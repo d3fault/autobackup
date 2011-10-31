@@ -8,7 +8,7 @@ class WebsiteAutomator : public QObject
     Q_OBJECT
 public:
     explicit WebsiteAutomator(QObject *parent = 0);
-
+    void startAutomating();
 signals:
 
 public slots:

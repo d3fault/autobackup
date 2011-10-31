@@ -23,5 +23,7 @@ selectWebsiteAndThenSiteActionWidget::~selectWebsiteAndThenSiteActionWidget()
 }
 void selectWebsiteAndThenSiteActionWidget::handleGoButtonClicked()
 {
-    m_WebsiteAutomatorList->append(new WebsiteAutomator(Websites["4chan"].Actions["PostThread"].getDefinition()));
+    WebsiteAutomator *newWebsiteAutomator(new WebsiteAutomator(Websites["4chan"].Actions["PostThread"].getDefinition()));
+    m_WebsiteAutomatorList->append(newWebsiteAutomator);
+    newWebsiteAutomator->startAutomating();
 }
