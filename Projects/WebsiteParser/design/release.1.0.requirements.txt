@@ -1,3 +1,0 @@
-- parcellized "steps" as input 					[INCOMPLETE]
-- website 'definitions service' 				[INCOMPLETE]
-- text/html parsing + image-based navigation	[INCOMPLETE]

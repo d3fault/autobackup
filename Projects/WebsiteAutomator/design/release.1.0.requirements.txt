@@ -1,0 +1,4 @@
+- parcellized "steps" as input 							[INCOMPLETE]
+- website 'definitions service' 						[INCOMPLETE]
+- text/html parsing + image-based navigation			[INCOMPLETE]
+- monitor 'ip address access list', "share" prevention	[INCOMPLETE]
