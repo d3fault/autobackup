@@ -1,0 +1,15 @@
+what should i focus on for the time being? reading or writing?
+craigslist poster helper is mainly writing...
+...forclosure reader (remax excel) is mainly reading
+(connecting the two is obviously awesome)
+even though it requires custom logic and probably a separate custom app, it would be REALLY cool to integrate them both together
+connect(forclosureReader, SIGNAL(listRead(QList<Properties>)), craigslistPoster, SLOT(postList(QList<Properties>)));
+forclosureReader and craigslistPoster are of type WebsiteAutomator... and their contents must be parcelized(??) to enable creation on the fly from definitions pulled from the web (service)
+making it easy for the user to connect the two is what's tricky.
+
+i digress, back to the point
+what should i focus on?
+4chan poster (spammer) vs. 4chan reader (4chan web browser)
+craigslist poster (spammer) vs. forclosure reader (or even craigslist reader)
+etc
+ideally, it'd be nice to do both at the same time... but that will be a pain in the ass to get right on the first try

@@ -25,8 +25,7 @@ selectWebsiteAndThenSiteActionWidget::selectWebsiteAndThenSiteActionWidget(QWidg
     fourChanWebsite.Actions.append(postThreadAction);
     Websites.append(fourChanWebsite);
     //TODOreq: fourchanWebsite needs to be parcelable, which parcelizes all the actions and all their steps...
-    //technically, it need only be read-only parcelable... we populate the object from a parcelized version pulled from the site..
-    //..but to future proof it (when i outsource the creation of definitions), i should make it both readwrite parcelable
+    //technically, it need only be read-only parcelable... we populate the object from a parcelized version pulled from the site, but to future proof it (when i outsource the creation of definitions), i should make it both readwrite parcelable
 
     //TODO: idk where this would go, but there needs to be like "variable chaining". one of the variables when posting to craigslist is a random string used to identify an input field. you must first parse out the input field name (random string), then you must also attach a piece of input to that input field name for submission.. a 2 step process. complicates shit even more. my brain is seriously going to explode considering all these possibilities
 
