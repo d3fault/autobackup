@@ -1,5 +1,5 @@
-#ifndef WEBSITEPARSER_H
-#define WEBSITEPARSER_H
+#ifndef WEBSITEAUTOMATOR_H
+#define WEBSITEAUTOMATOR_H
 
 #include <QObject>
 
@@ -15,4 +15,4 @@ public slots:
 
 };
 
-#endif // WEBSITEPARSER_H
+#endif // WEBSITEAUTOMATOR_H
