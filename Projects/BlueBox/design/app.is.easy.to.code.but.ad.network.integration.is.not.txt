@@ -1,0 +1,21 @@
+i'm leaning towards easy movie downloader (i will finally now write (now that i'm relatively sure i'm secure (woot hidden OS + no ethernet cable plugged in)) that i am going to call it blue box) because it's quick and easy and pretty much guaranteed money
+i will just let some random bitcoin account fill and fill and i don't ever have to rush to empty it until i know the extraction method is secure
+
+i've also thought up some features. the "upload to download" thing is scrapped
+45 second advertisement slots, maybe selling by the second... is in
+at any time, you can right click on the video -> never show ads. this preference is saved and a simple countdown timer is shown instead
+there should also be during the ad a "if you want to skip this ad, sign up for megaupload [here] (url)", and below it: "already have a megaupload account? enter login credentials [here] (widget)"
+
+this will give megaupload at least SOME incentive to not change their API so my app doesn't work. it's money from their own pocket.
+it's a gesture of goodwill on my part in hopes that they will reciprocate
+
+TODO: what if 2shared is only one available? when they're both available, should i still opt towards megaupload so i can show the ad?
+
+
+the application itself is pretty easy to code... the advertisement network will be a bit of work.. but it's nothing overly complicated.
+the ad network "payment"/"registration"/"purchasing" process should be EXCLUSIVELY on a tor hidden server. the regular http frontend that contains only the exe (remember, they always cross reference each other too) does not have said ad network / slot purchasing integration... else those servers would be vulnerable as fuck.
+
+basically, you submit a URL of a video and a bitcoin address that you're going to use to make a payment
+then, my server watches the bitcoin chain and sees if/when it gets paid (i guess the ordering of the two doesn't have to be this... they could pay before doing the register (but then someone could swoop in and submit their URL lol, by watching the bitcoin chain (not my problem)))
+
+how does my tor hidden server publish to the client app the url of the video to play? shit is now getting complicated. fml.
