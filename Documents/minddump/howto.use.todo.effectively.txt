@@ -1,0 +1,2 @@
+whenever you spam TODO: all over your source code it's good, but you could even do things like TODObug: and TODOoptimizatioin: etc
+can still search by phrase "TODO", but can also narrow your TODO search down. i like keeping my TODO list INSIDE of my source code... fuck the police (it'd still be nifty to be able to extract them, however).

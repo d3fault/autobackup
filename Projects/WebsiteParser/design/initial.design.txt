@@ -1,0 +1,11 @@
+basically everything i learned when planning 'craigslist poster helper', but abstracted into every site on the net...
+it can use text parsing or image finding/clicking to do each "step" (see craigslist poster helper design shit regarding "step"... but i don't need to, it's all in my memory (who am i talking to?))
+i need to parcelize the input... the series of steps
+i need to provide those parcelized steps as "service"
+sell the exe for something cheap, say $10
+then each website they go to is priced as a monthly service (prepay only)
+could maybe even have a guarantee... "website scripts updated within 24 hours or next month is free (or 'your money back', but that one sounds risky as fuck)"
+initially, i can provide the parcellized steps to whoever wants them... but it'd be great to code a tool that allows me to a) do it easily and b) outsource it so others can do it easily (i pay them, of course)
+long term, there is 2 sides to the business.. and i can gracefully step out of the picture
+i need it to work with captchas of all kinds... with ReCaptcha at the very least, but based on a simple IHumanVerification interface (see craigslist designs)
+website "service" that provides the step definitions based on monthly fee for that given task (or should i base it on an entire site? might as well NOT. as in, keep it specific... but maybe sell site-whole ones at a discount (with mostly unused features of course. idiots would buy em))
