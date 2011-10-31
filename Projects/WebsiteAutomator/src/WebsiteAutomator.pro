@@ -13,12 +13,16 @@ TEMPLATE = app
 SOURCES +=  main.cpp\
             selectwebsiteandthensiteactionwidget.cpp \
             websiteautomator.cpp \
-    websiteactiondefinition.cpp
+    websiteaction.cpp
 
 HEADERS  += selectwebsiteandthensiteactionwidget.h \
             websiteautomator.h \
-    websiteactiondefinition.h \
-    ParcelizedDefinition.h
+    websiteaction.h
+
+
+
+
+
 
 
 
