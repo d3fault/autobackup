@@ -1,0 +1,3 @@
+the only difference between the two is really color
+gui's will be red, backends will be black. for class diagram this doesn't have much of a bearing
+for use case view, it will help show to the programmer whether or not the code in the current timeline (in dia/uml lingo) is running on the GUI thread or the backend object's thread (preferred). helps them write good code and easily distinguish between gui code and backend code
