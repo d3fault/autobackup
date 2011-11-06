@@ -13,11 +13,27 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     designproject.cpp \
-    openprojectsmanager.cpp
+    projecttab.cpp \
+    projectviewtab.cpp \
+    designprojectview.cpp \
+    dragdropdiagramscene.cpp
 
 HEADERS  += mainwindow.h \
     designproject.h \
-    openprojectsmanager.h
+    projecttab.h \
+    projectviewtab.h \
+    designprojectview.h \
+    dragdropdiagramscene.h
+
+
+
+
+
+
+
+
+
+
 
 
 

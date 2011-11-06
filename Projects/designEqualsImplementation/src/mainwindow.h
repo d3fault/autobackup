@@ -8,7 +8,7 @@
 #include <QAction>
 #include <QTabWidget>
 
-#include <openprojectsmanager.h>
+#include <projecttab.h>
 #include <designproject.h>
 
 class MainWindow : public QMainWindow
@@ -21,9 +21,10 @@ public:
 private:
     //gui
     QWidget *m_LeftPane;
-    QTabWidget *m_ProjectTabWidget;
+    QTabWidget *m_ProjectTabWidgetContainer;
     //members
-    OpenProjectsManager *m_OpenProjectsManager;
+    DesignProject *m_CurrentProject;
+    bool m_Failed;
     //methods
     void createActions();
     void createLeftPane();
@@ -34,12 +35,12 @@ private:
     QAction *m_NewClassAction;
     QAction *m_NewUseCaseAction;
 private slots:
-    void handleProjectOpened(DesignProject*);
     void handleProjectTabChanged(int);
     //actions triggered
     void handleNewProjectAction();
-    void handleNewClassAction();
     void handleNewUseCaseAction();
+signals:
+    void e(const QString &);
 };
 
 #endif // MAINWINDOW_H
