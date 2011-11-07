@@ -7,6 +7,8 @@
 #include <QGraphicsView>
 #include <QAction>
 #include <QTabWidget>
+#include <QMenu>
+#include <QMenuBar>
 
 #include <projecttab.h>
 #include <designproject.h>
@@ -27,6 +29,7 @@ private:
     bool m_Failed;
     //methods
     void createActions();
+    void createMenus();
     void createLeftPane();
     void createProjectTabWidget();
 

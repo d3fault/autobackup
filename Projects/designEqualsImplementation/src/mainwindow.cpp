@@ -4,6 +4,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), m_Failed(true) /* true until m_CurrentProject is succesfully extracted/casted */
 {
     createActions();
+    createMenus();
     createLeftPane();
     createProjectTabWidget();
     //gui
@@ -39,6 +40,13 @@ void MainWindow::createActions()
 
     connect(m_NewProjectAction, SIGNAL(triggered()), this, SLOT(handleNewProjectAction()));
     connect(m_NewUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseAction()));
+}
+void MainWindow::createMenus()
+{
+    QMenu *fileMenu = this->menuBar()->addMenu(tr("File"));
+    QMenu *fileNewMenu = fileMenu->addMenu(tr("New"));
+    fileNewMenu->addAction(m_NewProjectAction);
+    fileNewMenu->addAction(m_NewUseCaseAction);
 }
 void MainWindow::handleNewProjectAction()
 {
