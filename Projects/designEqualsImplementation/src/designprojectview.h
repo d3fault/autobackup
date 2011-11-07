@@ -10,8 +10,9 @@ public:
     enum ProjectViewType { UseCaseType, ClassDiagramType };
     explicit DesignProjectView(QString useCaseName);
     explicit DesignProjectView();
+    QString getProjectViewName();
 private:
-    explicit DesignProjectView(QString projectViewName, ProjectViewType projectViewType);
+    void privConstructor(QString projectViewName, ProjectViewType projectViewType);
     QString m_ProjectViewName;
     ProjectViewType m_ProjectViewType;
 signals:

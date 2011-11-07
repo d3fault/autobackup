@@ -45,6 +45,7 @@ void MainWindow::handleNewProjectAction()
     //TODOreq: this should be called on first launch, and it should create a new project as well as our default classes... say 1 front end and 1 backend. there is no default use case. they launch it and nothing happens. the backend is NOT started automatically. i guess it could be and could emit some "hello world" or something to our debug pane or something... doesn't really matter
     QString newProjectName("New Project 1");
     ProjectTab *newProjectTab = new ProjectTab(new DesignProject(newProjectName));
+    newProjectTab->createEmptyClassDiagram(); //when loading instead of creating a new project, this call would be different. existingProjectTab->loadClassDiagramAndUseCases(&from etc idfk); the "existing" in existing project tab is still a new tab in memory... but the project is loaded from a saved file. the project is already existing, the tab is now (until we add it like just below)
     connect(newProjectTab, SIGNAL(e(const QString &)), this, SIGNAL(e(const QString &)));
     int newTabIndex = m_ProjectTabWidgetContainer->addTab(newProjectTab, newProjectName);
     m_ProjectTabWidgetContainer->setCurrentIndex(newTabIndex);

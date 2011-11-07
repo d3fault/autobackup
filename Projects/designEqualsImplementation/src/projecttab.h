@@ -14,6 +14,7 @@ class ProjectTab : public QWidget
 public:
     explicit ProjectTab(DesignProject *project);
     DesignProject *getProject();
+    void createEmptyClassDiagram();
 private:
     QVBoxLayout *m_Layout;
     QTabWidget *m_ProjectViewsTabContainer;

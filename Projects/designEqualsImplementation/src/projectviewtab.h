@@ -22,7 +22,7 @@ private:
     //members
     DesignProjectView *m_ProjectView;
 signals:
-
+    void e(const QString &);
 public slots:
 
 };
