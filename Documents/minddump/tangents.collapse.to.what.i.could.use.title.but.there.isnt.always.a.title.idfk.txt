@@ -1,0 +1,7 @@
+a random idea/thought when using tangents/tangentify. the collapsed version of the tangent could be the title of the referencing tangent/article/node/thingy-majig
+i'd have to rewrite everything in the past (not necessarily, this explaination is good enough for others to know why they don't make sense)
+and also, i tend to not write a title of a small parenthesis, like the one just above. what would i title it? what would i auto-title it?
+"not necessarily" (first line up to the first parenthesis? (a period in "mr. blah blah blah" would only show "mr" in that case. a shitty title.))
+or just an empty closed parenthesis? () <--this exact instance is an empty tangent? should be a reference to node 0, a blank node. kinda like /dev/null or something special/hardcoded
+^^^"<---" not to be confused with the thought right before the empty closed parenthesis... which is a non-empty tangent simply collapsed
+meh.

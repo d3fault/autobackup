@@ -1,0 +1,31 @@
+i just watched every planet of the apes released so far in the past 2-3 days
+and i wrote this function in a textpad on my non-sync'd linux box and then didn't save it
+it summarizes all the planet of the apes movies
+
+while(true)
+{
+	humans.enslave(apes);
+	apes.revolt();
+	apes.enslave(humans);
+	humans.revolt();
+}
+
+
+i didn't consider it worth saving (or posting to facefuck as i originally intended(i tend to bitch out with a lot of my shit... but i'm glad i launched nobodyme finally wooo))
+but it did lead me into a series of other thoughts that i am now considering worth writing/documenting
+
+class Human : Ape
+
+class Ape : Something //see "this is something" nobodyme shit
+
+there's obviously a string of species in between Ape and Something, but i ain't no fucking evolutionary biologist(?) so i don't know or care what they are
+
+still, it made me think of how this "Something" was initially just an inanimate spec of dust (a single atom)
+an inanimate spec of dust that merged/mutated with other specs until it gained the ability to clone/reproduce itself (there must have been plenty of lifelike specs that did NOT contain the ability to clone themselves and died off right away)
+from there, it continued to evolve/mutate until... well shit... until it became smart enough to write this goddamn sentence (and it will continue to evolve/mutate with it's own intelligence assisting it. we develop cures in medicine that would take the normal adapt/mutate/evolve method millions of years to accomplish)
+
+
+
+you know, i think i'm going to censor/htmlize this and post it on nobodyme lol...
+
+fffuuuuuuuuuuuuccccccckkkkkkk cennsssssoooooorrrrrrrshhhhhhhhiiiiiiipppppppp but yea the facebook stuff is kinda irrelevant lol, same with my linux box stuff
