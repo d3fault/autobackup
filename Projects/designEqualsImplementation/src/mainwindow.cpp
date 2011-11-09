@@ -68,6 +68,12 @@ void MainWindow::createLeftPane()
     //TODOreq: a vbox layout. the upper half has a two-tabbed thingy. one tab = class diagram mode diagrams, the other = use case mode diagrams. toggling between the two changes the graphics view currently open to non-editable(grayed out) if the modes don't match. respecitvely, changing the tabs from "overview mode" to any of the use cases that are currently open (or if opened from the bottom half of THIS vbox layout) changes the tab to it's corresponding mode.
     //TODOreq: the bottom half contains all of the views for the current project. the top one is always the Overview (class diagram mode). as mentioned in the comment directly above, selecting one opens it in a tab (or changes to that tab if it's already opened) and sets the upper half of this vbox layout's diagram add groupbox tab shits to display the corresponding group of diagram objects that can be added
     m_LeftPane = new QWidget();
+    QVBoxLayout *leftPaneLayout = new QVBoxLayout();
+    QTabWidget *useCaseAndClassDiagramViewsNodeSelectorTabWidget = new QTabWidget();
+    leftPaneLayout->addWidget(useCaseAndClassDiagramViewsNodeSelectorTabWidget);
+    leftPaneLayout->addWidget(listOfUseCasesForCurrentProjectOhAndAlsoClassDiagramAtTheTopKthx);
+
+    m_LeftPane->setLayout(leftPaneLayout);
 }
 void MainWindow::createProjectTabWidget()
 {
