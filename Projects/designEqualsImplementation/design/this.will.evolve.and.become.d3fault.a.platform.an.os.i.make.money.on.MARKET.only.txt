@@ -1,0 +1,40 @@
+Design = Implementation needs to evolve into a full featured operating system, minimalist of course
+everything can/should/needs-to-be licensed under the LGPL license
+the only place i can get money/own is the application market
+i can place ads on the download page for every free app, and take a slice of the revenue for paid apps (no ads on their pages)
+the designer (design = implementation) needs to be built into every app, so you can right-click->edit
+maybe even a right-click->view plugins (from store) (from there, you sort by free or paid.. but initially sorted by usage only)
+the master grand plan "dht" might come at a later date... i hope it does... but for the time being centralized is the best way to make a decent buck
+everything needs to be free, but we need to give the option for other people to release stuff for money
+
+the os/platform is os-independent. every app works on every OS. they all share/use the same store..
+mobile has screen scrolling support to display the desktop gui.. and if there is no desktop gui one is generated based on the backend
+the developer overrides it when creating a custom gui... same with for mobile. it is encouraged to make a mobile UI...
+...but i'm thinking/hoping/going-to use a desktop/mobile UI for most/all of the apps i make... only making a mobile UI when i feel it is necessary
+the default payment method (buying an app) is bitcoin, but visa and paypal (and others) are right below it
+the default payment receiving method (receiving payment for an app) is bitcoin, with bank/paypal/whatever right below it
+i am the middle man, i'd say 30%... but can be flexible
+
+for advertisements on free applications download pages, i get 49% of the profits, the developer gets 51% of the profits (and retains all ownership of course)
+free must be open source
+
+paid must be closed source... open source + paid defeats the purpose... as anyone can just fork->release4free 5 minutes later..
+is paid even a good model?
+if i'm allowing paid to be closed source, then i guess i should allow free to be closed source as well
+they lose the ability to right-click->edit/etc (crowd-sourced improvements 24/7) when closed source, but i guess i should still allow it
+
+maybe for the submission/approval process i should make providing the source necessary... but then how it is published to the market (that i own) is specified by the developer
+the only flaw i see with that is  that i'm going to want to have others do the approving for me... paying them and having them sign a legal contract could cover my ass...
+...but a lot of companies might lose interest because source code is very valuable and many wouldn't (don't blame them) want to give it out to a 'trusted party' (lol no such thing)
+
+
+even though i see the core of the application as being the design=implementation functionality and the market to sell apps made on there (all VERY integrated),
+the first UI presented to the user should be "d3fault". all the functionality coded by me (LGPL) for d3fault is done in the integrated design=implementation functionality
+
+CREATE
+EXPERIENCE
+LEARN
+
+create = document (tangentify, edit previous), picture (webcam, edit previous), video (webcam, capture card, edit previous), application (desgn = implementation, edit previous (edit current is available with rightl-click))
+experience = read document, view picture, view video, use application
+learn = experiences tagged with a 'tutorial' tag. all your learned stuff is remembered to form a timeline of it's own (under your EXPERIENCEs tagged 'learning' or something). you can follow paths from being a 0 year old to learning C++. you are presented with categories of many starting points (calculated/generated based on WHAT YOU ALREADY KNOW). there can also be a "learn something new/interesting/popular/recent" type thing.. or multiple whatever idk, you get the idea
