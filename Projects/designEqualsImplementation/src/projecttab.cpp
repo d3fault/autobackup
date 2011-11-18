@@ -13,6 +13,7 @@ ProjectTab::ProjectTab(DesignProject *project) : m_Failed(true)
 
     //connections
     connect(m_ProjectViewsTabContainer, SIGNAL(currentChanged(int)), this, SLOT(handleProjectViewsTabChanged(int)));
+    connect(m_Project, SIGNAL(projectViewAdded(DesignProjectView*)), this, SLOT(handleProjectViewAdded(DesignProjectView*)));
 }
 DesignProject * ProjectTab::getProject()
 {
@@ -34,9 +35,17 @@ void ProjectTab::handleProjectViewsTabChanged(int newIndex)
 }
 void ProjectTab::createEmptyClassDiagram()
 {
+    //TODO: remove this + dependent code, replaced/redesigned by handleProjectViewAdded
     DesignProjectView *emptyClassDiagram = new DesignProjectView();
     ProjectViewTab *classDiagramViewTab = new ProjectViewTab(emptyClassDiagram);
     connect(classDiagramViewTab, SIGNAL(e(const QString &)), this, SIGNAL(e(const QString &)));
     int newTabIndex = m_ProjectViewsTabContainer->addTab(classDiagramViewTab, emptyClassDiagram->getProjectViewName());
+    m_ProjectViewsTabContainer->widget(newTabIndex);
+}
+void ProjectTab::handleProjectViewAdded(DesignProjectView *newProjectView)
+{
+    ProjectViewTab *classDiagramViewTab = new ProjectViewTab(newProjectView);
+    connect(classDiagramViewTab, SIGNAL(e(const QString &)), this, SIGNAL(e(const QString &)));
+    int newTabIndex = m_ProjectViewsTabContainer->addTab(classDiagramViewTab, newProjectView->getProjectViewName());
     m_ProjectViewsTabContainer->widget(newTabIndex);
 }

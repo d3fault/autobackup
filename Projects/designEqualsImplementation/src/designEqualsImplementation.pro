@@ -16,14 +16,18 @@ SOURCES += main.cpp\
     projecttab.cpp \
     projectviewtab.cpp \
     designprojectview.cpp \
-    dragdropdiagramscene.cpp
+    dragdropdiagramscene.cpp \
+    diagramscenenode.cpp
 
 HEADERS  += mainwindow.h \
     designproject.h \
     projecttab.h \
     projectviewtab.h \
     designprojectview.h \
-    dragdropdiagramscene.h
+    dragdropdiagramscene.h \
+    diagramscenenode.h
+
+
 
 
 

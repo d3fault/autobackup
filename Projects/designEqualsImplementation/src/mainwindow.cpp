@@ -52,8 +52,11 @@ void MainWindow::handleNewProjectAction()
 {
     //TODOreq: this should be called on first launch, and it should create a new project as well as our default classes... say 1 front end and 1 backend. there is no default use case. they launch it and nothing happens. the backend is NOT started automatically. i guess it could be and could emit some "hello world" or something to our debug pane or something... doesn't really matter
     QString newProjectName("New Project 1");
-    ProjectTab *newProjectTab = new ProjectTab(new DesignProject(newProjectName));
-    newProjectTab->createEmptyClassDiagram(); //when loading instead of creating a new project, this call would be different. existingProjectTab->loadClassDiagramAndUseCases(&from etc idfk); the "existing" in existing project tab is still a new tab in memory... but the project is loaded from a saved file. the project is already existing, the tab is now (until we add it like just below)
+    DesignProject *newDesignProject = new DesignProject(newProjectName);
+    ProjectTab *newProjectTab = new ProjectTab(newDesignProject);
+    newDesignProject->createEmptyProject(); //when loading instead of creating a new project, this call would be different. existingDesignProject->loadClassDiagramAndUseCases(&from etc idfk); the "existing" in existing project tab is still a new tab in memory... but the project is loaded from a saved file. the project is already existing, the tab is now (until we add it like just below)
+    //^^if the above comment makes no sense, it's because i changed it from "tab" to just "object" later on... and from emptyClassDiagram to emptyProject. better design.
+    //TODOopt: right now if i call createEmptyProject before doing the new ProjectTab, the tab won't show up. they are only added by listening to DesignProject newProjectView signal... but the instantiator for ProjectTab should also search existing Views and add tabs accordingly
     connect(newProjectTab, SIGNAL(e(const QString &)), this, SIGNAL(e(const QString &)));
     int newTabIndex = m_ProjectTabWidgetContainer->addTab(newProjectTab, newProjectName);
     m_ProjectTabWidgetContainer->setCurrentIndex(newTabIndex);
@@ -70,10 +73,25 @@ void MainWindow::createLeftPane()
     m_LeftPane = new QWidget();
     QVBoxLayout *leftPaneLayout = new QVBoxLayout();
     QTabWidget *useCaseAndClassDiagramViewsNodeSelectorTabWidget = new QTabWidget();
+    createNodeButtonGroups();
     leftPaneLayout->addWidget(useCaseAndClassDiagramViewsNodeSelectorTabWidget);
-    leftPaneLayout->addWidget(listOfUseCasesForCurrentProjectOhAndAlsoClassDiagramAtTheTopKthx);
+    //createListForClassDiagramAndAllUseCases();
+    //leftPaneLayout->addWidget(listOfUseCasesForCurrentProjectOhAndAlsoClassDiagramAtTheTopKthx);
 
     m_LeftPane->setLayout(leftPaneLayout);
+}
+void MainWindow::createNodeButtonGroups()
+{
+    //TODOreq: left off here, re-arranged DesignProject... but i want some way to iterate through ProjectViewTypes to make 2("x") tabs here, and another way to iterate through each nodeType for each viewType to create the buttonGroup (2 colums, x rows (depending how many)) for each viewType/tab
+
+
+    //class diagram button group
+    m_ClassDiagramNodeButtonGroup = new QButtonGroup();
+    m_ClassDiagramNodeButtonGroup->setExclusive(false);
+    connect(m_ClassDiagramNodeButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(handleButtonGroupButtonClicked(int)));
+
+    //use case button group
+
 }
 void MainWindow::createProjectTabWidget()
 {
@@ -92,4 +110,17 @@ void MainWindow::handleProjectTabChanged(int index)
 
     //after this, nothing really... maybe redraw the qgraphicsscene based on the contents of the [new] current project...
     //...but mainly this is only necessary for later drag and drops / oonnections made
+}
+void MainWindow::handleButtonGroupButtonClicked(int)
+{
+    if(mode == classDiagramMode)
+    {
+
+    }
+    else if(mode == useCaseDiagramMode)
+    {
+
+    }
+    //NOTE, the above if/else might not be necessary at all until the actual click onto the graphics scene...
+    //the point is just to show that they share a handler
 }

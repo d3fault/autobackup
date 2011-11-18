@@ -9,9 +9,11 @@
 #include <QTabWidget>
 #include <QMenu>
 #include <QMenuBar>
+#include <QButtonGroup>
 
 #include <projecttab.h>
 #include <designproject.h>
+#include <diagramscenenode.h>
 
 class MainWindow : public QMainWindow
 {
@@ -24,6 +26,8 @@ private:
     //gui
     QWidget *m_LeftPane;
     QTabWidget *m_ProjectTabWidgetContainer;
+    QButtonGroup *m_ClassDiagramNodeButtonGroup;
+    QButtonGroup *m_UseCaseNodeButtonGroup;
     //members
     DesignProject *m_CurrentProject;
     bool m_Failed;
@@ -31,6 +35,7 @@ private:
     void createActions();
     void createMenus();
     void createLeftPane();
+    void createNodeButtonGroups();
     void createProjectTabWidget();
 
     //actions
@@ -39,6 +44,7 @@ private:
     QAction *m_NewUseCaseAction;
 private slots:
     void handleProjectTabChanged(int);
+    void handleButtonGroupButtonClicked(int);
     //actions triggered
     void handleNewProjectAction();
     void handleNewUseCaseAction();

@@ -25,6 +25,7 @@ signals:
     void e(const QString &);
 private slots:
     void handleProjectViewsTabChanged(int);
+    void handleProjectViewAdded(DesignProjectView*);
 };
 
 #endif // PROJECTTAB_H

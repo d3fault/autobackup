@@ -2,6 +2,9 @@
 #define DESIGNPROJECT_H
 
 #include <QObject>
+#include <QList>
+
+#include <designprojectview.h>
 
 class DesignProject : public QObject
 {
@@ -9,9 +12,14 @@ class DesignProject : public QObject
 public:
     explicit DesignProject(QString projectName);
     QString getProjectName();
+    void addProjectView(DesignProjectView *designProjectView);
+    void createEmptyProject(); //called if the recently instantiated DesignProject is "new"/empty
+    //TODOreq: void loadExistingProject(/*args*/);
 private:
     QString m_ProjectName;
+    QList<DesignProjectView*> *m_ProjectViewList;
 signals:
+    void projectViewAdded(DesignProjectView*);
 
 public slots:
 
