@@ -1,2 +1,3 @@
 task					done
 working buttonGroups			[]
+right-click added node->edit members	[]
