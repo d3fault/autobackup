@@ -1,3 +1,4 @@
-task					done
-working buttonGroups			[]
-right-click added node->edit members	[]
+task							done
+working buttonGroups					[]
+right-click added node->edit members			[]
+connect design=implementation gui with code generator	[]
