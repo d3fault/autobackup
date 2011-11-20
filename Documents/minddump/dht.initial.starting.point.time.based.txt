@@ -1,0 +1,6 @@
+a dht need only rely on a starting point that marks what time it is and then the client has their time sync'd with that starting point
+it boils down to: whoever has the most "no, that group is lying" 's is the true dht owner
+it can obviously be gamed
+
+bitcoin "deals with" this problem by changing it into: whoever has the most sheer resources owns the network
+wasteful, but sounds like it could work in theory. definitely can also be gamed..
