@@ -1,0 +1,7 @@
+i want to code a appp where i just press ctrl-t to open a new tab. there is also a new tab button but keyboard shortcuts are better considering i want to type into my private machine without my "online" computer even seeing it (different computer) and while watching something on my online computer/playing a game i guess too. boadwalk empire atm but besides the point.
+the system saves the date, the title (auto-title is first few words unless changed before save/publish(WHICH?)) and the content
+and i guess the content type, which is text in this instance
+
+ctrl-t saves the other one and moves onto the next
+but in the context of tangents, you wouldn't necessarily want to close the upper layer, as you might later return to it?
+so it saves (to prevent data loss), but it can be appended to before publish to represent a single "node"?
