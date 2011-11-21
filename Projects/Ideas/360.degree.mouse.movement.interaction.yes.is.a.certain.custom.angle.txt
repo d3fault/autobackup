@@ -1,0 +1,11 @@
+360 degree angles around the mouse, maybe cut into 12ths or user-specified value (add-from-12?)
+the default "yes" user interaction is to pull your mouse in the most instinctive manner
+each user has their own "yes" angle
+their default "no" is either a right-click or a swipe in the opposite direction. i am unsure if "yes" has a click involved
+
+every other direction is used for custom/contextual/app-specific/function-specific customization before saying yes or whatever
+
+it would be cool to have a series of steps that all require "yes" and to just do the swipe motion on them and to get every step answered "yes" for you
+auto-scripting built in or something
+if you hold down any of the number keys, 1-9, only that many yes's are automatically yes'd for you in that script/auto-yes gesture
+a lot of this needs to be better thought out because it isn't completely coherent... but i could see it leading to a faster more fluid (lol i hate that 'more fluid' buzzword) experience
