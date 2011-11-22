@@ -1,0 +1,3 @@
+vote ask question at beginning/first-launch w/e (registration): i am for anonymity: yes | no
+explain that you cannot be both for anonymity and against forwarding/sharing packets for their neighbors and still expect to look anonymous
+you must also forward/share for the anonymity to take effect on you.
