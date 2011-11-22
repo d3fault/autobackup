@@ -1,0 +1,4 @@
+i want to make a basic app that records my text files (when i start typing, when i finish typing, average cpm) + filename + content
+i use parenthesis as needed (auto-close-inserted) and ctrl+t is a new tangent (parenthesis is NOT? need to work this out in my head but basically "new tangent" is like "new window"/new tab/etc)
+i had this typed in yesterday but then fedora crashed or something.. last thing i hit was ctrl-t and then i was back at login screen wwhen i put my monitor back to this computer
+that's another thing, need to be able to use the app without needing a screen. gui needs to be basic enough to navigate without seeing anything
