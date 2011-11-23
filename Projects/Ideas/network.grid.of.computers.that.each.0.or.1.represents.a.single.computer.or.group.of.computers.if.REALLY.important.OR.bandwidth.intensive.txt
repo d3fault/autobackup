@@ -1,0 +1,7 @@
+must code a network grid of computers whom resemble the binary logic of a computer
+there are many checks and balances done by each binary 0 or 1
+every step is checked mathematically by every computer involved in the operation (if it uses it's 0s and 1s)
+every step that that 0/1 (which represents 1 computer (or sets of computers)) node sees from it's position and has enough resources to perform a calculation on it. every pc is a full fledged CPU and the software it is running is customizable from a grand scale (not possible to have gui client side edits AND network code changes? wouldn't those need to be inherently public? if they were changes to the core of the application. so are the gui changes. how do changes propogate?
+changes (notifications thereof) propogate by randomness. random changes in the grid are shown to the user on first launch. sort of like a "news" page lol? by leaving the default start/home page to that randomness, you are helping to propogate meme. the data is still backed up whether or not you view the information (none to view if it's all encrypted... mix/match public/private or fully public ok too)... but in order to help become meme it must not only be stored on silicon/electricity, it must also be stored in one's head
+i would subscribe to it
+but i'd probably filter out a shit ton of noise by categories
