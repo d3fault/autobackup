@@ -72,9 +72,9 @@ void MainWindow::createLeftPane()
     //TODOreq: the bottom half contains all of the views for the current project. the top one is always the Overview (class diagram mode). as mentioned in the comment directly above, selecting one opens it in a tab (or changes to that tab if it's already opened) and sets the upper half of this vbox layout's diagram add groupbox tab shits to display the corresponding group of diagram objects that can be added
     m_LeftPane = new QWidget();
     QVBoxLayout *leftPaneLayout = new QVBoxLayout();
-    QTabWidget *useCaseAndClassDiagramViewsNodeSelectorTabWidget = new QTabWidget();
+    QTabWidget *useCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget = new QTabWidget();
     createNodeButtonGroups();
-    leftPaneLayout->addWidget(useCaseAndClassDiagramViewsNodeSelectorTabWidget);
+    leftPaneLayout->addWidget(useCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget);
     //createListForClassDiagramAndAllUseCases();
     //leftPaneLayout->addWidget(listOfUseCasesForCurrentProjectOhAndAlsoClassDiagramAtTheTopKthx);
 
@@ -83,6 +83,16 @@ void MainWindow::createLeftPane()
 void MainWindow::createNodeButtonGroups()
 {
     //TODOreq: left off here, re-arranged DesignProject... but i want some way to iterate through ProjectViewTypes to make 2("x") tabs here, and another way to iterate through each nodeType for each viewType to create the buttonGroup (2 colums, x rows (depending how many)) for each viewType/tab
+    DesignProjectTemplates *dpt = new DesignProjectTemplates();
+    QList<DesignProjectTemplates::DesignProjectViewType> i = dpt->AllDesignProjectNodesByProjectViewType->uniqueKeys();
+    int viewTypesLength = i.length();
+    for(int j = 0; j < viewTypesLength; ++j)
+    {
+        //add tab for this DesignProjectViewType (class diagram, use case, etc)
+        QList<DiagramSceneNode*> dpt->AllDesignProjectNodesByProjectViewType->values(i.at(j));
+        //add a button to the groupbox for this tab.. maybe do other stuff (look at that handy example)... connect to it's signals/slots etc?
+
+    }
 
 
     //class diagram button group

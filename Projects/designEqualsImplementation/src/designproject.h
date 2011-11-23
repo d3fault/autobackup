@@ -9,7 +9,8 @@
 class DesignProject : public QObject
 {
     Q_OBJECT
-public:
+public:    
+    QList<DesignProjectView*> *m_DesignProjectViewsForThisProject; //initially just the class diagram but use cases are added
     explicit DesignProject(QString projectName);
     QString getProjectName();
     void addProjectView(DesignProjectView *designProjectView);

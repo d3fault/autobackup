@@ -1,0 +1,8 @@
+i should have a 100% transparent business where i have a utility for anyone to provide me disk space/bandwidth and be paid for it (bitcoin)
+i would control the core, but only because i can't figure out how to securely do it on a dht (if it's even possible)
+it's even harder to do it + get money for doing it on a dht...
+i pay the disk space/bandwidth providers with money earned from selling/advertising the applications. a cut for selling, and fees for advertising amongst other selling app.
+there is also security to consider
+lol such an understatement
+i'm pretty much going to be paid for doing security. i can outsource it.. but that makes no sense
+outsourcing + security is a contradiction really

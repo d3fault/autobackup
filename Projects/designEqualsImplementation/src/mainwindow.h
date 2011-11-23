@@ -11,9 +11,13 @@
 #include <QMenuBar>
 #include <QButtonGroup>
 
+#include <QList>
+#include <QMultiMap>
+
 #include <projecttab.h>
 #include <designproject.h>
 #include <diagramscenenode.h>
+#include <designprojecttemplates.h>
 
 class MainWindow : public QMainWindow
 {

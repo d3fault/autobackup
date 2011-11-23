@@ -1,0 +1,1 @@
+everything is host proof hosted + locally hosted. the locally hosted files can also be backed up and re-copied later (they are re-scanned at this time) to use as a base point for catching up to the main tree (should i call it the d3fault tree?)

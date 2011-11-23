@@ -17,7 +17,13 @@ SOURCES += main.cpp\
     projectviewtab.cpp \
     designprojectview.cpp \
     dragdropdiagramscene.cpp \
-    diagramscenenode.cpp
+    diagramscenenode.cpp \
+    designprojecttemplates.cpp \
+    DiagramSceneNodes/classdiagramfrontendnode.cpp \
+    DiagramSceneNodes/classdiagrambackendnode.cpp \
+    DiagramSceneNodes/usecaseactornode.cpp \
+    DiagramSceneNodes/usecasefrontendnode.cpp \
+    DiagramSceneNodes/usecasebackendnode.cpp
 
 HEADERS  += mainwindow.h \
     designproject.h \
@@ -25,7 +31,25 @@ HEADERS  += mainwindow.h \
     projectviewtab.h \
     designprojectview.h \
     dragdropdiagramscene.h \
-    diagramscenenode.h
+    diagramscenenode.h \
+    designprojecttemplates.h \
+    DiagramSceneNodes/classdiagramfrontendnode.h \
+    DiagramSceneNodes/classdiagrambackendnode.h \
+    DiagramSceneNodes/usecaseactornode.h \
+    DiagramSceneNodes/usecasefrontendnode.h \
+    DiagramSceneNodes/usecasebackendnode.h
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

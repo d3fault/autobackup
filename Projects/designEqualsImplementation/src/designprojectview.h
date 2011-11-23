@@ -7,7 +7,6 @@ class DesignProjectView : public QObject
 {
     Q_OBJECT
 public:
-    enum ProjectViewType { UseCaseType, ClassDiagramType };
     explicit DesignProjectView(QString useCaseName);
     explicit DesignProjectView();
     QString getProjectViewName();

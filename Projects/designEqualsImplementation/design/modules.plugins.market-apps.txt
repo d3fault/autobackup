@@ -1,0 +1,3 @@
+all these are going to be modules/plugins/market-apps
+all these ideas, that is. all my ideas. once i have timeline'ing (i'm guessing single party is fine for now... try to make it parcelable) integreted with application designing/building.
+a tangent can consist of infinite tangents all containing their own infinte tangents infinitely

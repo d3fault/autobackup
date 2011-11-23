@@ -1,0 +1,4 @@
+"is it true that you did such and such?"
+"link?"
+"gives-link"
+<auto-verifies + gives option to 'recall' if valid. notifies only if invalid>
