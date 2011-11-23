@@ -49,6 +49,8 @@ private:
 private slots:
     void handleProjectTabChanged(int);
     void handleButtonGroupButtonClicked(int);
+    void handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType);
+    void handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*);
     //actions triggered
     void handleNewProjectAction();
     void handleNewUseCaseAction();

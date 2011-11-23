@@ -85,10 +85,13 @@ void MainWindow::createNodeButtonGroups()
     //TODOmb: reverse the output from uniqeKeys() and values() below, otherwise it'll be all backwards from how i want it (not a huge deal)
     //TODOreq: left off here, re-arranged DesignProject... but i want some way to iterate through ProjectViewTypes to make 2("x") tabs here, and another way to iterate through each nodeType for each viewType to create the buttonGroup (2 colums, x rows (depending how many)) for each viewType/tab
     DesignProjectTemplates *dpt = new DesignProjectTemplates();
+    connect(dpt, SIGNAL(onViewTypePopulated(DesignProjectTemplates::DesignProjectViewType)), this, SLOT(handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType)));
+    connect(dpt, SIGNAL(onDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*)), this, SLOT(handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*)));
     //^i'm thinking i can attach signals to this such as "onViewTypeAdded" and "onNodeAdded" (which has the viewType as an argument (how do i access a tab based on the viewType? can't i only access them via integer? i guess i can iterate them, since there's only 2 atm...))
     //^^if i end up doing that, all/most code below is gone/relocated
     //also, i need to connect to dpt signals before issuing a "createTemplates()" command to it (currently in it's constructor, no time to hook up connections
     //i could fill out the tab/widget's layout with the NodeButton groupbox's etc before i emit the "onViewTypeAdded", so i don't have to even deal with onNodeAdded and iterating through the tabs to find what viewType the node is associated with
+    //ok but why am i re-do'ing work? is it because the below way is "improper"? (will work, but not good design)
     QList<DesignProjectTemplates::DesignProjectViewType> i = dpt->AllDesignProjectNodesByProjectViewType->uniqueKeys();
     int viewTypesLength = i.length();
     for(int j = 0; j < viewTypesLength; ++j)
@@ -142,4 +145,10 @@ void MainWindow::handleButtonGroupButtonClicked(int)
     }
     //NOTE, the above if/else might not be necessary at all until the actual click onto the graphics scene...
     //the point is just to show that they share a handler
+}
+void MainWindow::handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType)
+{
+}
+void MainWindow::handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType, DiagramSceneNode *)
+{
 }

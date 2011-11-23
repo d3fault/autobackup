@@ -1,15 +1,16 @@
 #ifndef DESIGNPROJECTTEMPLATES_H
 #define DESIGNPROJECTTEMPLATES_H
 
-//#include <QList>
+#include <QObject>
 #include <QMultiMap>
 
 //forward declaration
 class DiagramSceneNode;
 
 //TODOreq: make this a singleton. accessed/instantiated by "Instance"... and either implement copy-on-write for the templates or allow them to be copied when read
-class DesignProjectTemplates
+class DesignProjectTemplates : QObject
 {
+    Q_OBJECT
 public:
     enum DesignProjectViewType { UseCaseType, ClassDiagramType };
     //QList<DesignProjectView*> *m_AllDesignProjectViews; //"ever" (can be added pre-compile). needs to be static/const/enum/something i can't figure out and don't care to
@@ -19,6 +20,9 @@ public:
     DesignProjectTemplates();
 private:
     void populateDesignProjectViewsAndTheirNodes();
+signals:
+    void onViewTypePopulated(DesignProjectViewType);
+    void onDesignProjectNodeAdded(DesignProjectViewType, DiagramSceneNode*);
 };
 
 #endif // DESIGNPROJECTTEMPLATES_H
