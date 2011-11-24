@@ -72,9 +72,9 @@ void MainWindow::createLeftPane()
     //TODOreq: the bottom half contains all of the views for the current project. the top one is always the Overview (class diagram mode). as mentioned in the comment directly above, selecting one opens it in a tab (or changes to that tab if it's already opened) and sets the upper half of this vbox layout's diagram add groupbox tab shits to display the corresponding group of diagram objects that can be added
     m_LeftPane = new QWidget();
     QVBoxLayout *leftPaneLayout = new QVBoxLayout();
-    QTabWidget *useCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget = new QTabWidget();
+    m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget = new QTabWidget();
     createNodeButtonGroups();
-    leftPaneLayout->addWidget(useCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget);
+    leftPaneLayout->addWidget(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget);
     //createListForClassDiagramAndAllUseCases();
     //leftPaneLayout->addWidget(listOfUseCasesForCurrentProjectOhAndAlsoClassDiagramAtTheTopKthx);
 
@@ -84,14 +84,16 @@ void MainWindow::createNodeButtonGroups()
 {
     //TODOmb: reverse the output from uniqeKeys() and values() below, otherwise it'll be all backwards from how i want it (not a huge deal)
     //TODOreq: left off here, re-arranged DesignProject... but i want some way to iterate through ProjectViewTypes to make 2("x") tabs here, and another way to iterate through each nodeType for each viewType to create the buttonGroup (2 colums, x rows (depending how many)) for each viewType/tab
-    DesignProjectTemplates *dpt = new DesignProjectTemplates();
-    connect(dpt, SIGNAL(onViewTypePopulated(DesignProjectTemplates::DesignProjectViewType)), this, SLOT(handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType)));
-    connect(dpt, SIGNAL(onDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*)), this, SLOT(handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*)));
+    DesignProjectTemplates *dpt = DesignProjectTemplates::Instance();
+    connect(dpt, SIGNAL(onTemplatesPopulated()), this, SLOT(handleTemplatesPopulated()), Qt::QueuedConnection);
+    dpt->populateDesignProjectViewsAndTheirNodes();
+    //connect(dpt, SIGNAL(onViewTypePopulated(DesignProjectTemplates::DesignProjectViewType)), this, SLOT(handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType)));
     //^i'm thinking i can attach signals to this such as "onViewTypeAdded" and "onNodeAdded" (which has the viewType as an argument (how do i access a tab based on the viewType? can't i only access them via integer? i guess i can iterate them, since there's only 2 atm...))
     //^^if i end up doing that, all/most code below is gone/relocated
     //also, i need to connect to dpt signals before issuing a "createTemplates()" command to it (currently in it's constructor, no time to hook up connections
     //i could fill out the tab/widget's layout with the NodeButton groupbox's etc before i emit the "onViewTypeAdded", so i don't have to even deal with onNodeAdded and iterating through the tabs to find what viewType the node is associated with
     //ok but why am i re-do'ing work? is it because the below way is "improper"? (will work, but not good design)
+#if 0
     QList<DesignProjectTemplates::DesignProjectViewType> i = dpt->AllDesignProjectNodesByProjectViewType->uniqueKeys();
     int viewTypesLength = i.length();
     for(int j = 0; j < viewTypesLength; ++j)
@@ -105,7 +107,7 @@ void MainWindow::createNodeButtonGroups()
             //add a button to the groupbox for this tab.. maybe do other stuff (look at that handy example)... connect to it's signals/slots etc?
         }
     }
-
+#endif
 
     //class diagram button group
     m_ClassDiagramNodeButtonGroup = new QButtonGroup();
@@ -146,9 +148,55 @@ void MainWindow::handleButtonGroupButtonClicked(int)
     //NOTE, the above if/else might not be necessary at all until the actual click onto the graphics scene...
     //the point is just to show that they share a handler
 }
-void MainWindow::handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType)
+#if 0
+void MainWindow::handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType projectViewType)
 {
+    TemplateViewTab *templateViewTab = new TemplateViewTab(projectViewType);
+    connect(DesignProjectTemplates::Instance(), SIGNAL(onDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*), templateViewTab, SLOT(handleNodeAdded(DesignProjectTemplates::DesignProjectViewType, DiagramSceneNode*))));
+    m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->addTab(templateViewTab, templateViewTab->viewTypeAsString());
+
 }
+#endif
+void MainWindow::handleTemplatesPopulated()
+{
+    QList<DesignProjectTemplates::DesignProjectViewType> i = DesignProjectTemplates::Instance()->getAllDesignProjectNodesByProjectViewType()->uniqueKeys();
+
+    int viewTypesLength = i.length();
+    for(int j = 0; j < viewTypesLength; ++j)
+    {
+        TemplateViewTab *templateViewTab = new TemplateViewTab(i.at(i));
+        QGridLayout *buttonLayout = new QGridLayout();
+
+        //add tab for this DesignProjectViewType (class diagram, use case, etc)
+
+        const int maxCol = 1;
+        int curCol = 0;
+        int curRow = 0;
+        QList<DiagramSceneNode*> nodesOfThisViewType = DesignProjectTemplates::Instance()->getAllDesignProjectNodesByProjectViewType()->values(i.at(j));
+        int nodesOfThisViewTypeCount = nodesOfThisViewType.length();
+        for(int k = 0; k < nodesOfThisViewTypeCount; ++k)
+        {
+            buttonLayout->addWidget(createTemplateNodeButton(nodesOfThisViewType.at(k)), curRow, curCol);
+            if(curCol >= maxCol)
+            {
+                ++curRow;
+                curCol = 0;
+            }
+            else
+            {
+                ++curCol;
+            }
+            //add a button to the groupbox for this tab.. maybe do other stuff (look at that handy example)... connect to it's signals/slots etc?
+            //TODOreq: the widget that i add to the buttonLayout above needs to be a drawn icon + text underneath/above + on a button
+        }
+
+        templateViewTab->setLayout(buttonLayout);
+        m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->addTab(templateViewTab);
+    }
+}
+#if 0
 void MainWindow::handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType, DiagramSceneNode *)
 {
+    //shouldn't this be emitted to the tab/widget (the widget that IS the tab for viewType), which then adds it to it's existing groupbox/gui shit? yes, perfect use of signals/slots says so... i just change the connector from "this" to the recently created one
 }
+#endif

@@ -3,6 +3,7 @@
 
 #include <QtGui/QMainWindow>
 #include <QHBoxLayout>
+#include <QGridLayout>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QAction>
@@ -18,6 +19,7 @@
 #include <designproject.h>
 #include <diagramscenenode.h>
 #include <designprojecttemplates.h>
+#include <templateviewtab.h>
 
 class MainWindow : public QMainWindow
 {
@@ -29,7 +31,8 @@ public:
 private:
     //gui
     QWidget *m_LeftPane;
-    QTabWidget *m_ProjectTabWidgetContainer;
+    QTabWidget *m_ProjectTabWidgetContainer; //the tab widget containing the project tabs
+    QTabWidget *m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget; //the tab widget containing the node elements over on the left
     QButtonGroup *m_ClassDiagramNodeButtonGroup;
     QButtonGroup *m_UseCaseNodeButtonGroup;
     //members
@@ -49,8 +52,9 @@ private:
 private slots:
     void handleProjectTabChanged(int);
     void handleButtonGroupButtonClicked(int);
-    void handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType);
-    void handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*);
+    void handleTemplatesPopulated();
+    //void handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType);
+    //void handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*);
     //actions triggered
     void handleNewProjectAction();
     void handleNewUseCaseAction();

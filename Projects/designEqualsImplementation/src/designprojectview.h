@@ -2,6 +2,7 @@
 #define DESIGNPROJECTVIEW_H
 
 #include <QObject>
+#include <designprojecttemplates.h>
 
 class DesignProjectView : public QObject
 {
@@ -11,9 +12,9 @@ public:
     explicit DesignProjectView();
     QString getProjectViewName();
 private:
-    void privConstructor(QString projectViewName, ProjectViewType projectViewType);
+    void privConstructor(QString projectViewName, DesignProjectTemplates::DesignProjectViewType projectViewType);
     QString m_ProjectViewName;
-    ProjectViewType m_ProjectViewType;
+    DesignProjectTemplates::DesignProjectViewTypee m_ProjectViewType;
 signals:
 
 public slots:

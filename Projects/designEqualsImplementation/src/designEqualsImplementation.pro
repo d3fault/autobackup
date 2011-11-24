@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     DiagramSceneNodes/classdiagrambackendnode.cpp \
     DiagramSceneNodes/usecaseactornode.cpp \
     DiagramSceneNodes/usecasefrontendnode.cpp \
-    DiagramSceneNodes/usecasebackendnode.cpp
+    DiagramSceneNodes/usecasebackendnode.cpp \
+    templateviewtab.cpp
 
 HEADERS  += mainwindow.h \
     designproject.h \
@@ -37,7 +38,14 @@ HEADERS  += mainwindow.h \
     DiagramSceneNodes/classdiagrambackendnode.h \
     DiagramSceneNodes/usecaseactornode.h \
     DiagramSceneNodes/usecasefrontendnode.h \
-    DiagramSceneNodes/usecasebackendnode.h
+    DiagramSceneNodes/usecasebackendnode.h \
+    templateviewtab.h
+
+
+
+
+
+
 
 
 
