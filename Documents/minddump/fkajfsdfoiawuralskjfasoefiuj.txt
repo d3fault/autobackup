@@ -1,0 +1,15 @@
+adhesives that you attach tiny rotating cameras onto. they should be like tape
+i tape them to the top of buildings. the cameras are small and are painted the same color as the wall in which they are on)
+i could spy on my surroundings for fun, lulz, and self defense? (originally had "city" instead of surroundings, god damnit i NEEED my apppppp)
+i am waiting until i can utilize designEquals to make applications while recording each action (instrumenting) on a chronological timeline
+----------->THEN, tangentify can be merged into an abstract base between the two<------------------
+
+i do this in my "private" recording time
+all of it, the assembly, the drop, etc
+
+an offline computer (such as this) needs to be able to export a sync_increment that can then be imported/onlinine'd
+the decryption key never needs to leave the offline box
+BUT this does not use the cloud stored WALLET feature, so in case of local data loss all content is irretrievable until the decryption expiration date (ded). when cpu speed catches up or when your shit is prioritized.
+actually wallet is doable
+the decryption key for the wallet (and thus, the decrypted state of the wallet) never leave the offline machine
+the decryption key for the wallet is a combination of a user supplied password and a concatenation of one of your MANY INITIALLY PROVIDED BY YOU random "keyfiles". new users upload [x] right at first registration. only one is used, the rest are decoy to thwart supercomputers from breaking in toooo fast. the keyfiles should probably be sufficient length. how long is sufficient?
