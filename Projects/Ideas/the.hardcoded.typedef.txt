@@ -1,0 +1,1 @@
+the "hardcoded" type. static final or const or whatever the fuck. can even be #define ADLFKJSLDKJ "<content>" if it's quote escaped

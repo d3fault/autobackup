@@ -11,15 +11,19 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QButtonGroup>
+#include <QToolButton>
 
 #include <QList>
 #include <QMultiMap>
 
-#include <projecttab.h>
-#include <designproject.h>
-#include <diagramscenenode.h>
-#include <designprojecttemplates.h>
-#include <templateviewtab.h>
+#include "WidgetsThatRepresentIndividualTabItems/projecttab.h"
+#include "ClassesThatRepresentProjectBeingCreated/designproject.h"
+#include "Gui/diagramscenenode.h"
+#include "ClassesThatRepresentProjectBeingCreated/designprojecttemplates.h"
+#include "WidgetsThatRepresentIndividualTabItems/templateviewtab.h"
+
+#include <QStyle>
+//^TODOreq: use icon.image() instead of these placeholder stock icons
 
 class MainWindow : public QMainWindow
 {
@@ -33,8 +37,8 @@ private:
     QWidget *m_LeftPane;
     QTabWidget *m_ProjectTabWidgetContainer; //the tab widget containing the project tabs
     QTabWidget *m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget; //the tab widget containing the node elements over on the left
-    QButtonGroup *m_ClassDiagramNodeButtonGroup;
-    QButtonGroup *m_UseCaseNodeButtonGroup;
+    //QButtonGroup *m_ClassDiagramNodeButtonGroup;
+    //QButtonGroup *m_UseCaseNodeButtonGroup;
     //members
     DesignProject *m_CurrentProject;
     bool m_Failed;
@@ -44,6 +48,7 @@ private:
     void createLeftPane();
     void createNodeButtonGroups();
     void createProjectTabWidget();
+    QToolButton *createTemplateNodeButton(DiagramSceneNode *diagramSceneNode);
 
     //actions
     QAction *m_NewProjectAction;

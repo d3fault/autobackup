@@ -1,0 +1,2 @@
+i could just launch it bundled/preconfigured with tor
+they could make money on their apps and for also for running a node of my app (whether it tunnels through tor or not is up to them). my app/master server(???(serverS? wtf shouldn't i not depend on myself? oh that's right that's why i pay my node hosters using ad revenue + ))

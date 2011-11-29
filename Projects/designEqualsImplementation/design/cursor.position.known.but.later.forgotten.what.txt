@@ -1,0 +1,3 @@
+the cursor postion of the document being written should be appended encryptedly to a timeline so that backspaces are caught at the appropriate locations and same with ctrl-V'ing
+i the cursor position would have to be private/unpublished
+if they click somewhere and don't type anything, there is no new timeline node... and that is forgotten

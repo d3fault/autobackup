@@ -1,12 +1,12 @@
 #ifndef USECASEBACKENDNODE_H
 #define USECASEBACKENDNODE_H
 
-#include "../diagramscenenode.h"
+#include "../Gui/diagramscenenode.h"
 
 class UseCaseBackEndNode : public DiagramSceneNode
 {
 public:
-    UseCaseBackEndNode();
+    UseCaseBackEndNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
 };
 
 #endif // USECASEBACKENDNODE_H

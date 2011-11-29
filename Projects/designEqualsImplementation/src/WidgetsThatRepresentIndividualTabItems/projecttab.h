@@ -5,8 +5,8 @@
 #include <QVBoxLayout>
 #include <QTabWidget>
 
-#include <designproject.h>
-#include <projectviewtab.h>
+#include "../ClassesThatRepresentProjectBeingCreated/designproject.h"
+#include "projectviewtab.h"
 
 class ProjectTab : public QWidget
 {

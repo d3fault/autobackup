@@ -1,12 +1,12 @@
 #ifndef USECASEACTORNODE_H
 #define USECASEACTORNODE_H
 
-#include "../diagramscenenode.h"
+#include "../Gui/diagramscenenode.h"
 
 class UseCaseActorNode : public DiagramSceneNode
 {
 public:
-    UseCaseActorNode();
+    UseCaseActorNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
 };
 
 #endif // USECASEACTORNODE_H

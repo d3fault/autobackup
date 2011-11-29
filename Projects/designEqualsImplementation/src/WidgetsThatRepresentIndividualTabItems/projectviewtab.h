@@ -5,8 +5,8 @@
 #include <QVBoxLayout>
 #include <QGraphicsView>
 
-#include <designprojectview.h>
-#include <dragdropdiagramscene.h>
+#include "../ClassesThatRepresentProjectBeingCreated/designprojectview.h"
+#include "../Gui/dragdropdiagramscene.h"
 
 class ProjectViewTab : public QWidget
 {

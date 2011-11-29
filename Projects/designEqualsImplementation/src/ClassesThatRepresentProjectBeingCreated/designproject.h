@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QList>
 
-#include <designprojectview.h>
+#include "designprojectview.h"
 
 class DesignProject : public QObject
 {

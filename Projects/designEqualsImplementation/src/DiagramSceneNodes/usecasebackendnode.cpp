@@ -1,5 +1,7 @@
 #include "usecasebackendnode.h"
 
-UseCaseBackEndNode::UseCaseBackEndNode()
+UseCaseBackEndNode::UseCaseBackEndNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType)
+    : DiagramSceneNode(uniqueId, viewType)
 {
+
 }

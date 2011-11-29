@@ -1,5 +1,7 @@
 #include "classdiagramfrontendnode.h"
 
-ClassDiagramFrontEndNode::ClassDiagramFrontEndNode()
+ClassDiagramFrontEndNode::ClassDiagramFrontEndNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType)
+    : DiagramSceneNode(uniqueId, viewType)
 {
+
 }

@@ -1,0 +1,19 @@
+maybe like a million keyfiles, only one of which is real.
+
+when doing an "account recovery" (aka login on new system (without cache of any kind)), you brute force your million keyfiles and then remember which one works (as well as save it)
+
+1million * sizeof(keyfile)
+1000000*64bytes = 64mb
+
+so each new account appends a minimum of 64mb to the network
+7billion*64mb = 448,000,000,000,000,000 bytes for every human currently on earth (est)
+which is..
+eh...
+(adds commas)
+448 billion mb
+448 million gb
+448 thousand tb
+448 petabytes? not sure if my math is correct
+DO-ABLE... but very wasteful....
+also very secure (given secure passwords)
+takes a million times longer (theoretically) to crack. my math is most certainly wrong here, but on average 1 million/2 times longer (fluctuates). my math is definitely right here.

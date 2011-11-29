@@ -1,12 +1,12 @@
 #ifndef CLASSDIAGRAMFRONTENDNODE_H
 #define CLASSDIAGRAMFRONTENDNODE_H
 
-#include "../diagramscenenode.h"
+#include "../Gui/diagramscenenode.h"
 
 class ClassDiagramFrontEndNode : public DiagramSceneNode
 {
 public:
-    ClassDiagramFrontEndNode();
+    ClassDiagramFrontEndNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
 };
 
 #endif // CLASSDIAGRAMFRONTENDNODE_H

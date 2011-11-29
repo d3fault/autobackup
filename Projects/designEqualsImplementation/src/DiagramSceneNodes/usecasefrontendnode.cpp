@@ -1,5 +1,7 @@
 #include "usecasefrontendnode.h"
 
-UseCaseFrontEndNode::UseCaseFrontEndNode()
+UseCaseFrontEndNode::UseCaseFrontEndNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType)
+    : DiagramSceneNode(uniqueId, viewType)
 {
+
 }

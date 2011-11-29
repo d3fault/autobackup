@@ -1,0 +1,4 @@
+each node should be a compute thread on openCL. so thread if cpu and core if graphics card.
+you can have thousands of nodes. each one functions as it's own identity/forwarder.
+all they do is crunch some math and forward it to whoever
+the cpu should be dedicated to providing the gpu cores with data, only when the gpu is available is the cpu not used. the cpu is not used for crunching encryption if the gpu can do it for us. fall-back to cpu obviously, but don't use it if we don't have to.

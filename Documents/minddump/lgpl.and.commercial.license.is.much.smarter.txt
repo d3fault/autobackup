@@ -1,0 +1,7 @@
+because you want to appeal to businesses
+that's why lgpl > gpl
+lgpl appeals to both open source advocates and businesses alike
+you should still have a commercial license, but all that is is the lgpl product re-released + bundled with support
+eventually sell it off like nokia did to digia
+businesses are even more appealed to it because they know the COMMUNITY can/WILL maintain it even if the company backing it dies
+my mailing list post said way too much lol (i've known this for a while now)
