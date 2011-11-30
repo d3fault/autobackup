@@ -95,6 +95,7 @@ void MainWindow::createNodeButtonGroups()
     //ok but why am i re-do'ing work? is it because the below way is "improper"? (will work, but not good design)
 #if 0
     QList<DesignProjectTemplates::DesignProjectViewType> i = dpt->AllDesignProjectNodesByProjectViewType->uniqueKeys();
+    QList<DesignProjectTemplates::DesignProjectViewType> j = i
     int viewTypesLength = i.length();
     for(int j = 0; j < viewTypesLength; ++j)
     {
@@ -151,23 +152,20 @@ void MainWindow::handleButtonGroupButtonClicked(int)
     //NOTE, the above if/else might not be necessary at all until the actual click onto the graphics scene...
     //the point is just to show that they share a handler
 }
-#if 0
-void MainWindow::handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType projectViewType)
-{
-    TemplateViewTab *templateViewTab = new TemplateViewTab(projectViewType);
-    connect(DesignProjectTemplates::Instance(), SIGNAL(onDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*), templateViewTab, SLOT(handleNodeAdded(DesignProjectTemplates::DesignProjectViewType, DiagramSceneNode*))));
-    m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->addTab(templateViewTab, templateViewTab->viewTypeAsString());
-
-}
-#endif
 void MainWindow::handleTemplatesPopulated()
 {
-    QList<DesignProjectTemplates::DesignProjectViewType> allProjectViewTypes = DesignProjectTemplates::Instance()->getAllDesignProjectNodesByProjectViewType()->uniqueKeys();
+    QList<DesignProjectTemplates::DesignProjectViewType> allProjectViewTypesBackwards = DesignProjectTemplates::Instance()->getAllDesignProjectNodesByProjectViewType()->uniqueKeys();
+    QList<DesignProjectTemplates::DesignProjectViewType> allProjectViewTypesForwards; //really forwards. uniqueKeys returns them to us backwards so we have to fix it
+    QListIterator<DesignProjectTemplates::DesignProjectViewType> it(allProjectViewTypesBackwards);
+    for(it.toBack(); it.hasPrevious(); it.previous())
+    {
+        allProjectViewTypesForwards.append(it.peekPrevious());
+    }
 
-    int viewTypesLength = allProjectViewTypes.length();
+    int viewTypesLength = allProjectViewTypesForwards.length();
     for(int j = 0; j < viewTypesLength; ++j)
     {
-        TemplateViewTab *currentTemplateViewTab = new TemplateViewTab(allProjectViewTypes.at(j));
+        TemplateViewTab *currentTemplateViewTab = new TemplateViewTab(allProjectViewTypesForwards.at(j));
         connect(currentTemplateViewTab->getButtonGroup(), SIGNAL(buttonClicked(int)), this, SLOT(handleButtonGroupButtonClicked(int)));
         QGridLayout *buttonLayout = new QGridLayout();
 
@@ -176,7 +174,7 @@ void MainWindow::handleTemplatesPopulated()
         const int maxCol = 1;
         int curCol = 0;
         int curRow = 0;
-        QList<DiagramSceneNode*> nodesOfThisViewType = DesignProjectTemplates::Instance()->getAllDesignProjectNodesByProjectViewType()->values(allProjectViewTypes.at(j));
+        QList<DiagramSceneNode*> nodesOfThisViewType = DesignProjectTemplates::Instance()->getAllDesignProjectNodesByProjectViewType()->values(allProjectViewTypesForwards.at(j));
         int nodesOfThisViewTypeCount = nodesOfThisViewType.length();
         for(int k = 0; k < nodesOfThisViewTypeCount; ++k)
         {
@@ -208,10 +206,3 @@ QToolButton * MainWindow::createTemplateNodeButton(DiagramSceneNode *diagramScen
     newButton->setCheckable(true);
     return newButton;
 }
-
-#if 0
-void MainWindow::handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType designProjectViewType, DiagramSceneNode *diagramSceneNode)
-{
-    //shouldn't this be emitted to the tab/widget (the widget that IS the tab for viewType), which then adds it to it's existing groupbox/gui shit? yes, perfect use of signals/slots says so... i just change the connector from "this" to the recently created one
-}
-#endif

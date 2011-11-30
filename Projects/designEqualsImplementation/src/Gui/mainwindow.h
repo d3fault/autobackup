@@ -15,6 +15,7 @@
 
 #include <QList>
 #include <QMultiMap>
+#include <QListIterator>
 
 #include "WidgetsThatRepresentIndividualTabItems/projecttab.h"
 #include "ClassesThatRepresentProjectBeingCreated/designproject.h"
@@ -37,8 +38,6 @@ private:
     QWidget *m_LeftPane;
     QTabWidget *m_ProjectTabWidgetContainer; //the tab widget containing the project tabs
     QTabWidget *m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget; //the tab widget containing the node elements over on the left
-    //QButtonGroup *m_ClassDiagramNodeButtonGroup;
-    //QButtonGroup *m_UseCaseNodeButtonGroup;
     //members
     DesignProject *m_CurrentProject;
     bool m_Failed;
@@ -52,14 +51,12 @@ private:
 
     //actions
     QAction *m_NewProjectAction;
-    QAction *m_NewClassAction;
+    QAction *m_NewClassAction; //does this come out or does graphicsscene trigger this in it's itemAdded signal handler?
     QAction *m_NewUseCaseAction;
 private slots:
     void handleProjectTabChanged(int);
     void handleButtonGroupButtonClicked(int);
     void handleTemplatesPopulated();
-    //void handleViewTypeTemplatePopulated(DesignProjectTemplates::DesignProjectViewType);
-    //void handleDesignProjectNodeAdded(DesignProjectTemplates::DesignProjectViewType,DiagramSceneNode*);
     //actions triggered
     void handleNewProjectAction();
     void handleNewUseCaseAction();

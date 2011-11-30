@@ -28,12 +28,12 @@ DesignProjectTemplates::DesignProjectTemplates()
     //TODOopt: another class diagram scene node type can be USE CASE ENTRANCE. it puts a tiny actor next to where the use case first calls the front-end (use cases don't have to call a front-end.. but a user/actor DOES)
     //so maybe not a tiny actor... but a tiny "UC" or something
 
+    m_AllDesignProjectNodesByUniqueId = new QMap<int, DiagramSceneNode*>();
     m_AllDesignProjectNodesByProjectViewType = new QMultiMap<DesignProjectViewType, DiagramSceneNode*>();
     //populateDesignProjectViewsAndTheirNodes();
 }
 void DesignProjectTemplates::populateDesignProjectViewsAndTheirNodes()
 {
-    m_AllDesignProjectNodesByUniqueId = new QMap<int, DiagramSceneNode*>();
     int i = 0;
 
     //the order in which these are added to the qmap defines the order they show up in the gui
