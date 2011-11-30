@@ -1,0 +1,3 @@
+what if i send my keyboard strokes to my online computer over the network (configure adapter to be write-only?) but they can only be read/UTILIZED (synergy style) and also allow other users to read on the online/uploaded copy (that machine's sole purpose)
+same with mouse events
+all are sent, only if a) want to control online comp or b) want to share offline screen with online world (or combination thereof (gaming etc idgaf bout security))

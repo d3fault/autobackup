@@ -1,0 +1,3 @@
+i really want it to be dht
+server/client sucks so bad
+the dht application, by d3fault, follows d3fault. i sign everything that anyone auto-execs. which means i need to be really really careful myself.
