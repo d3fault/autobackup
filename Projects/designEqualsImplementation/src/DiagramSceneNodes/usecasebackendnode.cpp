@@ -5,3 +5,7 @@ UseCaseBackEndNode::UseCaseBackEndNode(int uniqueId, DesignProjectTemplates::Des
 {
 
 }
+QString UseCaseBackEndNode::getNodeTypeAsString()
+{
+    return QString("Back-End");
+}

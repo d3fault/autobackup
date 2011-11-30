@@ -7,6 +7,7 @@ class ClassDiagramFrontEndNode : public DiagramSceneNode
 {
 public:
     ClassDiagramFrontEndNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
+    virtual QString getNodeTypeAsString();
 };
 
 #endif // CLASSDIAGRAMFRONTENDNODE_H

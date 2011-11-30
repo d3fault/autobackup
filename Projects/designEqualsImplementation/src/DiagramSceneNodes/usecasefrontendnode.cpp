@@ -5,3 +5,7 @@ UseCaseFrontEndNode::UseCaseFrontEndNode(int uniqueId, DesignProjectTemplates::D
 {
 
 }
+QString UseCaseFrontEndNode::getNodeTypeAsString()
+{
+    return QString("Front-End");
+}

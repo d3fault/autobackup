@@ -175,12 +175,19 @@ void MainWindow::handleTemplatesPopulated()
         int curCol = 0;
         int curRow = 0;
         QList<DiagramSceneNode*> nodesOfThisViewType = DesignProjectTemplates::Instance()->getAllDesignProjectNodesByProjectViewType()->values(allProjectViewTypesForwards.at(j));
+        QList<DiagramSceneNode*> nodesOfThisViewTypeForwards;
+        QListIterator<DiagramSceneNode*> it2(nodesOfThisViewType);
+        for(it2.toBack(); it2.hasPrevious(); it2.previous())
+        {
+            nodesOfThisViewTypeForwards.append(it2.peekPrevious());
+        }
         int nodesOfThisViewTypeCount = nodesOfThisViewType.length();
         for(int k = 0; k < nodesOfThisViewTypeCount; ++k)
         {
-            DiagramSceneNode *currentNodeOfThisViewType = nodesOfThisViewType.at(k);
-            QToolButton *newButton = createTemplateNodeButton(currentNodeOfThisViewType);
-            buttonLayout->addWidget(newButton, curRow, curCol);
+            DiagramSceneNode *currentNodeOfThisViewType = nodesOfThisViewTypeForwards.at(k);
+            QToolButton *newButton = new QToolButton();
+            QWidget *newButtonWidget = createTemplateNodeButtonWidget(currentNodeOfThisViewType, newButton);
+            buttonLayout->addWidget(newButtonWidget, curRow, curCol);
             currentTemplateViewTab->getButtonGroup()->addButton(newButton, currentNodeOfThisViewType->getUniqueId());
             if(curCol >= maxCol)
             {
@@ -192,17 +199,27 @@ void MainWindow::handleTemplatesPopulated()
                 ++curCol;
             }
         }
+        buttonLayout->setColumnStretch(2, 10);
+        buttonLayout->setRowStretch(3, 10);
 
         currentTemplateViewTab->setLayout(buttonLayout);
         m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->addTab(currentTemplateViewTab, currentTemplateViewTab->getTabLabel());
     }
 }
-QToolButton * MainWindow::createTemplateNodeButton(DiagramSceneNode *diagramSceneNode)
-{
-    Q_UNUSED(diagramSceneNode);
-    QToolButton *newButton = new QToolButton();
-    newButton->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
-    newButton->setIconSize(QSize(50,50));
-    newButton->setCheckable(true);
-    return newButton;
+QWidget * MainWindow::createTemplateNodeButtonWidget(DiagramSceneNode *diagramSceneNode, QToolButton *buttonToConfigureAndUseInLayout)
+{    
+    //QToolButton *buttonToConfigureAndUseInLayout = new QToolButton();
+    buttonToConfigureAndUseInLayout->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
+    buttonToConfigureAndUseInLayout->setIconSize(QSize(50,50));
+    buttonToConfigureAndUseInLayout->setCheckable(true);
+
+
+    QGridLayout *buttonAndTextGridLayout = new QGridLayout();
+    buttonAndTextGridLayout->addWidget(buttonToConfigureAndUseInLayout, 0, 0, Qt::AlignHCenter);
+    buttonAndTextGridLayout->addWidget(new QLabel(diagramSceneNode->getNodeTypeAsString()), 1, 0, Qt::AlignCenter);
+
+    QWidget *widget = new QWidget();
+    widget->setLayout(buttonAndTextGridLayout);
+
+    return widget;
 }

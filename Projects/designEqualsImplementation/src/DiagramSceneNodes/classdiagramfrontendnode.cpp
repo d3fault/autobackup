@@ -5,3 +5,7 @@ ClassDiagramFrontEndNode::ClassDiagramFrontEndNode(int uniqueId, DesignProjectTe
 {
 
 }
+QString ClassDiagramFrontEndNode::getNodeTypeAsString()
+{
+    return QString("Front-End");
+}

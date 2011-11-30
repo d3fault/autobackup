@@ -5,3 +5,7 @@ UseCaseActorNode::UseCaseActorNode(int uniqueId, DesignProjectTemplates::DesignP
 {
 
 }
+QString UseCaseActorNode::getNodeTypeAsString()
+{
+    return QString("Actor");
+}

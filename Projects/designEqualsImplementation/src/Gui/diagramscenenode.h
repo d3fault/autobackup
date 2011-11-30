@@ -16,6 +16,7 @@ public:
     DiagramSceneNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
     int getUniqueId();
     DesignProjectTemplates::DesignProjectViewType getViewType();
+    virtual QString getNodeTypeAsString()=0;
 private:
     int m_UniqueId;
     DesignProjectTemplates::DesignProjectViewType m_ViewType;

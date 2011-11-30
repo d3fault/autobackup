@@ -45,11 +45,11 @@ void DesignProjectTemplates::populateDesignProjectViewsAndTheirNodes()
     ++i;
 
     //use case
-    m_AllDesignProjectNodesByUniqueId->insert(i, new UseCaseActorNode(i, UseCaseViewType));
-    ++i;
     m_AllDesignProjectNodesByUniqueId->insert(i, new UseCaseFrontEndNode(i, UseCaseViewType));
     ++i;
     m_AllDesignProjectNodesByUniqueId->insert(i, new UseCaseBackEndNode(i, UseCaseViewType));
+    ++i;
+    m_AllDesignProjectNodesByUniqueId->insert(i, new UseCaseActorNode(i, UseCaseViewType));
     ++i;
 
     //TODOopt: the below could be generated from the above map on the fly when requested, but we'll leave it out of laziness

@@ -7,6 +7,7 @@ class UseCaseActorNode : public DiagramSceneNode
 {
 public:
     UseCaseActorNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
+    virtual QString getNodeTypeAsString();
 };
 
 #endif // USECASEACTORNODE_H

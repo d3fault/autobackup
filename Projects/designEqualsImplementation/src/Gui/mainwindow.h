@@ -12,6 +12,7 @@
 #include <QMenuBar>
 #include <QButtonGroup>
 #include <QToolButton>
+#include <QLabel>
 
 #include <QList>
 #include <QMultiMap>
@@ -47,7 +48,7 @@ private:
     void createLeftPane();
     void createNodeButtonGroups();
     void createProjectTabWidget();
-    QToolButton *createTemplateNodeButton(DiagramSceneNode *diagramSceneNode);
+    QWidget *createTemplateNodeButtonWidget(DiagramSceneNode *diagramSceneNode, QToolButton *buttonToConfigureAndUseInLayout);
 
     //actions
     QAction *m_NewProjectAction;

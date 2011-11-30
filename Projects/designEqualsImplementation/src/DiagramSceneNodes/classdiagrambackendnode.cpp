@@ -5,3 +5,7 @@ ClassDiagramBackEndNode::ClassDiagramBackEndNode(int uniqueId, DesignProjectTemp
 {
 
 }
+QString ClassDiagramBackEndNode::getNodeTypeAsString()
+{
+    return QString("Back-End");
+}
