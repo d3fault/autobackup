@@ -1,0 +1,2 @@
+20 questions game software mode. it asks you yes or no questions to try to determine what you're trying to do... then does it for you (you can customize of course)
+idk sounds hard to implement but i thought of it while thinking about j and f being yes and no respectively (or 1 and 0). it helps you write documents, 
