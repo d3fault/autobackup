@@ -50,6 +50,8 @@ private:
     void createProjectTabWidget();
     QWidget *createTemplateNodeButtonWidget(DiagramSceneNode *diagramSceneNode, QToolButton *buttonToConfigureAndUseInLayout);
 
+    void setAllToolboxButtonsToFalseExcept(int buttonIdofButtonJustClicked);
+
     //actions
     QAction *m_NewProjectAction;
     QAction *m_NewClassAction; //does this come out or does graphicsscene trigger this in it's itemAdded signal handler?

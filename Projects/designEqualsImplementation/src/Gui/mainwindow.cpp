@@ -137,8 +137,11 @@ void MainWindow::handleProjectTabChanged(int index)
     //after this, nothing really... maybe redraw the qgraphicsscene based on the contents of the [new] current project...
     //...but mainly this is only necessary for later drag and drops / oonnections made
 }
-void MainWindow::handleButtonGroupButtonClicked(int)
+void MainWindow::handleButtonGroupButtonClicked(int buttonIdofButtonJustClicked)
 {
+    //set exclusivity
+    this->setAllToolboxButtonsToFalseExcept(buttonIdofButtonJustClicked);
+
 #if 0
     if(mode == classDiagramMode)
     {
@@ -154,6 +157,8 @@ void MainWindow::handleButtonGroupButtonClicked(int)
 }
 void MainWindow::handleTemplatesPopulated()
 {
+    //i am retarded for not just reversing the for loops. f it. i was looking for a simple "reverse" function (or "backwards") or something that SHOULD be built in and then i found that instead :(. oh look an excuse, shoulda left it at i'm retarded
+
     QList<DesignProjectTemplates::DesignProjectViewType> allProjectViewTypesBackwards = DesignProjectTemplates::Instance()->getAllDesignProjectNodesByProjectViewType()->uniqueKeys();
     QList<DesignProjectTemplates::DesignProjectViewType> allProjectViewTypesForwards; //really forwards. uniqueKeys returns them to us backwards so we have to fix it
     QListIterator<DesignProjectTemplates::DesignProjectViewType> it(allProjectViewTypesBackwards);
@@ -222,4 +227,8 @@ QWidget * MainWindow::createTemplateNodeButtonWidget(DiagramSceneNode *diagramSc
     widget->setLayout(buttonAndTextGridLayout);
 
     return widget;
+}
+void MainWindow::setAllToolboxButtonsToFalseExcept(int buttonIdofButtonJustClicked)
+{
+
 }

@@ -1,0 +1,9 @@
+i could answer my doorbell using text-to-speech
+
+the doorbell speaker decrypts it using my public decryption key
+
+so me and only me can broadcast from anywhere worldwide to my doorbell speaker anonymously (though, if they're at my door, they kinda already know who i am)
+
+still, answering the doorbell is a requirement of not being robbed
+
+i could monitor many many houses simultaneously

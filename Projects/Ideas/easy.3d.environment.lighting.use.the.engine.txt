@@ -1,0 +1,17 @@
+doing lighting is difficult, tedious, and very important for designing a 3d environment that users will navigate
+the best way to do it is to play it. in dev mode or something, but using the game engine
+and you can set lights around everywhere
+'make everything around ME more lit up' (incremements of 5, 10, 25, or "TO-MAX" every time)
+'make that area i am looking at lit up' (incrememnts)
+'make that are darker' (increments)
+etc (make everything around me darker too)
+
+the lighting is of course saved and is that way for all future users and your revisits
+"the d3fault lightmap"
+it can either be 100% bright or 100% dark, but why not 50%? that would be the best d3fault
+anybody else can edit their lightmap, but then it's not the d3fault... it's THEIRS
+anybody can select an alternate lightmap
+OR, a game/changeset/branch? can specify a lightmap (which is just a revision?) to use
+
+the 3d geometry is the same all throughout
+the lightmap and 3d geometry must be separated... pretty sure that's possible.
