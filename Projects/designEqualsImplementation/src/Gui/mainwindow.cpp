@@ -140,7 +140,7 @@ void MainWindow::handleProjectTabChanged(int index)
 void MainWindow::handleButtonGroupButtonClicked(int buttonIdofButtonJustClicked)
 {
     //set exclusivity
-    this->setAllToolboxButtonsToFalseExcept(buttonIdofButtonJustClicked);
+    this->setAllToolboxButtonsToNotCheckedExcept(buttonIdofButtonJustClicked);
 
 #if 0
     if(mode == classDiagramMode)
@@ -228,7 +228,25 @@ QWidget * MainWindow::createTemplateNodeButtonWidget(DiagramSceneNode *diagramSc
 
     return widget;
 }
-void MainWindow::setAllToolboxButtonsToFalseExcept(int buttonIdofButtonJustClicked)
+void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked)
 {
+    //TODOopt: this should probably be m_CurrentTemplateTab = (cast shit) in handleTemplateTabWidgeTabChanged just like for projects, not here..
+    TemplateViewTab *currentTemplateViewTab = qobject_cast<TemplateViewTab*>(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->currentWidget());
+    if(!currentTemplateViewTab)
+    {
+        emit e("Template Tab Cast Failed");
+        m_Failed = true;
+        return;
+    }
 
+    QButtonGroup *currentTabButtonGroup = currentTemplateViewTab->getButtonGroup();
+
+    QList<QAbstractButton *> buttons = currentTabButtonGroup->buttons();
+    foreach(QAbstractButton *button, buttons)
+    {
+        if(currentTabButtonGroup->button(buttonIdofButtonJustClicked) != button)
+        {
+            button->setChecked(false);
+        }
+    }
 }
