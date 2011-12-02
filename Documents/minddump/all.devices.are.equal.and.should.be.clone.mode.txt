@@ -1,0 +1,3 @@
+i want to run all/most of my devices in clone mode (monitors)... whereas others want "stretch to this screen" mode
+i want every piece of hardware to be able to do every function in the software... even if they opt not to do it (mobile/low-powered)
+all these commercials of people swiping data from a device to another device to analyze is ridiculous

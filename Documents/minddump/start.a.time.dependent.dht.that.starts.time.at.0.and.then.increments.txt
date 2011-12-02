@@ -1,0 +1,2 @@
+the only logical way to know is to start from 0 again. this way we erradicate timezone confusion, because it's stupid. we use universal time.
+software on a space ship travelling at the speed of light runs at normal speed. each node processes the data at the same time relative to where they are in the galaxy. they might have hella latency and you could easily determine their distance by how long ago something receive'dz "now" time was

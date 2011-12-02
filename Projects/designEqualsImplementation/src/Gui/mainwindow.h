@@ -13,6 +13,7 @@
 #include <QButtonGroup>
 #include <QToolButton>
 #include <QLabel>
+#include <QRect>
 
 #include <QList>
 #include <QMultiMap>

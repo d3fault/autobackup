@@ -1,0 +1,2 @@
+me sitting in a room with a bunch of manual clocks/calendars... basing everything i trust into knowing what time it is.
+so anybody could post and say it's whatever time they want, but only my say of what time it is is used as the d3fault timeserver. my public decryption key is used to read the results of the d3fault implementation of "whatTimeIsIt()"

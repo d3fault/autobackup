@@ -76,10 +76,19 @@ void MainWindow::createLeftPane()
     m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget = new QTabWidget();
     createNodeButtonGroups();
     leftPaneLayout->addWidget(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget);
+
+    //m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->setMinimumWidth(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->size().width());
+
     //createListForClassDiagramAndAllUseCases();
     //leftPaneLayout->addWidget(listOfUseCasesForCurrentProjectOhAndAlsoClassDiagramAtTheTopKthx);
 
+
     m_LeftPane->setLayout(leftPaneLayout);
+
+
+    //TODOreq: set min left panel to a dynamic minimum, based on OS/fontsize/etc
+    m_LeftPane->setMinimumWidth(199);
+    m_LeftPane->setMaximumWidth(199);
 }
 void MainWindow::createNodeButtonGroups()
 {

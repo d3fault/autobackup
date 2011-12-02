@@ -6,6 +6,8 @@ DragDropDiagramScene::DragDropDiagramScene(QObject *parent) :
 }
 void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    //
+    /*
     if(expectingNode())
     {
         item = new DiagramItem(myItemType, myItemMenu);
@@ -15,6 +17,7 @@ void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         emit itemInserted(item);
     }
+    */
 }
 bool DragDropDiagramScene::expectingNode()
 {
