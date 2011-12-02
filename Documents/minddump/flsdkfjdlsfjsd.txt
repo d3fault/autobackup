@@ -1,0 +1,6 @@
+apply is "save current changes"
+List<Changes*> m_Changes;
+
+the changes have been loaded from hard drive and they are different from how the user has configured them. save diff to hdd?
+
+there is a path to anonymity

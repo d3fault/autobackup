@@ -1,0 +1,4 @@
+when disconnecting myself from input and going into output only mode, i can ask questions with only yes or no as the answer
+like a survey
+so i never have to communicate, but i can still receive input
+first question: do you think i should continue / do you think this is a good idea?

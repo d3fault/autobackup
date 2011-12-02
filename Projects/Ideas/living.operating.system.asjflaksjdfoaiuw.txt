@@ -1,0 +1,23 @@
+a social networking operating system
+anonymity, security, freedom of information
+
+a living operating system
+"social networking" is a buzzword anyways
+living because you live on it + it is always growing
+
+
+how much pb would it cost per day to have the world (7 billion atm and growing hellafast) recorded 24/7
+let's calculate this using scene regulations on compression and lengths of works
+let's put 700mb at 1.5 hours
+to make it easier on the maths, 1000mb for 2 hours
+12gb per day per person
+84,000,000 gb per day for the whole world
+wow a metric fuck ton
+84,000gb is 84tb
+so 84 million is 84pb
+ROFL
+per day!
+30660 petabytes (millions of gigabytes) per year at xvid quality, random bullshit numbers chosen as starting points
+
+i'm a dork
+it needs to be distributed and have no single point of failure if i want it to always stay online

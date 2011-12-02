@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), m_Failed(true) /* true until m_CurrentProject is succesfully extracted/casted */
+    : QMainWindow(parent), m_Mode(ClickDragDefaultMode), m_Failed(true) /* true until m_CurrentProject is succesfully extracted/casted -- this is proving to be worthless */
 {
     createActions();
     createMenus();
@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //connections
     connect(m_ProjectTabWidgetContainer, SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabChanged(int)));
+    connect(this, SIGNAL(modeChanged(MainMenuMode)), this, SLOT(handleModeChanged(MainMenuMode)));
 
 
     //send a message to ourselves when we first launch the application to open up a blank new project
@@ -249,4 +250,15 @@ void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJust
             button->setChecked(false);
         }
     }
+
+    this->setMode(AddNodeMode);
+}
+void MainWindow::setMode(MainWindow::MainMenuMode newMode)
+{
+    m_Mode = newMode;
+    emit modeChanged(newMode);
+}
+void MainWindow::handleModeChanged(MainWindow::MainMenuMode newMode)
+{
+    //maybe the gui doesn't need to listen to this... maybe only the dragdropdiagramscene does? still, the capability to do both is nice. i love qt
 }

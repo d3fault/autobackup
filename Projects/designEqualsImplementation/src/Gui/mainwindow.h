@@ -35,6 +35,11 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 private:
+    //modes
+    enum MainMenuMode { ClickDragDefaultMode, AddNodeMode }; //i love writing addnodemode
+    MainMenuMode m_Mode;
+    void setMode(MainMenuMode newMode);
+    //there's also modeChanged signal and handleModeChanged slot
     //gui
     QWidget *m_LeftPane;
     QTabWidget *m_ProjectTabWidgetContainer; //the tab widget containing the project tabs
@@ -60,10 +65,12 @@ private slots:
     void handleProjectTabChanged(int);
     void handleButtonGroupButtonClicked(int);
     void handleTemplatesPopulated();
+    void handleModeChanged(MainMenuMode newMode);
     //actions triggered
     void handleNewProjectAction();
     void handleNewUseCaseAction();
 signals:
+    void modeChanged(MainMenuMode newMode);
     void e(const QString &);
 };
 
