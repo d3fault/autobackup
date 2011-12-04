@@ -1,0 +1,46 @@
+95% them, 5% me
+for both application sales and advertising revenues
+that 5% will add up.
+
+developers will want to use it because of the huge percentage gain over other distributors, plus it's wide range of platforms on a SINGLE codebase (design, reallly ;-) fuck YEA)
+open source developers will want to use it because it will be meritocratic lgpl bohemeth
+the core + most plugins are LGPL
+only one i can think of as maybe making commercial is the market app/plugin
+not sure if that's a necessity since if it wasn't then anybody could edit it at will
+actually... sure they can
+why NOT? (read on)
+
+
+re:meritocratic
+the author of the application is by default the most meritfull
+since i made d3fault + it's default plugins + the first market, i have the most merit over anyone else who randomly changes the market's bitcoin payment key
+the whole thing is customized/tuned/ready-to-create-for LGPL
+the core and every plugin released by me for free. installed by default. you can view the source for everything and even the operating system if in linux.
+this idea fucking pwns
+i can make so much moooooonnnnneneeeeeyyyyyyy
+but i can't lose focus of my real goals
+i WILL make so much money
+i need to get to work
+then again, the competition doesn't have shit
+at least i hope not
+if they did the stuff they put out wouldn't be such garbage
+sometimes i feel as if 1 small ass idea/feature is stolen and put into an entire product
+i think my paranoid mind gets the best of me a lot
+i doubt anybody is spying on me
+or if they are, it doesn't necessarily mean they have anything
+my email, documents, truecrypt encrypted, or THIS (fedora aes encrypted/PERMA-OFFLINE).
+i definitely feel more secure now than in my entire life
+PERMA-OFFLINE is the shit
+nobody gives a fuck about me
+nobody knows i'm even here
+
+nobodyme might have ruined that.
+but i still doubt i'm about to be targetted for having 1337 s0ftw4r3z
+targetted/infultrated/owned/jacked
+
+this is where i stand
+i guess...
+i still want an offsite backup, but where to store it is the issue atm
+lol anywhere just move one of your 1tb hard drives and you'll be 100% more safe. i am even comfortable putting this offline-only content in there. in fact i prefer it
+i might have it in a container in the container, but that's just paranoia :-P.
+i should move old.passwords.kdb into there as well

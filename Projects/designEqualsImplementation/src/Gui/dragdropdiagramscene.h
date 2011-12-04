@@ -18,7 +18,7 @@ private:
 signals:
 
 public slots:
-
+    void handleModeChanged()
 };
 
 #endif // DRAGDROPDIAGRAMSCENE_H

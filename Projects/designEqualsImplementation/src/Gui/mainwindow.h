@@ -37,7 +37,7 @@ public:
     ~MainWindow();
 private:
     //modes
-    enum MainMenuMode { ClickDragDefaultMode, AddNodeMode }; //i love writing addnodemode
+    enum MainMenuMode { ClickDragDefaultMode, AddNodeMode }; //i loved writing addnodemode
     MainMenuMode m_Mode;
     void setMode(MainMenuMode newMode);
     //there's also modeChanged signal and handleModeChanged slot

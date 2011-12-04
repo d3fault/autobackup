@@ -35,8 +35,6 @@ private:
     //OLDODOopt: should this be in a DesignProjectTemplate class? each type can/will/should(?) have it's own helper function. "createUseCaseBackendNode" (which just returns a pointer to our template (should be copy on write obv, but for now just copy on read. the OUTPUT code needs copy-on-read more than the first bootstrapping instance itself (what i'm writing right now))
 
 signals:
-    //void onViewTypePopulated(DesignProjectViewType);
-    //void onDesignProjectNodeAdded(DesignProjectViewType, DiagramSceneNode*);
     void onTemplatesPopulated();
 };
 
