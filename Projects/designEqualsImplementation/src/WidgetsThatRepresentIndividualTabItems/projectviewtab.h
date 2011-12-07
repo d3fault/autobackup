@@ -7,6 +7,7 @@
 
 #include "../ClassesThatRepresentProjectBeingCreated/designprojectview.h"
 #include "../Gui/dragdropdiagramscene.h"
+#include "../StateMachine/modesingleton.h"
 
 class ProjectViewTab : public QWidget
 {
@@ -23,8 +24,6 @@ private:
     DesignProjectView *m_ProjectView;
 signals:
     void e(const QString &);
-public slots:
-
 };
 
 #endif // PROJECTVIEWTAB_H

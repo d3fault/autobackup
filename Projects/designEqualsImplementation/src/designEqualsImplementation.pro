@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     DiagramSceneNodes/usecasebackendnode.cpp \
     WidgetsThatRepresentIndividualTabItems/projecttab.cpp \
     WidgetsThatRepresentIndividualTabItems/projectviewtab.cpp \
-    WidgetsThatRepresentIndividualTabItems/templateviewtab.cpp
+    WidgetsThatRepresentIndividualTabItems/templateviewtab.cpp \
+    StateMachine/modesingleton.cpp
     
     
 
@@ -41,7 +42,10 @@ HEADERS  += Gui/mainwindow.h \
     DiagramSceneNodes/usecasebackendnode.h \
     WidgetsThatRepresentIndividualTabItems/projecttab.h \
     WidgetsThatRepresentIndividualTabItems/projectviewtab.h \
-    WidgetsThatRepresentIndividualTabItems/templateviewtab.h
+    WidgetsThatRepresentIndividualTabItems/templateviewtab.h \
+    StateMachine/modesingleton.h
+
+
 
 
 

@@ -12,6 +12,9 @@ ProjectViewTab::ProjectViewTab(DesignProjectView *projectView)
     m_GraphicsView = new QGraphicsView(m_GraphicsScene);
     m_Layout->addWidget(m_GraphicsView);
     this->setLayout(m_Layout);
+
+    //connect the scene to the mode singleton's signals
+    connect(ModeSingleton::Instance(), SIGNAL(modeChanged(ModeSingleton::Mode)), m_GraphicsScene, SLOT(handleModeChanged(ModeSingleton::Mode)));
 }
 DesignProjectView * ProjectViewTab::getProjectView()
 {

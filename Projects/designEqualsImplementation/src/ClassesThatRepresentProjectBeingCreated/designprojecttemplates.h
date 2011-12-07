@@ -20,6 +20,7 @@ public:
     static QString getDesignProjectViewTypeAsString(DesignProjectViewType viewType);
     void populateDesignProjectViewsAndTheirNodes();
     QMultiMap<DesignProjectViewType, DiagramSceneNode*> *getAllDesignProjectNodesByProjectViewType();
+    DiagramSceneNode *getNodeByUniqueId(int uniqueId);
 private:
     DesignProjectTemplates(); //private so that it cannot be called
     //DesignProjectTemplates(DesignProjectTemplates const&){} //copy constructor is already private since we inherit QObject

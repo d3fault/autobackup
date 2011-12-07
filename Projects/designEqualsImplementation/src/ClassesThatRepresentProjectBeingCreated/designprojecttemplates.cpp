@@ -80,3 +80,11 @@ QString DesignProjectTemplates::getDesignProjectViewTypeAsString(DesignProjectTe
     }
     return QString();
 }
+DiagramSceneNode * DesignProjectTemplates::getNodeByUniqueId(int uniqueId)
+{
+    if(m_AllDesignProjectNodesByUniqueId->contains(uniqueId))
+    {
+        return m_AllDesignProjectNodesByUniqueId->value(uniqueId);
+    }
+    return NULL;
+}

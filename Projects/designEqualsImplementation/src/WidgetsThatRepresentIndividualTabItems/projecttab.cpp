@@ -35,6 +35,7 @@ void ProjectTab::handleProjectViewsTabChanged(int newIndex)
 }
 void ProjectTab::handleProjectViewAdded(DesignProjectView *newProjectView)
 {
+    //create a project view tab for the new project view
     ProjectViewTab *classDiagramViewTab = new ProjectViewTab(newProjectView);
     connect(classDiagramViewTab, SIGNAL(e(const QString &)), this, SIGNAL(e(const QString &)));
     int newTabIndex = m_ProjectViewsTabContainer->addTab(classDiagramViewTab, newProjectView->getProjectViewName());

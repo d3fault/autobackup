@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), m_Mode(ClickDragDefaultMode), m_Failed(true) /* true until m_CurrentProject is succesfully extracted/casted -- this is proving to be worthless */
+    : QMainWindow(parent), m_Failed(true) /* true until m_CurrentProject is succesfully extracted/casted -- this is proving to be worthless */
 {
     createActions();
     createMenus();
@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //connections
     connect(m_ProjectTabWidgetContainer, SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabChanged(int)));
-    connect(this, SIGNAL(modeChanged(MainMenuMode)), this, SLOT(handleModeChanged(MainMenuMode)));
+    connect(ModeSingleton::Instance(), SIGNAL(modeChanged(ModeSingleton::Mode)), this, SLOT(handleModeChanged(ModeSingleton::Mode)));
 
 
     //send a message to ourselves when we first launch the application to open up a blank new project
@@ -86,9 +86,8 @@ void MainWindow::createLeftPane()
     m_LeftPane->setLayout(leftPaneLayout);
 
 
-    //TODOreq: set min left panel to a dynamic minimum, based on OS/fontsize/etc
-    m_LeftPane->setMinimumWidth(199);
-    m_LeftPane->setMaximumWidth(199);
+    //TODOreq: set min left panel to a dynamic minimum, based on OS/fontsize/etc... 199 is perfect for now/this OS/etc
+    m_LeftPane->setFixedWidth(199);
 }
 void MainWindow::createNodeButtonGroups()
 {
@@ -152,18 +151,11 @@ void MainWindow::handleButtonGroupButtonClicked(int buttonIdofButtonJustClicked)
     //set exclusivity
     this->setAllToolboxButtonsToNotCheckedExcept(buttonIdofButtonJustClicked);
 
-#if 0
-    if(mode == classDiagramMode)
-    {
+    ModeSingleton::Instance()->setMode(ModeSingleton::AddNodeMode);
 
-    }
-    else if(mode == useCaseDiagramMode)
-    {
-
-    }
-#endif
-    //NOTE, the above if/else might not be necessary at all until the actual click onto the graphics scene...
-    //the point is just to show that they share a handler
+    //there might be a better design, but i'm getting annoyed with all this mode shit so i'm going to hack it together
+    DiagramSceneNode *nodeClicked = DesignProjectTemplates::Instance()->getNodeByUniqueId(buttonIdofButtonJustClicked);
+    ModeSingleton::Instance()->setPendingNodeToAdd(nodeClicked);
 }
 void MainWindow::handleTemplatesPopulated()
 {
@@ -259,15 +251,27 @@ void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJust
             button->setChecked(false);
         }
     }
+}
+#if 0
+void MainWindow::handleModeChanged(ModeSingleton::Mode newMode)
+{
+    //we set scene's mode
+    //it emits modeChanged signal
+    //we receive it here
+    //why? aside from good OO design. what do we do here? i guess if mode changed from AddNodeMode back to ClickDragModeDefault then i uncheck all the buttons in their groupboxes?
+    //but that change will be triggered/emitted from here lol... so i'm starting to wonder if putting the mode in the scene was the right decision
+    //ALSO, where's my instantiation of scene that i connect to? each project tab/project view has it's own, so wtf?
+    //this is getting stupidly complex
+    //not too complex to continue... but complex enough that i acknowledge my design (or lack thereof) sucks
+    //still, not about to scrap it, make a design in dia, and start over. so close to alpha i can taste it
 
-    this->setMode(AddNodeMode);
+    //one possible solution: make scene a singleton that's shared.. but that will have implications of it's own
+    //a tab changes, we erase the scene and redraw it with the new tab's children
+    //might not be such a bad idea since i need/want the projects + project views to be parcelable anyways..
+    //i'm not about to read FROM the scene to accomplish that lololol
+    //also, singleton model breaks my ability in the future to work on multiple projects at the same time in the same instance of the application
+    //"project linking", "referencing", whatever you wanna call it... which, tbh... would have been a bitch to implement with "modes" anyways... single gui, multiple scenes? =o
+    //i've accomplished nothing today but i've also given myself something to think about. still, wish i could just blow past this stupidity. i want my fucking alpha. i want to USE it. i want to design this in it. i want to output myself from myself. BOOTSTRAP MOTHERFUCKER. omg i love being alive, i love this world, this existence. i can see so far in the future but i am stuck here dealing with shitty modes
+    //*eats shotgun*
 }
-void MainWindow::setMode(MainWindow::MainMenuMode newMode)
-{
-    m_Mode = newMode;
-    emit modeChanged(newMode);
-}
-void MainWindow::handleModeChanged(MainWindow::MainMenuMode newMode)
-{
-    //maybe the gui doesn't need to listen to this... maybe only the dragdropdiagramscene does? still, the capability to do both is nice. i love qt
-}
+#endif

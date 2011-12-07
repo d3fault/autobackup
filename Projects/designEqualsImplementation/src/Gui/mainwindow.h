@@ -21,9 +21,11 @@
 
 #include "WidgetsThatRepresentIndividualTabItems/projecttab.h"
 #include "ClassesThatRepresentProjectBeingCreated/designproject.h"
-#include "Gui/diagramscenenode.h"
+#include "diagramscenenode.h"
 #include "ClassesThatRepresentProjectBeingCreated/designprojecttemplates.h"
 #include "WidgetsThatRepresentIndividualTabItems/templateviewtab.h"
+#include "dragdropdiagramscene.h"
+#include "../StateMachine/modesingleton.h"
 
 #include <QStyle>
 //^TODOreq: use icon.image() instead of these placeholder stock icons
@@ -36,11 +38,6 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 private:
-    //modes
-    enum MainMenuMode { ClickDragDefaultMode, AddNodeMode }; //i loved writing addnodemode
-    MainMenuMode m_Mode;
-    void setMode(MainMenuMode newMode);
-    //there's also modeChanged signal and handleModeChanged slot
     //gui
     QWidget *m_LeftPane;
     QTabWidget *m_ProjectTabWidgetContainer; //the tab widget containing the project tabs
@@ -66,12 +63,11 @@ private slots:
     void handleProjectTabChanged(int);
     void handleButtonGroupButtonClicked(int);
     void handleTemplatesPopulated();
-    void handleModeChanged(MainMenuMode newMode);
+    //void handleModeChanged(MainMenuMode newMode);
     //actions triggered
     void handleNewProjectAction();
     void handleNewUseCaseAction();
 signals:
-    void modeChanged(MainMenuMode newMode);
     void e(const QString &);
 };
 
