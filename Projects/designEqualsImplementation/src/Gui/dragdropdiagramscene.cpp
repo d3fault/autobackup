@@ -6,6 +6,19 @@ DragDropDiagramScene::DragDropDiagramScene(QObject *parent) :
 }
 void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    switch(ModeSingleton::Instance()->getMode())
+    {
+    case ModeSingleton::ClickDragDefaultMode:
+        m_ExpectingNode = false;
+        break;
+    case ModeSingleton::AddNodeMode:
+        m_ExpectingNode = true;
+        break;
+    default:
+        //set all to false
+        m_ExpectingNode = false;
+    }
+
     if(m_ExpectingNode)
     {
         //button unique id is used to get the template copy
@@ -23,6 +36,8 @@ void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         //emit itemInserted(item);
     }
 }
+//this slot is never called, re-designing because fuck it.
+#if 0
 void DragDropDiagramScene::handleModeChanged(ModeSingleton::Mode newMode)
 {
     switch(newMode)
@@ -38,3 +53,4 @@ void DragDropDiagramScene::handleModeChanged(ModeSingleton::Mode newMode)
         m_ExpectingNode = false;
     }
 }
+#endif

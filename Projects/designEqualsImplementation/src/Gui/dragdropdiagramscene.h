@@ -17,7 +17,7 @@ private:
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 public slots:
-    void handleModeChanged(ModeSingleton::Mode);
+    //void handleModeChanged(ModeSingleton::Mode);
 };
 
 #endif // DRAGDROPDIAGRAMSCENE_H

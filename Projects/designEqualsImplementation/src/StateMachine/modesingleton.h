@@ -15,6 +15,7 @@ public:
     Mode m_Mode;
     void setPendingNodeToAdd(DiagramSceneNode *pendingNode);
     DiagramSceneNode *getPendingNode();
+    Mode getMode();
 private:
     ModeSingleton();
     static ModeSingleton *m_pInstance;

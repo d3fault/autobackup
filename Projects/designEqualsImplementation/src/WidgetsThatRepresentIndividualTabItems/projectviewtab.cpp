@@ -14,7 +14,10 @@ ProjectViewTab::ProjectViewTab(DesignProjectView *projectView)
     this->setLayout(m_Layout);
 
     //connect the scene to the mode singleton's signals
-    connect(ModeSingleton::Instance(), SIGNAL(modeChanged(ModeSingleton::Mode)), m_GraphicsScene, SLOT(handleModeChanged(ModeSingleton::Mode)));
+    //ModeSingleton *modeSingleton = ModeSingleton::Instance();
+    //connect(modeSingleton, SIGNAL(modeChanged(ModeSingleton::Mode)), m_GraphicsScene, SLOT(handleModeChanged(ModeSingleton::Mode)), Qt::QueuedConnection);
+
+    //scene will just poll ModeSingleton on mousePress instead... fuck it, idk why that signal/slot isn't working :-/
 }
 DesignProjectView * ProjectViewTab::getProjectView()
 {

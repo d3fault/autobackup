@@ -2,6 +2,10 @@
 #define DIAGRAMSCENENODE_H
 
 #include <QGraphicsPolygonItem>
+#include <QColor>
+#include <QPixmap>
+#include <QPainter>
+#include <QPen>
 
 #include "../ClassesThatRepresentProjectBeingCreated/designprojecttemplates.h"
 
@@ -17,7 +21,13 @@ public:
     int getUniqueId();
     DesignProjectTemplates::DesignProjectViewType getViewType();
     virtual QString getNodeTypeAsString()=0;
-private:
+    QPixmap image() const;
+    virtual void drawMyPolygon()=0;
+    QPolygonF polygon() const
+        { return m_MyPolygon; }
+protected:
+    QPolygonF m_MyPolygon;
+private:    
     int m_UniqueId;
     DesignProjectTemplates::DesignProjectViewType m_ViewType;
 };

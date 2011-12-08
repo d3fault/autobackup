@@ -29,3 +29,7 @@ DiagramSceneNode * ModeSingleton::getPendingNode()
 {
     return m_PendingNode;
 }
+ModeSingleton::Mode ModeSingleton::getMode()
+{
+    return m_Mode;
+}
