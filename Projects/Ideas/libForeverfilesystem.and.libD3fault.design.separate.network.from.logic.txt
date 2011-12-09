@@ -1,0 +1,30 @@
+libForeverfilesystem is a filesystem with no delete. you write to it, it returns you an address. your data is encrypted or not, up to you. the filesystem provides functionality for storing an associated decryption key (if appropriate. plaintext + no key is permitted. all data is.). the associated decryption key can be empty and written to overwritten ONCE later. under the hood, this decryption-key-addition is really just a <node nodetype="decryptPrevious" reference="previousNodeId">decryptionKey</node> that is APPENDED to the filesystem. there is __NEVER__ overwriting or deletion. every revision is always kept forever, hence the name
+libD3fault is the d3fault implementation of software that uses said filesystem. it provides standalone applications in the form of plugins (which can be exported to be standalone applications that still use libForeverfilesystem). it uses libForeverfilesystem so is therefore dependent on it. libD3fault never does any networking by itself, but it does manage every file that it puts on libForeverfilesystem. it has a user-private index of files, and either d3fault or foreverfilesystem or both have an index of all their files global (private ones appear to be jumble), and of course the ability to filter out anything you don't have the key for
+
+libForeverfilesystem uses tor onion-like networking with p2p technology implicit. sort of like freenet except the files stay forever
+
+libForeverfilesystem: the index is snapshot'd at a certain point and all the files in that snapshot are globally verified by all participating nodes. if you do not participate, you are marked "untrusted". your work is verified by at least [x] people.
+
+libForeverfilesystem can be configured to allow [x] kb/s OR [x] gb per month. selecting the latter automatically calculates the first one and shows it to you. radio button with updated disabled opposite. "with this cap, your upload rate is [calculated]" or "with this upload rate, your monthly contribution will be around [calculated]"
+
+the filesystem ALWAYS adheres to that rate, 24/7 365
+
+blanks must be inserted by you and from others, but hopefully that can be minimized.
+you have to use the blanks and insert them (overwriting what is USUALLY blank with now data) into the network in order to have any degree of anonymity
+you MUST keep your machine running at all times and at that data rate in order for your anonymity to have any slight effect
+this is of course assuming there is no error in your code or design
+
+so d3fault is basically the timeline'ing, wallet'ing, and user-index and "global" index (global filtering out private material is what i would equate to modern day "/b/" ;-P). the tangentify, audio, picture, and video plugins to my standards. also an "import files" util that i approve of. hahahaha smartbackup.php god i've been at this for so long
+i think i just decided d3fault would definitely have it's own global index. libForeverfilesystem can have one too, might as well. it might need one(?). the idea is someone else can come along and make something similar to d3fault if they wanted to.
+but i am pretty fucking sure d3fault is going to be amazing and everyone will use it
+
+
+libForeverfilesystem is what will be attacked, as it is responsible for actually hosting the files
+however, by itself, libForeverfilesystem does nothing illegal
+
+d3fault may harvest illegal copyrighted content because it provides it's users/developers the means to make and share global lists with references to each individual list item (this is some kinda of special functionality, i guess it belongs kinda under html/http parsing? but not really... it deserves to be it's own thing too. maybe "import list from http" and "create list"), but the fault is both with the users and with libForeverfilesystem. d3fault only provides organization functionality to the masses.
+
+maybe libForeverfilesystem has it's own timeline? i guess yes?
+
+libForeverfilesystem.save(); //does network + multiplying stuffz
+libD3fault.save(); //does timeline'ing, wallet'ing, and global index'ing (timeline is really user-index lol). i guess global timeline really then. but the point is it does timeline'ing (both user and global) + wallet'ing ON libForeverfilesystem
