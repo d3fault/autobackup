@@ -1,0 +1,53 @@
+contexts, local variables, and hell, private class members/methods
+
+these all need to available to the user code segment that's in a different file
+
+a partial class (isn't that C# only?) might be what i need, same with friend class, idk
+
+contexts and local variables are harder...
+
+"Commands" back at datasoft
+are pretty much like "Actions" here in Qt/C#
+QRunnable
+
+but these both lose context and local variables
+
+context meaning 'this.something()' (something is private)
+and
+int x = 5;
+emit blah();
+userSegment1();
+
+now userSegment1 does NOT see x..
+
+
+the only solution i see atm is to generate the file with as much information we've gathered from the design, make note of it, then put the cursor right where they want to add some code. they save it, close it, we diff out what the user has added, and then replace that with a %USER_SEGMENT_1% string, while saving their actual segment somewhere safer (so as not to get overwritten). this way, we can re-generate the file over and over and over without ever losing the user segment. we'll always know where it goes relative to all changes/connection-calls or even separate user segments.
+2 user segments placed side by side become 1 (????????????)? doesn't matter, but the functionality to do so should be provided
+
+in the design, it's just shown as "user segment 1" and maybe a preview of the code graphically(?), onHover or something who cares
+
+user segment shown as same type of timeline node as a connection call
+
+LIFELINE IN UML (i've said timeline where i meant lifeline previously)
+so: [ node name (backend/frontend) ]
+                 |
+                 |
+                 |
+                 |connection1.call();
+                 |usersegment1();
+                 |connection2.call();
+                 |etc
+
+when generating userSegment1();, it just puts %USER_SEGMENT_1% and THEN replaces that string with the stored user segment (1)
+
+it should be further noted for elaboration that when the user WRITES userSegment1... when they actually CREATE it, the document is generated based on all the other userSegments and connection calls already added in the design. they write the code exactly as they would if they were going to compile it. in fact, they can compile it (although i think i'm going to overwrite the play button with "save, signal d3fault to compile/run" instead... or just "save, return to graphical designer"... idfk..
+
+if the user changes anything above their cursor... re-orders connection calls etc...
+basically, if they do ANYTHING other than add text or remove text from their designated "userSegment" MIDDLE-OF-DOCUMENT area,
+the system complains, throws them back in and tells them to create another user segment if they want to code elsewhere, or to use the designer to re-arrange connection calls
+
+the first generated half, right before the cursor placement, and the second generated half, the line after the cursor placement (cursor placed on empty new line) must be 100% character exact on save, so the userSegment can be extracted with ease
+
+if they changed something they shouldn't, they are thrown back into the editor so they can fix it. their data is not lost, but it is also not saved (yet). still in memory. they can copy it, re-generate the userSegment, then paste to make it work again
+
+it is not possible to edit the graphical design, connection calls etc ordering, while a userSegment is being created/edited

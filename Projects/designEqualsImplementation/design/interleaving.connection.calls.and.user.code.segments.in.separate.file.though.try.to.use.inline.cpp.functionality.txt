@@ -1,0 +1,12 @@
+the generated classes will contain their constructors, generated accessors, and additionally entry points for each use case (whether an actor or a higher class calls it is irrelevant)
+
+in those entry points, the emits are hardtyped by the generator based on arrows pointing in the use case designer
+in between the emits, connection CALLS, the user can put "user code chunk" which is just a call to another file that puts the cursor right where the user needs to start typing in order to show up after that emits
+
+function calls that expect a return value are broken up into two emit's
+
+if a user code segment appears after an emit that expects something in return, the code segment is placed in a different use-case-relevant chunk of code delegated to handle the signal that returns the value that we want
+there definitely needs to be a way to continue disregarding the return result...
+
+a return type is specified, we wait before receiving the signal returning the value to put the reference to the user chunk code
+if a KNOWN-TO-BE-ASYNCHRONOUS call is made, then we already must have(or need to make, or need to be generated) a place to receive the signal notifying it's completion/result
