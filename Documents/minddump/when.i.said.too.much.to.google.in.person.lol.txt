@@ -1,0 +1,2 @@
+"you should be able to build a bsp"
+user built realtime-3d dht driven map of the earth

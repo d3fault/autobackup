@@ -1,0 +1,9 @@
+using 2 potentiometers. one attached to each index finger
+the out position is 0,0
+left index controls x
+right index controls y
+the in position is resx_max,resy_max
+
+how to click?
+a pause at anywhere except 0,0 is a click
+a pause will use an averaging algorithm for whatever size object it is over (uses it's projected (if 3d) dimensions)
