@@ -1,0 +1,22 @@
+finger potentiometer board, all 10 fingers
+right hand (dominant hand?) is vowels index.. 
+in combination with left hand, is letter index AFTER said vowel indicated by right hand
+
+ex:
+right thumb alone is a
+right thumb + left thumb is b
+right thumb, left index = c
+so on and so forth
+right index is e
+right middle is i
+right ring is o
+right pinky is u
+
+there are extra/unused characters... for example right thumb + left ring/pinky (left ring would be E, but we do vowels on the right)
+
+it actually fits just perfectly aside from that
+z ends up being right pinky left pinky
+weird
+ALMOST AS IF IT WAS MEANT TO BE
+except i don't believe in 'meant to be' bullshit
+just a coincidence
