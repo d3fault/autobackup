@@ -1,0 +1,13 @@
+right click node -> edit
+vs
+draw an arrow from node to another node
+
+basically, how do i add functionality to a class?
+
+keeping in mind user segments too, which only seem appropriate by right-clicking. or at the very least, it's true that they only involve one node.
+
+
+connection-call seems more intuitive to create/make by using arrows
+user segment seems more intuitive to create/make by using a context menu
+the ordering of them, where their added, the order they appear, needs to be taken into account
+should also be able to change the ordering later on
