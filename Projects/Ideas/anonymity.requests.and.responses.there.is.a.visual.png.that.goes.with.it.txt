@@ -1,0 +1,1 @@
+i define my own "paths" back to me, because defining them is the same thing i do to receive packets (that i then forward) all the time. appending this trail to a global chain like bitcoin type chain gets you requests and responses
