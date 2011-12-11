@@ -1,0 +1,11 @@
+the return type is merely a string that the recipient signals back to another auto-generated slot, where we pick up execution (if it's all done synchronous)
+
+'use 1 thread per back-end'
+'use 1 thread per class per back-end'
+
+it could just be the case that they are just designated to be on different threads, therefore the Qt::AutoConnection must be used at all times.
+
+for a connection-call with a return type,
+the call is self->receiver
+at least, that's what it looks like to YOU. it is all you have to create. a method with an argument.
+the generator creates my signal, the receivers slot, and also (FOR THE RETURN VAL) the receiver's signal and my slot where execution continues

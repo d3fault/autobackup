@@ -1,0 +1,3 @@
+an led that is 1 when we have at least 1 listener.
+^^^in "isolation mode"
+since we know we have at least 1 listener, we also know we're not being blocked (RIGHT?)
