@@ -29,6 +29,7 @@ private:
 signals:
     void keySetChanged(QMap<int,Qt::Key> *newKeySet);
     void currentIndexChanged(int newIndex);
+    void guessedWrong();
 public slots:
     void start();
     void processKey(Qt::Key key);

@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QMessageBox>
 
 #include <dinosauralphabetgame.h>
 #include <inputkeyfilter.h>
@@ -35,6 +36,7 @@ signals:
 private slots:
     void handleKeySetChanged(QMap<int,Qt::Key> *newKeySet);
     void handleCurrentIndexChanged(int newIndex);
+    void handleGuessedWrong();
 public slots:
     void buildGui();
 };

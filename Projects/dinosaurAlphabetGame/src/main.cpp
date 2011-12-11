@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    qRegisterMetaType<Qt::Key>("Qt::Key");
+    qRegisterMetaType<Qt::Key>("Qt::Key"); //so we can use Qt::Key in signals/slots
 
     dinosaurAlphabetGameWidget w;
     w.show();

@@ -14,6 +14,7 @@ dinosaurAlphabetGameWidget::dinosaurAlphabetGameWidget(QWidget *parent)
     //connect to m_Game's signals to receive gui update events
     connect(m_Game, SIGNAL(keySetChanged(QMap<int,Qt::Key>*)), this, SLOT(handleKeySetChanged(QMap<int,Qt::Key>*)));
     connect(m_Game, SIGNAL(currentIndexChanged(int)), this, SLOT(handleCurrentIndexChanged(int)));
+    connect(m_Game, SIGNAL(guessedWrong()), this, SLOT(handleGuessedWrong()));
 
     //schedule that start() be called on the game thread
     QMetaObject::invokeMethod(m_Game, "start", Qt::QueuedConnection);
@@ -63,4 +64,10 @@ void dinosaurAlphabetGameWidget::setLabelFromIndexToEnd(int index)
         keys.append(QString((char)(int)m_CurrentKeySet->value(i)));
     }
     m_KeySetLabel->setText(keys);
+}
+void dinosaurAlphabetGameWidget::handleGuessedWrong()
+{
+    QMessageBox *mb = new QMessageBox();
+    mb->setText("Wrong");
+    mb->show();
 }

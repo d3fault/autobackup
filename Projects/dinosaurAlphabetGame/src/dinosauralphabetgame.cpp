@@ -42,6 +42,7 @@ void DinosaurAlphabetGame::processKey(Qt::Key key)
         {
             m_MissedKeys->append(m_CurrentKey);
         }
+        emit guessedWrong();
     }
 }
 void DinosaurAlphabetGame::getKeys()
