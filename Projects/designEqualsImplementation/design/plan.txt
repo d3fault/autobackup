@@ -1,4 +1,8 @@
 task							done
-working buttonGroups					[]
+
+working buttonGroups					[x]
+adding node changes back to clickdrag mode              []
+scene node is copy of (not same instance) template node []
+designProject contains parcelable child nodes           []
 right-click added node->edit members			[]
 connect design=implementation gui with code generator	[]
