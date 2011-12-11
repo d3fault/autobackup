@@ -50,10 +50,16 @@ void DinosaurAlphabetGame::getKeys()
     m_CurrentKeySet->clear();
     for(int i = 0; i < m_NumbersToShowAtATime; ++i)
     {
-        //get a random number between 0 and AlphabetSize
-        int randomNumber = (qrand() % AlphabetSize);
+        int randomNumber;
+        Qt::Key newKey;
+        QList<Qt::Key> keysAddedSoFar = m_CurrentKeySet->values();
+        do
+        {
+            //get a random number between 0 and AlphabetSize
+            randomNumber = (qrand() % AlphabetSize);
+            newKey = (Qt::Key)(Qt::Key_A + randomNumber); //todo if you wanted to expand the keyset, use m_StartOfKeyRange (assigned to Qt::Key_A in this example) here instead. can also make it easier to support a different language. they specify the range and the start of key range is deduced from that
+        } while(keysAddedSoFar.contains(newKey)); //make sure it isn't already in the key set. we don't want the same letters twice
 
-        Qt::Key newKey = (Qt::Key)(Qt::Key_A + randomNumber); //todo if you wanted to expand the keyset, use m_StartOfKeyRange (assigned to Qt::Key_A in this example) here instead. can also make it easier to support a different language. they specify the range and the start of key range is deduced from that
         m_CurrentKeySet->insert(i, newKey);
         //TODOreq: make sure we don't have the same letter in the set twice
     }
