@@ -25,6 +25,7 @@ private:
     void recycleMissedKeys();
     bool isKeyWeWant(Qt::Key key);
     bool keyWeAreProcessingIsLastKeyInSet();
+    void setCurrentKeyToFirstKeyInSet();
 signals:
     void keySetChanged(QList<Qt::Key> newKeySet);
     void currentIndexChanged(int newIndex);

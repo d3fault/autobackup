@@ -52,7 +52,7 @@ void DinosaurAlphabetGame::getKeys()
         m_CurrentKeySet->insert(i, newKey);
         //TODOreq: make sure we don't have the same letter in the set twice
     }
-    m_CurrentKeyIndex = 0;
+    setCurrentKeyToFirstKeyInSet();
 }
 void DinosaurAlphabetGame::getKeysOrRecycle()
 {
@@ -100,8 +100,14 @@ void DinosaurAlphabetGame::recycleMissedKeys()
         m_MissedKeys->removeAt(missedKeyIndex);
         --missedKeysLeft;
     }
+    setCurrentKeyToFirstKeyInSet();
 }
 void DinosaurAlphabetGame::seedRandom()
 {
     qsrand(QTime::currentTime().hour() + QTime::currentTime().minute() + QTime::currentTime().second() + QTime::currentTime().msec());
+}
+void DinosaurAlphabetGame::setCurrentKeyToFirstKeyInSet()
+{
+    m_CurrentKeyIndex = 0;
+    m_CurrentKey = m_CurrentKeySet->value(m_CurrentKeyIndex);
 }
