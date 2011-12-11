@@ -4,6 +4,8 @@
 #include <QtGui/QWidget>
 #include <QThread>
 #include <QKeyEvent>
+#include <QVBoxLayout>
+#include <QLabel>
 
 #include <dinosauralphabetgame.h>
 #include <inputkeyfilter.h>
@@ -18,10 +20,23 @@ public:
     DinosaurAlphabetGame *m_Game;
     QThread *m_Thread;
     ~dinosaurAlphabetGameWidget();
+
+    //gui
+    QVBoxLayout *m_Layout;
+    QLabel *m_KeySetLabel;
+private:
+    QMap<int,Qt::Key> *m_CurrentKeySet;
+    //gui
+    void setLabelFromIndexToEnd(int index);
 protected:
     void keyPressEvent(QKeyEvent *);
 signals:
     void keyPressed(Qt::Key key);
+private slots:
+    void handleKeySetChanged(QMap<int,Qt::Key> *newKeySet);
+    void handleCurrentIndexChanged(int newIndex);
+public slots:
+    void buildGui();
 };
 
 #endif // DINOSAURALPHABETGAMEWIDGET_H

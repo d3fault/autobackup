@@ -32,11 +32,16 @@ void DinosaurAlphabetGame::handleKeyPressed(Qt::Key key)
             ++m_CurrentKeyIndex;
             //get key using new index from key set
             m_CurrentKey = m_CurrentKeySet->value(m_CurrentKeyIndex);
+            //tell the gui that we got one right
+            emit currentIndexChanged(m_CurrentKeyIndex);
         }
     }
     else
     {
-        m_MissedKeys->append(key);
+        if(!m_MissedKeys->contains(m_CurrentKey)) //make sure we don't add it to the missed keys twice
+        {
+            m_MissedKeys->append(m_CurrentKey);
+        }
     }
 }
 void DinosaurAlphabetGame::getKeys()
@@ -52,7 +57,7 @@ void DinosaurAlphabetGame::getKeys()
         m_CurrentKeySet->insert(i, newKey);
         //TODOreq: make sure we don't have the same letter in the set twice
     }
-    setCurrentKeyToFirstKeyInSet();
+    onNewKeySet();
 }
 void DinosaurAlphabetGame::getKeysOrRecycle()
 {
@@ -72,7 +77,7 @@ bool DinosaurAlphabetGame::isKeyWeWant(Qt::Key key)
 }
 bool DinosaurAlphabetGame::keyWeAreProcessingIsLastKeyInSet()
 {
-    return (m_CurrentKeyIndex == (m_NumbersToShowAtATime - 1));
+    return (m_CurrentKeyIndex == (m_CurrentKeySet->count() - 1));
 }
 void DinosaurAlphabetGame::recycleMissedKeys()
 {
@@ -100,14 +105,15 @@ void DinosaurAlphabetGame::recycleMissedKeys()
         m_MissedKeys->removeAt(missedKeyIndex);
         --missedKeysLeft;
     }
-    setCurrentKeyToFirstKeyInSet();
+    onNewKeySet();
 }
 void DinosaurAlphabetGame::seedRandom()
 {
     qsrand(QTime::currentTime().hour() + QTime::currentTime().minute() + QTime::currentTime().second() + QTime::currentTime().msec());
 }
-void DinosaurAlphabetGame::setCurrentKeyToFirstKeyInSet()
+void DinosaurAlphabetGame::onNewKeySet()
 {
     m_CurrentKeyIndex = 0;
     m_CurrentKey = m_CurrentKeySet->value(m_CurrentKeyIndex);
+    emit keySetChanged(m_CurrentKeySet);
 }
