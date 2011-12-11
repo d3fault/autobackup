@@ -23,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     //connections
     connect(m_ProjectTabWidgetContainer, SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabChanged(int)));
-    connect(ModeSingleton::Instance(), SIGNAL(modeChanged(ModeSingleton::Mode)), this, SLOT(handleModeChanged(ModeSingleton::Mode)));
+    ModeSingleton *modeSingleton = ModeSingleton::Instance();
+    connect(modeSingleton, SIGNAL(modeChanged(ModeSingleton::Mode)), this, SLOT(handleModeChanged(ModeSingleton::Mode)));
 
 
     //send a message to ourselves when we first launch the application to open up a blank new project
@@ -252,9 +253,9 @@ void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJust
         }
     }
 }
-#if 0
 void MainWindow::handleModeChanged(ModeSingleton::Mode newMode)
 {
+    Q_UNUSED(newMode);
     //we set scene's mode
     //it emits modeChanged signal
     //we receive it here
@@ -274,4 +275,3 @@ void MainWindow::handleModeChanged(ModeSingleton::Mode newMode)
     //i've accomplished nothing today but i've also given myself something to think about. still, wish i could just blow past this stupidity. i want my fucking alpha. i want to USE it. i want to design this in it. i want to output myself from myself. BOOTSTRAP MOTHERFUCKER. omg i love being alive, i love this world, this existence. i can see so far in the future but i am stuck here dealing with shitty modes
     //*eats shotgun*
 }
-#endif

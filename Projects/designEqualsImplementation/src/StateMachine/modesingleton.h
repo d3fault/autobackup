@@ -21,9 +21,10 @@ private:
     static ModeSingleton *m_pInstance;
     DiagramSceneNode *m_PendingNode;
 signals:
-    void modeChanged(Mode newMode);
+    //the fix for the signal not being received was to put ModeSingleton:: in front of Mode below. qmake compares the signals/slots "literally" (string value i guess)
+    void modeChanged(ModeSingleton::Mode newMode);
 public slots:
-    void setMode(Mode newMode);
+    void setMode(ModeSingleton::Mode newMode);
 
 };
 

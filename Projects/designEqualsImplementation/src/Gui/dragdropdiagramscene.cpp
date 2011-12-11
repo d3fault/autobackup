@@ -6,6 +6,8 @@ DragDropDiagramScene::DragDropDiagramScene(QObject *parent) :
 }
 void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    //this is my hack/workaround since modesingleton's signal isn't heard
+#if 0
     switch(ModeSingleton::Instance()->getMode())
     {
     case ModeSingleton::ClickDragDefaultMode:
@@ -18,6 +20,7 @@ void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         //set all to false
         m_ExpectingNode = false;
     }
+#endif
 
     if(m_ExpectingNode)
     {
@@ -34,10 +37,9 @@ void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         nodeToAdd->setPos(event->scenePos());
 
         //emit itemInserted(item);
+        //TODOreq: the handler for this emit (even if the emit is moved elsewhere for the back-end parcelable list of nodes functionality) is what the mainmenu should listen to in order to set the buttonGroup buttons back to an unchecked state and to set the mode back to clickdragdefault. or hell, i could just set the mode back and mainwindow listens to modeChanged... but meh, i'm having trouble getting modeChanged to even be heard...
     }
 }
-//this slot is never called, re-designing because fuck it.
-#if 0
 void DragDropDiagramScene::handleModeChanged(ModeSingleton::Mode newMode)
 {
     switch(newMode)
@@ -53,4 +55,3 @@ void DragDropDiagramScene::handleModeChanged(ModeSingleton::Mode newMode)
         m_ExpectingNode = false;
     }
 }
-#endif

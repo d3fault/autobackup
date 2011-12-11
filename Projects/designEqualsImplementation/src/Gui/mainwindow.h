@@ -63,7 +63,7 @@ private slots:
     void handleProjectTabChanged(int);
     void handleButtonGroupButtonClicked(int);
     void handleTemplatesPopulated();
-    //void handleModeChanged(MainMenuMode newMode);
+    void handleModeChanged(ModeSingleton::Mode newMode);
     //actions triggered
     void handleNewProjectAction();
     void handleNewUseCaseAction();
