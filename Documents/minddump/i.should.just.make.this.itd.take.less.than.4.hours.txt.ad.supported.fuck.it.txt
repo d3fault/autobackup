@@ -1,0 +1,17 @@
+software kids game
+5 randomly selected letters
+recursive function to show the same 5 letters over and over (randomly each time, never using same letter 2 times in a row (on ends)) except the ones they already got right
+it says the letter at the same time that they type it
+if they type the letter wrong, the computer kindly says "no, that was [pressed-button], you want [target-button]"
+
+
+
+f & j are used often to keep the fingers in the correct position. we tell them to try to keep their pointer fingers at rest on f&j
+
+
+
+
+animation to add after the fact: dinosaur eats the letter if he gets it right. the letter falls into a lava pit if wrong
+
+
+might as well have a voice recognition input version for the droid/iphone-maybeidfk

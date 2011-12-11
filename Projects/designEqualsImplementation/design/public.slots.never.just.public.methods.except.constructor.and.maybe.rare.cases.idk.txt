@@ -1,0 +1,2 @@
+public functions aren't used except when appropriate
+all/most public "methods" (connection-calls) generated are public SLOTS. this has to be the case but it is also smarter to ensure future compatibility with other programs.
