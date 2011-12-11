@@ -12,9 +12,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         dinosauralphabetgamewidget.cpp \
-    dinosauralphabetgame.cpp
+    dinosauralphabetgame.cpp \
+    inputkeyfilter.cpp
 
 HEADERS  += dinosauralphabetgamewidget.h \
-    dinosauralphabetgame.h
+    dinosauralphabetgame.h \
+    inputkeyfilter.h
+
+
 
 
