@@ -20,6 +20,8 @@ public:
     ~dinosaurAlphabetGameWidget();
 protected:
     void keyPressEvent(QKeyEvent *);
+signals:
+    void keyPressed(Qt::Key key);
 };
 
 #endif // DINOSAURALPHABETGAMEWIDGET_H

@@ -9,7 +9,7 @@ dinosaurAlphabetGameWidget::dinosaurAlphabetGameWidget(QWidget *parent)
     m_Thread->start();
 
     //connect the gui events that we want to use to the game
-    connect(this, SIGNAL(keyPressed(Qt::Key), m_Game, SLOT(handleKeyPressed(Qt::Key))));
+    connect(this, SIGNAL(keyPressed(Qt::Key)), m_Game, SLOT(handleKeyPressed(Qt::Key)));
 
     //connect to m_Game's signals to receive gui update events
 
@@ -22,8 +22,8 @@ dinosaurAlphabetGameWidget::~dinosaurAlphabetGameWidget()
 }
 void dinosaurAlphabetGameWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
-    if(InputKeyFilter::isAtoZOnly(keyEvent->key()))
+    if(InputKeyFilter::isAtoZOnly((Qt::Key)keyEvent->key()))
     {
-        emit keyPressed(keyEvent->key());
+        emit keyPressed((Qt::Key)keyEvent->key());
     }
 }

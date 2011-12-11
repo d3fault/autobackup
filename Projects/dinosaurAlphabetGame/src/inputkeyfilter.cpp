@@ -2,6 +2,6 @@
 
 bool InputKeyFilter::isAtoZOnly(Qt::Key inputKey)
 {
-    return (inputKey >= Qt::Key_A && inputKey <= Qt::Key_Z);
+    return ((int)inputKey >= (int)Qt::Key_A && (int)inputKey <= (int)Qt::Key_Z);
 }
 
