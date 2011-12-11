@@ -31,7 +31,7 @@ signals:
     void currentIndexChanged(int newIndex);
 public slots:
     void start();
-    void handleKeyPressed(Qt::Key key);
+    void processKey(Qt::Key key);
 };
 
 #endif // DINOSAURALPHABETGAME_H

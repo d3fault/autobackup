@@ -9,7 +9,7 @@ dinosaurAlphabetGameWidget::dinosaurAlphabetGameWidget(QWidget *parent)
     m_Thread->start();
 
     //connect the gui events that we want to use to the game
-    connect(this, SIGNAL(keyPressed(Qt::Key)), m_Game, SLOT(handleKeyPressed(Qt::Key)));
+    connect(this, SIGNAL(keyPressed(Qt::Key)), m_Game, SLOT(processKey(Qt::Key)));
 
     //connect to m_Game's signals to receive gui update events
     connect(m_Game, SIGNAL(keySetChanged(QMap<int,Qt::Key>*)), this, SLOT(handleKeySetChanged(QMap<int,Qt::Key>*)));
@@ -36,7 +36,10 @@ void dinosaurAlphabetGameWidget::buildGui()
 {
     m_Layout = new QVBoxLayout();
     m_KeySetLabel = new QLabel();
-    m_Layout->addWidget(m_KeySetLabel);
+    QFont labelFont;
+    labelFont.setPointSize(30);
+    m_KeySetLabel->setFont(labelFont);
+    m_Layout->addWidget(m_KeySetLabel,0, Qt::AlignCenter);
     this->setLayout(m_Layout);
 }
 void dinosaurAlphabetGameWidget::handleKeySetChanged(QMap<int,Qt::Key> *newKeySet)

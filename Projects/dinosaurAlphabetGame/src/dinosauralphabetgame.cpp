@@ -18,7 +18,7 @@ void DinosaurAlphabetGame::start()
 
     getKeys();
 }
-void DinosaurAlphabetGame::handleKeyPressed(Qt::Key key)
+void DinosaurAlphabetGame::processKey(Qt::Key key)
 {
     if(isKeyWeWant(key))
     {
@@ -61,7 +61,6 @@ void DinosaurAlphabetGame::getKeys()
         } while(keysAddedSoFar.contains(newKey)); //make sure it isn't already in the key set. we don't want the same letters twice
 
         m_CurrentKeySet->insert(i, newKey);
-        //TODOreq: make sure we don't have the same letter in the set twice
     }
     onNewKeySet();
 }
