@@ -8,7 +8,7 @@ dinosaurAlphabetGameWidget::dinosaurAlphabetGameWidget(QWidget *parent)
     m_Game->moveToThread(m_Thread);
     m_Thread->start();
 
-    //connect the gui events that we want to use to the game
+    //connect the gui events that we want to use to the game object
     connect(this, SIGNAL(keyPressed(Qt::Key)), m_Game, SLOT(processKey(Qt::Key)));
 
     //connect to m_Game's signals to receive gui update events
@@ -19,7 +19,7 @@ dinosaurAlphabetGameWidget::dinosaurAlphabetGameWidget(QWidget *parent)
     //schedule that start() be called on the game thread
     QMetaObject::invokeMethod(m_Game, "start", Qt::QueuedConnection);
 
-    //schedule us to build the gui. we don't do it now so that we get our widget to show up asap. i guess i could schedule us to also set up the game object and thread in a future even too, making the constructor only queue 2 events (the "start" event is relocated to the hypothetical event)
+    //schedule us to build the gui. we don't do it now so that we get our widget to show up asap. i guess i could schedule us to also set up the game object and thread in a future even too, making the constructor only queue 2 events (the "start" event is relocated to the hypothetical event) and then be finished
     QMetaObject::invokeMethod(this, "buildGui", Qt::QueuedConnection);
 }
 dinosaurAlphabetGameWidget::~dinosaurAlphabetGameWidget()

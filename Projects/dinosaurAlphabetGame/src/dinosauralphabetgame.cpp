@@ -6,9 +6,10 @@ DinosaurAlphabetGame::DinosaurAlphabetGame(QObject *parent) :
 }
 void DinosaurAlphabetGame::myConstructor()
 {
+    m_NumbersToShowAtATime = 10;
+
     m_CurrentKeySet = new QMap<int,Qt::Key>();
     m_MissedKeys = new QList<Qt::Key>();
-    m_NumbersToShowAtATime = 5;
     AlphabetSize = ((Qt::Key_Z - Qt::Key_A) + 1); //off by one fix
 }
 void DinosaurAlphabetGame::start()
@@ -98,7 +99,7 @@ void DinosaurAlphabetGame::recycleMissedKeys()
         int missedKeyIndex = (qrand() % missedKeysLeft);
         Qt::Key missedKey;
         missedKey = m_MissedKeys->at(missedKeyIndex);
-        //i == 0: only compare first in new set
+        //i == 0: only compare first key in new set
         //missedKey == last key: make sure our first key is not our last key from last set (same key twice in a row is a no no)
         //missedKeysCount > 1: ignore all this if we only missed one key. we don't care in that one rare case if we do the same key twice
         while(i == 0 && missedKey == lastKey && missedKeysCount > 1)
