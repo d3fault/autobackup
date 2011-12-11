@@ -6,22 +6,6 @@ DragDropDiagramScene::DragDropDiagramScene(QObject *parent) :
 }
 void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    //this is my hack/workaround since modesingleton's signal isn't heard
-#if 0
-    switch(ModeSingleton::Instance()->getMode())
-    {
-    case ModeSingleton::ClickDragDefaultMode:
-        m_ExpectingNode = false;
-        break;
-    case ModeSingleton::AddNodeMode:
-        m_ExpectingNode = true;
-        break;
-    default:
-        //set all to false
-        m_ExpectingNode = false;
-    }
-#endif
-
     if(m_ExpectingNode)
     {
         //button unique id is used to get the template copy

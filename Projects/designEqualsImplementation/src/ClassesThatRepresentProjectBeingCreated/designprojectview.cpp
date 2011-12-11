@@ -20,3 +20,5 @@ QString DesignProjectView::getProjectViewName()
 {
     return m_ProjectViewName;
 }
+
+//TODOreq: i need to expand this class so that it contains a parcelable list of nodes. additionally, the parcelable list contains the geographic coordinates in the design scene... but this is not useful information that the GENERATOR needs
