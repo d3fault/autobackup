@@ -1,0 +1,4 @@
+proposal for desktop/mobile gui sharing
+
+like slides
+like 1 pixel lines spaced by 1 pixel over on the left side of the screen at whatever orientation

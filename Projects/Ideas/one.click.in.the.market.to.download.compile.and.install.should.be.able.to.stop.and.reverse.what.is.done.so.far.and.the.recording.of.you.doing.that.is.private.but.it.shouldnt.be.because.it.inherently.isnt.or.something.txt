@@ -1,0 +1,2 @@
+one-click download-compile-run with a locally compiled cache
+same button used unless right-clicked? what i am saying is we need a way to view the Qt intermediate and the C++ intermediate. just for the hell of it, allow them to pause the automated flow wherever they damn please. download source only too. they are all the "d3faultSteps".
