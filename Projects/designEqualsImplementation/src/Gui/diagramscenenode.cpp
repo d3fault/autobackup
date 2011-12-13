@@ -5,7 +5,9 @@ DiagramSceneNode::DiagramSceneNode(int uniqueId, DesignProjectTemplates::DesignP
 {
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
-    //setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges, true); //for redrawing arrows when the item moves
+    setBrush(Qt::white);
+
 }
 int DiagramSceneNode::getUniqueTemplateId()
 {

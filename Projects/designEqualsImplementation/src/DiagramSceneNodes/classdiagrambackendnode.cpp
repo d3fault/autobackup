@@ -13,7 +13,7 @@ QString ClassDiagramBackEndNode::getNodeTypeAsString()
 void ClassDiagramBackEndNode::drawMyPolygon()
 {
     //m_MyPolygon << QPointF(-100, 0) << QPointF(0, 100) << QPointF(100, 0) << QPointF(0, -100) << QPointF(-100, 0);
-    m_MyPolygon << QPointF(-100, -100) << QPointF(100, -100) << QPointF(100, 100) << QPointF(-100, 100);
+    m_MyPolygon << QPointF(-100, -100) << QPointF(100, -100) << QPointF(100, 100) << QPointF(-100, 100) << QPointF(-100, -100);
 }
 DesignProjectTemplates::DesignProjectViewNodeType ClassDiagramBackEndNode::getNodeType()
 {
