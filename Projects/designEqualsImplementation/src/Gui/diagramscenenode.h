@@ -15,7 +15,7 @@ class DiagramSceneNode : public QGraphicsPolygonItem
 {
 public:
     DiagramSceneNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
-    int getUniqueId();
+    int getUniqueTemplateId();
     DesignProjectTemplates::DesignProjectViewType getViewType();
     virtual QString getNodeTypeAsString()=0;
     QPixmap image() const;
@@ -26,7 +26,7 @@ public:
     //virtual DiagramSceneNode *cloneSelf();
 protected:
     QPolygonF m_MyPolygon;
-    int m_UniqueId;
+    int m_UniqueTemplateId;
     DesignProjectTemplates::DesignProjectViewType m_ViewType;
 };
 

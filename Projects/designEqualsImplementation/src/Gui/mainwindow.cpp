@@ -200,7 +200,7 @@ void MainWindow::handleTemplatesPopulated()
             QToolButton *newButton = new QToolButton();
             QWidget *newButtonWidget = createTemplateNodeButtonWidget(currentNodeOfThisViewType, newButton);
             buttonLayout->addWidget(newButtonWidget, curRow, curCol);
-            currentTemplateViewTab->getButtonGroup()->addButton(newButton, currentNodeOfThisViewType->getUniqueId());
+            currentTemplateViewTab->getButtonGroup()->addButton(newButton, currentNodeOfThisViewType->getUniqueTemplateId());
             if(curCol >= maxCol)
             {
                 ++curRow;

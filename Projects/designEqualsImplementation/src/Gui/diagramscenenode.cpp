@@ -1,12 +1,12 @@
 #include "diagramscenenode.h"
 
 DiagramSceneNode::DiagramSceneNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType) :
-    m_UniqueId(uniqueId), m_ViewType(viewType)
+    m_UniqueTemplateId(uniqueId), m_ViewType(viewType)
 {
 }
-int DiagramSceneNode::getUniqueId()
+int DiagramSceneNode::getUniqueTemplateId()
 {
-    return m_UniqueId;
+    return m_UniqueTemplateId;
 }
 DesignProjectTemplates::DesignProjectViewType DiagramSceneNode::getViewType()
 {
