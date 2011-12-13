@@ -1,0 +1,9 @@
+eh
+user code segments
+probably loops and whatnot
+but i want as much functionality as possible to exist as "lifeline nodes"
+user segment is lifeline node
+connection call is lifeline node
+i want to define as many lifeline node types as possible so that user code segments aren't used as often as possible
+hell, even 'loops and whatnot' could probably be lifeline nodes, with the body of the loop being a user segment code (as in, they type shit. but i guess the body of the while loop lifeline node could also contain more lifeline nodes???)
+i need to look at my guiBackendGenerator code and see where to go from here
