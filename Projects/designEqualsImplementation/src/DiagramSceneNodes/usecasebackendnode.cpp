@@ -16,10 +16,7 @@ void UseCaseBackEndNode::drawMyPolygon()
                           << QPointF(100, 0) << QPointF(0, -100)
                           << QPointF(-100, 0);
 }
-#if 0
-DiagramSceneNode *UseCaseBackEndNode::cloneSelf()
+DesignProjectTemplates::DesignProjectViewNodeType UseCaseBackEndNode::getNodeType()
 {
-    DiagramSceneNode *clone = new UseCaseBackEndNode(m_UniqueId, m_ViewType);
-    return clone;
+    return DesignProjectTemplates::UseCaseBackEndNodeType;
 }
-#endif

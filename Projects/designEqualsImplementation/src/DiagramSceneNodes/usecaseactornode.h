@@ -8,8 +8,8 @@ class UseCaseActorNode : public DiagramSceneNode
 public:
     UseCaseActorNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
     virtual QString getNodeTypeAsString();
+    virtual DesignProjectTemplates::DesignProjectViewNodeType getNodeType();
     virtual void drawMyPolygon();
-    //virtual DiagramSceneNode *cloneSelf();
 };
 
 #endif // USECASEACTORNODE_H

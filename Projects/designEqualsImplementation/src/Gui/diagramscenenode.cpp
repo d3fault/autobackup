@@ -3,6 +3,9 @@
 DiagramSceneNode::DiagramSceneNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType) :
     m_UniqueTemplateId(uniqueId), m_ViewType(viewType)
 {
+    setFlag(QGraphicsItem::ItemIsMovable, true);
+    setFlag(QGraphicsItem::ItemIsSelectable, true);
+    //setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 int DiagramSceneNode::getUniqueTemplateId()
 {
@@ -22,9 +25,3 @@ QPixmap DiagramSceneNode::image() const
     painter.drawPolyline(m_MyPolygon);
     return pixmap;
 }
-#if 0
-DiagramSceneNode * DiagramSceneNode::copyNode()
-{
-    return cloneSelf();
-}
-#endif

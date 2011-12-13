@@ -221,7 +221,7 @@ void MainWindow::handleTemplatesPopulated()
 QWidget * MainWindow::createTemplateNodeButtonWidget(DiagramSceneNode *diagramSceneNode, QToolButton *buttonToConfigureAndUseInLayout)
 {    
     //QToolButton *buttonToConfigureAndUseInLayout = new QToolButton();
-    buttonToConfigureAndUseInLayout->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
+    buttonToConfigureAndUseInLayout->setIcon(diagramSceneNode->image());
     buttonToConfigureAndUseInLayout->setIconSize(QSize(50,50));
     buttonToConfigureAndUseInLayout->setCheckable(true);
 

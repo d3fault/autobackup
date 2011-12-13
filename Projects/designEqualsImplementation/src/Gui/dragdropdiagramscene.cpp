@@ -31,6 +31,7 @@ void DragDropDiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         //TODOreq: the handler for this emit (even if the emit is moved elsewhere for the back-end parcelable list of nodes functionality) is what the mainmenu should listen to in order to set the buttonGroup buttons back to an unchecked state and to set the mode back to clickdragdefault. or hell, i could just set the mode back and mainwindow listens to modeChanged... but meh, i'm having trouble getting modeChanged to even be heard...
         ModeSingleton::Instance()->setMode(ModeSingleton::ClickDragDefaultMode);
     }
+    QGraphicsScene::mousePressEvent(event);
 }
 void DragDropDiagramScene::handleModeChanged(ModeSingleton::Mode newMode)
 {

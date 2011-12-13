@@ -28,9 +28,6 @@
 #include "../StateMachine/modesingleton.h"
 #include "../projectcontroller.h"
 
-#include <QStyle>
-//^TODOreq: use icon.image() instead of these placeholder stock icons
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

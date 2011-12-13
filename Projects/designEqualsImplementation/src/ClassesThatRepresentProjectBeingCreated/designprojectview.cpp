@@ -27,9 +27,9 @@ void DesignProjectView::addPendingNodeAt(QPointF pointNodeIsAtInScene)
 {
     DiagramSceneNode *nodeToAdd = ProjectController::Instance()->getPendingNode();
 
-    DiagramSceneNode *nodeToAddNewInstance = (DiagramSceneNode*)qMalloc(sizeof(DiagramSceneNode));
-    qMemCopy(nodeToAddNewInstance,nodeToAdd,sizeof(DiagramSceneNode)); //lol hacky as fuck idk if this'll work
-    //DiagramSceneNode *nodeToAddNewInstance = nodeToAdd->copyNode();
+    //DiagramSceneNode *nodeToAddNewInstance = (DiagramSceneNode*)qMalloc(sizeof(DiagramSceneNode));
+    //qMemCopy(nodeToAddNewInstance,nodeToAdd,sizeof(DiagramSceneNode)); //lol hacky as fuck idk if this'll work
+    DiagramSceneNode *nodeToAddNewInstance = DesignProjectTemplates::newNodeByType(nodeToAdd->getNodeType(), nodeToAdd->getUniqueTemplateId());
 
     m_ListOfNodes->insert(nodeToAddNewInstance,pointNodeIsAtInScene);
     nodeToAddNewInstance->setPos(pointNodeIsAtInScene);

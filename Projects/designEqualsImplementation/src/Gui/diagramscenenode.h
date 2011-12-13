@@ -18,12 +18,11 @@ public:
     int getUniqueTemplateId();
     DesignProjectTemplates::DesignProjectViewType getViewType();
     virtual QString getNodeTypeAsString()=0;
+    virtual DesignProjectTemplates::DesignProjectViewNodeType getNodeType()=0;
     QPixmap image() const;
     virtual void drawMyPolygon()=0;
     QPolygonF polygon() const
         { return m_MyPolygon; }
-    //DiagramSceneNode *copyNode();
-    //virtual DiagramSceneNode *cloneSelf();
 protected:
     QPolygonF m_MyPolygon;
     int m_UniqueTemplateId;

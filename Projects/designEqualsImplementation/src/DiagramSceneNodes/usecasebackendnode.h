@@ -8,8 +8,8 @@ class UseCaseBackEndNode : public DiagramSceneNode
 public:
     UseCaseBackEndNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
     virtual QString getNodeTypeAsString();
+    virtual DesignProjectTemplates::DesignProjectViewNodeType getNodeType();
     virtual void drawMyPolygon();
-    //virtual DiagramSceneNode *cloneSelf();
 };
 
 #endif // USECASEBACKENDNODE_H

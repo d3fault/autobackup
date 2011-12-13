@@ -39,17 +39,17 @@ void DesignProjectTemplates::populateDesignProjectViewsAndTheirNodes()
     //the order in which these are added to the qmap defines the order they show up in the gui
 
     //class diagram
-    m_AllDesignProjectNodesByUniqueId->insert(i, new ClassDiagramFrontEndNode(i, ClassDiagramViewType));
+    m_AllDesignProjectNodesByUniqueId->insert(i, newNodeByType(ClassDiagramFrontEndNodeType, i));
     ++i;
-    m_AllDesignProjectNodesByUniqueId->insert(i, new ClassDiagramBackEndNode(i, ClassDiagramViewType));
+    m_AllDesignProjectNodesByUniqueId->insert(i, newNodeByType(ClassDiagramBackEndNodeType, i));
     ++i;
 
     //use case
-    m_AllDesignProjectNodesByUniqueId->insert(i, new UseCaseFrontEndNode(i, UseCaseViewType));
+    m_AllDesignProjectNodesByUniqueId->insert(i, newNodeByType(UseCaseFrontEndNodeType, i));
     ++i;
-    m_AllDesignProjectNodesByUniqueId->insert(i, new UseCaseBackEndNode(i, UseCaseViewType));
+    m_AllDesignProjectNodesByUniqueId->insert(i, newNodeByType(UseCaseBackEndNodeType,i));
     ++i;
-    m_AllDesignProjectNodesByUniqueId->insert(i, new UseCaseActorNode(i, UseCaseViewType));
+    m_AllDesignProjectNodesByUniqueId->insert(i, newNodeByType(UseCaseActorNodeType, i));
     ++i;
 
     //TODOopt: the below could be generated from the above map on the fly when requested, but we'll leave it out of laziness
@@ -85,6 +85,28 @@ DiagramSceneNode * DesignProjectTemplates::getNodeByUniqueId(int uniqueId)
     if(m_AllDesignProjectNodesByUniqueId->contains(uniqueId))
     {
         return m_AllDesignProjectNodesByUniqueId->value(uniqueId);
+    }
+    return NULL;
+}
+DiagramSceneNode * DesignProjectTemplates::newNodeByType(DesignProjectTemplates::DesignProjectViewNodeType nodeType, int uniqueTemplateId)
+{
+    switch(nodeType)
+    {
+    case ClassDiagramFrontEndNodeType:
+        return new ClassDiagramFrontEndNode(uniqueTemplateId, ClassDiagramViewType);
+        break;
+    case ClassDiagramBackEndNodeType:
+        return new ClassDiagramBackEndNode(uniqueTemplateId, ClassDiagramViewType);
+        break;
+    case UseCaseFrontEndNodeType:
+        return new UseCaseFrontEndNode(uniqueTemplateId, UseCaseViewType);
+        break;
+    case UseCaseBackEndNodeType:
+        return new UseCaseBackEndNode(uniqueTemplateId, UseCaseViewType);
+        break;
+    case UseCaseActorNodeType:
+        return new UseCaseActorNode(uniqueTemplateId, UseCaseViewType);
+        break;
     }
     return NULL;
 }

@@ -8,8 +8,8 @@ class ClassDiagramBackEndNode : public DiagramSceneNode
 public:
     ClassDiagramBackEndNode(int uniqueId, DesignProjectTemplates::DesignProjectViewType viewType);
     virtual QString getNodeTypeAsString();
+    virtual DesignProjectTemplates::DesignProjectViewNodeType getNodeType();
     virtual void drawMyPolygon();
-    //virtual DiagramSceneNode *cloneSelf();
 };
 
 #endif // CLASSDIAGRAMBACKENDNODE_H

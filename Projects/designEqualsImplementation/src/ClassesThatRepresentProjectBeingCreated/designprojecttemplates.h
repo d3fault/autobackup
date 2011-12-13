@@ -15,18 +15,19 @@ class DesignProjectTemplates : public QObject
 {
     Q_OBJECT
 public:
+    enum DesignProjectViewNodeType { ClassDiagramFrontEndNodeType, ClassDiagramBackEndNodeType, UseCaseFrontEndNodeType, UseCaseBackEndNodeType, UseCaseActorNodeType };
     enum DesignProjectViewType { UseCaseViewType, ClassDiagramViewType };
     static DesignProjectTemplates* Instance();
     static QString getDesignProjectViewTypeAsString(DesignProjectViewType viewType);
     void populateDesignProjectViewsAndTheirNodes();
     QMultiMap<DesignProjectViewType, DiagramSceneNode*> *getAllDesignProjectNodesByProjectViewType();
     DiagramSceneNode *getNodeByUniqueId(int uniqueId);
+    static DiagramSceneNode *newNodeByType(DesignProjectViewNodeType nodeType, int uniqueTemplateId);
 private:
     DesignProjectTemplates(); //private so that it cannot be called
     //DesignProjectTemplates(DesignProjectTemplates const&){} //copy constructor is already private since we inherit QObject
     //DesignProjectTemplates& operator=(DesignProjectTemplates const&){} //assignment operator is private
     static DesignProjectTemplates *m_pInstance;
-
 
     //QList<DesignProjectView*> *m_AllDesignProjectViews; //"ever" (can be added pre-compile). needs to be static/const/enum/something i can't figure out and don't care to
     //QList<DesignProjectViewType*> *m_AllDesignProjectViewsByProjectViewType;
