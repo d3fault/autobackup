@@ -8,3 +8,7 @@ changing template tabs unchecks alltab moving from's buttons	[]
 drawing arrows from/to nodes visually highlights node(s)	[]
 right-click added node->edit members (might scratch this)	[]
 connect design=implementation gui with code generator		[]
+
+alpha 1								[]
+
+release 1							[]
