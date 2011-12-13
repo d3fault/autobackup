@@ -50,7 +50,7 @@ private:
     void createProjectTabWidget();
     QWidget *createTemplateNodeButtonWidget(DiagramSceneNode *diagramSceneNode, QToolButton *buttonToConfigureAndUseInLayout);
 
-    void setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked);
+    QButtonGroup *setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked);
 
     //actions
     QAction *m_NewProjectAction;

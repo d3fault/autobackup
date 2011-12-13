@@ -154,13 +154,21 @@ void MainWindow::handleProjectTabChanged(int index)
 void MainWindow::handleButtonGroupButtonClicked(int buttonIdofButtonJustClicked)
 {
     //set exclusivity
-    this->setAllToolboxButtonsToNotCheckedExcept(buttonIdofButtonJustClicked);
+    QButtonGroup *thisButtonsButtonGroup = setAllToolboxButtonsToNotCheckedExcept(buttonIdofButtonJustClicked);
 
-    ModeSingleton::Instance()->setMode(ModeSingleton::AddNodeMode);
+    //handle the case where we UNCHECK a button
+    if(!thisButtonsButtonGroup->button(buttonIdofButtonJustClicked)->isChecked())
+    {
+        ModeSingleton::Instance()->setMode(ModeSingleton::ClickDragDefaultMode);
+    }
+    else //handle the case where we CHECK a button
+    {
+        ModeSingleton::Instance()->setMode(ModeSingleton::AddNodeMode);
 
-    //there might be a better design, but i'm getting annoyed with all this mode shit so i'm going to hack it together
-    DiagramSceneNode *nodeClicked = DesignProjectTemplates::Instance()->getNodeByUniqueId(buttonIdofButtonJustClicked);
-    ProjectController::Instance()->setPendingNode(nodeClicked);
+        //there might be a better design, but i'm getting annoyed with all this mode shit so i'm going to hack it together
+        DiagramSceneNode *nodeClicked = DesignProjectTemplates::Instance()->getNodeByUniqueId(buttonIdofButtonJustClicked);
+        ProjectController::Instance()->setPendingNode(nodeClicked);
+    }
 }
 void MainWindow::handleTemplatesPopulated()
 {
@@ -222,7 +230,7 @@ QWidget * MainWindow::createTemplateNodeButtonWidget(DiagramSceneNode *diagramSc
 {    
     //QToolButton *buttonToConfigureAndUseInLayout = new QToolButton();
     buttonToConfigureAndUseInLayout->setIcon(diagramSceneNode->image());
-    buttonToConfigureAndUseInLayout->setIconSize(QSize(50,50));
+    buttonToConfigureAndUseInLayout->setIconSize(QSize(75,75));
     buttonToConfigureAndUseInLayout->setCheckable(true);
 
 
@@ -235,7 +243,7 @@ QWidget * MainWindow::createTemplateNodeButtonWidget(DiagramSceneNode *diagramSc
 
     return widget;
 }
-void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked)
+QButtonGroup *MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked)
 {
     //TODOopt: this should probably be m_CurrentTemplateTab = (cast shit) in handleTemplateTabWidgeTabChanged just like for projects, not here..
     TemplateViewTab *currentTemplateViewTab = qobject_cast<TemplateViewTab*>(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->currentWidget());
@@ -243,7 +251,7 @@ void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJust
     {
         emit e("Template Tab Cast Failed");
         m_Failed = true;
-        return;
+        return NULL; //TODOreq: check for null assignment
     }
 
     QButtonGroup *currentTabButtonGroup = currentTemplateViewTab->getButtonGroup();
@@ -260,6 +268,7 @@ void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJust
             button->setChecked(false);
         }
     }
+    return currentTabButtonGroup;
 }
 void MainWindow::handleModeChanged(ModeSingleton::Mode newMode)
 {
