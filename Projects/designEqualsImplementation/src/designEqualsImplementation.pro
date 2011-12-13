@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     WidgetsThatRepresentIndividualTabItems/projecttab.cpp \
     WidgetsThatRepresentIndividualTabItems/projectviewtab.cpp \
     WidgetsThatRepresentIndividualTabItems/templateviewtab.cpp \
-    StateMachine/modesingleton.cpp
+    StateMachine/modesingleton.cpp \
+    projectcontroller.cpp
     
     
 
@@ -43,7 +44,10 @@ HEADERS  += Gui/mainwindow.h \
     WidgetsThatRepresentIndividualTabItems/projecttab.h \
     WidgetsThatRepresentIndividualTabItems/projectviewtab.h \
     WidgetsThatRepresentIndividualTabItems/templateviewtab.h \
-    StateMachine/modesingleton.h
+    StateMachine/modesingleton.h \
+    projectcontroller.h
+
+
 
 
 

@@ -13,13 +13,10 @@ public:
     //modes
     enum Mode { ClickDragDefaultMode, AddNodeMode }; //i loved writing addnodemode
     Mode m_Mode;
-    void setPendingNodeToAdd(DiagramSceneNode *pendingNode);
-    DiagramSceneNode *getPendingNode();
     Mode getMode();
 private:
     ModeSingleton();
     static ModeSingleton *m_pInstance;
-    DiagramSceneNode *m_PendingNode;
 signals:
     //the fix for the signal not being received was to put ModeSingleton:: in front of Mode below. qmake compares the signals/slots "literally" (string value i guess)
     void modeChanged(ModeSingleton::Mode newMode);

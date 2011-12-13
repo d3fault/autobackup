@@ -135,14 +135,18 @@ void MainWindow::createProjectTabWidget()
 }
 void MainWindow::handleProjectTabChanged(int index)
 {
-    m_CurrentProject = qobject_cast<ProjectTab*>(m_ProjectTabWidgetContainer->widget(index))->getProject();
-    if(!m_CurrentProject)
+    DesignProject *projectOnNewTab = qobject_cast<ProjectTab*>(m_ProjectTabWidgetContainer->widget(index))->getProject();
+    if(!projectOnNewTab)
     {
         emit e("Project Tab Cast Failed");
         m_Failed = true;
         return;
     }
     m_Failed = false;
+    ProjectController::Instance()->setCurrentProject(projectOnNewTab);
+    ProjectController::Instance()->getCurrentProject()->setCurrentProjectView(projectOnNewTab->getCurrentProjectView());
+
+    //TODOreq: i think we might need to also set the currentProjectView for the currentProject, since we now have no idea what tab we're on now that the project tab has changed. projecttab.cpp is where the code handling projectView tab changes is located
 
     //after this, nothing really... maybe redraw the qgraphicsscene based on the contents of the [new] current project...
     //...but mainly this is only necessary for later drag and drops / oonnections made
@@ -156,7 +160,7 @@ void MainWindow::handleButtonGroupButtonClicked(int buttonIdofButtonJustClicked)
 
     //there might be a better design, but i'm getting annoyed with all this mode shit so i'm going to hack it together
     DiagramSceneNode *nodeClicked = DesignProjectTemplates::Instance()->getNodeByUniqueId(buttonIdofButtonJustClicked);
-    ModeSingleton::Instance()->setPendingNodeToAdd(nodeClicked);
+    ProjectController::Instance()->setPendingNode(nodeClicked);
 }
 void MainWindow::handleTemplatesPopulated()
 {
@@ -247,7 +251,11 @@ void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJust
     QList<QAbstractButton *> buttons = currentTabButtonGroup->buttons();
     foreach(QAbstractButton *button, buttons)
     {
-        if(currentTabButtonGroup->button(buttonIdofButtonJustClicked) != button)
+        if(buttonIdofButtonJustClicked < 0) //special case, set all to false
+        {
+            button->setChecked(false);
+        }
+        else if(currentTabButtonGroup->button(buttonIdofButtonJustClicked) != button)
         {
             button->setChecked(false);
         }
@@ -255,7 +263,15 @@ void MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJust
 }
 void MainWindow::handleModeChanged(ModeSingleton::Mode newMode)
 {
-    Q_UNUSED(newMode);
+    switch(newMode)
+    {
+    case ModeSingleton::ClickDragDefaultMode:
+        this->setAllToolboxButtonsToNotCheckedExcept(-1);
+        break;
+    default:
+        break;
+    }
+
     //we set scene's mode
     //it emits modeChanged signal
     //we receive it here

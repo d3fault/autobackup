@@ -16,3 +16,10 @@ void ClassDiagramFrontEndNode::drawMyPolygon()
                           << QPointF(100, 0) << QPointF(0, -100)
                           << QPointF(-100, 0);
 }
+#if 0
+DiagramSceneNode *ClassDiagramFrontEndNode::cloneSelf()
+{
+    DiagramSceneNode *clone = new ClassDiagramFrontEndNode(m_UniqueId, m_ViewType);
+    return clone;
+}
+#endif

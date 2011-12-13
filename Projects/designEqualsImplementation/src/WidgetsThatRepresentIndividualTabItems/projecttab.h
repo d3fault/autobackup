@@ -18,7 +18,6 @@ private:
     QVBoxLayout *m_Layout;
     QTabWidget *m_ProjectViewsTabContainer;
     DesignProject *m_Project;
-    DesignProjectView *m_CurrentProjectView;
     bool m_Failed;
 signals:
     void e(const QString &);

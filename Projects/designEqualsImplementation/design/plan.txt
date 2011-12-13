@@ -1,11 +1,12 @@
 task								done
 
 working buttonGroups						[x]
-adding node changes back to clickdrag mode              	[]
+adding node changes back to clickdrag mode              	[x]
 scene node is copy of (not same instance) template node 	[]
 designProject contains parcelable child nodes           	[]
 changing template tabs unchecks alltab moving from's buttons	[]
 drawing arrows from/to nodes visually highlights node(s)	[]
+unable to add class diagram nodes to use cases, vica versa	[]
 right-click added node->edit members (might scratch this)	[]
 connect design=implementation gui with code generator		[]
 

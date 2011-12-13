@@ -22,3 +22,9 @@ QPixmap DiagramSceneNode::image() const
     painter.drawPolyline(m_MyPolygon);
     return pixmap;
 }
+#if 0
+DiagramSceneNode * DiagramSceneNode::copyNode()
+{
+    return cloneSelf();
+}
+#endif

@@ -26,6 +26,7 @@
 #include "WidgetsThatRepresentIndividualTabItems/templateviewtab.h"
 #include "dragdropdiagramscene.h"
 #include "../StateMachine/modesingleton.h"
+#include "../projectcontroller.h"
 
 #include <QStyle>
 //^TODOreq: use icon.image() instead of these placeholder stock icons
@@ -43,7 +44,6 @@ private:
     QTabWidget *m_ProjectTabWidgetContainer; //the tab widget containing the project tabs
     QTabWidget *m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget; //the tab widget containing the node elements over on the left
     //members
-    DesignProject *m_CurrentProject;
     bool m_Failed;
     //methods
     void createActions();

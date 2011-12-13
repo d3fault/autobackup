@@ -21,14 +21,6 @@ void ModeSingleton::setMode(ModeSingleton::Mode newMode)
     m_Mode = newMode;
     emit modeChanged(newMode);
 }
-void ModeSingleton::setPendingNodeToAdd(DiagramSceneNode *pendingNode)
-{
-    m_PendingNode = pendingNode;
-}
-DiagramSceneNode * ModeSingleton::getPendingNode()
-{
-    return m_PendingNode;
-}
 ModeSingleton::Mode ModeSingleton::getMode()
 {
     return m_Mode;

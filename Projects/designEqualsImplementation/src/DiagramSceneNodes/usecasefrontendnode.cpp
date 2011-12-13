@@ -16,3 +16,10 @@ void UseCaseFrontEndNode::drawMyPolygon()
                           << QPointF(100, 0) << QPointF(0, -100)
                           << QPointF(-100, 0);
 }
+#if 0
+DiagramSceneNode *UseCaseFrontEndNode::cloneSelf()
+{
+    DiagramSceneNode *clone = new UseCaseFrontEndNode(m_UniqueId, m_ViewType);
+    return clone;
+}
+#endif

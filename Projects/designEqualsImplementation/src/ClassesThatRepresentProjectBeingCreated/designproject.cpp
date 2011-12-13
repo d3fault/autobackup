@@ -16,3 +16,12 @@ void DesignProject::createEmptyProject()
     DesignProjectView *emptyClassDiagram = new DesignProjectView();
     this->addProjectView(emptyClassDiagram);
 }
+DesignProjectView * DesignProject::getCurrentProjectView()
+{
+    return m_CurrentProjectView;
+}
+void DesignProject::setCurrentProjectView(DesignProjectView *newCurrentProjectView)
+{
+    m_CurrentProjectView = newCurrentProjectView;
+    emit currentProjectViewChanged(newCurrentProjectView);
+}
