@@ -1,0 +1,1 @@
+class diagram nodes only indicate connections (once) and use cases (kinda resemble public methods i guess?). the user segment code is WITHIN those use cases (you can click on them and the view changes to that use case view), not on the class diagram itself

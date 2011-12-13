@@ -1,0 +1,2 @@
+clicking anywhere on the node's lifeline (use case mode obviously) brings up a dialog: create user code segment here? yes, no, always yes, always no. there is also right-click->create user segment (no dialog confirmation)
+it's only if they DO NOT click->drag (move/rearrange)

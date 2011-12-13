@@ -1,0 +1,5 @@
+even though i'm putting the dht on hold, i still want my privately hosted (though host-proof-hosted!) system to rely on a filesystem/database that mimics what the dht will be
+this will future proof code as well as the data, allowing both to be transferred to the dht when it is stable
+
+basically, no deletions allowed. there should be a separate entity.. maybe even a separate company(?).. for handling raw file storage
+any file that hits that is already encrypted, and no [unencrypted] keys ever touch that server. (encrypted keys inside wallets of course do)

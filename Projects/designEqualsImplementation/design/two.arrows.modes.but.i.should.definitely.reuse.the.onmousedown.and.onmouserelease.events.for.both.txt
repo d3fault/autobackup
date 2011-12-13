@@ -1,0 +1,3 @@
+arrows
+class diagram mode: signify that two classes are connected. this is the connect() call in the constructor area. it asks you for name etc
+use case mode: signify that we are emitting a signal (where the arrow points is the slot). drawing this arrow asks you if you want to use a pre-existing connection or make a new one (which is added to class diagram for you)
