@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), m_Failed(true) /* true until m_CurrentProject is succesfully extracted/casted -- this is proving to be worthless */
+    : QMainWindow(parent), m_Failed(true) /* true until m_CurrentProject is succesfully extracted/casted -- this is proving to be worthless */, m_PreviousTemplateTabIndex(-1)
 {
     createActions();
     createMenus();
@@ -75,6 +75,7 @@ void MainWindow::createLeftPane()
     m_LeftPane = new QWidget();
     QVBoxLayout *leftPaneLayout = new QVBoxLayout();
     m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget = new QTabWidget();
+    connect(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleTemplateTabChanged(int)));
     createNodeButtonGroups();
     leftPaneLayout->addWidget(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget);
 
@@ -243,10 +244,18 @@ QWidget * MainWindow::createTemplateNodeButtonWidget(DiagramSceneNode *diagramSc
 
     return widget;
 }
-QButtonGroup *MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked)
+QButtonGroup *MainWindow::setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked, int tabIndex)
 {
     //TODOopt: this should probably be m_CurrentTemplateTab = (cast shit) in handleTemplateTabWidgeTabChanged just like for projects, not here..
-    TemplateViewTab *currentTemplateViewTab = qobject_cast<TemplateViewTab*>(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->currentWidget());
+    TemplateViewTab *currentTemplateViewTab;
+    if(tabIndex < 0)
+    {
+        currentTemplateViewTab = qobject_cast<TemplateViewTab*>(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->currentWidget());
+    }
+    else
+    {
+        currentTemplateViewTab = qobject_cast<TemplateViewTab*>(m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget->widget(tabIndex));
+    }
     if(!currentTemplateViewTab)
     {
         emit e("Template Tab Cast Failed");
@@ -275,7 +284,7 @@ void MainWindow::handleModeChanged(ModeSingleton::Mode newMode)
     switch(newMode)
     {
     case ModeSingleton::ClickDragDefaultMode:
-        this->setAllToolboxButtonsToNotCheckedExcept(-1);
+        setAllToolboxButtonsToNotCheckedExcept(-1);
         break;
     default:
         break;
@@ -299,4 +308,22 @@ void MainWindow::handleModeChanged(ModeSingleton::Mode newMode)
     //"project linking", "referencing", whatever you wanna call it... which, tbh... would have been a bitch to implement with "modes" anyways... single gui, multiple scenes? =o
     //i've accomplished nothing today but i've also given myself something to think about. still, wish i could just blow past this stupidity. i want my fucking alpha. i want to USE it. i want to design this in it. i want to output myself from myself. BOOTSTRAP MOTHERFUCKER. omg i love being alive, i love this world, this existence. i can see so far in the future but i am stuck here dealing with shitty modes
     //*eats shotgun*
+}
+void MainWindow::handleTemplateTabChanged(int index)
+{
+    //uncheck any checked buttons on the tab we are switching from
+    if(m_PreviousTemplateTabIndex < 0) //first time
+    {
+        m_PreviousTemplateTabIndex = index;
+    }
+    else
+    {
+        uncheckAllButtonsOnTemplateTab(m_PreviousTemplateTabIndex);
+        m_PreviousTemplateTabIndex = index;
+    }
+}
+void MainWindow::uncheckAllButtonsOnTemplateTab(int index)
+{
+    setAllToolboxButtonsToNotCheckedExcept(-1, index);
+    ModeSingleton::Instance()->setMode(ModeSingleton::ClickDragDefaultMode); //TODOopt: this is somewhat wasteful, because setting the mode unchecks all the buttons for the new tab too (which are all already unchecked, as per 1 line ABOVE). tiny waste, who cares.
 }

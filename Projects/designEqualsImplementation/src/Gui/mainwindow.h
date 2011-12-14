@@ -42,6 +42,7 @@ private:
     QTabWidget *m_UseCaseAndClassDiagramViewsNodesTemplateSelectorButtonGroupTabWidget; //the tab widget containing the node elements over on the left
     //members
     bool m_Failed;
+    int m_PreviousTemplateTabIndex;
     //methods
     void createActions();
     void createMenus();
@@ -50,7 +51,8 @@ private:
     void createProjectTabWidget();
     QWidget *createTemplateNodeButtonWidget(DiagramSceneNode *diagramSceneNode, QToolButton *buttonToConfigureAndUseInLayout);
 
-    QButtonGroup *setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked);
+    QButtonGroup *setAllToolboxButtonsToNotCheckedExcept(int buttonIdofButtonJustClicked, int tabIndex = -1);
+    void uncheckAllButtonsOnTemplateTab(int index);
 
     //actions
     QAction *m_NewProjectAction;
@@ -58,6 +60,7 @@ private:
     QAction *m_NewUseCaseAction;
 private slots:
     void handleProjectTabChanged(int);
+    void handleTemplateTabChanged(int);
     void handleButtonGroupButtonClicked(int);
     void handleTemplatesPopulated();
     void handleModeChanged(ModeSingleton::Mode newMode);

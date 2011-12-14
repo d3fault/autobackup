@@ -3,7 +3,7 @@ task									done
 working buttonGroups							[x]
 adding node changes back to clickdrag mode              		[x]
 scene node is copy of (not same instance) template node 		[x]
-checking template button, changing tab should uncheck pressed button	[]
+checking template button, changing tab should uncheck pressed button	[x]
 designProject contains parcelable child nodes           		[]
 unchecking a button puts us back into ClickDrag mode			[x]
 changing project tabs also changes the corresponding current view	[x]
