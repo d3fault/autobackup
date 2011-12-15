@@ -1,0 +1,4 @@
+connection calls
+the recepient node, the node the arrow is pointing to, the node with the slot
+
+either i could throw the user into 'user segment code' for handleSignal, or i could just put all the generated code (user segments included) that show up below the arrow on the design (the recipient still) INSIDE the handleSignal slot. i like this latter way better as of right now
