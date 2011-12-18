@@ -1,0 +1,37 @@
+connections
+receiver
+
+"method call"
+vs
+"event handler"
+
+eh...
+
+
+
+i need to be able to define a method on a node
+call it via a connection
+but i also need to be able to define the CONTENTS of said method...
+
+
+and how would i do
+
+if(boolean)
+  connectionCall();
+
+aside from defining a method whose sole purpose is to make a connection call
+but then i'm still putting the contents of the method in the method via design
+
+the method is designed
+it's contents are designed
+
+no 'user segment code'
+but HOW?
+
+
+another important thing
+say a user makes a connection call from a user segment
+i don't think it'd be very easy to get the arrow to show up in the design... and where would i put it? coming FROM the user segment? what if there are multiple? it is possible but complicates things
+
+i'm losing confidence in myself and this project
+maybe it's just too damn big for a first project...

@@ -1,0 +1,13 @@
+libAvGraphicsItem2
+video + audio
+
+
+CurlDownloader : MuxedDataProvider
+MuxedDataProvider has a signal "onDataGathered"
+
+//overview of connections
+CurlDownloader.onDataGathered -> QtLibAVDecoder.handleNewDataAvailable
+QtLibAVDecoder.onAudioFrameDecoded -> Synchronizer.handleNewAudioFrame
+QtLibAVDecoder.onVideoFrameDecoded -> Synchronizer.handleNewVideoFrame
+Synchronizer.onPresentAudio -> AudioPlayer.addAudioToQueue
+Synchronizer.onPresentVideo -> GraphicsItem.presentFrame
