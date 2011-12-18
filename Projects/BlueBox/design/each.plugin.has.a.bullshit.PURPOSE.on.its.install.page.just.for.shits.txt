@@ -1,0 +1,12 @@
+each plugin should also have a Purpose on the same page where you download/install
+
+Purposes
+iceparser: If you're too lazy to browse icefilms, this plugin will search for a given tv show/movie for you
+megaparser: If you're too lazy to wait the 60 seconds and click the button (often bringing a popup), this plugin shows you the parsed url after the countdown runs out
+etc
+
+kinda like a legal thing that my defense lawyer points to: "this is the purpose of each plugin. clearly NOT copyright infringement conspiracy"
+
+god i love being so fucking smart.
+'god'
+i i love being so fucking smart.

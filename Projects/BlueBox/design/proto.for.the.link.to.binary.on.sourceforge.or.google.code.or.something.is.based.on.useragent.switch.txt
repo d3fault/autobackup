@@ -1,0 +1,12 @@
+each individual plugin page can/should do basic user agent switching
+if(pluginLoaderUserAgent)
+{
+  proto = 'plugin'
+}
+else
+{
+  proto = 'http'
+}
+
+when using the plugin proto, it is still fetched via http. it is only done so by our application and then processed specially afterwards
+the binary is hosted on google code or sourceforge or someshit. i only host the ads, the summary, the url, the the php useragent switch

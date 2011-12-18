@@ -1,0 +1,4 @@
+webkit is used during the plugin install/update process
+but curl is a plugin that we download. it's necessary to interoperate with both the parsers. indirectly, it's output (from megaupload parser) is sent to video player
+megaupload parser only parses the actual URL + the time delay, so the curl plugin needs to be used standalone with feeding the video player
+i could put the curl video downloader inside of the video player, but maybe i shouldn't. maybe just 'file downloader' is best. idfk. doesn't matter really...
