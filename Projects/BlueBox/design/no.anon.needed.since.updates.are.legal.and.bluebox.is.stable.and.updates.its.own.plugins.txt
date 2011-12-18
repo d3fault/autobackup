@@ -1,0 +1,6 @@
+i can also provide updates without having to worry about going anonymous etc
+i am updating only the legal code
+bluebox autodetects the update and pulls it in
+once bluebox is published/stable, it keeps itself up to date (well, the plugins at least. i doubt i'll need to update bluebox very often)
+
+i should still use keys to verify authenticity etc...

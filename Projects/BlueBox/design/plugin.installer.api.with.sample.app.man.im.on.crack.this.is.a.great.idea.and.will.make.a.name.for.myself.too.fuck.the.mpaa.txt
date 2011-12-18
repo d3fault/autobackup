@@ -1,0 +1,17 @@
+bluebox chains specific services, but it uses an api to do so. the install protocol uses this api
+i need to publish a sample/spec app that also uses said protocol
+that sample app will be worthless by itself.
+you install icefilms parser, it gives you the megaupload link
+you install megaupload parser, it gives you the extracted download link + wait time
+you install video decoder/player, it asks you for a file input. maybe there's another plugin called "fileLoader" that just loads a file into memory... so we're at the same spot as where bluebox would be
+
+very obviously stupid, but a) serves as an example of the published api and b) provides a reason for the api to exist... or should i say, a reason for the plugins to support/use/be-released-under said protocol
+
+plugins.d3fault.net is parsed by the "example" app and the user is shown a list of plugins
+maybe each plugin should be on a subdomain of plugins
+iceparser.plugins.d3fault.net
+megaparser.plugins.d3fault.net
+fileloader.plugins.d3fault.net
+videoplayer.plugins.d3fault.net
+
+file loader is a worthless piece of shit, installing it by itself gives you a pointer to the first few bytes, as well as exposing a 'getMore' method or some bullshit. getMore reads more bytes from hdd and loads it into memory...

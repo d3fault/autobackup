@@ -1,0 +1,56 @@
+bluebox
+qt 5 services
+every piece of functionality split up
+
+icefilms parser
+megaupload parser
+video decoder
+video player
+(ok maybe video decoder and player are just one, for simplicity's sake)
+
+BlueBox is just a script basically
+
+each module/SERVICE (qt 5 specific) is on it's own d3fault subdomain
+
+bluebox is anon/tor/etc
+
+anyways, the webpages on teh subdomains are special
+during the installation process of bluebox, webview's are used to display the subdomains on the 'install' page
+the install page has a special protocol that only bluebox understands (well, others definitely can too. the api should be public)
+
+basically, bluebox is the only 'illegal' script and i get ad hits basically like 4 fucking times (one per module) during the bluebox install
+also for every time i need to update icefilms/megaupload scripts
+
+during bluebox install, each plugin subdomain is a "click next to install [module]" thing
+i should try to make it NOT look like a website, but a fluid application.
+the pages of course have google ads on them.
+
+there is of course a "download source" and "download dll" (without using the special "protocol") on the page for whenever someone goes to the page in a regular browser
+those 2 links should be smaller compared to the proto "click next to install"
+
+maybe in bluebox, it walks you through the steps during install
+'ok, now we're installing the megaupload parser. please click Install Megaupload Parser below'
+[webview]
+<a href='myproto://pluginInstallurl'>Install Megaupload Parser</a>
+[/webview]
+
+
+
+my whole '60 seconds video ad' service was flawed because i'd have to launder the money
+this one is badass like in your fucking face mpaa/riaa (well, not r) go fucking kill yourselves
+
+icefilms parser not illegal
+megaupload parser not illegal
+video decoder/player not illegal
+
+"connecting the dots between the 3" = illegal
+that's why bluebox is hosted anon/tor
+anon = bitcoin paid for/proxy-registered/fake-name-etc http site
+tor = same shit. they reference each other of course
+
+bluebox is simply a plugin download + keeper up to dater
+
+LGPL for everything, including bluebox. fuck the police.
+
+
+i just wonder how stable qt 5 is...
