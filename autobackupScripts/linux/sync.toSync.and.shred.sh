@@ -7,10 +7,10 @@ newDir=syncAt`echo $epochTime`
 new750x1=/mnt/750x1/onlineSyncs/`echo $newDir`/
 new750x2=/mnt/750x2/onlineSyncs/`echo $newDir`/
 
-mkdir `echo $new750x1`
-mkdir `echo $new750x2`
+sudo mkdir `echo $new750x1`
+sudo mkdir `echo $new750x2`
 
-cp -av ./* "$new750x1"
-cp -av ./* "$new750x2"
+sudo cp -av ./* "$new750x1"
+sudo cp -av ./* "$new750x2"
 
-shred -fuv --iterations=1 ./*
+sudo shred -fuv --iterations=1 ./*
