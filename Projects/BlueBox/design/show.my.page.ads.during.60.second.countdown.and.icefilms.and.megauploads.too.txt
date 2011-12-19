@@ -1,0 +1,39 @@
+incentive to put up links
+
+icefilms gesture
+megaupload gesture
+
+incentive to vote/rate accurately
+
+
+incentive to put up links: they get to put up a page displayed during the 60 seconds for an ad hit
+icefilms gesture: always show frame below with icefilms front page (ads take care of themselves)
+megaupload gesture: parse out the popup url, put it in a frame too. maybe ice and mega are side by side (but below)
+
+incentive to vote/rate accurately: if accuracy > 98% && voteCount > someNum (50 or so?), hmmm... what? let them show ads too? rofl this is hilarious. can't figure out WHERE i'd let them show an ad. this is not fully thought out, the the others are.
+
+
+so a grid: top-left = my page, 1 ad hit per view, top-right = poster's ad (OR MINE TAKES COLSPAN=2 if we use an icefilms link)
+
+err
+no
+
+it's icefilms or poster's page
+not both
+because once we have posters, we won't need icefilms at all.
+if the page is parsed from icefilms, THEN we show the icefilms front page
+
+TOP = mine always. you can only even see MINE. fuck their ads. we want impressions, but don't really want to even show the page..
+bottom-left = link poster or icefilms
+bottom-right = megaupload (or i guess 2 shared) popup ad
+
+
+the megaplugin needs an excuse to parse out the ad
+i guess it could provide a "fullSource()" method that returns the source and bluebox parses it manually/hacky/whogivesafuck
+
+megaupload won't disable abilities because they want to continue to receive ad hits
+same with icefilms
+
+they fuck with me, their ads are no longer shown.
+
+maybe even another optional gesture: a link to sign up for megaupload premium. but fuck that, i might as well make a download service if i expect moneys from it. the whole goal is FREE.
