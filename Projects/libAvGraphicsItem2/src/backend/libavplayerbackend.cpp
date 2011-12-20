@@ -4,20 +4,17 @@
 #include "audiovideosynchronizer.h"
 
 LibAvPlayerBackend::LibAvPlayerBackend(QObject *parent) :
-    QObject(parent), m_Initialized(false)
+    QObject(parent)
 {
 }
-void LibAvPlayerBackend::start()
+void LibAvPlayerBackend::init()
 {
-    if(!m_Initialized)
-    {
-        initialize();
-    }
+    privConstructor();
 
-    QMetaObject::invokeMethod(m_Synchronizer, "start", Qt::QueuedConnection);
-    QMetaObject::invokeMethod(m_Decoder, "start", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_Synchronizer, "init", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_Decoder, "init", Qt::QueuedConnection);
 }
-void LibAvPlayerBackend::initialize()
+void LibAvPlayerBackend::privConstructor()
 {
     m_DecoderThread = new QThread();
     m_Decoder = new LibAvDecoder();
@@ -35,5 +32,10 @@ void LibAvPlayerBackend::initialize()
     connect(m_Synchronizer, SIGNAL(audioReadyToBePresented(const QByteArray &)), this, SIGNAL(audioReadyToBePresented(const QByteArray &)));
     connect(m_Synchronizer, SIGNAL(frameReadyToBePresented(const QVideoFrame &)), this, SIGNAL(frameReadyToBePresented(const QVideoFrame &)));
 
-    m_Initialized = true;
+    connect(this, SIGNAL(onPlay()), m_Decoder, SLOT(play()));
+    connect(this, SIGNAL(onPlay()), m_Synchronizer, SLOT(play()));
+}
+void LibAvPlayerBackend::play()
+{
+    emit onPlay();
 }

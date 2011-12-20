@@ -13,7 +13,8 @@ signals:
     void audioFrameDecoded(const QByteArray &);
     void videoFrameDecoded(const QVideoFrame &);
 public slots:
-    void start();
+    void init();
+    void play();
 };
 
 #endif // LIBAVDECODER_H

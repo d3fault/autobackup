@@ -14,17 +14,18 @@ class LibAvPlayerBackend : public QObject
 public:
     explicit LibAvPlayerBackend(QObject *parent = 0);
 private:
-    bool m_Initialized;
-    void initialize();
+    void privConstructor();
     QThread *m_DecoderThread;
     LibAvDecoder *m_Decoder;
     QThread *m_SynchronizerThread;
     AudioVideoSynchronizer *m_Synchronizer;
 signals:
+    void onPlay();
     void frameReadyToBePresented(const QVideoFrame &);
     void audioReadyToBePresented(const QByteArray &);
 public slots:
-    void start();
+    void init();
+    void play(); //TODO: stop, pause
 };
 
 #endif // LIBAVPLAYERBACKEND_H

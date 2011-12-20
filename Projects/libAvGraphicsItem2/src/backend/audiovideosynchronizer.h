@@ -13,7 +13,8 @@ signals:
     void audioReadyToBePresented(const QByteArray &);
     void frameReadyToBePresented(const QVideoFrame &);
 public slots:
-    void start();
+    void init();
+    void play();
     void queueAudioFrame(const QByteArray &);
     void queueVideoFrame(const QVideoFrame &);
 };

@@ -4,6 +4,9 @@ LibAvDecoder::LibAvDecoder(QObject *parent) :
     QObject(parent)
 {
 }
-void LibAvDecoder::start()
+void LibAvDecoder::init()
+{
+}
+void LibAvDecoder::play()
 {
 }

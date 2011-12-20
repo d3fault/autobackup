@@ -4,7 +4,10 @@ AudioVideoSynchronizer::AudioVideoSynchronizer(QObject *parent) :
     QObject(parent)
 {
 }
-void AudioVideoSynchronizer::start()
+void AudioVideoSynchronizer::init()
+{
+}
+void AudioVideoSynchronizer::play()
 {
 }
 void AudioVideoSynchronizer::queueAudioFrame(const QByteArray &)
