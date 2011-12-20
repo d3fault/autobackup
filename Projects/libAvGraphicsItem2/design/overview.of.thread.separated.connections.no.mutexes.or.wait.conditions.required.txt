@@ -2,12 +2,15 @@ libAvGraphicsItem2
 video + audio
 
 
-CurlDownloader : MuxedDataProvider
-MuxedDataProvider has a signal "onDataGathered"
+//CurlDownloader : MuxedDataProvider
+//MuxedDataProvider has a signal "onDataGathered"
 
 //overview of connections
-CurlDownloader.onDataGathered -> QtLibAVDecoder.handleNewDataAvailable
+//CurlDownloader.onDataGathered -> QtLibAVDecoder.handleNewDataAvailable
 QtLibAVDecoder.onAudioFrameDecoded -> Synchronizer.handleNewAudioFrame
 QtLibAVDecoder.onVideoFrameDecoded -> Synchronizer.handleNewVideoFrame
 Synchronizer.onPresentAudio -> AudioPlayer.addAudioToQueue
 Synchronizer.onPresentVideo -> GraphicsItem.presentFrame
+
+removing CurlDownloader from this version, i'll implement it in libAvGraphicsItem3
+for now, i just want to focus on getting audio + video sync'd. 1 thing at a time.

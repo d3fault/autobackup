@@ -1,5 +1,6 @@
 #include <QtGui/QApplication>
-#include "libavplayerwidget.h"
+
+#include "frontend/libavplayerwidget.h"
 
 int main(int argc, char *argv[])
 {
