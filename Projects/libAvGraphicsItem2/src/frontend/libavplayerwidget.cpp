@@ -17,6 +17,7 @@ void libAvPlayerWidget::init()
     m_PlayerBackend = new LibAvPlayerBackend(); //hack. initGui depends on this, and it WAS instantiated in initBackend. initBackend depends on 2 gui objects instantiated in initGui... so re-ordering them wouldn't help.
     initGui();
     initBackend();
+    //TODO: i could put a initConnections(); here so solve the above hack...
 }
 void libAvPlayerWidget::initGui()
 {
@@ -40,7 +41,7 @@ void libAvPlayerWidget::initGui()
     this->setLayout(m_Layout);
 
     m_RawAudioPlayer = new RawAudioPlayer();
-    m_RawAudioPlayer->start();
+    m_RawAudioPlayer->init();
 }
 void libAvPlayerWidget::initBackend()
 {
