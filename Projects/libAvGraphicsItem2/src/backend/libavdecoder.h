@@ -42,6 +42,8 @@ private:
     unsigned int    m_SwScaledDecodedFrameSize;
     quint8          *m_NativeFormatDecodedFrameBuffer;
     quint8          *m_SwScaledDecodedFrameBuffer;
+    double          m_AudioClock;
+    double          m_AudioClockIncrementDenominator; //the numerator of the amount to increment is the returned buffer size
 signals:
     void audioFrameDecoded(const QByteArray &);
     void videoFrameDecoded(const QVideoFrame &);

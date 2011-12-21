@@ -92,6 +92,8 @@ bool LibAvDecoder::setupLibAv()
     }
     emit d("opened audio codec");
 
+    m_AudioClockIncrementDenominator = (double)((m_InputAudioCodecCtx->channels * 2) * m_InputAudioCodecCtx->sample_rate);
+
     //store frame rate
     m_FrameRate = av_q2d(m_InputFormatCtx->streams[m_VideoStreamIndex]->r_frame_rate);
     emit d("video frame rate: " + QString::number(m_FrameRate));
@@ -179,7 +181,7 @@ void LibAvDecoder::getFrame()
         emit d("read video frame #" + QString::number(currentFrame));
         //now decode the frame
         decodedSize = avcodec_decode_video2(m_InputVideoCodecCtx, m_NativeFormatDecodedVideoFrame, &frameFinished, m_InputFramePacket);
-        if(frameFinished)
+        if(frameFinished > 0)
         {
             ++currentFrame; //we need to make sure frameFinished before incrementing, becaues previous attempts may have only gotten partial frames
             emit d("decoded frame #" + QString::number(currentFrame) + ", size=" + QString::number(decodedSize));
@@ -194,8 +196,22 @@ void LibAvDecoder::getFrame()
     }
     else if(m_InputFramePacket->stream_index == m_AudioStreamIndex)
     {
-        int actualDecodedBufferSize = sizeof(m_DecodedAudioBuffer);
-        avcodec_decode_audio3(m_InputAudioCodecCtx, m_DecodedAudioBuffer, &actualDecodedBufferSize, m_InputFramePacket);
+        if(m_InputFramePacket->pts != AV_NOPTS_VALUE)
+        {
+            m_AudioClock = av_q2d(m_InputFormatCtx->streams[m_AudioStreamIndex]->time_base) * m_InputFramePacket->pts;
+        }
+
+        int actualDecodedBufferSize = sizeof(m_DecodedAudioBuffer); //as input, signifies the maximum size of our decoded audio buffer
+        int sizeReadFromInputPacket = avcodec_decode_audio3(m_InputAudioCodecCtx, m_DecodedAudioBuffer, &actualDecodedBufferSize, m_InputFramePacket);
+        if(actualDecodedBufferSize > 0) //as output, tells us how big the returned decoded audio buffer is
+        {
+            m_AudioClock += (((double)actualDecodedBufferSize) / m_AudioClockIncrementDenominator);
+        }
+        else //actualDecodedBufferSize <= 0
+        {
+            //no data was returned, get another frame
+            //TODO: atm, there is no code below here so just letting it continue onwards has the same effect.
+        }
     }
     av_free_packet(m_InputFramePacket);
 
