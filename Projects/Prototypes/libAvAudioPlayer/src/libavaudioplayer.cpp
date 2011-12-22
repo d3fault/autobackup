@@ -21,7 +21,7 @@ bool libAvAudioPlayer::init()
     avcodec_register_all();
     av_register_all();
     //open input. file or url
-    if(av_open_input_file(&m_InputFormatCtx, "/home/d3fault/test/vision.avi", NULL, 0, NULL) != 0)
+    if(av_open_input_file(&m_InputFormatCtx, "/home/d3fault/test/lights.mp3", NULL, 0, NULL) != 0)
     {
         emit d("unable to open input file");
         return false;
