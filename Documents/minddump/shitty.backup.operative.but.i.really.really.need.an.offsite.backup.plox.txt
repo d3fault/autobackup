@@ -1,0 +1,18 @@
+new backup mode thingy
+i'm going to backup my 750x drives
+i'll lose timestamps on my 'autobackup' folder, but not the git log associated.
+also the timestamps for regular files in 750x drives are preserved
+
+i want to go on vacation but i am too afraid of leaving my hard drives unattended
+i NEED an offsite backup for peace of mind
+it's a good idea either way
+
+but my work lately i value more than earlier
+even though shit, i value it all
+i'd fucking an hero if i lost EVERYTHING
+cases where i'd lose everything:
+robbed, fire, fbi raid
+
+i need this offsite backup regardless of me going to california for a few days
+the thought of leaving my files in my house, ALL of the drives in my room, makes me puke
+i should have done this earlier
