@@ -13,12 +13,15 @@ extern "C"
 
 #define IMAGE_PIX_FMT PIX_FMT_RGB32
 
+class ThreadSafeQueueByMutex;
+
 class libAvAudioPlayer : public QObject
 {
     Q_OBJECT
 public:
-    explicit libAvAudioPlayer(QObject *parent = 0);
+    explicit libAvAudioPlayer(ThreadSafeQueueByMutex *queue);
 private:
+    ThreadSafeQueueByMutex *m_Queue;
     bool init();
 
     //libav members
@@ -36,6 +39,7 @@ private:
     unsigned int    m_NativeFormatDecodedFrameSize;
     unsigned int    m_SwScaledDecodedFrameSize;
 signals:
+    void audioSpecGathered(int sampleRate, int numChannels, int sampleSize);
     void d(const QString &);
 public slots:
     void initAndPlay();

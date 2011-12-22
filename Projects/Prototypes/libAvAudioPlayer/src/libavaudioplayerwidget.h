@@ -4,7 +4,9 @@
 #include <QtGui/QWidget>
 #include <QThread>
 
+class ThreadSafeQueueByMutex;
 class libAvAudioPlayer;
+class QtAudioPlayer;
 
 class libAvAudioPlayerWidget : public QWidget
 {
@@ -14,8 +16,11 @@ public:
     libAvAudioPlayerWidget(QWidget *parent = 0);
     ~libAvAudioPlayerWidget();
 private:
-    QThread *m_Thread;
-    libAvAudioPlayer *m_Player;
+    ThreadSafeQueueByMutex *m_Queue;
+    QThread *m_DecodeThread;
+    libAvAudioPlayer *m_Decoder;
+    QThread *m_AudioThread;
+    QtAudioPlayer *m_Player;
 private slots:
     void init();
 };

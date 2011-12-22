@@ -12,10 +12,18 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         libavaudioplayerwidget.cpp \
-    libavaudioplayer.cpp
+    libavaudioplayer.cpp \
+    threadsafequeuebymutex.cpp \
+    qtaudioplayer.cpp
 
 HEADERS  += libavaudioplayerwidget.h \
-    libavaudioplayer.h
+    libavaudioplayer.h \
+    threadsafequeuebymutex.h \
+    qtaudioplayer.h
 
 LIBS += -lavcodec -lavformat -lavutil -lswscale -lz
+
+
+
+
 

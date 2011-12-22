@@ -1,8 +1,10 @@
 #include "libavaudioplayer.h"
 
-libAvAudioPlayer::libAvAudioPlayer(QObject *parent) :
-    QObject(parent)
+#include <threadsafequeuebymutex.h>
+
+libAvAudioPlayer::libAvAudioPlayer(ThreadSafeQueueByMutex *queue)
 {
+    m_Queue = queue;
 }
 void libAvAudioPlayer::initAndPlay()
 {
@@ -69,6 +71,8 @@ bool libAvAudioPlayer::init()
     //create AVPacket instance
     m_InputFramePacket = new AVPacket();
 
+    emit audioSpecGathered(m_InputCodecCtx->sample_rate, m_InputCodecCtx->channels, 16);
+
     return true;
 }
 void libAvAudioPlayer::getFrame()
@@ -108,7 +112,7 @@ void libAvAudioPlayer::getFrame()
             if(outputBufferSize > 0)
             {
                 //a frame has been decoded
-                //TODO: queue it to be played, memcpy or something. data(), outputBufferSize.
+                m_Queue->append(*m_DecodedAudioBuffer, outputBufferSize);
                 break;
             }
             packetSize -= numBytesUsed;
