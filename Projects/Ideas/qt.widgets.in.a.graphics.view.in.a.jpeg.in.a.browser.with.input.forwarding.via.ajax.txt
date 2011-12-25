@@ -1,0 +1,44 @@
+i would like the ability to code front-ends + back-ends on web while simultaneously coding a C++ desktop app
+
+Qt/C++ can probably do this, as it's my favorite lawl
+
+so basically you render the widgets in a graphics view, graphicsproxywidget etc
+
+you send the jpeg to the browser and put a mouse map or whatever that javascript shit is over it
+
+you forward all the mouse and keyboard events via ajax to the server/graphicsproxywidget and well yea that's about it
+
+it could be a QWebWindow or something and inherit QMainWindow,
+solely so i can call setCentralWidget on it... and i guess shit why not also try to inherit/graphicsview'ize all the rest of mainwindow's features (toolbars etc)
+
+i like this idea and i know it's relatively possible
+
+clicks would work
+right clicks maybe not...
+scrolls (list views etc) i dunno...
+
+but CLICKS WOULD WORK.
+as would key press events
+
+the "focus" would need to just be the image
+but there would need to be another "focus" in C++/widget land too that we maintain based on wherever they clicked
+
+right clicking/scrolling isn't completely necessary per se but it is definitely used in good desktop apps
+
+i am scared to google "javascript image map" or whatever because i feel as if my search queries are being watched and my ideas deciphered. i know that if i was on the spying end, i could probably decipher a lot of things based on my queries.
+...i am also a paranoid schizophrenic though so who knows...
+
+a lot of things could be translated into onMouseDown (for x (one'ish) seconds) = right click in c++/widget land
+which, in mobile, is a long press
+
+you can't scroll in mobile either, you click/drag
+which is something i can do
+
+onMouseDown, memorize y
+onMouseUp, check y, scroll proportionately
+
+if i were more ambitious i could hack the browsers to include right-clicking/scrolling etc
+
+i'd take C++ over php/perl/etc any day of the week.
+
+would be awesome to write one widget that works in web, desktop, and mobile...
