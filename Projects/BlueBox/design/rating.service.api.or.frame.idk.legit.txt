@@ -1,0 +1,4 @@
+there should also be incorporated (legitimately) my 'movie rating' service. like last.fm but for movies pretty much... and way more focus on rating movies. recommendation engine too.
+
+legit/d3fault = rating service
+illegit/bluebox/anon = megaupload url submission/user ranking/user ad sharing

@@ -1,0 +1,1 @@
+if bluebox can't load my pages to show the ads, it is assumed that they are up to date (the fake reason for going there) and the movie is still shown. can't DEPEND on my servers being up, because that's just stupid.

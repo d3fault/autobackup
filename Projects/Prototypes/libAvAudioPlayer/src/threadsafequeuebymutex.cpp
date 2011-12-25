@@ -19,7 +19,6 @@ QByteArray ThreadSafeQueueByMutex::deQueue(int howMuchToDeQueue)
     m_Mutex->lock();
 
     QByteArray ret = m_ByteArray->left(howMuchToDeQueue);
-    int retSize = ret.size();
     m_ByteArray->remove(0, howMuchToDeQueue);
 
     m_Mutex->unlock();

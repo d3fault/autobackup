@@ -1,0 +1,4 @@
+serial qcode over video
+
+a one-way communication method
+so i can securely OUTPUT from a hackproof box to a network enabled computer

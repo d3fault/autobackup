@@ -59,7 +59,10 @@ void QtAudioPlayer::fillAudioBuffer()
            if (bufferSize > 0)
                m_AudioBuffer->write(buffer, buffer.size());
            if (bufferSize != m_AudioOutput->periodSize())
+           {
+               bufferSize = 5;
                break;
+           }
            --chunks;
         }
     }

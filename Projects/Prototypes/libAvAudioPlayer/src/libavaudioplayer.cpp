@@ -21,6 +21,7 @@ bool libAvAudioPlayer::init()
     avcodec_register_all();
     av_register_all();
     //open input. file or url
+
     if(av_open_input_file(&m_InputFormatCtx, "/home/d3fault/test/lights.mp3", NULL, 0, NULL) != 0)
     {
         emit d("unable to open input file");
@@ -92,6 +93,36 @@ void libAvAudioPlayer::getFrame()
         int packetSize = m_InputFramePacket->size;
         int numBytesUsed = 0;
 
+#if 0
+        while(packetSize > 0)
+        {
+            outputBufferSize = ;
+            numBytesUsed = avcodec_decode_audio3(m_InputCodecCtx, (int16_t*)m_DecodedAudioBuffer->data(), &outputBufferSize, m_InputFramePacket);
+            if(numBytesUsed < 0)
+            {
+                //error
+                emit d("error in num bytes used");
+                return;
+            }
+            if(outputBufferSize > 0)
+            {
+                //a frame has been decoded
+                m_Queue->append(*m_DecodedAudioBuffer, outputBufferSize);
+                //a difference in the example is that it does not break here, but continues looping to see if there is more packet bytes?
+                //break;
+            }
+            packetSize -= numBytesUsed;
+            dataPointer += numBytesUsed;
+            if(packetSize < 4096)
+            {
+
+                break;
+                //right here it tells me to get more data... but that consists of me reading another frame... so i want to break
+                //but then there's potentially unused packet bytes that i never use... so wtf?
+                //i could queue them right after reading them, then deQueue them, and decode them... so RIGHT HERE i'd have something to dequeue from to get more bytes... but in my testing i've never even hit this shit anyways so wtf...
+            }
+        }
+#endif
         while(packetSize > 0)
         {
             //now decode the frame
@@ -113,7 +144,14 @@ void libAvAudioPlayer::getFrame()
             {
                 //a frame has been decoded
                 m_Queue->append(*m_DecodedAudioBuffer, outputBufferSize);
-                break;
+                if(numBytesUsed >= packetSize)
+                {
+                    break;
+                }
+                else//else, keep looping because we have more data in the packet?
+                {
+                    emit d("more data left in this packet");
+                }
             }
             packetSize -= numBytesUsed;
         }

@@ -1,0 +1,6 @@
+audio OS
+an OS that does sole output via audio sounds
+each keystroke (using arduino finger input thingy) has it's own unique sound (customizable)
+navigating menus or however you do anything in the app is all audio based
+the computer speaks to you
+you respond with input
