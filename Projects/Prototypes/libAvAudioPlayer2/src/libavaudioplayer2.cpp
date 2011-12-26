@@ -49,7 +49,7 @@ void libAvAudioPlayer2::init()
     connect(m_AudioPlayer, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
 
     QMetaObject::invokeMethod(m_Loader, "init", Qt::QueuedConnection);
-    QMetaObject::invokeMethod(m_Decoder, "init", Qt::QueuedConnection);
+    //QMetaObject::invokeMethod(m_Decoder, "init", Qt::QueuedConnection); //this is called automatically once we have enough data buffered
     QMetaObject::invokeMethod(m_Synchronizer, "init", Qt::QueuedConnection);
     QMetaObject::invokeMethod(m_AudioPlayer, "init", Qt::QueuedConnection);
 }
@@ -57,7 +57,7 @@ void libAvAudioPlayer2::play()
 {
     //TODO: many potential race conditions if some of these get going before the others =o
     QMetaObject::invokeMethod(m_Synchronizer, "play", Qt::QueuedConnection);
-    QMetaObject::invokeMethod(m_Decoder, "play", Qt::QueuedConnection);
+    //QMetaObject::invokeMethod(m_Decoder, "play", Qt::QueuedConnection);
     QMetaObject::invokeMethod(m_Loader, "load", Qt::QueuedConnection);
     QMetaObject::invokeMethod(m_AudioPlayer, "play", Qt::QueuedConnection);
 }
