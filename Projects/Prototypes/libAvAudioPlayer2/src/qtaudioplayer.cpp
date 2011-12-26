@@ -73,6 +73,7 @@ void QtAudioPlayer::actualStart()
 }
 void QtAudioPlayer::fillAudioBuffer()
 {
+    //TODO: potential race condition if synchronizer doesn't respond within 20ms... which is pretty damn long so i doubt would ever happen. still, the theoretical potential exists. boolean "dataHasBeenRequested" = true; here and checked every time would fix it. set it to false in handleNewAudioBytes
     if (m_AudioOutput && m_AudioOutput->state() != QAudio::StoppedState)
     {
         emit needAudio(m_AudioOutput->bytesFree());
