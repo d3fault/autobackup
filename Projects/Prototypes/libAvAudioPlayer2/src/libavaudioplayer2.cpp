@@ -30,6 +30,7 @@ void libAvAudioPlayer2::init()
     m_AudioPlayer->moveToThread(m_AudioThread);
     m_AudioThread->start();
 
+    //main connections
     //curl downloader -> audio decoder
     connect(m_Loader, SIGNAL(onDataGathered(QByteArray)), m_Decoder, SLOT(handleNewDataAvailable(QByteArray)));
     //decoder -> syncrhonizer
@@ -40,6 +41,12 @@ void libAvAudioPlayer2::init()
     connect(m_AudioPlayer, SIGNAL(needAudio(int)), m_Synchronizer, SLOT(handleNeedAudio(int)));
     //synchronizer -> audio player (push)
     connect(m_Synchronizer, SIGNAL(playAudio(QByteArray)), m_AudioPlayer, SLOT(handleNewAudioBytes(QByteArray)));
+
+    //debug connections
+    connect(m_Loader, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
+    connect(m_Decoder, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
+    connect(m_Synchronizer, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
+    connect(m_AudioPlayer, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
 
     QMetaObject::invokeMethod(m_Loader, "init", Qt::QueuedConnection);
     QMetaObject::invokeMethod(m_Decoder, "init", Qt::QueuedConnection);

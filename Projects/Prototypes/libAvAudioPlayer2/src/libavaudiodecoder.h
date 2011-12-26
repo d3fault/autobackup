@@ -11,6 +11,7 @@ public:
 
 signals:
     void onSpecGathered(int sampleRate, int numChannels, int sampleSize);
+    void d(const QString &);
 public slots:
     void handleNewDataAvailable(QByteArray newData);
 };

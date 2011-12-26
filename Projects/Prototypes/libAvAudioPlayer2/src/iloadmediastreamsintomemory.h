@@ -9,9 +9,10 @@ class ILoadMediaStreamsIntoMemory : public QObject
 public:
 signals:
     void onDataGathered(QByteArray data);
+    void d(const QString &);
 public slots:
     virtual void init()=0;
-    virtual void loadLoop()=0;
+    virtual void load()=0;
 };
 
 #endif // ILOADMEDIASTREAMSINTOMEMORY_H

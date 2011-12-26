@@ -22,6 +22,7 @@ private:
     QTimer *m_Timer;
 signals:
     void needAudio(int bytesNeeded);
+    void d(const QString &);
 public slots:
     void init();
     void play();

@@ -27,6 +27,8 @@ HEADERS  += libavaudioplayer2test.h \
     synchronizer.h \
     qtaudioplayer.h
 
+LIBS += -lavcodec -lavformat -lavutil -lswscale -lz -lcurl
+
 
 
 

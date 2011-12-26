@@ -11,6 +11,7 @@ public:
 
 signals:
     void playAudio(QByteArray audioBytes);
+    void d(const QString &);
 public slots:
     void init();
     void handleNeedAudio(int);
