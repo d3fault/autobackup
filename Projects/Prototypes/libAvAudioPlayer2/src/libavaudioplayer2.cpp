@@ -55,4 +55,9 @@ void libAvAudioPlayer2::init()
 }
 void libAvAudioPlayer2::play()
 {
+    //TODO: many potential race conditions if some of these get going before the others =o
+    QMetaObject::invokeMethod(m_Synchronizer, "play", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_Decoder, "play", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_Loader, "load", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_AudioPlayer, "play", Qt::QueuedConnection);
 }

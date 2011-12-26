@@ -4,8 +4,9 @@
 #include <QObject>
 #include <QThread>
 
-#include <curldownloader.h>
+//libavaudiodecoder.h MUST be included before curldownloader.h because they both include stdint.h and libav needs a CONSTANT_MACRO hack in order to function/compile
 #include <libavaudiodecoder.h>
+#include <curldownloader.h>
 #include <synchronizer.h>
 #include <qtaudioplayer.h>
 
