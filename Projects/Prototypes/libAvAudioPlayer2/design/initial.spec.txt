@@ -1,0 +1,11 @@
+the purpose of libAvAudioPlayer2 is to simultaneously prototype:
+a) curl buffering / libav usage of a file in memory (instead of hdd)
+b) to see if after modifying the code to load from memory, mp3s will work as well as .avi files
+
+i should have an interface that the curl downloader implements
+the same interface can also be implemented by a hard drive file loader
+
+IMediaStreamToMemoryLoader
+
+class CurlDownloader : IMediaStreamToMemoryLoader
+class LocalFileOpener : IMediaStreamToMemoryLoader
