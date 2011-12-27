@@ -34,7 +34,7 @@ void libAvAudioPlayer2::init()
     //curl downloader -> audio decoder
     connect(m_Loader, SIGNAL(onDataGathered(QByteArray)), m_Decoder, SLOT(handleNewDataAvailable(QByteArray)));
     //decoder -> syncrhonizer
-    connect(m_Decoder, SIGNAL(onDataDecoded(QByteArray)), m_Synchronizer, SLOT(handleNewDataAvailable(QByteArray)));
+    connect(m_Decoder, SIGNAL(onAudioDataDecoded(QByteArray)), m_Synchronizer, SLOT(handleNewAudioDataAvailable(QByteArray)));
     //decoder -> audio player (audio format spec)
     connect(m_Decoder, SIGNAL(onSpecGathered(int sampleRate, int numChannels, int sampleSize)), m_AudioPlayer, SLOT(setAudioSpec(int sampleRate, int numChannels, int sampleSize)));
     //audio player -> synchronizer (pull)

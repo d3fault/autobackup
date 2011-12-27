@@ -13,6 +13,7 @@ signals:
     void playAudio(QByteArray audioBytes);
     void d(const QString &);
 public slots:
+    void handleNewAudioDataAvailable(QByteArray newAudio);
     void init();
     void handleNeedAudio(int);
 };

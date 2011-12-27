@@ -18,7 +18,7 @@ void libAvAudioDecoder::initAndPlay()
             m_Initialized = true;
         }
 
-        QMetaObject::invokeMethod(this, "getFrame", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, "demuxFrame", Qt::QueuedConnection);
     }
 }
 int libAvAudioDecoder::staticReadPackets(void *opaque, uint8_t *buf, int bufSize)
@@ -29,9 +29,9 @@ int libAvAudioDecoder::readPackets(uint8_t *buf, int bufSize)
 {
     //buf_size is the size of the buffer we are going to fill
     //returns the number of bytes actually copied (how much is available based on our loader)
-    int amountCopied = qMin(bufSize, m_StreamQueue.size());
-    memcpy((void*)buf, (const void*)m_StreamQueue.data(), amountCopied);
-    m_StreamQueue.remove(0, amountCopied);
+    int amountCopied = qMin(bufSize, m_MuxedStream.size());
+    memcpy((void*)buf, (const void*)m_MuxedStream.data(), amountCopied);
+    m_MuxedStream.remove(0, amountCopied);
     return amountCopied;
 }
 void libAvAudioDecoder::handleNewDataAvailable(QByteArray newData)
@@ -39,8 +39,8 @@ void libAvAudioDecoder::handleNewDataAvailable(QByteArray newData)
     //queue it to be decoded later? maybe "de-Stream" it via libav and then queue it to be decoded later? (so we are ONLY processing audio stream) -------- NO, see below
     //in any case, we don't need to mutex our buffer since this slot is called from this thread, yay finally a payoff for doing getFrame() as a slot lawl (pause/stop still apply but i never code those in prototypes fuck the police)
     //we will not be de-stream'ing it here, libav calls readPackets expecting a file and then we can de-stream it and put it in yet another queue to later be decoded
-    m_StreamQueue.append(newData);
-    if(!m_Initialized && m_StreamQueue.size() >= AMOUNT_TO_BUFFER_BEFORE_STARTING)
+    m_MuxedStream.append(newData);
+    if(!m_Initialized && m_MuxedStream.size() >= AMOUNT_TO_BUFFER_BEFORE_STARTING)
     {
         initAndPlay();
     }
@@ -59,8 +59,8 @@ bool libAvAudioDecoder::actualInit()
 
     m_InputFormatCtx = avformat_alloc_context();
     m_InputFormatCtx->flags |= AVFMT_NOFILE|AVFMT_FLAG_IGNIDX;
-    m_InputStreamBuffer = (quint8*)av_malloc(INPUT_STREAM_BUFFER_SIZE);
-    m_InputFormatCtx->pb = av_alloc_put_byte(m_InputStreamBuffer,INPUT_STREAM_BUFFER_SIZE,0,this, &libAvAudioDecoder::staticReadPackets,NULL,NULL);
+    m_MuxedInputStream = (quint8*)av_malloc(INPUT_STREAM_BUFFER_SIZE);
+    m_InputFormatCtx->pb = av_alloc_put_byte(m_MuxedInputStream,INPUT_STREAM_BUFFER_SIZE,0,this, &libAvAudioDecoder::staticReadPackets,NULL,NULL);
     if(!m_InputFormatCtx->pb)
     {
         emit d("error allocating pb");
@@ -125,100 +125,71 @@ bool libAvAudioDecoder::actualInit()
     }
     emit d("opened codec");
 
-    m_DecodedAudioBuffer = new QByteArray(((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2), '0');
+    m_TempDecodedAudioBuffer = new QByteArray(((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2), '0');
 
     //create AVPacket instance
-    m_InputFramePacket = new AVPacket();
+    m_MuxedInputFramePacket = new AVPacket();
+
+    m_DeMuxedAudioFramePacket = new AVPacket();
+    av_init_packet(m_DeMuxedAudioFramePacket); //we only need to do this once, since we're manually maintaining the data pointer and size inside it.
 
     emit onSpecGathered(m_InputCodecCtx->sample_rate, m_InputCodecCtx->channels, 16);
 
     return true;
 }
-void libAvAudioDecoder::getFrame()
+void libAvAudioDecoder::demuxFrame()
 {
     //TODO: api-example.c shows me how to do this using a byte buffer as input. will stream_index get updated appropriately though???? i think i need to do av_read_frame, then put the video stream in a queue and the audio stream in a queue. then SOMEWHERE ELSE is where i mimic api-example.c by using a byte buffer as input. right here i think i just av_read_frame and queue the results appropriately... i guess..?
-#if 0
-    if(av_read_frame(m_InputFormatCtx, m_InputFramePacket) < 0)
+
+    if(av_read_frame(m_InputFormatCtx, m_MuxedInputFramePacket) < 0)
     {
         //TODO: done reading. for now, just return
         //TODO: maybe NOT done, we might just need to wait for curlDownloader to send us more data???
         return;
     }
-#endif
-
     //check to see if it's our target video stream
-    if(m_InputFramePacket->stream_index == m_AudioStreamIndex)
+    if(m_MuxedInputFramePacket->stream_index == m_AudioStreamIndex)
     {
-        ++m_CurrentFrameCount;
-        emit d("read audio frame #" + QString::number(m_CurrentFrameCount));
-
-        int packetSize = m_InputFramePacket->size;
-        int numBytesUsed = 0;
-
-#if 0
-        while(packetSize > 0)
-        {
-            outputBufferSize = ;
-            numBytesUsed = avcodec_decode_audio3(m_InputCodecCtx, (int16_t*)m_DecodedAudioBuffer->data(), &outputBufferSize, m_InputFramePacket);
-            if(numBytesUsed < 0)
-            {
-                //error
-                emit d("error in num bytes used");
-                return;
-            }
-            if(outputBufferSize > 0)
-            {
-                //a frame has been decoded
-                m_Queue->append(*m_DecodedAudioBuffer, outputBufferSize);
-                //a difference in the example is that it does not break here, but continues looping to see if there is more packet bytes?
-                //break;
-            }
-            packetSize -= numBytesUsed;
-            dataPointer += numBytesUsed;
-            if(packetSize < 4096)
-            {
-
-                break;
-                //right here it tells me to get more data... but that consists of me reading another frame... so i want to break
-                //but then there's potentially unused packet bytes that i never use... so wtf?
-                //i could queue them right after reading them, then deQueue them, and decode them... so RIGHT HERE i'd have something to dequeue from to get more bytes... but in my testing i've never even hit this shit anyways so wtf...
-            }
-        }
-#endif
-        while(packetSize > 0)
-        {
-            //now decode the frame
-            //decodedSize = avcodec_decode_video2(m_InputCodecCtx, m_NativeFormatDecodedFrame, &frameFinished, m_InputFramePacket);
-            m_InputFramePacket->data += numBytesUsed;
-            int outputBufferSize = m_DecodedAudioBuffer->size();
-            if(packetSize < FF_INPUT_BUFFER_PADDING_SIZE)
-            {
-                return;
-            }
-            numBytesUsed = avcodec_decode_audio3(m_InputCodecCtx, (int16_t*)m_DecodedAudioBuffer->data(), &outputBufferSize, m_InputFramePacket);
-            if(numBytesUsed < 0)
-            {
-                //error
-                emit d("error in num bytes used");
-                return;
-            }
-            if(outputBufferSize > 0)
-            {
-                //a frame has been decoded
-                m_Queue->append(*m_DecodedAudioBuffer, outputBufferSize);
-                if(numBytesUsed >= packetSize)
-                {
-                    break;
-                }
-                else//else, keep looping because we have more data in the packet?
-                {
-                    emit d("more data left in this packet");
-                }
-            }
-            packetSize -= numBytesUsed;
-        }
+        m_DeMuxedAudioStream.append((const char*)m_MuxedInputFramePacket->data, m_MuxedInputFramePacket->size);
+        QMetaObject::invokeMethod(this, "decodeAllQueuedDemuxedAudio", Qt::QueuedConnection);
     }
-    av_free_packet(m_InputFramePacket);
+    //TODO: else if == videoStream, do the same shit. or maybe just decode the video frame here and queue it for later, since i don't have problems with video like i do with audio. 1 frame in = 1 frame out
 
-    QMetaObject::invokeMethod(this, "getFrame", Qt::QueuedConnection);
+    av_free_packet(m_MuxedInputFramePacket);
+
+    QMetaObject::invokeMethod(this, "demuxFrame", Qt::QueuedConnection);
+}
+void libAvAudioDecoder::decodeAllQueuedDemuxedAudio()
+{
+    //not ALL queued demux'd audio, but as much as we possibly can. once it gets below a certain threshold, we return until demuxFrame gives us more data to work with/calls us again... then we use that leftover data in the beginning of the next call to us
+
+    int packetSize;
+    do
+    {
+        packetSize = m_DeMuxedAudioFramePacket->size = m_DeMuxedAudioStream.size();
+        if (packetSize < AUDIO_REFILL_THRESH)
+        {
+            return; //wait for more data to be queued, which will call us
+        }
+        m_DeMuxedAudioFramePacket->data = (uint8_t*)m_DeMuxedAudioStream.data();
+
+        int outputBufferSize = m_TempDecodedAudioBuffer->size(); //we re-declare it locally because decdode() modifies it as output
+
+        int numBytesUsed = avcodec_decode_audio3(m_InputCodecCtx, (int16_t*)m_TempDecodedAudioBuffer->data(), &outputBufferSize, m_DeMuxedAudioFramePacket);
+        if(numBytesUsed < 0)
+        {
+            //error
+            emit d("error in num bytes used");
+            return;
+        }
+        if(outputBufferSize > 0)
+        {
+            //m_DecodedAudioBuffer.append(*m_TempDecodedAudioBuffer, outputBufferSize);
+            QByteArray *decodedAudioForSynchronizer = new QByteArray(*m_TempDecodedAudioBuffer, outputBufferSize);
+            emit onAudioDataDecoded(*decodedAudioForSynchronizer);
+            //TODO: make sure synchronizer deallocates this when appropriate. but maybe NOT, since it uses implicit sharing my append() in synchronizer should point to this same data? idfk. maybe a shared/mutex'd queue might be better so we don't alloc all the damn time...
+        }
+        m_DeMuxedAudioStream.remove(0, numBytesUsed);
+
+    }while(m_DeMuxedAudioFramePacket->size);
 }

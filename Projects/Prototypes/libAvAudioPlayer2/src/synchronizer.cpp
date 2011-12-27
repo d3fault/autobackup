@@ -15,3 +15,6 @@ void Synchronizer::handleNeedAudio(int bytesNeeded)
 
     //emit playAudio(QByteArray); to return the bytes to our audio player
 }
+void Synchronizer::handleNewAudioDataAvailable(QByteArray newAudio)
+{
+}

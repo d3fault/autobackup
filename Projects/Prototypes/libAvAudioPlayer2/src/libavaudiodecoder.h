@@ -22,8 +22,10 @@ class libAvAudioDecoder : public QObject
 public:
     explicit libAvAudioDecoder(QObject *parent = 0);
 private:
-    quint8 *m_InputStreamBuffer;
-    QByteArray m_StreamQueue;
+    quint8 *m_MuxedInputStream;
+    QByteArray m_MuxedStream;
+    QByteArray m_DeMuxedAudioStream;
+    //QByteArray m_DecodedAudioBuffer; //all of our decoded audio. m_TempDecodedAudioBuffer copies itself into here after each decode(). actually we just emit it to Synchronizer.
     bool m_Initialized;
     bool m_InitFailedSoDontTryAgain;
     bool actualInit();
@@ -34,8 +36,9 @@ private:
     AVFormatContext *m_InputFormatCtx;
     AVCodecContext  *m_InputCodecCtx;
     AVCodec         *m_InputCodec;
-    QByteArray      *m_DecodedAudioBuffer;
-    AVPacket        *m_InputFramePacket;
+    QByteArray      *m_TempDecodedAudioBuffer; //libav writes directly into this buffer
+    AVPacket        *m_MuxedInputFramePacket;
+    AVPacket        *m_DeMuxedAudioFramePacket;
     SwsContext      *m_SwScaleCtx;
 
     //libav locals
@@ -43,12 +46,14 @@ private:
     int             m_AudioStreamIndex;
 signals:
     void onSpecGathered(int sampleRate, int numChannels, int sampleSize);
+    void onAudioDataDecoded(QByteArray audioData);
     void d(const QString &);
 public slots:
     void initAndPlay();
     void handleNewDataAvailable(QByteArray newData);
 private slots:
-    void getFrame();
+    void demuxFrame();
+    void decodeAllQueuedDemuxedAudio();
 };
 
 #endif // LIBAVAUDIODECODER_H
