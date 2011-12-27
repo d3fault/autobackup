@@ -21,6 +21,10 @@ void libAvAudioDecoder::initAndPlay()
 
         QMetaObject::invokeMethod(this, "demuxFrame", Qt::QueuedConnection);
     }
+    else
+    {
+        emit d("failed to init once so not trying again");
+    }
 }
 int libAvAudioDecoder::staticReadPackets(void *opaque, uint8_t *buf, int bufSize)
 {
@@ -60,8 +64,8 @@ bool libAvAudioDecoder::actualInit()
 
     m_InputFormatCtx = avformat_alloc_context();
     m_InputFormatCtx->flags |= AVFMT_NOFILE|AVFMT_FLAG_IGNIDX;
-    m_MuxedInputStream = (quint8*)av_malloc(INPUT_STREAM_BUFFER_SIZE);
-    m_InputFormatCtx->pb = av_alloc_put_byte(m_MuxedInputStream,INPUT_STREAM_BUFFER_SIZE,0,this, &libAvAudioDecoder::staticReadPackets,NULL,NULL);
+    m_AllocPutByteOwnedBuffer = (quint8*)av_malloc(INPUT_STREAM_BUFFER_SIZE);
+    m_InputFormatCtx->pb = av_alloc_put_byte(m_AllocPutByteOwnedBuffer,INPUT_STREAM_BUFFER_SIZE,0,this, &libAvAudioDecoder::staticReadPackets,NULL,NULL);
     if(!m_InputFormatCtx->pb)
     {
         emit d("error allocating pb");
@@ -72,10 +76,31 @@ bool libAvAudioDecoder::actualInit()
     memset(&ap, 0, sizeof(ap));
     ap.prealloced_context = 1;
 
+    m_InputFormatCtx->iformat = av_find_input_format("avi"); //meh, i guess i can do URL string detection and just swap it for whatever. .avi, .mkv, .mp3 (only in this "test".. but i wish i didn't have to say :(
+
+#if 0
+    AVProbeData pd;
+    pd.filename = "";
+    pd.buf = (unsigned char*)m_MuxedStream.data();
+    pd.buf_size = AMOUNT_TO_BUFFER_BEFORE_STARTING;
+
+    int score=0;
+    m_InputFormatCtx->iformat = av_probe_input_format2(&pd, 1, &score);
+
+    if(!m_InputFormatCtx->iformat)
+    {
+        emit d("iformat is null");
+        return false;
+    }
+    emit d("probed input format: " + QString(m_InputFormatCtx->iformat->name));
+
+    emit d("probe score: " + QString::number(m_InputFormatCtx->iformat->read_probe(&pd)));
+#endif
+
     int r = av_open_input_stream(&m_InputFormatCtx, m_InputFormatCtx->pb, "stream", m_InputFormatCtx->iformat, &ap);
     if(r != 0)
     {
-        emit d("error opening input stream");
+        emit d("error opening input stream: " + QString::number(r));
         return false;
     }
     emit d("opened input stream");

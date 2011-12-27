@@ -24,7 +24,7 @@ class libAvAudioDecoder : public QObject
 public:
     explicit libAvAudioDecoder(ThreadSafeQueueByMutex *decodedAudioBuffer);
 private:
-    quint8 *m_MuxedInputStream;
+    quint8 *m_AllocPutByteOwnedBuffer;
     QByteArray m_MuxedStream;
     QByteArray m_DeMuxedAudioStream;
     //QByteArray m_DecodedAudioBuffer; //all of our decoded audio. m_TempDecodedAudioBuffer copies itself into here after each decode(). actually we just emit it to Synchronizer.

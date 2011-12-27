@@ -15,7 +15,7 @@ void CurlDownloader::init()
 }
 void CurlDownloader::load()
 {
-    curl_easy_setopt(m_Curl, CURLOPT_URL, "http://127.0.0.1:80/cont.avi");
+    curl_easy_setopt(m_Curl, CURLOPT_URL, "http://127.0.0.1:6969/cont.avi");
 
     m_CurlResult = curl_easy_perform(m_Curl);
     if(m_CurlResult == CURLE_OK)
