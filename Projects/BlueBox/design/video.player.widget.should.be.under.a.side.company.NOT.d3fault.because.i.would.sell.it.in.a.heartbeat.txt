@@ -1,0 +1,15 @@
+i'm thinking i should release the GPL/LGPL (whatever i decide) + commercial VIDEO DECODER/PLAYER WIDGET product under a false/side-company
+i just don't want to tie it to d3fault because
+a) it's shit compared to what i have planned for d3fault
+b) i would sell it in a heartbeat for a few million bux and don't want to lose my d3fault branding for good over something so small
+
+
+nokia might be interested
+i could release it GPL/commercial initially, then probe nokia to buy me out... who can then release it under LGPL/commercial
+it can be a part of Qt just like Qt/Webkit
+it can be Qt/VideoPlayerWidget or something
+i guess Qt/LibAV but i'm providing more functionality than what libav provides alone
+
+the only thing is, how do you convert the contributed GPL code to LGPL later on?
+how the fuck did Qt do it? did Trolltech just ignore everybody's commits in the early days???
+i think this is worth asking on the qt mailing list. nobody would know wtf/why i'm asking, but it'd be an interesting history lesson
