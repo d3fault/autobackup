@@ -1,12 +1,9 @@
 #include "qtaudioplayer.h"
 
-QtAudioPlayer::QtAudioPlayer(QObject *parent) :
-    QObject(parent), m_Started(false), m_SpecSet(false)
+QtAudioPlayer::QtAudioPlayer(ThreadSafeQueueByMutex *sharedInputAudioQueue) :
+    m_Started(false), m_SpecSet(false)
 {
-}
-void QtAudioPlayer::init()
-{
-    //nothing to do here because we need an audio spec!
+    m_Queue = sharedInputAudioQueue;
 }
 void QtAudioPlayer::setAudioSpec(int sampleRate, int numChannels, int sampleSize)
 {
@@ -34,31 +31,6 @@ void QtAudioPlayer::setAudioSpec(int sampleRate, int numChannels, int sampleSize
         actualStart();
     }
 }
-void QtAudioPlayer::handleNewAudioBytes(QByteArray newAudioBytes)
-{
-    if (m_AudioOutput && m_AudioOutput->state() != QAudio::StoppedState)
-    {
-        int chunks = newAudioBytes.size()/m_AudioOutput->periodSize();
-        while (chunks)
-        {
-           QByteArray buffer = newAudioBytes.left(m_AudioOutput->periodSize());
-           int bufferSize = buffer.size();
-           if(bufferSize < newAudioBytes.size())
-               newAudioBytes.remove(0, bufferSize);
-           if (bufferSize > 0)
-               m_AudioBuffer->write(buffer, buffer.size());
-           if (bufferSize != m_AudioOutput->periodSize())
-           {
-               break;
-           }
-           --chunks;
-        }
-    }
-    else
-    {
-        m_Timer->stop();
-    }
-}
 void QtAudioPlayer::play()
 {
     m_Started = true;
@@ -69,14 +41,33 @@ void QtAudioPlayer::play()
 }
 void QtAudioPlayer::actualStart()
 {
-    m_Timer->start(20);
+    m_Timer->start(15); //15 so we call it about twice per video frame. this way we will always be in sync with the audio with a maximum error of 15ms, not even noticeable to the human eye
 }
 void QtAudioPlayer::fillAudioBuffer()
 {
-    //TODO: potential race condition if synchronizer doesn't respond within 20ms... which is pretty damn long so i doubt would ever happen. still, the theoretical potential exists. boolean "dataHasBeenRequested" = true; here and checked every time would fix it. set it to false in handleNewAudioBytes
     if (m_AudioOutput && m_AudioOutput->state() != QAudio::StoppedState)
     {
-        emit needAudio(m_AudioOutput->bytesFree());
+        int chunks = m_AudioOutput->bytesFree()/m_AudioOutput->periodSize();
+        while (chunks)
+        {
+           QByteArray buffer = m_Queue->deQueue(m_AudioOutput->periodSize());
+           int bufferSize = buffer.size();
+           if (bufferSize > 0)
+               m_AudioBuffer->write(buffer, buffer.size());
+           if (bufferSize != m_AudioOutput->periodSize())
+           {
+               break;
+           }
+           --chunks;
+        }
+
+        qint64 bytesInBuffer = m_AudioOutput->bufferSize() - m_AudioOutput->bytesFree();
+        qint64 usInBuffer = (qint64)(1000000) * bytesInBuffer / ( m_Format.channelCount() * m_Format.sampleSize() / 8 ) / m_Format.frequency();
+        qint64 usPlayed = m_AudioOutput->processedUSecs() - usInBuffer;
+
+        //TODO: seeking/pausing/stopping needs to add maths here, since processedUSecs is since we called start()
+
+        emit currentPlayingPositionInUsecs(usPlayed); //synchronizer takes this number and determines whether or not to emit a new frame
     }
     else
     {

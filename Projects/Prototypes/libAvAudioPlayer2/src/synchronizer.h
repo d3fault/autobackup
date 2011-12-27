@@ -10,12 +10,10 @@ public:
     explicit Synchronizer(QObject *parent = 0);
 
 signals:
-    void playAudio(QByteArray audioBytes);
     void d(const QString &);
+    //TODO: void showFrame(QVideoFrame);
 public slots:
-    void handleNewAudioDataAvailable(QByteArray newAudio);
-    void init();
-    void handleNeedAudio(int);
+    void audioTimeUpdated(quint64 microsecondsElapsed);
 };
 
 #endif // SYNCHRONIZER_H

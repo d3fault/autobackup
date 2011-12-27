@@ -9,6 +9,7 @@
 #include <curldownloader.h>
 #include <synchronizer.h>
 #include <qtaudioplayer.h>
+#include <threadsafequeuebymutex.h>
 
 class libAvAudioPlayer2 : public QObject
 {
@@ -25,6 +26,8 @@ private:
     libAvAudioDecoder *m_Decoder;
     Synchronizer *m_Synchronizer;
     QtAudioPlayer *m_AudioPlayer;
+
+    ThreadSafeQueueByMutex *m_SharedDecodedAudioBuffer;
 signals:
     void d(const QString &);
 public slots:

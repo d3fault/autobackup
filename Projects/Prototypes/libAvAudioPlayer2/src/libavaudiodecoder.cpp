@@ -1,8 +1,9 @@
 #include "libavaudiodecoder.h"
 
-libAvAudioDecoder::libAvAudioDecoder(QObject *parent) :
-    QObject(parent), m_Initialized(false), m_InitFailedSoDontTryAgain(false)
+libAvAudioDecoder::libAvAudioDecoder(ThreadSafeQueueByMutex *decodedAudioBuffer) :
+    m_Initialized(false), m_InitFailedSoDontTryAgain(false)
 {
+    m_SharedDecodedAudioBuffer = decodedAudioBuffer;
 }
 void libAvAudioDecoder::initAndPlay()
 {
@@ -185,11 +186,13 @@ void libAvAudioDecoder::decodeAllQueuedDemuxedAudio()
         if(outputBufferSize > 0)
         {
             //m_DecodedAudioBuffer.append(*m_TempDecodedAudioBuffer, outputBufferSize);
-            QByteArray *decodedAudioForSynchronizer = new QByteArray(*m_TempDecodedAudioBuffer, outputBufferSize);
-            emit onAudioDataDecoded(*decodedAudioForSynchronizer);
+            //QByteArray *decodedAudioForSynchronizer = new QByteArray(*m_TempDecodedAudioBuffer, outputBufferSize);
+            //emit onAudioDataDecoded(*decodedAudioForSynchronizer);
             //TODO: make sure synchronizer deallocates this when appropriate. but maybe NOT, since it uses implicit sharing my append() in synchronizer should point to this same data? idfk. maybe a shared/mutex'd queue might be better so we don't alloc all the damn time...
+            m_SharedDecodedAudioBuffer->append(*m_TempDecodedAudioBuffer, outputBufferSize);
+            //should we emit something here? probably not, fuck it. if anything, just the outputBufferSize
         }
         m_DeMuxedAudioStream.remove(0, numBytesUsed);
 
-    }while(m_DeMuxedAudioFramePacket->size);
+    }while(packetSize > 0);
 }

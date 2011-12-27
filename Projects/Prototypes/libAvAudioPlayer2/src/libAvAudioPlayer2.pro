@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     curldownloader.cpp \
     libavaudiodecoder.cpp \
     synchronizer.cpp \
-    qtaudioplayer.cpp
+    qtaudioplayer.cpp \
+    threadsafequeuebymutex.cpp
 
 HEADERS  += libavaudioplayer2test.h \
     libavaudioplayer2.h \
@@ -25,9 +26,12 @@ HEADERS  += libavaudioplayer2test.h \
     curldownloader.h \
     libavaudiodecoder.h \
     synchronizer.h \
-    qtaudioplayer.h
+    qtaudioplayer.h \
+    threadsafequeuebymutex.h
 
 LIBS += -lavcodec -lavformat -lavutil -lswscale -lz -lcurl
+
+
 
 
 

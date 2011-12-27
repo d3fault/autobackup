@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include <threadsafequeuebymutex.h>
+
 extern "C"
 {
     #include <libavcodec/avcodec.h>
@@ -20,7 +22,7 @@ class libAvAudioDecoder : public QObject
 {
     Q_OBJECT
 public:
-    explicit libAvAudioDecoder(QObject *parent = 0);
+    explicit libAvAudioDecoder(ThreadSafeQueueByMutex *decodedAudioBuffer);
 private:
     quint8 *m_MuxedInputStream;
     QByteArray m_MuxedStream;
@@ -30,7 +32,9 @@ private:
     bool m_InitFailedSoDontTryAgain;
     bool actualInit();
     static int staticReadPackets(void *opaque, uint8_t *buf, int bufSize);
-    int readPackets(uint8_t *buf, int buf_size);
+    int readPackets(uint8_t *buf, int bufSize);
+
+    ThreadSafeQueueByMutex *m_SharedDecodedAudioBuffer;
 
     //libav members
     AVFormatContext *m_InputFormatCtx;
@@ -46,7 +50,7 @@ private:
     int             m_AudioStreamIndex;
 signals:
     void onSpecGathered(int sampleRate, int numChannels, int sampleSize);
-    void onAudioDataDecoded(QByteArray audioData);
+    //void onAudioDataDecoded(QByteArray audioData);
     void d(const QString &);
 public slots:
     void initAndPlay();
