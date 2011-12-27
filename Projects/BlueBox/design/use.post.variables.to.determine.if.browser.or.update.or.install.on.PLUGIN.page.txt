@@ -1,0 +1,16 @@
+for the "plugins" (where ads will show), on the page that is:
+a) download page for regular browser users (plugin binary, plugin source.. view source links)
+b) install page for autoplugin (bluebox, examplePluginApp)
+c) update page for autoplugin (...)
+
+the detection of which of the 3 modes to be in should not be determined via user agent as previously mentioned
+the ads might eventually filter out my "autoplugin" user agent
+i need to always mimic the latest firefox. or i guess just regular webkit is probably fine.
+
+ANYWAYS, the detection is done via POST variables
+javascript can probably see the GET variables
+only the server sees the POST variables
+
+so like check4update=1&version=0.0.1
+or: install=1
+none = browser mode, offer zip/dll/source/view-source/whatever

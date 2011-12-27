@@ -1,0 +1,18 @@
+the video widget should be a standalone application + library licensed under LGPL
+i can sell "support", i guess
+but the site/subdomain/its-own-domain(??branding???) should be littered with advertisements, just like the plugin page (exists within same context)
+the documentation should all be wiki-style anybody-can-edit/add (ads)
+and the most recent source viewable via html (ads)
+
+could even offer a tutorial on how to use it
+i guess i could call the "support" just a "commercial" license or whatever, just like nokia does it
+
+MAYBE should be GPL,
+but LGPL is bound to attract WAAAAAY more attention
+
+
+there should be 2 classes that you would typically use (one of the 2, not both) if/when integrating the plugin
+a) libVideoPlayerWidget, creates a video graphics scene + audio output
+b) libVideoPlayer, which libVideoPlayerWidget depends on. it only emits 2 signals that are pre-synchronized: frameReady(QVideoFrame) and audioReady(QByteArray), or it can give you a QIODevice for using with QAudioOutput (push mode) idfk the details don't really matter. can/should support both push/pull imo
+
+simple "donate" (bitcoin/paypal) shit on the side too
