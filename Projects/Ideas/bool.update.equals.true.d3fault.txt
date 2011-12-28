@@ -1,0 +1,26 @@
+bool update = true;
+
+and a textpad below with a publish most recent "objects" (all of them, by default) over to the right
+it is a dht with an easy addnode (text words) that shares but not the 
+
+"this is like my only source of random input"
+
+"do you remember the night i watched you use the computer?"
+
+lock screen is really just so you have an excuse to touch your computer. when really it's just the app that's already running turning on live recording/auto-publishing. the updates, if you will
+
+just make an advertising network. it isn't that hard. the profits ARE turnkey once going. i was going to write "at speed" but i dunno 
+
+the default nodeType is text/tangents. you can refer to any previous document or create subdocuments (their creation timestamps published right when the open parenthesis is struck). filter under 5 seconds with no data (they backspaced) and BAN infinite blank pushers once they are determined to send erroneous or blank data
+
+
+the update button pulls/merges the branch you created from the dht. your private branch remains private but you read in all their updates. you merge with them locally.
+
+the update button pulls nodes of every nodeType, but displays all of them (default/first is text/tangent. there is also video/tangent). the video shows up if user adds more WHAT. we're severely limiting which file types everybody autosyncs/autoPRESENTS. every file type autosyncs, but only text/tangent autoSyncs by default
+
+"pardon my pun"
+
+every character exchange (every byte? every `buffer` which size is dependent on)
+
+
+they are all nobodyme posts. they output to html with tangentify enabled
