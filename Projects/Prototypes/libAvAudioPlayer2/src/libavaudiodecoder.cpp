@@ -34,9 +34,11 @@ int libAvAudioDecoder::readPackets(uint8_t *buf, int bufSize)
 {
     //buf_size is the size of the buffer we are going to fill
     //returns the number of bytes actually copied (how much is available based on our loader)
+    emit d("readPackets asking for " + QString::number(bufSize));
     int amountCopied = qMin(bufSize, m_MuxedStream.size());
     memcpy((void*)buf, (const void*)m_MuxedStream.data(), amountCopied);
     m_MuxedStream.remove(0, amountCopied);
+    emit d("returning " + QString::number(bufSize) + " from readPackets");
     return amountCopied;
 }
 void libAvAudioDecoder::handleNewDataAvailable(QByteArray newData)
@@ -76,16 +78,13 @@ bool libAvAudioDecoder::actualInit()
     memset(&ap, 0, sizeof(ap));
     ap.prealloced_context = 1;
 
-    m_InputFormatCtx->iformat = av_find_input_format("avi"); //meh, i guess i can do URL string detection and just swap it for whatever. .avi, .mkv, .mp3 (only in this "test".. but i wish i didn't have to say :(
-
-#if 0
+#if 1
     AVProbeData pd;
     pd.filename = "";
     pd.buf = (unsigned char*)m_MuxedStream.data();
     pd.buf_size = AMOUNT_TO_BUFFER_BEFORE_STARTING;
 
-    int score=0;
-    m_InputFormatCtx->iformat = av_probe_input_format2(&pd, 1, &score);
+    m_InputFormatCtx->iformat = av_probe_input_format(&pd, 1);
 
     if(!m_InputFormatCtx->iformat)
     {
@@ -95,6 +94,8 @@ bool libAvAudioDecoder::actualInit()
     emit d("probed input format: " + QString(m_InputFormatCtx->iformat->name));
 
     emit d("probe score: " + QString::number(m_InputFormatCtx->iformat->read_probe(&pd)));
+#else
+    m_InputFormatCtx->iformat = av_find_input_format("avi"); //meh, i guess i can do URL string detection and just swap it for whatever. .avi, .mkv, .mp3 (only in this "test".. but i wish i didn't have to say :(
 #endif
 
     int r = av_open_input_stream(&m_InputFormatCtx, m_InputFormatCtx->pb, "stream", m_InputFormatCtx->iformat, &ap);

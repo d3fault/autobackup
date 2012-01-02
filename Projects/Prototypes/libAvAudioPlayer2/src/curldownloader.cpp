@@ -56,7 +56,8 @@ size_t CurlDownloader::staticWriteFunction(void *ptr, size_t size, size_t nmemb,
 }
 size_t CurlDownloader::writeFunction(void *ptr, size_t size, size_t nmemb)
 {
-    QByteArray *newData = new QByteArray((const char*)ptr);
+    int byteSize = size * nmemb;
+    QByteArray *newData = new QByteArray((const char*)ptr, byteSize);
     emit onDataGathered(*newData);
-    return size * nmemb;
+    return byteSize;
 }
