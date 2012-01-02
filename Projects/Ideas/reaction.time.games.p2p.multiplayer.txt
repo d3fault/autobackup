@@ -1,0 +1,4 @@
+x,y,z rotations and x,y,z geographic coordinates make 6x 64-bit doubles which equals 384 bits (48 bytes) which is a good heartbeat signature for a player
+it needs to have a timestamp up to the exact millisecond (microsecond?) and be signed/verified by the player's public decryption key
+all data is passed using the player's public key
+knowing the timestamp at the exact millisecond helps detect hackers because then we get all the data that is being processed on their end of the game engine so we can see how fast they are moving the mouse and how accurately and shit on the fly theoretically

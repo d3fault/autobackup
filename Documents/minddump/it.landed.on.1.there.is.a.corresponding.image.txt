@@ -1,0 +1,10 @@
+0 - audio sync
+1 - bool update equals true
+2 - massage exchange (anon company)
+3 - encryption/protocol practice -> bitcoin poker
+4 - reaction time games
+5 - dubs anon/bitcoin ad engine
+6 - designEquals
+7 - mouseClickScript
+8 - proper tangent/timeline integration prototype
+9 - parcelize guiGenerator so as to help thinking/design of designEquals (which are 2 pieces of the same thing)

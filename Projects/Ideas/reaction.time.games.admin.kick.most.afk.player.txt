@@ -1,0 +1,3 @@
+admin control panel -> kick most-afk
+averaged out only while rounds are in play, not while dead/spectating
+i go afk all the time while dead
