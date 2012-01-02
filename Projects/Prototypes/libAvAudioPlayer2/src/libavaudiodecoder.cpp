@@ -46,6 +46,7 @@ void libAvAudioDecoder::handleNewDataAvailable(QByteArray newData)
     //queue it to be decoded later? maybe "de-Stream" it via libav and then queue it to be decoded later? (so we are ONLY processing audio stream) -------- NO, see below
     //in any case, we don't need to mutex our buffer since this slot is called from this thread, yay finally a payoff for doing getFrame() as a slot lawl (pause/stop still apply but i never code those in prototypes fuck the police)
     //we will not be de-stream'ing it here, libav calls readPackets expecting a file and then we can de-stream it and put it in yet another queue to later be decoded
+    emit d("appending " + QString::number(newData.size()) + " bytes to the muxed input stream (from curl)");
     m_MuxedStream.append(newData);
     if(!m_Initialized && m_MuxedStream.size() >= AMOUNT_TO_BUFFER_BEFORE_STARTING)
     {
@@ -98,6 +99,7 @@ bool libAvAudioDecoder::actualInit()
     m_InputFormatCtx->iformat = av_find_input_format("avi"); //meh, i guess i can do URL string detection and just swap it for whatever. .avi, .mkv, .mp3 (only in this "test".. but i wish i didn't have to say :(
 #endif
 
+    resetEof();
     int r = av_open_input_stream(&m_InputFormatCtx, m_InputFormatCtx->pb, "stream", m_InputFormatCtx->iformat, &ap);
     if(r != 0)
     {
@@ -105,15 +107,8 @@ bool libAvAudioDecoder::actualInit()
         return false;
     }
     emit d("opened input stream");
-#if 0
-    if(av_open_input_file(&m_InputFormatCtx, "/home/d3fault/test/lights.mp3", NULL, 0, NULL) != 0)
-    {
-        emit d("unable to open input file");
-        return false;
-    }
-    emit d("opened input");
-#endif
     //find stream info
+    resetEof();
     if(av_find_stream_info(m_InputFormatCtx) < 0)
     {
         emit d("unable to find stream info");
@@ -168,15 +163,18 @@ void libAvAudioDecoder::demuxFrame()
 {
     //TODO: api-example.c shows me how to do this using a byte buffer as input. will stream_index get updated appropriately though???? i think i need to do av_read_frame, then put the video stream in a queue and the audio stream in a queue. then SOMEWHERE ELSE is where i mimic api-example.c by using a byte buffer as input. right here i think i just av_read_frame and queue the results appropriately... i guess..?
 
+    resetEof();
     if(av_read_frame(m_InputFormatCtx, m_MuxedInputFramePacket) < 0)
     {
         //TODO: done reading. for now, just return
         //TODO: maybe NOT done, we might just need to wait for curlDownloader to send us more data???
+        emit d("av_read_frame returned < 0");
         return;
     }
     //check to see if it's our target video stream
     if(m_MuxedInputFramePacket->stream_index == m_AudioStreamIndex)
     {
+        emit d("...queuing an audio frame for decode of size: " + QString::number(m_MuxedInputFramePacket->size));
         m_DeMuxedAudioStream.append((const char*)m_MuxedInputFramePacket->data, m_MuxedInputFramePacket->size);
         QMetaObject::invokeMethod(this, "decodeAllQueuedDemuxedAudio", Qt::QueuedConnection);
     }
@@ -190,17 +188,20 @@ void libAvAudioDecoder::decodeAllQueuedDemuxedAudio()
 {
     //not ALL queued demux'd audio, but as much as we possibly can. once it gets below a certain threshold, we return until demuxFrame gives us more data to work with/calls us again... then we use that leftover data in the beginning of the next call to us
 
-    int packetSize;
+    int packetQueueSize;
     do
     {
-        packetSize = m_DeMuxedAudioFramePacket->size = m_DeMuxedAudioStream.size();
-        if (packetSize < AUDIO_REFILL_THRESH)
+        packetQueueSize = m_DeMuxedAudioFramePacket->size = m_DeMuxedAudioStream.size();
+        if (packetQueueSize < AUDIO_REFILL_THRESH)
         {
+            emit d("---packetQueueSize is less than threshold, returning until more has been demuxed");
             return; //wait for more data to be queued, which will call us
         }
         m_DeMuxedAudioFramePacket->data = (uint8_t*)m_DeMuxedAudioStream.data();
 
         int outputBufferSize = m_TempDecodedAudioBuffer->size(); //we re-declare it locally because decdode() modifies it as output
+
+        emit d("trying to decode with a packet queue of size: " + QString::number(packetQueueSize));
 
         int numBytesUsed = avcodec_decode_audio3(m_InputCodecCtx, (int16_t*)m_TempDecodedAudioBuffer->data(), &outputBufferSize, m_DeMuxedAudioFramePacket);
         if(numBytesUsed < 0)
@@ -209,6 +210,7 @@ void libAvAudioDecoder::decodeAllQueuedDemuxedAudio()
             emit d("error in num bytes used");
             return;
         }
+        emit d("DECODED FRAME - used " + QString::number(numBytesUsed) + " from the packetQueue, of which the output size is: " + QString::number(outputBufferSize));
         if(outputBufferSize > 0)
         {
             //m_DecodedAudioBuffer.append(*m_TempDecodedAudioBuffer, outputBufferSize);
@@ -220,5 +222,16 @@ void libAvAudioDecoder::decodeAllQueuedDemuxedAudio()
         }
         m_DeMuxedAudioStream.remove(0, numBytesUsed);
 
-    }while(packetSize > 0);
+    }while(packetQueueSize > 0);
+}
+void libAvAudioDecoder::resetEof()
+{
+    bool preEof = (m_InputFormatCtx->pb->eof_reached ? true : false);
+    if(m_MuxedStream.size() > 0)
+        m_InputFormatCtx->pb->eof_reached = 0;
+    bool postEof = (m_InputFormatCtx->pb->eof_reached ? true : false);
+    if(preEof != postEof)
+    {
+        emit d("RESET EOF ACTUALLY DID SOMETHING WOOO");
+    }
 }

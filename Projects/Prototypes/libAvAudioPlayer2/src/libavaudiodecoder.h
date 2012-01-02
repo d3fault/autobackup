@@ -15,7 +15,7 @@ extern "C"
 
 #define IMAGE_PIX_FMT PIX_FMT_RGB32
 #define AUDIO_REFILL_THRESH 4096
-#define INPUT_STREAM_BUFFER_SIZE 20480 //idfk, 4kb is probably good enough for audio, but what about video? will libav call my readPackets multiple times if my buffer size here is too small? idfk.
+#define INPUT_STREAM_BUFFER_SIZE 16384 //idfk, 4kb is probably good enough for audio, but what about video? will libav call my readPackets multiple times if my buffer size here is too small? idfk.
 #define AMOUNT_TO_BUFFER_BEFORE_STARTING INPUT_STREAM_BUFFER_SIZE //4kb of data should be enough to read the header
 
 class libAvAudioDecoder : public QObject
@@ -33,6 +33,7 @@ private:
     bool actualInit();
     static int staticReadPackets(void *opaque, uint8_t *buf, int bufSize);
     int readPackets(uint8_t *buf, int bufSize);
+    void resetEof();
 
     ThreadSafeQueueByMutex *m_SharedDecodedAudioBuffer;
 
