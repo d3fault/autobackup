@@ -30,10 +30,12 @@ void myOut(QString output)
 int readPacket(void *opaque, uint8_t *buf, int bufSize)
 {
     Q_UNUSED(opaque);
+    myOut("readPacket asking for: " + QString::number(bufSize));
     myOut("file in memory bytes remaining: " + QString::number(fileInMemory->size()));
     int size = qMin(bufSize, fileInMemory->size());
     memcpy((void*)buf, (const void*)fileInMemory->data(), size);
     fileInMemory->remove(0, size);
+    myOut("returning " + QString::number(bufSize) + " from readPacket");
     return size;
 }
 
