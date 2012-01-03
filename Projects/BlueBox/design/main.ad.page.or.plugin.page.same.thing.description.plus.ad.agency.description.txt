@@ -1,0 +1,17 @@
+You Are Up To Date
+Please Wait
+
+Click Here To Install
+A Suitable Video Player (LGPL/Commercial Licensing)
+
+Click Here To Download
+A Suitable Video Player (LGPL/Commercial Licensing)
+
+
+
+
+all 3 are the same page, just different post requests and a lack of a post request for the last one
+
+there are ads littered all over the page
+
+at least one of them has to be my ad agency: an image for a day. buy quick, it'll be twice as expensive tomorrow!

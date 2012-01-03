@@ -1,0 +1,6 @@
+an encryption layer and inside it 2 things. 1st,the word/right-network-confirmation/ident-ok-packet 'd3fault'. this is the 'd3fault' packet network. after that is a double for the size of the data and then directly proceeding that double, the data itself. there is no other piece of data that these routers see. they are there own library.
+a library that uses this protocol above for storage alone is called the d3fault-packet. lol way too many 'd3faults' already my mind is going to explode
+
+the encryption layer stripping could be foreverfilesystem
+the inside packet could be the d3fault data. protocol, if you will. but also file storage (infinite for everyone).
+i want to create a verification system where every once in a while you are asked to perform a random hash on the file. the truth would be the only acceptable answer and 
