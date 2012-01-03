@@ -5,6 +5,7 @@
 
 #include <QByteArray>
 #include <QMutex>
+#include <QMutexLocker>
 
 class ThreadSafeQueueByMutex : public QObject
 {
