@@ -13,6 +13,7 @@ void libAvAudioDecoder::initAndPlay()
         {
             if(!actualInit())
             {
+                emit d("init failed");
                 m_InitFailedSoDontTryAgain = true;
                 return;
             }
@@ -20,10 +21,6 @@ void libAvAudioDecoder::initAndPlay()
         }
 
         QMetaObject::invokeMethod(this, "demuxFrame", Qt::QueuedConnection);
-    }
-    else
-    {
-        emit d("failed to init once so not trying again");
     }
 }
 int libAvAudioDecoder::staticReadPackets(void *opaque, uint8_t *buf, int bufSize)
@@ -46,6 +43,8 @@ void libAvAudioDecoder::handleNewDataAvailable(QByteArray newData)
     //queue it to be decoded later? maybe "de-Stream" it via libav and then queue it to be decoded later? (so we are ONLY processing audio stream) -------- NO, see below
     //in any case, we don't need to mutex our buffer since this slot is called from this thread, yay finally a payoff for doing getFrame() as a slot lawl (pause/stop still apply but i never code those in prototypes fuck the police)
     //we will not be de-stream'ing it here, libav calls readPackets expecting a file and then we can de-stream it and put it in yet another queue to later be decoded
+    if(m_InitFailedSoDontTryAgain)
+        return; //dgaf
     emit d("appending " + QString::number(newData.size()) + " bytes to the muxed input stream (from curl)");
     m_MuxedStream.append(newData);
     if(!m_Initialized && m_MuxedStream.size() >= AMOUNT_TO_BUFFER_BEFORE_STARTING)
@@ -95,7 +94,12 @@ bool libAvAudioDecoder::actualInit()
     emit d("probed input format: " + QString(m_InputFormatCtx->iformat->name));
 
     emit d("probe score: " + QString::number(m_InputFormatCtx->iformat->read_probe(&pd)));
+
+    //Consume the probed data, as libav caches it for us
+    //m_MuxedStream.remove(0, AMOUNT_TO_BUFFER_BEFORE_STARTING);
+    //NOPE
 #else
+    //TODO: make this an else in the code and if score is 0 or something then try to detect it by the filename extension based on a few select types or even probe/extract the list from libav lol... damn this library is smart
     m_InputFormatCtx->iformat = av_find_input_format("avi"); //meh, i guess i can do URL string detection and just swap it for whatever. .avi, .mkv, .mp3 (only in this "test".. but i wish i didn't have to say :(
 #endif
 
@@ -116,7 +120,8 @@ bool libAvAudioDecoder::actualInit()
     }
     emit d("stream info found");
     //find first audio stream index
-    for(unsigned int i = 0; i < m_InputFormatCtx->nb_streams; ++i)
+    unsigned int nbStreams = m_InputFormatCtx->nb_streams;
+    for(unsigned int i = 0; i < nbStreams; ++i)
     {
         if(m_InputFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO)
         {
