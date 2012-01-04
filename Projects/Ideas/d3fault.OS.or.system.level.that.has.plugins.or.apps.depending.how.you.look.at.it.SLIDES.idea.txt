@@ -1,0 +1,12 @@
+desktop/mobile multi-gui
+"slides"
+on desktop, shows explorer like expanded path over to the left. allows you to go back and take another path
+mobile, swiping to the right takes you to the left (same as image switching for example). pausing or menu button or long press or something opens up concatenated "slide titles" or something. kinda like blades on xbox 360
+
+
+ex/tangent idea:
+'search `x264` on all previously visited slides'
+VS.
+'search `x264` on all previously visited slides, including updates to the slides' (everything is constantly changing)
+the latter will get a video player that i've used that has recently added x264 support (as a random example)
+

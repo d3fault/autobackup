@@ -1,0 +1,3 @@
+side-wide 1-link mirror of icefilms
+on link dead, re-scrape for that one title/episode ONLY
+mirror does scraping until banned... new IP/proxy/SCRAPER hired immediately after. users cannot be trusted. also cannot depend directly on icefilms.

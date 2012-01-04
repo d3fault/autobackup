@@ -1,0 +1,13 @@
+global merge
+global diff
+color if immediate diff (say, red)
+different color and FADING OUT as progressively more "past" (say, blue -> white/translucent). color is yellow
+
+ok better is immediate red, recent yellow fading. i think yellow fades fast (to human eye). faster than blue. green might work, but we need to remember our font is white
+
+actually fuck that black screen white font is best for eyes and most energy conserving
+
+
+so black background around everything, white text everywhere. since red/white don't distinguish as well, an always black border around the white before the background. with white on black it is not noticed, but with white on red it is
+
+

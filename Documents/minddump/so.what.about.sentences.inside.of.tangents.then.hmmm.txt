@@ -1,0 +1,5 @@
+all arguments should be made via text communication. text/tangent. each sentence, each parenthesis level. periods and open/close parenthesis detection. pressing the period aves it. pressing the space publishes it. pressing the first letter of the next sentence starts a new unit. you are not published, only saved up to the period. there is also LIVE mode which publishes your key for that sentence BEFORE you start typing it so each letter can be decrypted as it is received
+
+words dictate how often you sync/upload. each space signifies a "save"/"upload" if you will. you can type a word and it is forgotten/only-saved-for-you/EXTRACTED-to-be-used-with-its-own-NEW-key if you backspace it before hitting space. you can still hide the word but you cannot decrypt the unit (sentence) else it will reveal the word you were intending to hide. instead you copy everything out of it except the word you are trying to hide, make a new unit without it, then publish that one's key.
+
+a tangent cannot span two sentences. it is impossible. any period put inside the tangent would form a period in one of the sentences (each itself a unit).
