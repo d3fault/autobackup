@@ -1,0 +1,3 @@
+Mobile PC (untrusted)
+phone (n9? something with the capability to control  a) raspberry pi (trusted), which inadvertently controls/reads-from/saves all data from arduino. the qt software is on the raspberry pi, with a small sync'ing/uploading layer on the n9. the recording is also taken from the n9 and saved externally to something write-only. write-only SSD would be ideal. write only with a physical reset switch. you cannot do it via software.
+raspberry pi contains the OS, of which a video feed of output is sent to n9. n9 is merely a video PLAYER and an uploader. everything it uploads must be verified at a later date by facts recorded on the raspberry pi, which has no data connection to the n9... only video out. i don't think any phones have video in. fml.

@@ -1,0 +1,5 @@
+i go private/offline when i'm watching a movie
+a notification is sent telling why i am private/offline
+the notice says i am watching `movie`
+`movie` is a url that plays said movie at the exact same spot i am at (or from the beginning if i'm done). optionally, you can listen to my audio overlaying the movie with the movie audio filtered out so you only hear my voice. echo noise cancelling
+

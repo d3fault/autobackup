@@ -1,0 +1,4 @@
+3 lightttpd instances running on 3 different ports
+3 instance of the application using each port
+1 of the instances leaves
+wait, what?
