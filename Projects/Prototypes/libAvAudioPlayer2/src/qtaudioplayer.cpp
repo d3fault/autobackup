@@ -45,6 +45,7 @@ void QtAudioPlayer::actualStart()
 }
 void QtAudioPlayer::fillAudioBuffer()
 {
+
     if (m_AudioOutput && m_AudioOutput->state() != QAudio::StoppedState)
     {
         int chunks = m_AudioOutput->bytesFree()/m_AudioOutput->periodSize();

@@ -14,3 +14,7 @@ Synchronizer.onPresentVideo -> GraphicsItem.presentFrame
 
 removing CurlDownloader from this version, i'll implement it in libAvGraphicsItem3
 for now, i just want to focus on getting audio + video sync'd. 1 thing at a time.
+
+
+-----UPDATE-----
+using the design i came up with in libavaudioplayer
