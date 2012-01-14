@@ -1,0 +1,1 @@
+never made any progress with the source, except some basic design in place. took a tangent to libAvAudioPlayer (1 and 2) and now using a better audio-integrated design in libAvGraphicsItem3
