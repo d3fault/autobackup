@@ -1,0 +1,39 @@
+i am not having fun coding lately
+i am procrastinating
+timestamps show it
+but meh
+buffers, audio bytes, synchronization, timestamps... shit's killing me
+tangent after tangent after tangent
+just to make a buck
+i hope this is all worth it
+
+i want coding to go back to being fun!!!
+fffff
+a little bit of pain and i might be RETIRED
+guh
+money sucks
+
+so i told hannah yesterday that i'm going to "make and sell a video library to other developers"
+it's a good cover
+good as in i might be able to survive off that in the long run
+or just sell it as a whole dgaf
+
+i have a video library company/page
+it utilizes an auto-update-dll http/html api 'spec' that i (the company) invents and utilizes on the site (remember to do the sample app that utilizes the dlls, it's kinda necessary as something to point to)
+
+libMegaParser
+and
+libIceParser (maybe with a level of cache called 'icecache'. still unsure if user will parse icefilms or if i will (via proxies once i get b&)
+USE THE SAME update api?
+more ad hits
+but dgaf
+
+blah
+ad company
+sell a jpeg of fixed size pointing to a link of their choice
+accept bitcoins
+don't even need google.
+don't need anyone
+need servers only.
+need movie and tv watchers
+hahahahahaha there are infinite.
