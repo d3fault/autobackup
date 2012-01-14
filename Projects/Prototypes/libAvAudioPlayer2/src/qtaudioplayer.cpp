@@ -41,7 +41,7 @@ void QtAudioPlayer::play()
 }
 void QtAudioPlayer::actualStart()
 {
-    m_Timer->start(15); //15 so we call it about twice per video frame. this way we will always be in sync with the audio with a maximum error of 15ms, not even noticeable to the human eye
+    m_Timer->start(8); //15 so we call it about twice per video frame. this way we will always be in sync with the audio with a maximum error of 15ms, not even noticeable to the human eye
 }
 void QtAudioPlayer::fillAudioBuffer()
 {

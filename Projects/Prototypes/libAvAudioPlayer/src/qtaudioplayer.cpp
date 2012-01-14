@@ -45,7 +45,7 @@ void QtAudioPlayer::setAudioSpec(int sampleRate, int numChannels, int sampleSize
 }
 void QtAudioPlayer::actualStart()
 {
-    m_Timer->start(20);
+    m_Timer->start(10);
 }
 void QtAudioPlayer::fillAudioBuffer()
 {
@@ -57,10 +57,9 @@ void QtAudioPlayer::fillAudioBuffer()
            QByteArray buffer = m_Queue->deQueue(m_AudioOutput->periodSize());
            int bufferSize = buffer.size();
            if (bufferSize > 0)
-               m_AudioBuffer->write(buffer, buffer.size());
+               m_AudioBuffer->write(buffer, bufferSize);
            if (bufferSize != m_AudioOutput->periodSize())
            {
-               bufferSize = 5;
                break;
            }
            --chunks;
