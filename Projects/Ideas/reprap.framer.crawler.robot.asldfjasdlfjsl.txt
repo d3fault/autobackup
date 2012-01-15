@@ -1,0 +1,11 @@
+a reprap that builds framing and pours hot plastic (or could be some metal as long as it doesn't stick to framing)
+it leaves a small gap so it never overflows. it moves the framing upward and builds it's target while crawling up it (reprap 'frameblock' layer-downer). the unit is basically a frame surrounding it's current workpoint. the computer system is mounted to that because it IS the frame. making walls/shapes like this is going to give you a lot smoother walls than just laying over and over... and it solves the space problem. you set it on the ground and say BUILD and it builds and picks itself up on top of what it is building and it brings itself upward and so can move around and even very easily create a house.
+
+i want a smoothwalled translucent plastic (though weather proof!!!) house built automatically using this reprap
+
+self replicating silicon is much more awesome than plastic.
+especially once the human element is 100% removed
+
+psh
+"work"
+we have no jobs.

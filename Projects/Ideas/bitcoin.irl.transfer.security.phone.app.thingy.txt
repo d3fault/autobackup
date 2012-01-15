@@ -1,0 +1,7 @@
+bitcoin irl transfer
+i give him a bitcoin address from the screen of my phone.
+this is the only piece of valuable data that the phone has at the given moment
+he enters it and pays me money for a product.
+i sit by my phone and wait for the LED to turn a certain color
+this only happens if multiple servers behind the scenes that i own all verify that the payment was processed
+this is the only signal it processes. it doesn't know what the signal is for, but i do. of course signed/verified
