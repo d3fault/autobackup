@@ -1,0 +1,9 @@
+bulk plugin checker
+check multiple plugins (their status) and allow installation of them
+
+can install one, update another, while the 3rd is already up-to-date
+you specify what plugins to check for updates for in your POST data
+
+basically just consolidating all the plugin/install pages into one
+they are like firefox's, asking for (but not requiring) restart of app
+a lot of people restart and it brings them back to that same place and says "install complete" and gives another ad hit and allows them to continue installing the rest of the plugins. they can just install them all with only 1 restart at the end but w/e that's still 2 ad hits on the initial run of bluebox and the first installs of the plugins
