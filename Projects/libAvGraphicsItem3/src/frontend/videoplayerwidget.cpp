@@ -19,7 +19,7 @@ videoPlayerWidget::videoPlayerWidget(QWidget *parent) :
     m_ControlsLayout = new QHBoxLayout();
     m_PlayButton = new QPushButton();
     m_PlayButton->setIcon(this->style()->standardIcon(QStyle::SP_MediaPlay));
-    connect(m_PlayButton, SIGNAL(clicked()), m_VideoGraphicsItem, SLOT(startLibAVThreads()));
+    connect(m_PlayButton, SIGNAL(clicked()), m_LibAvPlayer, SLOT(play()));
     m_ControlsLayout->addWidget(m_PlayButton);
     m_Layout->addLayout(m_ControlsLayout);
 

@@ -51,11 +51,11 @@ void QtAudioPlayer::fillAudioBuffer()
         int chunks = m_AudioOutput->bytesFree()/m_AudioOutput->periodSize();
         while (chunks)
         {
-           QByteArray buffer = m_Queue->deQueue(m_AudioOutput->periodSize());
+           QByteArray buffer = m_Queue->deQueue(qMin(m_AudioOutput->bytesFree(), m_AudioOutput->periodSize()));
            int bufferSize = buffer.size();
            if (bufferSize > 0)
-               m_AudioBuffer->write(buffer, buffer.size());
-           if (bufferSize != m_AudioOutput->periodSize())
+           qint64 actuallyWritten = m_AudioBuffer->write(buffer, buffer.size());
+           if(actuallyWritten != (qint64)bufferSize || bufferSize != m_AudioOutput->periodSize() || actuallyWritten < 0 /*error gives us -1*/)
            {
                break;
            }
