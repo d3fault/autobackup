@@ -5,17 +5,16 @@
 #include <QByteArray>
 #include <QTimer>
 
-#include <generateddatabuffer.h>
-#include <databuffergenerator.h>
+#include <localfile.h>
 
 class CurlDownloader : public QObject
 {
     Q_OBJECT
 public:
-    CurlDownloader(DataBufferGenerator *dataBufferGenerator);
+    CurlDownloader(LocalFile *localFile);
 private:
     QTimer *m_Timer;
-    DataBufferGenerator *m_DataBufferGeneator;
+    LocalFile *m_LocalFile;
 signals:
     void onDataGathered(QByteArray *data);
 public slots:
