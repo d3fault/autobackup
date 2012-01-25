@@ -16,8 +16,8 @@ public:
     ~AudioVideoBuffersWidget();
 private:
     QVBoxLayout *m_Layout;
-    QPushButton *m_InflateButton;
-    QPushButton *m_DeflateButton;
+    QPushButton *m_PlayButton;
+    QPushButton *m_DestroyButton;
     QPlainTextEdit *m_DebugOutput;
 
     AudioVideoPlayer *m_AudioVideoPlayer;

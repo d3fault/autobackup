@@ -16,14 +16,22 @@ SOURCES += main.cpp\
     curldownloader.cpp \
     decoder.cpp \
     audioplayer.cpp \
-    localfile.cpp
+    localfile.cpp \
+    generateddatabuffer.cpp \
+    databuffergenerator.cpp
 
 HEADERS  += audiovideobufferswidget.h \
     audiovideoplayer.h \
     curldownloader.h \
     decoder.h \
     audioplayer.h \
-    localfile.h
+    localfile.h \
+    generateddatabuffer.h \
+    databuffergenerator.h
+
+
+
+
 
 
 

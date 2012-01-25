@@ -8,17 +8,17 @@ AudioVideoBuffersWidget::AudioVideoBuffersWidget(QWidget *parent)
 void AudioVideoBuffersWidget::init()
 {
     m_Layout = new QVBoxLayout();
-    m_InflateButton = new QPushButton(tr("Start"));
-    m_DeflateButton = new QPushButton(tr("Destroy"));
+    m_PlayButton = new QPushButton(tr("Play"));
+    m_DestroyButton = new QPushButton(tr("Destroy"));
     m_DebugOutput = new QPlainTextEdit();
 
-    m_Layout->addWidget(m_InflateButton);
-    m_Layout->addWidget(m_DeflateButton);
+    m_Layout->addWidget(m_PlayButton);
+    m_Layout->addWidget(m_DestroyButton);
     m_Layout->addWidget(m_DebugOutput);
     this->setLayout(m_Layout);
 
-    connect(m_InflateButton, SIGNAL(clicked()), m_AudioVideoPlayer, SLOT(initAndProbe()));
-    connect(m_DeflateButton, SIGNAL(clicked()), m_AudioVideoPlayer, SLOT(destroy()));
+    connect(m_PlayButton, SIGNAL(clicked()), m_AudioVideoPlayer, SLOT(initAndProbe()));
+    connect(m_DestroyButton, SIGNAL(clicked()), m_AudioVideoPlayer, SLOT(destroy()));
 }
 AudioVideoBuffersWidget::~AudioVideoBuffersWidget()
 {

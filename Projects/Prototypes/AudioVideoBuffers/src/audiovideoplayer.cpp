@@ -30,11 +30,12 @@ void AudioVideoPlayer::initAndProbe()
     m_AudioPLayer->moveToThread(m_AudioPLayerThread);
     m_AudioPLayerThread->start();
 
-    connect(m_Curl, SIGNAL(onDataGathered(QByteArray*)), m_LocalFile, SLOT(handleNewData(QByteArray*)));
+    connect(m_Curl, SIGNAL(onDataGathered(GeneratedDataBuffer*)), m_LocalFile, SLOT(handleNewData(GeneratedDataBuffer*)));
 
     QMetaObject::invokeMethod(m_Curl, "start", Qt::QueuedConnection);
 
 }
 void AudioVideoPlayer::destroy()
 {
+    //TODOreq: the whole point of this prototype.
 }

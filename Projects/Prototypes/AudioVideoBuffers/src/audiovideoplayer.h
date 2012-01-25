@@ -9,6 +9,8 @@
 #include <decoder.h>
 #include <audioplayer.h>
 
+class GeneratedDataBuffer;
+
 class AudioVideoPlayer : public QObject
 {
     Q_OBJECT
