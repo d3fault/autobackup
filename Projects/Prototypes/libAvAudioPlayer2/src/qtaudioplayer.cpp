@@ -57,7 +57,7 @@ void QtAudioPlayer::fillAudioBuffer()
            qint64 actuallyWritten = m_AudioBuffer->write(buffer, buffer.size());
            if(actuallyWritten != (qint64)bufferSize || bufferSize != m_AudioOutput->periodSize() || actuallyWritten < 0 /*error gives us -1*/)
            {
-               break;
+               break; //TODO: make sure that only the actuallyWritten bytes were taken from whatever buffer we pulled (or were pushed) from?
            }
            --chunks;
         }
