@@ -1,7 +1,7 @@
 #include "localfile.h"
 
 LocalFile::LocalFile(int memoryCacheSizeInBytes, DataBufferGenerator *dataBufferGenerator)
-    : m_MemoryCacheSize(memoryCacheSizeInBytes)
+    : m_MemoryCacheSize(memoryCacheSizeInBytes), m_WeHaveADataBuffer(false), m_AppendIsWaiting(false)
 {
     m_MemoryCache = new QSharedMemory(MEMORY_KEY);
     //m_WriteCache = new QSharedMemory(WRITE_CACHE_KEY);
@@ -59,6 +59,7 @@ void LocalFile::append(void *newData, int dataSize)
 }
 void LocalFile::handleBufferDelivery(GeneratedDataBuffer *newBuffer)
 {
+#if 0
     QMutexLocker scopedLock(m_WriteCacheEmptyBufferMutex);
     m_WriteCacheEmptyBufferQueue->append(newBuffer);
     if(m_WriteCacheEmptyBufferQueue->size() > 0)
@@ -67,10 +68,23 @@ void LocalFile::handleBufferDelivery(GeneratedDataBuffer *newBuffer)
         //ok i think i get why my brain is fucking up
         //the queue is not necessary. we should just always at one time have one m_CurrentEmptyDataBuffer; once it's full, we append it to a queue that is processed by this thread separately that actually does the writing
     }
-    weHaveADataBuffer = true;
+#endif
+
+
+    m_CurrentEmptyDataBuffer = newBuffer;
+    m_WeHaveADataBuffer = true;
+    if(m_AppendIsWaiting)
+    {
+        m_AppendIsWaiting = false;
+        //do the append now
+    }
 }
+
+//TODO: LOST IN THIS DOCUMENT SOMEWHERE
+
 void LocalFile::privateAppend(void *dataPtr, int dataSize)
 {
+#if 0
     int dataLeftToWrite = dataSize;
     int lastSizeUsed, lastTotalCapacity;
     while(dataLeftToWrite > 0)
@@ -90,5 +104,16 @@ void LocalFile::privateAppend(void *dataPtr, int dataSize)
         {
 
         }
+    }
+#endif
+
+    if(!m_WeHaveADataBuffer)
+    {
+        m_AppendIsWaiting = true;
+        //todo: should i block or just return + remember the pointer and datasize and write it later once we get a buffer delivery?
+    }
+    else
+    {
+
     }
 }

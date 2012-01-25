@@ -30,6 +30,8 @@ private:
     DataBufferGenerator *m_DataBufferGenerator; //for write cache only, not the memory cache
     QMutex *m_WriteCacheEmptyBufferMutex;
     void privateAppend(void *dataPtr, int dataSize);
+    volatile bool m_WeHaveADataBuffer;
+    volatile bool m_AppendIsWaiting;
 signals:
 
 public slots:
