@@ -1,0 +1,17 @@
+a windowing system isn't that hard to make
+there's always the windowing system sample devdays on github, pretty sure it was released LGPL
+basically you just have running "Windows", which always have an associated "Process" (multiple Windows can be shown from the same process + multiple processes (dependencies(?)) can be behind a single window, which are basically just plugins made by my designer/integrated-inline-int-main sdk. this windowing system sits right above yours, and can even run without it (as a standalone). a software shop is the only place i make a small profit, the rest is 100% LGPL. the shop too is LGPL but i need to retain commit power to the d3fault branch over it? something like that. "branding". "Nokia Ovi Store"... "Google Android Market"... "Apple AppStore"... "Microsoft <something>". mine will just be called "d3fault software manager". it IS the "default" software manager, in that you can easily replace it (the key inside is a copy/paste away)... and it is also the D3FAULT software manager. it is both roles at once and we hope to hide in that little slice of revenue infinitely. the OS as a whole, if you even want to call it that because it really runs right on top of linux/windows/mac/whatever, is called d3fault.
+i'm pretty sure that the windowing system on github only had the requirement of being able to render QWidget. if it inherited QWidget, it could be added/painted
+
+this is my long-term goal.
+
+re:windowing system not being that hard to make
+from a front-end approach, that is
+
+"windows" on the "desktop" (with or without icons, it can serve as a background without)
+and a MENU BAR at the bottom. menu bar has a button with some stupid logo, and all your apps are in there. there's also the open-windows-list (taskbar) to the right of the giant button
+and quicklaunch stuff. shit's easy if you think about it
+
+D3faultOS is a singleton. only one can be running on a computer at a single time. a better way to say this is it's a server. but maybe i can use QSharedMemory instead of network sockets? maybe i can abstract the logic out so i can use QSharedMemory where it's faster and network sockets where i need to? meh i'm not into the whole "running an app from here and viewing it's gui from over here!" trend anyways. show me some basic output, idgaf.
+d3fault, the main client app, can have infinite instances
+D3faultOS is in charge of keeping libforeverfilesystem up and running 24/7 too. it "owns"/"manages"/"launches" that dll
