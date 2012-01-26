@@ -1,0 +1,6 @@
+i don't like having the buffer generator on it's own thread, because when it comes to dealing with downloading from the network, i want the alloc to be quick and synchronous
+i also don't like it because LocalFile needs to know how big of a piece of data to alloc even though we don't know the dataSize yet!
+it would be smarter to alloc chunks exactly of the required data size
+
+i origninally was thinking that i needed to put them on their own threads so they could handle their own "Reclaim"
+i could accomplish the same thing without the stupidity of allocating asynchronously by using QMutexes on the "m_Used and m_ReUsed" queues in a public "reclaim" method that lives on generator, and accepts generated buffers. LocalFile calls it via it's direct-call from curl (so that part is a bit hacky but it's all to encapsulate it as a "LocalFile"), LocalFile accesses the buffer generator and the methods it calls use Mutexes to protect their queues. LocalFile also uses two Mutexes to protect the a) memory-cache and b) the write cache. we write to the current buffer until it's empty, send that one to the queue of scheduled to be written buffers (now that it's full), and get a new (or-ReUsed one) and write the rest of the data
