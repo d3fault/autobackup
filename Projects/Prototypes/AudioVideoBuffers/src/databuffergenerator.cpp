@@ -72,6 +72,9 @@ void DataBufferGenerator::sendBufferReadySignal(QObject *whoToNotify, GeneratedD
 {
     QMetaObject::invokeMethod(whoToNotify, "hereIsYourBuffer", (rushDangerous ? Qt::DirectConnection : Qt::QueuedConnection), Q_ARG(GeneratedDataBuffer*,bufferPtr));
 }
+GeneratedDataBuffer * DataBufferGenerator::giveMeADataBuffer()
+{
+}
 
 //old constructor
 #if 0

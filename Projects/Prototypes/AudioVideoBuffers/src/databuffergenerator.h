@@ -17,12 +17,12 @@ class DataBufferGenerator : public QObject
     Q_OBJECT
 public:
     DataBufferGenerator(int totalMaxSizeOfAllGeneratedDataBuffers, int generatedDataBufferSize);
-    //GeneratedDataBuffer *giveMeADataBuffer();
+    GeneratedDataBuffer *giveMeADataBuffer(int bufferSize);
 private:
     int m_TotalMaxSizeOfAllGeneratedDataBuffers;
     int m_GeneratedDataBufferSize;
-    //QMutex *m_ReUseQueueMutex;
-    //QMutex *m_UsedQueueMutex;
+    QMutex *m_ReUseQueueMutex;
+    QMutex *m_UsedQueueMutex;
     QQueue<GeneratedDataBuffer*> *m_ReUseQueue;
     QQueue<GeneratedDataBuffer*> *m_UsedQueue;
 

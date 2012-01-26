@@ -1,7 +1,7 @@
 #include "localfile.h"
 
 LocalFile::LocalFile(int memoryCacheSizeInBytes, DataBufferGenerator *dataBufferGenerator)
-    : m_MemoryCacheSize(memoryCacheSizeInBytes), m_WeHaveADataBuffer(false), m_AppendIsWaiting(false), m_WeCareWhenANewBufferArrives(false)
+    : m_MemoryCacheSize(memoryCacheSizeInBytes), m_CurrentLogicalWriteIndex(0), m_WeHaveADataBuffer(false), m_AppendIsWaiting(false), m_WeCareWhenANewBufferArrives(false)
 {
     m_MemoryCache = new QSharedMemory(MEMORY_KEY);
     //m_WriteCache = new QSharedMemory(WRITE_CACHE_KEY);
@@ -10,7 +10,7 @@ LocalFile::LocalFile(int memoryCacheSizeInBytes, DataBufferGenerator *dataBuffer
     //m_WriteCache->create(WRITE_CACHE_SIZE);
     m_DataBufferGenerator = dataBufferGenerator;
 
-    m_WriteCacheEmptyBufferQueue = new QQueue<GeneratedDataBuffer*>();
+    m_WriteCacheFilledToBeWrittenToDiskBufferQueue = new QQueue<GeneratedDataBuffer*>();
     //m_WriteCacheEmptyBufferMutex = new QMutex();
 
     scheduleOneBufferDelivery(false);
@@ -21,7 +21,7 @@ void LocalFile::hereIsYourBuffer(GeneratedDataBuffer *thebuffer)
     //WRONG. curl thread can access it at any time. we need to mutex access to it
     //QMutexLocker scopedLock(m_WriteCacheEmptyBufferMutex);
     //we are no longer locking because for the most part, this will be called using a Queued connection so we use our own thread to append it. but there is also the case where i call this from a different thread using Qt::DirectConnection. OUR thread is known to be calling THAT thread using BlockingQueued, so we're essentiall calling ourselves. a weird hack that i hope works
-    m_WriteCacheEmptyBufferQueue->append(theBuffer);
+    m_WriteCacheFilledToBeWrittenToDiskBufferQueue->append(theBuffer);
     if(m_WeCareWhenANewBufferArrives)
     {
         m_WeCareWhenANewBufferArrives = false;
@@ -30,6 +30,9 @@ void LocalFile::hereIsYourBuffer(GeneratedDataBuffer *thebuffer)
 }
 void LocalFile::append(void *newData, int dataSize)
 {
+    setFileContents(m_CurrentLogicalWriteIndex, newData, dataSize);
+
+#if 0
     //ok. we call this method FROM A CURL THREAD, SO FIRST AND FOREMOST WE MUST MUTEX THE QUEUE
     *m_CurrentEmptyDataBuffer = this->getBufferSafeOnDifferentThreadFast(dataSize);
     //after we get it, then we write to it
@@ -40,6 +43,7 @@ void LocalFile::append(void *newData, int dataSize)
         memcpy(m_CurrentEmptyDataBuffer->data(), newData, sizeToWrite);
         m_CurrentEmptyDataBuffer->setDataSize(sizeToWrite);
     }
+#endif
 
 
     //todo: calculate bytesFreeInMemoryCache
@@ -148,15 +152,15 @@ void LocalFile::privateAppend(void *dataPtr, int dataSize)
 }
 GeneratedDataBuffer *LocalFile::getBufferSafeOnDifferentThreadFast(int minimumReturnSize)
 {
-    QMutexLocker scopedLock(m_WriteCacheEmptyBufferMutex);
-    int queueSize = m_WriteCacheEmptyBufferQueue->size();
+    QMutexLocker scopedLock(m_WriteCacheFilledToBeWrittenToDiskBufferMutex);
+    int queueSize = m_WriteCacheFilledToBeWrittenToDiskBufferQueue->size();
     int scheduleMore = 0;
 
     if(queueSize == 0)
     {
         scheduleOneBufferDelivery(true); //blocking schedule one. it does not return until the slot it calls returns, indicating a buffer has been returned. maybe not, i need to verify this// TODO
         //if we've used up the maximum size of the buffer generator, then it returns and does NOT guarantee a queue append
-        int newQueueSize = m_WriteCacheEmptyBufferQueue->size();
+        int newQueueSize = m_WriteCacheFilledToBeWrittenToDiskBufferQueue->size();
         int delta = newQueueSize - queueSize;
         if(delta < 1) //result of scheduleOne(true);
         {
@@ -183,7 +187,7 @@ GeneratedDataBuffer *LocalFile::getBufferSafeOnDifferentThreadFast(int minimumRe
 
     if(queueSize > 0)
     {
-        return m_WriteCacheEmptyBufferQueue->dequeue();
+        return m_WriteCacheFilledToBeWrittenToDiskBufferQueue->dequeue();
     }
 
     //QMetaObject::invokeMethod
@@ -193,3 +197,57 @@ void LocalFile::scheduleOneBufferDelivery(bool blockingQueued)
 {
     QMetaObject::invokeMethod(m_DataBufferGenerator, "scheduleBufferDelivery", (blockingQueued ? Qt::BlockingQueuedConnection : Qt::QueuedConnection), Q_ARG(QObject, this), Q_ARG(bool, blockingQueued));
 }
+void LocalFile::setFileContents(int index, void *srcPtr, int srcSize)
+{
+    //memory
+    m_MemoryCache->lock();
+    if(index < (m_CurrentDecodeReadIndex /*memoryIndex*/ + LOCAL_FILE_MEMORY_SIZE_BYTES)) //it's impossiblef or readIndex to be ahead of the writeIndex (index)
+    {
+        //we're in range for copying some data to the in-memory cache
+        int amountOfRoomInCache = (m_CurrentDecodeReadIndex + LOCAL_FILE_MEMORY_SIZE_BYTES) - index;
+        int amountToCopy = qMin(amountOfRoomInCache,srcSize); //the first-n bytes of the srcPtr are copied, all we have room for
+
+    }
+
+    //hdd saving/scheduling
+    int dataLeftToBeWrittenOnThisMethodCall = srcSize;
+    void *localPtr = srcPtr;
+    if(!m_CurrentEmptyDataBuffer)
+    {
+        getNextBuffer(srcSize);
+    }
+    while(dataLeftToBeWrittenOnThisMethodCall > 0)
+    {
+        int spaceLeft = (m_CurrentEmptyDataBuffer->getCapacity() - m_CurrentEmptyDataBuffer->getSize());
+        if(spaceLeft > 0) //if there's any room left, use it
+        {
+            int toBeWrittenOnThisIteration = qMin(spaceLeft, dataLeftToBeWrittenOnThisMethodCall);
+            m_CurrentEmptyDataBuffer->appendData(localPtr,toBeWrittenOnThisIteration);
+            localPtr += toBeWrittenOnThisIteration;
+            dataLeftToBeWrittenOnThisMethodCall -= toBeWrittenOnThisIteration;
+
+            if(spaceLeft <= toBeWrittenOnThisIteration)
+            {
+                //if we've used up the remainder of that buffer, add it to the queue to be written to disk
+                m_WriteCacheFilledToBeWrittenToDiskBufferMutex->lock();
+                m_WriteCacheFilledToBeWrittenToDiskBufferQueue->append(m_CurrentEmptyDataBuffer);
+                m_WriteCacheFilledToBeWrittenToDiskBufferMutex->unlock();
+                if(dataLeftToBeWrittenOnThisMethodCall > 0)
+                {
+                    getNextBuffer(dataLeftToBeWrittenOnThisMethodCall);
+                }
+
+            }
+        }
+        else
+        {
+            getNextBuffer(dataLeftToBeWrittenOnThisMethodCall);
+        }
+    }
+}
+void LocalFile::getNextBuffer(int bufferSize)
+{
+    m_CurrentEmptyDataBuffer = m_DataBufferGenerator->giveMeADataBuffer(bufferSize);
+}
+
+//GOAL: to make the use of buffers thread-safe inherently because the generator is thread safe and only one thread will be working with a buffer at a given time (until it's ReUsed/gone through the generator again)
