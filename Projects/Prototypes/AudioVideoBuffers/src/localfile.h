@@ -32,10 +32,14 @@ private:
     void privateAppend(void *dataPtr, int dataSize);
     volatile bool m_WeHaveADataBuffer;
     volatile bool m_AppendIsWaiting;
+    volatile bool m_WeCareWhenANewBufferArrives;
+    GeneratedDataBuffer *getBufferSafeOnDifferentThreadFast(int minimumReturnSize);
+    void scheduleOneBufferDelivery(bool blockingQueued = false);
 signals:
 
 public slots:
-    void handleBufferDelivery(GeneratedDataBuffer *newBuffer);
+    void hereIsYourBuffer(GeneratedDataBuffer *thebuffer);
+    //void handleBufferDelivery(GeneratedDataBuffer *newBuffer);
 };
 
 #endif // LOCALFILE_H

@@ -1,7 +1,7 @@
 #include "localfile.h"
 
 LocalFile::LocalFile(int memoryCacheSizeInBytes, DataBufferGenerator *dataBufferGenerator)
-    : m_MemoryCacheSize(memoryCacheSizeInBytes), m_WeHaveADataBuffer(false), m_AppendIsWaiting(false)
+    : m_MemoryCacheSize(memoryCacheSizeInBytes), m_WeHaveADataBuffer(false), m_AppendIsWaiting(false), m_WeCareWhenANewBufferArrives(false)
 {
     m_MemoryCache = new QSharedMemory(MEMORY_KEY);
     //m_WriteCache = new QSharedMemory(WRITE_CACHE_KEY);
@@ -11,12 +11,37 @@ LocalFile::LocalFile(int memoryCacheSizeInBytes, DataBufferGenerator *dataBuffer
     m_DataBufferGenerator = dataBufferGenerator;
 
     m_WriteCacheEmptyBufferQueue = new QQueue<GeneratedDataBuffer*>();
-    m_WriteCacheEmptyBufferMutex = new QMutex();
+    //m_WriteCacheEmptyBufferMutex = new QMutex();
 
-    QMetaObject::invokeMethod(m_DataBufferGenerator, "scheduleBufferDelivery", Qt::QueuedConnection, Q_ARG(QObject, this));
+    scheduleOneBufferDelivery(false);
+}
+void LocalFile::hereIsYourBuffer(GeneratedDataBuffer *thebuffer)
+{
+    //the buffer is empty at this point. since we were called by a slot, we know that our LocalFile thread is the only one accessing this queue. no mutex is needed: //<<--TODOreq verify this
+    //WRONG. curl thread can access it at any time. we need to mutex access to it
+    //QMutexLocker scopedLock(m_WriteCacheEmptyBufferMutex);
+    //we are no longer locking because for the most part, this will be called using a Queued connection so we use our own thread to append it. but there is also the case where i call this from a different thread using Qt::DirectConnection. OUR thread is known to be calling THAT thread using BlockingQueued, so we're essentiall calling ourselves. a weird hack that i hope works
+    m_WriteCacheEmptyBufferQueue->append(theBuffer);
+    if(m_WeCareWhenANewBufferArrives)
+    {
+        m_WeCareWhenANewBufferArrives = false;
+        //trigger something
+    }
 }
 void LocalFile::append(void *newData, int dataSize)
 {
+    //ok. we call this method FROM A CURL THREAD, SO FIRST AND FOREMOST WE MUST MUTEX THE QUEUE
+    *m_CurrentEmptyDataBuffer = this->getBufferSafeOnDifferentThreadFast(dataSize);
+    //after we get it, then we write to it
+    //if(//should i verify it?)
+    if(m_CurrentEmptyDataBuffer)
+    {
+        int sizeToWrite = qMin(dataSize, m_CurrentEmptyDataBuffer->getCapacity);
+        memcpy(m_CurrentEmptyDataBuffer->data(), newData, sizeToWrite);
+        m_CurrentEmptyDataBuffer->setDataSize(sizeToWrite);
+    }
+
+
     //todo: calculate bytesFreeInMemoryCache
 #if 0
     if(bytesFreeInMemoryCache > 0)
@@ -53,10 +78,8 @@ void LocalFile::append(void *newData, int dataSize)
         m_CurrentDataBuffer->setSize(dataSize);
     }
 #endif
-
-    QMutexLocker scopedLock(m_WriteCacheEmptyBufferMutex);
-    privateAppend(newData, dataSize);
 }
+#if 0
 void LocalFile::handleBufferDelivery(GeneratedDataBuffer *newBuffer)
 {
 #if 0
@@ -70,7 +93,7 @@ void LocalFile::handleBufferDelivery(GeneratedDataBuffer *newBuffer)
     }
 #endif
 
-
+#if 0
     m_CurrentEmptyDataBuffer = newBuffer;
     m_WeHaveADataBuffer = true;
     if(m_AppendIsWaiting)
@@ -78,12 +101,16 @@ void LocalFile::handleBufferDelivery(GeneratedDataBuffer *newBuffer)
         m_AppendIsWaiting = false;
         //do the append now
     }
+#endif
+    //^^^NOT SURE?
 }
+#endif
 
 //TODO: LOST IN THIS DOCUMENT SOMEWHERE
 
 void LocalFile::privateAppend(void *dataPtr, int dataSize)
 {
+
 #if 0
     int dataLeftToWrite = dataSize;
     int lastSizeUsed, lastTotalCapacity;
@@ -107,6 +134,7 @@ void LocalFile::privateAppend(void *dataPtr, int dataSize)
     }
 #endif
 
+#if 0
     if(!m_WeHaveADataBuffer)
     {
         m_AppendIsWaiting = true;
@@ -116,4 +144,52 @@ void LocalFile::privateAppend(void *dataPtr, int dataSize)
     {
 
     }
+#endif
+}
+GeneratedDataBuffer *LocalFile::getBufferSafeOnDifferentThreadFast(int minimumReturnSize)
+{
+    QMutexLocker scopedLock(m_WriteCacheEmptyBufferMutex);
+    int queueSize = m_WriteCacheEmptyBufferQueue->size();
+    int scheduleMore = 0;
+
+    if(queueSize == 0)
+    {
+        scheduleOneBufferDelivery(true); //blocking schedule one. it does not return until the slot it calls returns, indicating a buffer has been returned. maybe not, i need to verify this// TODO
+        //if we've used up the maximum size of the buffer generator, then it returns and does NOT guarantee a queue append
+        int newQueueSize = m_WriteCacheEmptyBufferQueue->size();
+        int delta = newQueueSize - queueSize;
+        if(delta < 1) //result of scheduleOne(true);
+        {
+            m_WeCareWhenANewBufferArrives = true;
+            qDebug("we should have gained exactly one, but instead gained: " + QString::number(delta));
+            return;
+        }
+
+        queueSize = newQueueSize;
+    }
+
+    int aGoodMinimumQueueSize = 3;
+    if(queueSize < aGoodMinimumQueueSize)
+    {
+        scheduleMore = aGoodMinimumQueueSize-queueSize; //figure out how many more we're going to schedule
+    }
+    if(scheduleMore > 0)
+    {
+        for(int i = 0; i < scheduleMore; ++i)
+        {
+            scheduleOneBufferDelivery(false);
+        }
+    }
+
+    if(queueSize > 0)
+    {
+        return m_WriteCacheEmptyBufferQueue->dequeue();
+    }
+
+    //QMetaObject::invokeMethod
+    //privateAppend(newData, dataSize);
+}
+void LocalFile::scheduleOneBufferDelivery(bool blockingQueued)
+{
+    QMetaObject::invokeMethod(m_DataBufferGenerator, "scheduleBufferDelivery", (blockingQueued ? Qt::BlockingQueuedConnection : Qt::QueuedConnection), Q_ARG(QObject, this), Q_ARG(bool, blockingQueued));
 }

@@ -17,18 +17,24 @@ class DataBufferGenerator : public QObject
     Q_OBJECT
 public:
     DataBufferGenerator(int totalMaxSizeOfAllGeneratedDataBuffers, int generatedDataBufferSize);
-    GeneratedDataBuffer *giveMeADataBuffer();
+    //GeneratedDataBuffer *giveMeADataBuffer();
 private:
     int m_TotalMaxSizeOfAllGeneratedDataBuffers;
     int m_GeneratedDataBufferSize;
-    QMutex *m_ReUseQueueMutex;
-    QMutex *m_UsedQueueMutex;
+    //QMutex *m_ReUseQueueMutex;
+    //QMutex *m_UsedQueueMutex;
     QQueue<GeneratedDataBuffer*> *m_ReUseQueue;
     QQueue<GeneratedDataBuffer*> *m_UsedQueue;
+
+    volatile bool m_ScheduleWhenReUseSubmitted;
+    QObject *m_LastToAskForABuffer;
+    void sendBufferReadySignal(QObject *whoToNotify, GeneratedDataBuffer *bufferPtr, bool rushDangerous = false);
 signals:
-
+    void doneUsing(GeneratedDataBuffer *selfPointer);
 public slots:
-
+    void scheduleBufferDelivery(QObject objectToDeliverTo, bool rushDangerous = false);
+private slots:
+    void reclaim(GeneratedDataBuffer *selfPointer);
 };
 
 #endif // DATABUFFERGENERATOR_H
