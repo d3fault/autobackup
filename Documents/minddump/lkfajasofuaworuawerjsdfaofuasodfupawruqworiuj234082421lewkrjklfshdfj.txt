@@ -1,0 +1,99 @@
+100mbps for a month is 32.4tb of data
+leaseweb has a [volumen network] (slower? less reliable?)] dedi for $69 that gives you unlimited 100mpbs (32.4tb, assuming it's max'd out 24/7)
+
+i'm really wanting to branch out in servers, because it's such a turnkey business
+and i could use my programming skills very effectively
+Wt is sexy as fuck, i could make admin panels in C++ and do whatever the fuck i want
+basic server administration and security is my weakness, but i'm sure i could follow some random tutorials on how to secure a server (and i could script whatever i learn)
+
+Anonymous Bitcoin Computing[.com]
+ABC (favicon, logo, etc)
+i hope the domain is available but i bet it is
+
+-server space/webhosting (outsource webdesign and other bullshit (see freelance trading below? no reason to have it twice! by doing a freelance app i AM outsourcing it and taking a slice... just more efficiently/transparently))
+-advertising (content owners, business owners -- both ends)
+-bitcoin exchange (i could theoretically do this, but i'd need to be more business savvy because i need to integrate with USD peoples/banks/something. maybe paypal in/out is good enough?) NEVER EVER EVER STORE A SIGNIFICANT AMOUNT OF MONEY IN A PAYPAL ACCOUNT. THEY ARE NOT TO BE TRUSTED, ONLY UTILIZED
+-freelance computing exchange (every category of computers, web design, coding etc) = hire coders, find work
+-bitcoin launderer? if it was a tor site + anonymous (as of yet, i haven't said the idea out loud anywhere), i could do it, taking a small slice for cleansing. there's still a problem with dealing with multiple bitcoins, making sure a user doesn't get bitcoins they put in earlier... later.. but also not knowing who they are by IP or any real means. so the two seem contradictory.
+
+...MegaUpload type shit? i think it's too expensive tbh
+but if it's profitable how does that make sense? high barrier to entry?
+in any case, you need a good 10k or so for the first month's worth of servers. "investing" etc...
+...maybe later
+
+poker might be better kept on a different domain/area/company, it's a little more shady? though not nearly as shady as laundering lol
+
+theoretical:
+anon-owned-managed: poker/gambling bitcoin site/company
+anon-owned-managed: bitcoin launderer
+
+coding the launderer myself means i can trust the laundering party
+everyone else would have to trust [the server] me, i could know that my data isn't being logged
+i could know that all the laundering transactions are not being recorded
+god i love encryption
+
+
+where does my "front" come into play?
+video widget is my only/sole front?
+or should i do ABC non-anonymously? as in my ownership of it. that would rule out laundering at the very least (though i could do that elsewhere)
+so video widget + ABC = two fronts?
+
+i need a front
+i need it to make at least a little bit of sense that i'm making >$0
+if i finish video widget, i could publish it GPL and write a bomb ass tutorial for it
+i could pretend like the company is a lot bigger than it really is (all sites do this)
+the product has more functionality than it really does (ok this isn't really a lie... it's just that libav provides so much functionality for me i might as well echo it)
+
+off of commercial(support) sales and advertising hits alone (especially if BlueBox uses my bulkpluginupdater page on the front), my front will exist
+video is definitely a front
+but what about ABC?
+the A in ABC kinda says i should keep it a "back" (lol)
+but i don't necessarily need to
+bitcoin is NOT illegal [as of now]
+
+all these business ventures and here i sit with $2 in my pocket
+god life is going to change so dramatically
+it's all going to be by my own work/knowledge
+
+i am 100% confident i can be a multimillionaire
+will? well, nothing's written.
+
+i thought i had more ideas for ABC but i guess those 4 are it
+of course i could outsource web design etc and take a cut
+
+OH RIGHT FREELANCE COMPUTING!!
+
+hmmm
+soo....
+to anon or not to anon
+
+i need to keep coding
+so close to getting video widget up
+then ?????????
+meh fuck so much work to do
+maybe i should focus on ABC
+seems easier
+but video widget is so fundamental
+i will rely on it tons in the future, i'd imagine...
+
+
+
+
+
+i need to focus less on operating speed and more on bootstrapping
+is video widget the best way to go about that? i could maybe just pay someone to do what i'm struggling to do and be done with it. $100 might be plenty.
+outsourcing
+is a cost
+i have no income
+so i need an income
+investors?
+fuck that, revenue split
+time
+time
+time
+time
+time
+investors
+save
+TIME
+fuck.
