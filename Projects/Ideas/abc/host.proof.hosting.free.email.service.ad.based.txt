@@ -1,0 +1,16 @@
+host proof hosting free email service
+ad revenue (HOWEVER, no way to enforce that the user VIEWS the ad. an api could enforce that it is downloaded)
+it couldn't be web-based... (OR COULD IT??? JAVASCRIPT DECRYPTING? the Wt/C++ app/server only ever sees encrypted shit, but it also sends javascript decryption routines. they key must live in memory in the user's browser... which is unsafe as fuck anyways. the .exe should always be the preferred method, just like hushmail (lol java thanks for making me not compete))
+.exe + open source shits
+free like 20mb or something (with rate limits of course, though those are usually never mentioned to the user)
+more for $, but the 20mb should gradually increase just like every other free email provider
+
+the email addresses should NOT be @abc
+mb some random domain like @freesecureemail or someshit, for a) security reasons (email sometimes inaccurately "prove" ownership of a domain) and b) free advertising
+the tld should be short though, freesecureemail is shit, too long. you get the idea
+
+
+google has ads. they display them on search results
+they also have ads they display on user's pages
+i will only have the latter because i am not interested in becoming a search engine
+d3fault will eventually be a complete distributed mirror of the entire internet, however. that is not part of this business***** plan
