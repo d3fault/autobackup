@@ -1,0 +1,11 @@
+it just hit me how much more smart i must be than bill gates, steve jobs, woz, et al
+i'm definitely not the smartest person around,
+but those guys built operating systems with no knowledge of programming
+they had to invent it as they went
+i'm lucky to be at a point where Qt/C++ exists
+the wheel has already been invented
+current operating systems suck
+but they're what we have
+they're "the first bunch"
+
+i am smarter than i give myself credit for. i think/know i could build an "Operating System"
