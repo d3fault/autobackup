@@ -1,0 +1,3 @@
+heatbeat sensor on arduino that, for every heartbeat, pings a server
+just for fun really
+but can be extrapolated into some kind of health monitoring service easily... auto-dispatching 911 on heartbeat failure
