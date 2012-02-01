@@ -1,0 +1,18 @@
+basically i need to design a system so that users can view movies easily, but mpaa/riaa bots would have a hard time parsing my db. each view requires a captcha (which, as i just mentioned, will also contain an ad). this will slow down the mpaa/riaa dmca notices.. they can't auto-send them out or auto harvest them
+
+however
+
+i'm not sure if the captcha should be presented to the user at the blob data phase or what
+eh, this is all long term shit that incorporates user-reuploading etc
+for now just parsing icefilms is really plenty...
+don't need captcha or ad...
+but i will put ad in update page
+
+
+a user uploading a movie has no idea what he's uploading
+he does not have the decryption key
+he is assigned a blob and told to mirror it
+simple as that
+
+"BlueBox Regular Edition" (...)
+"BlueBox Hacker Edition" (tor configured (for db communication only), auto-uploading/mirroring accross various file sharing sites, meritocratic rating system for integrity delivered content (NUKE'd etc))
