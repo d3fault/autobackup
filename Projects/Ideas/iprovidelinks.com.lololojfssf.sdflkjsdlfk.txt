@@ -1,0 +1,6 @@
+iprovidelinks.com
+"where can i do"
+"where can i find"
+
+"where can i find <foreach imdb.movielist()>" = "do not ask for copyrighted content" etc
+if there isn't an automated response available [yet], a person is paid to find/research that and provide links for it. 
