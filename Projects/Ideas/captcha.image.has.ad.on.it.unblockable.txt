@@ -1,0 +1,9 @@
+captcha and ad image should be one
+the top half is an ad
+the bottom half is a captcha
+
+ad publishers would like this because then they KNOW the ad was seen by a human
+it is impossible to NOT see the ad (unless a script/app crops the image lolol (workaround: random(0,1) tells us if the captcha is on top or bottom. owned))
+
+google would love this info
+niggers
