@@ -1,0 +1,2 @@
+pwm controlling LEDs which are on top of my head to signal data to a satellite for authenticity verification
+the idea is. err, that is the idea
