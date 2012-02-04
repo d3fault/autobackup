@@ -1,0 +1,2 @@
+isn't it possible to build an electromagnetic motor that powers itself?
+the electricity required to "flip" the electromagnetic polarity constantly (to keep the motor spinning) stays constant but the size (and therefore power generated) of the magnets can scale up indefinitely? i could be wrong about the power staying the same as the magent size rises. maybe it cancels itself out.

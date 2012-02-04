@@ -1,0 +1,1 @@
+the vibration for each of the 26/27 letters is AFTER i confirm that it is written to disk (perhaps encryptedly). this is done realtime.

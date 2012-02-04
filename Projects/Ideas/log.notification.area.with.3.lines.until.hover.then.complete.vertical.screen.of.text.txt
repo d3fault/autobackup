@@ -1,0 +1,12 @@
+a log/notification area
+3 previous log messages are shown
+they live at the bottom of the screen
+i'm thinking bottom right
+on hover, the 3 changes into fullscreen
+that is, as vertical as it can go
+straight up
+not getting any wider
+ONLY ON HOVER
+you can click/drag/copy/paste the text from there of course
+and scrollbars too
+move away, it goes back to 3 log messages. 3 could be configurable, but 3 by default. errors would be easily seen, as well as just notifications that aren't worth getting all IN YOU FACE like a messagebox too

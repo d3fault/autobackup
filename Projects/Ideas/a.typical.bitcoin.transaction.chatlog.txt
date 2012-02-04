@@ -1,0 +1,2 @@
+chat stream intertwined with relevant bitcoin pulled data
+all data is pulled, as per bitcoin protocol.. but only keys associated with the transaction that the chat is a "hasA" of. Transaction.Chatlog; Your text cannot be formatted. The Bitcoin Relevant Data Text is formatted blue or green or bold and or underlined or something like that to make it stand out.
