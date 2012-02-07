@@ -1,0 +1,52 @@
+i bought the slider potentiometers
+i bought the arduino mega
+i guess i'm actually doing this?
+
+there's some MEDIOCRE at best video glasses on amazon
+500 for the only pair i'd settle for
+
+
+"project go outside"
+.com
+donate niggas
+
+
+arduino + raspberry pi + custom "glove" keyboard (<3) + [optional] video glasses + [optional] usb webcam duct taped to head / under chin. goes through raspberry pi and i fullscreen the webcam so i can watch where i'm walking. i can keep a video of "irl" open in the corner of my screen at all times while working on coding etc (for example). walking/coding at the same times
+
+i also want to have a non-visual mode that is completely compatible
+but user input with + without video simply doesn't exist
+i'm split between aOS (audio OS) and vOS (vibration OS)
+both are possible and would be fun to try.
+
+basically the API/custom-os-type-thing would be navigable via my gloves
+feedback from teh computer could be given to me in one of three ways:
+1) video
+2) audio (tts, for example)
+3) vibrations. i'd have 1 for every letter of the alphabet littered all over my body. feelsgoodman
+
+i'm retarded and awesome at the same time
+
+
+my dream/goal/ambition/desire/will is to have a solar powered mobile setup
+sleeping bag, tent, water filter, ammo + backup food included
+then i wander into the wilderness for days on end
+weeks even
+i could live there
+living out there is so incredibly cheap compared to a house/apt/condo/etc
+a lot more work involved too.... but that's besides the point
+
+
+a car battery
+a solar panel to trickle charge it
+2x SSDs for archiving everything (occassional syncs or realtime syncs?)
+SD card for rPi... i guess for caching if i decide to do occassional syncs)... but just OS + my software if doing realtime syncs
+SSDs are pretty low power so i could do either
+i still want to keep my audio recording device separate
+i will never simultaneously be a) video offline (assuming recording of usb webcam) and b) audio offline
+during video syncs i keep audio going... during audio syncs/battery changes i keep video going. gg
+
+for the timeline organizing/uploading later (what, did you really think you were just going to make all this footage for fun? well, yes, actually... if it isn't fun i'm not doing it)
+the audio stream is the main synchronizer
+as in, video syncs to audio
+with exception to the gaps where i'm replacing the audio batteries
+coding it will be a bitch.. but definitely possible to auto-sync it all.
