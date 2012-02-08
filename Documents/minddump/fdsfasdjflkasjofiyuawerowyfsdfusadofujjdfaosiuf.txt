@@ -1,0 +1,35 @@
+was about to write my video shit
+but now i'm leaning towards AdCaptcha
+sounds so easy
+could be a pure Wt implementation
+but it might be smarter to do Wt + Qt
+Wt for user interface
+
+publisher sign up/config
+advertiser sign up/config
+(users can be both)
+i just am not sure if Wt is suitable for sending a dynamic image, for example
+i know it CAN
+but it has ajax scheisa that isn't appropriate in that context
+idfk.
+
+i'd still need an http server if i did Qt
+i could h4x one together
+since all i need is GET /image?clientid=123&campaignid=etc for THAT portion of the system
+and the javascript/ajax widget that embeds my image, what would that be in? can you embed a Wt app?
+
+
+i also believe that if i'm going to make that framework, i should also include functionality for just images,... or even just text-based ads
+
+if i abstract it enough, the video advertising might even fit in nicely.. though i'm unsure about this
+i could just make multiple ad agencies
+
+K.I.S.S.
+
+AdCaptcha by itself is a million dollar idea (not that that's saying very much)
+so it should be priority
+a google buyout is most likely...
+fuck it
+
+
+*reads Wt docs*
