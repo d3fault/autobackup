@@ -63,14 +63,17 @@ flow:
       releaser: 			hash(decryptedSceneRelease) ->[submits] usersubmittedscenehashes(title, quality, group, decryptedHash, adcaptchaGuess);
       
       //upload
-      others('leakers')/releaser: 		a) encrypt(decryptedSceneRelease, &key, &encryptedHash) ->[submits] usersubmittedhashassociations(decryptedHash, encryptedHash, key, adcaptchaGuess);
-						b) encryptedSceneRelease ->[upload(whatever file hosting site)], then ->[submits] usersubmittedlinks(fileHostingLink, encryptedHash, adcaptchaGuess);
+      others('leakers')/releaser: 		a) key/encryptedHash = encrypt(decryptedSceneRelease) ->[submits] usersubmittedhashassociations(decryptedHash, encryptedHash, adcaptchaGuess);
+						b) ^key/encryptedHash ->[submits] usersubmittedhashkeys(key, encryptedHash, adcaptchaGuess);
+						c) encryptedSceneRelease ->[upload(whatever file hosting site)], then ->[submits] usersubmittedlinks(fileHostingLink, encryptedHash, adcaptchaGuess);
 
       
       //download
       dler: 					a) decryptedHash =[pulls] usersubmittedscenehashes(title, quality, group, adcaptchaGuess);
-						b) JUST_ONE_encryptedHash/decryptionKey (there are MANY, but each costs an adcaptcha) =[pulls] usersubmittedhashassociations(decryptedHash, adcaptchaGuess); /////////<<<<<------ i think this is the vital one to have an adcaptcha at (aside from ALL submits, of course)
-						c) fileHostingLink =[pulls] usersubmittedlinks(JUST_ONE_encryptedHash, adcaptchaGuess);
+						b) JUST_ONE_encryptedHash (there are MANY, but each costs an adcaptcha) =[pulls] usersubmittedhashassociations(decryptedHash, adcaptchaGuess); /////////<<<<<------ i think this is the vital one to have an adcaptcha at (aside from ALL submits, of course)
+						c) decryptionKey =[pulls] usersubmittedhashkeys(encryptedHash, adcaptchaGuess); //the site has no notion of what the hash is
+						d) fileHostingLink =[pulls] usersubmittedlinks(JUST_ONE_encryptedHash, adcaptchaGuess);
+						e) view: decryptedFile = decrypt(downloadedFile, decryptionKey);
 
 
 usersubmittedlinks does not EXPECT/demand an encrypted hash to be used as it's key. a plaintext title of the linked content (for legal content. bittorrent etc).
@@ -82,7 +85,11 @@ shit i forgot the part where the user gets the key to decrypt
 ok fixed that was easy. just needed to get it from usersubmittedhashassociations
 though maybe i should have YET ANOTHER? usersubmittedhashkeys? one extra step for both uploader and downloader...
 ima save/commit and try to see if usersubmittedhashkeys fits in easily + makes sense
+it does make sense and the more i analyze everything the more i feel like i should put EVERY SINGLE ONE on an anonymous/not-owned-by-me page.... except how will i do adcaptcha for submissions? maybe i won't... maybe just a plain ole fashioned captcha (recaptcha lol)
+the only page i want to be mine is.... (scrolls up because i can't remember): usersubmittedhashassociations. associate 2 arbitrary hashes together. it is a many-to-one relationship. one decryptedHash has many many encryptedHashes. a dmca notice asking to pull down all encryptedHashes for a given decryptedHash (which corresponds to a formal/scene release ofc) can be safely ignored because there is no checking of the relationship between the two hashes. we don't know and don't care what the relationship is. could a meritocratic system exist on such a site then? what's to stop people from posting bogus hashes? what would i even call that? "report bad association" ?? it contradicts what i just said about not verifying the associations.
+this idea is now falling apart because i can't prevent mpaa/riaa from posting a bunch of fake hash associations. though... it would cost them their time.
 
+a bluebox integrated app could auto-md5 and auto-report a bad association... but i still don't know what i would call it on the site? maybe a rating system 0-5?? enough zeros and your hash is no longer presented?
 
 
 on usersubmittedformalreleases: title: "We document the existence of files on the internet. Nothing more, nothing less"
