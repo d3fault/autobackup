@@ -90,6 +90,7 @@ the only page i want to be mine is.... (scrolls up because i can't remember): us
 this idea is now falling apart because i can't prevent mpaa/riaa from posting a bunch of fake hash associations. though... it would cost them their time.
 
 a bluebox integrated app could auto-md5 and auto-report a bad association... but i still don't know what i would call it on the site? maybe a rating system 0-5?? enough zeros and your hash is no longer presented?
+the many-to-one association is complicating things... although it is definitely needed (or something similar). megaupload had many-to-one associations... and they didn't do it right.. and it's going to cost them.
 
 
 on usersubmittedformalreleases: title: "We document the existence of files on the internet. Nothing more, nothing less"
