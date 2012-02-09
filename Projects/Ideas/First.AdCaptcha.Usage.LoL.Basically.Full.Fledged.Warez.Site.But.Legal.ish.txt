@@ -1,0 +1,117 @@
+ehhhh
+adcaptcha is full go
+it sounds easy
+but i need something to use it on
+i'm thinking....
+usersubmittedlinks.com
+accepts/responds to dmca notices... does NOT simply remove 1x "link" to internal file like megaupload. that was their biggest problem. on dmca takedown notice..... hmmmm gonna type this out down below...
+
+
+basically, a hash/title (encrypted or not, idgaf), and a [multiple] link[s] on a generic file hosting site
+the transaction is simple:
+to submit a link you must fill out an adcaptcha
+to retrieve a link you must fill out an adcaptcha
+
+i need to avoid the problem of "1 dmca notice taking down ALL the links of said material"
+
+
+so another nifty site might be... usersubmittedhashassociations.com
+
+this associates the DECRYPTED hash (a scene release, for example) with MULTIPLE***(???) encrypted hashes
+the transaction is the same
+or there isn't one
+if it was streamlined all together, we'd only want one transaction of course...
+
+so....
+
+MPAA/RIAA browse to a........ usersubmittedscenehashes.com
+rofl this is getting amazing
+there is nothing on there except the HASH of the scene release
+
+they get that and then plug it into usersubmittedhashassociations.com and fuck now they have every association on usersubmittedlinks.com
+bulk dmca notices, however, are NOT possible
+adcaptcha prevents them
+
+maybe from usersubmittedhashassociations you only get 1 "encrypted" hash (for your given input hash (the decrypted scene release hash)) --- PER adcaptcha you fill out
+you don't get a list of them
+but i mean i guess you can... by repeatedly filling out adcaptchas lol
+
+
+meritocratacity (lol sp?)
+uhh
+anybody could easily verify that a file is legit because the hash will match
+
+
+maybe... reporting a hash fail triggers an auto-download and check?
+
+where are the decryption keys stored?
+
+
+usersubmittedkeyhashassociations.com
+since a given private key can sign infinite pieces of data, it cannot be linked EXCLUSIVELY to the copyrighted content
+fuck this is on giant ass tangent
+i'm not sure it all fits together as nicely as i'm trying to make it
+
+
+
+
+
+
+
+flow:
+      //announce
+      releaser: 			hash(decryptedSceneRelease) ->[submits] usersubmittedscenehashes(title, quality, group, decryptedHash, adcaptchaGuess);
+      
+      //upload
+      others('leakers')/releaser: 		a) encrypt(decryptedSceneRelease, &key, &encryptedHash) ->[submits] usersubmittedhashassociations(decryptedHash, encryptedHash, key, adcaptchaGuess);
+						b) encryptedSceneRelease ->[upload(whatever file hosting site)], then ->[submits] usersubmittedlinks(fileHostingLink, encryptedHash, adcaptchaGuess);
+
+      
+      //download
+      dler: 					a) decryptedHash =[pulls] usersubmittedscenehashes(title, quality, group, adcaptchaGuess);
+						b) JUST_ONE_encryptedHash/decryptionKey (there are MANY, but each costs an adcaptcha) =[pulls] usersubmittedhashassociations(decryptedHash, adcaptchaGuess); /////////<<<<<------ i think this is the vital one to have an adcaptcha at (aside from ALL submits, of course)
+						c) fileHostingLink =[pulls] usersubmittedlinks(JUST_ONE_encryptedHash, adcaptchaGuess);
+
+
+usersubmittedlinks does not EXPECT/demand an encrypted hash to be used as it's key. a plaintext title of the linked content (for legal content. bittorrent etc).
+we are using the basic association of a title and a link to our benefit
+
+DMCA notices will be directed at usersubmittedlinks... and will only correspond to exactly 1x uploaded copy
+
+shit i forgot the part where the user gets the key to decrypt
+ok fixed that was easy. just needed to get it from usersubmittedhashassociations
+though maybe i should have YET ANOTHER? usersubmittedhashkeys? one extra step for both uploader and downloader...
+ima save/commit and try to see if usersubmittedhashkeys fits in easily + makes sense
+
+
+
+on usersubmittedformalreleases: title: "We document the existence of files on the internet. Nothing more, nothing less"
+perty much like nforce etc
+
+
+
+
+
+
+
+
+
+see the thing is
+it'd be ridiculously easy to crawl a site like tpb for their hashes
+and i'm not p2p/dht related at all
+only similarities is i'm using hashes as identifiers
+
+
+a better domain might be usersubmittedformalreleases.com ... mentioning "scene" might be incriminating.
+would it matter that they are all on the same server?
+would it matter that my name is behind each one? i am unsure.
+it might be wiser to only have 1x of them linked with me. the one that has the adcaptcha step.
+it doesn't matter which one has the adcaptcha step... though it kind of does so as to prevent mpaa/riaa from scraping
+
+RE-READ THIS (IMPORTANT): you only want 1x adcaptcha (well, except for SUBMITTING stuff.. that's different. most people just pull) and you want to put it on the right domain that will prevent mpaa/riaa from scraping and batch/bulk sending out dmca notices
+
+
+i guess bluebox could use this infrastructure (better than relying on icefilms solely)... but damn i definitely still need to release that anonymously ;-)
+
+
+just to be a dick, i should make the MPAA/RIAA fill out an adcaptcha just to send a dmca takedown notice ;-)
