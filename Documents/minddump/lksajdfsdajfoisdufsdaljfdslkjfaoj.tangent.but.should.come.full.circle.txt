@@ -1,0 +1,8 @@
+AdCaptcha and BlueBox kinda go hand in hand
+err, the Video Library i mean... because on it's update page, i will display an AdCaptcha
+in that sense, AdCaptcha is a dependency and should be made first
+AdCaptcha is also smaller and easier and has a stronger "business" model
+
+"Get paid to put a captcha on your page"
+"Advertisers: Guarantee that your ads are seen!"
+etc
