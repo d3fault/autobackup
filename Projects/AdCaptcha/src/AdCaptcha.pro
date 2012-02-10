@@ -3,18 +3,34 @@
 QT += core
 QT -= gui
 TARGET = AdCaptcha
-LIBS += -L/usr/local/lib -lwt -lwthttp -lboost_signals-mt
-QMAKE_CXXFLAGS += -DNDEBUG
-#CONFIG += console
+LIBS += -L/usr/local/lib -lwt -lwthttp -lboost_signals-mt -lwtdbo -lwtdbosqlite3
+#QMAKE_CXXFLAGS += -DNDEBUG
+CONFIG += console
 CONFIG -= app_bundle
 TEMPLATE = app
 SOURCES += main.cpp \
     site/adcaptchasite.cpp \
-    embed/adcaptchaembed.cpp
+    embed/adcaptchaembed.cpp \
+    database.cpp \
+    site/owners/campaigneditorview.cpp \
+    site/publishers/adeditorview.cpp \
+    user.cpp
 
 HEADERS += \
     site/adcaptchasite.h \
-    embed/adcaptchaembed.h
+    embed/adcaptchaembed.h \
+    database.h \
+    site/owners/campaigneditorview.h \
+    site/publishers/adeditorview.h \
+    user.h
+
+
+
+
+
+
+
+
 
 
 
