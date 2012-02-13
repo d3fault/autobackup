@@ -3,7 +3,7 @@
 QT += core
 QT -= gui
 TARGET = AdCaptcha
-LIBS += -L/usr/local/lib -lwt -lwthttp -lboost_signals-mt -lwtdbo -lwtdbosqlite3
+LIBS += -L/usr/local/lib -lwt -lwthttp -lboost_signals-mt -lboost_system-mt -lwtdbo -lwtdbosqlite3
 #QMAKE_CXXFLAGS += -DNDEBUG
 CONFIG += console
 CONFIG -= app_bundle

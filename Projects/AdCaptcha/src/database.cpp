@@ -4,12 +4,12 @@
 namespace
 {
     //these can't be member variables because we can't rely on Database to be instantiated even once before we call GlobalConfigure
-    Wt::Auth::AuthService s_AuthService; //todo: ensure deleted. could make it a non-pointer for easier management?
-    Wt::Auth::PasswordService s_PasswordService; //todo, ensure deleted -- just like authservice
+    Wt::Auth::AuthService s_AuthService;
+    Wt::Auth::PasswordService s_PasswordService(s_AuthService);
 }
 
 Database::Database()
-    : m_Sqlite(WApplication::instance()->appRoot() + "adcaptcha.db")
+    : m_Sqlite(Wt::WApplication::instance()->appRoot() + "adcaptcha.db")
 {
     //todo: a ReadWriteLock equivalent (in boost??) (i only know of it in Qt) of an in-memory cache of an array of AdCampaigns
     //it should have a dirty bit that is set to true whenever we write... or i guess we could just update the cache on write...
@@ -21,13 +21,14 @@ Database::Database()
     //todo: maybe enable WAL (write-ahead-logging (i don't know that that is what setProperty accepts, research this)) for sqlite... enables simultaneous writes and error recovery if crash during transaction. idk if it's needed... but it sounds interesting
 
     m_DbSession.mapClass<User>("user");
-    m_DbSession.mapClass<AuthInfo>("auth_info");
-    m_DbSession.mapClass<AuthInfo::AuthIdentityType>("auth_identity");
-    m_DbSession.mapClass<AuthInfo::AuthTokenType>("auth_token");
+    m_DbSession.mapClass<UserAuthInfo>("auth_info");
+    m_DbSession.mapClass<UserAuthInfo::AuthIdentityType>("auth_identity");
+    m_DbSession.mapClass<UserAuthInfo::AuthTokenType>("auth_token");
 
-    m_UserDb = new Wt::Auth::Dbo::UserDatabase<Wt::Auth::Dbo::AuthInfo<User> >(m_DbSession);
+    m_UserDb = new UserDatabase(m_DbSession);
 
-    Wt::Dbo::Transaction transaction(session_);
+
+    Wt::Dbo::Transaction transaction(m_DbSession);
     try
     {
         m_DbSession.createTables();
@@ -48,7 +49,7 @@ void Database::GlobalConfigure()
     s_AuthService.setEmailVerificationEnabled(true);
 
     Wt::Auth::PasswordVerifier *passwordVerifier = new Wt::Auth::PasswordVerifier(); //todo... the reference material does NOT delete this pointer (it does use pointers, unlike authservice (scoped deletion))... so does .setVerifier take ownership of it and delete it for me??
-    passwordVerifier->addHashFunction(new Auth::BCryptHashFunction(7));
+    passwordVerifier->addHashFunction(new Wt::Auth::BCryptHashFunction(7));
     s_PasswordService.setVerifier(passwordVerifier);
 
     s_PasswordService.setStrengthValidator(new Wt::Auth::PasswordStrengthValidator());
@@ -60,9 +61,17 @@ const Wt::Auth::AuthService &Database::getAuthService()
 }
 const Wt::Auth::AbstractPasswordService & Database::getPasswordService()
 {
-    return s_AuthService;
+    return s_PasswordService;
 }
 Wt::Auth::Login &Database::getLogin()
 {
     return m_Login;
+}
+Wt::Auth::AbstractUserDatabase & Database::getUserDatabase()
+{
+    return *m_UserDb;
+}
+Database::~Database()
+{
+    delete m_UserDb;
 }

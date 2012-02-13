@@ -1,7 +1,8 @@
-#define WT_AC_ENTRY_POINT_SITE "/home"
+//#define WT_AC_ENTRY_POINT_SITE "/home"
 //also define about, register, login, etc etc
 
 #define WT_AC_ENTRY_POINT_EMBED "/adcaptcha"
+//TODO:^ move to AdCaptchaEmbed as static member, because we need it from within there to handle internal path changed
 
 #include <Wt/WServer>
 using namespace Wt;
