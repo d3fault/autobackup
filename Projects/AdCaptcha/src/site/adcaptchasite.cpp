@@ -3,7 +3,8 @@
 AdCaptchaSite::AdCaptchaSite(WContainerWidget *parent)
     : WContainerWidget(parent),
       m_CampaignEditorView(0),
-      m_AdEditorView(0)
+      m_AdEditorView(0),
+      m_HomeView(0)
       //initialize every view on the site to 0. when the internal path changes, instantiate them (if not 0) and then make them the current top. if they're already instantiated, just make them the current top. we re-use the instantiations, only instantiating each view a) when it's viewed and b) once per user, no matter if they navigate to each one hundreds of times
 {
     m_MyDb.getLogin().changed().connect(this, &AdCaptchaSite::handleLoginChanged);
@@ -30,6 +31,7 @@ void AdCaptchaSite::handleLoginChanged()
     else
     {
         m_ViewStack->clear();
+        m_HomeView = 0;
         m_CampaignEditorView = 0;
         m_AdEditorView = 0;
     }
@@ -60,11 +62,7 @@ void AdCaptchaSite::showHome()
 {
     if(!m_HomeView)
     {
-        m_HomeView = new WContainerWidget(m_ViewStack);
-
-        m_HomeView->addWidget(new WAnchor(OWNER_PATH, "For Website Owners - Shows Ads + Verify Humans"));
-        m_HomeView->addWidget(new WBreak());
-        m_HomeView->addWidget(new WAnchor(PUBLISHER_PATH, "For Advertisers/Publishers - Purchase Ad Space/Edit Current Ads"));
+        m_HomeView = new AdCaptchaSiteHome(m_ViewStack);
     }
     m_ViewStack->setCurrentWidget(m_HomeView);
 }
@@ -83,4 +81,16 @@ void AdCaptchaSite::showPublisher()
         m_AdEditorView = new AdEditorView(&m_MyDb, m_ViewStack);
     }
     m_ViewStack->setCurrentWidget(m_AdEditorView);
+}
+std::string AdCaptchaSite::getHomePath()
+{
+    return HOME_PATH;
+}
+std::string AdCaptchaSite::getOwnerPath()
+{
+    return OWNER_PATH;
+}
+std::string AdCaptchaSite::getPublisherPath()
+{
+    return PUBLISHER_PATH;
 }

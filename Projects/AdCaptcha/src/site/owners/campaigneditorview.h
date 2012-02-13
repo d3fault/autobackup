@@ -4,8 +4,10 @@
 #include <Wt/WContainerWidget>
 #include <Wt/WText>
 #include <Wt/WBreak>
+#include <Wt/WAnchor>
 using namespace Wt;
 
+#include "../adcaptchasite.h"
 #include "../../database.h"
 
 class CampaignEditorView : public WContainerWidget

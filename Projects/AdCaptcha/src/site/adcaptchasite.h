@@ -5,12 +5,11 @@
 #include <Wt/WStackedWidget>
 #include <Wt/WContainerWidget>
 #include <Wt/Auth/AuthWidget>
-#include <Wt/WAnchor>
-#include <Wt/WBreak>
 using namespace Wt;
 
 #include "owners/campaigneditorview.h"
 #include "publishers/adeditorview.h"
+#include "adcaptchasitehome.h"
 
 #include "../database.h"
 
@@ -18,15 +17,23 @@ using namespace Wt;
 #define OWNER_PATH "/owner"
 #define PUBLISHER_PATH "/publisher"
 
+class AdCaptchaSiteHome;
+class AdEditorView;
+class CampaignEditorView;
+
 class AdCaptchaSite : public WContainerWidget
 {
 public:
     AdCaptchaSite(WContainerWidget *parent = 0);
 
+    static std::string getHomePath();
+    static std::string getOwnerPath();
+    static std::string getPublisherPath();
+
 private:
     WStackedWidget *m_ViewStack;
 
-    WContainerWidget *m_HomeView;
+    AdCaptchaSiteHome *m_HomeView;
     CampaignEditorView *m_CampaignEditorView; //for site owners
     AdEditorView *m_AdEditorView; //for ad publishers
     //are there more?

@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     database.cpp \
     site/owners/campaigneditorview.cpp \
     site/publishers/adeditorview.cpp \
-    user.cpp
+    user.cpp \
+    site/adcaptchasitehome.cpp
 
 HEADERS += \
     site/adcaptchasite.h \
@@ -22,7 +23,10 @@ HEADERS += \
     database.h \
     site/owners/campaigneditorview.h \
     site/publishers/adeditorview.h \
-    user.h
+    user.h \
+    site/adcaptchasitehome.h
+
+
 
 
 

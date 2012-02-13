@@ -6,5 +6,8 @@ CampaignEditorView::CampaignEditorView(Database *dbInstance, WContainerWidget *p
 {
     new WText("Hello Campaign Editor View LoL", this);
     new WBreak(this);
-    new WText("lol i fucking love Wt/C++");
+    new WText("lol i fucking love Wt/C++", this);
+    new WBreak(this);
+    WAnchor *publisherAnchor = new WAnchor(AdCaptchaSite::getPublisherPath(), "Publishers");
+    publisherAnchor->setRefInternalPath(AdCaptchaSite::getPublisherPath());
 }
