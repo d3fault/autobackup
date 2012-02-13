@@ -1,0 +1,37 @@
+ad-double
+addubs
+whatever i end up calling it
+"$1 first day (for the whole day) doubling until they refuse to pay for the next day"
+
+VS./and
+
+adcaptcha
+normal ad usage but with a captcha embedded in the same image
+
+no reason i can't combine these two
+though i dunno if i should limit both of them
+
+they are both good ideas on their own
+i would be limitting both of them by exclusively tying each to each other
+but at the same time, might as well let them interoperate
+
+
+adcaptcha needs standalone/regular advertising mode
+but SHOULD have "doubles" mode
+
+"doubles" advertising should also have adcaptcha?
+
+vice versa
+which domain should i go with? or neither?
+
+"<buzzword> advertising"
+or both? pointing to <buzzword>
+idgaf
+
+but there are DEFINITELY uses where i _DONT_ want to use captchas and i still want to present ads
+
+statichan
+static-chan
+and deletion mirror
+
+though static-chan will use adcaptcha for submitting/replying, ofc
