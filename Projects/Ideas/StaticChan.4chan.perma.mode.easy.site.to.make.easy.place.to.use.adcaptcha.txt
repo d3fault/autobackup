@@ -1,0 +1,6 @@
+static chan
+4chan /b/ but never deleted
+maybe some r9k logic (md5shit?) thrown into the mix...
+could even just create a new symlink when dupe md5 is detected..
+
+AdCaptcha use
