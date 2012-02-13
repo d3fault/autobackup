@@ -1,0 +1,21 @@
+abc security
+a central server with my Wt web-app
+this server keeps track of user balances etc
+and it handles the bulk of the bandwidth
+
+whenever a transaction is placed,
+my local server that i have physical control over is the one that verifies the payment
+it runs a local Qt/Bitcoin app
+
+i don't trust server admins
+
+also, before/as a user attempts to purchase a service (or cash out or whatever), their balance is verified. we keep 2 copies of the balance database. 1x local server (master copy), 1x webserver (sort of just like a cached number... since they're going to view their balance way more often than they're going to modify it)
+
+once i make more i should buy an office and put the server in there with some uber IRL security in place
+RFID card shit + webcams with motion detectors etc
+
+at this point i can probably also move the web-facing server in there too.. but it still might be smarter to outsource the high-bandwidth shit... so maybe not..
+
+perty excited about getting an office...
+... it will be my home away from home
+might even get an office before i get a house.
