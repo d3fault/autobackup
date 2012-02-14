@@ -1,0 +1,18 @@
+Bitcoin-Qt
+
+not only should i copy code from that liberally for use with ABC...
+
+...but i should offer a modified version of the client on abc.com for my users
+it allows you to right click on your transaction(s) and say "mix" or "shuffle" or whatever
+and there is a checkbox for "auto-mix all"
+
+legality of this is questionable
+security is also difficult but certainly possible
+i could take a low as fuck percentage
+1%
+.5%
+it'll add up....................................
+
+
+
+people would LOVE it because of it's ease of use
