@@ -1,0 +1,70 @@
+i'm a bit worried about the security model of abc
+receiving coins is no problem
+ad publishers will give me money. i give them an address from my stocked up address and then bam they pay me and i don't have any risk associated
+
+but how do i pay the website owners????????
+i refuse to put my trust in a datacenter
+sysadmins are human.
+how do the current bitcoin laundery systems exist?
+
+i could understand if the laundery machines only existed on .onions
+but they tend to have .com's too..... WTF??????
+
+that's an IP address.
+maybe they're on foreign soil?
+maybe only the server is?
+TRUST_SYSADMINS
+nope.
+they must live somewhere else i guess?
+have physical access to bandwidth?
+idfk.
+
+
+
+
+ok maybe.....
+net-facing/untrusted/btc-receive-address-preloaded-periodically DATACENTER server
+regular + .onion (for convenience/client-anonymity)
+
+all paid for anon/btc by me. no names attached. hosted outside US of course. domain too.
+
+
+THEN, for sending payments... it connects to a .onion that i have running AT HOME. this doesn't talk to anyone except that other server. but the net-facing server can't figure out my home IP since the only way i access it is via .onion
+it is a website, per se... but i restrict all access except from the net-facing server (by means of keys or maybe IP (maybe not possible with tor.. but keys would be sufficient))
+
+it sends me a message: "SEND PAYMENT TO BLAH"
+i do.
+all automated of course
+
+man i love my brain
+when i started typing this document i wasn't sure there was a solution...
+...but this one sounds like it will work. might need to upgrade to a cox business line but WHO GIVES A FUCKING SHIT. $200 is nothing.
+i want a business line anyways if you think about it........
+
+
+
+i suck at OpenSSL
+bitcoin et al (Wt too) all use/prefer OpenSSL
+i'm in love with CryptoPP :(
+but i do also think OpenSSL is probably higher level than CryptoPP
+CryptoPP was to build your own cryptosystem
+OpenSSL is like the de facto standard cryptosystem that every browser/os/etc uses...
+i just need to learn to fucking USE it.
+
+i really love bitcoin.
+idk wtf i'd do if it didn't exist. paypal i guess :(
+
+
+
+i REALLY REALLY REALLY REALLY REALLY REALLY REALLY REALLY hope abc.com isn't taken by the time i am ready to launch.
+but as long as i never say it out loud and never type it outside of this computer then it should remain forever unknown to everyone.
+it's not THAT great of a domain
+but it's good.
+catchy
+"ABC" is the best part about it
+the graphics can be shit
+just use "ABC" alphabet references n shit
+it can look like a child made it
+who cares.
+it'll be memorable
+perfect.

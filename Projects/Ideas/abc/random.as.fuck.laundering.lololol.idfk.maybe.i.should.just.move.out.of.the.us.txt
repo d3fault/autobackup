@@ -1,0 +1,9 @@
+the amount i should launder should be completely random
+random number generators etc
+
+say like $2000 - $5000 a month
+a rand() in between the two
+then divided up into 15-500 payments (rand())
+each payment amount is also determined via rand() and the time it is sent is also rand()
+it is ok for them to come at the same time if that's what the rand() says to do.
+it would look retarded if it was linear.

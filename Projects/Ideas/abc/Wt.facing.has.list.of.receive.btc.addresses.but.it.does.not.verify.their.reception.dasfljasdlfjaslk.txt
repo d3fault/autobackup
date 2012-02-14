@@ -1,0 +1,9 @@
+Wt/net-facing does have a notion of bitcoin. it has a list of "receive addresses" that it disperses to users (they have to fill out an adcaptcha to get one.. and only get one until a payment is received to it)
+Wt hands out addresses, and tells the local/.onion server to "be on the lookout" for that transaction in the chain. once i see it locally, i tell the net-facing one via it's .onion (so i retain my anonymity) that it is legit
+that's the reception process
+a bit of a bitch....
+...but as secure as i can possibly think
+
+
+we're dealing with MONEY systems here
+security is HIGH AS FUCK priority.
