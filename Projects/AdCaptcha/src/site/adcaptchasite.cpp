@@ -70,7 +70,7 @@ void AdCaptchaSite::showOwner()
 {
     if(!m_CampaignEditorView)
     {
-        m_CampaignEditorView = new CampaignEditorView(&m_MyDb, m_ViewStack);
+        m_CampaignEditorView = new OwnerCampaignsView(&m_MyDb, m_ViewStack);
     }
     m_ViewStack->setCurrentWidget(m_CampaignEditorView);
 }
@@ -78,7 +78,7 @@ void AdCaptchaSite::showPublisher()
 {
     if(!m_AdEditorView)
     {
-        m_AdEditorView = new AdEditorView(&m_MyDb, m_ViewStack);
+        m_AdEditorView = new PublisherCampaignsView(&m_MyDb, m_ViewStack);
     }
     m_ViewStack->setCurrentWidget(m_AdEditorView);
 }

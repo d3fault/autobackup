@@ -1,5 +1,5 @@
-#ifndef CAMPAIGNEDITORVIEW_H
-#define CAMPAIGNEDITORVIEW_H
+#ifndef OWNERCAMPAIGNSVIEW_H
+#define OWNERCAMPAIGNSVIEW_H
 
 #include <Wt/WContainerWidget>
 #include <Wt/WText>
@@ -10,12 +10,12 @@ using namespace Wt;
 #include "../adcaptchasite.h"
 #include "../../database.h"
 
-class CampaignEditorView : public WContainerWidget
+class OwnerCampaignsView : public WContainerWidget
 {
 public:
-    CampaignEditorView(Database *dbInstance, WContainerWidget *parent = 0);
+    OwnerCampaignsView(Database *dbInstance, WContainerWidget *parent = 0);
 private:
     Database *m_MyDb;
 };
 
-#endif // CAMPAIGNEDITORVIEW_H
+#endif // OWNERCAMPAIGNSVIEW_H

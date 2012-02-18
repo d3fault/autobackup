@@ -12,19 +12,27 @@ SOURCES += main.cpp \
     site/adcaptchasite.cpp \
     embed/adcaptchaembed.cpp \
     database.cpp \
-    site/owners/campaigneditorview.cpp \
-    site/publishers/adeditorview.cpp \
     user.cpp \
-    site/adcaptchasitehome.cpp
+    site/adcaptchasitehome.cpp \
+    site/owners/ownercampaignsview.cpp \
+    site/publishers/publishercampaignsview.cpp
 
 HEADERS += \
     site/adcaptchasite.h \
     embed/adcaptchaembed.h \
     database.h \
-    site/owners/campaigneditorview.h \
-    site/publishers/adeditorview.h \
     user.h \
-    site/adcaptchasitehome.h
+    site/adcaptchasitehome.h \
+    site/owners/ownercampaignsview.h \
+    site/publishers/publishercampaignsview.h
+
+
+
+
+
+
+
+
 
 
 

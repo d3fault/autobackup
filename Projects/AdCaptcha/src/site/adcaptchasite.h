@@ -18,8 +18,8 @@ using namespace Wt;
 #define PUBLISHER_PATH "/publisher"
 
 class AdCaptchaSiteHome;
-class AdEditorView;
-class CampaignEditorView;
+class PublisherCampaignsView;
+class OwnerCampaignsView;
 
 class AdCaptchaSite : public WContainerWidget
 {
@@ -34,8 +34,8 @@ private:
     WStackedWidget *m_ViewStack;
 
     AdCaptchaSiteHome *m_HomeView;
-    CampaignEditorView *m_CampaignEditorView; //for site owners
-    AdEditorView *m_AdEditorView; //for ad publishers
+    OwnerCampaignsView *m_CampaignEditorView; //for site owners
+    PublisherCampaignsView *m_AdEditorView; //for ad publishers
     //are there more?
 
     Database m_MyDb;
