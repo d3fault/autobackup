@@ -23,6 +23,8 @@
 //SERVER RECEIVES HELLO, REPLIES WITH WELCOME
 //CLIENT RECEIVES WELCOME, ASKS FOR A BEER
 //SERVER RECEIVES REQUEST FOR BEER, RESPONDS YES HERE IS YOUR BEER
+//CLIENT RECEIVES BEER, SAYS THANKS
+//SERVER RECEIVES THANKS. <says np... except at this point i'm testing nothing> ###i do want to test that the server also does end of message detection though... which is why i'm saying thanks
 //...to be continued
 
 //base
@@ -53,6 +55,7 @@ struct MessageFromClient : public Message
         InvalidMessageFromClientSubType, //should i make this equal to -1 like in the Message constructor above?
         HelloMessageFromClientSubType,
         MayIPleaseHaveABeer,
+        ThanksForTheBeer,
         GoodbyeMessageFromClientSubType
     };
 

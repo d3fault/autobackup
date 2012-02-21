@@ -21,6 +21,7 @@ private:
 
     void sendWelcome(QTcpSocket *conn);
     void sendBeer(QTcpSocket *conn);
+    void sendOkTakeCare(QTcpSocket *conn);
 public slots:
     void start();
 private slots:

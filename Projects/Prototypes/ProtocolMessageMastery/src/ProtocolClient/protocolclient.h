@@ -6,6 +6,8 @@
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
 
+#include <QTimer>
+
 #include "../Protocol/myprotocol.h"
 
 class ProtocolClient : public QObject
@@ -17,10 +19,13 @@ private:
     QTcpSocket *m_Socket;
 
     void askForABeer();
+    void sendThanks();
+    void walkOut();
 signals:
     void d(const QString &);
 public slots:
     void connectToServer();
+    void leave();
 private slots:
     void handleConnected();
     void handleServerReadyRead();

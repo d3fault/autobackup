@@ -64,11 +64,13 @@ void ProtocolClient::handleServerReadyRead()
             break;
         case MessageToClient::YesHereIsYourBeer:
             emit d("haha we just scammed the server out of a free beer. fuck yeeee");
-            //sendThanks();
+            sendThanks();
             //...etc...
+            QTimer::singleShot(3000, this, SLOT(leave()));
             break;
         case MessageToClient::OkTakeCareMessageToClientSubType:
             emit d("server has responded to our goodbye saying 'take care'");
+            walkOut();
             break;
         case MessageToClient::InvalidMessageToClientSubType:
         default:
@@ -79,6 +81,7 @@ void ProtocolClient::handleServerReadyRead()
 }
 void ProtocolClient::handleDisconnected()
 {
+    emit d("we have disconnected");
 }
 void ProtocolClient::askForABeer()
 {
@@ -89,4 +92,30 @@ void ProtocolClient::askForABeer()
     QDataStream stream(m_Socket);
     stream << messageFromClient;
     emit d("asking server for a beer");
+}
+void ProtocolClient::sendThanks()
+{
+    MessageFromClient thanks;
+    thanks.m_MessageType = Message::MessageFromClientType;
+    thanks.m_MessageSubType = MessageFromClient::ThanksForTheBeer;
+
+    QDataStream stream(m_Socket);
+    stream << thanks;
+    emit d("sending thanks");
+}
+void ProtocolClient::leave()
+{
+    //done drinking our beer, chugged it in 3 seconds. time to leave... even though the server just blankly stared at us after we thanked him for the beer. kinda creepy if you ask me...
+    MessageFromClient peace;
+    peace.m_MessageType = Message::MessageFromClientType;
+    peace.m_MessageSubType = MessageFromClient::GoodbyeMessageFromClientSubType;
+
+    QDataStream stream(m_Socket);
+    stream << peace;
+    emit d("saying goodbye");
+}
+void ProtocolClient::walkOut()
+{
+    emit d("disconnecting/walking out");
+    m_Socket->disconnectFromHost();
 }
