@@ -18,6 +18,9 @@ signals:
     void d(const QString &);
 private:
     QTcpServer *m_TcpServer;
+
+    void sendWelcome(QTcpSocket *conn);
+    void sendBeer(QTcpSocket *conn);
 public slots:
     void start();
 private slots:

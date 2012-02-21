@@ -5,6 +5,26 @@
 
 //in any case, learning protocols + tcp/ssl coding is a VERY useful skill. who cares what project i use it in. i will probably use the knowledge/code learned/typed tonight for the rest of my life.
 
+
+
+//ok so the purpose of this is to detect END OF MESSAGES
+//it's why i have the "top of atEnd while loop" debug output'd
+//currently i just have HELLO and WELCOME
+//but in order to test it, i need to have either one of them receive TWO messages
+//the question is: do i go to the top of the while loop without seeing the "ready read" debug output?
+//is control stuck in that while loop?
+//to make it easier for me to follow wtf is going on LATER, when i'm re-reading this... here's my proposed protocol communication:
+
+//SERVER.listen
+//CLIENT.connectToServer
+
+//..on connected, CLIENT SENDS HELLO
+//..on connected, SERVER does nothing except connect's to the socket's readyRead and waits
+//SERVER RECEIVES HELLO, REPLIES WITH WELCOME
+//CLIENT RECEIVES WELCOME, ASKS FOR A BEER
+//SERVER RECEIVES REQUEST FOR BEER, RESPONDS YES HERE IS YOUR BEER
+//...to be continued
+
 //base
 struct Message
 {
@@ -32,6 +52,7 @@ struct MessageFromClient : public Message
     {
         InvalidMessageFromClientSubType, //should i make this equal to -1 like in the Message constructor above?
         HelloMessageFromClientSubType,
+        MayIPleaseHaveABeer,
         GoodbyeMessageFromClientSubType
     };
 
@@ -47,6 +68,7 @@ struct MessageToClient : public Message
     {
         InvalidMessageToClientSubType, //-1?
         WelcomeMessageToClientSubType,
+        YesHereIsYourBeer,
         OkTakeCareMessageToClientSubType
     };
 

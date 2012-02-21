@@ -15,6 +15,8 @@ public:
     explicit ProtocolClient(QObject *parent = 0);
 private:
     QTcpSocket *m_Socket;
+
+    void askForABeer();
 signals:
     void d(const QString &);
 public slots:
