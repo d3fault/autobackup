@@ -1,0 +1,57 @@
+i'm playing dependency resolution hell in my head and with code that i need to write.. not just install
+AdCaptcha depends entirely on bitcoin code that i've yet to write
+said bitcoin code should be re-useable in the future on other projects
+
+essentially, i need a piece of [secure] server software that simply communicates with bitcoind on the command line
+the server software can watch the bitcon network for something (a payment is received) and notify a client when it's done
+...or just be polled to verify that a user does in fact have a certain amount of credits before making a purchase. the web servers only ever have a cached credit amount and are never trusted
+ETC
+
+this implies user accounts (not to be confused with bitcoin accounts) stored in a local db
+and there is an APP_ID that each client/server connection keeps separately
+
+
+AdCaptcha has APP_ID 0x1 and a user named "joe" that is separate from, say, an amazon spinoff with APP_ID 0x2 and a user named "joe"
+both Joes are separate entities and have separate balances
+
+
+SECURITY***
+you didn't think you were getting off that easy, did you?
+bitcoin aside, the problem of securely communicating between the webserver and the trusted bitcoin server (with accounts for each app_id etc) becomes an issue
+i'm thinking QSslSocket will be used here, so i don't have to reinvent the wheel
+
+but i'm unsure if i can do authenticity in the way i want to
+without having yet another layer of encryption on the QSslSocket
+
+i could be wrong.
+i'm new to SSL shit, i prefer Crypto++.
+however, reinventing the wheel is stupid... and SSL is the defacto standard accross the web...
+SO, don't be an idiot. learn SSL.
+
+AdCaptcha -> Bitcoin Payments Processor -> Secure Socket Level Communications
+
+depdnency hell at it's best
+
+
+
+which brings me back to where i left off with BitcoinPoker...
+.... PROTOCOLS.
+i think that's what i want to practice tonight.
+PROTOCOLS.
+nothing more, nothing less.
+server/client
+client/client
+however you want to look at it
+you need a protocol.h file that defines (to both sides) their interactions
+"A Lighthouse with Windows" is the best example i've seen of this
+uses Qt, TcpSocket, and a somewhat simple protocol.h file
+QSslSocket is essentially the same thing as TcpSocket. the encryption is transparent to the user.
+my issue, if i remember correctly, was how to detect that the end of a message has been detected?
+event driven server/client communication.... none of this polling bullshit
+
+
+ASIDE: i can live with polling the bitcoind application for now... though this may not be wise as a long term solution because it might access the hdd on every poll? might be better to (IN THE FUTURE) rewrite it so i check the network myself and use an in-memory model, hopefully event-driven(????), to deal with bitcoin
+
+
+
+SOMEHOW WRITING ALL THIS HELPS, EVEN THOUGH I'LL NEVER READ IT AGAIN. BRAINS R WEIRD
