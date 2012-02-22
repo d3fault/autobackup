@@ -1,0 +1,24 @@
+i never thought of this till just now...
+aOS, while being power conserving and freeing my eyes to allow me to focus on walking/hiking/etc/LIFE/LIVING...
+...also would HUGELY appeal to the blind community
+sup blind fucks.
+
+visual would appeal to regular users as well as deaf users (there is hardly a difference here, aside from sound fx obviously)
+and PHYSICAL feedback (vibrations scattered around mah body... just because feelsgoodman) would appeal to the deaf/blind community... hello <whats-her-name-again?>
+
+integrating the 3 would be key
+designing an app in d3fault (design=implementation) should transparently make the app accessable by all 3 "views" (views is a horrible description)
+i need to mentally disect "what makes an app"
+how to iterate between "basic menu items" or "basic gui items"... somewhat similar to tab indexes for inputs... but also to read outputs etc as well
+the visual markup would be specific, every app has a default view that doesn't have custom gui code that goes along with how the aOS sees it... and SOMEHOW(???) how the visual feedback is felt.
+
+reading back text via audio/visual is piece of cake
+the physical feedback is different
+i only imagined the vibrations being 1 for each letter of the alphabet.. i guess it could do that while reading back too... only REALLY fast (as fast as their body can sense)... whereas on input it just confirms your keys pressed
+somewhat similar to braille, the body is trained to react to physical stimulation which triggers reading
+
+man this is good shit, anything that targets accessability like this is ALWAYS big
+i should definitely keep this in mind when i design some shit...
+it's cool that it's all just a side effect of me pleasing myself <3
+a person does best when acting for themself
+lining yourself up to also benefit others as a result is rare and awesome
