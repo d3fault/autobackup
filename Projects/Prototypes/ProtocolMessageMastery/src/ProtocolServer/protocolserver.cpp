@@ -118,4 +118,6 @@ void ProtocolServer::sendOkTakeCare(QTcpSocket *conn)
 
 
     conn->disconnectFromHost(); //????? who calls this? us or them? either? both? ANSWER: it doesn't appear to matter.. but we don't get an error notifying us of their disconnection if we DO call this line. so i guess this is the way to cleanly disconnect? everything has been said/done at this point anyways so who cares. commenting it out functions exactly the same (we still hit our disconnected() slot) but there is an additional handleSocketError hit that just tells us that the client has disconnected
+
+    //new thought: possible race condition that we get disconnected before sending the takeCare message????
 }
