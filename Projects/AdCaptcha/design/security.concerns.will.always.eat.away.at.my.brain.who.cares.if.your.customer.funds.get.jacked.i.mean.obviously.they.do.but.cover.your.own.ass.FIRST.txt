@@ -1,0 +1,22 @@
+i can't think of a scenario where the webserver for adcaptcha being compromised does not also allow them to empty out every user's account
+the ONLY additional security feature is that i can keep them from taking _MY_ 1%...
+...my slice of the action (5%? "m_Percentage")
+
+since the server is where everything happens, compromising it means they can make up whatever they want to happen
+they can send requests for balance transfers, which are not denied if there is sufficient funds... and they can send commands to pay out to whomever they please (themselves obviously)
+i can/will/should limit them so they cannot take my percent. even though i am putting my users at risk, it is better than also being at risk myself
+there is ABSOLUTELY NO WAY IN HELL to fix this except hosting the server with physical security as well
+even then, exploitation is still a factor... but it's a factor for the bitcoin server too... which is why i will of course forward all of my 1% slice to bitcoin addresses with an air gap
+the best they could do is overwrite my address queue with addresses of their own and take my daily payout(s) until i discover it and fix it
+they cannot rob me of previous days
+
+
+i'm starting to think maybe it would be unwise to host a financial application remotely
+but eh,.. need to handle traffic.
+man i can't believe this is my solution
+AdCaptcha, what a crock of shit
+what a piece of shit
+an advertising agency
+god i fucking fail
+
+NOOOOOOOOOOOO IT WWWWWWWWIIIIIIIIIILLLLLLLLLLL WORK I KNOW IT WILL EVEN IF THE PROFITS ARE NOT OMG YAY THEY WILL STILL EXIST AND IT IS 100% TURNKEY SO SUCK MY DICK
