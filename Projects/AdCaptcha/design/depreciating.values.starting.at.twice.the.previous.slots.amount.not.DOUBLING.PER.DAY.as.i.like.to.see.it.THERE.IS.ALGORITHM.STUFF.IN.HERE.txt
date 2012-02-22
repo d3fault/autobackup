@@ -1,0 +1,51 @@
+i think i've mentioned this before but i want to mention it again just in case
+depreciating values
+doubles each day... depreciates back down to it's old value (the day before) linearly throughout the day
+maybe 1 minute intervals
+
+the page where users can watch values drop is NOT server synchronized
+that is, the server does not have to PUSH each notification every minute telling it about the drop
+on page load, the server gives them the "now" price and 100% on client-side using custom javascript, the values depreciate
+HOWEVER, when the unit is sold (and therefore no longer available for purchase), THEN a server-intiated update is sent and the unit is no longer buy-able... rather, it is... but for the next day's price
+
+
+so the price is 100% determined by how far it is away from now
+it has nothing to do with doubling the day before it
+if nobody buys it, there's a possibility that that day can go for cheaper than the day before it (eventually.. after 24 hours)
+
+say a friday/saturday is more valuable than a sunday
+
+today's wednesday at noon and (just pulling this out of my ass) friday sells for $5 right at noon
+right then, saturday opens up at $10 and over the course of the next 24 hours, linearly depreciates to $5.
+if after that initial 24 hours it is not purchased, it then linearly depreciates down to $1 (or whatever i put as MINIMUM_BID) right at the stroke of midnight saturday night/sunday morning
+for simplicity, i could just make it do the second depreciating function only
+should*
+
+so is the next day (monday) $20 or is it sundayActual*2 ??????
+HMMMMMM
+kinda makes more sense to do sunday*2
+for every day, really...
+
+
+
+let's think this through
+
+$1 minimum bid... stays here indefinitely until the moment someone buys it (they get 24 hours from when they buy it. fuck "midnight" etc)
+say monday at noon someone buys the $1 slot... immediately the $2 slot is opened and it linearly depreciates back down to $1 (the minimum... NOT the previous days price.. though coincidentally IS for this second slot) over the next 24 hours
+assuming nobody purchases, we are back where we were to begin with, $1. perfect.
+
+say monday at like 6pm someone buys the next 24 hour slot (to start tuesday at noon) for $1.75
+immediately the 3rd 24 hour slot becomes available for $3.50 ((n-1)*2), and it begins it's linear depreciation down to $1
+except with that slot, it isn't 24 hours we have to wait... like we cleanly have with the 2nd 24 hour slot depreciating
+so it linearly depreciates from $3.50 ((n-1)*2) to $1 over the course of monday 6pm to wednesday at noon (the END of the second slot)
+
+***********************************************************
+nextPrice = previousPrice*2
+depreciatingTime = previousSlot.EndTime - currentTime
+***********************************************************
+
+^^using those 2 numbers i can use math to make it linearly depreciate back down to $1 right when the last purchased slot opens up. the idea is that it will be re-purchased before it gets to that. it will, in most cases... unless the site sucks lol...
+$1 minimum is just to make the math easier... but it can be $0.01 for all i care... or even lower. ARBITRARY
+(in fact $1 will probably be much to high for most sites... so it'd probably be best to make the minimum $0.01.... though on the other hand, maybe it should be specifiable per-site (ok now this is just getting ahead of myself) because a lot of sites would scoff at the idea of letting a day of advertising go for $0.01... or even $1...)
+
+yes, site-specifiable is definitely the best way to go... $1 is my suggested default... it doubles quickly enough imo...
