@@ -1,0 +1,19 @@
+project go outside
+aOS
+
+tangent recall
+undecided between two modes
+"what was i talking about?" (voice recognition or key-triggered)
+the speech synthesis reads to you what you wrote either
+a) at the beginning of the open parenthesis
+b) if you close a parenthesis, it can read you the last few words before you typed the open parenthesis ***** THIS IS MY FAVORITE
+c) re-read you the last few words of your current sentence.. up to and including the very first word of the sentence
+
+
+A gives you the big picture of what you were talking about
+B lets you pick up on a previous train of thought that you had diverted from
+C gives you basically your current train of thought for when you have 'brain farts'
+
+
+A is different than C in that you could have diverted from the big picture (the point of the tangent) ever so slightly, but not enough to warrant a new tangent, so you want to get back to what you were talking about
+C is just when you forget wtf you were talking about
