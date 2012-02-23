@@ -19,10 +19,10 @@ void SecureClient::connectToSecureServer()
         emit d("attempting to connect at port 6969");
 
         //retarded DEBUGGING
-        if(!m_SslSocket->waitForEncrypted())
+        /*if(!m_SslSocket->waitForEncrypted())
         {
             emit d(m_SslSocket->errorString());
-        }
+        }*/
     }
 }
 void SecureClient::handleConnectedNotYetEncrypted()

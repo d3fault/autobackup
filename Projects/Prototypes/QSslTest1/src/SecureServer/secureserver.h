@@ -2,6 +2,7 @@
 #define SECURESERVER_H
 
 #include <QObject>
+#include <QtNetwork/QAbstractSocket>
 
 #include "ssltcpserver.h"
 #include "../shared/protocol.h"
@@ -22,8 +23,10 @@ public slots:
     void startServer();
 private slots:
     void handleConnectedButNotEncryptedYet();
-    void handleConnectedAndEncrypted(QSslSocket* secureSocket);
+    void handleConnectedAndEncrypted();
     void handleReadyRead();
+    void handleSslErrors(QList<QSslError> sslErrors);
+    void handleSocketError(QAbstractSocket::SocketError);
 };
 
 #endif // SECURESERVER_H

@@ -20,6 +20,10 @@ HEADERS  += mainserverwidget.h \
     ssltcpserver.h \
     ../shared/protocol.h
 
+RESOURCES += \
+    SslFiles.qrc
+
+
 
 
 

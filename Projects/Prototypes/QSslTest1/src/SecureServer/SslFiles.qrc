@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource>
+        <file>privkey.pem</file>
+        <file>cacert.pem</file>
+    </qresource>
+</RCC>

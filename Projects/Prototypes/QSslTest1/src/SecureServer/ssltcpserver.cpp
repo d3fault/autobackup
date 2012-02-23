@@ -6,20 +6,31 @@ SslTcpServer::SslTcpServer(QObject *parent) :
 }
 void SslTcpServer::incomingConnection(int handle)
 {
-    QSslSocket *secureSocket = new QSslSocket();
+    QSslSocket *secureSocket = new QSslSocket(this);
     if(secureSocket->setSocketDescriptor(handle))
     {
-        connect(secureSocket, SIGNAL(encrypted()), this, SLOT(handleEncrypted()));
-        connect(secureSocket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
+        //connect(secureSocket, SIGNAL(encrypted()), this, SLOT(handleEncrypted()));
+        //connect(secureSocket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
+
+        //TODO: setPrivateKey and setLocalCertificate
+        /*
+          openssl genrsa -out privkey.pem 2048
+          openssl req -new -x509 -key privkey.pem -out cacert.pem -days 1095
+        */
+        secureSocket->setPrivateKey(":/privkey.pem");
+        secureSocket->setLocalCertificate(":/cacert.pem");
+        //secureSocket->setCaCertificates(); <-- i think i need to do this one the client for the ca cert that generated my server's local cert or something? barely understand what i'm doing
+
+        m_PendingConnections.enqueue(secureSocket);
         secureSocket->startServerEncryption();
         emit d("server is initiating delayed handshake");
 
 
         //retarded debugging
-        if(!secureSocket->waitForEncrypted())
+        /*if(!secureSocket->waitForEncrypted())
         {
             emit d(secureSocket->errorString());
-        }
+        }*/
     }
     else
     {
@@ -27,19 +38,18 @@ void SslTcpServer::incomingConnection(int handle)
         delete secureSocket;
     }
 }
-void SslTcpServer::handleEncrypted()
+/*void SslTcpServer::handleEncrypted()
 {
     emit d("the socket has emitted encrypted()");
     //hopefully this will work...
     QSslSocket *secureSocket = qobject_cast<QSslSocket*>(sender());
     emit newEncryptedConnection(secureSocket);
-}
-void SslTcpServer::handleSslErrors(QList<QSslError> sslErrors)
+}*/
+QTcpSocket * SslTcpServer::nextPendingConnection()
 {
-    int numErrors = sslErrors.count();
-    emit d(QString::number(numErrors) + " ssl errors");
-    for(int i = 0; i < numErrors; ++i)
+    if(m_PendingConnections.isEmpty())
     {
-        emit d("ssl error #" + QString::number(i) + " - " + sslErrors.at(i).errorString());
+        return 0;
     }
+    return m_PendingConnections.dequeue();
 }
