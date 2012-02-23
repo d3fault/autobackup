@@ -1,0 +1,15 @@
+ok i think i figured out this CA stuff...
+nifty shell script in /etc/pki/tls/misc/ called CA that simplifies the fuck out of it
+unfortunately i can't run it multiple times
+so my solution is this:
+generate the keys in virtual box fedora 16 (same os as this), and then just roll back the change
+i don't want to use all this pki/database bullshit that CA integrates so cleanly with
+
+though i guess i will when i generate a key (NOT ON VIRTUALBOX AS IT IS ONLINE) for the production server
+but maybe not... just use virtualbox inside offline box...
+
+
+what i'm getting at is this:
+i want to copy/paste the key(s),cert(s), and CA cert(s?? the client should have one too imo) to be used in my Qt QSsl project...
+... i don't even want my system to know of their existence, ESPECIALLY BECAUSE i can no longer generate CA shit after i generate one. buggy script or something. idfk.
+i don't need/want revocation lists etc anyways because i can just update the binaries with new shit whenever i need to. i am god, and this is not typical cert usage
