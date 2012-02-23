@@ -6,6 +6,11 @@ SecureServer::SecureServer(QObject *parent) :
 }
 void SecureServer::startServer()
 {
+    if(!QSslSocket::supportsSsl())
+    {
+        emit d("ssl is not supported");
+        return;
+    }
     if(!m_SslTcpServer)
     {
         m_SslTcpServer = new SslTcpServer(this);
@@ -57,7 +62,7 @@ void SecureServer::handleReadyRead()
             case ClientToServerMessage::GoodbyeGoFuckYourself:
                 emit d("goodbye received from client");
                 //i should send a ThatsRudeByeNow here... but idk about this race condition stuff...
-                secureSocket->disconnect(); //since we don't send anything back like "ok take care", there is no race condition here
+                secureSocket->disconnectFromHost(); //since we don't send anything back like "ok take care", there is no race condition here
                 secureSocket->deleteLater();
                 return;
             default:

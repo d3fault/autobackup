@@ -15,8 +15,14 @@ void SecureClient::connectToSecureServer()
         connect(m_SslSocket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
         connect(m_SslSocket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
 
-        QHostAddress localHost(QHostAddress::LocalHost);
-        m_SslSocket->connectToHostEncrypted(localHost.toString(), 6969);
+        m_SslSocket->connectToHostEncrypted("127.0.0.1", 6969);
+        emit d("attempting to connect at port 6969");
+
+        //retarded DEBUGGING
+        if(!m_SslSocket->waitForEncrypted())
+        {
+            emit d(m_SslSocket->errorString());
+        }
     }
 }
 void SecureClient::handleConnectedNotYetEncrypted()
@@ -32,6 +38,7 @@ void SecureClient::handleConnectedAndEncrypted()
 void SecureClient::handleSslErrors(QList<QSslError> sslErrors)
 {
     int numErrors = sslErrors.count();
+    emit d(QString::number(numErrors) + " ssl errors");
     for(int i = 0; i < numErrors; ++i)
     {
         emit d("ssl error #" + QString::number(i) + " - " + sslErrors.at(i).errorString());
@@ -61,7 +68,7 @@ void SecureClient::handleReadyRead()
             break;
         case ServerToClientMessage::ThatsRudeByeNow:
             emit d("server acknowledged our bye");
-            m_SslSocket->disconnect();
+            m_SslSocket->disconnectFromHost();
             m_SslSocket->deleteLater();
             return;
         default:
