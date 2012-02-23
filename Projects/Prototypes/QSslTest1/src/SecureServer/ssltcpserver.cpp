@@ -17,8 +17,8 @@ void SslTcpServer::incomingConnection(int handle)
           openssl genrsa -out privkey.pem 2048
           openssl req -new -x509 -key privkey.pem -out cacert.pem -days 1095
         */
-        secureSocket->setPrivateKey(":/privkey.pem");
-        secureSocket->setLocalCertificate(":/cacert.pem");
+        secureSocket->setPrivateKey(":/serverprivatekey.pem");
+        secureSocket->setLocalCertificate(":/servercert.pem");
         //secureSocket->setCaCertificates(); <-- i think i need to do this one the client for the ca cert that generated my server's local cert or something? barely understand what i'm doing
 
         m_PendingConnections.enqueue(secureSocket);

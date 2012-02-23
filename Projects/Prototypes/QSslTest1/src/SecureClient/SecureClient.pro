@@ -19,3 +19,5 @@ HEADERS  += mainclientwidget.h \
     ../shared/protocol.h
 
 
+RESOURCES += \
+    MyCA.qrc

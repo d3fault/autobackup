@@ -15,6 +15,21 @@ void SecureClient::connectToSecureServer()
         connect(m_SslSocket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
         connect(m_SslSocket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
 
+        //setup our CA cert. too bad the Cert constructor doesn't just take a filepath lol..
+        QFile caFileResource(":/CAcert.pem");
+        caFileResource.open(QFile::ReadOnly);
+        QByteArray caByteArray = caFileResource.readAll();
+        QSslCertificate certificateAuthority(caByteArray);
+
+        if(certificateAuthority.isNull())
+        {
+            emit d("the CA is null");
+        }
+        QList<QSslCertificate> whyForceAListBastards;
+        whyForceAListBastards.append(certificateAuthority);
+
+        m_SslSocket->setCaCertificates(whyForceAListBastards);
+
         m_SslSocket->connectToHostEncrypted("127.0.0.1", 6969);
         emit d("attempting to connect at port 6969");
 

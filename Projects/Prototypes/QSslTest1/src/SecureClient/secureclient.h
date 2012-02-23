@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QtNetwork/QSslSocket>
 #include <QtNetwork/QHostAddress>
+#include <QFile>
 
 #include "../shared/protocol.h"
 

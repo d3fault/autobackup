@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
-        <file>privkey.pem</file>
-        <file>cacert.pem</file>
+        <file>servercert.pem</file>
+        <file>serverprivatekey.pem</file>
     </qresource>
 </RCC>
