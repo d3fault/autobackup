@@ -1,0 +1,21 @@
+69chan
+basically just a better version of 4chan, probably in Wt
+static, no deletions (cept cp)
+on the "about" or "contact" page, there is a photoshopped picture of me 69'ing myself
+cawk goes in mouf
+i(we) am(are) horizontal, not vertical
+
+then an arrow pointing to me saying "this is your god now"
+or like "this is the admin of the site"
+
+the title of the entire site (not just the about page) is "because moot is a faggot"
+i can change that later though....
+Wt/Ajax, maybe even a native client
+
+DHT would be pro but you're getting ahead of yourself YET AGAIN
+
+AdCaptcha for posting, AdDoubles on pages (or maybe not... since AdCaptcha is shown on every page anyways... why have 2?)
+
+fuck moot
+fuck 4chan
+not complicated software at all...
