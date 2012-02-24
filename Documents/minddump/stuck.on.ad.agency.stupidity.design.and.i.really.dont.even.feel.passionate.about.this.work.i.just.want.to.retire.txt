@@ -1,0 +1,67 @@
+the design of this advertising agency is where i'm currently stuck
+i know i want to use Wt for the front-end... it just simplifies shit.
+but do i want ot push the application logic to my local/trusted server? the one that's doing the bitcoin checking?
+
+since i'm asking it permission before doing each operation, it may be more efficient to keep the app logic local
+
+i still definitely want to cleanly separate the app logic with the bitcoin/payment processing logic...
+... but idk
+i just don't fucking know
+
+
+
+user ----(https)---> Wt/app|Qt/Ssl app -----(QSsl)----> Trusted Payment Processor -(local calls)-> bitcoind -> tor -> network
+                     Wt is used as usual, Qt/Ssl is a singleton on a different thread and we send events to it.
+
+		      I should instantiate the Qt singleton in main() on the stack, just like you're supposed to do with 1x Wt session (though i haven't been doing this and it's been working fine)
+
+
+what i'm saying is since Wt/app will be calling trusted payment procesor or "trusted account balance manager" (payment processor yet behind that) a lot, i wonder if i should push the logic there?
+Wt/webserver will still handle bulk traffic, of course... but maybe whenever anything HAPPENS, it HAPPENS locally and the Wt front-end is just the cache that becomes updated
+
+i don't know
+i'm lost in my own brain
+designing and coding at the same time
+i guess it doesn't matter
+famous last words
+the wrong choice could trigger HUGE code rewrites later on.
+
+i guess i'm sort of getting ahead of myself...
+...i should stick with doing this from the bottom up
+that means bitcoind interfacing FIRST
+then bitcoind interfacing over SSL
+etc...
+
+
+errr, i think there should be a "bank" app/db in between the bitcoind and the ssl interface
+so i ssl interface with the bank
+and a backend payment processor for the "bank" is bitcoind
+but could also be paypal (though i could just do that on the webserver, since you gotta "trust" other noobs anyways might as well)
+
+the "BANK" is the amount each user REALLY has
+we check with the bank from the front-end/Wt whenever we want to do something that will shift balances
+
+the bank should also periodically/daily send out my percentage cuts to bitcoin addresses generated on a safe/offline machine
+so if the bank or webserver is compromised, only user funds are lost
+gah security is a fucking BITCH.
+how do real banks do it?
+do they just not give a fuck?
+how does Mt Gox do it?
+do they just not give a fuck?
+should i just not give a fuck?
+i mean i guess my choices are
+a)give a fuck and be poor
+b)not give a fuck and get money
+
+i _do_ give a fuck... i'm just too smart for my own good
+bitcoin is lightyears ahead of paypal... but there is no such thing as perfect security
+i cannot wait for perfect security before i start making money
+
+...just as i cannot wait for perfect security/dht-thing before doing d3fault
+i want to code d3fault
+fuck this ad agency bullshit
+i mean yea i'll use it within d3fault i bet... (why not)...
+but coding d3fault is my true passion
+get past this obstacle
+retire motherfucker.
+...you can always hire crypto junkies later to come in and examine/optimize/improve/test your code
