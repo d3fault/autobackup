@@ -16,6 +16,20 @@ void SslTcpServer::incomingConnection(int handle)
         /*
           openssl genrsa -out privkey.pem 2048
           openssl req -new -x509 -key privkey.pem -out cacert.pem -days 1095
+
+          i should clarify. the above commands work and all, but it's for a self-signed certificate... which is an ssl error in itself.
+
+          the proper way is to use /etc/pki/tls/misc/CA script to generate the CA, the cert/private-key, and then sign the cert with the CA.
+
+          ./CA -newca
+          ./CA -newreq
+          ./CA -sign
+
+          as simple as that really...
+          then put the CA on both the server/client
+          and the cert/private-key on the server only
+          (unless client has it's own CA, then the process is [additionally] reversed and both sides then have 2 CA certs as well. their own and their peers)
+
         */
 
         QFile caFileResource(":/CAcert.pem");
