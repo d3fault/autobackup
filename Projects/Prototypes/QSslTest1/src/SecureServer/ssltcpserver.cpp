@@ -51,7 +51,7 @@ void SslTcpServer::incomingConnection(int handle)
         secureSocket->setCaCertificates(whyForceAListBastards);
 
 
-        QByteArray passPhrase("fuckyou"); //pointless, i shouldn't have entered one in CA script
+        QByteArray passPhrase("fuckyou"); //pointless, i shouldn't have entered one in CA script. on the client side (the webserver in my case), however... i COULD use one and prompt for it whenever the application starts up. so the hdd copy of it wouldn't be able to authenticate itself unless _I_ am the one who starts it up. an adversary would have to go through the extra step of extracting the key from memory. i do actually think this is a good extra security step... especially with encrypted memory/paging (encrypted hdd too?? i guess it's not needed but might as well... MIGHT AS WELL? NO MAYNG SHIT SLOWS SHIT DOWN MAYNG)
         secureSocket->setPrivateKey(":/serverprivatekey.pem", QSsl::Rsa, QSsl::Pem, passPhrase);
         secureSocket->setLocalCertificate(":/servercert.pem");
         //secureSocket->setCaCertificates(); <-- i think i need to do this one the client for the ca cert that generated my server's local cert or something? barely understand what i'm doing
