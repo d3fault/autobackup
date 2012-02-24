@@ -4,6 +4,7 @@
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QSslSocket>
 #include <QQueue>
+#include <QFile>
 
 class SslTcpServer : public QTcpServer
 {

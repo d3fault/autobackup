@@ -2,5 +2,6 @@
     <qresource>
         <file>servercert.pem</file>
         <file>serverprivatekey.pem</file>
+	<file>CAcert.pem</file>
     </qresource>
 </RCC>
