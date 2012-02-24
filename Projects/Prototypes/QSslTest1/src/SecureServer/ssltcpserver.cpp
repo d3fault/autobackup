@@ -17,7 +17,9 @@ void SslTcpServer::incomingConnection(int handle)
           openssl genrsa -out privkey.pem 2048
           openssl req -new -x509 -key privkey.pem -out cacert.pem -days 1095
         */
-        secureSocket->setPrivateKey(":/serverprivatekey.pem");
+
+        QByteArray passPhrase("fuckyou"); //pointless, i shouldn't have entered one in CA script
+        secureSocket->setPrivateKey(":/serverprivatekey.pem", QSsl::Rsa, QSsl::Pem, passPhrase);
         secureSocket->setLocalCertificate(":/servercert.pem");
         //secureSocket->setCaCertificates(); <-- i think i need to do this one the client for the ca cert that generated my server's local cert or something? barely understand what i'm doing
 
@@ -30,7 +32,8 @@ void SslTcpServer::incomingConnection(int handle)
         /*if(!secureSocket->waitForEncrypted())
         {
             emit d(secureSocket->errorString());
-        }*/
+        }
+        emit d("got past wait");*/
     }
     else
     {
