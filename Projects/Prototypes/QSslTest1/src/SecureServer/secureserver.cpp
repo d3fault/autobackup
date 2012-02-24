@@ -29,7 +29,7 @@ void SecureServer::handleConnectedButNotEncryptedYet()
     emit d("new connection, not yet encrypted");
     QSslSocket *newConnection = qobject_cast<QSslSocket*>(m_SslTcpServer->nextPendingConnection()); //is this necessary? we don't care about the unencrypted tcp socket (what it returns)... but do i need to call this to keep the pending connections queue cleared?
     if(newConnection)
-    {
+    {        
         connect(newConnection, SIGNAL(encrypted()), this, SLOT(handleConnectedAndEncrypted()));
         connect(newConnection, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
         connect(newConnection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError(QAbstractSocket::SocketError)));

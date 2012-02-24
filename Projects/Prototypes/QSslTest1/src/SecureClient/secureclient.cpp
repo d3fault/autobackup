@@ -16,24 +16,43 @@ void SecureClient::connectToSecureServer()
         connect(m_SslSocket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
 
 
-        //setup our CA cert. too bad the Cert constructor doesn't just take a filepath lol..
-        QFile caFileResource(":/CAcert.pem");
-        caFileResource.open(QFile::ReadOnly);
-        QByteArray caByteArray = caFileResource.readAll();
-        caFileResource.close();
+        //setup our server CA cert. too bad the Cert constructor doesn't just take a filepath lol..
+        QFile serverCaFileResource(":/serverCA.pem");
+        serverCaFileResource.open(QFile::ReadOnly);
+        QByteArray serverCaByteArray = serverCaFileResource.readAll();
+        serverCaFileResource.close();
 
-        QSslCertificate certificateAuthority(caByteArray);
-        if(certificateAuthority.isNull())
+        QSslCertificate serverCA(serverCaByteArray);
+        if(serverCA.isNull())
         {
-            emit d("the CA is null");
+            emit d("the server CA is null");
             return;
         }
-        emit d("the certificate is not null");
+        emit d("the server certificate is not null");
 
-        QList<QSslCertificate> whyForceAListBastards;
-        whyForceAListBastards.append(certificateAuthority);
-        //QSslSocket::setDefaultCaCertificates(whyForceAListBastards);
-        m_SslSocket->setCaCertificates(whyForceAListBastards);
+        //client CA
+        QFile clientCaFileResource(":/clientCA.pem");
+        clientCaFileResource.open(QFile::ReadOnly);
+        QByteArray clientCaByteArray = clientCaFileResource.readAll();
+        clientCaFileResource.close();
+
+        QSslCertificate clientCA(clientCaByteArray);
+        if(clientCA.isNull())
+        {
+            emit d("client CA is null");
+        }
+        emit d("client ca is not null");
+
+
+        QList<QSslCertificate> allCertificateAuthorities;
+        allCertificateAuthorities.append(serverCA);
+        allCertificateAuthorities.append(clientCA);
+
+        m_SslSocket->setCaCertificates(allCertificateAuthorities);
+
+        QByteArray passPhrase("fuckyou");
+        m_SslSocket->setPrivateKey(":/clientPrivateKey.pem", QSsl::Rsa, QSsl::Pem, passPhrase);
+        m_SslSocket->setLocalCertificate(":/clientPublicCert.pem");
 
         m_SslSocket->connectToHostEncrypted("localhost", 6969);
         emit d("attempting to connect at port 6969");

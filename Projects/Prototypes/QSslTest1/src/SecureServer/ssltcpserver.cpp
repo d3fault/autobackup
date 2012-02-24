@@ -32,24 +32,36 @@ void SslTcpServer::incomingConnection(int handle)
 
         */
 
-        QFile caFileResource(":/CAcert.pem");
-        caFileResource.open(QFile::ReadOnly);
-        QByteArray caByteArray = caFileResource.readAll();
-        caFileResource.close();
+        QFile serverCaFileResource(":/serverCA.pem");
+        serverCaFileResource.open(QFile::ReadOnly);
+        QByteArray serverCaByteArray = serverCaFileResource.readAll();
+        serverCaFileResource.close();
 
-        QSslCertificate certificateAuthority(caByteArray);
-        if(certificateAuthority.isNull())
+        QSslCertificate serverCA(serverCaByteArray);
+        if(serverCA.isNull())
         {
-            emit d("the CA is null");
+            emit d("the server CA is null");
             return;
         }
-        emit d("the certificate is not null");
+        emit d("the server certificate is not null");
 
-        QList<QSslCertificate> whyForceAListBastards; //list will be nice once the client has it's own CA issuer cert ;-)
-        whyForceAListBastards.append(certificateAuthority);
-        //QSslSocket::setDefaultCaCertificates(whyForceAListBastards);
-        secureSocket->setCaCertificates(whyForceAListBastards);
+        QFile clientCaFileResource(":/clientCA.pem");
+        clientCaFileResource.open(QFile::ReadOnly);
+        QByteArray clientCaByteArray = clientCaFileResource.readAll();
+        clientCaFileResource.close();
 
+        QSslCertificate clientCA(clientCaByteArray);
+        if(clientCA.isNull())
+        {
+            emit d("client CA is null");
+        }
+        emit d("client ca is not null");
+
+        QList<QSslCertificate> allCertificateAuthorities;
+        allCertificateAuthorities.append(serverCA);
+        allCertificateAuthorities.append(clientCA);
+
+        secureSocket->setCaCertificates(allCertificateAuthorities);
 
         QByteArray passPhrase("fuckyou"); //pointless, i shouldn't have entered one in CA script. on the client side (the webserver in my case), however... i COULD use one and prompt for it whenever the application starts up. so the hdd copy of it wouldn't be able to authenticate itself unless _I_ am the one who starts it up. an adversary would have to go through the extra step of extracting the key from memory. i do actually think this is a good extra security step... especially with encrypted memory/paging (encrypted hdd too?? i guess it's not needed but might as well... MIGHT AS WELL? NO MAYNG SHIT SLOWS SHIT DOWN MAYNG)
         secureSocket->setPrivateKey(":/serverprivatekey.pem", QSsl::Rsa, QSsl::Pem, passPhrase);

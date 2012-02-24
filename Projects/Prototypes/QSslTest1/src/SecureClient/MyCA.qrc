@@ -1,5 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
-        <file>CAcert.pem</file>
+        <file>serverCA.pem</file>
+	<file>clientCA.pem</file>
+	<file>clientPrivateKey.pem</file>
+	<file>clientPublicCert.pem</file>
     </qresource>
 </RCC>
