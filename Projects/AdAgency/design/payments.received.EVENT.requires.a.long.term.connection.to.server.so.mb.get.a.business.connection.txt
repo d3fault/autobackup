@@ -1,0 +1,22 @@
+the payment received EVENT**** would in theory require the local 'bank' to make a server to the webserver...
+even though with the SSL connection i currently have the webserver/front-end as the client and the local bank/bitcoin payment shit as the server. the webserver connects to it on demand.
+2 solutions:
+a) have yet another ssl server on the webserver just to receive events
+b) leave the connection open 24/7
+
+i don't like either one of these solutions.
+a udp protocol would make this easier as i could just send the packet whenever the fuck i felt like it
+still, i'd have to manually do encryption/authentication and handshaking and account for packet loss (packet confirmations)
+FUCK THAT.
+
+i'm leaning towards 24/7 connection
+...except i'm planning on having this shit run in my house
+off my home connection
+
+aim/msn/irc are allowed to have connections open 24/7...
+...what will they say about a mostly idle ssl connection to some random server?
+
+obviously i'll upgrade to business connection once i can afford it
+
+then again, i'm probably going to need some kind of investment money for the initial servers...
+... so i can factor in investment money for a business connection too...
