@@ -8,6 +8,7 @@ cd ..
 cp -av ./recording-*.3gp /mnt/750x1/droidSoundRecorder/
 cp -av ./recording-*.3gp /mnt/750x2/droidSoundRecorder/
 cd ./DCIM/Camera/
+read -n1 -r -p "done copying, press a key to start shredding" key
 shred -fuv --iterations=1 ./*
 cd ..
 cd ./.thumbnails/

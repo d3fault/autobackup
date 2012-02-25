@@ -13,4 +13,6 @@ sudo mkdir `echo $new750x2`
 sudo cp -av ./* "$new750x1"
 sudo cp -av ./* "$new750x2"
 
+read -n1 -r -p "done copying, press any key to continue with shred" key
+
 sudo shred -fuv --iterations=1 ./*
