@@ -1,0 +1,19 @@
+realization: basically everything i want to do has the dependency of a) ad agency and b) bitcoin payment processing
+
+so an ad agency that modularly uses a bitcoin payment processor is my 2 core dependencies to enable me to make apps in the future that utilize both.
+by themselves they also can/will generate money
+though i doubt the bitcoin payment processor will on it's own (i'm not going to rent that as a SAAS or anything)
+
+bluebox, should i ever make it, depends on the ad agency, can/will use it
+d3fault can/will
+massage exchange can/will
+quickdinner
+staticchan
+69chan
+whatever else i pull out of my ass
+they all have that in common
+
+
+to not depend on another ad agency
+and to not depend on a 3rd party payment processor
+life will be great.
