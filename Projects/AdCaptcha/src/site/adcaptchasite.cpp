@@ -26,6 +26,7 @@ void AdCaptchaSite::handleLoginChanged()
 {
     if(m_MyDb.getLogin().loggedIn())
     {
+        //TODO: since this seems to be the first point of entry after the user first registers... we can check our app bank cache db to see if we have set up a (non-cached) bank account yet on our remote server. if we haven't, now is where we do it and we store the user/id (whatever) in the app bank cache db too. we init it to zero on user creation, then check to see if it's still zero right here. if it is, we know they haven't set up a bank account yet. we want to delay this until after the registration CONFIRMATION process, so spam creating accounts (without verifying them) doesn't even send a message to our remote bank server. ya know, i kinda like that: RemoteBankServer and LocalAppBankCache. they are the same except remote manages multiple app bank accounts (for future projects)
         handleInternalPathChanged(WApplication::instance()->internalPath());
     }
     else
