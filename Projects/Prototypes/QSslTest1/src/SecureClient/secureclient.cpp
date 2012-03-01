@@ -40,6 +40,7 @@ void SecureClient::connectToSecureServer()
         if(clientCA.isNull())
         {
             emit d("client CA is null");
+            return;
         }
         emit d("client ca is not null");
 
@@ -99,6 +100,7 @@ void SecureClient::handleReadyRead()
         if(message.m_MessageType != Message::ServerToClientMessageType)
         {
             emit d("somehow got a message that wasn't a server2client message");
+            return;
         }
         switch(message.m_TheMessage)
         {
