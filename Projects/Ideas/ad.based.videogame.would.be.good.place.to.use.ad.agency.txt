@@ -1,0 +1,85 @@
+my project immediately following AdAgency should be a free video game
+exploring/socializing/creating is the main mission
+maybe fps arenas or something too.. but that should come secondary as fuck
+
+building the world, a la minecraft style, is also a big objective
+
+however, where it diverges from minecraft (noob shit) is that i want it to be completely decentralized
+1 giant fucking server
+ad based (AdAgency).. people can put up an ad on their own creations, i take my small sliver for providing the functionality
+
+of course, the entrance to the game (which i think should be a 3d representation of MY ROOM), will have the first ad up on the wall (tangent: i can put a giant monitor in my room with the same image on it for lulz)
+freenode bootstrapping is ideal... mimic bitcoin... maybe even in the way it crunches blocks to keep a clean record of what exists
+
+there is no deletion of objects. ever.
+
+you can go into an offline/private mode and make an object... and while in that mode you can delete/etc... but once you import it into the main server, it stays where you put it, however you put it. future revisions can replace old ones, but the user has the ability to revert (from their perspective or for everyone's?)
+
+bsp vs. scenery.. a la halo
+
+bsp can only be created in realtime
+but how to MODIFY (implies delete) bsp
+
+movie rooms, p2p stream of the movie playing
+if you want to rewind it you're thrown into your own room (that others can join)
+
+players have tv heads, or just regular heads but with webcam injected skin on mesh (i've written about this before)
+
+where stuff gets interesting is when i factor in data
+like, for example, a hard drive in the world
+everything needs to be spread out as fuck amongst ip addresses/nodes
+it should NOT be "if the person is near me, i connect/talk to them"
+random nodes selected, etc
+
+hard drives in-game are basically what i envision d3fault/dht to be
+
+
+
+
+
+a world of freedom
+there is no place in the physical earth where we can be free
+so we live on the internet
+i will possibly maybe eventually undeclare my US citizenship and declare myself a citizen of the virtual world
+this isn't 2nd life type shit... i want a basis in reality... if one can be aquired
+
+
+long as fuck term, projected reality (there's a better term for this but i forget)
+oh right the term is augmented reality
+you walk around IRL wearing glasses, you walk around in-game
+assuming the game is model'd after earth, which i want it to be
+
+
+NOTE: do not make the plane flat. make it a giant ass sphere the size of earth (wikipedia that shit)
+anybody can teleport wherever the fuck they want on the earth and make their own shit (their own house)
+grass everywhere in between (can be changed as appropriate. change implies delete. work this out)
+
+
+what i'm really getting at is basically starting with a "game" and trasforming it into an amazingly awesome dht/app. the problem of "where to store data" is solved because it is stored "in the physical realm of the game"
+3rd party (well, i'll make em) editions of file access managers (D3FAULT!!!!) can interface with the game, ignoring all the 3d/mesh bullshit that it doesn't care about and going straight for the data
+
+you cannot play if you cannot upload
+it makes no sense
+this solves the problem of people not contributing
+they'll have to in order to play
+else, how would they move in-game?
+suhweet nice side-effect i just stumbled upon
+
+LGPL or GPL, idk idc fuggit. mb even public domain (forced) for the contributing/created in-game data. the underlying code might need to be something else as it interfaces with LGPL? maybe not i think LGPL doesn't contaminate the user's licensing
+
+
+it is an experiment, after all
+so there can be different iterations of this (realm) when incompatible bugs need to be fixed. do not rely on it for data storage [just yet]
+
+like freenet, a user shouldn't know what data they store.. else they are obligated to respond to dmca takedowns
+
+
+
+
+
+scaling talk voice radius', based on lag
+your voice can be heard (but at a low volume, increasing as they get closer) by anyone within 10meters in game (definitely using the metric system fucking americans are stupid)... but if the overall system detects lag, it can scale that number down (or up) as appropriate
+
+
+
+it goes on...
