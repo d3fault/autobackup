@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource>
+        <file>servercert.pem</file>
+        <file>serverprivatekey.pem</file>
+	<file>serverCA.pem</file>
+	<file>clientCA.pem</file>
+    </qresource>
+</RCC>

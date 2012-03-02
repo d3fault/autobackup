@@ -12,7 +12,7 @@ struct Message
         ServerToClientMessageType
     };
 
-    inline Message(MessageType messageType = InvalidMessageType, QString appId = QString(), quint16 theMessage = -1, QString extraString = QString(), qint64 extraDouble = -1.0)
+    inline Message(MessageType messageType = InvalidMessageType, QString appId = QString(), quint16 theMessage = -1, QString extraString = QString(), double extraDouble = -1.0)
         : m_MessageType(messageType), m_AppId(appId), m_TheMessage(theMessage), m_ExtraString(extraString), m_ExtraDouble(extraDouble)
     { }
 
@@ -20,7 +20,8 @@ struct Message
     QString m_AppId;
     quint16 m_TheMessage;
     QString m_ExtraString; //generally used for storing a btc address, but can be empty for certain messages. holds app id and username too
-    qint64 m_ExtraDouble; //generally used for storing a btc value, but can be empty for certain messages
+    double m_ExtraDouble; //generally used for storing a btc value, but can be empty for certain messages
+    //todo: verify that the db stores/retrieves the double properly, that no rounding errors occur throughout the client/server or anywhere. think of test cases. i THINK that since i'm using C++ (same as bitcoin itself) i should be ok
 };
 
 struct ClientToServerMessage : public Message
@@ -28,12 +29,12 @@ struct ClientToServerMessage : public Message
     enum TheMessage
     {
         InvalidClientToServerMessage,
-        HeresMyAppId,
         AddUserWithThisName,
-        GiveMeAKeyForUserXAndWatchForPayment
+        GiveMeAKeyForUserXAndWatchForPayment,
+        BalanceTransferIfEnough //purchase a slot, for example. we're gonna need another QString() to account for the fact that there's a from and a to user (and of course, the amount)
     };
 
-    inline ClientToServerMessage(QString appId = QString(), TheMessage theMessage = InvalidClientToServerMessage, QString extraString = QString(), qint64 extraDouble = -1.0)
+    inline ClientToServerMessage(QString appId = QString(), TheMessage theMessage = InvalidClientToServerMessage, QString extraString = QString(), double extraDouble = -1.0)
         : Message(Message::ClientToServerMessageType, appId, theMessage, extraString, extraDouble)
     { }
 };
@@ -50,7 +51,7 @@ struct ServerToClientMessage : public Message
         HeyThisKeyForUserXGotSomeConfirmedMoneyY
     };
 
-    inline ServerToClientMessage(QString appId = QString(), TheMessage theMessage = InvalidServerToClientMessage, QString extraString = QString(), qint64 extraDouble = -1.0)
+    inline ServerToClientMessage(QString appId = QString(), TheMessage theMessage = InvalidServerToClientMessage, QString extraString = QString(), double extraDouble = -1.0)
         : Message(Message::ServerToClientMessageType, appId, theMessage, extraString, extraDouble)
     { }
 };

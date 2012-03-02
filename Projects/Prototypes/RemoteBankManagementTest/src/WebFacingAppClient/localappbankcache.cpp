@@ -11,7 +11,7 @@ void LocalAppBankCache::addUser(QString userNameToAdd)
 void LocalAppBankCache::handleUserAdded(QString newUser)
 {
     //remote has added the user and signal'd us, so now we add it to our local cache and then signal the gui
-    m_Db->addUser(newUser);
+    m_Db.addUser(newUser);
 
     emit userAdded(newUser);
 }

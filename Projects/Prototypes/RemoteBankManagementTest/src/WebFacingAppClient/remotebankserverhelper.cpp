@@ -3,6 +3,8 @@
 RemoteBankServerHelper::RemoteBankServerHelper(QObject *parent) :
     QObject(parent)
 {
+    //todo: move this shit out of the constructor. our emit d()'s our not being received because we can't connect to the signal until after we construct the object. we're still getting the "connected and encrypted" signal though (read: it's working) so whatever for now...
+
     m_SslSocket = new QSslSocket(this);
     //connect(m_SslSocket, SIGNAL(connected()), this, SLOT(handleConnectedNotYetEncrypted())); we dgaf
     connect(m_SslSocket, SIGNAL(encrypted()), this, SLOT(handleConnectedAndEncrypted()));
@@ -50,17 +52,16 @@ RemoteBankServerHelper::RemoteBankServerHelper(QObject *parent) :
 
     m_SslSocket->connectToHostEncrypted("localhost", 6969);
     emit d("attempting to connect at port 6969");
+
+    /*if(!m_SslSocket->waitForEncrypted())
+    {
+        emit d(m_SslSocket->errorString());
+    }
+    emit d("got past wait");*/
 }
 void RemoteBankServerHelper::addUser(QString userToAdd)
 {
-    if(isConnected())
-    {
-        sendAddUserMessage(userToAdd);
-    }
-    else
-    {
-        emit d("unable to add user: " + userToAdd);
-    }
+    sendAddUserMessage(userToAdd);
 }
 bool RemoteBankServerHelper::isConnected()
 {
@@ -90,6 +91,11 @@ void RemoteBankServerHelper::sendAddUserMessage(QString userToAdd)
         ClientToServerMessage addUserMessage(MY_CLIENT_APP_ID, ClientToServerMessage::AddUserWithThisName, userToAdd);
         QDataStream stream(m_SslSocket);
         stream << addUserMessage;
+    }
+    else
+    {
+        emit d("unable to send add user message -- isConnected() returned false");
+        //todo: for the server (clienthelper), it's a big deal if we're not connected when trying to send a message.. but for the client (this), we can simply show the user an error 'service temporarily unavailable' and stop
     }
 }
 void RemoteBankServerHelper::handleConnectedAndEncrypted()

@@ -1,0 +1,33 @@
+when to charge my percent
+
+if on payment received event [only], they could use my 'accounts'/'wallets' service to send amonst themselves (instantly too) for no fee infinite times
+if on balance transfer (as per second half of above sentence), then a launderer/mind-changer (puts money in, waits a few days, pays out) does not get charged a fee
+if on payout, then the onPaymentReceivedEvent problem also occurrs
+
+
+
+ideally i'd only like to charge the percent/payment ONCE for the following use case:
+
+user1 adds 100 credits, buys slot from user2. user2's account is credited 99 credits. user2 does payout and gets all 99
+
+
+
+so how do i do it so user 1 adds 100 credits, waits a few days, does a payout and gets 99 credits back? (they use our service as a laundery service... or just change their minds)
+
+
+
+
+
+OR:
+
+
+user1 adds 100 credits, buys slot from user2. user2 gets (100)*.99 ... but user2 is also a purchaser and they do not payout. instead, they purchase a slot from user3 who now gets ((100)*.99)*.99 ... we charge the percent again
+i almost think we have to keep track of the money on a much smaller scale... seeing what's going on, the history of it, etc
+fucking pain in the ass. there's gotta be an easier way...
+
+
+
+oh, and another factor: we want to do this ASAP/hourly with all new funds.
+so maybe a user can have an "amount" and also a "taxedAmount"... and if "taxedAmount" is less than "amount", that means they received some new moneys and we take our percent from the amount-taxedAmount
+this works for the launderer scenario as well as the typical use case of only transferring a balance once (the taxedAmount is applied to the new user or something?)
+but it DOES NOT account for the multiple balance transfers that can happen
