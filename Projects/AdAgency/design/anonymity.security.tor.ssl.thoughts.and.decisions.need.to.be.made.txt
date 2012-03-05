@@ -1,0 +1,38 @@
+there exists the problem of the bitcoin bank server having multple connections
+when communicating with the bitcoin network, i will be using tor
+when communicating with the front-end, i will be using just an SSL connection
+
+i mean, at least that's where i'm at in my head right now
+but i'm kinda wondering if that defeats the purpose
+anybody listening to outgoing connections from the webclient can easily identify the bank's IP address
+
+two options:
+a) not use tor to connect to bitcoin network and just say idgaf
+b) the bitcoind interfacing server ('remote bank') is a tor hidden service (that still is private by requiring authentication)
+
+[b] has the problem of the tor network being notoriously unreliable... can i programmatically/EASILY do 'get new ip' in a while loop until the connection works?
+.........AND, when the server propogates events (payments received) _BACK_TO_THE_CLIENT_ (webserver/front-end), the tor connection might be dead by then
+i guess that problem exists with or without tor... and my caching/sending-on-connect (and the client/webserver tries to ALWAYS maintain a connection) of all the missed messages (which i think i'm going to do EITHER WAY) would i guess work...
+
+
+the connection would have yet another layer of encryption if going through tor... which is fine by me
+
+
+tor[QtSSL(message)]
+
+
+
+obviously, if i decide i want to keep this specific project private/anon,... then going through tor from webclient is a given.
+...but if i do decide that, then i do NOT want to host the bitcoin server in my house
+i'd host it on a server i bought via tor/bitcoin while on a cracked wifi
+still good to keep webclient/bitcoinservers separate... webclient will be paid for in same way (not associated though) except it will have a public ip
+the bitcoin server would have the risk of being hacked/fucked-with by network admins... but again, as long as i keep a relatively large cache of offline keys and take my percent hourly.. the damage TO MYSELF ONLY could be minimal
+
+
+hosting in a 'trusted'/reputable server farm would be best for the bitcoin server. i mean both would be optimal but at the very least something like leaseweb should be used for the bitcoin server. they'd shit a brick if they found out an admin tampered with a client
+but i doubt leaseweb allows anon
+
+that doesn't mean i can't use a fake identity though
+
+
+it all depends what i want to do
