@@ -1,0 +1,22 @@
+use TX line of arduino mega to another arduino (uno)
+2 pairs of arduinos, 2 pairs of raspberry pi's
+
+they are only connected by the TX line
+save on offline raspberry pi
+publish online (no need to save... but maybe a 2nd copy??) on online raspberry pi
+
+i can physically disconnect the two at will also
+but a TX line can only TX...
+can/does serial work with TX only?
+should in theory... idk about practice
+
+obviously my usb serial is software control of TX/RX.. the lines are integrated
+
+but doing a jwh-22 (lol i think that's a drug but i mean a fucking jumper cable) from TX mega to RX uno *might* work
+
+uno is cheap, pi is cheap
+doubles power tho...
+
+can only be when within wifi that i have it on
+
+syncs/catches up on wifi i guess
