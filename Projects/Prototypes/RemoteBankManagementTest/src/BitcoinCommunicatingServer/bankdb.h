@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QHash>
 
+#include "../sharedProtocol/userBankAccount.h"
+
 //in-memory prototype. impl will be database backed/persistent
 class BankDb : public QObject
 {
@@ -11,6 +13,7 @@ class BankDb : public QObject
 public:
     explicit BankDb(QObject *parent = 0);
     void addUser(const QString &appId, const QString &userName); //todo: should either return a bool or an AddUserResult. to make this initial prototype easier and to get it up and running, we're going to assume it worked... because it will
+    void setAddFundsKey(const QString &appId, const QString &userName, const QString &newKey);
 private:
     /*
       --- our 'local app bank db' reciprocal ---
@@ -19,12 +22,10 @@ private:
     QHash<QString, qint64> m_Db;
     */
 
-          //appId        //user   //balance
-    QHash<QString, QHash<QString, double> > m_Db;
+          //appId        //user   //details
+    QHash<QString, QHash<QString, UserBankAccount> > m_Db;
 signals:
-
-public slots:
-
+    void d(const QString &);
 };
 
 #endif // BANKDB_H

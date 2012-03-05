@@ -15,14 +15,18 @@ SOURCES += main.cpp\
     ssltcpserver.cpp \
     bank.cpp \
     appclienthelper.cpp \
-    bankdb.cpp
+    bankdb.cpp \
+    bitcoinhelper.cpp
 
 HEADERS  += debugserverview.h \
     ssltcpserver.h \
     ../sharedProtocol/sharedprotocol.h \
+    ../sharedProtocol/userBankAccount.h \
     bank.h \
     appclienthelper.h \
-    bankdb.h
+    bankdb.h \
+    bitcoinhelper.h
 
 RESOURCES += \
     SslFiles.qrc
+

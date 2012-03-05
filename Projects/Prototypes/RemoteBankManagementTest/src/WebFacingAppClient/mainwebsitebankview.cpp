@@ -43,6 +43,7 @@ mainWebsiteBankView::mainWebsiteBankView(QWidget *parent)
 
 
 
+    m_Layout->addWidget(m_AllUsersListWidget);
     m_Layout->addWidget(m_Debug);
     this->setLayout(m_Layout);
 }
@@ -71,8 +72,7 @@ void mainWebsiteBankView::handleUserAdded(QString newUser)
 }
 void mainWebsiteBankView::showListContextMenu(const QPoint &pos)
 {
-    //maybe a mapToGlobal(pos) in exec
-    m_ListContextMenu->exec(pos);
+    m_ListContextMenu->exec(mapToParent(pos));
 }
 void mainWebsiteBankView::handleAddFundsRequestActionTriggered()
 {

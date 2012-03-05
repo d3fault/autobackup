@@ -33,6 +33,7 @@ private slots:
     void handleSslErrors(QList<QSslError> sslErrors);
     void handleReadyRead();
     void handleSocketError(QAbstractSocket::SocketError);
+    void handleDisconnect();
 };
 
 #endif // REMOTEBANKSERVERHELPER_H

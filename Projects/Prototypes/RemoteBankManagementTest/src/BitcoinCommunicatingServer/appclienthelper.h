@@ -21,9 +21,11 @@ private:
 signals:
     void d(const QString &);
     void addUserRequested(const QString &appId, const QString &userName);
+    void addFundsKeyRequested(const QString &appId, const QString &userName);
 public slots:
     void startListening();
     void handleUserAdded(const QString &appId, const QString &userName);
+    void handleAddFundsKeyGenerated(const QString &appId, const QString &userName, const QString &newKey);
 private slots:
     void handleConnectedButNotEncryptedYet();
     void handleConnectedAndEncrypted();

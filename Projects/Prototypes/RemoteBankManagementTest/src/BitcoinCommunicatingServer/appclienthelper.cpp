@@ -85,6 +85,9 @@ void AppClientHelper::handleReadyRead()
                 emit addUserRequested(message.m_AppId, message.m_ExtraString /*username*/);
                 //definitely thread separated message post here.. the other thread will be polling bitcoin... we never want to block the tcp server
                 break;
+            case ClientToServerMessage::GiveMeAKeyForUserXAndWatchForPayment:
+                emit addFundsKeyRequested(message.m_AppId, message.m_ExtraString /*username*/);
+                break;
             default:
                 emit d("invalid client2server message");
                 return;
@@ -127,6 +130,22 @@ void AppClientHelper::handleUserAdded(const QString &appId, const QString &userN
         //we check for the existence of said queue/cache on appId connection and flush it
         //an app id specific message would be perfect for this... otherwise we're waiting for an action... which might lead us to go out of sync or god knows what else. at the very least it'll cause us to wait for an action to occur... instead of flushing the queue right when they connect (as we should)
         //todo: LOL, the queue should be a db-backed one... what if so many messages get queued that we run out of memory? every hypothetical scenario must be accounted for. fml.
+    }
+}
+void AppClientHelper::handleAddFundsKeyGenerated(const QString &appId, const QString &userName, const QString &newKey)
+{
+    ServerToClientMessage message(appId, ServerToClientMessage::HeresAKeyXForUserYAndIllLetYouKnowWhenPaymentIsReceived);
+    message.m_ExtraString = userName;
+    message.m_ExtraString2 = newKey;
+    QSslSocket *appSocket = getSocketByAppId(appId);
+    if(isConnected(appSocket))
+    {
+        QDataStream stream(appSocket);
+        stream << message;
+    }
+    else
+    {
+        emit d("unable to send user added message. connection lost?");
     }
 }
 QSslSocket * AppClientHelper::getSocketByAppId(const QString &appId)

@@ -184,3 +184,7 @@ void RemoteBankServerHelper::handleSocketError(QAbstractSocket::SocketError sock
 {
     emit d("abstract socket error #" + QString::number(socketError));
 }
+void RemoteBankServerHelper::handleDisconnect()
+{
+    //todo
+}
