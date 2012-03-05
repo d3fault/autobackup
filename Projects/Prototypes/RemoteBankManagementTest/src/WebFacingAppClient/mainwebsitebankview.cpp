@@ -17,6 +17,15 @@ mainWebsiteBankView::mainWebsiteBankView(QWidget *parent)
 
     //gui
     m_Layout = new QVBoxLayout();
+    //list widget
+    m_AllUsersListWidget = new QListWidget();
+    m_AllUsersListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_AllUsersListWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showListContextMenu(QPoint)));
+    //context menu
+    m_ListContextMenu = new QMenu(this);
+    m_AddFundsRequestAction = new QAction("Add Funds", this);
+    connect(m_AddFundsRequestAction, SIGNAL(triggered()), this, SLOT(handleAddFundsRequestActionTriggered()));
+    m_ListContextMenu->addAction(m_AddFundsRequestAction);
 
     //1) add user buttan (lineedit as input): creates user account on remote bank
     QHBoxLayout *newUserRow = new QHBoxLayout();
@@ -57,6 +66,25 @@ void mainWebsiteBankView::handleUserAdded(QString newUser)
 {
     //this slot gets called after local bank contacts remote bank, adds a user, then remote bank signals that a user has been added, then local bank signals that a user has been added... then we're here.
 
-    //TODO: add the newUser to the list view
+    new QListWidgetItem(newUser, m_AllUsersListWidget);
     m_Debug->appendPlainText("GUI: " + newUser + " has been add/propagated");
+}
+void mainWebsiteBankView::showListContextMenu(const QPoint &pos)
+{
+    //maybe a mapToGlobal(pos) in exec
+    m_ListContextMenu->exec(pos);
+}
+void mainWebsiteBankView::handleAddFundsRequestActionTriggered()
+{
+    QListWidgetItem *itemRightClicked = m_AllUsersListWidget->currentItem();
+    if(itemRightClicked)
+    {
+        QString user = itemRightClicked->text().trimmed();
+        if(!user.isEmpty())
+        {
+            m_Debug->appendPlainText("requesting an add funds action for user: " + user);
+            QMetaObject::invokeMethod(m_LocalBank, "addFundsRequest", Qt::QueuedConnection, Q_ARG(QString, user));
+
+        }
+    }
 }

@@ -15,6 +15,7 @@ class RemoteBankServerHelper : public QObject
 public:
     explicit RemoteBankServerHelper(QObject *parent = 0);
     void addUser(QString userToAdd);
+    void getNewAddFundsKey(QString user);
 private:
     QSslSocket *m_SslSocket;
     bool isConnected();
@@ -25,6 +26,7 @@ private:
     //void sendAppIdMessage();
 signals:
     void userAdded(QString newUser);
+    void addFundsKeyReceived(QString user, QString newKey);
     void d(const QString &);
 private slots:
     void handleConnectedAndEncrypted();

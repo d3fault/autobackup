@@ -20,7 +20,8 @@ HEADERS  += mainwebsitebankview.h \
     localappbankcache.h \
     localbankdb.h \
     remotebankserverhelper.h \
-    ../sharedProtocol/sharedprotocol.h
+    ../sharedProtocol/sharedprotocol.h \
+    ../sharedProtocol/userBankAccount.h
 
 RESOURCES += \
     CAfiles.qrc

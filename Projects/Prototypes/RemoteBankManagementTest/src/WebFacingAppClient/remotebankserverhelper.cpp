@@ -63,6 +63,16 @@ void RemoteBankServerHelper::addUser(QString userToAdd)
 {
     sendAddUserMessage(userToAdd);
 }
+void RemoteBankServerHelper::getNewAddFundsKey(QString user)
+{
+    if(isConnected())
+    {
+        ClientToServerMessage getNewAddFundsKeyMessage(MY_CLIENT_APP_ID, ClientToServerMessage::GiveMeAKeyForUserXAndWatchForPayment, user);
+        QDataStream stream(m_SslSocket);
+        stream << getNewAddFundsKeyMessage;
+        emit d("sending server request for new add funds key for user: " + user);
+    }
+}
 bool RemoteBankServerHelper::isConnected()
 {
     bool weAreConnected = false;
@@ -160,6 +170,9 @@ void RemoteBankServerHelper::handleReadyRead()
         case ServerToClientMessage::UserAdded:
             //todo: get the bank id, emit so parent can save it + update gui
             emit userAdded(message.m_ExtraString /*username*/);
+            break;
+        case ServerToClientMessage::HeresAKeyXForUserYAndIllLetYouKnowWhenPaymentIsReceived:
+            emit addFundsKeyReceived(message.m_ExtraString /*username*/, message.m_ExtraString2 /*new key*/);
             break;
         default:
             emit d("received invalid server2client message");
