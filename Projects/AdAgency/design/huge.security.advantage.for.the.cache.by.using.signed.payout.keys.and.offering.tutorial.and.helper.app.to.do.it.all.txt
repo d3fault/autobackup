@@ -1,0 +1,20 @@
+random idea to increase security for users: on signup, they submit a public decryption key/cert.
+they cannot change this in the future
+but the list of 'payout' addresses is signed/encrypted by this key. we do not pay out to any other keys.
+
+there is no reason for this cert to live on the cache/front-end... but it is not a security risk if it does
+on signup, pass it to bitcoin communicating server/bank. never allow it to change.
+this way, both my front-end 'server'/cache/wt would need to be compromised AS WELL AS the user's security
+if i teach them how to do secure/offline wallet management (maybe even giving them a custom [open-source] app to bulk-generate + SIGN**/encrypt payout keys)...
+...which i'm pretty damn good at writing tutorials/code...
+the security just shot up from like 10% to near 99% in my eyes
+
+i could probably apply this extra security to my own percentage take-outs payout keys... but i'm not sure if it'd add any extra security. definitely does for the users.
+sure, it's an optional step. but if they don't do it on signup they can't do it later (or MAYBE can once later)... but then back down to 10% security (if wt compromised, massive key loss results)
+
+it doesn't even matter if their user account on the Wt/cache is compromised... an adversary can't do an instant-payout without that user's private key/signed-payout-key
+
+this might all translate oh so nicely to a badass laundering system
+
+
+and but of course, if my bitcoin communicating server (which i intend on hosting in my fucking room) is compromised... all extra security measures are lost

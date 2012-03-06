@@ -1,0 +1,8 @@
+rcpssl is built into the bitcoin client, i just discovered
+at first i was like "aww man i coulda written way less code"
+
+...but i like having the polling being local
+i don't want to do an RPCSSL message for every poll
+it'd increase the traffic a fuck ton
+so there. i win on accident :)
+plus i want to keep the bank logic (actual) OUT of the cache/front-end

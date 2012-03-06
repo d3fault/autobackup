@@ -1,0 +1,7 @@
+signal/slot pending/confirmed payment verification
+
+a good proper design would just emit a signal for pending and another for confirmed...
+...idk fuck it sychrnonous is good enough for now as long as this shit works. but i wanted to get this down
+
+
+and besides, we're already doing a signal of sorts accross the QSslSocket. good design in that respect... so fuck it
