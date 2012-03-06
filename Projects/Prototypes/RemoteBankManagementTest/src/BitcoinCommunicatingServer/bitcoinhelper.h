@@ -4,7 +4,9 @@
 #include <QObject>
 #include <QProcess>
 
-#define PATH_TO_BITCOIND "/path/to/bitcoind"
+#define PATH_TO_BITCOIND "/home/d3fault/test/btc/bitcoin-0.5.2-linux/bin/32/"
+#define BITCOIND_PROCESS "bitcoind"
+#define BITCOIN_DATA_DIR "-datadir=/home/d3fault/test/btc/testnet-box/2"
 
 class BitcoinHelper : public QObject
 {
@@ -14,6 +16,7 @@ public:
     QString getNewKeyToReceivePaymentsAt();
 private:
     QProcess *m_BitcoinD;
+    QString bitcoind(QString apiCmd);
 signals:
 
 private slots:
