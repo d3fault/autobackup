@@ -3,10 +3,13 @@
 
 #include <QObject>
 #include <QThread>
+#include <QTimer>
 
 #include "appclienthelper.h"
 #include "bankdb.h"
 #include "bitcoinhelper.h"
+
+#define TIME_IN_BETWEEN_EACH_POLL 10000
 
 class Bank : public QObject
 {
@@ -18,6 +21,8 @@ private:
     AppClientHelper *m_Clients; //plural because the server can handle multiple connections
     BankDb m_Db;
     BitcoinHelper m_Bitcoin;
+    QTimer *m_PollingTimer;
+    bool m_CurrentlyProcessingPollingList;
 signals:
     void d(const QString &);
     void userAdded(const QString &appId, const QString &userName);
@@ -27,6 +32,7 @@ public slots:
 private slots:
     void handleAddUserRequested(const QString &appId, const QString &userName);
     void handleAddFundsKeyRequested(const QString &appId, const QString &userName);
+    void handlePollingTimerTimedOut();
 };
 
 #endif // BANK_H

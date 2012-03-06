@@ -1,14 +1,17 @@
 #include "bank.h"
 
 Bank::Bank(QObject *parent) :
-    QObject(parent), m_Clients(0)
+    QObject(parent), m_Clients(0), m_CurrentlyProcessingPollingList(false)
 {
-
 }
 void Bank::start()
 {
     if(!m_Clients)
     {
+        m_PollingTimer = new QTimer();
+        m_PollingTimer->setInterval(TIME_IN_BETWEEN_EACH_POLL);
+        connect(m_PollingTimer, SIGNAL(timeout()), this, SLOT(handlePollingTimerTimedOut()));
+
         m_ServerThread = new QThread();
         m_Clients = new AppClientHelper();
         m_Clients->moveToThread(m_ServerThread);
@@ -49,4 +52,22 @@ void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userN
     //so basically there should be a check for isLastKeyToPoll at the end of pollOneAddFundsKey (which we invokeObject queue'd).. if it evaluates to false, we launch another pollOneAddFundsKey (as an event). and lastly, if isLastKeyToPoll evalutates to true, we re-enable the 10-second timer. we don't want race conditions... which is why we disable the timer right when we start processing the list
 
     emit addFundsKeyGenerated(appId, userName, newKey);
+
+    if(!m_PollingTimer->isActive() && !m_CurrentlyProcessingPollingList)
+    {
+        //if the timer isn't already started, and it isn't stopped because we're in the middle of processing the list... then start the timer. the boolean is safe to access because we only enter any of this class's methods via events.. which means we'll always be on the same thread and no other thread accesses the boolean
+        m_PollingTimer->start();
+    }
 }
+void Bank::handlePollingTimerTimedOut()
+{
+    if(m_ListOfNewKeysToPollSinceLastTime.count() > 0 /*we can't add to our list of keys to poll while we're in the middle of polling... that'd be a nightmare*/)
+    {
+        m_ListOfKeysToPoll.append(m_ListOfNewKeysToPollSinceLastTime);
+    }
+    //we also need to differentiate from the Awaiting (check for Pendings!) and Pending (check for Confirms!)
+    //TODO LEFT OFF, IN THE MOOD FOR SOME BLOPS
+}
+
+//TODO: when converting a double to a QString, the format parameter should be 'f', with precision of 8. MAYBE a precision of 9 and we manually round it??? the default format uses e and E... but we don't want that so we have to force 'f'
+//when converting from QString to double, it should just work.. but we can check the &ok to make sure it's true afterwards

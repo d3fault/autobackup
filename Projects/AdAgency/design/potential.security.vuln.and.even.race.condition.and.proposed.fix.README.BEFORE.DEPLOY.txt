@@ -1,0 +1,7 @@
+i'm going to allow users on the client site (who get 'paid out') to add a list of bitcoin addresses to send payments to. they can also dump their entire account on demand.. but we should give them the option to do a dump once a day to one of their keys. once the payment is sent to their key, we remove the key from the db and forget about it
+
+
+
+also, potentially huge security flaw. make sure the local cache only allows for 1 pay out request to be sent to the server at a time
+potential race condition (accidentally abusing the security risk): user requests a pay out of their account in full at the same time that their daily automated payout happens. both requests get to the server before the server can respond, and the user is paid their account balance twice. maybe it'd be smart to give each appid-user his own 'bitcoin account' so if they tried this or it happened accidentally, bitcoin would prevent it and say insufficient funds
+still, having the cache/bank-client say "ok a payout is being processed" (and refusing to start another, even if automated******) is a good idea on top of the bitcoin account fix
