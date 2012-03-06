@@ -35,7 +35,6 @@ void Bank::handleAddUserRequested(const QString &appId, const QString &userName)
     //perhaps the answer is to use an AddUserResult type struct thing (enum maybe?) in my sharedProtocol.h file
 
     m_Db.addUser(appId, userName);
-    emit d("server added user: '" + userName + "'' to appId account: '" + appId + "'");
     emit userAdded(appId, userName);
 }
 void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userName)
