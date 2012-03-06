@@ -23,7 +23,7 @@ private:
     */
 
           //appId        //user   //details
-    QHash<QString, QHash<QString, UserBankAccount> > m_Db;
+    QHash<QString, QHash<QString, UserBankAccount*> > m_Db;
 signals:
     void d(const QString &);
 };

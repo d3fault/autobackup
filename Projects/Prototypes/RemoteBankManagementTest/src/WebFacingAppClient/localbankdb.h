@@ -22,7 +22,7 @@ public:
     void setFundsRequestBitcoinKey(QString user, QString newKey);
 private:
           //name , details -- might be wiser to add .Name to UserBankAccount and keep it in a QList. idgaf
-    QHash<QString, UserBankAccount> m_Db;
+    QHash<QString, UserBankAccount*> m_Db;
 signals:
     void d(const QString &);
 public slots:

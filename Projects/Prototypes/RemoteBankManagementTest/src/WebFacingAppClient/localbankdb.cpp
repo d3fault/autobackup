@@ -5,9 +5,9 @@ LocalBankDb::LocalBankDb(QObject *parent) :
 { }
 void LocalBankDb::addUser(QString newUser)
 {
-    UserBankAccount newUserAccount;
-    newUserAccount.AddFundsBitcoinKey = DEFAULT_EMPTY_ADD_FUNDS_BITCOIN_KEY;
-    newUserAccount.Balance = 0.0;
+    UserBankAccount *newUserAccount = new UserBankAccount();
+    newUserAccount->AddFundsBitcoinKey = DEFAULT_EMPTY_ADD_FUNDS_BITCOIN_KEY;
+    newUserAccount->Balance = 0.0;
     m_Db.insert(newUser, newUserAccount);
 }
 bool LocalBankDb::hasAddFundRequestBitcoinKey(QString user)
@@ -15,8 +15,8 @@ bool LocalBankDb::hasAddFundRequestBitcoinKey(QString user)
     bool hasKey = false;
     if(m_Db.contains(user))
     {
-        UserBankAccount userAccount = m_Db.value(user);
-        if(userAccount.AddFundsBitcoinKey != DEFAULT_EMPTY_ADD_FUNDS_BITCOIN_KEY)
+        UserBankAccount *userAccount = m_Db.value(user);
+        if(userAccount->AddFundsBitcoinKey != DEFAULT_EMPTY_ADD_FUNDS_BITCOIN_KEY)
         {
             hasKey = true;
         }
@@ -27,8 +27,8 @@ bool LocalBankDb::addFundsRequestBitcoinKeyHasNoUpdates(QString user)
 {
     if(m_Db.contains(user))
     {
-        UserBankAccount userAccount = m_Db.value(user);
-        if(userAccount.AddFundsStatus == UserBankAccount::AwaitingPayment)
+        UserBankAccount *userAccount = m_Db.value(user);
+        if(userAccount->AddFundsStatus == UserBankAccount::AwaitingPayment)
         {
             return true;
         }
@@ -46,8 +46,8 @@ QString LocalBankDb::getExistingAddFundsKey(QString user)
 {
     if(m_Db.contains(user))
     {
-        UserBankAccount userAccount = m_Db.value(user);
-        QString key = userAccount.AddFundsBitcoinKey.trimmed();
+        UserBankAccount *userAccount = m_Db.value(user);
+        QString key = userAccount->AddFundsBitcoinKey.trimmed();
         if(key.isEmpty())
         {
             return QString("error, existing key was empty");
@@ -68,8 +68,8 @@ bool LocalBankDb::addFundsRequestBitcoinKeyIsPendingConfirm(QString user)
 
     if(m_Db.contains(user))
     {
-        UserBankAccount userAccount = m_Db.value(user);
-        if(userAccount.AddFundsStatus == UserBankAccount::PaymentPending)
+        UserBankAccount *userAccount = m_Db.value(user);
+        if(userAccount->AddFundsStatus == UserBankAccount::PaymentPending)
         {
             return true;
         }
@@ -84,8 +84,8 @@ bool LocalBankDb::addFundsRequestBitcoinKeyIsConfirmed(QString user)
 {
     if(m_Db.contains(user))
     {
-        UserBankAccount userAccount = m_Db.value(user);
-        if(userAccount.AddFundsStatus == UserBankAccount::PaymentConfirmed)
+        UserBankAccount *userAccount = m_Db.value(user);
+        if(userAccount->AddFundsStatus == UserBankAccount::PaymentConfirmed)
         {
             return true;
         }
@@ -100,26 +100,12 @@ void LocalBankDb::setFundsRequestBitcoinKey(QString user, QString newKey)
 {
     if(m_Db.contains(user))
     {
-        UserBankAccount userAccount = m_Db.value(user);
-        userAccount.AddFundsBitcoinKey = newKey;
-        userAccount.AddFundsStatus = UserBankAccount::AwaitingPayment;
+        UserBankAccount *userAccount = m_Db.value(user);
+        userAccount->AddFundsBitcoinKey = newKey;
+        userAccount->AddFundsStatus = UserBankAccount::AwaitingPayment;
     }
     else
     {
         emit d("error in setFundsRequestBitcoinKey, user not found");
-    }
-
-    //test - ensure we are modifying the key that is in the m_Db.. and not just extracting a copy and modifying that (only to be deleted when out of scope)
-    if(m_Db.contains(user))
-    {
-        UserBankAccount userAccount = m_Db.value(user);
-        if(userAccount.AddFundsBitcoinKey != newKey)
-        {
-            emit d("ERROR WE ARE MODIFYING A COPY OF THE USER ACCOUNT IN DB");
-        }
-        else
-        {
-            emit d("SUCCESS modifying UserAccount in Db correctly");
-        }
     }
 }
