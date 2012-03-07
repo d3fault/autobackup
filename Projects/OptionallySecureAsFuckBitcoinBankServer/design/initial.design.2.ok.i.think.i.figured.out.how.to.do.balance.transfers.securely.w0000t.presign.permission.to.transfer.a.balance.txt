@@ -1,0 +1,25 @@
+re: SecureAsFuckBitcoinBankServer balanceTransfer problem
+pre-signed authorization by the user's private key to transfer a balance
+
+could be for however long they want or could be for within a time range
+
+if their account is in SecureAsFuck mode, they have to submit a 'permission slip' of sorts to allow the balance transfer
+
+this is generated signed beforehand, but can be decrypted/verified/processed instantly by the server
+
+
+a typical permission slip might say
+
+'allow me to balanceTransfer 35 bitcoins'
+
+
+....so really the only important thing is the amount
+
+
+but i could get all fancy (K.I.S.S.) and specify who to allow the transfer to, how long the permission slip is valid for, etc....
+
+
+this solution does apply to every other potential client (to the bitcoin bank server (server clients vs. user clients lol)), not just the ad agency.
+
+
+oh and we're gonna want to use random data (and maybe their username) to pad the signing/encryption just because it's always a bad idea to encrypt something so small
