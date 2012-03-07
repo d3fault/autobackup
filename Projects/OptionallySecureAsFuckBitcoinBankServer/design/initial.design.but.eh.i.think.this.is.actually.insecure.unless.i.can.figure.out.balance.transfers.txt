@@ -1,0 +1,52 @@
+this is my result from the RemoteBankManagementTest prototype, the BitcoinCommunicatingServer
+even though i am currently designing it around the idea of using it with Ad Agency, it is definitely in no way specific to that
+
+i can/will use this on many projects for the rest of my life
+whether it's one server for them all or just this same codebase deployed many times, it matters not
+
+the SecureAsFuck portion of this is during the AddUser ("registration" in the eyes of a client) stage
+they have the option (this is the ONLY time they have the option) to put their account into "Secure As Fuck Mode"
+the default (radio selector between the two) is just "Semi-Secure Mode"
+
+we explain to them the difference, that in Semi-Secure mode, if either their password or the client's server (tangent: i should just refer to it as the server.. kinda lying ish, they don't need to know there's another server behind the scenes.. but we'd have some explaining to do if that (this) server did get compromised :-/) is compromised
+
+in Secure As Fuck Mode, they supply a public decryption key/certificate
+
+we link them to tutorials on offline wallet management, bulk key generation, and the encrypting/signing of bulk keys (to be uploaded/refilled every so often)
+
+-----THERE IS NO REASON TO STORE THE PAYOUT KEYS THAT WE RECEIVE/VERIFY ON THE SERVER IN ENCRYPTED/SIGNED FORM-----
+^reason: if the server is compromised, adversary could just use whatever key they want.. or shit just talk to bitcoind directly and do whatever the fuck they want
+
+----tl;dr: the verification stage of the bulk-generated/signed/encrypted payout-keys is right after the user uploads them. right when they get to the bank server. after that, we decrypt/verify/store them in the plain (saves space/time later)--
+
+
+SecureAsFuck is basically just a boolean... and if it's true, we read in their PayoutPublicCertificate (blank/ignored if in semi-secure mode)
+
+the client could know the SecureAsFuck boolean if it wants/needs in order to update various texts throughout the client's site
+the client is passing SecureAsFuck to the server on registration anyways. it's up the client if they want to remember/cache it and act accordingly
+
+
+
+ssl protocol (requests here only (responses include but aren't limited to: heresYourAddFundsKeyMofo, and confirmations of the various requests)):
+a) addUser(QString userName, bool secureAsFuck = false, QString usersPayoutPublicCertificate = QString());
+b) requestAddFundsKey()
+c) balanceTransfer(QString from, QString to, double amount);  //////-------HMMMMM----- does this negate any added security that SecureAsFuck mode brings???
+d) refillPayoutQueue(QString xmlFormattedAndOptionallySignedEncryptedListOfPayoutKeys);
+e) payout(QString optionallySignedEncryptedPayoutKey); //immediate... still follows SecureAsFuck rules, but doesn't use a key from the queue
+f) ...there may be more i'm unsure
+
+
+after taking a shit and thinking on it
+yes, balanceTransfer does in fact fuck things up
+they could just transfer to any user whether secure or not (could be secure but they could own it) and then what was the point of it to begin with, since they are now in control of all payout keys?
+
+i thought about letting them sign custom 'balance transfer requests' on their offline compy...
+...but it really is a pain in the ass and removes the realtime purchasing functionality
+i guess realtime purchasing is really kind of impossible, hence bitcoins inherent desig
+online -> usb transfer -> offline, sign -> usb transfer -> online = pain in the fucking ass + not realtime
+in my ad agency example/first, the price of the next slot is going to be constantly/gradually dropping... so there would be a rush for them to sign their shit
+
+unless i ALLOWED the slot purchase in their (purchaser/trasfer-from-er) eyes INSTANTLY  (deduct the funds from their account, but DO NOT credit the to-er instantly until they sign/verify as mentioned in a sec) but then required them to sign/verify the balance transfer request offline before the slot can be USED by their uploaded advertisement image
+if the ad slot start time commences before they sign/verify the balance transfer... uhhh.... i really don't know. i keep the money? i can't give it to the person who sold the slot obvioiusly... and i shouldn't give it back either... i just don't know. i guess i'd keep it... but the slot-seller would be PISSED if this happened and they were legit, but the buyer for GOD KNOWS WHY (they lost the private key, for example) reason didn't/couldn't sign/verify it in time...
+
+i guess SemiSecureBitcoinBankServer is all i can manage :(... back to square one...
