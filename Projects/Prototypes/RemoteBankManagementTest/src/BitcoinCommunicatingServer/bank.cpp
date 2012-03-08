@@ -1,5 +1,22 @@
 #include "bank.h"
 
+
+/*
+  -testing-
+  cd into bitcoin's /bin directory, then start up the two bitcoind daemon's in test mode
+  ./bitcoind -datadir=/home/d3fault/test/btc/testnet-box/1 -daemon
+  ./bitcoind -datadir=/home/d3fault/test/btc/testnet-box/2 -daemon
+
+  optional: if you are testing receiving confirmed payments, enable generating of the blocks (on either or both)
+  ./bitcoind -datadir=/home/d3fault/test/btc/testnet-box/1 setgenerate true
+  ./bitcoind -datadir=/home/d3fault/test/btc/testnet-box/2 setgenerate true
+
+  then in the app you do 'add funds' to send a 'getnewaddress' to bitcoind
+  copy that address and 'sendtoaddress' from #1 (our app is #2):
+  ./bitcoind -datadir=/home/d3fault/test/btc/testnet-box/1 sendtoaddress <key-copied> 123.456789
+*/
+
+
 Bank::Bank(QObject *parent) :
     QObject(parent), m_Clients(0), m_CurrentlyProcessingPollingLists(false), m_CurrentIndexInListOfAwaitingKeysToPoll(0), m_CurrentIndexInListOfPendingKeysToPoll(0)
 {
