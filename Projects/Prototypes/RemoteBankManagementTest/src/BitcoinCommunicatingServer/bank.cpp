@@ -19,6 +19,7 @@ void Bank::start()
 
         connect(m_Clients, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
         connect(&m_Db, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+        connect(&m_Bitcoin, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 
         //requests from client
         connect(m_Clients, SIGNAL(addUserRequested(QString,QString)), this, SLOT(handleAddUserRequested(QString,QString)));

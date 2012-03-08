@@ -18,7 +18,7 @@ private:
     QProcess *m_BitcoinD;
     QString bitcoind(QString apiCmd);
 signals:
-
+    void d(const QString &);
 private slots:
     void handleProcessError(QProcess::ProcessError processError);
 };
