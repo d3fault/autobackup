@@ -14,9 +14,10 @@ class BitcoinHelper : public QObject
 public:
     explicit BitcoinHelper(QObject *parent = 0);
     QString getNewKeyToReceivePaymentsAt();
+    double parseAmountAtAddressForConfirmations(int confirmations, QString addressToCheck);
 private:
     QProcess *m_BitcoinD;
-    QString bitcoind(QString apiCmd);
+    QString bitcoind(QString apiCmd, QString optionalApiCmdArg1 = QString(), QString optionalApiCmdArg2 = QString());
 signals:
     void d(const QString &);
 private slots:

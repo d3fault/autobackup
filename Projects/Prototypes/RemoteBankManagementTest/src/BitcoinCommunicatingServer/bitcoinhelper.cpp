@@ -19,9 +19,20 @@ void BitcoinHelper::handleProcessError(QProcess::ProcessError processError)
     //todomb: we could save the full command in bitcoind() below as a QString as m_CurrentCommand and then if we get an error here, emit it as well. would probably help with debuggin... but i'm not having problems (yet)
     emit d("QProcess signal'd an error code: " + QString::number(processError));
 }
-QString BitcoinHelper::bitcoind(QString apiCmd)
+QString BitcoinHelper::bitcoind(QString apiCmd, QString optionalApiCmdArg1, QString optionalApiCmdArg2)
 {
-    m_BitcoinD->start(QString(PATH_TO_BITCOIND) + QString(BITCOIND_PROCESS), QStringList() << BITCOIN_DATA_DIR << apiCmd, QIODevice::ReadOnly);
+    QStringList argList; //motherfuckin start() was adding quotes around my apiCmd that contained spaces (getreceivedbyaddress <key> <confirmations>)
+    argList << BITCOIN_DATA_DIR;
+    argList << apiCmd;
+    if(!optionalApiCmdArg1.isEmpty())
+    {
+        argList << optionalApiCmdArg1;
+        if(!optionalApiCmdArg2.isEmpty())
+        {
+            argList << optionalApiCmdArg2;
+        }
+    }
+    m_BitcoinD->start(QString(PATH_TO_BITCOIND) + QString(BITCOIND_PROCESS), argList, QIODevice::ReadOnly);
     if(!m_BitcoinD->waitForStarted(5000)) //we WANT to block since we have our own thread just for interfacing with bitcoind. every call to bitcoind should go through this thread via an event
     {
         emit d("error: bitcoind process call never started");
@@ -35,4 +46,23 @@ QString BitcoinHelper::bitcoind(QString apiCmd)
     }
     QByteArray result = m_BitcoinD->readAllStandardOutput();
     return QString(result).trimmed(); //pretty sure trim only removes leading/trailing whitespace/newlines. newline being my biggest concern atm. but some api commands return multiple results separated by a space... which need to be parsed by the caller. /hope .trimmed() doesn't mess with THAT whitespace..
+}
+double BitcoinHelper::parseAmountAtAddressForConfirmations(int confirmations, QString addressToCheck)
+{
+    QString bitcoindResult = bitcoind("getreceivedbyaddress", addressToCheck, QString::number(confirmations, 'f', 0)); //TODOreq: get lost in thought making sure that addressToCheck is never a user supplied address. as of my code so far, we're only using this method in the polling of addresses we created.. so it should be ok (famous last words, maybe i should sanitize it ANYWAYS). huge potential vulnerability here. HUGE. entire wallet lost huge. also, lol: don't use bitcoind to verify it's accuracy.. as that'd have the same pitfall. use some regular expressions or filtering or someshit
+
+    if(bitcoindResult.isEmpty())
+    {
+        emit d("bitcoind result is empty");
+        return 0.0;
+    }
+    double parsedAmount = 0.0;
+    bool convertWentOk = false;
+    parsedAmount = bitcoindResult.toDouble(&convertWentOk);
+    if(!convertWentOk)
+    {
+        emit d("error parsing the double out of getreceivebyaddress: " + bitcoindResult);
+        return 0.0;
+    }
+    return parsedAmount;
 }

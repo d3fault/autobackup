@@ -134,12 +134,12 @@ void AppClientHelper::handleUserAdded(const QString &appId, const QString &userN
 }
 void AppClientHelper::handleAddFundsKeyGenerated(const QString &appId, const QString &userName, const QString &newKey)
 {
-    ServerToClientMessage message(appId, ServerToClientMessage::HeresAKeyXForUserYAndIllLetYouKnowWhenPaymentIsReceived);
-    message.m_ExtraString = userName;
-    message.m_ExtraString2 = newKey;
     QSslSocket *appSocket = getSocketByAppId(appId);
     if(isConnected(appSocket))
     {
+        ServerToClientMessage message(appId, ServerToClientMessage::HeresAKeyXForUserYAndIllLetYouKnowWhenPaymentIsReceived);
+        message.m_ExtraString = userName;
+        message.m_ExtraString2 = newKey;
         QDataStream stream(appSocket);
         stream << message;
     }
@@ -160,4 +160,12 @@ bool AppClientHelper::isConnected(QSslSocket *socketToCheck)
         return true;
     }
     return false;
+}
+void AppClientHelper::handlePendingAmountDetected(QString keyToPoll, double pendingAmount)
+{
+    //todo
+}
+void AppClientHelper::handleConfirmedAmountDetected(QString key, double confirmedAmount)
+{
+    //todo
 }
