@@ -1,0 +1,4 @@
+Wt and Qt both have gridlayouts, HLayouts, and VLayouts...
+as well as pushbuttons and text inputs
+
+these, as well as like list views, are the basics that can be used for a generic gui builder (even auto-gen'd from persistent object generator) for a native gui and a web gui. some fancy logic obvioiusly needed in LOTS OF PLACES LUL. my head hurts
