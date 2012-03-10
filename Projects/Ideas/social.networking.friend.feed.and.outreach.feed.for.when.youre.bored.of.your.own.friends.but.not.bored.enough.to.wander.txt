@@ -1,0 +1,2 @@
+in social networking, there should be "Personal" feed, which only shows friend's posts
+but there should also be an "Outreach" feed, which shows friends of friends. the amount of recursion (1 by default) should be customizable)
