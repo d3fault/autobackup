@@ -26,8 +26,8 @@ public slots:
     void startListening();
     void handleUserAdded(const QString &appId, const QString &userName);
     void handleAddFundsKeyGenerated(const QString &appId, const QString &userName, const QString &newKey);
-    void handlePendingAmountDetected(QString key, double pendingAmount);
-    void handleConfirmedAmountDetected(QString key, double confirmedAmount);
+    void handlePendingAmountDetected(QString appId, QString userName, QString key, double pendingAmount);
+    void handleConfirmedAmountDetected(QString appId, QString userName, QString key, double confirmedAmount);
 private slots:
     void handleConnectedButNotEncryptedYet();
     void handleConnectedAndEncrypted();

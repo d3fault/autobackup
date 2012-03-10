@@ -48,8 +48,8 @@ struct ServerToClientMessage : public Message
         InvalidAppId,
         UserAdded, //i was going to return the bank account id, but there's no point of it ever leaving the server. appId + username is enough. the local cache will just have a "isAccountSetup" bool value instead of seeing if bank_account_id is not equal to zero like i originally planned...
         HeresAKeyXForUserYAndIllLetYouKnowWhenPaymentIsReceived,
-        HeyThisKeyForUserXGotSomePendingMoneyY,
-        HeyThisKeyForUserXGotSomeConfirmedMoneyY
+        HeyThisKeyXForUserYGotSomePendingMoneyZ,
+        HeyThisKeyXForUserYGotSomeConfirmedMoneyZ
     };
 
     inline ServerToClientMessage(QString appId = QString(), TheMessage theMessage = InvalidServerToClientMessage, QString extraString = QString(), double extraDouble = -1.0, QString extraString2 = QString())

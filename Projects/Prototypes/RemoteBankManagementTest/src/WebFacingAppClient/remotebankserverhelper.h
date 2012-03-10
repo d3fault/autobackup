@@ -27,6 +27,8 @@ private:
 signals:
     void userAdded(QString newUser);
     void addFundsKeyReceived(QString user, QString newKey);
+    void pendingPaymentReceived(QString user, QString key, double pendingAmount);
+    void confirmedPaymentReceived(QString user, QString key, double confirmedAmount);
     void d(const QString &);
 private slots:
     void handleConnectedAndEncrypted();

@@ -109,3 +109,12 @@ void LocalBankDb::setFundsRequestBitcoinKey(QString user, QString newKey)
         emit d("error in setFundsRequestBitcoinKey, user not found");
     }
 }
+void LocalBankDb::pendindAmountReceived(QString user, QString key, double amount)
+{
+    //i think we need to modify my db... maybe add a pending balance field? maybe keep a list of all transactions (and their pending/confirmed status)?
+    //it doesn't make sense to just set the user's balance to the new amount and set their AddFundStatus to pending... because WHAT ABOUT ALL THEIR PREVIOUS SHIT?
+}
+void LocalBankDb::confirmedAmountReceived(QString user, QString key, double amount)
+{
+    //for this one, we'll probably just append to the user's balance. easier than pending. but wtf is the point of having the AddFundStatus::Confirmed then?? maybe i should change them to Awaiting and Pending only. but Awaiting really only applies to a key (which is only used once per transaction)... HMMMM... starting to think i should have a list of transactions (the key is the primary key)... might be good for book-keeping too.. but i don't really even want to do book-keeping. i'd rather delete the data :)... but also, if i DO book-keeping, it might allow me to verify account balances before doing payouts (might be hard, but possible)
+}

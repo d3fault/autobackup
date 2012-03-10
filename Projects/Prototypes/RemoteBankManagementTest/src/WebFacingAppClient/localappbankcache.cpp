@@ -23,6 +23,9 @@ void LocalAppBankCache::init()
         //todo: this is where i should invokeMethod the async connection starting (so i can listen to the emit d()'s in the connecting phase. oh actually i should move up the connect to SIGNAL d() below to above this invokeMethod. not high priority
         connect(m_BankServer, SIGNAL(userAdded(QString)), this, SLOT(handleUserAdded(QString)));
         connect(m_BankServer, SIGNAL(addFundsKeyReceived(QString,QString)), this, SLOT(handleAddFundsKeyReceived(QString,QString)));
+        connect(m_BankServer, SIGNAL(pendingPaymentReceived(QString,QString,double)), this, SLOT(handlePendingPaymentReceived(QString,QString,double)));
+        connect(m_BankServer, SIGNAL(confirmedPaymentReceived(QString,QString,double)), this, SLOT(handleConfirmedPaymentReceived(QString,QString,double)));
+
         connect(m_BankServer, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
         connect(&m_Db, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
     }
@@ -77,4 +80,18 @@ void LocalAppBankCache::handleAddFundsKeyReceived(QString user, QString newKey)
     //emit addFundsKeyReceived(user, newKey);
 
     //semi-todo: we might use the addFundsKeyReceived signal where we shouldn't, for when we return an existing/awaiting/unused key to a user. but then we won't be able to say 'hey use this key first bitch' so maybe not...
+}
+void LocalAppBankCache::handlePendingPaymentReceived(QString user, QString key, double pendingAmount)
+{
+    //update our local db/cache -- TODO: server hasn't updated it's db yet.. as in, i haven't written the code to do it
+    m_Db.pendindAmountReceived(user, key, pendingAmount);
+
+    //TODO: just like handleAddFundsKeyReceived above, we're just goint to use emit d() to push the notification to the mainwebsitebankview.cpp... but in impl it'd be a special signal (probably)
+    emit d(user + " received " + QString::number(pendingAmount,'f',8) + " -PENDING- @ " + key);
+}
+void LocalAppBankCache::handleConfirmedPaymentReceived(QString user, QString key, double confirmedAmount)
+{
+    //todo: see pending sister function's TODOs
+    m_Db.confirmedAmountReceived(user, key, confirmedAmount);
+    emit d(user + " received " + QString::number(confirmedAmount,'f',8) + " -CONFIRMED- @ " + key);
 }

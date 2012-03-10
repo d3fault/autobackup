@@ -174,6 +174,12 @@ void RemoteBankServerHelper::handleReadyRead()
         case ServerToClientMessage::HeresAKeyXForUserYAndIllLetYouKnowWhenPaymentIsReceived:
             emit addFundsKeyReceived(message.m_ExtraString /*username*/, message.m_ExtraString2 /*new key*/);
             break;
+        case ServerToClientMessage::HeyThisKeyXForUserYGotSomePendingMoneyZ:
+            emit pendingPaymentReceived(message.m_ExtraString /*username*/, message.m_ExtraString2 /*key*/, message.m_ExtraDouble /*amount*/);
+            break;
+        case ServerToClientMessage::HeyThisKeyXForUserYGotSomeConfirmedMoneyZ:
+            emit confirmedPaymentReceived(message.m_ExtraString /*username*/, message.m_ExtraString2 /*key*/, message.m_ExtraDouble /*amount*/);
+            break;
         default:
             emit d("received invalid server2client message");
             return;

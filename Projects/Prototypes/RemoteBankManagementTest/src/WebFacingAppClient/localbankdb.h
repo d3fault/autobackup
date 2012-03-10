@@ -20,6 +20,8 @@ public:
     bool addFundsRequestBitcoinKeyIsPendingConfirm(QString user);
     bool addFundsRequestBitcoinKeyIsConfirmed(QString user);
     void setFundsRequestBitcoinKey(QString user, QString newKey);
+    void pendindAmountReceived(QString user, QString key, double amount);
+    void confirmedAmountReceived(QString user, QString key, double amount);
 private:
           //name , details -- might be wiser to add .Name to UserBankAccount and keep it in a QList. idgaf
     QHash<QString, UserBankAccount*> m_Db;

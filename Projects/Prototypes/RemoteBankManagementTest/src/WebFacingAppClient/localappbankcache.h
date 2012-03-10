@@ -21,11 +21,15 @@ signals:
     //void addFundsKeyReceived(QString user, QString newKey);
     void d(const QString &);
 public slots:
+    //handle requests from the gui/user
     void addUser(QString userNameToAdd);
     void addFundsRequest(QString user);
 
+    //handle responses from the server
     void handleUserAdded(QString newUser);
     void handleAddFundsKeyReceived(QString user, QString newKey);
+    void handlePendingPaymentReceived(QString user, QString key, double pendingAmount);
+    void handleConfirmedPaymentReceived(QString user, QString key, double confirmedAmount);
     void init();
 };
 

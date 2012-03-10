@@ -14,7 +14,7 @@ struct UserBankAccount
         PaymentConfirmed
     };
 
-    double Balance;
+    double Balance; //i think a pending balance is in order, and when i change AddFundsStatus to Confirmed, i zero it out and add it to my regular balance
     QString AddFundsBitcoinKey;
     AddFundsStatuses AddFundsStatus;
 };

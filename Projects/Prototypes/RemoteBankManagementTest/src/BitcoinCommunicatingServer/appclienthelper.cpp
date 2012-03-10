@@ -161,11 +161,32 @@ bool AppClientHelper::isConnected(QSslSocket *socketToCheck)
     }
     return false;
 }
-void AppClientHelper::handlePendingAmountDetected(QString keyToPoll, double pendingAmount)
+void AppClientHelper::handlePendingAmountDetected(QString appId, QString userName, QString key, double pendingAmount)
 {
-    //todo
+    QSslSocket *appSocket = getSocketByAppId(appId);
+    if(isConnected(appSocket))
+    {
+        ServerToClientMessage pendingAmountReceivedMessage(appId, ServerToClientMessage::HeyThisKeyXForUserYGotSomePendingMoneyZ, userName, pendingAmount, key);
+        QDataStream stream(appSocket); //i just want to take a moment of my time to say just how much i fucking love Qt. QDataStream makes life so fucking easy...
+        stream << pendingAmountReceivedMessage;
+    }
+    else
+    {
+        emit d("unable to send pending amount received message, connection lost?");
+    }
 }
-void AppClientHelper::handleConfirmedAmountDetected(QString key, double confirmedAmount)
+void AppClientHelper::handleConfirmedAmountDetected(QString appId, QString userName, QString key, double confirmedAmount)
 {
-    //todo
+    //this method and the one above are the exact same aside from the message type. i could combine them into a private function... but who cares (i might in the future if i have to modify both of them a lot)
+    QSslSocket *appSocket = getSocketByAppId(appId);
+    if(isConnected(appSocket))
+    {
+        ServerToClientMessage pendingAmountReceivedMessage(appId, ServerToClientMessage::HeyThisKeyXForUserYGotSomeConfirmedMoneyZ, userName, confirmedAmount, key);
+        QDataStream stream(appSocket);
+        stream << pendingAmountReceivedMessage;
+    }
+    else
+    {
+        emit d("unable to send confirmed amount received message, connection lost?");
+    }
 }

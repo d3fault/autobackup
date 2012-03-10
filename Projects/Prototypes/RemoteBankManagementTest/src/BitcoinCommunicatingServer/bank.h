@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QList>
+#include <QHash>
 
 #include "appclienthelper.h"
 #include "bankdb.h"
@@ -17,6 +18,11 @@ class Bank : public QObject
 {
     Q_OBJECT
 public:
+    struct AppIdAndUsernameStruct
+    {
+        QString AppId;
+        QString UserName;
+    };
     explicit Bank(QObject *parent = 0);
 private:
     QThread *m_ServerThread;
@@ -34,12 +40,14 @@ private:
     int m_CurrentIndexInListOfPendingKeysToPoll;
 
     void reEnableTimerIfBothListsAreDone();
+
+    QHash<QString /*key*/, AppIdAndUsernameStruct> m_AppIdAndUserNameByKey;
 signals:
     void d(const QString &);
     void userAdded(const QString &appId, const QString &userName);
     void addFundsKeyGenerated(const QString &appId, const QString &userName, const QString &newKey);
-    void pendingAmountDetected(QString key, double pendingAmount);
-    void confirmedAmountDetected(QString key, double confirmedAmount);
+    void pendingAmountDetected(QString appId, QString userName, QString key, double pendingAmount);
+    void confirmedAmountDetected(QString appId, QString userName, QString key, double confirmedAmount);
 public slots:
     void start();
     void pollOneAwaitingKey();

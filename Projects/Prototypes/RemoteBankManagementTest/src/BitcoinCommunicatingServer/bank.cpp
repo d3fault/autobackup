@@ -45,8 +45,8 @@ void Bank::start()
         //responding to requests from client
         connect(this, SIGNAL(userAdded(QString,QString)), m_Clients, SLOT(handleUserAdded(QString,QString)));
         connect(this, SIGNAL(addFundsKeyGenerated(QString,QString,QString)), m_Clients, SLOT(handleAddFundsKeyGenerated(QString,QString,QString)));
-        connect(this, SIGNAL(pendingAmountDetected(QString,double)), m_Clients, SLOT(handlePendingAmountDetected(QString,double)));
-        connect(this, SIGNAL(confirmedAmountDetected(QString,double)), m_Clients, SLOT(handleConfirmedAmountDetected(QString,double)));
+        connect(this, SIGNAL(pendingAmountDetected(QString,QString,QString,double)), m_Clients, SLOT(handlePendingAmountDetected(QString,QString,QString,double)));
+        connect(this, SIGNAL(confirmedAmountDetected(QString,QString,QString,double)), m_Clients, SLOT(handleConfirmedAmountDetected(QString,QString,QString,double)));
         //todo: a BitcoinPoller class might be better.. it makes more sense for it to emit the signal and contain all the polling logic. it can, but might not have to, be on it's own thread. but it's not toooo inaccurate for the bank to do all this logic. and the code's already here so fuck it
 
         QMetaObject::invokeMethod(m_Clients, "startListening", Qt::QueuedConnection);
@@ -76,6 +76,11 @@ void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userN
 
     m_ListOfNewKeysToAddToAwaitingOnNextTimeout.append(newKey);
 
+    AppIdAndUsernameStruct appIdAndUserName;
+    appIdAndUserName.AppId = appId;
+    appIdAndUserName.UserName = userName;
+    m_AppIdAndUserNameByKey.insert(newKey, appIdAndUserName); //store this information so we can look it up when we get a pending and confirmed payment
+
     if(!m_PollingTimer->isActive() && !m_CurrentlyProcessingPollingLists)
     {
         //if the timer isn't already started (it won't be started in 2 cases: our FIRST time at this code AND when processing the lists), and it isn't stopped because we're in the middle of processing the list... then start the timer. the boolean is safe to access because we only enter any of this class's methods via events.. which means we'll always be on the same thread and no other thread accesses the boolean
@@ -84,6 +89,8 @@ void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userN
 }
 void Bank::handlePollingTimerTimedOut()
 {
+    //TODO: bug in poller. poller stops polling when there's 2 keys (they were both in pending). added one, went instantly to pending. 5 mins later i added another, instantly went to pending... then noticed the poller stopped working.. maybe in isEndOfListDetection()?? timer said it was disabled at the end of this timeout/method
+
     emit d("poll timer just timed out");
     if(m_ListOfNewKeysToAddToAwaitingOnNextTimeout.size() > 0 /*we can't add to our list of keys to poll while we're in the middle of polling... that'd be a nightmare*/)
     {
@@ -123,8 +130,15 @@ void Bank::pollOneAwaitingKey()
         {
             emit d("key: " + keyToPoll + " now has a pending amount of: " + QString::number(pendingAmount, 'f', 8)); //todo: static doubleToString
 
-            //i guess this is where i'd emit a signal?? TODO: we need the appId, username, key, and amount... but for now/debugging/coding/simplicity, we'll just emit it the key + amount
-            emit pendingAmountDetected(keyToPoll, pendingAmount);
+            if(!m_AppIdAndUserNameByKey.contains(keyToPoll))
+            {
+                emit d("error: couldn't look up appId and username by key: " + keyToPoll);
+                return;
+            }
+
+            AppIdAndUsernameStruct appIdAndUsername = m_AppIdAndUserNameByKey.value(keyToPoll);
+            emit pendingAmountDetected(appIdAndUsername.AppId, appIdAndUsername.UserName, keyToPoll, pendingAmount);
+            //leave the appIdAndUsername in m_AppIdAndUserNameByKey because we'll need to retrieve it once more on confirmed payment detected
 
             //not only do we emit the update, but we add it to the next step so it gets poll'd for it's confirmation next time
             m_ListOfNewKeysToAddToPendingOnNextTimeout.append(m_ListOfAwaitingKeysToPoll.takeAt(m_CurrentIndexInListOfAwaitingKeysToPoll)); //TODO: oh fuck huge error. we're modifying our list as we're iterating through it
@@ -138,7 +152,16 @@ void Bank::pollOneAwaitingKey()
         ++m_CurrentIndexInListOfAwaitingKeysToPoll;
     }
 
-    reEnableTimerIfBothListsAreDone();
+    if(m_CurrentIndexInListOfPendingKeysToPoll < m_ListOfPendingKeysToPoll.size())
+    {
+        //we have more, so schedule another call to this method
+        QMetaObject::invokeMethod(this, "pollOneAwaitingKey", Qt::QueuedConnection);
+    }
+    else
+    {
+        //we don't have more in this one, but we need to check that there aren't more in Pending before re-enabling the timer...
+        reEnableTimerIfBothListsAreDone();
+    }
 }
 void Bank::pollOnePendingKey()
 {
@@ -154,7 +177,17 @@ void Bank::pollOnePendingKey()
         if(confirmedAmount > 0.0)
         {
             emit d("key: " + keyToPoll + " now has a confirmed amount of: " + QString::number(confirmedAmount, 'f', 8));
-            emit confirmedAmountDetected(keyToPoll, confirmedAmount);
+
+
+            if(!m_AppIdAndUserNameByKey.contains(keyToPoll))
+            {
+                emit d("error: couldn't look up appId and username by key: " + keyToPoll);
+                return;
+            }
+
+            AppIdAndUsernameStruct appIdAndUsername = m_AppIdAndUserNameByKey.value(keyToPoll);
+            emit confirmedAmountDetected(appIdAndUsername.AppId, appIdAndUsername.UserName, keyToPoll, confirmedAmount);
+            m_AppIdAndUserNameByKey.remove(keyToPoll); //we won't need to look it up anymore, so remove it from the hash
 
             m_ListOfPendingKeysToPoll.removeAt(m_CurrentIndexInListOfPendingKeysToPoll); //we don't take because there's no step after this
 
@@ -166,7 +199,16 @@ void Bank::pollOnePendingKey()
         ++m_CurrentIndexInListOfPendingKeysToPoll;
     }
 
-    reEnableTimerIfBothListsAreDone();
+    if(m_CurrentIndexInListOfPendingKeysToPoll < m_ListOfPendingKeysToPoll.size())
+    {
+        //we have more, so schedule another call to this method
+        QMetaObject::invokeMethod(this, "pollOnePendingKey", Qt::QueuedConnection);
+    }
+    else
+    {
+        //we don't have more in this one, but we need to check that there aren't more in Awaiting before re-enabling the timer...
+        reEnableTimerIfBothListsAreDone();
+    }
 }
 void Bank::reEnableTimerIfBothListsAreDone()
 {
