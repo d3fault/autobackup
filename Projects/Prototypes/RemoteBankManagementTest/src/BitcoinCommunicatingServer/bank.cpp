@@ -36,7 +36,7 @@ void Bank::start()
 
         connect(m_Clients, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
         connect(&m_Db, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
-        connect(&m_Bitcoin, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+        connect(BitcoinHelper::Instance(), SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 
         //requests from client
         connect(m_Clients, SIGNAL(addUserRequested(QString,QString)), this, SLOT(handleAddUserRequested(QString,QString)));
@@ -65,7 +65,7 @@ void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userN
 {
     //todo: should we also check here that we're not awaiting/pending... or is checking on the client/cache enough? we shouldn't even get here unless it was already checked (by the client)... but for future proofing for apps maybe it'd be good to check here (only? too?)
 
-    QString newKey = m_Bitcoin.getNewKeyToReceivePaymentsAt();
+    QString newKey = BitcoinHelper::Instance()->getNewKeyToReceivePaymentsAt();
     m_Db.setAddFundsKey(appId, userName, newKey);
     //todo: set up the code that polls this new key every so often to see if it has changed. i guess for now it's ok to iterate over m_Db and check/poll the keys for anything that's Awaiting or Pending... but in the future we'll want to have the list be separate (probably? could be wrong) and also NOT check awaitings that are > 24 hours old (or something). the user can still manually request the poll... but we definitely need to STOP polling after a certain period of time... else we may end up with hundreds of thousands of old as fuck keys that we are polling
 
@@ -124,7 +124,7 @@ void Bank::pollOneAwaitingKey()
     {
         QString keyToPoll = m_ListOfAwaitingKeysToPoll.at(m_CurrentIndexInListOfAwaitingKeysToPoll);
         emit d("about to poll awaiting payment key: " + keyToPoll);
-        double pendingAmount = m_Bitcoin.parseAmountAtAddressForConfirmations(0, keyToPoll);
+        double pendingAmount = BitcoinHelper::Instance()->parseAmountAtAddressForConfirmations(0, keyToPoll);
 
         if(pendingAmount > 0.0)
         {
@@ -173,7 +173,7 @@ void Bank::pollOnePendingKey()
     {
         QString keyToPoll = m_ListOfPendingKeysToPoll.at(m_CurrentIndexInListOfPendingKeysToPoll);
         emit d("about to poll pending payment key: " + keyToPoll);
-        double confirmedAmount = m_Bitcoin.parseAmountAtAddressForConfirmations(1, keyToPoll);
+        double confirmedAmount = BitcoinHelper::Instance()->parseAmountAtAddressForConfirmations(1, keyToPoll);
         if(confirmedAmount > 0.0)
         {
             emit d("key: " + keyToPoll + " now has a confirmed amount of: " + QString::number(confirmedAmount, 'f', 8));

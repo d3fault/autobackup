@@ -12,11 +12,16 @@ class BitcoinHelper : public QObject
 {
     Q_OBJECT
 public:
-    explicit BitcoinHelper(QObject *parent = 0);
+    static BitcoinHelper* Instance();
+
+    //helper functions that call bitcoind
     QString getNewKeyToReceivePaymentsAt();
     double parseAmountAtAddressForConfirmations(int confirmations, QString addressToCheck);
 private:
-    QProcess *m_BitcoinD;
+    static BitcoinHelper *m_pInstance;
+    BitcoinHelper();
+    QProcess m_BitcoinD;
+    //private function that my helper functions call
     QString bitcoind(QString apiCmd, QString optionalApiCmdArg1 = QString(), QString optionalApiCmdArg2 = QString());
 signals:
     void d(const QString &);

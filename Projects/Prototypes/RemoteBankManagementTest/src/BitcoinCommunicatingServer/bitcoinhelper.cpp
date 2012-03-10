@@ -1,11 +1,18 @@
 #include "bitcoinhelper.h"
 
-BitcoinHelper::BitcoinHelper(QObject *parent) :
-    QObject(parent)
+BitcoinHelper::BitcoinHelper()
 {
-    m_BitcoinD = new QProcess();
-    m_BitcoinD->setWorkingDirectory(PATH_TO_BITCOIND);
-    connect(m_BitcoinD, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleProcessError(QProcess::ProcessError)));
+    m_BitcoinD.setWorkingDirectory(PATH_TO_BITCOIND);
+    connect(&m_BitcoinD, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleProcessError(QProcess::ProcessError)));
+}
+BitcoinHelper *BitcoinHelper::m_pInstance = NULL;
+BitcoinHelper *BitcoinHelper::Instance()
+{
+    if(!m_pInstance) //only one instance allowed
+    {
+        m_pInstance = new BitcoinHelper();
+    }
+    return m_pInstance;
 }
 QString BitcoinHelper::getNewKeyToReceivePaymentsAt()
 {
@@ -32,19 +39,19 @@ QString BitcoinHelper::bitcoind(QString apiCmd, QString optionalApiCmdArg1, QStr
             argList << optionalApiCmdArg2;
         }
     }
-    m_BitcoinD->start(QString(PATH_TO_BITCOIND) + QString(BITCOIND_PROCESS), argList, QIODevice::ReadOnly);
-    if(!m_BitcoinD->waitForStarted(5000)) //we WANT to block since we have our own thread just for interfacing with bitcoind. every call to bitcoind should go through this thread via an event
+    m_BitcoinD.start(QString(PATH_TO_BITCOIND) + QString(BITCOIND_PROCESS), argList, QIODevice::ReadOnly);
+    if(!m_BitcoinD.waitForStarted(5000)) //we WANT to block since we have our own thread just for interfacing with bitcoind. every call to bitcoind should go through this thread via an event
     {
         emit d("error: bitcoind process call never started");
         return QString();
     }
-    if(!m_BitcoinD->waitForFinished())
+    if(!m_BitcoinD.waitForFinished())
     {
         emit d("error: bitcoind process call never finished");
         return QString();
         //todo: i suppose returning blank QString's is alright here.. but the caller should probably do some validation. however, i can predict the scenario where i check a key returned by this function against... you guessed it... this function. pretty sure there's an 'isvalidkey' command or someshit. if that too error'd out, there might be a possible case of an infinte loop (though i don't think so)
     }
-    QByteArray result = m_BitcoinD->readAllStandardOutput();
+    QByteArray result = m_BitcoinD.readAllStandardOutput();
     return QString(result).trimmed(); //pretty sure trim only removes leading/trailing whitespace/newlines. newline being my biggest concern atm. but some api commands return multiple results separated by a space... which need to be parsed by the caller. /hope .trimmed() doesn't mess with THAT whitespace..
 }
 double BitcoinHelper::parseAmountAtAddressForConfirmations(int confirmations, QString addressToCheck)

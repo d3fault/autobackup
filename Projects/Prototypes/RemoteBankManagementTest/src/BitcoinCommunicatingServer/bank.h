@@ -28,7 +28,6 @@ private:
     QThread *m_ServerThread;
     AppClientHelper *m_Clients; //plural because the server can handle multiple connections
     BankDb m_Db;
-    BitcoinHelper m_Bitcoin;
     QTimer *m_PollingTimer;
     bool m_CurrentlyProcessingPollingLists;
 
