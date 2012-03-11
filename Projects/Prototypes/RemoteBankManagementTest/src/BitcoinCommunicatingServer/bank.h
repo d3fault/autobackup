@@ -3,32 +3,24 @@
 
 #include <QObject>
 #include <QThread>
-#include <QTimer>
-#include <QList>
-#include <QHash>
 
 #include "appclienthelper.h"
 #include "bankdb.h"
 #include "bitcoinhelper.h"
-
-//#define TIME_IN_BETWEEN_EACH_POLL 600000 //10 minutes for impl... actually maybe this is too high. maybe 10 seconds IS what we want for the impl? could be anything really... 1 minute sounds nice...
-#define TIME_IN_BETWEEN_EACH_POLL 10000 //10 seconds for debugging
+#include "bitcoinpoller.h"
 
 class Bank : public QObject
 {
     Q_OBJECT
 public:
-    struct AppIdAndUsernameStruct
-    {
-        QString AppId;
-        QString UserName;
-    };
     explicit Bank(QObject *parent = 0);
 private:
     QThread *m_ServerThread;
     AppClientHelper *m_Clients; //plural because the server can handle multiple connections
-    BankDb m_Db;
-    QTimer *m_PollingTimer;
+    BankDb *m_Db;
+    BitcoinPoller *m_BitcoinPoller;
+
+    /*
     bool m_CurrentlyProcessingPollingLists;
 
     QList<QString> m_ListOfNewKeysToAddToAwaitingOnNextTimeout;
@@ -40,21 +32,24 @@ private:
 
     void reEnableTimerIfBothListsAreDone();
 
-    QHash<QString /*key*/, AppIdAndUsernameStruct> m_AppIdAndUserNameByKey;
+    QHash<QString, AppIdAndUsernameStruct> m_AppIdAndUserNameByKey;
+    */
 signals:
     void d(const QString &);
     void userAdded(const QString &appId, const QString &userName);
     void addFundsKeyGenerated(const QString &appId, const QString &userName, const QString &newKey);
-    void pendingAmountDetected(QString appId, QString userName, QString key, double pendingAmount);
-    void confirmedAmountDetected(QString appId, QString userName, QString key, double confirmedAmount);
+    void pendingAmountReceived(QString appId, QString username, QString key, double pendingAmount);
+    void confirmedAmountReceived(QString appId, QString username, QString key, double confirmedAmount);
 public slots:
     void start();
-    void pollOneAwaitingKey();
-    void pollOnePendingKey();
+    //void pollOneAwaitingKey();
+    //void pollOnePendingKey();
 private slots:
     void handleAddUserRequested(const QString &appId, const QString &userName);
     void handleAddFundsKeyRequested(const QString &appId, const QString &userName);
-    void handlePollingTimerTimedOut();
+    void handlePendingAmountDetected(QString appId,QString username,QString key, double pendingAmount);
+    void handleConfirmedAmountDetected(QString appId,QString username,QString key,double confirmedAmount);
+    //void handlePollingTimerTimedOut();
 };
 
 #endif // BANK_H

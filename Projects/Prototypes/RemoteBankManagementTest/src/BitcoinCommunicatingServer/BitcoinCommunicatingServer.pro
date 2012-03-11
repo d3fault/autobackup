@@ -16,7 +16,8 @@ SOURCES += main.cpp\
     bank.cpp \
     appclienthelper.cpp \
     bankdb.cpp \
-    bitcoinhelper.cpp
+    bitcoinhelper.cpp \
+    bitcoinpoller.cpp
 
 HEADERS  += debugserverview.h \
     ssltcpserver.h \
@@ -25,7 +26,8 @@ HEADERS  += debugserverview.h \
     bank.h \
     appclienthelper.h \
     bankdb.h \
-    bitcoinhelper.h
+    bitcoinhelper.h \
+    bitcoinpoller.h
 
 RESOURCES += \
     SslFiles.qrc

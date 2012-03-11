@@ -161,7 +161,7 @@ bool AppClientHelper::isConnected(QSslSocket *socketToCheck)
     }
     return false;
 }
-void AppClientHelper::handlePendingAmountDetected(QString appId, QString userName, QString key, double pendingAmount)
+void AppClientHelper::handlePendingAmountReceived(QString appId, QString userName, QString key, double pendingAmount)
 {
     QSslSocket *appSocket = getSocketByAppId(appId);
     if(isConnected(appSocket))
@@ -175,7 +175,7 @@ void AppClientHelper::handlePendingAmountDetected(QString appId, QString userNam
         emit d("unable to send pending amount received message, connection lost?");
     }
 }
-void AppClientHelper::handleConfirmedAmountDetected(QString appId, QString userName, QString key, double confirmedAmount)
+void AppClientHelper::handleConfirmedAmountReceived(QString appId, QString userName, QString key, double confirmedAmount)
 {
     //this method and the one above are the exact same aside from the message type. i could combine them into a private function... but who cares (i might in the future if i have to modify both of them a lot)
     QSslSocket *appSocket = getSocketByAppId(appId);

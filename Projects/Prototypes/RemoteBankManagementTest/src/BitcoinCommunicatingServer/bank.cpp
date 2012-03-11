@@ -18,36 +18,54 @@
 
 
 Bank::Bank(QObject *parent) :
-    QObject(parent), m_Clients(0), m_CurrentlyProcessingPollingLists(false), m_CurrentIndexInListOfAwaitingKeysToPoll(0), m_CurrentIndexInListOfPendingKeysToPoll(0)
+    QObject(parent), m_Clients(0)
 {
 }
 void Bank::start()
 {
     if(!m_Clients)
     {
-        m_PollingTimer = new QTimer();
-        m_PollingTimer->setInterval(TIME_IN_BETWEEN_EACH_POLL);
-        connect(m_PollingTimer, SIGNAL(timeout()), this, SLOT(handlePollingTimerTimedOut()));
+        m_Db = new BankDb();
+        m_BitcoinPoller = new BitcoinPoller(10);
 
         m_ServerThread = new QThread();
         m_Clients = new AppClientHelper();
         m_Clients->moveToThread(m_ServerThread);
         m_ServerThread->start();
 
+        //set up debugging
         connect(m_Clients, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
-        connect(&m_Db, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+        connect(m_Db, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
         connect(BitcoinHelper::Instance(), SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+        connect(m_BitcoinPoller, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 
-        //requests from client
+        //HANDLING REQUESTS FROM CLIENTS
         connect(m_Clients, SIGNAL(addUserRequested(QString,QString)), this, SLOT(handleAddUserRequested(QString,QString)));
         connect(m_Clients, SIGNAL(addFundsKeyRequested(QString,QString)), this, SLOT(handleAddFundsKeyRequested(QString,QString)));
 
-        //responding to requests from client
+        //RESPONDING TO REQUESTS FROM CLIENTS
+        //user added
         connect(this, SIGNAL(userAdded(QString,QString)), m_Clients, SLOT(handleUserAdded(QString,QString)));
+        //key generated
         connect(this, SIGNAL(addFundsKeyGenerated(QString,QString,QString)), m_Clients, SLOT(handleAddFundsKeyGenerated(QString,QString,QString)));
-        connect(this, SIGNAL(pendingAmountDetected(QString,QString,QString,double)), m_Clients, SLOT(handlePendingAmountDetected(QString,QString,QString,double)));
-        connect(this, SIGNAL(confirmedAmountDetected(QString,QString,QString,double)), m_Clients, SLOT(handleConfirmedAmountDetected(QString,QString,QString,double)));
-        //todo: a BitcoinPoller class might be better.. it makes more sense for it to emit the signal and contain all the polling logic. it can, but might not have to, be on it's own thread. but it's not toooo inaccurate for the bank to do all this logic. and the code's already here so fuck it
+        connect(this, SIGNAL(addFundsKeyGenerated(QString,QString,QString)), m_BitcoinPoller, SLOT(pollThisKeyAndNotifyUsOfUpdates(QString,QString,QString))); //it might be better to do this as a Qt::QueuedConnection. they currently live on the same thread so it will be called direct. after i write some more code i'll be able to tell. shouldn't matter but it might
+        //even though it makes sense to listen to this signal twice, i still need to add it to the db in THIS class first. maybe this is only for the pendingAmountDeteced/confirmed ones below.. but it's definitely true for both (just not sure what the state of this code is). there are possible race conditions, or if the db insert fails, we do NOT want to notify the clients, for example
+        //^^^we are the ones emitting the above signal, so it is implied that we have already added it to the db before emitting
+
+        //old
+        /*connect(m_BitcoinPoller, SIGNAL(pendingAmountDetected(QString,QString,QString,double)), m_Clients, SLOT(handlePendingAmountDetected(QString,QString,QString,double)));
+        connect(m_BitcoinPoller, SIGNAL(confirmedAmountDetected(QString,QString,QString,double)), m_Clients, SLOT(handleConfirmedAmountDetected(QString,QString,QString,double)));*/
+        //TODO: either we should, or bankdb should, also listen to these signals... because we need to update the db. at the very least AddFundStatus... and PendingBalance if i decide to implement it... and definitely confirmed balance obv
+        //re: "even though it makes sense" above actually applies right here. do not connect the signal to m_Db. rewrite those above to connect to a handleX here and then after the db insert is confirmed and done synchronously, then emit the signal. potential race condition would apply otherwise: what if we notified the user and they did something with it to change it before the db event processed it. it's unlikely that it would happen, but i'm not willing to risk it
+
+        //bitcoin poller
+        //-- poller -> this
+        connect(m_BitcoinPoller, SIGNAL(pendingAmountDetected(QString,QString,QString,double)), this, SLOT(handlePendingAmountDetected(QString,QString,QString,double)));
+        connect(m_BitcoinPoller, SIGNAL(confirmedAmountDetected(QString,QString,QString,double)), this, SLOT(handleConfirmedAmountDetected(QString,QString,QString,double)));
+        //^^in these two slots, we update the db and then emit the corresponding "received" signals that then notify the m_Clients, done below VVV
+        //-- this -> clients
+        connect(this, SIGNAL(pendingAmountReceived(QString,QString,QString,double)), m_Clients, SLOT(handlePendingAmountReceived(QString,QString,QString,double)));
+        connect(this, SIGNAL(confirmedAmountReceived(QString,QString,QString,double)), m_Clients, SLOT(handleConfirmedAmountReceived(QString,QString,QString,double)));
 
         QMetaObject::invokeMethod(m_Clients, "startListening", Qt::QueuedConnection);
     }
@@ -58,7 +76,7 @@ void Bank::handleAddUserRequested(const QString &appId, const QString &userName)
     //i seem to be wanting this AddUserResult to be propogating from the db all the way through this server app and even back to the remote connection!! it would be nice if i can figure out way to do such a thing using just 1 type. it just might be possible. i want to avoid the mess of BankDbAddUserResult -> BankAddUserResult -> BankServerAddUserResult --[network]--> parse/process BankServerAddUserResult
     //perhaps the answer is to use an AddUserResult type struct thing (enum maybe?) in my sharedProtocol.h file
 
-    m_Db.addUser(appId, userName);
+    m_Db->addUser(appId, userName);
     emit userAdded(appId, userName);
 }
 void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userName)
@@ -66,14 +84,15 @@ void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userN
     //todo: should we also check here that we're not awaiting/pending... or is checking on the client/cache enough? we shouldn't even get here unless it was already checked (by the client)... but for future proofing for apps maybe it'd be good to check here (only? too?)
 
     QString newKey = BitcoinHelper::Instance()->getNewKeyToReceivePaymentsAt();
-    m_Db.setAddFundsKey(appId, userName, newKey);
+    m_Db->setAddFundsKey(appId, userName, newKey);
     //todo: set up the code that polls this new key every so often to see if it has changed. i guess for now it's ok to iterate over m_Db and check/poll the keys for anything that's Awaiting or Pending... but in the future we'll want to have the list be separate (probably? could be wrong) and also NOT check awaitings that are > 24 hours old (or something). the user can still manually request the poll... but we definitely need to STOP polling after a certain period of time... else we may end up with hundreds of thousands of old as fuck keys that we are polling
 
     //we should set a timer that begins polling the list of addresses every 10 seconds. but the timer should stop while processing the list. and each item in the list should be sent as an event to ourselves so we're still able to receive addFundsKeyRequests at the same time that we're polling for older ones
     //so basically there should be a check for isLastKeyToPoll at the end of pollOneAddFundsKey (which we invokeObject queue'd).. if it evaluates to false, we launch another pollOneAddFundsKey (as an event). and lastly, if isLastKeyToPoll evalutates to true, we re-enable the 10-second timer. we don't want race conditions... which is why we disable the timer right when we start processing the list
 
-    emit addFundsKeyGenerated(appId, userName, newKey);
+    emit addFundsKeyGenerated(appId, userName, newKey); //poller can just listen to this signal. <3 PROPER design.
 
+    /*
     m_ListOfNewKeysToAddToAwaitingOnNextTimeout.append(newKey);
 
     AppIdAndUsernameStruct appIdAndUserName;
@@ -86,7 +105,9 @@ void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userN
         //if the timer isn't already started (it won't be started in 2 cases: our FIRST time at this code AND when processing the lists), and it isn't stopped because we're in the middle of processing the list... then start the timer. the boolean is safe to access because we only enter any of this class's methods via events.. which means we'll always be on the same thread and no other thread accesses the boolean
         m_PollingTimer->start();
     }
+    */
 }
+#if 0
 void Bank::handlePollingTimerTimedOut()
 {
     //TODO: bug in poller. poller stops polling when there's 2 keys (they were both in pending). added one, went instantly to pending. 5 mins later i added another, instantly went to pending... then noticed the poller stopped working.. maybe in isEndOfListDetection()?? timer said it was disabled at the end of this timeout/method
@@ -194,7 +215,7 @@ void Bank::pollOnePendingKey()
             --m_CurrentIndexInListOfPendingKeysToPoll;
 
             //TODO: the m_Db modification should be within these braces... but not necessarily after this decrement. i think we need appId and username anyways to do the modification, so hold off for now. and also: do it for the 'Awaiting' cousin method above. we don't really benefit from updating the db.. but if the app crashes and restarts, we retain our state.
-            //should be something like m_Db.promoteAddFundsKeyState(UserAccount::Confirmed)... Pending for the Awaiting method above. and again: this line should not necessarily go here... but definitely within these braces
+            //should be something like m_Db->promoteAddFundsKeyState(UserAccount::Confirmed)... Pending for the Awaiting method above. and again: this line should not necessarily go here... but definitely within these braces
         }
         ++m_CurrentIndexInListOfPendingKeysToPoll;
     }
@@ -219,6 +240,23 @@ void Bank::reEnableTimerIfBothListsAreDone()
         m_PollingTimer->start();
         emit d("re-enabling the timer because we reached the end of the lists");
     }
+}
+#endif
+void Bank::handlePendingAmountDetected(QString appId, QString username, QString key, double pendingAmount)
+{
+    //todo: update db here
+
+    emit d(username + " received pending amount: " + QString::number(pendingAmount,'f',8));
+
+    emit pendingAmountReceived(appId, username, key, pendingAmount);
+}
+void Bank::handleConfirmedAmountDetected(QString appId, QString username, QString key, double confirmedAmount)
+{
+    //todo: update db here
+
+    emit d(username + " received confirmed amount: " + QString::number(confirmedAmount, 'f', 8));
+
+    emit confirmedAmountReceived(appId, username, key, confirmedAmount);
 }
 
 //TODO: when converting a double to a QString, the format parameter should be 'f', with precision of 8. MAYBE a precision of 9 and we manually round it??? the default format uses e and E... but we don't want that so we have to force 'f'
