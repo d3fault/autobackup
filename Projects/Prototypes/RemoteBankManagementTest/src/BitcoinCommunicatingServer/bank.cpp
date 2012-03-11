@@ -49,14 +49,6 @@ void Bank::start()
         //key generated
         connect(this, SIGNAL(addFundsKeyGenerated(QString,QString,QString)), m_Clients, SLOT(handleAddFundsKeyGenerated(QString,QString,QString)));
         connect(this, SIGNAL(addFundsKeyGenerated(QString,QString,QString)), m_BitcoinPoller, SLOT(pollThisKeyAndNotifyUsOfUpdates(QString,QString,QString))); //it might be better to do this as a Qt::QueuedConnection. they currently live on the same thread so it will be called direct. after i write some more code i'll be able to tell. shouldn't matter but it might
-        //even though it makes sense to listen to this signal twice, i still need to add it to the db in THIS class first. maybe this is only for the pendingAmountDeteced/confirmed ones below.. but it's definitely true for both (just not sure what the state of this code is). there are possible race conditions, or if the db insert fails, we do NOT want to notify the clients, for example
-        //^^^we are the ones emitting the above signal, so it is implied that we have already added it to the db before emitting
-
-        //old
-        /*connect(m_BitcoinPoller, SIGNAL(pendingAmountDetected(QString,QString,QString,double)), m_Clients, SLOT(handlePendingAmountDetected(QString,QString,QString,double)));
-        connect(m_BitcoinPoller, SIGNAL(confirmedAmountDetected(QString,QString,QString,double)), m_Clients, SLOT(handleConfirmedAmountDetected(QString,QString,QString,double)));*/
-        //TODO: either we should, or bankdb should, also listen to these signals... because we need to update the db. at the very least AddFundStatus... and PendingBalance if i decide to implement it... and definitely confirmed balance obv
-        //re: "even though it makes sense" above actually applies right here. do not connect the signal to m_Db. rewrite those above to connect to a handleX here and then after the db insert is confirmed and done synchronously, then emit the signal. potential race condition would apply otherwise: what if we notified the user and they did something with it to change it before the db event processed it. it's unlikely that it would happen, but i'm not willing to risk it
 
         //bitcoin poller
         //-- poller -> this
@@ -91,160 +83,10 @@ void Bank::handleAddFundsKeyRequested(const QString &appId, const QString &userN
     //so basically there should be a check for isLastKeyToPoll at the end of pollOneAddFundsKey (which we invokeObject queue'd).. if it evaluates to false, we launch another pollOneAddFundsKey (as an event). and lastly, if isLastKeyToPoll evalutates to true, we re-enable the 10-second timer. we don't want race conditions... which is why we disable the timer right when we start processing the list
 
     emit addFundsKeyGenerated(appId, userName, newKey); //poller can just listen to this signal. <3 PROPER design.
-
-    /*
-    m_ListOfNewKeysToAddToAwaitingOnNextTimeout.append(newKey);
-
-    AppIdAndUsernameStruct appIdAndUserName;
-    appIdAndUserName.AppId = appId;
-    appIdAndUserName.UserName = userName;
-    m_AppIdAndUserNameByKey.insert(newKey, appIdAndUserName); //store this information so we can look it up when we get a pending and confirmed payment
-
-    if(!m_PollingTimer->isActive() && !m_CurrentlyProcessingPollingLists)
-    {
-        //if the timer isn't already started (it won't be started in 2 cases: our FIRST time at this code AND when processing the lists), and it isn't stopped because we're in the middle of processing the list... then start the timer. the boolean is safe to access because we only enter any of this class's methods via events.. which means we'll always be on the same thread and no other thread accesses the boolean
-        m_PollingTimer->start();
-    }
-    */
 }
-#if 0
-void Bank::handlePollingTimerTimedOut()
-{
-    //TODO: bug in poller. poller stops polling when there's 2 keys (they were both in pending). added one, went instantly to pending. 5 mins later i added another, instantly went to pending... then noticed the poller stopped working.. maybe in isEndOfListDetection()?? timer said it was disabled at the end of this timeout/method
-
-    emit d("poll timer just timed out");
-    if(m_ListOfNewKeysToAddToAwaitingOnNextTimeout.size() > 0 /*we can't add to our list of keys to poll while we're in the middle of polling... that'd be a nightmare*/)
-    {
-        m_ListOfAwaitingKeysToPoll.append(m_ListOfNewKeysToAddToAwaitingOnNextTimeout);
-        m_ListOfNewKeysToAddToAwaitingOnNextTimeout.clear();
-    }
-    if(m_ListOfNewKeysToAddToPendingOnNextTimeout.size() > 0)
-    {
-        m_ListOfPendingKeysToPoll.append(m_ListOfNewKeysToAddToPendingOnNextTimeout);
-        m_ListOfNewKeysToAddToPendingOnNextTimeout.clear();
-    }
-    m_CurrentIndexInListOfAwaitingKeysToPoll = 0;
-    m_CurrentIndexInListOfPendingKeysToPoll = 0;
-    if(m_ListOfAwaitingKeysToPoll.size() > 0)
-    {
-        m_CurrentlyProcessingPollingLists = true;
-        m_PollingTimer->stop();
-        QMetaObject::invokeMethod(this, "pollOneAwaitingKey", Qt::QueuedConnection);
-    }
-    if(m_ListOfPendingKeysToPoll.size() > 0)
-    {
-        m_CurrentlyProcessingPollingLists = true;
-        if(m_PollingTimer->isActive()) { m_PollingTimer->stop(); } //i hope calling this twice has no effect. actually, hoping is for suckers. *adds code*
-        QMetaObject::invokeMethod(this, "pollOnePendingKey", Qt::QueuedConnection);
-    }
-    emit d("at the end of the timeout function, the timer is now: " + QString((m_PollingTimer->isActive() ? "active" : "disabled")));
-}
-void Bank::pollOneAwaitingKey()
-{
-    if(m_CurrentIndexInListOfAwaitingKeysToPoll < m_ListOfAwaitingKeysToPoll.size())
-    {
-        QString keyToPoll = m_ListOfAwaitingKeysToPoll.at(m_CurrentIndexInListOfAwaitingKeysToPoll);
-        emit d("about to poll awaiting payment key: " + keyToPoll);
-        double pendingAmount = BitcoinHelper::Instance()->parseAmountAtAddressForConfirmations(0, keyToPoll);
-
-        if(pendingAmount > 0.0)
-        {
-            emit d("key: " + keyToPoll + " now has a pending amount of: " + QString::number(pendingAmount, 'f', 8)); //todo: static doubleToString
-
-            if(!m_AppIdAndUserNameByKey.contains(keyToPoll))
-            {
-                emit d("error: couldn't look up appId and username by key: " + keyToPoll);
-                return;
-            }
-
-            AppIdAndUsernameStruct appIdAndUsername = m_AppIdAndUserNameByKey.value(keyToPoll);
-            emit pendingAmountDetected(appIdAndUsername.AppId, appIdAndUsername.UserName, keyToPoll, pendingAmount);
-            //leave the appIdAndUsername in m_AppIdAndUserNameByKey because we'll need to retrieve it once more on confirmed payment detected
-
-            //not only do we emit the update, but we add it to the next step so it gets poll'd for it's confirmation next time
-            m_ListOfNewKeysToAddToPendingOnNextTimeout.append(m_ListOfAwaitingKeysToPoll.takeAt(m_CurrentIndexInListOfAwaitingKeysToPoll)); //TODO: oh fuck huge error. we're modifying our list as we're iterating through it
-            //hack: decrement the index to account for what we took/removed. the next time we're here, we'll have the same exact .at() ... but it SHOULD work(???)
-            --m_CurrentIndexInListOfAwaitingKeysToPoll;
-
-            //TODO/thoughts: the polling lists should just be in memory (in impl). when we emit our signal or whatever, bank responds to it by updating the db (which is in-memory for now, but won't be in the impl) and also by notifying the client over the network. oh whoops thought this code was in bitcoinhelper.cpp (should it be?)... but well yea, we're still going to emit the signal... but we just modify the m_Db right here
-        }
-
-        //onto the next! if we didn't remove one, .at() will actually be +1.. but if we did remove one (see above), the next .at() will be the same. it's why we have the -- and then right here a ++ again. we ALWAYS want to ++ to get to the next, but we don't always need to use the -- hack unless we remove one
-        ++m_CurrentIndexInListOfAwaitingKeysToPoll;
-    }
-
-    if(m_CurrentIndexInListOfPendingKeysToPoll < m_ListOfPendingKeysToPoll.size())
-    {
-        //we have more, so schedule another call to this method
-        QMetaObject::invokeMethod(this, "pollOneAwaitingKey", Qt::QueuedConnection);
-    }
-    else
-    {
-        //we don't have more in this one, but we need to check that there aren't more in Pending before re-enabling the timer...
-        reEnableTimerIfBothListsAreDone();
-    }
-}
-void Bank::pollOnePendingKey()
-{
-    //all/most of the same comments from the Awaiting function above apply here... including the decrement/takeAt/increment hack
-
-    emit d("polling one pending key");
-
-    if(m_CurrentIndexInListOfPendingKeysToPoll < m_ListOfPendingKeysToPoll.size())
-    {
-        QString keyToPoll = m_ListOfPendingKeysToPoll.at(m_CurrentIndexInListOfPendingKeysToPoll);
-        emit d("about to poll pending payment key: " + keyToPoll);
-        double confirmedAmount = BitcoinHelper::Instance()->parseAmountAtAddressForConfirmations(1, keyToPoll);
-        if(confirmedAmount > 0.0)
-        {
-            emit d("key: " + keyToPoll + " now has a confirmed amount of: " + QString::number(confirmedAmount, 'f', 8));
-
-
-            if(!m_AppIdAndUserNameByKey.contains(keyToPoll))
-            {
-                emit d("error: couldn't look up appId and username by key: " + keyToPoll);
-                return;
-            }
-
-            AppIdAndUsernameStruct appIdAndUsername = m_AppIdAndUserNameByKey.value(keyToPoll);
-            emit confirmedAmountDetected(appIdAndUsername.AppId, appIdAndUsername.UserName, keyToPoll, confirmedAmount);
-            m_AppIdAndUserNameByKey.remove(keyToPoll); //we won't need to look it up anymore, so remove it from the hash
-
-            m_ListOfPendingKeysToPoll.removeAt(m_CurrentIndexInListOfPendingKeysToPoll); //we don't take because there's no step after this
-
-            --m_CurrentIndexInListOfPendingKeysToPoll;
-
-            //TODO: the m_Db modification should be within these braces... but not necessarily after this decrement. i think we need appId and username anyways to do the modification, so hold off for now. and also: do it for the 'Awaiting' cousin method above. we don't really benefit from updating the db.. but if the app crashes and restarts, we retain our state.
-            //should be something like m_Db->promoteAddFundsKeyState(UserAccount::Confirmed)... Pending for the Awaiting method above. and again: this line should not necessarily go here... but definitely within these braces
-        }
-        ++m_CurrentIndexInListOfPendingKeysToPoll;
-    }
-
-    if(m_CurrentIndexInListOfPendingKeysToPoll < m_ListOfPendingKeysToPoll.size())
-    {
-        //we have more, so schedule another call to this method
-        QMetaObject::invokeMethod(this, "pollOnePendingKey", Qt::QueuedConnection);
-    }
-    else
-    {
-        //we don't have more in this one, but we need to check that there aren't more in Awaiting before re-enabling the timer...
-        reEnableTimerIfBothListsAreDone();
-    }
-}
-void Bank::reEnableTimerIfBothListsAreDone()
-{
-    if(m_CurrentIndexInListOfAwaitingKeysToPoll >= m_ListOfAwaitingKeysToPoll.size() && m_CurrentIndexInListOfPendingKeysToPoll >= m_ListOfPendingKeysToPoll.size())
-    {
-        //if they're both at the end of their list of keys to poll, we re-enable the timer so that in X seconds, we poll the list again. i think this might be an off by one error
-        m_CurrentlyProcessingPollingLists = false;
-        m_PollingTimer->start();
-        emit d("re-enabling the timer because we reached the end of the lists");
-    }
-}
-#endif
 void Bank::handlePendingAmountDetected(QString appId, QString username, QString key, double pendingAmount)
 {
-    //todo: update db here
+    m_Db->pendingAmountReceived(appId, username, pendingAmount);
 
     emit d(username + " received pending amount: " + QString::number(pendingAmount,'f',8));
 
@@ -252,7 +94,7 @@ void Bank::handlePendingAmountDetected(QString appId, QString username, QString 
 }
 void Bank::handleConfirmedAmountDetected(QString appId, QString username, QString key, double confirmedAmount)
 {
-    //todo: update db here
+    m_Db->confirmedAmountReceived(appId, username, confirmedAmount);
 
     emit d(username + " received confirmed amount: " + QString::number(confirmedAmount, 'f', 8));
 

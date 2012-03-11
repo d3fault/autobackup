@@ -47,7 +47,7 @@ void AppClientHelper::handleConnectedAndEncrypted()
     {
         connect(secureSocket, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
 
-        //it makes more sense, from a design perspective, to put the socket in m_SocketsByAppId right here. unfortunately we don't have appId yet, we've only just established an encrypted connection. of there was a handleAppIdMessage, that would be an even better place. for now, we're going to put it in our readyReady and INEFFICIENTLY check it using .contains(appId) for every message. if not exist, add it
+        //it makes more sense, from a design perspective, to put the socket in m_SocketsByAppId right here. unfortunately we don't have appId yet, we've only just established an encrypted connection. if there was a handleAppIdMessage, that would be an even better place. for now, we're going to put it in our readyReady and INEFFICIENTLY check it using .contains(appId) for every message. if not exist, add it
     }
 }
 void AppClientHelper::handleReadyRead()

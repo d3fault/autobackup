@@ -35,9 +35,13 @@ mainWebsiteBankView::mainWebsiteBankView(QWidget *parent)
     newUserRow->addWidget(m_NewUserButton);
     m_Layout->addLayout(newUserRow);
 
+    connect(m_NewUserLineEdit, SIGNAL(returnPressed()), this, SLOT(handleNewUserPressed()));
     connect(m_NewUserButton, SIGNAL(clicked()), this, SLOT(handleNewUserPressed()));
 
     //2) send funds request (highlight existing user first): gets addy to send to, sets up event to be dispatched when funds received at that address that propagates back to us from remote
+    //^^^^^initially i was thinking this wouldn't have anything to do with bitcoin. it really doesn't, but if i use bitcoin accounts (which i do plan to. added security), i need to issue the "move" api command. it doesn't access the network or anything, just modifies our wallet.db -- TODO: "move" has minconf=1... what are the implications of this? you can only move an amount that has been confirmed? i guess this is what i want. i'd probably have code checking it too
+    //in my secure as fuck version, i'm going to verify a "permission slip" is signed by their private key (using their public decryption cert to decrypt+verify) has the right amount (permission slips can only be used once? do i subtract the amount transferred from the amount the permission slip authorizes? i need to think this out more... but not quite yet). i guess the offline client could keep in sync with a server-sync'd "numTransactions". 0,0... 1,1.. this is the simplest way to make sure a permission slip is used only once. and whatever is left over from the permission slip is simply ignored and remains in thier possession. they need to sign another permission slip to do another transaction. the gui could tell them which # permission slip it expects. if this number increments without their knowledge/doing, they know their shit has been compromised -- TODO: read the previous lol
+
     //3) purchase something (ad slots) (highlight existing user for 'from'): balance transfer remotely, if sufficient funds. nothing to do with bitcoin. from is highlighted in list, to is (???? maybe a popup form that asks who to give money to? but this is semi-pointless, just use a hardcoded 'to' to start)
     //4) payout (highlight existing user first): asks for btc addy to send to + amount
 
@@ -54,7 +58,7 @@ mainWebsiteBankView::~mainWebsiteBankView()
 void mainWebsiteBankView::handleNewUserPressed()
 {
     //for this prototype, it's good to call this new user
-    //but for the actual implementation, this code is going to be munged with the OnLoggedIn slot. we check if our current user's id (Wt user) has a bank account set up at the local app bank cache. if it doesn't (it'll be zero by default), then this is where THIS CODE RIGHT HERE comes into play. for this prototype we're going to NOT have a user db, just a local bank cache db of users and their cached balance. the actual implementation will have a Wt userdb and a local bank cache db associated with every user created (and confirmed via email)
+    //but for the actual implementation, this code is going to be munged with the OnLoggedIn slot. we check if our current user's id (Wt user) has a bank account set up at the local app bank cache. if it doesn't (it'll be zero by default), then this is where THIS CODE RIGHT HERE comes into play. for this prototype we're going to NOT have a user db, just a local bank cache db of users and their cached balance. the actual implementation will have a Wt userdb and a local bank cache db associated with every user created (and bank account created only after confirmed via email)
 
     QString newUser(m_NewUserLineEdit->text().trimmed());
     if(!newUser.isEmpty())

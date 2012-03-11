@@ -14,6 +14,8 @@ public:
     explicit BankDb(QObject *parent = 0);
     void addUser(const QString &appId, const QString &userName); //todo: should either return a bool or an AddUserResult. to make this initial prototype easier and to get it up and running, we're going to assume it worked... because it will
     void setAddFundsKey(const QString &appId, const QString &userName, const QString &newKey);
+    void pendingAmountReceived(const QString &appId, const QString &username, double pendingAmount);
+    void confirmedAmountReceived(const QString &appId, const QString &username, double confirmedAmount);
 private:
     /*
       --- our 'local app bank db' reciprocal ---

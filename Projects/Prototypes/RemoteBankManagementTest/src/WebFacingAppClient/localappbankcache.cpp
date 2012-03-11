@@ -83,8 +83,8 @@ void LocalAppBankCache::handleAddFundsKeyReceived(QString user, QString newKey)
 }
 void LocalAppBankCache::handlePendingPaymentReceived(QString user, QString key, double pendingAmount)
 {
-    //update our local db/cache -- TODO: server hasn't updated it's db yet.. as in, i haven't written the code to do it
-    m_Db.pendindAmountReceived(user, key, pendingAmount);
+    //update our local db/cache
+    m_Db.pendindAmountReceived(user, pendingAmount);
 
     //TODO: just like handleAddFundsKeyReceived above, we're just goint to use emit d() to push the notification to the mainwebsitebankview.cpp... but in impl it'd be a special signal (probably)
     emit d(user + " received " + QString::number(pendingAmount,'f',8) + " -PENDING- @ " + key);
@@ -92,6 +92,6 @@ void LocalAppBankCache::handlePendingPaymentReceived(QString user, QString key, 
 void LocalAppBankCache::handleConfirmedPaymentReceived(QString user, QString key, double confirmedAmount)
 {
     //todo: see pending sister function's TODOs
-    m_Db.confirmedAmountReceived(user, key, confirmedAmount);
+    m_Db.confirmedAmountReceived(user, confirmedAmount);
     emit d(user + " received " + QString::number(confirmedAmount,'f',8) + " -CONFIRMED- @ " + key);
 }

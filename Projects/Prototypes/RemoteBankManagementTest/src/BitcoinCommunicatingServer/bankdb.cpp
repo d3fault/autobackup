@@ -22,7 +22,8 @@ void BankDb::addUser(const QString &appId, const QString &userName)
         UserBankAccount *newAccount = new UserBankAccount();
         newAccount->AddFundsBitcoinKey = DEFAULT_EMPTY_ADD_FUNDS_BITCOIN_KEY; //TODO: our bitcoin polling loop has to check that the bitcoin key is NOT this 'default'. it can't just check every Awaiting because when the user is first created, before they try to add funds, we are in a state where they don't have a key but they ARE at AwaitingPayment. i could add another enum but it doesn't matter how you do it
         newAccount->Balance = 0.0;
-        newAccount->AddFundsStatus = UserBankAccount::AwaitingPayment;
+        newAccount->PendingBalance = 0.0;
+        newAccount->AddFundsStatus = UserBankAccount::PaymentAwaiting;
 
         listOfAccountsForThisAppId->insert(userName, newAccount);
         emit d("adding user '" + userName + "' to server db with appId '" + appId + "'");
@@ -64,7 +65,7 @@ void BankDb::setAddFundsKey(const QString &appId, const QString &userName, const
         {
             UserBankAccount *userAccount = listOfAccountsForThisAppId->value(userName);
             userAccount->AddFundsBitcoinKey = newKey;
-            userAccount->AddFundsStatus = UserBankAccount::AwaitingPayment;
+            userAccount->AddFundsStatus = UserBankAccount::PaymentAwaiting;
             emit d("setting addFundsKey for user: " + userName + " to: " + newKey);
         }
         else
@@ -75,5 +76,50 @@ void BankDb::setAddFundsKey(const QString &appId, const QString &userName, const
     else
     {
         emit d("error in setAddFundsKey, appId not found in db");
+    }
+}
+void BankDb::pendingAmountReceived(const QString &appId, const QString &username, double pendingAmount)
+{
+    if(m_Db.contains(appId))
+    {
+        QHash<QString, UserBankAccount*> *listOfAccountsForThisAppId = m_Db.value(appId);
+        if(listOfAccountsForThisAppId->contains(username))
+        {
+            UserBankAccount *userAccount = listOfAccountsForThisAppId->value(username);
+            userAccount->AddFundsStatus = UserBankAccount::PaymentPending;
+            userAccount->PendingBalance = pendingAmount; //todo: maybe add to the current pending amount? that's only if we change our polling logic to continue polling with 0 confirmations even after one 0 confirmations payment has been detected.. which it currently doesn't. this number doesn't even matter, so idk why we store it... it only KIND OF matters in the web facing cache db.. if the user is not logged in and then makes a payment, then logs in.. it should tell them. but since we pass it to the webclient right away, what is the point of storing it here on the server? might make shit easier in the future but i can't think of a scenario where i'd use it yet
+        }
+        else
+        {
+            emit d("error in pendingAmountReceived, username not found in db");
+        }
+
+    }
+    else
+    {
+        emit d("error in pendingAmountReceived, appId not found in db");
+    }
+}
+void BankDb::confirmedAmountReceived(const QString &appId, const QString &username, double confirmedAmount)
+{
+    if(m_Db.contains(appId))
+    {
+        QHash<QString, UserBankAccount*> *listOfAccountsForThisAppId = m_Db.value(appId);
+        if(listOfAccountsForThisAppId->contains(username))
+        {
+            UserBankAccount *userAccount = listOfAccountsForThisAppId->value(username);
+            userAccount->AddFundsStatus = UserBankAccount::PaymentConfirmed;
+            userAccount->PendingBalance = 0.0; //see? if we zero it out here wtf was the point of storing it above?? we could check to see if the PendingBalance is the same as our new confirmedBalance.. which would really only mean that the user made 2 payments and got them both in on time. if they don't do it before the block is solved, they're fucked. we advise them of this in the GUI. there is no benefit to checking that PendingBalance is equal to our new confirmedBalance... at least i can't think of one. if there was a benefit, here would be the place
+            userAccount->Balance += confirmedAmount; //we add it. if we kept a list of transactions, then this transaction's balance would be assigned to it. however, our current design is not that.
+        }
+        else
+        {
+            emit d("error in confirmedAmountReceived, username not found in db");
+        }
+
+    }
+    else
+    {
+        emit d("error in confirmedAmountReceived, appId not found in db");
     }
 }
