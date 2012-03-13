@@ -13,7 +13,7 @@ public:
     explicit LocalAppBankCache(QObject *parent = 0);
 private:
     RemoteBankServerHelper *m_BankServer; //helper, encapsulates ssl + protocol etc
-    LocalBankDb m_Db; //TODO: for now, in-memory works. but a future version of this prototype should use an sql db to be persistent across exe sessions.
+    LocalBankDb m_Db; //TODO: for now, in-memory works. but a future version of this prototype should use an sql db to be persistent across exe sessions. maybe this should be a pointer initialized in the init() slot? so that the thread that we moveTo owns it? i really don't know if it matters :-/... what the fuck are "child objects". moveToThread also moves all "child objects"... are those child widgets? or any QObject that has this passed into it's constructor for *parent?? as of now i know one thing: the db is being constructed on the GUI thread.
 
     void userNeedsNewBitcoinAddFundsKey(QString user);
 signals:

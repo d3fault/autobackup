@@ -14,17 +14,27 @@ SOURCES += main.cpp\
         mainwebsitebankview.cpp \
     localappbankcache.cpp \
     localbankdb.cpp \
-    remotebankserverhelper.cpp
+    remotebankserverhelper.cpp \
+    adagencyapplogic.cpp \
+    appuserdb.cpp
 
 HEADERS  += mainwebsitebankview.h \
     localappbankcache.h \
     localbankdb.h \
     remotebankserverhelper.h \
     ../sharedProtocol/sharedprotocol.h \
-    ../sharedProtocol/userBankAccount.h
+    ../sharedProtocol/userBankAccount.h \
+    adagencyapplogic.h \
+    appuserdb.h \
+    AppUserAccount.h
 
 RESOURCES += \
     CAfiles.qrc
+
+
+
+
+
 
 
 
