@@ -67,6 +67,8 @@ mainWebsiteBankView::mainWebsiteBankView(QWidget *parent)
     connect(m_NewAdOwnerAdCampaignButton, SIGNAL(clicked()), this, SLOT(handleNewAdCampaignPressed())); //i might be wrong with the above though. maybe some js checking of values could be done which could then send a JSignal or whatever to the server (which has to do the same checks again... CAN NEVER TRUST A GUI/user... <<<---- TODO
 
     m_AllAdOwnerAdCampaignsListWidget = new QListWidget();
+    m_PurchaseSlotButton = new QPushButton("Purchase Slot");
+    connect(m_PurchaseSlotButton, SIGNAL(clicked()), this, SLOT(handlePurchaseSlotPressed()));
 
 
     //4) payout (highlight existing user first): asks for btc addy to send to + amount
@@ -75,6 +77,7 @@ mainWebsiteBankView::mainWebsiteBankView(QWidget *parent)
 
     m_Layout->addWidget(m_AllUsersListWidget);
     m_Layout->addWidget(m_AllAdOwnerAdCampaignsListWidget);
+    m_Layout->addWidget(m_PurchaseSlotButton);
     m_Layout->addWidget(m_Debug);
     this->setLayout(m_Layout);
 }
@@ -140,18 +143,43 @@ void mainWebsiteBankView::handleNewAdCampaignPressed()
 }
 QString mainWebsiteBankView::getCurrentlySelectedUsername()
 {
-    QListWidgetItem *selectedUsernameListWidgetItem = m_AllUsersListWidget->currentItem();
-    if(selectedUsernameListWidgetItem)
-    {
-        return selectedUsernameListWidgetItem->text().trimmed();
-    }
-    else
-    {
-        m_Debug->appendPlainText("you need to select a user for that action");
-        return QString(); //callers have to verify a non-empty string still
-    }
+    return getCurrentlySelectedItemForListWidget(m_AllUsersListWidget);
 }
 void mainWebsiteBankView::handleCampaignAdded(QString newCampaignName)
 {
     new QListWidgetItem(newCampaignName, m_AllAdOwnerAdCampaignsListWidget);
+}
+void mainWebsiteBankView::handlePurchaseSlotPressed()
+{
+    //todo: if we wanted to we could verify that the selected user is NOT the owner of the slot we are trying to purchase. it's gotta be a separate user. but for now who gives a fuck. and i see no strict reason why we should disallow it. hell, i might even buy my own first slot for the "eating my own dog food" ad on the ad agency page. i'm thinking it should just be a picture of my cock.
+    QString purchaserUsername = getCurrentlySelectedUsername();
+    if(purchaserUsername.isEmpty())
+    {
+        m_Debug->appendPlainText("select a username to be the purchaser of the ad campaign slot");
+        return;
+    }
+    QString adCampaignNameToPurchaseAslotFrom = getCurrentlySelectedAdCampaign();
+    if(adCampaignNameToPurchaseAslotFrom.isEmpty())
+    {
+        m_Debug->appendPlainText("select an ad campaign to purchase a slot from");
+        return;
+    }
+    QMetaObject::invokeMethod(m_AppLogic, "purchaseSlotXforUserY", Qt::QueuedConnection, Q_ARG(QString, adCampaignNameToPurchaseAslotFrom), Q_ARG(QString, purchaserUsername));
+}
+QString mainWebsiteBankView::getCurrentlySelectedAdCampaign()
+{
+    return getCurrentlySelectedItemForListWidget(m_AllAdOwnerAdCampaignsListWidget);
+}
+QString mainWebsiteBankView::getCurrentlySelectedItemForListWidget(QListWidget *listWidgetToGetItemFor)
+{
+    QListWidgetItem *selectedListWidgetItem = listWidgetToGetItemFor->currentItem();
+    if(selectedListWidgetItem)
+    {
+        return selectedListWidgetItem->text().trimmed();
+    }
+    else
+    {
+        m_Debug->appendPlainText("a list widget item was supposed to be selected but was not");
+        return QString(); //callers have to verify a non-empty string still
+    }
 }

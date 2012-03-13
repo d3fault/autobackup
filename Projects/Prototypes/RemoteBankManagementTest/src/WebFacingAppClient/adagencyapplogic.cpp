@@ -18,4 +18,26 @@ void AdAgencyAppLogic::createAdCampaignXForUserY(QString adCampaignName, QString
 void AdAgencyAppLogic::init()
 {
     m_Db = new AppUserDb(); //i should probably move the db for the local bank cache into it's init as well
+    connect(m_Db, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+}
+void AdAgencyAppLogic::purchaseSlotXforUserY(QString adCampaignNameToPurchaseSlotFrom, QString slotPurchaserUsername)
+{
+    //TODOreq: TODOTODOTODO -- after we do whatever needs to be done in this slot (initial check of allotted funds required for balance transfer), our bank server should listen to a signal from this level/layer (not the gui level/layer as i currently have it designed) and initiate the balance transfer.
+    //it goes like this: Wt/GUI -> Wt/Front-End-Server (here) -> Qt/Back-End-Bank-Server
+    //TODO: it makes no sense for us to emit a signal to the gui which then emits a signal to a server. we can hackily connect the two in the GUI code, however... keeping the interaction in the GUI code to a minimum. in the implementation the connect() would/should be done in THIS constructor's logic. the reason i didn't design it like that to begin with is because i didn't even have this class while i was designing it originally.
+
+    //check in cache if enough funds availalbe
+    //TODO
+
+    //TODOsecure: check user's public cert for permission slip is valid, then put it into pending so no other users can try to buy it while we wait for our bank server to respond (should be fast, but never fast enough)
+    //...
+
+    //since we currently don't own the server in this class (which we SHOULD), we'll just emit the hacky signal that the GUI connects us to the server with and the server's code will do the verification. i mean, it still should... but it should do it before it's on the way towards sending the message to the back-end-server. a boolean m_Server.hasEnoughFundsForBalanceTransfer(username) or something... and we call it blocking queued i guess?? that m_Server is really the LocalAppBankCache class, and it only checks locally at first. (then sets the campaign as pendingBuy, then the server has to also confirm the amount and also do the balance transfer. then when we get back here, we update our cache to reflect the balance transfer)
+
+    emit appLogicRequestsSlotPurchase(slotPurchaserUsername, adCampaignNameToPurchaseSlotFrom.Owner, adCampaignNameToPurchaseSlotFrom.currentPrice);
+    //we're going to need to remember what slot wants to be purchased.. because the bank server has no need to know. only the owner's username and the purchaser's username and the price
+    //i'm really starting to think i should just start coding the Wt/functioning app...
+    //but i also don't want to for 2 reasons: a) want to test persistence of remote bank db, and b) want to prototype OptionallySecureAsFuckBank thingo....
+
+    //if i was better at git i'd revert it to before this applogic code into a new folder (while still keeping this app logic code) where i could prototype the db persistency. after that i'd be confident enough to start the Wt/functional attempt (because it might take multiple attempts). i think i could add the SecureAsFuck functionality/features later on (famous last words??).. they are just custom alternate paths that aren't HUGE (but do HUGE THINGS) from the big picture. it would be hard'ish to prototype (as is this right here) without an actual/functioning app...
 }

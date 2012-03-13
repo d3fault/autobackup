@@ -19,6 +19,7 @@ public slots:
     void init();
     void addUser(QString newUser);
     void createAdCampaignXForUserY(QString adCampaignName, QString adCampaignOwnerName);
+    void purchaseSlotXforUserY(QString adCampaignNameToPurchaseSlotFrom, QString slotPurchaserUsername);
 };
 
 #endif // ADAGENCYAPPLOGIC_H

@@ -33,7 +33,8 @@ private:
     QListWidget *m_AllUsersListWidget;
     QListWidget *m_AllAdOwnerAdCampaignsListWidget;
     QMenu *m_ListContextMenu;
-    QAction *m_AddFundsRequestAction;
+    QAction *m_AddFundsRequestAction; //lol shouldn't i have an addUserAction and now also an addCampaignAction etc?? why do i only have an addFundsRequestAction? i guess because it's NEEDED by the right-clicking menu... it's still better organization though to put everything as an action
+    QPushButton *m_PurchaseSlotButton;
 
     QPlainTextEdit *m_Debug;
 
@@ -44,9 +45,12 @@ private:
     AdAgencyAppLogic *m_AppLogic; //not sure if this needs it's own thread or not. in any case, the app logic runs on the Wt server, while the gui runs in the user's browser. that's somewhat like thread separation... so i'm thinking.. yes?
 
     QString getCurrentlySelectedUsername();
+    QString getCurrentlySelectedAdCampaign();
+    QString getCurrentlySelectedItemForListWidget(QListWidget *listWidgetToGetItemFor);
 private slots:
     void handleNewUserPressed();
     void handleNewAdCampaignPressed();
+    void handlePurchaseSlotPressed();
 
     void handleUserAdded(QString newUser);
     void handleCampaignAdded(QString newCampaignName);
