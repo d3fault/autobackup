@@ -1,0 +1,13 @@
+on ABC i could have like a "public user profiles" type system, which mimics facebook/myspace
+on each profile, there is an advertisement image. just one. at the top. so the idea is basically that if a user has a popular proifle with lots of friends, someone can buy that user's ad space (for whatever rate, doubling each slot shits). if they don't have enough viewers and nobody wants to purchase their specific one, there is a "public profile global ad" that anybody can buy. it's shown on every profile that doesn't have a specific purchaser (it automatically alternates between the global/user-specific).
+
+the owner of the profile gets a 3% cut or whatever of the ad revenue (or is it the other way around? i think the other way around. i want to spoil my users. _I_ get the 3% cut.)
+but if it's the global ad, then i get 100% of it...
+
+people would flock from myspace/facebook because they'd be making money just for having a bitchin profile
+
+it could even be a sub-category under the Index menu
+
+Index
+      -> Websites (advertisers + site owners)
+      -> People (profiles)
