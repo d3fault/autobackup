@@ -1,0 +1,3 @@
+my offline setup could easily be modified *without* leaving physical keylogger
+the bios could be keylogged, and could be re-programmed to output a different inaudible (but maybe audible to dogs?) tone for each keystroke that my phone could then pick up
+the bios could also just save the logged keys to it's own memory.. for later retrieval. but the above demonstrates realtime logging.
