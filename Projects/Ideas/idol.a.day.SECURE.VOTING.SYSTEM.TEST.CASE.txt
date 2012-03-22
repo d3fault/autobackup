@@ -1,0 +1,19 @@
+american idol
+idoladay (idol a day... one per day for each category... sooo... LOTS)
+
+bitcoin ads are revenue source
+people submit videos (a la youtube (could be link or upload)) and review others'
+it could be used without beefy security and still would provide a profit
+
+but my [better] idea is to use it to test out the "video authentication" scheme
+
+you read off a public decryption key or whatever in a video to confirm that a) you are a person and b) you are legit and your public key associated with your profile matches etc or something (haven't worked out the fine details in this but yea...)
+basically it's just to test the functionality/security of a voting system
+because WHO GIVES A FUCK who the daily idol is
+obviously millions of dipshits do...
+but it isn't a risk
+
+...as putting a person in power using such a voting system IS a risk.
+so yea anyways that idea could easily make millions and millions,, even without the beefy security
+
+lol life's fucking easy
