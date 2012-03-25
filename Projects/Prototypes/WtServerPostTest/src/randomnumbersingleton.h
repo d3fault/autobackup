@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QTimer>
+#include <QDebug>
 
 class RandomNumberSingleton : public QObject
 {
@@ -13,12 +14,12 @@ public:
 private:
     static RandomNumberSingleton *m_pInstance;
     RandomNumberSingleton();
-    QThread *m_MyThread;
+    static QThread *m_MyThread;
     QTimer *m_GenerateNumberTimer;
-private slots:
+private Q_SLOTS:
     void init();
     void generateNumber();
-signals:
+Q_SIGNALS:
     void numberGenerated(int number);
 };
 

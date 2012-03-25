@@ -1,5 +1,7 @@
 #include "wtsessionspecificnumberwatcher.h"
 
+#include "QtAwareWtApp.h"
+
 WtSessionSpecificNumberWatcher::WtSessionSpecificNumberWatcher(std::string wtSessionId, WServer &server, ServerPostCallback callback)
     : m_WtSessionId(wtSessionId), m_WtServer(server), m_WtSessionCallback(callback)
 {
@@ -25,7 +27,13 @@ void WtSessionSpecificNumberWatcher::handleGeneratedNumber(int number)
     if(m_NumbersBeingWatched.contains(number))
     {
         //emit numberSeen ;-)
+        qDebug() << "number IS being watched for";
         m_WtServer.post(m_WtSessionId, boost::bind(m_WtSessionCallback, number));
+        //m_Wt->updateGuiAfterContextSwitch(number);
+    }
+    else
+    {
+        qDebug() << "number not being watched";
     }
 
     m_NumberWatchingListMutex->unlock();

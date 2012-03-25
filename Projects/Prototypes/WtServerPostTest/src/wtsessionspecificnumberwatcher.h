@@ -10,6 +10,8 @@ using namespace Wt;
 
 typedef boost::function<void (int)> ServerPostCallback;
 
+class QtAwareWtApp;
+
 class WtSessionSpecificNumberWatcher : public QObject
 {
     Q_OBJECT
@@ -19,12 +21,13 @@ public:
 private:
     QMutex *m_NumberWatchingListMutex;
     QList<int> m_NumbersBeingWatched;
+    //QtAwareWtApp *m_Wt;
     std::string m_WtSessionId;
-    WServer &m_WtServer;
+    Wt::WServer &m_WtServer;
     ServerPostCallback m_WtSessionCallback;
-signals:
+Q_SIGNALS:
     //void numberSeeen(); <--against my instincts and prior learnings, i can't use a signal :(. i have to use Server.Post() to propagate it to the right thread/context. weird/shitty imo
-public slots:
+public Q_SLOTS:
     void handleGeneratedNumber(int number);
 };
 

@@ -1,8 +1,8 @@
 #include <QtCore/QCoreApplication>
 #include <QDebug>
 
-#include "QtAwareWtApp.h"
 #include <Wt/WServer>
+#include "QtAwareWtApp.h"
 using namespace Wt;
 
 WApplication *createApplication(const WEnvironment& env, WServer &server)

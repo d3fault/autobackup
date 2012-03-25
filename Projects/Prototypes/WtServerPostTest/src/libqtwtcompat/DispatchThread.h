@@ -48,10 +48,10 @@ public:
 
   void propagateEvent();
 
-signals:
+Q_SIGNALS:
   void doEvent();
 
-private slots:
+private Q_SLOTS:
   void onEvent();
 
 private:

@@ -36,7 +36,7 @@ DispatchObject::DispatchObject(DispatchThread *thread)
 
 void DispatchObject::propagateEvent()
 {
-  emit doEvent();
+  Q_EMIT doEvent();
 }
 
 void DispatchObject::onEvent()
