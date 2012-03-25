@@ -8,9 +8,25 @@ CONFIG += console
 CONFIG -= app_bundle
 TEMPLATE = app
 SOURCES += main.cpp \
-    wtapp.cpp
+    libqtwtcompat/DispatchThread.C \
+    libqtwtcompat/WQApplication.C \
+    QtAwareWtApp.cpp \
+    randomnumbersingleton.cpp \
+    wtsessionspecificnumberwatcher.cpp
+
 
 HEADERS += \
-    wtapp.h
+    libqtwtcompat/DispatchThread.h \
+    libqtwtcompat/WQApplication \
+    QtAwareWtApp.h \
+    randomnumbersingleton.h \
+    wtsessionspecificnumberwatcher.h
+
+
+
+
+
+
+
 
 
