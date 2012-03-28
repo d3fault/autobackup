@@ -1,0 +1,12 @@
+d3fault (network) and it's associated library to access the network filesystem, should be LGPL
+the reason being is so that companies can use it and promote it's use for free, and possibly even contribute back to it
+
+which brings me to my next point
+an application such as a word processing application that isn't run 24/7 should only be used for it's bandwidth
+there can be 2 forms of 'trusted'
+regular where they're expected to hold files long term
+and short-term where the files they are given are only files of high interest and they help spread out the bandwidth
+when they go offline and re-emerge, they are not expected to still have the files (though they might as well until they are overwritten)
+
+should it be a cost of using the network? to provide your bandwidth at the very least?
+this is not a viable solution for mobile (very expensive bandwidth) users
