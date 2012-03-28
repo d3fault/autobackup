@@ -9,3 +9,17 @@ YAT
 lawl.
 they are all in the name of progress
 but sometimes lead you further away from it
+
+
+addtionally, i should prototype the cross-session-persistence of watching numbers
+the amount of time any watched numbers is seen is updated while they are not even there
+i guess this implies i need a username login function (password isn't necessary, but i guess i should just use the AuthWidget which has it already built in)
+when they log in (for a second+ time), their previously set-as-being-watched numbers are shown with all the times it has been seen [since they added the watch?? or in total? this might not matter]
+
+there are too many "sessions" (wt WApplication sessions, db sessions..)... my mind is full of fuck
+
+
+
+
+i also want to create Qt objects BEFORE any user connects. my singleton delayed instantiation until first call/first user session doesn't cut it imo... but it might just have to do. the thing is, i want to pass my server process lifetime db session object into said singleton (or at least an object that communicates with it)... but how can i if the db session is created in main() (is that where it should go? the tutorial on the dbo doesn't really say). I guess it can just live in an object that I instantiate in main, which is referenced via DbHolderSingleton::Instance()->ServerProcessDbSession; from within our delayed-instantiated ListenerObjectSingleton after the first user connects.
+this would possibly even imply that in order to be fully started up and able to be listening to and updating the db, we need to connect (and maybe log in?) to the wt application after we launch it. not a HUGE deal, but might not be a good design. i don't know if this holds true, just a thought~
