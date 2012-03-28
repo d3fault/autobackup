@@ -1,0 +1,40 @@
+i worry about, but cannot think of, scenarios in which the process-wide db session is modifying the same thing/row/table/whatever as the WApp-session-specific db session
+i guess the same holds true for 2x Wapp session db sessions
+am i missing something?
+databases suck.
+
+ex:
+
+process-wide db session:
+
+Transaction t(session);
+//modify some db shit
+
+
+//...before commit is called, the other scenario occurs
+t.commit();
+
+
+WApp-user-session db session:
+
+Transaction t(session);
+//modify some shit. the same shit the other transaction modifies
+t.commit();
+
+
+
+
+an easy example is an increment. if they both increment and we want 2 increments, maybe only one will be shown?
+this is a race condition that may be hard to trigger during tests
+but a live production server with thousands of connections could easily trigger it
+
+
+i could maybe simulate this by allocating a Transaction on the heap, server.post'ing when the transaction is open, enabling a button to do a commit
+
+then opening another session that does the same thing. committing the second one before the first... and seeing wtf the outcome is...
+
+the db test could be an increment as suggested
+
+is the point of a transaction that only 1 transaction can be "open" at a time? it should be imo..
+
+shiiiiit, section 8 of the dbo tutorial covers all this... it looks like they have that shit all figured out and i don't have to give a fuck. fuck yea for not reinventing the wheel...
