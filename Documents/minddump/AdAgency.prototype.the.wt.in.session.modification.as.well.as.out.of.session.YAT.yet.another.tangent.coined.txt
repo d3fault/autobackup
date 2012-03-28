@@ -1,0 +1,11 @@
+you know, i guess the proper solution is to prototype
+since i am unsure, i must become sure
+
+it shouldn't be too hard to make a prototype that reads/modifies the db from within a WApplication session... as well as when a random number is generated (going by my old Server.Post prototype). the random number generator is of course simulating the ssl connection to the bank server
+the random number generator should have a db associated. each number 0-10 should add a row, and if the row already exists just append how many times that random number has been generated)
+
+fuck, YET ANOTHER TANGENT
+YAT
+lawl.
+they are all in the name of progress
+but sometimes lead you further away from it

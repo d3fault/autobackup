@@ -1,0 +1,14 @@
+the listener object will be disconnected from the bank helper singleton upon Wt session deletion
+but that doesn't necessarily mean we don't want to update the db values still
+we definitely still do
+all it means is we don't want to notify the client via server.post
+so the db logic/code should definitely NOT go in the listener object... nor should it have anything to do with whether or not the user is logged in/has a session active
+
+all i am wondering is if i can access/modify/use the Wt db (safely?) from outside of a Wt WApplication session...
+...if i can't, the solution is to use a Qt db
+but i do think it will make organization easier if i keep them all in one db (with multiple tables of course)
+
+the .user() (returns dbo::ptr<User>) call in the db code for Wt really just performs a .find using the username by string... nothing fancy about that
+and i vaguely remember reading somewhere that i should instantiate 1 database object for the lifetime of the SERVER PROCESS... with each user-session getting their own instantiation as well. something about it making sure the db stays open/active/alive or something.
+i might be able to use that server process instantiation of the db to do my bidding... i dunno lol
+god, and i drank coffee for THIS? i was hoping for a coding day :(

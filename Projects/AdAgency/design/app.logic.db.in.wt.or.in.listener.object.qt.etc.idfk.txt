@@ -1,0 +1,34 @@
+ok so i have server push figured out... and with multiple clients
+but i am unsure of how i want to design the db
+
+will the object that each session has that watches for updates from the remote server (sslbankhelper -> listener object (does server.post) -> wt app) have a db... or just use in-memory shit?
+
+i guess i need to figure out what exactly i'd need to be looking for
+
+certain things will be synchronous. example: getting a key to send funds to
+at least, it may appear synchronous...
+maybe it isn't/shouldn't be?
+maybe it too should use the listener object?
+
+that isn't that great of a name :(... i need a better one
+
+
+but, for example, the 2 best cases i can think of that use the listener object:
+1) the user has a key already and is on their account page (unless we show their credits on EVERY page...). when a pending balance is received, the listener object server.posts that to the session. same with confirmed payment
+2) for "list sites that have slots available" view, we can show the user like 10 or so sites at a time (20? 50?)... and we can update the slot price (and associating javascript "countdown" code (the rate may change as the days has changed too)) when a different user purchases said slot. this might be too inefficient to implement for 10 at a time... but at the very least, being on the page specific to that ad (shows it's details... maybe previous slot sale prices or whatever) should be updated via server.post whenever someone buys it
+2a) that same "details" view for an ad campaign might be viewable from the perspective of the site owner... they'd want the values server.post'd to them as well. they'd definitely want to see every slot's sale price, who bought it, the ad they bought with it (and remember: disputes!)
+
+i want to update the pending/confirmed amounts regardless of whether the user still has a session/connection/isLoggedIn
+so that the values are correct if they make a connection later
+my view/confusion is (i am unsure atm) that the wt session/wapplication object is where the db logic/code is/has-to-be(?????)... so how can i update the db without that session being active?
+
+the m_Db object i'm pretty sure is only alive for the duration of a Wt session... but i could also just save it's contents (username) and update the db when i don't have a wapplication session active by using the username to access the db (i think?)
+i need to check into my AdCaptcha code to see how the m_Db object works
+
+
+
+after investigating... to be honest i have no idea.
+i have no idea if all the "App Logic" (many-to-one campaigns + many-to-one slot-purchases), including the cached balance, should be in the same user db that we use to login with Wt
+or if it should be in a separate (Qt or Wt?) db in the listener object
+
+this really is my only problem before i am able to code the ENTIRE FUCKING THING... which i want to do ASAP :-P
