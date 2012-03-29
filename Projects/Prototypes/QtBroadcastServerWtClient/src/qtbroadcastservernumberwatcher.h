@@ -9,6 +9,7 @@
 #include <QThread>
 #include <QHash>
 #include <QHashIterator>
+#include <QMutableHashIterator>
 #include <QList>
 
 #include <boost/function.hpp>

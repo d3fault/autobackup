@@ -1,6 +1,7 @@
 #include "qtbroadcastservernumberwatcher.h"
 
 QtBroadcastServerNumberWatcher::QtBroadcastServerNumberWatcher()
+    : m_UsersAndTheirNumbersBeingWatched(0)
 {
     //don't do anything in here as the object hasn't been .moveToThread'd yet
 }
@@ -15,11 +16,14 @@ QtBroadcastServerNumberWatcher * QtBroadcastServerNumberWatcher::Instance()
 }
 void QtBroadcastServerNumberWatcher::init()
 {
-    //todo: set up random number generator on it's own thread, connect to it's signal
-    //we could just keep sending ourselves unlimited events to simulate a while(true) loop...but it's better to only check our list of numbers that our clients are watching whenever the random number generator emits a new number generated
-
     qRegisterMetaType<WtClientCallback>("WtClientCallback"); //because invokeObject sends these as Q_ARG's
-    m_UsersAndTheirNumbersBeingWatched = new QHash<QtBroadcastServerNumberWatcher::QtBroadcastServerClient*, UsersAndTheirNumbersBeingWatched*>();
+    qRegisterMetaType<QtBroadcastServerNumberWatcher::QtBroadcastServerClient*>("QtBroadcastServerNumberWatcher::QtBroadcastServerClient*");
+    qRegisterMetaType<std::string>("std::string");
+
+    if(!m_UsersAndTheirNumbersBeingWatched)
+    {
+        m_UsersAndTheirNumbersBeingWatched = new QHash<QtBroadcastServerNumberWatcher::QtBroadcastServerClient*, UsersAndTheirNumbersBeingWatched*>();
+    }
 
     m_RandomNumberGeneratorThread = new QThread();
     m_RandomNumberGenerator = new MyRandomNumberGenerator();
@@ -40,35 +44,28 @@ void QtBroadcastServerNumberWatcher::connectToQtBroadcastServer(QtBroadcastServe
         user->m_NumbersBeingWatched = new QList<int>();
 
         m_UsersAndTheirNumbersBeingWatched->insert(client, user);
-        qDebug() << "connected";
     }
     //else, already connected...
 }
 void QtBroadcastServerNumberWatcher::watchForNum(QtBroadcastServerNumberWatcher::QtBroadcastServerClient *client, int numberToWatch)
 {
-    qDebug() << "qt broadcast server received request to watch for num: " << QString::number(numberToWatch);
     if(m_UsersAndTheirNumbersBeingWatched->contains(client))
     {
         UsersAndTheirNumbersBeingWatched *user = m_UsersAndTheirNumbersBeingWatched->value(client);
         if(!user->m_NumbersBeingWatched->contains(numberToWatch))
         {
             user->m_NumbersBeingWatched->append(numberToWatch);
-            qDebug() << "now watching: " << QString::number(numberToWatch);
         }
         //else num already being watched
     }
-    else
-    {
-        qDebug() << "not yet connected...";
-    }
+    //else not yet connected
 }
 void QtBroadcastServerNumberWatcher::disconnectFromQtBroadcastServer(QtBroadcastServerNumberWatcher::QtBroadcastServerClient *client)
 {
     if(m_UsersAndTheirNumbersBeingWatched->contains(client))
     {
-        UsersAndTheirNumbersBeingWatched *user = m_UsersAndTheirNumbersBeingWatched->value(client);
+        UsersAndTheirNumbersBeingWatched *user = m_UsersAndTheirNumbersBeingWatched->take(client);
         delete user->m_NumbersBeingWatched;
-        m_UsersAndTheirNumbersBeingWatched->remove(client);
         delete user;
     }
 }
@@ -82,7 +79,6 @@ void QtBroadcastServerNumberWatcher::handleRandomNumberGenerated(int num)
         userPtr = it.value();
         if(userPtr->m_NumbersBeingWatched->contains(num))
         {
-            qDebug() << "a number being watched, " + QString::number(num) + ", was generated. posting to session id: " << QString(userPtr->m_SessionId.c_str());
             Wt::WServer::instance()->post(userPtr->m_SessionId, boost::bind(userPtr->m_Callback, num)); //todo: we could do a callback function that takes the it.key(); as an input and all it does is removes is calls the disconnectFromQtBroadcastServer so that we don't post() to it ever again. we might even be able to just use the disconnectFromQt[...] function right in the binding!! to test that it works, comment out the call to disconnect in the finalize(); in the WApplication object... and add a QDebug call to disconnect of course
         }
     }
@@ -90,8 +86,26 @@ void QtBroadcastServerNumberWatcher::handleRandomNumberGenerated(int num)
 }
 void QtBroadcastServerNumberWatcher::stop()
 {
-    //TODO: dealloc the QHash
     QMetaObject::invokeMethod(m_RandomNumberGenerator, "stop", Qt::BlockingQueuedConnection);
-    QMetaObject::invokeMethod(m_RandomNumberGeneratorThread, "quit", Qt::QueuedConnection);
+    m_RandomNumberGeneratorThread->quit(); //direct call it, since the thread that is currently executing is the owner of the QThread object. when we call .wait() on it on the next line, it blocks indefinitely and we never have a change to even receive/process the 'quit' event. actually BlockingQueued would solve this too. ok i am wrong, that causes a DeadLock (qt detects this)
+    //QMetaObject::invokeMethod(m_RandomNumberGeneratorThread, "quit", Qt::BlockingQueuedConnection);
     m_RandomNumberGeneratorThread->wait();
+
+    //this needs to be after the random number generator thread is done stopping because it raises signals that will cause us to access the hash...
+    //dealloc the QHash
+    if(m_UsersAndTheirNumbersBeingWatched)
+    {
+        QMutableHashIterator<QtBroadcastServerNumberWatcher::QtBroadcastServerClient*,UsersAndTheirNumbersBeingWatched*> it(*m_UsersAndTheirNumbersBeingWatched);
+        UsersAndTheirNumbersBeingWatched *userPtr;
+        while(it.hasNext())
+        {
+            it.next();
+            userPtr = it.value();
+            it.remove();
+            delete userPtr->m_NumbersBeingWatched;
+            delete userPtr;
+        }
+        delete m_UsersAndTheirNumbersBeingWatched;
+        m_UsersAndTheirNumbersBeingWatched = 0;
+    }
 }

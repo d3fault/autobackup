@@ -28,5 +28,7 @@ void MyRandomNumberGenerator::stop()
     if(m_Timer)
     {
         m_Timer->stop(); //this is pointless
+        delete m_Timer;
+        m_Timer = 0;
     }
 }

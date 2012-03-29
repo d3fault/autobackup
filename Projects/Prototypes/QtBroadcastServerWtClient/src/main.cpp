@@ -26,12 +26,15 @@ int main(int argc, char **argv)
     int ret = WRun(argc, argv, &handleNewWtConnection);
 
     QMetaObject::invokeMethod(qtServer, "stop", Qt::BlockingQueuedConnection); //blocking so it has time to do all it's deallocation n stuff
-    QMetaObject::invokeMethod(&broadcastServerThread, "quit", Qt::QueuedConnection);
+    broadcastServerThread.quit();
     broadcastServerThread.wait();
+
+    qDebug() << "last thread stopped. return code: " << QString::number(ret);
 
     return ret;
     return app.exec(); //<-- this is the line that i think needs to be called and won't be without the qtwithwt interop library :(. we'll never enter the Qt event loop :(. but MAYBE since i'm putting the singleton on it's own thread and starting it all from within this main function... just MAYBE it will work. no idea hence keep coding bitch
 
 
     //HMMMM maybe after we do a server.start(); we can then do an app.exec(); and then after that we can do a server.waitForShutdown(); (we'd need to exit via Qt::exit() or whatever it's called in order to get exec to return)
+    //maybe NOT ya sonnofabitch. shit works even though i kinda thought it wouldn't :-P
 }
