@@ -1,0 +1,13 @@
+this is not to be confused with a QSsl/QTcpServer
+
+this is yet another server (that acts as a client to the QSslServer) that does WServer.post'ing to the Wt clients
+
+i don't think this will even work as I am NOT using the wtwithqt compatibility library...
+...but i have a hunch that it MIGHT if i use QMetaObject::invokeMethod whenever i communicate from the Wt WApplication user session to the Qt Broadcast Server Singleton (owns an object that is a random number generator as well)
+
+
+
+...my Qt Broadcast Server Singleton probably CANNOT modify the Wt process wide database... but who knows, maybe it can. that is NOT what i am testing, however
+
+
+this Qt Broadcast Server Singleton will only keep track of "connected" clients and what numbers they want to be notified for updates of to is are the what ;-P

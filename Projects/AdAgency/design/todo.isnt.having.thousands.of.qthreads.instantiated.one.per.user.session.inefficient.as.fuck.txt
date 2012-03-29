@@ -1,0 +1,2 @@
+this Wt with Qt interoperability implementation means that for every single Wt user session established, a QThread is made
+i'm really trying to minimize the cost of each session... as that is directly proportional to server costs... but this seems to really take a shit on everything.
