@@ -1,0 +1,3 @@
+a 'profile' is just all of the person's data
+a person can (by choice) sell an ad slot that is persistent accross their profile data items
+for 24 hours

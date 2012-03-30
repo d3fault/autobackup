@@ -1,0 +1,38 @@
+while(true)
+{
+  while(!self.learnedEnough) //a better name for this would be: if(inInputMode) ... if(inConsumeMode) ...
+  {
+    m_Timeline.addNode(TimelineNode referenceToSuggestedArticleBasedOnPreviouslyDemonstratedInterests/these-read-references);
+  }
+  else //output mode
+  {
+    m_Timeline.addNode(TimelineNode referenceToTimelineItemCreatedByMe;
+  }
+}
+
+
+
+and then i put mine into outputOnly mode
+it's while(true) (whiletrue.com?? probably taken. d3fault.net will do :))
+the word 'default' is used in that sense to mean that you can connect to other networks... or, they are all of the same network but that is the default entrance into it. if d3fault.net/com/org get siezed it won't matter one bit.
+
+
+this is supposed to be the code that i use to / high level design of my fingers project to in computer land
+fingers is just a means of input to control the keyboard when creating a text document, but is also used to navigate the application itself... going 'next' and going into create mode when you will it
+the same user interface needs to be a) clickable and b) navigable using just audio
+
+beeps tell you what mode you're in and confirm 'next' triggers, and also keep you an audio feedback (can just be TTS but PER LETTER (TTS isn't needed as there are only 26 letters. i could just voice them)) as you are typing
+
+
+
+
+another mode of creation is music. the fingers become instruments
+
+communication is done (friends list) over on the left, right, whatever. dockable pretty much. it too does m_Timeline.addNode()
+
+is a node a keystroke? a message? or an entire chat log?
+
+//if individual keystrokes are sent, the packet header will be significantly larger than
+messages are the ideal size/timespan between saves
+but i also kinda want REALTIME
+i dunno lol
