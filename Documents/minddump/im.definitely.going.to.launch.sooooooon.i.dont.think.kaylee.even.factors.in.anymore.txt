@@ -2,7 +2,7 @@ in output only mode, i can take 1 input a day
 that input being the advertisement image above my video stream (the video stream has the domain burned into the image.. but that's all my 'protection')
 people would pay money to get into my brain
 
-the output computer would use a different internet connection than the input computer
+the output computer would use a different internet connection than the input computer. i want to add that there are 2 output computers. 1 is 'offline mode' and is my coding and working machine etc. the video output is recorded by the other output machine, which is connected to the internet. i also do my gaming on the internet machine (no security risk there fuck it)
 the input computer is used to verify that i'm still online.. and it's how i'd see the 1 ad a day
 audio would need to be muted.. but maybe i can have a line thingy that moves to indicate volume indeed is working
 
