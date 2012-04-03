@@ -1,0 +1,11 @@
+when the time comes where i need to scale upward the appdb/appusernamedb server
+i can basically just split the shit in half
+an md5sum of say, for example, the usernames (or the owner's website domain), is first done
+then the first letter of the md5sum is used to determine which server to connect to
+initially, for the first split/scale, there'll just be 2 appdbs/usernamedbs
+md5s have a range of 16
+0-F
+so 0-7 for the first letter will connect to server #1
+and 8-F (15) will connect to server #2
+it can be divided further as needed, and when all 16 are used up, we can then use the 2nd letter of the md5 sum
+there should probably be a secret salt added to the md5 function (each wt front-end would need the same salt though) just so users can't game this and bring the any 1 server they choose to a halt. since they can generate md5sums for their usernames and keep generating until they get 'a' repeatedly and then spam created/login/whatever 'a' usernames to ddos. secret salt prevents this

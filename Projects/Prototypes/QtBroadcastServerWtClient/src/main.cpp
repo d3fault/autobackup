@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     broadcastServerThread.start();
 
     //in the initial launch this won't matter... but if i ever stop and restart the server, there might exist a race condition where the init() event is not processed before the first client connects and tries to QtBroadcastServerConnect() (actually... since that too is an event... it won't matter. lol i'm dumb. disregard this)
-    QMetaObject::invokeMethod(qtServer, "init", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(qtServer, "init", Qt::BlockingQueuedConnection); //i could even use a return value to make sure that it init'd ok and check it before doing WRun...
 
     int ret = WRun(argc, argv, &handleNewWtConnection);
 

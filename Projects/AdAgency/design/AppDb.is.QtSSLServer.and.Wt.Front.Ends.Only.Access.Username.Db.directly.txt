@@ -1,0 +1,58 @@
+the app bank cache db must be accessible by multiple instances at the same time.
+
+many Wt front-ends, 1 PostgreSQL (edit: doesn't matter if it's Postgre or SQLite, since Qt will be accessing. keep reading) it app bank cache database server (public dedi... although these will be the SAME MACHINE at launch, design needs to be scalable), 1 bank server (qt only)
+
+so i'm thinking maybe the app bank cache needs code encapsulating it that makes sure that the app bank cache is only updated by 1 Wt instance at a time
+
+I guess this means yet another Qt SSL protocol connection...
+
+otherwise, if we have the Wt code check the local app cache db, and ALSO do the communicating with the remote bank, multiple wt instances may connect/talk-to the remote bank at the same time and this could lead to disasterous consequences
+
+there is basically an AppDb, which is just a Qt application that receives multiple connections from the Wt front-ends (may or may not have Qt logic. i'm guessing yes, just for the SSL client connection part). the app db stores all the application logic as well as the "bank cache" shit. the Wt front-ends can/should have their own cache levels... but that basically means 3 levels of cache: the bitcoin server (1), the app server (1), and each wt front-end (X)
+
+the connections from the wt front-ends to the app-db are app specific. "Purchase slot x" etc... which the appdb forwards to the bitcoin server as "balance transfer x". the appdb processes the results, updates the app logic/db, and passes it on to the Wt server(s?). i am unsure at this moment if every update to the appdb needs to be pushed to ever Wt front-end. it almost sounds like it might defeat teh purpose of having the wt-front end caches... although at the end of the day the bulk of requests are just going to be READs which is the sole purpose of having so many Wt front-ends. all writes, and their responses, do i think need to be pushed to the wt front ends. there may be exceptions to this
+
+
+the appdb is both an ssl client (to the bitcoin server) and an ssl server (for the Wt front-ends)
+
+in a sense, it IS the application guts
+my main reason for opening this document is to determine if i want to use Wt or Qt databases
+since the appdb has no reason to be Wt, i guess i have my answer
+
+
+long-as-fuck-term: the bitcoin server will have many appdb type apps connecting to it, each with many wt front-ends connecting to individual appdb's
+scalable as fuck and i like visualizing that graph in my head <3
+
+the bitcoin server can probably be optimized to not call bitcoind as an executable
+i mean, i know it can..
+it's just a matter of doing
+
+so my QtBroadcastServer (that calls WServer.Post) is going to be something like: AdAgencyDbHelper (orAdAgencyDbServerHelper ... it is an SSL *CLIENT* (but exposes server api) to the appdb *SERVER*)
+AdAgencyDbHelper will be on it's on thread, contain a thread + ssl client, and the Wt front-end posts to it's thread when it wants to watch for some bullshit, which it uses WServer.post to respond
+
+
+the bitcoin server and the appdb server are what need backing up/RAID-0/whatever. the wt front-ends do not need backing up
+
+the wt front-ends probably don't even need databases... so i don't think i even need to use Wt::dbo
+they will be long-standing, and can either pull what they need when a user requests it or pull a fresh copy of the db on startup (unsure)
+
+oh god, how does Wt Username/Password/Registration/Login factor into all of this????
+
+ESPECIALLY with scalability
+do i need yet another PostgreSQL server (no app surrounding it like the appdb) just for username shit?
+my appUsernameDb??
+i think yes
+
+my brain was wanting to combine appdb and usernamedb using wt::dbo
+i can now confirm i need to use wt::dbo ... for the username db
+but i should NOT use it for the application logic... for the sole reason that i do NOT want each Wt front-end to be communicating with the bank server also. i only want 1 connection to the bank server per app. the app itself has many connections to each wt front-ends
+
+each front-end will thus have 2 connections to the appdb computer. 1 for the userdb and another for the appdb
+the connection to the appdb is only ever made AFTER the user completes the confirmation step in the email received (i may even ad a captcha to be completed to this step)
+
+this actually seems shit. 2 connections per wt front-end
+
+BUT, it is still scalable beceause i am NOT going to have 'thousands' of wt front-ends
+
+adding 1 wt-front end adds capacity for thousands of users, but only takes 2 additional connections to the appdb server
+(the appdb and userdb will probably be on the same physical server... but they don't really need to be)

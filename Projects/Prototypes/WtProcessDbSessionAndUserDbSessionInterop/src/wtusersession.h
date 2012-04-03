@@ -1,18 +1,16 @@
 #ifndef WTUSERSESSION_H
 #define WTUSERSESSION_H
 
-#include "../../../../tps/libqtwtcompat/WQApplication"
+#include <Wt/WApplication>
 using namespace Wt;
 
-class WtUserSession : public WQApplication
+class WtUserSession : public WApplication
 {
 public:
-    WtUserSession(const WEnvironment& env, WServer &server);
+    WtUserSession(const WEnvironment& env);
 
     virtual void create();
     virtual void destroy();
-private:
-    WServer &m_Server;
 };
 
 #endif // WTUSERSESSION_H

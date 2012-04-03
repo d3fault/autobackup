@@ -5,17 +5,19 @@ LIBS += -L/usr/local/lib -lwt -lwthttp -lboost_signals-mt -lboost_system-mt -lwt
 #QMAKE_CXXFLAGS += -DNDEBUG
 QMAKE_CXXFLAGS += -DWT_NO_SLOT_MACROS
 CONFIG += console
-#CONFIG += no_keywords
 CONFIG -= app_bundle
 TEMPLATE = app
 SOURCES += main.cpp \ 
     wtusersession.cpp \
-    ../../../../tps/libqtwtcompat/WQApplication.C \
-    ../../../../tps/libqtwtcompat/DispatchThread.C
-
+    AppDbHelper.cpp
 HEADERS += \
     wtusersession.h \
-    ../../../../tps/libqtwtcompat/WQApplication \
-    ../../../../tps/libqtwtcompat/DispatchThread.h
+    AppDbHelper.h
+
+
+
+
+
+
 
 

@@ -1,12 +1,11 @@
 #include "wtusersession.h"
 
-WtUserSession::WtUserSession(const WEnvironment &env, WServer &server)
-    : WApplication(env), m_Server(server)
+WtUserSession::WtUserSession(const WEnvironment &env)
+    : WApplication(env)
 {
 }
 void WtUserSession::create()
 {
-    m_RandomNumberSessionWatcher = new RandomNumberSessionWatcher();
 }
 void WtUserSession::destroy()
 {
