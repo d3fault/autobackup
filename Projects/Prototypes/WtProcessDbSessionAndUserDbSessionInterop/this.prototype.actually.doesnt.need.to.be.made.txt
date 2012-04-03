@@ -1,1 +1,0 @@
-since i'm using an appdb that is going to be Qt-based, i don't need to worry about using a Wt db session object from a Qt thread. this prototype hence is useless and doesn't need to exist 

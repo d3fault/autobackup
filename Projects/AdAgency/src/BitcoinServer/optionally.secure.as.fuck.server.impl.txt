@@ -1,0 +1,1 @@
+re-usable bitcoin bank server, optionally secure as fuck (todo later)
