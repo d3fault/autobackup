@@ -9,12 +9,16 @@ TEMPLATE = app
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
     database.cpp \
-    user.cpp
+    usernamedb.cpp
 
 HEADERS += \
     anonymousbitcoincomputing.h \
     database.h \
-    user.h
+    usernamedb.h
+
+
+
+
 
 
 

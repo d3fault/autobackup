@@ -9,7 +9,7 @@ namespace
 }
 
 Database::Database()
-    : m_Sqlite(Wt::WApplication::instance()->appRoot() + "adcaptcha.db")
+    : m_Sqlite(Wt::WApplication::instance()->appRoot() + "usernamedb.db") /*not sure if i can make this scalable by splitting the username a-z thing in half... since it's so tied in with Wt*/
 {
     //todo: a ReadWriteLock equivalent (in boost??) (i only know of it in Qt) of an in-memory cache of an array of AdCampaigns
     //it should have a dirty bit that is set to true whenever we write... or i guess we could just update the cache on write...
@@ -20,7 +20,7 @@ Database::Database()
     m_Sqlite.setProperty("show-queries", "false");
     //todo: maybe enable WAL (write-ahead-logging (i don't know that that is what setProperty accepts, research this)) for sqlite... enables simultaneous writes and error recovery if crash during transaction. idk if it's needed... but it sounds interesting
 
-    m_DbSession.mapClass<User>("user");
+    m_DbSession.mapClass<UsernameDb>("usernamedb");
     m_DbSession.mapClass<UserAuthInfo>("auth_info");
     m_DbSession.mapClass<UserAuthInfo::AuthIdentityType>("auth_identity");
     m_DbSession.mapClass<UserAuthInfo::AuthTokenType>("auth_token");
