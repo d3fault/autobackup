@@ -13,7 +13,7 @@
 #include <Wt/Auth/HashFunction>
 #include <Wt/Auth/Dbo/UserDatabase>
 
-#include "user.h"
+#include "usernamedb.h"
 
 typedef Wt::Auth::Dbo::UserDatabase<UserAuthInfo> UserDatabase;
 

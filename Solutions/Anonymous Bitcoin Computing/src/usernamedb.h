@@ -18,8 +18,10 @@ public:
     void persist(Action &action)
     {
 
-        Wt::Dbo::hasMany(action, authInfos, Wt::Dbo::ManyToOne, "user");
+        Wt::Dbo::hasMany(action, authInfos, Wt::Dbo::ManyToOne, "usernamedb");
     }
 };
+
+DBO_EXTERN_TEMPLATES(UsernameDb);
 
 #endif // USERNAMEDB_H
