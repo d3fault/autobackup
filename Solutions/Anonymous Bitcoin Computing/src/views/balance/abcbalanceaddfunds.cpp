@@ -3,7 +3,7 @@
 AbcBalanceAddFunds::AbcBalanceAddFunds(WContainerWidget *parent)
     : WContainerWidget(parent)
 {
-    addWidget(new WLabel("test123"));
+    addWidget(new WLabel("Hello Add Funds"));
     /*//Key
     WLabel *addFundsKeyLabel = new WLabel("Key: ");
     m_AddFundsKeyLineEdit = new WLineEdit("[None]");
@@ -46,4 +46,23 @@ void AbcBalanceAddFunds::handleAddFundsBalanceButtonClicked()
     WApplication::instance()->deferRendering(); //freeze the UI until we get our response
     QMetaObject::invokeMethod(AbcAppDbHelper::Instance(), "addFundsRequest", Qt::QueuedConnection, Q_ARG(QString,username)); //maybe also send in our Wt SessionID and a Callback?
     */
+}
+
+
+const std::string AbcBalanceAddFunds::ReadableText = "Add Funds";
+const std::string AbcBalanceAddFunds::PreferredInternalPath = "/balance/add-funds";
+
+bool AbcBalanceAddFunds::isInternalPath(const std::string &internalPath)
+{
+    if(internalPath == PreferredInternalPath)
+        return true;
+    if(internalPath == "/balance/add")
+        return true;
+    if(internalPath == "/balance/addfunds")
+        return true;
+    return false;
+}
+bool AbcBalanceAddFunds::requiresLogin()
+{
+    return true;
 }

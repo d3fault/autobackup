@@ -14,6 +14,12 @@ class AbcBalanceAddFunds : public WContainerWidget
 {
 public:
     AbcBalanceAddFunds(WContainerWidget *parent = 0);
+
+    static const std::string ReadableText;
+    static const std::string PreferredInternalPath;
+
+    static bool isInternalPath(const std::string &internalPath);
+    static bool requiresLogin();
 private:
     WLineEdit *m_AddFundsKeyLineEdit;
     WLabel *m_PendingPaymentAmountActual;

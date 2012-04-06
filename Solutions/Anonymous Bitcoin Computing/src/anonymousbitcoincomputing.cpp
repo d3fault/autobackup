@@ -1,10 +1,21 @@
 #include "anonymousbitcoincomputing.h"
 
 AnonymousBitcoinComputing::AnonymousBitcoinComputing(const WEnvironment &env)
-    : WApplication(env)
+    : WApplication(env), m_AuthWidgetIsInStack(false), m_PageNotFound(0)
 {
+    m_UsernameDb.getLogin().changed().connect(this, &AnonymousBitcoinComputing::handleLoginChanged);
+
+    m_AuthWidget = new Wt::Auth::AuthWidget(Database::getAuthService(), m_UsernameDb.getUserDatabase(), m_UsernameDb.getLogin());
+    m_AuthWidget->addPasswordAuth(&Database::getPasswordService());
+    m_AuthWidget->setRegistrationEnabled(true);
+
     buildGui();
+
     this->internalPathChanged().connect(this, &AnonymousBitcoinComputing::handleInternalPathChanged);
+
+    handleInternalPathChanged(WApplication::instance()->internalPath());
+
+    m_AuthWidget->processEnvironment();
 }
 void AnonymousBitcoinComputing::buildGui()
 {
@@ -19,21 +30,22 @@ void AnonymousBitcoinComputing::buildGui()
     setTitle(ANONYMOUS_BITCOIN_COMPUTING_BASE_TITLE);
 
     m_MainStack = new WStackedWidget();
+    //m_MainStack->addWidget(m_AuthWidget);
     WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250);
     m_MainStack->setTransitionAnimation(slideInFromBottom, true);
 
-    WAnchor *homeAnchor = new WAnchor(WLink(WLink::InternalPath,"/home"),"Home");
-    WAnchor *indexAnchor = new WAnchor(WLink(WLink::InternalPath, "/index"), "Index");
+    WAnchor *homeAnchor = new WAnchor(WLink(WLink::InternalPath, AbcHome::PreferredInternalPath), AbcHome::ReadableText);
+    WAnchor *indexAnchor = new WAnchor(WLink(WLink::InternalPath, AbcIndex::PreferredInternalPath), AbcIndex::ReadableText);
 
     WAnchor *balanceAnchor = new WAnchor(WLink(WLink::InternalPath, "/balance"), "Balance"); //TODO: should show their balance, and also show "Add Funds" and "Request Dispursement" below it
-    WAnchor *balanceAddFundsAnchor = new WAnchor(WLink(WLink::InternalPath, "/balance/add-funds"), "--Add Funds");
-    WAnchor *balanceRequestDisbursementAnchor = new WAnchor(WLink(WLink::InternalPath, "/balance/request-disbursement"), "--Request Disbursement");
+    WAnchor *balanceAddFundsAnchor = new WAnchor(WLink(WLink::InternalPath, AbcBalanceAddFunds::PreferredInternalPath), "--" + AbcBalanceAddFunds::ReadableText);
+    WAnchor *balanceRequestDisbursementAnchor = new WAnchor(WLink(WLink::InternalPath, AbcBalanceRequestPayout::PreferredInternalPath), "--" + AbcBalanceRequestPayout::ReadableText);
 
-    //TODO: "Set Up Auto-Dispursement" (daily) <-- where they add a bunch of keys
+    //TODO: "Set Up Auto-Dispursement" (daily) <-- where they add a bunch of keys ... or just "Options"
 
     WAnchor *advertisingAnchor = new WAnchor(WLink(WLink::InternalPath, "/advertising"), "Advertising");
-    WAnchor *advertisingSellAdSpaceAnchor = new WAnchor(WLink(WLink::InternalPath, "/advertising/sell-ad-space"), "--Sell Ad Space");
-    WAnchor *advertisingBuyAdSpaceAnchor = new WAnchor(WLink(WLink::InternalPath, "/advertising/buy-ad-space"), "--Buy Ad Space");
+    WAnchor *advertisingSellAdSpaceAnchor = new WAnchor(WLink(WLink::InternalPath, AbcAdvertisingSellAdSpace::PreferredInternalPath), "--" + AbcAdvertisingSellAdSpace::ReadableText);
+    WAnchor *advertisingBuyAdSpaceAnchor = new WAnchor(WLink(WLink::InternalPath, AbcAdvertisingBuyAdSpace::PreferredInternalPath), "--" + AbcAdvertisingBuyAdSpace::ReadableText);
 
     //TODO: AdCaptcha (both buy and sell?)
 
@@ -42,7 +54,9 @@ void AnonymousBitcoinComputing::buildGui()
 
     WVBoxLayout *mainVLayout = new WVBoxLayout();
 
-    WHBoxLayout *headerHLayout = new WHBoxLayout(); //todo: title? authwidget?
+    WHBoxLayout *headerHLayout = new WHBoxLayout();
+    //todo: title?
+    //headerHLayout->addWidget(m_AuthWidget);
 
     WHBoxLayout *bodyHLayout = new WHBoxLayout();
 
@@ -74,13 +88,16 @@ Wt::WContainerWidget * AnonymousBitcoinComputing::getView(AnonymousBitcoinComput
         WContainerWidget *theView = it->second;
         if(theView)
         {
+            std::cout << "returning already created" << std::endl;
             return theView; //already created, return it
         }
+        std::cout << "returning re-created" << std::endl;
         m_AllViews[view] = createView(view); //already created but was zero'd out/deleted, re-create it
         return m_AllViews[view];
     }
     else
     {
+        std::cout << "returning newly created" << std::endl;
         m_AllViews[view] = createView(view); //has not been created, is not in the list yet. create it
         //m_AllViews.insert(std::pair<AbcViews,WContainerWidget*>(view, theView));
         return m_AllViews[view];
@@ -88,92 +105,150 @@ Wt::WContainerWidget * AnonymousBitcoinComputing::getView(AnonymousBitcoinComput
 }
 Wt::WContainerWidget * AnonymousBitcoinComputing::createView(AnonymousBitcoinComputing::AbcViews view)
 {
+    WContainerWidget *containerView;
     switch(view)
     {
     case AnonymousBitcoinComputing::AbcHomeView:
-        return new AbcHome();
+        containerView = new AbcHome(m_MainStack);
+        return containerView;
         break;
     case AnonymousBitcoinComputing::AbcIndexView:
-        return new AbcIndex();
+        containerView = new AbcIndex(m_MainStack);
+        return containerView;
         break;
     case AnonymousBitcoinComputing::AbcBalanceSubMenuView:
     {
-        WContainerWidget *balanceSub = new WContainerWidget();
-        balanceSub->addWidget(new WText("Pick A Sub-Category"));
-        return balanceSub;
+        containerView = new WContainerWidget(m_MainStack);
+        containerView->addWidget(new WText("Pick A Balance Sub-Category"));
+        return containerView;
     }
         break;
     case AnonymousBitcoinComputing::AbcBalanceAddFundsView:
-        return new AbcBalanceAddFunds();
+        containerView = new AbcBalanceAddFunds(m_MainStack);
+        return containerView;
         break;
     case AnonymousBitcoinComputing::AbcBalanceRequestPayoutView:
-        return new AbcBalanceRequestPayout();
+        containerView = new AbcBalanceRequestPayout(m_MainStack);
+        return containerView;
         break;
     case AnonymousBitcoinComputing::AbcAdvertisingSubMenuView:
     {
-        WContainerWidget *advertiseSub = new WContainerWidget();
-        advertiseSub->addWidget(new WText("Pick A Sub-Category"));
-        return advertiseSub;
+        containerView = new WContainerWidget(m_MainStack);
+        containerView->addWidget(new WText("Pick An Advertising Sub-Category"));
+        return containerView;
     }
         break;
     case AnonymousBitcoinComputing::AbcAdvertisingSellAdSpaceView:
-        return new AbcAdvertisingSellAdSpace();
+        containerView = new AbcAdvertisingSellAdSpace(m_MainStack);
+        return containerView;
         break;
     case AnonymousBitcoinComputing::AbcAdvertisingBuyAdSpaceView:
-        return new AbcAdvertisingBuyAdSpace();
+        containerView = new AbcAdvertisingBuyAdSpace(m_MainStack);
+        return containerView;
         break;
     default:
-        //error
-        return 0;
+        containerView = pageNotFound();
+        return containerView;
         break;
     }
 }
 void AnonymousBitcoinComputing::handleInternalPathChanged(const std::string &newInternalPath)
 {
     showViewByInternalPath(newInternalPath);
-    /*if(m_UsernameDb.getLogin().loggedIn())
-    {
-        if(newInternalPath == HOME_PATH)
-        {
-            showHome();
-        }
-        else if(newInternalPath == OWNER_PATH)
-        {
-            showOwner();
-        }
-        else if(newInternalPath == PUBLISHER_PATH) //could also catch cases like AdvertiserPath (just pure semantics, fuck it)
-        {
-            showPublisher();
-        }
-        else //catch-all. could report an error here if we wanted
-        {
-            WApplication::instance()->setInternalPath(HOME_PATH, true);
-        }
-    }
-    //else: TODO: i could put certain widgets that don't require login in here, and the others up above...
-    */
 }
 void AnonymousBitcoinComputing::showViewByInternalPath(const std::string &internalPath)
 {
-    WContainerWidget *viewToShow = getViewOrAuthWidgetDependingOnInternalPathAndWhetherOrNotLoggedInAndIfItMattersForInternalPath(internalPath);
+    WWidget *viewToShow = getViewOrAuthWidgetDependingOnInternalPathAndWhetherOrNotLoggedInAndIfItMattersForInternalPath(internalPath);
     m_MainStack->setCurrentWidget(viewToShow);
 }
 Wt::WWidget * AnonymousBitcoinComputing::getViewOrAuthWidgetDependingOnInternalPathAndWhetherOrNotLoggedInAndIfItMattersForInternalPath(const std::string &internalPath)
 {
-    if(internalPath == AbcHome::getInternalPath())
+    if(AbcHome::isInternalPath(internalPath))
     {
-        if(AbcHome::requiresLogin())
+        if(AbcHome::requiresLogin() && !m_UsernameDb.getLogin().loggedIn())
         {
-            return getAuthWidget();
+            return getAuthWidgetForStack();
         }
         return getView(AbcHomeView);
     }
-    //if(...)
+    if(AbcIndex::isInternalPath(internalPath))
+    {
+        if(AbcIndex::requiresLogin() && !m_UsernameDb.getLogin().loggedIn())
+        {
+            return getAuthWidgetForStack();
+        }
+        return getView(AbcIndexView);
+    }
+    //TODO: /balance
+    if(AbcBalanceAddFunds::isInternalPath(internalPath))
+    {
+        if(AbcBalanceAddFunds::requiresLogin() && !m_UsernameDb.getLogin().loggedIn())
+        {
+            return getAuthWidgetForStack();
+        }
+        return getView(AbcBalanceAddFundsView);
+    }
+    if(AbcBalanceRequestPayout::isInternalPath(internalPath))
+    {
+        if(AbcBalanceRequestPayout::requiresLogin() && !m_UsernameDb.getLogin().loggedIn())
+        {
+            return getAuthWidgetForStack();
+        }
+        return getView(AbcBalanceRequestPayoutView);
+    }
+    //TODO: /advertising
+    if(AbcAdvertisingBuyAdSpace::isInternalPath(internalPath))
+    {
+        if(AbcAdvertisingBuyAdSpace::requiresLogin() && !m_UsernameDb.getLogin().loggedIn())
+        {
+            return getAuthWidgetForStack();
+        }
+        return getView(AbcAdvertisingBuyAdSpaceView);
+    }
+    if(AbcAdvertisingSellAdSpace::isInternalPath(internalPath))
+    {
+        if(AbcAdvertisingSellAdSpace::requiresLogin() && !m_UsernameDb.getLogin().loggedIn())
+        {
+            return getAuthWidgetForStack();
+        }
+        return getView(AbcAdvertisingSellAdSpaceView);
+    }
+    return pageNotFound();
+}
+Wt::WContainerWidget * AnonymousBitcoinComputing::pageNotFound()
+{
+    if(!m_PageNotFound)
+    {
+        m_PageNotFound = new WContainerWidget(m_MainStack);
+        m_PageNotFound->addWidget(new WText("Error 404, Page Not Found"));
+    }
+    return m_PageNotFound;
+}
+void AnonymousBitcoinComputing::handleLoginChanged()
+{
+    if(m_UsernameDb.getLogin().loggedIn())
+    {
+        //TODO: since this seems to be the first point of entry after the user first registers... we can check our app bank cache db to see if we have set up a (non-cached) bank account yet on our remote server. if we haven't, now is where we do it and we store the user/id (whatever) in the app bank cache db too. we init it to zero on user creation, then check to see if it's still zero right here. if it is, we know they haven't set up a bank account yet. we want to delay this until after the registration CONFIRMATION process, so spam creating accounts (without verifying them) doesn't even send a message to our remote bank server. ya know, i kinda like that: RemoteBankServer and LocalAppBankCache. they are the same except remote manages multiple app bank accounts (for future projects)
 
-    //there's gotta be a way i can do this more betterer
-    //a read-only singleton could be shared by each Wt WApplication (user session)
-    //only to be used as a "list of views" to iterate. but how can i reference the class and not an instantiation of it? further, how can i instantiate it later when i only have a reference to it? i'm suuuuuure it's possible... i'm just not good enough at C++ to do it :(
-    //one thing i do know, is each view should implement an interface: IAbcView with virtual methods getInternalPath, requiresLogin, and maybe newInstantiation?? maybe i can code it so that newInstantiation... or i guess we could call it sessionInstance()... basically a per-WApplication-session singleton self-contained. idfk. it would be awesome if i could get the abstract (interface) code of sessionInstance() to call it's child constructor... so i'd only have to write the code once... but man at this point i'm really just dicking around with "prettiness" and "elegance" and not improving functionality...
-    //so a read-only REAL singleton that has a list of IAbcView class types... for iterating
-    //and each IAbcView is a per-WApplication-singleton self-contained. sounds fun to code lol.. although i'll admit in advance that i'm taking a pointless tangent. fuck it. coding is supposed to be fun. when it isn't fun, BONER
+        //continue to wherever the user requested
+        handleInternalPathChanged(WApplication::instance()->internalPath());
+    }
+    else
+    {
+        //TODO: iterate through  m_AllViews, set it->second to 0; (also 'delete' ?), and do m_MainStack.removeWidget(it->second)... we want to keep the authwidget in the stack... but right now i have it in the gui twice... idk where i want it yet :-/
+        //m_MainStack->clear();
+
+        /*m_HomeView = 0;
+        m_CampaignEditorView = 0;
+        m_AdEditorView = 0;*/
+    }
+}
+Wt::Auth::AuthWidget * AnonymousBitcoinComputing::getAuthWidgetForStack()
+{
+    if(!m_AuthWidgetIsInStack)
+    {
+        m_MainStack->addWidget(m_AuthWidget);
+        m_AuthWidgetIsInStack = true;
+    }
+    return m_AuthWidget;
 }

@@ -23,6 +23,7 @@
 #include <Wt/WVBoxLayout>
 #include <Wt/WAnimation>
 #include <Wt/WText>
+#include <Wt/Auth/AuthWidget>
 using namespace Wt;
 
 
@@ -41,11 +42,17 @@ public:
     AnonymousBitcoinComputing(const WEnvironment &env);
 private:
     WStackedWidget *m_MainStack;
+    Wt::Auth::AuthWidget *m_AuthWidget;
+    Wt::Auth::AuthWidget *getAuthWidgetForStack();
+    bool m_AuthWidgetIsInStack;
     Database m_UsernameDb;
     void buildGui();
+    void handleLoginChanged();
     void handleInternalPathChanged(const std::string &newInternalPath);
     void showViewByInternalPath(const std::string &internalPath);
     WWidget *getViewOrAuthWidgetDependingOnInternalPathAndWhetherOrNotLoggedInAndIfItMattersForInternalPath(const std::string &internalPath);
+    WContainerWidget *pageNotFound();
+    WContainerWidget *m_PageNotFound;
 
     enum AbcViews
     {
