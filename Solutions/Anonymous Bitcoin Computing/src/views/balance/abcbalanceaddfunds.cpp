@@ -3,8 +3,7 @@
 AbcBalanceAddFunds::AbcBalanceAddFunds(WContainerWidget *parent)
     : WContainerWidget(parent)
 {
-    addWidget(new WLabel("Hello Add Funds"));
-    /*//Key
+    //Key
     WLabel *addFundsKeyLabel = new WLabel("Key: ");
     m_AddFundsKeyLineEdit = new WLineEdit("[None]");
     m_AddFundsKeyLineEdit->setReadOnly(true);
@@ -38,7 +37,7 @@ AbcBalanceAddFunds::AbcBalanceAddFunds(WContainerWidget *parent)
 
     layout->addWidget(requestAddFundsButton, 3, 1);
 
-    this->setLayout(layout);*/
+    this->setLayout(layout);
 }
 void AbcBalanceAddFunds::handleAddFundsBalanceButtonClicked()
 {

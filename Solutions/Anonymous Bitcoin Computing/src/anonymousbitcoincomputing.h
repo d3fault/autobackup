@@ -5,13 +5,7 @@
 
 #define ANONYMOUS_BITCOIN_COMPUTING_MENU_SUB_ITEM_PREFIX "--"
 
-#define ANONYMOUS_BITCOIN_COMPUTING_BALANCE_TEXT "Balance"
-#define ANONYMOUS_BITCOIN_COMPUTING_BALANCE_ADD_FUNDS_TEXT "Add Funds"
-#define ANONYMOUS_BITCOIN_COMPUTING_BALANCE_REQUEST_PAYOUT_TEXT "Request Disbursement"
-
-#define ANONYMOUS_BITCOIN_COMPUTING_ADVERTISING_TEXT "Advertising"
-#define ANONYMOUS_BITCOIN_COMPUTING_ADVERTISING_SELL_AD_SPACE_TEXT "Sell Ad Space"
-#define ANONYMOUS_BITCOIN_COMPUTING_ADVERTISING_BUY_AD_SPACE_TEXT "Buy Ad Space"
+#define ANONYMOUS_BITCOIN_COMPUTING_LOGOUT_INTERNAL_PATH "/logout"
 
 #include <map>
 
@@ -45,6 +39,7 @@ private:
     Wt::Auth::AuthWidget *m_AuthWidget;
     Wt::Auth::AuthWidget *getAuthWidgetForStack();
     bool m_AuthWidgetIsInStack;
+    WAnchor *m_LogoutAnchor;
     Database m_UsernameDb;
     void buildGui();
     void handleLoginChanged();
@@ -66,7 +61,8 @@ private:
         AbcAdvertisingBuyAdSpaceView
         //todo: when adding more views, update createView
     };
-    std::map<AbcViews,WContainerWidget*> m_AllViews;
+    typedef std::map<AbcViews,WContainerWidget*> AbcViewMap;
+    AbcViewMap m_AllViews;
     WContainerWidget *getView(AbcViews view);
     WContainerWidget *createView(AbcViews view);
 };
