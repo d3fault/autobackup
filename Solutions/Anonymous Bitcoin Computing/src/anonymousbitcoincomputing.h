@@ -7,7 +7,7 @@
 
 #define ANONYMOUS_BITCOIN_COMPUTING_BALANCE_TEXT "Balance"
 #define ANONYMOUS_BITCOIN_COMPUTING_BALANCE_ADD_FUNDS_TEXT "Add Funds"
-#define ANONYMOUS_BITCOIN_COMPUTING_BALANCE_REQUEST_PAYOUT_TEXT "Request Payout"
+#define ANONYMOUS_BITCOIN_COMPUTING_BALANCE_REQUEST_PAYOUT_TEXT "Request Disbursement"
 
 #define ANONYMOUS_BITCOIN_COMPUTING_ADVERTISING_TEXT "Advertising"
 #define ANONYMOUS_BITCOIN_COMPUTING_ADVERTISING_SELL_AD_SPACE_TEXT "Sell Ad Space"
@@ -17,14 +17,16 @@
 
 #include <Wt/WApplication>
 #include <Wt/WStackedWidget>
-#include <Wt/WMenu>
-#include <Wt/WMenuItem>
-#include <Wt/WSubMenuItem>
+#include <Wt/WAnchor>
 #include <Wt/WWidget>
 #include <Wt/WHBoxLayout>
+#include <Wt/WVBoxLayout>
 #include <Wt/WAnimation>
 #include <Wt/WText>
 using namespace Wt;
+
+
+#include "database.h"
 
 #include "views/abchome.h"
 #include "views/abcindex.h"
@@ -36,9 +38,15 @@ using namespace Wt;
 class AnonymousBitcoinComputing : public WApplication
 {
 public:
-
     AnonymousBitcoinComputing(const WEnvironment &env);
 private:
+    WStackedWidget *m_MainStack;
+    Database m_UsernameDb;
+    void buildGui();
+    void handleInternalPathChanged(const std::string &newInternalPath);
+    void showViewByInternalPath(const std::string &internalPath);
+    WWidget *getViewOrAuthWidgetDependingOnInternalPathAndWhetherOrNotLoggedInAndIfItMattersForInternalPath(const std::string &internalPath);
+
     enum AbcViews
     {
         AbcHomeView,
@@ -52,14 +60,8 @@ private:
         //todo: when adding more views, update createView
     };
     std::map<AbcViews,WContainerWidget*> m_AllViews;
-    void buildMenu();
     WContainerWidget *getView(AbcViews view);
     WContainerWidget *createView(AbcViews view);
-    WWidget *buildBalanceWWidget();
-    WWidget *buildAdvertisingWWidget();
-    void zeroOutEachViewPointer();
-    void menuItemChanged(WMenuItem *menuItem);
-    void setVisibilityForAllSubMenuItems(WSubMenuItem *subMenuItem, bool visible);
 };
 
 #endif // ANONYMOUSBITCOINCOMPUTING_H

@@ -1,0 +1,17 @@
+if every call to the appdb from a wt front-end has to use the network, including reads, then the wt front-end does not function properly as a cache
+the bottleneck becomes the appdb
+which i only barely have designed to scale up
+i need to use a wt db as a local cache
+i guess it's possible... the lower levels will simply PUSH whenever a change occurs
+
+bitcoin bank server (onChange) ---PUSH--> AppDb (onChange) ---PUSH--> Wt Db (incorporate with the usernamedb)
+
+so reads do NOT require connecting to the AppDb... but i mean writes do obviously...
+
+the "AppDbHelper" (which communicates over a thread with Wt directly) is where i register to be notified of updates (say, funds have been added)
+so if i push EVERY change, this will function as intended
+
+
+AppDb isn't necessarily a cache level in this sense.. it is an abstraction level
+and a consolidation/final say as to who has what. a central database. the application database. hence the name
+to think of as a cache level is incorrect
