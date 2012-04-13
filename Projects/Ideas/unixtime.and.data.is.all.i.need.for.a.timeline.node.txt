@@ -1,0 +1,27 @@
+timeline
+there is unixtime and there is data
+title is optional
+if it's blank, unixtime is used
+there are no two pieces of data that occur at EXACTLY the same time
+it is impossible
+because time can be infinitely precise
+randomness can be added to give the precision we are unable to calculate using modern computers
+
+a block chain (a la bitcoin) can be used to store the data and it's integrity
+the 'block chain' is all of the data(????) or maybe at least just all the hashes????
+a 'daily ad' can be incorporated into the block chain, and users who donate their bandwidth/cpu receive a fair cut of it
+this is the block chain daily ad
+there can also be an ad specific to individual content
+so we reward the server providers
+and the content providers
+
+
+only on such a system with anonymity built in (bitcoin does not currently have this)... 7 layers of encrypted proxies etc... is data secure
+it economically drives itself
+it becomes an economy in the traditional sense
+it also is a currency muchlike bitcoin (except on it's own block chain)
+i am unsure if i am able to implement it... but i am sure that it is possible
+
+this after/during watching history channel einstein
+i guess i do fancy myself a genius
+but i have no proof of it (hah!)
