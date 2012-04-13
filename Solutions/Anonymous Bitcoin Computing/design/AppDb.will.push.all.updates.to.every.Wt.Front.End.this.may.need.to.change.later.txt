@@ -1,0 +1,34 @@
+so the app logic db / central db that contains all the site's "data" needs to be aware of each Wt Front-End for pushing updates to it
+but i'm wondering
+aside: each Wt front-end will have a list of connected clients, where they are on the site (and knows what data objects to push to each view)
+aside2: the "AppDbHelper" is a cache, a notifier, and receives updates to it's cached objects from the AppDb itself
+
+but this is where i start getting lost
+the updates... are they to EVERYTHING [since we turn the wt front-end on]?
+or are they only updates to each piece we request?
+
+if to everything since turned on (with pulls as needed), the AppDb itself doesn't need to associate each "WtFrontEndId" with each and every value (only in memory [but i mean use hdd as extended memory... just saying it's not important and should trigger a delete-cache on all the wt wront-ends on startup])
+still, EVERY update being pushed to EVERY wt front-end is a waste of bandwidth
+however, associating an WtFrontEndId with each and every piece of data (saying it should be pushed to it) is potentially a huge memory/cpu waster on the AppDb
+
+i wish there was some middle ground... but i can't think of it
+
+the 'push everything' method seems simpler
+and during the early days the added, i probably wouldn't even notice the inefficiency (the same goes for the other method!... or any optimization in general..)
+
+i could make the "WtFrontEndId" associations temporary, to be purged when the user logs off
+doing it INSTANTLY would be incredibly inefficient and would defeat the purpose of having an AppDb... as every user request would update it's state with the AppDb
+not only that, but we'd have to update the AppDb each time we leave a page that needs updating (this could be combined with the request to watch the new page's values..)
+
+each and every GET therefore requires a hit to the AppDb
+hmmm.... isn't that a side effect of the WtFrontEndId method? no... as by default (without a compromise between the two), we KEEP ON UPDATING (via push) any previously pulled values... so only *NEW* values require a hit to the AppDb... but if i kept a fresh adfljkadslfjas ahh fuck it, i think i'm going with the 'send every update after turning on' method (and pull anything we don't already have)
+
+aside3: the "AppDbHelper" thread on the wt front-ends sounds like it will be the bottleneck so i should give it's thread higher priority (but test this?)
+
+
+ok so send every update to each it is
+as an example of it working, imagine a user asks for a value near-instantly before it is updated
+
+the request from AppDbHelper for the cached values (soon to be outdated) ALSO sets us up to be Server.Post notified of updates to said value
+the updated values are pushed from AppDb, and there is no conflict/race condition as the communication between Wt-Front-End <--> AppDbHelper <--> AppDb is all using QMetaObject::invokeMethod (or signals/slots where appropriate) Queued Connection (and possibly/probably(unless it doesn't work or is inefficient) BlockingQueued on the initial Wt request)
+so the user either gets the most-recent values, or is Server.Post'd them milliseconds later
