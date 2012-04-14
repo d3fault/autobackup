@@ -1,0 +1,123 @@
+i don't like that every request requires/uses a BlockingQueuedConnection / call across a thread
+all requests from every user (for that wt-front-end) funnel into a single thread to read data
+man, now that i've put it that way.... it totally sucks.
+
+i'm thinking a Shared Lock (boost equivalent of QReadWriteLock)
+multiple readers, single writer
+
+i can do try_get_shared_lock() and if it returns false (meaning the writer has the lock), fill in 'Loading...' (just like where my 'hold your horses' code would have) and then WServer.Post the values in later. a regular QueuedConnection is used so we have to .Post it back. this also sets up push notifications for us
+but if we DO get the shared lock, then the QueuedConnection event we send should say 'we don't need data [YET] (since we already got it)... but give us updates still'
+
+i'm thinking just a regular old map or something as a cache...
+idfk.
+
+
+
+FUCK
+race condition where push notification doesn't get WServer.Post'd
+we get the shared lock, retrieve it's values
+schedule the event to be nofitied of future updates
+
+but an incoming network/update packet schedules an event BEFORE US
+
+the thread we post to updates our cache, but we've already read from it
+since we *THINK* it's up-to-date (and don't request to have the data sent to us, which we WOULD HAVE DONE if try_get_shared_lock returned false), the thread does nothing with except registers us for FUTURE updates. any that come in an event AFTER the one we sent.
+it's a slim race condition, but could cause HUGE bugs
+and would be hard as fuck to debug
+i'm glad i caught it
+
+i am a coder.
+
+
+
+so i mean i guess i could send the values i pulled from try_get_shared_lock to the thread via QueuedConnection....
+....but that seems somewhat wasteful
+when the thread processes it, it checks it's own cache (no need to check the cache that it obtains write lock for.. but that would work too) to see if the values still match
+if they DON'T, then we WServer.Post the new race condition'd updated values to the Wt session
+
+holy shit man i don't know what to do
+at best i could optimize it to be pointers to the data that Wt uses (since it's read-only anyways, there is no threading issues)
+but it's still just that much more data that a) needs to be analyzed and b) passed around in events and shit
+
+
+
+....and what if they navigate away before we can even check the pointers (dereferencing them)
+isn't the way they tell us that also by posting an event to us?
+
+ok tangent: does that case apply at all if we DO NOT use this shared locker bullshit idea [that seems to introduce more problems than it solves]?
+
+tangent resp: NO, because when we say 'hold your horses', we do defer rendering until we get the update... whereas the above is when we DO get values and DO NOT defer rendering because we *think* everything is going smoothly. by doing defer rendering, it forbids the user to navigate somewhere else (or post an event to the AppDbHelper thread) until we return with the values they requested (and resumeRendering() is called)
+
+
+
+holy fuck my brain is going to explode
+
+maybe just deal with it motherfucker
+
+i could split up the namespace
+
+have like say 32 threads (26?)
+
+read-only definitions of which thread has which cache given a particular piece of data (or data FAMILY, since we'll be getting multiple values at once and it would be stupid to cause multiple cross-thread calls)
+the QSslSocket would need to read those definitions too so it knows what thread to push updates to
+this would accomplish nothing, as only 1 thread can be processed at a time anyways
+INCORRECT, multi-cpu computers (servers!) would benefit from this technique
+it pretty much splits up the cache so i can still read from one while writing to another
+instead of only being able to do one read operation or one write operation at a time
+
+i could make the amount of times that the cache is split dynamic based on "QThread::idealThreadCount()"
+
+if we only have 1 cpu, then splitting the cache provides no benefit anyways
+idealThreadCount returns... well.. idk... the ideal Thread Count for the given CPUs
+who cares how it's calculated (though i'm guessing it's 1 per core/cpu?)
+
+hmmm.... i think this is as good as it gets
+if idealThreadCount returns < 1 (error etc... and idk why it would ever return 0), we set the number of caches to 1
+> 1, we use whatever it gave us to evenly split the data cache
+
+'data FAMILY'
+hmmm... pending balance + confirmed balance
+....an entire page of 'ad slots'...
+
+...another aside, it may be good to keep the ad slots family vs. balance families separated too...
+
+...so multiple layers of separation... (regardless of how many ideal thread count returns)
+but idfk.
+
+
+
+....and maybe this is all just premature ejaculation...
+but given the 2nd line of the document... i think not.
+
+
+
+
+the ad slot family cannot be split (or should not be split) if we have the list sortable
+because then that fucks up my cache splitting definitions
+
+
+
+
+
+
+
+i cannot use a Wt-thread cache
+else the above race condition ALWAYS applies
+
+i just want this fucker to be easily scalable
+i don't want to have to come back later and fuck with it
+i've been very careful to make sure i can do haproxy scaling
+
+but this stupid namespace split is how i plan to also scale the AppDb itself at a future date
+good fucking luck with that.
+especially with the sorting issue... though maybe it won't matter since all updates are pushed to teh CACHE
+and the CACHE is what does the sorting
+so i guess it doesn't hurt the AppDb cache namespace split... if i ever even do it
+it sounds like a bitch
+but i know it's possible
+well sure, everything's possible kid
+
+the ad slot family deserves efficient caching way more than the balance family does...
+so if i can't attain it + sortability, stick with what WORKS
+especially considering you don't even have a working prototype of this yet. rofl.
+ok onto coding. KISS.
