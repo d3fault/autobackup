@@ -1,0 +1,31 @@
+a user logs into a wt app
+there is a menu with 5 options
+he middle mouse clicks two of them
+
+...do the new tabs have their own sessionId?
+how does the WServer.Post work?
+
+does each tab get the internalPathChanged signal?
+that question applies both to the first tab (that i use to open up 2 other tabs) and to the 2 extra tabs when i navigate to items 4 and 5 on the menu
+
+
+does it count as 2 users being logged in with the same username?
+
+is it 1 login 'session' and 3 separate wt 'sessions' (WApplications?)???????????
+that 1 login 'session' being shared across all 3 wt 'sessions'...
+
+IDFK
+
+needs moar prototype/testing
+
+
+oh and of course i can't forget that each page has server push from a qt-singleton-thread-backend
+it might be good to practice the LEAVING of pages (and telling the backend NOT to notify us for those values anymore) too...
+
+maybe each of my tabs (wcontainers in a wstackedwidget) can implement from something that has values that it communicates to the back-end with to get notifications/updates for said values. idk.
+
+
+you know come to think of it i can test this already on ABC's code.... lol
+most of it
+
+...and to think i almost wrote code to test this rofl
