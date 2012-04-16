@@ -29,3 +29,9 @@ you know come to think of it i can test this already on ABC's code.... lol
 most of it
 
 ...and to think i almost wrote code to test this rofl
+
+
+
+
+
+...and if the two tabs navigate to the same page... our back-end needs to be OK with that (i guess..)

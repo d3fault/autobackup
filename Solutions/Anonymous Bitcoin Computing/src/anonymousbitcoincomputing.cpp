@@ -13,9 +13,12 @@ AnonymousBitcoinComputing::AnonymousBitcoinComputing(const WEnvironment &env)
 
     this->internalPathChanged().connect(this, &AnonymousBitcoinComputing::handleInternalPathChanged);
 
-    handleInternalPathChanged(WApplication::instance()->internalPath());
+    handleInternalPathChanged(this->internalPath());
 
     m_AuthWidget->processEnvironment();
+
+    //debug
+    std::cout << "wt.sessionId(" << this->sessionId() << "), wapplication constructor just called" << std::endl;
 }
 void AnonymousBitcoinComputing::buildGui()
 {
@@ -157,6 +160,9 @@ Wt::WContainerWidget * AnonymousBitcoinComputing::createView(AnonymousBitcoinCom
 }
 void AnonymousBitcoinComputing::handleInternalPathChanged(const std::string &newInternalPath)
 {
+    //debug
+    std::cout << "wt.sessionId(" << this->sessionId() << "), internal path changed to: " << newInternalPath << std::endl;
+
     if(newInternalPath == ANONYMOUS_BITCOIN_COMPUTING_LOGOUT_INTERNAL_PATH)
     {
         m_UsernameDb.getLogin().logout();
@@ -236,16 +242,25 @@ Wt::WContainerWidget * AnonymousBitcoinComputing::pageNotFound()
 }
 void AnonymousBitcoinComputing::handleLoginChanged()
 {
+    //debug
+    std::cout << "wt.sessionId(" << this->sessionId() << "), login changed..." << std::endl;
+
     if(m_UsernameDb.getLogin().loggedIn())
     {
+        //debug
+        std::cout << "wt.sessionId(" << this->sessionId() << "), LOGGED IN" << std::endl;
+
         //TODO: since this seems to be the first point of entry after the user first registers... we can check our app bank cache db to see if we have set up a (non-cached) bank account yet on our remote server. if we haven't, now is where we do it and we store the user/id (whatever) in the app bank cache db too. we init it to zero on user creation, then check to see if it's still zero right here. if it is, we know they haven't set up a bank account yet. we want to delay this until after the registration CONFIRMATION process, so spam creating accounts (without verifying them) doesn't even send a message to our remote bank server. ya know, i kinda like that: RemoteBankServer and LocalAppBankCache. they are the same except remote manages multiple app bank accounts (for future projects)
 
         m_LogoutAnchor->setHidden(false);
         //continue to wherever the user requested
-        handleInternalPathChanged(WApplication::instance()->internalPath());
+        handleInternalPathChanged(this->internalPath());
     }
     else
     {
+        //debug
+        std::cout << "wt.sessionId(" << this->sessionId() << "), LOGGED OUT" << std::endl;
+
         m_LogoutAnchor->setHidden(true);
         AbcViewMap::iterator it = m_AllViews.begin();
         //WContainerWidget *theView = 0;
