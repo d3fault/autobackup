@@ -4,19 +4,19 @@ AbcBalanceAddFunds::AbcBalanceAddFunds(WContainerWidget *parent)
     : m_AwaitingValues(false), WContainerWidget(parent)
 {
     //Key
-    WLabel *addFundsKeyLabel = new WLabel("Key: ");
-    m_AddFundsKeyLineEdit = new WLineEdit("[None]");
+    WLabel *addFundsKeyLabel = new WLabel(("Key: ");
+    m_AddFundsKeyLineEdit = new WLineEdit();
     m_AddFundsKeyLineEdit->setReadOnly(true);
     addFundsKeyLabel->setBuddy(m_AddFundsKeyLineEdit);
 
 
     //Pending Payment Amount
     WLabel *pendingPaymentAmountLabel = new WLabel("Pending Amount: ");
-    m_PendingPaymentAmountActual = new WLabel("0.00000000");
+    m_PendingPaymentAmountActual = new WLabel();
 
     //Confirmed Payment Amount
     WLabel *confirmedPaymentAmountLabel = new WLabel("Confirmed Amount: ");
-    m_ConfirmedPaymentAmountActual = new WLabel("0.00000000");
+    m_ConfirmedPaymentAmountActual = new WLabel();
 
     //Request Add Funds Key Pushbutton
     WPushButton *requestAddFundsButton = new WPushButton("Request Add Funds Key");
@@ -38,6 +38,9 @@ AbcBalanceAddFunds::AbcBalanceAddFunds(WContainerWidget *parent)
     layout->addWidget(requestAddFundsButton, 3, 1);
 
     this->setLayout(layout);
+
+
+    notifyOfPageChange(); //we put it in a function so that when we come back to this page, we can call it's public function. may need to make this virtual because i think right now we only cache a collection of WContainer pointers...
 }
 void AbcBalanceAddFunds::handleAddFundsBalanceButtonClicked()
 {
@@ -50,18 +53,7 @@ void AbcBalanceAddFunds::handleAddFundsBalanceButtonClicked()
     //if the blocking queued shit doesn't work, just set all the values to "LOADING..." and then do an async request. it might make for a snappier gui too (though 'LOADING...' doesn't help much... AND it's slightly less efficient as now we have to post() the values EVERY request. bah.)
 
 
-    AppDbResult result;
-    QMetaObject::invokeMethod(AppDbHelper::Instance(), "addFundsRequest", Qt::BlockingQueuedConnection, Q_RETURN_ARG(AppDbResult, result), Q_ARG(QString, username), Q_ARG(CallbackInfo, callbackInfo));
 
-    if(result.NotInCacheWeWillNotifyYou)
-    {
-        WApplication::instance()->deferRendering();
-        m_AwaitingValues = true; //the notification updates don't need to do resumeRendering. we only need to resume if we defer here... hence the boolean
-    }
-    else //it was in the cache so we got our values immediately. in THIS addFundsRequest scenario, that actually probably means we haven't used a key issued to us yet. but in others, it simply means the data was cached.
-    {
-        processNewValues(result);
-    }
 }
 
 
@@ -98,4 +90,24 @@ void AbcBalanceAddFunds::processNewValues(AppDbResult newValues)
     m_ConfirmedPaymentAmountActual->setText(WtQtUtil::fromQString(BtcUtil::doubleToQString(newValues.ReturnDouble2)));
 
     WApplication::instance()->triggerUpdate();
+}
+void AbcBalanceAddFunds::notifyOfPageChange()
+{
+    //this is called in our constructor after the layout is created
+    //and anytime we switch BACK to this view
+    //it tells AppDbHelper to push updates to us, and also gets/sets the cached values if they are available.
+    //the constructor should set it's values to blank... and IN HERE we set it to 'LOADING...' if they aren't cached... and to the cached values if they are.
+
+    AppDbResult result;
+    QMetaObject::invokeMethod(AppDbHelper::Instance(), "NowViewingAbcBalanceAddFunds", Qt::BlockingQueuedConnection, Q_RETURN_ARG(AppDbResult, result), Q_ARG(QString, username), Q_ARG(CallbackInfo, callbackInfo));
+
+    if(result.NotInCacheWeWillNotifyYou)
+    {
+        WApplication::instance()->deferRendering();
+        m_AwaitingValues = true; //the notification updates don't need to do resumeRendering. we only need to resume if we defer here... hence the boolean
+    }
+    else //it was in the cache so we got our values immediately. in THIS addFundsRequest scenario, that actually probably means we haven't used a key issued to us yet. but in others, it simply means the data was cached.
+    {
+        processNewValues(result);
+    }
 }

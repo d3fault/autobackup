@@ -126,6 +126,7 @@ Wt::WContainerWidget * AnonymousBitcoinComputing::createView(AnonymousBitcoinCom
     {
         containerView = new WContainerWidget(m_MainStack);
         containerView->addWidget(new WText("Pick A Balance Sub-Category"));
+        //todo: links to them. fuck actually showing the balance
         return containerView;
     }
         break;

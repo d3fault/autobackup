@@ -21,6 +21,8 @@ class AbcBalanceAddFunds : public WContainerWidget
 public:
     AbcBalanceAddFunds(WContainerWidget *parent = 0);
 
+    void notifyOfPageChange();
+
     static const std::string ReadableText;
     static const std::string PreferredInternalPath;
 

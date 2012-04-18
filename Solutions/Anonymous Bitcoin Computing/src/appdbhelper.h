@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QThread>
+#include <QCache>
+#include <QHash>
 
 struct AppDbResult
 {
@@ -29,18 +31,20 @@ public:
     static AppDbHelper* Instance();
 
     //helpers, which call our private slot equivalent using blocking queued
-    static AppDbResult AddFundsRequest(QString username, CallbackInfo callbackInfo);
+    AppDbResult NowViewingAbcBalanceAddFunds(QString username, CallbackInfo callbackInfo);
+    AppDbResult AddFundsRequest(QString username, CallbackInfo callbackInfo);
 private:
     AppDbHelper();
     static AppDbHelper *m_pInstance;
 
     QThread *m_SocketThread;
     AppDbSocket *m_AppDb; //the real helper
+
+    QCache<QString,UserAddFundsPageValues> cachedUserAddFundsPageValues;
+    QHash<AppDbHelperClient*,ViewUserIsAtSoWeKnowWhatValuesToUpdate> userViewHash;
 signals:
 public slots:
     void init();
-private slots:
-    AppDbResult AddFundsRequestPrivate(QString username, CallbackInfo callbackInfo);
 };
 
 #endif // APPDBHELPER_H
