@@ -15,7 +15,10 @@ SOURCES += main.cpp \
     views/balance/abcbalanceaddfunds.cpp \
     views/balance/abcbalancerequestpayout.cpp \
     views/advertising/abcadvertisingselladspace.cpp \
-    views/advertising/abcadvertisingbuyadspace.cpp
+    views/advertising/abcadvertisingbuyadspace.cpp \
+    appdbhelper.cpp \
+    wtqtutil.cpp \
+    btcutil.cpp
 
 HEADERS += \
     anonymousbitcoincomputing.h \
@@ -26,7 +29,16 @@ HEADERS += \
     views/balance/abcbalanceaddfunds.h \
     views/balance/abcbalancerequestpayout.h \
     views/advertising/abcadvertisingselladspace.h \
-    views/advertising/abcadvertisingbuyadspace.h
+    views/advertising/abcadvertisingbuyadspace.h \
+    appdbhelper.h \
+    wtqtutil.h \
+    btcutil.h
+
+
+
+
+
+
 
 
 

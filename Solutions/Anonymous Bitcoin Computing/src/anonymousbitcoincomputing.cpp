@@ -160,6 +160,8 @@ Wt::WContainerWidget * AnonymousBitcoinComputing::createView(AnonymousBitcoinCom
 }
 void AnonymousBitcoinComputing::handleInternalPathChanged(const std::string &newInternalPath)
 {
+    //TODOreq: here, or somewhere, tell the AppDbHelper to NOT update us for the internal path that we just LEFT. i can use my WApplication identifier (AppDbHelperClient* or sessionId) to see if we're already watching for a set of values... and if we are, remove it right before we set the new notification. what i'm saying is that we can have this logic performed in AppDbHelper when a PageChange or whatever happens ('notify us of any values on the page we are looking at'). i like having this todo right here though because it relates to internal path changes
+
     //debug
     std::cout << "wt.sessionId(" << this->sessionId() << "), internal path changed to: " << newInternalPath << std::endl;
 

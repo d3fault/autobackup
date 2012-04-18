@@ -10,6 +10,12 @@
 #include <Wt/WPushButton>
 using namespace Wt;
 
+#include <QMetaObject>
+
+#include "wtqtutil.h"
+#include "btcutil.h"
+#include "appdbhelper.h"
+
 class AbcBalanceAddFunds : public WContainerWidget
 {
 public:
@@ -21,9 +27,14 @@ public:
     static bool isInternalPath(const std::string &internalPath);
     static bool requiresLogin();
 private:
+    bool m_AwaitingValues;
+
     WLineEdit *m_AddFundsKeyLineEdit;
     WLabel *m_PendingPaymentAmountActual;
     WLabel *m_ConfirmedPaymentAmountActual;
+
+    void notifyCallback(AppDbResult updateOrResult);
+    void processNewValues(AppDbResult result);
 
     void handleAddFundsBalanceButtonClicked();
 };
