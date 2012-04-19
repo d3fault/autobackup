@@ -34,10 +34,10 @@ private:
     WLineEdit *m_AddFundsKeyLineEdit;
     WLabel *m_PendingPaymentAmountActual;
     WLabel *m_ConfirmedPaymentAmountActual;
-
+#ifdef AFRd3abc
     void notifyCallback(AppDbResult updateOrResult);
     void processNewValues(AppDbResult result);
-
+#endif
     void handleAddFundsBalanceButtonClicked();
 };
 

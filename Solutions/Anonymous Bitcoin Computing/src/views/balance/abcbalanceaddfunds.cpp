@@ -1,7 +1,7 @@
 #include "abcbalanceaddfunds.h"
 
 AbcBalanceAddFunds::AbcBalanceAddFunds(WContainerWidget *parent)
-    : m_AwaitingValues(false), WContainerWidget(parent)
+    : WContainerWidget(parent), m_AwaitingValues(false)
 {
     //Key
     WLabel *addFundsKeyLabel = new WLabel(("Key: ");
@@ -39,8 +39,9 @@ AbcBalanceAddFunds::AbcBalanceAddFunds(WContainerWidget *parent)
 
     this->setLayout(layout);
 
-
+#ifdef AFRd3abc
     notifyOfPageChange(); //we put it in a function so that when we come back to this page, we can call it's public function. may need to make this virtual because i think right now we only cache a collection of WContainer pointers...
+#endif
 }
 void AbcBalanceAddFunds::handleAddFundsBalanceButtonClicked()
 {
@@ -51,9 +52,6 @@ void AbcBalanceAddFunds::handleAddFundsBalanceButtonClicked()
     //we might also just store the boolean(s) telling us what we need to do within this class... and they could be pushed to us via the notify shits. so we don't need to ask AppDbHelper (except when we actually DO need a new key)... we just ask ourselves
 
     //if the blocking queued shit doesn't work, just set all the values to "LOADING..." and then do an async request. it might make for a snappier gui too (though 'LOADING...' doesn't help much... AND it's slightly less efficient as now we have to post() the values EVERY request. bah.)
-
-
-
 }
 
 
@@ -74,6 +72,7 @@ bool AbcBalanceAddFunds::requiresLogin()
 {
     return true;
 }
+#ifdef AFRd3abc
 void AbcBalanceAddFunds::notifyCallback(AppDbResult updateOrResult)
 {
     if(m_AwaitingValues)
@@ -91,8 +90,10 @@ void AbcBalanceAddFunds::processNewValues(AppDbResult newValues)
 
     WApplication::instance()->triggerUpdate();
 }
+#endif
 void AbcBalanceAddFunds::notifyOfPageChange()
 {
+#ifdef AFRd3abc
     //this is called in our constructor after the layout is created
     //and anytime we switch BACK to this view
     //it tells AppDbHelper to push updates to us, and also gets/sets the cached values if they are available.
@@ -110,4 +111,5 @@ void AbcBalanceAddFunds::notifyOfPageChange()
     {
         processNewValues(result);
     }
+#endif
 }

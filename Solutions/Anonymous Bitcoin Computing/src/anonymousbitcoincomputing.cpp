@@ -1,7 +1,7 @@
 #include "anonymousbitcoincomputing.h"
 
 AnonymousBitcoinComputing::AnonymousBitcoinComputing(const WEnvironment &env)
-    : m_OurBankAccountIsSetUp(false), m_AuthWidgetIsInStack(false), WApplication(env), m_PageNotFound(0)
+    : WApplication(env), m_AuthWidgetIsInStack(false), m_PageNotFound(0), m_OurBankAccountIsSetUp(false)
 {
     m_UsernameDb.getLogin().changed().connect(this, &AnonymousBitcoinComputing::handleLoginChanged);
 
@@ -108,6 +108,8 @@ Wt::WContainerWidget * AnonymousBitcoinComputing::getView(AnonymousBitcoinComput
 }
 Wt::WContainerWidget * AnonymousBitcoinComputing::createView(AnonymousBitcoinComputing::AbcViews view)
 {
+    //TODOopt: re-arrange these based on usage statistics as well.
+
     WContainerWidget *containerView;
     switch(view)
     {
@@ -148,6 +150,10 @@ Wt::WContainerWidget * AnonymousBitcoinComputing::createView(AnonymousBitcoinCom
         break;
     case AnonymousBitcoinComputing::AbcAdvertisingBuyAdSpaceView:
         containerView = new AbcAdvertisingBuyAdSpace(m_MainStack);
+        return containerView;
+        break;
+    case AnonymousBitcoinComputing::AbcFirstLoginView:
+        containerView = new AbcFirstLogin(m_MainStack);
         return containerView;
         break;
     default:
@@ -240,7 +246,14 @@ Wt::WWidget * AnonymousBitcoinComputing::getViewOrAuthWidgetDependingOnInternalP
         }
         return getView(AbcAdvertisingSellAdSpaceView);
     }
-
+    if(AbcFirstLogin::isInternalPath(internalPath))
+    {
+        if(AbcFirstLogin::requiresLogin() && !m_UsernameDb.getLogin().loggedIn())
+        {
+            return getAuthWidgetForStack();
+        }
+        return getView(AbcFirstLoginView);
+    }
     return pageNotFound();
 }
 Wt::WContainerWidget * AnonymousBitcoinComputing::pageNotFound()
