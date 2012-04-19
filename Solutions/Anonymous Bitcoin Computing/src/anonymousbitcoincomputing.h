@@ -20,6 +20,8 @@ using namespace Wt;
 
 #include "database.h"
 
+#include "appdbhelper.h"
+
 #include "views/abchome.h"
 #include "views/abcindex.h"
 #include "views/balance/abcbalanceaddfunds.h"

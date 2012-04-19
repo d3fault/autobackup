@@ -1,7 +1,7 @@
 #include "appdbhelper.h"
 
 AppDbHelper::AppDbHelper()
-    : cachedUserAddFundsPageValues(1000) //TODOreq: research good cache max defaults. these must a) be big enough to justify having a cache... and b) small enough to not take up so much memory that Wt is limited in connections
+    //AFRd3abc: cachedUserAddFundsPageValues(1000) //TODOreq: research good cache max defaults. these must a) be big enough to justify having a cache... and b) small enough to not take up so much memory that Wt is limited in connections
     //for a maxCost for something such as cachedUserAddFundsPageValues, we could use the same #define that Wt uses for MaxConnections or something... or, better yet, MaxLogins. except there is no such value and it is simply a matter of available memory. still, whatever that number is is what we'd want this particular maxCost to be
     //for the maxCost of something AdSlot related, the number would probably be much lower... and the benefits of having a cache would be seen easier. it might even be wise to use a different caching strategy for those... QReadWriteLock (shared_lock boost).. but that presents it's own problems and i think even a race condition if i'm not mistaken?
 {
@@ -20,6 +20,7 @@ void AppDbHelper::init() //TODO: maybe a return value to inidicate success (even
 {
     //TODOreq: set up thread for socket etc
 }
+#ifdef AFRd3abc
 AddFundsRequestResult AppDbHelper::AddFundsRequest(QString username, CallbackInfo callbackInfo)
 {
 
@@ -68,6 +69,7 @@ AppDbResult AppDbHelper::NowViewingAbcBalanceAddFunds(QString username, Callback
 
     return result;
 }
+#endif
 bool AppDbHelper::isBankAccountSetUpForUser(const std::string &usernameToCheck)
 {
     //FUCK. false doesn't necessarily mean that a bank account isn't yet set up... it just means our cache doesn't have it. i guess maybe the wt-front-end can pull this entire list on initial connect (and of course receive notification updates)? TODOreq

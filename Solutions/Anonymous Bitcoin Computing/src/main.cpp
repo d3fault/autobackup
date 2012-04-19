@@ -3,6 +3,7 @@ using namespace Wt;
 
 #include "database.h"
 #include "anonymousbitcoincomputing.h"
+#include "appdbhelper.h"
 
 WApplication *serverEntryPoint(const WEnvironment &env)
 {

@@ -4,7 +4,7 @@ AbcBalanceAddFunds::AbcBalanceAddFunds(WContainerWidget *parent)
     : WContainerWidget(parent), m_AwaitingValues(false)
 {
     //Key
-    WLabel *addFundsKeyLabel = new WLabel(("Key: ");
+    WLabel *addFundsKeyLabel = new WLabel("Key: ");
     m_AddFundsKeyLineEdit = new WLineEdit();
     m_AddFundsKeyLineEdit->setReadOnly(true);
     addFundsKeyLabel->setBuddy(m_AddFundsKeyLineEdit);
