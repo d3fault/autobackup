@@ -39,6 +39,12 @@ AppDbResult AppDbHelper::NowViewingAbcBalanceAddFunds(QString username, Callback
 
     //i can't wait till i get to the point where i can pay others to think for me..
 
+    //maybe just insert the callbackInfo into the hash instead of the 'theClass' part of it. fuck man i'm a little lost here...
+
+
+
+
+
     AppDbResult result;
 
     result.NotInCacheWeWillNotifyYou = !cachedUserAddFundsPageValues.contains(username);
@@ -48,12 +54,12 @@ AppDbResult AppDbHelper::NowViewingAbcBalanceAddFunds(QString username, Callback
         return result;
     }
 
-    UserAddFundsPageValues *values = cachedUserAddFundsPageValues.object(username);
+    UserAddFundsPageValues *pageValues = cachedUserAddFundsPageValues.object(username);
 
-    result.ReturnString1 = values->Key; //if it's [None] we still just pass it to the user. they then can request their first key. we check to see if the key is [None] before checking the AddFundStatus and give them their first key if it is. so somewhere in THIS class we must refer to an exact value of "[None]" so that it compares and equals to the same value that AppDb has set (although it can be blank, detect the blank, and THEN return "[None]"... we want what it returns to point to the same #define as what we compare to... just like in our RemoteBankManagementTest
-    result.ReturnDouble1 = values->PendingAmount;
-    result.ReturnDouble2 = values->ConfirmedKey;
-    result.ReturnDouble3 = values->AddFundsStatus; //0 = awaiting, 1 = pending, 2 = confirmed
+    result.ReturnString1 = pageValues->Key; //if it's [None] we still just pass it to the user. they then can request their first key. we check to see if the key is [None] before checking the AddFundStatus and give them their first key if it is. so somewhere in THIS class we must refer to an exact value of "[None]" so that it compares and equals to the same value that AppDb has set (although it can be blank, detect the blank, and THEN return "[None]"... we want what it returns to point to the same #define as what we compare to... just like in our RemoteBankManagementTest
+    result.ReturnDouble1 = pageValues->PendingAmount;
+    result.ReturnDouble2 = pageValues->ConfirmedKey;
+    result.ReturnDouble3 = pageValues->AddFundsStatus; //0 = awaiting, 1 = pending, 2 = confirmed
     //may need to refactor this shit. a QDataStream might be better... but maybe not. KISS (even if coding too much) for now
 
     //check to see if in cache. if not, set bool appropriately and return. if is, fill out the rest and return

@@ -255,6 +255,11 @@ void AnonymousBitcoinComputing::handleLoginChanged()
 
         //TODO: since this seems to be the first point of entry after the user first registers... we can check our app bank cache db to see if we have set up a (non-cached) bank account yet on our remote server. if we haven't, now is where we do it and we store the user/id (whatever) in the app bank cache db too. we init it to zero on user creation, then check to see if it's still zero right here. if it is, we know they haven't set up a bank account yet. we want to delay this until after the registration CONFIRMATION process, so spam creating accounts (without verifying them) doesn't even send a message to our remote bank server. ya know, i kinda like that: RemoteBankServer and LocalAppBankCache. they are the same except remote manages multiple app bank accounts (for future projects)
 
+        //^^^^OUTDATED
+
+        //GetAndOrCreateBankAccountAsyncOrBlocking
+        //or something. maybe a QHash<QString=username,bool=accountIsSetup> on in our AppDbHelper cache. if it's not in there, we try to set one up by sending a request to the AppDb. This also can/should/but-doesn't-have-to send a request to the Bitcoin Server setting up an account on that (associated with our AppDb's AppId)... we could delay it until they request an add funds key... but that might complicate shit unnecessarily. it is a QHash and not a QCache because we want to know right away whether or not they have an account set up... but we don't necessarily need any of the values from it. Damn dude this is getting complicated especially since you don't have a defined goal here. do you want to show the balance on every page??? if that were the case then you WOULD want it to be in this hash. i don't fucking know anymore i want to kill myself. i want relief.
+
         m_LogoutAnchor->setHidden(false);
         //continue to wherever the user requested
         handleInternalPathChanged(this->internalPath());
@@ -291,12 +296,6 @@ void AnonymousBitcoinComputing::handleLoginChanged()
             }
             ++it;
         }
-        //TODO: iterate through  m_AllViews, set it->second to 0; (also 'delete' ?), and do m_MainStack.removeWidget(it->second)... we want to keep the authwidget in the stack... but right now i have it in the gui twice... idk where i want it yet :-/
-        //m_MainStack->clear();
-
-        /*m_HomeView = 0;
-        m_CampaignEditorView = 0;
-        m_AdEditorView = 0;*/
     }
 }
 Wt::Auth::AuthWidget * AnonymousBitcoinComputing::getAuthWidgetForStack()

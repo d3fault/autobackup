@@ -10,8 +10,6 @@ class WtQtUtil
 public:
     static WString fromQString(const QString &input);
     static QString fromWString(const WString &input);
-private:
-    WtQtUtil();
 };
 
 #endif // WTQTUTIL_H

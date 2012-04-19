@@ -1,8 +1,5 @@
 #include "wtqtutil.h"
 
-WtQtUtil::WtQtUtil()
-{
-}
 Wt::WString WtQtUtil::fromQString(const QString &input)
 {
     return WString::fromUTF8((const char *)input.toUtf8());
