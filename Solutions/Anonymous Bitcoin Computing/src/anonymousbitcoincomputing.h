@@ -2,9 +2,7 @@
 #define ANONYMOUSBITCOINCOMPUTING_H
 
 #define ANONYMOUS_BITCOIN_COMPUTING_BASE_TITLE "Anonymous Bitcoin Computing"
-
 #define ANONYMOUS_BITCOIN_COMPUTING_MENU_SUB_ITEM_PREFIX "--"
-
 #define ANONYMOUS_BITCOIN_COMPUTING_LOGOUT_INTERNAL_PATH "/logout"
 
 #include <map>
@@ -20,7 +18,6 @@
 #include <Wt/Auth/AuthWidget>
 using namespace Wt;
 
-
 #include "database.h"
 
 #include "views/abchome.h"
@@ -29,6 +26,7 @@ using namespace Wt;
 #include "views/balance/abcbalancerequestpayout.h"
 #include "views/advertising/abcadvertisingselladspace.h"
 #include "views/advertising/abcadvertisingbuyadspace.h"
+#include "views/abcfirstlogin.h"
 
 class AnonymousBitcoinComputing : public WApplication
 {
@@ -58,13 +56,16 @@ private:
         AbcBalanceRequestPayoutView,
         AbcAdvertisingSubMenuView,
         AbcAdvertisingSellAdSpaceView,
-        AbcAdvertisingBuyAdSpaceView
-        //todo: when adding more views, update createView
+        AbcAdvertisingBuyAdSpaceView,
+        AbcFirstLoginView
+        //todo: when adding more views, update createView and getViewOrAuthWidgetDependingOnInternalPathAndWhetherOrNotLoggedInAndIfItMattersForInternalPath
     };
     typedef std::map<AbcViews,WContainerWidget*> AbcViewMap;
     AbcViewMap m_AllViews;
     WContainerWidget *getView(AbcViews view);
     WContainerWidget *createView(AbcViews view);
+    std::string m_Username;
+    bool m_OurBankAccountIsSetUp;
 };
 
 #endif // ANONYMOUSBITCOINCOMPUTING_H

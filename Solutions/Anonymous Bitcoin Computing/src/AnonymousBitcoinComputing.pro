@@ -1,7 +1,7 @@
 QT += core
 QT -= gui
 TARGET = AnonymousBitcoinComputing
-LIBS += -L/usr/local/lib -lwt -lwthttp -lboost_signals-mt -lboost_system-mt -lwtdbo -lwtdbosqlite3
+LIBS += -L/usr/local/lib -lwt -lwthttp -lboost_signals-mt -lboost_system-mt -lboost_thread-mt -lwtdbo -lwtdbosqlite3
 #QMAKE_CXXFLAGS += -DNDEBUG
 CONFIG += console
 CONFIG -= app_bundle
@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     views/advertising/abcadvertisingbuyadspace.cpp \
     appdbhelper.cpp \
     wtqtutil.cpp \
-    btcutil.cpp
+    btcutil.cpp \
+    views/abcfirstlogin.cpp
 
 HEADERS += \
     anonymousbitcoincomputing.h \
@@ -32,7 +33,10 @@ HEADERS += \
     views/advertising/abcadvertisingbuyadspace.h \
     appdbhelper.h \
     wtqtutil.h \
-    btcutil.h
+    btcutil.h \
+    views/abcfirstlogin.h
+
+
 
 
 

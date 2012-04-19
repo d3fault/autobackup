@@ -1,0 +1,1 @@
+my code is 50% comments with TODOs and considerations and 50% code, a good portion of which refers to other code that isn't even implemented. lawl. fml. i imagine it will only get worse. but towards the end i can do a ctrl+F -> 'todo' and then raaaaape. at least that's the idea

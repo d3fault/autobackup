@@ -26,6 +26,8 @@ AddFundsRequestResult AppDbHelper::AddFundsRequest(QString username, CallbackInf
 }
 AppDbResult AppDbHelper::NowViewingAbcBalanceAddFunds(QString username, CallbackInfo callbackInfo)
 {
+    //TODO short term: when i comment this out to test the first log in shit, i should simplify this but still call it via BlockingQueued. return a random string and try to use it within Wt context. just to see if BlockingQueued even works...
+
     //TODO... re: generics. i could abstract the "AbcBalanceAddFunds" out of this maybe... and then call a virtual function for a list of values to notify for? another virtual function could contain the callback info...
     //for now, KISS
 
@@ -40,9 +42,6 @@ AppDbResult AppDbHelper::NowViewingAbcBalanceAddFunds(QString username, Callback
     //i can't wait till i get to the point where i can pay others to think for me..
 
     //maybe just insert the callbackInfo into the hash instead of the 'theClass' part of it. fuck man i'm a little lost here...
-
-
-
 
 
     AppDbResult result;
@@ -69,9 +68,17 @@ AppDbResult AppDbHelper::NowViewingAbcBalanceAddFunds(QString username, Callback
 
     return result;
 }
+bool AppDbHelper::isBankAccountSetUpForUser(const std::string &usernameToCheck)
+{
+    //FUCK. false doesn't necessarily mean that a bank account isn't yet set up... it just means our cache doesn't have it. i guess maybe the wt-front-end can pull this entire list on initial connect (and of course receive notification updates)? TODOreq
 
-
-
+    boost::shared_lock<boost::shared_mutex> sharedScopedLock(m_AlreadySetUpBankAccountsListMutex);
+    if(m_AlreadySetUpBankAccountsList.find(usernameToCheck) != m_AlreadySetUpBankAccountsList.end())
+    {
+        return true;
+    }
+    return false;
+}
 
 //WE DON'T EVEN KNOW IF THE BLOCKINGQUEUED SHIT WILL WORK.. BUT I SEE NO REASON WHY IT WOULDN'T
 //'we'

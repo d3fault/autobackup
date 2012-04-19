@@ -1,10 +1,15 @@
 #ifndef APPDBHELPER_H
 #define APPDBHELPER_H
 
+#include <set>
+
 #include <QObject>
 #include <QThread>
 #include <QCache>
 #include <QHash>
+
+#include <boost/thread/locks.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 struct AppDbResult
 {
@@ -35,6 +40,12 @@ public:
 private:
     AppDbHelper();
     static AppDbHelper *m_pInstance;
+
+
+    //bank accounts set up yet list + mutex + helper function
+    std::set<std::string> m_AlreadySetUpBankAccountsList;
+    boost::shared_mutex m_AlreadySetUpBankAccountsListMutex;
+    bool isBankAccountSetUpForUser(const std::string &usernameToCheck);
 
     QThread *m_SocketThread;
     AppDbSocket *m_AppDb; //the real helper. ssl socket (manager)

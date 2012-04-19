@@ -89,7 +89,7 @@ void mainWebsiteBankView::handleNewUserPressed()
 {
     //for this prototype, it's good to call this new user
     //but for the actual implementation, this code is going to be munged with the OnLoggedIn slot. we check if our current user's id (Wt user) has a bank account set up at the local app bank cache. if it doesn't (it'll be zero by default), then this is where THIS CODE RIGHT HERE comes into play. for this prototype we're going to NOT have a user db, just a local bank cache db of users and their cached balance. the actual implementation will have a Wt userdb and a local bank cache db associated with every user created (and bank account created only after confirmed via email)
-    //todo: see 2) send funds request above, 4th paragraph down
+    //todo: see 3) send funds request above, 4th paragraph down
 
     QString newUser(m_NewUserLineEdit->text().trimmed());
     if(!newUser.isEmpty())
