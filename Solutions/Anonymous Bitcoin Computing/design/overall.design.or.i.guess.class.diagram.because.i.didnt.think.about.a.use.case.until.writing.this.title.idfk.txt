@@ -1,0 +1,23 @@
+i'd love to have a dia diagram with every class in the Wt Front End, every class in the AppDb, and every class in the Bank Server
+it would be fap worthy~
+
+i have to make it if i want it
+
+maybe i should....
+....idk
+
+i just know i get to obsessed with designs and never write code
+but maybe that's a good thing?
+it lets me sort out problems that are harder to sort out when staring at C++ code
+
+makes it easier to see the big picture
+
+
+hmmmmmmmmmmmmmmmmmmmm
+YET-ANOTHER-TANGENT
+
+
+
+although not _REALLY_
+design is an integral stage of development
+and this project is actually kind of big.
