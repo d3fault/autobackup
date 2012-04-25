@@ -19,13 +19,29 @@ SOURCES += main.cpp \
     abcappdb.cpp \
     bankserverhelper.cpp \
     ourserverforwtfrontends.cpp \
-    abcapplogic.cpp
+    abcapplogic.cpp \
+    Messages/bankserveractionrequest.cpp \
+    Messages/applogicrequestresponse.cpp \
+    Messages/applogicrequest.cpp \
+    Messages/bankserveractionrequestresponse.cpp
 
 HEADERS += \
     abcappdb.h \
     bankserverhelper.h \
     ourserverforwtfrontends.h \
-    abcapplogic.h
+    abcapplogic.h \
+    Messages/bankserveractionrequest.h \
+    Messages/applogicrequestresponse.h \
+    Messages/applogicrequest.h \
+    Messages/bankserveractionrequestresponse.h
+
+
+
+
+
+
+
+
 
 
 

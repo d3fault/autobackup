@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QThread>
+#include <QDebug>
 
 #include "abcapplogic.h"
 #include "bankserverhelper.h"
@@ -26,7 +27,9 @@ private:
     QThread *m_OurServerForWtFrontEndsThread;
     OurServerForWtFrontEnds *m_OurServerForWtFrontEnds;
 signals:
+    void d(const QString &);
 public slots:
+    void handleD(const QString &); //if there was a GUI layer or something, that would be the place to do this. but for now just put a qDebug() << output; in this class. fuck it.
 };
 
 #endif // ABCAPPDB_H
