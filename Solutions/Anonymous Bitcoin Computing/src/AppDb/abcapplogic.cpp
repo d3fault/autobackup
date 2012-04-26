@@ -7,6 +7,7 @@ AbcAppLogic::AbcAppLogic(QObject *parent) :
 void AbcAppLogic::init()
 {
     //TODO: i guess like init the database n shit
+    emit d("starting logic init");
 }
 void AbcAppLogic::handleRequestFromWtFrontEnd(AppLogicRequest *request)
 {

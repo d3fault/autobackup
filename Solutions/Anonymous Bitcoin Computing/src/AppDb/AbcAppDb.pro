@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     Messages/bankserveractionrequest.cpp \
     Messages/applogicrequestresponse.cpp \
     Messages/applogicrequest.cpp \
-    Messages/bankserveractionrequestresponse.cpp
+    Messages/bankserveractionrequestresponse.cpp \
+    ../shared/ssltcpserver.cpp
 
 HEADERS += \
     abcappdb.h \
@@ -33,7 +34,8 @@ HEADERS += \
     Messages/bankserveractionrequest.h \
     Messages/applogicrequestresponse.h \
     Messages/applogicrequest.h \
-    Messages/bankserveractionrequestresponse.h
+    Messages/bankserveractionrequestresponse.h \
+    ../shared/ssltcpserver.h
 
 
 
