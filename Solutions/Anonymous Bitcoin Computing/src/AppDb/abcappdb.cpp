@@ -54,7 +54,7 @@ void AbcAppDb::connectToBankServerAndStartListeningForWtFrontEnds()
         connect(m_AppLogic, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
         connect(m_OurServerForWtFrontEnds, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
 
-        //START CONNECTING TO THE BANK SERVER. AFTER THE CONENCTION IS ESTABLISHED, IT SIGNALS THE OTHER 2 TO START AS WELL
+        //START CONNECTING TO THE BANK SERVER. AFTER THE CONNECTION IS ESTABLISHED, IT SIGNALS THE OTHER 2 TO START AS WELL
         QMetaObject::invokeMethod(m_BankServer, "connectToBankServer", Qt::QueuedConnection); //start asynchronously connecting
     }
 }

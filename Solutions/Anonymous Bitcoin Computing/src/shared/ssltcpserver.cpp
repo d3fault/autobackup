@@ -141,8 +141,12 @@ void SslTcpServer::handleConnectedAndEncrypted()
     QSslSocket *secureSocket = qobject_cast<QSslSocket*>(sender());
     if(secureSocket)
     {
-        --connect(secureSocket, SIGNAL(readyRead()), this, SLOT(handleReadyRead())); //should i emit clientConnectedAndEncrypted(secureSocket), allowing my parent class to process the messages using it's app-specific prototol? i like the idea of using a list of connected certificate serial numbers so as to detect a duplicate connection... in the case our [to be written] 'alive?' code fails to detect a connection drop. there is no reason that multiple clients can't authenticate using the same client public certificate (and it still passes our clientCA vefification test)..... UNLESS we keep track of the currently connected serial numbers (corresponding to the certificates). this comment is mainly just me thinking out loud. i should keep the serial number private, and emit the socket pointer so i can listen to it's readyRead. but i don't like the idea of passing around the socket pointer within the application logic (which is then passed back to use for telling us who to reply to). a serial number as a uint is better served at that, and it also means we can continue operation when a connection drops and reconnects (ie, the socket pointer changes). still, need to connect to that readyRead()!!!!!!
+        //connect(secureSocket, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
+
+        //should i emit clientConnectedAndEncrypted(secureSocket), allowing my parent class to process the messages using it's app-specific prototol? i like the idea of using a list of connected certificate serial numbers so as to detect a duplicate connection... in the case our [to be written] 'alive?' code fails to detect a connection drop. there is no reason that multiple clients can't authenticate using the same client public certificate (and it still passes our clientCA vefification test)..... UNLESS we keep track of the currently connected serial numbers (corresponding to the certificates). this comment is mainly just me thinking out loud. i should keep the serial number private, and emit the socket pointer so i can listen to it's readyRead. but i don't like the idea of passing around the socket pointer within the application logic (which is then passed back to use for telling us who to reply to). a serial number as a uint is better served at that, and it also means we can continue operation when a connection drops and reconnects (ie, the socket pointer changes). still, need to connect to that readyRead()!!!!!!
         //fml idk wtf to do. i'm overthinking this.
+        //both a 32-bit pointer to a socket and a uint have the same overhead as far as passing them around... with 64-bit platforms doubling for the former (at least i think)
+        //seeing as i don't want to double the overhead for 64-bit (because i very well may use 64-bit servers)... and i don't want the business logic to have to contain a QSslSocket pointer.... i should use the serial number in a uint as my identifier. badabing badabam all i gotta do is TTHHHIIIIINNNNNKKKKKKK
 
         uint clientSerialNumber = secureSocket->peerCertificate().serialNumber().toUInt();
         if(m_EncryptedSocketsBySerialNumber.contains(clientSerialNumber))
@@ -155,7 +159,7 @@ void SslTcpServer::handleConnectedAndEncrypted()
         {
             //not in our hash yet, so add it
             m_EncryptedSocketsBySerialNumber.insert(clientSerialNumber, secureSocket);
-            --emit clientConnectedAndEncrypted(clientSerialNumber);
+            emit clientConnectedAndEncrypted(clientSerialNumber, secureSocket);
         }
     }
 }

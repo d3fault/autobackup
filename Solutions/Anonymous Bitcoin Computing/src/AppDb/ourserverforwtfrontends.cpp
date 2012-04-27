@@ -19,7 +19,29 @@ void OurServerForWtFrontEnds::startListeningForWtFrontEnds()
 void OurServerForWtFrontEnds::handleResponseFromAppLogic(AppLogicRequestResponse *response)
 {
 }
-void OurServerForWtFrontEnds::handleClientConnectedAndEncrypted(uint clientId)
+void OurServerForWtFrontEnds::handleClientConnectedAndEncrypted(uint clientId, QSslSocket *client)
 {
+    //clientId is how we'll refer to it from now on... and we only need client right here to efficiently connect to it's readyRead signal
+    //TODO: should i store the clientId here too? or in the socket code? idfk.
+    connect(client, SIGNAL(readyRead()), this, SLOT(handleWtFrontEndSentUsData()));
     //TODOreq: send them the list of usernames that have a bank account already created
+}
+void OurServerForWtFrontEnds::handleWtFrontEndSentUsData()
+{
+    emit d("received data from wt front-end");
+    if(QSslSocket *secureSocket = qobject_cast<QSslSocket*>(sender()))
+    {
+        QDataStream stream(secureSocket);
+        while(!stream.atEnd())
+        {
+            WtFrontEndToAppDbMessage message;
+            stream >> message;
+            if(message.m_WtFrontEndAndAppDbMessageType != WtFrontEndAndAppDbMessage::WtFrontEndToAppDbMessageType)
+            {
+                emit d("somehow got the wrong message type");
+                return;
+            }
+                emit requestFromWtFrontEnd(AppLogicRequest::fromWtFrontEndToAppDbMessage(message));
+        }
+    }
 }

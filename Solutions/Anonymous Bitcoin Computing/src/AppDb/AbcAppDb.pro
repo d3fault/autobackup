@@ -35,7 +35,8 @@ HEADERS += \
     Messages/applogicrequestresponse.h \
     Messages/applogicrequest.h \
     Messages/bankserveractionrequestresponse.h \
-    ../shared/ssltcpserver.h
+    ../shared/ssltcpserver.h \
+    ../shared/WtFrontEndAndAppDbProtocol.h
 
 
 

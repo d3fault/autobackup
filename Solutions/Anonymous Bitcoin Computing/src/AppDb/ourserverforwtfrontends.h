@@ -2,9 +2,9 @@
 #define OURSERVERFORWTFRONTENDS_H
 
 #include <QObject>
-#include <QHash>
 
 #include "../shared/ssltcpserver.h"
+#include "../shared/WtFrontEndAndAppDbProtocol.h"
 #include "Messages/applogicrequest.h"
 #include "Messages/applogicrequestresponse.h"
 
@@ -28,7 +28,8 @@ public slots:
     void handleResponseFromAppLogic(AppLogicRequestResponse*); //this somewhat contradicts what i wrote above this class definition in the comments, but it should be noted that for a simple 'GET' request to the app logic, only the wt front-end that requested the information should be sent that information. however, when something in the app logic *CHANGES*, we notify _every_ wt front-end of the change. i suppose my AppLogicRequest[Response] struct can have a bool somethingChanged and also an identifier for the wt front-end that made the request. if the somethingChanged is true, we send to everyone (i guess that's how we can prioritize the wt front-end that made the request). if it's false, we only send to the wt front-end that made the request. it doubles as an optimization when somethingChanged is true.
     //i guess another item in the struct could be a QByteArray that we build using a QDataStream. the bytearray (pointer) is the data itself. whether the changed/updated data or the data that the front-end wants a 'GET' of
 private slots:
-    void handleClientConnectedAndEncrypted(uint clientId);
+    void handleClientConnectedAndEncrypted(uint clientId, QSslSocket *client);
+    void handleWtFrontEndSentUsData();
 };
 
 #endif // OURSERVERFORWTFRONTENDS_H

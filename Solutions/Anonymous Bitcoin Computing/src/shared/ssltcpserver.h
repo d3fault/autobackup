@@ -6,6 +6,7 @@
 #include <QtNetwork/QSslCertificate>
 #include <QtNetwork/QSslKey>
 #include <QQueue>
+#include <QHash>
 #include <QFile>
 
 class SslTcpServer : public QTcpServer
@@ -32,7 +33,7 @@ protected:
     virtual void incomingConnection(int handle);
 signals:
     void d(const QString &);
-    void clientConnectedAndEncrypted(uint clientId);
+    void clientConnectedAndEncrypted(uint clientId, QSslSocket *client);
 private slots:
     void handleNewConnectionNotYetEncrypted();
     void handleConnectedAndEncrypted();
