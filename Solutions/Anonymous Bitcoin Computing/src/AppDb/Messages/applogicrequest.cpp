@@ -51,7 +51,7 @@ void AppLogicRequest::returnAnAppLogicRequest(AppLogicRequest *appLogicRequest)
 {
     m_RecycledAppLogicRequests.append(appLogicRequest);
 }
-void AppLogicRequest::processAppLogicRequest()
+void AppLogicRequest::determineAppLogicRequestAndCallAppropriateMethod()
 {
     //we need to make sure that this is _NEVER_ called from anywhere but the AppLogic object/thread... since it operates directly on our AppLogic object. AS OPPOSED TO the giveMeAnAppLogicRequest() and returnAnAppLogicRequest()... which should _ONLY_ be called from the OurServerForWtFrontEnds object/thread (so we don't need mutex's to protect the list)
     switch(m_WtFrontEndToAppDbMessage->m_TheMessage)

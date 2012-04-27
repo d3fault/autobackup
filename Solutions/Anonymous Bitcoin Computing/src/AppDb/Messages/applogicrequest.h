@@ -19,7 +19,7 @@ public:
     uint getRequestorId();
 
     //unsafe -- should only be called from AppLogic object/thread
-    void processAppLogicRequest();
+    void determineAppLogicRequestAndCallAppropriateMethod();
 private:
     Q_DISABLE_COPY(AppLogicRequest)
 

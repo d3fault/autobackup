@@ -21,6 +21,8 @@ void OurServerForWtFrontEnds::handleResponseFromAppLogic(AppLogicRequestResponse
     //todo: blah blah blah
     //then, after we're done with the response... after we've sent the request over the network (blah blah blah), return the response to be recycled
 
+    //somewhere in here we're going to need to build an AppDbToWtFrontEndMessage... and i'm thinking the 'theMessage' part of it can be determined automatically based on what the request's 'theMessage' is. we can have a static function in the protocol called like 'responseForRequest(request)'... all enum based... so we don't even need to fill one out. but there are still definitely going to be cases where we need to assign variables to the AppDbToWtFrontEndMessage..... can that be done in AppLogicRequest static method? (or i suppose AppLogicRequestResponse is probably a better place... since we're now in the response phase) that static method in AppLogicRequestResponse could be the one to dig into response->parentRequest()->m_WtFrontEndToAppDbMessage->m_ExtraString0 and "KNOW" (based on the fact that it's currently in a switch for 'theMessage' (response, as noted in this very comment) that m_ExtraString0 is the username (FOR EXAMPLE)
+
     //something like m_TcpSocket->sendResponseTo(response->parentRequest()->getRequestorId());
 
     AppLogicRequest::returnAnAppLogicRequest(response->parentRequest());
@@ -28,6 +30,7 @@ void OurServerForWtFrontEnds::handleResponseFromAppLogic(AppLogicRequestResponse
 void OurServerForWtFrontEnds::handleClientConnectedAndEncrypted(QSslSocket *client)
 {
     connect(client, SIGNAL(readyRead()), this, SLOT(handleWtFrontEndSentUsData()));
+    //TODOreq: re: list of usernames with bank account - this class should have it's own copy of the list... so we don't have to bug AppLogic (though then again, it's not like Wt Front Ends connect a whole lot...). but anyways, when a createBankAccount app logic method succeeds, it emits to us that fact, as well as the new username. we then broadcast it to ever wt front-end. this is SEPARATE from the AppLogicRequestResponse specifically to the wt front-end/user that we made a new bank account for. createBankAccount in app logic should have 2 emits on success. HOWEVER, for the wt front-end that the user is currently on, it would be possible to use the broadcast notification as the response. this might overly complicate things (but then again, receiving notification that a bank account has been created... TWICE... might complicate things too (TODOreq: make sure that the one that is propagated to the user does not conflict/make-the-same-'alreadyExists?'-sanity-checks as when the code receives the broadcast notify))
     //TODOreq: send them the list of usernames that have a bank account already created.... and TODOreq further, make sure that when a new incoming duplicate connection (didn't detect dropped)... we DON'T send them the list of users again? man this is getting stupid confusing.
     //a) they disconnect and reconnect, we send them the list of usernames again
     //b) the connection drops and then picks back up (???? same QSslSocket* ????), we do not send them the list of usernames again
