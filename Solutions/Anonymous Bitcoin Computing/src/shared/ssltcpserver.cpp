@@ -13,7 +13,7 @@ void SslTcpServer::initAndStartListening()
         return;
     }
 
-    //Server CA is what the client's use to verify the authenticity of the server. It is a "List", but in our case only contains our server's Local Certificate. It has to be 'securely' copied to the client connection. both sides have it set. On this side, we only use it when loading our public local certificate to see if it's on the list.
+    //Server CA is what the client's use to verify the authenticity of the server. It is a "List", but in our case only contains our server's Local Certificate. It has to be 'securely' copied to the client connection. both sides have it set. On this side, we only use it when loading our public local certificate to see if it's on the list (and verify against it).
     QFile serverCaFileResource(m_ServerCaFile);
     serverCaFileResource.open(QFile::ReadOnly);
     QByteArray serverCaByteArray = serverCaFileResource.readAll();
@@ -27,7 +27,7 @@ void SslTcpServer::initAndStartListening()
     }
     emit d("the server certificate is not null");
 
-    //Client CA is what the server uses to verify the authenticity of the clients
+    //Client CA is a list of certificates that the server uses to verify the authenticity of the clients. each client can use the same certificate, but for our purposes we're going to have each client having a unique certificate. it is how we will identify them.
     QFile clientCaFileResource(m_ClientCaFile);
     clientCaFileResource.open(QFile::ReadOnly);
     QByteArray clientCaByteArray = clientCaFileResource.readAll();
@@ -148,6 +148,19 @@ void SslTcpServer::handleConnectedAndEncrypted()
         //both a 32-bit pointer to a socket and a uint have the same overhead as far as passing them around... with 64-bit platforms doubling for the former (at least i think)
         //seeing as i don't want to double the overhead for 64-bit (because i very well may use 64-bit servers)... and i don't want the business logic to have to contain a QSslSocket pointer.... i should use the serial number in a uint as my identifier. badabing badabam all i gotta do is TTHHHIIIIINNNNNKKKKKKK
 
+        //basically what's fucking with my head right here is that i'm using the serialNumber as an ID for two separate purposes:
+        //A) to detect duplicate connections (in the case we don't detect a connection drop)
+        //B) to identify which client to send an AppLogicRequest[Response] back to
+
+        //i could use an IP address for both it really doesn't matter...
+
+        //just don't forget that they are TWO SEPARATE REASONS and you should be alright
+        //but should they share the same QHash<uint,QSslSocket*> ........ ?????????...... that's what's really getting me. and is QSslSocket* the right value type for that hash? where will i keep track of the last 'i-AM-alive' received? could just be an object that has that QDateTime + the QSslSocket... ya dig?
+        //i am also writing/designing around code that i am not even implementing yet (connection management)... so meh.
+
+        //for now, just code for B.
+
+#ifdef ABC_CONNECTION_MANAGEMENT
         uint clientSerialNumber = secureSocket->peerCertificate().serialNumber().toUInt();
         if(m_EncryptedSocketsBySerialNumber.contains(clientSerialNumber))
         {
@@ -161,6 +174,8 @@ void SslTcpServer::handleConnectedAndEncrypted()
             m_EncryptedSocketsBySerialNumber.insert(clientSerialNumber, secureSocket);
             emit clientConnectedAndEncrypted(clientSerialNumber, secureSocket);
         }
+#endif
+        emit clientConnectedAndEncrypted(secureSocket);
     }
 }
 void SslTcpServer::handleSslErrors(QList<QSslError> sslErrors)
@@ -175,4 +190,8 @@ void SslTcpServer::handleSslErrors(QList<QSslError> sslErrors)
 void SslTcpServer::handleSocketError(QAbstractSocket::SocketError abstractSocketError)
 {
     emit d("abstract socket error #" + QString::number(abstractSocketError));
+}
+uint SslTcpServer::getClientUniqueId(QSslSocket *client)
+{
+    return client->peerCertificate().serialNumber().toUInt(); //so i can change this for ip address or something easily if i need to
 }

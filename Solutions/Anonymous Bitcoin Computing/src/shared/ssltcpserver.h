@@ -15,6 +15,7 @@ class SslTcpServer : public QTcpServer
 public:
     explicit SslTcpServer(QObject *parent, const QString &serverCaFile, const QString &clientCaFile, const QString &serverPrivateEncryptionKeyFile, const QString &serverPublicLocalCertificateFile, const QString &serverPrivateEncryptionKeyPassPhrase);
     virtual QTcpSocket *nextPendingConnection();
+    static uint getClientUniqueId(QSslSocket *client);
     void initAndStartListening();
 private:
     QQueue<QSslSocket*> m_PendingConnections;
@@ -33,7 +34,7 @@ protected:
     virtual void incomingConnection(int handle);
 signals:
     void d(const QString &);
-    void clientConnectedAndEncrypted(uint clientId, QSslSocket *client);
+    void clientConnectedAndEncrypted(QSslSocket *client);
 private slots:
     void handleNewConnectionNotYetEncrypted();
     void handleConnectedAndEncrypted();

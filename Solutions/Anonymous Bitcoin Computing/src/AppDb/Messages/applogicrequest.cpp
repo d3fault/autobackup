@@ -29,13 +29,19 @@ AppLogicRequest *AppLogicRequest::fromWtFrontEndToAppDbMessage(WtFrontEndToAppDb
     //perfect. right after i 'new' AppLogic, i'll set AppLogicRequest::AppLogicPtr...
     //then i just call AppLogicRequest.processRequest(); ... and AppLogicRequest (which CAN/SHOULD know AppLogic methods) does the switch on WtFrontEndToAppDbMessage (which it also definitely knows... hell i'm writing in it right now) and bam, that's IT.
 }
-AppLogicRequest * AppLogicRequest::giveMeAnAppLogicRequest()
+AppLogicRequest * AppLogicRequest::giveMeAnAppLogicRequest(uint requestorId)
 {
+    AppLogicRequest *appLogicRequest;
     if(!m_RecycledAppLogicRequests.isEmpty())
     {
-        return m_RecycledAppLogicRequests.takeLast(); //why last? JUST IN CASE taking first would trigger a re-order. it DOES NOT MATTER which one i take. i originally thought this should be a queue but it really doesn't matter at all
+        appLogicRequest = m_RecycledAppLogicRequests.takeLast(); //why last? JUST IN CASE taking first would trigger a re-order. it DOES NOT MATTER which one i take. i originally thought this should be a queue but it really doesn't matter at all
     }
-    return new AppLogicRequest();
+    else
+    {
+        appLogicRequest = new AppLogicRequest();
+    }
+    appLogicRequest->setRequestorId(requestorId);
+    return appLogicRequest;
 }
 void AppLogicRequest::setAppLogic(AbcAppLogic *appLogic)
 {
@@ -47,7 +53,7 @@ void AppLogicRequest::returnAnAppLogicRequest(AppLogicRequest *appLogicRequest)
 }
 void AppLogicRequest::processAppLogicRequest()
 {
-    //we need to make sure that this is _NEVER_ called from anywhere but the AppLogic object/thread... since it operates directly on our AppLogic object
+    //we need to make sure that this is _NEVER_ called from anywhere but the AppLogic object/thread... since it operates directly on our AppLogic object. AS OPPOSED TO the giveMeAnAppLogicRequest() and returnAnAppLogicRequest()... which should _ONLY_ be called from the OurServerForWtFrontEnds object/thread (so we don't need mutex's to protect the list)
     switch(m_WtFrontEndToAppDbMessage->m_TheMessage)
     {
     //TODOopt: re-arrange these cases based on usage statistics. we probably won't be creating bank accounts nearly as much as we'll be GET'ing some random piece of data...
@@ -61,4 +67,12 @@ void AppLogicRequest::processAppLogicRequest()
         //TODO: ERROR
         break;
     }
+}
+void AppLogicRequest::setRequestorId(uint requestorId)
+{
+    m_RequestorId = requestorId;
+}
+uint AppLogicRequest::getRequestorId()
+{
+    return m_RequestorId;
 }

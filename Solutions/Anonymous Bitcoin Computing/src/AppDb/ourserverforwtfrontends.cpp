@@ -12,7 +12,7 @@ void OurServerForWtFrontEnds::startListeningForWtFrontEnds()
     {
         m_SslTcpServer = new SslTcpServer(this, ":/serverCa.pem", ":/clientCa.pem", ":/serverPrivateEncryptionKey.pem", ":/serverPublicLocalCertificate.pem", "fuckyou" /* TODOopt: make it so when starting the server we are prompted for this passphrase. this way it is only ever stored in memory... which is an improvement but still not perfect */);
         connect(m_SslTcpServer, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
-        connect(m_SslTcpServer, SIGNAL(clientConnectedAndEncrypted(uint)), this, SLOT(handleClientConnectedAndEncrypted(uint)));
+        connect(m_SslTcpServer, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleClientConnectedAndEncrypted(QSslSocket*)));
         m_SslTcpServer->initAndStartListening();
     }
 }
@@ -21,14 +21,21 @@ void OurServerForWtFrontEnds::handleResponseFromAppLogic(AppLogicRequestResponse
     //todo: blah blah blah
     //then, after we're done with the response... after we've sent the request over the network (blah blah blah), return the response to be recycled
 
+    //something like m_TcpSocket->sendResponseTo(response->parentRequest()->getRequestorId());
+
     AppLogicRequest::returnAnAppLogicRequest(response->parentRequest());
 }
-void OurServerForWtFrontEnds::handleClientConnectedAndEncrypted(uint clientId, QSslSocket *client)
+void OurServerForWtFrontEnds::handleClientConnectedAndEncrypted(QSslSocket *client)
 {
-    //clientId is how we'll refer to it from now on... and we only need client right here to efficiently connect to it's readyRead signal
-    //TODO: should i store the clientId here too? or in the socket code? idfk.
     connect(client, SIGNAL(readyRead()), this, SLOT(handleWtFrontEndSentUsData()));
-    //TODOreq: send them the list of usernames that have a bank account already created
+    //TODOreq: send them the list of usernames that have a bank account already created.... and TODOreq further, make sure that when a new incoming duplicate connection (didn't detect dropped)... we DON'T send them the list of users again? man this is getting stupid confusing.
+    //a) they disconnect and reconnect, we send them the list of usernames again
+    //b) the connection drops and then picks back up (???? same QSslSocket* ????), we do not send them the list of usernames again
+    //c) the connection drops and then they re-establish a new one (new QSslSocket*, but same certificate serial number) [before we notice the other one is dropped... otherwise it would appear to us as (a)]
+
+    //^^^^^this is really ssltcpserver code, but i'm just venting it with relation to the 'send list of usernames on first connection' as it is a use case and makes it easier to comprehend
+
+    //ok now that i've written the //something like m_TcpSocket->sendResponseTo(response->parentRequest()->getRequestorId()); in handleResponseFromAppLogic... i see that THIS CLASS doesn't need to give a fuck about a list of currently connected QSslSockets. woot.
 }
 void OurServerForWtFrontEnds::handleWtFrontEndSentUsData()
 {
@@ -38,12 +45,12 @@ void OurServerForWtFrontEnds::handleWtFrontEndSentUsData()
         QDataStream stream(secureSocket);
         while(!stream.atEnd())
         {
-            AppLogicRequest *request = AppLogicRequest::giveMeAnAppLogicRequest();
-            //WtFrontEndToAppDbMessage message;
-            stream >> *message;
-            if(message->m_WtFrontEndAndAppDbMessageType != WtFrontEndAndAppDbMessage::WtFrontEndToAppDbMessageType)
+            AppLogicRequest *request = AppLogicRequest::giveMeAnAppLogicRequest(SslTcpServer::getClientUniqueId(secureSocket)); //gets a new/recycled AppLogicRequest and sets it's clientId so we know who to respond to later on...
+            stream >> *(request->m_WtFrontEndToAppDbMessage); //i hope dereferencing this and re-using it is okay!!!! lol 'hope'. TODOreq: write small prototype to make sure this shit works
+            if(request->m_WtFrontEndToAppDbMessage->m_WtFrontEndAndAppDbMessageType != WtFrontEndAndAppDbMessage::WtFrontEndToAppDbMessageType)
             {
                 emit d("somehow got the wrong message type in handleWtFrontEndSentUsData");
+                AppLogicRequest::returnAnAppLogicRequest(request); //no point in leaving it on the heap!
                 return;
             }
             emit requestFromWtFrontEnd(request);
