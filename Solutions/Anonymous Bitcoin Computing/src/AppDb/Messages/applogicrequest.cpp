@@ -2,7 +2,12 @@
 
 AppLogicRequest::AppLogicRequest()
 {
+    m_WtFrontEndToAppDbMessage = new WtFrontEndToAppDbMessage();
+    m_AppLogicRequestResponse = new AppLogicRequestResponse(this);
+    //TODO: setDefaultValues should be called both here and before returning the takeLast() below. it sets things like somethingChanged (etc) to false;
 }
+AbcAppLogic *AppLogicRequest::m_AppLogic = NULL;
+QList<AppLogicRequest*> AppLogicRequest::m_RecycledAppLogicRequests = QList<AppLogicRequest*>(); //extra copy but fuck it, only once per app
 AppLogicRequest *AppLogicRequest::fromWtFrontEndToAppDbMessage(WtFrontEndToAppDbMessage message)
 {
     //TODOopt: from here we can manage a recycled queue of already new'd objects or something if we want
@@ -23,4 +28,37 @@ AppLogicRequest *AppLogicRequest::fromWtFrontEndToAppDbMessage(WtFrontEndToAppDb
     //if only i could make AppLogicRequest be the one to do the switch()... then it would be perfect. this i probably could. AppLogic gets the AppLogicRequest and then calls processRequest(this); on it (with 'this' being AppLogic itself... or AppLogic could be a singleton idgaf). Or i could set a static AppLogic pointer during the init phase... (just increasing efficiency here... something a compiler/profiler does way better (idk though i mean it's not like a compiler optimizes memory usage/allocating. you have to analyze/redesign based on the output of a profiler (or a simple memory usage view) to do that. and the optimizations i'm making MAKE SENSE to me. kinda like how when i did video i made it recycle the video frames. no fucking profiler/compiler told me to do it... it just made sense. this being a high bandwidth/performance server app i definitely think it should be optimized))
     //perfect. right after i 'new' AppLogic, i'll set AppLogicRequest::AppLogicPtr...
     //then i just call AppLogicRequest.processRequest(); ... and AppLogicRequest (which CAN/SHOULD know AppLogic methods) does the switch on WtFrontEndToAppDbMessage (which it also definitely knows... hell i'm writing in it right now) and bam, that's IT.
+}
+AppLogicRequest * AppLogicRequest::giveMeAnAppLogicRequest()
+{
+    if(!m_RecycledAppLogicRequests.isEmpty())
+    {
+        return m_RecycledAppLogicRequests.takeLast(); //why last? JUST IN CASE taking first would trigger a re-order. it DOES NOT MATTER which one i take. i originally thought this should be a queue but it really doesn't matter at all
+    }
+    return new AppLogicRequest();
+}
+void AppLogicRequest::setAppLogic(AbcAppLogic *appLogic)
+{
+    m_AppLogic = appLogic;
+}
+void AppLogicRequest::returnAnAppLogicRequest(AppLogicRequest *appLogicRequest)
+{
+    m_RecycledAppLogicRequests.append(appLogicRequest);
+}
+void AppLogicRequest::processAppLogicRequest()
+{
+    //we need to make sure that this is _NEVER_ called from anywhere but the AppLogic object/thread... since it operates directly on our AppLogic object
+    switch(m_WtFrontEndToAppDbMessage->m_TheMessage)
+    {
+    //TODOopt: re-arrange these cases based on usage statistics. we probably won't be creating bank accounts nearly as much as we'll be GET'ing some random piece of data...
+    case WtFrontEndToAppDbMessage::CreateBankAccountForUserX:
+    {
+        m_AppLogic->createBankAccountForUser(m_WtFrontEndToAppDbMessage->m_ExtraString0, m_AppLogicRequestResponse); //we send the response so they can fill it out and tell OurServerForWtFrontEnds the response (by emitting it back). the response has a pointer to the request, and vice versa
+            break;
+    }
+    case WtFrontEndToAppDbMessage::InvalidWtFrontEndToAppDbMessageType:
+    default:
+        //TODO: ERROR
+        break;
+    }
 }

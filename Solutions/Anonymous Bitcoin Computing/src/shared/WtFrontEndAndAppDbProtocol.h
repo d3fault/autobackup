@@ -11,7 +11,7 @@ struct WtFrontEndAndAppDbMessage
         WtFrontEndToAppDbMessageType,
         AppDbToWtFrontEndMessageType
     };
-    inline WtFrontEndAndAppDbMessage(WtFrontEndAndAppDbMessageType wtFrontEndAndAppDbMessageType = InvalidWtFrontEndAndAppDbMessageType, quint16 theMessage = 0, QString extraString0)
+    inline WtFrontEndAndAppDbMessage(WtFrontEndAndAppDbMessageType wtFrontEndAndAppDbMessageType = InvalidWtFrontEndAndAppDbMessageType, quint16 theMessage = 0, QString extraString0 = QString())
         : m_WtFrontEndAndAppDbMessageType(wtFrontEndAndAppDbMessageType), m_TheMessage(theMessage), m_ExtraString0(extraString0)
     { }
     quint16 m_WtFrontEndAndAppDbMessageType;

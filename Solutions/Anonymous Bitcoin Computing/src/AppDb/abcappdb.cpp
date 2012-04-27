@@ -9,6 +9,7 @@ void AbcAppDb::connectToBankServerAndStartListeningForWtFrontEnds()
     if(!m_AppLogic)
     {
         m_AppLogic = new AbcAppLogic();
+        AppLogicRequest::setAppLogic(m_AppLogic);
         m_AppLogicThread = new QThread();
         m_AppLogic->moveToThread(m_AppLogicThread);
         m_AppLogicThread->start();

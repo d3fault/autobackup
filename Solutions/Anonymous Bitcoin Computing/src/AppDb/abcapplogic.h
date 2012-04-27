@@ -14,6 +14,8 @@ class AbcAppLogic : public QObject
 public:
     explicit AbcAppLogic(QObject *parent = 0);
 
+    //App Logic -- these methods get called in AppLogicRequest.processAppLogicRequest after the AppLogicRequest is emit'd over to us........... and maybe some of these App Logic methods might be called by some parallel that interfaces with the Bitcoin Server (TODOTODOTODOreq)
+    void createBankAccountForUser(const QString &user, AppLogicRequestResponse *responseThatWeFillOutAndEmitBack);
 signals:
     void d(const QString &);
     void appLogicRequestRequiresBankServerAction(BankServerActionRequest*);

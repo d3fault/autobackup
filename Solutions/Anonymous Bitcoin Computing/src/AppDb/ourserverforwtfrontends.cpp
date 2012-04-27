@@ -18,6 +18,10 @@ void OurServerForWtFrontEnds::startListeningForWtFrontEnds()
 }
 void OurServerForWtFrontEnds::handleResponseFromAppLogic(AppLogicRequestResponse *response)
 {
+    //todo: blah blah blah
+    //then, after we're done with the response... after we've sent the request over the network (blah blah blah), return the response to be recycled
+
+    AppLogicRequest::returnAnAppLogicRequest(response->parentRequest());
 }
 void OurServerForWtFrontEnds::handleClientConnectedAndEncrypted(uint clientId, QSslSocket *client)
 {
@@ -34,14 +38,15 @@ void OurServerForWtFrontEnds::handleWtFrontEndSentUsData()
         QDataStream stream(secureSocket);
         while(!stream.atEnd())
         {
-            WtFrontEndToAppDbMessage message;
-            stream >> message;
-            if(message.m_WtFrontEndAndAppDbMessageType != WtFrontEndAndAppDbMessage::WtFrontEndToAppDbMessageType)
+            AppLogicRequest *request = AppLogicRequest::giveMeAnAppLogicRequest();
+            //WtFrontEndToAppDbMessage message;
+            stream >> *message;
+            if(message->m_WtFrontEndAndAppDbMessageType != WtFrontEndAndAppDbMessage::WtFrontEndToAppDbMessageType)
             {
-                emit d("somehow got the wrong message type");
+                emit d("somehow got the wrong message type in handleWtFrontEndSentUsData");
                 return;
             }
-                emit requestFromWtFrontEnd(AppLogicRequest::fromWtFrontEndToAppDbMessage(message));
+            emit requestFromWtFrontEnd(request);
         }
     }
 }
