@@ -25,7 +25,8 @@ void OurServerForWtFrontEnds::handleResponseFromAppLogic(AppLogicRequestResponse
 
     //something like m_TcpSocket->sendResponseTo(response->parentRequest()->getRequestorId());
 
-    AppLogicRequest::returnAnAppLogicRequest(response->parentRequest());
+    //AppLogicRequest::returnAnAppLogicRequest(response->parentRequest());
+    AppLogicRequest::returnAnInheritedAppLogicRequest(response->parentRequest());
 }
 void OurServerForWtFrontEnds::handleClientConnectedAndEncrypted(QSslSocket *client)
 {
@@ -48,15 +49,24 @@ void OurServerForWtFrontEnds::handleWtFrontEndSentUsData()
         QDataStream stream(secureSocket);
         while(!stream.atEnd())
         {
-            AppLogicRequest *request = AppLogicRequest::giveMeAnAppLogicRequest(SslTcpServer::getClientUniqueId(secureSocket)); //gets a new/recycled AppLogicRequest and sets it's clientId so we know who to respond to later on...
-            stream >> *(request->m_WtFrontEndToAppDbMessage); //i hope dereferencing this and re-using it is okay!!!! lol 'hope'. TODOreq: write small prototype to make sure this shit works
-            if(request->m_WtFrontEndToAppDbMessage->m_WtFrontEndAndAppDbMessageType != WtFrontEndAndAppDbMessage::WtFrontEndToAppDbMessageType)
+            //AppLogicRequest *request = AppLogicRequest::giveMeAnAppLogicRequest(SslTcpServer::getClientUniqueId(secureSocket)); //gets a new/recycled AppLogicRequest and sets it's clientId so we know who to respond to later on...
+
+
+            //in order to know what kind of INHERITED AppLogicRequest (for example: CreateBankAccountAppLogicRequest : AppLogicRequest .... with virtual methods called to do the work)... we must first read the message from the network and determine 'theMessage'.
+
+            //so maybe (with recycling included):
+            WtFrontEndToAppDbMessage *newMessage = WtFrontEndToAppDbMessage::giveMeAWtFrontEndToAppDbMessage(SslTcpServer::getClientUniqueId(secureSocket));
+            stream >> *newMessage;
+            if(newMessage->m_WtFrontEndAndAppDbMessageType != WtFrontEndAndAppDbMessage::WtFrontEndToAppDbMessageType)
             {
                 emit d("somehow got the wrong message type in handleWtFrontEndSentUsData");
-                AppLogicRequest::returnAnAppLogicRequest(request); //no point in leaving it on the heap!
+                WtFrontEndToAppDbMessage::returnAWtFrontEndToAppDbMessage(newMessage);
                 return;
             }
-            emit requestFromWtFrontEnd(request);
+            //then, now that the message has been read off the network, we can get the appropriate type of AppLogicRequest (the inherited type... even though we refer to it by pointer here... AS WELL AS set the newMessage to be a child of it... so when we recycle the AppLogicRequest* (a hash or something, with 'theMessage' as the key, and a QList<AppLogicRequest*> as the value), we also recycle the newMessage too
+            AppLogicRequest *inheritedAppLogicRequest = AppLogicRequest::giveMeAnInheritedAppLogicRequestBasedOnTheMessage(newMessage);
+
+            emit requestFromWtFrontEnd(inheritedAppLogicRequest);
         }
     }
 }

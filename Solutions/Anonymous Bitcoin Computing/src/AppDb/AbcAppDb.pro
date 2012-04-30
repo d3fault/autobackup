@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     Messages/applogicrequestresponse.cpp \
     Messages/applogicrequest.cpp \
     Messages/bankserveractionrequestresponse.cpp \
-    ../shared/ssltcpserver.cpp
+    ../shared/ssltcpserver.cpp \
+    Messages/AppLogicRequests/createbankaccountapplogicrequest.cpp
 
 HEADERS += \
     abcappdb.h \
@@ -36,7 +37,10 @@ HEADERS += \
     Messages/applogicrequest.h \
     Messages/bankserveractionrequestresponse.h \
     ../shared/ssltcpserver.h \
-    ../shared/WtFrontEndAndAppDbProtocol.h
+    ../shared/WtFrontEndAndAppDbProtocol.h \
+    Messages/AppLogicRequests/createbankaccountapplogicrequest.h
+
+
 
 
 
