@@ -39,7 +39,8 @@ void AbcAppLogic::handleResponseFromBankServer(BankServerActionRequestResponse *
     //re: the TODOTODOTODOreq in our header... something like bankResponse->processBankServerResponse() ;-)
     //i don't think there will be any race condition detection done in there... so maybe processBankServerResponse() will be pure virtual
 
-    //psbly do (unsure atm... though PROBABLY):
+    //psbly do (unsure atm... though PROBABLY): NOPE. the bank response needs to be translated into an app logic response lol.
+    //TODO: also, after we know we don't need the bank response anymore... we recycle the associated bank request/response. in/around here. this might also be around where m_TriggeredRequestToBankServer is set to false. oh wait no that's going to be wherever we recycle the app logic request. gah this is confusing
     emit responseToWtFrontEndReady(bankResponse);
 }
 #if 0
