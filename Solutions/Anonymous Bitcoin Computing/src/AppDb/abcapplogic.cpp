@@ -13,13 +13,13 @@ void AbcAppLogic::handleRequestFromWtFrontEnd(AppLogicRequest *request)
 {
     request->processAppLogicRequest();
 
-    //the following is pseudo-code
-    if(!request->bankServerRequestTriggered()) //if we didn't dispatch a request to the bank server, that means we already have a response and should send it back to the wt front-end
+    if(!request->bankServerRequestTriggered()) //if we aren't going to dispatch a request to the bank server, that means we already have a response and should send it back to the wt front-end
     {
         emit responseToWtFrontEndReady(request->response());
     }
     else
     {
+        request->setBankServerRequest(BankServerActionRequest::getBankServerActionRequestByTheMessage(request->m_NetworkRequestMessage->m_TheMessage));
         m_ListOfPendingBankRequests.append(request->bankServerActionRequest());
         emit appLogicRequestRequiresBankServerAction(request->bankServerActionRequest());
     }

@@ -34,27 +34,9 @@ AppLogicRequest *AppLogicRequest::fromWtFrontEndToAppDbMessage(WtFrontEndToAppDb
     //then i just call AppLogicRequest.processRequest(); ... and AppLogicRequest (which CAN/SHOULD know AppLogic methods) does the switch on WtFrontEndToAppDbMessage (which it also definitely knows... hell i'm writing in it right now) and bam, that's IT.
 }
 #endif
-AppLogicRequest * AppLogicRequest::giveMeAnAppLogicRequest(uint requestorId)
-{
-    AppLogicRequest *appLogicRequest;
-    if(!m_RecycledAppLogicRequests.isEmpty())
-    {
-        appLogicRequest = m_RecycledAppLogicRequests.takeLast(); //why last? JUST IN CASE taking first would trigger a re-order. it DOES NOT MATTER which one i take. i originally thought this should be a queue but it really doesn't matter at all
-    }
-    else
-    {
-        appLogicRequest = new AppLogicRequest();
-    }
-    appLogicRequest->setRequestorId(requestorId);
-    return appLogicRequest;
-}
 void AppLogicRequest::setAppLogic(AbcAppLogic *appLogic)
 {
     m_AppLogic = appLogic;
-}
-void AppLogicRequest::returnAnAppLogicRequest(AppLogicRequest *appLogicRequest)
-{
-    m_RecycledAppLogicRequests.append(appLogicRequest);
 }
 void AppLogicRequest::processAppLogicRequest()
 {
@@ -132,6 +114,9 @@ void AppLogicRequest::setNetworkRequestMessage(WtFrontEndToAppDbMessage *network
 }
 void AppLogicRequest::returnAnInheritedAppLogicRequest(AppLogicRequest *appLogicRequest)
 {
+    //TODOmb: setDefaults(appLogicRequest)
+    appLogicRequest->unSetBankServerRequestTriggered(false); //setting this to false in effect disassociates (lol) the app logic request with the bank server request (even though we are still pointing to it!!! un-pointing to it is not a necessity so long as we make sure that we point to a new [albeit recycled] one every time we set triggered to true)
+
     if(m_RecycledAppLogicRequestsByTheMessage.contains(appLogicRequest->m_NetworkRequestMessage->m_TheMessage))
     {
         //already in the hash, so the list is already instantiated. just append ourselves to it
@@ -149,13 +134,13 @@ void AppLogicRequest::returnAnInheritedAppLogicRequest(AppLogicRequest *appLogic
     //THEN, return/recycle the underlying network request. since the app logic request is being recycled, we know that the underling network request that triggered the app logic request can also be recycled
     WtFrontEndToAppDbMessage::returnAWtFrontEndToAppDbMessage(appLogicRequest->getNetworkRequestMessage());
 }
-WtFrontEndToAppDbMessage * AppLogicRequest::getNetworkRequestMessage()
+WtFrontEndToAppDbMessage *AppLogicRequest::getNetworkRequestMessage()
 {
     return m_NetworkRequestMessage;
 }
-void AppLogicRequest::setBankServerRequestTriggered(bool triggered)
+void AppLogicRequest::unSetBankServerRequestTriggered()
 {
-    m_BankServerRequestTriggered = triggered;
+    m_BankServerRequestTriggered = false;
 }
 bool AppLogicRequest::bankServerRequestTriggered()
 {
@@ -168,4 +153,8 @@ void AppLogicRequest::setBankServerRequest(BankServerActionRequest *bankServerRe
 BankServerActionRequest * AppLogicRequest::bankServerActionRequest()
 {
     return m_BankServerActionRequest;
+}
+void AppLogicRequest::setBankServerRequestTriggered()
+{
+    m_BankServerRequestTriggered = true;
 }
