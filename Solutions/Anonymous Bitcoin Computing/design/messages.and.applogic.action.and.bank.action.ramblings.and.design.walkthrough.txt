@@ -113,17 +113,17 @@ true performs the action (which fills out a response)
 meh this is all lingo but at the same time understanding what i'm doing is VITAL to properly designing it.
 
 bool shouldReply = true;
-if(!raceCondition1detected())
+if(!appLogicActionInterface.raceCondition1detected())
 {
-  if(!raceCondition2detected())
+  if(!appLogicActionInterface.raceCondition2detected())
   {
-    if(needsToCommunicateWithBankServer())
+    if(appLogicActionInterface.needsToCommunicateWithBankServer())
     {
-      BankRequest (BankAction?) = buildBankRequest(); <- virtual, default impl returning 0. check for 0. shouldn't be necessary though because only impls returning true for needsToCommunicateWithBank will need to fill it out... and they of course will
+      BankRequest (BankAction?) = appLogicActionInterface.buildBankRequest(); <- virtual, default impl returning 0. check for 0. shouldn't be necessary though because only impls returning true for needsToCommunicateWithBank will need to fill it out... and they of course will
       if(bankRequest)
       {
-	addToListOfPending();
-	emit bankRequest();
+	appLogicActionInterface.addToListOfPending(bankRequest);
+	emit bankRequest(bankRequest);
 	shouldReply = false;
       }
     }
@@ -132,8 +132,8 @@ if(!raceCondition1detected())
 
 if(shouldReply)
 {
-  performAction();
-  emit replyReady();
+  appLogicActionInterface.performAction();
+  emit replyReady(appLogicActionInterface);
 }
 
 
