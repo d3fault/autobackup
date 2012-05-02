@@ -1,0 +1,52 @@
+so i think the definitions should live in the protocol
+re-examing the 'lighthouse for windows' protocol, that's how he does it
+it's the common point between the client and the server
+App Logic is the common point between all 3
+but bank server doesn't need to know about wt and vice versa
+2 protocols. 1x = Wt <--> AppDb, 2x = AppDb <--> Bank Server
+
+i'm tempted to use google's protobuf... but it looks like it'd complicate things
+at the very least, it's more to learn.
+
+the protobuf + rpc especially
+but maybe using protobuf alone would be worthwhile...
+
+the main benefit it would provide is to let me call the variables by their actual name
+and not m_ExtraString0 etc (with hardcoded remembering)
+there is *SOME* wasted space for the optional/unset/unused variables (maybe i am wrong?)
+but that seems to be minimized anyways
+
+still, i hate google with a passion
+HOWEVER, it's open source
+bsd license
+and just including headers etc...
+idk.
+i just don't know.
+
+i could use better verification with protobuf with the built-in bool has_property(); shits...
+but i hate the idea of even referencing a google namespace from within my code
+perhaps i'm just being stupid
+
+perhaps it will save me lots of time (in the long run especially) to figure out and use protobuf + rpc
+
+i'd be more inclined if there wasn't such non-existent documentation for implementing RpcChannel
+protobuf looks easy in theory... but RpcChannel has to BECOME the ssl sockets, in a sense...
+
+gah fuck this shit
+i'm using protobuf at max
+the rpc impl doc is non-existent... only 3rd party code that's complex as a motherfucker
+
+
+protobuf object -> qbytearray -> (qdatastream. necessary?) -> qsslsocket
+
+my data stream is not for the object itself, but for the stream/qsslsocket
+so i will still use it
+i will just stream in a qbytearray that IS my protobuf object (serialized)
+i guess.
+meh.
+
+protobuf does have better support for arrays, so it seems
+something i have yet to even think about designing
+Repeatable is what they call it
+now i'm just wasting breathe
+but there's something else on my mind i want to write/think about before i start coding...
