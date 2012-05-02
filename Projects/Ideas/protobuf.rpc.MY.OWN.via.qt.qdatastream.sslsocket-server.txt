@@ -1,0 +1,11 @@
+i could [later] make my own protobuf rpc generation equivalent
+
+using struct/enum protocol + (OPTIONIAL via checkmark) SSL -> TcpSocket
+
+it could probably factor in with the diagram object DESIGN=IMPLEMENTATION
+for cross-network (thread?) rpc
+
+the difference between cross-network and cross-thread is actually minute
+just the means of getting it across
+they are ESSENTIALLY the same thing...
+so it could be abstracted as such (TODO: GET REALLY HIGH AND THINK OF WHAT THE FUCK YOU'RE TALKING ABOUT + DOCUMENT/CODE IT)

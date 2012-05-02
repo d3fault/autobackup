@@ -1,0 +1,6 @@
+i also need to 'prepare' for the comparison'ing of 'is this bank request in pending?'
+
+'PENDING BANK ACTION DETECTION' : overload the equals operator... to see if the enums are equal.. then based on the enums (if they ARE equal), an equals operator overload comparing only the m_Extra values that that enum happens to use..
+
+
+took this out of message.enum.struct.rambling because it's valuable

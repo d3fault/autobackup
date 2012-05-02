@@ -1,0 +1,172 @@
+so my protocol of enum/struct shit is where the app logic actions are defined (as both requests and responses)
+the OurWtServer just passes it up... but it could encapsulate it also just so we have a clientId of who to send back to
+the AppLogic does a switch, and calls directly functions of INHERITED/IMPLEMENTED (base class interface) "AppLogicAction"...
+...so a AppLogicCreateBankAccountAction handles the initial request (it has access to a static pointer to the applogic, just like we did with "app logic request")
+AS WELL AS the response (after the bank responds)
+if, for example, either of the race conditions are detected (aka, 'bank account for user already created'), setTriggerBankAction is NOT called and the error response is returned immediately
+the response generating phase, whether done in AppLogic or the inherited AppLogicAction... well, how to put this: SUCKS
+mb protobuf is the way to go...
+
+
+
+....ALTERNATIVELY, i could have the "OurServerForWtFrontEnds" destruct the messages (requests) and construct the messages (responses)... app logic would only listen to (and signal) signals (slots) specific to each action
+the thing about that is then the OurServer doesn't know who the message correlates with... unless that is an argument of the signal/slot... which is THAT MUCH MORE CODE for every action. gah.
+
+
+knowing what response goes with what request is a benefit gained from protobuf rpc
+though i guess AppLogicAction can have pointers to both the request and the response????
+
+but remember that AppLogicAction is only 1 instance and is basically just used to help keep the code cleanly separated
+
+
+a QList<AppLogicAction*> that is filled during AppLogic constructor with AppLogicAction implementors
+OR BETTER YET
+a QHash<Message::Action /*ProtocolMessageEnum*/,AppLogicAction*> filled during the constructor
+there is no switch then, it is only a hash lookup (less code, but ultimately the same thing)
+
+AppLogic only ever operates on the AppLogicAction interface
+
+but that enum in the hash key is only the request
+unless i make it both the request and the response(???)
+
+Message
+{
+  Type
+  {
+    Request,
+    Response
+  }
+  Action
+  {
+    CreateBankAccount
+    GET
+    AddAdCampaign
+    Etc
+  }
+  QString m_ExtraString0;
+  //etc
+}
+
+ok changed hash key name to reflect that.
+
+
+still not sure if that solves anything
+but it does make for nice organization in one place (AppLogic)
+
+
+but my problem seemed to come from knowing the response type implicitly? <------
+
+
+
+
+so the request comes in encapsulated by a WtServerRequest or something (just has ClientID + the message)
+based on the message's Action, AppLogic calls the appropriate AppLogicAction implementation (the part that deals with request)
+then, AppLogic checks to see if it triggered a bank account action
+in the case of CreateBankAccount, it will (unless race conditions are detected TODO: note, this is basically just a 'bank account already created' and should trigger the EXACT SAME MESSAGE on wt as when wt catches it)
+...but for a simple GET, there is no bank action
+--GET-->
+since GET triggered no bank action, AppLogic calls the response pure virtual methods for the AppLogicAction of that Action type (same pointer from the hash, same block of code)
+
+ok maybe GET is a bad example because there isn't really any action being performed
+
+*thinks of an action that does something without touching server*
+
+AddAdCampaign
+
+that is, put up a campaign for a site in which the other users can purchase slots
+
+the user already has a bank account (pre-requsite for visiting that page)
+
+i mean, fuck, i don't know what it does in the response virtual method
+
+I DO KNOW THAT FOR CREATEBANKACCOUNT, WE ACTUALLY CREATE TEH BANK ACCOUNT IN RESPONSE BECAUSE IT IS ONLY CALLED AFTER THE BANK ACTION FINISHES
+
+so wtf
+CreateBankAccount the action is done in response
+AddAdCampaign the action is done in request
+and GET idfk where it is done
+GET _IS_ a request, but the populating of said GET _IS_ a response
+so it could be either one
+
+so basically the 'request' virtual method (checks for both race conditions + trigger bank action) might not be properly named...
+
+are there any actions [forgot train of thought]
+
+basically... 'needsToQueryBankBeforePerformingAction' and 'performAction'
+= request, response.... respectively
+
+idfk where the race detection shit would go...
+i guess in needsToQuery...
+...since they are part of the check
+and they set errors which are processed in 'performAction' when generating the response???
+
+are there any actions .... that need to do something in response before sending off a request to bank action
+the only thing i can think of.... and it's more of a CHECK still (meh), is DoPayout. we'll check for sufficient funds... but that's similar to the race condition check of CreateBankAccount (seeing if user already exists)
+eh it is both a race condition and a check. if it's still pending or something, it's a race condition. insufficient funds = check
+but still not any kind of action per se...
+
+
+maybe naming it bool isReadyToPerformAction()
+false implying we send a bank server action request.... or that a neither race conditions was detected. ok i'm mixed up about this race condition detection. don't i still respond if there is a race condition?? fuck it, the race condition shit should be separate from the needsToContactBankServer(). right before it i guess.
+true performs the action (which fills out a response)
+
+meh this is all lingo but at the same time understanding what i'm doing is VITAL to properly designing it.
+
+bool shouldReply = true;
+if(!raceCondition1detected())
+{
+  if(!raceCondition2detected())
+  {
+    if(needsToCommunicateWithBankServer())
+    {
+      BankRequest (BankAction?) = buildBankRequest(); <- virtual, default impl returning 0. check for 0. shouldn't be necessary though because only impls returning true for needsToCommunicateWithBank will need to fill it out... and they of course will
+      if(bankRequest)
+      {
+	addToListOfPending();
+	emit bankRequest();
+	shouldReply = false;
+      }
+    }
+  }
+}
+
+if(shouldReply)
+{
+  performAction();
+  emit replyReady();
+}
+
+
+so the AppLogicAction implementation will know about both of the protocols (well, not every implementation... only the ones that need to communicate with the bank server)
+
+i guess each AppLogicAction can have it's own PendingBankRequests QList/QHash whatever, for optimzation purposes. no point in them checking against other types (TODO: I FUCKING HOPE. uhh.. pending 'delete' campaign for simultaneous purchase slot? has nothing to do with server so idk if it affects us. still there could be similar that DO affect server. payout + buy slot. server code would catch this but still.. TODOreq: at the VERY least, make sure server catches that.)
+
+I'm tempted to say "well AppLogicAction can contain an interface pointer to BankActionRequest, and the AppLogicAction impl can then instantiate the specific type"... but i think it's easier to just use a BankActionRequest and fill it out by hand in the AppLogicAction impl. the reason being is so i don't have to cast it back into the appropriate response type before giving it to AppLogicAction again after it goes to the bank server
+
+idk these protocols being so close to each other is making shit overly complicated
+
+but that's my own fault really.
+
+i'm wanting the AppLogicAction to be the creator/decoder of BankActions
+is that bad?
+
+doesn't sound too bad
+
+now as for matching up
+
+//OurWtServerEncapsulatingMessage is just an object with a uint clientId and a pointer to the network message (the actual message). TODO: maybe it can/should INHERIT the network message.. just adding the clientId member? i just think that might be a memory optimization
+AppLogicAction::QList<OurWtServerEncapsulatingMessage(NetworkMessage)*> m_PendingBankRequests;
+since the pending bank requests are PER AppLogicApplication implementation, the AppLogicAction implementation can contain a pure virtual isEqualTo(OurWtServer...) for detecting race condition #2. the type of message is already determined by the fact that we're in that app logic action implementation
+
+ok so that's good for storing the pending and detecting race condition #2
+but now for matching up
+
+the BankAction (still unsure if it's a request only or a combo request/response or what) is emitted to the bank helper and stuck on a socket
+server does it's shit, replies with it's response (????????????? to be implemented, lol)
+we could just use integer incrementing for the messageId, so we can match it back up with the BankAction that is sitting there waiting for a response. an implicit way of detecting/matching up???
+anyways, once we figure out which BankAction it corresponded with, we emit it back to our AppLogic thread. AppLogic then does processBankResponse
+processBankResponse calls bankAction.appLogicAction(), corresponding (doubly linked) to the appLogicAction that is in pending... and we then remove it
+oh fuck, but wait, how do we get back in appLogicAction implementation?
+easy, bankAction calls appLogicAction, which is an interface to our impelemented type. so after it calls ANY method on the appLogicAction interface, we are back in the inherited land
+
+BankServer -> BankServerHelper --(BankAction)--> AppLogic --processBankAction(bankAction)--> bankAction.appLogicAction.bankActionRespond(); OR SOMETHING. idfk. but somewhere along this line, AppLogicAction.performAction(); is called... the same thing that's called when there is no bank action. now that we have a response from bank, we can do what needs to be done. and then emit it.
