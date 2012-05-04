@@ -1,0 +1,38 @@
+fuck
+in my message.and.applogic ramblings
+i confused AppLogicAction with WtFrontEndAndAppDbMessage
+there is only 1 app logic action per action type
+and well the messages are 1 per message
+
+so the whole 'get back into inherited context' design doesn't really work...
+
+i mean i think it still can... it just needs some more thought
+
+bah, i guess i can get the app logic action pointer out of the hash again
+but that means binding the wt->appdb 'message' to the bank request
+which sort of makes sense i guess...
+...i'm already doing it for the 'pending'...
+
+
+so processBankAction would really need to do (in app logic):
+
+AppLogicAction *appLogicInterface = m_DefinedActions.value(bankRequest->originatingRequest->m_Action, 0);
+
+but as i wrote just now, what if the bank action doesn't have a wt request????
+then who would we send it to?
+i mean yea, BROADCAST
+fuck
+i need to do broadcasts either way
+
+my design doesn't take those into account atm
+
+god damnit i hate coding
+love/hate
+hate right now...
+
+
+BankServer:Funds Pending Detected -> AppDb -> BROADCAST-TO-EVERY-WT
+
+i mean sure, only certain types of bank actions warrant a response
+create bank account, for example
+but shit, the code/design DEFINITELY needs to account for both responses and broadcasts...

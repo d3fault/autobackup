@@ -12,6 +12,14 @@ struct WtFrontEndAndAppDbMessage
         WtFrontEndToAppDbMessageType,
         AppDbToWtFrontEndMessageType
     };
+    enum Action
+    {
+        InvalidAction,
+        CreateBankAccountAction,
+        SimpleGETAction,
+        PurchaseAdSlotAction,
+        ListAdCampaignAction
+    };
     inline WtFrontEndAndAppDbMessage(WtFrontEndAndAppDbMessageType wtFrontEndAndAppDbMessageType = InvalidWtFrontEndAndAppDbMessageType, quint16 theMessage = 0, QString extraString0 = QString())
         : m_WtFrontEndAndAppDbMessageType(wtFrontEndAndAppDbMessageType), m_TheMessage(theMessage), m_ExtraString0(extraString0)
     { }
@@ -20,7 +28,7 @@ struct WtFrontEndAndAppDbMessage
     QString m_ExtraString0;
 
     //don't-pass via DataStream
-    uint m_RequestorId;
+    uint m_RequestorId; //really shouldn't be here since when Wt uses the protocol, it won't use the requestorId (though i guess i might be able to rename it to peer Id? although it will only be 1 connection from their view so no need for an Id at all...
 
     //i could have the 'give' and 'recycle' messages be here and stored in a QHash<WtFrontEndAndAppDbMessageType,QList<WtFrontEndAndAppDbMessage*> > .... with give accepting a WtFrontEndAndAppDbMessageType as a parameter... but who gives a fuck.
 };

@@ -66,7 +66,7 @@ void OurServerForWtFrontEnds::handleWtFrontEndSentUsData()
             //then, now that the message has been read off the network, we can get the appropriate type of AppLogicRequest (the inherited type... even though we refer to it by pointer here... AS WELL AS set the newMessage to be a child of it... so when we recycle the AppLogicRequest* (a hash or something, with 'theMessage' as the key, and a QList<AppLogicRequest*> as the value), we also recycle the newMessage too
             AppLogicRequest *inheritedAppLogicRequest = AppLogicRequest::giveMeAnInheritedAppLogicRequestBasedOnTheMessage(newMessage);
 
-            emit requestFromWtFrontEnd(inheritedAppLogicRequest);
+            emit requestFromWtFrontEnd(newMessage);
         }
     }
 }

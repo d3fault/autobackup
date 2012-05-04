@@ -3,14 +3,46 @@
 AbcAppLogic::AbcAppLogic(QObject *parent) :
     QObject(parent)
 {
+    AppLogicAction::setAppLogic(this);
+
+    m_DefinedActions.insert(WtFrontEndAndAppDbMessage::CreateBankAccountAction, new CreateBankAccountAction());
 }
 void AbcAppLogic::init()
 {
     //TODO: i guess like init the database n shit
     emit d("starting logic init");
 }
-void AbcAppLogic::handleRequestFromWtFrontEnd(AppLogicRequest *request)
+void AbcAppLogic::handleRequestFromWtFrontEnd(WtFrontEndToAppDbMessage *request)
 {
+    bool replyNow = true;
+    AppLogicAction *actionInterface = m_DefinedActions.value(request->m_Action, 0);
+    if(actionInterface)
+    {
+        actionInterface->setCurrentMessage(request);
+
+        if(!actionInterface->raceCondition1detected())
+        {
+            if(!actionInterface->raceCondition2detected())
+            {
+                if(actionInterface->needsToCommunicateWithBankServer())
+                {
+                    BankAction *bankAction = actionInterface->buildBankRequest();
+                    if(bankAction)
+                    {
+                        actionInterface->addCurrentMessageToPending(request); //to detect race condition #2
+                        emit appLogicRequestRequiresBankServerAction(bankAction);
+                        replyNow = false;
+                    }
+                }
+            }
+        }
+
+        if(replyNow)
+        {
+
+        }
+    }
+#if 0
     request->processAppLogicRequest();
 
     if(!request->bankServerRequestTriggered()) //if we aren't going to dispatch a request to the bank server, that means we already have a response and should send it back to the wt front-end
@@ -23,6 +55,7 @@ void AbcAppLogic::handleRequestFromWtFrontEnd(AppLogicRequest *request)
         m_ListOfPendingBankRequests.append(request->bankServerActionRequest());
         emit appLogicRequestRequiresBankServerAction(request->bankServerActionRequest());
     }
+#endif
 }
 void AbcAppLogic::handleResponseFromBankServer(BankServerActionRequestResponse *bankResponse)
 {

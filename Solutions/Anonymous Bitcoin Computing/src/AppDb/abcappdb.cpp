@@ -9,7 +9,6 @@ void AbcAppDb::connectToBankServerAndStartListeningForWtFrontEnds()
     if(!m_AppLogic)
     {
         m_AppLogic = new AbcAppLogic();
-        AppLogicRequest::setAppLogic(m_AppLogic);
         m_AppLogicThread = new QThread();
         m_AppLogic->moveToThread(m_AppLogicThread);
         m_AppLogicThread->start();
@@ -42,7 +41,7 @@ void AbcAppDb::connectToBankServerAndStartListeningForWtFrontEnds()
         //TODOopt: if a wt front-end can't connect to the appdb for an extended amount of time (or for any amount of time really), it would be nice to be able to do a redirect to one of the other wt front-end servers... but this implies that we'd be able to a) know their subdomain and b) know whether or not they too are offline/online. no point redirecting to a wt front-end that also can't connect to the appdb. this is an optimization that would require the servers to communicate with each other heavily
         //connect(m_OurServerForWtFrontEnds, SIGNAL(wtFrontEndConnectionReEstablished()), m_AppLogic, SLOT(handleWtFrontEndConnectionReEstablished())); //resume pushing updates... and maybe flush a cache of updates that they missed since their DC???
 #endif
-        connect(m_OurServerForWtFrontEnds, SIGNAL(requestFromWtFrontEnd(AppLogicRequest*)), m_AppLogic, SLOT(handleRequestFromWtFrontEnd(AppLogicRequest*))); //TODOreq: we *might* be able to share the protocol/struct 'AppLogicRequest' with the Wt-Front-End code for simplification/seemless integration. who knows.
+        connect(m_OurServerForWtFrontEnds, SIGNAL(requestFromWtFrontEnd(WtFrontEndToAppDbMessage*)), m_AppLogic, SLOT(handleRequestFromWtFrontEnd(WtFrontEndToAppDbMessage*))); //TODOreq: we *might* be able to share the protocol/struct 'AppLogicRequest' with the Wt-Front-End code for simplification/seemless integration. who knows.
         //TODOreq: should the AppLogicRequests be pointers? probably for optimization... but we also need to know when to clean them up (and/or recycle them (oh god don't get me started))
 
         //connect to our app logic's signals

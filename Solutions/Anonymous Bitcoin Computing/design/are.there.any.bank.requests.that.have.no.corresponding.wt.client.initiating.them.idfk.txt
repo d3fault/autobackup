@@ -1,0 +1,5 @@
+gah
+not all bank action requests will be initiated by wt client requests
+fml
+the best/only example i can think of: automated payouts (i GUESS this code could live on the bank server itself... idfk where is 'appropriate'. actually pretty sure on the bank server is most appropriate)
+so now the question still stands... are there any bank requests that aren't triggered by a wt client request??

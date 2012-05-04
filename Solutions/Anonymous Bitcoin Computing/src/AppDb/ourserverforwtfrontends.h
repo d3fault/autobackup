@@ -22,7 +22,7 @@ private:
     SslTcpServer *m_SslTcpServer;
 signals:
     void d(const QString &);
-    void requestFromWtFrontEnd(AppLogicRequest*);
+    void requestFromWtFrontEnd(WtFrontEndToAppDbMessage*);
 public slots:
     void startListeningForWtFrontEnds();
     void handleResponseFromAppLogic(AppLogicRequestResponse*); //this somewhat contradicts what i wrote above this class definition in the comments, but it should be noted that for a simple 'GET' request to the app logic, only the wt front-end that requested the information should be sent that information. however, when something in the app logic *CHANGES*, we notify _every_ wt front-end of the change. i suppose my AppLogicRequest[Response] struct can have a bool somethingChanged and also an identifier for the wt front-end that made the request. if the somethingChanged is true, we send to everyone (i guess that's how we can prioritize the wt front-end that made the request). if it's false, we only send to the wt front-end that made the request. it doubles as an optimization when somethingChanged is true.

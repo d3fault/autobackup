@@ -2,11 +2,17 @@
 #define APPLOGIC_H
 
 #include <QObject>
+#include <QHash>
 
-#include "Messages/applogicrequest.h"
+#include "applogicaction.h"
+#include "../shared/WtFrontEndAndAppDbProtocol.h"
+
+#include "Actions/createbankaccountaction.h"
+
+/*#include "Messages/applogicrequest.h"
 #include "Messages/applogicrequestresponse.h"
 #include "Messages/bankserveractionrequest.h"
-#include "Messages/bankserveractionrequestresponse.h"
+#include "Messages/bankserveractionrequestresponse.h"*/
 
 class AbcAppLogic : public QObject
 {
@@ -18,13 +24,15 @@ public:
     //void createBankAccountForUser(const QString &user, AppLogicRequestResponse *responseThatWeFillOutAndEmitBack);
 private:
     QList<BankServerActionRequest*> m_ListOfPendingBankRequests;
+
+    QHash<WtFrontEndAndAppDbMessage::Action, AppLogicAction*> m_DefinedActions;
 signals:
     void d(const QString &);
     void appLogicRequestRequiresBankServerAction(BankServerActionRequest*);
     void responseToWtFrontEndReady(AppLogicRequestResponse*);
 public slots:
     void init();
-    void handleRequestFromWtFrontEnd(AppLogicRequest*);
+    void handleRequestFromWtFrontEnd(WtFrontEndToAppDbMessage*);
     void handleResponseFromBankServer(BankServerActionRequestResponse*);
 };
 
