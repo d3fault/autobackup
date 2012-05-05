@@ -1,0 +1,20 @@
+so basically after some thought i've decided that just whipping the AppDb out of thin air is not the best place to start
+a good place to start is with the bank server, and the INTERFACE IT EXPOSES [that AppDb subscribes to] (this answers my question earlier about 'where do i define shit?'. the AppDb also defines an interface that Wt Front-End subscribes to)
+
+basically the bank server protocol needs requests, responses, and broadcast messages.
+
+from the AppDb perspective, it is not just a Wt Front-End message that can trigger an "AppLogicAction"... it is also a Bank Server broadcast
+
+broadcast --(pending funds received)--> AppDb --(AppLogicAction[pending-funds-received])--> AppLogic .............. which eventually gets broadcasted to the Wt Clients as well (TODO: there might be a way to know which Wt front-end wants that data the most. similar to how AddFundsRequest responds to the Wt front-end that requested it FIRST but also broadcasts it to ever Wt Front-End (assuming they all have hot caches of add funds keys... maybe that's a bad example)
+
+in any case, the fact that a bank server broadcast can initiate an AppLogicAction means i need to rethink my design
+
+
+i do think getting a functional working bank-server/appdb-client [very similar to the prototype i already have] up and running is a good starting point to understanding/developing the design that AppDb/AppLogic will use
+
+
+TODO: abstract the FUCK out of AppDb/Wt Front-End to make it extensible to any kind of app ever.. by simply implementing a few interfaces or something
+
+there is no reason why AppDb is tied to ABC
+
+i can see myself re-using this code in numerous places
