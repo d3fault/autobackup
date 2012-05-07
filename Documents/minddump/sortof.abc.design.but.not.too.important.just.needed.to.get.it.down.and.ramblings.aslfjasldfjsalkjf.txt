@@ -1,0 +1,75 @@
+so i finally got it
+it finally clicked
+the network protocol should only be known by:
+clientshelper (in the server app) and bankserverhelper (in the appdb app)
+
+it is disgusting to even consider letting the applogic interface with the protocol like that
+
+what the fuck were you thinking?
+oh right, you weren't
+
+
+technically, clienshelper is part of the server code
+as in, it is re-used anywhere that the server can be re-used
+
+it has a basic interface: requestaddfundskey, createbankaccount, balancetransfer, payout, and the two broadcasts: pendingbalancereceived and confirmedbalancereceived
+
+i mean that's it
+the protocol is abstracted, and those interface methods (including their responses [well not for broadcasts, that's n/a]... since they are ASYNC) expose the parameters as they are: const QString &username, const QString &bitcoinAddress..... ETC
+or the slot (request)
+in the emit (response)
+
+that's the interface
+in a nutshell
+
+you're deeping to dively to find (lol spooner) a solution to encompass all
+each request/response (action) requires it's own logic
+
+so you're going to need to code said logic no matter what
+
+hard code this shit
+get it up and running idiot
+it isn't that complicated
+you're overcomplicating it
+probably because you aren't designing it first....
+
+
+
+just do it
+nike
+
+
+it should be noted that not even the bank code would be aware of the protocol
+appclients has it's own interface that the bank subscribes to
+naw mean?
+
+yea i naw u mean
+k
+
+
+now doit
+
+
+or actually
+
+
+i know this is a weird spot
+
+but ima sync
+
+got both tb hdds here
+
+and refuse to leave my house unless it's to drop it back off at becher's
+
+
+seriously
+was planning on applying to mesa public schools maybe today (gonna be tomorrow i bet)
+but am too paranoid to even go turn in an application until i have this sync done and the offsite copy back in place
+
+1 offsite is shit
+but it's better than 0
+
+and too broke to do more atm...
+
+
+god i _NEEEEED_ d3fault.
