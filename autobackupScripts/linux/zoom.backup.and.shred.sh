@@ -10,8 +10,8 @@ new750x2=/mnt/750x2/zoom/`echo $newDir`/
 sudo mkdir `echo $new750x1`
 sudo mkdir `echo $new750x2`
 
-sudo cp -av ./* "$new750x1"
-sudo cp -av ./* "$new750x2"
+sudo cp -av ./ "$new750x1"
+sudo cp -av ./ "$new750x2"
 
 read -n1 -r -p "done copying, press any key to continue with shred. only shredding FOLDER01 so you gotta do any others manually" key
 
