@@ -26,7 +26,29 @@ void ClientsHelper::handleClientSentUsData()
         QDataStream stream(secureSocket);
         while(!stream.atEnd())
         {
-            WtFrontEndToAppDbMessage *newMessage = WtFrontEndToAppDbMessage::giveMeAWtFrontEndToAppDbMessage(SslTcpServer::getClientUniqueId(secureSocket));
+            ClientToBankServerMessage message;
+            stream >> message;
+            if(message.shit())
+            {
+                switch(message.action)
+                {
+                case createBankAccountRequest:
+                    emit bankAccountCreationRequested(message.Username);
+                    break;
+                case balanceTransferRequest:
+                    emit balanceTransferRequested(message.Username, message.Amount);
+                    break;
+                default:
+                    emit error(); //todo
+                    break;
+
+                    //the point is, clienthelper and serverhelper (which lives in appdb land) encapsulate the appdb <--> bank server communication. clientshelper exposes an interface to bank server. a series of signals(above) and slots (to be created... examples: bankAccountCreated() and balanceTransferred())
+
+                    //in the appdb land, serverhelper only knows about the appdb <--> bank server protocol and the interface it exposes (also via signals and slots). it DOES NOT and SHOULD NOT know about the AppDb itself. the signals/slots it exposes are pretty much analogous to the signals and slots we are defining right here for the bank server to use. a SLOT on the serverhelper called createBankAccount eventually comes SIGNAL bankAccountCreationRequested() right here in this clientshelper file, just a few lines up. protobuf probably is helpful here in avoiding the double api declaration. but oh well it's not a huge price to pay. the penalty really is that i have to keep the >> and << operator overloads in sync. that's really about it. protobuf does it for me, big whoop
+                }
+            }
+
+            /*WtFrontEndToAppDbMessage *newMessage = WtFrontEndToAppDbMessage::giveMeAWtFrontEndToAppDbMessage(SslTcpServer::getClientUniqueId(secureSocket));
             stream >> *newMessage;
             if(newMessage->m_WtFrontEndAndAppDbMessageType != WtFrontEndAndAppDbMessage::WtFrontEndToAppDbMessageType)
             {
@@ -38,6 +60,7 @@ void ClientsHelper::handleClientSentUsData()
             AppLogicRequest *inheritedAppLogicRequest = AppLogicRequest::giveMeAnInheritedAppLogicRequestBasedOnTheMessage(newMessage);
 
             emit requestFSromWtFrontEnd(newMessage);
+            */
         }
     }
 }

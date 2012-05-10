@@ -19,7 +19,8 @@ void BankServer::startListening()
         m_ClientsThread->start();
 
         //connect signals and slots
-
+        connect(m_Clients, SIGNAL(bankAccountCreationRequested(QString)), m_Bank, SLOT(handleBankAccountCreationRequested(QString)));
+        connect(m_Clients, SIGNAL(balanceTransferRequested(QString,double)), m_Bank, SLOT(handleBalanceTransferRequested(QString,double)));
 
         //connect debug signals
         connect(m_Bank, SIGNAL(d(QString)), this, SLOT(handleD(QString)));

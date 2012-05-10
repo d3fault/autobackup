@@ -15,6 +15,9 @@ private:
 signals:
     void initialized(); //todo: who will listen to this? bank could before going into 'all systems go' mode... but meh seems worthless
     void d(const QString &);
+
+    void bankAccountCreationRequested(const QString &username);
+    void balanceTransferRequested(const QString &username, double amount);
 public slots:
     void init();
 private slots:

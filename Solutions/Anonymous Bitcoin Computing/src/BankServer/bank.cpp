@@ -10,3 +10,9 @@ void Bank::init()
 
     emit initialized();
 }
+void Bank::handleBankAccountCreationRequested(const QString &username)
+{
+}
+void Bank::handleBalanceTransferRequested(const QString &username, double amount)
+{
+}
