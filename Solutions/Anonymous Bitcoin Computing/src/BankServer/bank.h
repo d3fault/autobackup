@@ -12,6 +12,7 @@ public:
 signals:
     void initialized();
     void d(const QString &);
+    void bankAccountCreated(const QString &username);
 public slots:
     void init();
     void handleBankAccountCreationRequested(const QString &username);

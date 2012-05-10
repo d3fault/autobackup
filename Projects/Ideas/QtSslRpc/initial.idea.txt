@@ -1,0 +1,20 @@
+RPC is essentially defining an interface to some business logic (bank.cpp in bank server code)
+and then generating a protocol that conforms to said interface (appclientshelper.cpp (in bank server), protocol, ssl/tcp socket, bankserverhelper.cpp (in appdb))
+the last of which, bankserverhelper.cpp has the EXACT SAME INTERFACE as the business logic itself
+
+it's just a matter of what each interface implementor does
+bank.cpp does actual bank operations
+bankserverhelper.cpp just forwards the action requests over a tcp/ssl socket
+
+
+
+so... you'd declare a series of action request slots (of which response signals are auto-generated, but up to you to use) and signals for broadcasts(pending/confirmed received)
+
+a code generator could take care of the rest... the ssl, the 2 helpers... but it would be hard to have the race condition detectors (for both appdb level and bank server db) in said generated code. the race condition on the server code depends too much on the business layer, which is not exposed... only an interface to it is
+
+
+so i seem to be getting confused on who is defining an interface. it now seems bank.ccp is the one defining the interface... the bankserverhelper.cpp (appdb) <--> clientshelper.cpp (bank server) support code implements said interface and exposes it across the network to the rpc client
+
+the interface is defined elsewhere, and the bank.cpp merely subscribes to it
+
+this opposed to bank.cpp defining the interface... which would require parsing of c++ (precompiler?) to implement
