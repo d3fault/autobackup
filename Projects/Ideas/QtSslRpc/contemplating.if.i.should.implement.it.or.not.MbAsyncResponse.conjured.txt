@@ -1,0 +1,289 @@
+i've decided if i can write an interface for appdb/applogic and it appears to make my life easier, i will try to implement this code generator
+
+<interface name="AbcAppDb" version="1">
+  <action name="CreateBankAccount" [hasResponse="true" (true by default)] [broadcastResponse="true" (false by default, ignored if hasResponse is false. we want to broadcast the response here to every wt front-end client. broadcastResponse would NOT be true for the CreateBankAccount action defined in the BitcoinBankServer interface... since only the requesting app client should be notified)]>
+    <parameter type="const QString &" name="Username" />
+  </action>
+  <action name="PurchaseSlot" broadcastResponse="true"> <!-- how it will normally be used -->
+    <parameter type="const QString &" name="purchaserUsername" />
+    <parameter type="double" name="purchaseAmount" />
+  </action>
+  <action name="PerformPayout"> <!-- perform payout does not broadcast the results. should it? i mean technically it could in case the user is/does (<--TODO: is/does) log[ged] in to a different wt front end simultaneously or later. but really, no other user needs to know that a payout was performed succesfully... so it seems really pointless to broadcast it -->
+    <parameter type="const QString &" name="purchaserUsername" />
+    <parameter type="double" name="purchaseAmount" />
+  </action>
+
+  <broadcast name="PendingBalanceDetected">
+    <parameter type="const QString &" name="Username" /?>
+    <parameter type="double" name="Amount" />
+  </broadcast>
+  <broadcast name="ConfirmedBalanceReceived">
+    <parameter type="const QString &" name="Username" />
+    <parameter type="double" name="Amount" />
+  </broadcast>
+</interface>
+
+
+
+
+i don't like that the response has to have the same parameters as the request
+
+//sending the request from AppDb
+AsyncObj listener = createBankAccount(QString username input);
+connect(lisenter, SIGNAL(response()), this, SLOT(createBankAccountResponded());
+
+then maybe, so we don't need the username input or any of the parameters, just a return type telling us of errors etc
+
+stream >> message;
+
+ASyncObj storedListener = storedRequests.getListener(message.uniqueId);
+then storedListener.respond(); which just does emit response();
+
+AsyncObject just has like bool completedSuccessfully, error, and maybe a QString for the error string itself...
+
+
+
+and in:
+createBankAccountResponded()
+{
+  if(listener.completedSuccessfully())
+  {
+    //bah this idea sucks there's way too many implications
+  }
+
+  //in this AppDb CreateBankAccount example, the response that should be done is basically just de-marshalling the listener from server, updating the app logic db if no error, and then forwarding the response (whether error or not). so this code actually does has very similar code (though not the same as... using 2 different auto-gen'd rpc interfaces) to the "sending the request from the appDb" above
+}
+
+
+...a better example might be (just to show the 2 differences of CreateBankAccount ambiguity above)..
+
+
+ASyncObject listener = performPayout(QString username, double amount);
+connect(listener, SIGNAL(response()), this, handlePerformPayoutResponded());
+
+and in:
+handlePerformPayoutResponded()
+{
+  if(!listener.(sender()??)completedSuccessfully)
+  {
+    //bah this sucks as of ambiguity as well, should have chosen "purchase slot"
+  }
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+//AsyncObject1 is wt <--> appdb and AsyncObject2 is appdb <--> bank server
+
+//====WT CODE======
+ASyncObject1 listener1 = purchaseSlot(username, amount);
+connect(listener1, SIGNAL(response()), this, SLOT(handlePurchaseSlotResponse()));
+
+
+//====APPDB CODE====
+Impl::purchaseSlot(username, amount)
+{
+  ASyncObject2 listener2 = balanceTransfer(username, amount);
+  connect(listener2, SIGNAL(response()), this, SLOT(handleBalanceTransferResponse());
+}
+
+//====BANK SERVER CODE====
+Impl::balanceTransfer(username, amount) //TODO: somehow this needs to be per AppId as well... might have some interface implications but maybe not??
+{
+  /*
+  //do the actual balance transfer
+  set response.everythingCompletedSuccessfully();
+  or emit it or something
+  //which triggers it being sent back across the server //gotta make sure we respond to the right people
+  */
+  
+  if(m_AppIdHash.value(appId).containsUser(username))
+  {
+    username = m_AppIdHash.value(appId).getUser(username);
+    if(username.hasAmount(amount))
+    {
+      bank = m_AppIdHash.value(appId);
+      bank.transfer(username, amount, toUsername);
+      emit balanceTransferFinished();
+    }
+    else
+    {
+      emit balanceTransferFinishedFailed("User Has Insufficient Funds"); //or an enum or something???
+    }
+  }
+  else
+  {
+    emit balanceTransferFinishedFailed("User Has No Account");
+  }
+}
+
+
+//behind the scenes, in the auto-gen'd code that subscribes to the same interface that bank.cpp exposes. our clientshelper.cpp
+
+//during initialization, we connect to all it's slots and signals
+
+so we'd already have a:
+handleBalanceTransferFinished()
+{
+  //sets succeededCorrectly to true
+  //forwards over network
+}
+and
+handleBalanceTransferFinishedFailed(QString error)
+{
+  //sets succeededCorrectly to false, as well as the error string in the network message (mb an enum...)
+  //forwards over network
+
+  maybe a respondBalanceTransferFinished(bool successfulCompletion, QString error); //to be shared by non-Error finished
+}
+
+with
+respondBalanceTransferFinished(bool successfulCompletion, QString error)
+{
+  dataStream << successfulCompletion;
+  if(!successfulCompletion)
+  {
+    dataStream << error;
+  }
+}
+OR SOMETHING
+
+//then
+//====APPDB CODE====
+
+//behind the scenes (in autogen'd code):
+stream >> message;
+
+ASyncObj storedListener = storedRequests.getListener(message.uniqueId);
+then storedListener.respond(); which just does emit response();
+
+//which calls slot:
+Impl::handleBalanceTransferResponse() //this is not part of the interface it implements... it is a business layer method that processes the response for another interface with which we are using (the appdb <--> bank server interface... and the Impl mentioned on teh beginning of this line is only our subscription to wt <--> appdb. it is the interface WE expose. so i guess these responses would be like private slots:...
+{
+  and then we do qobject_cast<sender()>
+  to get the ASyncObject2 listener2 back out
+  which we test/use
+  if(listener2.completedSuccessfully())
+  {
+    //update our cache db that the deduction (might be handled by auto-gen'd code (TODOTODOTODO)) _AND_ (definitely NOT handled by auto-gen'd code) say that slot X is owned by user Y in our app logic db
+  }
+  else
+  {
+    //forward the error for our ASyncObject1 listener/response
+    //but also, the business layer specific code could go right here: deQueue the 'tooLate' queue and start their verifying throught the bank server. also flush/respond to that queue when the above completedSuccessfully() is true
+  }
+  //somewhere the response for listener1 that triggered the listener2 needs to be summoned and filled out.. basically just forwarding the information
+  responseForListener1.respond();
+}
+
+
+//====WT CODE====
+
+Impl::handlePurchaseSlotResponse() //again, not a part of the interface it exposes... but is merely a custom business logic processing of the response [for the interface we are subscribing to]
+{
+    if(sender().completedSuccessfully())
+    {
+      wt.post("it is yours");
+    }
+    else
+    {
+      wt.post("error: " + sender().getError());
+    }
+}
+
+
+//baw this is getting confusing
+//but it is also very future proof/worthwhile thing to do...
+
+
+so the interface that is generated (implemented by serverhelper.cpp)... that my rpc client calls... returns an AsyncObject...
+...and the interface that my actual server business logic implements (NOTE: WHICH auto-gen'd code connects to and uses!!!)
+....also returns AsyncObject?
+except the auto-gen'd code does not listen to the response() signal on it... it calls respond() directly right when it gets it because the business layer implementation that is just passed it to/got it from(???) filled it out.
+
+idfk. calling it Response *response; is really the same thing
+
+//Wt Client
+//RPC CLIENT, interface subscribing code
+AsyncResponse *purchaseSlotResponse = purchaseSlot(username, slot, amount /*idk if amount will be here, but probably*/);
+connect(purchaseSlotResponse, SIGNAL(responded()), this, handlePurchaseSlotResponded());
+
+AppDb Server
+//RPC SERVER, auto-generated interface subscribing code
+ASyncResponse *balanceTransferResponse = balanceTransfer(appId, username, slot, amount);
+connect(balanceTransferResponse, SIGNAL(responded()), this, handleBalanceTransferResponded());
+
+//balanceTransfer above is an AppLogic / inherited-interface method, defined via the interface that declares the code for the Wt <--> AppDb RPC connection
+i suppose asyncResponse could also be used synchronously... by setting a responseReady() and  checking it after balanceTransfer returns
+if it is, we synchronously respond
+
+
+my only worry now is the transparency of the requestorId (which Wt) for AppDb and the AppId considerations for BankServer (which AppDb)
+in both cases, they are used for "which client to respond to"
+but in Bank Server, the ID is used also for "which app bank accounts account" (container of accounts).. basically QHash<appId,AllBankAccountsForThatAppId> everyBankAccount;
+
+
+
+
+i guess this document taught me nothing, except that an Rpc implementation a) can be done, b) is hard work, and c) would save a lot of time in the future
+
+
+
+hmm the Wt code can use the synchronous features of the AsyncReply to see if AppDbHelper had whatever value in IT'S cache
+as well as the AppDb doing the same thing before emitting to Bank Server
+
+and the interface that Bank.cpp implements (auto-gen'd interface at that) just happens to always do it's shit synchronously (it depends on nobody else... unless we post an event to a "bitcoinhelper" thread, in which case it would...)
+
+MbAsyncResponse is better named
+after you get it, you check to see if responseReady() is true... if it is, the response was synchronous... we hit the cache!
+if not, you subscribe to it's responded() signal and then forget about it. to get it back you cast sender() in a responded signal handler slot
+
+bah if responseReady() then you just call respond() which emits responded() signal and that is called which then calls slot responseReady() and wtf am i even talking about anymore...
+
+ok, use case:
+
+AppLogic::createBankAccount(const QString &username)
+{
+  MbAsyncResponse *createBankAccountAppDbResponse = this.getRecycledMbAsyncResponse();
+
+  MbAsyncResponse *createBankAccountBankServerResponse = BankServerHelper::Instance()->createBankAccount(username);
+  if(createBankAccountBankServerResponse.responseReady())
+  {
+    /*
+    createBankAccountAppDbResponse.setResponseReady(true);
+    //a response being ready here would indicate an error.. that the username for the user already exists
+    */
+    processResponseForResponse(createBankAccountBankServerResponse, createBankAccountAppDbResponse);
+    //so then we'd emit our FinishedFailed() signal (though not necessarily, it may just be the finished() signal if nothing went wrong) which makes us respond back to the wt front-end client
+  }
+  else
+  {
+    createBankAccountAppDbResponse.setResponseReady(false);
+    connect(createBankAccountBankServerResponse, SIGNAL(responded()), this, handleCreateBankAccountResponded());
+    m_LogicActionsPendingBankAction.insert(createBankAccountBankServerResponse, createBankAccountAppDbResponse);
+  }
+}
+
+handleCreateBankAccountResponded()
+{
+    
+    MbAsyncResponse *originalCreateBankAccountRequestButInAppDbLand = m_LogicActionsPendingBankAction.value(qobject_cast<MbAsyncObject*>(sender()));
+    //the sender was the signal that called this function, which was a bank server response. maybe use .take instead above
+    
+    processResponseForResponse(sender() /*bank server request*/, originalCreateBankAccountRequestButInAppDbLand);
+    //and then do i emit the signals on the response??? do i call responseThatWasWaitingForOtherResponse.respond(); which calls the signals for me?? which we already have a slot listening to?
+
+    //i think:
+    originalCreateBankAccountRequestButInAppDbLand.respond(); //in here, and not in processResponseForResponse() because if we do get a response synchronously, the code that calls createBankAccount, which is auto-gen'd, will be the one calling MbAsyncResponse::respond(); since our call to processResponseForResponse() set responseReady to true... (copied it from the other response)
+}
+processResponseForResponse(MbAsyncResponse *responseThatJustResponded, MbAsyncResponse *responseThatWasWaitingForOtherResponse)
+{
+  responseThatWasWaitingForOtherResponse.setResponseReady(true); //we could set it to the other one's getter, but it HAS TO BE TRUE in order for this code to get here...
+
+  responseThatWasWaitingForOtherResponse.setCompletedSuccessfully(responseThatJustResponded.completedSuccessfully());
+  if(!responseThatJustResponded.completedSuccessfully())
+  {
+    responseThatWasWaitingForOtherResponse.setError(responseThatJustResponded.getError());
+  }
+}
