@@ -1,0 +1,10 @@
+this ssl rpc abstraction + using an interface definition doesn't consider the dual caching taking place over the threshold of both interfaces (the one you implement (server rpc) + the one that is auto-gen'd (client rpc, tunnels across ssl/tcp))
+this means the object to be cached must be a Q_PROPERTY
+
+it's caching mechanism (or i suppose containing object) must be copied over to the rcp client in the facade code
+
+actually, this makes no sense. i mean, it could be done, but the bank database code (which is what we'd need to copy/use if we needed to 'create' a cache on the rpc client) is located in bank.cpp
+bank.cpp is outside of our abstraction/interface. the interface code is generated before the coder codes bank.cpp
+the rpc server (aka, your business logic) is coded after (though not necessarily) the interface is generated/designed/thought-up
+
+still even without the complexities of the dual caching, i'm starting to think a code generator is a bad choice at the moment.
