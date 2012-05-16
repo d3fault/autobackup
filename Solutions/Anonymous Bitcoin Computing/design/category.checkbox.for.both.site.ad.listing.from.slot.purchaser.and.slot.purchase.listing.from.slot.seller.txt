@@ -1,0 +1,4 @@
+The admittance of a "site to be listed" and the selected categories for the image/ad must be approved before any slots can be purchased for a price.
+The approval is done by an hourly worker to just glance at an ad and see if it falls under certain categories
+OR, the approval is done by the site owner. the check marks are still automatically checked by some code to see if they fit. But if an owner complains, a paid worker needs to be the tie breaker.
+there needs to be a form for the client to object one more time, which triggers approval by a different paid approver. they can only dispute a dispute once per dispute.

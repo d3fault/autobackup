@@ -1,0 +1,12 @@
+each category should have it's own "global" ad slot. it is not specific to any one site and can be used by any site (and payment to them sent? but how would i get usage statistics without a callback? gah)
+the category images can be used by callback + theirBitcoinAddy (must be authenticated somehow else users could use plugins to get the moneys themselves)
+we could send the bitcoinAddyToPayTo to them in an html form when they request the html/js to embed a slot on their site
+they put in the bitcoinAddyToPayTo on the html/js request page and a private/public key is created and associated with their request. their request is returned to them having been signed/encrypted by our public key (which is used as a cert i suppose?)
+...and the signed/encrypted bitcoinAddyToPayTo is sent along with the (also signed) sitedomain-identifier(to keep track of how many hits they get and therefore their equal proportion of the category)
+true no-account usage
+it actually sounds easier
+and i could just pay off self profits right away or minutely or something ya know?
+
+man that'd be so easy to code
+but it scales for shit
+and how2 idfk
