@@ -1,0 +1,5 @@
+the rpc server interface
+i'll code it as if it were generated. the interface definition (slots and signals) being dropped in by a code generator
+so there won't be an interface that you inherit
+but you will define directly the interface that your BUSINESS CODE inherits
+also the auto-generated client-rpc code inherits the interface... but the business layer right there is the auto-generated (not in this case, but i will attempt to type it as if it were) ssl/message/protocol abstraction

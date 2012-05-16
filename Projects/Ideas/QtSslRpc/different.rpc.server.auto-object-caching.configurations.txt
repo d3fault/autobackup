@@ -1,0 +1,14 @@
+the object caching is also different at each level
+
+for appdb <--> bitcoin
+, the auto-gen'd bank cache on the appdb as singular. there is only 1 [cached] bank account on the appdb
+...similarly, in the rpc server bank code, the "bank" object (of which we are attempting to use the EXACT SAME ONE (code-wise) on the appdb bank cache) contains many of the Bank objects. the per-connection identification (appId) tells us which sub-Object (bank) account to use.
+
+equally as important, and to be able to even see the complications
+for wt front-end <--> appdb
+, the auto-gen'd appdb cache on the wt front-end is still singular, but...
+...the appdb code for the rpc server, which is similar to the bank code in the appdb <--> bitcoin relationship above, IS ALSO SINGULAR. this means conflicts in the code generation process
+
+boils down to:
+1 appdb per appdb + the same copy on every wt front-end (appdb is master copy)
+infinite banks in the bank server, 1 copy per appdb (appId) (bank server is master copy)
