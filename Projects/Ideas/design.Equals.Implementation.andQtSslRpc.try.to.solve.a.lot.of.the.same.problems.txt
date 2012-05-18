@@ -1,0 +1,5 @@
+the problem is about inter-process communication. whether it's across ssl or just a thread, it is the same
+there needs to be a code generator for all 3 cases (unencrypted tcp why not)
+there needs to be a graphical designer utilizing this inter-object communication. inter-app might be a better way to look at it. each app can still have it's own thread cluster. it only has to be able to accept it's workload from another thread/network-device and marshall data between it's own threads itself.
+
+where did i get lost with designEqualsImplementation?

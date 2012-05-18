@@ -1,0 +1,2 @@
+the servers would all have to upgrade the newest patch for security reasons. when a hole is found the guts of the protocol fixes itself with a patch and a new codepath for the patched protocol version or something.
+this on top of their contractual obligation to bandwidth/cpu/etc
