@@ -1,0 +1,29 @@
+d3fault: copy on write
+
+so basically the network should abstract, similar to how Qt does, the copy-on-write mechanism
+
+doing so securely may prove a challenge
+but it's gotta be possible
+
+
+and another concern is: do i do a full copy of the data... or just a diff with the new data?
+
+one's more efficient during runtime, one's more efficient with disk space
+
+i think i've theorized about this before and have concluded: diffs for permanent storage, full copy for cache data serving
+best of both worlds
+
+
+
+but i am getting off the point
+
+
+the point is that it is IMPOSSIBLE to overwrite previous data
+from your perspective, you have overwritten it
+but the trusted servers correlate with each other to ensure that never happens
+even deleting a piece of data is impossible
+they can appear to have deleted it... but the old data/revision still remains
+
+
+nothing too revolutionary/new in this article... but i've never really thought of it as 'copy on write' before
+sameshit, new buzzword

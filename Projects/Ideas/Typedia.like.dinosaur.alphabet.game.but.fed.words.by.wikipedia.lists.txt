@@ -1,0 +1,84 @@
+Typedia
+
+Wikipedia scraping typing + informational game
+
+I was thinking of the Dinosaur Alphabet Game
+and i wanted more input than just the ABCs
+
+Wikipedia media is licensed under Creative Commons BY-SA
+which means i only have to say who the content is by... and share the content under the same license. ez (allow clicking for 'info' (author) and saving to disk). the software does not factor in. i can release that under whatever i want
+
+so i was thinking that i could do like Wikipedia - List of Animals
+each animal loads an image, the name, and possibly even the pronounciation (says it before you start typing, and after you get it right) .ogg file. Making this, as well as making it cross platform, means I'd need Qt Android + Qt Phonon with Android back-end. I don't think one exists. But images + text is good enough.... and Images + Text + OS-specific-TTS would work too (Android: outsource to Java. figuring it out on other platforms might actually be slightly tricky but maybe not, depends on available libs). or maybe just OS-specific-Audio-Player (Android: outsource to Java, etc)
+
+
+
+pronounciations being the only iffy (for wide-multiplatform support),
+we do not have to stop with animals
+
+the parser can/should be for generic Wikipedia articles
+
+maybe even an if(pronounciationAvalable) { pronounce(); } else { word2tts(); }
+
+
+but that's digressing back into the audio hiccups again
+
+
+
+this is a project for after ABC is up... as it would use it extensively. doesn't have to, could do adwords or whatever.
+
+
+
+but eh 'Animals' could just be one category
+
+could be movies, tv shows, tv show characters, pokeman
+
+
+.... basically anything there's a list of
+
+
+or shit, even just a 'Random' mode ;-)
+
+fuck it.
+
+teaches you a) how to type and b) random wikipedia article facts/items
+(should the wikipedia item's descrption be there? i guess optional if they want to type and/or read it. idfk)
+maybe even opt-in realtime (instead of before you start) depending on if you find the item interesting
+if you don't find it interesting, you just type the word and go onto the next
+
+but if you do find it interesting, you can practice type the entire fucking article to become an <item> master
+
+typing is better than reading because it forces your brain to process it
+the information goes in your eyes, swims around your brain, then travels down your arms and out your fingers
+
+the fact that it MUST come down your arms and out your fingers is what forces the information to 'swim around in your brain' more than usual (than if you were to just read it) and is why you will learn it better
+
+
+
+Random mode would be fun
+just sayin.
+
+
+
+if you like what you're typing, you press TAB (at anytime during typing the word	but before the last letter (because i'm NOT making them press 'enter')) to continue typing that document
+
+
+
+this is such a basic+easy+awesome+would-make-money idea
+
+might piss off wikimedia...
+but each user uses their own IP so fuck it hahahaha
+that means some tricky curl usage + useragent modification and i'll _always_ be able to parse wikipedia <3
+
+it might be frowned upon
+but who cares
+
+oh and the picture (if there is one) is the background for the word / descrption (if they choose to type it) they are typing
+
+
+such a brilliant simple app
+tempted to just make it + use adwords
+
+java + objective-c are the enemy
+Qt + Android Phonon are another
+and Qt/LGPL + iOS app store are yet another (buying commercial support solves that...)
