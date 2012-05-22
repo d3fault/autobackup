@@ -97,6 +97,40 @@ public slots:
     //the virtual private server solution from amazon kinda looks promising
     //but what would i even put on it? wt front-ends + the appdb? it does look like it might work... but it still has the issue of 'update push'. like if an appdb changes some shit and replies to a wt client... it still has to upate all the other wt clients of the broadcast. except that in all cases the db will be singular/shared (right?). there is no 'cache' db or 'master db'. there is just the db. so my solution is more efficient in the short term... but there's obviously scales better. that's the whole point of it.
 
+    //ok so ec2 might work
+    //basically all my designing is stupid + pointless
+    //i'd just use a Wt front-end + MAYBE a qt/thread separated data channel for accessing the aws db shit. or maybe i'm just fine using the Wt postgres/simplexml built in shit for everything? The Bank, The AbcAppDb, and the Wt usernames?
+    //all that on one OpenBSD virtual machine that i then upload and.... is that it?
+    //am i overcomplicating the FUCK out of this?
+    //i think i might be. i don't want to depend on amazon servers...
+    //...but i also really don't need to... per se
+
+    //sure, i'd have to use my real name initially (well not really... fake identity works)
+    //i just think aws might get all like 'wtf' and do better identity checking than most places...
+    //all i'd _REALLY_ need to do is periodically log into the shit through tor + vpn (because tor would look suspicious i bet) and upload a new stack of 'me-payout-keys'. the bitcoin thread (as i definitely couldn't use the wt thread for this) would periodically pay out all profits to me... etc (and perhaps even more. have a MAX_STORED and a MAX_USER_PAYOUT (not a max-me-payout. it's for the user per day or something. but idk that idea kinda sucks. having a MAX_STORED doesn't sound too bad but it'd mean that some large payments couldn't be instant. i'd have to send funds to myself. i guess i could have a list of 'to-pay-back-so-i-can-do-a-large-payout' preloaded keys so i could just do a regular bitcoin payment to it from wherever, without ever touching the ec2. ec2 detects the payment, knows that it's from the to-pay-back queue (TODO: should definitely be a queue... no point checking all of them, and i control when they are put in anyways)
+
+    //and all i'd REALLY need to do to verify my security, and that i'm still up and running... is to check the amount that a given key has received. i don't need to ever touch the ec2 to do this. tor + bitcoin works (or hell, even the public bitcoin db would suffice the majority of the time)
+
+    //cons: short lived tor connections *might* associate my identity/moneys with short-lived bitcoin connections...
+    //solution: a long-term bitcoin node that i connect through would solve that
+
+    //also, i'm unsure of amazon's policies on bitcoin. i guess also tor... since the bitcoin manual says you should always run bitcoin through tor.
+    //it wouldn't be a lot of bitcoin bandwidth or even tor bandwidth... mostly just https connections and crunching of bitcoins to see if they're valid etc
+
+    //the scalability of this solution is theoretically similar. it has a ceiling, whereas my approach wouldn't... but that ceiling is pretty damn high.
+    //the 20ghz 7gb ram (??? bandwidth ???) would be $475.20/mo if i pay after per month...
+    //...or $288/mo if i pay $712 up front (security deposit?) and sign a 1 year contract
+
+    //the differences between the pre-paid and pay-as-you-go plans for the small/default is night and day
+    //as you go: $57.60/mo - no security deposit
+    //prepay (light): $28.08/mo - $69 security deposit + 1yr contract
+    //prepay (medium): $17.28/mo - $160 sec d + 1yr
+    //there's also a heavy
+
+    //prepaid is definitely the way to go for ec2/aws to be worth it
+
+    //tl;dr: idfkwtf to do
+
 signals:
     void bankAccountCreated(const QString &username);
 };
