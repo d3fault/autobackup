@@ -1,0 +1,5 @@
+Thomas Coletto may have owned the hard drive contents of my online computer. i don't think there was much on it, but i am unable to get the drive to work so i have no idea
+There was not enough time between power cycles and times when i had physically taken the power/data cables out of the drive to have successfully withdrawn all* of my data. But it was enough to 
+
+the basic plan is this:
+make an app that pretends like your computer is off. turns off fans etc and runs on tiny embedded/silent computer. we intercept the power signal to the mobo and handle on/off requests. we are also plugged into the mobo as a random cable to sniff data and maybe even to pull it
