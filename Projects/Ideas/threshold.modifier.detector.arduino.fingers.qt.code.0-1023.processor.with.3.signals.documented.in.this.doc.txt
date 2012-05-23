@@ -1,0 +1,9 @@
+signal: "we just noticed finger X slid Ymm/units and did NOT cross over the digital/binary axis. each finger has two signals. 1 is clicked/toggled/triggered, the other is positionChanged(1-1024). you can get fine tuned or just triggered, but this helper can be listened to and we can present the user a prompt to see if they want to tweak where the crossover is in the 0-1023 range. it can be used at all times (configurable thresholds) or only in a training mode
+it could be off most of the time, but ON during Typedia/practice mode
+
+typing will use the digital switch
+
+there needs to be some digital switch to instantly toggle all the fingers from digital to analog
+or idk some way to use both
+
+dream: type/code while making music... or AT THE VERY LEAST while dancing to it. listening to both digital + analog signals would allow for that

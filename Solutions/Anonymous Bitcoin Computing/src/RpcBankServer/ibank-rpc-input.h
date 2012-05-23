@@ -130,6 +130,39 @@ public slots:
     //prepaid is definitely the way to go for ec2/aws to be worth it
 
     //tl;dr: idfkwtf to do
+    
+    
+    
+    
+    //hmm i'm thinking now maybe each Wt is a node to a Wt-username-db + AppDb Cache all in a single CouchBase + Memcached on each
+    //i guess some can be failover but ideally i want every node utilized. hopefully there's that mode + auto-failover
+    //The AppDbs can/will/do have their own CoucheBase + Memcached... even if it's just 1 node/db during the beginning. Scaling Problems = Fixed. Fuck Amazon
+    
+    //so basically i do a QDataStream into b64 and then use that as the 'value' on the CouchBase put
+    //the Key is 
+    //upon entry, you get Key "INDEX" and that gives you a nigger samwich
+    
+    //fuck i'm lost
+    //ok,
+    //all of the following would, in an ideal rpc generator (i almost said 'world'), be auto-generated (seriously though, you can write software to control... over a cluster of computers (or just one, except that we also want to expose that interface to the users, so multiple is better (AWS front-end on amazon.com))... how many nodes of a separate cluster of computers... a user has. i'm talking auto-scaling for specific users, the automatic deployment of binaries over a network. automated paying, etc. of course the RPC Generator fits nicely into the mix. used alone, the rpc generator is a badass tool. used with automation (auto-scaling of either of the Back-End's, including the renting out of such a service (it is very useful to me on it's own as well)), it is a think to be feared)
+    Bank::CreateBankAccount(QString username)
+    {
+      BankAccountObject object; //stack. we don't give a shit about it after it has been streamed to QDataStream
+      object.username = username;
+      object.pendingBalance = 0.0;
+      object.confirmedBalance = 0.0;
+      object.thereWasSomeEnumHere = I_FORGET_WHAT;
+      //todo: object.publicDecryptionCertificate, object.userIsSecureAsFuck, which maybe isn't necessary if we just check for a default value of publicDecryptionCertificate
+      
+      QDataStream stream << object;
+      key=sha512(username + someBankOnlyKnownSalt);
+      
+      dht.put(key, object.toBase64());
+      
+      //TODO: check response: if(!dht.put.... how long does it take for it to put something. is it async? more importantly, will it tell me if a key/value pair already exists for a given key? how can i do an atomic read and if not exist, write. if exist, fail and notify of failure. that is seriously one of the hardest DHT questions ever. but it has an answer. it probably isn't _THAT_ hard, it just sounds hard. ima go take a shit after i re-read it and see if i can come up with anything. nope nothing my brain got stuck in trying to figure out routing again. i'm pretty sure THAT's the hardest problem. there are lot of simple solutions but the best solution will [probably] be quite complex
+    }
+	  
+    
 
 signals:
     void bankAccountCreated(const QString &username);

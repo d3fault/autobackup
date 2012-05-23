@@ -1,0 +1,2 @@
+Typedia is what i use to master arduino fingers typing. it is my test environment
+and i film it's creation and use

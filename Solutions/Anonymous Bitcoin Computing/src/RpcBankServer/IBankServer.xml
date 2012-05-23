@@ -1,0 +1,14 @@
+<!-- the default for hasResponse is true. i only put it in so i don't forget about it. it is optional -->
+<interface name="BankServer" version="1">
+  <action name="CreateBankAccount" hasResponse="true" broadcastResponse="false"><!-- took me a bit of staring to get it, but broadCastResponse will be "true" for the IAppDb "CreateBankAccount", because not every AppDb wants to know when other AppDbs create a bank account, but every Wt front-end DOES want to know -->
+    <parameter type="const QString &" name="Username" />
+  </action>
+  <broadcast name="PendingBalanceDetected">
+    <parameter type="const QString &" name="Username" />
+    <parameter type="double" name="Amount" />
+  </broadcast>
+  <broadcast name="AutoPayoutPerformed">
+    <parameter name="const QString &" name="Username" />
+    <parameter name="double" name="Amount" />
+  </broadcast>
+</interface>
