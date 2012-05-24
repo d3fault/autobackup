@@ -1,3 +1,4 @@
+#if 0
 #ifndef CLIENTSHELPER_H
 #define CLIENTSHELPER_H
 
@@ -26,3 +27,4 @@ private slots:
 };
 
 #endif // CLIENTSHELPER_H
+#endif

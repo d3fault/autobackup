@@ -1,5 +1,5 @@
 #include "clientshelper.h"
-
+#if 0
 ClientsHelper::ClientsHelper(QObject *parent) :
     QObject(parent), m_SslTcpServer(0)
 {
@@ -64,3 +64,4 @@ void ClientsHelper::handleClientSentUsData()
         }
     }
 }
+#endif

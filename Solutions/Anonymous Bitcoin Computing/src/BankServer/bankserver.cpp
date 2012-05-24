@@ -8,11 +8,15 @@ void BankServer::startListening()
 {
     if(!m_Bank)
     {
-        m_BankThread = new QThread();
         m_Bank = new Bank();
+        m_BankThread = new QThread();
         m_Bank->moveToThread(m_BankThread);
         m_BankThread->start();
 
+        m_RpcClientsHelper = new RpcClientsHelper(m_Bank); //where input is just an IBank
+        //m_RpcClientsHelper creates a thread in it's constructor for the network to use... and connects signals from the object on that thread to m_Bank, which it assumes is already on another thread.
+
+        /*
         m_ClientsThread = new QThread();
         m_Clients = new ClientsHelper();
         m_Clients->moveToThread(m_ClientsThread);
@@ -20,14 +24,14 @@ void BankServer::startListening()
 
         //connect signals and slots
         connect(m_Clients, SIGNAL(bankAccountCreationRequested(QString)), m_Bank, SLOT(handleBankAccountCreationRequested(QString)));
-        connect(m_Clients, SIGNAL(balanceTransferRequested(QString,double)), m_Bank, SLOT(handleBalanceTransferRequested(QString,double)));
+        connect(m_Clients, SIGNAL(balanceTransferRequested(QString,double)), m_Bank, SLOT(handleBalanceTransferRequested(QString,double)));*/
 
         //connect debug signals
         connect(m_Bank, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
-        connect(m_Clients, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
+        connect(m_RpcClientsHelper, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
 
-        //daisy-chain: init Bank -> init ClientsHelper
-        connect(m_Bank, SIGNAL(initialized()), m_Clients, SLOT(init()));
+        //daisy-chain: init Bank -> init RpcClientsHelper
+        connect(m_Bank, SIGNAL(initialized()), m_RpcClientsHelper, SLOT(init()));
 
         //start initializing Bank
         QMetaObject::invokeMethod(m_Bank, "init", Qt::QueuedConnection);

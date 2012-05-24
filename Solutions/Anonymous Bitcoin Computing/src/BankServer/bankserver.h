@@ -6,7 +6,7 @@
 #include <QDebug>
 
 #include "bank.h"
-#include "clientshelper.h"
+#include "autoGendRpcClientHypothetical/rpcclientshelper.h"
 
 class BankServer : public QObject
 {
@@ -17,8 +17,8 @@ public:
 private:
     QThread *m_BankThread;
     Bank *m_Bank;
+    RpcClientsHelper *m_RpcClientsHelper;
     QThread *m_ClientsThread;
-    ClientsHelper *m_Clients;
 signals:
 
 private slots:

@@ -1,15 +1,13 @@
 #include "bank.h"
 
-Bank::Bank(QObject *parent) :
-    QObject(parent)
-{
-}
 void Bank::init()
 {
-    //todo: init sql db i guess
+    //todo: init sql db i guess. might use a dht instead... because it scales better. the only thing is, i don't know how to receive notifications of an update via a dht. maybe a custom (but hopefully still scalable) solution can be worked out that allows for notifications/updates amongst siblings
+    //memcached is cool and all, but i don't know what cases i would actually want to use it (referring to couchbase)... seeing as there aren't notifications to the dht... why would i ever want to read my cached results from memory?
 
     emit initialized();
 }
+#if 0
 void Bank::handleBankAccountCreationRequested(const QString &username)
 {
     if(!m_PerAppBankAccountsHash.value(appId).hasBankAccountFor(username))
@@ -34,8 +32,17 @@ void Bank::handleBankAccountCreationRequested(const QString &username)
     //todo: error where addBankAccount fails (db errors?)
 
 
-    emit bankAccountCreationFailed();
+    emit bankAccountCreationFailed(); //i do like this generic/fallback error emitting approach
 }
 void Bank::handleBalanceTransferRequested(const QString &username, double amount)
 {
+}
+#endif
+void Bank::createBankAccount(const QString &username)
+{
+    //TODO: write to the db
+    emit d("create bank account for user: " + username + " requested");
+
+
+    emit bankAccountCreated(username);
 }

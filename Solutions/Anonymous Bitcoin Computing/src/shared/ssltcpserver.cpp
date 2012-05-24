@@ -1,7 +1,7 @@
 #include "ssltcpserver.h"
 
 SslTcpServer::SslTcpServer(QObject *parent, const QString &serverCaFile, const QString &clientCaFile, const QString &serverPrivateEncryptionKeyFile, const QString &serverPublicLocalCertificateFile, const QString &serverPrivateEncryptionKeyPassPhrase) :
-    QTcpServer(parent), m_ServerCaFile(serverCaFile), m_ClientCaFile(clientCaFile), m_ServerPrivateEncryptionKeyFile(serverPrivateEncryptionKeyFile), m_ServerPublicLocalCertificateFile(serverPublicLocalCertificateFile), m_ServerPrivateEncryptionKeyPassPhrase(serverPrivateEncryptionKeyPassPhrase)
+    QTcpServer(parent), m_ServerCaFile(serverCaFile), m_ClientCaFile(clientCaFile), m_ServerPrivateEncryptionKeyFile(serverPrivateEncryptionKeyFile), m_ServerPrivateEncryptionKeyPassPhrase(serverPrivateEncryptionKeyPassPhrase), m_ServerPublicLocalCertificateFile(serverPublicLocalCertificateFile)
 {
     //we moved our constructor to init() so that our emit d()'s would work
 }
@@ -46,7 +46,7 @@ void SslTcpServer::initAndStartListening()
 
 
     //Server Private Encryption Key is the private portion of our Local Certificate
-    QByteArray serverPrivateEncryptionKeyPassPhraseByteArray(m_ServerPrivateEncryptionKeyPassPhrase);
+    QByteArray serverPrivateEncryptionKeyPassPhraseByteArray(m_ServerPrivateEncryptionKeyPassPhrase.toUtf8()); //TODO: not sure if .toUtf8() is right... even though it does in fact return a QByteArray. idfk what kind it expects.. shit doesn't say
 
     QFile serverPrivateEncryptionKeyFileResource(m_ServerPrivateEncryptionKeyFile);
     serverPrivateEncryptionKeyFileResource.open(QFile::ReadOnly);
@@ -88,9 +88,9 @@ void SslTcpServer::incomingConnection(int handle)
     {
         secureSocket->setCaCertificates(m_AllMyCertificateAuthorities);
 
-        secureSocket->setPrivateKey(m_ServerPrivateEncryptionKey);
+        secureSocket->setPrivateKey(*m_ServerPrivateEncryptionKey);
 
-        secureSocket->setLocalCertificate(m_ServerPublicLocalCertificate);
+        secureSocket->setLocalCertificate(*m_ServerPublicLocalCertificate);
 
         m_PendingConnections.enqueue(secureSocket);
 

@@ -4,6 +4,7 @@
 #include <QObject>
 
 //a future version of this hypothetical rpc generator might parse a header file... but initially i'm going to specify all of the interface in an xml file. it also makes the parameter modification easier.
+//the BankServerHelper code generated that is located on the RPC client and is used by the RPC client's code implements this, and so does your custom Bank Server implementation on the RPC Server
 
 class IBank : public QObject
 {
@@ -24,7 +25,8 @@ public slots:
     //for appdb rpc server impl, the WtFrontEndsClientsHelper could always add two uints to the beginning of the parameter list. the first is the wtId and the second is the requestId. they are both signal'd back to the WtFrontEndsClientHelper
 
     //the requestId will no doubt overflow (TODO: handle), but the appId and wtId identifiers probably never will
-    //for broadcasting, we could have the rpc compiler generate duplicates of all the signals. one for regular reply mode and one for reply + broadcast mode
+    //for broadcasts, we could have the rpc compiler generate duplicates of all the signals. one for regular reply mode and one for reply + broadcast mode. note, there are no cases where i want to use broadcast mode (not to be confused with a broadcast itself. i should probably change the wording. broadcast mode = send to every client vs. broadcast = a response that was server initiated) on the server. oh fuck i think it even effected my design thoughts. re-reading that sentence says: "broadcasts (server initiated updates) uses reply + broadcast mode slot"
+    //ok fixed, now the broadcast/updates are called signals
 
     //EDIT
     //if the AppDb ever splits in order to scale (lol good luck with that), then the Bank also needs to incorporate broadcast mode and it should use it for every single per-appId bank action
@@ -145,6 +147,7 @@ public slots:
     //fuck i'm lost
     //ok,
     //all of the following would, in an ideal rpc generator (i almost said 'world'), be auto-generated (seriously though, you can write software to control... over a cluster of computers (or just one, except that we also want to expose that interface to the users, so multiple is better (AWS front-end on amazon.com))... how many nodes of a separate cluster of computers... a user has. i'm talking auto-scaling for specific users, the automatic deployment of binaries over a network. automated paying, etc. of course the RPC Generator fits nicely into the mix. used alone, the rpc generator is a badass tool. used with automation (auto-scaling of either of the Back-End's, including the renting out of such a service (it is very useful to me on it's own as well)), it is a think to be feared)
+#if 0
     Bank::CreateBankAccount(QString username)
     {
       BankAccountObject object; //stack. we don't give a shit about it after it has been streamed to QDataStream
@@ -161,11 +164,12 @@ public slots:
       
       //TODO: check response: if(!dht.put.... how long does it take for it to put something. is it async? more importantly, will it tell me if a key/value pair already exists for a given key? how can i do an atomic read and if not exist, write. if exist, fail and notify of failure. that is seriously one of the hardest DHT questions ever. but it has an answer. it probably isn't _THAT_ hard, it just sounds hard. ima go take a shit after i re-read it and see if i can come up with anything. nope nothing my brain got stuck in trying to figure out routing again. i'm pretty sure THAT's the hardest problem. there are lot of simple solutions but the best solution will [probably] be quite complex
     }
-	  
-    
-
+#endif
 signals:
-    void bankAccountCreated(const QString &username);
+    void initialized();
+    void d(const QString &);
+
+    void bankAccountCreated(const QString &username); //will probably have to be createBankAccountCompleted, only because we only have a string copy of the word "createBankAccount"
 };
 
 #endif // IBANKRPCINPUT_H

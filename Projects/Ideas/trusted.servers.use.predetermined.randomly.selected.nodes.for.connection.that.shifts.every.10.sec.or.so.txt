@@ -1,0 +1,5 @@
+given your identity (public key) and your last determined* list of neighbors, you connect to a set of random neighbors from that list (we're talking about bootstrapping but the technique might be useful for just sending files) based on predetermination of your certificate + the current timespan of 10 seconds. meaning every 10 seconds you would connect to a different set of nodes for new connections
+this enforces the time, and we can also say that we only accept files (blocks, probably) from within that 10 sec time range that are sent to the correct mathematically determined set. you also don't get to choose your neighbors, those are randomly predetermined too. man i have all these far stretching ideas i don't even know if they are capable but i think they are. i want to implement them so bad but there's just so much god damn work before i'm there
+
+it should be noted that i'm not talking about packets
+..............ALTHOUGH, maybe i should be.... since they could just keep laaaaaagggggiiiiinnnggg the packets and writing very slowly so that even minutes later they are still writing that block (TODOreq)
