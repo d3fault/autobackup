@@ -1,0 +1,5 @@
+write the dir.structure.file.txt to a level above where you do the tree
+this way, dir.structure.txt isn't in the tree XML output
+script copies dir.structure.txt to the dir where we performed tree
+script does git add . git commit -am "date etc"
+script removes dir.structure.txt (the other copy is still there but is irrelevant at this point). downside: doing a git status will show the file as missing. fuck actually now this plan fucks up manual commits where i give them a comment. yea actually that is definitely the problem. i can't tag AND auto-commit always updates just because dir.structure.txt always catches it's own previous write and always has something new to commit.
