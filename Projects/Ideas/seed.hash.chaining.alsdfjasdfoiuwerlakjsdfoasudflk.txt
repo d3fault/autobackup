@@ -1,0 +1,15 @@
+seed hash chaining
+first seed is the video. whether encrypted or not is irrelevant, but encrypted might be worthwhile to bind it with a public/private key?
+
+
+actually, VERY FIRST (offline. do on a safe computer and then format it afterwards) seed is mouse generated in keepass/truecrypt. i could provide a util for this i guess (or take their qwidget ;-P)
+that seeded random number generator is a secure one, and it is used to generate your private/public key
+you say the public key IN the video, and sign your video with the private key
+the encrypted video's hash, or the contents itself, unsure if it matters
+
+
+
+we want to have predictable-guaranteed-randomness (their data?) and ACTUAL_RANDOMNESS  (others' data?) from other nodes collide to provide verifiable consistency back to a root object (the video)
+their data is not predictably random
+but their seed hash chain needs to be?
+the direction it takes is predictable ONLY GIVEN a) the last seed chained/predicted and b) the new data (whether theirs or someone else's)

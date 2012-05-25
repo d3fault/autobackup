@@ -1,0 +1,17 @@
+the problem of an atomic core
+an atomic write
+biggest problem in dht
+
+i hate terms like 'eventually consistent'
+barf
+
+
+seeing as it's a finite amount
+and it's like a web
+you can unfold the 'web' (of nodes) into a plain
+
+and if your write is sent to the network and the entire network as a whole verifies it in a predictable manner on that plain
+you could watch your data light up the plain
+or the orb
+or whatever shape you choose
+after seeing the majority of the orb (online/trusted users (servers?)) light up, you know your data is safe

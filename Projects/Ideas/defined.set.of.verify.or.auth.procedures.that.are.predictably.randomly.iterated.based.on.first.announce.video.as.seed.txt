@@ -1,0 +1,6 @@
+the video's encrypted form is
+ah fuck 
+this solution is hard to conceptualize
+but i'm pretty sure there's something there
+
+i dont' know enough about predictable random number generators (predictable based on the seed. the video needs to be the seed, and somehow each predicableRNG.next() will be used to verify a certain user (the owner of the video) has done the correct procedures to still be a trusted server)

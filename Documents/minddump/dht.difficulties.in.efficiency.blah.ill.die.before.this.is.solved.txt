@@ -1,0 +1,5 @@
+one problem: it is very inefficient to notify every node in a dht of every write. might be slightly less inefficient if writes from multiple nodes were combined before being sent to neighboring nodes... but still inefficient altogether. even the notifying of the reception
+another: how to nonchalantly listen for a message, beit a reply or whatever
+yet another: and how to distribute data equally/safely
+
+i think another and yet another are different levels of abstraction. at least, i hope so. the data level of encryption/routing/security should be different from the user level, as far as communicating goes. maybe not, idfk. so confused.
