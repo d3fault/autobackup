@@ -1,0 +1,16 @@
+ok so yea, the point is, i try to never go offline. i walk around with fingers on, arduino in one pocket, raspberry pi in the other.
+my creepy house telescoping internet plan wouldn't allow me to walk around ever
+UNLESS i vpn'd to that house directly
+
+the central point (weak point) is the mountain house itself
+
+i guess just having multiple mountain houses might solve that?
+
+each of the regular houses is usable for staying at + fucking + partying
+i could have a different identity associated with each (creeeeepy)
+
+but the point is, they each tunnel outward to a mountain house, which distributedly tunnels back out through the combination of all the houses
+
+this idea sucks because if i use them randomly a sting could just sit and wait at any one of them. the only semi-safe place is the mountain house. but it's also just one place, 19 lost because 1 regular was compromised which led to mountain being compromised (with 20 + mountain house to start). 19 lost because of 1 (mountain) is bad. it's a point of weakness. it should fail better.
+
+i could realistically respond to any one of the 20 locations bedroom doors detecting someone putting their hand on the door (though i shouldn't rely on that as security... just a greeting mechanism (which DETERS theivery). video camera inside looking at door is better. this is inside a telescoping internet room). right when human touch is detected, it alerts me and i can say "hi, what's up? can i help you? how's it going?" and speakers there play it.
