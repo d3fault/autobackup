@@ -1,0 +1,8 @@
+The GUI of d3fault need be highly configurable and needs to be in-app reconfigurable, similar to how QMainMenu's toolbar is. The default view of d3fault is a saved state (only the state, not [all of] my data!) of the GUI and the content is their data (maybe some of my public data in the mix).
+I can make an Alpha-default GUI, which means the changes are not pushed out to all my peers? subscribers? anybody on the 'd3fault' upgrade channel?
+On change (of default GUI/view-configuration) or promoting Alpha-default GUI to default d3fault GUI (for subscribers(??????) i guess you are a subscriber by default), the very first thing we ask the user using our custom-type modal yes/no dialog is "Do you like the changes? Do you want us to fix it?" actually we can't do that... can't ask a no question followed by a yes question. actually i can i just did suck it bitch
+i guess if they said to change back, they would be only be taken off the d3fault channel for their own default view category (category: GUI. maybe "default configuration category" fits better? idk it's a hard thing to abstract but i'm tryin and know it can be done)
+
+
+
+**NOTE I AM TALKING ABOUT A QWIDGET GRIDLAYOUT-TYPE CONFIGURATION LEVEL HERE (which may or may not include colors, theming of system widgets, system widget shapes), NOT SUB QWIDGET ALTHOUGH THAT WOULD BE INTERESTING (sublevel being like, the ability to make a widget's label bold)

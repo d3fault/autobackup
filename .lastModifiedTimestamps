@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031818
+Documents/minddump/:1386031821
 Documents/minddump/dreams/:1337201061
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -153,6 +153,7 @@ Documents/minddump/my.say.of.what.time.it.is.is.what.time.it.is.txt:1322863302
 Documents/minddump/numerical.idea.i.want.to.be.number.3.but.not.a.must.nor.is.even.having.the.numerical.ids.txt:1333103242
 Documents/minddump/open.source.is.double.edged.sword.but.ultimately.worth.it.txt:1328317146
 Documents/minddump/output.only.can.have.selective.as.fuck.input.txt:1322779096
+Documents/minddump/paranoia.understood.though.i.may.have.been.hacked.from.freenet.txt:1337909446
 Documents/minddump/parttime.job.bootstrap.perhaps.idfk.txt:1320314644
 Documents/minddump/prematurely.excited.still.so.much.work.to.be.done.sadface.txt:1330171184
 Documents/minddump/profiles.and.data.and.ads.per.profile.txt:1333103196
@@ -181,6 +182,7 @@ Documents/minddump/soundproof.cubes.txt:1322605103
 Documents/minddump/start.a.time.dependent.dht.that.starts.time.at.0.and.then.increments.txt:1322863559
 Documents/minddump/strong.silent.forgotten.type.or.world.leader.living.in.constant.fear.type.txt:1332453298
 Documents/minddump/stuck.on.ad.agency.stupidity.design.and.i.really.dont.even.feel.passionate.about.this.work.i.just.want.to.retire.txt:1330091700
+Documents/minddump/suicide.figured.out.asdfsdlafkjsadlfjoweursdlfkjdsf.txt:1337911623
 Documents/minddump/tangents.collapse.to.what.i.could.use.title.but.there.isnt.always.a.title.idfk.txt:1320773524
 Documents/minddump/tempted.to.post.on.facefuck.fsdlkjfasoifuwerlkjasdfosduflskjfd.txt:1336169344
 Documents/minddump/the.desire.to.gitsync.grows.correlated.to.number.of.unsyncd.docs.txt:1322065834
@@ -299,7 +301,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1337826930
+Projects/Ideas/:1337911576
 Projects/Ideas/QtSslRpc/:1337204290
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -341,12 +343,14 @@ Projects/Ideas/block.generation.plus.flattr.but.we.cant.have.a.21.mil.cap.and.sc
 Projects/Ideas/bool.update.equals.true.d3fault.txt:1325049002
 Projects/Ideas/broadcasting.live.i.dont.even.have.to.do.anything.tbh.txt:1328137796
 Projects/Ideas/captcha.image.has.ad.on.it.unblockable.txt:1328070905
+Projects/Ideas/creepy.but.awesome.way.to.have.reliable.anonymous.internet.txt:1337911576
 Projects/Ideas/crowd.sourced.realtime.music.prolly.one.of.my.best.ideas.txt:1331442662
 Projects/Ideas/d3fault.OS.or.system.level.that.has.plugins.or.apps.depending.how.you.look.at.it.SLIDES.idea.txt:1325694210
 Projects/Ideas/d3fault.OS.windowing.systems.arent.hard.to.make.at.all.alsdjfasoufosad.txt:1327615562
 Projects/Ideas/d3fault.each.node.should.be.a.compute.thread.in.openCL.txt:1322609416
 Projects/Ideas/d3fault.encryption.layer.is.foreverfilesystem.txt:1325624171
 Projects/Ideas/d3fault.patch.forcing.for.trusted.servers.txt:1337300965
+Projects/Ideas/default.gui.view.of.d3fault.needs.to.be.on.a.d3fault.update.channel.for.the.category.gui.and.they.can.branch.off.by.modifying.txt:1337887396
 Projects/Ideas/deletion.mirror.is.easy.site.to.use.ads.on.txt:1329121337
 Projects/Ideas/design.Equals.Implementation.andQtSslRpc.try.to.solve.a.lot.of.the.same.problems.txt:1337301011
 Projects/Ideas/destiny.but.dont.forget.SOFTWARE.your.true.passion.i.just.do.this.out.of.pity.i.guess.txt:1328744396
@@ -384,6 +388,7 @@ Projects/Ideas/meh.didnt.get.very.far.with.this.but.the.seed.is.there.txt:132368
 Projects/Ideas/merge.to.a.place.of.truth.alfdjsadlfjasdl.txt:1328052708
 Projects/Ideas/meritocratic.lie.proof.byte.network.txt:1325705926
 Projects/Ideas/network.grid.of.computers.that.each.0.or.1.represents.a.single.computer.or.group.of.computers.if.REALLY.important.OR.bandwidth.intensive.txt:1322071181
+Projects/Ideas/offline.online.split.figured.out.this.applies.to.both.keyboard.mouse.and.fingers.txt:1337911524
 Projects/Ideas/one.click.in.the.market.to.download.compile.and.install.should.be.able.to.stop.and.reverse.what.is.done.so.far.and.the.recording.of.you.doing.that.is.private.but.it.shouldnt.be.because.it.inherently.isnt.or.something.txt:1323683733
 Projects/Ideas/portrait.and.landscape.modes.on.both.desktop.and.mobile.by.measuring.desktop.resolution.txt:1329806118
 Projects/Ideas/protobuf.rpc.MY.OWN.via.qt.qdatastream.sslsocket-server.txt:1335959064
@@ -763,7 +768,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031818
+Projects/libAvGraphicsItem2/design/:1386031821
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -848,7 +853,7 @@ Solutions/Anonymous Bitcoin Computing/src/AppDb/bankserverhelper.h:1335350377
 Solutions/Anonymous Bitcoin Computing/src/AppDb/main.cpp:1334997969
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.cpp:1336171193
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.h:1336171200
-Solutions/Anonymous Bitcoin Computing/src/BankServer/:1337834198
+Solutions/Anonymous Bitcoin Computing/src/BankServer/:1337834563
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/:1337833391
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/rpcclientshelper.cpp:1337829252
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/rpcclientshelper.h:1337829198
@@ -922,7 +927,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1337834377
+autobackupScripts/win/.directory:1337911628
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
