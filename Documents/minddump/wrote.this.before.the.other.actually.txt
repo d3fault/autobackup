@@ -1,0 +1,6 @@
+i like the idea of a read-only usb drive plugable into anything
+i should but a circular usb hub on my chest
+arduino on left
+raspi on right
+or vice versa, makes no diff
+but REALLY, the offline is on the left, along with arduino
