@@ -1,0 +1,49 @@
+it would be nice to have a read-only live usb distro that installs packages off the drive (if they're cached), logs in etc
+custom softwares basically
+it never saves to local, only to a remote
+password encryption on logon launches the custom routine. without it, you're looking at a live usb session unmodified, but the usb disk has a) the bootstrap script and b) the encrypted scripts/apps(?) that take over
+
+see the thing is i want the apps to live on the repo
+because i want to develop them
+but i also want them to be cached
+
+everything's becoming a data nightmare in my head
+i can't convulge this yum automation/liveUSB idea with d3fault itself, which would primarily be a qt stack. but it might actually use yum? wait no it wouldn't long term. it would BE the repository long-term. i'm talking about a software/scm repository combined. yum being the software repository, and a git-like repo being the scm one. but all combined. idfk. it ties in with inline editable int main somehow... which hopefully/possibly ties in with designEqualsImplementation somehow. i dream big.
+
+the 'repo' that you write to (and read from) does not accept deletes, plain and simple
+in order to legitimately do that, it needs to be setup like freenet where the hoster of a piece of data does not know what they're hosting. if they did, they could be legally obligated to delete it based on DMCAs. but if the mpaa/riaa don't know who to send the DMCA to, then they cannot send it. the network lives
+
+so i need:
+1) no-delete dht repository/timeline with scaling and data integrity (might include continous update-hashes (update hashes are just hashes of existing files but with a new/different algorithm))
+2) security/user level for messaging, trusted user system (video thingo), and public keys and storage of data. each user has a private filesystem (or infinite private filesystems). there is also 1 giant public filesystem that is shared amongst all users. copying something from the giant public filesystem to one of your own private filesystems should be (or from private-to-private, but i'm not so sure about private-to-public. might be ok idk tho) copy-on-write
+
+it is worth mentioning at this point that we're still at a data level~
+
+'app level' ? (2) is kind of app level too if you think about it. idfk:
+3) user settings, what to install on top of the liveUSB drive. or really, it can just be any 'fresh install'. using a 'fresh install' has the added advantage of you not having to install every package after every reboot. they are cached. installing new items needs to ask you if you want to add it to the list of things to install on fresh install/liveUSB boot. or at the very least, be easy to add by keyword or whatever
+4) development level, i don't know how to define this and my brain is about to explode
+
+
+level 1 & 2 might need tighter integration seeing as the video thingo for determining a TRUSTED node
+
+ok wait
+
+trusted SERVER
+vs
+trusted PERSON
+
+
+
+a trusted PERSON (1x) can have infinite trusted SERVERs
+a trusted server needs a trusted person
+that person identifies/verifies himself, which includes all of his servers, through video and peer review
+
+how often a person verifies themself is up to them
+however, it should be noted that all data since their last verify is 'taken with a grain of salt'
+so they should want to verify at least somewhat often
+
+it's not that the data is not trusted... it's just we know that at any point you may be hacked and it could become untrusted. we don't know when in the linear timeline you started uploading erroneous shit, so we take it all with a grain of salt until you verify it. you can also update/hack-attempt which gives you a new identity KINDA (only so much as your old hacked/compromised account isn't used anymore and your new 'identity' is secure) and you symbolically link your old/now-hacked account with the new one and are only able to do so by verifying with the old account's peers. probably only the peers he had during/before the last verify that was performed (as an unauthroized user could just add peers of his own)
+
+
+we should probably also try to keep in mind who a user is when replicating on teh dht
+trying not to select the same user and his servers. but idk maybe that would ruin true undetectable anonymity... or maybe anonymity is on a different level anyways idfk
