@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config version="1" revision="5">
+  <username>d3fault</username>
+  <password>*#=6zd}8$%x@</password>
+  <server-name>Last.fm</server-name>
+  <http-proxy></http-proxy>
+  <download-dir>/home/liveuser/Music</download-dir>
+  <imstatus-template>♫ {artist} - {title} ♫ (Vagalume {version})</imstatus-template>
+  <use-proxy>0</use-proxy>
+  <use-system-proxy>0</use-system-proxy>
+  <low-bitrate>0</low-bitrate>
+  <discovery-mode>0</discovery-mode>
+  <enable-scrobbling>1</enable-scrobbling>
+  <im-pidgin>0</im-pidgin>
+  <im-gajim>0</im-gajim>
+  <im-gossip>0</im-gossip>
+  <im-telepathy>0</im-telepathy>
+  <disable-confirm-dialogs>0</disable-confirm-dialogs>
+  <show-notifications>0</show-notifications>
+  <close-to-systray>1</close-to-systray>
+  <autodownload-free-tracks>1</autodownload-free-tracks>
+</config>
