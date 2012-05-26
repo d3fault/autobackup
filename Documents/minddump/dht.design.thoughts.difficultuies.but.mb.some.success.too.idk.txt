@@ -1,0 +1,20 @@
+figuring out how i want my dht to function is proving to be a challenge
+securing it will probably be even more difficult
+the video shits
+the predictable randomness
+the encryptering
+:(
+i know they're good ideas
+i just can't get a great implementation down
+baaaaaaaawwwwwwwwwwww
+
+
+
+the max a user/server node can use at a given time for the user data is 50%. the other 50% is reserved/used for the server -- storing other people's data. we'll live solely based on the fact that most people don't use even close to 50% of their drive. we could probably have triple replication and still be ok. that's 3 full copies. the 3 full copies can and probably should be spread all over the network, spattered. it should also be raid split, but not by 3. by as many as it is spattered. i may need to write a custom parity routine for this. raid-5 sucks is all i know. the other 2 exact copies can help in the resolving of the 3rd's missing segment. the spattered amount starts at one: yourself. you copy your own data into your server space. it is lol at first, but when 2nd node comes online, you immediately send him a full copy of all your data. he does the same with his. so now you both have 3 copies (but we're not done yet). one in the user half of your drive, one in the server half of your drive, and one in the server half of the 2nd node's drive. so a 3rd comes online, you and, the 2nd one upload both of your datas to the 3rd one at the same time. equal portions. this is the contract that they fill, and you reciprocate. should the 3rd generate any data, it is sent to both of the users. or just one first and then double teams the other just like what's going on (twice at the same time, equally) to him, the 3rd node.
+
+should the integrity of the filesystem as a hole come under threat, the system can put itself into 'repair-only' mode, which it announces via popup on every node. when in repair-only mode, you cannot read or write... the system is using all of the resources (and therefore time) available to fix itself. you can help the server out by adding new/more servers. that would/should only happen in an unhealthy ecosystem.
+
+
+i can/should give the user the option to use their spare cycles on bitcoin crunching. i mean, unless the user is using the computer. but for SERVERS, that only give a precise percentage of their cpu per [x]-idfk, the downtime can be utilized easily by crunching bitcoin. in fact, you can configure it to use 80% of your resources at all times if you have promised 20% of your resources for that month (which will come at any time the network deems necessary). if you don't give enough for a certain month (as much as you promise, no more!), you are docked for the next month until you make up for it. actually nvm. i was thinking about leaving the 20% free but then the network might want to utilize it's 20% by doing > 50% bursts every so often (and keeping track of how long they took. we measure and expect a certain speed for everything based on network latency + cpu ghz. we can guess accurately within a few seconds based on previous measuresments and just pure math. their ghz should be math'd based on results alone. fuck what they say.)
+so yea i mean uhh i think i'd want to do like 5% usage and only every few minutes or something. but there is no such thing as 5% usage.
+
