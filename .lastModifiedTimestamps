@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031851
+Documents/minddump/:1386031855
 Documents/minddump/dreams/:1337201061
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -113,6 +113,7 @@ Documents/minddump/im.bukken.faked.txt:1336583818
 Documents/minddump/im.definitely.going.to.launch.sooooooon.i.dont.think.kaylee.even.factors.in.anymore.txt:1333301872
 Documents/minddump/inheritence.is.bullshit.daljdfoasiuewrlkjafou.txt:1334614026
 Documents/minddump/inscribe.data.with.light.emission.lol.idfk.txt:1337329480
+Documents/minddump/integrity.checking.forever.loop.lol.fuck.this.shit.salfdkjasldfkjasdlkf.txt:1338031660
 Documents/minddump/it.landed.on.1.there.is.a.corresponding.image.txt:1325464080
 Documents/minddump/it.will.be.documented.and.others.could.easily.be.as.smart.as.me.or.smart.by.mimickery.alone.txt:1323683638
 Documents/minddump/jfasdofuasdofuaslfdkjasdfoausdfl.txt:1328052335
@@ -308,7 +309,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1338022568
+Projects/Ideas/:1338031707
 Projects/Ideas/QtSslRpc/:1337204290
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -359,6 +360,7 @@ Projects/Ideas/crowd.sourced.realtime.music.prolly.one.of.my.best.ideas.txt:1331
 Projects/Ideas/d3fault.OS.or.system.level.that.has.plugins.or.apps.depending.how.you.look.at.it.SLIDES.idea.txt:1325694210
 Projects/Ideas/d3fault.OS.windowing.systems.arent.hard.to.make.at.all.alsdjfasoufosad.txt:1327615562
 Projects/Ideas/d3fault.could.generate.currency.too.im.pretty.sure.sadlfjkasdfoiwreualskjf.txt:1337989155
+Projects/Ideas/d3fault.create.filesystem.interface.to.be.implemented.txt:1338031707
 Projects/Ideas/d3fault.each.node.should.be.a.compute.thread.in.openCL.txt:1322609416
 Projects/Ideas/d3fault.encryption.layer.is.foreverfilesystem.txt:1325624171
 Projects/Ideas/d3fault.patch.forcing.for.trusted.servers.txt:1337300965
@@ -415,6 +417,7 @@ Projects/Ideas/readme.before.or.when.designing.bootstrapped.version.txt:13235900
 Projects/Ideas/release.code.write.DOOOOEEEEEEET.txt:1328082591
 Projects/Ideas/reprap.framer.crawler.robot.asldfjasdlfjsl.txt:1326662844
 Projects/Ideas/retirement.villa.asdlfjasdlfjasdofiusadfoiuasdfojawerlkasjefoij.txt:1328744590
+Projects/Ideas/reuse.existing.tools.if.you.want.even.if.by.command.line.fuggit.but.api.is.preferred.asflsfkjsdlfkjs.txt:1338031620
 Projects/Ideas/seed.hash.chaining.alsdfjasdfoiuwerlakjsdfoasudflk.txt:1337989129
 Projects/Ideas/sell.cs.tag.as.an.ad.slot.lol.asldfjsaldfjsoiusdf.txt:1332971365
 Projects/Ideas/serial.qcode.over.video.out.txt:1324818896
@@ -787,7 +790,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031851
+Projects/libAvGraphicsItem2/design/:1386031855
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -935,7 +938,7 @@ autobackupScripts/:1321106464
 autobackupScripts/linux/:1337998869
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338006474
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338021503
-autobackupScripts/linux/LiveCDinstallAndConfigExtra/install.all.rpms.via.yum.and.configure.extra.sh:1338022251
+autobackupScripts/linux/LiveCDinstallAndConfigExtra/install.all.rpms.via.yum.and.configure.extra.sh:1338027300
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/vagalume-config.xml:1337881282
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
@@ -950,7 +953,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1338023039
+autobackupScripts/win/.directory:1338031711
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

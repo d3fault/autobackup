@@ -1,0 +1,13 @@
+i know this liveUSB stuff is a waste of time
+i need to figure out the line that i want to draw as far as what's on the hard drive and what my scripts do
+basically, i need to get the fuck out of installationscriptland
+it's fun playing here, but it's not productive for shit
+doing it to a minimal level seemed necessary if not at least so i can stop wasting bandwidth
+i'm about to embark on an unrar/7zip passworded archive
+password input through bootstrap/install script
+and then it just executes auto.sh inside the archive~
+the archive type should be abstracted -- a job best left to C++
+
+i need to use already-existing tools in combination with custom code (controls the tools)
+duh
+who cares if you use shit via command line. you can give each process it's own thread.

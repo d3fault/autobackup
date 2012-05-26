@@ -15,5 +15,14 @@ chmod 777 /home/liveuser/.vagalume/config.xml
 cp /usr/share/zoneinfo/America/Phoenix /etc/localtime
 ntpdate 0.fedora.pool.ntp.org
 
+# USER MODE SETTINGS. PERFORM ALL ROOT OPERATIONS BEFORE THIS LINE nvm doesn't work
+# su liveuser
+
 # desktop, a preinstalled image specific to fedora 17 lxde
-pcmanfm --set-wallpaper=/usr/share/backgrounds/images/ladybugs.jpg
+su liveuser --command="pcmanfm --set-wallpaper=/usr/share/backgrounds/images/ladybugs.jpg"
+
+# firefox, create new profile, append custom config -- assumes noscript + adblock installed
+su liveuser --command="/usr/bin/firefox -CreateProfile default"
+su liveuser --command="cat ./firefox.prefs.additions.txt >> /home/liveuser/.mozilla/firefox/*.default/prefs.js"
+
+
