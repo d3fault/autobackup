@@ -1,0 +1,1 @@
+i want to test myself and see if i can turn an md5sum command on a default install lie and say whatever md5sum i hardcode into the source only for a given file/my-archive.script could have the same hash so memorizing it doesn't do shit

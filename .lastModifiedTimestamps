@@ -1,10 +1,11 @@
 Documents/:1320774775
-Documents/minddump/:1386031862
+Documents/minddump/:1386031865
 Documents/minddump/dreams/:1337201061
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
 Documents/minddump/5meo.attempt.2.and.way.higher.read.this.shit.its.good.asdlfjsadofuwerlkjsadfoulkjasdf.txt:1334481071
 Documents/minddump/AdAgency.prototype.the.wt.in.session.modification.as.well.as.out.of.session.YAT.yet.another.tangent.coined.txt:1332958174
+Documents/minddump/PostgreSQL.sucks.just.sayin.scalability.thoughts.txt:1338081216
 Documents/minddump/a.perfect.end.lasjdfasdlfkjs.4.lexi.txt:1320836605
 Documents/minddump/adflkjasdfoiausdflkajweraoirusdaflkjsadfouasdflkjsdfoiu.txt:1335804858
 Documents/minddump/aflsdjasodfiuaojrelwkajasdlfkjasdofuosiyfiwerhaskfjsdflouiwerwekj.txt:1331632956
@@ -29,6 +30,7 @@ Documents/minddump/being.of.electricity.txt:1322679120
 Documents/minddump/being.recorded.keeps.the.record.clear.but.most.still.never.verbally.admit.defeat.txt:1325464115
 Documents/minddump/blah.blah.blah.been.wanting.to.build.this.for.years.txt:1321978847
 Documents/minddump/bleeding.out.of.my.head.lol.minddump.is.the.only.appropriate.folder.txt:1322679223
+Documents/minddump/bootstrap.verifies.usb.files.integrity.txt:1338125801
 Documents/minddump/broadcast.for.safety.fldjfsalfjoisaufasodfjlsdajf.txt:1328889102
 Documents/minddump/ca.certs.and.CA.gen.utility.thoughts.and.randomness.who.gives.a.fuck.adlfjasldfjasdoful.txt:1330012236
 Documents/minddump/camera.is.a.computer.mod.txt:1323476263
@@ -87,11 +89,13 @@ Documents/minddump/freedom.of.information.or.childpornless.internet.txt:13232877
 Documents/minddump/fsdafhasdfiuoydsfawtawerkjrosiufsdkfj.txt:1328117354
 Documents/minddump/fsdfjsdlfsdofiyusdfjsdlfk.txt:1328117345
 Documents/minddump/fsdlkfjdsapfousdflasdjfoawruvoriua937sfsdf.txt:1327893267
+Documents/minddump/fsdlkfjsadlfjsdoiuaelrkajsfd.txt:1338125870
 Documents/minddump/fslfkjasdfljasdfoasdufjasldfj.txt:1321758509
 Documents/minddump/fuck.acting.accordingly.just.be.yourself.asdjflkasjdfasdfoiwuerawflkfsd.txt:1334830775
 Documents/minddump/fuck.google.glass.they.dont.have.shit.on.me.sadfljasdlfjsadl.txt:1334830360
 Documents/minddump/future.privacy.concerns.there.is.no.privacy.maybe.thats.what.d3fault.is.all.about.USING.what.is.vulnerable.txt:1332366866
 Documents/minddump/get.smart.before.ehh.getting.smart.lol.wtf.idk.txt:1321758445
+Documents/minddump/hacked.md5sum.you.never.know.txt:1338125857
 Documents/minddump/how.do.you.EXPORT.from.hidden.os.lol.txt:1320057239
 Documents/minddump/howto.use.todo.effectively.txt:1320052350
 Documents/minddump/human.selection.religion.txt:1333874741
@@ -168,6 +172,7 @@ Documents/minddump/profiles.and.data.and.ads.per.profile.txt:1333103196
 Documents/minddump/protocols.for.tonight.i.need.to.become.an.protocolh.master.coder.hacker.1337z0r.txt:1329806939
 Documents/minddump/public.key.for.every.one.second.of.content.to.start.saldjfasldjfls.txt:1332315638
 Documents/minddump/real.dmt.bring.the.code.i.write.while.tripping.back.into.this.realm.txt:1334480183
+Documents/minddump/real.life.vs.idk.what.tbp.txt:1338125833
 Documents/minddump/reality.is.best.worst.and.only.experience.txt:1325359766
 Documents/minddump/research.mah.brain.mayng.txt:1320315731
 Documents/minddump/retardation.can.strike.at.any.moment.txt:1323374872
@@ -791,7 +796,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031862
+Projects/libAvGraphicsItem2/design/:1386031865
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -939,7 +944,7 @@ autobackupScripts/:1321106464
 autobackupScripts/linux/:1337998869
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
-autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338074874
+autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/install.all.rpms.via.yum.and.configure.extra.sh:1338075431
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/keepassx.config.ini:1338074788
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/vagalume-config.xml:1337881282
@@ -956,7 +961,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1338075559
+autobackupScripts/win/.directory:1338125881
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

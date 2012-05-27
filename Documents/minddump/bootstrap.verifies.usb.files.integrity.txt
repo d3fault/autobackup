@@ -1,0 +1,1 @@
+before the bootstrap script runs, we verify the integrity of the .7z file. this ensures us that we are at least being hacked. but also protects us from hardware failure(???)
