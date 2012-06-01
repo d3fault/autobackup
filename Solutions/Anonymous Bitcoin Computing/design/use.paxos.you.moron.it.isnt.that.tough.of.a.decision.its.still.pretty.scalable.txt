@@ -1,0 +1,5 @@
+actually
+a paxos is perfect for an environment like abc
+so long as 'race conditions' aka 'prepared[paxox]?' checks effecting domains (slot purchased should still be a listed site, among many other race conditions)
+but i mean paxos really is perfect
+who cares if there's a bit of latency when purchasing a slot. as long as we optimize reads to the best of our ability (i'm not going to cache writes (might change my mind later)), the system is ok with a bit of lag on the most important step of the process. i'm only going to use private (well... not for bitcoin) servers. goddamnit i was thinking about this earlier, there's no concept of private. there's: online, semi-secure-online[you have control of the server], and pretty-secure-offline[security is as good as online, if not WORSE*... but requires physical location be revealed and compromised(i'm going to store on my persons 24/7/365/infinity to achieve this(i do fear of being drugged-forced-passed-out,,,, but i should have footage to .... know something was up. unexpected pause. unexpected gap in public (a month, lol), whatever))]

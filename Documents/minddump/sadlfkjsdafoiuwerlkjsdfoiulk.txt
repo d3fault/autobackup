@@ -1,0 +1,2 @@
+figuring out this dht thing is difficult, even with using a pre-existing one.
+'there was data loss and my packets were involved' message, describing the details (as much as that node has. it could be the original requestor or a forwarder. wherever the break in the link is detected. they have the most context to the situation) but without revealing any of the message of course. just like the mere fact that some packets were lost for a given request and need to be refilled.

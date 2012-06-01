@@ -1,0 +1,6 @@
+i am d3fault
+that is my 'channel'
+i am also THE default ['channel']
+clever, eh?
+
+but anyways, i have the most followers implicitly, so it is my job to keep the network 'stable'. i accept any patch i deem worthwhile and test it on an offline/testing network first. i only accept source under acceptable licenses.
