@@ -1,0 +1,10 @@
+you get your timestamp for the beginning of your file (because some might be continually streamed) as soon as you get the paxos result
+how the FUCK do i do paxos + streaming, my mind just exploded.
+
+
+and the confirmation/ability-to-log-off once you have uploaded 1 full copy to the network
+some might opt in to find out when the 3 accepters/learners have gotten their copies. given network speed differences amongst servers vs users it could be instantly. the server could easily be 3x faster upload than you, so it'd upload to the other 3 as fast as you can upload to it.
+
+but for me, i want to know that i have an offline copy of the recently uploaded data. how i accomplish this is yet to be created
+
+a thumb drive auto-inserter/auto-setter-downer (software hardcoded to ONLY do that, never to pick up an old one) maybe sync'd (aka dropped) hourly or something. writes during arm-movement, getting another usb drive or something, block. this is only for my files. it is probably my most secure/trusted/SAFE copy [of online-only (afk with dat cd-r)-submitted content. my offline-before-online copy, which i might not be able to do everywhere, is obviously more secure/safe].

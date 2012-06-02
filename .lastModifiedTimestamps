@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031880
+Documents/minddump/:1386031883
 Documents/minddump/dreams/:1337201061
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -23,6 +23,7 @@ Documents/minddump/asfasdljfaslfjowieursakjfasdfjsladfjasdofiuawerlkjasfdljasdf.
 Documents/minddump/asfdlaskjfowaeuralsdjfasdofusadfljsdfoasdfoiweryqwrkodfa.txt:1334824695
 Documents/minddump/asfljdsfljuweoruasldfkjsadfosuadflkjwerou.txt:1332366568
 Documents/minddump/asflkajsouweraoweiruasldkfjsadflkjouwerl.txt:1337329431
+Documents/minddump/ask.bro.for.5meo.when.ready.to.launch.or.just.get.some.idgaf.txt:1338636073
 Documents/minddump/asldfjasdofuwaelrjewoiurel.fuck.titles.asldfjasdlfjsadou.txt:1333103102
 Documents/minddump/asldfkjsdofuwelrkjjaosadfuwerkjfdgoiuwekkeiejHI.txt:1333731501
 Documents/minddump/be.prepared.for.that.embarrassment.embrace.it.txt:1323683770
@@ -321,7 +322,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1338634780
+Projects/Ideas/:1338636915
 Projects/Ideas/QtSslRpc/:1337204290
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -364,6 +365,7 @@ Projects/Ideas/bitcoin.irl.transfer.security.phone.app.thingy.txt:1326662820
 Projects/Ideas/block.generation.plus.flattr.but.we.cant.have.a.21.mil.cap.and.scalability.is.a.huge.issue.txt:1334609777
 Projects/Ideas/bool.update.equals.true.d3fault.txt:1325049002
 Projects/Ideas/broadcasting.live.i.dont.even.have.to.do.anything.tbh.txt:1328137796
+Projects/Ideas/build.base.fingers.and.music.code.and.others.will.contribute.additions.for.free.and.improve.it.fuck.yea.open.source.txt:1338635937
 Projects/Ideas/cached.package.installer.want.to.implement.using.yum.aslfdjasodfijlksdjf.txt:1338004502
 Projects/Ideas/captcha.image.has.ad.on.it.unblockable.txt:1328070905
 Projects/Ideas/creation.date.is.when.you.start.typing.but.maybe.not.idk.txt:1338005187
@@ -450,6 +452,7 @@ Projects/Ideas/use.TX.line.fromarduino.mega.to.communicate.securely.upload.only.
 Projects/Ideas/vibrations.are.confirmations.that.your.input.has.been.recognized.txt:1328317236
 Projects/Ideas/wasdf.domain.use.could.do.finger.shits.for.it.txt:1329121244
 Projects/Ideas/yes.or.no.input.and.20.questions.game.software.mode.txt:1322679432
+Projects/Ideas/you.get.timestamp.for.timeline.in.dht.when.paxos.completes.and.i.get.all.sorts.of.other.confirmations.one.invented.too.txt:1338636915
 Projects/Ideas/youtube.video.reposter.retarded.spam.idea.txt:1322357399
 Projects/Ideas/yum.fedora.liveusb.automation.but.kinda.ties.in.with.d3fault.ultimately.the.public.encryption.key.concept.txt:1338022568
 Projects/OptionallySecureAsFuckBitcoinBankServer/:1331099023
@@ -804,7 +807,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031880
+Projects/libAvGraphicsItem2/design/:1386031883
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -842,7 +845,7 @@ Projects/libAvGraphicsItem3/src/libAvGraphicsItem3.pro:1327004311
 Projects/libAvGraphicsItem3/src/main.cpp:1327003410
 Solutions/:1331868448
 Solutions/Anonymous Bitcoin Computing/:1334997525
-Solutions/Anonymous Bitcoin Computing/design/:1338599601
+Solutions/Anonymous Bitcoin Computing/design/:1338635976
 Solutions/Anonymous Bitcoin Computing/design/AppDb.will.push.all.updates.to.every.Wt.Front.End.this.may.need.to.change.later.txt:1334343874
 Solutions/Anonymous Bitcoin Computing/design/Get.Balance.And.Database.Efficiency.Thoughts.And.Potential.Solutions.IDFK.dia:1333876018
 Solutions/Anonymous Bitcoin Computing/design/Use.Case--WtFrontEnd2AppDb2BankServer--Basic.Request.dia:1335879492
@@ -856,6 +859,7 @@ Solutions/Anonymous Bitcoin Computing/design/design.first.noob.doing.bank.server
 Solutions/Anonymous Bitcoin Computing/design/i.can.expand.this.into.just.about.anything.including.a.facebook.competitor.that.pays.its.users.txt:1331871659
 Solutions/Anonymous Bitcoin Computing/design/initial.idea.idk.what.to.make.the.c.stand.for.txt:1326758179
 Solutions/Anonymous Bitcoin Computing/design/messages.and.applogic.action.and.bank.action.ramblings.and.design.walkthrough.txt:1335982063
+Solutions/Anonymous Bitcoin Computing/design/open.source.advertising.tagline.and.release.under.gpl.with.commercial.option.txt:1338635976
 Solutions/Anonymous Bitcoin Computing/design/overall.design.or.i.guess.class.diagram.because.i.didnt.think.about.a.use.case.until.writing.this.title.idfk.txt:1335004289
 Solutions/Anonymous Bitcoin Computing/design/paxos.it.is.but.i.think.there.may.be.design.ramifications.especially.with.my.caching.strategy.txt:1338599601
 Solutions/Anonymous Bitcoin Computing/design/pending.bank.action.equality.detection.equals.operator.overloading.i.guess.idk.txt:1335960896
@@ -971,7 +975,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1338635111
+autobackupScripts/win/.directory:1338637181
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

@@ -1,0 +1,17 @@
+the fingers + music impl that i make
+will SUCK
+
+
+HOWEVER
+and this is a HUGE FUCKING HOWEVER
+that i just thought of right this very fucking moment
+real musicians will understand the way i think and will modify + submit (FUCK YEA LGPL FUCK YEA OPEN SOURCE HUUUUUUUUUGE WIN IMO) modifications. like they'll slide it under me. i'll use shitty ass auto-gen'd tones until other programmers/musicians slide underneath me the tools needed to SOUND BETTER. i won't need to learn teh tools, the tools will be programmed specifically for me. if they aren't, i do not accept them in my repository. they are of course still accepted to MASTER... but i only pull in what _I_ like. d3fault is a personal flavor branch. that needs to be a well known fact. you just happen to be on the d3fault channel by default in the application called d3fault. you can change it in the global/SPINE(?) app options to be MASTER but that mode is highly unstable (however has to be compilable to even enter it)
+
+so like i'll have a dual upload
+i'll stream to the dht i build
+but also to some other sources
+vimeo, youtube, CUSTOM(ABC?), and/or even existing p2p video softwares. there is 1 stream that represents/documents the creation process of everything as a whole and THAT needs to be mirrored on many other online sites. so if the dht goes down, i am still online on those other sturdier sites. for those streams in particular i may/might use ads-embedded (each one for each stream/site can/should be sold as a separate abc slot)
+this way even if the source is lost (oh god), the video demonstrating the creation of it is not, and it can therefore be successfully recreated with minimal losses. my offline copies (as well as checkpoint (of the dht) copies) will hopefully remain safe but i cannot predict the future.
+should i release the video streams under lgpl?
+this way the source code created during the filming of the video is also definitely also lgpl (should someone try to somehow evade that by saying they got it from the video under CC or something idfk)
+not sure if lgpl is appropriate for video... or if it's even applicable
