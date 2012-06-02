@@ -19,3 +19,73 @@ they say 'and then it's just stored to the dht like normal'
 as opposed to all the accepting, preparing, etc... after that's all done... you just 'store to the dht like normal' ;-P
 
 i rike dat -- ima gonna wanna definitely use it in d3fault, though sometimes it's hard for me to wrap my head around the concept that each node can do way more than just store filess
+
+
+re: caching
+
+
+so i mean like i don't know if i can do 'notify' anymore
+err, i guess i mean i don't know if the concept even applies
+
+my other design would have been based on partitioning, with a hot cache (always live) on [all] the node[s]... aka the appDb[s]. the partitions would have been re-linked back together to form the full [bank server] db when on the appdb... only writing/verifying(TODO: make sure verifying does not verify against the cache) the cached bank server data would go through the partition selector and then down to the specific bank server for that given partition
+my caching strategy needs to be rethunk methinks
+
+
+
+still many instances of wt given a certain appdb, that's given... but what about the username db that wt uses?
+what about the appdb cache on each wt server? <-- that problem specifically is equivalent (at least as far as i can see for now) to the 'bank cache still on appdb?' question i'm trying to solve in writing this out
+
+meh ok let's skip wt, since i don't know [yet]
+
+appdb: the appdb db, the who purchased what slot, who lists what slot, index of all pages, ETC... is all stored in a paxos dht
+right? paxos dht. as in, that 1 appdb server is the only one initially, but as we add multiple appdbs, they do paxos protocol with each other. i think having the 2nd server will be slower than just 1. paxos protocol overhead takes over at 2 servers... and probably somewhat linearly levels out as you add more and more servers. btw paxos is not meant for 1 server, or even 2... but i can customize routes [as i add nodes?] until i'm doing normal paxos. or should i do normal paxos and then add routes for 1,2,3, etc? matters not. make it work noob.
+but back to what the fuck i was trying to think about. before, that [now-paxos-dht] appdb was cached on each wt front end and changes were pushed to each, hopefully minimizing the amount of reads to the appdb.
+i think wt front ends will do simple round robin distribution to the appdbs, instead of partitioning. appdb will do the same round robin'ing when it talks to bank server[s]. this round-robin'ing instead of partitioning is what will make the server a lot more scalable, hopefully. i have confidence that it will in the long run, but maybe not in the short term
+
+but it still doesn't tell me anything about what to do with caching
+it could be that caching hasn't changed at all...
+whatever round-robin/randomly selected appdb performs the change to the paxosDHT is the one that pushes all the updates to all the wt front-ends, prioritizing of course the wt front-end that initiated the request
+idk though... that actuall sounds incredibly inefficient. should wt front-ends just cache their reads? how will they know when a read is stale?
+
+bah ok just took a shit and thought about it. basically, i can/should combine wt/appd again. there is no point in having them separated.
+HOWEVER, this does nothing for the caching
+the paxo-dht will live on a different thread and wt will do it's call n shit and then we post the results back
+no different than before, but minus a network message
+
+it might be unwise in the future to have wt front-end and appdb together
+i really don't know
+for example, we don't want out dht-paxos to crash when 1 wt front end does (due to overload?)
+
+but the point i came up with that's vital is that the appdb cache, in between the wt front end and the appdb, can't, or doesn't, exist... in the current/new design
+like basically a write could occur using a different wt/appdb-paxos node and we'd have no way of being notified. we'd maybe find out of we were acceptors/listeners/whatever, but there is no guarantee we will be notified of the change in the dht... unless we broadcast it to ever appdb, but that screams inefficient more than paxos itself. i guess as an optimization we could broadcast it to anyone who wasn't an acceptor (who doesn't already know). the acceptors view the proposal as an 'update' as soon as it's learned/accepted. slight optimization oh god fml...
+
+gah
+
+so... each read has to do a paxos-read? (btw, i still haven't figured that out but i assume/imply it has to do with the prepare/accepting of the paxos... waiting on pending writes that effect it etc)
+
+is my ASyncMb *result = BlockingQueuedCallToAppDbCacheAndThenAppDb(); //async if not in cache, sync if is
+^is that design now defunct?
+do i do async every time?
+it does alleviate some concerns i had with using blockingQueued from within a wt session... (still am not even sure if it would have worked hahahahahaha)
+
+but that just seeems soooooooo fucking slow and inefficient
+every page load etc will have 'LOADING' for all the variables for as long as it takes the paxos to do a read
+the good news is that paxos-reads should be somewhat efficient
+no wait
+are they?
+i have no idea
+don't they also require the talking to of > 50% of the network? to see if there's no pending/conflicting paxos write?
+fuck. paxos blows. or does it?
+what would i have done before? just returned the soon-to-be-outdated variable?
+how is that any better?
+i guess it's better because the updated variable comes in and overwrites the outdated one as soon as it's available.
+i could do that with a cached-paxox-read too though...
+each read returns the cached result but then verifies that it's still correct in the dht by doing a paxos-dht-read? inefficient as fuck.
+i don't know what ima do but ima go think about it while i fill up these damn waterbottles and drink my cup of joseph kony
+
+
+
+
+tangent and random though: if the delivery payload of the paxos write is significantly larger than the combination of messages that the paxos protocol uses (aka large files... my abc impl will NOT use big files so i consider paxos inefficient for the use case. inefficient but still good enough [i hope]), paxos is actually pretty damn efficient. large file atomic writes into a dht? yes plz (thinking about how 'bittorrent clients' would be able to start downloading before the user is done uploading makes my brain explode. paxos does not use 'super seed'... i THINK you upload 1x full copy to 1x 'paxos client' or 'proposer' or idfk really. i could customize/change it however i want, however however however)
+
+more random: bank scales a lot better than before. it can delegate/coordinate with itself
