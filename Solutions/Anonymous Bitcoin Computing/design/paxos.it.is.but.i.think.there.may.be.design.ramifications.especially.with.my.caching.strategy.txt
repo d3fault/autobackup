@@ -1,0 +1,21 @@
+so I mean I've decided on Paxos
+50% agreement kinda sucks, but it's logically***??? the only way to do an atomic commit into a dht
+the whitepaper i read was about accuracy, not performance. it didn't even mention that the design it used to implement the atomic write sucks
+
+i will also keep paxos in mind, or something similar/modified, for d3fault. i am obsessed with > 50% 'yes' = accept theory, especially when it comes to voting. maybe the logical votes can be intertwined with the paxos 'prepare' thingo, naw mean?
+
+i'm going to keep on trucking for now, doing db in memory
+
+i want to continue the networking half of the bitcoinserver + rpc hypothetical
+
+and then i want to make the rpc prototype
+
+and then i want to use the rpc prototype to generate all the paxos messages. multiple inheritence (each node is a proposer,acceptor,learner,[etc?leader]) will be an interesting modification to the rpc generator.
+
+paxos is also helping me conceptuatlize the multiple roles you can have dht nodes perform
+
+they say 'and then it's just stored to the dht like normal'
+
+as opposed to all the accepting, preparing, etc... after that's all done... you just 'store to the dht like normal' ;-P
+
+i rike dat -- ima gonna wanna definitely use it in d3fault, though sometimes it's hard for me to wrap my head around the concept that each node can do way more than just store filess
