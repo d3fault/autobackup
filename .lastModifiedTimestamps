@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031891
+Documents/minddump/:1386031895
 Documents/minddump/dreams/:1337201061
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -324,7 +324,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1338706770
+Projects/Ideas/:1338719755
 Projects/Ideas/QtSslRpc/:1337204290
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -377,6 +377,7 @@ Projects/Ideas/creepy.but.awesome.way.to.have.reliable.anonymous.internet.txt:13
 Projects/Ideas/crowd.sourced.realtime.music.prolly.one.of.my.best.ideas.txt:1331442662
 Projects/Ideas/d3fault.OS.or.system.level.that.has.plugins.or.apps.depending.how.you.look.at.it.SLIDES.idea.txt:1325694210
 Projects/Ideas/d3fault.OS.windowing.systems.arent.hard.to.make.at.all.alsdjfasoufosad.txt:1327615562
+Projects/Ideas/d3fault.core.server.no.gui.required.and.d3fault.io.considerations.txt:1338719755
 Projects/Ideas/d3fault.could.generate.currency.too.im.pretty.sure.sadlfjkasdfoiwreualskjf.txt:1337989155
 Projects/Ideas/d3fault.create.filesystem.interface.to.be.implemented.txt:1338034199
 Projects/Ideas/d3fault.each.node.should.be.a.compute.thread.in.openCL.txt:1322609416
@@ -709,7 +710,7 @@ Projects/WebsiteAutomator/src/websiteaction.h:1320065677
 Projects/WebsiteAutomator/src/websiteautomator.cpp:1320063447
 Projects/WebsiteAutomator/src/websiteautomator.h:1320063371
 Projects/designEqualsImplementation/:1321628481
-Projects/designEqualsImplementation/design/:1324121146
+Projects/designEqualsImplementation/design/:1338720504
 Projects/designEqualsImplementation/design/100.percent.lgpl.95.percent.profit.goes.to.them.5.percent.to.me.txt:1322953540
 Projects/designEqualsImplementation/design/100.percent.transparent.business.except.for.security.lol.how.do.i.do.security.does.the.community.do.it.for.me.lol.txt:1322065974
 Projects/designEqualsImplementation/design/add.use.case.use.case.rofllewl.txt:1320581057
@@ -733,6 +734,7 @@ Projects/designEqualsImplementation/design/hopefully.the.last.program.i.ever.hav
 Projects/designEqualsImplementation/design/host.proof.hosting.3x.plus.local.copy.is.what.app.provides.for.free.txt:1322065929
 Projects/designEqualsImplementation/design/huge.design.doc.detailing.user.segments.editing.and.creating.relevant.to.connection.calls.txt:1323469900
 Projects/designEqualsImplementation/design/inline.editable.and.d3fault.feed.is.me.but.contains.what.alfjsdlfj.txt:1323835075
+Projects/designEqualsImplementation/design/inline.editable.and.detched.design.thoughts.and.short.vs.long.term.design.plans.txt:1338720504
 Projects/designEqualsImplementation/design/interleaving.connection.calls.and.user.code.segments.in.separate.file.though.try.to.use.inline.cpp.functionality.txt:1323467864
 Projects/designEqualsImplementation/design/its.pretty.nice....enjoy.it.while.it.lasts.....goodnight.txt:1323505988
 Projects/designEqualsImplementation/design/keystrokes.and.mouse.events.forwarding.recording.and.playing.back.txt:1322696957
@@ -811,7 +813,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031891
+Projects/libAvGraphicsItem2/design/:1386031895
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -979,7 +981,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1338708372
+autobackupScripts/win/.directory:1338720582
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

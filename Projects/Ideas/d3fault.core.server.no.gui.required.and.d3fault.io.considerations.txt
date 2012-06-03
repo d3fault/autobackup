@@ -1,0 +1,76 @@
+i want d3fault or whatever runs on my pi basically to be able to run in, and communicate with fingers (input) and/or audio (output) _WITHOUT_ having to startx
+i need a server core back end (does the audio count as a front-end? it sort-of does imo... (what do the fingers count as? just an input method? doesn't a front-end provide the input method? ex: a gui uses keyboard/mouse -_-. idfk need to think into this more))
+
+this does correlate with how i want my steam-overly functionality to operate
+the desktop and overlay GUIs, although possibly drawn differently (more specifically: at different times... or something) have a synchronized state through the core. i want to include key presses (including before pressing enter in a text field for example), unlike steam (enter a message, don't press enter, close game, message is lost)
+the but core server should explicitly NOT depend on _ANY_ front-end
+yes i think fingers are a front-end
+i think audio is too
+audio-fingers is a complete i/o handshake(???)
+
+audio ~= screen
+fingers ~= kb/mouse
+
+
+just as i can use my kb/mouse when screen is off (albeit hard to navigate), i can use fingers without either audio or screen
+
+
+so does front-end subdivide into input and output?
+none of the 4 are bound together (or 5 if you include the output of vibrating thingos all over my boday)
+kb/mouse does not depend on screen (could use with audio output), fingers do not depend on audio (could, and probably definitely will way before i ever got around to implementing kb/mouse->audio, use with screen)
+
+so the binding of fingers to audio
+err, it isn't binding
+they should not be aware of one another
+
+fingers/kb+mouse ---(input)---> d3fault -----(output)----> audio/screen
+
+or really could just be keyboard (or could just be mouse <---- 'mobile touch' use case, should have popup keyboard built into d3fault for when those cases are detected (or can be opted into))
+
+
+so basically the fingers would have like 2 modes ish?
+i mean i don't know what kind of hybrid OS controlling/navigating method i'm going to come up with (that's half the fun), but the fingers will definitely have keyboard/mouse mimicking functionality as well. PERHAPS simultaneously (fps woo) but unsure how that would work unless i disabled a lot of the keys (left hand = movement, right hand = mouse. ez.)
+
+
+oh and of course a 'music mode'
+which doesn't necessarily have to be a mode (though it might need to be, given that we probably/definitely (but maybe not always) want analog instead of digital)
+
+the analog/digital switch is the core (though not only) difference between when the fingers is simulating mouse (analog) or keyboard (digital)
+
+
+man i'm awesome
+
+
+
+abc -> launch -> fingers
+
+srsly.
+
+mb announce goals of hunger/corruption (shame/paranoia too, though less relevant atm), but state that i need a better foundation to accomplish it: fingers + d3fault
+
+whenever i feel d3fault is stable enough or something or am bored of it or whatever, i can/should tackle hunger/corruption
+actually d3fault itself tackles corruption
+so yea~
+
+i guess i'll just say i'll focus on that
+because hunger is easier?
+that's not a good reason
+
+i could SAY that corruption is the only reason for hunger
+but i don't believe it tbh
+
+
+at what point do i diverge and solve hunger?
+
+i envision myself taking my newly created fingers/d3fault and ditching society (output only mode?)
+and going to a secluded area to live alone
+i bring rations/food/power/etc but it's only enough for a while
+i try to solve my hunger problems in the most efficient and automated******* way
+the automated part of that is the only part that counts
+100% autonomous scales awesomely
+world hunger = solved
+'cost'
+lol.
+'cost'
+how could you even put a cost on something like that?
+you corrupt piece of shit

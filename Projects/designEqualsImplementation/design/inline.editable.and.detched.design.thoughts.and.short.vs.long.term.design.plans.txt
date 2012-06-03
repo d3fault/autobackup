@@ -1,0 +1,37 @@
+making an inline editable yet detached from the core gui sounds difficult to design
+certainly possible, but my mind just turned into mush when i tackled it
+
+just need to let it stew and the answers will come to me
+i think i need to have the design,source,binary all 3 implicitly linked together in the core
+
+binary is just like the cached/compiled form of the source
+and source is the design... implemented.
+
+or something
+this might not translate as nicely as it sounds
+especially since 1 module/sub-app/plugin to the core/server could contain infinite designs (sub-designs?)
+
+ok so i guess the design that's shown at that level is the class diagram one
+from there you can select use cases from a list of use cases or right click on a class and it shows you a list of use cases that that class is involved in
+
+
+early: design and implementation are linked symbollically only. you can have one without the other (though a source without a design is frowned upon, it should still be accepted. code is code (and open source makes it 'easy enough' (famous last words) to decipher the design))
+later: design generates implementation
+
+
+
+so in the distant future if i succeed
+when i succeed
+i will only ever have to carry around the designs, the designEquals binary, and the Qt/C++ compiler
+the designs are the apps
+the plugins
+
+
+
+
+
+each app needs to be able to OPTIONALLY (though highly recommended for a lot of cases) make a gui/interface(?????) for each of the input/output types: fingers/kb+mouse/audio/screen
+BUT the point i want to make is that one should be generated on-the-fly for each type by default, based on somehow interpretting the design (doubt it's possible with source. definitely a lot harder at least)? idfk.
+
+my 'object generator' shit that generates a gui for a persistent object
+basically just an auto-generated editable/persistable view of the object's properties. maybe a button for each slot/method (private is hidden), and some way of displaying signals. the app/plugin can/should be tested using this, as it removes other code path errors etc. it perfects (lol) modularity imo~
