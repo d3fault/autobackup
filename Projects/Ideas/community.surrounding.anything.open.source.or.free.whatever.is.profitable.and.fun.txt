@@ -1,0 +1,10 @@
+a community is free workers
+modding esp
+i just came up with the idea of saying to jeff that i am going to summon a game community that will make the game for me...
+for free
+because there are enough bored gamers/modders out there
+
+a community is free workers
+ads within 'community' + free game (builds 'community') = profitability
+you're not going to make AAA profits, but you're going to make a badass game (assuming you KNOW HOW to. which i think i do. but it is worth noting that not everyone knows how to. in fact most don't... even their ideas suck) and for practically no cost. announce it live, dictate and develop it live. you can and should do your applications this way. i want like automated (not voice/video interpreted) 'build me this design' shit. designEquals would replace that, but paying works too. pay to have designs implemented using an inferior version of designEquals that just finds a bidder for the design. designs can/will get stolen.. but open source'ness is what protects the project (assuming it gets implemented) because it was first to market and pretty much any spin a 3rd party gives to that design can and will be added to the open source one (since it will by-default have more users, since it was out first)
+i think it would work
