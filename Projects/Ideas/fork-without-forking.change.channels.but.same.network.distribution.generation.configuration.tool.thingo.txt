@@ -1,0 +1,23 @@
+the manner in which my software is distributed, on d3fault.net
+should provide a documented configuration utility so a user can clone EXACTLY the distribution onto their own domain
+
+it should be noted that they are given the option of a) using the existing dht/network/d3fault or b) starting their own
+
+
+tangent: show ads on http/www served (by d3fault.net/com/org) dht/network/d3fault content via ABC
+
+back to what i was saying:
+my distribution on d3fault.net, INCLUDING d3fault.net itself (the Wt app is part of the distribution) is configured to:
+a) use the d3fault network
+b) follow 'd3fault' (me) by default
+
+their difference SHOULD only be to (b), as replicating (a) is wasted effort imo (unless they disagree with me fundamentally on some design/code/etc (THERE'S STILL MAIN/MASTER + THEIR OWN BRANCH AND CHANGING (b), so wtf?))
+b) follow 'them' by default
+
+
+
+bitchtits.net could download the distribution, run the distribution-generation-configuration(??) tool, and basically the only thing they change is the default channel thingo to follow 'bitchtits' instead of 'd3fault' (me)
+they collect the ad revenue for viewing dht/d3fault content via bitchtits.net
+
+
+this allows for fork-without-forking behavior, where everybody wins
