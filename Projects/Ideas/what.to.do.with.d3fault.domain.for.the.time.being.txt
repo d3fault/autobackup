@@ -1,0 +1,33 @@
+d3fault.net/com/org temporary usage (until they all combine <3):
+
+
+BEGIN-HTML
+The Dream: To combine the following projects into a colossal mega open source app/community
+NOT-HTML-NOTE:(below is a list of the core individual components, the building blocks of d3fault, as projects focusing only on themselvs. prototypes so to speak, though they may provide a handsome amount of functionality by themselves)
+-DHT
+-Inline Editable
+-Design Equals Implementation
+-Distributed/Secure Voting (american idol type abc-driven site to test/develop/profit from this)
+-Timeline? I can't picture this as existing _without_ d3fault. central (private/secure/'business'/dht) servers? public access or just me bloggin?
+-Fingers (input)
+-Audio (output)
+-Fingers Music Creation
+-Probably others I am forgetting lol
+END-HTML
+
+it should be noted that either inline editable or design equals can/should/will contain the modular auto-gui (which can be overridden!!!!!) shits, that interfaces (talks to) with the custom/new I/O... possibly through defined interfaces (Id3faultInput etc)
+
+
+should ABC be on the list? half me says yes other half says no
+i mean once i have ABC up and running it would be wise to declare those projects. They become hyperlinks (to subdomains or wherever) once i have something for them to point to. Designs count. Code is better
+
+i should also have a forum that is all encompassing (maybe a subforum for each hyperlink), just to keep all discussions on the project at large organized and to get ad revenue (abc) from them :-P
+
+
+I want all of my content to be released under awesome licenses, which [perhaps] is a requirement for contributors?
+Code: LGPL (exception: ABC, gpl for now -- will lgpl later after stable/ballin/rich)
+Content: CC BY-SA
+
+i want/need and firmly believe that corporations should be able to profit from the content, as well as contribute to it
+
+if only there was BY-SA -> BY-NC-SA fallover like there is LGPL -> GPL, then it'd be perfect
