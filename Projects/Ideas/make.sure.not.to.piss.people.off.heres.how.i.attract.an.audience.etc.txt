@@ -1,0 +1,105 @@
+there needs to be a divide between what the user should give a shit about and what i should give a shit about
+
+d3fault
+
+private/business/paxos (also open source? wtf? wouldn't that entice them to 'care'?)
+public/d3fault <-- i want to focus my 'care' here and i want to attract 'care' here
+
+
+
+but i also need to code the paxos dht to host it all?
+what the fuck
+i mean basically obviously what i'm saying is that i'm going to re-use the code created for ABC
+to host the initial/ongoing development
+HOPEFULLY IN A FORMAT THAT IS FUTURE PROOF/COMPATIBLE WITH PUBLIC/D3FAULT ?? TimelineNode::timestamp and TimelineNode::data
+
+dat's it.
+
+not every type has a title
+for example, an individual frame of a video does not have a title
+it does however have a timestamp (relative to beginning of video or rleative to network? could be both. ideally i'd use one for both) and a reference to it's parent, the video
+IVideoFrame::ParentVideo is all that needs to be added, as timestamp/data are already there because IVideoFrame virtual inherits (they all do?) TimelineNode
+
+a picture would have an [optional] title, so it could be one of the larger category types that have ITitle
+even though ITitle is not mandatory, the app should be customized to allow searching the paxos-dht by title
+
+the title is always optional and i think i need to make my protocol aware of optional items just google's protobuf does
+
+jesus christ my product is so fucking superior
+
+my entire business model fits on one giant ass dht
+
+there is never downtime of any service~
+
+still
+
+
+HALF OF THE NETWORK AGREES ON 1 WRITE (they have to see some sort of context of the data to check if it conflicts)
+
+
+what the fuck?
+so like would i just use a hash in the message that all 50 get?
+a hash of the request -- with user-specific stuff taken out (ex:username)
+so that other requests by other users at the same time have the same hash and they conflict
+
+or do i just do the data itself
+
+i mean fuck
+
+i can't do timelineNode::data if i want to get a COLLISION-DETECTABLE (username taken out) hash/footprint of the write request
+
+actually yes i can. timelinenode just has a virtual (not pure, returns NULL by default (TODOreq: check for that null lol)) getCollisionCheckableFootprint() that we implement if we need to take the username or similar out of the equation. if this virtual method returns null, that means we just use the hash of the serialized qdatastream (bytearray) to perform the paxos 'prepare'. new creations of pictures, for example, whether derivative or not (i also want to let them say that something was derived. and also the ability to remix any object which sets up that 'derivative' property/pointer for them. it complies with whatever CC license, or is at least aware of. OTHER users should be allowed to mark something as a derivative of another. a voting something might factor in here, but the timestamps that they were accepted into the dht are definitely preserved. something submitted earlier can still have derived from something submitted later... though you may be lying lol who knows, which is why timestamp needs to be preserved), don't need to check if there's another one by a different user. ok i lied it does... but it shouldn't abort, just link to the one that already exists ;-) ok this is getting confusing. copy-on-write dual-ownership? who does the network think is the real owner? what does it matter? you are not the owner of it, you are just someone who submitted it. there can be multiple people that submit it. this saves space on dupes obv.
+
+
+the paxos-dht should be private [initially], but we might be able to outsource (manually, somewhat securely) some caching functionality. everything should be signed, but i've thought about doing that on ABC for a while now. 'lend your server/computer' (for money of course).
+
+
+
+
+
+shit i still haven't answered my original question
+i was about to save/close but i re-read the top
+that's a good context-refresher. i should think about automating that somehow. "did i answer my question?"
+infinite questions recursion
+
+or maybe a
+while(!amIdeadYet())
+{
+  question(question(question)question)question() etc. IDFK
+}
+
+now back to trying to actually answer the question
+rofl
+<3 tangents
+time is not infinite noob
+not yet it isn't
+not for you
+may never be
+sadface
+
+just wrote 'immortality is impossible'
+NOW BACK TO MY QUESTION
+
+how do i make abc private/gpl
+or d3fault
+in early stages
+how
+what
+the
+fuck
+
+THE PERSIST (in early d3fault) IS A MODULE connected to a private/paxos/abc-dht (or maybe abc will be it's own? doesn't matter too much except security maybe)
+THEREFORE IT IS MODULAR
+I STILL WANT people to be able to submit additions
+the additons should not be dependent on the exact implementation of the persist
+and i have an active research area with an unstable/public persist implementation
+the source code of which is [for the time being] hosted on the stable/private/business paxos dht
+get it?
+
+yes but i do think it might drive some people away knowing that i'm using a private/paxos/dht
+
+private/paxos/dht = ads on every page i serve. they are expensive.
+public/d3fault = ads on only my shit
+
+when talking about media, yea ads are easy
+when talking about code (or remixed media), who gets to put an ad up and collect revenue? is the revenue split amongst developers? does the ad revenue guarantee to be used (we demonstrage/show/transparently-use) for the code that generated it? i think that's a good idea even for paxos/private/business dht. with private, i am obviously the decider of what the funds are used on (within the code), but when public, who gets that decision? the maintainer? i don't like that assumption as people will cling to that power until death. ALSO, it puts an obligation on me to work on 'done' (lol Qt) modules that just so happen to have a lot of users. like a core/spine for instance... i guess in those cases i could siphon the money out... but i could code it so that that would be detectable. rofl. money sits? money goes to parent project? money goes to parent project but once a feature is 'requested' (and approved!!) then the funds can be taken back out of parent? everything must balance out of course, but money should not sit. i still think there's an issue with a maintainer becoming a warlock and owning a particular module. open source means we could just fork, but that's way easier said than done (though it doesn't have to be, if i code/modularize my shit well enough it could be a breeze and the new maintainer would start having control. i guess a vote-committee is the best way. so private: me only i guess? i get the money and it is mine, just like for my media on public. public: voting will have been figured out by now, so we must use it. needs trusted network of friends (probably developers, another level up really, but same concept/security) of course too)

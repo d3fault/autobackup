@@ -1,0 +1,7 @@
+paxos-modification-customization
+dispatch-todo lists are dispatched ever x seconds
+who does the dispatching (could be multiple people, but could be 1) is written on the previous dispatch-todo (bootstrap problem)
+the list makes sure everyone in the network is utilized by someone else once
+
+
+i might be able to sub-segement the network to make it "multi core", by having a [always-changing-based-on-todo-list-which-is-guaranteed-predictable-random] be "Acceptors" (not how regular paxos means it. i'm going to make up my own verbage) which only mark that the write was requested and then give a PROMISE that the write will be attempted. This is the "posting. please wait" pause screen on /b/. i can't figure out if i'm trying to solve reads or writes. obv paxos is atomic write. but multi-core needs to also have a caching strategy. i guess any of the paxos members can update/push. will the wt front-ends be overwhelmed with updates? should the paxos be involved in a subscribe-this-is-the-wt-page-i-am-looking-at-so-give-me-updates-bitch type opt-in streaming? they (wt front-ends) definitely alread have to keep track of it on a user level

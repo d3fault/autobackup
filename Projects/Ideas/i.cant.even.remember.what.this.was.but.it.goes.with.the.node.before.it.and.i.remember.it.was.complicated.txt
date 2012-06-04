@@ -1,0 +1,1 @@
+the business logic implementation of every* generated rpc (so long as they're saved to the dht) is unique, along with a version number. these implementations should be able to be used interchangeably and swapped out while still running. my brain just esploded

@@ -1,0 +1,11 @@
+remix [yourself] infinitely
+
+start with others work
+play on top of it
+add a layer
+a layer which needs to be removable
+but this is your layer
+when exploring, you never see anything with your layer on it
+d3fault will have a cross-link structure like wikipedia based on large paged words. we can create a boringWordList for like the,a,etc,oh.and.etc
+
+i was originally thinking music (got this idea while listening to (and therefore remixing) Harperactive - MSNcore (instrumental)), but it applies to code as well.

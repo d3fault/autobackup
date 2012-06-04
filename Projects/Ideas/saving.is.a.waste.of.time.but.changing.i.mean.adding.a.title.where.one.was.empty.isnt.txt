@@ -1,0 +1,9 @@
+saving is a waste of time and i need to automate it.
+not a waste of time
+but i shouldn't need to go back and and save + choose a title
+come on man wtf is taking you so long
+i know what
+it's because i want to film the transition
+tbh
+ROFL
+that's why i'm only doing ABC -> Launch (def need/want 5meo launch) -> Fingers, could do that relatively small tangent of not having to save whenever after i launch. it could be first. i should plan out the object serialization process for timeline and use that, appear (though don't explicitly say) that you come up with it on the spot. basically all you need is an object (timelineNode?) with it's QDataStream operators implemented. that is the protocol/serialization in one. QDataStream is amazing, what the fuck am I doing with Enum's n shit? i guess because i want objects to be in-memory instatntiations too, only sometimes used as protocol/schema

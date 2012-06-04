@@ -1,0 +1,11 @@
+there will be INSTANT remixes instantly appearing on the main/master of the same functionality. one is voted/chosen to resolve the conflicts, BUT THEY ARE ALL REMEMBERED/USABLE (you may lose a lot of functionality in trying them out, however (TODOreq: make sure no data is lost in that transition. they transition back and their state was saved))
+
+for that reason i'll just ignore main/master
+i'll build a network of trusted recommenders who will build a network of trusted recommenders (they might call them "friends")
+basically a 'recommend' piece of software needs to be usable by both recommenders and friends. they both implement Signal IRecommend::recommend(what <-- brain just exploded. a qstring? a reference to a timeline node? the timeline node itself? or, it's identifier. idfk);
+
+main/master is impossible to sift
+it is the /b/ of code
+
+
+NOTE THIS IS NOT WHAT I INTEND "GLOBAL" TO BE (my real /b/ competetor)...

@@ -1,0 +1,117 @@
+ad driven private-paxos implementing d3fault ideas~
+use profits to build public-maybe-also-paxos
+it can be private
+so long as the source is public
+
+
+
+HOLY
+FUCKING
+SHIT.
+
+
+
+we're still talking about different products though i'm pretty sure
+thus, different routes in life
+i don't think i can do both
+i could be wrong but i don't think i can
+THEY ARE VERY SIMILAR, HOWEVER
+so might be portable?
+it's mostly just the security and/or paxos IMPLEMENTATION that would change
+the code that uses dht-serializable-objects (hmm i could have that use/provide(be-an-interface) the datastream operators...)
+the objects themselves
+would/should/could* not change
+could being a hypothetical
+it might not be as smooth a transition as i want/hope/imagine
+
+but it could be done.
+great care needs to be taken when defining the TimelineNode QDataStream
+
+should be
+
+{
+  out << timestamp;
+  out << data; //where data is IData and pure virtual qdatastream operators
+}
+//same for in >>
+
+
+
+the serialized timelinenode, which is REALLY ANY PROGRAMMATIC OBJECT WE WANT, is paxos-written to the dht. if i can do multiple cores then that's just fucking dandy. however, how do i be asynchronous and still do multi cores? wasn't my todo-dispatch list thingo the key to multi-core? maybe instead of a dispatch-list it could just be a dispatch item to a (any) core. this doesn't make sense. the idea of a core doesn't make sense. those are called quarums. each core requires 1 member from each core, so they can all safely share data. so i have just invented a paxos again. i just wish there was some way to make it so you don't need half of the fucking network to agree on one write. it has a scaling barrier to entry. not a minimum to function, but a minimum overhead that is most heavily felt during the low numbers. example: 2. paxos is fucking pointless at 2. i mean i should still use it, but it a) overcomplicates the logic and b) uses excessive messages (tangent: i want IMessage to be able to be sent across a network or across a thread... or i guess synchronously if on the same thread. basically just use Qt's built in connect() in conjunction with the rpc generator's signals/slots (i think that means i need to abstract the idea of an object out... which is hard'ish but possible. the problem is i don't want to reinvent the wheel. obviously not every class will want to save it's state on the dht, therefore not every class is rpc generated? or not serializeable?)........... or do i define the very item i am referring to when i define the rpc generator object? are they one in the same? i'm so lost)
+
+
+rpc generated-item
+vs
+serialized timeline node
+
+the same?
+so lost
+where do they cross?
+
+
+they come from different use cases
+and the use cases do merge
+but they are still different things
+hard to even think about
+feel like superman
+kryptonite
+typing slower
+(would be documented WWWWWWWWWWWWWWRRRRRRRRRRRRRRRRRYYYYYYYYYYYYYYYYYYYYYYYYYYY)
+
+what was i saying?
+
+
+i mean rpc is like an automated call to a service [object]
+serialized timeline nodes are specifically user-generated pieces of data
+but the developer[s] are also users, ya know?
+
+
+when i just say rpc there is no object
+it is only when i think about the caching/persisting element that the object comes into play
+
+so fuck, they are not even closely the same thing
+ONE IS THE SOLUTION TO THE OTHER, HOWEVER
+FUCK YEA.
+
+i was taking this route for a reason, remember?
+oh yea i'm dumb.
+
+rpc 'object' (just gives you stubs for the rpc signals/slots) is serializable by putting in a paxos-like dht. whether it's public or private is irrelevant. i was following a tangent of 'how to efficiently store/cache the object in which i am passing'. i still don't see where the business logic goes. OH RIGHT, IN THE STUBS THAT THE BUSINESS LOGIC IMPLEMENTS. it does whatever it wants to the data (itself, the auto-generated interface, including it's properties (i mean we're talking about an 'OBJECT' generator, which includes more than signals/slots. all/most objects have properties)) -- i guess when defining the object whether or not the object (itself????????????) in one of the signals/slots you mark it const to say it won't be written to. this is what tells us when it is ok to persist, naw mean? we could have different nodes perform the same calculations and then compare them before persisting.
+
+everything, even private, should be public
+as in open source
+so hacks would require my access (hopefully, but definitely not necessarily). (this being a different security level than my offline-always mode, lol. fuck that shit.)
+
+ok so wait
+rpc exposes services (including signals) of a back end
+the parameters are not the back end objects
+obviously, but i'm confused
+where did i mention parameters? *re-reads*
+'how to efficiently store/cache the object in which i am passing'
+noob
+i think that means it's an irrelevant/outdated-as-of-now question
+
+
+wait, what?
+
+a) i use an rpc generator app to create the interface that i want to generate. the rpc generator needs to be integrated tightly enough with the paxos to know not to send a message if the determined-paxos-todo-shit says to pass a message to itself. it does it across thread instead of across network.
+
+i still can't conceptualize what an object is
+
+for bankServer (rpc server), it's a bank account
+for abcServer (rpc server), it's a abc user account... what they have listed and what they've purchased... also hopefully some way to cache a known-to-be-rpc-object bankServer bank account. naw mean?
+
+
+
+bank account is simple
+abc is harder
+
+i will be continually adding slots (which always have return signals auto-gen'd too) as i add functionality
+properties to go along them would be [serializable!!! need to optimize/customize for paxos? (linked list is easiest)] lists
+
+
+so the rpc generator, really is the OBJECT GENERATOR... but it by default (or not) generates rpc servers instead of thread-safe objects. they are inherently the same and can/should be used interchangeably.
+i guess yes, every change to these objects should be paxos-persisted?
+
+i mean FUCK i guess i know what i mean
+other objects, utility objects for example, are just fucking coded like regular in god damn C++ and can be utilized from within the implemented business logic. the point is that code doesn't talk cross network/thread and therefore doens't need an object generator... but it is still in each copy of the paxos-members app. you need to remember that there isn't 1 instantiation of whoever will be running the implemented business layer, all nodes can run it. with a todo-dispatch a 'paxos-code-version-number' is sent to the chosen node who then lazy-upgrades his business implementation if he needs to. man i'm so lost but it does sound plausible

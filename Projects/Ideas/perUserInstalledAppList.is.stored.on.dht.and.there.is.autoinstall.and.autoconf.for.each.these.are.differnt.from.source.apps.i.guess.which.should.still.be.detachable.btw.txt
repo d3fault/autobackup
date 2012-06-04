@@ -1,0 +1,11 @@
+foreach(perUserInstalledAppsList)
+{
+  userSpecificConfigList[i].configure(); //IConfigure? (do you now? that is great. very convenient)
+}
+
+
+
+
+
+use of app is forking of app
+in the case of d3fault, all of everything is logged unter a special subcategory (that really only makes sense when i d3fault use it, sans domain forks)
