@@ -1,0 +1,4 @@
+if the raspberry pi is compromised, the arduino software is too
+i have to provide a new pi stack and then reflash the arduino without using it at all
+they both must never touch internets
+

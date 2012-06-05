@@ -1,0 +1,3 @@
+even if you become known as unreliable your presence is still accepted, your requests still replied to, and your machine still used to offload hotspots. we dgaf if you go offline. the 'trusted server network' can offload hotspots to itself also, but prioritizes non-trusted machines since we don't want replicas, just bandwidth. a known consistently read node is pushed to any non-trusted
+we should scale the network's detection percent or whatever TRIGGER-offload ratio/number/idk as the overall access/bandwidth requires/wants(?) it
+

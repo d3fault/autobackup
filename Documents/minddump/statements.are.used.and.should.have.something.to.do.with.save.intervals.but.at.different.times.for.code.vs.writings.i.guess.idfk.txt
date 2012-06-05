@@ -1,0 +1,1 @@
+talking/writing is also a series of statements, except we [i don't know how to treat it differently than code statements]. the sub-contents of a file is a series of statements and sub-statements

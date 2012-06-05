@@ -1,0 +1,43 @@
+i can have 2 streams going at a given moment
+
+server.write(encryptedStreamObjectSentToTom, size);
+
+inside encryptedStreamObject, once decryted, we see 2 items
+whether we put an int at the beginning say how many we have (i guess we can have as many as we want).
+
+the point is, one of them is Not Encrypted
+that's the packet sent to tom
+
+
+
+
+oh right
+it is random data as padding
+and the node is always a set size
+
+idk if that was what i was going to say
+but i want it
+
+it is both their predictable-rng-input and their encryption storage/purchasing/allowing. it is wasted0
+i don't remember typing the zero. does it belong?
+like, i mean, is the price worth the cost?
+the system can/should(?) raise the redundancy amount as it grows.
+
+
+IInvalidate (both notifying of parent (like a pyramid towards the user (Qt "_user_" sense)
+
+you could do multiple layers and have largely distributed across the globe using anonymous server purchases
+anon(tor)+bitcoin purchased server is my right
+my right to privacy and therefore security
+
+
+i could detect a spike in a graph where a failover happens
+i use a reasonably small set of nodes, but still plenty enough replication
+when that is detected, a ping is sent to all of the known servers in that relatively small set of nodes. we are all homies and got each other's backs
+just by the increase of packets over the given set of a long term period. false alarms aren't a big deal anyways, (but can/should/would/but-how signal a math change to make them [false alarms] not happen as often. this math number would need to scale down as we increase
+we use the average basically. and we expect/measure/make-sure-it-happens scale with out neighbors proportionally*
+
+
+
+
+"since it is obviously possible to make up arbitrary funds as we've seen with the previous (ed: now current) economy model, we should do so (that is, provide incentive in a given area of interest) with hardware efficiency as a bootstrap". hardware being both computers and resources as a singular object. any

@@ -1,0 +1,2 @@
+i just figured out
+that the one with 5 (was it googles? or paxos?) you write to any of the nodes and it just has to replicate to the master? man i think they're trying to throw you off with their designs. what the fuck are they talking about?

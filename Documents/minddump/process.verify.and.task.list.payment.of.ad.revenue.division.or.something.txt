@@ -1,0 +1,16 @@
+a controlled/compared processing/verifying-of-files task
+which allows you to take part in the bitcoin/cpu-crunching lottery (upon winning your work is verified in full)
+winning means you get the ad revenue that the system generates... or at least a portion of it.
+each 'lottery winner' divides the ad revenue pool up once more
+win once and you get revenue for your machine for a while
+but you are still required to perform tasks
+and perhaps they are even verified by someone else before each dispersement
+
+how long do they last?
+forever?
+
+maybe it shouldn't be a membership
+but an instant dispersion of bitcoins
+the bitcoins come from the ad revenue
+but they still have to win the dispersion lottery (sort of like landing on that one spot in monopoly that gets the money in the middle (but with a relatively constant/calculated prize)) by getting leading 000000s in the block chain
+seeing as i'm doing the bitcoin protocol also, i might be able to call them d3faults. i really don't know...

@@ -1,0 +1,19 @@
+i should just say nothing
+SAY NOTHING
+to the camera
+just code
+
+launch, code
+aka write
+data stream of d3fault app realtime-view of d3fault channel
+all i need to do is the source/binary integration and i have the timeline items i need
+for source, i should commit on save, auto-save every statement creation/modification
+
+do or don't record pauses? well doesn't matter since already committed/saved/timeline'd
+i would say don't
+because coding is all over the place
+
+
+contexts are just series' of statements with possible sub-contexts that are also series' of statements
+
+

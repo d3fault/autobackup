@@ -1,0 +1,6 @@
+auto-compression of video stream to keep it under available bandwidth
+this stream is not saved, only viewed [realtime]
+
+and after it, who cares how late it comes, is the still-compressed-but-much-better-quality copy
+
+i guess our auto-compress needs to target even lower than the available bandwidth because the higher quality stream needs at least SOME. should it be a 50/50 split? half your upload stream is how much video bandwidth your encoder auto-scales to. size (WxH) or 'jpeg compression %', if it applies to the codec. mb you can choose which you prefer, or maybe they both scale proportionately, idfk.
