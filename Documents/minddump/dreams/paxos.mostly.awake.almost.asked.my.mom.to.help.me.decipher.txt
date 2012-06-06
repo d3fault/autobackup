@@ -1,0 +1,39 @@
+when waking up this morning [my mom was there wtf], i was tempted to ask her 
+something
+
+'is this a data network or a '
+
+i really don't know
+
+
+the paxos/gfs/chubby/abc designs have been floating around in my head lately
+
+ESPECIALLY IN MY DREAMS
+
+i was actually pretty close to asking her this morning
+but i was even tempted to ask yesterday morning
+
+
+
+i don't know what to do
+
+i do seem to get the answer in my sleep
+but i can't even conceptualize it
+gah.
+
+i'm still a bit confused on how GFS even works
+that might be intentional by google. niggers.
+
+
+more or less, i don't understand the concept of a file
+is that a table?
+
+when it's modified, how does that happen?
+complete rewrite (of QDataStream'd object)
+or echo >> newshit;
+???????
+
+i guess one is modification and the other is appending
+but they are both modifying
+
+the fuck.

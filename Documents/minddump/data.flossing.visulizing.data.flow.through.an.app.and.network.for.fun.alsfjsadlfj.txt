@@ -1,0 +1,38 @@
+data flossing
+pretty sure i already coined that term for a method of ensuring freenet content doesn't get lost
+
+
+but here's another
+
+sitting in your chair right at launch staring at the webcam, not moving
+envisioning the path of bytes as they flow through the network
+i mean... i did this unintentionally, and then realized what i did and thought it was cool, hence this article
+only a coder can do it
+
+
+
+raw video -> encode -> encrypt -> compress(mb before encrypt?dgaf) -> transmit (visualize this in your brain on an electrical basis, such as serial transimission) -> receive -> decompress -> decode -> draw pixels on monitor
+
+shit's fun
+half of it is performed once on my end
+the other half is performed infinite times based on viewer count
+
+so i'm sitting there at launch after saying nothing and vizualizing myself as each person around the globe
+what do they want me to say?
+
+who cares
+honestly if you want to stare at the camera for a bit 'data floss' it for fun (while 5meo'ing etc, perhaps 'freak out' and tape your mouth closed), go for it
+but it's important that you CODE
+do not just sit
+do not just talk
+CODE
+
+and btw, you are a free software junky and will only mention/endorse free software
+sorry pi
+'i have an arduino hooked up to a lightweight linux pc that costs $25' ;-P
+
+
+
+
+
+/random

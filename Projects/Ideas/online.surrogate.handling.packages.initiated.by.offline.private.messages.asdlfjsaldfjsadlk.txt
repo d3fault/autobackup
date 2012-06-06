@@ -1,0 +1,63 @@
+so that 2 streams in 1 hidden thing (or really infinite in 1) was a tangent
+
+i was trying to think if i want to be 100% public, semi-private, etc
+
+and i decided i want to be 100% public, and 0-100% private based on HOWEVER THE FUCK MUCH I WANT
+
+it's worth noting that those 2 percentages add together
+
+just as my online computer is on over to the left (currently reading GFS wikipedia trying to understand DLM/Chubby + GFS design)
+my offline computer, where i'm typing right now, was just turned on. it would be my pi + arduino, and would have some kind of write-only mode to an online pc (another pi? android with mobile data? laptop? who gives a fuck what)
+
+so i am safe and still retain a certain amount of privacy
+
+
+
+
+
+i need to cherrish my quiet life
+private life
+it will be gone someday
+and there will be no getting it back
+
+you will miss it.
+guaranteed
+
+
+but it's not worth keeping
+
+a) stay quiet, die quiet, retain max privacy
+b) get loud, no privacy
+
+
+
+
+
+
+the scenario i envisioned (and the reason i said 'tom' in earlier docs):
+tom is being controlled like on arrested development via video camera
+i have him walk around my data center and his arms/hands are at my command
+he jokes, "i am steven's robot"
+but yea, the offline computer (which can still sign/propagate messages? how do i get responses? same way i read emails? copy over via usb/whatever?) i initiate a drug deal
+and i command tom to "pick up this bag from some guy at the door"
+i don't explain what it is
+tom never knows
+
+
+i mean fuck yea ima smoke mad bowls with that dick
+cuz he's cool
+but idk, he just popped into my head
+could be any person lawl
+
+1x surrogate(that's the word!) per data center...
+he could probably manage the whole place single handedly
+aka i could manage every data center around the world single handedly
+
+hire a relatively smart fucker
+surrogate/record him regardless
+
+detach
+autopilot mode, all recorded just in case (and to keep him worried and less error prone?)
+i only give commands whenever i need to
+
+they could even be higher level commands if the monkey can code
