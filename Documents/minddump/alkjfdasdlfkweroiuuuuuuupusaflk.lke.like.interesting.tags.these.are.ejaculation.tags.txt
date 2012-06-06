@@ -1,0 +1,4 @@
+masturbationismaintenance.com
+
+basically a maslog implementation
+the underlying code should be maslog and opengpl rofl
