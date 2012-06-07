@@ -1,0 +1,2 @@
+black screen, white text
+it's easiest on the eyes and the cheapest on the hardware (though not maybe necessarily [yet?])

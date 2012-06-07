@@ -1,0 +1,2 @@
+there is a string2hash mapping that happens clientside. this is the map to the entire dht, which is just a regular 3-node dht (each one needs to confirm the write before it is valid. the first writer knows he is the first writer and he is the one that waits for the)
+the master (and replicas) just give the semi-updated partition clusters. The partition clusters are empty at first? but already mapped out?
