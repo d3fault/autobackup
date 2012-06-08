@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031926
+Documents/minddump/:1386031930
 Documents/minddump/dreams/:1338978881
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -367,7 +367,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1339059319
+Projects/Ideas/:1339126384
 Projects/Ideas/QtSslRpc/:1337204290
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -389,6 +389,7 @@ Projects/Ideas/abc/security.model.for.SENDING.figured.out....receiving.is.easy.t
 Projects/Ideas/2.potentiometers.one.for.x.one.for.y.pause.is.click.txt:1323421515
 Projects/Ideas/360.degree.mouse.movement.interaction.yes.is.a.certain.custom.angle.txt:1321885975
 Projects/Ideas/4.objectives.of.the.most.boring.and.necessary.show.ever.txt:1334253346
+Projects/Ideas/5th.objective.insanity.caused.by.3.of.other.4.aldfkjasdflkj.txt:1339126356
 Projects/Ideas/69chan.the.best.idea.in.here.is.the.pic.of.me.69ing.myself.rofl.txt:1330086384
 Projects/Ideas/Anonymous.Bitcoin.Computing.i.hope.the.domain.is.still.available.txt:1326858278
 Projects/Ideas/Auto.Transcrption.auto.selling.of.segments.and.even.have.coders.implementors.easily.triggerable.txt:1337986818
@@ -450,6 +451,7 @@ Projects/Ideas/flip.a.coin.to.decide.future.gender.rofl.asdlfjasdfoiuwerlakjoiue
 Projects/Ideas/forever.filesystem.txt:1322679153
 Projects/Ideas/fork-without-forking.change.channels.but.same.network.distribution.generation.configuration.tool.thingo.txt:1338776799
 Projects/Ideas/giant.monitor.and.giant.backpack.sounds.like.a.giant.back.ache.txt:1325708881
+Projects/Ideas/gifting.abc.dance.channel.to.caydon.or.to.anyone.really.costs.me.zilch.txt:1339126384
 Projects/Ideas/global.diff.falskjfaourelasjdf.txt:1325705909
 Projects/Ideas/grid.ring.around.equator.incl.water.because.it.gets.optimal.energy.efficiency.for.weather.conditions.txt:1322679293
 Projects/Ideas/hardcopies.emp.proof.plox.txt:1328223328
@@ -874,7 +876,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031926
+Projects/libAvGraphicsItem2/design/:1386031930
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1042,7 +1044,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1339059324
+autobackupScripts/win/.directory:1339126391
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
