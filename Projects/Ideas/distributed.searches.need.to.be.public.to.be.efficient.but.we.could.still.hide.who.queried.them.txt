@@ -1,0 +1,1 @@
+distributed searches by definition have to be public. but we might be able to make it so the publically searched term is known but not linked with the requestor. even though that word is spelled requester i like it better with an o because i can skim it easier.

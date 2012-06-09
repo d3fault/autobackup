@@ -1,0 +1,1 @@
+i think i might be ruining the orders occassionally in kwrite when i new one, write something, then go back to the article i was writing when i hit new and kept typing, then hit new again. no idea. using kde platform version 4.7.2 which probably correlates with qt except i have 4.8 libraries on here? beta? idfk what's going on
