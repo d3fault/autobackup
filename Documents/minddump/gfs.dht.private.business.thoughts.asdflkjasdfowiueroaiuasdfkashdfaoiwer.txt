@@ -1,0 +1,102 @@
+weird so now do i just code it? or do i think it over and make sure it's the right design
+make sure it actually fucking works.
+
+i was about to say i should just code it
+but nay
+i need to think on this one
+it's a complicated design decision i'm about to make
+need to be sure
+
+need to also do it in dia
+and the implementation needs to match
+
+do not digress from this tangent any further
+gfs-like scaling is a necessity
+
+but the rpc generator is a necessity to make the gfs inter-communication
+not really a necessity
+but will help
+wat do
+
+
+i mean it's a relatively small segment of code to do
+to do the rpc hypothetical
+and then it's relatively straightforward abstracting of string data to make the rpc generator
+
+i don't even think i need to make sure that it functions correctly... i just need to make sure that the observed generated code appears correct. and maybe at least compiles. what i'm saying is that i might get random ssl type errors that i can't solve. err i should probably solve them now as the gfs impl will definitely use them LMAO. ok so yes i definitely want to abstract them. so i don't have to copy/paste so much ssl shit especially. i'm fucking lazy, ya know?
+
+but i do think i should get the design for GFS down in dia before proceeding with the rpc hypothetical
+which means i just need to let the design that i finally just figured out stew in mah brain until i can confirm it
+will probably be tonight as i sleep, as weird as that sounds...
+
+so do gfs design in dia
+or in a text file if it doesn't come out naturally in dia. it should.
+and then finish up that "createBankAccount" rpc hypothetical
+then do the generator
+then USE the generator to implement the gfs impl
+
+if all of the master <--> chunkserver <---> chunkserver communication is behind a LAN, it can perhaps be unencrypted?
+
+the wt front-end <--> master and wt front-end <--> chunkserver communication definitely needs to be encrypted/authenticated (ssl), however
+
+should i restrict each wt front-end in the sense of what it can do?
+because if i don't then any front-end can do operations that simply do not make sense
+since the wt front-ends will be outsourced, they can very easily be hacked to send authenticated bogus data
+
+so long as they can reverse a binary
+which anybody can
+
+local wt front-ends solve this
+but then i need massive bandwidth to here
+early on
+not sure if could scale that fast
+
+how does that work?
+each wt front-end has it's own internet port/company?
+haproxy (where? safe to outsource?) round-robbins to each
+
+and all of the wt front-ends point inward to a gigabit LAN cluster?
+offsite backups will be stored at aunt robyn's for now
+i can/should reward her/them for this eventually
+why the fuck not?
+but don't let them hold your data hostage
+
+
+i guess that makes sense...
+and it doesn't sound too hard to scale
+it's just the cost of buying more bandwidth
+which, if i'm getting that many users, should be*(?????) profitable
+i actually do think it would be profitable before the 1 data line is used up
+the 1 business line
+before it drops connections
+it might slow down, but it shouldn't drop connections before it is profitable
+i am not sure if this is a fact
+
+oh and slashdot effect pretty much just shits all over everything...
+hah. my scaling idea sucks.
+
+well i mean i guess what i'm trying to say is that i need to be ready for it
+maybe like 3 business lines to the house
+
+still under 5k probably quite easily
+i do think i am going to ask friends if they want to invest
+before i ask anybody in a more business manner
+5k is nothing
+and maybe i'll look at kick starter
+nah i don't think this is kickstarter appropriate...
+but maybe, if VC option/etc sounds shit. maybe just credit cards would work actually
+go to BofA and say "i want to start up a business so i can pay your bills i owe you so can i have like 5k in cards?"
+5k is like nothing to them especially when they know it's for a business and if you are able to convince them you will be profitable, you might be able to get some cards
+if not there are always other credit card companies you can try... rofl
+come to think of it i do think maxing out credit cards is a great idea. fuck friends they are too human
+credit cards i can at least just not pay if my entire idea goes kerplunk
+
+and i think there's EASILY 5k in credit between all the companies out there
+rofl.
+man this is so totally going to work
+i might just survive the slashdot effect
+but maybe not... who knows
+
+i definitely need to scale in-house
+buy a property etc
+trust nobody

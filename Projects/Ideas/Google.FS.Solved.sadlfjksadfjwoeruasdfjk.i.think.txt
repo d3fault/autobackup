@@ -1,0 +1,217 @@
+GoogleFS Solved
+so yes pre-generated (but should be able to add for a "file") chunks
+each chunk is a partition range?
+so the data that makes up the request's response, as in, where it is stored is random as FUCK. sha512 (64-bit keys used at google? what about collisions srsly. mb i'm getting it wrong or maybe they verify block ranges as they are generated..., DUH)
+64 bit gives you plenty of non-colliding ranges to partition into the hudreds of thousands of nodes
+the master (which is chubby-paxos-rotated. i guess the rotating is to force verification/synchronization?) instructs the data replication
+
+whenever we want to look up what a piece of data is, that "filename" (what gfs/chubby calls it) to the result (the thing that is hashed and matches a specific partition in the chunks. the chunks are stored together on 64mb files pre-allocated(mb not, but definitely pre-reserved), but have no association with one another. i don't know what google means by "files can be multiple 64mb chunks". i guess if the particular path to the data was a list. this would be an improper use imo, but i am unsure. wouldn't lists be better stored as references into the dht? so the list is a pointer to the items are which are constituent items in the list, but the list itself is an item as well. maybe i'm wrong and perhaps it is faster to store them together? maybe for large items it's better to segregate and small items it's better to ).
+NAY, the list is a perfect example of why the 64mb (+expanding) file is perfect
+and every list item stored in the 1 64mb file
+because the list item is basically a table of persisted objects
+
+but i don't get that
+that makes no sense
+then all clients will write to the same chunk server, and it becomes the bottleneck
+they HAVE TO BE split up
+
+basically instead of:
+sha512("/ls/abc/ads/slotPurchases/slot123");
+it becomes:
+sha512("/ls/abc/ads/slotPurchases/slot123/slot7");
+^thus giving it a a completely random/balanced chunkserver
+
+
+the randomness of the sha512 function (we should salt it btw) is our even distribution
+
+basically, the details... the VALUE that is stored... do not factor into it, understand?
+so every user... therefore every wt front-end/client.... will arrive at the same chunkserver owner for that particular "table insert" / "path" into the cluster
+
+the first chunk server is just the entire 64-bit range
+the second chunk server just mirrors it
+the third chunk server mirrors it as well
+the fourth chunk server gets thrown into the list of nodes to distribute to. as long as everything has 3 copies we are peachy. it is only when a fail is detected that replication needs to take place
+same with fifth server
+
+
+oh and all data needs to be crc32'd err at least verified from the hdd but idk if it should also be a secure hash or not :-/. might as well make it one? famous last words? crc32 is a lot faster. cached crc32 in memory is even faster
+
+
+even though the master is just splitting up the 64-bit range, it does so 64mb at a time
+so master just has to find a 64mb compatible gap in the range and then assigns it to that server
+a previous server will have had it assigned, and in the race condition, it accepts the data and informs the master, who decides [and does] what needs to be done... probably replicating that data to the recently-partitioned/added node.
+the chunk server can detect this race condition because master first gets all the nodes permission/etc(prepare?prepared. type shit except the chunkservers are NOT doing full paxos). so before the master even starts the partitioning every chunk server is aware of it. i guess we could limit that to only the affected chunkservers?
+
+the fact that they are reserved does not mean they are written
+and in fact they are NOT written sequentially
+they are written in the order they were received
+but we don't give a fuck about that, we only care that we get the right value when we give it a certain hash
+
+
+i think i really have figured out GFS finally but i am not 100% sure that i have
+
+
+
+ok so suppose there is a list item NODE
+doesn't that node get hit a lot?
+
+
+ok two things
+there is no list item node (entry into hash table)
+but there IS a list count
+and remember that everything is cached by the wt front-end nodes too, so list item count probably won't change much (famous last words?)
+or maybe all i have is a pointer to the first item in the list
+and we just keep reading 
+
+no that won't work
+list of items becomes central point of failure
+and not wanting to read all the items simultanously keeps us from just doing a pointer to first item in the list
+
+
+err the caching bro
+i just think
+that
+ok what is the list of items
+
+in this instance, it is slots purchased for a given slot
+0 based index, but still recording timestamp for events
+the timestamp is not the "filename", the 0 is
+
+ok so in the slot instance the list of items will not be increasing at that fast of a rate
+
+but the first thing that comes to mind is: 4chan
+what if they were community posts?
+/ls/4chan/threads/thread928493/post0
+
+how would i be able to know how many posts are in thread928493 without creating a central point of failure
+yes there is caching but
+BUT NOTHING. the thread928493 is the caching for us.
+bandwidth is shared amongst the servers based on need. don't need it? someone else uses it.
+they all balance out evenly in the end, THEORETICALLY (never really)
+
+
+thread928493 has a specific list of posts location, so boner
+that + caching on wt front end SHOULD be enough
+
+honestly the caching is going to do a lot more than you think. you definitely want auto-caching/coding in the future
+but for now you just need to be careful to make sure you cache
+
+posting causes an increment in teh post count (how the fuck to do this in appending manner? just keep track of previous post counts in timeline fashion?)
+it must also trigger a cache invalidation to be sent
+does the node that holds the post count trigger that invalidation? i'd say yes
+so does that mean it keeps track of which wt front-ends have read it? or does it invalidate everyone <---- LOL. definitely keeping track of those who have read it is a better idea than invalidating them all
+
+the randomness that is sha512 ensures equal distribution, in theory~
+the bandwidth sharing ensures equal bandwidth distribution, seriously.
+combine the two and you have a scaling network
+
+
+does the master/chubby service replicate just the partition db? or does it replicate all of the chunks (keeps track of when last replication was) periodically. i mean to different data centers. "offsite backup". i'd say this should be done automatically. as far as accepting an atomic write is concerned (so we can respond to user), having an entire data center agree is good enough. but as far as keeping the data safe long term, an offsite backup is critical. van + hdd style... or fiber optic hella expensive bandwidth style? i actually am going to say i STILL think the van + hdd style is cheaper. the data can be easily verified upon arrival. give something for IT noobs to do, they don't even have to see any of the decrypted data.. just the results of whether or not the data is corrupt. lol automated IT management.
+
+so to replicate via van i need to have an IRL presence
+but if i replicate over network (famous last words?) i can maintain an offline/anonymous/bitcoin business
+
+i still am very unsure on what i want to do
+and i am very glad that i'm keeping my motherfucking mouth shut on the subject
+so i still have the choice
+
+i value that choice and don't want to be rushed into one
+
+is 'because i can' good enough reason?
+i think i'd need a cover
+
+and what about LAUNCHING
+don't be a pussy
+
+i could launch abc anon, same with vid service + ads, then launch myself onto it later
+just as i'm sure natashi satoski (bitcoin guy) did
+he's hiding under disguise of one of the less active developers, i'm sure of it
+or maybe he has real friends who are hiding his identity and committing for him
+that is actually more secure given you can trust your friend which is to say that it is not secure at all
+
+i am relatively confident i can at least stay legally anonymous
+hackers and people with a brain would be able to identify me
+
+but lawyers wouldn't be able to prove it
+i should wink at the camera like an immature child
+
+
+so basically how i would do it is i'd go through the same company for 'data centers' and ask them if they could hook them up directly in between (extra interface cards for each)
+
+HOWEVER this has the point of failure of the company itself.
+fuck.
+do i need to host locally and have bandwidth piped in?
+i guess eventually
+but idk i think it's cheaper in short term to outsource it
+i could be wrong...
+
+i genuinely have no fucking clue
+
+so i think i need to have physical control over my servers
+isp pulls plug, i just replace them
+outsourced data center pulls plug, my data is fucking stuck on their drives ahhahahahaha
+
+plus it allows me complete control over the hardware
+or in better terms: makes me responsible for the security of them
+which means: my house might become targetted
+which means: i either need to profit fast (this is actually very likely) or seek VC
+
+i already need initial server/bandwidth funds (for my house)...
+...but those are MINIMAL compared to a wholly owned data center
+
+talking like 5k for 1 month, should be self sustaining by then
+vs. like 50k at _LEAST_ for a cheap ass rental business location data center
+
+rentals are shit too
+
+but i do think home launch (FOR ABC) is the thing to do
+not "launch launch"
+just "business launch" (whether anon or not)
+
+definitely NEED to move out before launch launch, methinks
+
+could do it in data center / office...
+
+actually that might be kinda cool...
+
+but it doesn't matter where
+
+maybe you should buy a fucking house and make THAT the data center
+
+err fire proof?
+
+
+still i want to live WITH the data servers
+because i don't trust nobody
+and you can't live at a fucking business building
+or can you?
+don't think so
+so home server it is...
+
+
+but wait
+does this include Wt front-ends???
+or just chunk servers + paxos chubby partition agreement db? man that is perfectly worded
+
+i think Wt front-ends can/should be outsourced
+bandwidth is cheap as fuck when outsourced
+
+and this way i'll minimize bandwidth to my house / data center / data center house [...???????]
+
+who cares what i do
+
+but i don't want to incorporate
+or yes i do
+yes i do
+it is a smart thing to do tax-wise and it absolves you of certain liabilities
+
+but then i'm 'playing by their rules'
+
+i guess i should/need-to explicitly state that the only reasons i'm playing by their rules is to a) save money on taxes (incorporating) and b) so i don't go to fucking jail (for for liability issues and for not paying taxes)
+refer to dr. kevorkian's speech about regretting killing a patient because it was a waste of his precious life. dr. kevorkian's life, that is. he did not regret killing the patient in any way except that he had to server jail time for it and that was a waste of dr. kevorkian's previous life
+
+that's the reason i LLC + pay taxes
+say it just like that
+in every other respect, i do not intend to operate like a corporation
+i intend on staying singular
+except that i do need to have a will for what to do with my company should i die. shit needs to stay alive. or does it? d3fault is supposed to be self-sustaining bro. abc is just for bootsrap so who gives a shit???????? i should essentially pull the plug on it by releasing it as LGPL and moving the transaction rate (my cut) to zero. that is, once i can sustain without it. abc can sustain without it, as i intend on having up enough content that uses it's ads to live off of those revenues alone. how does one commit a piece of functionality? do i approve/deny whether or not they get money? this model really sucks when in private/business/STABLE mode. i feel i won't be able to allow anyone else to profit, unless they fork wholly. fml. d3fault is way superior.
