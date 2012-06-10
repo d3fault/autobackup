@@ -1,0 +1,39 @@
+in Google's 15 page paper about GFS
+Section 3.2 - Data Flow
+
+"To fully utilize each machine's network bandwidth, the data is pushed linearly"
+...
+"rather than divided among multiple recipients"
+
+
+the design and functionality of the network as a whole can stay the change
+
+but toggling between each of those two would be handy
+
+
+the first one is good for if your cluster is on a LAN
+the latter is better for if your cluster is on a WAN
+
+
+linear: client pings each replica, creates pipeline based on that. lowest latency = closest
+multiple: p2p bittorrent superseed. the data spreads across a larger (geographically speaking) network faster.
+
+
+
+
+in a WAN environment if you were to do linear, you'd have to wait for every single server to get there copy
+well maybe not but the last server in the chain would depend on everyone in between him and the first
+they have to get every piece before he does
+
+superseed will have the last server in the line contributing (coincidentally, the last part of the file) to every node (except the node it gave to them)
+so each node uses a good amount of up/down simultaneously
+
+
+
+
+it can be a radio toggle in a hypothetical admin app (which i'd imagine communicates with the master?)
+could even in theory switch the mode at runtime
+but what's the point of that...
+
+
+a better feature would be to be able to map out which are in a LAN and which are over a WAN and to select the appropriate one automatically

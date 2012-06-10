@@ -1,0 +1,4 @@
+google uses ip address to estimate distance
+for a LAN this works
+
+for a WAN measuring latency is better
