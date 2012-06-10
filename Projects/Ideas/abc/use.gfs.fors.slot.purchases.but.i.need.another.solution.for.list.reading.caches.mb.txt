@@ -1,0 +1,63 @@
+holy shit it is definitely worth mentioning that the append-only 64mb 'partition ranges'
+unallocated, or lazy-allocated (hdd)
+based on the 64-bit key, which is a hash to the specific object write
+aka a "slot"
+
+the gfs design is functional
+
+and it is an entirely different use case than
+say
+the "view listed slots" first page (however i sort it)
+which would be an obvious hot spot
+
+
+first of all, that's reading... so it's optimization is different
+it's optimizations only need to be aware and somehow take into account the manner in which each individual item is written
+
+
+the list should still receive updates (this might be a pipe dream but maybe not, wt seems powerful as fuck)
+so the read-cache can still be either updated or the cache can be invalidated. it does not matter which
+but it needs to know to be invalidated when any of those chunkservers receive a write
+and how the fuck?
+
+i think the client needs to initiate that
+maybe the clients all communicate with each other to keep their caches up to date?
+
+
+my old abc design scaled better here
+because my wt front-ends/clients cached
+
+
+
+i find it funny that they see the memory of the master as a limitation of the size that the cluster can scale to
+on overload, page
+pretty sums it up...
+
+but i mean more efficiently than paging, persist frequently accessed values...
+or just have a hot cache that LRU items are auto-dropped from
+the chunkserver maps will be an easily calculable size so hot cache is doable
+
+
+
+
+
+
+q=butts -> google.com -> bigtable.query(butts) -> does this pull up cached query or run new one or combination of the two?
+
+
+
+how the FUCK do they use gfs...
+who gives a shit
+
+
+tbh
+the problem bores me
+
+truly distributed/stable/secure/resilent is so much more interesting...
+
+
+
+use it for atomic writes/appends
+what it is intended for
+
+but think about wtf to do for lists, especially of the hotspot variety
