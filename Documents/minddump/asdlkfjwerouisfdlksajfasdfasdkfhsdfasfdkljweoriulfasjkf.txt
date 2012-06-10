@@ -1,0 +1,86 @@
+google mentioned that they sometimes have hotspots where a file is accessed on one chunkserver by many man clients at once
+they said for example hosting an executable that is to be run in parrallel
+
+the solution: add replication for those kinds of files
+
+i get why google uses nearest server for reads
+distance, even at data center scale, matters
+hops etc too
+
+but the reason they can do that is that the chunkservers make their 2 replicas before saying "got it". so the 2 have to say to it: "got it". before he is able to say it. this means replicas are never stale, unless they're being written to, but in that case we are aware and can just block until the write finishes
+
+
+still, the reason i am bringing it up
+it doesn't appear they have a solution to that
+wtf?
+
+
+isn't that a very common scenario?
+my list example
+
+but i mean maybe not necessarily
+
+
+
+PAY ATTENTION
+you are understanding GOOGLE's solution to THEIR scaling problems
+the solution you now get, but is optimized for search/web. which is why it works so well with Index
+man that sentence made no sense
+i wonder how many of my sentences make no sense?
+lol fuggit
+
+the Index part makes sense, but the sentence before that doesn't
+
+gah i mean
+
+how does a "table" become a "file"
+is what i need to figure out
+i need to either design a solution to that based on my new knowledge
+
+or find a way to use their solution (which still scales) to solve it
+
+i don't know which is the 'right' answer
+fuck being alone
+
+
+
+i get how a specific entry into a table/db could be achieved by hashing the filename: /ls/fuck/you
+but you can't hash: "/ls/fuck/you/*" to get every entry in "you"
+you gotta store either a count or an index
+which is a hotspot for all clients trying to get a list of /ls/fuck/you/
+which could be a forum index
+/ls/b/
+every client accesses 1 chunkserver to get the list of threads on the front page
+fml
+
+
+SO WHAT IS THE SOLUTION TO THIS
+'add replication'
+hotspot detection code (to trigger replication) is difficult to code
+
+but BALANCING code from a godlike perspective over a long period of time, such as on the master, is actually quite simple. averaging numbers etc.
+
+
+the master cannot detect (soon enough) when there's a hotspot
+servers usually fail instead of say "hey i'm fucked, please help"
+so hotspot detection is a necessity
+perhaps knowing my own capabilities via a scan/test/benchmark and then monitoring that i stay below those capabilities
+if not, hot spot detected, request replica to help
+
+but the thing is....
+how the fuck is that replica supposed to help?
+it'll help with reads, but now writes needs to be persisted to a 4th before you give the client an ok
+if we only do 3, the 4th might serve up stale data
+and seeing as we're a hotspot, this is a likely scenario (assuming lots of writes?)
+
+but that's JUST the thing
+there are going to be lots of writes to such an index
+perhaps a paxos alone is better for "hotspots"
+
+
+i don't get how there's a chunk id 64-bit and then an offset into the chunk
+i would think that each unique position is stored uniquely because of it's uniequeness
+
+is the whole list one chunk/file?
+god damn i'm so entirely fucking lost
+one minute i get gfs and the next i'm like 'lol wut?'

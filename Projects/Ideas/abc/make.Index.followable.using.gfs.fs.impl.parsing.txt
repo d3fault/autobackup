@@ -1,0 +1,18 @@
+make the index followable
+either provide them space (i would need a massive dns cluster to handle this i think)
+or just crawl their domain and mark out sites. like a 5 level recursion limit on the site, not following any others.
+
+that's the "Index"
+so they have to do business with me to be on the "index"
+but the cost of business is "cheap"
+(when it should be nothing ;-))
+so people will sign up
+
+and a gfs-like
+
+maybe a search function? but then this would imply i am crawling non-business-with sites
+so basically: do i want to be a nigger or not?
+
+how about this: i can let anyone add a site for free (maybe just a captcha verification)
+
+but the default mode cannnot/should-not be be scraping everything

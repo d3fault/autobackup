@@ -1,0 +1,41 @@
+a somewhat safe failover is to make sure all needed ram for normal operation is pre-allocated (at program start) and of course destroyed at shutdown
+but then it leaves the rest for like tcp connections or whatever
+
+
+actually there are multiple reasons to failover
+
+i don't even mean failover
+i mean... request a helper
+"why can't i carry all these packets?" <-- i should make this meme and use it with advertising the gpl'd impl
+
+this could be any dht node type
+
+chunkserver
+client
+master
+couldn't the domains
+i forget that thought
+don't even remember writing it
+
+
+meh
+as i was saying though
+there are multiple reasons to failover
+
+not enough memory
+not enough cpu
+not enough bandwidth
+
+there are probably more?
+
+catching any one of them by itself is tricky
+it needs very well designed softwares
+
+but it is possible
+
+meh i do not think it is worth the investment at this time
+fucking difficult and i'd maybe never finish it
+
+better to make something workable for now and then optimize where optimizations are needed
+i probably will not be able to predict where bottlenecks will pop up
+i may even have a difficult time finding them

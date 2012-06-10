@@ -1,0 +1,92 @@
+you must realize you are integrating multiple types of dhts
+i think 3 is the count now
+
+regular dht
+master paxos (uses regular)
+gfs layer dht/chunkservercluster that uses master
+
+
+man it's awesome knowing i can do those designs
+i feel like an intelligent human being
+really? the rest of the fucking world can't figure out a C++ gfs?
+
+i wouldn't be surprised at all if hadoop was just to discourage C++ impls
+especially since after you have it in one language, a port/minimalist-port (no features, just core functionality) to another language is easy/relatively cheap. you already have a perfect design to base it off of so the hardest part has already been done. they could have so easily planted the idea within the apache foundation. in person or through a man on the inside. it's so easy to give someone an idea, even if you never say the idea explicitly.
+
+
+but to know i can and will/might do it is a cool feeling
+and tbh, i'd only scale it at like a medium sized project
+
+getting the design right is KEY
+i will definitely dia it perfectly
+before even starting
+and constantly farting
+
+lewlsauce
+lewl is what i meant to say
+then i tacked it on
+should i have
+was that not technically a different thought?
+because it was like an addition...
+
+
+
+OMFG
+
+
+OMFG
+
+GFS-type chunkserver partitioning with d3fault timeline nodes hashing
+nah idk
+i dunno
+
+i mean yes, in a business environment i wouldn' thave to worry nearly as much about security
+and i could use it while i build a self-sustaining model
+
+i will only do it so long as before i have started i have abstracted to datastore. the timelinenode::persist, which uses the private/gfs-like impl has to be able to used with a self-sustaining dht. this is doable. all of my shit is a desktop client, though i also broadcast myself + allow access to the data through web. desktop = you are peer at the very least in the video distribution (oh god yet another dht usage my head is going to explode), and if you view it through the web then you see ads and that is your 'payment'. the software is 100% gpl, but accepted patches must work both in the desktop and on the web view. maybe that's just a 'phase' of d3fault? or am i talking about abc? well abc will use it in a much simpler manner: providing ad service. could add more but it is definitely NOT
+distributed/scaling platform that uses "innovative" doubling-per-slot(forced day or optional?) with decreasing js algorithms in webclient
+with such a low entry fee, .00000001 , i'd imagine the range ANY site would cover would be 0-60 slots
+which is a human manageable number
+
+you could have 2 months worth of ads lined up to be displayed on your site
+and that's like fuck i don't even know or care to do the math oh wait i have bc now i did it on my droid's calc using oh fuck nvm the '^' doesn't help me, i need a C++ environment
+
+
+fuck it
+the point is, you're at like 10btc/slots after 30 days, and from there it continues to double
+
+0  days = 0.00000001 btc
+30 days = 10.73741824 btc
+60 days = 11529215046.06846976 btc
+eleven fucking billion
+hahah only 21 million will ever be in existence
+
+it's weird to think that the currency is the currency
+the bitcoin is a bitcoin
+and you can have fractions of a bitcoin
+or one containing multiple bitcoins
+or something?
+i guess that'd just be one block
+but you could still make it go to one address
+therefore isn't that one address one bitcoin?
+no, it's an address
+which is one of many addresses in an account
+which could be one of many accounts in a bank (errr, *is going to be)
+
+i guess money is the same
+
+wait i forget
+how many bitcoins will ever be generated?
+is it really only 21 mil? wtf?
+i dont't think i should invest tooo heavily in it
+maybe 60 out / spread out over various currencies and 40 in :-/
+40 is livable in case others get seized
+and vice versa...
+assets can be moved into bitcoin relatively quickly
+though i think less quickly out of it
+especially with laundry considerations
+
+
+
+
+11,529,215,046

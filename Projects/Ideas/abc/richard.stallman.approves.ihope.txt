@@ -1,0 +1,27 @@
+i will make money off the network, but the network will abide by 'concrete-promise.com' (aka, don't spy on your users)
+which is enforced through code
+which is open source
+and gpl'd
+
+initially
+it is not for sale
+so only i can profit from it
+
+well i mean they can port it and make money from that
+but good luck buddy.
+derivatives need to be open source and so why would they use your derivatives if they could just be merged back into upstream?
+you cannot open source it unless it is gpl
+you cannot distribute it unless it is gpl
+
+holy fuck richard stallman is a genius
+
+
+
+this is my 
+d3fault early impl on private/business
+OR
+strictly abc venture and not having anything revolutionary
+
+
+
+i do think i could do an anonymous paxos master chubby cluster with each node in the cluster being in a different datacenter/company/country and same with each of the clients (and their replicas... or is each client a fully capable one) and the chunkservers. auto failover mode for all = 'bot-net' ish 'website'. i could just purchase new domains whenever old ones get siezed. so long as i have tor private key... or maybe those are per-server and matter less. as long as i control the cluster which is a distributed data store and front end (even if only accessible via tor for the time being (specific nodes are front-ends or they all are? i guess all. they all act as clients. oh i need silent failover servers noob. as in, the failed-over-to machine did not have a previously known location. this implies that a master or something similar would have to read a replica that went down, and then write it to the hidden/now-online server. the replica that goes down and the hidden/now-online one cannot have communicated (message forwarding for replication) in order for it to be unknown. so we just have to cross our fingers that all 3 replicas don't go down at the same time. if they do, we're fucked. maybe i need way more than 3. one bug and i'm fucked.))

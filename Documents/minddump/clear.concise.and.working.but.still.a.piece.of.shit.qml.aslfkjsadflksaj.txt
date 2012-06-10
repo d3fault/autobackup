@@ -1,0 +1,2 @@
+"a clear, concise, working solution to the problem at hand"
+^the only "pros" i should put in the QtQuick wiki/debate page
