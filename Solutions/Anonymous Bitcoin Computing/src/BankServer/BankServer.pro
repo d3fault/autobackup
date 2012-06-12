@@ -31,4 +31,6 @@ HEADERS += \
     autoGendRpcClientHypothetical/rpcclientshelper.h \
     autoGendRpcClientHypothetical/serverandprotocolknower.h \
     ../RpcBankServer/ibank-rpc-output.h \
-    ../RpcBankServer/RpcBankServerNetworkProtocol.h
+    ../RpcBankServer/RpcBankServerNetworkProtocol.h \
+    autoGendRpcClientHypothetical/CreateBankAccountRequest.h
+

@@ -14,6 +14,8 @@ RpcClientsHelper::RpcClientsHelper(IBank *rpcServerInterfaceImplementor)
     connect(m_ServerAndProtocolKnower, SIGNAL(createBankAccount(const QString &)), rpcServerInterfaceImplementor, SLOT(createBankAccount(const QString &)));
     connect(rpcServerInterfaceImplementor, SIGNAL(bankAccountCreated(const QString &)), m_ServerAndProtocolKnower, SLOT(bankAccountCreated(const QString &)));
 
+    //connect(rpcServerInterfaceImplementor, SIGNAL(pendingAm))
+
     //forward debug messages
     connect(m_ServerAndProtocolKnower, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }

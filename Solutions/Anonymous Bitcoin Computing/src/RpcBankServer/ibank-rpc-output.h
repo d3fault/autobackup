@@ -1,5 +1,5 @@
-#ifndef IBANKRPCINPUT_H
-#define IBANKRPCINPUT_H
+#ifndef IBANKRPCOUTPUT_H
+#define IBANKRPCOUTPUT_H
 
 #include <QObject>
 
@@ -147,24 +147,20 @@ public slots:
     //fuck i'm lost
     //ok,
     //all of the following would, in an ideal rpc generator (i almost said 'world'), be auto-generated (seriously though, you can write software to control... over a cluster of computers (or just one, except that we also want to expose that interface to the users, so multiple is better (AWS front-end on amazon.com))... how many nodes of a separate cluster of computers... a user has. i'm talking auto-scaling for specific users, the automatic deployment of binaries over a network. automated paying, etc. of course the RPC Generator fits nicely into the mix. used alone, the rpc generator is a badass tool. used with automation (auto-scaling of either of the Back-End's, including the renting out of such a service (it is very useful to me on it's own as well)), it is a think to be feared)
-#if 0
-    Bank::CreateBankAccount(QString username)
-    {
-      BankAccountObject object; //stack. we don't give a shit about it after it has been streamed to QDataStream
-      object.username = username;
-      object.pendingBalance = 0.0;
-      object.confirmedBalance = 0.0;
-      object.thereWasSomeEnumHere = I_FORGET_WHAT;
-      //todo: object.publicDecryptionCertificate, object.userIsSecureAsFuck, which maybe isn't necessary if we just check for a default value of publicDecryptionCertificate
-      
-      QDataStream stream << object;
-      key=sha512(username + someBankOnlyKnownSalt);
-      
-      dht.put(key, object.toBase64());
-      
-      //TODO: check response: if(!dht.put.... how long does it take for it to put something. is it async? more importantly, will it tell me if a key/value pair already exists for a given key? how can i do an atomic read and if not exist, write. if exist, fail and notify of failure. that is seriously one of the hardest DHT questions ever. but it has an answer. it probably isn't _THAT_ hard, it just sounds hard. ima go take a shit after i re-read it and see if i can come up with anything. nope nothing my brain got stuck in trying to figure out routing again. i'm pretty sure THAT's the hardest problem. there are lot of simple solutions but the best solution will [probably] be quite complex
-    }
-#endif
+
+    //re: AWS ^
+    //we can supply them with this header and tell them to write code (just 1 object... header/source) that implements it. they submit it, we make sure the header hasn't changed, then we compile it (security issues? vm?) and run it on our auto-generated rpc shit with auto-scaling dht/infrastructure
+
+    //"1) you define an interface in xml/web-gui \n2) you implement the given header and upload the created object \n3) we compile it in with our proprietary(rofl) rpc server implementation"
+
+    //you know, i feel in this situation a proprietary solution is actually better. but then again, probably only for me/business. but it's like an order of magnitude better. by giving your opponents the code, you give them the infrastructure that does not need to be distributed to directly compete with you
+    //i'm not factoring in the user's rpc server impl object licensing, which may or may not need exceptions in the (proprietary? free software?) sever code's license (should i choose to distribute it)
+
+    //so yes i want ABC to be gpl
+    //but can i call it gpl if it uses generated code and the code generator is not included / free software?
+    //i don't see why not so long as the generated code is gpl'd...
+    //and to be honest, it would be pretty damn easy to make an rpc generator just by looking at the source and recognizing it's patterns. i'm about to do it right now/soon
+
 signals:
     void initialized();
     void d(const QString &);
@@ -172,4 +168,4 @@ signals:
     void bankAccountCreated(const QString &username); //will probably have to be createBankAccountCompleted, only because we only have a string copy of the word "createBankAccount"
 };
 
-#endif // IBANKRPCINPUT_H
+#endif // IBANKRPCOUTPUT_H

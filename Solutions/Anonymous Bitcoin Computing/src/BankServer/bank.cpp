@@ -40,9 +40,34 @@ void Bank::handleBalanceTransferRequested(const QString &username, double amount
 #endif
 void Bank::createBankAccount(const QString &username)
 {
-    //TODO: write to the db
-    emit d("create bank account for user: " + username + " requested");
+    //TODO: write to the db. this is the user's implementation... but we'd want to have exposed (maybe send them a header to #include as well as the ibank.h) our dht if used as a service like amazon aws / proprietary mode. meh. i should do open source and STILL do the business. i think your target audience is not really interested in setting up all the infrastructure and would rather use your pre-existing servers for a fee
+    //that is, unless i made installing it / setting it up insanely easy via script/installer/wizard (and i could even auto-set-it-up on servers of my own... as in, rent them out seemlessly. these are a lot of ideas and decisions coming together and i think free software is the way to go because i don't want to be a greedy nigger like aws but i still appreciate the business need to just define an interface and the object implementation (dht storage is abstracted to them via header) so i think i will make enough money off of hosting the service aspect of it, including payment server etc, so businesses can just focus on business)
 
+    //perhaps even the user interface, which is only an rpc client and in this case Wt where appdb is rpc server, can be user-generated (and/or auto-generated ;-))
+    //maybe we could just give them an html string and a list of $_varName_$ 's to litter throughout it so we will string replace them. i'm not sure if wt wants html.. but there's probably a way to use raw html as the content of a WContainerWidget
+
+    emit d("create bank account for user: " + username + " requested");
 
     emit bankAccountCreated(username);
 }
+#if 0
+    Bank::CreateBankAccount(QString username)
+    {
+      BankAccountObject object; //stack. we don't give a shit about it after it has been streamed to QDataStream
+      object.username = username;
+      object.pendingBalance = 0.0;
+      object.confirmedBalance = 0.0;
+      object.thereWasSomeEnumHere = I_FORGET_WHAT;
+      //todo: object.publicDecryptionCertificate, object.userIsSecureAsFuck, which maybe isn't necessary if we just check for a default value of publicDecryptionCertificate
+
+      QDataStream stream << object;
+      key=sha512(username + someBankOnlyKnownSalt);
+
+      dht.put(key, object.toBase64());
+
+      //TODO: check response: if(!dht.put.... how long does it take for it to put something. is it async? more importantly, will it tell me if a key/value pair already exists for a given key? how can i do an atomic read and if not exist, write. if exist, fail and notify of failure. that is seriously one of the hardest DHT questions ever. but it has an answer. it probably isn't _THAT_ hard, it just sounds hard. ima go take a shit after i re-read it and see if i can come up with anything. nope nothing my brain got stuck in trying to figure out routing again. i'm pretty sure THAT's the hardest problem. there are lot of simple solutions but the best solution will [probably] be quite complex
+
+      //^^^^that dht usage actually kind of sucks. the gfs style is superior
+      //also dunno why this is in here my interface when it should probably be in the impl (but obviously still commented out
+    }
+#endif

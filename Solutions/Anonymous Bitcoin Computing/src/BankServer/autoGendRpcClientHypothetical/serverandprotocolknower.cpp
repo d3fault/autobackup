@@ -37,15 +37,17 @@ void ServerAndProtocolKnower::handleMessageReceivedFromRpcClientOverNetwork()
             switch(newMessage.m_MessageAction)
             {
             case RpcBankServerMessageAction::CreateBankAccountAction:
-                if(!m_PendingCreateBankAccountRequests.contains(newMessage.m_Username))
+                uint clientId = SslTcpServer::getClientUniqueId(secureSocket);
+                if(m_NetworkClientIdAndPendingCreateBankAccountRequestsHash.contains(clientId))
                 {
-                    m_PendingCreateBankAccountRequests.append(newMessage.m_Username);
-                    emit createBankAccount(newMessage.m_Username);
+                    if(m_NetworkClientIdAndPendingCreateBankAccountRequestsHash.values(clientId).contains(newMessage.m_Username))
+                    {
+                        //TODO: deal with already pending. i think this is my race detection code. probably just respond instantly with the error + reason. TODOopt: maybe even check the pending request to see how long it's been since it was dispatched... and if it's been too long then we say wtf and/or request another
+                        return; //so we don't emit/request the message
+                    }
                 }
-                else
-                {
-                    //TODO: deal with already pending. i think this is my race detection code. probably just respond instantly with the error + reason. TODOopt: maybe even check the pending request to see how long it's been since it was dispatched... and if it's been too long then we say wtf and/or request another
-                }
+                m_NetworkClientIdAndPendingCreateBankAccountRequestsHash.insert(clientId, newMessage.m_Username);
+                emit createBankAccount(clientId, newMessage.m_Username); //the clientId is used in this case as the app specific bank account id. i think i remember writing somewhere that i was going to pass in some sort of ID for the first parameter. now i'm wondering if it's better to use a 32-bit request id and just match up the request id's with the requests (and therefore responses?). the user doesn't have to do anything with clientId, and on their end it can/should be called requestId. all they do is emit it back with their own input (the request... in this case, just the username string. can/might/should(?) be an object, which could mean the request id is/could-be a part of it. actually i kind of like that idea. i also need to keep genericizing of race conditions in mind, objects are harder to compare (default to pointer comparison instead of value comparison... but this can/should be changed))
             break;
             //TODO: this is where new actions go. we might be able to abstract the pending.contains + append + emit'ing between each action... but variable parameter amounts might mess that up (or just 1 helper per action? all auto-generated anyways. idfk. do whatever. make it work first tho ;-))
             case RpcBankServerMessageAction::InvalidAction:
@@ -58,7 +60,8 @@ void ServerAndProtocolKnower::handleMessageReceivedFromRpcClientOverNetwork()
 }
 void ServerAndProtocolKnower::bankAccountCreated(const QString &username)
 {
-    m_PendingCreateBankAccountRequests.removeOne(username); //TODOreq: should this be a list/hash of requests so that i can retrieve it? or should it be just for use in detecting the race condition of one already pending.... OR BOTH????????????
+    m_NetworkClientIdAndPendingCreateBankAccountRequestsHash.re
+    //m_PendingCreateBankAccountRequests.removeOne(username); //TODOreq: should this be a list/hash of requests so that i can retrieve it? or should it be just for use in detecting the race condition of one already pending.... OR BOTH????????????
     //TODO: send the success message across the network
 
     //TODO: re-using would mean we only have the message as an RpcBankServerMessage, not an RpcBankServerMessageAction. it shouldn't matter though....

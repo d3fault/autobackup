@@ -1,0 +1,1 @@
+the way to auto-scale the size of your packets (assuming combined or minimum or maximum or both) is by seeing at which point in the graph for the rate at which packets are dropped starts spiking. just BEFORE that is the capacity you want to aim for. so i mean you can start at some relatively small packet size or maybe even agree on a size before communicating with a server?

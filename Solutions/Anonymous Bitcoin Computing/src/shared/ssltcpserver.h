@@ -16,6 +16,7 @@ public:
     explicit SslTcpServer(QObject *parent, const QString &serverCaFile, const QString &clientCaFile, const QString &serverPrivateEncryptionKeyFile, const QString &serverPublicLocalCertificateFile, const QString &serverPrivateEncryptionKeyPassPhrase);
     virtual QTcpSocket *nextPendingConnection();
     static uint getClientUniqueId(QSslSocket *client);
+    QSslSocket *getSocketByUniqueId(uint uniqueId);
     void initAndStartListening();
 private:
     QQueue<QSslSocket*> m_PendingConnections;

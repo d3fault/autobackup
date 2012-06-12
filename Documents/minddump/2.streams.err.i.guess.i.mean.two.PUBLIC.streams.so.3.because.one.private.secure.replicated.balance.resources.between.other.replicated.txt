@@ -1,0 +1,9 @@
+i definitely need 2 streams
+1 stable-all-recording-replicated-secure
+1 prototype unstable on-the-network-that-i-am-coding-on
+the second one could collapse at any moment due to a typo or bug
+the first should/needs-to stay simple/stable/replicated/offsite-copies/tested
+and it needs to stay online when the network as a whole... the second one... goes down
+i sell that stability
+maybe?
+or i make it ad revenue'd/online-www-http-access?

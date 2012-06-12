@@ -175,6 +175,12 @@ void SslTcpServer::handleConnectedAndEncrypted()
             emit clientConnectedAndEncrypted(clientSerialNumber, secureSocket);
         }
 #endif
+        //this might be used later in connection management, but right now i just want getSocketByUniqueId(uint id);
+        //m_SocketsByUniqueId
+        //lol found out i already had one from commented out connection management attempt
+        m_EncryptedSocketsBySerialNumber.insert(getClientUniqueId(secureSocket), secureSocket);
+        //i wonder if it's  more efficient to just store teh socket. this way at least i ensure only 1 per cert (don't i?)
+
         emit clientConnectedAndEncrypted(secureSocket);
     }
 }
@@ -194,4 +200,8 @@ void SslTcpServer::handleSocketError(QAbstractSocket::SocketError abstractSocket
 uint SslTcpServer::getClientUniqueId(QSslSocket *client)
 {
     return client->peerCertificate().serialNumber().toUInt(); //so i can change this for ip address or something easily if i need to
+}
+QSslSocket *SslTcpServer::getSocketByUniqueId(uint uniqueId)
+{
+    return m_EncryptedSocketsBySerialNumber.value(uniqueId);
 }

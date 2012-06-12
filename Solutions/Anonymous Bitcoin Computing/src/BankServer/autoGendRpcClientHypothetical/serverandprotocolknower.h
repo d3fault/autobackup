@@ -2,13 +2,13 @@
 #define SERVERANDPROTOCOLKNOWER_H
 
 #include <QObject>
-#include <QList>
+#include <QMultiHash>
 #include <QString>
 
 #include "../shared/ssltcpserver.h"
 #include "../RpcBankServer/RpcBankServerNetworkProtocol.h"
 
-//weirdly, this class has the exact opposite interface implementation as the regular rpc implementations. it's auto-generated so it doesn't matter.. it's just funny i guess?. all signals in the interface become slots here, all slots in interface become signals here
+//weirdly, this class has the exact opposite interface implementation as the regular rpc implementations. it's auto-generated so it doesn't matter.. it's just funny i guess?. all signals in the interface become slots here, all slots in interface become signals here. will be fun to write the generator code for that lol
 class ServerAndProtocolKnower : public QObject
 {
     Q_OBJECT
@@ -17,12 +17,13 @@ public:
 private:
     SslTcpServer *m_SslTcpServer;
 
-    QList<QString /* TODO: object generation if there's more than one parameter? */> m_PendingCreateBankAccountRequests; //to the rpc bank impl
+    //QList<QString /* TODO: object generation if there's more than one parameter? */> m_PendingCreateBankAccountRequests; //to the rpc bank impl
+    QMultiHash<uint,QString> m_NetworkClientIdAndPendingCreateBankAccountRequestsHash; //could also just do all pending requests, but we're using a generator and seeing as we're going to be looking through these for dupes it is also efficient to have one per request type
 signals:
     void d(const QString &);
     void createBankAccount(const QString &);
 public slots:
-    void bankAccountCreated(const QString &username); //really, the response (this here slot) doesn't need the username. we just need a magic cookie to identify the requests back up with the responses... and then using the request handle (would this be an ASyncMb* or is this a different subject?) that we connect signals to, we do sender() when the response is received and now have the request... and therefore the string.
+    void bankAccountCreated(CreateBankAccountRequest /*idk if i should do this or not*/); //really, the response (this here slot) doesn't need the username. we just need a magic cookie to identify the requests back up with the responses... and then using the request handle (would this be an ASyncMb* or is this a different subject?) that we connect signals to, we do sender() when the response is received and now have the request... and therefore the string.
     //as far as errors, we could auto-generate an enum that says specifically which parameter failed or something. idfk. the rpc server impl would have to set them... which makes sense
 
     //as far as the appdb -> bank server request holding + identifying with response

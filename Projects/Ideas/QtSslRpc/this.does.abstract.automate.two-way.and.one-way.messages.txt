@@ -1,0 +1,2 @@
+basically what the rpc generator is doing is abstracting 1-way (broadcasts) and 2-way (request/response) messages over an ssl connection
+i think further work should be done to incorporate threads, because there is little to no differences between the two. i have documented this elsewhere i believe, and it's intended integration with designEquals

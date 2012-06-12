@@ -1,0 +1,4 @@
+1 day is arbitrary
+1 bitcoin is arbitrary
+
+let's make it user-customizable but default to some near-power-of-2-maximum that is near 1 day

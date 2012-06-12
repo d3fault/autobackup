@@ -20,7 +20,7 @@ struct RpcBankServerMessage
     double m_Amount;
 
     //only for RpcBankServerMessageRequestResponse
-    //bool m_IsResponse; //why do i have an IsResponse? if the rpc client/appdb CODE _reads_ a RpcBankServerMessageRequestResponse, then it's obviously a response. it _writes_ the request. the inverse is true on the Bank. if it _reads_ then it's a request, and if it _writes_ then it is a response. so why would i put the value in the protocol if we can easily deduce that?
+    //bool m_IsResponse; //why do i have an IsResponse? if the rpc client/appdb CODE _reads_ a RpcBankServerMessageRequestResponse, then it's obviously a response. it _writes_ the request. the inverse is true on the Bank. if it _reads_ then it's a request, and if it _writes_ then it is a response. so why would i put the value in the protocol if we can easily deduce that? TODOreq: make sure your generated code deduces that.
 
     bool m_ErrorOccurred; //it does still make sense to only use ErrorOccurred in the Response, however
     QString m_ErrorString; //only in message if(error-occured). lol premature ejaculation BUT THIS IS SO FUN (so is cumming). oh and also this is basically what protobuf does for you~ hah i am making an Rpc Generator as we speak. coding ABC simultaneously fuck yea
@@ -54,6 +54,7 @@ struct RpcBankServerMessageBroadcast : public RpcBankServerMessage
 //so long as i keep these together and basically the exact same (except for the direction of the stream operator), i can do custom/efficient/minimal messaging. the in-memory message will not be efficient/minimal... only the network traffic :(. oh well network traffic is actually one of the most expensive things~
 inline QDataStream &operator>>(QDataStream &in, RpcBankServerMessage &message)
 {
+#if 0
     //the only benefit from having isResponse is that i can use the request that i read as the response. no copying is ever needed, i only change isResponse to true and set m_ErrorOccurred (which, during request phase, wasn't even streamed... though still allocated by us. tiny memory overhead saves us a message copy. it is ugly to have to set isResponse before using the stream operators TODO)
     //rpc client reads response from network - TODO: set isResponse to true before reading via stream operator (in the caller of this stream operator). since it's auto-generated code, it's not THAT big of a deal
     //rpc server reads request from network - TODO: see above todo about isResponse. same with with other stream operator below (during generation of these, i can really just string replace the "<<" and ">>" operators on a template lol...
@@ -80,11 +81,69 @@ inline QDataStream &operator>>(QDataStream &in, RpcBankServerMessage &message)
 
 
     return in;
+#endif
+    
+    //i copied/pasted this from the opposite operator down below. that is the one that i should modify as it still has it's comments etc. i left the above ifdef'd out because i wasn't entirely sure which to use
+    
+    //rpc server reads serializes request
+    //rpc client reads serializes response
+    
+
+    if(message.m_MessageType != RpcBankServerMessage::InvalidRpcBankServerMessageType)
+    {
+        in >> message.m_MessageType;
+        in >> message.m_MessageAction;
+
+        switch(message.m_MessageType)
+        {
+        case RpcBankServerMessage::RpcBankServerMessageActionType:
+        {
+            switch(message.m_MessageAction)
+            {
+            case RpcBankServerMessageAction::CreateBankAccountAction:
+                in >> message.m_Username;
+            break;
+            }
+
+            if(message.isResponse)
+            {
+                in >> message.m_ErrorOccurred;
+                if(message.m_ErrorOccurred)
+                {
+                    in >> message.m_ErrorString;
+                }
+            }
+        }
+        break;
+        case RpcBankServerMessage::RpcBankServerMessageBroadcastType:
+            switch(message.m_MessageAction)
+            {
+            case RpcBankServerMessageBroadcast::PendingAmountDetectedBroadcastMessage:
+            case RpcBankServerMessageBroadcast::ConfirmedAmountDetectedBroadcastMessage:
+                in >> message.m_Username;
+                in >> message.m_Amount;
+            break;
+            case RpcBankServerMessageBroadcast::InvalidBroadcastMessage:
+            default:
+                break;
+            }
+        break;
+        case RpcBankServerMessage::InvalidRpcBankServerMessageType:
+        default:
+            break;
+        }
+    }
+    else
+    {
+        message.m_ErrorOccurred = true;
+        message.m_ErrorString = "Invalid Bank Server Message Type";
+    }
+    return in;
 }
 inline QDataStream &operator<<(QDataStream &out, RpcBankServerMessage &message)
 {
-    //rpc client writes request to network
-    //rpc server writes response to network
+    //rpc client serializes request
+    //rpc server serializes response
     //TODO: also set isResponse to false for broadcasts i guess... maybe doesn't matter
 
 
@@ -145,7 +204,7 @@ inline QDataStream &operator<<(QDataStream &out, RpcBankServerMessage &message)
         //TODOreq: not sure if this makes sense here. we also don't want this propagating to the GUI
         //it probably does NOT belong here. why would we check the message right after we just streamed it to a QDataStream? it might make sense for the other stream. the extractor. might also make sense to use enums for the error type
         message.m_ErrorOccurred = true;
-        message.m_ErrorString = "Invalid Broadcast Message Type";
+        message.m_ErrorString = "Invalid Bank Server Message Type";
     }
     return out;
 }
