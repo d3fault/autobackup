@@ -1,0 +1,32 @@
+pressing play and watching your shit compile and using it is a sanity checkpoint (for your brain!)
+before you press it, it only works in theory
+the compiler/computer turns theory into actual
+
+it's the most orgasmic feeling (at times)
+the writing of it too
+the whole experience
+
+
+usually, just knowing it compiled is enough reassurance to be relatively sure that the new functionality works
+testing is usually just a confirmation
+
+that's what coding is
+
+you have to KNOW it will work
+or else it won't
+
+
+you must understand, to a moderate level, every piece of functionality you interface with
+
+some software you must know intrinsically/ly-a until you write a mere 4-10 lines using your newly aquired possibly-vast sum of knowledge on the software you are interfacing with
+
+software re-use is vital
+i/we can/should/need-to do more of it
+
+
+
+i want this through a hard-typed service iterator
+once a service is defined, the service it implements (of which the implementation of the service inherits/recognizes/is-aware-of) shows up in the . or -> drop-down menu auto suggestion
+
+
+that should lead to optimal

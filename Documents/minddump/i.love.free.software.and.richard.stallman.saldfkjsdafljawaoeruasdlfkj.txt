@@ -1,0 +1,10 @@
+by doing free software
+you're going to make less money from the software directly (commerial/support licenses still make money)
+but you're going to get more accomplished
+not only that, you're going to allow others to get more accomplished
+is your goal to further mankind or to further yourself exclusively?
+free software allows you to do both at the same time.
+
+
+free software puts you in an environment where if someone else takes your code and modifies it, they have to give you back their modifications if they distribute it
+this is very good because if you're worried about a DIRECT competetor, they're going to have to release all of their enhancements to your product to you under the same license, which means you can just pull in all of their changes. either this or they cannot be a software distribution such as yourself and are therefore not your competition. that's not to say that there aren't use cases where your competitor needn't distribute their executable and therefore modified source. uploading it to their own server and running the executable on the server does not count as  distribution. unless the server/executable distributes itself to the user (this is why Wt has their ajax code served up to the browser under a more permissive license than GPL, because technically that ajax code is part of the executable (Wt) and so distributing it would mean they have to also distribute the rest of their app as well as it's source code. gpl says any coded linked to must also be gpl-compatible, else the code doing the linking iis itself non-gpl-compatible)

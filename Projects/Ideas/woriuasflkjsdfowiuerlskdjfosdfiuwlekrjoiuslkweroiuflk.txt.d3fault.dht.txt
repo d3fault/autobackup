@@ -1,0 +1,1 @@
+all experiences in the app are recorded and you can use a slider to go to any specific moment in time. file writes, and bulk file writes (installs etc), can be detected by the app (if it is an OS?) and combined into a single (but has to be 'confirmed/authenticated') action on the timeline slider. anything you create is
