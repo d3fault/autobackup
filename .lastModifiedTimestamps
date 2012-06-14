@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031965
+Documents/minddump/:1386031970
 Documents/minddump/dreams/:1338978881
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -400,7 +400,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1339677673
+Projects/Ideas/:1339679133
 Projects/Ideas/QtSslRpc/:1339494468
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -442,7 +442,7 @@ Projects/Ideas/StaticChan.4chan.perma.mode.easy.site.to.make.easy.place.to.use.a
 Projects/Ideas/Typedia.like.dinosaur.alphabet.game.but.fed.words.by.wikipedia.lists.txt:1337638855
 Projects/Ideas/Typedia.used.for.arduino.fingers.abc.training.too.txt:1337812366
 Projects/Ideas/a.typical.bitcoin.transaction.chatlog.txt:1328236830
-Projects/Ideas/actually.considering.forking.qt.youve.got.balls.my.friend.fuck.nokia.and.long.live.free.software.wouldnt.be.able.to.without.txt:1339677673
+Projects/Ideas/actually.considering.forking.qt.youve.got.balls.my.friend.fuck.nokia.and.long.live.free.software.wouldnt.be.able.to.without.txt:1339679135
 Projects/Ideas/ad.based.videogame.would.be.good.place.to.use.ad.agency.txt:1330720584
 Projects/Ideas/alphabet.electronic.confirmations.through.arduino.per.letter.txt:1328219880
 Projects/Ideas/anonymity.requests.and.responses.there.is.a.visual.png.that.goes.with.it.txt:1323476151
@@ -928,7 +928,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031965
+Projects/libAvGraphicsItem2/design/:1386031970
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1097,7 +1097,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1339677675
+autobackupScripts/win/.directory:1339679234
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

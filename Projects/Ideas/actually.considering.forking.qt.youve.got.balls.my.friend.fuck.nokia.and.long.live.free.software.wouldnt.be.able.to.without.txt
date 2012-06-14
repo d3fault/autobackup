@@ -53,3 +53,144 @@ but Nokia is killing Qt
 that could arguably be considered immoral
 
 so fuck them.
+
+
+remember to consider the planned integration with designEquals directly into Qt
+you definitely want to attract developers
+you definitely WILL attract developers
+perhaps it is a waste of time to go out of your way to 'steal' Qt userbase?
+
+
+a simple html file index, a forum, a mailing list, a git repo.... actually compiling Qt after renaming it..., then putting it on the index and calling the whole thing 'd3fault'
+
+
+haha, this is so awesome
+look at me.... "scheming"
+
+i could see someone calling me out on this later (thiago?)
+
+"that was smart" , they'd say
+
+fof onw fantacizing are we?
+wow now fantacizing are we?
+lol noob
+you haven't done SHIT.
+but you know you're skilled
+i know you're skilled
+i know i'm skilled
+
+man you're retarded too
+
+
+
+
+idk i'm not sure i am able to handle all of the forking
+yes it would be easy'ish after a while
+but very difficult in the beginning
+perhaps not worth it
+
+d3fault stands by itself, you don't need to fuck with Qt
+besides, they ARE different things
+
+d3fault USES Qt USES C++ USES Assembly USES Binary
+just another logical step up
+but intending to bring design abstraction while still retaining 100% Qt functionality (goal, perhaps unattainable. definitely attainable to a degree)
+
+i think I've changed my mind
+not going to port Qt
+
+HOWEVER
+if i ever do create a fucking C++ Front-End to QtQuick or my own hacky solution using QGraphicsScene (hopefully the api is independent of QGraphicsScene and it can be swapped out for a better impl later just like QtQuick was)
+........and i think i MIGHT
+
+designEquals needs that functionality
+i could just use QML
+i could just use QWidgets
+so i guess designEquals does not _NEED_ that functionality
+
+just that now any designEquals QML GUI depends on v8/vm and is interpretted
+FML
+
+i think i should make 'native' a promise somewhere
+d3fault?
+well yes i do think so
+nt-project.org? if it comes into existence, the n in nt is obvious that yes i would subscribe to that -_- <- pointless
+
+so yes no matter what
+i subscribe to native
+d3fault needs to be native
+d3fault needs a hardware accelerated GUI api
+
+HOWEVER
+designEquals (what i was referring to as d3fault just now) can abstract GUI (can also generate it hypothetically)
+
+basically i want just grids, v and h layouts, text boxes of various sizes (one and multi line), and motherfucking buttons.
+oh and radio boxes, checkboxes, groupers (for radio/check boxes)
+you know, that kind of shit
+
+
+IDEALLY i'd be able to generate Wt code too
+
+but this is a huge dream/stretch
+
+
+that is still possible
+
+
+
+if d3fault is a dht then it could expose a webserver (or communicate through webserver TODOreq this idea isn't half bad it gives you fake 'reason' to use webserver, and also semi-forces user to expose http webserver/domain pointing to it (ip works, and is propagated/referenced by other nodes that do use a domain, such as d3fault.com/net/org so they don't have to anyways lol))
+the idea is that the GUI is the exact fucking same on the desktop GUI and the web browser
+web browser is like thin client
+it depends on a desktop GUI instance
+
+they both present the same interface and allow the same functionality
+video needs to be presented a little differently (maybe not, idfk)
+err what i mean is video needs custom code for both the browser and the desktop
+same with pictures
+though for pictures that shit's fucking easy, ya dig??
+
+my designEquals gui API only lets you use primitives that exist both in the browser and the desktop
+that is potentially limiting
+
+should i say fuck the browser?
+
+i should try to adhere to it until i think of a use case where i can justify saying 'fuck the browser'
+but my previous work will have given me bias to say 'support the browser' and i might pass up on a good idea
+don't.
+
+FUCK THE BROWSER
+broken fucking paradigm
+
+i wouldn't even be considering this if it weren't so incredibly fucking easy to:
+a) abstract a gui
+b) present abstracted gui as impl in both desktop(Qt)/website(Wt) environments
+
+
+they are both backed by Qt/C++, it's just that the Wt code must first forward shit to the Qt/C++ back-end and the webserver they are operating with deals with the dht (a bunch of other webservers?) directly
+aka a 'message over network' instead of 'over a thread' ;-)
+my rpc generator fits in here ;-)
+
+
+
+i like this webserver idea
+
+it's stupid and ballsy and i like it
+
+it adds overhead but it allows you to slip in the old double usage
+turning the dht into a massive webserver cluster
+
+perhaps i, privately, can be the one to give out (can still be cached so long as i 'sign') the hashes of the objects to be delivered? this way nobody but the d3fault servers (me) have to be 'TRUSTED'. everybody 'else' is just a file storage/mirror/processor/shits
+
+
+this experiment WILL FAIL
+it will be fun
+i will cam the entire thing
+and it WILL FAIL (hacks etc)
+
+but before it does
+it will work.
+
+
+inter-webserver communication, at the end of the day, is no different than regular server<-->server communication
+
+except who initiates the conversation if there are no clients (well, there ARE clients (users), but they are being served data out of the dht, which is connections to other webservers. so does that mean at that point i act as a client? can the nodes act as both webserver and webserver client? WHY THE FUCK NOT noob just use curl, shit's open source as fuck and awesome and easy to use FUCK YEA my shit's going to be a giant open source bundle of AWESOME). i just answered my question in that parenthesis fuck thiago saying not to use so many parenthesis. the answer is the curl library acts as a webserver client whenever it wants to initiate a message. signal or request. a response is just a regular web response. what if it takes a while? should i just do web client messages every time? maybe it'll be like AsyncMb... webserver response is not async (data was cached), webserver client curl request is Async... and the webserver's response (it has to respond right? just to say 'i got your request' i'd imagine) tells the person asking whether or not it's Async. fuck yea. i'm so far out in hypothetical land but i know all of this is doable (lol hacks inb4 adrian lamo)
