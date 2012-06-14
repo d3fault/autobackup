@@ -1,0 +1,55 @@
+so basically my intent to fork Qt
+is a publicity stunt
+and or business maneuver?
+
+both, really
+for what you're planning
+
+
+'d3fault' becomes made realtime in an LGPL manner
+
+i really just make it as a user application to Qt
+
+it becomes OS-like
+'framework'
+'dev framework'
+'dev OS'
+(but still user compatible?)
+
+
+i am without a doubt a user app
+but the current QML/QtQuick situation that does genuinely frustrate me gives me the opportunity to:
+a) fork Qt and add a hacky C++/native solution <--- this justifies the fork
+b) under the name of the fork, release/create/build d3fault
+
+
+i can do the design/coding
+but making the code fit Qt's coding style requirements (pretty much every aspect of the Qt Project I would intend to mimic... except gerrit and other proprietary bullshit) should be done by someone else
+the entire website, source for the framework, database backing both the website and the development surrounding the source for the framework (maybe the source can/should go on the database?)
+
+
+
+or i can just make a prototype
+is really what i mean
+i make a prototype
+and then pay some noob to Qt/integrate it
+
+but i won't call it Qt, remember?
+
+d3fault coding standards
+
+or should i call it nt-project ?
+native toolkit
+
+technically it isn't a toolkit
+but nobody would give enough of a fuck to complain about that
+
+i mean like d3fault could be a user app just made out of nt
+
+
+but then again, if i STEAL a large'ish portion of Qt's userbase, i'm speeding up the process of attracting developers
+it's maybe slightly immoral
+but Nokia is killing Qt
+that could arguably be considered immoral
+
+so fuck them.
