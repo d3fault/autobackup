@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031975
+Documents/minddump/:1386031979
 Documents/minddump/dreams/:1338978881
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -19,6 +19,7 @@ Documents/minddump/alksweruuoiasufdkasjfdslkfsuoiweroit.txt:1338993193
 Documents/minddump/all.devices.are.equal.and.should.be.clone.mode.txt:1322863520
 Documents/minddump/alskfjaewofuaslfkjsdfouawerjsadflaspuk.txt:1324474911
 Documents/minddump/asdfkajsdfoiuweralkjfsdfasdfuyaoreiuasflakjsdfpouwer.txt:1334829442
+Documents/minddump/asdfljweoruasdlfweoriusladfkjasfdsahdfkashdfklsfh.txt:1339760912
 Documents/minddump/asdflkjaoriuasodfasflkajskayleeadslfkjasdfoiuwerlaskjfoaiuwerflsj.txt:1335954650
 Documents/minddump/asdflkjasdfouiweoriasfdlkjasdfouiopiuqrwqwrelkjoasduasdflkj.txt:1332493828
 Documents/minddump/asdflkjdsaflasjdfouwearklsafkjhsadfoulkerj.txt:1335804974
@@ -276,6 +277,7 @@ Documents/minddump/tangents.collapse.to.what.i.could.use.title.but.there.isnt.al
 Documents/minddump/target.audience.sliding.0.year.olds.as.i.progress.txt:1339676518
 Documents/minddump/tempted.to.post.on.facefuck.fsdlkjfasoifuwerlkjasdfosduflskjfd.txt:1336169344
 Documents/minddump/the.desire.to.gitsync.grows.correlated.to.number.of.unsyncd.docs.txt:1322065834
+Documents/minddump/the.dht.problem.simlified.aldjfasdlfjweoriualsfdjkaoriulkdsf.txt:1339759548
 Documents/minddump/the.immortality.introcellular.nanomachine.txt:1322605514
 Documents/minddump/the.meaning.of.life.adlsfjasdfuwaoerusdlfkjasd.txt:1331249924
 Documents/minddump/then.than.sldkfjsadlkjfoweuralkjfsdfjsdlkfssssdf.txt:1337110913
@@ -401,7 +403,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1339679133
+Projects/Ideas/:1339759594
 Projects/Ideas/QtSslRpc/:1339494468
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -535,6 +537,7 @@ Projects/Ideas/one.click.in.the.market.to.download.compile.and.install.should.be
 Projects/Ideas/online.surrogate.handling.packages.initiated.by.offline.private.messages.asdlfjsaldfjsadlk.txt:1338908149
 Projects/Ideas/p2p.taxiab.service.idk.what.i.mean.by.unlicensed.in.this.txt:1339059048
 Projects/Ideas/paxos.modifications.customizations.aslfjasdfouwelrkjsadfoulskdf.txt:1338795519
+Projects/Ideas/pay.them.for.their.computes.with.network.computes.which.they.can.just.sell.anyways.if.they.want.txt:1339759594
 Projects/Ideas/perUserInstalledAppList.is.stored.on.dht.and.there.is.autoinstall.and.autoconf.for.each.these.are.differnt.from.source.apps.i.guess.which.should.still.be.detachable.btw.txt:1338793556
 Projects/Ideas/portrait.and.landscape.modes.on.both.desktop.and.mobile.by.measuring.desktop.resolution.txt:1329806118
 Projects/Ideas/protobuf.rpc.MY.OWN.via.qt.qdatastream.sslsocket-server.txt:1335959064
@@ -929,7 +932,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031975
+Projects/libAvGraphicsItem2/design/:1386031979
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1098,7 +1101,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1339743094
+autobackupScripts/win/.directory:1339761164
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

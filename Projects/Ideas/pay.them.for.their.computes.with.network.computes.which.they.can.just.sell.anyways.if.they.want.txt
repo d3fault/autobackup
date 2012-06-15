@@ -1,0 +1,10 @@
+a 'value' of the dht (d3fault)
+could be running expensive distributed operations on the network
+you have to earn them by donating cpu/bandwidth
+and you can sell them for cash
+
+the only example i can think of: facial recognition
+
+any picture as input, rectangle select face
+find dat person in all images
+try to find name too (if personImage/name db exists i guess idfk)

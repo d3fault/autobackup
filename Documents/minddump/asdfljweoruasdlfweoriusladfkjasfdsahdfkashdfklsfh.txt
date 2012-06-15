@@ -1,0 +1,28 @@
+idfk fml
+
+
+teh chunk server that processes the atomic write
+and then he notifies a notifier who notifies the clients who notify the users
+
+
+
+or no
+i said that wrong
+chunk server writes, then notifies a notifier who notifies THE notifier(pusher/updater, cacher, subscriber) who notifies/pushes(or invalidates?) clients who notify the users
+the reason there are 2 notifiers
+i dunno
+maybe not~
+but i feel like it MIGHT reduce bottlenecks
+
+i just forgot the thought that backed up that claim
+so now it is baseless
+though not necessarily wrong
+
+need2think moar
+
+
+
+
+
+i'm basically making a skip-the-cache-levels writer
+it needs to be to be atomic

@@ -1,0 +1,111 @@
+had an interesting thought while out on a night walk
+
+i was thinking about all of the dht solutions
+and i just want it fucking solved
+it should be solved by using a library
+
+this is what i was thinking
+and then i started thinking about all the clusterfucks (best usage of word ever) of implementations
+
+
+but that wasn't the thought either (though 'clusterfuck' came after it)
+
+the thought is basically a simplification of the dht problem as a whole
+and why it is difficult
+i think knowing/understanding it might also help me find a simple solution, even if i have to make it~
+
+
+anyways
+i keep typing
+but it isn't coming out
+...
+........
+...........
+............
+
+
+
+the goal of a dht is:
+high throughput reads
+and high throughput atomic writes
+
+
+simple as that
+
+but they are both hugely different problems
+high throughput reads requires caching strategies be implemented
+and high throughput atomic writes requires consistent distribution
+
+this was my eureka moment (at least i hope)
+
+AHAH!
+i thought
+walking around the neighborhoods 2:30am alone with my dog <3 lexi
+
+
+'distribution' is the opposite of 'caching'
+
+
+a cache is like a collective
+sure you can have multiple caches distributed
+but a single cache is a collective
+
+and a distribution... what high throughput atomic writing needs... well... isn't
+
+so to solve the writing you have to ruin the reading
+and to solve the reading you have to ruin the writing
+
+there is no optimal solution
+and there are so many solutions
+for many different use cases
+
+because it is (perhaps) an impossible problem to solve [completely]
+
+
+i still wonder/hope if i can solve it generically enough for the majority of my use cases
+
+
+if(isSet(valueIWantToPurchase))
+{
+  purchase(valueIWantToPurchase);
+  //atomic write/purchase success
+}
+
+^is a fail
+because it reads from the cache and then writes atomically
+
+it'd need to be:
+if(checkIfNotSetAndThenPurchaseIfItIsnt(valueIwantToPurchase))
+{
+  //atomic write/purhase success
+}
+
+
+the pre-condition checking cannot use the cache
+so care needs to be taken when coding
+the coder (just me for now) needs to be aware of that~
+
+
+
+
+
+
+
+
+
+
+
+perhaps couchbase is easier
+fml idk my bff jill tbh
+
+
+i'm fucking raging
+at ZooKeeper
+
+ZooKeeper is basically chubby
+google's bullshit
+fuck em
+meh
+
+isn't couchbase just all i want with everything already done?
+how fo atomic write?
