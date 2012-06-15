@@ -1,0 +1,437 @@
+and now to address the elephant in the room
+in my brain
+
+dht, more difficult
+vs
+already designed still-scalable but has definite limit to scalability
+
+both need to be created
+there might exist a dht solution that can be re-used, but none that i've been able to find that have atomic write, which is definitely needed in banking applications
+
+i gain control and knowledge by creating my own solution
+but i waste time
+
+it will be easier to add features, fix bugs, etc
+on my own codebase
+rather than hadoop's
+
+especially given that i hate java
+
+
+
+so i mean
+
+my gfs
+
+or
+
+what i took from finally understanding gfs
+
+paxos master (ima do distributed like they are now doing)
+chunkserver
+
+master re-arranges chunks to different chunkservers to balance overall network (which is a LAN)
+each "client" is a Wt front-end (with possibly a thick Qt appdb layer, maybe separated by thread) with a dedicated internet connection
+
+then i just use another beefy server to roundrobin connections to all the various clients
+i could have specialized clients
+but binaries don't really cause a slowdown or anything so i might as well have fully capable clients
+at least for the "site", you know?
+
+ABC is what i'm focusing on here
+
+
+so i mean
+
+
+each chunkserver holds multiple chunks
+each chunk defines a range in a 64-bit namespace
+
+and a specific 64-bit hash, the collection of variables that make up the data point, ex: /app/abc/listedSites/123/purchasedSlots/456 <-- points to a specific slot that only 1 person can purchase
+
+
+it can be possible and i will probably find a use case for it in the future, to overwrite previous values
+but by default, the 'append-record' (which i still kinda just see as 'atomic write, guaranteeing that nobody already took the spot') will be used
+there is no need to overwrite [yet]
+
+
+overwriting is also a much slower process and i believe would involve the master to notify the clients that the chunk mappings that are being overwritten are temporarily unavailable
+
+
+
+
+
+
+
+
+
+ANYWAYS
+that's not so much of a problem
+even if i am misinterpretting how they use gfs
+since they don't give a specific example...
+...fuck it
+my shit will work
+
+
+
+where it becomes a problem'ish is listing all the slots for a given site
+/app/abc/listedSites/123/purchasedSlots/
+
+AND/OR
+listing like the 'front page' / 'top 10-50' / etc (this is mainly only an issue for the first page(s), as the middle of the list will be very infrequently accessed
+
+ex: /app/abc/listedSites/
+^the ordering of this can/should be customizable, but my brain can't even begin to contemplate how i'd go about doing that [yet] TODOreq: contemplate it.
+
+for now i'm interested purely in the hotspot that such "lists" create
+
+given my usage of gfs, 1 single chunk server... 1 single index into a chunk.... will be responsible for serving that up
+to possibly every client
+
+is that such a big deal?
+
+now that i put it THAT way
+
+it might not be
+
+hmm
+
+
+man i was hypothesizing about a caching layer that the paxos master is aware of and that the chunkserver's would update
+
+
+TODOreq: pushing/updates consideration
+
+
+
+so i mean
+elaborate
+because i'm still not sold
+
+
+ok i'm definitely not sold
+forget what i just said
+
+the clients do not use caching [of data. only of chunk locations etc]
+therefore every user will cause the client to access the hotspot
+
+
+ignore that TODOreq pushing/updates consideration just above
+
+because my next thing i'm trying to spit out does take it into consideration
+
+
+it's hard to conceptualize really
+
+but i mean it's a fucking caching layer built into the gfs cluster
+
+perhaps different nodes than the ones responsible for the data.... perhaps the same....
+...perhaps the same but scrambled/overlayed on top of the chunkservers
+(with reference to directly above, 'clients' will not be chunk servers. i will not scramble/overlay them, even though i could (ok i MIGHT early on... but will stop later after funds allow))
+
+
+that's besides the point
+
+what is relevant
+
+is that each client keeps a list of users
+and what page they are looking at
+i mean that's pretty obvious considering each client is a Wt front end
+
+BUT
+the wt front ends have to subscribe/unsubscribe to the caching layer
+subscribe = gimmeh updates biatch
+unsubscribe = no more users viewing dat shit, idgaf no mo
+
+it is efficient because 50 users could be on 1 wt client and that 1 wt client only needs to add 1 subscription to the caching servers
+a user joins dem 50 (who are all looking at the same page or whatever), now 51.. we don't need to touch the caching layer
+only the wt client
+
+we could even do a lazy unsubscribe that waits a couple seconds before unsubscribing
+not that we want pushes
+BUT
+if it really is a hotspot
+say
+if it goes from 0 -> 1 -> 0 -> 1 (users viewing a page on a specific client) FREQUENTLY,
+then it's wise to just assume that someone else will be subscribing relatively soon
+and it's hardly a loss to unsubscribe a few seconds later... big whoop we got an update we didn't need -_-. maybe unsubscribe on first unused push? ultra lazy yeeee. doesn't matter. well it does... but yea uhm idfk
+
+
+so the 3 chunkservers that hold the copies (1 primary, 2 replicas) have to be written first
+the primary... the one 'written to', tells the cache that it has updated some shit
+
+man what the fuck am i getting at
+
+if the 64-bit hash is new (as per record-append)
+then how would the cache be able to let people subscribe to it
+maybe it calculates (for the clients) the 'next', assuming linear numeral increments
+
+i don't know what's going on anymore
+do i read from the cache then?
+doesn't that make it NOT atomic?
+
+an atomic write, followed by a cached read
+will probably result in 'no data' or whatever being returned -_-
+whereas if i did a read on the same server doing the atomic write (a la gfs style), the read would wait until the write finished (since they are both accessing same data)
+
+
+god damnit i hate this scalability problem
+it's holding me back more than it should
+i should just make it functional
+CEILING?????????????????????????????????????????????????????????????????????????????????????????????????????????
+sell before hitting????????????????????????????????????????????????????????????????????????????????????????
+1 mil (a low as FUCK price) would be enough... imo
+frugal usage could lead to creation of many replacement companies (time consuming, but less considering i just pay noobs at this point)
+blowing it could last a year~
+
+
+dht is a hugely complex problem
+one nobody has REALLY solved
+business has solved it in business settings
+
+but d3fault-like hasn't
+you intend to
+you hope to
+perhaps it is unsolvable?
+in which case, you're going to make a lot of experimental prototype data layers that will function and then fail
+it will be fun
+
+the business dht (HMMMMMMMMMMMM, so i need it even for d3fault/launching??????) will be stable and support all the failed attemps (ie, their source code, the documented creation of, etc. there will be data loss when they fail, but it won't be my data as i will keep offline copies and online (business dht) copies)
+
+
+my head hurts
+i want to cry
+i want to punch
+i want to dance
+i want to fucking launch
+
+this is so stupid
+an ad agency~
+
+SO
+STUPID
+what the fuck am i doing??????
+
+i can't depend on google
+i can't depend on anyone
+i just want a dependable (aka self owned) bitcoin ad agency
+is that so much to ask for?
+FUCK
+
+and now i have to MAKE a fucking dht
+are you kidding me?
+are you retarded?
+is AWS the way to go?
+
+didn't you say 'dependable' ???
+fucking niggers will just pull the plug as per political pressure
+amazon's a bitch
+they get assfucked left and right
+but they love it
+because they make billions~
+
+god damnit i hate being so smart
+suicide?
+
+can be attained in ~30 seconds
+nothingness can be attained in ~30 seconds
+is that what you want?
+
+no
+and you know i can't either
+i can't allow myself
+OR
+an instance of me always lives on
+
+i can't tell which
+because i am never IN the branch that kills himself
+it is impossible to be
+by definition
+
+
+fuck
+see?
+this dht makes me want to blow my fucking brains out
+perhaps you need to re-think your approach
+
+WHAT IS THERE SOME OTHER WAY TO STORE DISTRIBUTED DATA THAT I'M NOT AWARE OF?
+fuck.
+god fucking damnit.
+
+what the fuck am i doing
+no money
+no friends
+no drugs
+no job
+no hobbies (well..)
+
+you're such a bitch
+kill yourself
+
+i feel like d3fault-dht will be fun to devise
+it will be experimental with modular datastores being replaced
+the functionality will probably mostly stay the same (????)
+i mean like the user apps that use it as a datastore
+should be plugable
+might not be able to be
+but whatever
+port etc (if stable)
+
+
+but what i'm getting at is
+THIS dht, the business dht, is NOT fun
+it is stressful and i am trying to code it asap so i can move along with the whole 'creating a business' problem
+there's still so much to do even after this
+it sickens me
+and here i am
+deep in dht logic/code
+stressed
+broke
+alone
+sober
+bored
+silent
+
+
+i want to cry
+no tears will come out, as usual
+
+there is no easy solution to this
+you either say fuck it and make it fail to scale
+or you grit your teeth and forge a path
+
+take your pick
+
+
+
+
+
+
+
+
+
+
+HMMMMMM
+i should add that even though after the cached read (just after atomic write) might return 'no data',
+it is a subscribe event.. so as soon as the atomic write finishes, it will update the cache which will update the client which will update the user
+
+there's still the problem of predictability in the cache
+a client will subscribe to all updates to /app/abc/listedSites/123/purhcasedSlots/
+say if they're viewing the details for a listed site, which has a list of all the purchased slots
+they tell the cache that they're interested in all updates to that
+err i mean they simultaneously perform a read of all existing slots (hotspot even within cache?), and subscribe to notifications/updates of future slots
+
+so i mean wtf?
+how do i does dis?
+how does i ls that dir and get file count?
+
+ESPECIALLY given my usage of gfs
+which perhaps is incorrect
+maybe the dirs are the only thing factored into the 64-bit hash
+so that files will be in the same chunk
+and we can then ls them
+
+i really don't know
+yes it's still atomic guaranteed
+but i see it as a hotspot issue now
+but maybe it's to the point where it doesn't matter?
+
+so does that mean a chunk (folder) holds files (entries) and also holds references to other chunks (folders)?
+/app/abc/listedSites/123/
+viewing that 'page' would show us the associated NAME (domain name?) with 123, perhaps a minimum slot price, categories, AND the purchasedSlots/
+where name,min, and cat are files in the chunk and purchasedSlots/ would be a chunk reference/folder
+
+i still don't know if this is how gfs works
+but i think it's slightly more accurate~
+
+hotspots
+
+HOTSPOTS
+the root of all evil
+fuck my life
+cities are hotspots btw
+
+does it create hotspots??
+
+/app/abc/listedSites/
+gives me every file, aka every listed site
+as a reference?
+123 is a reference right?
+
+and there's also the > 64mb of listedSites issue TODOreq lmfao... TODOreq i can't just keep putting TODOreq everywhere when my design is changing by teh second and i have no idea what the fuck i'm doing
+but that's just a 
+
+i don't know
+in the gfs whitepaper they talked about an offset into the file that they send to the master to get appropriate chunk (64 mb)
+how is the client supposed to already know that???????????????????????????????????????????????
+what the fuck am i missing?
+
+
+also i don't want EVERY listed site
+i'd just want like 10 or whatever
+1-10 for first page, 11-20, etc
+
+maybe fixed entry sizes and fixed chunk sizes allows you to calculate offset into chunk?
+are they still written out of order at beginning of file?
+or does the file need to be inflated and the data written where its offset says?
+there could perhaps be abstraction to achieve both
+
+my head hurts
+i'm going to go kill myself now
+JK LOL
+or not
+i did
+in some other universe
+fml
+i'm so stupid
+i'm in this one
+i can't see the others
+whether they exist or not is irrelevant
+i'm in this one
+until i die
+until i experience death
+which i will
+unless i become immortal
+
+which, if you want to do
+you need to code
+you need to get rich so you can fund your projects which will hopefully help increase intelligence so that hopefully someone will discover immortality
+that's your only sliver of hope
+
+and here you are
+right at this very moment in time
+at the very fucking beginning of that plan
+a good plan
+but yet to be implemented
+a plan without an implementation is worthless
+so implement it
+stop crying about dht being 'hard'
+didn't you once say 'if you aren't willing to do hard work, then don't do anything' or something?
+
+this is to be expected
+you have until saturday before your parents get back
+not that you can't work on it afterwards
+but these days alone should be used wisely
+hence this 415 line doc
+
+TRYING
+really am
+nobody would doubt that
+actually everybody would
+except those that have seen this computer
+aka, just me
+
+fuck man
+i'm so ronery
+bawwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+;-P
+harden the fuck up.
+
+it's just...
+... i know i'm solving a stupid problem
+that has been solved before
+so what the fuck am i doing?
+
+
+looking into 'hadoop atomic write' (just googled it) now
