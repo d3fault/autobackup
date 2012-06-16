@@ -1,0 +1,52 @@
+notify a notifier figured out
+
+i mean basically something like splitting the 'notifying' job
+
+one master notifier and 1 to many slave notifiers
+or perhaps master can be the 1 in the case of 1
+
+but 2 doesn't make sense, unless they split the load evenly
+BUT THEN DOES THE CHUNKSERVER UPDATE BOTH OF THEM??? exactly stfu
+
+i mean i guess the master notifier can say "i'll do this half. hey slave bitch, you do this half"
+or maybe the slave should already know who to push and shit too
+
+but yea i think after we get past that initial point
+
+
+oh i don't know
+
+
+
+but i do know this
+
+
+
+
+IF I CODE MY OWN, I CAN USE QDATASTREAM >> AND <<
+rofl
+is that worth coding a fucking dht from scratch?
+
+business broski
+priorities
+prioritize!
+
+couchbase seems aight
+
+honestly, the only 2 remaining questions i have with couchbase (note: as of this doc, ALL my questions are answered with custom gfs-like/couchbase-like) are:
+'tap' ing into a server, which i guess is like getting updates/notifies? i've read about it but yet to see concrete examples
+and hotspots n shit
+
+i don't know they don't have hotspot balancing
+but a search for 'couchbase key hotspot' and 'couchbase key bottleneck' returned nothing of relevance
+
+perhaps a forum post for the second one
+
+and just GO LOOK HARDER FOR DOC FOR TAPPING
+
+
+
+i kinda sorta wanna code a fukken dht
+it sounds fun
+
+AND, it will let me use my Rpc Generator for some cool shit pretty much instantly~ fuck yea (note i am paused with that, not stuck. considering message re-use optimizations but meh shit's mad boring/easy compared to dht ('boring' you say? so you like the challenge? if it isn't a challenge you drop it and resume it later? maybe that's why you dropped video right after you perfected the design ROFL. didn't impl it tho fml wish i woulda o well always later and i still got dem designs ;-)))

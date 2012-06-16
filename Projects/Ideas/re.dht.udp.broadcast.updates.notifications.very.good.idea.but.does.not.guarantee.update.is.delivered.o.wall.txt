@@ -1,0 +1,18 @@
+lan/cluster UDP multicast/broadcast could be done by chunk server for efficient update/notify
+
+note: the request that triggered the write will probably get back afterwards, even if we send it first
+the client needs to be able to see the udp multicast and say "yea, i requested that. my response must be coming soon" and know to not do shit with it... as far as validating the request. it can/should maybe actually use the push/update/notify? i only say that because every other client that did NOT trigger the request sure as shit isn't going to hesitate
+
+the client that does the request can maybe use either response or udp multicast as it's 'ok now tell the user' portion (even though we should still wait for the response just to be sure everything went smooth)
+
+oh and the notify would need to also contain a tag either saying that client requested it, or identifying the specific request
+race conditions might mean we get a notify/update for the value we have requested before we get a response... but that update/notify might correlate with another client's request as per the definition of a race condition~
+
+
+
+
+oh and i think this would be assuming that there's no 'caching' layer in the gfs/dht thingo
+no need for it
+it's a work around for it
+
+and a clever one that just came out of nowhere too
