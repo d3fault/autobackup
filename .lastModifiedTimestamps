@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031989
+Documents/minddump/:1386031994
 Documents/minddump/dreams/:1338978881
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -140,6 +140,7 @@ Documents/minddump/i.am.a.leader.daslfjasdofuwerkalsdlkfjasofiusdflkasjfasouiwea
 Documents/minddump/i.am.gay.for.kaylee.lol.txt:1320773261
 Documents/minddump/i.can.pick.my.own.missile.silo.slut.asdfljasdlfjasdofausowaupua.txt:1326546284
 Documents/minddump/i.forget.the.rest.and.started.typing.this.before.the.previous.txt:1338003289
+Documents/minddump/i.genuinely.love.to.code.and.that.is.my.advantage.over.most.everyone.else.txt:1339821829
 Documents/minddump/i.guess.i.do.want.to.remain.unknown.being.popular.would.suck.fasldjfwoaurslafjsdaflkj.txt:1337293738
 Documents/minddump/i.leik.wordrap.most.dont.txt:1339487903
 Documents/minddump/i.love.free.software.and.richard.stallman.saldfkjsdafljawaoeruasdlfkj.txt:1339490037
@@ -215,6 +216,7 @@ Documents/minddump/my.most.pure.thoughts.ever.i.think.i.know.what.to.do.from.her
 Documents/minddump/my.say.of.what.time.it.is.is.what.time.it.is.txt:1322863302
 Documents/minddump/no.way.ima.be.poor.asldfjaslfdjasldfjowurldfn.txt:1337987476
 Documents/minddump/numerical.idea.i.want.to.be.number.3.but.not.a.must.nor.is.even.having.the.numerical.ids.txt:1333103242
+Documents/minddump/obsession.and.love.are.ultimately.the.same.thing.but.one.is.seen.as.being.bad.can.you.guess.whihc.loljk.txt:1339821951
 Documents/minddump/offline.online.maintained.24.7.i.want.both.i.will.it.txt:1337914565
 Documents/minddump/oiurqoweirqweklajsdfvckjfasdlfkweorusaflk.txt:1338993116
 Documents/minddump/oiwurlsakjfwoeriuafdkshadfkhlsadfweoriu.txt:1339229126
@@ -404,7 +406,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1339820500
+Projects/Ideas/:1339823683
 Projects/Ideas/QtSslRpc/:1339494468
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -463,6 +465,7 @@ Projects/Ideas/bitcoin.irl.transfer.security.phone.app.thingy.txt:1326662820
 Projects/Ideas/black.screen.white.text.to.save.batteries.and.you.know.what.kindle.screen.might.be.worth.looking.at.txt:1339058821
 Projects/Ideas/block.generation.plus.flattr.but.we.cant.have.a.21.mil.cap.and.scalability.is.a.huge.issue.txt:1334609777
 Projects/Ideas/bool.update.equals.true.d3fault.txt:1325049002
+Projects/Ideas/boostrap.the.planet.instead.of.hack.the.planet.ya.know.asdlkfjaweoriuasdlfkjsfoiu.sameshit.txt:1339823683
 Projects/Ideas/broadcasting.live.i.dont.even.have.to.do.anything.tbh.txt:1328137796
 Projects/Ideas/build.base.fingers.and.music.code.and.others.will.contribute.additions.for.free.and.improve.it.fuck.yea.open.source.txt:1338635937
 Projects/Ideas/cached.package.installer.want.to.implement.using.yum.aslfdjasodfijlksdjf.txt:1338004502
@@ -572,6 +575,7 @@ Projects/Ideas/time.lapse.workout.show.myself.GROW.lawl.txt.oh.and.it.should.be.
 Projects/Ideas/trusted.USER.vs.trusted.SERVER.a.user.can.have.infinite.servers.txt:1338016501
 Projects/Ideas/trusted.servers.use.predetermined.randomly.selected.nodes.for.connection.that.shifts.every.10.sec.or.so.txt:1337826930
 Projects/Ideas/udp.broadcast.to.get.webcam.video.feed.of.myself.into.other.applications.and.their.data.stacks.so.nothing.is.ever.lost.ya.know.txt:1339229433
+Projects/Ideas/udp.broadcast.within.local.private.cluster.dht.does.not.scale.for.shit.so.dont.use.that.idea.dslafkjsadflwerosflksdafljk.txt:1339821290
 Projects/Ideas/unixtime.and.data.is.all.i.need.for.a.timeline.node.txt:1334312295
 Projects/Ideas/use.TX.line.fromarduino.mega.to.communicate.securely.upload.only.to.another.arduino.and.or.pi.txt:1330937956
 Projects/Ideas/vibrations.are.confirmations.that.your.input.has.been.recognized.txt:1328317236
@@ -936,7 +940,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031989
+Projects/libAvGraphicsItem2/design/:1386031994
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1105,7 +1109,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1339820559
+autobackupScripts/win/.directory:1339823704
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

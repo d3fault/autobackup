@@ -1,0 +1,50 @@
+well shit
+
+udp broadcast is looking sexier by the minute
+or sounding
+or thinking
+
+the more i think about it.
+
+
+clients just keep track of what shit their users want
+AND THAT'S IT
+
+
+they read every (GAAAAAAAAAAAAAAAASP???????) update/notify and see if any of their users want it
+if they don't, disregard/dgaf
+
+
+
+see that gasp?
+that might kill this entire idea
+
+
+every update to everybody?
+ok, calm down
+it's not as bad as it sounds
+remember that udp broadcast by definition means that that's really only 1 network request (though, it is sent to every client [that's listening to udp broadcast. we don't set chunkservers etc to])
+
+network-wise, efficient/effective as shit
+so that calms me down
+
+
+but now i'm considering CPU
+
+would it just be a QHash lookup, with the key-to-watch-for as the first one, and a list of users as the second????
+that should be somewhat fast, yes. the udp broadcast (which should probably have a light verification algo on it? (TODOoptimization: perhaps checksum it after matching the hash? chances are high we don't want it so no point in checksumming it before))
+
+
+i'm just worried that 
+i mean it makes sense that
+eventually
+
+yea
+no
+
+fuck this idea
+
+
+
+small dht: great go for it decent optimization. overhead is processing the key for every update/notify (aka 'request/response'. each one triggers an update)
+large dht: no terrible idea the whole point of a dht is so i don't have to see their messages and shit i mean really think about a 1k cluster and then think of every 1 of those in the 1k processing a key for every request that every node makes? fucking shittiest idea ever
