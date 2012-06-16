@@ -1,0 +1,61 @@
+pretty fucking sure
+and i mean like 99% sure
+i'm going to use couchbase
+just watched their I-III developer videos on Vimeo
+i'm sold
+CAS solves atomicity good enough
+and Views are a worthwhile optimization to make me not want to put a serialized Qt object in as the value
+sort of damnit in that respect
+BUT json sounds easy anyways FUCK IT
+never used it, seen it plenty, looks like xml successor
+fits certain use cases.
+but wastes space for storing 'keys' as strings :(
+
+
+
+i was really looking forward to using QDataStream and overriding stream operators in QObject classes
+i've never done it
+but all my 'protocol' usage has made me finally realize that that's how fucking easy it really is
+
+to persist a QObject, that's all you do.
+your properties/state just have to composed of QDataStream serializable objects, or custom QObjects that also implement the QDataStream stream operators
+
+so easy
+then you literally just write that to a fucking file (or the 'value' in couchbase)
+
+
+just that the 'map' / View shit in couchbase needs json if you want to, you know, DO SHIT with the data
+
+
+i really with i had a fucking Qt couchbase
+that'd be sick
+
+errr
+the map/View code needs to be javascript
+you can't pass a binary unless every node is same OS
+sure you could theoretically compile on the fly but ROFL no.
+
+but i do love that the QDataStream'd value would work the same on every platform
+shit's so much better than strings/json/xml/etc :(
+
+
+out << QDateTime::Now();
+
+
+i don't even have to give a fuck how it's stored.
+
+
+to retrieve:
+QDateTime storedTime;
+in >> storedTime;
+
+
+note: i might have the in/out and/or stream operators backwards. who cares~
+
+
+
+but yea
+json + couchbase it is
+
+it supposedly compiles on FreeBSD too
+but at this point, i will compromise with linux (binaries wooooooo). FUCK. IT.

@@ -1,0 +1,49 @@
+random ish idea
+
+
+so i talk about abstracting messages over threads and networks
+this is a good idea overall
+but i did just think of a potential optimization (probably only for certain use cases)
+
+
+you measure timings
+for
+1) how long it takes for a message to get from a to b
+2) how long it takes b to process a message
+
+using these two numbers you can calculate (somehow?) if you should just send the messages right away (low latency applications would skip on this entire idea, which is why i said 'probably only for certain use cases') or if it would be a worthwhile optimization to bulk them into a single network message. it would probably only ever be useful over network but i can't be certain of that. might be good in rare thread uses
+
+
+i don't think any of my projects currently working on could utilize this optimization
+BUT
+it's re-usable code, could possibly even be enabled/disabled via checkbox during Rpc Generation
+
+
+[ ] Group Messages Together If We Detect It Is An Optimization (this is Recommended to be disabled, as it introduces overhead and very rarely brings benefits)
+
+
+
+
+i can think of cross-thread situations where this [transparency!!!! the best part of it all] might be helpful/useful
+when emitting lots of small messages from one thread to another
+if it isn't a huge latency issue of course
+
+come to think of it
+i can think of how to implement it with network messages
+but since i rely on Qt's Signals/Slots for cross-thread
+
+how do i bulk send over 5 'messages' in 1?
+
+
+user sees:
+realSignal -> realSlot
+
+but behind the scenes (and only used if detection says to):
+realSignalCatcherSlot <- a slot on same thread as realSignal, so called synchronously. just queues the message. also we'd have to disconnect the realSignal and realSlot before doing this
+and
+realSlotBulk <- we could QMetaObject::invoke(Qt::Queued) it over so we don't need a connect() and possibly disconnect() later... but idfk doesn't really matter. you get the idea. oh and that bulk slot would just call the realSlot (it also might be in charge of measuring message processing length? but so far i was assuming we already 'detected' to use it. i would need to come up with a design for measuring/detecting as well as using. they could share signals/slots if they want it doesn't matter)
+
+
+it really only works easily/transparently/togglingly if used with Rpc Generator
+becaus otherwise we'd need to detect a 'connect' in the code and do all kinds of shit with it
+a lot easier if we're the ones in charge of 'connect' ing the signal to the slot (and just don't haha, instead doing custom logic with it (whether in measure state or bulkDispatch state))

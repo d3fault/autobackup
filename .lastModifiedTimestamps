@@ -1,5 +1,5 @@
 Documents/:1320774775
-Documents/minddump/:1386031979
+Documents/minddump/:1386031984
 Documents/minddump/dreams/:1338978881
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
@@ -56,6 +56,7 @@ Documents/minddump/cube.grid.plox.txt:1323509054
 Documents/minddump/d3fault.copy.on.write.nothing.new.here.i.don.thtink.fuck.iasd.asdlfjaslfkj.txt:1337639246
 Documents/minddump/dasfljsdofiuareouasklfjsadlfjsaofujasdlkfjas.txt:1331350458
 Documents/minddump/data.flossing.visulizing.data.flow.through.an.app.and.network.for.fun.alsfjsadlfj.txt:1338978628
+Documents/minddump/decided.couchbase.for.business.endeavors.this.very.moment.aslfjasdlfkajserwyu.txt:1339806130
 Documents/minddump/deep.conversation.while.knowing.i.am.not.being.spied.on.waking.life.txt:1335344777
 Documents/minddump/dfalkjsdfaoufasljwerousflsjdfsodufsljerwoul.txt:1332366483
 Documents/minddump/dfasdfjawoerukfjghasdfhdsafou.txt:1323504983
@@ -403,7 +404,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1339759594
+Projects/Ideas/:1339805569
 Projects/Ideas/QtSslRpc/:1339494468
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
@@ -438,6 +439,7 @@ Projects/Ideas/Auto.Transcrption.auto.selling.of.segments.and.even.have.coders.i
 Projects/Ideas/First.AdCaptcha.Usage.LoL.Basically.Full.Fledged.Warez.Site.But.Legal.ish.txt:1328753016
 Projects/Ideas/Google.FS.Solved.sadlfjksadfjwoeruasdfjk.i.think.txt:1339238990
 Projects/Ideas/Google.FS.simple.thin.accept.layer.which.guarantees.a.response.txt:1339239022
+Projects/Ideas/IPC.Group.Message.Detector.in.Rpc.Generator.longshot.optimization.idea.but.clever.ish.imo.too.txt:1339805569
 Projects/Ideas/Mobile.PC.Phone.Right.In.Front.of.my.BRAIN.so.i.look.a.little.up.the.phone.is.just.the.monitor.and.untrusted.uploader.txt:1325708965
 Projects/Ideas/Mobile.PC.dangling.in.front.of.brain.is.monitor.only.txt:1325714415
 Projects/Ideas/Quick.Dinner.Sex.Hookup.rofl.alfjdsflajsdlk.txt:1328052721
@@ -932,7 +934,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386031979
+Projects/libAvGraphicsItem2/design/:1386031984
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1101,7 +1103,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1339761164
+autobackupScripts/win/.directory:1339806297
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
