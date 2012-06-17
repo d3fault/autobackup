@@ -1,0 +1,13 @@
+d3fault
+
+even though i am running in a kind of debug in that i am logging execution
+i do it so that i can replay it
+
+this means that i am NOT running in debug mode
+it is a special "recording" mode that runs irrespective of debug mode and is on by default in both debug and release modes. maybe it should be a #define? that would make people trust it more. it should be a #d3finen.
+lol tyop oi thnk
+
+
+
+omfg
+as i am coding IN the app, i can do a #d3fine which results in an ACTUAL #define in the source code for yourself. so developers will see it before they compile and get to choose whether or not they want the functionality. there also should be/needs-to-be manual build instructions for the entire app, including a script to do it for you. the script is the manual. comments etc. i am excellent with comments. maybe i should make clear, defined, simple, and understandable comments a requirement for ever non-obvious line. sort of how you filter out and/the/of/or/etc (not actually the word etc or maybe yes depends on preference, it can even be a special expander (you click on it) that gives you like 5 more based on like google patterns or whatever)

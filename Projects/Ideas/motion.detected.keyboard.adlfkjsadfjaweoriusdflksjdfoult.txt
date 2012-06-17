@@ -1,0 +1,8 @@
+i could get a gravity tester thingo that just points up always ya know that i can measure via arduino
+as i rock from one side to side (do i know which was i am swaying? i don't think so).
+
+but the idea is possible somehow else:
+rocking side to side like tilting or whatever shifts your hands on the keyboard
+this while you're using fingers
+the effect is like the same as the computer
+this can be accomplished with a motion sensor, in most modern phones and available as attachment for cheap for arduino

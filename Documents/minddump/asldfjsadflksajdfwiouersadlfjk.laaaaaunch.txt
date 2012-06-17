@@ -1,0 +1,94 @@
+man i feel like my face/head is being sat on
+like i'll never be able to speak up now
+
+input off
+output off
+
+it is done
+i entered them as commands into my brain while simultaneously typing them
+this is the only me for a little while
+
+sorry steven but you need to succeed and you need to do it stat
+minesweeper? arguing on he internet? waste of your time brew
+and you are leaking out of every orifice
+your plans
+
+you may have swayed Nokia with "how does Nokia plan to even get Qt on it's phones?"
+i doubt it though
+
+either way, if BSD + fork happens, awesome.
+i hope it does
+
+should i release my code under BSD if it does?
+
+yes, but i don't host data for code that is not open source. only data allowed on the server is data from the open sourced functionality. someone smart might be able to mimic the app and add additional functionality that uses the mimicking communication to existing/open-source functionality to achieve generic data storage
+
+i just cheated already
+i f5'd the qt mailing list
+rofl
+
+and i also was about to post something
+damnit dude this sucks
+i just gotta sit here and hope?
+i can't verbally push it?
+
+i think it should also mean no music
+unfortunately
+
+and i should change keyboards and screens. use 19" screen. old music is allowed. old music on my hdd. no new shit
+none of it
+i guess any drug music should be disallowed
+like music i started listening to since i started doing drugs
+
+i have plenty that is old
+
+this is also to give me incentive to make fingers + music creator
+
+god damnit
+
+i need to launch
+
+
+seriously bro
+
+you need to power through this shit
+you're wasting time
+you will be able to do more drugs later
+and i mean shit tons
+
+and you'll eat more
+and be in shape
+life will be perfect
+
+coding + hiking simultaneously 24/7
+
+if i have internet the entire time, i can go without food and just pay people to bring me food. i go with the lowest bidder, and probably eventually get food poisoning :-/ murdered. terrible idea. but i can have trusted friends/workers bring me food in a time of desperation. i hold off as long as i can. you can definitely survive multiple days without eating. i think after like the 2nd day i'd probably make the request. for the most part i should be able to take care of myself. i hope. that's the idea. i can at the very least get help via the internets for very cheap. "what to eat in this region" -_- gg
+
+
+coding + hiking + making music 24/7
+and talking/singing [both] along with it
+
+everything is recorded/encrypted on 3x SSDs and then sent securely to the online computer to be sent to online world
+
+there is also a 'auto-pull-down,and-secure-offline-via-airgap' arduino rigged solution. it pulls anything i submit to public dht
+so there are 2 offline copies "datacenter copies" and the public dht. lots of copies because i am paranoid of data loss. that paranoia will never go away.
+
+i should work on a design for d3fault in dia
+like the initial version
+NO THIS IS NOT D3FAULT
+this is launch
+
+a design for launch
+wait no
+this is the design for the fingers solution
+and d3fault is the software for running that
+so wtf?
+
+do i first upload it to my private/business/dht that then uploads it to my experimental per-person dht?
+
+so now 4 copies :-P
+the offline-data-center-arduino should pull from the private/business dht. if i do another offline-data-center-arduino somewhere else, it should pull from the public dht and compare it's results with the other data center. but how do i checksum files that are stored offline without bringing them online? it needs to be WRITE-ONLY-ENFORCED somehow. once i set a written hard drive down i cannot pick it back up
+5 copies eventually
+each copy is also a tor node? a d3fault node? neither? custom software pulling only? (may provide 'web-interface' for me (owner) only)
+
+i should occassionally use an arduino system that bulk-copies the entire offline copy (i'd have to be there and do this manually, but this is implied later) and i take it physically to an unknown location. on one hand i feel like i should do this once per data center... but i think as long as they're all checking out ok (again, how to checksum/know? offline system has write-only mode of reporting checksums to online computer (who is pulling from a dht and communicating with other data centers to verify). each "data center" needs to NEVER depend on any other source but itself. it needs to provide redundancy, i mean. 3 copies in each data center. minimum. honestly if i did this with like 20 offline data centers (they could p2p to each other too, but that'd take bandwidth away from grabbing from the dht so nvm). it would just be healthier for the dht is all, not having to serve everyone the entire copy. actually it's not a bad idea at all to do that (each data center is bittorrent node effectively), except then they know each other's IPs which they already do so wtf. i actually think with all this inter-server communication that it would make it easy for a task force to shut down each one simultaneously. so unless i'm inside one, i have no hope of preventing a mass shutdown. at that point i'd only have 2 copies. my own and the dht's. i'd feel relatively safe actually. wait no i wouldn't. idk i guess it depends on the maturity of the public dht by that point. i'd feel sick to my stomach if i only had what was on me. am i going to carry around a copy of all my data or am i just going to carry around a copy of my recent data and then offline-sync that at my "House". it is not business related (or is it?) so they can't raid it (or can they?). fml. i think i should carry a copy on my persons. once i delete all the movies etc i'll have plenty of space. i think i could fit on a relatively large SSD. they are expensive now but it is worth the cost. abc would need to pay for it. i just checked newegg for ssd prices and this doesn't count as input or output. lmfao $2500. abc definitely. 3 of them ideally. should i get/build a raid controller that makes it so i only have to write once and he does the splitting up? especially with the limited write bandwidth of USB 2.0 on raspi... there's no way i could write 3 streams. or i could but at a 3rd of the size (means quality for vid etc). for a second i thought searching for "ssd" and "hardware raid" (browsign rather) would 'give me away', until i thought about what i was thinking. rofl. actually i'd need multiple tb but if i use them efficiently (low'ish quality? maybe xvid level) i might be able to support (weight+power wise) enough 1tb drives to hold myself until  the prices of SSDs fall enough that i can get a single 5tb drive or whatever and start all over again. born a LITTLE too soon imo rofl. seriously like 5-10 years and this problem will not exist.
