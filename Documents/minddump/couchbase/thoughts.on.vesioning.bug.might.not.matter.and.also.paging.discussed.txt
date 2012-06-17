@@ -1,0 +1,18 @@
+i might be able to work around the eventually-consistent bullshit behind the views
+where it matters, i use CAS and do error handling in the client etc
+
+
+
+i think views might not even apply/matter, but idfk
+
+a view called "page" would have a page number, a list of items on that page (their keys), and a next page key (perhaps a previous page key that is empty on page 0)
+
+
+i am mentioning this only because the list of items on that page (in the stored doc) should be the same as the DEFAULT list of items per page in the Wt code (perhaps they can pull from the same #define/config var)
+that's just an optimization
+
+but it also means i need to pull 10 docs if they change the wt settings to be 100 for example
+
+25 is probably a good default
+idfk.
+we want to at least go 'below the fold', ya know? 10 might not

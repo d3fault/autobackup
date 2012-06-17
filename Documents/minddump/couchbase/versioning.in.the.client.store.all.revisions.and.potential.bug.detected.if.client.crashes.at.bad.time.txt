@@ -1,0 +1,52 @@
+so if i do 1.8 + Qt/QDataStream
+it'll make upgrading to 2.0 when it's ready/fixed a bitch
+and i will want to
+
+but that's not what i was saying
+
+
+i was saying that (actually this applies to 2.0/json too?)
+
+i'll have like an object "user"
+
+and in the value is a property "currentConfig" and it's value is a key to the current config for that user
+but then we also have a property "previousConfigs" and it's value is an array of keys (in order of changed)
+
+the config values themselves are timestamped
+
+
+there are lots of things that have that 'previousX' shit
+
+i was trying to explain it a little ago with 'files' in a d3fault context
+
+it's an optimization thing
+the value for 'currentConfig' is going to be a relatively set size (can still grow/shrink if the user adds to their config fields for example)
+and the value for 'previousConfigs' will eventually grow to be quite large and less performant so we wouldn't want to request the entire value (a giant list of keys of previous configs) because it's less efficient
+
+
+
+so this leads me to another point
+
+i now have to update the "user" document each time the user changes their config
+this isn't that big of a deal except for when you encounter the following error:
+client puts their new config doc on the cluster
+client crashes before it can put the updated user doc onto the cluster
+
+it's a crash condition, maybe a race condition. who cares what it's called
+
+i think it's a big deal and i might even bring it up on CouchBase forums
+
+
+in the user/config scenario it isn't THAT big of a deal (user just uses old config)
+
+but in other scenarios, it can be DEVASTATING and cause enormous errors.
+
+
+there needs to be a way to do "set all docs or fail"
+
+
+ACTUALLY, there might be...
+
+i think 'set' is multi by default
+or at least i think there is one for it?
+i need to look into this more
