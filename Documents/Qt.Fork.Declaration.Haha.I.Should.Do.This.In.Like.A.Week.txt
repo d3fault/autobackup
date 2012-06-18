@@ -1,0 +1,51 @@
+Declaring a State of FUD && 'Official' Fork Proposal
+
+tl;dr: Qt -> Qeh (mb-if-purchase: link to: http://qeh-project.org (todo/placeholder: "Gears are turning. We will update this page as soon as there is something to show."))
+
+Microsoft's second greatest weapon is FUD (Fear, Uncertainty, and Doubt). Their first greatest is vendor lock-in.
+
+I think we can all agree that the Qt Project is in a state of FUD, and this is exactly where Microsoft wants us.
+
+We need to be aware of and never forget the game we are playing (Qt is a framework to be feared (or loved, depending entirely on perspective)), and we need to play it offensively.
+
+For this reason (and because nobody else with merit has taken it upon themselves), I am proposing a fork.
+
+The fork will be the same Qt you've always loved, but here are some key differences:
+1) Revised BSD Licensing, which means that you no longer need a Commercial License to target iOS. It also means that if you change the Qt source code and distribute the resulting binaries, you are not required to share your changes. This was previously only possible by purchasing a Commercial License from Digia. Note that these two reasons are really the same: the iOS app store is not LGPL compatible because the it adds restrictions to published content, exactly the kind of thing the LGPL tries to prevent (and succeeds via CopyLeft; the Revised BSD is a non-copyleft Free Software license).
+2) No single company gets every Qt support contract (unless we set up a non-profit for this) -- we can have a list of respectable companies alphabetized whenever a user clicks "Support". If we are feeling nice, we can put Digia up above the alphabetized list and explain how they previously purchased Qt Commercial from Nokia and got screwed on that deal (as of this fork).
+3) You are no longer required to sign the CLA in order to contribute. The CLA gave Nokia/Digia the power to resell your code under _any_ license of their choosing. Instead, contributing code only needs to be licensed under the terms of the Revised BSD (or compatible?TODO)
+4)
+TODO: is that it?^^^^
+
+What we call it isn't relevant. For simplicity and to keep changes to user code to a minimum, I vote that we call it Qeh (pronounced: "Qweh", like "meh"). The 'Q' represents where the project originated, and also allows us to keep the Q prefix in class names. The 'E' and 'H' stand for Eirik Chambe-Eng and Haavard Nord, the founders of Trolltech/Qt.
+
+
+As a priority and in order to be taken seriously, our first goal should be to re-release 4.8.2 as our 1.0.0 flagship product. The Qt5 target will become 2.0.0, but it might need further delays as the mess is sorted out.
+
+The work that needs to be done for 1.0.0 to happen (afaik):
+1) The KDE Free Qt Foundation needs to hold a meeting and invoke the BSD Clause. To do this, we need either Lars Knoll or Matthias Ettrich to vote for it (since it's obvious both members representing KDE would be all for it).
+2) Rename all instances of Qt to Qeh. A script (however hacky) to do this would be the best solution, but some parts may need to be done manually.
+3) Platform Plugins (QPA) for every platform aside from x11 would need to be re-created and/or re-licensed under the terms of the Revised BSD. The reason for this is that the BSD Clause only applies to the "x11 version of Qt" (it was written before Qt Plaform Abstraction existed <3. There is no longer an "x11 version of Qt"). To read this yourself: http://www.kde.org/community/whatiskde/images/nokia-agreement-3.jpg . Take note that "KDE Windows System" really means "x11", and also observe (and laugh at) the outdated explicit exclusion of MS Windows, Macintosh, Symbian, etc.
+
+----Luckily, we aren't under arbitrary constraints like typical companies. Qeh will operate under the "when it's finished" release model.
+TODO^: not sure this above line fits and is a strong point. I think Nokia worked under the "when it's finished" model... even though for them it was much more about saving costs / rushing, ya know (like any business).
+
+
+TODO:
+Android?
+Native Commitment?
+Future of Qt Declarative?
+QWidgets2
+
+
+
+MAYBE:
+I have taken it upon myself to purchase qeh-project.org, and will point it's DNS to a server provided by a member with merit in what will be considered the first steps of the fork. I will hand over the domain to the Chief Maintainer (TODO: this is a potential mistake, they could fuck us over. an 'entity' such as a company is better at holding this, so maybe I should hold it myself?), once one is elected (it can be Lars again for all I care. I don't have a vote because I have no merit). TODOalso: up to what level does the contributor's status transfer over to the fork? Obviously approvers/committers, but maintainers maybe not (???) and definitely not the Chief Maintainer. Perhaps the meritocratic governance model has instructions on what to do in the event of a fork.
+
+
+
+random/rant/TODO:
+Surviving in Open Governance will prove to be a challenge because there aren't formally any non-technical positions in charge of overall direction. On one hand this is great as all decisions will be based on technical merit. On another, this could hinder progress as every member is busy with their specific technical work and nobody has the time to step back and observe/modify/extend the overall direction of the project.
+^todo: this is also kind of weak. but so long as it is presented as weak (doesn't attempt to be strong), it is a valid argument.
+
+d3fault
