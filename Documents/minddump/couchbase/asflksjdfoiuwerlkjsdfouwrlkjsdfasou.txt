@@ -1,0 +1,6 @@
+in all honesty i do believe that it was irresponsible of the video maker in Vimeo Couchbase Developing II to put up such an example that is so obviously flawed. but it might be his different use of it that makes it ok. i am unsure.
+
+
+but i am pretty fucking sure my solution is safer
+
+his models only the verifiability aspects of the bank, which can obviously be eventually consistent

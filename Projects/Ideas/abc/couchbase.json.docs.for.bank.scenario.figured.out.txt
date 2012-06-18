@@ -1,0 +1,253 @@
+regarding ABC, Couchbase, [...eventual launching!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!]
+i forget what i was going to say but am glad that i am launching
+i am glad that i am on a timeline that leads to my launching
+
+setGoal:launch,time=indefinite.but.asap <- does not use a TTL/timeout, but schedules to get it done.
+
+
+
+
+so i think i just need to model my requirements that i need out of ABC in Couchbase
+like, try to make the json
+simple as that
+
+it would be wiser to have couchbase installed/running
+2.0 will work for developing so long as i don't use views
+1.8 can be supplanted using basic ass document storage/cas-atomicity-checking Qt code (which means it is independent (until i start using views in the Qt code))
+
+so fuck it mayng
+
+here goes it
+
+
+jsonKey="appAbc"
+{
+  timestamp : unixtimestamp <------- this will be implied on pretty much every value
+  "products" : array("appAbcProductAdDouble", "appAbcProductAdCaptcha", "appAbcProductIndex")
+  "supportPages" : array("Home", "Help", "etcbullshit")
+  //more can be defined, arbitrary.
+  //there is no users which is an array. instead we just do a lookup into the dht to see if a given user exists. appAbcUser[fillInUsernameOnLoginAttemptAndProbablySanitizeButIdk]
+}
+
+jsonKey="appAbcProductAdDouble"
+{
+  websitesListedInWhichSlotsAreShownAndCanBePurchased : array("appAbcProductAdDoubleCbpDogFood", "appAbcProductAdDoubleCbpD3fault", users can have infinite of these. fuck this is dumb keeping a record like this in a single node. do i need Views here? time to rewatch couchbase dev vid II. i get that the idea is to prefix it with appAbcProductAdDoubleCbp ... but i need a LIST of them god damnit. i think yes i need a map ... maybe a reduce (prolly not). i think i need to do appAbcProductAdDouble objects with a randomly generated string appended (make sure doesn't exist, try again until we get an empty spot) and have the "type" property in the value of that canBePurchased (aka 'slot') be "Cbp". i really wish they were Qt objects but this functionality is power do not deny it. i didn't rewatch the video i just remembered what to do (for now, still rusty on emit concept. but i know i don't even consider an emit if the "type" isn't "Cbp". maybe "slot" and "slotFiller" fits better? lol easier to understand so yes. do they just get an image or a url too? i guess that is configurable, but i'd say do image by default. ok onto next json object))
+  //i like "canBePurchased" better
+
+  adsThatCanBeDisplayedInAPurchasedSlot : 
+  //i like "canBeDisplayedInPurchased" better
+}
+
+
+jsonKey="appAbcProductAdDouble<RandomString>"
+{
+  type : "slot"
+  name : "Dog Food" //to be used on ABC itself rofl <3 'business'. i should call it that too (maybe an 'alias TODOreq consider alias feature' called "Abc" that points to "Dog Food" or vice versa or they are just linked equally? "Synonyms"
+}
+
+
+
+
+ok break
+this is going good
+up next to write view
+but first i want to state that it's OK that the map/reduce shit is eventually consistent
+because it is only used for views
+
+critical sets (slot purchases, for example) use custom CAS checking to make sure we don't overwrite a previous value. if there IS a previous value, we lose. they got it.
+i should still use Views as they provide efficiency
+very fucking efficient how do you say
+
+if used properly
+and re-watching the Dev II vid over and over is all you need
+srsly.
+
+HE MAKES A FUCKING BANK
+
+isn't that eventually consistent?
+wtf?
+
+keep that in mind while rewatching it
+
+maybe he's trolling/baiting disaster intentionally
+maybe he's dumb?
+maybe i'm dumb?
+
+i would think you'd definitely want to use CAS... except for a transaction log + eventual balancing. which is what he demonstrates. still he should definitely clarify imo.
+wait no he did
+the thing he posted at the beginning was an add, which means it is CAS-ish? manual CAS is for if the key already exists? otherwise just use add? add is probably an abstraction of CAS, but maybe not
+
+
+still not sure about multiSet (all or nothing)
+
+
+[still watchin vid]
+
+
+hmm so far, realized i don't need type: slot
+
+jsonKey="appAbcProductAdDoubleSlot<RandomString>"
+{
+  name : "Dog Food"
+  width : 500
+  height : 150
+  hasUrl : true //this says whether or not the particular slot allows urls
+  slotLength : timeInSeconds //ima do 24 hours by default
+  minPrice : "0.00000001"
+}
+
+
+still a little confused
+
+
+[still watching]
+
+
+ok i get it
+the first store, the transaction itself (in the bank example) only goes through after we manually verify that there is enough
+and we use either CAS or add'ing to ensure atomicity
+
+the View pulled from that transaction is used for 2 things
+a) generating any "order by" and "count" and "group" shit you might need (you specify ahead of time and it is performed incrementally)
+b) eventually double-checking of transactions. the final "group" makes the balance (of every user) balance out to zero
+
+since we emit twice in one view (the one immediately after the transaction), both of those are guaranteed by the system to be present when reducing. they are both atomically added to the set of things to "reduce" (group) so we never don't balance out to zero~
+
+
+if we use the View for the value that we check against, we are at risk of double spending
+
+he does sum the users in the view
+so this means there is a duplicate document for the user and their balance?
+
+i'm pretty sure yes
+
+
+
+
+
+
+
+write "user" and their properties
+{
+  "balance" : newBalance
+  "mostRecentTransaction" : "transactionKey"
+  "previousTransactionsHistory" : "fuck
+}
+
+^^^ forget that
+
+
+
+[keeps thinking]
+
+
+
+this vid makes no fucking sense
+watching it over and over
+
+he's saying Views are good enough :-/
+
+uhhhhhhhhhhhhh
+
+
+wTfamIdoin
+
+time to go eat food
+
+
+
+GOT IT
+
+journal write (in case fail)
+
+jsonKey: appAbcUser<Supplied>Balance
+{
+  balance : 12345.2334
+}
+
+
+or maybe
+
+
+jsonKey : appAbcUser<Supplied>BalanceShift
+{
+  oldBalance : 5
+  newBalanace : 4
+  action: "purchaseSlotFiller<RandomString>"
+}
+
+^and something like this one needs to be CAS---- err what? so i guess i just take the word shift out of it and do the same shit? the Balance, which is CAS overwritten, says old, new, and what caused (or will cause?) the in-between
+
+
+so...
+
+##################################################### BANK FIGURED OUT ####################################################### TODOreq
+
+jsonKey : appAbcUser<Supplied>Balance
+{
+  oldBalance : 5
+  newBalance : 4
+  whatToAttemptToGet : "appAbcAdDoubleSlot<Random-persistent-String>SlotFiller2" //the random string is the same for SlotFiller3, for example. it is the slot/website in which we are buying a filler/'slot'(i don't like 'slot' terminology for this, leads to too much confusion and i finally figured out why. slot and slotFiller is way easier to comprehend)
+}
+^we CAS set that. this is our first "has enough funds?" check and also serves as our journal declaration. it can still fail if we are beat to the punch (i think this implies that it's NOT a <RandomString>, but is in fact numeric incrementing!
+
+then, we ADD (ensures atomic. if it fails we return their balance back to normal i guess?):
+jsonKey : appAbcAdDoubleSlot<Random-persistent-String>SlotFiller2
+{
+  imageb64encoded : <user-supplied-image-data> //must fit their width/height or be smaller than
+  urlToAnchorTo : <user-supplied-href-for-when-they-click-dat-shit>
+  soldPrice : //whatever it was at then they clicked. perhaps like a couple seconds window? maybe decrements in 10 second intervals? but what to do when they click buy at 9.99999 seconds and teh shit is in the next interval before it is got'd. do we honor what the client says was their request time and just accept the first one we receive? the client enforces a like 1-3 second window on slot prices but idk man this can be exploited but is it even that much of a gain? perhaps the window is only lagging so they can purchase it for more than it should cost but never less than it should cost? shift the window gap 1-3 second thing to do that, if possible. actually yea i think this is important i need to think about it
+  purchaser : <user (supplied)> //this is for crash recovery checking. our only way to see if we got something we intended to buy (journal'd about it)
+}
+
+... and then just record the transaction as a transaction document which leads into everything seen in CouchBase Vimeo Develop II
+
+
+slotFiller purchase window
+and scaling so they can only use the window to pay more than it is currently at (according to wt/client), and NEVER less, as that would be exploited
+
+considering the price is dropping always, i think this is what the case will always be (so long as i enforce it in code TODOreq). if they send a request for lower than the slotFiller has dropped to, we deny it. if it's above what we think the slotFiller has dropped to by 3 (or just x) seconds (at whatever rate they use), we accept the overpayment. we will strive for keeping everything as synchronized as possible. slotFillers can/should display "time left" in hours/minutes ... never mentinoing 'what time of day' that happens to be (but this can be customizable or we show both (ebay!))
+
+man i got it
+
+
+twas a bitch
+but i think that would work
+
+
+ok so let's say they crash right after they set the Balance
+we'd see the journal'd "attempt" and at startup we should then check the slot to see if we are the purchaser (i just added that property)
+if we aren't, we revert.
+
+#################IMPORTANT######################### TODOreq
+perhaps when we revert we can call the "whatToAttemptToGet" : "crashRecoverRevertFromAttemptAppAbcAdDoubleSlot<Random-persistent-String>SlotFiller2" ... and "weGotBeatToThePunchFromAttemptAppAbcAdDoubleSlot<Random-persistent-String>SlotFiller2"
+
+they are both reverts. first one happens at crash before we can finish the buy, second on typical race condition
+
+
+also when we are recovering from a crash, after checking that we are in fact the purchaser of the slotFiller, we also have to ensure that the transactionDocument was created TODOreq -- happens just after slotFiller in normal operation, but we might crash after slotFiller and before transaction~
+
+i think this should be done on every login, which means that it doesn't necessarily have to be the crashed node that re-checks it. the user will be directed to another client hopefully by load balancer and on login we get the balance and check the most recent attempt/journal'd thing we were trying to do by simply getting it. if we can get it, we can guarantee that every transaction prior went through. if not, just revert (if it's on a new login, it means a crash recovery. a client will know becaue it won't lose control when the race condition happens). i wonder if i should keep a timeline-like history of the Balance. isn't that what the transaction is (the one that gets 'View'd)? i guess so. i could put what it was for as well i suppose...
+
+//the Transaction
+jsonKey : appAbcTransactionAdDoubleSlot<Random-persistent-String>SlotFiller2
+{
+  from : "jimboKnives"
+  to : "abcAdmin" //for Dog Food slot
+  amount : 69
+}
+
+the clever naming means we can still get out all of the transactions during the View/Map process by doing the typical .startsWith
+and the key is also generatable/knowable by the SlotFiller document itself, and therefore we can test to see if the transaction was created, during recovery process
+we can also deduce the SlotFiller based on our own key. there's no need for a property saying what the transaction was for, the key tells us and provides enough information to get more information.
+
+^essentially a 2-way link between the SlotFiller itself and the SlotFiller purchase transaction, all through effective key naming techniques. fuck yea CouchBase (most would erroneously attribute this win to JSON)
+
+once transaction is in, the rest is just map/reduce so who gives a fuck if it's eventual :)
+
+
+damn i'm proud of myself for powering through that
+i think i finally get it
+i think this will finally work
+i think i will finally get some god damn money
+i think finally

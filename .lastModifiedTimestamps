@@ -1,6 +1,8 @@
 Documents/:1340000614
-Documents/minddump/:1386032013
-Documents/minddump/couchbase/:1339955731
+Documents/minddump/:1386032018
+Documents/minddump/couchbase/:1340023017
+Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
+Documents/minddump/couchbase/askdjfowuroursl.abc.maps.figured.out.txt:1340023017
 Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.json.views.but.not.for.just.the.key.and.value.data.if.i.use.Check-And-Set.txt:1339951812
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
@@ -47,6 +49,7 @@ Documents/minddump/asldfkjsdofuwelrkjjaosadfuwerkjfdgoiuwekkeiejHI.txt:133373150
 Documents/minddump/asldgjfsaodiuflkjweroisfdlksdjfsaoifdulwekrjlostinthoughtperfectlaskjfasofiuwel.txt:1339487591
 Documents/minddump/asldjkfasdlfkjowieurlkfjsdflkjwerou.txt:1339936146
 Documents/minddump/asldkfjasodiufwelkrjsafdoiualwerkjdsfoiusdfrelkj.txt:1339936353
+Documents/minddump/asldkfjslfkjaouwerakwjerlskdfjosyfoiwueroiulkfd.txt:1340004935
 Documents/minddump/aslfkjwoerualsfkjasofwerlkjsdfoasdfkashfasklfhasdfsadfweoiurflakj.txt:1339742746
 Documents/minddump/be.prepared.for.that.embarrassment.embrace.it.txt:1323683770
 Documents/minddump/being.of.electricity.txt:1322679120
@@ -60,6 +63,7 @@ Documents/minddump/camera.is.a.computer.mod.txt:1323476263
 Documents/minddump/clear.concise.and.working.but.still.a.piece.of.shit.qml.aslfkjsadflksaj.txt:1339321953
 Documents/minddump/computer.programming.is.vague.not.even.computer.peers.could.randomly.guess.at.what.im.doing.txt:1338635107
 Documents/minddump/cool.picture.i.wanna.take.cowboy.earth.computer.txt:1324463331
+Documents/minddump/create.a.person.more.like.it.i.guess.txt:1340005141
 Documents/minddump/cube.grid.plox.txt:1323509054
 Documents/minddump/d3fault.copy.on.write.nothing.new.here.i.don.thtink.fuck.iasd.asdlfjaslfkj.txt:1337639246
 Documents/minddump/d3fault.is.my.normal.aslfjasldfjasdfouwerlksajdfasdofiulk.txt:1339839173
@@ -168,6 +172,7 @@ Documents/minddump/im.bukken.faked.txt:1336583818
 Documents/minddump/im.definitely.going.to.launch.sooooooon.i.dont.think.kaylee.even.factors.in.anymore.txt:1333301872
 Documents/minddump/im.still.not.certain.on.how.gfs.operates.i.mean.they.say.so.little.in.so.much.but.how.objects.are.persisted.is.key.or.im.just.retarded.txt:1339322462
 Documents/minddump/immortality.emergence.aka.god.is.impossible.just.added.that.god.part.just.now.txt:1338798921
+Documents/minddump/impossible.to.not.break.the.law.there.are.too.many.txt:1340004973
 Documents/minddump/infinite.multiverses.mean.even.if.i.do.die.i.will.be.trying.in.another.one.where.i.wont.die.txt:1339936124
 Documents/minddump/inheritence.is.bullshit.daljdfoasiuewrlkjafou.txt:1334614026
 Documents/minddump/inscribe.data.with.light.emission.lol.idfk.txt:1337329480
@@ -258,6 +263,7 @@ Documents/minddump/sadlfkjsadofuwerlkajsdfaisfoyawieruy.txt:1339319220
 Documents/minddump/sadlfkjsdafoiuwerlkjsdfoiulk.txt:1338205281
 Documents/minddump/sadlfkjweoriusadflkjasdfkjhasdkfshadfweoiru.txt:1338993154
 Documents/minddump/sadlkfjwoerusladfjsdafljksdf.txt:1338992911
+Documents/minddump/safsldkfjasdfouwlrekjsdfouiwlerkjsadfoui.txt:1340016021
 Documents/minddump/salkdfjowiurasdfjsofiuqwerukjsh.txt:1338993138
 Documents/minddump/saodfuwelkrjsaodfiulwkjersaofiiuyioqwrpoiufsdkj.txt:1337505571
 Documents/minddump/sasldfjweorulskfjsaodfiuweroiusfdkjsfdhasf.txt:1339319303
@@ -268,6 +274,7 @@ Documents/minddump/sdalfjsdaofiulkjweroiusafuioasdpfu.txt:1331347277
 Documents/minddump/sdflkajsfowuerlaskfjsadofulkt.txt:1338205221
 Documents/minddump/sdflkweroiusdfoiuwreklweroiaufwe098234.txt:1339058881
 Documents/minddump/sdflsadjfaosdufwerlkjasdfoiuasflsakjf.txt:1333103151
+Documents/minddump/sdflskjdfouwrlkjasfdoiuwerlkjsdf.txt:1340023036
 Documents/minddump/sdflwoierulksdjfxkldjvxlfsdofiuwjskflhasfd.txt:1339058852
 Documents/minddump/sdfoauerwearjsdlkgfsdofysdafkjsdfopsrejukl.txt:1325352425
 Documents/minddump/sdfsdflkjsdfoieuraeirasdlfkjsdflksdfoiurewklj.txt:1338983671
@@ -433,7 +440,7 @@ Projects/Ideas/QtSslRpc/maybe.not.now.maybe.do.this.later.idk.txt:1336792346
 Projects/Ideas/QtSslRpc/not.worth.doing.atm.MbAsync.with.Wt.usage.complicated.but.doable.read.this.txt:1337204290
 Projects/Ideas/QtSslRpc/this.does.abstract.automate.two-way.and.one-way.messages.txt:1339494468
 Projects/Ideas/QtSslRpc/xml.input.example.as.well.as.ssl.cert.key.autogen.utility.based.on.client.count.txt:1336700083
-Projects/Ideas/abc/:1339328367
+Projects/Ideas/abc/:1340016320
 Projects/Ideas/abc/3.layers.of.dht.but.i.think.it.is.definitely.doable.not.that.hard.really.just.design.it.well.before.you.start.txt:1339321739
 Projects/Ideas/abc/Wt.facing.has.list.of.receive.btc.addresses.but.it.does.not.verify.their.reception.dasfljasdlfjaslk.txt:1329207674
 Projects/Ideas/abc/abc.funds.the.staged.wasdf-and.go.outside.donation.driven.projects.lol.laundered.txt:1329206565
@@ -441,6 +448,7 @@ Projects/Ideas/abc/abc.makes.money.by.being.service.but.is.also.a.service.that.i
 Projects/Ideas/abc/abc.security.local.in.house.server.does.bitcoin.verifications.and.grants.transactions.permission.txt:1329131826
 Projects/Ideas/abc/abc.specific.bitcoin.client.auto.laundering.lawl.sounds.actually.somewhat.easy.txt:1329198692
 Projects/Ideas/abc/adcaptcha.and.addubs.fall.under.abc.woo.txt:1329131549
+Projects/Ideas/abc/couchbase.json.docs.for.bank.scenario.figured.out.txt:1340016320
 Projects/Ideas/abc/host.proof.hosting.free.email.service.ad.based.txt:1327810665
 Projects/Ideas/abc/investing.option.category.thing.plus.nude.skimask.branding.rofl.txt:1327801369
 Projects/Ideas/abc/make.Index.followable.using.gfs.fs.impl.parsing.txt:1339320344
@@ -959,7 +967,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032013
+Projects/libAvGraphicsItem2/design/:1386032018
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1128,7 +1136,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1340000681
+autobackupScripts/win/.directory:1340023043
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

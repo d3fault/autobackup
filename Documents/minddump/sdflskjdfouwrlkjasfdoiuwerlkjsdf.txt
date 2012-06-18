@@ -1,0 +1,6 @@
+it's probabl unwise to let slots set a minimum that's too low and a waste of MY OWN resources
+
+so maybe like .0001 should be minimum, you understand?
+
+
+you want to balance between 'adding up pennies' and doing billions of _TINY_/not-worth-it transactions

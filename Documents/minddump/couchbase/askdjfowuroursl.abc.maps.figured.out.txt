@@ -1,0 +1,65 @@
+i think i could, for each attempt/journal thingo that modifies my "Balance" (cas overwrite), keep a log of it. but then i also have to error recover that log to make sure it is written upon crash and well you see the problem (though this might be the last i hope)
+
+and what about as i attempt to recover the log? do i journal my attempt to recover the log?
+
+see, that tiny bit of data loss is ok. it's not like the data is lost. it's just no longer important.
+
+
+
+yea fuck that
+
+
+
+
+
+
+but onto another thought
+
+
+
+listing every slotFiller that you've purchased
+
+i mean you're definitely going to want a
+
+jsonKey : appAbcUser<Supplied>SlotFillersPurchased
+{
+  slotFillers : array()
+}
+
+
+BUT, what if it grows too big? we could partition it ourselves?
+
+
+ok this is one perspective that i see
+right
+
+but WRONG
+
+you're dead wrong
+
+whenever you run into that problem, you need to remember that you're wrong
+
+the solution is Views/map/reduce
+
+all the slotFiller's purchased is just like a (map? reduce?) i forget but pretty sure one of them. can't find the spot in Developing II where he talks about map/reduce :(
+(ex: on a user profile)
+
+ok i do think it's a matter of a View. instead of a Group i'm going to want to do a "get only this key" with whatever the view spits out
+
+i thinkin Developing III is where the answer is *watches*
+
+
+
+
+and remember, we don't care if a user profile showing all the user's slots or slotFillers is eventually consistent. TODOreq: we should say "you have the slot filler. it may take a few minutes to show up in your profile but we promise you have it"
+
+
+the Query in code, that can customize the view, is probably my best bet. but idfk. we can't do a user(key)-specific map or reduce in the View/Javascript code :-/
+
+
+i can iterate over the query and definitely get the shit i want, but that's' inefficient
+
+*still watching III*
+
+
+i just realized all i need to do is see what "Query" methods there are..
