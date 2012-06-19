@@ -1,13 +1,16 @@
 Documents/:1340000614
-Documents/minddump/:1386032018
-Documents/minddump/couchbase/:1340023017
+Documents/minddump/:1386032023
+Documents/minddump/couchbase/:1340087363
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
 Documents/minddump/couchbase/askdjfowuroursl.abc.maps.figured.out.txt:1340023017
 Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.json.views.but.not.for.just.the.key.and.value.data.if.i.use.Check-And-Set.txt:1339951812
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
+Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1338978881
+Documents/minddump/dreams/:1386032023
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
+Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
+Documents/minddump/dreams/iron.man.train.raid.with.10.seconds.of.elbow.conscience.txt:1340076931
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
 Documents/minddump/dreams/paxos.mostly.awake.almost.asked.my.mom.to.help.me.decipher.txt:1338978881
 Documents/minddump/2.streams.always.hidden.as.just.1.idfk.txt:1338898350
@@ -967,7 +970,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032018
+Projects/libAvGraphicsItem2/design/:1386032023
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1136,7 +1139,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1340023043
+autobackupScripts/win/.directory:1340087373
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

@@ -1,0 +1,25 @@
+gah just spent an hour or two searching for the phrase "tap" in all the couchbase docs
+
+fucking so undocumented
+
+pos.
+
+well.............
+
+
+i think i'm going to try some examples later on tonight
+
+and hopefully i can F2 the api calls to see where they lead and read the source to see what they do (maybe the source is documented better, doubt it)
+
+
+i just need to see wtf comes out of 'tap mutation', ya know?
+
+and what does 'tap create filter' do?
+
+
+if tap mutation shows every change to the db, great
+so long as tap create filter can specify a .startsWith for my key
+
+and i hope i am tapping the cluster, not a specific node. i think/hope i am
+
+time to go shower to use as cover for beating off. got an erection the size of mount everest
