@@ -1,0 +1,126 @@
+I'm wondering if I even need taps
+
+
+Wt -> AppDb(backed by CouchBase cluster) -> BankServer(backed by CouchBase cluster)
+
+this might allow me to use outsourced hosting for the Wt/AppDb (which can/will be on the same server initially)
+
+
+but, you see, I can't get a grip on it
+
+
+I don't think I'd need taps because the AppDb is owned code and that means I have control of execution directly after interfacing with the CouchBase cluster
+
+
+I think I could, after doing a 'store' on a certain variable into the cluster, do a 'get' into a special key name space that keeps track of what Wt clients want updates for that key (or key range/subset)
+
+taps actually sound resource hungry
+
+but the client already has the pre-filtered information, it just needs a list of Wt clients
+
+
+and those Wt clients represent a LIST of users. 1 Wt client can represent hundreds of users watching a single variable
+
+i mean, this is of course after the store is SUCCESSFULLY completed
+
+i think CouchBase makes a promise that if it returns without errors, it was successful.
+
+
+
+
+so long as I only put binaries on the dedicated servers, my source is not leaked and therefore my business cannot be EASILY jacked
+
+
+getting a snapshot of the cluster and backing it up remotely might be difficult
+
+
+as would scaling to another data center :(
+
+
+but by outsourcing it, i am saying "you guys take care of the data links. i just don't care"
+
+which is true, i don't
+
+but I still want the BankServer to be local, shit's too sensitive
+
+maybe the AppDb and BankServer clusters can [MANUALLY] back up each other daily or something....
+
+meaning i have code that does it
+
+the contents of the bank server would need to be encrypted... and the AppDb contents merely should be encrypted
+
+
+
+eventually I'd like to get to a point where I can abstract the "journal" spend
+for now I'm going to use it when buying a slotFiller on the AppDb, and when modifying a user's balance on the BankServer
+
+
+
+but the question is do I need taps
+hmmmm
+
+
+
+I'm thinking no
+
+but there might be race conditions with my 'list of Wt watchers'
+
+example:
+i get the list of Wt watchers for a specific update and update them
+before a message can be received / put onto the cluster saying 'add me to list of Wt watchers'
+would they, in that case, be late enough to guarantee that they're going to get the freshest of data anyways?
+or since they're not getting it via update/notify, maybe they have to wait for a View to propagate through the network and there's an even larger chance they won't get it?
+if they're viewing a list of slots, like the front page or whatever (btw that's how you solve it: key slotList has properties "slotListPage1" : "keyToIt" <- that's 1st page and we add properties as we add pages..., can check if they exist etc)
+then yes, they would potentially miss the recent update if the view hasn't propagated
+
+FUCK.
+
+
+TODOreq: ^ and V
+they might even get a future update that needs to be applied AFTER the other update that they missed and didn't get because View hasn't propagated
+a deduction of balance or something, who knows
+
+
+so.... do I need taps?
+
+
+so i don't miss values due to waiting for View propagation?
+tap comes after View propagation... so update/notifies will take longer, but we won't potentially miss data
+
+god damnit i hate being so smart
+and i love it
+me damn it
+stop saying god
+remove word from vocabulary
+
+
+
+IF THE VALUE THAT IS PASSED VIA UPDATE/NOTIFY IS _NOT_ ACCESSED VIA A VIEW, THE RACE CONDITION DOES NOT EXIST
+
+
+
+Views are mainly useful for lists anyways. so maybe i can just not have those be update/notified?
+
+appAbcProductAdDoubleSlot<Random-persistent-String>
+{
+  name : "Dog Food"
+  minPrice: 1.0
+  //etc there is a more complete one in another doc
+}
+
+^^^^^ this EXACT key is get'd when viewing the slot details page.... and so we can update/notify it safely
+
+BUT, that slot goes through the View system in order to build the list of slots / front page
+
+
+i'm not sure
+
+but for now just remember that values obtained from a view cannot be safely update/notified through the method invented in the writing of this document
+
+i might be able to hackily add properties
+like for example to that slot above i could add:
+
+lastSlotFillerPurchasePrice : 123
+
+
+which would be a duplicate value, and meh nvm i forget what the fuck i'm talking about but i was hoping that if i didn't have to access it via a View that I could use it in update/notify. i'd need to also pull it... but that's not the case for populating the 'list of slots' case... we use a view for that. so wtf?
