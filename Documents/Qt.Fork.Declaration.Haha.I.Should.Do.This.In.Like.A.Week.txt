@@ -6,19 +6,33 @@ Microsoft's second greatest weapon is FUD (Fear, Uncertainty, and Doubt). Their 
 
 I think we can all agree that the Qt Project is in a state of FUD, and this is exactly where Microsoft wants us.
 
-We need to be aware of and never forget the game we are playing (Qt is a framework to be feared (or loved, depending entirely on perspective)), and we need to play it offensively.
+We need to be aware of and never forget the game we are playing (Qt is a framework to be feared (or loved, depending entirely on perspective)). We need to play it offensively. Defense/waiting/reacting is a losing game, especially in the world of Development Frameworks.
 
 For this reason (and because nobody else with merit has taken it upon themselves), I am proposing a fork.
+
+A slow death (current future) is worse than an instant rebirth (fork) with promise of life.
+
+--------In order for a fork to actually happen, there needs to be an incentive for one to happen (other than the current 'Qt is Dead' situation, which a lot of people seem to want to ride out).
+
+A huge gain received from forking is that we could invoke the BSD Clause. The Revised BSD License is a more permissive Free Software license that enables us to publish our applications onto the Apple iOS App Store, among other things. Previously this required a Qt Commercial License.
+
+We only need 1 of the 2 people at Nokia to agree to invoke the BSD Clause (assuming both KDE members do too, and I'm pretty sure they will).
+___So, Lars Knoll and Matthias Ettrich: Will one of you invoke it? As in, will you make it happen? None of this if(microsoftBuysNokia) stuff. Yes I am in effect asking you to quit your job at Nokia. You will be a hero in the Free Software community and could probably very easily get a job at some Qt (fork'd) Support company. Take your pick. Please transform the support company into an R&D software house (support + R&D would attract tons of clients if marketed correctly). Or start your own thing idc.
+
+Will you invoke it?
+
+Don't be surprised if right after one Nokian invokes the BSD Clause, the other is fired as well (or maybe Qt division is canned outright). The reason would be that Nokia has no reason to keep that member on payroll anymore (this is assuming Nokia keeps chopping up the Qt department. Lars and Matthias will no doubt be the very last 2 to go. I don't want to imply that either of them aren't capable engineers).
 
 The fork will be the same Qt you've always loved, but here are some key differences:
 1) Revised BSD Licensing, which means that you no longer need a Commercial License to target iOS. It also means that if you change the Qt source code and distribute the resulting binaries, you are not required to share your changes. This was previously only possible by purchasing a Commercial License from Digia. Note that these two reasons are really the same: the iOS app store is not LGPL compatible because the it adds restrictions to published content, exactly the kind of thing the LGPL tries to prevent (and succeeds via CopyLeft; the Revised BSD is a non-copyleft Free Software license).
 2) No single company gets every Qt support contract (unless we set up a non-profit for this) -- we can have a list of respectable companies alphabetized whenever a user clicks "Support". If we are feeling nice, we can put Digia up above the alphabetized list and explain how they previously purchased Qt Commercial from Nokia and got screwed on that deal (as of this fork).
 3) You are no longer required to sign the CLA in order to contribute. The CLA gave Nokia/Digia the power to resell your code under _any_ license of their choosing. Instead, contributing code only needs to be licensed under the terms of the Revised BSD (or compatible?TODO)
-4)
+4) unsure: BSD means we can accept more 3rd party code licenses? science/research this
 TODO: is that it?^^^^
 
 What we call it isn't relevant. For simplicity and to keep changes to user code to a minimum, I vote that we call it Qeh (pronounced: "Qweh", like "meh"). The 'Q' represents where the project originated, and also allows us to keep the Q prefix in class names. The 'E' and 'H' stand for Eirik Chambe-Eng and Haavard Nord, the founders of Trolltech/Qt.
 
+Also, remember that Qt probably will not go away at Nokia for a while. Until Nokia completely phases out Qt, we will continue to receive updates, bug fixes, including the entire 5.0 release should Nokia stick it out that long. We would only need to pull in their changes and resolve conflicts.
 
 As a priority and in order to be taken seriously, our first goal should be to re-release 4.8.2 as our 1.0.0 flagship product. The Qt5 target will become 2.0.0, but it might need further delays as the mess is sorted out.
 
@@ -40,12 +54,19 @@ QWidgets2
 
 
 MAYBE:
-I have taken it upon myself to purchase qeh-project.org, and will point it's DNS to a server provided by a member with merit in what will be considered the first steps of the fork. I will hand over the domain to the Chief Maintainer (TODO: this is a potential mistake, they could fuck us over. an 'entity' such as a company is better at holding this, so maybe I should hold it myself?), once one is elected (it can be Lars again for all I care. I don't have a vote because I have no merit). TODOalso: up to what level does the contributor's status transfer over to the fork? Obviously approvers/committers, but maintainers maybe not (???) and definitely not the Chief Maintainer. Perhaps the meritocratic governance model has instructions on what to do in the event of a fork.
+I have taken it upon myself to purchase qeh-project.org, and will point it's DNS to a server provided by a member with merit in what will be considered the first steps of the fork. I will hand over the domain to the Chief Maintainer (TODO: this is a potential mistake, they could fuck us over. an 'entity' such as a company is better at holding this, so maybe I should hold it myself?), once one is elected (it can be Lars again for all I care. I don't have a vote because I have no merit). TODOalso: up to what level does the contributor's status transfer over to the fork? Obviously approvers/committers, but maintainers maybe not (???) and definitely not the Chief Maintainer. Perhaps the meritocratic governance model has instructions on what to do in the event of a fork. I could be wrong, but want to at least highlight the possibility.
 
 
 
 random/rant/TODO:
-Surviving in Open Governance will prove to be a challenge because there aren't formally any non-technical positions in charge of overall direction. On one hand this is great as all decisions will be based on technical merit. On another, this could hinder progress as every member is busy with their specific technical work and nobody has the time to step back and observe/modify/extend the overall direction of the project.
+Surviving in Open Governance will prove to be a challenge because there aren't formally any non-technical positions in charge of overall direction. On one hand this is great, as all decisions will be based on technical merit. On another, this might hinder progress as every member is busy with their domain-specific technical work and nobody has the time to step back and observe/modify/extend the overall direction of the project.
 ^todo: this is also kind of weak. but so long as it is presented as weak (doesn't attempt to be strong), it is a valid argument.
+
+
+maybe: "Email me if you want to help with the fork. Remember, this has to be done by the community, not a company." <- I could maybe use every email to make the fork happen at my will, not having to do a single thing. I also think convincing Lars or Mattius to invoke BSD clause is vital first step. Convincing them will give me merit'ish, if I do it on the mailing list and succeed. maybe enough to lead this fork? which means i should have the asking of the invoking be in THIS email probably? probably up top too...
+^that help email might be all i need (I should probably put in this email that I'm looking for servers and administrators. People with merit preferred) to direct my own little fork-e-poo. That plus the 'gears are turning' initial default page on qeh-project.org
+
+maybe-also: maintainers for modules in the fork would only be responsible for pulling in commits done to the Qt/Nokia branch (if the maintainers don't follow). Once the maintainer stops committing to Qt/Nokia, if he doesn't come to the fork, then we can no longer maintain that module. Only then does the module receive a 'Needs Maintainer' status. A maintainer of the Qt/Nokia branch can opt for maintainer status in the Qeh fork and automatically gets it. Only Approvers/Committers keep their status in the fork. How do they prove themselves to be the same person? Perhaps a forum post on qt-project.org (err wait are those the same as gerrit accounts yet? that's what matters)? Perhaps a comment on a tester(me?)-specified bug report/commit in gerrit. Cost: Spam. Reward: Secure Transfer of Meritocracy Statuses. I could also let them specify the comment so long as they link me to it beforehand so I can see it appear. This will reduce in necessary spam comments. "pick something you want to comment on and then link me before you do".
+extending^mb: After you create your account on the Qeh fork, please contact me for further instructions on getting your status as an Approver/Committer/Maintainer back. We will have a vote for the Chief Maintainer position in a few weeks after the water settles and the members that decide to join the fork have created a new account and have received their merit/status back.
 
 d3fault
