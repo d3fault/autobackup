@@ -1,0 +1,58 @@
+the question
+that i need to answer before i can code the rest of rpc generator:
+
+is it wise to let BankDbHelper and BitcoinHelper know of the ActionArg objects for each Action????
+
+
+
+
+
+
+
+HOLY SHIT ALSO:
+aren't mutex locks way more expensive than both stack allocs and heap allocs?????????????
+i need to do a mutex lock in my recycler code. fuck. defeat purpose?
+
+wait no do i?
+
+
+if the object (therefore thread) that i do the ::get in is the same as the one i do the ::recycle in.......
+no
+
+so Actions (request/response): no mutex needed to guard the recycle list
+
+but if the ::get is in BitcoinHelper and the ::recycle is in RpcClientsHelper (auto-generated)......
+yes, the recycle list would need a mutex lock since they are not on the same thread
+
+
+fucking unoptimized pos
+
+but that's just a property of the difference between a signal and and action (what i call em in xml)
+
+action is a loop
+signal is a line
+
+i could just draw another line (emit the ::recycle)
+
+idfk.
+
+maybe this all isn't worth it anyways
+
+maybe a bitcoin QString can allocate faster than a cross thread recyle makes it worth it
+as in, backing up the message queue isn't worth it to recycle some 64 character QStrings
+
+
+
+
+
+FUCK i just don't know
+fml.
+
+it's comforting knowing that it will work either way
+but one way is better, that is for sure.
+
+
+i do know one thing
+if i emit the ::recycle, then the recycle code is not the same for Action as it is for Broadcast (although, the emit could be in the pure virtual so if i really wanted them to be they could)
+
+

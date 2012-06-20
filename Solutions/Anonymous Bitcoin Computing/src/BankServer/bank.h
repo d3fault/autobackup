@@ -2,15 +2,21 @@
 #define BANK_H
 
 #include <QObject>
+#include <QThread>
 
+#include "bankdbhelper.h"
 #include "../RpcBankServer/ibank-rpc-output.h"
 
 class Bank : public IBank
 {
+private:
+    BankDbHelper *m_Db;
+    QThread *m_DbThread;
 signals:
     //void initialized();
     //void d(const QString &);
     //void bankAccountCreated(const QString &username); //no point in re-declaring an implemented signal. just emit it.
+
 public slots:
     void init();
 

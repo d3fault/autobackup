@@ -58,7 +58,7 @@ void ServerAndProtocolKnower::handleMessageReceivedFromRpcClientOverNetwork()
         }
     }
 }
-void ServerAndProtocolKnower::bankAccountCreated(const QString &username)
+void ServerAndProtocolKnower::createBankAccountCompleted(const QString &username)
 {
     m_NetworkClientIdAndPendingCreateBankAccountRequestsHash.re
     //m_PendingCreateBankAccountRequests.removeOne(username); //TODOreq: should this be a list/hash of requests so that i can retrieve it? or should it be just for use in detecting the race condition of one already pending.... OR BOTH????????????

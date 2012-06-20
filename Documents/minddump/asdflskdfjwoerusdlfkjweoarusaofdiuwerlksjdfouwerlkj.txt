@@ -1,0 +1,29 @@
+even though couchbase is not meant for WAN
+
+a d3fault/dht could use the first [few?] node[s] as the couchbase "client" in a sense
+
+access into the network
+
+the abstraction allows us to somehow forcibly bill (pay!?) each server for their bandwidth/cpu/resources
+
+
+security risks aside, a bitcoin with cpu/bandwidth would be more secure because bandwidth is equally as hard to 'forge'
+
+the bad guy network wouldn't just need to have more cpu power than the regular network
+it would also need to have more bandwidth :-/
+
+i guess a worm could do this...
+
+
+all in all, i'll admit that it might not be possible to do securely (therefore funds have no value)
+
+but functional (hackable)? definitely.
+
+
+safety from law is more important than safety from hackers
+
+so they can down the network and delete/overwrite files
+
+great.
+
+if we still have anonymity/relative-message-security, it's still a win

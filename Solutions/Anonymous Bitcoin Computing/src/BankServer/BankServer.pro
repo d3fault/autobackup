@@ -18,19 +18,25 @@ TEMPLATE = app
 SOURCES += main.cpp \
     bankserver.cpp \
     bank.cpp \
+    bankdbhelper.cpp \
     clientshelper.cpp \
     ../shared/ssltcpserver.cpp \
     autoGendRpcClientHypothetical/rpcclientshelper.cpp \
-    autoGendRpcClientHypothetical/serverandprotocolknower.cpp
+    autoGendRpcClientHypothetical/serverandprotocolknower.cpp \
+    couchbaseclusterdbhelper.cpp
 
 HEADERS += \
     bankserver.h \
     bank.h \
+    bankdbhelper.h \
     clientshelper.h \
     ../shared/ssltcpserver.h \
     autoGendRpcClientHypothetical/rpcclientshelper.h \
     autoGendRpcClientHypothetical/serverandprotocolknower.h \
     ../RpcBankServer/ibank-rpc-output.h \
     ../RpcBankServer/RpcBankServerNetworkProtocol.h \
-    autoGendRpcClientHypothetical/CreateBankAccountRequest.h
+    autoGendRpcClientHypothetical/ActionsArgsObjects/CreateBankAccountArgs.h \
+    couchbaseclusterdbhelper.h
+
+
 

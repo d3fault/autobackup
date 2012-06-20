@@ -14,7 +14,7 @@ void BankServer::startListening()
         m_BankThread->start();
 
         m_RpcClientsHelper = new RpcClientsHelper(m_Bank); //where input is just an IBank
-        //m_RpcClientsHelper creates a thread in it's constructor for the network to use... and connects signals from the object on that thread to m_Bank, which it assumes is already on another thread.
+        //m_RpcClientsHelper creates a thread in it's constructor for the network to use... and connects signals from the object on that thread to m_Bank, which it assumes is already on another thread. RpcClientsHelper could be on it's own thread and own the network protocol knower -- that would have the same effect... but there's not really a reason to do this. RpcClients helper just connects and disconnects signals really...
 
         /*
         m_ClientsThread = new QThread();

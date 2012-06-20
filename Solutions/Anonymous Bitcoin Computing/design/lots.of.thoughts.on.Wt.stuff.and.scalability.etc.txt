@@ -1,0 +1,52 @@
+TODOreq
+
+Wt users without javascript or ajax (do simple || here, because idk which to rely on. prolly ajax?) do not 'subscribe' to be updated... they merely request the page data. this implies a bool subscribe variable when requesting a page. i think there are signals that can tell me when ajax/js support changes. ajax is really what we need.
+
+this is an optimization but i'm making it req since it's pretty heavy and easy to implement
+
+this is completely not related to whether or not we get results right away or have to fetch them.
+
+actually i'm not sure i'm even going to have a cache. won't the Wt's be the client's into the Couchbase cluster? the AppDb will be on the same machine? no wait, the AppDb _IS_ the cluster. so yes, the AppDb .exe is on the Wt machine. we probably could merge the two applications at this point, but I'm not sure if I should. no need for an SSL connection to myself.
+does that mean the Wt request will block until we get a result from the Couchbase cluster? it's starting to sound like it
+
+I think Wt and AbcAppDb might just need to be separated by a thread instead...
+...i know i can (but should i attempt to [yet]?) abstract this with rpc generator lawl
+
+
+
+i like the idea of fat Wt binaries and fat Abc binaries (together) as clients into the cluster
+
+does each app (abc in this case) get it's own cluster? or just it's own bucket in the cluster?
+
+
+can Wt even handle multiple domains? i know it can handle multiple entry points... but those will all fall under Abc
+
+
+i also wonder how easy it would be to make a couchbase db plugin thingo for Wt, so i can use it for username db too :-D (it's own bucket? nah)
+
+at the very least i can code a custom login thing relatively easily
+
+Wt is pretty easy ya know?
+
+maybe just a generic / blank [LOADING] center screen thing until the async response getting the page from the couchbase cluster completes?
+maybe gray out the UI and have that thing as like a rounded button?
+
+or just freeze the UI and have a loading indicator (little spinny wheel thingo in one of the corners)?
+
+i think any of those ideas are better than showing the page with "Loading..." in place of every value we don't yet have
+
+
+basically i need to think of a reason to have the abc on a separate binary (future scaling MAYBE?), and if i can't: make them cross-thread
+if i abstract cross thread/network then it would be easy to toggle them back and forth anyways... for future scaling if i end up needing to
+
+
+
+maybe the way Wt does multiple domains is by setting the domains to point to a certain folder and then that folder is the entry point to Wt
+the domain wouldn't show that it's in a folder, but Wt would know it
+
+
+this way every Wt could handle every app I make and I'd just need to make some business logic (AbcAppDb-like) for the new functionality
+that + create a new bucket in the cluster = awesome scaling of all my services horizontally
+overly scaled, for safety's sake, would (should) only ever happen so there is minimal overpayment to keep the network stable
+
+whereas if each is on it's own cluster then we need 'more than enough' for each one. mathematically speaking it should even out, but in practice unpredictable increases in load would be hard to predict. lol words. take out the first 'unpredictable'. every app/service benefits from the scaling outward. giant motherfucking binaries fuck yea. 'giant' being like 30mb tops after years and years of work. rofl. good luck stealing my shit because ima only ever let -O2 compiled binaries touch a production server. fuck scripts.

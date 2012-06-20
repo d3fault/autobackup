@@ -42,7 +42,7 @@ signals:
 
     //i say a sub-class. the protocol/network class object/thread should emit directly to the IBank thread. we only manage the connections between the two... and we do it on the main thread.... so we don't want network thread -> main thread -> IBank thread signaling. it just isn't efficient. sub class it is
 public slots:
-
+    void init();
 };
 
 #endif // RPCCLIENTSHELPER_H

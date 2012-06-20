@@ -1,0 +1,134 @@
+the response needn't contain the entire request
+especially across the network
+
+it needs to only contain the result. ok,failedReasonX,failedReasonY
+in some cases it contains more than the request: getPaymentKeyForUser(const QString &username); <-- that Action (request) returns a motherfucking Bitcoin key way longer than the username. sure they are both QStrings but that is purely a coincidence. other use cases they will not be the same
+
+so my trying-to-be-clever reusing the request as the response is actually quite stupid
+
+should i just stack allocate them and let the d pointers do their magic (even accross threads)? that implies i give them d pointer logic
+
+so it's down to what's easier/faster(performance wise, not time to completion)
+
+
+a custom recycle technique or d pointer use
+
+i honestly don't know
+
+going out of scope just decrements the counter, DELETING if 0
+which means we'll alloc/realloc lots?
+isn't that the point of using recycling?
+
+and the benefit of a stack allocate (being hot cache) lost when passing the stack allocated object across a thread and the object is using a d ptr (heap object) to avoid deletion (the refCount is incremented in the emit)? i could be wrong.
+
+this is a good question for C++ gurus
+
+or i can test it?
+
+yes, yes i can
+
+but should i?
+how long would it take?
+
+
+OMG
+what if
+get this
+
+i recycle a stack object?
+that makes no sense
+
+still wondering if i should write that test.
+and how to go about doing it.
+
+the thing is
+
+Creating an object on the stack (that has a d_ptr) also makes a heap create (the d_ptr itself).
+So any gain from stack is lost, and heap recycling should be used. If we weren't doing cross-thread calls it would be a different answer
+
+
+i should still test it
+
+'premature optimization'
+etc
+
+
+mb should just post on C++ gurus in Qt forum
+
+
+just go with what functions
+what you know will function
+i trust heap allocated objects when doing cross-thread shit anyways... and if i do memory management myself in get/recycle program, i know it will work. that answers that. easy to take out later anyways.
+
+so..
+
+there is only 1 network message object (maybe? i can customize the protocol reading/writing code to get (recycle'd) an object of whatever i determine the specific type to be, and then create a 2-way association between the two. the recycle should be a pure virtual, but i should not put any other functionality in there as pure virtual, though i can and am tempted to. you just emit the get'd Action-specific object (which has it's parent, the network message, backing it. there is a 2-way association (message only sees it as interface IRecyclableAction though, and calls it when appropriate. then recycles itself (talking about network message, the 'parent' (except not. from the business logic, it appears as though the Action specific object is the parent because it abstracts calls to the message)) too.))
+i think this method still does take into consideration that the response is different than the request. the request (Action implementation)!!!) is what holds, and therefore recycles, the response fields. that takes care of responses being way bigger than requests, but doesn't do anything for requests at different times being different sizes. i still don't know what happens when you set a QString to 5 characters when it's 200 before. do you free up 195? i need to look this up
+---Broadcasts do not need a network message backing them. because they only have the Action-specific fields like a response. the Broadcast Action-specific fields are written directly to the network, no need to copy to message in-between. maybe the same should be said of responses? the thing is we don't want to allocate on the fly, which is what you do if you don't use recycling. so recycling actually makes it easier. recycle broadcasts and recycle actions and recycle actions. remember that we'll only ever generate as much messages as we need. but a downside (if there are a LOT of various message types) is that 1 of each type will always be on the heap. you'd have to have a LOOOOOT of messages for this to be a big problem, but then again maybe not if your messages only contain LARGE object types, which take up a lot of memory at the very least until we overwrite their contents. calling .clear() on them is stupid because then we'd potentially dealloc, which defeats purpose of recycling. maybe i can call .squeeze or whatever every time after i write into it. if the message size was the same as before, it does nothing (but is it expensive? shouldn't be: i can modify source if i need to woo. it should first see if they're the same size or smaller. i imagine it would). if the previous one was way bigger, it now frees up that memory :). so now long-standing used once objects (that might be large) left over waiting to be re-used are the only problem. i don't see it as being a big problem for the time being.
+
+so a Response emits the RequestArgs (which contains request data abstracted/backed-by network message) thing back to it, but does not put it's Response value(s) in that object... just sends them as emit parameters. this is so we can copy them directly to the network
+^^^^^^^^^^^^^NVM Response should be separate but recycled also. otherwise we'd have to alloc the response fields every time too. fuck.
+
+
+i'm still really wondering if it'd be faster to just do Stack allocs everywhere
+KISS
+IDFK
+god-damnit
+overthinking this
+but meh, it's interesting and i'm kinda waiting for a response on the couchbase forums anyways
+
+a Request always has a Response
+so it should be CreateBankAccountRequestResponse that is recycled
+
+::get is at the network handling code
+::recycle is at the same network handle code/layer, but for sending instead of receiving
+
+a Broadcast sounds like it SHOULD do it's ::get deep in the BitcoinHelper code
+right after it detects a motherfucking pending amount detected.
+
+PendingAmountDetectedBroadcastArgs
+
+do they belong in BitcoinHelper code?
+
+you still haven't written it,
+but the BitcoinHelper is going to be a member of Bank
+and on it's own thread
+
+just like the BankDbHelper
+
+we don't want either BankDbHelper or BitcoinHelper to have anything to do with the Rpc Generated code
+
+so Bank itself is the one that calls ::get to get the recycled Broadcast message.
+
+after all, when BitcoinHelper detects a pending key, we have to figure out who that key belongs to by looking in the db before we are able to broadcast it.
+
+      <---BitcoinHelper detects pending amount for a key
+Bank finds out who it belongs to in db (aside: and also writes that it happened? or should we wait for confirmed before writing)
+    --> BankDbHelper --> CouchBaseClusterDbHelper
+    <--
+Bank now responds to who the key belongs to
+
+
+HOWEVER, at this point, the broadcast values have already been allocated by the BitcoinHelper
+and also, how the fuck am i going to remember which broadcast vals went with the cross-thread request to the db unless i sent it the vals along?
+this implies that either BitcoinHelper and BankDbHelper know of PendingAmountDetectedBroadcastArgs and BitcoinHelper does the ::get (also, the virtual recycle should be same interface as Request/Response uses, so i can use same network code... though that's not a biggie)
+or that the values are allocated by BitcoinHelper and i have to pass them to BankDbHelper (so it can record them as well) who passes them back to Bank along with the newly found owner of the key (which can just be a member of the recycled object), the username/appdb id of which is allocated in BankDbHelper for each request. multiple args would mean an object (recycleable or not) is probably better, considering cross-thread message posts the norm
+
+yea i think recycle is the way to go.
+and i think all of the Bank impl can/should/will know about it. I may regret this later, not abstracting the two. though i can do that later. what, BitcoinHelper has it's own 'pendingAmountDetected' object recycled that is different from the network/rpc side of thing's 'pendingAmountDetected' object that is also recycled? keeping them together is more efficient but now they are more tightly coupled.
+
+I did say the Rpc Client User and the Rpc Server implementation will be unaware of the _NETWORK PROTOCOL_, but i never said they'd be unaware of the Action types..
+
+
+in the AbcAppDb, the message shouldn't go further than the AppLogic area. if it goes all the way to the next network stack, it is now in another RpcClientsHelper (for the Abc Rpc Server impl (the logic)) and i can't wrap my head around putting generated code in generated code (until i make caching on different levels auto generated too, but even then xD)
+
+but is it ok for the message to go deep into the roots of the Rpc Server implementation?
+i'm actually thinking yes
+for Bank it hardly matters (decoupling later??????????? idfk)
+and for AbcAppDb, we'd just do something like:
+
+emit signal BankServerRpcServerHelper::createBankAccount(WtCreateBankAccountRequestResponse.username());
+
+until we can generate 2 Rpc shit's next to each other yet on different levels and basically PIPELINE them (which would be a similar project to, though not exactly the same as, auto-caching on the same concept of 'levels' (note: i don't think i'm even going to use caching with couchbase so w/e fuck that shit (i am going to MANUALLY cache the bank account db in the abc app db (both of which are couchbase clusters (requests to bank server should be avoided and this is a huge optimization since getBalance() will be very very frequent just when browsing)))))
+which sounds complicated as fuck so i'll leave it for a future exercise
+TODOoptimization ^

@@ -86,7 +86,7 @@ public slots:
     //scalability is always on my mind
     //not just with d3fault (though mostly with d3fault)
     //but also for regular server apps like this one. it still needs to scale horizontally
-    //d3fault will scale in a circle and uniformly across the network
+    //d3fault will scale in a circle (lol wut?) and uniformly across the network
     //server scaling for a website is a bit different... but when it boils down to it a lot of the concepts are the same (for the lower levels that need to scale outward)
 
     //so... do i take YET ANOTHER TANGENT (YAT) or should i just code this shit to not be scalable?
@@ -161,11 +161,17 @@ public slots:
     //i don't see why not so long as the generated code is gpl'd...
     //and to be honest, it would be pretty damn easy to make an rpc generator just by looking at the source and recognizing it's patterns. i'm about to do it right now/soon
 
+
+
+    //re: all the above shit. I'm going with CouchBase, fuck coding my own and fuck paying amazon. i want to sell/rent servers too
+    //con of CouchBase: json necessary for object serialization. NOT A BIGGY. was looking forward to QDataStream shit (and will on my own version, should i make one. but right now i need to prioritize launching and making one takes too long for that) oh well.
 signals:
     void initialized();
     void d(const QString &);
 
-    void bankAccountCreated(const QString &username); //will probably have to be createBankAccountCompleted, only because we only have a string copy of the word "createBankAccount"
+    void createBankAccountCompleted(const QString &username);
+    void createBankAccountFailedUsernameAlreadyExists(const QString &username);
+    void createBankAccountFailedPersistError(const QString &username);
 };
 
 #endif // IBANKRPCOUTPUT_H

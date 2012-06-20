@@ -1,14 +1,18 @@
 <!-- the default for hasResponse is true. i only put it in so i don't forget about it. it is optional. broadcastResponseToAllClients should probably default to false also (safer, especially in bank usage) -->
 <interface name="BankServer" version="1">
-  <action name="CreateBankAccount" hasResponse="true" broadcastResponseToAllClients="false" failedReasons="UsernameAlreadyExists,PersistError"><!-- took me a bit of staring to get it, but broadCastResponse will be "true" for the IAppDb "CreateBankAccount", because not every AppDb wants to know when other AppDbs create a bank account, but every Wt front-end DOES want to know. actually now i'm thinking it doesn't but it depends on how my caching works... tbd -->
+  <action name="createBankAccount" hasResponse="true" broadcastResponseToAllClients="false" failedReasons="usernameAlreadyExists,persistError"><!-- took me a bit of staring to get it, but broadCastResponse will be "true" for the IAppDb "CreateBankAccount", because not every AppDb wants to know when other AppDbs create a bank account, but every Wt front-end DOES want to know. actually now i'm thinking it doesn't but it depends on how my caching works... tbd -->
     <parameter type="const QString &" name="Username" />
   </action>
-  <signal name="PendingBalanceDetected">
+  <signal name="pendingBalanceDetected">
     <parameter type="const QString &" name="Username" />
     <parameter type="double" name="Amount" />
   </signal>
-  <signal name="AutoPayoutPerformed">
-    <parameter name="const QString &" name="Username" />
-    <parameter name="double" name="Amount" />
+    <signal name="confirmedAmountDetected">
+    <parameter type="const QString &" name="Username" />
+    <parameter type="double" name="Amount" />
+  </signal>
+  <signal name="autoPayoutPerformed">
+    <parameter type="const QString &" name="Username" />
+    <parameter type="double" name="Amount" />
   </signal>
 </interface>

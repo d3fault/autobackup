@@ -5,7 +5,16 @@ void Bank::init()
     //todo: init sql db i guess. might use a dht instead... because it scales better. the only thing is, i don't know how to receive notifications of an update via a dht. maybe a custom (but hopefully still scalable) solution can be worked out that allows for notifications/updates amongst siblings
     //memcached is cool and all, but i don't know what cases i would actually want to use it (referring to couchbase)... seeing as there aren't notifications to the dht... why would i ever want to read my cached results from memory?
 
-    emit initialized();
+    m_Db = new BankDbHelper();
+    m_DbThread = new QThread();
+    m_Db->moveToThread(m_DbThread);
+    m_DbThread->start();
+
+    //daisy-chain it's init to our intitialized. if i add any more business objects here on another thread, i need to handle them (ensure both) before forwarding them
+    connect(m_Db, SIGNAL(initialized()), this, SIGNAL(initialized()));
+
+    //now begin initializing the db
+    QMetaObject::invokeMethod(m_Db, "init", Qt::QueuedConnection);
 }
 #if 0
 void Bank::handleBankAccountCreationRequested(const QString &username)
@@ -40,15 +49,18 @@ void Bank::handleBalanceTransferRequested(const QString &username, double amount
 #endif
 void Bank::createBankAccount(const QString &username)
 {
-    //TODO: write to the db. this is the user's implementation... but we'd want to have exposed (maybe send them a header to #include as well as the ibank.h) our dht if used as a service like amazon aws / proprietary mode. meh. i should do open source and STILL do the business. i think your target audience is not really interested in setting up all the infrastructure and would rather use your pre-existing servers for a fee
+    //TODO: write to the db. also maybe make a bitcoin account for them? this is the user's implementation... but we'd want to have exposed (maybe send them a header to #include as well as the ibank.h) our dht if used as a service like amazon aws / proprietary mode. meh. i should do open source and STILL do the business. i think your target audience is not really interested in setting up all the infrastructure and would rather use your pre-existing servers for a fee
     //that is, unless i made installing it / setting it up insanely easy via script/installer/wizard (and i could even auto-set-it-up on servers of my own... as in, rent them out seemlessly. these are a lot of ideas and decisions coming together and i think free software is the way to go because i don't want to be a greedy nigger like aws but i still appreciate the business need to just define an interface and the object implementation (dht storage is abstracted to them via header) so i think i will make enough money off of hosting the service aspect of it, including payment server etc, so businesses can just focus on business)
 
     //perhaps even the user interface, which is only an rpc client and in this case Wt where appdb is rpc server, can be user-generated (and/or auto-generated ;-))
     //maybe we could just give them an html string and a list of $_varName_$ 's to litter throughout it so we will string replace them. i'm not sure if wt wants html.. but there's probably a way to use raw html as the content of a WContainerWidget
 
+
+    //these two below probably won't be here because the write to the db will be asynchronous to Bank's perspective (though syncrhonous in BankDbHelper, which is on it's own thread)
+
     emit d("create bank account for user: " + username + " requested");
 
-    emit bankAccountCreated(username);
+    emit createBankAccountCompleted(username);
 }
 #if 0
     Bank::CreateBankAccount(QString username)
