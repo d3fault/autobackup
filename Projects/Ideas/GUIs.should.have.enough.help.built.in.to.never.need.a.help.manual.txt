@@ -1,0 +1,4 @@
+your software's functionality will have all help documents built into the GUI
+this is a good GUI.
+
+the rest are just functional
