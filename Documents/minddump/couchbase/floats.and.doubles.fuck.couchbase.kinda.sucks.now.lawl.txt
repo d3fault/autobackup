@@ -1,0 +1,20 @@
+when storing the <username>Balance for a bank account, it should be stored as a string
+we parse it to double when we have Qt/C++
+
+json/couchbase only does floats as a native type
+
+so when we do the View that ultimately leads to me balancing out every transaction to zero
+we have to do .parseFloat in javascript
+after two Group()ings, we are supposed to balance out at zero
+
+because float might not be sufficient (?????), we should respond to a non-zero
+
+by triggering a much slower count/verify
+
+if that much slower count/verify completes, then we record the acceptable error of margin (in a more accurate double format)
+future group().group() balance checkings should be zero within that error of margin
+a larger one and we we-trigger the slow count/verify again
+
+we could also keep track of each error of margin and report spikes
+
+in any case, it's a huge error if our slow count/verify ever doesn't balance out
