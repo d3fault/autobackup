@@ -30,7 +30,7 @@ void BankServer::startListening()
         connect(m_Bank, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
         connect(m_RpcClientsHelper, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
 
-        //daisy-chain: init Bank -> init RpcClientsHelper
+        //daisy-chain: init Bank -> init RpcClientsHelper. bank is the back-end that is being served via the server, so it makes sense to init it first
         connect(m_Bank, SIGNAL(initialized()), m_RpcClientsHelper, SLOT(init()));
 
         //start initializing Bank

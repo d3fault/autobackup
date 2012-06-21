@@ -29,7 +29,7 @@ class RpcClientsHelper : public QObject
 public:
     explicit RpcClientsHelper(IBank *rpcServerInterfaceImplementor);
 private:
-    IBank *m_RpcServerInterfaceImplementor; //don't need this right now, but probably will during teardown
+    IBank *m_RpcServerInterfaceImplementor;
 
     QThread *m_ServerThread;
     ServerAndProtocolKnower *m_ServerAndProtocolKnower;
