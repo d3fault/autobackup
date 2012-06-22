@@ -11,6 +11,7 @@ public:
     explicit SignalCommunicatingHeapRecyclingDataProcessor(QObject *parent = 0);
 private:
     QString m_ReplaceBackTo;
+    int m_Count;
 signals:
     void doneWithData(QString *usedData);
 public slots:

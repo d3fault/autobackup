@@ -12,9 +12,9 @@ void TestDriver::init()
 
     QString sampleData("wpqeiaiqmnaewar"); //the 'generator' replaces all the A's with B's, and the 'processor' does the opposite.
 
-    int loopCount = 1000; //do the above process of replacing characters in a string this many times
+    int loopCount = 10000; //do the above process of replacing characters in a string this many times
 
-    int sizeMultiplier = 20; //repeat sampleData this many times for the actual operations
+    int sizeMultiplier = 250; //repeat sampleData this many times for the actual operations
 
 
     m_SignalCommunicatingHeapRecyclingDataGenerator = new SignalCommunicatingHeapRecyclingDataGenerator(loopCount, sizeMultiplier, sampleData);

@@ -24,6 +24,9 @@ private:
 
     int m_LoopCount;
     int m_SizeMultiplier;
+
+    int m_Count;
+    QString m_CountChar;
 signals:
     void d(const QString &);
     void testFinished(int numGenerated, int totalSize);

@@ -9,6 +9,7 @@ void SignalCommunicatingImplicitlySharedStackDataGenerator::init()
 {
     m_Interval = 0;
     m_ReplaceTo.append("b");
+    m_CountChar.append("a");
 }
 void SignalCommunicatingImplicitlySharedStackDataGenerator::startTest()
 {
@@ -25,7 +26,8 @@ void SignalCommunicatingImplicitlySharedStackDataGenerator::generateOne()
         }
 
         //change every A to a B
-        theBytes.replace("a", m_ReplaceTo);
+        //theBytes.replace("a", m_ReplaceTo);
+        m_Count = theBytes.count(m_CountChar);
         emit bytesGenerated(theBytes);
         ++m_Interval;
         QMetaObject::invokeMethod(this, "startTest", Qt::QueuedConnection);

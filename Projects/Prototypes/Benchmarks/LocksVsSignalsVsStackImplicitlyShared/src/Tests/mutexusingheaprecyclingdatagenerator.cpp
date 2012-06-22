@@ -10,6 +10,7 @@ void MutexUsingHeapRecyclingDataGenerator::init()
     m_RecycleList = new QList<QString*>();
     m_Interval = 0;
     m_ReplaceTo.append("b");
+    m_CountChar.append("a");
     m_Done = false;
     m_NumGenerated = 0;
 }
@@ -22,7 +23,8 @@ void MutexUsingHeapRecyclingDataGenerator::generateOne()
     if(m_Interval < m_LoopCount)
     {
         QString *theBytes = getRecycledOrNew();
-        theBytes->replace("a", m_ReplaceTo);
+        //theBytes->replace("a", m_ReplaceTo);
+        m_Count = theBytes->count(m_CountChar);
         emit bytesGenerated(theBytes);
         ++m_Interval;
         QMetaObject::invokeMethod(this, "startTest", Qt::QueuedConnection);

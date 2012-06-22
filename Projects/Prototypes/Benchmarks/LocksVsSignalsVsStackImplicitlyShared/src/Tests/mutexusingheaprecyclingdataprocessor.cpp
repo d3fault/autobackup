@@ -10,7 +10,8 @@ void MutexUsingHeapRecyclingDataProcessor::init()
 }
 void MutexUsingHeapRecyclingDataProcessor::processGeneratedData(QString *generatedData)
 {
-    generatedData->replace("b", m_ReplaceBackTo);
+    //generatedData->replace("b", m_ReplaceBackTo);
+    m_Count = generatedData->count(m_ReplaceBackTo);
     //emit doneWithData(generatedData);
     m_ListOwner->recycledUsed(generatedData);
 }

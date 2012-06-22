@@ -13,6 +13,8 @@ public:
 private:
     QString m_ReplaceBackTo;
     MutexUsingHeapRecyclingDataGenerator *m_ListOwner;
+
+    int m_Count;
 signals:
     void doneWithData(QString *usedData);
 public slots:

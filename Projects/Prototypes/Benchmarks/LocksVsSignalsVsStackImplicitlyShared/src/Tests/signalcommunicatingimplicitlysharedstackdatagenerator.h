@@ -13,8 +13,11 @@ private:
     int m_Interval;
     QString m_StartingVal;
     QString m_ReplaceTo;
+    QString m_CountChar;
     int m_LoopCount;
     int m_SizeMultiplier;
+
+    int m_Count;
 signals:
     //void testFinished();
     void bytesGenerated(QString);
