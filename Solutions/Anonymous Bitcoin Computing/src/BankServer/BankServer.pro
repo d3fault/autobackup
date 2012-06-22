@@ -35,8 +35,15 @@ HEADERS += \
     autoGendRpcClientHypothetical/serverandprotocolknower.h \
     ../RpcBankServer/ibank-rpc-output.h \
     ../RpcBankServer/RpcBankServerNetworkProtocol.h \
-    autoGendRpcClientHypothetical/ActionsArgsObjects/CreateBankAccountArgs.h \
-    couchbaseclusterdbhelper.h
+    couchbaseclusterdbhelper.h \
+    autoGendRpcClientHypothetical/BroadcastsArgsObjects/pendingbalanceaddeddetectedargs.h \
+    autoGendRpcClientHypothetical/ActionsArgsObjects/createbankaccountargs.h
+
+
+
+
+
+
 
 
 

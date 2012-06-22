@@ -3,11 +3,11 @@
   <action name="createBankAccount" hasResponse="true" broadcastResponseToAllClients="false" failedReasons="usernameAlreadyExists,persistError"><!-- took me a bit of staring to get it, but broadCastResponse will be "true" for the IAppDb "CreateBankAccount", because not every AppDb wants to know when other AppDbs create a bank account, but every Wt front-end DOES want to know. actually now i'm thinking it doesn't but it depends on how my caching works... tbd -->
     <parameter type="const QString &" name="Username" />
   </action>
-  <signal name="pendingBalanceDetected">
+  <signal name="pendingBalanceAddedDetected">
     <parameter type="const QString &" name="Username" />
     <parameter type="double" name="Amount" />
   </signal>
-    <signal name="confirmedAmountDetected">
+    <signal name="confirmedBalanceAddedDetected">
     <parameter type="const QString &" name="Username" />
     <parameter type="double" name="Amount" />
   </signal>
