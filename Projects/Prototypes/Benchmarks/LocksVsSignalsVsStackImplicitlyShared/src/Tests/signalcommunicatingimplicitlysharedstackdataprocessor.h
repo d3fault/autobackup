@@ -18,7 +18,7 @@ signals:
     void testFinished();
 public slots:
     void init();
-    void processGeneratedData(QString);
+    void processGeneratedData(const QString &);
 };
 
 #endif // SIGNALCOMMUNICATINGIMPLICITLYSHAREDSTACKDATAPROCESSOR_H

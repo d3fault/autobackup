@@ -20,20 +20,20 @@ void MutexUsingHeapRecyclingDataGenerator::startTest()
 }
 void MutexUsingHeapRecyclingDataGenerator::generateOne()
 {
-    if(m_Interval < m_LoopCount)
+    while(m_Interval < m_LoopCount) //changing this to a while loop instead of doing a message based while loop halved the time. we can't do a regular while loop for the message based recycling, as it'd finish the loop before ever processing a recycle message. we can do it for the stack one though. basically what i'm getting at is that this test is flawed because the generation of data should not be an event while loop... but MAYBE if all 3 of them are then the results are accurate. i'm unsure.
     {
         QString *theBytes = getRecycledOrNew();
         //theBytes->replace("a", m_ReplaceTo);
         m_Count = theBytes->count(m_CountChar);
         emit bytesGenerated(theBytes);
         ++m_Interval;
-        QMetaObject::invokeMethod(this, "startTest", Qt::QueuedConnection);
+        //QMetaObject::invokeMethod(this, "startTest", Qt::QueuedConnection);
     }
-    else
-    {
+    //else
+    //{
         m_Done = true;
         checkDone();
-    }
+    //}
 }
 QString * MutexUsingHeapRecyclingDataGenerator::getRecycledOrNew()
 {

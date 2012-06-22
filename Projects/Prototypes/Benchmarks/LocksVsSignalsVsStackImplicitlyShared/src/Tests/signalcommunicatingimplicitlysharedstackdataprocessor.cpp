@@ -9,7 +9,7 @@ void SignalCommunicatingImplicitlySharedStackDataProcessor::init()
     m_Interval = 0;
     m_ReplaceBackTo.append("a");
 }
-void SignalCommunicatingImplicitlySharedStackDataProcessor::processGeneratedData(QString generatedData)
+void SignalCommunicatingImplicitlySharedStackDataProcessor::processGeneratedData(const QString &generatedData)
 {
     //change all B's to A's
     //generatedData.replace("b", m_ReplaceBackTo); //fuck, we'd detach() at this point. test fails/sucks. or maybe idgaf? or i could just NOP right here? but i need to "spin cycles". also, the compiler might notice that we don't do anything and NOP this anyways...

@@ -20,7 +20,7 @@ private:
     int m_Count;
 signals:
     //void testFinished();
-    void bytesGenerated(QString);
+    void bytesGenerated(const QString &);
 public slots:
     void init();
     void startTest();

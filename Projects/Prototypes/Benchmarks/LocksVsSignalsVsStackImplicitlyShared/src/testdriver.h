@@ -28,11 +28,12 @@ private:
     QThread *m_ProcessorThread;
 
     //TODO: stack alloc/delloc (dgaf) vs. heap recycling ____ WITHOUT thread separation (Actions). There would never be a reason/case to use a mutex for that test
+    //^^i should note that in the Actions use case, we pass the stack var across a thread, the thread passes it back, and then we recycle it (or let it go out of scope). I'm guessing that this will have similar performance to the thread separated tests... because it still does go across threads... and stack alloc of implicitly shared isn't really stack alloc anyways (d ptr)... so meh too lazy to even attempt this test
 
     SignalCommunicatingHeapRecyclingDataGenerator *m_SignalCommunicatingHeapRecyclingDataGenerator; //'owner' of recycle list
     SignalCommunicatingHeapRecyclingDataProcessor *m_SignalCommunicatingHeapRecyclingDataProcessor; //emits back to owner
 
-    MutexUsingHeapRecyclingDataGenerator *m_MutexUsingHeapRecyclingDataGenerator; //neither thread 'owns' the recycle list, they both lock a mutex to access it
+    MutexUsingHeapRecyclingDataGenerator *m_MutexUsingHeapRecyclingDataGenerator; //generator owns the list, processor calls a method on generator that uses a locked mutex to access it safely
     MutexUsingHeapRecyclingDataProcessor *m_MutexUsingHeapRecyclingDataProcessor;
 
     SignalCommunicatingImplicitlySharedStackDataGenerator *m_SignalCommunicatingImplicitlySharedStackDataGenerator; //there is no recycle list, but the instantiated type is a) on the stack and b) implicitly shared (implicitly shared so we can emit it across a thread to the processor)

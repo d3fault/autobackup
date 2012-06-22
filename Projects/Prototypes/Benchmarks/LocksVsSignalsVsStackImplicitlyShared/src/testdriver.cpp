@@ -10,11 +10,12 @@ void TestDriver::init()
     m_GeneratorThread = new QThread();
     m_ProcessorThread = new QThread();
 
-    QString sampleData("wpqeiaiqmnaewar"); //the 'generator' replaces all the A's with B's, and the 'processor' does the opposite.
+    QString sampleData("wpqeiaiqmnaewar"); //the generator and processor both just count the occurences of the letter 'a'
+    //not anymore: the 'generator' replaces all the A's with B's, and the 'processor' does the opposite.
 
     int loopCount = 10000; //do the above process of replacing characters in a string this many times
 
-    int sizeMultiplier = 250; //repeat sampleData this many times for the actual operations
+    int sizeMultiplier = 100; //repeat sampleData this many times for the actual operations
 
 
     m_SignalCommunicatingHeapRecyclingDataGenerator = new SignalCommunicatingHeapRecyclingDataGenerator(loopCount, sizeMultiplier, sampleData);
@@ -94,7 +95,7 @@ void TestDriver::handleMutexHeapRecycleTestDone(int numGenerated, int totalSize)
 
 
     //stack test related connections
-    connect(m_SignalCommunicatingImplicitlySharedStackDataGenerator, SIGNAL(bytesGenerated(QString)), m_SignalCommunicatingImplicitlySharedStackDataProcessor, SLOT(processGeneratedData(QString)));
+    connect(m_SignalCommunicatingImplicitlySharedStackDataGenerator, SIGNAL(bytesGenerated(const QString &)), m_SignalCommunicatingImplicitlySharedStackDataProcessor, SLOT(processGeneratedData(const QString &)));
     //he does not emit it back, nor does he even return it. he lets it go out of scope and dgafs it
 
     m_Time.restart();
