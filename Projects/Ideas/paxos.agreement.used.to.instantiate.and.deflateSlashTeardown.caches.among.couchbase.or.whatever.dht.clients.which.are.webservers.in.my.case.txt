@@ -1,0 +1,27 @@
+QMap<Last10AverageAccessesPerSecond, QString /* key */> m_OrderedMapBasedOnLike100mostOftenUsedIshConcept;
+
+
+
+//the get
+
+value CouchbaseWrapper::get(key)
+{
+  if(hashOfKeysWithCachesInstantiated.contains(key))
+  {
+    value = getItFromHash^^^^(key);
+    return value.giveMeAcachedDodeAndYouTakeCareOfRoundRobinPlxIdgaf();
+  }
+  
+  //TODO: get the average out of the map. it is slow to do a QMap lookup by value (couchbase-key), but possible. we are using a QMap so it orders it based on the one with the highest average access rate. does QMap even re-evaluate the key or is it only evaluated on insert? may need custom code fuck it possible.
+
+  if(averageAccessCountPerSecondBasedOnLast10accesses > 5) //if we access it on average more than 5 times per second -- TODO: detect when to take it OUT of cache mode?
+  {
+    instantiateAmotherFuckingCacheFor(key); //TODO: maybe change the above 5^^^ now that we have one (two if you count actual owner). perhaps 2.5 times a second now before doing a 3rd? or actually we should raise the threshhold a bit before we divide by the new N. 5 is our rate of users, we split into the caches, we'd hit the 2.5 instantly without even any more users coming. maybe just keep it at 5 in that case? TODO: should we also keep track of the individual times each cache is hit? i'd say nah, just keep an overall count for that couchbase client (this wrapper)... all of the accesses to the nodes, including giveMeAcachedDodeAndYouTakeCareOfRoundRobinPlxIdgaf() accesses
+    //also notify neighbor clients of the cache instantiation. TODO: i think there needs to be a paxos consensus on a cache instantiate (and probably deflate). this is not to be confused with the invalidation done to the caches during a write.
+  }
+}
+
+
+
+
+i really think the paxos agreement to instantiate caches (maybe they can have minimum instantiation lengths too?) is a great solution, so long as keeping track of accesses isn't too costly. i think keeping 100 'most often accessed' and their average accesses per second would be sufficient. towards the bottom of the list i wouldn't be surprised if it was filled with very low numbers (which are constantly ejected to make room for new ones (maybe it should be a queue-like sub-list of MRU values? so we don't keep adding one and then removing it and adding it again and as you can imagine we have forgotten about it and therefore cannot / do not average it. it's like a race condition of sorts //TODOreq))

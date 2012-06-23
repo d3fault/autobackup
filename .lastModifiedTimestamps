@@ -1,5 +1,5 @@
 Documents/:1340125072
-Documents/minddump/:1386032099
+Documents/minddump/:1386032105
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -10,7 +10,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032099
+Documents/minddump/dreams/:1386032105
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/iron.man.train.raid.with.10.seconds.of.elbow.conscience.txt:1340076931
@@ -446,7 +446,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1340447548
+Projects/Ideas/:1340459286
 Projects/Ideas/QtSslRpc/:1340202458
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
 Projects/Ideas/QtSslRpc/broadcast.either.needs.a.mutex.for.recycle.list.gah.or.a.cross.thread.message.recycle.fml.Actions.dont.have.this.problem.txt:1340202458
@@ -593,6 +593,7 @@ Projects/Ideas/offline.online.split.figured.out.this.applies.to.both.keyboard.mo
 Projects/Ideas/one.click.in.the.market.to.download.compile.and.install.should.be.able.to.stop.and.reverse.what.is.done.so.far.and.the.recording.of.you.doing.that.is.private.but.it.shouldnt.be.because.it.inherently.isnt.or.something.txt:1323683733
 Projects/Ideas/online.surrogate.handling.packages.initiated.by.offline.private.messages.asdlfjsaldfjsadlk.txt:1338908149
 Projects/Ideas/p2p.taxiab.service.idk.what.i.mean.by.unlicensed.in.this.txt:1339059048
+Projects/Ideas/paxos.agreement.used.to.instantiate.and.deflateSlashTeardown.caches.among.couchbase.or.whatever.dht.clients.which.are.webservers.in.my.case.txt:1340459725
 Projects/Ideas/paxos.modifications.customizations.aslfjasdfouwelrkjsadfoulskdf.txt:1338795519
 Projects/Ideas/pay.them.for.their.computes.with.network.computes.which.they.can.just.sell.anyways.if.they.want.txt:1339759594
 Projects/Ideas/perUserInstalledAppList.is.stored.on.dht.and.there.is.autoinstall.and.autoconf.for.each.these.are.differnt.from.source.apps.i.guess.which.should.still.be.detachable.btw.txt:1338793556
@@ -1015,7 +1016,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032099
+Projects/libAvGraphicsItem2/design/:1386032105
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1193,7 +1194,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1340453360
+autobackupScripts/win/.directory:1340459730
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
