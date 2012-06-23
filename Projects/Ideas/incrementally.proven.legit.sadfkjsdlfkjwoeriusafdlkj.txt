@@ -1,0 +1,10 @@
+enjoy 2012 noobs (originally thought: faggotss)
+
+start with a small ass release
+in a .zip
+live
+sha512 it
+upload it
+allow/teach-if-need the average person to verify the files. they can open each zip and text file
+improve incrementally 24/7 live
+you operate under the assumption that at least 1 person checked each md5sum/sha512(?) [not both, but md5 is so much smaller/easier to read] (<- lol that is a phenomenom now. finding the balance)

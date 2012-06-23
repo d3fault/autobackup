@@ -1,0 +1,22 @@
+i don't know if i can explore my brain
+actually that is not at all what i meant to say
+what i mean to say:
+i don't know if i can abstract Serial
+in the same way I'm pretty sure i can abstract
+Network/Threads
+
+but,
+i KNOW i can find out
+especially AFTER implementing a shared interface between
+Network and Threads. then i will see the abstract concept
+that is happening in all it's glory
+
+
+i think Serial is just a state based system
+
+ez
+
+QStateMachine *MIIIIGHT* help, have no clue
+shit is easy as fuck anyways
+
+but can i _USE_ it ~~the same~~ as the Network/Threads?

@@ -1,0 +1,25 @@
+i need to launch
+and i was thinking about sending a screen shot of every one BEHIND this one
+but nah
+live in a .zip?
+rofl
+would you like to come live in a zip with me kaylee?
+i think that would send the wrong impression
+
+BUT,
+it is essentially what i am doing
+
+hence, fingers
+need2goOutside
+want2goOutside
+
+project-go-outside.com
+is the overall project
+wasdf is the finger specific portion
+
+project-go-outside.com bundles the arduino wasdf project with a compliant C++/Qt Free Software
+Rasperry Pi Stack
+
+wasdf is just the Arduino Software + the Serial Protocol / C++ impl (in Qt)
+
+project-go-outside.com just happens to use wasdf as one of it's input methods

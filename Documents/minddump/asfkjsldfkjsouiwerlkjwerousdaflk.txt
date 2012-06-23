@@ -1,0 +1,11 @@
+when i get "dogFood"
+i also get every appending of that "rootword" (tld sans extension?)
+or is it an arbitrary word
+
+pages linked to are not allowed to have targetting
+the user has already been targetted
+pages link to are to a specific product or brand (<- huge wording loophole fuck this idea)
+
+
+but i mean i am still going to use "dogFood"
+probably just abc-domain wide but idk i was kinda getting at that i should allow for sub-pages of a rootWord
