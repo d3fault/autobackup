@@ -1,6 +1,7 @@
 #ifndef PENDINGBALANCEADDEDDETECTEDARGS_H
 #define PENDINGBALANCEADDEDDETECTEDARGS_H
 
+#include <QObject>
 #include <QList>
 #include <QMutex>
 
@@ -60,54 +61,26 @@
 
 struct PendingBalanceAddedDetectedArgs
 {
-    static QList<PendingBalanceAddedDetectedArgs*> *m_PullingList;
     static QList<PendingBalanceAddedDetectedArgs*> *m_RecycleList;
-    static QAtomicInt m_SharedAtomicIntInsteadOfMutexLocking; //if i can't solve 'wat do', just use a mutex
 
     static PendingBalanceAddedDetectedArgs *getNewOrRecycled()
     {
-        if(m_PullingList.isEmpty())
+        if(!m_RecycleList.isEmpty())
         {
-            //if(!m_RecycleList.isEmpty()) -- can't do this because that list is accessed on other thread. this is what the atomic int is for
-            if(m_SharedAtomicIntInsteadOfMutexLocking.testAndSetAcquire(1, 2))
-            {
-                qSwap(m_PullingList, m_RecycleList);
-                return m_PullingList->takeLast();
-            }
-            else
-            {
-                return new PendingBalanceAddedDetectedArgs();
-            }
+            return m_RecycleList->takeLast();
         }
         else
         {
-            return m_PullingList->takeLast();
+            PendingBalanceAddedDetectedArgs *newArgs = new PendingBalanceAddedDetectedArgs();
+            connect(newArgs, SIGNAL(doneUsingArgObject()), this, SLOT(recycledArgObject())); //Auto-Connection means I don't have to worry about cross-threads :-D. same-thread (Actions) will be handled for me. Hmm I think does this also mean they can share a base type?
+            //I would say the answer to that is yes, TODOreq: SO LONG AS the base type doesn't pull from a shared List<NetworkMessages> to use as their backing object. Actions would pull from the list in network thread, broadcasts would pull from it in Bitcoin thread. The solution: either have all actions share a NetworkMessageList and each Broadcast gets it's own NetworkMessageList, OR both every Action and Broadcast get their own NetworkMessageList. for actions they can most likely share~, but Broadcasts most likely cannot (even with each other). I am not willing to use a QMutex
+            return newArgs;
         }
     }
     static recycleUsed(PendingBalanceAddedDetectedArgs *used)
     {
-        if(m_SharedAtomicIntInsteadOfMutexLocking != 2)
-        {
-
-            if(m_SharedAtomicIntInsteadOfMutexLocking == 1)
-            {
-                //race condition lists could enter swapping before i call this append
-                m_RecycleList->append(used);
-            }
-            else if(m_SharedAtomicIntInsteadOfMutexLocking.testAndSetAcquire(0, 1))
-            {
-                m_RecycleList->append(used);
-            }
-        }
-        else
-        {
-            //wat do
-        }
+        m_RecycleList->append(used);
     }
 };
-
-QList<PendingBalanceAddedDetectedArgs*> PendingBalanceAddedDetectedArgs::m_PullingList = new QList<PendingBalanceAddedDetectedArgs*>();
-QList<PendingBalanceAddedDetectedArgs*> PendingBalanceAddedDetectedArgs::m_RecycleList = new QList<PendingBalanceAddedDetectedArgs*>();
-
 
 #endif // PENDINGBALANCEADDEDDETECTEDARGS_H

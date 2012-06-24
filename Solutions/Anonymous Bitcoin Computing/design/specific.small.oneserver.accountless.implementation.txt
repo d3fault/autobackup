@@ -10,3 +10,35 @@ and i could just pay off self profits right away or minutely or something ya kno
 man that'd be so easy to code
 but it scales for shit
 and how2 idfk
+
+
+
+I've been thinking about this more,
+it would be very easy to set up many many "Laundry" nodes all around the globe
+_AND_
+my Rpc Generator can/will/should be able to change the "network calls" into "cross-thread" calls
+
+
+so I can easily collapse my Wt -> AppDb -> BankServer into a single executable
+
+...
+
+and then swap out the data stores backing AppDb and BankServer to be a simple SQLite db (as opposed to Couchbase <3). err i think Wt's db too, idfk at this point
+
+
+i should maybe also put the source out to the public?
+perhaps even the install script?
+
+
+maybe~
+up2you
+then you'd be shooting yourself in the foot too
+
+
+free information vs. money for me?
+lLoL
+
+ggggrrrrrrrrrrrreeeeeeeeeeeeeeeeeed
+staring it right in the eyes
+and going to have to be a human on this one :(
+need monah for d3fault pr0ject

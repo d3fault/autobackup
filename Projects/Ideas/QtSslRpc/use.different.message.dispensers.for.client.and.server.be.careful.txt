@@ -1,0 +1,28 @@
+IBank::getMessageDispenser()
+
+
+returns a message dispenser for all actions/broadcasts
+
+
+with a networking example
+the rpc client will have one
+and the rpc server will have one
+they do not share memory
+
+TODOreq:
+but if i don't code/design correctly,
+for the cross-thread usage...
+they might incorrectly share the same message dispenser
+which means multiple threads accessing the same object (the dispenser itself) without proper locking etc
+
+so just be careful
+
+maybe just have each side of the rpc connection have it's own rpc dispenser?
+
+
+does this mean i'm going to fill out an ArgObject before requesting an Action?
+
+i'd think yes
+
+
+seeing as broadcasts are going to give you an ArgObject (when done, just emit it away!)

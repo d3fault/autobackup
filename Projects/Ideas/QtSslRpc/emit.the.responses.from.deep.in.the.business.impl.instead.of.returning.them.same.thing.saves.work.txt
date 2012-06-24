@@ -1,0 +1,38 @@
+Random idea I just had: instead of returning the responses, maybe i can just emit them back?
+would keep the Bank impl cleaner, no marshalling around types and shit
+
+AND, it's already do cross-thread operation... we're just making it simpler.
+
+
+
+
+so we'd have like a CreateBankAccountArgsObject request;
+
+
+then we could do:
+
+//for other types we'd set params on the request object itself
+
+emit request.responseReady();
+
+
+
+better example, with setting params:
+
+GetAddFundsKeyArgObject request;
+
+request.setResponseAddFundsKey("asdf");
+
+emit request.responseReady();
+
+
+
+there is also of course
+
+
+emit request.responseFailed<Reason>();
+
+
+
+and you'd prolly need to do a return; right after each one
+since you're not longer returning the objects themselves

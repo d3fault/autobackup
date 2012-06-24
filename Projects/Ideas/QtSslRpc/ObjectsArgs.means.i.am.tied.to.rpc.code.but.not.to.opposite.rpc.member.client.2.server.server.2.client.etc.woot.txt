@@ -1,0 +1,20 @@
+but wait, doesn't this make it strongly coupled?
+
+
+well yes
+
+but not to each other
+only to the rpc code!
+
+which is PERFECT
+
+
+back-end can still be swapped out
+and of course back end is strongly coupled with rpc shit
+
+
+and front end is a USER of rpc shit,
+so of course it is strongly  coupled
+
+however, the client does not depend on the server, and vice versa
+PERFECTO DESIGNO

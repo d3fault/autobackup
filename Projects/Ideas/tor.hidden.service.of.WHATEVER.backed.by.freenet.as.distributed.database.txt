@@ -1,0 +1,49 @@
+Tor hidden service
+
+which uses
+
+Freenet Distributed Storage/Database
+
+
+multiple nodes scattered throughout the globe can serve up the freenet data
+
+
+whether it is encrypted on freenet (decrypted by the Tor hidden service, my C++/Qt app) is a choice.
+
+
+I could create 'snapshots' every so often (tor hidden services only synchronize with each other once a day or something, for example (this is a good solution for a global laundering service, where you want to spread out payments over a week or two)), or just have really high latency and use the Freenet datastore realtime.
+
+
+
+Every so often (say, once a year), the nodes can correlate with each other (through the freenet?) to 'floss' the data, as I have written about a long time ago. Stale data can be forgotten / not flossed if I choose.
+
+In that instance, I don't think I was referring to using it as a backing datastore for a tor hidden service
+
+
+I think I was pondering it's usage in a d3fault scenario... and I didn't like it because of the lossy data.
+
+I still do not like it for d3fault. I want something permanent.
+
+
+
+However, ABC/various business ideas are entirely less important
+
+
+A global mixing service (multiple tor hidden services) could share a freenet back-end
+
+
+
+
+for some reason this all makes me want to kill myself
+
+
+perhaps because I'm over-engineering ABC
+or because I'm pissed that I am broke and the possibilities are endless to making money
+should I even go forward with a legitimate style business?
+as a cover?
+
+ABC is so basic... but I could provide it under a different format (paypal, web-only? ewww) to maintain legitimacy
+
+that I have yet to announce a single project is great. I have so many options right now and I love it.
+
+but when I realize I have nothing out there, it makes me facepalm so hard that I want to shoot myself in the face.

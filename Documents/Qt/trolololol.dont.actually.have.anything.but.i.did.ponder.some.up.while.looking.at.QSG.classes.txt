@@ -1,0 +1,58 @@
+So I've made a QWidgets2 design/prototype... BUT....
+
+
+Apparently I'm smarter than everyone at Nokia. I managed to make a "modern, fluid" GUI API using the QSG* classes without incurring the additional costs of: JIT Parsing of .qml files, a JavaScript Interpreter, and a Virtual Machine. I also did it without using declarative, something claimed by many to be impossible.
+
+It's a C++ API, and I only have a few basic elements created so far: Buttons, Labels, Text Fields, Layout Boxes... planning on adding Radios and Checkboxes next.
+
+They look very ugly at the moment, but that doesn't matter. With a bit of TLC, they can look identical to QWidgets1... use styling, etc.
+
+
+Now onto the BUT,
+
+I can't find a reason to contribute them to the "Qt Project".
+
+
+A wise man once wrote a chapter about 'asking the right question' in a book on advice.
+
+So my question is: What is Qt?
+
+IMO:
+Qt is a powerful cross-platform C++ framework.
+
+A framework consists of 2 core parts:
+1) The GUI API
+2) The Utility Libraries
+
+
+
+
+Going by that definition, it is my opinion (and nothing more) that Nokia has taken the Qt Project off track from "the Qt way" (as the founders intended) with their QML experiment.
+They paid a pretty penny acquiring Qt, so they have every right to do whatever they want with it.
+
+
+The thing is, "The GUI API" is a __CORE__ piece of functionality to the framework.
+
+Which brings me to the next question:
+Why should I do Nokia's work for them?
+
+Sure, they offloaded Qt Commercial to Digia... but that's besides the point. The fact remains that Qt is a valuable product, and I am sitting on a [very unfinished] core piece of functionality. I am convinced that my functionality has value, so why would I contribute/GIVE it to the Qt Project and let Nokia/Digia sell it?
+
+This is what I meant when I said "The Qt Project is, in this very moment, in the worst state it could possibly be in". Another reason to tackle on to that one is Nokia's cutting back of the Qt division's resources... which to date has still not been officially addressed (poor communication, yet another reason to tackle on).
+
+The codebase isn't in a bad condition... it's the contribution model surrounding it that's unhealthy.
+
+
+Sure, I could contribute it as an Add-On... but remember the bit about it being CORE functionality? Core functionality does not belong in an add-on.
+
+
+Which brings me to this thing I keep mentioning (which triggers accusations of trolling): a fork.
+
+
+Don't get me wrong, the Qt Project requires a large amount of active contributors/maintainers to stay alive....
+...but does it really require that many to maintain a fork? You could just pull every change from the upstream/Qt Project... rename it (scripted)... apply your changes.... and release/sell. The selling would just be commercial support (can't re-license Qt like Digia/Nokia can).... but at least the commercial support would be going to the contributors... not the corporation taking the project in the wrong direction.
+
+
+That being said, I don't want to fork. I'm too lazy _AND_ I don't want to split the community. The point I'm trying to put in everyone's faces, however, is this: The current contributing model surrounding the Qt Project is unhealthy. It makes people want to fork. Sure, I'm too lazy... but what about the next guy? I want Qt to be all it can be (lol army). This means that, despite everyone thinking I'm a troll, the issue needs to be dealt with if we want Qt to thrive. You do want Qt to thrive, don't you? We need the community to stick together in order for it to thrive.
+
+d3fault
