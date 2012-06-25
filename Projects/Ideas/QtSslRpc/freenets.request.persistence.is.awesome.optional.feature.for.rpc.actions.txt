@@ -1,0 +1,34 @@
+I like freenet's idea of persistent requests
+
+something, reboot, persistent
+
+
+I forget what the something was
+
+but I think I'd want mine to be persistent always
+it requres additional code and the accessing of the hdd for every message. fuck that. but an in-memory cache like memcached or couchbase even that persists eventually might not be so bad. what are longer? network calls or hdd calls?
+
+
+anyways, to the point:
+
+I want to steal that option of those 3 and put them as options when defining the Rpc xml. each request can have one and I could even do like the entire rpc server (every action, it doesn't make sense in broadcasts). you could even potentially forward this to be a run-time variable configuration. actually it would probably be easy to do so. but the additional code shouldn't be necessary when specifying in the xml. the additional code for the ones you dont' choose, that is. i want my rpc generator to be minimal. as soon as it isn't, that's when shit starts going downhill.
+
+
+the reason this came up was I was thinking of having a node that I directly access via my phone's internet
+it's a tor relay / bitcoin node (maybe even freenet node if my other ones are too. idfk) and I only verify my balance on it
+
+i can even convert it to USD before sending the reply to the phone
+
+
+
+BUT actually this is dumb since I can just download block-chain
+
+
+what I was thinking I'd be doing is querying some hidden service. the phone talking one would be the rpc client with persistence = reboot (good enough for now imo)
+and the hidden service itself would be a tcp back-end to some other node? perhaps an ABC node if I do that offline? err not offline but eya hidden. or even just online + offline. err public + private. err http[s] + onion
+
+I originally was thinking just to do like a read-only type thing to that server
+or even have values pushed to it (wouldn't the phone communicating one be the server? I guess TCP means they can talk 2-way duh I'm dumb)
+
+
+because I don't trust the network connections, I should retry the persisted request in like 5 seconds or so. this is a messaging protocol, not a high bandwidth one. it should be both. tor is not. rpc is? idk rpc is domain-specific. as in, the domain in which you use rpc defines whether or not you should send large files

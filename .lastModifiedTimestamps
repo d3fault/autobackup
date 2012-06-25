@@ -1,7 +1,7 @@
 Documents/:1340559291
 Documents/Qt/:1340559703
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032117
+Documents/minddump/:1386032123
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -12,7 +12,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032117
+Documents/minddump/dreams/:1386032123
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/iron.man.train.raid.with.10.seconds.of.elbow.conscience.txt:1340076931
@@ -451,14 +451,15 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1340576320
-Projects/Ideas/QtSslRpc/:1340544053
+Projects/Ideas/:1340617799
+Projects/Ideas/QtSslRpc/:1340618830
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
 Projects/Ideas/QtSslRpc/ObjectsArgs.means.i.am.tied.to.rpc.code.but.not.to.opposite.rpc.member.client.2.server.server.2.client.etc.woot.txt:1340544053
 Projects/Ideas/QtSslRpc/broadcast.either.needs.a.mutex.for.recycle.list.gah.or.a.cross.thread.message.recycle.fml.Actions.dont.have.this.problem.txt:1340202458
 Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncResponse.conjured.txt:1336703490
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
 Projects/Ideas/QtSslRpc/emit.the.responses.from.deep.in.the.business.impl.instead.of.returning.them.same.thing.saves.work.txt:1340540991
+Projects/Ideas/QtSslRpc/freenets.request.persistence.is.awesome.optional.feature.for.rpc.actions.txt:1340618830
 Projects/Ideas/QtSslRpc/im.going.to.attempt.to.prototype.this.as.i.manually.code.abc.txt:1337201257
 Projects/Ideas/QtSslRpc/initial.idea.txt:1336692360
 Projects/Ideas/QtSslRpc/maybe.not.now.maybe.do.this.later.idk.txt:1336792346
@@ -508,6 +509,7 @@ Projects/Ideas/actually.considering.forking.qt.youve.got.balls.my.friend.fuck.no
 Projects/Ideas/ad.based.videogame.would.be.good.place.to.use.ad.agency.txt:1330720584
 Projects/Ideas/alphabet.electronic.confirmations.through.arduino.per.letter.txt:1328219880
 Projects/Ideas/anonymity.requests.and.responses.there.is.a.visual.png.that.goes.with.it.txt:1323476151
+Projects/Ideas/arduino.enabled.offline.write.only.hack.proof.airgap.automated.backup.system.txt:1340617799
 Projects/Ideas/asdlkfjweaoriusdflkjawoiusdfsakfhjsadfjoweirl.txt:1339229095
 Projects/Ideas/at.launch.2.options.a.is.start.from.beginning.b.is.watch.current.live.txt:1338980965
 Projects/Ideas/atomic.core.watch.it.light.up.but.how.to.watch.it.be.notified.while.remaining.anonymous.gah.txt:1337989204
@@ -527,6 +529,7 @@ Projects/Ideas/cached.package.installer.want.to.implement.using.yum.aslfdjasodfi
 Projects/Ideas/cactuar.on.my.way.to.page.dead.shirt.or.just.dead.idc.i.like.just.dead.slightly.more.txt:1338705746
 Projects/Ideas/captcha.image.has.ad.on.it.unblockable.txt:1328070905
 Projects/Ideas/community.surrounding.anything.open.source.or.free.whatever.is.profitable.and.fun.txt:1338706770
+Projects/Ideas/connecting.to.dot.onions.in.qt.i.can.verify.remote.dns.resolution.before.beginning.txt:1340590435
 Projects/Ideas/creation.date.is.when.you.start.typing.but.maybe.not.idk.txt:1338005187
 Projects/Ideas/creepy.but.awesome.way.to.have.reliable.anonymous.internet.txt:1337911576
 Projects/Ideas/crowd.sourced.realtime.music.prolly.one.of.my.best.ideas.txt:1331442662
@@ -612,6 +615,7 @@ Projects/Ideas/qt.widgets.in.a.graphics.view.in.a.jpeg.in.a.browser.with.input.f
 Projects/Ideas/re.dht.udp.broadcast.updates.notifications.very.good.idea.but.does.not.guarantee.update.is.delivered.o.wall.txt:1339820500
 Projects/Ideas/reaction.time.games.admin.kick.most.afk.player.txt:1325442878
 Projects/Ideas/reaction.time.games.p2p.multiplayer.txt:1325442855
+Projects/Ideas/read.this.before.ever.making.a.custom.http.server.for.tor.hidden.services.txt:1340590786
 Projects/Ideas/readme.before.or.when.designing.bootstrapped.version.txt:1323590022
 Projects/Ideas/readme.howto.launch.fuck.i.had.a.huge.thing.here.but.hit.up.arrow.key.and.it.erased.txt:1338634780
 Projects/Ideas/related.and.or.parent.triggers.a.contextual.search.or.something.this.doesnt.make.MUCH.sense.but.there.is.something.there.txt:1340447548
@@ -1026,7 +1030,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032117
+Projects/libAvGraphicsItem2/design/:1386032123
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1210,7 +1214,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1340580730
+autobackupScripts/win/.directory:1340619192
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

@@ -1,0 +1,14 @@
+Qt already has support for the HTTP protocol.
+I am thinking about writing my own using strings and making it minimal
+
+
+HOWEVER, I might be able convince myself that the following method is safe enough:
+
+HTTP headers are the main cause of leaking...
+...so I can sanitize them based on a whitelist
+
+I can search for an IP address pattern in the header (perhaps only the "Host" key)
+
+but more importantly, I can just filter out both key/value for anything I _DON'T_ recognize.
+
+A whitelist of the basics for every response (request? I guess both since I'm talking about a Tor hidden-service and a Tor node client to that hidden service (should note I am NOT talking about web pages here. wait wtf why would I use http then fuckin a this is dumb and pointless)) is faster than making my own http server

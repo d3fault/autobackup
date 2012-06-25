@@ -1,0 +1,15 @@
+an arm holding an ssd
+it can move horizontally but not vertically
+
+the arm drops the ssd a few inches onto a pillow (ssd because much higher shock resistance, and because fuck it)
+just low enough that the arm cannot pick it up
+
+we have harnessed gravity to make a "write only offline permanent air-gap'd hack-proof backup system....... that's still entirely vulnerable to real world / physical intrusions-attacks (uses encryption though so contents are not-seen. safe would mean they are secure would mean they are still in place physically)
+
+the (or a different one) can grab another ssd from a stack of ssds. it only uses one at a time, but there are 3 of these "datacenters" all around. or actually no there are 3 drives per data center. and fuck tons around the globe. i'd sleep so well.
+
+
+oh, right
+
+
+separate from the pillow, i picture it below it, there is a hammer that presses a lever (like a DING thing at a carnival). when it hits that, the pillow and the lever, which are part of a car thingo, drive the fuck away and 'store' the ssd. it can also 'get' the drives. but it CANNOT put the drive back into the computer that gave it to him. the 'get' would be for a future in-person operation of retrieving the backup. i'd still want that process to be atonomous (though manually/in-person triggered, thus hack proof). after it 'stores' the ssd, it repositions the pillow. the repositioning of the pillow cart 'kicks the dropper in the knee' (presses a button that wasn't there until moments after the hammer dropped on the lever) which says "i'm back, you can drop shit on me" (it does not drop if it does not receive that signal. perhaps even they 'latch' together so a human couldn't even slide it away. but at that point i am protecting physically so wasting time. doors with locks at this point).

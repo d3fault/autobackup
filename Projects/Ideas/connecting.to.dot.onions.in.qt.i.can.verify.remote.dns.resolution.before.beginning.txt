@@ -1,0 +1,9 @@
+If I ever have a "hidden service" that I've written with a SslTcpServer exposing some Rpc Impl and I want to connect to it via it's .onion through QTcpSocket (QSslSocket):
+in QtNetwork, after setting the proxy to SOCKS5, i need to query the list of capabilities at run-time and ensure that QNetworkProxy::HostNameLookupCapability is enabled so it uses the proxy (tor) for dns resolving
+
+if that isn't enabled, i should fail
+
+alternatively/additionally/to-be-even-safer, i can do that dsocks /etc/resolv.conf shit so even if I do attempt to look it up locally, it still goes through Tor
+
+
+SOCKS5 does set that capability, but I'm unsure if it is ALWAYS set. the qnetworkproxy.html#socks5 section on the qt docs seem to imply that it isn't always? perhaps they are referring to explicitly disabling it manually? either way, it's a nice safety check before ever initiating a host lookup / tcp connect
