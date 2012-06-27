@@ -1,0 +1,1 @@
+changed the design for messages multiple times. so i don't lose any TODOs, i'm going to just move them into this old folder 

@@ -10,7 +10,7 @@ void Bank::init()
     m_Db->moveToThread(m_DbThread);
     m_DbThread->start();
 
-    m_BitcoinHelper = new BitcoinHelper(IBank::messageDispenser()->broadcasts()->pendingBalanceAddedDetectedMessageDispenser(), IBank::messageDispenser()->broadcasts()->confirmedBalanceAddedDetectedMessageDispenser() /*TODOmb: payout dispersed dispenser TODOreq: confirm network connectivity during payment dispersions. we can't just assume they went through because we called the command. I will probably need to test what happens when connectivity is lost, because idfk. doesn't that mean I am on my own chain rofl? */);
+    m_BitcoinHelper = new BitcoinHelper(IBankServer::messageDispenser()->broadcasts()->pendingBalanceAddedDetectedMessageDispenser(), IBankServer::messageDispenser()->broadcasts()->confirmedBalanceAddedDetectedMessageDispenser() /*TODOmb: payout dispersed dispenser TODOreq: confirm network connectivity during payment dispersions. we can't just assume they went through because we called the command. I will probably need to test what happens when connectivity is lost, because idfk. doesn't that mean I am on my own chain rofl? */);
     m_BitcoinThread = new QThread();
     m_BitcoinHelper->moveToThread(m_BitcoinThread);
     m_BitcoinThread->start();

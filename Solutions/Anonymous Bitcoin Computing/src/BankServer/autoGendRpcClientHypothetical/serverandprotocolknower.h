@@ -6,7 +6,7 @@
 #include <QString>
 
 #include "../shared/ssltcpserver.h"
-#include "../RpcBankServer/RpcBankServerNetworkProtocol.h"
+#include "../RpcBankServer/rpcbankservernetworkmessage.h"
 
 //weirdly, this class has the exact opposite interface implementation as the regular rpc implementations. it's auto-generated so it doesn't matter.. it's just funny i guess?. all signals in the interface become slots here, all slots in interface become signals here. will be fun to write the generator code for that lol
 class ServerAndProtocolKnower : public QObject
@@ -18,7 +18,7 @@ private:
     SslTcpServer *m_SslTcpServer;
 
     //QList<QString /* TODO: object generation if there's more than one parameter? */> m_PendingCreateBankAccountRequests; //to the rpc bank impl
-    QMultiHash<uint,QString> m_NetworkClientIdAndPendingCreateBankAccountRequestsHash; //could also just do all pending requests, but we're using a generator and seeing as we're going to be looking through these for dupes it is also efficient to have one per request type
+    QMultiHash<uint,QString> m_NetworkClientIdAndPendingCreateBankAccountRequestsHash; //could also just do all pending requests, but we're using a generator and seeing as we're going to be looking through these for dupes it is also efficient to have one per action type
 signals:
     void d(const QString &);
     void createBankAccount(const QString &);

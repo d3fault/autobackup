@@ -3,23 +3,23 @@
 
 #include <QObject>
 
+#include "bankservermessagedispenser.h"
+#include "Messages/Actions/createbankaccountmessagedispenser.h"
+
 //i was confused for a minute on why this was in the rpc shared folder... but it's because "bankserverhelper" (the auto generated rpc client code) will implement this interface as well
 //hmm actually this has implications on my message recycling. do i pass in a QString &username or do i fill out an ArgObject before making the request?
 
 //a future version of this hypothetical rpc generator might parse a header file... but initially i'm going to specify all of the interface in an xml file. it also makes the parameter modification easier.
 //the BankServerHelper code generated that is located on the RPC client and is used by the RPC client's code implements this, and so does your custom Bank Server implementation on the RPC Server
 
-class BankMessageDispenser;
-
-class IBank : public QObject
+class IBankServer : public QObject
 {
     Q_OBJECT
 public:
-    IBank() { m_BankMessageDispenser = new BankMessageDispenser(); }
-    BankMessageDispenser *getBankMessageDispenser() { return m_BankMessageDispenser; }
+    IBankServer() { m_BankMessageDispenser = new BankServerMessageDispenser(); }
+    BankServerMessageDispenser *messageDispenser() { return m_BankMessageDispenser; }
 private:
-    BankMessageDispenser *m_BankMessageDispenser;
-
+    BankServerMessageDispenser *m_BankMessageDispenser;
 public slots:
     virtual void createBankAccount(CreateBankAccountMessage *createBankAccountMessage)=0; //this far in I already wonder what the parameters should be... for example, if a first parameter needs to be a request identifier (or a request object... but then the RPC auto-gen'd impl will depend on object code that the RPC server impl will use directly). username makes sense... but how will the auto-gen'd rpc impl know which signal/response goes with which slot/request??
 

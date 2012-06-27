@@ -1,0 +1,3 @@
+TODOopt: cross network rpc shit will have different instances of the messages themselves. they are marshalled onto and off of the network
+i have discussed this before, but i think it was mostly only for the generators?
+however, in the cross-thread rpc, we can/should (optimization, just rewrote the t0d0 to be opt instead of req) re-use the same message. would be stupid not to.

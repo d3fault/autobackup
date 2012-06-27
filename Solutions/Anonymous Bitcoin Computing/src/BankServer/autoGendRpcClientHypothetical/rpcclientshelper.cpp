@@ -1,6 +1,6 @@
 #include "rpcclientshelper.h"
 
-RpcClientsHelper::RpcClientsHelper(IBank *rpcServerInterfaceImplementor)
+RpcClientsHelper::RpcClientsHelper(IBankServer *rpcServerInterfaceImplementor)
     : m_RpcServerInterfaceImplementor(rpcServerInterfaceImplementor), m_ServerAndProtocolKnower(0)
 {
 

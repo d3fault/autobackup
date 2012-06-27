@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+
+
 //TODOreq: idk if this belongs here per se, but i want to make a note (writing down helps me remember anyways): there is no reason for the business impl to need any of the actions dispensers... only the broadcast dispensers. the actions themselves pass individual messages as their arguments. only the RpcClientsHelper (auto-generated code) needs to deal with the dispensers for Actions
 
 //TODOreq: in the interest of not connecting/disconnecting over and over, recycled messages will keep their connections. seeing as they are per-message-type, this works out nicely. only when getting a new one do we need to make it's connection, and only when deleting the messages (program shutdown) do we disconnect them
@@ -15,6 +17,8 @@ class CreateBankAccountMessageDispenser : public QObject
 {
     Q_OBJECT
 public:
+    void setMessageReadyReceiver();
+
     QString *username() { return m_BackingNetworkMessage->string0(); } //lol wut? this is the dispenser, not the message itself!!!!!!!!!!
     //I suppose I can define the message + the dispenser in the same file... this file... because I don't want 2 files per Action + 2 files per Broadcast ehh
 
@@ -68,5 +72,22 @@ public:
 
     //oh fuck TODOreq: no recycled messages available, no memory ('new' fails), ... wait for recycled? block? wtf? rare condition anyways, deal with it later
 };
+void CreateBankAccountMessageDispenser::setMessageReadyReceiver(SomeTypePossiblyServerAndProtocolKnower *receiver)
+{
+    //this function just sets the receiver for later use when new'ing. it comes in through the parameter. instincts/logic atm say it should be the ServerAndProtocolKnower object... but since we're going to use this on the RpcClient also... that clearly does not make any sense. I'm thinking an interface that ServerAndProtocolKnower implements...
+
+    //THEN AGAIN, the kind of things that we'll be rigging will be different (methinks opposite) on the client... so maybe not?
+    //and there is no "messageReadyForClient" signal on the client... nor is there an equivalent "messageReadyForServer" (although there could be)... we just pass the message directly to the exposed method for whatever action we want
+    //client still does use the recycling shit. I'm wondering if I need to hit up dia to help my brain :-P
+
+    //on new'ing in ::get, we do this:
+    connect(newMessage, SIGNAL(messageReadyForClient(CreateBankAccountMessage*)), receiverPassedInAsParameter, SLOT(createBankAccountCompleted(CreateBankAccountMessage*)));
+    //to use it is a bit redundant, but w/e:
+    emit messageWeFilledOut.messageReadyForClient(messageWeFilledOut); //weird because we're passing ourselves in a signal that we own. I don't think this is illegal, and there might be a better way to do it. but for now, it works (<- assumption, pretty sure) so fuck it.
+
+    //fuck this, so lost. dia it is
+
+    //obviously this would all be in some interface that CreateBankAccountMessageDispenser implements...
+}
 
 #endif // CREATEBANKACCOUNTMESSAGEDISPENSER_H

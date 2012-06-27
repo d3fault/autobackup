@@ -36,7 +36,7 @@ void BankServer::startListening()
         connect(m_RpcClientsHelper, SIGNAL(initialized()), m_Bank, SLOT(init()));
 
         //start initializing Rpc Clients Helper
-        QMetaObject::invokeMethod(m_Bank, "m_RpcClientsHelper", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(m_RpcClientsHelper, "init", Qt::QueuedConnection);
     }
 }
 void BankServer::handleD(const QString &msg)

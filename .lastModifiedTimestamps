@@ -1,7 +1,7 @@
 Documents/:1340559291
 Documents/Qt/:1340559703
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032135
+Documents/minddump/:1386032141
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -12,7 +12,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032135
+Documents/minddump/dreams/:1386032141
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/iron.man.train.raid.with.10.seconds.of.elbow.conscience.txt:1340076931
@@ -453,7 +453,7 @@ Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
 Projects/Ideas/:1340748367
-Projects/Ideas/QtSslRpc/:1340618830
+Projects/Ideas/QtSslRpc/:1340838589
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
 Projects/Ideas/QtSslRpc/ObjectsArgs.means.i.am.tied.to.rpc.code.but.not.to.opposite.rpc.member.client.2.server.server.2.client.etc.woot.txt:1340544053
 Projects/Ideas/QtSslRpc/broadcast.either.needs.a.mutex.for.recycle.list.gah.or.a.cross.thread.message.recycle.fml.Actions.dont.have.this.problem.txt:1340202458
@@ -464,10 +464,12 @@ Projects/Ideas/QtSslRpc/freenets.request.persistence.is.awesome.optional.feature
 Projects/Ideas/QtSslRpc/im.going.to.attempt.to.prototype.this.as.i.manually.code.abc.txt:1337201257
 Projects/Ideas/QtSslRpc/initial.idea.txt:1336692360
 Projects/Ideas/QtSslRpc/maybe.not.now.maybe.do.this.later.idk.txt:1336792346
+Projects/Ideas/QtSslRpc/message.dispensers.in.client.and.server.its.hard.to.think.for.both.client.and.server.use.cases.simultaneously.txt:1340838402
 Projects/Ideas/QtSslRpc/not.worth.doing.atm.MbAsync.with.Wt.usage.complicated.but.doable.read.this.txt:1337204290
 Projects/Ideas/QtSslRpc/rpc.and.abc.shit.they.are.like.the.same.in.my.brain.atm.lol.txt:1340200211
 Projects/Ideas/QtSslRpc/this.does.abstract.automate.two-way.and.one-way.messages.txt:1339494468
 Projects/Ideas/QtSslRpc/use.different.message.dispensers.for.client.and.server.be.careful.txt:1340543935
+Projects/Ideas/QtSslRpc/very.handy.optimization.for.rpc.across.threads.use.the.same.message.lol.txt:1340838589
 Projects/Ideas/QtSslRpc/xml.input.example.as.well.as.ssl.cert.key.autogen.utility.based.on.client.count.txt:1336700083
 Projects/Ideas/abc/:1340016320
 Projects/Ideas/abc/3.layers.of.dht.but.i.think.it.is.definitely.doable.not.that.hard.really.just.design.it.well.before.you.start.txt:1339321739
@@ -1032,7 +1034,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032135
+Projects/libAvGraphicsItem2/design/:1386032141
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1122,40 +1124,42 @@ Solutions/Anonymous Bitcoin Computing/src/AppDb/bankserverhelper.h:1335350377
 Solutions/Anonymous Bitcoin Computing/src/AppDb/main.cpp:1334997969
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.cpp:1336171193
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.h:1336171200
-Solutions/Anonymous Bitcoin Computing/src/BankServer/:1340830029
-Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/:1340822056
-Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/ActionsArgsObjects/:1340368778
-Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/ActionsArgsObjects/createbankaccountargs.h:1340188105
-Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/BroadcastsArgsObjects/:1340539882
-Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/BroadcastsArgsObjects/pendingbalanceaddeddetectedargs.h:1340539882
-Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/rpcclientshelper.cpp:1340821827
-Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/rpcclientshelper.h:1340821582
+Solutions/Anonymous Bitcoin Computing/src/BankServer/:1340840700
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/:1340839242
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/:1340838707
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/ActionsArgsObjects/:1340368778
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/ActionsArgsObjects/createbankaccountargs.h:1340188105
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/BroadcastsArgsObjects/:1340539882
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/BroadcastsArgsObjects/pendingbalanceaddeddetectedargs.h:1340539882
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/note.what.is.this.txt:1340838696
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/rpcclientshelper.cpp:1340839189
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/rpcclientshelper.h:1340839242
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/serverandprotocolknower.cpp:1340822056
-Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/serverandprotocolknower.h:1340821963
-Solutions/Anonymous Bitcoin Computing/src/BankServer/BankServer.pro:1340818779
-Solutions/Anonymous Bitcoin Computing/src/BankServer/bank.cpp:1340821257
-Solutions/Anonymous Bitcoin Computing/src/BankServer/bank.h:1340180038
+Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/serverandprotocolknower.h:1340839175
+Solutions/Anonymous Bitcoin Computing/src/BankServer/BankServer.pro:1340839200
+Solutions/Anonymous Bitcoin Computing/src/BankServer/bank.cpp:1340839190
+Solutions/Anonymous Bitcoin Computing/src/BankServer/bank.h:1340839251
 Solutions/Anonymous Bitcoin Computing/src/BankServer/bankdbhelper.cpp:1340188566
 Solutions/Anonymous Bitcoin Computing/src/BankServer/bankdbhelper.h:1340184897
-Solutions/Anonymous Bitcoin Computing/src/BankServer/bankserver.cpp:1340819620
+Solutions/Anonymous Bitcoin Computing/src/BankServer/bankserver.cpp:1340839282
 Solutions/Anonymous Bitcoin Computing/src/BankServer/bankserver.h:1337827210
 Solutions/Anonymous Bitcoin Computing/src/BankServer/clientshelper.cpp:1337827575
 Solutions/Anonymous Bitcoin Computing/src/BankServer/clientshelper.h:1337827586
 Solutions/Anonymous Bitcoin Computing/src/BankServer/couchbaseclusterdbhelper.cpp:1340179900
 Solutions/Anonymous Bitcoin Computing/src/BankServer/couchbaseclusterdbhelper.h:1340179900
 Solutions/Anonymous Bitcoin Computing/src/BankServer/main.cpp:1336220778
-Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/:1340821378
+Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/:1340839558
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/:1340819310
-Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/Actions/:1340830026
-Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/Actions/createbankaccountmessagedispenser.h:1340830026
+Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/Actions/:1340840695
+Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/Actions/createbankaccountmessagedispenser.h:1340840695
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/Broadcasts/:1340818719
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/Broadcasts/pendingbalanceaddeddetected.h:1340818719
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/bankserveractionmessagedispenser.h:1340819310
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/Messages/bankserverbroadcastmessagedispenser.h:1340545120
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/IBankServer.xml:1340368831
-Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/RpcBankServerNetworkProtocol.h:1339492978
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/bankservermessagedispenser.h:1340545580
-Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/ibank-rpc-output.h:1340821378
+Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/ibankserver.h:1340839558
+Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/rpcbankservernetworkmessage.h:1339492978
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/:1334997579
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/:1334827029
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/advertising/:1333733713
@@ -1218,7 +1222,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1340830035
+autobackupScripts/win/.directory:1340840711
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

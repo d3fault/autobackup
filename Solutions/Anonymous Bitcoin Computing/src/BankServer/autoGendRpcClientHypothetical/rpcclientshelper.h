@@ -21,15 +21,15 @@
 
 #include "serverandprotocolknower.h"
 
-#include "../RpcBankServer/ibank-rpc-output.h"
+#include "../RpcBankServer/ibankserver.h"
 
 class RpcClientsHelper : public QObject
 {
     Q_OBJECT
 public:
-    explicit RpcClientsHelper(IBank *rpcServerInterfaceImplementor);
+    explicit RpcClientsHelper(IBankServer *rpcServerInterfaceImplementor);
 private:
-    IBank *m_RpcServerInterfaceImplementor;
+    IBankServer *m_RpcServerInterfaceImplementor;
 
     QThread *m_ServerThread;
     ServerAndProtocolKnower *m_ServerAndProtocolKnower;

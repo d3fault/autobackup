@@ -1,0 +1,25 @@
+to what i said earlier about never needing Actions dispensers
+this is only true for the rpc server
+
+the rpc client behaves the exact opposite
+
+
+
+
+Rpc Client
+-Needs Actions Dispenser
+-Doesn't Need Broadcast Dispenser (messages are arguments)
+
+Rpc Server
+-Needs Broadcast Dispenser
+-Doesn't Need Actions Dispenser (messages are arguments)
+
+
+
+bingo
+
+
+so it does make sense to have a "BankServerMessageDispenser", that just has "actions" and "broadcasts"
+
+client gets what he needs (action dispenser)
+server gets what he needs (broadcast dispenser)

@@ -5,9 +5,9 @@
 #include <QThread>
 
 #include "bankdbhelper.h"
-#include "../RpcBankServer/ibank-rpc-output.h"
+#include "../RpcBankServer/ibankserver.h"
 
-class Bank : public IBank
+class Bank : public IBankServer
 {
 private:
     BankDbHelper *m_Db;
