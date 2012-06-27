@@ -58,8 +58,10 @@ void ServerAndProtocolKnower::handleMessageReceivedFromRpcClientOverNetwork()
         }
     }
 }
-void ServerAndProtocolKnower::createBankAccountCompleted(const QString &username)
+void ServerAndProtocolKnower::createBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage)
 {
+    //TODO: the below is old. everything we need is in createBankAccountMessage
+
     m_NetworkClientIdAndPendingCreateBankAccountRequestsHash.re
     //m_PendingCreateBankAccountRequests.removeOne(username); //TODOreq: should this be a list/hash of requests so that i can retrieve it? or should it be just for use in detecting the race condition of one already pending.... OR BOTH????????????
     //TODO: send the success message across the network
@@ -81,4 +83,10 @@ void ServerAndProtocolKnower::createBankAccountCompleted(const QString &username
     //what pending request for the associated action is the response associated with (using only the parameters?
     //what socket does the request/response that we just got back from the rpc server impl correspond to?
     //TODOreq: there is no pre-existing request or socket for broadcasts... and yet the broadcast still needs to select the correct socket.... without even knowing of their existence
+}
+void ServerAndProtocolKnower::createBankAccountFailedUsernameAlreadyExists(CreateBankAccountMessage *createBankAccountMessage)
+{
+}
+void ServerAndProtocolKnower::createBankAccountFailedPersistError(CreateBankAccountMessage *createBankAccountMessage)
+{
 }

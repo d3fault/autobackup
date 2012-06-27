@@ -3,6 +3,11 @@
 
 #include <QObject>
 
+//so like wtf? this is a message dispenser dispenser?
+//yea pointless.
+//the messages should share a dispenser
+//perhaps with the broadcasts (though maybe not, since there are complications)
+
 class BankServerActionMessageDispenser : public QObject
 {
     Q_OBJECT

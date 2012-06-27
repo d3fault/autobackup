@@ -3,17 +3,40 @@
 
 #include <QObject>
 
+//TODOreq: idk if this belongs here per se, but i want to make a note (writing down helps me remember anyways): there is no reason for the business impl to need any of the actions dispensers... only the broadcast dispensers. the actions themselves pass individual messages as their arguments. only the RpcClientsHelper (auto-generated code) needs to deal with the dispensers for Actions
 
 //TODOreq: in the interest of not connecting/disconnecting over and over, recycled messages will keep their connections. seeing as they are per-message-type, this works out nicely. only when getting a new one do we need to make it's connection, and only when deleting the messages (program shutdown) do we disconnect them
+
+//the rpc messages can have different backing network messages each time
+//upon 'recycle', they are no longer associated (even though they still are)
+//upon 'get' (a recycled), we are forced into associating a new backing network message. the one we just read it (side note: it too was recycled :-P)
 
 class CreateBankAccountMessageDispenser : public QObject
 {
     Q_OBJECT
 public:
-    QString *username() { return m_BackingNetworkMessage->string0(); }
+    QString *username() { return m_BackingNetworkMessage->string0(); } //lol wut? this is the dispenser, not the message itself!!!!!!!!!!
+    //I suppose I can define the message + the dispenser in the same file... this file... because I don't want 2 files per Action + 2 files per Broadcast ehh
+
+    //does each type need it's OWN dispenser?
+    //I should elaborate
+    //does each Action/Broadcast message need it's own dispenser TYPE? can't they just share the type, each having their own instance?
+    //well... yes... but should I still call them by the message in which they dispense?
+    //I'd say yes... but the type should not specify it... the variable/member name should!!!!
+    //lol dommit this project's getting semi-messy. not lost yet but still lots of failed messages attempts etc lmao
+
+    //fuck, wat do. was about to write "committing before obliterating / cleaning up"... but there's a lot of TODOreq's in here
+    //wouldn't ifdef'ing them out and removing from .pro mean they don't show up in project-wide searching?
+    //wat do. maybe so many comments and TODOs don't belong in the source itself
+    //but fuck me I can't think of any other place...
 
     //the responseReady() signal is inheritied
     //as is the doneWithMessage() signal
+
+    //responseReady() doesn't make sense for broadcasts, but something similar certainly does. the wording would just be different. emit broadcast.broadcastReady(); for example. doneWithMessage() is the same~
+    //tryin to think if Actions/Broadcasts should inherit from same class
+    //maybe an emit rpcMessage.messageReadyForClient(); <-- the base abstract class/interface between Actions/Broadcasts
+    //some more design considerations need to take place with regard to message dispensers (doneWithMessage() goes back to the dispenser)... but I think I can get this as I code it... doesn't sound too difficult
 
     //TODOreq: i think, for the broadcasts (pending balance detected for example), i'm going to have to do QObject::moveToThread to make it so the dispenser lives on the bitcoin thread. my ::get is ALWAYS on the same thread... it is only the ::recycle that can occur accross threads (but Qt::AutoConnection is the determiner of that). i am now making it a requirement that ::gets happen on a QObject that lives in the same thread in which you are calling it. perhaps Mutexes are the way instead?
     //perhaps, as a safety requirement, i can do like PendingBalanceDetectedMessageDispenser::takeOwnerShip(&bitcoinHelper); <-- bitcoinHelper would need to be on it's own thread before i make this call. so it'd be in an init or something
@@ -33,6 +56,17 @@ public:
     //i guess you could just call the slots one by one (inline'd)
     //so MAYBE possible
     //but i doubt it would be easy
+
+
+    //another idea I just had:
+    //a 'private' backing class
+    //takeOwnership() swaps the backing dummy class
+    //the method directly called on the private backing class(es) can be inlined
+    //before takeOwnership, backing class does jack shit
+    //afterwards, it works
+    //that would at least create segfaults :). I'd still need to check the return value isn't zero.
+
+    //oh fuck TODOreq: no recycled messages available, no memory ('new' fails), ... wait for recycled? block? wtf? rare condition anyways, deal with it later
 };
 
 #endif // CREATEBANKACCOUNTMESSAGEDISPENSER_H

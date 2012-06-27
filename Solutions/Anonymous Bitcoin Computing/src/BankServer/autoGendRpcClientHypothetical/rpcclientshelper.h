@@ -33,7 +33,9 @@ private:
 
     QThread *m_ServerThread;
     ServerAndProtocolKnower *m_ServerAndProtocolKnower;
+    void rigMessages();
 signals:
+    void initialized();
     void d(const QString &);
 
     //should a sub-class that is only known to RpcClientsHelper be the one emitting the signals that the IBank receives  in slots?

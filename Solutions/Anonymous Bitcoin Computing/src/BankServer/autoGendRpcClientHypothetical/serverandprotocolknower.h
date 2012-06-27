@@ -23,7 +23,9 @@ signals:
     void d(const QString &);
     void createBankAccount(const QString &);
 public slots:
-    void createBankAccountCompleted(CreateBankAccountRequest /*idk if i should do this or not*/); //really, the response (this here slot) doesn't need the username. we just need a magic cookie to identify the requests back up with the responses... and then using the request handle (would this be an ASyncMb* or is this a different subject?) that we connect signals to, we do sender() when the response is received and now have the request... and therefore the string.
+    void createBankAccountFailedUsernameAlreadyExists(CreateBankAccountMessage *createBankAccountMessage);
+    void createBankAccountFailedPersistError(CreateBankAccountMessage *createBankAccountMessage);
+    void createBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage); //really, the response (this here slot) doesn't need the username. we just need a magic cookie to identify the requests back up with the responses... and then using the request handle (would this be an ASyncMb* or is this a different subject?) that we connect signals to, we do sender() when the response is received and now have the request... and therefore the string.
     //as far as errors, we could auto-generate an enum that says specifically which parameter failed or something. idfk. the rpc server impl would have to set them... which makes sense
 
     //as far as the appdb -> bank server request holding + identifying with response

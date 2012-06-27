@@ -41,7 +41,8 @@ HEADERS += \
     autoGendRpcClientHypothetical/ActionsArgsObjects/createbankaccountargs.h \
     ../RpcBankServer/Messages/bankserveractionmessagedispenser.h \
     ../RpcBankServer/Messages/bankserverbroadcastmessagedispenser.h \
-    ../RpcBankServer/Messages/Actions/createbankaccountmessagedispenser.h
+    ../RpcBankServer/Messages/Actions/createbankaccountmessagedispenser.h \
+    ../RpcBankServer/Messages/Broadcasts/pendingbalanceaddeddetected.h
 
 
 

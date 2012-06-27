@@ -30,11 +30,13 @@ void BankServer::startListening()
         connect(m_Bank, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
         connect(m_RpcClientsHelper, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
 
-        //daisy-chain: init Bank -> init RpcClientsHelper. bank is the back-end that is being served via the server, so it makes sense to init it first
-        connect(m_Bank, SIGNAL(initialized()), m_RpcClientsHelper, SLOT(init()));
+        //daisy-chain: init Bank -> init RpcClientsHelper. bank is the back-end that is being served via the server, so it makes sense to init it first.
+        //I'm now reversing this for one reason: Bank uses a message dispenser that it gets from RpcClientsHelper... and RpcClientsHelper sets up the signals for all my messages to make them easily dispatchable
+        //connect(m_Bank, SIGNAL(initialized()), m_RpcClientsHelper, SLOT(init()));
+        connect(m_RpcClientsHelper, SIGNAL(initialized()), m_Bank, SLOT(init()));
 
-        //start initializing Bank
-        QMetaObject::invokeMethod(m_Bank, "init", Qt::QueuedConnection);
+        //start initializing Rpc Clients Helper
+        QMetaObject::invokeMethod(m_Bank, "m_RpcClientsHelper", Qt::QueuedConnection);
     }
 }
 void BankServer::handleD(const QString &msg)

@@ -21,7 +21,7 @@ private:
     BankMessageDispenser *m_BankMessageDispenser;
 
 public slots:
-    virtual void createBankAccount(const QString &username)=0; //this far in I already wonder what the parameters should be... for example, if a first parameter needs to be a request identifier (or a request object... but then the RPC auto-gen'd impl will depend on object code that the RPC server impl will use directly). username makes sense... but how will the auto-gen'd rpc impl know which signal/response goes with which slot/request??
+    virtual void createBankAccount(CreateBankAccountMessage *createBankAccountMessage)=0; //this far in I already wonder what the parameters should be... for example, if a first parameter needs to be a request identifier (or a request object... but then the RPC auto-gen'd impl will depend on object code that the RPC server impl will use directly). username makes sense... but how will the auto-gen'd rpc impl know which signal/response goes with which slot/request??
 
     //ok this really boils down to 2 problems. getting the reply matching back up with the request.... AND getting the right appId. it all depends on what design I CHOOSE TO TAKE. there is no right/wrong way (there is only better and worse)
     //to help me understand/future-proof, i'm going to put the equivalent slot/request that i will be putting in my IAppDb (TODO: IAppDb only has createBankAccount etc and IAbcAppDb has all the ABC specific slots. AbcAppDb rpc server impl inherits both):
@@ -180,9 +180,10 @@ signals:
     void initialized();
     void d(const QString &);
 
-    void createBankAccountCompleted(const QString &username);
+    //TODO: these should become signals on the CreateBankAccountMessage... and RpcClientsHelper should set up the connections for me so idgaf when using them
+    /*void createBankAccountCompleted(const QString &username);
     void createBankAccountFailedUsernameAlreadyExists(const QString &username);
-    void createBankAccountFailedPersistError(const QString &username);
+    void createBankAccountFailedPersistError(const QString &username);*/
 };
 
 #endif // IBANKRPCOUTPUT_H

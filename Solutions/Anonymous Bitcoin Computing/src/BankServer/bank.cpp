@@ -10,8 +10,19 @@ void Bank::init()
     m_Db->moveToThread(m_DbThread);
     m_DbThread->start();
 
+    m_BitcoinHelper = new BitcoinHelper(IBank::messageDispenser()->broadcasts()->pendingBalanceAddedDetectedMessageDispenser(), IBank::messageDispenser()->broadcasts()->confirmedBalanceAddedDetectedMessageDispenser() /*TODOmb: payout dispersed dispenser TODOreq: confirm network connectivity during payment dispersions. we can't just assume they went through because we called the command. I will probably need to test what happens when connectivity is lost, because idfk. doesn't that mean I am on my own chain rofl? */);
+    m_BitcoinThread = new QThread();
+    m_BitcoinHelper->moveToThread(m_BitcoinThread);
+    m_BitcoinThread->start();
+
+
     //daisy-chain it's init to our intitialized. if i add any more business objects here on another thread, i need to handle them (ensure both) before forwarding them
-    connect(m_Db, SIGNAL(initialized()), this, SIGNAL(initialized()));
+    //^meh fuck that, just daisy chain them more haha fucking /lazy
+
+    //db initialized -> bitcoin helper initialized -> we are initialized -- we init db first because bitcoin might want to access it? idfk tbh but it sounds plausible. tbh i doubt it however. fuck it
+    connect(m_Db, SIGNAL(initialized()), m_BitcoinHelper, SLOT(init())); //TODOreq: in this init, we take ownership of the pending, confirmed, and MAYBE (idk atm) the payout dispersed message dispensers
+    connect(m_BitcoinHelper, SIGNAL(initialized()), this, SIGNAL(initialized()));
+
 
     //now begin initializing the db
     QMetaObject::invokeMethod(m_Db, "init", Qt::QueuedConnection);
@@ -47,7 +58,7 @@ void Bank::handleBalanceTransferRequested(const QString &username, double amount
 {
 }
 #endif
-void Bank::createBankAccount(const QString &username)
+void Bank::createBankAccount(CreateBankAccountMessage *message)
 {
     //TODO: write to the db. also maybe make a bitcoin account for them? maybe make the bitcoin account first and only if it works then write it to the db? or vice versa?
     //re: rpc, this is the user's implementation... but we'd want to have exposed (maybe send them a header to #include as well as the ibank.h) our dht if used as a service like amazon aws / proprietary mode. meh. i should do open source and STILL do the business. i think your target audience is not really interested in setting up all the infrastructure and would rather use your pre-existing servers for a fee
@@ -82,5 +93,8 @@ void Bank::createBankAccount(const QString &username)
 
       //^^^^that dht usage actually kind of sucks. the gfs style is superior
       //also dunno why this is in here my interface when it should probably be in the impl (but obviously still commented out
+
+      //couchbase has the answer to the atomic shit <3<3<3<3<3 pretty sure ima use it at this point
+      //i just hate json... but would be stupid of me to pass up on map/reduce, even though i barely understand it's usage atm
     }
 #endif
