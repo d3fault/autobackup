@@ -36,11 +36,19 @@ HEADERS += \
     ../RpcBankServer/rpcbankservernetworkmessage.h \
     ../RpcBankServer/bankservermessagedispenser.h \
     couchbaseclusterdbhelper.h \
-    ../RpcBankServer/Messages/bankserveractionmessagedispenser.h \
-    ../RpcBankServer/Messages/bankserverbroadcastmessagedispenser.h \
     ../RpcBankServer/Messages/Actions/createbankaccountmessagedispenser.h \
     ../RpcBankServer/Messages/Broadcasts/pendingbalanceaddeddetected.h \
-    ../RpcBankServer/ibankserver.h
+    ../RpcBankServer/ibankserver.h \
+    ../RpcBankServer/Messages/bankserveractionsmessagedispensers.h \
+    ../RpcBankServer/Messages/bankserverbroadcastsmessagedispensers.h \
+    ../RpcBankServer/Messages/Actions/actionmessagedispenser.h
+
+
+
+
+
+
+
 
 
 

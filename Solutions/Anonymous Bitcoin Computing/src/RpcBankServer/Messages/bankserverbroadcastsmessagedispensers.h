@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class BankServerBroadcastMessageDispenser : public QObject
+class BankServerBroadcastsMessageDispensers : public QObject
 {
     Q_OBJECT
 public:

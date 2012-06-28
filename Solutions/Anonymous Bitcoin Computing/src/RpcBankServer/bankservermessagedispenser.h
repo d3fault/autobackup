@@ -13,8 +13,8 @@ public:
     explicit BankServerMessageDispenser(QObject *parent = 0)
         : QObject(parent)
     {
-        m_BankServerActionMessageDispenser = new BankServerActionMessageDispenser();
-        m_BankServerBroadcastMessageDispenser = new BankServerBroadcastMessageDispenser();
+        m_BankServerActionMessageDispenser = new BankServerActionsMessageDispensers();
+        m_BankServerBroadcastMessageDispenser = new BankServerBroadcastsMessageDispensers();
     }
     BankServerMessageDispenser::~BankServerMessageDispenser()
     {
@@ -23,11 +23,11 @@ public:
         //delete m_BankServerBroadcastMessageDispensers;
         //delete m_BankServerActionMessageDispensers;
     }
-    BankServerActionMessageDispenser *actionMessageDispenser() { return m_BankServerActionMessageDispenser; }
-    BankServerBroadcastMessageDispenser *broadcastMessageDispenser() { return m_BankServerBroadcastMessageDispenser; }
+    BankServerActionsMessageDispensers *actions() { return m_BankServerActionMessageDispenser; }
+    BankServerBroadcastsMessageDispensers *broadcasts() { return m_BankServerBroadcastMessageDispenser; }
 private:
-    BankServerActionMessageDispenser *m_BankServerActionMessageDispenser;
-    BankServerBroadcastMessageDispenser *m_BankServerBroadcastMessageDispenser;
+    BankServerActionsMessageDispensers *m_BankServerActionMessageDispenser;
+    BankServerBroadcastsMessageDispensers *m_BankServerBroadcastMessageDispenser;
 signals:
 
 public slots:
