@@ -1,0 +1,7 @@
+a way to use git commit logs is to just not sync them with the 2x750gb drives
+
+do a manual git commit (with message), do some more work (manual commit if you want), etc etc... your most recent will be auto-commit'd, but your manual commit with message gets pushed too
+
+the slight downside: no "3 copies" of your git message log'd commit... until you do the additional work + auto-commit
+
+hardly that bad.. but still a slight downer...

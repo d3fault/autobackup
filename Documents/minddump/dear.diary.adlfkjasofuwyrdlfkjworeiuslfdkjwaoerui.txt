@@ -1,0 +1,190 @@
+i've got an entire weekend to myself and i'm sort of weirded out about it
+so bucking fored of the internet
+and coding is fun but also draining
+
+my offline computer makes me feel so alone / disconnected
+except when i type things like this: dear diary
+etc
+
+right now i'm just typing as the thoughts come
+
+though my feeling of depression was hitting me a few minutes earlier (before i started writing about the dreams)
+
+i don't know the purpose of this document. there is none except to let meeeeeeee speak. whoops E
+
+i'm a lonely fucker
+and i have nobody to blame but myself for that
+
+i better launch
+or else i will end up killing myself, no doubt
+
+
+launching might attract kaylee or heidi
+
+
+it will definitely attract millions of gold diggers / attention whores / female humans
+
+i..
+
+i........
+
+
+i......... don't konw what to type lext next
+don't force it
+just sit
+but then you (reader) won't know i'm sitting
+the doc will appear to be fluid
+i need to code that pause watching editor
+fuck i need to launch
+because i want to code all that shit live
+for fun and for lulz and so everybody knows what the fuck is going on
+understand the source
+modify it
+enhance it
+
+how will i ever receive said enhancements if i'm in output only mode?
+
+that's one of my biggest thoughts atm
+
+tor hidden service vs. legit service
++
+output only vs. 100% truth vs. 100% APPEARANCE of truth (side monitor doing tor/hidden activities) vs. i don't fucking know what
+
+so many options
+
+all i know is i want to launch
+how i do it is irrelevant
+perhaps, flip a coin?
+(flip multiple coins)
+
+i definitely want/need a front
+ABC would be a good one
+
+but i also want ABC to service tor hidden services
+as in, BE ONE
+and also, allow ads to be served on other tor hidden sites
+
+my only thought on how to do that is to use the tor hidden service's public key as the identifier in ABC
+if i know the onion url (which is derived from public key), then i can be forced to censor
+
+it all boils down to: can i look up an onion url by the public key (my understanding is that it's only the other way around)
+
+i could also have them just say 'hidden service' instead of providing a URL where the ad is shown. "Hidden Service #12345"
+i don't care what it is and don't have to see what it is ever
+therefore am not responsible for censoring (i hope?)
+
+i want to legally do business with/on the silk road, for example
+
+i'd need a disclaimer saying that if they don't provide the URL, their site will not be added to the ABC "Index" (which i'm thinking is going to be a scraper/mirrorer/maybe-a-searcher... but i like the alphabetically organized approach instead of forcing a search. 'browse' mode is handy as fuck imo. fuck google.
+
+meh getting away from dear diary mode, which is fine except now i don't know how to file this document rofl
+if i had a tagging system implemented it would be both a mind dump and an ABC doc
+
+man i have too many designs that i'm forcing myself to sit on
+it's painful
+knowing what i can/want to be doing and not doing it
+
+because i want to do it live
+and i am not live
+not yet~
+
+
+i love richard stallman
+i love the creative commons (although less)
+
+i will have an awesome platform
+100% CC-BY-SA and 100% Free Software (preferably LGPL, but maybe BSD... and maybe GPL. no clue yet. will decide on per-app basis)
+
+that alone + live coding + ad revenue = i will be successful
+
+the moneys generated from ABC on other sites etc will just be a bonus rofl
+a backup plan
+except i'm implementing my backup plan... before hand
+
+
+that's how a real baller works
+you don't gamble
+you fucking make guarantees
+or since there's no such thing as a guarantee
+you get your probabilities as close as possible to 100%
+before you ever let yourself become vulnerable
+
+i'd be vulnerable if i tried to do this on youtube
+because google is a censoring entity and deserves to burn in hell for it
+fuck google.
+
+vulnerable because i'd make dick in ad revs (at first)
+vulnerable because i'd have no steady rent if nobody watches me
+vulnerable because google can pull the plug when i say things like: "google is an evil corporation and i hope they go out of business and i also hope serge and larry die of cancer"
+
+don't get me wrong, i'll still publish on youtube
+and vimeo
+etc
+
+but i need/want/must-have my own stream / streaming service
+my own network
+complaints / legal shit come to me
+
+then i'd only have to worry about the gov't / ISPs shutting me down
+which is actually likely
+
+but less likely than google citing some stupid TOS violation
+bastards.
+
+ABC alone will make me rich
+but launching will make me happy, sane, powerful(??), productive, and fulfilled
+oh and probably even more rich :-P
+hahahahaha
+
+god damn i need to fucking code
+this RPC shit is bullshit
+
+'casting' -_-
+rofl.
+
+wait, what?
+
+can't the
+
+doesn't the
+
+isn't it
+
+just operate on a list, right?
+
+but then the list item type is irrelevant?
+
+so i don't have to cast, i can put in the types i want?
+
+or something?
+
+basically.... you don't want an abstract message
+or do you? since they have the same signals?
+
+i don't know what the fuck is going on anymore, my brain hurts
+
+rofl
+
+so close yet so far
+
+i'm glad i'm using couchbase
+because i'd be a lot further away if i didn't
+
+'the only thing that is not allowed on this video network is child porn'
+
+fuck yea gore
+fuck yea rape
+fuck yea porn
+fuck yea beastiality
+fuck yea copyrighted content (will respond to dmca though :()
+
+i'm going to define my own segment of the internet
+fuck google.
+
+this has nothing to do with d3fault
+
+d3fault will not respond to dmca
+and will hold child porn
+
+because of the nature of it's design
+uncensorable.
