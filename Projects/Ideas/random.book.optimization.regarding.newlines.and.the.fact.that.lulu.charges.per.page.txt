@@ -1,0 +1,55 @@
+an optimization in a book could show \n wherever i press enter
+
+
+
+
+
+because sometimes i like to do shit like this.
+
+
+
+
+
+
+
+
+
+
+and paper/ink is expensive in books
+
+
+
+
+
+
+
+
+and in the cases i do so many enters, i should do like \n.7 <-- indicates 7 new lines. something along these lines
+
+
+
+
+
+
+
+also, make sure you make it knowable by teh reader (lol it's usually a parser) whenever you actually write the word "\n", like in this doc for example...
+
+
+since the idiots charge by page, i should never actually put newlines. and new docs just get a special splitter too rofl.
+
+
+
+
+and i still don't know what ima do with teh ones i want to keep private... if i should put the encrypted form in the book or just leave them out
+
+also, in teh beginning, a "how to read this book" guide :-P
+
+
+minimizing costs through lulu :-P
+
+dumbasses don't charge by ink/character (even 'character' could be minimized)
+o costs less than d
+
+
+
+an alternative to this is that i just stop pressing enter so many damn times. i need to code my linewrapping/autosaving/wpm'averaging/autoTimelining text editor

@@ -1,0 +1,76 @@
+---------RPC SERVER-----------
+
+Bank Initializes. It implements IBankServer... o fuck now i have BankServer.cpp and IBankServer.h :-/ gonna change back to IBank.h instead fuck that
+ANYWAYS
+RpcClientsHelpers initializes with Bank passed in....
+
+[Requests]
+this is so we can connect the Action Request signals (the main Rpc Actions) from the ProtocolKnower to the Bank itself
+AND
+[Responses/Broadcasts]
+so we can hook up the "messageReadyForClient" signal for Actions/Broadcasts to somehow get the message to the ProtocolKnower (perhaps via interface? maybe not. need to think about client implications)
+[Recycling]
+also: so we can hook up the "messageDone" signal for Actions/Broadcasts to their respective dispensers. For Actions, we'll own the dispensers. but all that means is that we Qt::AutoConnection in the emit will process them faster
+
+
+
+
+---------RPC CLIENT----------
+
+AppLogic initializes
+RpcServerHelper initializes
+
+[Requests]
+AppLogic includes RpcServerHelper (owns him?) so we can call Actions directly specifying the parameters by what they are. there is no "messageReadyForServer", but there could be (we'd need a dispenser if that was the case)
+[Responses]
+responses come back as ActionMessages,
+[Recycling]
+which we emit "messageDone" on when done with
+[Broadcasts]
+TODOreq: broadcasts come through as... hmm unsure tbh... the BroadcastMessages...? or just the parameters individually in a signal? it really could be either... until I do more AppLogic shit I just don't know.
+
+
+
+
+
+in any case, client never needs a dispenser (i could design it so it does...? TODOopt: i wonder if it could be possible when using chaining rpc shit so for like forwarding to wt client (rpc client) if it would be preferrable/possible/sane(!!!) to use the same messages received or something or whatever i'm lost in my brain)
+for now I think I'll just call the method specifying the parameters... even though I'm guessing those parameters will be read from ANOTHER message (from wt rpc client). in the case of createBankAccount, it'd just be basic forwarding. see 1 sentence above if you want your brain to explode
+and on that OTHER rpc message, we'd call "messageDone" with it right after using it's members as parameters (or maybe not if we wait for the result? IDFK. brain hurts again)
+
+god damnit don't get away from the point
+think just 1 rpc instance for now
+ok one last tangent: the messages that would be optimally forwarded (in some crazy hacked rpc chaining shit) would probably end up being different messages that are defined the exact same. so like i'd get compile errors and have to get rid of one (and then hackily change the #include referencing that one). they'd be the same though i think. this might even have implications in designEquals if (and i think i will) i deem this rpc shit re-usable in that app
+
+jesus my brain fucking hurts
+not really
+what i mean by that
+is that i'm confused
+i've never actually been like 'my brain hurts' unless i have a headache
+sometimes i do get a headache from this shit
+but i don't currently
+i just get/got confused as balls
+so that sounded like the thing to say...
+
+fuck i don't know what to do
+what am I even trying to think up?
+
+
+Message / Message Dispenser 'rigging'
+
+right
+in the client context now
+I have server figured out pretty much
+
+for the client I just need to rig 'messageDone' shit
+
+that's easy
+
+the auto-generated code is the only one to use the dispenser
+and the auto-generated code is the one to rig the messages to get back to the dispenser
+
+whether i use a message for broadcasts on the client or the parameters themselves is irrelevant
+
+actually I just decided ima use messages... BECAUSE if I don't then where am I going to get those types that the broadcast signal emits? the stack? rofl.
+
+ok got it figured out
+it's easier on the client.... which makes sense. rpc 'server' is by definition more complicated. it is the IMPLEMENTATION
