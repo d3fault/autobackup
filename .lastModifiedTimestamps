@@ -1,7 +1,7 @@
 Documents/:1340559291
 Documents/Qt/:1340559703
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032166
+Documents/minddump/:1386032172
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -12,7 +12,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032166
+Documents/minddump/dreams/:1386032172
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
@@ -224,6 +224,7 @@ Documents/minddump/lawyers.and.jail.are.real.and.hosting.files.is.an.easy.target
 Documents/minddump/ldasjfsoadfulekarjosadfupowuerafsljdfasldfoiusdf.txt:1330938172
 Documents/minddump/ldjsfaosuflkjworaweuraosfusadflkjwoaerusldfkj.txt:1334816547
 Documents/minddump/lfdsajfoasduflwerkjsfoyusadfiahsdfksajfsdfusoafisdfjafasdkfj.txt:1331903648
+Documents/minddump/lfsdakjfoaiuwerlakjsdfouwaerojksfoiuwerl.txt:1340944105
 Documents/minddump/lgpl.and.commercial.license.is.much.smarter.txt:1322580379
 Documents/minddump/life.is.pain.adskfljsadlfkjsdalk.txt:1320314046
 Documents/minddump/life.plans.Toasty.The.Knowledge.i-seek-knowledge.song.lyrics.kinda.tripped.with.me.heard.it.write.when.i.ifinished.writing.it.txt:1337980665
@@ -1052,7 +1053,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032166
+Projects/libAvGraphicsItem2/design/:1386032172
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1241,7 +1242,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1340927174
+autobackupScripts/win/.directory:1340945534
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
