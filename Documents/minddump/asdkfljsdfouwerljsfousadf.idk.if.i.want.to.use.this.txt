@@ -1,0 +1,18 @@
+keyboard layout: a e i o u r t s then more very frequently used letters, with the most frequently used on your userDecidedLeftOrRightHandedPreference. if they are left handed, that pattern is done backwards and RTL.
+there needs to be a universal "go back" trigger. finger and keyboard command.
+i could, for example, do: left pinky pull while left ring finger pull = z and x being pressed at the same time. maybe ctrl + zx. they are not meant to be done the same way.
+
+
+right now you are holding onto it
+"don't flood"
+
+i hope to someday not have that limitation
+
+i need my own network for that
+
+but there arleady exist plenty. use them as backup.
+
+seriously, why not use every existing dht in combination with your own homegrown dht. the source for the homegrown is hosted on all the other ones (security weaknesses will be found for each. the data needs to be safe regardless. safe as in not disappearing and staying unmodified).
+
+a cluster independent appllication layer that uses multiple cluster types and manages each one independently. it can instantly disable by a type
+

@@ -1,2 +1,9 @@
 me sitting in a room with a bunch of manual clocks/calendars... basing everything i trust into knowing what time it is.
 so anybody could post and say it's whatever time they want, but only my say of what time it is is used as the d3fault timeserver. my public decryption key is used to read the results of the d3fault implementation of "whatTimeIsIt()"
+
+i can use quartz ones on a battery when leaving that secure'er room. the room videotapes itself and it's entrances and each camera has a pattern/grid/verified-through-video light thing that the private keys that are secured by said room are needed to understand. if the electricity goes out for the cameras or even if just the color grid that's verified or obviously motion without permission (because i have to navigate it) alerts me. need highly controlled lighting. it could just be a pattern thing instead of flashing colored lights. especially since we need controlled lighting. maybe a mechanical QR-CODE wall. the video footage is processed by an in-secure-room offline** computer. i guess that offline computer still needs to be able to trigger an alert, which means output only communicating with an online computer
+
+reading video feed is easy to do without going online, lol. verifying using local-only-stored keys is actually pretty damn secure.
+
+basically that qr-code wall would be like a laser grid in mission impossible. rofl.
+you could have it cut off a hallway like that, full wall. they could dig over/under/around it. but they could also dig straight down allegedly. assuming the room is underground. a  solution for the "under/over/around" is to use a camera looking at the point of hallway as well

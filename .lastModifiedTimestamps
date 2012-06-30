@@ -1,7 +1,8 @@
-Documents/:1340559291
-Documents/Qt/:1340559703
+Documents/:1341011328
+Documents/Qt/:1341011328
+Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032172
+Documents/minddump/:1386032179
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -12,7 +13,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032172
+Documents/minddump/dreams/:1386032179
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
@@ -45,6 +46,7 @@ Documents/minddump/asdflkjasdfouiweoriasfdlkjasdfouiopiuqrwqwrelkjoasduasdflkj.t
 Documents/minddump/asdflkjdsaflasjdfouwearklsafkjhsadfoulkerj.txt:1335804974
 Documents/minddump/asdflkjsdfouwerouiweroufouisdffffffffffrfrrrrrrrrrrrreeeeeeeeeeeeee.txt:1340578286
 Documents/minddump/asdflskdfjwoerusdlfkjweoarusaofdiuwerlksjdfouwerlkj.txt:1340183876
+Documents/minddump/asdkfljsdfouwerljsfousadf.idk.if.i.want.to.use.this.txt:1341010624
 Documents/minddump/asdlfjasdofuwlekrjsaofusadlfjoewurlsajjflsjk.txt:1335805201
 Documents/minddump/asdlfkjoweurarweourwlkjsadfdfsdufasoiu.txt:1337329406
 Documents/minddump/asdlfkjsdfoiuwerlkjsdfaoiusdlkjerw.txt:1340925359
@@ -259,7 +261,7 @@ Documents/minddump/mental.orgasm.right.before.a.sudden.death.txt:1320302226
 Documents/minddump/mind.control.and.publicity.stunt.x.txt:1322065096
 Documents/minddump/minddump.ideas.all.the.sameshit.these.days.lol.it.doesnt.matter.where.i.save.as.long.as.i.do.this.title.has.nothing.to.do.with.body.txt:1328744697
 Documents/minddump/my.most.pure.thoughts.ever.i.think.i.know.what.to.do.from.here.DONT.DIE.MOTHERFUCKER.infinite.universes.i.cant.hah.txt:1335804270
-Documents/minddump/my.say.of.what.time.it.is.is.what.time.it.is.txt:1322863302
+Documents/minddump/my.say.of.what.time.it.is.is.what.time.it.is.txt:1341012525
 Documents/minddump/no.way.ima.be.poor.asldfjaslfdjasldfjowurldfn.txt:1337987476
 Documents/minddump/numerical.idea.i.want.to.be.number.3.but.not.a.must.nor.is.even.having.the.numerical.ids.txt:1333103242
 Documents/minddump/obsession.and.love.are.ultimately.the.same.thing.but.one.is.seen.as.being.bad.can.you.guess.whihc.loljk.txt:1339821951
@@ -375,7 +377,6 @@ Documents/nobodyme/havents.posted.this.yet.but.considering.evolution.leads.to.wa
 Documents/nobodyme/internet.show.uncensored.dht.network.etc.TITLE.txt:1323323105
 Documents/nobodyme/pre.censored.humans.implement.apes.implement.something.txt:1320774800
 Documents/nobodyme/website.worst.case.scenario.i.become.embarrassed.txt:1323683547
-Documents/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Pictures/:1337332835
 Pictures/Head.Eye.i.suck.at.drawing.the.neck.looks.like.a.chin.or.anteater.mouth.lol.svg:1335462127
 Pictures/Microsoft.sitting.on.Nokias.head.i.was.gonna.add.puppet.strings.but.i.like.it.as.is.svg:1337333311
@@ -1053,7 +1054,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032172
+Projects/libAvGraphicsItem2/design/:1386032179
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1242,7 +1243,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1340945534
+autobackupScripts/win/.directory:1341018403
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
