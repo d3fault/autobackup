@@ -1,0 +1,113 @@
+class IRecycler
+{
+protected:
+  
+  //recycle is easy
+  void private_recycle(IRecyclable *item) { m_RecycleList.append(item); }
+  
+  //get slightly more difficult, but not much
+  IRecyclable *private_getNewOrRecycled()
+  {
+    if(!m_RecycleList.isEmpty())
+    {
+      return m_RecycleList.takeLast();
+      //TODO: maybe attach the underlying network message here? i'm not sure if i need a shared message... might be able to just use a NetworkMessageHeader and then use Action/Broadcast-specific stream operators. in any case, i'm not sure if this is the right place anywyas (but where!?!?)
+    }
+    //else
+    IRecyclable *newItem = getNewOfType(); //pure virtual call, not implemented
+    connect(newItem, SIGNAL(doneWithMessageSignal()), this, SLOT(handleMessageReportingItselfDone())); //TODOreq: 'this' needs to live on the same thread of the one object that calls ::get on the dispenser
+    return newItem;
+  }
+
+private slots:
+  void handleMessageReportingItselfDone()
+  {
+    IRecycleable *item = some_cast_probably_static<IRecycleable*>(sender()); //see network for figuring out which cast. prolly static? maybe qobject_cast (difference?)
+    private_recycle(item);
+  }
+}
+
+class IRecycle
+{
+public:
+  void doneWithMessage() { emit doneWithMessageSignal(); }
+signals:
+  void doneWithMessageSignal();
+}
+
+class IDispenseDeliverers
+{
+  //not sure what this does? maybe just provide a pure virtual that we override that connects to the slot delivery destination or something?
+  //doesn't this mean we need a pointer to the type that accepts the slot? it might only need to be known in the sub-class that inherits our pure virtual. we could still theoretically hold a pointer to it in ourself. but why?
+  //i think we already take care of this below in getNewOfType... so what's the point of having this interface?
+
+#if 0 //this belongs in IDeliver, not IDeliverDispenser. wtf goes in here then?
+  //maybe just this:
+public:
+  void deliver() { emit deliverSignal(); }
+signals:
+  void deliverSignal();
+#endif
+
+  //it would seem like this would be the place to know who i am delivering too.. but it is different for every inheriter. the only consistency is the deliverySignal() shit. worth it?
+}
+
+class IDeliver
+{
+public:
+  void deliver() { emit deliverSignal(); }
+signals:
+  void deliverSignal();  
+}
+
+class CreateBankAccountMessageDispenser : IRecycler, IDispenseDeliverers
+{
+private:
+  virtual IRecyclable* getNewOfType()
+  {
+    CreateBankAccountMessage* newMessage = new CreateBankAccountMessage();
+    connect(newMessage, SIGNAL(deliverSignal()), uhhProtocolKnowerIGuess, SLOT(createBankAccountCompleted()));
+    //TODOreq: wat do i do for createBankAccountFailed<Reason> deliveries?
+  }
+public:
+  //void recycle(CreateBankAccountMessage*) { private_recycle(IRecyclable*); } //we don't need this because the messages emit a signal off of themselves that bring them back to the dispenser (via IRecycle)
+  CreateBankAccountMessage* getNewOrRecycled() { return static_cast<CreateBankAccountMessage*>(private_getNewOrRecycled()); }
+}
+
+class CreateBankAccountMessage : IRecycle, IDeliver
+{
+  //so like, do i just define the members and the stream operator/protocol?
+}
+
+//usage:
+
+message = dispenser.getNewOrRecycled();
+message.write(sup);
+message.deliver(); //public function just emits deliverSignal
+
+//after deliver delivers (in this case, writes the bytes to the network (TODOopt: this won't be the end of delivery point if the same object is used in a cross-thread (instead of network) environment))), it calls
+message.doneWithMessage(); //public function just emits recycleSignal (connection of which is done inside IRecycler, just after calling getNewOfType)
+
+Message::recycle();
+and
+MessageDispenser::recycle();
+are not the same
+first emits message
+second is after the emit, and has the message itself (gotten through sender()) as the argument
+
+fuck this renaming Message::recycle() to Message::doneWithMessage()
+
+
+
+also, since we are a code generator, it isn't a HUGE deal if we don't implement a shared interface (apparent problem of inheriting multiple QObjects with signals).
+some duplicate code, yes... but it isn't a large cost if we aren't writing it. just will increase binary size a little
+i am against it in principle but will not fight a compiler over it.
+
+
+i'm definitely feeling a prototype finalizing this functionality soon.
+one sample action
+one sample broadcast
+
+nothing more~
+
+functional. compiling. dealing with this inheritence nonsense will make ABC unreadable, especially if i fail

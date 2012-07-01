@@ -1,0 +1,5 @@
+they are either going to buy it from you or they are going to steal it from you
+might as well provide them an easy way to buy it
+might as well allow them to share it
+
+a bitcoin music selling service. artist names his own price. the d3fault value per song per album or per song alone is 1 btc. need to be able to sell "albums" and they set whatever price for the album too. but when suggesting a number it is just the break even equivalent of our d3fault selling value: (1 x SongNum).

@@ -1,0 +1,5 @@
+with a range of infinity, any pattern of numbers that occurs once in that range is guaranteed to re-occur multiple times, up to a limit of infinite occurances.
+
+is there infinite time?
+is there infinite space?
+do we exist?

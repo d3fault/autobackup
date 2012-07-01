@@ -2,7 +2,7 @@ Documents/:1341011328
 Documents/Qt/:1341011328
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032179
+Documents/minddump/:1386032186
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -13,7 +13,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032179
+Documents/minddump/dreams/:1386032186
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
@@ -200,6 +200,7 @@ Documents/minddump/im.definitely.going.to.launch.sooooooon.i.dont.think.kaylee.e
 Documents/minddump/im.still.not.certain.on.how.gfs.operates.i.mean.they.say.so.little.in.so.much.but.how.objects.are.persisted.is.key.or.im.just.retarded.txt:1339322462
 Documents/minddump/immortality.emergence.aka.god.is.impossible.just.added.that.god.part.just.now.txt:1338798921
 Documents/minddump/impossible.to.not.break.the.law.there.are.too.many.txt:1340004973
+Documents/minddump/infinite.multiple.parrallel.universes.mathematically.proven.txt:1341170221
 Documents/minddump/infinite.multiverses.mean.even.if.i.do.die.i.will.be.trying.in.another.one.where.i.wont.die.txt:1339936124
 Documents/minddump/inheritence.is.bullshit.daljdfoasiuewrlkjafou.txt:1334614026
 Documents/minddump/inscribe.data.with.light.emission.lol.idfk.txt:1337329480
@@ -467,8 +468,9 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1340926274
-Projects/Ideas/QtSslRpc/:1340843249
+Projects/Ideas/:1341168391
+Projects/Ideas/QtSslRpc/:1341179571
+Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
 Projects/Ideas/QtSslRpc/ObjectsArgs.means.i.am.tied.to.rpc.code.but.not.to.opposite.rpc.member.client.2.server.server.2.client.etc.woot.txt:1340544053
 Projects/Ideas/QtSslRpc/broadcast.either.needs.a.mutex.for.recycle.list.gah.or.a.cross.thread.message.recycle.fml.Actions.dont.have.this.problem.txt:1340202458
@@ -482,6 +484,7 @@ Projects/Ideas/QtSslRpc/maybe.not.now.maybe.do.this.later.idk.txt:1336792346
 Projects/Ideas/QtSslRpc/message.dispensers.in.client.and.server.its.hard.to.think.for.both.client.and.server.use.cases.simultaneously.txt:1340838402
 Projects/Ideas/QtSslRpc/message.dispensers.rigging.in.both.server.and.client.figured.out.was.overthinking.it.txt:1340843249
 Projects/Ideas/QtSslRpc/not.worth.doing.atm.MbAsync.with.Wt.usage.complicated.but.doable.read.this.txt:1337204290
+Projects/Ideas/QtSslRpc/prototype.spec.of.message.recycling.and.delivering.todo.txt:1341179571
 Projects/Ideas/QtSslRpc/rpc.and.abc.shit.they.are.like.the.same.in.my.brain.atm.lol.txt:1340200211
 Projects/Ideas/QtSslRpc/this.does.abstract.automate.two-way.and.one-way.messages.txt:1339494468
 Projects/Ideas/QtSslRpc/use.different.message.dispensers.for.client.and.server.be.careful.txt:1340543935
@@ -540,6 +543,7 @@ Projects/Ideas/beat.4chan.what.is.next.chaaaaaaaarge.txt:1339059319
 Projects/Ideas/because.i.can.and.eventually.will.not.txt:1339500005
 Projects/Ideas/bitcoin.and.slot.length.of.1.day.is.arbitrary.and.user.configable.txt:1339521703
 Projects/Ideas/bitcoin.irl.transfer.security.phone.app.thingy.txt:1326662820
+Projects/Ideas/bitcoin.music.selling.set.your.own.price.app.txt:1341081219
 Projects/Ideas/black.screen.white.text.to.save.batteries.and.you.know.what.kindle.screen.might.be.worth.looking.at.txt:1339058821
 Projects/Ideas/block.generation.plus.flattr.but.we.cant.have.a.21.mil.cap.and.scalability.is.a.huge.issue.txt:1334609777
 Projects/Ideas/bool.update.equals.true.d3fault.txt:1325049002
@@ -580,6 +584,7 @@ Projects/Ideas/economy.is.stupid.prove.and.abuse.it.simultaneously.adlsfjsdlfjsa
 Projects/Ideas/electromagneticity.seems.like.it.could.generate.more.power.than.it.consumes.txt:1328236762
 Projects/Ideas/exact.backspace.time.noted.and.submitted.with.sentence.which.is.single.message.length.or.tangent.parenthesis.idfk.txt:1338003267
 Projects/Ideas/finger.potentiometer.keyboard.alphabet.layout.still.need.numbers.tho.kthx.txt:1323456734
+Projects/Ideas/fingers.music.making.24x7.even.while.coding.until.i.grow.gills.txt:1341168391
 Projects/Ideas/flip.a.coin.to.decide.future.gender.rofl.asdlfjasdfoiuwerlakjoiuerou.txt:1334400060
 Projects/Ideas/forever.filesystem.txt:1322679153
 Projects/Ideas/fork-without-forking.change.channels.but.same.network.distribution.generation.configuration.tool.thingo.txt:1338776799
@@ -670,6 +675,7 @@ Projects/Ideas/udp.broadcast.to.get.webcam.video.feed.of.myself.into.other.appli
 Projects/Ideas/udp.broadcast.within.local.private.cluster.dht.does.not.scale.for.shit.so.dont.use.that.idea.dslafkjsadflwerosflksdafljk.txt:1339821290
 Projects/Ideas/unixtime.and.data.is.all.i.need.for.a.timeline.node.txt:1334312295
 Projects/Ideas/use.TX.line.fromarduino.mega.to.communicate.securely.upload.only.to.another.arduino.and.or.pi.txt:1330937956
+Projects/Ideas/using.tor.and.bitcoin.to.taunt.hollywood.and.uhh.i.gues...THEM.txt:1341036845
 Projects/Ideas/vibrations.are.confirmations.that.your.input.has.been.recognized.txt:1328317236
 Projects/Ideas/wasdf.domain.use.could.do.finger.shits.for.it.txt:1329121244
 Projects/Ideas/what.to.do.with.d3fault.domain.for.the.time.being.txt:1338788716
@@ -1054,7 +1060,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032179
+Projects/libAvGraphicsItem2/design/:1386032186
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1243,7 +1249,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1341018403
+autobackupScripts/win/.directory:1341179585
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

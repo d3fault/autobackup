@@ -1,0 +1,103 @@
+They are both (broadcasts and actions) IRecycleable
+only Actions are IRespondable
+the signal IRespondable gives you is respond()
+
+perhaps even respond(IRespondable), you pass yourself in.
+IRespondable is only given enough info to know how and where to respond. aka nothing but a signal which our auto-generated code has previously connected for us.
+do i need to use casting?
+is it even such a big deal to need to use casting?
+am i just being a bitch?
+
+
+wait what?
+doesn't broadcast have a messageReadyForClient() auto-rigged mechanism?
+yes
+
+
+an IDeliver interface
+holy shit
+dude
+that has so many different implications
+
+but right now i'm just focusing on Action delivering a response and a broadcast... broadcasting.
+
+IDeliver could also be used in network environment. fuck yea seeking. <- rofl while i'm at it, that should be the connection UI update for "connecting...".
+
+
+QList<IDeliver> m_IDeliverLiars;
+^^^^^^^^^^^^^^^^^^^^^censoring nodes are placed in this universally-shared list. i had globally written at first but then i remembered that would be very short sighted of me and could possibly cause confusion in the distant future when i am dead.
+
+
+but anyways back to Actions/Broadcasts implementing IDeliver
+
+then they just do emit IDeliver::deliver();
+ok i got it
+you call IDeliver::deliver(); which is a public function
+it then emits itself. no emitting done on your part. saves for user error.
+
+i don't think public signals exist anyways ding-dong.
+
+you'd still be calling this.deliver();
+because you'd have the Action itself.
+or i mean, the ActionMessage. err or the BroadcastMessage
+both of which inherit IDeliver
+
+both Actions and BroadcastMessage both have to override a pure virtual method
+it is a protected method, so called internally.
+
+it new's the specific type and then returns it as an IDeliver
+that we then connect and return to the caller of ::get, but only after we first connect our signal to it
+so like actaully it would be CreateBankAccountMessage <- an example of an ActionMessage. there is no actual "ActionMessage". we inherit IDeliver and provide that protected pure virtual.
+
+since we are a code generator, we can/should cast the IDeliver back into whatever it was before the return from ::get. although, this makes no sense. wait yea it does. CreateBankAccountMessageDispenser inherits the IRecycler interface. the units it deals with are IRecyclables
+
+the specific IRecycleables (CreateBankAccountMessageDispenser for example) override a public pure virtual function. all it does is it casts a known private variable (our IRecyclable specific[Action|Broadcast] (CreateBankAccountMessage for example)) into the specific type and return it to the caller pre-cast. this is only beneficial because we are a code generator so it is easy and gives us a kind of mock (yet still very real) compile time checking mechansim for the user. we don't want them to do any casting of Messages (IRecyclable and IDeliver. would it be IMessage or no? is there any reason for it to exist other than so we don't have to implement 2 interfaces? which is a decent reason imo. ahah! but we are a code generator so the user never actually writes the code to implement both IRecycle and IDeliver).
+
+each Message, for example CreateBankAccountMessage, implements the following two interfaces:
+
+IRecycle::recycle();
+IDeliver::deliver();
+
+both just emit signals that take them to their destination thread/object :-D
+
+each MessageDispenser, for example CreateBankAccountMessageDispenser, implements:
+
+IRecycle IRecycler::get();
+IRecycler::recycle(IRecycle);
+
+i guess actually it's ok to not have get and recycle. but there should definitely be a private_get and private_recycle implemented. the public portions of it ONLY do casting and returning. actually there's no reason to have private_recycle. we don't need to cast before getting an interface out. only vice versa
+
+we want CreateBankAccountMessage to come out of ::get without the need for us (THE BUSINESS IMPLEMENTATION RPC SERVER, the _ACTUAL_ 'client' (developer) of the rpc as a whole) to cast.
+
+but is casting the right answer?
+
+can i do templates and interfaces at the same time?
+can my template operate on an interface?
+isn't that the whole point of interfaces?
+but then you need casting
+templates do not need casting
+
+how the fuck do i 
+OHHHH
+i declare the signal in the template class itself
+
+it is just
+
+Q_SIGNALS:
+  void IRecycler::recycle(T) { QList<T>().append(T) }
+
+get is just
+
+public:
+  T IRecycler::get() { return QList<T>().takeLast(); }
+
+
+BitcoinHelper calls a public IRecycler::takeOwnership(this /*m_BitcoinHelper, referring to himself*/) { this.moveToThread(QObject *bitcoinHelper) }
+
+
+all we need that QObject* for is to connect to one of it's signals, called:
+
+i don't know what i'm talking about anymore
+
+err no, it's so the signals/slots go to the right object/thread
+what signal/slot i am calling is irrelevant (i think? all inherited 'objects' are moved thread as well right? i sure hope so but i have no idea)
