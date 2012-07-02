@@ -37,6 +37,11 @@ signals:
 
 class IDispenseDeliverers
 {
+  IDispenseDeliverers(QObject *objectToConnectDeliverSignalTo, const char *slotToConnectDeliverSignalTo) 
+    : m_Om_ObjectToConnectDeliverSignalTo(objectToConnectDeliverSignalTo), m_SlotToConnectDeliverSignalTo(slotToConnectDeliverSignalTo)
+  { }
+
+  //VVV old, before i had above constructor thought up
   //not sure what this does? maybe just provide a pure virtual that we override that connects to the slot delivery destination or something?
   //doesn't this mean we need a pointer to the type that accepts the slot? it might only need to be known in the sub-class that inherits our pure virtual. we could still theoretically hold a pointer to it in ourself. but why?
   //i think we already take care of this below in getNewOfType... so what's the point of having this interface?
@@ -66,7 +71,7 @@ private:
   virtual IRecyclable* getNewOfType()
   {
     CreateBankAccountMessage* newMessage = new CreateBankAccountMessage();
-    connect(newMessage, SIGNAL(deliverSignal()), uhhProtocolKnowerIGuess, SLOT(createBankAccountCompleted()));
+    connect(newMessage, SIGNAL(deliverSignal()), m_ObjectToConnectDeliverSignalTo, m_SlotToConnectDeliverSignalTo);
     //TODOreq: wat do i do for createBankAccountFailed<Reason> deliveries?
   }
 public:

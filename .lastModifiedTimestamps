@@ -2,7 +2,7 @@ Documents/:1341011328
 Documents/Qt/:1341011328
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032192
+Documents/minddump/:1386032199
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -13,7 +13,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032192
+Documents/minddump/dreams/:1386032199
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
@@ -473,7 +473,7 @@ Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
 Projects/Ideas/:1341168391
-Projects/Ideas/QtSslRpc/:1341179571
+Projects/Ideas/QtSslRpc/:1341209877
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
 Projects/Ideas/QtSslRpc/ObjectsArgs.means.i.am.tied.to.rpc.code.but.not.to.opposite.rpc.member.client.2.server.server.2.client.etc.woot.txt:1340544053
@@ -488,7 +488,7 @@ Projects/Ideas/QtSslRpc/maybe.not.now.maybe.do.this.later.idk.txt:1336792346
 Projects/Ideas/QtSslRpc/message.dispensers.in.client.and.server.its.hard.to.think.for.both.client.and.server.use.cases.simultaneously.txt:1340838402
 Projects/Ideas/QtSslRpc/message.dispensers.rigging.in.both.server.and.client.figured.out.was.overthinking.it.txt:1340843249
 Projects/Ideas/QtSslRpc/not.worth.doing.atm.MbAsync.with.Wt.usage.complicated.but.doable.read.this.txt:1337204290
-Projects/Ideas/QtSslRpc/prototype.spec.of.message.recycling.and.delivering.todo.txt:1341179571
+Projects/Ideas/QtSslRpc/prototype.spec.of.message.recycling.and.delivering.todo.txt:1341209877
 Projects/Ideas/QtSslRpc/rpc.and.abc.shit.they.are.like.the.same.in.my.brain.atm.lol.txt:1340200211
 Projects/Ideas/QtSslRpc/this.does.abstract.automate.two-way.and.one-way.messages.txt:1339494468
 Projects/Ideas/QtSslRpc/use.different.message.dispensers.for.client.and.server.be.careful.txt:1340543935
@@ -699,7 +699,7 @@ Projects/ProjectGoOutside/do.it.for.the.live.not.the.money.but.skip.dht.version.
 Projects/ProjectGoOutside/haha.initial.design.shits.idfk.but.go.outside.the.two.Os.dont.like.each.other.in.domain.choosing.txt:1328601337
 Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge.deal.to.me.also.i.should.not.neglect.these.ideas.txt:1329935001
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
-Projects/Prototypes/:1340371926
+Projects/Prototypes/:1341205596
 Projects/Prototypes/AudioVideoBuffers/:1327617847
 Projects/Prototypes/AudioVideoBuffers/design/:1327617616
 Projects/Prototypes/AudioVideoBuffers/design/AudioVideoBuffersOverviewDetailed.dia:1327575511
@@ -934,6 +934,19 @@ Projects/Prototypes/pluginIDEandRunner/src/main.cpp:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginIDEandRunner.pro:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginideandrunnermainwidget.cpp:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginideandrunnermainwidget.h:1326313092
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/:1341205690
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/:1341210510
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/bitcoinhelperandbroadcastmessagedispenseruser.cpp:1341208726
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/bitcoinhelperandbroadcastmessagedispenseruser.h:1341208570
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/irpcserverimpl.h:1341207371
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/main.cpp:1341206100
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/mainwidget.cpp:1341208078
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/mainwidget.h:1341207181
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcMessageDeliveryAndRecycling.pro:1341205887
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcclientshelperanddeliveryacceptorandnetwork.cpp:1341210510
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcclientshelperanddeliveryacceptorandnetwork.h:1341210095
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcserverbusinessimpl.cpp:1341208468
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcserverbusinessimpl.h:1341208214
 Projects/Prototypes/timelineFileStore/:1321106315
 Projects/Prototypes/timelineFileStore/timelineFileStore/:1320135863
 Projects/Prototypes/timelineFileStore/timelineFileStore/main.cpp:1320132377
@@ -1064,7 +1077,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032192
+Projects/libAvGraphicsItem2/design/:1386032199
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1154,7 +1167,7 @@ Solutions/Anonymous Bitcoin Computing/src/AppDb/bankserverhelper.h:1335350377
 Solutions/Anonymous Bitcoin Computing/src/AppDb/main.cpp:1334997969
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.cpp:1336171193
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.h:1336171200
-Solutions/Anonymous Bitcoin Computing/src/BankServer/:1340851782
+Solutions/Anonymous Bitcoin Computing/src/BankServer/:1341206012
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/:1340839242
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/:1340838707
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/ActionsArgsObjects/:1340368778
@@ -1253,7 +1266,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1341205529
+autobackupScripts/win/.directory:1341210521
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
