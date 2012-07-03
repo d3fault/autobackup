@@ -4,15 +4,19 @@
 #include <QObject>
 #include <QHash>
 
-#include "irpcserverimpl.h"
+#include "irpcclientshelper.h"
 
-class RpcClientsHelperAndDeliveryAcceptorAndNetwork : public QObject
+//most of this is going to move into IRpcClientsHelper
+
+//but what DOES belong in here is the impl-specific (even though auto-generated) message transport
+//so this class hasA SslTcpSocket/Server in the final. in this demo, it will be quite empty (except my simulate action button clicked shit)
+
+class RpcClientsHelperAndDeliveryAcceptorAndNetwork : public IRpcClientsHelper
 {
     Q_OBJECT
 public:
     explicit RpcClientsHelperAndDeliveryAcceptorAndNetwork(IRpcServerImpl *rpcServerImpl);
 private:
-    void setupBroadcastDispensers(QHash<BroadcastEnum, BroadcastDispenser*> *broadcastDispensers);
     void setupInternalActionDispensers();
 signals:
     void initialized();

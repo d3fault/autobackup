@@ -1,13 +1,8 @@
 #include "rpcclientshelperanddeliveryacceptorandnetwork.h"
 
 RpcClientsHelperAndDeliveryAcceptorAndNetwork::RpcClientsHelperAndDeliveryAcceptorAndNetwork(IRpcServerImpl *rpcServerImpl)
-{
-    setupBroadcastDispensers(rpcServerImpl->broadcastDispensers());
-
-    setupInternalActionDispensers();
-
-    connect(this, SIGNAL(createBankAccountRequested(CreateBankAccountMessage*)), rpcServerImpl, SLOT(createBankAccount(CreateBankAccountMessage*)));
-}
+    : IRpcClientsHelper(rpcServerImpl)
+{ }
 void RpcClientsHelperAndDeliveryAcceptorAndNetwork::handleSimulateActionButtonClicked()
 {
     //blah blah do internal getting of CreateBankAccountMessage from a dispenser
@@ -33,17 +28,6 @@ void RpcClientsHelperAndDeliveryAcceptorAndNetwork::handlePendingBalancedAddedDe
     //write the broadcast itself to the network
 
     message->doneWithMessage();
-}
-void RpcClientsHelperAndDeliveryAcceptorAndNetwork::setupBroadcastDispensers(QHash<BroadcastEnum, BroadcastDispenser *> *broadcastDispensers)
-{
-    BroadcastDispenser *reUsedBasePointer;
-
-    //pending balanced added detected
-    reUsedBasePointer = new PendingBalanceAddedDetectedMessageDispenser(this, SLOT(handlePendingBalancedAddedDetectedDelivery())); //so perhaps IDispenseDeliverables has a constructor that accepts a QObject pointer and a const char* slot?
-    broadcastDispensers->insert(PendingBalanceAddedDetected, reUsedBasePointer);
-    //the message dispenser remembers 'this' as a qobject, and connects each message's deliverSignal() to the slot specified on creation
-
-    //reUsedBasePointer = new ConfirmedBalanceAddedDetected.... same shit
 }
 void RpcClientsHelperAndDeliveryAcceptorAndNetwork::setupInternalActionDispensers()
 {

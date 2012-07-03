@@ -14,13 +14,43 @@ SOURCES += main.cpp\
         mainwidget.cpp \
     rpcclientshelperanddeliveryacceptorandnetwork.cpp \
     rpcserverbusinessimpl.cpp \
-    bitcoinhelperandbroadcastmessagedispenseruser.cpp
+    bitcoinhelperandbroadcastmessagedispenseruser.cpp \
+    messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.cpp \
+    messages/broadcasts/pendingbalanceaddeddetectedmessage.cpp \
+    messageDispensers/actions/createbankaccountmessagedispenser.cpp
 
 HEADERS  += mainwidget.h \
     rpcclientshelperanddeliveryacceptorandnetwork.h \
     rpcserverbusinessimpl.h \
     bitcoinhelperandbroadcastmessagedispenseruser.h \
-    irpcserverimpl.h
+    irpcserverimpl.h \
+    irpcclientshelper.h \
+    messageDispensers/broadcastdispensers.h \
+    messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.h \
+    messageDispensers/imessagedispenser.h \
+    messages/imessage.h \
+    messages/broadcasts/pendingbalanceaddeddetectedmessage.h \
+    messageDispensers/actiondispensers.h \
+    messageDispensers/actions/createbankaccountmessagedispenser.h
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

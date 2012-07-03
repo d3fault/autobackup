@@ -4,15 +4,16 @@
 #include <QObject>
 #include <QHash>
 
+#include "broadcastdispensers.h"
+
 class IRpcServerImpl : public QObject
 {
     Q_OBJECT
 public:
-    QHash<BroadcastEnum, BroadcastDispenser*> *broadcastDispensers() { return m_BroadcastDispensers; }
-
+    BroadcastDispensers *broadcastDispensers() { return m_BroadcastDispensers; }
+    void setBroadcastDispensers(BroadcastDispensers *broadcastDispensers) { m_BroadcastDispensers = broadcastDispensers; }
 private:
-    QHash<BroadcastEnum, BroadcastDispenser*> *m_BroadcastDispensers;
-
+    BroadcastDispensers *m_BroadcastDispensers;
 public slots:
     virtual void createBankAccount(CreateBankAccountMessage *createBankAccountMessage)=0;
 };
