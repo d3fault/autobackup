@@ -2,7 +2,7 @@ Documents/:1341011328
 Documents/Qt/:1341011328
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032199
+Documents/minddump/:1386032206
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -13,7 +13,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032199
+Documents/minddump/dreams/:1386032206
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
@@ -27,6 +27,7 @@ Documents/minddump/3.kids.might.as.well.isnt.that.much.harder.than.1.asjldfksajd
 Documents/minddump/5meo.attempt.2.and.way.higher.read.this.shit.its.good.asdlfjsadofuwerlkjsadfoulkjasdf.txt:1334481071
 Documents/minddump/AdAgency.prototype.the.wt.in.session.modification.as.well.as.out.of.session.YAT.yet.another.tangent.coined.txt:1332958174
 Documents/minddump/PostgreSQL.sucks.just.sayin.scalability.thoughts.txt:1338081216
+Documents/minddump/a.drug.deal.or.just.convo.using.only.the.word.fuck.txt:1341286990
 Documents/minddump/a.perfect.end.lasjdfasdlfkjs.4.lexi.txt:1320836605
 Documents/minddump/a.person.is.made.up.entirely.by.their.thoughts.txt:1339487552
 Documents/minddump/adflkjasdfoiausdflkajweraoirusdaflkjsadfouasdflkjsdfoiu.txt:1335804858
@@ -153,6 +154,7 @@ Documents/minddump/fldsjfaoawueralsdjfasodgpaygaiofusd.txt:1323683925
 Documents/minddump/flkjdsfoiasdyfiasyfoaisyfhdskfhksldhfiosuafalsdjflkj.txt:1328744898
 Documents/minddump/flsdkfjdlsfjsd.txt:1322828892
 Documents/minddump/flsjadfoaiweurlskfjasdfouygsdgakj.txt:1323683522
+Documents/minddump/fml.martyr.etc.born.too.soon.but.meh.first.stentence.still.counts.live.as.if.you.were.the.main.character.of.a.book.you.would.read.txt:1341223000
 Documents/minddump/freedom.of.information.or.childpornless.internet.txt:1323287752
 Documents/minddump/fsdafhasdfiuoydsfawtawerkjrosiufsdkfj.txt:1328117354
 Documents/minddump/fsdfjsdlfsdofiyusdfjsdlfk.txt:1328117345
@@ -935,7 +937,7 @@ Projects/Prototypes/pluginIDEandRunner/src/pluginIDEandRunner.pro:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginideandrunnermainwidget.cpp:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginideandrunnermainwidget.h:1326313092
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/:1341205690
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/:1341210510
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/:1341210711
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/bitcoinhelperandbroadcastmessagedispenseruser.cpp:1341208726
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/bitcoinhelperandbroadcastmessagedispenseruser.h:1341208570
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/irpcserverimpl.h:1341207371
@@ -1077,7 +1079,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032199
+Projects/libAvGraphicsItem2/design/:1386032206
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1167,7 +1169,7 @@ Solutions/Anonymous Bitcoin Computing/src/AppDb/bankserverhelper.h:1335350377
 Solutions/Anonymous Bitcoin Computing/src/AppDb/main.cpp:1334997969
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.cpp:1336171193
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.h:1336171200
-Solutions/Anonymous Bitcoin Computing/src/BankServer/:1341206012
+Solutions/Anonymous Bitcoin Computing/src/BankServer/:1341210712
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/:1340839242
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/:1340838707
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/ActionsArgsObjects/:1340368778
@@ -1266,7 +1268,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1341210521
+autobackupScripts/win/.directory:1341287394
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
