@@ -6,7 +6,8 @@
 #include <QHash>
 #include <QTimer>
 
-#include "messageDispensers/broadcastdispensers.h"
+class BroadcastDispensers;
+class PendingBalanceAddedDetectedMessageDispenser;
 
 class BitcoinHelperAndBroadcastMessageDispenserUser : public QObject
 {

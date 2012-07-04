@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.cpp \
     messages/broadcasts/pendingbalanceaddeddetectedmessage.cpp \
     messageDispensers/actions/createbankaccountmessagedispenser.cpp \
-    messages/actions/createbankaccountmessage.cpp
+    messages/actions/createbankaccountmessage.cpp \
+    irpcclientshelper.cpp \
+    messageDispensers/broadcastdispensers.cpp
 
 HEADERS  += mainwidget.h \
     rpcclientshelperanddeliveryacceptorandnetwork.h \
@@ -34,6 +36,8 @@ HEADERS  += mainwidget.h \
     messageDispensers/actiondispensers.h \
     messageDispensers/actions/createbankaccountmessagedispenser.h \
     messages/actions/createbankaccountmessage.h
+
+
 
 
 

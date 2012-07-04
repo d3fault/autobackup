@@ -1,8 +1,9 @@
 Documents/:1341011328
-Documents/Qt/:1341011328
+Documents/Qt/:1341368708
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
+Documents/Qt/dear.nokia.gtfo.txt:1341368708
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032220
+Documents/minddump/:1386032227
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -13,7 +14,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032220
+Documents/minddump/dreams/:1386032227
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
@@ -476,7 +477,7 @@ Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
 Projects/Ideas/:1341168391
-Projects/Ideas/QtSslRpc/:1341209877
+Projects/Ideas/QtSslRpc/:1341363501
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
 Projects/Ideas/QtSslRpc/ObjectsArgs.means.i.am.tied.to.rpc.code.but.not.to.opposite.rpc.member.client.2.server.server.2.client.etc.woot.txt:1340544053
@@ -485,6 +486,7 @@ Projects/Ideas/QtSslRpc/contemplating.if.i.should.implement.it.or.not.MbAsyncRes
 Projects/Ideas/QtSslRpc/different.rpc.server.auto-object-caching.configurations.txt:1337202154
 Projects/Ideas/QtSslRpc/emit.the.responses.from.deep.in.the.business.impl.instead.of.returning.them.same.thing.saves.work.txt:1340540991
 Projects/Ideas/QtSslRpc/freenets.request.persistence.is.awesome.optional.feature.for.rpc.actions.txt:1340618830
+Projects/Ideas/QtSslRpc/good.design.means.one.switch.case.brace.on.the.entire.business.impl.txt:1341363501
 Projects/Ideas/QtSslRpc/im.going.to.attempt.to.prototype.this.as.i.manually.code.abc.txt:1337201257
 Projects/Ideas/QtSslRpc/initial.idea.txt:1336692360
 Projects/Ideas/QtSslRpc/maybe.not.now.maybe.do.this.later.idk.txt:1336792346
@@ -937,38 +939,40 @@ Projects/Prototypes/pluginIDEandRunner/src/main.cpp:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginIDEandRunner.pro:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginideandrunnermainwidget.cpp:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginideandrunnermainwidget.h:1326313092
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/:1341205690
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/:1341356188
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/:1341355816
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actions/:1341355715
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actions/createbankaccountmessagedispenser.cpp:1341355715
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actions/createbankaccountmessagedispenser.h:1341355715
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcasts/:1341354664
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.cpp:1341354664
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.h:1341353722
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actiondispensers.h:1341355816
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcastdispensers.h:1341355649
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/imessagedispenser.h:1341353434
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/:1341353549
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/actions/:1341361100
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/actions/createbankaccountmessage.cpp:1341361100
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/actions/createbankaccountmessage.h:1341361100
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/broadcasts/:1341354635
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/broadcasts/pendingbalanceaddeddetectedmessage.cpp:1341353827
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/broadcasts/pendingbalanceaddeddetectedmessage.h:1341354635
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/imessage.h:1341353327
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/bitcoinhelperandbroadcastmessagedispenseruser.cpp:1341208726
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/bitcoinhelperandbroadcastmessagedispenseruser.h:1341208570
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/irpcclientshelper.h:1341356145
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/irpcserverimpl.h:1341355186
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/:1341362410
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/:1341369217
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/:1341363221
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actions/:1341358177
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actions/createbankaccountmessagedispenser.cpp:1341357866
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actions/createbankaccountmessagedispenser.h:1341358177
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcasts/:1341363278
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.cpp:1341363105
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.h:1341363278
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actiondispensers.h:1341356631
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcastdispensers.cpp:1341362889
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/broadcastdispensers.h:1341362704
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/imessagedispenser.h:1341363221
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/:1341364440
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/actions/:1341365010
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/actions/createbankaccountmessage.cpp:1341364519
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/actions/createbankaccountmessage.h:1341365010
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/broadcasts/:1341369217
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/broadcasts/pendingbalanceaddeddetectedmessage.cpp:1341364549
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/broadcasts/pendingbalanceaddeddetectedmessage.h:1341369217
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messages/imessage.h:1341364440
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/bitcoinhelperandbroadcastmessagedispenseruser.cpp:1341364570
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/bitcoinhelperandbroadcastmessagedispenseruser.h:1341362515
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/irpcclientshelper.cpp:1341362823
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/irpcclientshelper.h:1341361647
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/irpcserverimpl.h:1341362807
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/main.cpp:1341206100
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/mainwidget.cpp:1341208078
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/mainwidget.h:1341207181
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcMessageDeliveryAndRecycling.pro:1341355715
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcclientshelperanddeliveryacceptorandnetwork.cpp:1341346517
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcclientshelperanddeliveryacceptorandnetwork.h:1341346521
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcserverbusinessimpl.cpp:1341208468
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcserverbusinessimpl.h:1341208214
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcMessageDeliveryAndRecycling.pro:1341362625
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcclientshelperanddeliveryacceptorandnetwork.cpp:1341361746
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcclientshelperanddeliveryacceptorandnetwork.h:1341361742
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcserverbusinessimpl.cpp:1341364560
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcserverbusinessimpl.h:1341361796
 Projects/Prototypes/timelineFileStore/:1321106315
 Projects/Prototypes/timelineFileStore/timelineFileStore/:1320135863
 Projects/Prototypes/timelineFileStore/timelineFileStore/main.cpp:1320132377
@@ -1099,7 +1103,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032220
+Projects/libAvGraphicsItem2/design/:1386032227
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1189,7 +1193,7 @@ Solutions/Anonymous Bitcoin Computing/src/AppDb/bankserverhelper.h:1335350377
 Solutions/Anonymous Bitcoin Computing/src/AppDb/main.cpp:1334997969
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.cpp:1336171193
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.h:1336171200
-Solutions/Anonymous Bitcoin Computing/src/BankServer/:1341345426
+Solutions/Anonymous Bitcoin Computing/src/BankServer/:1341365091
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/:1340839242
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/:1340838707
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/ActionsArgsObjects/:1340368778
@@ -1288,7 +1292,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1341361100
+autobackupScripts/win/.directory:1341369220
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

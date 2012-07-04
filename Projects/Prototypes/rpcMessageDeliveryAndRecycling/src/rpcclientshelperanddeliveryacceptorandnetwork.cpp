@@ -1,5 +1,7 @@
 #include "rpcclientshelperanddeliveryacceptorandnetwork.h"
 
+#include "messageDispensers/actiondispensers.h"
+
 RpcClientsHelperAndDeliveryAcceptorAndNetwork::RpcClientsHelperAndDeliveryAcceptorAndNetwork(IRpcServerImpl *rpcServerImpl)
     : IRpcClientsHelper(rpcServerImpl)
 { }

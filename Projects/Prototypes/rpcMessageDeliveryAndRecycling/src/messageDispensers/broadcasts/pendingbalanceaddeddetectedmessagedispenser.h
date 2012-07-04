@@ -3,7 +3,8 @@
 
 #include "../../irpcclientshelper.h"
 #include "../imessagedispenser.h"
-#include "../../messages/broadcasts/pendingbalanceaddeddetectedmessage.h"
+
+class PendingBalanceAddedDetectedMessage;
 
 class PendingBalanceAddedDetectedMessageDispenser : public IMessageDispenser
 {
@@ -11,7 +12,7 @@ public:
     PendingBalanceAddedDetectedMessageDispenser(IRpcClientsHelper *destinationObject)
         : IMessageDispenser(destinationObject)
     { }
-    PendingBalanceAddedDetectedMessage *getNewOrRecycled() { return static_cast<PendingBalanceAddedDetectedMessage*>(privateGetNewOrRecycled()); }
+    PendingBalanceAddedDetectedMessage *getNewOrRecycled();
 protected:
     IMessage *getNewOfTypeAndConnectToDestinationObject();
 };

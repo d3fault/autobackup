@@ -1,16 +1,13 @@
 #include "rpcserverbusinessimpl.h"
 
-RpcServerBusinessImpl::RpcServerBusinessImpl(QObject *parent) :
-    QObject(parent)
-{
+#include "messages/actions/createbankaccountmessage.h"
 
-}
 void RpcServerBusinessImpl::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
 {
     //do some shit in the db
 
     //if it works, just deliver. TODOreq: failed reasons cases
-    emit createBankAccountMessage->createBankAccountCompleted();
+    createBankAccountMessage->myDeliver();
 }
 void RpcServerBusinessImpl::init()
 {

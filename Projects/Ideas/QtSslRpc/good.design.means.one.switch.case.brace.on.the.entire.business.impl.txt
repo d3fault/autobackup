@@ -1,0 +1,8 @@
+basically, a good design only has one switch/case usage segment when dealing with multiple messages
+you only need to do a switch/case thingo right after you read the network message header
+then you read in the rest of the message onto the message itself, and then emit the message to teh business impl
+it emits back, and each message has it's own code path
+
+we might be able to combine code paths right toward the end, the writing back onto the network
+
+but there should never be a reason to do another switch on the message to figure out what kind it is again

@@ -10,8 +10,6 @@
 class RpcServerBusinessImpl : public IRpcServerImpl
 {
     Q_OBJECT
-public:
-    explicit RpcServerBusinessImpl(QObject *parent = 0);
 private:
     QThread *m_BitcoinThread;
     BitcoinHelperAndBroadcastMessageDispenserUser *m_Bitcoin;

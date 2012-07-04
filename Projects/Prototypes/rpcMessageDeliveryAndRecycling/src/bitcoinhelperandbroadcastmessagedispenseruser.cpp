@@ -1,5 +1,9 @@
 #include "bitcoinhelperandbroadcastmessagedispenseruser.h"
 
+#include "messageDispensers/broadcastdispensers.h"
+#include "messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.h"
+#include "messages/broadcasts/pendingbalanceaddeddetectedmessage.h"
+
 BitcoinHelperAndBroadcastMessageDispenserUser::BitcoinHelperAndBroadcastMessageDispenserUser(BroadcastDispensers *broadcastDispensers)
     : m_DebugTimer(0)
 {
@@ -26,7 +30,6 @@ void BitcoinHelperAndBroadcastMessageDispenserUser::handleDebugTimerTimeout()
     if(qrand() % 10 == 3)
     {
         PendingBalanceAddedDetectedMessage *pendingBalanceAddedDetectedMessage = m_PendingBalanceAddedDetectedMessageDispenser->getNewOrRecycled();
-        pendingBalanceAddedDetectedMessage->setDetectedBalanceAmountEtc(5);
-        pendingBalanceAddedDetectedMessage->deliver();
+        pendingBalanceAddedDetectedMessage->myDeliver();
     }
 }

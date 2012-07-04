@@ -3,18 +3,14 @@
 
 #include <QObject>
 
-#include "irpcclientshelper.h"
-#include "broadcasts/pendingbalanceaddeddetectedmessagedispenser.h"
+class IRpcClientsHelper;
+class PendingBalanceAddedDetectedMessageDispenser;
 
 class BroadcastDispensers : public QObject
 {
     Q_OBJECT
 public:
-    explicit BroadcastDispensers(IRpcClientsHelper *destinationObject)
-    {
-        m_PendingBalanceAddedDetectedMessageDispenser = new PendingBalanceAddedDetectedMessageDispenser(destinationObject);
-    }
-
+    explicit BroadcastDispensers(IRpcClientsHelper *destinationObject);
     PendingBalanceAddedDetectedMessageDispenser *pendingBalanceAddedDetectedMessageDispenser();
 private:
     PendingBalanceAddedDetectedMessageDispenser *m_PendingBalanceAddedDetectedMessageDispenser;

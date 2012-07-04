@@ -6,6 +6,8 @@
 
 #include "messageDispensers/broadcastdispensers.h"
 
+class CreateBankAccountMessage;
+
 class IRpcServerImpl : public QObject
 {
     Q_OBJECT
