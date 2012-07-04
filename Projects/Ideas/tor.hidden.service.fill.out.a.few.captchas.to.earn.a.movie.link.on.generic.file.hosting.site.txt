@@ -1,0 +1,25 @@
+a tor hidden service (for the management portion)
+you fill out like 5+ captchas as 'payment' to get a link to download a movie
+
+the URL is obfuscated, and the file is possibly even encrypted.
+
+it is stored on some generic file hosting site.
+
+we could even monitor the download count. if it spikes up higher than it should be (indicating it was posted on a forum),
+we delete it and make a new mirror
+
+spike should not be 1 or 2
+
+it should be like a percentage of whatever we expect given however many captchas have been filled out
+
+
+and yea, we sell the captchas / automation of course (hence tor hidden service)
+
+
+the biggest 'expense' would be getting bandwidth + IPs to upload to the generic file hosting sites
+
+we'd need to maintain mirrors of every tv show + movie... would be expensive as fuck
+
+but there's gotta be a balancing point between profits from number of captchas and cost of servers to maintain warez archive
+
+perhaps the 'upload a movie as payment' idea is better

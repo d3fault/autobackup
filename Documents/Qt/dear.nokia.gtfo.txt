@@ -1,36 +1,40 @@
-Dear Nokia,
+Proposal: Remove QML from Qt's code base (OR: Should it be a requirement that Qt Modules are interoperable?)
 
-gtfo.
+QML is not interoperable with Qt/C++.
 
-You're ruining Qt's good name by turning it into a toy programming language and splitting the community in half.
-
-QML is a _user_ application of Qt. It is a powerful product, potentially profitable, and the users of it can even use Qt/C++ behind the scenes.
-However, it does not belong in the Qt code base (except maybe as an Add-On).
-
-The reason being that QML <--> Qt interoperability does not exist and never will.
-
-Suuuuuure, it's claimed to be interoperable... but that's a lie.
+It claims to be interoperable, but it is not.
 
 QML can access everything from Qt/C++ (usually requires glue code), but Qt cannot access everything from QML.
 
 Examples:
 a) Qt Graphical Effects
 b) QML Desktop Components
+c) [more to come, no doubt]
 
 ^every time a new piece of QML-exclusive functionality is announced and touted as "Qt functionality", the divide in the community grows.
+
+QML is ruining Qt's good name by introducing a "toy programming language" mode and splitting the community in half by making new framework features exclusive to that TPL mode.
+
+QML is a _user_ application of Qt. It is a powerful product, potentially profitable, and the users of it can even use Qt/C++ behind the scenes.
+However, it does not belong in the Qt code base (perhaps as an Add-On?).
 
 The IEEE defines 'interoperability' as:
 "the ability of two or more systems or components to exchange information and to use the information that has been exchanged."
 The definition of 'exchange':
-"An act of giving one thing and receiving another in return" <-- just want to point out that the exchange in interoperability is two ways. QML gives nothing back. QML specific functionality is inaccessible from Qt/C++.
+"An act of giving one thing and receiving another in return" <-- just wanted to point out that the exchange in interoperability is two ways
+QML only uses functionality that Qt/C++ provides. QML specific functionality is inaccessible from Qt/C++.
+Therefore, QML is not interoperable with Qt/C++ and should not be in Qt's code base.
 
-QML acts like a _user_ application. It only uses functionality in Qt/C++.
+Another way of thinking about this: Imagine Nokia was pouring resources and functionality directly into the python bindings (instead of upstream) and then claiming the python bindings were "Qt". Oh, you like C++? You like native? Too bad, now you have to use python if you want any of the new functionality.
 
-Another way of thinking about this: Imagine Nokia was pouring resources and functionality directly into the python bindings and then claiming the python bindings were "Qt". Oh, you like C++? You like native? Too bad, now you have to use python if you want any of the new functionality.
-
-Now let's get out our conspiracy theory watches (so we can see how much time we waste speculating): It's plausible that Microsoft manipulated Nokia into purchasing Trolltech with the sole intentions of segregating the community (divide and conquer) in the way described above. It makes me giggle when people respond saying "The Nokia employees are devoted to Qt!". I don't question their devotion for a second (the code monkeys working at Nokia are on my team as far as I'm concerned)... but at the end of the day they have to work on what their boss tells them to work on. Nokia Qt Developer's Boss: Nokia. Nokia's Boss: Microsoft. The only question that remains: does Microsoft play that dirty? (hint: yes). I hate repeating myself (I do it often), but for anyone who can't figure out why Microsoft would dislike Qt: Microsoft's primary revenue source is operating system sales. They do so well with operating system sales because of their use of vendor lock-in tactics. Applications made for Windows tend to not work on other operating systems. Qt is changing that. Qt is platform independent, as powerful as (if not more powerful than) Microsoft's .Net lineup, with the added advantage of being 100% native. Qt is the biggest threat to Microsoft's long-term survival.
+Now let's get out our conspiracy theory watches (so we can see how much time we waste speculating): It's plausible that Microsoft directed Nokia into purchasing Trolltech with the sole intentions of segregating the community (divide and conquer) in the way described above. It makes me giggle when people respond saying "The Nokia employees are devoted to Qt!". I don't question their devotion for a second (the code monkeys working at Nokia are on my team as far as I'm concerned)... but at the end of the day, they do what they're told to do by the guy who writes their paycheck. Qt in-house developer's boss: Nokia. Nokia's boss: Microsoft. The only question that remains: does Microsoft play that dirty? (hint: yes). I hate repeating myself (I do it often), but for anyone who can't figure out why Microsoft would dislike Qt: Microsoft's primary revenue source is operating system sales. They do so well with operating system sales because of their use of vendor lock-in tactics. Applications made for Windows tend to not work on other operating systems. Qt is changing that. Qt is platform independent, as powerful as (if not more powerful than) Microsoft's .Net lineup, with the added advantage of being 100% native. Qt is the biggest threat to Microsoft's long-term survival.
 
 
 So with all the noise that I'm making, QML is making more. Not only that, it's syphoning resources and splitting the community in half.
 
 d3fault
+
+p.s. re: me not having any merit
+From http://qt-project.org/wiki/The_Qt_Governance_Model
+"Decisions about the future of the Project are made through mailing list discussion with the members of the community, from the newest User to the Chief Maintainer."
+That being said, I expect to be ignored because the vast majority of contributors/deciders work within Nokia (and can't speak freely because of it (they can still speak against the motion though. anyone else see the problem with that? LOL 'Open Governance')). We'd need a lazy consensus among 3rd party contributors beating out Nokia employees voting against... and then we'd have to hope the Maintainers/Chief Maintainer doesn't override the decision. Never going to happen. Fork sounds easier... but that splits the community as well.

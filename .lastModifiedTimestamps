@@ -1,9 +1,9 @@
 Documents/:1341011328
-Documents/Qt/:1341368708
+Documents/Qt/:1341373118
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
-Documents/Qt/dear.nokia.gtfo.txt:1341368708
+Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032227
+Documents/minddump/:1386032234
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -14,7 +14,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032227
+Documents/minddump/dreams/:1386032234
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
@@ -476,7 +476,7 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/Ideas/:1341168391
+Projects/Ideas/:1341372707
 Projects/Ideas/QtSslRpc/:1341363501
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -644,6 +644,7 @@ Projects/Ideas/paxos.agreement.used.to.instantiate.and.deflateSlashTeardown.cach
 Projects/Ideas/paxos.modifications.customizations.aslfjasdfouwelrkjsadfoulskdf.txt:1338795519
 Projects/Ideas/pay.them.for.their.computes.with.network.computes.which.they.can.just.sell.anyways.if.they.want.txt:1339759594
 Projects/Ideas/perUserInstalledAppList.is.stored.on.dht.and.there.is.autoinstall.and.autoconf.for.each.these.are.differnt.from.source.apps.i.guess.which.should.still.be.detachable.btw.txt:1338793556
+Projects/Ideas/play.vidya.to.keep.them.distracted.while.you.code.tor.hidden.services.on.another.hidden.offline.comp.txt:1341372707
 Projects/Ideas/portrait.and.landscape.modes.on.both.desktop.and.mobile.by.measuring.desktop.resolution.txt:1329806118
 Projects/Ideas/progressive.knee.clapper.alfjsadfouwerljdsfoulrjksdfouewrl.txt:1340748367
 Projects/Ideas/protobuf.rpc.MY.OWN.via.qt.qdatastream.sslsocket-server.txt:1335959064
@@ -677,6 +678,7 @@ Projects/Ideas/the.hardcoded.typedef.txt:1322608579
 Projects/Ideas/think.i.might.have.figured.out.gfs.and.therefore.abc.scaling.technique.txt:1339059231
 Projects/Ideas/threshold.modifier.detector.arduino.fingers.qt.code.0-1023.processor.with.3.signals.documented.in.this.doc.txt:1337812575
 Projects/Ideas/time.lapse.workout.show.myself.GROW.lawl.txt.oh.and.it.should.be.in.the.nude.txt:1324814596
+Projects/Ideas/tor.hidden.service.fill.out.a.few.captchas.to.earn.a.movie.link.on.generic.file.hosting.site.txt:1341372530
 Projects/Ideas/tor.hidden.service.of.WHATEVER.backed.by.freenet.as.distributed.database.txt:1340576320
 Projects/Ideas/trusted.USER.vs.trusted.SERVER.a.user.can.have.infinite.servers.txt:1338016501
 Projects/Ideas/trusted.servers.use.predetermined.randomly.selected.nodes.for.connection.that.shifts.every.10.sec.or.so.txt:1337826930
@@ -1103,7 +1105,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032227
+Projects/libAvGraphicsItem2/design/:1386032234
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1193,7 +1195,7 @@ Solutions/Anonymous Bitcoin Computing/src/AppDb/bankserverhelper.h:1335350377
 Solutions/Anonymous Bitcoin Computing/src/AppDb/main.cpp:1334997969
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.cpp:1336171193
 Solutions/Anonymous Bitcoin Computing/src/AppDb/ourserverforwtfrontends.h:1336171200
-Solutions/Anonymous Bitcoin Computing/src/BankServer/:1341365091
+Solutions/Anonymous Bitcoin Computing/src/BankServer/:1341372770
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/:1340839242
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/:1340838707
 Solutions/Anonymous Bitcoin Computing/src/BankServer/autoGendRpcClientHypothetical/oldOutdatedChanged/ActionsArgsObjects/:1340368778
@@ -1292,7 +1294,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1341369220
+autobackupScripts/win/.directory:1341373194
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
