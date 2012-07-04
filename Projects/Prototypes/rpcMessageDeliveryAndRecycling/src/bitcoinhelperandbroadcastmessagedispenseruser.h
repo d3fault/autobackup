@@ -6,15 +6,17 @@
 #include <QHash>
 #include <QTimer>
 
+#include "messageDispensers/broadcastdispensers.h"
+
 class BitcoinHelperAndBroadcastMessageDispenserUser : public QObject
 {
     Q_OBJECT
 public:
-    explicit BitcoinHelperAndBroadcastMessageDispenserUser(QHash<BroadcastEnum, BroadcastDispenser*> *broadcastDispensers);
+    explicit BitcoinHelperAndBroadcastMessageDispenserUser(BroadcastDispensers *broadcastDispensers);
 
     void moveBroadcastDispensersToThread(QThread *thread);
 private:
-    BroadcastDispenser *m_PendingBalanceAddedDetectedMessageDispenser;
+    PendingBalanceAddedDetectedMessageDispenser *m_PendingBalanceAddedDetectedMessageDispenser;
 
     QTimer *m_DebugTimer;
 signals:

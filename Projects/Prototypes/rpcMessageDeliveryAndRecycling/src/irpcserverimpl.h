@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QHash>
 
-#include "broadcastdispensers.h"
+#include "messageDispensers/broadcastdispensers.h"
 
 class IRpcServerImpl : public QObject
 {

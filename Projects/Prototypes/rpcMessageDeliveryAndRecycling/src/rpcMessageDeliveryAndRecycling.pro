@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     bitcoinhelperandbroadcastmessagedispenseruser.cpp \
     messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.cpp \
     messages/broadcasts/pendingbalanceaddeddetectedmessage.cpp \
-    messageDispensers/actions/createbankaccountmessagedispenser.cpp
+    messageDispensers/actions/createbankaccountmessagedispenser.cpp \
+    messages/actions/createbankaccountmessage.cpp
 
 HEADERS  += mainwidget.h \
     rpcclientshelperanddeliveryacceptorandnetwork.h \
@@ -31,7 +32,10 @@ HEADERS  += mainwidget.h \
     messages/imessage.h \
     messages/broadcasts/pendingbalanceaddeddetectedmessage.h \
     messageDispensers/actiondispensers.h \
-    messageDispensers/actions/createbankaccountmessagedispenser.h
+    messageDispensers/actions/createbankaccountmessagedispenser.h \
+    messages/actions/createbankaccountmessage.h
+
+
 
 
 

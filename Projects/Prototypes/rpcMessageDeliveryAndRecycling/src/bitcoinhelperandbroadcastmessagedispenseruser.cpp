@@ -1,15 +1,16 @@
 #include "bitcoinhelperandbroadcastmessagedispenseruser.h"
 
-BitcoinHelperAndBroadcastMessageDispenserUser::BitcoinHelperAndBroadcastMessageDispenserUser(QHash<BroadcastEnum, BroadcastDispenser *> *broadcastDispensers)
+BitcoinHelperAndBroadcastMessageDispenserUser::BitcoinHelperAndBroadcastMessageDispenserUser(BroadcastDispensers *broadcastDispensers)
     : m_DebugTimer(0)
 {
-    m_PendingBalanceAddedDetectedMessageDispenser = broadcastDispensers->value(PendingBalanceAddedDetected); //etc
+    m_PendingBalanceAddedDetectedMessageDispenser = broadcastDispensers->pendingBalanceAddedDetectedMessageDispenser();
 
     //TODOreq: move the dispenser object to the thread that we are on
 }
 void BitcoinHelperAndBroadcastMessageDispenserUser::moveBroadcastDispensersToThread(QThread *thread)
 {
-    m_PendingBalanceAddedDetectedMessageDispenser->moveToThread(thread); //etc
+    m_PendingBalanceAddedDetectedMessageDispenser->moveToThread(thread);
+    //etc
 }
 void BitcoinHelperAndBroadcastMessageDispenserUser::startDebugTimer()
 {

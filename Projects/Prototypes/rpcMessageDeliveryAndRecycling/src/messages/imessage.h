@@ -10,6 +10,6 @@ public:
   void doneWithMessage() { emit doneWithMessageSignal(); }
 signals:
   void doneWithMessageSignal();
-}
+};
 
 #endif // IMESSAGE_H

@@ -16,18 +16,12 @@ class RpcClientsHelperAndDeliveryAcceptorAndNetwork : public IRpcClientsHelper
     Q_OBJECT
 public:
     explicit RpcClientsHelperAndDeliveryAcceptorAndNetwork(IRpcServerImpl *rpcServerImpl);
-private:
-    void setupInternalActionDispensers();
 signals:
     void initialized();
-    void createBankAccountRequested(CreateBankAccountMessage*);
 public slots:
     void handleSimulateActionButtonClicked();
 
     void init();
-
-    void handleCreateBankAccountDelivery();
-    void handlePendingBalancedAddedDetectedDelivery();
 };
 
 #endif // RPCCLIENTSHELPERANDDELIVERYACCEPTORANDNETWORK_H

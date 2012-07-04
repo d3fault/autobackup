@@ -3,18 +3,19 @@
 
 #include <QObject>
 
+#include "../irpcclientshelper.h"
 #include "actions/createbankaccountmessagedispenser.h"
 
 class ActionDispensers : public QObject
 {
     Q_OBJECT
 public:
-    CreateBankAccountMessageDispenser *createBankAccountMessageDispenser() { return m_CreateBankAccountMessageDispenser; }
-    explicit ActionDispensers(QObject *parent = 0)
-        : QObject(parent)
+    explicit ActionDispensers(IRpcClientsHelper *destinationObject)
     {
-        m_CreateBankAccountMessageDispenser = new CreateBankAccountMessageDispenser();
+        m_CreateBankAccountMessageDispenser = new CreateBankAccountMessageDispenser(destinationObject);
     }
+
+    CreateBankAccountMessageDispenser *createBankAccountMessageDispenser() { return m_CreateBankAccountMessageDispenser; }
 private:
     CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
 };
