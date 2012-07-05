@@ -1,0 +1,11 @@
+an optimization / worst case scenario code path (might be too costly to
+implement) where if i am unable to 'new' a message (out of memory), i only make
+sure that 1 was previously new'd... and then i block and wait for that old one
+(or any of the previous old ones, doesn't matter... just need 1 though or else
+we fail/error out)
+
+
+might be possible / cheap-enough seeing as i don't need to use an atomic
+or sharing etc for a bool waitingForMessageOutOfMemory ... since ::get and
+::recycle is on the same thread (well, my current code isn't, but working on
+fixing that)

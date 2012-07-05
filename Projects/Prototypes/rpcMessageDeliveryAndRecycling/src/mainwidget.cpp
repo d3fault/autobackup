@@ -25,6 +25,8 @@ mainWidget::mainWidget(QWidget *parent)
     //we should make note somewhere that it should be done BEFORE the new broadcast dispenser owner is .moveToThread'd (so we are a 'child' when it happens)
     //we could just check that the dispensers aren't 0 (i'd have to init them to zero, no biggy) instead of using booleans... since we have to send in the elected owner as the parent in the constructor (default of parent = 0 is not there)
 
+    //also, still don't know if i need to do MessageDispenser::moveToThread(...); or if just setting it as a child really is enough. if the doc says it is, i guess that's enough to go by for the next prototype. but i won't be happy until i see threadIds matching in debug code~
+
 
     m_BusinessThread = new QThread();    
     m_Business->moveToThread(m_BusinessThread);

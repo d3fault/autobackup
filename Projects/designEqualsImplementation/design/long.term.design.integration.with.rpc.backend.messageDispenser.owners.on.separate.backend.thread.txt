@@ -1,0 +1,4 @@
+i can envision a feature of designEquals that moves my 'message dispensers' to
+the appropriate back-end impl thread... even if it isn't the 'rpc server' /
+designEquals 'node'... but one behind it (and on a different thread).
+designEquals takes care of that for me~
