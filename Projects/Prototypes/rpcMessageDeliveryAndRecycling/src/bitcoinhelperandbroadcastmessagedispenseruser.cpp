@@ -4,15 +4,12 @@
 #include "messageDispensers/broadcasts/pendingbalanceaddeddetectedmessagedispenser.h"
 #include "messages/broadcasts/pendingbalanceaddeddetectedmessage.h"
 
-BitcoinHelperAndBroadcastMessageDispenserUser::BitcoinHelperAndBroadcastMessageDispenserUser(BroadcastDispensers *broadcastDispensers)
+BitcoinHelperAndBroadcastMessageDispenserUser::BitcoinHelperAndBroadcastMessageDispenserUser()
     : m_DebugTimer(0)
+{ }
+void BitcoinHelperAndBroadcastMessageDispenserUser::grabBroadcastDispensersAndMoveEachToOurThread(BroadcastDispensers *broadcastDispensers, QThread *thread)
 {
     m_PendingBalanceAddedDetectedMessageDispenser = broadcastDispensers->pendingBalanceAddedDetectedMessageDispenser();
-
-    //TODOreq: move the dispenser object to the thread that we are on
-}
-void BitcoinHelperAndBroadcastMessageDispenserUser::moveBroadcastDispensersToThread(QThread *thread)
-{
     m_PendingBalanceAddedDetectedMessageDispenser->moveToThread(thread);
     //etc
 }
@@ -25,14 +22,14 @@ void BitcoinHelperAndBroadcastMessageDispenserUser::startDebugTimer()
     }
     m_DebugTimer->start(500);
 
+    emit d(QString("starting timer on what should be the bitcoin thread: ") + QString::number(QThread::currentThreadId()));
     emit d("starting debug timer");
 }
 void BitcoinHelperAndBroadcastMessageDispenserUser::handleDebugTimerTimeout()
 {
-    emit d("timer timed out");
     if(qrand() % 10 == 3)
     {
-        emit d("wewt got 3. dispatching broadcast message now");
+        emit d(QString("timer timed out and we got 3 on what should be the bitcoin thread: ") + QString::number(QThread::currentThreadId()));
         PendingBalanceAddedDetectedMessage *pendingBalanceAddedDetectedMessage = m_PendingBalanceAddedDetectedMessageDispenser->getNewOrRecycled();
         pendingBalanceAddedDetectedMessage->myDeliver();
     }

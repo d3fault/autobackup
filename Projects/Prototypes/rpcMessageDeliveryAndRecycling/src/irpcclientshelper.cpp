@@ -23,6 +23,8 @@ void IRpcClientsHelper::setupBroadcastDispensers()
 void IRpcClientsHelper::setupInternalActionDispensers()
 {
     m_ActionDispensers = new ActionDispensers(this);
+
+    connect(m_ActionDispensers->createBankAccountMessageDispenser(), SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }
 void IRpcClientsHelper::createBankAccountCompleted()
 {
@@ -33,6 +35,7 @@ void IRpcClientsHelper::createBankAccountCompleted()
     //but don't forget failed<Reason> shit...
     if(message)
     {
+        emit d(QString("received create bank account message on what should be network thread: ") + QString::number(QThread::currentThreadId()));
         emit d("create bank account response sent to network");
     }
     message->doneWithMessage();
@@ -48,6 +51,7 @@ void IRpcClientsHelper::pendingBalanceAddedDetected()
     //sendToClientViaRpcTransport(static_cast<IMessage*>(sender())); //TODOreq: another thing, we might need that function to take the message out of our 'pending' requests. not applicable to broadcasts, but for actions it is. also, since this is so generic allegedly, why even have this slot? why not just connect the signal directly to the sendToClientViaRpc slot?
     if(message) //sanity check for debugging, but shouldn't be needed in production (famous last words)
     {
+        emit d(QString("received pending balance message on what should be network thread: ") + QString::number(QThread::currentThreadId()));
         emit d("pending balance added detected broadcast sent to network");
     }
     message->doneWithMessage();

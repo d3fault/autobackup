@@ -13,9 +13,9 @@ class BitcoinHelperAndBroadcastMessageDispenserUser : public QObject
 {
     Q_OBJECT
 public:
-    explicit BitcoinHelperAndBroadcastMessageDispenserUser(BroadcastDispensers *broadcastDispensers);
+    explicit BitcoinHelperAndBroadcastMessageDispenserUser();
 
-    void moveBroadcastDispensersToThread(QThread *thread);
+    void grabBroadcastDispensersAndMoveEachToOurThread(BroadcastDispensers *broadcastDispensers, QThread *thread);
 private:
     PendingBalanceAddedDetectedMessageDispenser *m_PendingBalanceAddedDetectedMessageDispenser;
 

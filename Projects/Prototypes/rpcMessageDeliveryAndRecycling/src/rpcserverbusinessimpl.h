@@ -10,7 +10,10 @@
 class RpcServerBusinessImpl : public IRpcServerImpl
 {
     Q_OBJECT
-private:
+public:
+    RpcServerBusinessImpl(QObject *parent = 0);
+    void pushBroadcastDispensersToAppropriateBusinessThreads();
+private:    
     QThread *m_BitcoinThread;
     BitcoinHelperAndBroadcastMessageDispenserUser *m_Bitcoin;
 public slots:
