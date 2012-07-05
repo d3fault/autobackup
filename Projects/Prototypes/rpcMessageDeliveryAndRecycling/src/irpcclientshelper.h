@@ -36,6 +36,7 @@ public slots:
     //broadcast handling to be dispatched onto network
     void pendingBalanceAddedDetected();
 signals:
+    void d(const QString &);
     //create bank account request as it comes in from network
     void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
 };

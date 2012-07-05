@@ -24,11 +24,15 @@ void BitcoinHelperAndBroadcastMessageDispenserUser::startDebugTimer()
         connect(m_DebugTimer, SIGNAL(timeout()), this, SLOT(handleDebugTimerTimeout()));
     }
     m_DebugTimer->start(500);
+
+    emit d("starting debug timer");
 }
 void BitcoinHelperAndBroadcastMessageDispenserUser::handleDebugTimerTimeout()
 {
+    emit d("timer timed out");
     if(qrand() % 10 == 3)
     {
+        emit d("wewt got 3. dispatching broadcast message now");
         PendingBalanceAddedDetectedMessage *pendingBalanceAddedDetectedMessage = m_PendingBalanceAddedDetectedMessageDispenser->getNewOrRecycled();
         pendingBalanceAddedDetectedMessage->myDeliver();
     }

@@ -3,10 +3,9 @@
 
 #include "../imessage.h"
 
-LEFT OFF -- //can't figure out why i keep getting undefined reference shit. maybe it's the signals/slots in derived classes?
-
 class PendingBalanceAddedDetectedMessage : public IMessage
 {
+    Q_OBJECT
 public:
     void myDeliver();
 signals:

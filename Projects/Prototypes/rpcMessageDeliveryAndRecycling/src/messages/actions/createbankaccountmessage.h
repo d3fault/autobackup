@@ -5,6 +5,7 @@
 
 class CreateBankAccountMessage : public IMessage
 {
+    Q_OBJECT
 public:
     void myDeliver();
 signals:

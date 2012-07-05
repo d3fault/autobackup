@@ -18,6 +18,8 @@ private:
     BroadcastDispensers *m_BroadcastDispensers;
 public slots:
     virtual void createBankAccount(CreateBankAccountMessage *createBankAccountMessage)=0;
+signals:
+    void d(const QString &);
 };
 
 #endif // IRPCSERVERIMPL_H

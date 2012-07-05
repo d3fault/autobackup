@@ -13,8 +13,6 @@ class RpcServerBusinessImpl : public IRpcServerImpl
 private:
     QThread *m_BitcoinThread;
     BitcoinHelperAndBroadcastMessageDispenserUser *m_Bitcoin;
-signals:
-
 public slots:
     void init();
     void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);

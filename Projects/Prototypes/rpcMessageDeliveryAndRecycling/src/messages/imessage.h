@@ -9,7 +9,7 @@ class IMessage : public QObject
 public:
   void doneWithMessage() { emit doneWithMessageSignal(); }
   //void deliver() { privateDeliver(); }
-protected:
+//protected:
   //virtual void privateDeliver()=0; //each specific message must override this type. all it does is emit it's message-specific signal
 signals:
   void doneWithMessageSignal();

@@ -15,11 +15,15 @@ mainWidget::mainWidget(QWidget *parent)
 
     m_Layout = new QVBoxLayout();
     m_Debug = new QPlainTextEdit();
-    m_SimulateActionButton = new QPushButton();
+    m_SimulateActionButton = new QPushButton("simulate create bank account");
 
     m_Layout->addWidget(m_Debug);
     m_Layout->addWidget(m_SimulateActionButton);
     this->setLayout(m_Layout);
+
+
+    connect(m_ClientsHelper, SIGNAL(d(QString)), m_Debug, SLOT(appendPlainText(QString)));
+    connect(m_Business, SIGNAL(d(QString)), m_Debug, SLOT(appendPlainText(QString)));
 
     connect(m_SimulateActionButton, SIGNAL(clicked()), m_ClientsHelper, SLOT(handleSimulateActionButtonClicked()));
 

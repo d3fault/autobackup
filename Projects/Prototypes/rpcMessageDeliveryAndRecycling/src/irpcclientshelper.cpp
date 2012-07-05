@@ -31,6 +31,10 @@ void IRpcClientsHelper::createBankAccountCompleted()
     //send to transport
     //see the broadcast example below and note how similar they are. collapse as capable
     //but don't forget failed<Reason> shit...
+    if(message)
+    {
+        emit d("create bank account response sent to network");
+    }
     message->doneWithMessage();
 }
 void IRpcClientsHelper::createBankAccountFailedUsernameAlreadyExists()
@@ -42,5 +46,9 @@ void IRpcClientsHelper::pendingBalanceAddedDetected()
     //send to transport. perhaps a pure virtual for both the transport (sending to network), which operates on an IMessage... which has pure virtual stream operators?
     //then we could do:
     //sendToClientViaRpcTransport(static_cast<IMessage*>(sender())); //TODOreq: another thing, we might need that function to take the message out of our 'pending' requests. not applicable to broadcasts, but for actions it is. also, since this is so generic allegedly, why even have this slot? why not just connect the signal directly to the sendToClientViaRpc slot?
+    if(message) //sanity check for debugging, but shouldn't be needed in production (famous last words)
+    {
+        emit d("pending balance added detected broadcast sent to network");
+    }
     message->doneWithMessage();
 }

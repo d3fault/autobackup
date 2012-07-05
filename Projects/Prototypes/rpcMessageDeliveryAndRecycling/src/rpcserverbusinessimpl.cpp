@@ -7,6 +7,7 @@ void RpcServerBusinessImpl::createBankAccount(CreateBankAccountMessage *createBa
     //do some shit in the db
 
     //if it works, just deliver. TODOreq: failed reasons cases
+    emit d("business impl got create bank account request and processed it");
     createBankAccountMessage->myDeliver();
 }
 void RpcServerBusinessImpl::init()
@@ -24,6 +25,7 @@ void RpcServerBusinessImpl::init()
 
     //^^^^^^^^^^^^^weirdly, the broadcasts are initialized/new'd on the main thread... but then the object that they are created in (in the constructor) is later moved to another thread (before the above is called). i'm not sure what this means. we might need to 'push' them before moving the object to it's own thread... but maybe not. i don't fully understand moveToThread. it says it moves 'children'... but i don't know if this means members or things that are initialized with QObject *parent using 'this' as the parent etc. no fucking clue tbh, need to test
 
+    connect(m_Bitcoin, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 
     QMetaObject::invokeMethod(m_Bitcoin, "startDebugTimer", Qt::QueuedConnection); //normally would have this schedule like once every 10 seconds max or whatever that formula was .... and it'd be checking for pending/confirmed payments etc. we are in this demo just generating a random number 1-10 and seeing if it's 3. lol
 }

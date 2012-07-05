@@ -21,7 +21,7 @@ private:
 
     QTimer *m_DebugTimer;
 signals:
-
+    void d(const QString &);
 public slots:
     void startDebugTimer();
 private slots:
