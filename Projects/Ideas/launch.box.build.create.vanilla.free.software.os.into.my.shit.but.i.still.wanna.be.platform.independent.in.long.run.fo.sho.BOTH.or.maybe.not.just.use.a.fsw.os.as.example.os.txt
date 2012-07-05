@@ -1,0 +1,66 @@
+i can/should make a 'launch box'
+
+i mean have the design for what i'm going to do planned etc so everything is
+smooth...
+
+
+
+but really, record the installation of an operating system and everything that
+goes along with it. record video-wise...
+
+...then code the motherfucking on-system recording shizzz
+
+launch OS
+
+whatever
+
+i mean it isn't something that'd be special
+
+but would show how2doit
+
+
+it would be even better if i accomplished it + documented it with 100% free
+software
+
+a 100% free software OS :-P, which there are plenty of
+
+
+
+
+
+
+complications would arise during the downloading/compilation of h.264 / x264
+the libav copies of it
+
+but i mean... we could generically NOT-exclude it
+you know?
+never mention it
+
+as long as it's free software, i'm game
+LGPL is good enough... so....
+
+
+i'm not sure what license would need to be paid??
+
+a script mimicking my launch box (created + documented the creation) could do
+it for the user too. at that point, am i breaking h.264 patents? i'd call
+bullshit.
+
+
+
+
+i could always take the 'safe' route and explicitly exclude patent infringing
+codecs... but i like the apathy route better...
+
+this is all getting away from the point
+
+
+i'd like to even visually record myself building a thumb drive of the OS in
+windows mode...
+
+then plugging it in and installing the os
+
+could call that video "breaking free" (of windows, for most)
+"breaking free" doesn't apply to me... i just choose windows because i want to
+appeal to noobs... and linux users can obviously already build thumb
+drives........

@@ -15,10 +15,11 @@ mainWidget::mainWidget(QWidget *parent)
     m_Business->pushBroadcastDispensersToAppropriateBusinessThreads(); //broadcastDispenser has to be set up before this call, but we own it at this point (why there's no arg). T O D O r e q (nvm decided to make it pure virtual instead. good enough): this call could also be my check (in 'init' later) to make sure dispensers are moved appropriately. i mean it'd still require the user/developer to know to do it right... but still, this will raise attention
 
 
-    TODO LEFT OFF -- compiling aside from this line.. but very very broken. create bank account messages are returning on the bitcoin thread? wtf? might even start the below comments in a new project... scared this one might be too fucked.
+    TODO LEFT OFF -- compiling aside from this line.. but very very broken. create bank account messages are recycling on the bitcoin thread? wtf? might even start the below comments in a new project... scared this one might be too fucked.
     //perhaps something along the line of:
-    //m_ClientsHelper->electBroadcastDispenserOwnerForPendingBalanceAddedMessages(m_Business->bitcoin());
-    //etc
+    //m_ClientsHelper->electBroadcastDispenserOwnerForPendingBalanceAddedMessages(m_Business->bitcoin()); //TODOreq: additionally, in this scenario, it might also be smart to make Bitcoin's constructor NOT accept a QObject *parent... so we don't accidentally pass in the business as a parent... which would cause bitcoin to move it's thread too.... no bueno (but also might not matter, since we'd just override it later?)
+
+    //etc for each broadcast message type
 
     //then, when initializing m_ClientsHelper later... or starting it or whatever, we can just do simple boolean checks to make sure that each broadcast dispenser has an owner elected. if it doesn't, it spits out the appropriate error message and stops.
     //this at least forces the user/developer to elect an owner for every broadcast dispenser.
@@ -27,6 +28,7 @@ mainWidget::mainWidget(QWidget *parent)
 
     //also, still don't know if i need to do MessageDispenser::moveToThread(...); or if just setting it as a child really is enough. if the doc says it is, i guess that's enough to go by for the next prototype. but i won't be happy until i see threadIds matching in debug code~
 
+    //during the 'elect' shit...right after the "new MessageDispenser(electedOwner)" we have a great opportunity to set the destination object for the specific dispenser to 'this'. much more organized than how i'm doing it now. shit's all over the place.
 
     m_BusinessThread = new QThread();    
     m_Business->moveToThread(m_BusinessThread);
