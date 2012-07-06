@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="current.noninteroperable.design.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.88"
+     inkscape:cx="375"
+     inkscape:cy="383.63636"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1440"
+     inkscape:window-height="852"
+     inkscape:window-x="-3"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff"
+       id="rect2985"
+       width="363.63635"
+       height="68.181816"
+       x="93.181816"
+       y="720.54401" />
+    <rect
+       style="fill:#000000"
+       id="rect2987"
+       width="502.27274"
+       height="136.36363"
+       x="111.36364"
+       y="729.63489" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot2989"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(125,256.81818)"><flowRegion
+         id="flowRegion2991"><rect
+           id="rect2993"
+           width="201.13637"
+           height="111.36364"
+           x="129.54546"
+           y="511.45309"
+           style="fill:#ffffff" /></flowRegion><flowPara
+         id="flowPara2995">Qt Quick</flowPara></flowRoot>    <rect
+       style="fill:#000000"
+       id="rect3035"
+       width="506.81818"
+       height="157.95454"
+       x="111.36365"
+       y="494.40765" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3037"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(121.59091,-30.681818)"><flowRegion
+         id="flowRegion3039"><rect
+           id="rect3041"
+           width="367.04544"
+           height="82.954544"
+           x="179.54546"
+           y="587.58948"
+           style="fill:#ffffff" /></flowRegion><flowPara
+         id="flowPara3043">QML</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:9.74856186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 234.09091,644.0883 c 0,69.97262 0,87.96558 0,87.96558"
+       id="path3049"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:5.4991107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 235.76319,649.48902 20.51907,20.51907"
+       id="path3053"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3823"
+       d="m 233.55499,650.62538 -20.51907,20.51907"
+       style="fill:none;stroke:#000000;stroke-width:5.4991107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3825"
+       d="M 234.62683,731.37173 255.1459,710.85266"
+       style="fill:none;stroke:#000000;stroke-width:5.4991107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:5.4991107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 232.41863,730.23537 211.89956,709.7163"
+       id="path3827"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3829"
+       d="m 467.04546,644.0883 c 0,69.97262 0,87.96558 0,87.96558"
+       style="fill:none;stroke:#000000;stroke-width:9.74856186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3831"
+       d="m 468.71774,649.48902 20.51907,20.51907"
+       style="fill:none;stroke:#000000;stroke-width:5.4991107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:5.4991107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 466.50954,650.62538 -20.51907,20.51907"
+       id="path3833"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:5.4991107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 467.58138,731.37173 20.51907,-20.51907"
+       id="path3835"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3837"
+       d="M 465.37318,730.23537 444.85411,709.7163"
+       style="fill:none;stroke:#000000;stroke-width:5.4991107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+  </g>
+</svg>

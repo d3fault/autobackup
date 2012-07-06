@@ -1,9 +1,18 @@
 Documents/:1341011328
-Documents/Qt/:1341373118
+Documents/Qt/:1341529788
+Documents/Qt/interoperable-diagrams/:1341534418
+Documents/Qt/interoperable-diagrams/current.noninteroperable.design.png:1341534383
+Documents/Qt/interoperable-diagrams/current.noninteroperable.design.svg:1341531095
+Documents/Qt/interoperable-diagrams/ideal.interoperable.design.png:1341534418
+Documents/Qt/interoperable-diagrams/ideal.interoperable.design.svg:1341532422
+Documents/Qt/interoperable-diagrams/lol.bad.design.compromise.png:1341534353
+Documents/Qt/interoperable-diagrams/lol.bad.design.compromise.svg:1341534330
+Documents/Qt/interoperable-diagrams/qt.quick.and.qml.only.svg:1341530404
+Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032270
+Documents/minddump/:1386032278
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -14,7 +23,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032270
+Documents/minddump/dreams/:1386032278
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -90,6 +99,7 @@ Documents/minddump/broadcast.for.safety.fldjfsalfjoisaufasodfjlsdajf.txt:1328889
 Documents/minddump/ca.certs.and.CA.gen.utility.thoughts.and.randomness.who.gives.a.fuck.adlfjasldfjasdoful.txt:1330012236
 Documents/minddump/camera.is.a.computer.mod.txt:1323476263
 Documents/minddump/can.buy.my.own.slotFillers.for.no.cost.because.all.costs.come.back.to.me.and.zero.out.lmao.txt:1340901801
+Documents/minddump/censoring.certain.names.will.allow.me.to.launch.fuck.yea.aldkfjasdlfkjweroiu.txt:1341528952
 Documents/minddump/clear.concise.and.working.but.still.a.piece.of.shit.qml.aslfkjsadflksaj.txt:1339321953
 Documents/minddump/computer.programming.is.vague.not.even.computer.peers.could.randomly.guess.at.what.im.doing.txt:1338635107
 Documents/minddump/cool.picture.i.wanna.take.cowboy.earth.computer.txt:1324463331
@@ -1116,7 +1126,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032270
+Projects/libAvGraphicsItem2/design/:1386032278
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1305,7 +1315,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1341468940
+autobackupScripts/win/.directory:1341534720
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
