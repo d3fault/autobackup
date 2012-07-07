@@ -1,0 +1,7 @@
+the reason my recycling works fast is because you either don't have to do any
+allocating, or you do it synchronously and almost-as-fast (aside from
+queue.empty() check... which is cheap'ish (the the sole cost addition in every
+case)). you do the allocating, that is.
+
+the cost is potential message/cross-thread calls congenstion. i do not know how
+cheap they are. TODOoptimize: research that

@@ -30,7 +30,7 @@ mainWidget::mainWidget(QWidget *parent)
 
     //during the 'elect' shit...right after the "new MessageDispenser(electedOwner)" we have a great opportunity to set the destination object for the specific dispenser to 'this'. much more organized than how i'm doing it now. shit's all over the place.
 
-    m_BusinessThread = new QThread();    
+    m_BusinessThread = new QThread();
     m_Business->moveToThread(m_BusinessThread);
     m_BusinessThread->start();
 

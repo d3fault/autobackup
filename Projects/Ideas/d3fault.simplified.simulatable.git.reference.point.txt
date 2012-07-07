@@ -1,0 +1,15 @@
+like if 'git integration' with Qt Creator meant that every time i save, I sync
+with my git branch AND the remotes. this, however, is not the same as
+committing. comitting is distinct and has git messages. also more likely to
+compile. the 'other' shit, behind the scenes (of git commits... but still very
+important data and still redundified)... is presented in a timeline fashion.
+keystrokes with per-sentence charactersPerSecond auto-averaging / playback,
+with pauses with (pause.length > (thatAverageCps * 1.5)).
+
+so there's like "auto-sync'ing" but also "snapshot creation"
+
+the 'moment'... the 'snapshot'... is just a specific point in time in the
+timeline of the auto-syncs... with a textual commit message ("1.0 release" etc)
+attached. there could even be tags to go with the commits/snapshots: _Release:1
+or who knows what/how. but like integrated with the underlying messageData /
+software itself, making commit messages filterable.
