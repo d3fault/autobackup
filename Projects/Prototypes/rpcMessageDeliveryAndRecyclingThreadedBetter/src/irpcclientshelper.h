@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "irpcbusiness.h"
+class IRpcBusiness;
 
 class IRpcClientsHelper : public QObject
 {

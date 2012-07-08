@@ -1,5 +1,9 @@
 #include "irpcclientshelper.h"
 
+#include "irpcbusiness.h"
+
+#include "messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.h"
+
 IRpcClientsHelper::IRpcClientsHelper(IRpcBusiness *business)
     : m_Business(business)
 {

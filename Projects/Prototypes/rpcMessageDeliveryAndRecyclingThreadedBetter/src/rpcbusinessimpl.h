@@ -17,8 +17,8 @@ private:
     BitcoinHelper *m_Bitcoin;
 protected:
     void setParentForEveryBroadcastDispenser(IRpcClientsHelper *clientsHelper);
-    void organizeThreadsImpl();
-    void startBackendImplThreads();
+    void organizeBackendThreads();
+    void startBackendThreads();
 public slots:
     void init();
     void start();

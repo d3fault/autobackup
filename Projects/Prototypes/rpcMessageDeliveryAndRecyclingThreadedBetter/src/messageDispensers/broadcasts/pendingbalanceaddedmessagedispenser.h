@@ -3,10 +3,10 @@
 
 #include "../imessagedispenser.h"
 
-class PendingBalancedAddedMessageDispenser : public IMessageDispenser
+class PendingBalanceAddedMessageDispenser : public IMessageDispenser
 {
 public:
-    PendingBalancedAddedMessageDispenser();
+    PendingBalanceAddedMessageDispenser(QObject *mandatoryParent);
 };
 
 #endif // PENDINGBALANCEDADDEDMESSAGEDISPENSER_H

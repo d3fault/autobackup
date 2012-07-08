@@ -24,14 +24,14 @@ void RpcBusinessImpl::setParentForEveryBroadcastDispenser(IRpcClientsHelper *cli
     clientsHelper->setBroadcastDispenserParentForPendingBalanceAddedMessages(m_Bitcoin);
     //etc
 }
-void RpcBusinessImpl::organizeThreadsImpl()
+void RpcBusinessImpl::organizeBackendThreads()
 {
     m_BitcoinThread = new QThread();
 
     m_Bitcoin->moveToThread(m_BitcoinThread);
     //etc
 }
-void RpcBusinessImpl::startBackendImplThreads()
+void RpcBusinessImpl::startBackendThreads()
 {
     m_BitcoinThread->start();
     //etc

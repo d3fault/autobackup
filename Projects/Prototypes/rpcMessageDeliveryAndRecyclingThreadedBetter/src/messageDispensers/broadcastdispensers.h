@@ -1,17 +1,19 @@
 #ifndef BROADCASTDISPENSERS_H
 #define BROADCASTDISPENSERS_H
 
-#include "broadcasts/pendingbalancedaddedmessagedispenser.h"
+#include "broadcasts/pendingbalanceaddedmessagedispenser.h"
 
 class BroadcastDispensers
 {
 public:
     BroadcastDispensers();
-    void setPendingBalancedAddedMessageDispenser(PendingBalancedAddedMessageDispenser *pendingBalancedAddedMessageDispenser);
-    PendingBalancedAddedMessageDispenser *pendingBalancedAddedMessageDispenser();
+    void setPendingBalanceAddedMessageDispenser(PendingBalanceAddedMessageDispenser *pendingBalancedAddedMessageDispenser);
+    PendingBalanceAddedMessageDispenser *pendingBalanceAddedMessageDispenser();
+    //etc
+
     bool everyDispenserIsCreated();
 private:
-    PendingBalancedAddedMessageDispenser *m_PendingBalancedAddedMessageDispenser;
+    PendingBalanceAddedMessageDispenser *m_PendingBalanceAddedMessageDispenser;
 };
 
 #endif // BROADCASTDISPENSERS_H

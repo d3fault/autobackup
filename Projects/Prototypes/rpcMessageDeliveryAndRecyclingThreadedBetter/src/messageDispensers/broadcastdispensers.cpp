@@ -1,21 +1,21 @@
 #include "broadcastdispensers.h"
 
 BroadcastDispensers::BroadcastDispensers()
-    : m_PendingBalancedAddedMessageDispenser(0)
+    : m_PendingBalanceAddedMessageDispenser(0) //etc
 { }
-void BroadcastDispensers::setPendingBalancedAddedMessageDispenser(PendingBalancedAddedMessageDispenser *pendingBalancedAddedMessageDispenser)
+void BroadcastDispensers::setPendingBalanceAddedMessageDispenser(PendingBalanceAddedMessageDispenser *pendingBalancedAddedMessageDispenser)
 {
-    m_PendingBalancedAddedMessageDispenser = pendingBalancedAddedMessageDispenser;
+    m_PendingBalanceAddedMessageDispenser = pendingBalancedAddedMessageDispenser;
 }
-PendingBalancedAddedMessageDispenser * BroadcastDispensers::pendingBalancedAddedMessageDispenser()
+PendingBalanceAddedMessageDispenser * BroadcastDispensers::pendingBalanceAddedMessageDispenser()
 {
-    return m_PendingBalancedAddedMessageDispenser;
+    return m_PendingBalanceAddedMessageDispenser;
 }
 bool BroadcastDispensers::everyDispenserIsCreated()
 {
     //TODOreq: check this bool/method somewhere in init/construction (idk where)
 
-    if(!m_PendingBalancedAddedMessageDispenser)
+    if(!m_PendingBalanceAddedMessageDispenser)
         return false;
 
     //etc for every broadcast dispenser

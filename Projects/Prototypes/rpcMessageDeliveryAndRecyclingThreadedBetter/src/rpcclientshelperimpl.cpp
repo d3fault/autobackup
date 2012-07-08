@@ -1,6 +1,6 @@
 #include "rpcclientshelperimpl.h"
 
-RpcClientsHelperImpl::RpcClientsHelperImpl(QObject *parent) :
-    IRpcClientsHelper(parent)
+RpcClientsHelperImpl::RpcClientsHelperImpl(IRpcBusiness *business)
+    : IRpcClientsHelper(business)
 {
 }

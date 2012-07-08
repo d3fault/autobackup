@@ -7,7 +7,7 @@ class RpcClientsHelperImpl : public IRpcClientsHelper
 {
     Q_OBJECT
 public:
-    explicit RpcClientsHelperImpl(QObject *parent = 0);
+    explicit RpcClientsHelperImpl(IRpcBusiness *business);
 
 signals:
 

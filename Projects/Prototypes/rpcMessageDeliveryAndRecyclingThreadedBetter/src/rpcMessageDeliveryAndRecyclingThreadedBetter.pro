@@ -20,8 +20,8 @@ SOURCES += main.cpp\
     irpcclientshelper.cpp \
     bitcoinhelper.cpp \
     messageDispensers/broadcastdispensers.cpp \
-    messageDispensers/broadcasts/pendingbalancedaddedmessagedispenser.cpp \
-    messageDispensers/imessagedispenser.cpp
+    messageDispensers/imessagedispenser.cpp \
+    messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.cpp
 
 HEADERS  += \
     rpcmessagedeliveryandrecyclingthreadedbettertest.h \
@@ -33,8 +33,12 @@ HEADERS  += \
     irpcclientshelper.h \
     bitcoinhelper.h \
     messageDispensers/broadcastdispensers.h \
-    messageDispensers/broadcasts/pendingbalancedaddedmessagedispenser.h \
-    messageDispensers/imessagedispenser.h
+    messageDispensers/imessagedispenser.h \
+    messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.h
+
+
+
+
 
 
 

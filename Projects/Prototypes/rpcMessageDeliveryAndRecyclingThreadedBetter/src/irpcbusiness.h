@@ -16,8 +16,8 @@ public:
     void organizeThreads(IRpcClientsHelper *clientsHelper);
 protected:
     virtual void setParentForEveryBroadcastDispenser(IRpcClientsHelper *clientsHelper)=0;
-    virtual void organizeThreadsImpl()=0;
-    virtual void startBackendImplThreads()=0;
+    virtual void organizeBackendThreads()=0;
+    virtual void startBackendThreads()=0;
     BroadcastDispensers *m_BroadcastDispensers;
 public slots:
     virtual void init()=0;
