@@ -5,7 +5,7 @@ ServerAndProtocolKnower::ServerAndProtocolKnower(QObject *parent) :
 {
     if(!m_SslTcpServer)
     {
-        new SslTcpServer(this, ":/serverCa.pem", ":/clientCa.pem", ":/serverPrivateEncryptionKey.pem", ":/serverPublicLocalCertificate.pem", "fuckyou" /* TODOopt: make it so when starting the server we are prompted for this passphrase. this way it is only ever stored in memory... which is an improvement but still not perfect */); //since this code is auto-generated, we don't really need to put all the public/private key shits in the constructor as arguments. HOWEVER, it is still very good for the re-use of SslTcpServer, so i'll just leave it. it makes no difference in the auto-generated scenario where the string replaced variables are located, is all i'm saying
+        m_SslTcpServer = new SslTcpServer(this, ":/serverCa.pem", ":/clientCa.pem", ":/serverPrivateEncryptionKey.pem", ":/serverPublicLocalCertificate.pem", "fuckyou" /* TODOopt: make it so when starting the server we are prompted for this passphrase. this way it is only ever stored in memory... which is an improvement but still not perfect */); //since this code is auto-generated, we don't really need to put all the public/private key shits in the constructor as arguments. HOWEVER, it is still very good for the re-use of SslTcpServer, so i'll just leave it. it makes no difference in the auto-generated scenario where the string replaced variables are located, is all i'm saying
         connect(m_SslTcpServer, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
         connect(m_SslTcpServer, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleClientConnectedAndEncrypted(QSslSocket*)));
         m_SslTcpServer->initAndStartListening();

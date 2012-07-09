@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "irpcclientshelper.h"
+#include "irpcbusinesscontroller.h"
 
 #include "messageDispensers/broadcastdispensers.h"
 
@@ -13,11 +13,10 @@ class IRpcBusiness : public QObject
 public:
     explicit IRpcBusiness(QObject *parent = 0);
     BroadcastDispensers *broadcastDispensers();
-    void organizeThreads(IRpcClientsHelper *clientsHelper);
+    void organizeBackendBusinessObjectsThreadsAndStartThem(IRpcBusinessController *clientsHelper);
 protected:
-    virtual void setParentForEveryBroadcastDispenser(IRpcClientsHelper *clientsHelper)=0;
-    virtual void organizeBackendThreads()=0;
-    virtual void startBackendThreads()=0;
+    virtual void setParentBackendBusinessObjectForEveryBroadcastDispenser(IRpcBusinessController *clientsHelper)=0;
+    virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem()=0;
     BroadcastDispensers *m_BroadcastDispensers;
 public slots:
     virtual void init()=0;

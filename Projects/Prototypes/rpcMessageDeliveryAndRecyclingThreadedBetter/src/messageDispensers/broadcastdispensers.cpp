@@ -13,8 +13,6 @@ PendingBalanceAddedMessageDispenser * BroadcastDispensers::pendingBalanceAddedMe
 }
 bool BroadcastDispensers::everyDispenserIsCreated()
 {
-    //TODOreq: check this bool/method somewhere in init/construction (idk where)
-
     if(!m_PendingBalanceAddedMessageDispenser)
         return false;
 

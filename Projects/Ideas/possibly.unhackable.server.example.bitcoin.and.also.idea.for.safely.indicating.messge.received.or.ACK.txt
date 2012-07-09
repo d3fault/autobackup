@@ -1,0 +1,47 @@
+that secure qr/video method would be ideal in a bitcoin server type situation
+all private keys on the more-secure server
+all bitcoin signing etc done on that server
+
+but all web communicating etc done by teh qr-writer (and later (to get
+response), qr-reader)
+
+there is never active two way communication in the traditional sense...
+...even though there very much is
+
+
+
+so like a special 'create bank account' qr pattern (we use a whitelist for
+instructions), which is immediately followed by the username (or whatever
+parameters / "data"). both servers have the same headers or whatever is
+required to process the common instructions/data
+
+
+the data blobs can be fixed size (seeing as they already are. resolution = data
+size) to prevent buffer overflows.
+
+
+
+it is possible to abuse this method of communication by allowing actual
+instructions themselves to be coded in the "data" and then executed. this is
+improper use of the security method and all your security is lost. there needs
+to be a clear distinction between data and instructions. instruction whitelist,
+data "blobs" (never executed) safely handled.
+
+
+OH AND ONE LAST THING
+
+there could be a signal for 'message received', so long as it's just a single
+wire connection (one way.. but back the other way). this way we move in a much
+more organized fashion and there is no message loss (we don't need realtime
+etc).
+
+example:
+
+webserver: lifts special 'instructionReady' (could be instructionOrDataReady
+too) signal
+secureServer: reads the qr frame, then lifts special 'okGotIt' signal. there is
+maybe even parity/authentication/verification (or all 3) on qr frame
+
+only after 'okGotIt' is received do we send either a following 'dataReady' or
+another 'instructionReady' or if i decide: 'instructionOrDataReady' -- but
+that's all semantics/design

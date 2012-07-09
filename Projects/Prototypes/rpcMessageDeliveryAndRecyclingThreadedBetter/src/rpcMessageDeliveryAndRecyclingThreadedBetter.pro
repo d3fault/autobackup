@@ -16,12 +16,12 @@ SOURCES += main.cpp\
     idebuggablestartablestoppablebackend.cpp \
     rpcbusinessimpl.cpp \
     irpcbusiness.cpp \
-    rpcclientshelperimpl.cpp \
-    irpcclientshelper.cpp \
     bitcoinhelper.cpp \
     messageDispensers/broadcastdispensers.cpp \
     messageDispensers/imessagedispenser.cpp \
-    messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.cpp
+    messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.cpp \
+    irpcbusinesscontroller.cpp \
+    rpcbusinesscontrollerimpl.cpp
 
 HEADERS  += \
     rpcmessagedeliveryandrecyclingthreadedbettertest.h \
@@ -29,12 +29,20 @@ HEADERS  += \
     idebuggablestartablestoppablebackend.h \
     rpcbusinessimpl.h \
     irpcbusiness.h \
-    rpcclientshelperimpl.h \
-    irpcclientshelper.h \
     bitcoinhelper.h \
     messageDispensers/broadcastdispensers.h \
     messageDispensers/imessagedispenser.h \
-    messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.h
+    messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.h \
+    irpcbusinesscontroller.h \
+    rpcbusinesscontrollerimpl.h
+
+
+
+
+
+
+
+
 
 
 

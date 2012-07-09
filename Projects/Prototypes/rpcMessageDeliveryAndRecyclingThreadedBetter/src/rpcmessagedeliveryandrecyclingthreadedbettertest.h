@@ -1,11 +1,9 @@
 #ifndef RPCMESSAGEDELIVERYANDRECYCLINGTHREADEDBETTERTEST_H
 #define RPCMESSAGEDELIVERYANDRECYCLINGTHREADEDBETTERTEST_H
 
-#include <QThread>
-
 #include "idebuggablestartablestoppablebackend.h"
 #include "rpcbusinessimpl.h"
-#include "rpcclientshelperimpl.h"
+#include "rpcbusinesscontrollerimpl.h"
 
 class rpcMessageDeliveryAndRecyclingThreadedBetterTest : public IDebuggableStartableStoppableBackend
 {
@@ -18,14 +16,7 @@ public slots:
     void stop();
 private:
     RpcBusinessImpl *m_Business;
-    RpcClientsHelperImpl *m_ClientsHelper;
-
-    QThread *m_BusinessThread;
-    QThread *m_ClientsHelperThread;
-
-    void instantiateObjects();
-    void organizeThreads();
-    void startThreads();
+    RpcBusinessControllerImpl *m_RpcBusinessController;
 };
 
 #endif // RPCMESSAGEDELIVERYANDRECYCLINGTHREADEDBETTERTEST_H

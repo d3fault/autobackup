@@ -19,20 +19,19 @@ RpcBusinessImpl::RpcBusinessImpl(QObject *parent) :
 
     //TODO: the above "etc"s would requires a splitting of the connect, extending/modifying the daisy-chain
 }
-void RpcBusinessImpl::setParentForEveryBroadcastDispenser(IRpcClientsHelper *clientsHelper)
+void RpcBusinessImpl::setParentBackendBusinessObjectForEveryBroadcastDispenser(IRpcBusinessController *rpcBusinessController)
 {
-    clientsHelper->setBroadcastDispenserParentForPendingBalanceAddedMessages(m_Bitcoin);
+    rpcBusinessController->setBroadcastDispenserParentForPendingBalanceAddedMessages(m_Bitcoin);
     //etc
+
+    //in this method it is the rpc generator user's responsibility to assign a parent for every broadcast. they ask themself: 'who (what object/thread) will be using this message dispenser?'
+    //they only have to guarantee that it hasn't been .moveToThread'd yet.. but we provide a pure virtual to encourage that (and call it for them)
+    //we also check their work, but only making sure that every broadcast dispenser has a parent assigned
 }
-void RpcBusinessImpl::organizeBackendThreads()
+void RpcBusinessImpl::moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem()
 {
     m_BitcoinThread = new QThread();
-
     m_Bitcoin->moveToThread(m_BitcoinThread);
-    //etc
-}
-void RpcBusinessImpl::startBackendThreads()
-{
     m_BitcoinThread->start();
     //etc
 }

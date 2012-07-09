@@ -5,7 +5,7 @@ IMessageDispenser::IMessageDispenser(QObject *mandatoryOwnerBeforeOwnerHasBeenMo
 {
 
 }
-void IMessageDispenser::setDestinationObject(IRpcClientsHelper *destinationObject)
+void IMessageDispenser::setDestinationObject(IRpcBusinessController *destinationObject)
 {
     m_DestinationObject = 0;
 }

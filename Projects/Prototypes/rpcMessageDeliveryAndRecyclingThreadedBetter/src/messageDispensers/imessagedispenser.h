@@ -10,9 +10,9 @@ class IMessageDispenser : public QObject
     Q_OBJECT
 public:
     explicit IMessageDispenser(QObject *mandatoryParent);
-    void setDestinationObject(IRpcClientsHelper *destinationObject);
+    void setDestinationObject(IRpcBusinessController *destinationObject);
 private:
-    IRpcClientsHelper *m_DestinationObject;
+    IRpcBusinessController *m_DestinationObject;
 signals:
 
 public slots:

@@ -1,0 +1,37 @@
+my write only video QR-code shit can be used on a 'server'
+
+a... central data authority
+even a dht / couchbase cluster
+
+
+there's an actual webserver (no trust given to him) connected to the web
+
+he translates requests into QR/video and sends them to the way-more-secure
+server/cluster
+
+server/cluster only takes instructions/data (both. ex:
+instruction:dataPacketComingOfSizeXYZ, then: data123 (size=XYZ)) through a very
+limited QR protocol.
+
+there are the predefined instructions specific to the server's domain
+and data blobs that are never executed. by forcing the data blobs over an
+hdmi/dvi/vga (vga sounds safest because it's analog) cable, we stip the data
+blobs (even in the predefined instructions) of malicious data. they'd have to
+find a hole in the hopefully-robust QR/video protocol. the more limited it is,
+the easier it is to secure. we cut out all the rest of the operating system's
+security holes using this method. that's the biggy.
+
+
+the server can even respond using the exact same method of information
+transport.
+
+there is no 'ack' when sending a packet (or whatever says 'i got that packet,
+send the next). the communicating is write-only
+
+the video writer and reader NEED to be of sufficient speed. if they miss data,
+it is missed. maybe we could request it again.. but that requires us to do a
+video write of our own (expensive obviously)
+
+so either dedicated / non-stressed (cpu-wise) hardware
+or realtime software... which i know nothing about (except that it makes hard
+guarantees in performance)

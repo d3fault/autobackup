@@ -5,9 +5,9 @@ IRpcBusiness::IRpcBusiness(QObject *parent) :
 {
     m_BroadcastDispensers = new BroadcastDispensers();
 }
-void IRpcBusiness::organizeThreads(IRpcClientsHelper *clientsHelper)
+void IRpcBusiness::organizeBackendBusinessObjectsThreadsAndStartThem(IRpcBusinessController *rpcBusinessController)
 {
-    setParentForEveryBroadcastDispenser(clientsHelper);
+    setParentBackendBusinessObjectForEveryBroadcastDispenser(rpcBusinessController);
 
     //since the impl is in charge of making sure every dispenser has an owner elected, we check his work before continuing
     if(!m_BroadcastDispensers->everyDispenserIsCreated())
@@ -16,11 +16,8 @@ void IRpcBusiness::organizeThreads(IRpcClientsHelper *clientsHelper)
     }
     else
     {
-        //then, after the electing above, the dispensers are children of the threads about to be moved (and so also get moved)
-        organizeBackendThreads();
-
-        //hack: start the thread because it's a thread that's behind the scenes and we want to make sure we're on the GUI thread when we **PUSH** the object onto the right thread. (when .moveToThread actually does it's shit?). idfk if this is a valid argument or not anymore
-        startBackendThreads();
+        //then, after the electing above, the dispensers are children of the threads about to be moved... so now we move them... and then start them
+        moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem();
     }
 }
 BroadcastDispensers *IRpcBusiness::broadcastDispensers()

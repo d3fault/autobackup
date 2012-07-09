@@ -16,9 +16,8 @@ private:
     QThread *m_BitcoinThread;
     BitcoinHelper *m_Bitcoin;
 protected:
-    void setParentForEveryBroadcastDispenser(IRpcClientsHelper *clientsHelper);
-    void organizeBackendThreads();
-    void startBackendThreads();
+    void setParentBackendBusinessObjectForEveryBroadcastDispenser(IRpcBusinessController *clientsHelper);
+    void moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem();
 public slots:
     void init();
     void start();
