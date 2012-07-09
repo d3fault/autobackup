@@ -3,12 +3,18 @@
 
 #include <QObject>
 
+#include "irpcbankserverclientshelper.h"
+#include "messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.h"
+
 class BitcoinHelper : public QObject
 {
     Q_OBJECT
 public:
     explicit BitcoinHelper(); //we choose not to have a parent so we don't ever become someone's child and follow them on moveToThread
 
+    void takeOwnershipOfApplicableBroadcastDispensers(IRpcBankServerClientsHelper *rpcBankServerClientsHelper);
+private:
+    PendingBalanceAddedMessageDispenser *m_PendingBalanceAddedMessageDispenser;
 signals:
     void initialized();
     void started();

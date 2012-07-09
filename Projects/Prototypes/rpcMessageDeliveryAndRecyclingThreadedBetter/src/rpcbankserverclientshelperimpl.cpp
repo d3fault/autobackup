@@ -1,7 +1,9 @@
-#include "rpcbusinesscontrollerimpl.h"
+#include "rpcbankserverclientshelperimpl.h"
 
-RpcBusinessControllerImpl::RpcBusinessControllerImpl(IRpcBusiness *business)
-    : IRpcBusinessController(business)
+#include "ssltcpserverandprotocolknower.h"
+
+RpcBankServerClientsHelperImpl::RpcBankServerClientsHelperImpl(IRpcBankServer *business)
+    : IRpcBankServerClientsHelper(business)
 {
     //I'm wondering if in here is a better place to make the connections between IRpcBusinessController and IProtocolKnower (the interface that ServerAndProtocolknower implements. it then hasA 'SslTcpServer' and uses it extensively in the pure virtual IProtocolKnower method overrides). Here rather than in the IRpcBusinessController constructor. I did say (in the header) that only this impl would be the one to hasA ServerAndProtocolKnower
 
@@ -36,9 +38,11 @@ RpcBusinessControllerImpl::RpcBusinessControllerImpl(IRpcBusiness *business)
     //why am i going so slow?
 
 
-    m_Transport = new ServerAndProtocolKnower();
+    //m_Transporter = new ServerAndProtocolKnower();
 
-    setupConnections();
+    //m_Transporter = new SslTcpServerAndProtocolKnower(); //seemless switching out with ThreadTransporterAndProtocolKnower once implemented... and some IPC one too..
+
+    //setupConnections(); //mandatory call must be after transporter is initialized
 
     //m_ProtocolKnower = new ServerAndProtocolKnower();
 
@@ -67,4 +71,8 @@ RpcBusinessControllerImpl::RpcBusinessControllerImpl(IRpcBusiness *business)
 
     //should the ITransporter be the layer that remembers 'who to respond to'
     //or should my IRpcBusinessController be the one?
+}
+IRpcBankServerMessageTransporter *RpcBankServerClientsHelperImpl::getNewTransporterImpl()
+{
+    return new SslTcpServerAndProtocolKnower();
 }

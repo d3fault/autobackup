@@ -1,7 +1,7 @@
-#include "rpcbusinessimpl.h"
+#include "rpcbankserverimpl.h"
 
-RpcBusinessImpl::RpcBusinessImpl(QObject *parent) :
-    IRpcBusiness(parent)
+RpcBankServerImpl::RpcBankServerImpl(QObject *parent) :
+    IRpcBankServer(parent)
 {
     m_Bitcoin = new BitcoinHelper();
 
@@ -19,31 +19,34 @@ RpcBusinessImpl::RpcBusinessImpl(QObject *parent) :
 
     //TODO: the above "etc"s would requires a splitting of the connect, extending/modifying the daisy-chain
 }
-void RpcBusinessImpl::setParentBackendBusinessObjectForEveryBroadcastDispenser(IRpcBusinessController *rpcBusinessController)
+void RpcBankServerImpl::takeOwnershipOfAllBroadcastDispensers(IRpcBankServerClientsHelper *rpcBankServerClientsHelper)
 {
-    rpcBusinessController->setBroadcastDispenserParentForPendingBalanceAddedMessages(m_Bitcoin);
+    m_Bitcoin->takeOwnershipOfApplicableBroadcastDispensers(rpcBankServerClientsHelper);
     //etc
 
     //in this method it is the rpc generator user's responsibility to assign a parent for every broadcast. they ask themself: 'who (what object/thread) will be using this message dispenser?'
     //they only have to guarantee that it hasn't been .moveToThread'd yet.. but we provide a pure virtual to encourage that (and call it for them)
     //we also check their work, but only making sure that every broadcast dispenser has a parent assigned
 }
-void RpcBusinessImpl::moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem()
+void RpcBankServerImpl::moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem()
 {
     m_BitcoinThread = new QThread();
     m_Bitcoin->moveToThread(m_BitcoinThread);
     m_BitcoinThread->start();
     //etc
 }
-void RpcBusinessImpl::init()
+void RpcBankServerImpl::init()
 {
     QMetaObject::invokeMethod(m_Bitcoin, "init", Qt::QueuedConnection);
 }
-void RpcBusinessImpl::start()
+void RpcBankServerImpl::start()
 {
     QMetaObject::invokeMethod(m_Bitcoin, "start", Qt::QueuedConnection);
 }
-void RpcBusinessImpl::stop()
+void RpcBankServerImpl::stop()
 {
     QMetaObject::invokeMethod(m_Bitcoin, "stop", Qt::QueuedConnection);
+}
+void RpcBankServerImpl::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
+{
 }

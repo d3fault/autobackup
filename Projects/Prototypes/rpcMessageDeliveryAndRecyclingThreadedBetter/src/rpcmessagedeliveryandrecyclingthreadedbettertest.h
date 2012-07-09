@@ -2,8 +2,8 @@
 #define RPCMESSAGEDELIVERYANDRECYCLINGTHREADEDBETTERTEST_H
 
 #include "idebuggablestartablestoppablebackend.h"
-#include "rpcbusinessimpl.h"
-#include "rpcbusinesscontrollerimpl.h"
+#include "rpcbankserverimpl.h"
+#include "rpcbankserverclientshelperimpl.h"
 
 class rpcMessageDeliveryAndRecyclingThreadedBetterTest : public IDebuggableStartableStoppableBackend
 {
@@ -15,8 +15,8 @@ public slots:
     void start();
     void stop();
 private:
-    RpcBusinessImpl *m_Business;
-    RpcBusinessControllerImpl *m_RpcBusinessController;
+    RpcBankServerImpl *m_Business;
+    RpcBankServerClientsHelperImpl *m_RpcBankServerClientsHelperImpl;
 };
 
 #endif // RPCMESSAGEDELIVERYANDRECYCLINGTHREADEDBETTERTEST_H

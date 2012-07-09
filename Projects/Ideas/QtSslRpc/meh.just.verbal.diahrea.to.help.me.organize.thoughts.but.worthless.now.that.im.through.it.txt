@@ -1,0 +1,7 @@
+rpc server backend objects need to take ownership of and keep a reference to
+whatever dispensers they require
+
+they dispensers also need to know of the rpc client server helper's
+IRpcBankServerTransporter, which is the destination object (for the connect of
+each message new'd by that dispenser. the QObject *parent of the message as it
+is being new'd is the rpc server backend object that takes ownership of it)

@@ -14,27 +14,67 @@ SOURCES += main.cpp\
     rpcmessagedeliveryandrecyclingthreadedbettertest.cpp \
     debugstartstopgui.cpp \
     idebuggablestartablestoppablebackend.cpp \
-    rpcbusinessimpl.cpp \
-    irpcbusiness.cpp \
     bitcoinhelper.cpp \
     messageDispensers/broadcastdispensers.cpp \
     messageDispensers/imessagedispenser.cpp \
     messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.cpp \
-    irpcbusinesscontroller.cpp \
-    rpcbusinesscontrollerimpl.cpp
+    irpcbankserverclientshelper.cpp \
+    irpcbankserver.cpp \
+    rpcbankserverimpl.cpp \
+    rpcbankserverclientshelperimpl.cpp \
+    irpcbankservermessagetransporter.cpp \
+    ssltcpserverandprotocolknower.cpp \
+    messages/imessage.cpp \
+    messages/actions/createbankaccountmessage.cpp \
+    messageDispensers/actions/createbankaccountmessagedispenser.cpp \
+    messages/broadcasts/pendingbalanceaddedmessage.cpp
 
 HEADERS  += \
     rpcmessagedeliveryandrecyclingthreadedbettertest.h \
     debugstartstopgui.h \
     idebuggablestartablestoppablebackend.h \
-    rpcbusinessimpl.h \
-    irpcbusiness.h \
     bitcoinhelper.h \
     messageDispensers/broadcastdispensers.h \
     messageDispensers/imessagedispenser.h \
     messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.h \
-    irpcbusinesscontroller.h \
-    rpcbusinesscontrollerimpl.h
+    irpcbankserverclientshelper.h \
+    irpcbankserver.h \
+    rpcbankserverimpl.h \
+    rpcbankserverclientshelperimpl.h \
+    irpcbankservermessagetransporter.h \
+    ssltcpserverandprotocolknower.h \
+    messages/imessage.h \
+    messages/actions/createbankaccountmessage.h \
+    messageDispensers/actions/createbankaccountmessagedispenser.h \
+    messages/broadcasts/pendingbalanceaddedmessage.h
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

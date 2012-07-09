@@ -7,7 +7,7 @@ void BroadcastDispensers::setPendingBalanceAddedMessageDispenser(PendingBalanceA
 {
     m_PendingBalanceAddedMessageDispenser = pendingBalancedAddedMessageDispenser;
 }
-PendingBalanceAddedMessageDispenser * BroadcastDispensers::pendingBalanceAddedMessageDispenser()
+PendingBalanceAddedMessageDispenser *BroadcastDispensers::pendingBalanceAddedMessageDispenser()
 {
     return m_PendingBalanceAddedMessageDispenser;
 }
