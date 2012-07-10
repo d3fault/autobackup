@@ -19,7 +19,7 @@ void BitcoinHelper::stop()
 {
     emit stopped();
 }
-void BitcoinHelper::takeOwnershipOfApplicableBroadcastDispensers(IRpcBankServerClientsHelper *rpcBankServerClientsHelper)
+void BitcoinHelper::takeOwnershipOfApplicableBroadcastDispensers(RpcBankServerClientsHelper *rpcBankServerClientsHelper)
 {
    m_PendingBalanceAddedMessageDispenser = rpcBankServerClientsHelper->takeOwnershipOfPendingBalanceAddedMessageDispenserRiggedForDelivery(this);
 }

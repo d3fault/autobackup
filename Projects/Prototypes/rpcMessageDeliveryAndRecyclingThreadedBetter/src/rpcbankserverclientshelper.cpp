@@ -1,13 +1,14 @@
-#include "irpcbankserverclientshelper.h"
+#include "rpcbankserverclientshelper.h"
 
 #include "irpcbankserver.h"
-
 #include "messages/actions/createbankaccountmessage.h"
 #include "messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.h"
+#include "ssltcpserverandprotocolknower.h"
 
-IRpcBankServerClientsHelper::IRpcBankServerClientsHelper(IRpcBankServer *business)
+RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServer *business)
     : m_Business(business)
 {
+    m_ActionDispensers = new ActionDispensers();
     m_BroadcastDispensers = new BroadcastDispensers();
 
     //TODOreq: connect etc to IRpcBusiness signals/slots (actions/broadcasts)(i think? pretty sure yes.)
@@ -22,12 +23,12 @@ IRpcBankServerClientsHelper::IRpcBankServerClientsHelper(IRpcBankServer *busines
 
     m_Business->moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem();
 
-    m_Transporter = Transporter::getNewTransporterImpl();
+    m_Transporter = new SslTcpServerAndProtocolKnower();
 
     connectTransporterActionRequestSignalsToBusinessSlots();
 
     //TODOreq: also, we might need to set up actions dispensers (make m_Transport the parent i think?) BEFORE moving threads etc
-    m_Transporter->takeOwnershipOfAllActionDispensers();
+    m_Transporter->takeOwnershipOfAllActionDispensers(this);
 
     //^^^TODOreq: in the rpc client, the two above calls will be opposite. m_Business->takeOwnershipOfActionDispensersAndOrganizeAndStartPrivateBusinessObjects(); (rpc CLIENT business in that case)
     //and: m_Transport->claimAllBroadcastDispensers(); //transport being rpc server helper (or possibly irpcbusinesscontroller? fml i should have kept the "clientshelper" and "serverhelper" names...
@@ -40,7 +41,24 @@ IRpcBankServerClientsHelper::IRpcBankServerClientsHelper(IRpcBankServer *busines
     m_Transporter->moveToThread(m_RpcBankServerMessageTransporterThread);
     m_RpcBankServerMessageTransporterThread->start();
 }
-PendingBalanceAddedMessageDispenser *IRpcBankServerClientsHelper::takeOwnershipOfPendingBalanceAddedMessageDispenserRiggedForDelivery(QObject *owner)
+void RpcBankServerClientsHelper::init()
+{
+}
+void RpcBankServerClientsHelper::start()
+{
+}
+void RpcBankServerClientsHelper::stop()
+{
+}
+void RpcBankServerClientsHelper::connectTransporterActionRequestSignalsToBusinessSlots()
+{
+    //action requests
+    connect(m_Transporter, SIGNAL(createBankAccount(CreateBankAccountMessage*)), m_Business, SLOT(createBankAccount(CreateBankAccountMessage*)));
+
+    //actions responses are handled via .deliver();
+    //broadcasts are handled via .deliver(); also
+}
+PendingBalanceAddedMessageDispenser *RpcBankServerClientsHelper::takeOwnershipOfPendingBalanceAddedMessageDispenserRiggedForDelivery(QObject *owner)
 {
     //we set the object passed in (an rpc server impl backend object) as the dispenser's owner, so that it is moved on .moveToThread and so we can pass 'this' (dispenser) in when new'ing our specific message type... and we will be calling it from the owner object's thread (same one .moveTo'd) also
     m_BroadcastDispensers->setPendingBalanceAddedMessageDispenser(new PendingBalanceAddedMessageDispenser(owner));
@@ -49,11 +67,9 @@ PendingBalanceAddedMessageDispenser *IRpcBankServerClientsHelper::takeOwnershipO
     //we return a reference to it to the object that took ownership. we keep a copy in m_BroadcastDispensers just so we can make sure they all got instantiated. no other reason i can think of yet. it would be unsafe for us to touch them when we are up and running. only the owners can
     return m_BroadcastDispensers->pendingBalanceAddedMessageDispenser();
 }
-void IRpcBankServerClientsHelper::connectTransporterActionRequestSignalsToBusinessSlots()
+CreateBankAccountMessageDispenser *RpcBankServerClientsHelper::takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner)
 {
-    //action requests
-    connect(m_Transporter, SIGNAL(createBankAccount(CreateBankAccountMessage*)), m_Business, SLOT(createBankAccount(CreateBankAccountMessage*)));
-
-    //actions responses are handled via .deliver();
-    //broadcasts are handled via .deliver(); also
+    m_ActionDispensers->setCreateBankAccountMessageDispenser(new CreateBankAccountMessageDispenser(owner));
+    m_ActionDispensers->createBankAccountMessageDispenser()->setDestinationObject(m_Transporter); //for actions, we could just set the destination object right after the call to this method... but it makes no difference
+    return m_ActionDispensers->createBankAccountMessageDispenser();
 }

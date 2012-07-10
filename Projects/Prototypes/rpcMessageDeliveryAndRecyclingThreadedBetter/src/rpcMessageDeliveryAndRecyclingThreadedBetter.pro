@@ -18,16 +18,16 @@ SOURCES += main.cpp\
     messageDispensers/broadcastdispensers.cpp \
     messageDispensers/imessagedispenser.cpp \
     messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.cpp \
-    irpcbankserverclientshelper.cpp \
     irpcbankserver.cpp \
     rpcbankserverimpl.cpp \
-    rpcbankserverclientshelperimpl.cpp \
     irpcbankservermessagetransporter.cpp \
     ssltcpserverandprotocolknower.cpp \
     messages/imessage.cpp \
     messages/actions/createbankaccountmessage.cpp \
     messageDispensers/actions/createbankaccountmessagedispenser.cpp \
-    messages/broadcasts/pendingbalanceaddedmessage.cpp
+    messages/broadcasts/pendingbalanceaddedmessage.cpp \
+    rpcbankserverclientshelper.cpp \
+    messageDispensers/actiondispensers.cpp
 
 HEADERS  += \
     rpcmessagedeliveryandrecyclingthreadedbettertest.h \
@@ -37,16 +37,24 @@ HEADERS  += \
     messageDispensers/broadcastdispensers.h \
     messageDispensers/imessagedispenser.h \
     messageDispensers/broadcasts/pendingbalanceaddedmessagedispenser.h \
-    irpcbankserverclientshelper.h \
     irpcbankserver.h \
     rpcbankserverimpl.h \
-    rpcbankserverclientshelperimpl.h \
     irpcbankservermessagetransporter.h \
     ssltcpserverandprotocolknower.h \
     messages/imessage.h \
     messages/actions/createbankaccountmessage.h \
     messageDispensers/actions/createbankaccountmessagedispenser.h \
-    messages/broadcasts/pendingbalanceaddedmessage.h
+    messages/broadcasts/pendingbalanceaddedmessage.h \
+    rpcbankserverclientshelper.h \
+    messageDispensers/actiondispensers.h
+
+
+
+
+
+
+
+
 
 
 

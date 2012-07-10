@@ -3,7 +3,7 @@
 
 #include "idebuggablestartablestoppablebackend.h"
 #include "rpcbankserverimpl.h"
-#include "rpcbankserverclientshelperimpl.h"
+#include "rpcbankserverclientshelper.h"
 
 class rpcMessageDeliveryAndRecyclingThreadedBetterTest : public IDebuggableStartableStoppableBackend
 {
@@ -16,7 +16,7 @@ public slots:
     void stop();
 private:
     RpcBankServerImpl *m_Business;
-    RpcBankServerClientsHelperImpl *m_RpcBankServerClientsHelperImpl;
+    RpcBankServerClientsHelper *m_RpcBankServerClientsHelper;
 };
 
 #endif // RPCMESSAGEDELIVERYANDRECYCLINGTHREADEDBETTERTEST_H

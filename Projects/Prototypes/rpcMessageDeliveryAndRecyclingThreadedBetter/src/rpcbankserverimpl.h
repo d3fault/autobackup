@@ -12,7 +12,7 @@ class RpcBankServerImpl : public IRpcBankServer
     Q_OBJECT
 public:
     explicit RpcBankServerImpl(QObject *mandatoryParent = 0);
-    void takeOwnershipOfAllBroadcastDispensers(IRpcBankServerClientsHelper *rpcBankServerClientsHelper);
+    void takeOwnershipOfAllBroadcastDispensers(RpcBankServerClientsHelper *rpcBankServerClientsHelper);
     void moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem();
 private:
     QThread *m_BitcoinThread;

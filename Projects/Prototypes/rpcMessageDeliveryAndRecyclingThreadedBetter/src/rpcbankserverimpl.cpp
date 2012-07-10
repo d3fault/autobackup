@@ -19,7 +19,7 @@ RpcBankServerImpl::RpcBankServerImpl(QObject *parent) :
 
     //TODO: the above "etc"s would requires a splitting of the connect, extending/modifying the daisy-chain
 }
-void RpcBankServerImpl::takeOwnershipOfAllBroadcastDispensers(IRpcBankServerClientsHelper *rpcBankServerClientsHelper)
+void RpcBankServerImpl::takeOwnershipOfAllBroadcastDispensers(RpcBankServerClientsHelper *rpcBankServerClientsHelper)
 {
     m_Bitcoin->takeOwnershipOfApplicableBroadcastDispensers(rpcBankServerClientsHelper);
     //etc
@@ -49,4 +49,6 @@ void RpcBankServerImpl::stop()
 }
 void RpcBankServerImpl::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
 {
+    //blah blah blah
+    createBankAccountMessage->deliver();
 }

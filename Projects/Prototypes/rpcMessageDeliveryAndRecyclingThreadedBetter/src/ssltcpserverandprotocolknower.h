@@ -7,9 +7,9 @@ class SslTcpServerAndProtocolKnower : public IRpcBankServerMessageTransporter
 {
     Q_OBJECT
 public:
-    explicit SslTcpServerAndProtocolKnower(QObject *mandatoryParent = 0);
+    explicit SslTcpServerAndProtocolKnower();
 private:
-    SslTcpServer *m_Server;
+    //TODOreq: SslTcpServer *m_Server;
 signals:
 
 public slots:

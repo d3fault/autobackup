@@ -5,11 +5,15 @@
 
 #include "messages/actions/createbankaccountmessage.h"
 
+class RpcBankServerClientsHelper;
+class CreateBankAccountMessageDispenser;
+
 class IRpcBankServerMessageTransporter : public QObject
 {
     Q_OBJECT
 public:
-    explicit IRpcBankServerMessageTransporter(QObject *mandatoryParent = 0);
+    explicit IRpcBankServerMessageTransporter();
+    void takeOwnershipOfAllActionDispensers(RpcBankServerClientsHelper *rpcBankServerClientsHelper);
 signals:
     void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
 public slots:
@@ -20,7 +24,16 @@ public slots:
     void pendingBalanceDetected();
 
 protected:
+    CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     //not sure if i should have a pure virtual 'transportToClient'... or if all of my public slots should be pure virtual...
+    //^^^^TODO: this is actually a relatively large design decision and i don't know off the top of my head what the right solution is
+    //if i don't make them pure virtual, i can have this ITransporter be the one keeping track of who to send back to etc
+    //i really don't know what to do for that. especially since broadcasts don't even have that data as handily available
+    //this is a good commit point
+
+    LEFT OFF^^^
+
+    //old comments:
 
     //i mean i gotta factor in how the createBankAccount signal will be used
 

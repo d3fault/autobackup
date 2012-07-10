@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "irpcbankserverclientshelper.h"
+#include "rpcbankserverclientshelper.h"
 
 #include "messageDispensers/broadcastdispensers.h"
 
@@ -12,7 +12,7 @@ class IRpcBankServer : public QObject
     Q_OBJECT
 public:
     explicit IRpcBankServer(QObject *mandatoryParent = 0);
-    virtual void takeOwnershipOfAllBroadcastDispensers(IRpcBankServerClientsHelper *rpcBankServerClientsHelper)=0;
+    virtual void takeOwnershipOfAllBroadcastDispensers(RpcBankServerClientsHelper *rpcBankServerClientsHelper)=0;
     virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem()=0;
 public slots:
     virtual void init()=0;
