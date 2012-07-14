@@ -11,10 +11,21 @@ DebugStartStopGui::DebugStartStopGui(IDebuggableStartableStoppableBackend *debug
     m_Layout->addWidget(m_StartButton);
     m_Layout->addWidget(m_StopButton);
 
+
+    //QVBoxLayout *layout = static_cast<QVBoxLayout*>(this->layout());
+    QPushButton *createBankAccountSimButton = new QPushButton("Create Bank Account");
+    m_Layout->addWidget(createBankAccountSimButton);
+
+    //this->layout()->addWidget(&createBankAccountSimButton);
+
+    connect(createBankAccountSimButton, SIGNAL(clicked()), debuggableStartableStoppableBackend, SLOT(simulateCreateBankAccount()));
+
+
     this->setLayout(m_Layout);
 
     m_BackendThread = new QThread();
     debuggableStartableStoppableBackend->moveToThread(m_BackendThread);
+    m_BackendThread->start();
 
     connect(debuggableStartableStoppableBackend, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
     connect(m_StartButton, SIGNAL(clicked()), debuggableStartableStoppableBackend, SLOT(start()));

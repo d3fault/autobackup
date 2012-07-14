@@ -13,6 +13,8 @@ rpcMessageDeliveryAndRecyclingThreadedBetterTest::rpcMessageDeliveryAndRecycling
     /*connect(m_Business, SIGNAL(initialized()), m_RpcBusinessController, SLOT(init()));
     connect(m_Business, SIGNAL(started()), m_RpcBusinessController, SLOT(start()));
     connect(m_RpcBusinessController, SIGNAL(stopped()), m_Business, SLOT(stop()));*/
+
+    connect(m_RpcBankServerClientsHelper, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }
 void rpcMessageDeliveryAndRecyclingThreadedBetterTest::init()
 {
@@ -37,4 +39,8 @@ void rpcMessageDeliveryAndRecyclingThreadedBetterTest::stop()
     ////QMetaObject::invokeMethod(m_Business, "stop", Qt::QueuedConnection);
 
     m_RpcBankServerClientsHelper->stop();
+}
+void rpcMessageDeliveryAndRecyclingThreadedBetterTest::simulateCreateBankAccount()
+{
+    QMetaObject::invokeMethod(m_RpcBankServerClientsHelper, "simulateCreateBankAccount", Qt::QueuedConnection);
 }

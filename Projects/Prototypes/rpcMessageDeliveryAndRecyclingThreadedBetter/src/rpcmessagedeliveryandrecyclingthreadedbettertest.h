@@ -14,6 +14,8 @@ public slots:
     void init();
     void start();
     void stop();
+
+    void simulateCreateBankAccount();
 private:
     RpcBankServerImpl *m_Business;
     RpcBankServerClientsHelper *m_RpcBankServerClientsHelper;

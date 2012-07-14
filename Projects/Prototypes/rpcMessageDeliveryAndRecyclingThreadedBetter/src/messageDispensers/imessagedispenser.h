@@ -2,6 +2,7 @@
 #define IMESSAGEDISPENSER_H
 
 #include <QObject>
+#include <QThread> //debug
 
 #include "../irpcbankservermessagetransporter.h"
 #include "messages/imessage.h"
@@ -23,6 +24,8 @@ protected:
     virtual IMessage *getNewOfTypeAndConnectToDestinationObject()=0;
 public slots:
     void handleMessageReportingItselfDone();
+signals:
+    void d(const QString &);
 };
 
 #endif // IMESSAGEDISPENSER_H

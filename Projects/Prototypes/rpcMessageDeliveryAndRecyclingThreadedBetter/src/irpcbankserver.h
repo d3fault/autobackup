@@ -21,6 +21,7 @@ public slots:
 
     virtual void createBankAccount(CreateBankAccountMessage *createBankAccountMessage)=0;
 signals:
+    void d(const QString &);
     void initialized();
     void started();
     void stopped(); //gui could listen for this before closing, but it isn't used in the daisy chaining, whereas initialized and started are (we reverse the order on shutdown/stop)

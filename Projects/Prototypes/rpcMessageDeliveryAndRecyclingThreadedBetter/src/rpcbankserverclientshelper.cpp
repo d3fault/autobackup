@@ -14,6 +14,8 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServer *business)
     //TODOreq: connect etc to IRpcBusiness signals/slots (actions/broadcasts)(i think? pretty sure yes.)
     //connect(m_Transporter, SIGNAL(createBankAccount(CreateBankAccountMessage*)), m_Business, SLOT(createBankAccount(CreateBankAccountMessage*)));
 
+    //transporter has to be instantiated before business->takeOwnership because inside of it, we set the destination object to be transporter
+    m_Transporter = new SslTcpServerAndProtocolKnower();
 
     //next line must be before the .moveToThreads below -- it sets up broadcast dispensers properly
     m_Business->takeOwnershipOfAllBroadcastDispensers(this); //m_Transport has to be new'd before we can call this anyways, as we use it as a destination object. so this move to setupConnections() seems worthwhile
@@ -22,8 +24,6 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServer *business)
         return; //TODOreq: return false. even though shit, it's called from a constructor. maybe just set up an initFailed flag and throw an error?
 
     m_Business->moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem();
-
-    m_Transporter = new SslTcpServerAndProtocolKnower();
 
     connectTransporterActionRequestSignalsToBusinessSlots();
 
@@ -40,15 +40,26 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServer *business)
     m_RpcBankServerMessageTransporterThread = new QThread();
     m_Transporter->moveToThread(m_RpcBankServerMessageTransporterThread);
     m_RpcBankServerMessageTransporterThread->start();
+
+    //daisy-chain init
+    connect(m_Business, SIGNAL(initialized()), m_Transporter, SLOT(init()));
+    connect(m_Business, SIGNAL(started()), m_Transporter, SLOT(start()));
+    connect(m_Transporter, SIGNAL(stopped()), m_Business, SLOT(stop())); //we reverse the order when stopping, so that transporter can block and wait for business to complete pending requests (should probably put a timer in place or something... but if the code is good enough we shouldn't need one)
+
+    connect(m_Business, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+    connect(m_Transporter, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }
 void RpcBankServerClientsHelper::init()
 {
+    QMetaObject::invokeMethod(m_Business, "init", Qt::QueuedConnection);
 }
 void RpcBankServerClientsHelper::start()
 {
+    QMetaObject::invokeMethod(m_Business, "start", Qt::QueuedConnection);
 }
 void RpcBankServerClientsHelper::stop()
 {
+    QMetaObject::invokeMethod(m_Transporter, "stop", Qt::QueuedConnection);
 }
 void RpcBankServerClientsHelper::connectTransporterActionRequestSignalsToBusinessSlots()
 {
@@ -72,4 +83,8 @@ CreateBankAccountMessageDispenser *RpcBankServerClientsHelper::takeOwnershipOfCr
     m_ActionDispensers->setCreateBankAccountMessageDispenser(new CreateBankAccountMessageDispenser(owner));
     m_ActionDispensers->createBankAccountMessageDispenser()->setDestinationObject(m_Transporter); //for actions, we could just set the destination object right after the call to this method... but it makes no difference
     return m_ActionDispensers->createBankAccountMessageDispenser();
+}
+void RpcBankServerClientsHelper::simulateCreateBankAccount()
+{
+    QMetaObject::invokeMethod(m_Transporter, "simulateCreateBankAccount", Qt::QueuedConnection);
 }

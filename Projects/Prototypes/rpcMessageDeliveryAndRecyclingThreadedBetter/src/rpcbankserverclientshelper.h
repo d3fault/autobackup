@@ -40,9 +40,12 @@ private:
 
     void connectTransporterActionRequestSignalsToBusinessSlots();   
 signals:
+    void d(const QString &);
     void initialized();
     void started();
     void stopped();
+public slots:
+    void simulateCreateBankAccount();
 };
 
 #endif // IRPCBANKSERVERCLIENTSHELPER_H

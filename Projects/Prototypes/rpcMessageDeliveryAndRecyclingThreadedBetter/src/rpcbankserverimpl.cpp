@@ -18,6 +18,8 @@ RpcBankServerImpl::RpcBankServerImpl(QObject *parent) :
     //etc
 
     //TODO: the above "etc"s would requires a splitting of the connect, extending/modifying the daisy-chain
+
+    connect(m_Bitcoin, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }
 void RpcBankServerImpl::takeOwnershipOfAllBroadcastDispensers(RpcBankServerClientsHelper *rpcBankServerClientsHelper)
 {
@@ -37,18 +39,22 @@ void RpcBankServerImpl::moveBackendBusinessObjectsToTheirOwnThreadsAndStartThem(
 }
 void RpcBankServerImpl::init()
 {
+    emit d(QString("receiving init on what should be the business thread: ") + QString::number(QThread::currentThreadId()));
     QMetaObject::invokeMethod(m_Bitcoin, "init", Qt::QueuedConnection);
 }
 void RpcBankServerImpl::start()
 {
+    emit d(QString("receiving start on what should be the business thread: ") + QString::number(QThread::currentThreadId()));
     QMetaObject::invokeMethod(m_Bitcoin, "start", Qt::QueuedConnection);
 }
 void RpcBankServerImpl::stop()
 {
+    emit d(QString("receiving stop on what should be the business thread: ") + QString::number(QThread::currentThreadId()));
     QMetaObject::invokeMethod(m_Bitcoin, "stop", Qt::QueuedConnection);
 }
 void RpcBankServerImpl::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
 {
-    //blah blah blah
+    emit d(QString("rpc server business impl received create bank account message on what should be the business thread: ") + QString::number(QThread::currentThreadId()));
+
     createBankAccountMessage->deliver();
 }

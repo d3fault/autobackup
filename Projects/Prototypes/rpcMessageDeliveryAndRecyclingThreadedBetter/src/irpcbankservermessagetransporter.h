@@ -2,6 +2,8 @@
 #define IRPCBANKSERVERMESSAGETRANSPORTER_H
 
 #include <QObject>
+#include <QThread> //debug
+#include <QDateTime> //debug
 
 #include "messages/actions/createbankaccountmessage.h"
 
@@ -15,14 +17,23 @@ public:
     explicit IRpcBankServerMessageTransporter();
     void takeOwnershipOfAllActionDispensers(RpcBankServerClientsHelper *rpcBankServerClientsHelper);
 signals:
+    void d(const QString &);
+    void initialized();
+    void started();
+    void stopped();
     void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
 public slots:
+    void init();
+    void start();
+    void stop();
+
     void createBankAccountCompleted();
     void createBankAccountFailedUsernameAlreadyExists();
     void createBankAccountFailedPersistError();
 
     void pendingBalanceDetected();
 
+    void simulateCreateBankAccount();
 protected:
     CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     //not sure if i should have a pure virtual 'transportToClient'... or if all of my public slots should be pure virtual...
@@ -31,7 +42,8 @@ protected:
     //i really don't know what to do for that. especially since broadcasts don't even have that data as handily available
     //this is a good commit point
 
-    LEFT OFF^^^
+    //LEFT OFF^^^
+    //^^copy/pasted this folder/state because i do think it's worth prototyping. about to add debug code to and test THIS prototype (just the message threading), but may need to copy/paste the outcome (should i change it) again before doing the client request matching prototype. the client request matching also [seems to depend heavily] on the usage of rpc server/client shit
 
     //old comments:
 
