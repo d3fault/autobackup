@@ -1,0 +1,114 @@
+i think
+well
+i know
+that i want to finalize the rpc bullshit so i can forget about it
+
+i need to make a functional prototype
+yes, this is YET ANOTHER FUCKING TANGENT
+
+however, once completed, almost all of ABC will be completed (not really tho)
+
+the prototype (in which i will carve out __THE__ rpc generator) should contain
+2 sample actions and 2 sample broadcasts
+
+the reason there's 2 of each is to make sure each get initialized properly
+
+like they might daisy-chain against each other's signals and i need to have 2
+implemented to test that the generated code functions correctly. scaling to
+more than 2 is easy.
+
+so:
+createBankAccount
+getAddFundsKeyAndWatch
+
+with 2 broadcasts:
+pendingBalancedAdded
+confirmedBalanceAdded
+
+
+i have coded similar before and even made it go accross network (ssl too
+right???? sweeeet stealing that code <3)... but there is no need for this code
+to have a functional BITCOIN processor
+
+i need only the rpc shit to be functional/perfect/actual
+
+the backend stuff will be placeholder for now
+
+not that it'll be hard to re-use the already written bitcoin code... but
+there's no point in actually doing it, since this prototype will be disregarded
+in like 5 mins :-P
+
+this prototype has a purpose. it is what i will use as a mold for the rpc
+generator
+the sculpting
+
+or whatever
+when people put their face in some clay and then make another one (or teeth)
+is how i see it
+
+
+fuck yea
+this is so exciting
+
+i'm doing motherfucking SCIENCE
+
+fuck google proto buff
+
+i remember considering trying to use their rpc shit
+but i am now very glad i am not.
+
+my object creation method is superior anyways imo
+
+i am constructing objects based on rpc actions/broadcasts
+
+
+or maybe it's inferior
+fuck blood rushing around my body
+wondering if i'm doing it rite
+
+do i need a "UserBankAccount" object passed into both create bank account and
+get add funds key?
+
+a consolidated class
+
+or should i just compose a class for each action/parameter? (easier)
+
+i don't think it matters... but it might :-/
+
+how hard would it be to modify?
+
+i think i should just not give a shit for the time being
+
+theirs is more about message serialization, which is not a problem for me
+
+mine focuses on the rpc... theirs appears way to difficult (a la unimplemented,
+leaving me to a) decipher their shit and b) implement layers only after i
+decipher their shit --- we all know how much i love deciphering other people's
+shit. isn't it written in java anyways? rofl fuck that)
+
+i also like my "NetworkHeader" approach i have planned
+
+parse the message off the network until we can decipher what kind of actual
+message it is... then we defer the rest of the parsing to the message itself.
+
+something along the lines of
+
+networkMessage >> networkHeader; //or just do like >> version, >> messageType,
+>> otherHeaderInfo manually
+then:
+switch(networkHeader.messageType)
+{
+  case CreateBankAccount: //serialized enums
+    CreateBankAccountMessage *cbam = m_Dispenser.getNewOrRecycled();
+    networkMessage >> cbam; //CreateBankAccountMessage has a datastream
+override and knows what to parse. it _IS_ the protocol. our generator might
+need to add version info shit so previously generated stuff fails to interact
+with newly generated stuff. this is where protobuff shines.. but i think it
+would be a somewhat minimal amount of work to add that functionality
+    emit createBankAccount(cbam);
+}
+
+
+
+it will be in this prototype that i figure out how to do client request
+matching~
