@@ -16,7 +16,6 @@ public:
 signals:
     void doneWithMessageSignal();
     void deliverSignal();
-public slots:
 };
 inline QDataStream &operator>>(QDataStream &in, IMessage &message)
 {

@@ -3,6 +3,10 @@
   <action name="createBankAccount" hasResponse="true" broadcastResponseToAllClients="false" failedReasons="usernameAlreadyExists,persistError"><!-- took me a bit of staring to get it, but broadCastResponse will be "true" for the IAppDb "CreateBankAccount", because not every AppDb wants to know when other AppDbs create a bank account, but every Wt front-end DOES want to know. actually now i'm thinking it doesn't but it depends on how my caching works... tbd -->
     <parameter type="const QString &" name="Username" />
   </action>
+  <action name="getAddFundsKey" hasResponse="true" broadcastResponseToAllClients="false" failedReasons="useExistingKeyFirst,waitForPendingToBeConfirmed">
+    <parameter type="const QString &" name="Username" />
+    <response type="const QString &" name="AddFundsKey" /> <!-- didn't consider responses because CreateBankAccount doesn't have one. fml i'm stupid. response should definitely be able to have multiple values. i'm getting closer and closer to reinventing the protobuf wheel. also, does hasResponse mean what i think it does? so confused now. signal parameters are the same thing as responses all of the sudden... wtf -->
+  </action>
   <signal name="pendingBalanceAddedDetected">
     <parameter type="const QString &" name="Username" />
     <parameter type="double" name="Amount" />

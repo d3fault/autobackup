@@ -3,23 +3,10 @@
 BankServer::BankServer()
 {
     m_Bitcoin = new BitcoinHelper();
-    //new impl backend objects, rig up connections etc to init/start/stop to/from backend objects
-    //do not start them in any way or move their thread yet. do that in provided pure virtual
-}
-void BankServer::init()
-{
-}
-void BankServer::start()
-{
-}
-void BankServer::stop()
-{
-}
-void BankServer::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
-{
-}
-void BankServer::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
-{
+
+    connect(m_Bitcoin, SIGNAL(initialized()), this, SIGNAL(initialized()));
+    connect(m_Bitcoin, SIGNAL(started()), this, SIGNAL(started()));
+    connect(m_Bitcoin, SIGNAL(stopped()), this, SIGNAL(stopped()));
 }
 void BankServer::instructBackendObjectsToClaimRelevantDispensers()
 {
@@ -27,4 +14,26 @@ void BankServer::instructBackendObjectsToClaimRelevantDispensers()
 }
 void BankServer::moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()
 {
+    m_BitcoinThread = new QThread();
+    m_Bitcoin->moveToThread(m_BitcoinThread);
+    m_BitcoinThread->start();
 }
+void BankServer::init()
+{
+    QMetaObject::invokeMethod(m_Bitcoin, "init", Qt::QueuedConnection);
+}
+void BankServer::start()
+{
+    QMetaObject::invokeMethod(m_Bitcoin, "start", Qt::QueuedConnection);
+}
+void BankServer::stop()
+{
+    QMetaObject::invokeMethod(m_Bitcoin, "stop", Qt::QueuedConnection);
+}
+void BankServer::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
+{
+}
+void BankServer::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
+{
+}
+

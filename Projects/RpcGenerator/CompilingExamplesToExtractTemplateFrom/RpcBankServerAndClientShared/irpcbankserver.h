@@ -4,6 +4,8 @@
 #include <QObject>
 
 #include "iacceptmessagedeliveriesgoingtorpcbankserver.h"
+#include "actiondispensers.h"
+#include "broadcastdispensers.h"
 
 class IRpcBankServer : public IAcceptMessageDeliveriesGoingToRpcBankServer
 {
@@ -64,6 +66,58 @@ signals:
     //confusing a bit but makes sense
 
     //so my IAccept* classes are on both the rpc client and server, they are shared
+
+
+    //rpc server impl actions have message passed as arg and is IAcceptMessageDeliveriesGoingToRpcBankServer
+    //rpcserverhelper actions are .deliver()'d with no message and also inherit IAcceptMessageDeliveriesGoingToRpcBankServer
+
+    //rpc client impl broadcasts and action responses have message passed as arg and is IAcceptMessageDeliveriesGoingToRpcBankClient
+    //rpc server impl broadcasts and action responses are .deliver()'d with no message and also inherit IAcceptMessageDeliveriesGoingToRpcBankClient
+
+    //so basically, i can't use IAccept bullshit. fml.
+    //yes, the interfaces are equivalent
+    //but they differ only in that there is no message as a parameter...
+
+    //essentially, whenver auto-generated code gives us a message, we just do .doneWithMessage() on it after we're done processing it and it recycles
+    //and whenever we use a dispenser, we just do .deliver()
+
+    //auto-generated code gives us a message as a parameter (it doesn't have to, i could do sender() casting, but making the user do it is ugly)
+    //user code just uses .deliver(), so we never emit action(message); like i was originally thinking a while ago. not for action requests, responses,  nor broadcasts
+
+    //god damn prematurely optimizationing gets me again !!!!!!!!!
+
+    //so i can't use any inheritence among server/client then?
+    //i _COULD_, but don't want to. because i want to use .deliver()
+
+    //RpcServerHelper in rpc client 'could' inherit ibankserver.h ... which is what the rpc server impl inherits. they are exactly the same, EXCEPT FOR the lack of a message in the parameter. rpc server impl has one, RpcServerHelper does not. hell, it doesn't even have public slots. it just rigs connections etc between an internal class as the passed in IRpcClientImpl (just like on server side, to set up Action Dispensers properly)
+
+    //============================ACTION SIGNAL/SLOTS SIGNATURES============(note none matching)
+
+    //on rpc client
+    //--deliver();
+    //slot RpcBankServerHelper::handleCreateBankAccountRequestDelivered(); //deliver() gets us here and we call it from anywhere in rpc client impl. the initial request.
+    //--then we wait
+    //signal RpcBankServerHelper::createBankAccountCompleted(CreateBankAccountMessage*); //emit signal when reading response from network
+    //slot IRpcBankServerClientImpl::handleCreateBankAccountCompleted(CreateBankAccount*); //RpcBankServerHelper triggers this slot when it receives a response from network
+
+    //on rpc server
+    //signal RpcClientsHelper::createBankAccount(CreateBankAccountMessage*); //emit this signal when network message received
+    //slot IRpcBankServer::createBankAccount(CreateBankAccountMessage*); //rpc clients helper emits these to us
+    //--deliver();
+    //slot RpcClientsHelper::createBankAccountCompleted(); //deliver() gets us here. the response/initial broadcast
+
+    //notice that, although being very fucking similar, none of the above 6 have matching signatures??? i rest my case. IAccept* sucks.
+
+    //============================BROADCAST SIGNAL/SLOTS SIGNATURES============
+    //on rpc server in some business impl object/thread
+    //--deliver();
+    //slot RpcBankServerClientsHelper::pendingBalanceDetected(); //this is initial request triggered by .deliver(). we do sender() to get access
+    //signal RpcBankServerHelper::pendingBalanceDetected(PendingBalanceDetectedMessage*);
+    //slot IRpcBankServerClientImpl::handlePendingBalanceDetected(PendingBalanceDetectedMessage*); //we just call .doneWithMessage() afterwards and it recycles itself
+
+    //again, same with broadcasts... no situation where the signatures are matching
+
+    //ok so that means i get to fucking tear down
 };
 
 

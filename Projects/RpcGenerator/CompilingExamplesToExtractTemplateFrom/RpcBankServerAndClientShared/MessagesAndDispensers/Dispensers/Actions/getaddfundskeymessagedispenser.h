@@ -3,6 +3,8 @@
 
 #include "../imessagedispenser.h"
 
+#include "../../Messages/Actions/getaddfundskeymessage.h"
+
 #include "../../../iacceptrpcbankservermessagedeliveries.h"
 #include "../../../iacceptmessagedeliveriesgoingtorpcbankserver.h"
 

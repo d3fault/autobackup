@@ -3,6 +3,8 @@
 
 #include "../imessagedispenser.h"
 
+#include "../../Messages/Actions/createbankaccountmessage.h"
+
 #include "../../../iacceptrpcbankservermessagedeliveries.h"
 #include "../../../iacceptmessagedeliveriesgoingtorpcbankserver.h"
 

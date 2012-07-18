@@ -3,6 +3,8 @@
 
 #include "../imessagedispenser.h"
 
+#include "../../Messages/Broadcasts/pendingbalancedetectedmessage.h"
+
 #include "../../../iacceptrpcbankservermessagedeliveries.h"
 #include "../../../iacceptmessagedeliveriesgoingtorpcbankclient.h"
 

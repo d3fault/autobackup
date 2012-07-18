@@ -30,7 +30,9 @@ SOURCES += main.cpp\
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.cpp \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/imessage.cpp \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.cpp \
-    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.cpp
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.cpp \
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessage.cpp \
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/confirmedbalancedetectedmessage.cpp
 
 HEADERS  += bankserverdebugwidget.h \
     idebuggablestartablestoppablebankserverbackend.h \
@@ -52,7 +54,13 @@ HEADERS  += bankserverdebugwidget.h \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.h \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/imessage.h \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h \
-    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h \
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessage.h \
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/confirmedbalancedetectedmessage.h
+
+
+
+
 
 
 

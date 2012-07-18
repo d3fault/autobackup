@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "../../../RpcBankServerAndClientShared/irpcbankserver.h"
+#include "../../../RpcBankServerAndClientShared/actiondispensers.h"
 #include "../../../RpcBankServerAndClientShared/broadcastdispensers.h"
 
 class RpcBankServerClientsHelper : public QObject
@@ -13,6 +14,8 @@ public:
     explicit RpcBankServerClientsHelper(IRpcBankServer *rpcBankServer);
 private:
     IRpcBankServer *m_RpcBankServer;
+    ActionDispensers *m_ActionDispensers;
+    BroadcastDispensers *m_BroadcastDispensers;
 signals:
 
 public slots:
