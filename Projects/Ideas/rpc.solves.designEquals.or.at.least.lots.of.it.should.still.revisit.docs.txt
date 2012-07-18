@@ -1,0 +1,60 @@
+i accidentally solved my designEquals problem
+rpc solves it
+
+<app>
+  <class name="class1">
+    <property type="const QString &" name="Whatever" serialiaziable=true>
+  </class>
+  <rpcServer>
+    <!-- in here is the shit that i already have for rpc bank server -->
+    <actions>
+    <broadcasts>
+  </rpcClient
+  <rpcClient>
+    <-- someshit i haven't written yet. perhaps doesn't exist as i only need
+know of the server's existence to generate the client portion as well -->
+  <!/client> <!-- that not means i changed my mind and am not having a
+</client> tag <-- that's the one that would trigger it in a parser (potential
+for loss of data right here if i xml parse my data. this one should be read
+verbatim
+</app>
+
+you'd still be able to generate the rpc client code somewhere specific
+and the rpc server code somewhere else
+
+i just have to serialize the object and use it as argument
+
+but yea anyways, i can connect them as nodes in desiqnEquals
+the client/server
+they are all just nodes, but i use the classes (basic ass classes merely defined
+in-app)
+the 'from' portion of the arrow (the first node clicked and held down on) is a
+node and is the client
+the 'to' portion of the arrow (the second node mouse released on) is a node and
+is the server
+
+the name of the rpc interface to use is the arrow 'name'
+
+you are at an rpc-global-server-and-client-overview. that is your 'service'.
+you advertise lgpl/by-sa distribution and realtime creation (at least you
+personally do). the latter is used by you and anyone else.
+
+i need qt 5. -- i want qt 5 for it's service framework
+i can/should integrate with it
+
+oh and also fork qt fuck it might as well
+
+
+the xml is the overal "scene" of nodes and their relationships (they can be
+both multiple clients and multiple servers).
+
+i like that thought for both application high level development (rpc server
+"impl" would be where you do C++. the stub is generated for you and qt-creator
+is opened for you right at the file you need to type and with the right .pro
+file open so you can just press play (which first saves back to d3fault and
+then compiles as usual (or d3fault takes care of it like normal. probably this
+actually)) and then it runs (which it doesn't always have to do when accessed
+by d3fault. we can merely compile it as well. basically we intercept the qt
+creator commands? idfk wtf i'm talking baout anymore but i think there was more
+to this)
+

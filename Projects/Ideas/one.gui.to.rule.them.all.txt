@@ -1,0 +1,37 @@
+req for gui system
+
+you can vectorize rendered raster with somewhat decent results
+but when the widgets have sophisticated corners and shapes or whatever then it
+quickly loses it's value and becomes a cost
+
+d3fault should use it (this is not req for gui system of course)
+
+steam overlay
+QSG*-using
+QWidgets1-like interface (as similar as possible)
+uhh something about designEquals having auto-generated GUI
+yea i mean i think i could do it
+and even have customizable GUI
+ok now can i do shared? what is shared? whared what?
+dumbass shared means like network shared shit like on a network where anyone
+can download shit. even if you use a dht ad-supported cluster to bootstrap it,
+get that motherfucker up. you can/will/should/definitely-intend-to-MAKE a
+self-sustaining-infinitely-living-completely-decentralized ad-free p2p LGPL
+version... but security is the bitch.
+inline-editable... but this idea goes in with the shared shit
+
+i will make sure to announce "your data is not guaranteed to be safe. you
+should keep backups. <a href'adslfkj'>here</a> is a backup utility that plugs
+in nicely and has a wizard/instructions on how to safely/securely do an
+"offline" + "offsite" backup". offsite being a lot harder
+
+<wrote after Qwidgets1....>
+it will simply be QWidgets2
+you opt into it
+a lot of times if you just use the default QWidget shit in non-complicated
+ways, your code should just compile.
+
+can both be attained?
+do i has teh skillz?
+
+should i just ask? has it been done?
