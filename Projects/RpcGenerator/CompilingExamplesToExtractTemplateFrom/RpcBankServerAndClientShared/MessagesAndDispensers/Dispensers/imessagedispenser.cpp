@@ -1,6 +1,6 @@
 #include "imessagedispenser.h"
 
-IMessageDispenser::IMessageDispenser(IAcceptRpcBankServerMessageDeliveries *destination, QObject *owner)
+IMessageDispenser::IMessageDispenser(QObject *destination, QObject *owner)
     : QObject(owner), m_Destination(destination)
 { }
 IMessage *IMessageDispenser::privateGetNewOrRecycled()

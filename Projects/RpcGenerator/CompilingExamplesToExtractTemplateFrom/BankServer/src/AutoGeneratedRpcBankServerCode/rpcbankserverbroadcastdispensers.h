@@ -1,15 +1,16 @@
-#ifndef BROADCASTDISPENSERS_H
-#define BROADCASTDISPENSERS_H
+#ifndef RPCBANKSERVERBROADCASTDISPENSERS_H
+#define RPCBANKSERVERBROADCASTDISPENSERS_H
 
 #include <QObject>
 
+#include "ibankserverprotocolknower.h"
 #include "MessagesAndDispensers/Dispensers/Broadcasts/pendingbalancedetectedmessagedispenser.h"
 #include "MessagesAndDispensers/Dispensers/Broadcasts/confirmedbalancedetectedmessagedispenser.h"
 
-class BroadcastDispensers
+class RpcBankServerBroadcastDispensers //client one doesn't have a destination object of any kind, but still uses takeOwnership to handle recycling
 {
 public:
-    BroadcastDispensers(IAcceptMessageDeliveries *destination);
+    RpcBankServerBroadcastDispensers(IAcceptMessageDeliveries *destination);
     PendingBalanceDetectedMessageDispenser *takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner);
     ConfirmedBalanceDetectedMessageDispenser *takeOwnershipOfConfirmedBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner);
     bool everyDispenserIsCreated();
@@ -19,4 +20,4 @@ private:
     ConfirmedBalanceDetectedMessageDispenser *m_ConfirmedBalanceDetectedMessageDispenser;
 };
 
-#endif // BROADCASTDISPENSERS_H
+#endif // RPCBANKSERVERBROADCASTDISPENSERS_H

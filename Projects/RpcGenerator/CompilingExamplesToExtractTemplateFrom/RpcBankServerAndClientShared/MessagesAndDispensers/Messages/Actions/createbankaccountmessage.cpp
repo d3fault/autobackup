@@ -39,3 +39,11 @@ void CreateBankAccountMessage::streamOut(QDataStream &out)
     CREATE_BANK_ACCOUNT_MESSAGE_PARSE_AS_ACTION_REQUEST_PARAMS(out,<<);
 #endif
 }
+void CreateBankAccountMessage::createBankAccountFailedUsernameAlreadyExists()
+{
+    emit createBankAccountFailedUsernameAlreadyExistsSignal();
+}
+void CreateBankAccountMessage::createBankAccountFailedPersistError()
+{
+    emit createBankAccountFailedPersistErrorSignal();
+}

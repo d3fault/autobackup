@@ -32,8 +32,13 @@ void BankServer::stop()
 }
 void BankServer::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
 {
+    emit d(QString("receiving create bank account message with username: ") + createBankAccountMessage->Username);
+    createBankAccountMessage->deliver(); //deliver implies "Success", for every Action
 }
 void BankServer::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
+    emit d(QString("receiving get add funds key message with username: ") + getAddFundsKeyMessage->Username);
+    getAddFundsKeyMessage->AddFundsKey = "randomAddFundsKeyGoesHere";
+    getAddFundsKeyMessage->deliver();
 }
 

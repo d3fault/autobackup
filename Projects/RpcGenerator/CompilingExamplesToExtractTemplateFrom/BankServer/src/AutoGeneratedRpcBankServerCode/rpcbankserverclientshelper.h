@@ -3,23 +3,29 @@
 
 #include <QObject>
 
-#include "../../../RpcBankServerAndClientShared/irpcbankserver.h"
-#include "../../../RpcBankServerAndClientShared/actiondispensers.h"
-#include "../../../RpcBankServerAndClientShared/broadcastdispensers.h"
+
+#include "irpcbankserverbusiness.h"
+#include "rpcbankserveractiondispensers.h"
+#include "rpcbankserverbroadcastdispensers.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/createbankaccountmessagedispenser.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.h"
+
+#include "ibankserverprotocolknower.h"
 
 class RpcBankServerClientsHelper : public QObject
 {
     Q_OBJECT
 public:
-    explicit RpcBankServerClientsHelper(IRpcBankServer *rpcBankServer);
+    explicit RpcBankServerClientsHelper(IRpcBankServerBusiness *rpcBankServer);
 private:
-    IRpcBankServer *m_RpcBankServer;
-    ActionDispensers *m_ActionDispensers;
-    BroadcastDispensers *m_BroadcastDispensers;
-signals:
+    IRpcBankServerBusiness *m_RpcBankServer;
+    RpcBankServerActionDispensers *m_ActionDispensers;
+    RpcBankServerBroadcastDispensers *m_BroadcastDispensers;
+    IBankServerProtocolKnower *m_Transporter;
+    void takeOwnershipOfActionsAndSetupDelivery();
 
-public slots:
-
+    CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
+    GetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 };
 
 #endif // RPCBANKSERVERCLIENTSHELPER_H

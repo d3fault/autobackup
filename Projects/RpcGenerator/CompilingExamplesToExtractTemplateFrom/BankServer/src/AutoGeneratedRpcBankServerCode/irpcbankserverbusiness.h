@@ -1,13 +1,12 @@
-#ifndef IRPCBANKSERVER_H
-#define IRPCBANKSERVER_H
+#ifndef IRPCBANKSERVERBUSINESS_H
+#define IRPCBANKSERVERBUSINESS_H
 
 #include <QObject>
 
-#include "iacceptmessagedeliveriesgoingtorpcbankserver.h"
-#include "actiondispensers.h"
-#include "broadcastdispensers.h"
+#include "rpcbankserveractiondispensers.h"
+#include "rpcbankserverbroadcastdispensers.h"
 
-class IRpcBankServer : public IAcceptMessageDeliveriesGoingToRpcBankServer
+class IRpcBankServerBusiness : public QObject
 {
     Q_OBJECT
 public:
@@ -15,18 +14,17 @@ public:
     virtual void instructBackendObjectsToClaimRelevantDispensers()=0; //broadcasts for rpc server impl, actions for rpc client impl
     virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()=0;
 
-    void setActionDispensers(ActionDispensers *actionDispensers);
-    ActionDispensers *actionDispensers();
-
-    void setBroadcastDispensers(BroadcastDispensers *broadcastDispensers);
-    BroadcastDispensers *broadcastDispensers();
+    void setBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers);
+    RpcBankServerBroadcastDispensers *broadcastDispensers();
 protected:
-    ActionDispensers *m_ActionDispensers;
-    BroadcastDispensers *m_BroadcastDispensers;
+    RpcBankServerBroadcastDispensers *m_BroadcastDispensers;
 public slots:
     virtual void init()=0;
     virtual void start()=0;
     virtual void stop()=0;
+
+    virtual void createBankAccount(CreateBankAccountMessage*)=0;
+    virtual void getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)=0;
 signals:
     void d(const QString &);
     void initialized();
@@ -95,7 +93,7 @@ signals:
 
     //on rpc client
     //--deliver();
-    //slot RpcBankServerHelper::handleCreateBankAccountRequestDelivered(); //deliver() gets us here and we call it from anywhere in rpc client impl. the initial request.
+    //slot RpcBankServerHelper::createBankAccount(); //deliver() gets us here and we call it from anywhere in rpc client impl. the initial request.
     //--then we wait
     //signal RpcBankServerHelper::createBankAccountCompleted(CreateBankAccountMessage*); //emit signal when reading response from network
     //slot IRpcBankServerClientImpl::handleCreateBankAccountCompleted(CreateBankAccount*); //RpcBankServerHelper triggers this slot when it receives a response from network
@@ -112,13 +110,21 @@ signals:
     //on rpc server in some business impl object/thread
     //--deliver();
     //slot RpcBankServerClientsHelper::pendingBalanceDetected(); //this is initial request triggered by .deliver(). we do sender() to get access
+    //write to network in above slot
     //signal RpcBankServerHelper::pendingBalanceDetected(PendingBalanceDetectedMessage*);
     //slot IRpcBankServerClientImpl::handlePendingBalanceDetected(PendingBalanceDetectedMessage*); //we just call .doneWithMessage() afterwards and it recycles itself
 
     //again, same with broadcasts... no situation where the signatures are matching
 
     //ok so that means i get to fucking tear down
+
+
+    //hmm so broadcasts definitely need a different interface on each side
+    //but do actions?
+    //technically, no... but the naming of the signals/slots is not consistent. one is a completed() signal and the other is just the request still going to the impl but it is a signal. how can i merge the two's names? is it worth it?
+
+    //i say fuck it. it isn't worth fighting logic / my brain just to use polymorphism. man i'm so stupid sometimes.
 };
 
 
-#endif // IRPCBANKSERVER_H
+#endif // IRPCBANKSERVERBUSINESS_H

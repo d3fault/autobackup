@@ -3,17 +3,17 @@
 
 #include <QObject>
 
-#include "../../iacceptrpcbankservermessagedeliveries.h"
+#include "../Messages/imessage.h"
 
 //TODOreq: add "RpcBankServer" to IMessageDispenser and to IMessage... so we can use multiple rpc client/server generated code instances side by side
 class IMessageDispenser : public QObject
 {
     Q_OBJECT
 public:
-    explicit IMessageDispenser(IAcceptRpcBankServerMessageDeliveries *destination, QObject *owner);
+    explicit IMessageDispenser(QObject *destination, QObject *owner);
 private:
     QList<IMessage*> m_RecycleList;
-    IAcceptRpcBankServerMessageDeliveries *m_Destination;
+    QObject *m_Destination;
 protected:
     IMessage *privateGetNewOrRecycled();
     virtual IMessage *getNewOfTypeAndConnectToDestinationObject()=0;

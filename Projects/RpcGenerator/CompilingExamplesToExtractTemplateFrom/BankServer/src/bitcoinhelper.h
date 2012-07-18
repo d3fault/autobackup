@@ -12,7 +12,7 @@ class BitcoinHelper : public QObject
     Q_OBJECT
 public:
     explicit BitcoinHelper();
-    void takeOwnershipOfApplicableBroadcastDispensers(BroadcastDispensers *broadcastDispensers);
+    void takeOwnershipOfApplicableBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers);
 private:
     PendingBalanceDetectedMessageDispenser *m_PendingBalanceDetectedMessageDispenser;
     ConfirmedBalanceDetectedMessageDispenser *m_ConfirmedBalanceDetectedMessageDispenser;

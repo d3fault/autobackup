@@ -1,6 +1,8 @@
 #include "createbankaccountmessagedispenser.h"
 
-CreateBankAccountMessageDispenser::CreateBankAccountMessageDispenser(IAcceptRpcBankServerMessageDeliveries *destination, QObject *owner)
+#include "../../../iacceptrpcbankserveractiondeliveries.h"
+
+CreateBankAccountMessageDispenser::CreateBankAccountMessageDispenser(QObject *destination, QObject *owner)
     : IMessageDispenser(destination, owner)
 { }
 CreateBankAccountMessage *CreateBankAccountMessageDispenser::getNewOrRecycled()
@@ -10,6 +12,6 @@ CreateBankAccountMessage *CreateBankAccountMessageDispenser::getNewOrRecycled()
 void CreateBankAccountMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
 {
     CreateBankAccountMessage *createBankAccountMessage = new CreateBankAccountMessage(this);
-    connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IAcceptMessageDeliveriesGoingToRpcBankServer*>(m_Destination), SLOT(createBankAccount(CreateBankAccountMessage*)));
+    connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
     return createBankAccountMessage;
 }

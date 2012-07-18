@@ -3,7 +3,7 @@
 BitcoinHelper::BitcoinHelper()
 {
 }
-void BitcoinHelper::takeOwnershipOfApplicableBroadcastDispensers(BroadcastDispensers *broadcastDispensers)
+void BitcoinHelper::takeOwnershipOfApplicableBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers)
 {
     m_PendingBalanceDetectedMessageDispenser = broadcastDispensers->takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(this);
     m_ConfirmedBalanceDetectedMessageDispenser = broadcastDispensers->takeOwnershipOfConfirmedBalanceDetectedMessageDispenserRiggedForDelivery(this);

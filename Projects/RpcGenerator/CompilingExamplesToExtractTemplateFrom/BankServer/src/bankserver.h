@@ -9,7 +9,7 @@
 
 #include "bitcoinhelper.h"
 
-class BankServer : public IRpcBankServer
+class BankServer : public IRpcBankServerBusiness
 {
     Q_OBJECT
 public:

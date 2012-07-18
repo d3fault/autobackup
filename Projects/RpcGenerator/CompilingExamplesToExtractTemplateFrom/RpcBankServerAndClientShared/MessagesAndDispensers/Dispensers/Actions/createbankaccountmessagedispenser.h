@@ -5,13 +5,10 @@
 
 #include "../../Messages/Actions/createbankaccountmessage.h"
 
-#include "../../../iacceptrpcbankservermessagedeliveries.h"
-#include "../../../iacceptmessagedeliveriesgoingtorpcbankserver.h"
-
 class CreateBankAccountMessageDispenser : public IMessageDispenser
 {
 public:
-    CreateBankAccountMessageDispenser(IAcceptRpcBankServerMessageDeliveries *destination, QObject *owner);
+    CreateBankAccountMessageDispenser(QObject *destination, QObject *owner);
     CreateBankAccountMessage *getNewOrRecycled();
 protected:
     void getNewOfTypeAndConnectToDestinationObject();
