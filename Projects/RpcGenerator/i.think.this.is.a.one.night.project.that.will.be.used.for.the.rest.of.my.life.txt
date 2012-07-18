@@ -1,0 +1,14 @@
+todo
+{
+  combine BitcoinCommunicatingServer's overall completele'ness (sans actual
+back-ends)
+  with ABC's BankServer (yet untested) SslTcpServer code. it should work, i
+just extracted like certs and shit
+  AND with RpcMessageDeliveryAndRecyclingThreadedBetter's recycling
+}
+
+^^then, write the templates (manually the first time, fuck scripts will slow
+you down too much and you'll lose energy) and the generator that uses said
+templates.
+
+i want to see all of that done tonight

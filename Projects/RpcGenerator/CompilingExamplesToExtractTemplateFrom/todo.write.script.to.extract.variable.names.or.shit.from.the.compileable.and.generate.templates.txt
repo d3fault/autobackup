@@ -1,0 +1,12 @@
+CompilingExamplesToExtractTemplateFrom
+there is a script that has hardcoded the variables that needs to be taken out
+and %VAR_NAME% done to them (can generate it based on the actual var name taken
+out if you want or make me define it. first sounds easier).
+
+from that, the template used when "compiling" (generating rpc that uses said
+template) is used is used is used rofl what the fuck.
+
+so i can modify and test the compiling version of my generated code. i can add
+to the generated code as well as the extraction script as needed... but should
+always have a compiling/working CompilingExamplesToExtractTemplateFrom example
+before updating the extract script. and before running it (implied)

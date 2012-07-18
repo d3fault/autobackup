@@ -13,7 +13,7 @@ class BankDbHelper : public QObject
 public:
     explicit BankDbHelper(QObject *parent = 0);
 private:
-    CouchBaseClusterDbHelper *m_Db; //BankDbHelper (us) gets a it's own class, but CouchBaseClusterDbHelper does not [need one]. calls to it our synchronous between us, as they should be
+    CouchBaseClusterDbHelper *m_Db; //BankDbHelper (us) gets a it's own class (did i mean thread here?), but CouchBaseClusterDbHelper does not [need one]. calls to it our synchronous between us, as they should be
 signals:
     void initialized();
 public slots:

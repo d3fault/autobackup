@@ -1,0 +1,52 @@
+how do i want to do the recycling for the RpcBankServerHeader "objects"? or do
+i even want to? can/should i allocate them on the stack?
+
+do i store the header and match the message back up with the header later to
+see who to return the message to?
+
+i don't think i can store it on the stack since i'm accessing it from different
+methods in the same class. different contexts. i mean because i'll be storing
+the pointer of it in a list... 
+
+i kinda like the message detach, get filled out asynchronously, re-attach to
+header, header has return info
+
+the header only has the address of the requestor
+when broadcast="true" is used (i forget why... but...), we use a separate list
+of "everyone" (but also only within the context of that "appId" thingy? perhaps
+a couchbase vbucket. although it has nothing to do with the database, it would
+broadcast to all clients of that vbucket. his brothers/sisters. from there, the
+brothers/sisters broadcast to their appropriate front-ends)
+
+
+SslSocketAndProtocolKnower : IRpcBankServerTransporter
+
+^^ that class is the one that has it's owned regular-easy-recycled list of
+headers. or maybe the other kind, i don't know.
+
+and it listens to the actual portable SslSocket and makes a slot for it's
+signal when data is there. then it just scoops it up using the header. or i
+could do a stack alloc and then just write the socketPointer as the hash name
+and the IMessage as the hash value. or maybe the UniqueId instead. yes unique
+ID.
+
+these UniqueIds are only unique for the given AppId. perAppVbucketDb <-- AppId
+UniqueIds are used to identify the "clients" of the rpc connection
+couchbase-client cluster
+
+i don't know what the fuck i'm talking about anymore
+
+but i need to figure that shit out
+
+meh, sounds easy tbh. just whip something up right as you come across it. put
+as much thought into it as needed and code around it as much as you want
+
+i know this: the rpc server impl never knows about the requestor. or even the
+appId context it is in.
+
+the rpc server impl is oblivious to the fact that one vbucket neighbor over
+(and a different binary, maybe running on different machines but can
+theoretically run on the same one. not recommended though for unknown reasons)
+also has the same rpc type code but a completely different server impl because
+it is either just a different domain or because it serves different
+functionality

@@ -1,0 +1,17 @@
+i need to make sure that threading works right when my impl backend hands off a
+dispensed message to a brother/sister impl backend (bitcoin to
+dbhelper(dbhelper provides synchronous access to couchbase via hasA
+m_CouchbaseDbHelper))
+
+i need to make sure that deliver() is NOT called from the bitcoin thread
+(should be from the db helper thread) and that we still receive the
+deliverSignal slot on the network thread
+
+i can't see why i wouldn't, but who knows
+
+
+my m_Bank will make the signals between the bitcoin backend impl, the dbhelper
+backend impl, and then from the dbhelper backend to the (NEVERMIND BECAUSE
+DELIVER() just emits a signal and takes care of itself. we only need to hook up
+the hand off from bitcoin to dbhelper.. then dbhelper calls deliver() like
+normal...
