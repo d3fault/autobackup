@@ -13,11 +13,12 @@ public:
     explicit IMessageDispenser(QObject *destination, QObject *owner);
 private:
     QList<IMessage*> m_RecycleList;
-    QObject *m_Destination;
 protected:
+    QObject *m_Destination;
     IMessage *privateGetNewOrRecycled();
     virtual IMessage *getNewOfTypeAndConnectToDestinationObject()=0;
 public slots:
     void handleMessageReportingItselfDone();
+};
 
 #endif // IMESSAGEDISPENSER_H

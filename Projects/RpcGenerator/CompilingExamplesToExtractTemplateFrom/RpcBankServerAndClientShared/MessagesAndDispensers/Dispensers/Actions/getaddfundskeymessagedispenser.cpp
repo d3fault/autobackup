@@ -2,16 +2,16 @@
 
 #include "../../../iacceptrpcbankserveractiondeliveries.h"
 
-GetAddFundsKeyMessageDispenser::GetAddFundsKeyMessageDispenser(IAcceptRpcBankServerMessageDeliveries *destination, QObject *owner)
+GetAddFundsKeyMessageDispenser::GetAddFundsKeyMessageDispenser(QObject *destination, QObject *owner)
     : IMessageDispenser(destination, owner)
 { }
 GetAddFundsKeyMessage *GetAddFundsKeyMessageDispenser::getNewOrRecycled()
 {
     return static_cast<GetAddFundsKeyMessage*>(privateGetNewOrRecycled());
 }
-void GetAddFundsKeyMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
+IMessage *GetAddFundsKeyMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
 {
     GetAddFundsKeyMessage *getAddFundsKeyMessage = new GetAddFundsKeyMessage(this);
-    connect(getAddFundsKeyMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionDeliveries*>(m_Destination), SLOT(getAddFundsKeyDelivery()));
+    connect(getAddFundsKeyMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerMessageDeliveries*>(m_Destination), SLOT(getAddFundsKeyDelivery()));
     return getAddFundsKeyMessage;
 }

@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "rpcbankserveractiondispensers.h"
-#include "rpcbankserverbroadcastdispensers.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
 
 class IRpcBankServerBusiness : public QObject
 {
@@ -15,7 +15,6 @@ public:
     virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()=0;
 
     void setBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers);
-    RpcBankServerBroadcastDispensers *broadcastDispensers();
 protected:
     RpcBankServerBroadcastDispensers *m_BroadcastDispensers;
 public slots:

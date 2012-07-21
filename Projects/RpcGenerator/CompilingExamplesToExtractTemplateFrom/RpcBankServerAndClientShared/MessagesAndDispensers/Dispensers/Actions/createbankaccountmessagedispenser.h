@@ -11,7 +11,7 @@ public:
     CreateBankAccountMessageDispenser(QObject *destination, QObject *owner);
     CreateBankAccountMessage *getNewOrRecycled();
 protected:
-    void getNewOfTypeAndConnectToDestinationObject();
+    IMessage *getNewOfTypeAndConnectToDestinationObject();
 };
 
 #endif // CREATEBANKACCOUNTMESSAGEDISPENSER_H

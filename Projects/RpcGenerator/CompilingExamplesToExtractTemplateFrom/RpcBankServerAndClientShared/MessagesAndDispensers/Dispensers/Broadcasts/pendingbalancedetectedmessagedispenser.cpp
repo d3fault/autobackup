@@ -1,15 +1,15 @@
 #include "pendingbalancedetectedmessagedispenser.h"
 
-PendingBalanceDetectedMessageDispenser::PendingBalanceDetectedMessageDispenser(IAcceptRpcBankServerMessageDeliveries *destination, QObject *owner)
+PendingBalanceDetectedMessageDispenser::PendingBalanceDetectedMessageDispenser(QObject *destination, QObject *owner)
     : IMessageDispenser(destination, owner)
 { }
-PendingBalanceAddedMessage *PendingBalanceDetectedMessageDispenser::getNewOrRecycled()
+PendingBalanceDetectedMessage *PendingBalanceDetectedMessageDispenser::getNewOrRecycled()
 {
-    return static_cast<PendingBalanceAddedMessage*>(privateGetNewOrRecycled());
+    return static_cast<PendingBalanceDetectedMessage*>(privateGetNewOrRecycled());
 }
-void PendingBalanceDetectedMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
+IMessage *PendingBalanceDetectedMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
 {
     PendingBalanceDetectedMessage *pendingBalanceDetectedMessage = new PendingBalanceDetectedMessage(this);
-    connect(pendingBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptMessageDeliveriesGoingToRpcBankClient*>(m_Destination), SLOT(pendingBalanceDetected(PendingBalanceDetectedMessage*)));
+    connect(pendingBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerMessageDeliveries*>(m_Destination), SLOT(pendingBalanceDetectedDelivery()));
     return pendingBalanceDetectedMessage;
 }

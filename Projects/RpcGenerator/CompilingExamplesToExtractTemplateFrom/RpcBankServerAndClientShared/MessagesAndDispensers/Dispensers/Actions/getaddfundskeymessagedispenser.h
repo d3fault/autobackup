@@ -11,7 +11,7 @@ public:
     GetAddFundsKeyMessageDispenser(QObject *destination, QObject *owner);
     GetAddFundsKeyMessage *getNewOrRecycled();
 protected:
-    void getNewOfTypeAndConnectToDestinationObject();
+    IMessage *getNewOfTypeAndConnectToDestinationObject();
 };
 
 #endif // GETADDFUNDSKEYMESSAGEDISPENSER_H

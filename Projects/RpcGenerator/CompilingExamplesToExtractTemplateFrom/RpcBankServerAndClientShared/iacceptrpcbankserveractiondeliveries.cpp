@@ -1,6 +1,6 @@
 #include "iacceptrpcbankserveractiondeliveries.h"
 
-IAcceptRpcBankServerActionDeliveries::IAcceptRpcBankServerActionDeliveries(QObject *parent) :
+IAcceptRpcBankServerMessageDeliveries::IAcceptRpcBankServerMessageDeliveries(QObject *parent) :
     QObject(parent)
 {
 }

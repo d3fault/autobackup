@@ -9,9 +9,9 @@ CreateBankAccountMessage *CreateBankAccountMessageDispenser::getNewOrRecycled()
 {
     return static_cast<CreateBankAccountMessage*>(privateGetNewOrRecycled());
 }
-void CreateBankAccountMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
+IMessage *CreateBankAccountMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
 {
     CreateBankAccountMessage *createBankAccountMessage = new CreateBankAccountMessage(this);
-    connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
+    connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerMessageDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
     return createBankAccountMessage;
 }

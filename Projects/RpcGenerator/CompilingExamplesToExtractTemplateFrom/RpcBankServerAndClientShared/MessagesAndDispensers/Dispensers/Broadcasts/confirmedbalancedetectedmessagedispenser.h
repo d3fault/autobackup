@@ -5,16 +5,15 @@
 
 #include "../../Messages/Broadcasts/confirmedbalancedetectedmessage.h"
 
-#include "../../../iacceptrpcbankservermessagedeliveries.h"
-#include "../../../iacceptmessagedeliveriesgoingtorpcbankclient.h"
+#include "../../../iacceptrpcbankserveractiondeliveries.h"
 
 class ConfirmedBalanceDetectedMessageDispenser : public IMessageDispenser
 {
 public:
-    ConfirmedBalanceDetectedMessageDispenser(IAcceptRpcBankServerMessageDeliveries *destination, QObject *owner);
+    ConfirmedBalanceDetectedMessageDispenser(QObject *destination, QObject *owner);
     ConfirmedBalanceDetectedMessage *getNewOrRecycled();
 protected:
-    void getNewOfTypeAndConnectToDestinationObject();
+    IMessage *getNewOfTypeAndConnectToDestinationObject();
 };
 
 #endif // CONFIRMEDBALANCEDETECTEDMESSAGEDISPENSER_H

@@ -5,16 +5,15 @@
 
 #include "../../Messages/Broadcasts/pendingbalancedetectedmessage.h"
 
-#include "../../../iacceptrpcbankservermessagedeliveries.h"
-#include "../../../iacceptmessagedeliveriesgoingtorpcbankclient.h"
+#include "../../../iacceptrpcbankserveractiondeliveries.h"
 
 class PendingBalanceDetectedMessageDispenser : public IMessageDispenser
 {
 public:
-    PendingBalanceDetectedMessageDispenser(IAcceptRpcBankServerMessageDeliveries *destination, QObject *owner);
-    PendingBalanceAddedMessage *getNewOrRecycled();
+    PendingBalanceDetectedMessageDispenser(QObject *destination, QObject *owner);
+    PendingBalanceDetectedMessage *getNewOrRecycled();
 protected:
-    void getNewOfTypeAndConnectToDestinationObject();
+    IMessage *getNewOfTypeAndConnectToDestinationObject();
 };
 
 #endif // PENDINGBALANCEDETECTEDMESSAGEDISPENSER_H

@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "../../RpcBankServerAndClientShared/broadcastdispensers.h"
+#include "../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
 #include "../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Broadcasts/pendingbalancedetectedmessagedispenser.h"
 #include "../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Broadcasts/confirmedbalancedetectedmessagedispenser.h"
 
@@ -16,6 +16,15 @@ public:
 private:
     PendingBalanceDetectedMessageDispenser *m_PendingBalanceDetectedMessageDispenser;
     ConfirmedBalanceDetectedMessageDispenser *m_ConfirmedBalanceDetectedMessageDispenser;
+signals:
+    void d(const QString &);
+    void initialized();
+    void started();
+    void stopped();
+public slots:
+    void init();
+    void start();
+    void stop();
 };
 
 #endif // BITCOINHELPER_H

@@ -2,23 +2,58 @@
 #define IBANKSERVERPROTOCOLKNOWER_H
 
 #include <QObject>
+#include <QHash>
 
 #include "../../../RpcBankServerAndClientShared/iacceptrpcbankserveractiondeliveries.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessage.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/confirmedbalancedetectedmessage.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/createbankaccountmessagedispenser.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.h"
 
-class IBankServerProtocolKnower : public IAcceptRpcBankServerActionDeliveries
+class IBankServerProtocolKnower : public IAcceptRpcBankServerMessageDeliveries
 {
     Q_OBJECT
 public:
     explicit IBankServerProtocolKnower(QObject *parent = 0);
+    void setActionDispensers(RpcBankServerActionDispensers *rpcBankServerActionDispensers);
+    void takeOwnershipOfActionsAndSetupDelivery();
+private:
+    RpcBankServerActionDispensers *m_RpcBankServerActionDispensers;
+    QHash<CreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByCreateBankAccountMessagePointer;
+    QHash<GetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByGetAddFundsKeyMessagePointer;
+protected:
+    CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
+    GetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
+
+    virtual void myTransmit(IMessage *message, uint uniqueRpcClientId)=0;
+
+    //we only have process* classes for Action requests
+    void processCreateBankAccountMessage(CreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId);
+    void processGetAddFundsKeyMessage(GetAddFundsKeyMessage *getAddFundsKeyMessage, uint uniqueRpcClientId);
+    //the point of the process* is to add them to a pending list. and then after we append to the list we also emit. since we are auto-generated, process* doesn't have to. it makes no difference who emits, but by having a process() for each, we simplify the design imo
 signals:
+    void initialized();
+    void started();
+    void stopped();
+
     //incoming action requests
     void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
     void getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage);
 public slots:
+    void init();
+    void start();
+    void stop();
+
+    //outgoing Action responses
     void createBankAccountDelivery(); //deliver'd from rpc server impl. our IRpcBankServerClientProtocolKnower on rpc client also inherits IAcceptRpcBankServerActionDeliveries
     void getAddFundsKeyDelivery();
+
+    //outgoing Broadcasts
+    void pendingBalanceDetectedDelivery();
+    void confirmedBalanceDetectedDelivery();
 
     //errorrs, delivered similarly to .deliver()
     void createBankAccountFailedUsernameAlreadyExists();
@@ -65,6 +100,26 @@ public slots:
       RpcClientBroadcast        N               Y               Y               n/a                 n/a                     n/a || Y
 
       brain is in autopilot mode. relaxing.
+
+      so i think I've decided  to not have Request/Response separation, nor Hidden/Readonly-able which means the following table applies:
+
+      RpcClientActionMessage    Y               Y               Y -- the deliverable ability is simply ignored on the client
+      RpcServerActionMessage    Y               Y               Y
+      RpcServerBroadcastMessage Y               Y               Y
+      RpcClientBroadcastMessage
+
+      err no fuck that shit. it's even simpler. you've had it once before.
+
+      ==========JACKPOT=========
+
+      RpcActionMessage          Y               Y               Y -- the recycle ability is simply ignored on the server. deliver is used on both client and server
+      RpcBroadcastMessage       Y               Y               Y -- the deliver ability is simply ignored on the client. recycle is only used on the client.
+
+      so it is IMessage after all...
+      TODOoptimization: you can rig .deliver and .recycle to check if they are being called from the right place (a recycle in broadcast server impl re-interprets, based on the fact that we're IN the recycle thread (and therefore haven't been delivered yet), the doneWithMessage to actually emit the doneSignal() message. there are similar optimizations using the deliver() in the wrong places that can make it recycle instead. the rpc client when it receives something, for example. this prevents/saves user error. but there might be a case where the destination and recycler are the same thing or something? idfk and don't feel like exploring this any further
+
+
+      old:
 
 
       so among the Actions vs. Broadcasts, the main characteristic is that Actions actually have an answer to the Hidden/Read-Only "public API nice'ness"

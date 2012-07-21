@@ -1,8 +1,6 @@
 #ifndef RPCBANKSERVERACTIONDISPENSERS_H
 #define RPCBANKSERVERACTIONDISPENSERS_H
 
-#include "ibankserverprotocolknower.h"
-
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/createbankaccountmessagedispenser.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.h"
 
@@ -22,11 +20,14 @@
 class RpcBankServerActionDispensers
 {
 public:
-    RpcBankServerActionDispensers(IBankServerProtocolKnower *destination);
+    RpcBankServerActionDispensers(QObject *destination);
     CreateBankAccountMessageDispenser *takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner);
     GetAddFundsKeyMessageDispenser *takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(QObject *owner);
 private:
-    IBankServerProtocolKnower *m_Destination;
+    QObject *m_Destination;
+
+    CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
+    GetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 };
 
 #endif // RPCBANKSERVERACTIONDISPENSERS_H

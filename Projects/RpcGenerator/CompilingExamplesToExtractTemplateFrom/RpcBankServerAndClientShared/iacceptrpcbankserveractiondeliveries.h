@@ -3,14 +3,19 @@
 
 #include <QObject>
 
-class IAcceptRpcBankServerActionDeliveries : public QObject
+class IAcceptRpcBankServerMessageDeliveries : public QObject
 {
     Q_OBJECT
 public:
-    explicit IAcceptRpcBankServerActionDeliveries(QObject *parent = 0);
+    explicit IAcceptRpcBankServerMessageDeliveries(QObject *parent = 0);
 public slots:
+    //Actions
     virtual void createBankAccountDelivery()=0;
     virtual void getAddFundsKeyDelivery()=0;
+
+    //Broadcasts
+    virtual void pendingBalanceDetectedDelivery()=0;
+    virtual void confirmedBalanceDetectedDelivery()=0;
 };
 
 #endif // IACCEPTRPCBANKSERVERACTIONDELIVERIES_H

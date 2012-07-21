@@ -3,10 +3,11 @@
 
 #include "../imessage.h"
 
-#define PENDING_BALANCE_DETECTED_MESSAGE_PARSE_BROADCAST(qds,strop) (qds strop Username; qds strop PendingBalance;)
+#define PENDING_BALANCE_DETECTED_MESSAGE_PARSE_BROADCAST(qds,strop) qds strop Username; qds strop PendingBalance;
 
 class PendingBalanceDetectedMessage : public IMessage
 {
+    Q_OBJECT
 public:
     PendingBalanceDetectedMessage(QObject *owner);
 
