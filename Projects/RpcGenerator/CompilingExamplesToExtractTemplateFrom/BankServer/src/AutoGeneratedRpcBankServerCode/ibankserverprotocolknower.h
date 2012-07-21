@@ -35,6 +35,7 @@ protected:
     void processGetAddFundsKeyMessage(GetAddFundsKeyMessage *getAddFundsKeyMessage, uint uniqueRpcClientId);
     //the point of the process* is to add them to a pending list. and then after we append to the list we also emit. since we are auto-generated, process* doesn't have to. it makes no difference who emits, but by having a process() for each, we simplify the design imo
 signals:
+    void d(const QString &);
     void initialized();
     void started();
     void stopped();
@@ -43,10 +44,6 @@ signals:
     void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
     void getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage);
 public slots:
-    void init();
-    void start();
-    void stop();
-
     //outgoing Action responses
     void createBankAccountDelivery(); //deliver'd from rpc server impl. our IRpcBankServerClientProtocolKnower on rpc client also inherits IAcceptRpcBankServerActionDeliveries
     void getAddFundsKeyDelivery();

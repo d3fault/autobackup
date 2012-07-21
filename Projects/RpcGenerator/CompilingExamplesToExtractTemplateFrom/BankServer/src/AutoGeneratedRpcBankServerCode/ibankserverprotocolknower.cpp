@@ -4,18 +4,6 @@ IBankServerProtocolKnower::IBankServerProtocolKnower(QObject *parent) :
     IAcceptRpcBankServerMessageDeliveries(parent)
 {
 }
-void IBankServerProtocolKnower::init()
-{
-    emit initialized();
-}
-void IBankServerProtocolKnower::start()
-{
-    emit started();
-}
-void IBankServerProtocolKnower::stop()
-{
-    emit stopped();
-}
 void IBankServerProtocolKnower::setActionDispensers(RpcBankServerActionDispensers *rpcBankServerActionDispensers)
 {
     m_RpcBankServerActionDispensers = rpcBankServerActionDispensers;

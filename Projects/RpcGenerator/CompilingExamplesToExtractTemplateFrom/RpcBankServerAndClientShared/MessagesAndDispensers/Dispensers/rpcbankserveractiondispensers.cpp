@@ -6,8 +6,10 @@ RpcBankServerActionDispensers::RpcBankServerActionDispensers(QObject *destinatio
 CreateBankAccountMessageDispenser *RpcBankServerActionDispensers::takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner)
 {
     m_CreateBankAccountMessageDispenser = new CreateBankAccountMessageDispenser(m_Destination, owner);
+    return m_CreateBankAccountMessageDispenser;
 }
 GetAddFundsKeyMessageDispenser * RpcBankServerActionDispensers::takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(QObject *owner)
 {
     m_GetAddFundsKeyMessageDispenser = new GetAddFundsKeyMessageDispenser(m_Destination, owner);
+    return m_GetAddFundsKeyMessageDispenser;
 }
