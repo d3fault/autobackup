@@ -1,0 +1,5 @@
+my music app can/should not only scrobble but tell the author/artist at what point the user pressed "next" or "ban" or "love". what point in time on the song
+
+cloudsong does it wrong. fuck comments (though allow them in their respective categories). 
+
+a lot of "next"ing could trigger toning down the frequency in which the song is played. like a playMaxEvery8days or fuck i don't know how long
