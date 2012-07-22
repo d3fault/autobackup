@@ -1,36 +1,22 @@
 #ifndef BANKSERVERDEBUGWIDGET_H
 #define BANKSERVERDEBUGWIDGET_H
 
-#include <QtGui/QWidget>
-#include <QVBoxLayout>
-#include <QPlainTextEdit>
 #include <QPushButton>
-#include <QThread>
 
-#include "idebuggablestartablestoppablebankserverbackend.h"
+#include "idebuggablestartablestoppablefrontend.h"
+#include "bankservertest.h"
 
-class bankServerDebugWidget : public QWidget
-
+class bankServerDebugWidget : public IDebuggableStartableStoppableFrontend
 {
     Q_OBJECT
-
 public:
-    bankServerDebugWidget(IDebuggableStartableStoppableBankServerBackend *debuggableStartableStoppableBankServerBackend);
+    bankServerDebugWidget(BankServerTest *bankServerTest, QWidget *parent = 0);
     ~bankServerDebugWidget();
 private:
-    QThread *m_BackendThread;
-    IDebuggableStartableStoppableBankServerBackend* m_DebuggableStartableStoppableBankServerBackend;
-    QVBoxLayout *m_Layout;
-    QPlainTextEdit *m_Debug;
-    QPushButton *m_StartButton;
-    QPushButton *m_StopButton;
-
-    void handleD(const QString &msg);
-private slots:
-    void buildGui();
-    void handleBackendInitialized();
-    void handleBackendStarted();
-    void handleBackendStopped();
+    QPushButton *m_SimulatePendingBalanceDetectedBroadcast;
+    QPushButton *m_SimulateConfirmedBalanceDetectedBroadcast;
+protected:
+    void addButtonsToLayoutAndConnectToBackend();
 };
 
 #endif // BANKSERVERDEBUGWIDGET_H

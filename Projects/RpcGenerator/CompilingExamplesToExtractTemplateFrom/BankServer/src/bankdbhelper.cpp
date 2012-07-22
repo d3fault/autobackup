@@ -37,4 +37,14 @@ void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccount
 }
 void BankDbHelper::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
+    if(!m_AllUsers.contains(getAddFundsKeyMessage->Username))
+    {
+        //TODOreq: user not exist error
+        //getAddFundsKeyMessage->get
+    }
+    else
+    {
+        //TODOreq: add to db etc, perhaps relay to bitcoin?
+        getAddFundsKeyMessage->deliver();
+    }
 }

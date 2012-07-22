@@ -1,7 +1,7 @@
 #include "ibankserverprotocolknower.h"
 
 IBankServerProtocolKnower::IBankServerProtocolKnower(QObject *parent) :
-    IEmitRpcBankServerActionRequestSignalsWithMessageAsParam(parent)
+    IEmitRpcBankServerClientActionRequestSignalsWithMessageAsParam(parent)
 { }
 void IBankServerProtocolKnower::setActionDispensers(RpcBankServerActionDispensers *rpcBankServerActionDispensers)
 {

@@ -13,7 +13,7 @@
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/createbankaccountmessagedispenser.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.h"
 
-class IBankServerProtocolKnower : public IEmitRpcBankServerActionRequestSignalsWithMessageAsParam
+class IBankServerProtocolKnower : public IEmitRpcBankServerClientActionRequestSignalsWithMessageAsParam
 {
     Q_OBJECT
 public:

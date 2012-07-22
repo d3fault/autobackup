@@ -15,7 +15,7 @@ public:
     explicit BankServer();
     void instructBackendObjectsToClaimRelevantDispensers();
     void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
-    void connectRpcBankServerActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParam *actionRequestSignalEmitter);
+    void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerClientActionRequestSignalsWithMessageAsParam *actionRequestSignalEmitter);
 private:
     BankDbHelper *m_BankDbHelper;
     QThread *m_BankDbHelperThread;

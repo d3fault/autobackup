@@ -1,8 +1,8 @@
 #ifndef RPCBANKSERVERACTIONDISPENSERS_H
 #define RPCBANKSERVERACTIONDISPENSERS_H
 
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/createbankaccountmessagedispenser.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.h"
+#include "../../MessagesAndDispensers/Dispensers/Actions/createbankaccountmessagedispenser.h"
+#include "../../MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.h"
 
 // the action dispenser is the same on rpc client and server. it uses a destination and owner on both ends, so we can still leave this in the rpc client/server shared folder
 

@@ -32,7 +32,7 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServerBusiness *r
     moveBusinessToItsOwnThreadAndStartTheThread(); //similar to above call though not the exact same. this is the business object itself now finally, not it's backend objects
 
     //actualRpcConnections();
-    m_RpcBankServer->connectRpcBankServerActionRequestSignalsToBankServerImplSlots(m_Transporter);
+    m_RpcBankServer->connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(m_Transporter);
     daisyChainInitStartStopConnections();
 }
 /*

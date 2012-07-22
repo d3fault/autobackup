@@ -21,3 +21,9 @@ void BankServerTest::stop()
 {
     m_RpcBankServerClientsHelper->stop();
 }
+void BankServerTest::simulatePendingBalanceDetectedBroadcast()
+{
+}
+void BankServerTest::simulateConfirmedBalanceDetectedBroadcast()
+{
+}
