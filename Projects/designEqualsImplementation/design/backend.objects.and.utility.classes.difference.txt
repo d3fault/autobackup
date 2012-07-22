@@ -1,0 +1,3 @@
+in the context of designEquals and rpc generator (which i'm realizing are pretty similar)
+backend objects and utility classes only differ in that backend objects are on a different thread and use signals/slots to communicate
+utility classes are called synchronously
