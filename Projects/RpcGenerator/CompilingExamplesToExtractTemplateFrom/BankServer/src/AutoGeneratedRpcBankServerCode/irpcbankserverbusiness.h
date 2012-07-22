@@ -1,6 +1,10 @@
 #ifndef IRPCBANKSERVERBUSINESS_H
 #define IRPCBANKSERVERBUSINESS_H
 
+#define RPC_BANK_SERVER_CODE // we define this because we _ARE_ the rpc server. this makes us parse our messages correctly using QDataStream
+
+//TODOreq: somewhere on the client, we have to define RPC_BANK_SERVER_CLIENT_CODE
+
 #include <QObject>
 
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
