@@ -5,6 +5,7 @@
 #include <QList>
 
 #include "../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
+#include "../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
 
 class BankDbHelper : public QObject
 {
@@ -23,6 +24,7 @@ public slots:
     void stop();
 
     void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
+    void getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage);
 };
 
 #endif // BANKDBHELPER_H

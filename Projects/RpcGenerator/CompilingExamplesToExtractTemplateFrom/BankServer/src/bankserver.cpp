@@ -7,18 +7,6 @@ BankServer::BankServer()
 
     daisyChainInitStartStopConnections();
 }
-void BankServer::connectRpcBankServerActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParam *actionRequestSignalEmitter)
-{
-    //TODOoptimization: there's a slightly better design where i can do 'connect(rpc, signal(create()), m_BankDbHelper, SLOT(create())); ---- but it requires a radical redesign. right now our backend impl doesn't even need to be aware of clientshelper... but in that case it would (maybe? maybe i can just make available the interface that exposes the action request signals (i think IBankServerProtocolKnower implements that interface atm))
-    //i think the above is possible but i just need to factor out the signals that IBankServerProtocolKnower defines. the action request signals... then pass them to BankServer... clientshelper can call a pure virtual or something with that new interface as the parameter... then we just connect the objects and that's all... ez gg. not worth doing yet however because i'm overloaded with trivial tasks (welcome to programming)
-
-    connect(actionRequestSignalEmitter, SIGNAL(createBankAccount(CreateBankAccountMessage*)), m_BankDbHelper, SLOT(createBankAccount(CreateBankAccountMessage*)));
-
-    //connect(this, SIGNAL(createBankAccountRequested(CreateBankAccountMessage*)), m_BankDbHelper, SLOT(doCreateBankAccount(CreateBankAccountMessage*)));
-
-    //TODOreq: create bank account definitely needs to go to the db, but where should GetAddFundsKey go?
-    //even if it goes to both db and bitcoin, we should set up signal/slot chaining to achieve it. the two backend objects should remain unaware of each other
-}
 void BankServer::daisyChainInitStartStopConnections()
 {
     //daisy-chain
@@ -48,6 +36,20 @@ void BankServer::moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()
     m_BitcoinThread = new QThread();
     m_Bitcoin->moveToThread(m_BitcoinThread);
     m_BitcoinThread->start();
+}
+void BankServer::connectRpcBankServerActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParam *actionRequestSignalEmitter)
+{
+    //TODOoptimization: there's a slightly better design where i can do 'connect(rpc, signal(create()), m_BankDbHelper, SLOT(create())); ---- but it requires a radical redesign. right now our backend impl doesn't even need to be aware of clientshelper... but in that case it would (maybe? maybe i can just make available the interface that exposes the action request signals (i think IBankServerProtocolKnower implements that interface atm))
+    //i think the above is possible but i just need to factor out the signals that IBankServerProtocolKnower defines. the action request signals... then pass them to BankServer... clientshelper can call a pure virtual or something with that new interface as the parameter... then we just connect the objects and that's all... ez gg. not worth doing yet however because i'm overloaded with trivial tasks (welcome to programming)
+
+    connect(actionRequestSignalEmitter, SIGNAL(createBankAccount(CreateBankAccountMessage*)), m_BankDbHelper, SLOT(createBankAccount(CreateBankAccountMessage*)));
+    connect(actionRequestSignalEmitter, SIGNAL(getAddFundsKey(GetAddFundsKeyMessage*)), m_BankDbHelper, SLOT(getAddFundsKey(GetAddFundsKeyMessage*)));
+
+    //TODOreq: create bank account definitely needs to go to the db, but where should GetAddFundsKey go?
+    //even if it goes to both db and bitcoin, we should set up signal/slot chaining to achieve it. the two backend objects should remain unaware of each other
+    //just making it go to db for now
+
+    //but i can always do chaining from db -> bitcoin and bitcoin -> db etc. like createBankAccountStep1() in db and createBankAccountStep2() in bitcoin ----------- and possibly a createBankAccountStep3() in db again to verify the bitcoin shit? idfk.
 }
 void BankServer::init()
 {

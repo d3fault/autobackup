@@ -35,3 +35,6 @@ void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccount
         return;
     }
 }
+void BankDbHelper::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
+{
+}
