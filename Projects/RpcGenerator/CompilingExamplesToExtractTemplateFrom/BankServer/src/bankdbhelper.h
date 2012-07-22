@@ -22,7 +22,7 @@ public slots:
     void start();
     void stop();
 
-    void doCreateBankAccount(CreateBankAccountMessage *createBankAccountMessage);
+    void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
 };
 
 #endif // BANKDBHELPER_H

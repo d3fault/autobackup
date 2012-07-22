@@ -15,7 +15,7 @@ void BankDbHelper::stop()
 {
     emit stopped();
 }
-void BankDbHelper::doCreateBankAccount(CreateBankAccountMessage *createBankAccountMessage)
+void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
 {
     if(!m_AllUsers.contains(createBankAccountMessage->Username))
     {

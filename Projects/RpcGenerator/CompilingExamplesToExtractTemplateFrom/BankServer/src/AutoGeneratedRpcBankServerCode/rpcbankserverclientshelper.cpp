@@ -31,14 +31,17 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServerBusiness *r
 
     moveBusinessToItsOwnThreadAndStartTheThread(); //similar to above call though not the exact same. this is the business object itself now finally, not it's backend objects
 
-    actualRpcConnections();
+    //actualRpcConnections();
+    m_RpcBankServer->connectRpcBankServerActionRequestSignalsToBankServerImplSlots(m_Transporter);
     daisyChainInitStartStopConnections();
 }
+/*
 void RpcBankServerClientsHelper::actualRpcConnections()
 {
     connect(m_Transporter, SIGNAL(createBankAccount(CreateBankAccountMessage*)), m_RpcBankServer, SLOT(createBankAccount(CreateBankAccountMessage*)));
     connect(m_Transporter, SIGNAL(getAddFundsKey(GetAddFundsKeyMessage*)), m_RpcBankServer, SLOT(getAddFundsKey(GetAddFundsKeyMessage*)));
 }
+*/
 void RpcBankServerClientsHelper::daisyChainInitStartStopConnections()
 {
     //daisy-chain connections

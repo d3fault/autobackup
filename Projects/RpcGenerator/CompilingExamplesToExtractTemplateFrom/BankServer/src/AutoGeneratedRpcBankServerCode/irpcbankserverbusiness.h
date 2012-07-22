@@ -7,6 +7,7 @@
 
 #include <QObject>
 
+#include "iemitrpcbankserveractionrequestsignalswithmessageasparam.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
 
@@ -17,6 +18,7 @@ public:
     //the reason for the two following virtuals is so our rpc generated code will call them (it still assumes (well, not enetirely) they are used correctly) in the correct order. because if we move the backend business objects, they can't "pull" the thread ownership (or something. idfk. taking safest route possible)
     virtual void instructBackendObjectsToClaimRelevantDispensers()=0; //broadcasts for rpc server impl, actions for rpc client impl
     virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()=0;
+    virtual void connectRpcBankServerActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParam *actionRequestSignalEmitter)=0;
 
     void setBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers);
 protected:
@@ -25,9 +27,6 @@ public slots:
     virtual void init()=0;
     virtual void start()=0;
     virtual void stop()=0;
-
-    virtual void createBankAccount(CreateBankAccountMessage*)=0;
-    virtual void getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)=0;
 signals:
     void d(const QString &);
     void initialized();

@@ -15,6 +15,7 @@ public:
     explicit BankServer();
     void instructBackendObjectsToClaimRelevantDispensers();
     void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
+    void connectRpcBankServerActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParam *actionRequestSignalEmitter);
 private:
     BankDbHelper *m_BankDbHelper;
     QThread *m_BankDbHelperThread;
@@ -22,18 +23,11 @@ private:
     BitcoinHelper *m_Bitcoin;
     QThread *m_BitcoinThread;
 
-    void connectRpcActionRequestSignalsToMySlotImpls();
     void daisyChainInitStartStopConnections();
 public slots:
     void init();
     void start();
     void stop();
-
-    void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
-    void getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage);
-signals:
-    void createBankAccountRequested(CreateBankAccountMessage *createBankAccountMessage);
-    void getAddFundsKeyRequested(GetAddFundsKeyMessage *getAddFundsKeyMessage);
 };
 
 #endif // BANKSERVER_H
