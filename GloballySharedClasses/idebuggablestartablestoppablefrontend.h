@@ -13,7 +13,7 @@ class IDebuggableStartableStoppableFrontend : public QWidget
 {
     Q_OBJECT
 public:
-    explicit IDebuggableStartableStoppableFrontend(IDebuggableStartableStoppableBackend *debuggableStartableStoppableFrontend, QWidget *parent = 0);
+    explicit IDebuggableStartableStoppableFrontend(IDebuggableStartableStoppableBackend *debuggableStartableStoppableBackend, QWidget *parent = 0);
 private:
     QPlainTextEdit *m_Debug;
     QPushButton *m_StartButton;

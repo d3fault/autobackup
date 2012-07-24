@@ -2,8 +2,8 @@
 
 #include "idebuggablestartablestoppablebackend.h"
 
-IDebuggableStartableStoppableFrontend::IDebuggableStartableStoppableFrontend(IDebuggableStartableStoppableBackend *debuggableStartableStoppableFrontend, QWidget *parent)
-    : QWidget(parent), m_DebuggableStartableStoppableBackend(debuggableStartableStoppableFrontend)
+IDebuggableStartableStoppableFrontend::IDebuggableStartableStoppableFrontend(IDebuggableStartableStoppableBackend *debuggableStartableStoppableBackend, QWidget *parent)
+    : QWidget(parent), m_DebuggableStartableStoppableBackend(debuggableStartableStoppableBackend)
 {
     QMetaObject::invokeMethod(this, "setupGuiAndThenBeginBackendInit", Qt::QueuedConnection); //this guarantees that the object will be done constructing (and the pure virtual will have been implemented). it doubles as a way of making the gui load faster :)
 }

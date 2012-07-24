@@ -1,0 +1,16 @@
+class QFileSystemWatcher : public QObject
+{
+public:
+  QFileSystemWatcher(QObject *parent = 0);
+private:
+  IQFilesystemWatcherPrivate *m_QFileSystemWatcherPrivate;
+}
+
+QFileSystemWatcher::QFileSystemWatcher(QObject *parent = 0)
+{
+#ifdef CURRENT_OS_DOES_NOT_EMIT_FINE_GRAIN //Mac OS X Leopard, some BSD variants
+  m_QFileSystemWatcherPrivate = new QtQFileSystemWatcherPrivateCourseFsWatcher();
+#else
+  m_QFileSystemWatcherPrivate = new QtFileSystemWatcherPrivateFineFsWatcher();
+#endif
+}

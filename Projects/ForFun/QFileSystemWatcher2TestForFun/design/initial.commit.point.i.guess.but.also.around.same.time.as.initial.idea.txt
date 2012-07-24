@@ -1,0 +1,46 @@
+INativelyEmitBothDirAndFileChanges : 
+IOnlyEmitRelativeLocations :  
+
+i can't remember what comes after those two
+
+but i think implementing a basic cross-platform QFilesystemWatcher would be easy. i wouldn't even have to implement it the os-specific portions, just do a good design. the 
+
+and then i paused at the word the and then re-read the sentence (wroe ste there then backspaced it)
+but i couldn't remember what came after the word the. i knew it was significant (and i know it too)
+
+QWindowsFilesystemWatcher : INativelyEmitBothDirAndFileChanges
+QLinuxFilesystemWatcher : INativelyEmitBothDirAndFileChanges
+
+QMacOsxLionAndAboveFilesystemWatcher : INativelyEmitBothDirAndFileChanges
+
+QOtherPlatformsFilesystemWatcher : IOnlyEmitRelativeLocations
+
+
+QFilesystemWatcher has recursive element put in
+
+QFilesystemEvents is using an event based system
+
+connecting slots to my own signals is actually good design because of the DirectConnection in AutoConnection fuck yea Qt
+
+so,
+
+#ifdef MacOsxShitVersion
+connect(this, SIGNAL(dirChanged(const QString &)), this, SLOT(figureOutWhatFuckingFileChangedBecauseMyFsIsShit(const QString &dir)));
+#endif
+
+
+i think i'm confusing the fuck out of myself with this design. but i know it makes sense.
+
+
+class QFilesystemWatcher()
+{
+  Q_OBJECT
+signals:
+  void dirChanged(const QString &dir);
+  void fileChanged(const QString &file);
+private:
+  QFileSystemWatcherPrivate m_d;
+  
+}
+
+for fun, i have decided to code this.
