@@ -1,0 +1,73 @@
+a fun tor/anon/disconnected project would utilize rpc generator and even bank server
+
+basically, an auto-scaling-generic-file-host ... profitable + dmca'responding (to maximize time to raid (literally raiding my servers))
+
+it does not have to be tor hidden server... but i should not associate my name with the .com/etc (so i use tor myself to not be associated with it)
+
+
+but onto the interesting stuff
+
+we sell bandwidth (to users)
+we buy bandwidth (from server houses)
+
+they bid on the bandwidth
+we offer a ridiculously low price (based on a previous "average" bandwidth price.. auto-scaling.. needs bootstrap rate)
+and the price we offer for the bandwidth gradually increases
+until a server house (we outsource) is happy with the price (we can even provide an API for them to auto-purchase.. or like bid orders in stock)
+
+but unlike a stock, it only increases
+
+they can:
+a) buy manually watching it on the site (similar code to my ad double shit.. except increasing with time instead of decreasing like ad double)
+b) set (and change at any time) their buy-once-it-reaches-this-point number -- with a customizable amount
+c) api for it (notify broadcast, purchase action) if they're smart enough to make a fully automated server house (i can, but do not want to. would much rather outsource it)
+
+
+
+we only buy as much servers as we need
+we are ok with break even (but still try to do better)
+because:
+a) we will show ads using abc on each page
+b) it is automated so there is a MINISCULE cost for us doing business with them
+
+
+
+
+
+the 'purchaseBandwidthAtRate' that they do is a promise that they must fulfill a certain bitrate for a certain amount of time. could be daily idgaf
+
+that's a bad name for it
+
+'offerBandwidthToMED3FAULTtoUseWithGenericFileHostingSitesAtRateX'
+
+they aren't purchasing
+they're... promising... that they will deliver SET-BANDWIDTH-AMOUNT for SET-LEASE-TIME (24 hours?)... and that they are ok/happy-with the rate at which we are currently offering.
+
+we only pay after the 24 hours has been fulfilled
+
+the "report broken link" is actually functional
+
+we can contain a map of "this IP (user) does not (for some unknown networking reason) work with our rented out IPs (server houses) in some db/cluster/couchbase" and do routing to OTHER servers accordingly. the "report broken link" tests that. sometimes it really isn't the server house's problem but is in fact just a networking error. if the majority of users are happy with the link (by not reporting it broken), we just route that one user who is having problems to some other server
+
+
+the dmca'ing is outsourced too... like leapfuck type shit (ez)
+
+i could even outsource the outsourcing if i really want to get intricate
+but i probably shouldn't associate my name with that "we do easy ass outsource work from home" business either (like google did)
+for now it's just DMCA checking
+and hell, a lot of people would do that for free if it meant they got to download full movies to "check" :-P
+they can just keep the avi after they say "yes this is a dmca violation"
+
+disagreements become disputes etc i can't remember the leapforce flow but can make up my own
+
+would be very bad to report a false positive dmca notify
+
+
+
+also would be very awesome if the whole system was decentralized entirely
+no single point of failure (except load balancer, but that's always a problem)
+wait no you can have multiple load balancers on different backup DNS shits woot
+
+i wish dns used roundrobin by default. i wish it was in the user code before ever hitting the network
+i could implement that in d3fault, but not for the existing internets
+just have to reinvent dns (easy and done many times before)

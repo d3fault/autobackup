@@ -1,0 +1,7 @@
+re: c) in my previous idea
+
+the api for an rpc generated interface should be auto-generated too
+
+i mean, we use in our code an api that is generated
+but we should be able to check an additional box at code generation step that says "make API public also"
+gives them some json/xml/REST/etc API that matches identically the API that the (MAYBE-auto-generated (but won't be at first)) web gui that they use to do manual operations on the site ([a] in previous idea)
