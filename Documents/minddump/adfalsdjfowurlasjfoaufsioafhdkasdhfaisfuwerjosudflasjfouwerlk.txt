@@ -1,0 +1,30 @@
+the video is the key thing
+which i still haven't completely finalized/figured out
+
+
+is also vulnerable
+
+scalable, yet vulnerable
+
+but the good news:
+
+one SECOND of video is tons of bits of data
+and 1 bit doubles the possible keys
+
+
+so extending the video by a few seconds would probably give you a few extra hundred years...
+i mean i don't know for sure i haven't done jack shit math
+
+but i'm guessing/assuming
+
+
+maybe we should just use the video itself as the only type of 'password'
+nothing else
+
+like you 'sign' something (text etc) with your 'password' (the video)
+
+the first copy on 'the network' (d3fault) is tells you who the author is
+
+IDFK
+
+just randomness here

@@ -1,0 +1,20 @@
+the only security i believe in:
+a) certs for authenticity/verification (maybe encryption too)
+b) distribution (hardcopies esp)
+
+
+so if i just "save" by PUBLISHING EVERYWHERE
+
+....  i can live comfortably
+
+knowing the data is safe
+
+and that's all that matters
+
+
+i guess i can still do my 'prediction' shit using certs
+
+
+but i still need to re-organize d3fault to NOT use passwords
+
+which i have yet to do

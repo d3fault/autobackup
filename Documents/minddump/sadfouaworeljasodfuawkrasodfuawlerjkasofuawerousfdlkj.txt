@@ -1,0 +1,28 @@
+hmm what about the offline 'cert' + human password method? (concatenation)
+
+eh it sucks that's what
+
+if the offline 'cert' is compromised, they just have to brute force the human password
+GONE.
+
+fml
+
+there really is no solution
+
+when will this take effect?
+100 years?
+300?
+
+not long, that's for sure (relative to evolution etc)
+
+we're practically there
+
+i might as well accept it
+fuck passwords
+
+and how do you secure certs then?
+
+maybe you don't
+maybe you shred the private key
+
+and then just move onto a new keypair upon offline compromise??
