@@ -12,7 +12,7 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032517
+Documents/minddump/:1386032528
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -23,7 +23,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032517
+Documents/minddump/dreams/:1386032528
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -50,6 +50,7 @@ Documents/minddump/adlsfjasdofuwerlkjsdofuwlerjasofduwaerkhsadfkjhsdfoiuwer.txt:
 Documents/minddump/aflsdjasodfiuaojrelwkajasdlfkjasdofuosiyfiwerhaskfjsdflouiwerwekj.txt:1331632956
 Documents/minddump/afsdflasdjfowireulsfkjsaodifuwlerkjsofdijslfhkgjhasdfoiuwerlkj.txt:1340905413
 Documents/minddump/agnostic.theist.not.god.but.for.other.peoples.perspectives.life.is.NOT.a.giant.metaphor.5meo.txt:1334479909
+Documents/minddump/akfljsafoawurlkjsfdulwrkjasofduawlerkj.txt:1343327146
 Documents/minddump/alfjaosufsdlkfjworusldfkjoweurkdfsjowuerwlaekj.txt:1342615331
 Documents/minddump/alkfjsdlkfjwoeirusdfkjsdflkjworusokerwoerusdlkj.txt:1340449786
 Documents/minddump/alkjfdasdlfkweroiuuuuuuupusaflk.lke.like.interesting.tags.these.are.ejaculation.tags.txt:1338992975
@@ -303,6 +304,7 @@ Documents/minddump/minddump.hesitations.sadlfjweurlsdkfjowruelsadfj.txt:13426054
 Documents/minddump/minddump.ideas.all.the.sameshit.these.days.lol.it.doesnt.matter.where.i.save.as.long.as.i.do.this.title.has.nothing.to.do.with.body.txt:1328744697
 Documents/minddump/my.most.pure.thoughts.ever.i.think.i.know.what.to.do.from.here.DONT.DIE.MOTHERFUCKER.infinite.universes.i.cant.hah.txt:1335804270
 Documents/minddump/my.say.of.what.time.it.is.is.what.time.it.is.txt:1341012525
+Documents/minddump/need.fo.launch.losting.mindz.y0.txt:1343327303
 Documents/minddump/next.prototype.should.be.my.last.and.should.be.enough.to.actually.make.the.rpc.generator.wooooot.so.exciting.txt:1342243026
 Documents/minddump/no.way.ima.be.poor.asldfjaslfdjasldfjowurldfn.txt:1337987476
 Documents/minddump/numerical.idea.i.want.to.be.number.3.but.not.a.must.nor.is.even.having.the.numerical.ids.txt:1333103242
@@ -310,6 +312,7 @@ Documents/minddump/obsession.and.love.are.ultimately.the.same.thing.but.one.is.s
 Documents/minddump/offline.online.maintained.24.7.i.want.both.i.will.it.txt:1337914565
 Documents/minddump/oiurqoweirqweklajsdfvckjfasdlfkweorusaflk.txt:1338993116
 Documents/minddump/oiwurlsakjfwoeriuafdkshadfkhlsadfweoriu.txt:1339229126
+Documents/minddump/ok.guess.i.was.wrong.if.you.use.encryption.ROUNDS.then.user.passwords.do.scale.txt:1343325984
 Documents/minddump/ok.i.will.but.first.a.bit.about.my.paranoia.txt:1342605480
 Documents/minddump/open.source.is.double.edged.sword.but.ultimately.worth.it.txt:1328317146
 Documents/minddump/output.only.can.have.selective.as.fuck.input.txt:1322779096
@@ -538,7 +541,7 @@ Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfilesystemwatcher2.h:13431312
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.cpp:1343124786
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.h:1343123172
 Projects/ForFun/QFileSystemWatcher2TestForFun/changes.to.existing.qfsw.main.class.txt:1343131983
-Projects/Ideas/:1343109540
+Projects/Ideas/:1343326149
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -565,7 +568,7 @@ Projects/Ideas/QtSslRpc/use.different.message.dispensers.for.client.and.server.b
 Projects/Ideas/QtSslRpc/very.handy.optimization.for.rpc.across.threads.use.the.same.message.lol.txt:1340838589
 Projects/Ideas/QtSslRpc/worthless.message.rigging.design.lol.dia.isnt.helping.dia:1340841690
 Projects/Ideas/QtSslRpc/xml.input.example.as.well.as.ssl.cert.key.autogen.utility.based.on.client.count.txt:1336700083
-Projects/Ideas/abc/:1340016320
+Projects/Ideas/abc/:1343327211
 Projects/Ideas/abc/3.layers.of.dht.but.i.think.it.is.definitely.doable.not.that.hard.really.just.design.it.well.before.you.start.txt:1339321739
 Projects/Ideas/abc/Wt.facing.has.list.of.receive.btc.addresses.but.it.does.not.verify.their.reception.dasfljasdlfjaslk.txt:1329207674
 Projects/Ideas/abc/abc.funds.the.staged.wasdf-and.go.outside.donation.driven.projects.lol.laundered.txt:1329206565
@@ -578,6 +581,7 @@ Projects/Ideas/abc/host.proof.hosting.free.email.service.ad.based.txt:1327810665
 Projects/Ideas/abc/investing.option.category.thing.plus.nude.skimask.branding.rofl.txt:1327801369
 Projects/Ideas/abc/make.Index.followable.using.gfs.fs.impl.parsing.txt:1339320344
 Projects/Ideas/abc/random.as.fuck.laundering.lololol.idfk.maybe.i.should.just.move.out.of.the.us.txt:1329207872
+Projects/Ideas/abc/red.1.pixel.border.around.image.with.1.pixel.black.spacer.border.to.identify.ads.txt:1343327211
 Projects/Ideas/abc/richard.stallman.approves.ihope.txt:1339321764
 Projects/Ideas/abc/security.model.for.SENDING.figured.out....receiving.is.easy.txt:1329207416
 Projects/Ideas/abc/use.gfs.fors.slot.purchases.but.i.need.another.solution.for.list.reading.caches.mb.txt:1339328367
@@ -699,6 +703,7 @@ Projects/Ideas/make.sure.not.to.piss.people.off.heres.how.i.attract.an.audience.
 Projects/Ideas/malicious.commits.must.be.detected.by.me.but.i.can.have.pre.screeners.too.txt:1338205267
 Projects/Ideas/megaupload.shit.kicker.completely.anon.bitcoin.next.project.after.abc.rpc.generator.tangent.txt:1343103296
 Projects/Ideas/megaupload.shit.kicker.completely.anon.bitcoin.next.project.after.abc.txt:1343103238
+Projects/Ideas/megaupload.shit.kicker.should.be.decentralized.and.raid.proof.eventually.txt:1343326149
 Projects/Ideas/meh.didnt.get.very.far.with.this.but.the.seed.is.there.txt:1323683589
 Projects/Ideas/merge.to.a.place.of.truth.alfdjsadlfjasdl.txt:1328052708
 Projects/Ideas/meritocratic.agreement.of.what.a.document.is.ad.based.system.txt:1340273457
@@ -1362,7 +1367,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032517
+Projects/libAvGraphicsItem2/design/:1386032528
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1551,7 +1556,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1343315505
+autobackupScripts/win/.directory:1343327470
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

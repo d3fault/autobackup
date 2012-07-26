@@ -1,0 +1,77 @@
+a 1 pixel red border around the image (user specified size)
+with a 1 pixel black border inside it
+
+so really a 2 pixel border
+
+
+this is my 'ad identifier'
+
+i don't care if other ad companies mimick it
+
+but i plan on having integrity.
+i don't want to trick people into clicking
+i want to clearly mark my ads
+and the red border is how i will do it
+
+if adblock etc starts picking up on it (the html), i'll probably have to put the 2px border on the image itself (just grow it, don't overwrite their image)
+
+
+
+that + only allowing the image to be requested like 2-3 times per day (so they HAVE to cache it (we provide scripts for this in multiple languages and basically just make it easy as hell)), so that ABC does not get an image hit (and therefore IP address) for every visitor
+
+== INTEGRITY
+
+
+
+
+if the site hoster (who has the ad on his page) happens to be purchasing servers from megauploadshitkicker (or similar on ABC side? this would be an ftp-like service rather than just generic file hosting like megaupload), that integrity is actually lost.
+
+not sure if i should combine megauploadshitkicker with the abc buy/sell server idea
+
+or perhaps just scrap the abc buy/sell server idea altogether?
+
+reason being.... i really don't want to be raided on anything associated with my name
+
+and megaupload shit kicker will probably eventually be raided
+just because it will be so god damn awesome and a thorn in their side (just like megaupload was)
+
+
+this is all going to be difficult as fuck to manage once i'm launched
+
+or maybe i'll just sell the megauploadshitkicker company at that point (kim dotcom would probably buy it? i'd probably have to sell it at a loss but oh well)
+
+
+on one hand, i want to stay offline/private so i can work on all kinds of tor/offline/hidden-server type things
+
+on the other, i really really really really want to launch because peace of mind will give me ecstacy and make my life fulfilling etc
+
+so i'm just going to make it a mini project
+
+in between ABC launch (shit launch, probably won't even profit at first) and ACTUAL launch
+will be megauploadshitkicker
+just to speed up profits etc to get to actual launch faster
+
+and for fun, definitely
+
+if it gets stable and distributed, maybe i can just leave it up and running and never touch it
+
+but i doubt it
+
+security vulns will pop up etc eventually and i'd have to fix them~
+
+
+ok aside from that
+
+how am i going to handle security vulns for d3fault in realtime?
+i'll be teaching the would-be hackers exactly what to do... as i fix the bug
+
+obviously my shit will be safe offline... but the network itself would potentially collapse in the meantime
+
+oh well, fuck it.
+
+this is why ABC will scale to be a justin.tv type service (just boring ass video shit, each user getting their own ABC 'ad' right above their stream)
+
+so when d3fault goes down, my stream does not. i've talked about this before.
+d3fault will also stream it, ofc
+
+maybe if d3fault is detected to have collapsed, the video-viewer app (webpage???? both!?) rolls over to ABC.tv thingo
