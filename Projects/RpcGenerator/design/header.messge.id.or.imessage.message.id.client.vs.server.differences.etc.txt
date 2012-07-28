@@ -1,0 +1,129 @@
+making the header a member of IMessage does not help because i need to stream in the header before i know which pending list to get the IMessage out of (as both an optimization and message matching).
+
+bah.
+
+header recycling doesn't help because how do i know which header to pull of out a recycled list (or a pending list) BEFORE i have read the header???
+
+
+it's pretty cool to know that once i solve this problem, i should have a compiling + working example from which to make my first rpc generator :-D
+
+fucking excited as hell... but gah, back to this gaod damn problem
+
+
+
+on the server, making header a member of IMessage has teh benefit of not having to look up who the client is... 
+
+^^^^^^^FALSE STATEMENT. message id != client id
+(had it deleted/cut but then pasted again for verbosity fuck yea)
+
+
+we could of course modify modify header to make the statement true. it just isn't atm.
+
+
+BAH, unable to think about this. can't conceptualize it enough
+
+--------Client:
+send: Header(size,type) + IMessageImpl
+receive: Header(size,type) + IMessageImpl
+
+--------Server:
+receive: Header(size,type) + IMessageImpl
+send: Header(size,type) + IMessageImpl
+
+
+
+ok that doesn't help me at all.
+but the problem occurs in client receive.
+the problem has to do with recycling
+we know the message type from the header...
+but we don't can't get the message out of the pending because the message pointer is how we'd get it out
+maybe we can turn it into a hash with the message ID as the key
+then put the message ID in the header
+the only problem with this is that we do not recycle the header. on the client the lack of recycling is not a problem at all... but on the server, we'd have no way to know what the message ID is. we could just put the message ID as a member of IMessage... but then it would lead to a wasted value: the message ID in IMessage on the client... we'd never need it.
+that's not a hugely big deal
+we can't ONLY have the message id in IMessage because then the header is useless and we can't get the pending message out by message id. it has to be in the header for the client
+
+
+that's the problem in a nutshell
+
+client:
+message id has to be in the header
+server:
+message id has to be in the imessage (because we don't recycle the header and need the message id to be the same in the response)
+
+the IMessage class is shared between client/server, client has no need for the message id in the IMessage
+waste of an int.
+
+that's basically it. should i give a fuck about a wasted int? is this entire document and the time spent writing it worth it???
+
+
+TODOoptimization: for broadcasts we don't need to send the message id. our stream operator should be custom if/else shit to see if we're a broadcast or not and then not stream the extra int (message id) if we're a broadcast
+^has nothing to do with my current problem (the reason for writing this doc)
+
+
+
+perhaps i can make an intermediate class that keeps the header around within IMessage (err, an inheritence of IMessage) JUST for the server side
+so they can still share IMessage, but only server has a IServerMessage : IMessage that adds a pointer to the header (and therefore the message id)
+this means headers will be on the heap and therefore slower. but it's roughly the same as if i put the message id in the imessage (heap), so w/e. just an int vs. struct in that case, but both on heap
+
+
+and it'd only apply to Actions... Broadcasts would have no message id. would they need to be streamed differently? i think yes. or i can just set message id to 0 and say fuck it
+
+should the broadcasts inherit IServerMessage?
+methinks no
+
+since it's all auto-generated code, it wouldn't matter much that broadcasts don't use a recycled header (can be stack alloc one) and actions do
+
+on the server, we should do:
+
+for actions:
+stream << IServerMessage->header();
+stream << IServerMessage;
+
+for broadcasts:
+stream << stackHeader;
+stream << IMessage;
+
+
+i guess that's the most elegant solution i can come up with. i'm probably overly optimizing at this point lawl
+none of the recycling code would need to change, we can still deal with IMessage directly when it's an IServerMessage
+
+
+OK PROBLEM (ish):
+on the server, reading in the message
+do we use a stack header and then copy the message id into the IServerMessage?
+this actually implies that we don't put the whole header in IServerMessage
+just the message id.
+so we would be doing a stack header for the sending again, just have to copy it back in
+
+so now it becomes
+
+//action response
+Header header;
+header.messageId = IServerMessage.messageId();
+stream << header;
+stream << IServerMessage;
+
+broadcasts:
+Header header;
+stream << header;
+stream << IMessage;
+
+
+eh there is more to setting up a message. you set the type and the size.. but yea that's the general idea...
+
+
+
+another random problem:
+IServerMessage is not shared, but IMessage is
+and then each ActionMessage IS shared, but inherits IServerMessage
+we can't have shared messages inherit a non-shared class
+unless we just say fuck it and make IServerMessage shared (even though it isn't)
+
+also, since each ActionMessage is shared directly, how do i make them inherit IServerMessage without making them not-shared?
+these aren't hard problems to hack my way past (just make the messages NOT shared lol)... but i want to do it right
+in fact this pretty much breaks everything i just wrote above. i can't have my actions inherit IServerMessage and be shared :(
+
+so basically i don't have a solution :(
+
+but as far as elegance is concerned, it sounds the best to have the message id in the header. just means i'd need to recycle it is all (not a big deal i hope). time to brainstorm while i touch myself

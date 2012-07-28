@@ -23,7 +23,9 @@ void BankServerClientTest::stop()
 }
 void BankServerClientTest::simulateCreateBankAccountAction()
 {
+    QMetaObject::invokeMethod(m_BankClient, "simulateCreateBankAccountAction", Qt::QueuedConnection);
 }
 void BankServerClientTest::simulateGetAddFundsKeyAction()
 {
+    QMetaObject::invokeMethod(m_BankClient, "simulateGetAddFundsKeyAction", Qt::QueuedConnection);
 }

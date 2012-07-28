@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 
+#include "ibankserverclientprotocolknower.h"
 #include "irpcbankserverclientbusiness.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"

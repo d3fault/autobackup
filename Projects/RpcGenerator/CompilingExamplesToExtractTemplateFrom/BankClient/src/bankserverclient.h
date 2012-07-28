@@ -10,10 +10,25 @@ public:
     BankServerClient();
     void instructBackendObjectsToClaimRelevantDispensers();
     void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
+    void connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam *signalEmitter);
+private:
+    //these dispensers will be in backend objects once i think of some..
+    CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
+    GetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 public slots:
     void init();
     void start();
     void stop();
+
+    //debug
+    void simulateCreateBankAccountAction();
+    void simulateGetAddFundsKeyAction();
+private slots:
+    void handleCreateBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage);
+    void handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage *getAddFundsKeyMessage);
+
+    void handlePendingBalanceDetected(PendingBalanceDetectedMessage *pendingBalanceDetectedMessage);
+    void handleConfirmedBalanceDetected(ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage);
 };
 
 #endif // BANKSERVERCLIENT_H

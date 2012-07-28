@@ -5,7 +5,7 @@
 
 #include <QObject>
 
-
+#include "iemitrpcbankserverbroadcastandactionresponsesignalswithmessageasparam.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
 
@@ -17,7 +17,7 @@ public:
     virtual void instructBackendObjectsToClaimRelevantDispensers()=0;
     virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()=0;
 
-    virtual void connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerSignalsWithMessageAsParam *signalEmitter)=0;
+    virtual void connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam *signalEmitter)=0;
 
     void setActionDispensers(RpcBankServerActionDispensers *actionDispensers);
 protected:
