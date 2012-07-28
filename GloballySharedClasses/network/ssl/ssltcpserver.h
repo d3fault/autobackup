@@ -35,7 +35,7 @@ private:
     QString m_ServerPrivateEncryptionKeyPassPhrase;
     QString m_ServerPublicLocalCertificateFile;
 protected:
-    virtual void incomingConnection(int handle);
+    void incomingConnection(int handle);
 signals:
     void d(const QString &);
     void clientConnectedAndEncrypted(QSslSocket *client);

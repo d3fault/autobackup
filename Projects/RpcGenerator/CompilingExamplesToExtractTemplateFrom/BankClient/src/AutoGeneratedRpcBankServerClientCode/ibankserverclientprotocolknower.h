@@ -42,6 +42,9 @@ signals:
     void started();
     void stopped();
 public slots:
+    virtual void init()=0;
+    virtual void start()=0;
+    virtual void stop()=0;
     //outgoing Action requests
     void createBankAccountDelivery();
     void getAddFundsKeyDelivery();

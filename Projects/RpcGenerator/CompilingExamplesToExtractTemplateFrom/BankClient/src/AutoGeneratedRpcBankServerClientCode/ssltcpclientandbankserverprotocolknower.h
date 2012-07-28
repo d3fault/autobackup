@@ -3,18 +3,24 @@
 
 #include "ibankserverclientprotocolknower.h"
 
-TODO LEFT OFF -- cant find my ssltcpclient shit. where did i copy ssltcpserver from again?? lol fuck it, going for a swim. made good progress today
+#include "network/ssl/ssltcpclient.h"
 
 class SslTcpClientAndBankServerProtocolKnower : public IBankServerClientProtocolKnower
 {
     Q_OBJECT
 public:
     explicit SslTcpClientAndBankServerProtocolKnower(QObject *parent = 0);
-
-signals:
-
+protected:
+    void myTransmit(IMessage *messaage);
+private:
+    SslTcpClient *m_SslTcpClient;
+private slots:
+    void handleConnectedAndEncrypted(QSslSocket *socket);
+    void handleMessageReceivedFromRpcServerOverNetwork();
 public slots:
-
+    void init();
+    void start();
+    void stop();
 };
 
 #endif // SSLTCPCLIENTANDBANKSERVERPROTOCOLKNOWER_H

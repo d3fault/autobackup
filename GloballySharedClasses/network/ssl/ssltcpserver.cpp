@@ -23,7 +23,13 @@ bool SslTcpServer::init()
         emit d("the server CA is null");
         return false;
     }
-    emit d("the server certificate is not null");
+    emit d("the server CA is not null");
+    if(!serverCA.isValid())
+    {
+        emit d("the server CA is not valid");
+        return false;
+    }
+    emit d("the server CA is valid");
 
     //Client CA is a list of certificates that the server uses to verify the authenticity of the clients. each client can use the same certificate, but for our purposes we're going to have each client having a unique certificate. it is how we will identify them.
     QFile clientCaFileResource(m_ClientCaFile);
@@ -38,6 +44,12 @@ bool SslTcpServer::init()
         return false;
     }
     emit d("client CA is not null");
+    if(!clientCA.isValid())
+    {
+        emit d("client CA is not valid");
+        return false;
+    }
+    emit d("client CA is valid");
 
     m_AllMyCertificateAuthorities.append(serverCA);
     m_AllMyCertificateAuthorities.append(clientCA);
@@ -67,7 +79,7 @@ bool SslTcpServer::init()
     serverPublicLocalCertificateFileResource.close();
 
     m_ServerPublicLocalCertificate = new QSslCertificate(serverPublicLocalCertificateByteArray);
-    if(m_ServerPublicLocalCertificate->isNull() /*TODO: also isValid?*/)
+    if(m_ServerPublicLocalCertificate->isNull())
     {
         emit d("server public local certificate is null");
         return false;
@@ -91,6 +103,7 @@ bool SslTcpServer::start()
 void SslTcpServer::stop()
 {
     this->close();
+    emit d("stopping ssl tcp server");
 }
 void SslTcpServer::incomingConnection(int handle)
 {

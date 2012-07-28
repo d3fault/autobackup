@@ -3,14 +3,11 @@
 #include "../../RpcBankServerAndClientShared/rpcbankserverheader.h"
 
 SslTcpServerAndBankServerProtocolKnower::SslTcpServerAndBankServerProtocolKnower(QObject *parent)
-    : IBankServerProtocolKnower(parent), m_SslTcpServer(0)
+    : IBankServerProtocolKnower(parent)
 {
-    if(!m_SslTcpServer)
-    {
-        m_SslTcpServer = new SslTcpServer(this, ":/serverCa.pem", ":/clientCa.pem", ":/serverPrivateEncryptionKey.pem", ":/serverPublicLocalCertificate.pem", "fuckyou" /* TODOopt: make it so when starting the server we are prompted for this passphrase. this way it is only ever stored in memory... which is an improvement but still not perfect */);
-        connect(m_SslTcpServer, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
-        connect(m_SslTcpServer, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleClientConnectedAndEncrypted(QSslSocket*)));
-    }
+    m_SslTcpServer = new SslTcpServer(this, ":/serverCa.pem", ":/clientCa.pem", ":/serverPrivateEncryptionKey.pem", ":/serverPublicLocalCertificate.pem", "fuckyou" /* TODOopt: make it so when starting the server we are prompted for this passphrase. this way it is only ever stored in memory... which is an improvement but still not perfect */);
+    connect(m_SslTcpServer, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+    connect(m_SslTcpServer, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleClientConnectedAndEncrypted(QSslSocket*)));
 }
 void SslTcpServerAndBankServerProtocolKnower::init()
 {
@@ -78,6 +75,7 @@ void SslTcpServerAndBankServerProtocolKnower::myTransmit(IMessage *message, uint
     //Action Responses + Broadcasts
 
     //TODOreq -- uniqueRpcClientId is 0 for broadcasts... and perhaps if the action broadcasts it's response?
+    //TODOreq: this isn't directly related to this method, but i need to make note of it somewhere. only one of the broadcast receivers should write the broadcast value to the db (assuming a shared-among-broadcast-receivers couchbase cluster)... so maybe that implies i should just broadcast to one client and then let him notify his siblings? or something? idfk
 
     //TODOreq: handle the case where none of broadcast's servers (clients) are online, nobody to send to wtf
 
