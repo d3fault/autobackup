@@ -12,7 +12,7 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032561
+Documents/minddump/:1386032572
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -23,7 +23,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032561
+Documents/minddump/dreams/:1386032572
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -77,6 +77,7 @@ Documents/minddump/asdljfasdfjasouiwarlkjsdfpasioufasjdflkoij.txt:1330950450
 Documents/minddump/asdlkfjwerouisfdlksajfasdfasdkfhsdfasfdkljweoriulfasjkf.txt:1339323819
 Documents/minddump/asfasdljfaslfjowieursakjfasdfjsladfjasdofiuawerlkjasfdljasdf.txt:1335804444
 Documents/minddump/asfdlaskjfowaeuralsdjfasdofusadfljsdfoasdfoiweryqwrkodfa.txt:1334824695
+Documents/minddump/asfdljasdofuwlerjsodfulwerkjsoafulkj.txt:1343505473
 Documents/minddump/asfkjsldfkjsouiwerlkjwerousdaflk.txt:1340448634
 Documents/minddump/asfljdsfljuweoruasldfkjsadfosuadflkjwerou.txt:1332366568
 Documents/minddump/asflkajsouweraoweiruasldkfjsadflkjouwerl.txt:1337329431
@@ -550,7 +551,7 @@ Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfilesystemwatcher2.h:13431312
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.cpp:1343124786
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.h:1343123172
 Projects/ForFun/QFileSystemWatcher2TestForFun/changes.to.existing.qfsw.main.class.txt:1343131983
-Projects/Ideas/:1343478547
+Projects/Ideas/:1343505042
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -718,6 +719,7 @@ Projects/Ideas/meh.didnt.get.very.far.with.this.but.the.seed.is.there.txt:132368
 Projects/Ideas/merge.to.a.place.of.truth.alfdjsadlfjasdl.txt:1328052708
 Projects/Ideas/meritocratic.agreement.of.what.a.document.is.ad.based.system.txt:1340273457
 Projects/Ideas/meritocratic.lie.proof.byte.network.txt:1325705926
+Projects/Ideas/minddump.gives.me.a.prior.work.to.point.to.in.case.someone.else.genuinely.comes.up.with.same.idea.and.tries.to.patent.it.txt:1343505042
 Projects/Ideas/motion.detected.keyboard.adlfkjsadfjaweoriusdflksjdfoult.txt:1339936076
 Projects/Ideas/music.timeline.save.time.pressed.ban.love.next.especially.the.next.part.and.tell.the.artist.txt:1342772760
 Projects/Ideas/network.grid.of.computers.that.each.0.or.1.represents.a.single.computer.or.group.of.computers.if.REALLY.important.OR.bandwidth.intensive.txt:1322071181
@@ -1260,9 +1262,10 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndCli
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1342883715
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1342606724
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1342611815
-Projects/RpcGenerator/design/:1343504191
+Projects/RpcGenerator/design/:1343509399
 Projects/RpcGenerator/design/delivery.Overview.dia:1343473655
 Projects/RpcGenerator/design/header.messge.id.or.imessage.message.id.client.vs.server.differences.etc.txt:1343504191
+Projects/RpcGenerator/design/keep.pending.requests.client.side.in.case.of.connection.drop.at.the.very.least.txt:1343509399
 Projects/RpcGenerator/design/unsure.still.how.to.do.client.matching.but.know.i.want.rpc.server.impl.to.be.oblivious.of.neighboring.rpc.server.impls.in.their.own.vbuckets.txt:1342609839
 Projects/RpcGenerator/i.think.this.is.a.one.night.project.that.will.be.used.for.the.rest.of.my.life.txt:1342608099
 Projects/WebsiteAutomator/:1320055392
@@ -1387,7 +1390,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032561
+Projects/libAvGraphicsItem2/design/:1386032572
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1576,7 +1579,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1343504214
+autobackupScripts/win/.directory:1343513771
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

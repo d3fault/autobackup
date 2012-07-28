@@ -1,0 +1,1 @@
+i should still keep the pending requests on the client side (even if i don't do conflict resolution client side because of what i wrote earlier about it being easier to do on server) because there is no way to tell if a connection has dropped and keeping it until i get a response is a good way to make sure every request makes it across the network
