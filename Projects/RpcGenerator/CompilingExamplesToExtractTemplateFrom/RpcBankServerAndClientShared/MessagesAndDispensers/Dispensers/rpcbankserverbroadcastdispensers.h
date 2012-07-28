@@ -15,6 +15,7 @@ public:
     bool everyDispenserIsCreated();
 private:
     QObject *m_Destination;
+
     PendingBalanceDetectedMessageDispenser *m_PendingBalanceDetectedMessageDispenser;
     ConfirmedBalanceDetectedMessageDispenser *m_ConfirmedBalanceDetectedMessageDispenser;
 };

@@ -23,6 +23,7 @@ public:
     RpcBankServerActionDispensers(QObject *destination);
     CreateBankAccountMessageDispenser *takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner);
     GetAddFundsKeyMessageDispenser *takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(QObject *owner);
+    bool everyDispenserIsCreated();
 private:
     QObject *m_Destination;
 

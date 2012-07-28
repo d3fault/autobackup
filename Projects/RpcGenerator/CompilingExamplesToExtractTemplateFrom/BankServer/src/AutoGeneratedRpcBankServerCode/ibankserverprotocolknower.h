@@ -22,8 +22,8 @@ public:
     void takeOwnershipOfActionsAndSetupDelivery();
 private:
     RpcBankServerActionDispensers *m_RpcBankServerActionDispensers;
-    QHash<CreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByCreateBankAccountMessagePointer;
-    QHash<GetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByGetAddFundsKeyMessagePointer;
+    QHash<CreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer;
+    QHash<GetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer;
 protected:
     CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     GetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;

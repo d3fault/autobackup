@@ -17,7 +17,7 @@ public:
     virtual void instructBackendObjectsToClaimRelevantDispensers()=0;
     virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()=0;
 
-    virtual void connectRpcBankServerSignalsToBankClientImplSlots(IEmitRpcBankServerSignalsWithMessageAsParam *signalEmitter)=0;
+    virtual void connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerSignalsWithMessageAsParam *signalEmitter)=0;
 
     void setActionDispensers(RpcBankServerActionDispensers *actionDispensers);
 protected:

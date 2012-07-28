@@ -3,7 +3,7 @@
 
 #include "ibankserverprotocolknower.h"
 
-#include "ssltcpserver.h"
+#include "network/ssl/ssltcpserver.h"
 
 class SslTcpServerAndBankServerProtocolKnower : public IBankServerProtocolKnower
 {

@@ -1,0 +1,10 @@
+or maybe i could/should release Rpc Generator under LGPL and just put an ABC ad on every page
+make a full fledged community
+
+might be worth it for the ads
+
+and i could sell commercial licenses of course... (same way Qt does)
+....which means i'd need a CLA
+fuck.
+
+i hate CLAs

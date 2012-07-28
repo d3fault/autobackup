@@ -14,7 +14,7 @@ void IBankServerProtocolKnower::takeOwnershipOfActionsAndSetupDelivery()
 }
 void IBankServerProtocolKnower::processCreateBankAccountMessage(CreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId)
 {
-    m_UniqueRpcClientIdsByCreateBankAccountMessagePointer.insert(createBankAccountMessage, uniqueRpcClientId);
+    m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.insert(createBankAccountMessage, uniqueRpcClientId);
 
     //TODOreq: perhaps check the list already by value to see if we're already working on the same request?
     //if we are, it still might fail and then we should process this one. so i need to atomically access a list in that case, a list of "pendingCollissionsAwaitingFinalizatioin"
@@ -26,7 +26,7 @@ void IBankServerProtocolKnower::processCreateBankAccountMessage(CreateBankAccoun
 }
 void IBankServerProtocolKnower::processGetAddFundsKeyMessage(GetAddFundsKeyMessage *getAddFundsKeyMessage, uint uniqueRpcClientId)
 {
-    m_UniqueRpcClientIdsByGetAddFundsKeyMessagePointer.insert(getAddFundsKeyMessage, uniqueRpcClientId);
+    m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer.insert(getAddFundsKeyMessage, uniqueRpcClientId);
     emit getAddFundsKey(getAddFundsKeyMessage);
 }
 void IBankServerProtocolKnower::createBankAccountDelivery()
@@ -36,7 +36,7 @@ void IBankServerProtocolKnower::createBankAccountDelivery()
     //so these transmits right now make it APPEAR i should just connect every .deliverSignal() to a single slot... but for keeping track of pending messages (which i have yet to do), that will turn out not to be the case
 
     CreateBankAccountMessage *createBankAccountMessage = static_cast<CreateBankAccountMessage*>(sender());
-    uint uniqueRpcClientId = m_UniqueRpcClientIdsByCreateBankAccountMessagePointer.take(createBankAccountMessage);
+    uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.take(createBankAccountMessage);
     myTransmit(createBankAccountMessage, uniqueRpcClientId);
     createBankAccountMessage->doneWithMessage();
 
@@ -45,7 +45,7 @@ void IBankServerProtocolKnower::createBankAccountDelivery()
 void IBankServerProtocolKnower::getAddFundsKeyDelivery()
 {
     GetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<GetAddFundsKeyMessage*>(sender());
-    uint uniqueRpcClientId = m_UniqueRpcClientIdsByGetAddFundsKeyMessagePointer.take(getAddFundsKeyMessage);
+    uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer.take(getAddFundsKeyMessage);
     myTransmit(getAddFundsKeyMessage, uniqueRpcClientId);
     getAddFundsKeyMessage->doneWithMessage();
 }
