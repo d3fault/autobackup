@@ -12,7 +12,7 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032595
+Documents/minddump/:1386032607
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -23,7 +23,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032595
+Documents/minddump/dreams/:1386032607
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -166,6 +166,7 @@ Documents/minddump/fasdjfoasdfjosdafujlsakfjasofusdfpsakhfasfj.txt:1331275933
 Documents/minddump/fasdklfjowaurlasjdfowuerl.txt:1343559301
 Documents/minddump/fasdlfjasodfuaspfjwerlkjsadfouyioyasfjsdaflkjer.txt:1331627151
 Documents/minddump/fasdlfjoaweursldjfksadofusaldfjsadofupyuasdfsdfoiuer.txt:1326305895
+Documents/minddump/fasdlfkjawoerulsdfjaowruwaljsafioyasdfksah.txt:1343566421
 Documents/minddump/fasdlfkjweorusalfkjasofusiofyasidfuwerlkjsoi.txt:1337505553
 Documents/minddump/fasfdsdklfjsdfouwelkrjsdfoiusdfkjwer.txt:1338992844
 Documents/minddump/fasjkflasdjfoweurjflsdfhsdofysaihasj.txt:1338547645
@@ -556,7 +557,7 @@ Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfilesystemwatcher2.h:13431312
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.cpp:1343124786
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.h:1343123172
 Projects/ForFun/QFileSystemWatcher2TestForFun/changes.to.existing.qfsw.main.class.txt:1343131983
-Projects/Ideas/:1343535309
+Projects/Ideas/:1343566007
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -621,6 +622,7 @@ Projects/Ideas/Typedia.like.dinosaur.alphabet.game.but.fed.words.by.wikipedia.li
 Projects/Ideas/Typedia.used.for.arduino.fingers.abc.training.too.txt:1337812366
 Projects/Ideas/a.goal.in.life.can.be.based.purely.on.childish.fun.txt:1340468796
 Projects/Ideas/a.typical.bitcoin.transaction.chatlog.txt:1328236830
+Projects/Ideas/abcdefault.can.be.kid.friendly.tagged.d3fault.segments.or.anything.really.badass.name.domain.txt:1343565735
 Projects/Ideas/abstract.and.use.gpg.to.have.web.of.trust.functionality.without.hardly.any.coding.txt:1339936405
 Projects/Ideas/actually.considering.forking.qt.youve.got.balls.my.friend.fuck.nokia.and.long.live.free.software.wouldnt.be.able.to.without.txt:1339679135
 Projects/Ideas/ad.based.videogame.would.be.good.place.to.use.ad.agency.txt:1330720584
@@ -661,6 +663,7 @@ Projects/Ideas/d3fault.each.node.should.be.a.compute.thread.in.openCL.txt:132260
 Projects/Ideas/d3fault.encryption.layer.is.foreverfilesystem.txt:1325624171
 Projects/Ideas/d3fault.patch.forcing.for.trusted.servers.txt:1337300965
 Projects/Ideas/d3fault.simplified.simulatable.git.reference.point.txt:1341613674
+Projects/Ideas/d3fault.tagging.read.this.before.launching.or.after.idk.but.read.before.doing.tags.txt:1343566007
 Projects/Ideas/deciding.whether.its.an.idea.or.a.minddump.is.becoming.a.pain.in.the.ass.txt:1338001535
 Projects/Ideas/default.gui.view.of.d3fault.needs.to.be.on.a.d3fault.update.channel.for.the.category.gui.and.they.can.branch.off.by.modifying.txt:1337887396
 Projects/Ideas/defined.set.of.verify.or.auth.procedures.that.are.predictably.randomly.iterated.based.on.first.announce.video.as.seed.txt:1337987678
@@ -1269,8 +1272,9 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndCli
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1342883715
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1342606724
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1342611815
-Projects/RpcGenerator/design/:1343509399
+Projects/RpcGenerator/design/:1343565701
 Projects/RpcGenerator/design/delivery.Overview.dia:1343473655
+Projects/RpcGenerator/design/figured.out.how.to.do.header.message.id.and.message.type.stuff.now.onto.implementing.woot.txt:1343565701
 Projects/RpcGenerator/design/header.messge.id.or.imessage.message.id.client.vs.server.differences.etc.txt:1343504191
 Projects/RpcGenerator/design/keep.pending.requests.client.side.in.case.of.connection.drop.at.the.very.least.txt:1343509399
 Projects/RpcGenerator/design/unsure.still.how.to.do.client.matching.but.know.i.want.rpc.server.impl.to.be.oblivious.of.neighboring.rpc.server.impls.in.their.own.vbuckets.txt:1342609839
@@ -1397,7 +1401,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032595
+Projects/libAvGraphicsItem2/design/:1386032607
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1587,7 +1591,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1343562397
+autobackupScripts/win/.directory:1343566728
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

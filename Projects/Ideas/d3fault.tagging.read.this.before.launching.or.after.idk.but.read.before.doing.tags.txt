@@ -1,0 +1,21 @@
+re: abcdefault.can.be.kid... in Ideas folder
+
+the shit about tags
+i want to elaborate on it and put it in it's own file
+
+well i mean i don't have anything much to say about it
+
+but basically it's a different version of the same problem you've already encountered numerous times (with respect to a video as a document and an individual frame being a document also????)
+
+
+the problem defined:
+1) i need to be able to tag a segment of a video that i am recording live as "kid friendly" (or ANY tag, that's just one of) without stopping the video. only the time that i started tagging and then stopped is recorded or something idfk
+2) entire documents can be tagged too
+
+
+
+kind of reminds me of chicken and egg problem... except yea i don't know if that applies. fuggit
+
+
+i'm trying to sit here and brainstorm ideas
+but i don't have nearly enough infrastructure in place to know how to deal with it.

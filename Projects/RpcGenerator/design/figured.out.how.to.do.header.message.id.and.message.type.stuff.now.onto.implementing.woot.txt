@@ -1,0 +1,8 @@
+decided to put type and messageId in IMessage
+the only part that needs special handling is the client receiving
+since we have the IMessage STORED (by type and message), we will allocate the type and message on the stack
+
+then look up the associated IMessage
+it's cheap and it works
+
+server is easy
