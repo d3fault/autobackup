@@ -110,5 +110,5 @@ void SslTcpClientAndBankServerProtocolKnower::myTransmit(IMessage *message)
 {
     QDataStream stream(m_SslTcpClient);
     stream << message->Header;
-    stream << message;
+    stream << *message;
 }

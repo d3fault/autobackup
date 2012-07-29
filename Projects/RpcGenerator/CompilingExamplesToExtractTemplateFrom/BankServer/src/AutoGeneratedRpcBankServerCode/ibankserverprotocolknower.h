@@ -29,6 +29,7 @@ protected:
     GetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 
     virtual void myTransmit(IMessage *message, uint uniqueRpcClientId)=0;
+    virtual void myBroadcast(IMessage *message)=0;
 
     //we only have process* classes for Action requests
     void processCreateBankAccountMessage(CreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId);

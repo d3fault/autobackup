@@ -12,6 +12,7 @@ public:
     explicit SslTcpServerAndBankServerProtocolKnower(QObject *parent = 0);
 protected:
     void myTransmit(IMessage *message, uint uniqueRpcClientId);
+    void myBroadcast(IMessage *message);
 private:
     SslTcpServer *m_SslTcpServer;
 private slots:

@@ -7,6 +7,7 @@
 #include <QtNetwork/QSslKey>
 #include <QQueue>
 #include <QHash>
+#include <QList>
 #include <QFile>
 
 /*
@@ -34,6 +35,7 @@ public:
     virtual QTcpSocket *nextPendingConnection();
     static uint getClientUniqueId(QSslSocket *client);
     QSslSocket *getSocketByUniqueId(uint uniqueId);
+    QList<uint> getAllConnectedUniqueIds();
     bool init();
     bool start();
     void stop();

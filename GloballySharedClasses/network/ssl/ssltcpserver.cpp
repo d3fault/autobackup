@@ -210,3 +210,7 @@ QSslSocket *SslTcpServer::getSocketByUniqueId(uint uniqueId)
 {
     return m_EncryptedSocketsBySerialNumber.value(uniqueId);
 }
+QList<uint> SslTcpServer::getAllConnectedUniqueIds()
+{
+    return m_EncryptedSocketsBySerialNumber.keys();
+}

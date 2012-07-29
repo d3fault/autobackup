@@ -27,7 +27,9 @@ void BankServerTest::stop()
 }
 void BankServerTest::simulatePendingBalanceDetectedBroadcast()
 {
+    QMetaObject::invokeMethod(m_BankServer, "simulatePendingBalanceDetectedBroadcast", Qt::QueuedConnection);
 }
 void BankServerTest::simulateConfirmedBalanceDetectedBroadcast()
 {
+    QMetaObject::invokeMethod(m_BankServer, "simulateConfirmedBalanceDetectedBroadcast", Qt::QueuedConnection);
 }

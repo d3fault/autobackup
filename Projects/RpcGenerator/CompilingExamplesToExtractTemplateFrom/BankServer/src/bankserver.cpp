@@ -69,3 +69,11 @@ void BankServer::stop()
     emit d("BankServer received stop message");
     QMetaObject::invokeMethod(m_Bitcoin, "stop", Qt::QueuedConnection);
 }
+void BankServer::simulatePendingBalanceDetectedBroadcast()
+{
+    QMetaObject::invokeMethod(m_Bitcoin, "simulatePendingBalanceDetectedBroadcast", Qt::QueuedConnection);
+}
+void BankServer::simulateConfirmedBalanceDetectedBroadcast()
+{
+    QMetaObject::invokeMethod(m_Bitcoin, "simulateConfirmedBalanceDetectedBroadcast", Qt::QueuedConnection);
+}

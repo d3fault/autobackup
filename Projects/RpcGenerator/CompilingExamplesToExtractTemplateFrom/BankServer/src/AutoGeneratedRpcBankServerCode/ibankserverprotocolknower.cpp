@@ -52,14 +52,21 @@ void IBankServerProtocolKnower::getAddFundsKeyDelivery()
 void IBankServerProtocolKnower::pendingBalanceDetectedDelivery()
 {
     PendingBalanceDetectedMessage *pendingBalanceDetectedMessage = static_cast<PendingBalanceDetectedMessage*>(sender());
-    myTransmit(pendingBalanceDetectedMessage, 0);
+    pendingBalanceDetectedMessage->Header.MessageType = RpcBankServerHeader::PendingBalanceDetectedMessageType;
+    pendingBalanceDetectedMessage->Header.MessageId = 0;
+    emit d(QString("pending balance detected delivery received, about to broadcast it. user: ") + pendingBalanceDetectedMessage->Username);
+    //myTransmit(pendingBalanceDetectedMessage, 0);
+    myBroadcast(pendingBalanceDetectedMessage);
     //there is no pending queue because we are not 'responding' to anyone
     pendingBalanceDetectedMessage->doneWithMessage();
 }
 void IBankServerProtocolKnower::confirmedBalanceDetectedDelivery()
 {
     ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = static_cast<ConfirmedBalanceDetectedMessage*>(sender());
-    myTransmit(confirmedBalanceDetectedMessage, 0);
+    confirmedBalanceDetectedMessage->Header.MessageType = RpcBankServerHeader::ConfirmedBalanceDetectedMessageType;
+    confirmedBalanceDetectedMessage->Header.MessageId = 0;
+    //myTransmit(confirmedBalanceDetectedMessage, 0);
+    myBroadcast(confirmedBalanceDetectedMessage);
     confirmedBalanceDetectedMessage->doneWithMessage();
 }
 void IBankServerProtocolKnower::createBankAccountFailedUsernameAlreadyExists()

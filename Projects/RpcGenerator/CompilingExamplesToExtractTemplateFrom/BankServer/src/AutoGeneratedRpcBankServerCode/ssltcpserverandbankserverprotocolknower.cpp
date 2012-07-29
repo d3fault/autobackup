@@ -91,10 +91,12 @@ void SslTcpServerAndBankServerProtocolKnower::myTransmit(IMessage *message, uint
 
     //TODOreq: handle the case where none of broadcast's servers (clients) are online, nobody to send to wtf
 
+
     QSslSocket *socket = m_SslTcpServer->getSocketByUniqueId(uniqueRpcClientId);
     QDataStream stream(socket);
     stream << message->Header;
-    stream << message;
+    stream << *message;
+
 
     //TODOreq: stream the header first, most importantly, the size. actually size isn't that important i can probably disregard it. qt puts it in for me whenever needed lol
     //to get that enum, we could keep the header around
@@ -102,4 +104,17 @@ void SslTcpServerAndBankServerProtocolKnower::myTransmit(IMessage *message, uint
     //the enum IS the header..
     //i could store it in IMessage and just stream it in/out right before my pure virtual streamIn/streamOut inherited class calls
     //same with the uniqueClientId... saves me from having to look it up later (i look up the client id so i can look up the socket, 2 lookups. there would only be one if i do what this comment says. and there would be equal data storage. it's just faster/better to put uniqueClient in IMessage. and might as well do the header enum too... ??? may need to sleep on this...)
+}
+void SslTcpServerAndBankServerProtocolKnower::myBroadcast(IMessage *message)
+{
+    //broadcast
+    QList<uint> allConnectedClients = m_SslTcpServer->getAllConnectedUniqueIds();
+    QListIterator<uint> it(allConnectedClients);
+    uint clientId;
+    while(it.hasNext())
+    {
+        clientId = it.next();
+        emit d(QString("broadcasting a message to clientId: ") + QString::number(clientId));
+        myTransmit(message, clientId);
+    }
 }

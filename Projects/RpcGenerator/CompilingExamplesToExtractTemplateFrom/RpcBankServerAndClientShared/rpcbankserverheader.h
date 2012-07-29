@@ -28,6 +28,7 @@ inline QDataStream &operator>>(QDataStream &in, RpcBankServerHeader &message)
 }
 inline QDataStream &operator<<(QDataStream &out, const RpcBankServerHeader &message)
 {
+    //TODOoptimization: we could detect a broadcast by seeing if messageId is 0 and then not streaming out the message id. but it means on the client i'd have to receive the header in 2 stages (figure out if it's a broadcast or not and then get the message id if applicable). not worth it imo... (also you'd have to change the order of them, but that's given)
     out << message.MessageId;
     out << message.MessageType;
     return out;

@@ -28,6 +28,10 @@ public slots:
     void init();
     void start();
     void stop();
+
+    //debug
+    void simulatePendingBalanceDetectedBroadcast();
+    void simulateConfirmedBalanceDetectedBroadcast();
 };
 
 #endif // BANKSERVER_H
