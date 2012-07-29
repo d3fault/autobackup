@@ -1,0 +1,4 @@
+mount = mounts <-- never needs to be called. also we do not mount at startup anymore. i should use Qt to interact with Truecrypt. i am more comfortable with it and can check it's return results easier. i suck at bash. and i will also have a place to store the state "mounted" (but this wouldn't be synchronized if i opened truecrypt and dismounted one (so maybe i check when auto-committing?? todo: see if there's a command to check if certain shit is mounted?))
+auto-commit script = if not mounted, mount. if mount fails, error. after mount, auto-sync
+dismount = dismount
+shutdown script = auto-commit if pending changes. if fails, error. after auto-commit, dismount then shutdown

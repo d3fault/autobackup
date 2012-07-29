@@ -1,0 +1,27 @@
+i was laying on my bed listening to music and beating my feet to the music
+i've thought of this before, but never finalized how it'd be done
+now i got it
+
+my range is merely further when laying down, but i can be sitting and tapping my foot (either ball of foot or heal, both work)
+
+anyways, onto implementation:
+
+black band velcro shit wrapped around each shin with hook/loop on front
+
+
+same type of potentiometer (linear slider) as with fingers, but longer because my foot has more range than my fingers
+only the top half of the potentiometer is attached to the hook
+the bottom half sways or whatever sort of
+the slider itself (the thing that moves) has a spring going back to the black strap (just like fingers) and a regular string extending outward toward my toe, which it ties around
+
+that's pretty much it
+i beat my feet, and the string is pulled
+there might need to be a stabilization thing (???????????) on the bottom of the potentiometer, but i am unsure about this
+
+
+holy fucking shit man stop fucking around with ABC/RPC and god damnit fucking launch already
+
+it's worth it just so you can use this shit for music making
+seriously, everything else aside, i just want to make music :(
+
+coding while mobile is a huge bonus too. fuck this chair.

@@ -12,7 +12,7 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032572
+Documents/minddump/:1386032584
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -23,7 +23,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032572
+Documents/minddump/dreams/:1386032584
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -81,6 +81,7 @@ Documents/minddump/asfdljasdofuwlerjsodfulwerkjsoafulkj.txt:1343505473
 Documents/minddump/asfkjsldfkjsouiwerlkjwerousdaflk.txt:1340448634
 Documents/minddump/asfljdsfljuweoruasldfkjsadfosuadflkjwerou.txt:1332366568
 Documents/minddump/asflkajsouweraoweiruasldkfjsadflkjouwerl.txt:1337329431
+Documents/minddump/asflkjwaoerusadlfkjawoeruasldfkjaoulkjsaifoweriou.txt:1343535023
 Documents/minddump/asfowiurlaskfjowiurlksfjlkwroiuasflkjweroiu.txt:1339487566
 Documents/minddump/asfsalkjfweoruisladkfjsadfiusadofiwuerlkwaroiusaflkjweoriulk.txt:1342232591
 Documents/minddump/asjdflaskfjwoiufsdlkjweroiusaflkjeroult.txt:1339319274
@@ -377,6 +378,7 @@ Documents/minddump/sdlkjfwoeriusadflkjasfdjlksadhsfdkl.txt:1338993015
 Documents/minddump/secure.and.secret.are.boolean.attributes.there.is.no.semi.txt:1324814637
 Documents/minddump/self.punishment.to.give.incentive.to.code.FASTER.you.are.wasting.life.txt:1339936494
 Documents/minddump/semi.dream.weird.idfk.ajsdfljfouwrojasfljasfouawfjsadfojawrouwaeroiusdflkj.txt:1343315384
+Documents/minddump/seriously.NEED.to.launch.or.else.i.have.wasted.a.life.txt:1343532413
 Documents/minddump/sfalkfjsoiusdflwejrlskafjsadfoiuwerlkj.txt:1339936418
 Documents/minddump/sfaslkfjsdofuwarklkfjsdoul.txt:1323504970
 Documents/minddump/sfdlkwejroiusdflkjawfsdopfsudflskjdoiuwerl.txt:1339058790
@@ -551,7 +553,7 @@ Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfilesystemwatcher2.h:13431312
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.cpp:1343124786
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.h:1343123172
 Projects/ForFun/QFileSystemWatcher2TestForFun/changes.to.existing.qfsw.main.class.txt:1343131983
-Projects/Ideas/:1343505042
+Projects/Ideas/:1343535309
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -678,6 +680,7 @@ Projects/Ideas/fingers.music.making.24x7.even.while.coding.until.i.grow.gills.tx
 Projects/Ideas/flip.a.coin.to.decide.future.gender.rofl.asdlfjasdfoiuwerlakjoiuerou.txt:1334400060
 Projects/Ideas/forever.filesystem.txt:1322679153
 Projects/Ideas/fork-without-forking.change.channels.but.same.network.distribution.generation.configuration.tool.thingo.txt:1338776799
+Projects/Ideas/fuck.last.fm.for.not.tagging.remixes.properly.i.need.to.supersede.it.as.well.as.many.other.things.on.the.net.txt:1343535309
 Projects/Ideas/giant.monitor.and.giant.backpack.sounds.like.a.giant.back.ache.txt:1325708881
 Projects/Ideas/gifting.abc.dance.channel.to.caydon.or.to.anyone.really.costs.me.zilch.txt:1339126384
 Projects/Ideas/global.diff.falskjfaourelasjdf.txt:1325705909
@@ -794,9 +797,10 @@ Projects/OptionallySecureAsFuckBitcoinBankServer/:1331099023
 Projects/OptionallySecureAsFuckBitcoinBankServer/design/:1331099803
 Projects/OptionallySecureAsFuckBitcoinBankServer/design/initial.design.2.ok.i.think.i.figured.out.how.to.do.balance.transfers.securely.w0000t.presign.permission.to.transfer.a.balance.txt:1331099803
 Projects/OptionallySecureAsFuckBitcoinBankServer/design/initial.design.but.eh.i.think.this.is.actually.insecure.unless.i.can.figure.out.balance.transfers.txt:1331099050
-Projects/ProjectGoOutside/:1341829441
+Projects/ProjectGoOutside/:1343531755
 Projects/ProjectGoOutside/aOS.implementation.of.it.using.fingers.input.and.audio.output.feedback.i.shouldnt.limit.it.to.audio.but.need.to.integrate.audio.physical.and.visual.feedbacks.together.and.exclusively.txt:1329915980
 Projects/ProjectGoOutside/do.it.for.the.live.not.the.money.but.skip.dht.version.of.app.store.its.too.much.of.a.longshot.but.MAYBE.LATER.txt:1329935156
+Projects/ProjectGoOutside/foot.implementation.of.fingers.similar.shit.alfjasdfoiwerlj.txt:1343531755
 Projects/ProjectGoOutside/haha.initial.design.shits.idfk.but.go.outside.the.two.Os.dont.like.each.other.in.domain.choosing.txt:1328601337
 Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge.deal.to.me.also.i.should.not.neglect.these.ideas.txt:1329935001
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
@@ -1390,7 +1394,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032572
+Projects/libAvGraphicsItem2/design/:1386032584
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1559,7 +1563,7 @@ Solutions/BlueBox/A Suitable Video Player/:1325623733
 Solutions/BlueBox/Bitcoin Ad Agency/:1325623706
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1325623915
 autobackupScripts/:1321106464
-autobackupScripts/linux/:1337998869
+autobackupScripts/linux/:1343536975
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -1568,6 +1572,7 @@ autobackupScripts/linux/LiveCDinstallAndConfigExtra/keepassx.config.ini:13380747
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/vagalume-config.xml:1337881282
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
+autobackupScripts/linux/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
 autobackupScripts/linux/dismount.2x.750gb.drives.sh:1321491794
 autobackupScripts/linux/droid.backup.and.shred.sh:1336416161
 autobackupScripts/linux/droid.conversationBackup.pull.zip.and.shred.sh:1333202549
@@ -1579,7 +1584,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1343513771
+autobackupScripts/win/.directory:1343536980
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
