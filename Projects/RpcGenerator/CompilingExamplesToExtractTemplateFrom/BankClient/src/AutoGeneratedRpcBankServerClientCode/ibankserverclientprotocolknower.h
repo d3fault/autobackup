@@ -21,6 +21,8 @@ public:
     void setBroadcastDispensers(RpcBankServerBroadcastDispensers *rpcBankServerBroadcastDispensers);
     void takeOwnershipOfBroadcastsAndSetupDelivery();
 private:
+    uint m_MessageIdCounter;
+    uint getUniqueMessageId();
     RpcBankServerBroadcastDispensers *m_RpcBankServerBroadcastDispensers;
 #if 0
     too lazy to re-read these comments but i did change from list to hash as predicted

@@ -1,7 +1,7 @@
 #include "ibankserverclientprotocolknower.h"
 
 IBankServerClientProtocolKnower::IBankServerClientProtocolKnower(QObject *parent) :
-    IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam(parent)
+    IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam(parent), m_MessageIdCounter(0)
 { }
 void IBankServerClientProtocolKnower::setBroadcastDispensers(RpcBankServerBroadcastDispensers *rpcBankServerBroadcastDispensers)
 {
@@ -44,6 +44,9 @@ void IBankServerClientProtocolKnower::processGetAddFundsKeyResponseReceived(GetA
 void IBankServerClientProtocolKnower::createBankAccountDelivery()
 {
     CreateBankAccountMessage *createBankAccountMessage = static_cast<CreateBankAccountMessage*>(sender());
+    //TODOoptimization: perhaps use friend class shit to hide the Header from the user? right now it's just public. ESPECIALLY since they can access the header (right after .getNewOrRecycled()) and before it is even set (right here)
+    createBankAccountMessage->Header.MessageId = getUniqueMessageId();
+    createBankAccountMessage->Header.MessageType = RpcBankServerHeader::CreateBankAccountMessageType;
     //TODOreq: checking conflicting pending
     m_PendingCreateBankAccountMessagesById.insert(createBankAccountMessage->Header.MessageId, createBankAccountMessage);
     myTransmit(createBankAccountMessage);
@@ -54,6 +57,8 @@ void IBankServerClientProtocolKnower::createBankAccountDelivery()
 void IBankServerClientProtocolKnower::getAddFundsKeyDelivery()
 {
     GetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<GetAddFundsKeyMessage*>(sender());
+    getAddFundsKeyMessage->Header.MessageId = getUniqueMessageId();
+    getAddFundsKeyMessage->Header.MessageType = RpcBankServerHeader::GetAddFundsKeyMessageType;
     //conflict resolution
     m_PendingGetAddFundsKeyMessagesById.insert(getAddFundsKeyMessage->Header.MessageId, getAddFundsKeyMessage);
     myTransmit(getAddFundsKeyMessage);
@@ -85,4 +90,10 @@ GetAddFundsKeyMessage *IBankServerClientProtocolKnower::getPendingGetAddFundsKey
     if(getAddFundsKeyMessage)
         m_PendingGetAddFundsKeyMessagesById.remove(messageId);
     return getAddFundsKeyMessage;
+}
+uint IBankServerClientProtocolKnower::getUniqueMessageId()
+{
+    return ++m_MessageIdCounter; //TODOreq: use better message id mechanism... like a hash or something. for now/testing, simple increment shit is good enough :-P. and also, right now we DON'T re-use a message id... but actually we probably can (so long as the message id has already been returned from pending, ya know?). doesn't mean we should (but that doesn't mean we shouldn't. i simply do not know)
+    //our current method will overflow :-/ -- though i doubt it will happen while testing (in production it surely would)
+    //maybe a hash (md5/sha1/crc32) of the current timestamp + the message pointer as an int concatenated? that would solve dupes problem fo sho
 }

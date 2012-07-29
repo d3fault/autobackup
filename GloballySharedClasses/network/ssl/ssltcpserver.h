@@ -9,6 +9,23 @@
 #include <QHash>
 #include <QFile>
 
+/*
+To Generate All Server CA Stuff:
+
+use /etc/pki/tls/misc/CA script to generate the CA, the cert/private-key, and then sign the cert with the CA.
+
+I personally recommend doing this in a VM because the CA script integrates too tightly with your system. I set a checkpoint and roll back each time after manually copying the files out
+
+./CA -newca
+./CA -newreq
+./CA -sign
+
+then put the CA on both the server/client -- it's like their authentication list
+and the cert/private-key on the server only
+
+If you want 2-way authentication (stronger), give the client it's own CA. the process is [additionally] reversed and both sides then have 2 CA certs. their own and their peer's
+*/
+
 class SslTcpServer : public QTcpServer
 {
     Q_OBJECT

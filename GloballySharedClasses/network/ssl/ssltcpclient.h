@@ -7,6 +7,21 @@
 #include <QList>
 #include <QFile>
 
+/*
+To Generate All Client CA Stuff (not needed if you only want regular one-way HTTPS-like encryption):
+
+use /etc/pki/tls/misc/CA script to generate the CA, the cert/private-key, and then sign the cert with the CA.
+
+I personally recommend doing this in a VM because the CA script integrates too tightly with your system. I set a checkpoint and roll back each time after manually copying the files out
+
+./CA -newca
+./CA -newreq
+./CA -sign
+
+then put the CA on both the server/client -- it's like their authentication list
+and the cert/private-key on the client only
+*/
+
 class SslTcpClient : public QSslSocket
 {
     Q_OBJECT

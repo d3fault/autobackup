@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource>
+	<file>../../../../RpcBankServerAndClientShared/SslCAs/RpcBankServerCA.pem</file>
+	<file>../../../../RpcBankServerAndClientShared/SslCAs/RpcBankServerClientCA.pem</file>
+	<file>RpcBankServerPrivateKey.pem</file>
+	<file>RpcBankServerPublicCert.pem</file>
+    </qresource>
+</RCC>

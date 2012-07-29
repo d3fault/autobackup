@@ -8,7 +8,7 @@ RpcBankServerHelper::RpcBankServerHelper(IRpcBankServerClientBusiness *rpcBankSe
     m_Transporter = new SslTcpClientAndBankServerProtocolKnower();
 
     m_ActionDispensers = new RpcBankServerActionDispensers(m_Transporter);
-    m_BroadcastDispensers = new RpcBankServerBroadcastDispensers(m_Transporter);
+    m_BroadcastDispensers = new RpcBankServerBroadcastDispensers(m_Transporter); //we (client) don't need a destination, but since it's shared code with the server we just deal with it and make our destination forward to recycling
 
     m_RpcBankServerClient->setActionDispensers(m_ActionDispensers);
     m_Transporter->setBroadcastDispensers(m_BroadcastDispensers);
