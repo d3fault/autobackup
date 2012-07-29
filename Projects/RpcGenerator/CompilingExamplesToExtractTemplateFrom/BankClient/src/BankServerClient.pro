@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.cpp \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.cpp \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessage.cpp \
-    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/confirmedbalancedetectedmessage.cpp \
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/confirmedbalancedetectedmessage.cpp \    
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/imessagedispenser.cpp \
     ../../../../../GloballySharedClasses/idebuggablestartablestoppablefrontend.cpp \
     ../../../../../GloballySharedClasses/network/ssl/ssltcpclient.cpp
 
@@ -54,6 +55,8 @@ HEADERS  += bankclientdebugwidget.h \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessage.h \
     ../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/confirmedbalancedetectedmessage.h \
+    ../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/imessagedispenser.h \
+    ../../RpcBankServerAndClientShared/rpcbankserverheader.h \
     ../../../../../GloballySharedClasses/idebuggablestartablestoppablebackend.h \
     ../../../../../GloballySharedClasses/idebuggablestartablestoppablefrontend.h \
     ../../../../../GloballySharedClasses/network/ssl/ssltcpclient.h
