@@ -12,7 +12,7 @@ class BankServerClientTest : public IDebuggableStartableStoppableBackend
 public:
     BankServerClientTest();
 private:
-    BankServerClient *m_BankClient;
+    BankServerClient *m_BankServerClient;
     RpcBankServerHelper *m_RpcBankServerHelper;
 
 public slots:
