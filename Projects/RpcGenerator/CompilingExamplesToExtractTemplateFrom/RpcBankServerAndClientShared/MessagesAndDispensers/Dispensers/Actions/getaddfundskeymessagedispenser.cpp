@@ -1,7 +1,5 @@
 #include "getaddfundskeymessagedispenser.h"
 
-#include "../../../iacceptrpcbankserveractiondeliveries.h"
-
 GetAddFundsKeyMessageDispenser::GetAddFundsKeyMessageDispenser(QObject *destination, QObject *owner)
     : IMessageDispenser(destination, owner)
 { }

@@ -50,18 +50,22 @@ void BankServerClient::stop()
 void BankServerClient::handleCreateBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage)
 {
     emit d(QString("create bank account message completed for user: ") + createBankAccountMessage->Username);
+    createBankAccountMessage->doneWithMessage();
 }
 void BankServerClient::handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
     emit d(QString("get add funds key message completed for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey);
+    getAddFundsKeyMessage->doneWithMessage();
 }
 void BankServerClient::handlePendingBalanceDetected(PendingBalanceDetectedMessage *pendingBalanceDetectedMessage)
 {
-    emit d(QString("pending balance detected for user: ") + pendingBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(pendingBalanceDetectedMessage->PendingBalance, "f", 8));
+    emit d(QString("pending balance detected for user: ") + pendingBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(pendingBalanceDetectedMessage->PendingBalance, 'f', 8));
+    pendingBalanceDetectedMessage->doneWithMessage();
 }
 void BankServerClient::handleConfirmedBalanceDetected(ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage)
 {
-    emit d(QString("confirmed balance detected for user: ") + confirmedBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(confirmedBalanceDetectedMessage->ConfirmedBalance, "f", 8));
+    emit d(QString("confirmed balance detected for user: ") + confirmedBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(confirmedBalanceDetectedMessage->ConfirmedBalance, 'f', 8));
+    confirmedBalanceDetectedMessage->doneWithMessage();
 }
 void BankServerClient::simulateCreateBankAccountAction()
 {

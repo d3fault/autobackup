@@ -4,6 +4,7 @@
 #include "../imessagedispenser.h"
 
 #include "../../Messages/Actions/createbankaccountmessage.h"
+#include "../../../iacceptrpcbankservermessagedeliveries.h"
 
 class CreateBankAccountMessageDispenser : public IMessageDispenser
 {

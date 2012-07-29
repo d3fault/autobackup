@@ -1,7 +1,7 @@
 #include "ssltcpclient.h"
 
 SslTcpClient::SslTcpClient(QObject *parent, const QString &clientCaFile, const QString &serverCaFile, const QString &clientPrivateEncryptionKeyFile, const QString &clientPublicLocalCertificateFile, const QString &clientPrivateEncryptionKeyPassPhrase)
-    : QSslSocket(parent), m_ClientCaFile(clientCaFile), m_ServerCaFile(serverCaFile), m_ClientPrivateEncryptionKeyFile(clientPrivateEncryptionKeyFile), m_ClientPublicLocalCertificateFile(clientPublicLocalCertificateFile), m_ClientPrivateEncryptionKeyPassPhrase(clientPrivateEncryptionKeyPassPhrase)
+    : QSslSocket(parent), m_ClientCaFile(clientCaFile), m_ServerCaFile(serverCaFile), m_ClientPrivateEncryptionKeyFile(clientPrivateEncryptionKeyFile), m_ClientPrivateEncryptionKeyPassPhrase(clientPrivateEncryptionKeyPassPhrase), m_ClientPublicLocalCertificateFile(clientPublicLocalCertificateFile)
 { }
 bool SslTcpClient::init()
 {
@@ -25,7 +25,7 @@ bool SslTcpClient::init()
     emit d("the client CA is not null");
     if(!clientCA.isValid())
     {
-        emid d("the client CA is not valid");
+        emit d("the client CA is not valid");
         return false;
     }
     emit d("the client CA is valid");

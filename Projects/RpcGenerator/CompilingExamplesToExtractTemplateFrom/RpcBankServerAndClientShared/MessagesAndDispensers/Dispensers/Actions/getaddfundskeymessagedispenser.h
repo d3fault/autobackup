@@ -4,6 +4,7 @@
 #include "../imessagedispenser.h"
 
 #include "../../Messages/Actions/getaddfundskeymessage.h"
+#include "../../../iacceptrpcbankservermessagedeliveries.h"
 
 class GetAddFundsKeyMessageDispenser : public IMessageDispenser
 {

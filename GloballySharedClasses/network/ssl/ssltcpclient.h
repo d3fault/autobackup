@@ -11,7 +11,7 @@ class SslTcpClient : public QSslSocket
 {
     Q_OBJECT
 public:
-    explicit SslTcpClient(QObject *parent = 0, const QString &clientCaFile, const QString &serverCaFile, const QString &clientPrivateEncryptionKeyFile, const QString &clientPublicLocalCertificateFile, const QString &clientPrivateEncryptionKeyPassPhrase);
+    explicit SslTcpClient(QObject *parent, const QString &clientCaFile, const QString &serverCaFile, const QString &clientPrivateEncryptionKeyFile, const QString &clientPublicLocalCertificateFile, const QString &clientPrivateEncryptionKeyPassPhrase);
     bool init();
     bool start();
     void stop();

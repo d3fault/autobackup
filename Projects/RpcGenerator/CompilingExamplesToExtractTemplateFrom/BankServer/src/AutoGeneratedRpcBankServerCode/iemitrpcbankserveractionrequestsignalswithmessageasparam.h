@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "iacceptrpcbankserveractiondeliveries.h"
+#include "../../../RpcBankServerAndClientShared/iacceptrpcbankservermessagedeliveries.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
 

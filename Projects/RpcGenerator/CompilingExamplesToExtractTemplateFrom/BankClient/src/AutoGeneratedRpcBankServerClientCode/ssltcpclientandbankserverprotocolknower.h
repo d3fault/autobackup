@@ -11,7 +11,7 @@ class SslTcpClientAndBankServerProtocolKnower : public IBankServerClientProtocol
 public:
     explicit SslTcpClientAndBankServerProtocolKnower(QObject *parent = 0);
 protected:
-    void myTransmit(IMessage *messaage);
+    void myTransmit(IMessage *message);
 private:
     SslTcpClient *m_SslTcpClient;
 private slots:

@@ -30,57 +30,80 @@ void SslTcpClientAndBankServerProtocolKnower::stop()
 }
 void SslTcpClientAndBankServerProtocolKnower::handleConnectedAndEncrypted(QSslSocket *socket)
 {
-    connect(m_Server, SIGNAL(readyRead()), this, SLOT(handleMessageReceivedFromRpcServerOverNetwork()));
+    //TODOoptimization: perhaps with connection management stuff, i can check to see if m_SslTcpClient == socket... and if not, then socket is the new connection so we should drop/forget the old one or something idfk
+    connect(socket, SIGNAL(readyRead()), this, SLOT(handleMessageReceivedFromRpcServerOverNetwork()));
 }
 void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServerOverNetwork()
 {
     //Action Responses and Broadcasts
-    QDataStream stream(m_SslTcpClient);
+    QDataStream stream(static_cast<QSslSocket*>(sender()));
     while(!stream.atEnd())
     {
         RpcBankServerHeader header;
         stream >> header;
+#if 0
         if(header.MessageSize > 0) //could compare m_SslTcpClient->bytesAvailable() and return if not enough, but if there aren't enough left then we need to eh put the header BACK so we re-read it next time the slot gets called or something??? maybe i should just scrap headers altogether... but i like how i can delegate the stream operator to the message type itself :(. perhaps i can have a 2-stage header?? doesn't help with solving this particular problem, but does help with the message ID thing a bit (maybe? unsure)
         {
-            switch(header.MessageType)
+#endif
+        switch(header.MessageType)
+        {
+        //Action Responses
+        case RpcBankServerHeader::CreateBankAccountMessageType:
             {
-            //Action Responses
-            case RpcBankServerHeader::CreateBankAccountMessageType:
+                CreateBankAccountMessage *createBankAccountMessage = getPendingCreateBankAccountMessageById(header.MessageId);
+                if(createBankAccountMessage)
                 {
-                    processCreateBankAccountResponseReceived();
-                    //TODOreq: i think i need to put a unique message ID in the header so i can match it up with the pending message?? idfk but something definitely needs to be done here
-                    //the main problem with this that i can think of is that we do NOT recycle the headers
+                    stream >> *createBankAccountMessage;
+                    emit createBankAccountCompleted(createBankAccountMessage);
+                    //processCreateBankAccountResponseReceived();
                 }
-            break;
-            case RpcBankServerHeader::GetAddFundsKeyMessageType:
+                else
                 {
-                    processGetAddFundsKeyResponseReceived();
+                    //TODOreq: deal with response that was never requested
                 }
-            break;
-            //Broadcasts
-            case RpcBankServerHeader::PendingBalanceDetectedMessageType:
-                {
-                    PendingBalanceDetectedMessage *pendingBalanceDetectedMessage = m_PendingBalanceDetectedMessageDispenser->getNewOrRecycled();
-                    emit pendingBalanceDetected(pendingBalanceDetectedMessage);
-                }
-            break;
-            case RpcBankServerHeader::ConfirmedBalanceDetectedMessageType:
-                {
-                    ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = m_ConfirmedBalanceDetectedMessageDispenser->getNewOrRecycled();
-                    emit confirmedBalanceDetected(confirmedBalanceDetectedMessage);
-                }
-            break;
-            case RpcBankServerHeader::InvalidMessageType:
-            default:
-                emit d("error: got invalid message type from server");
-            break;
             }
+        break;
+        case RpcBankServerHeader::GetAddFundsKeyMessageType:
+            {
+                GetAddFundsKeyMessage *getAddFundsKeyMessage = getPendingGetAddFundsKeyMessageById(header.MessageId);
+                if(getAddFundsKeyMessage)
+                {
+                    stream >> *getAddFundsKeyMessage;
+                    emit getAddFundsKeyCompleted(getAddFundsKeyMessage);
+                    //processGetAddFundsKeyResponseReceived();
+                }
+                else
+                {
+                    //TODOreq: deal with response that was never requested
+                }
+            }
+        break;
+        //Broadcasts
+        case RpcBankServerHeader::PendingBalanceDetectedMessageType:
+            {
+                PendingBalanceDetectedMessage *pendingBalanceDetectedMessage = m_PendingBalanceDetectedMessageDispenser->getNewOrRecycled();
+                stream >> *pendingBalanceDetectedMessage;
+                emit pendingBalanceDetected(pendingBalanceDetectedMessage);
+            }
+        break;
+        case RpcBankServerHeader::ConfirmedBalanceDetectedMessageType:
+            {
+                ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = m_ConfirmedBalanceDetectedMessageDispenser->getNewOrRecycled();
+                stream >> *confirmedBalanceDetectedMessage;
+                emit confirmedBalanceDetected(confirmedBalanceDetectedMessage);
+            }
+        break;
+        case RpcBankServerHeader::InvalidMessageType:
+        default:
+            emit d("error: got invalid message type from server");
+        break;
         }
+        //} if(header.MessageSize > 0)
     }
 }
-void SslTcpClientAndBankServerProtocolKnower::myTransmit(IMessage *messaage)
+void SslTcpClientAndBankServerProtocolKnower::myTransmit(IMessage *message)
 {
-    //TODOreq: stream header
     QDataStream stream(m_SslTcpClient);
-    stream << messaage;
+    stream << message->Header;
+    stream << message;
 }

@@ -43,30 +43,36 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
         {
             RpcBankServerHeader header; //stack alloc because there is no dptr. might change this if i want header to hold client response data etc
             stream >> header;
+#if 0
             if(header.MessageSize > 0)
             {
-                switch(header.MessageType)
+#endif
+            switch(header.MessageType)
+            {
+            case RpcBankServerHeader::CreateBankAccountMessageType:
                 {
-                case RpcBankServerHeader::CreateBankAccountMessageType:
-                    {
-                        CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
-                        stream >> *createBankAccountMessage;
-                        processCreateBankAccountMessage(createBankAccountMessage, SslTcpServer::getClientUniqueId(secureSocket));
-                    }
-                break;
-                case RpcBankServerHeader::GetAddFundsKeyMessageType:
-                    {
-                        GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
-                        stream >> *getAddFundsKeyMessage;
-                        processGetAddFundsKeyMessage(getAddFundsKeyMessage, SslTcpServer::getClientUniqueId(secureSocket));
-                    }
-                break;
-                case RpcBankServerHeader::InvalidMessageType:
-                default:
-                    emit d("error: got invalid message type from client");
-                break;
+                    CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
+                    createBankAccountMessage->Header.MessageType = header.MessageType;
+                    createBankAccountMessage->Header.MessageId = header.MessageId;
+                    stream >> *createBankAccountMessage;
+                    processCreateBankAccountMessage(createBankAccountMessage, SslTcpServer::getClientUniqueId(secureSocket));
                 }
+            break;
+            case RpcBankServerHeader::GetAddFundsKeyMessageType:
+                {
+                    GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
+                    getAddFundsKeyMessage->Header.MessageType = header.MessageType;
+                    getAddFundsKeyMessage->Header.MessageId = header.MessageId;
+                    stream >> *getAddFundsKeyMessage;
+                    processGetAddFundsKeyMessage(getAddFundsKeyMessage, SslTcpServer::getClientUniqueId(secureSocket));
+                }
+            break;
+            case RpcBankServerHeader::InvalidMessageType:
+            default:
+                emit d("error: got invalid message type from client");
+            break;
             }
+            //} if(header.MessageSize > 0)
         }
     }
 }
@@ -81,6 +87,7 @@ void SslTcpServerAndBankServerProtocolKnower::myTransmit(IMessage *message, uint
 
     QSslSocket *socket = m_SslTcpServer->getSocketByUniqueId(uniqueRpcClientId);
     QDataStream stream(socket);
+    stream << message->Header;
     stream << message;
 
     //TODOreq: stream the header first, most importantly, the size. actually size isn't that important i can probably disregard it. qt puts it in for me whenever needed lol

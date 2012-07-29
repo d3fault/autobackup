@@ -1,7 +1,5 @@
 #include "createbankaccountmessagedispenser.h"
 
-#include "../../../iacceptrpcbankserveractiondeliveries.h"
-
 CreateBankAccountMessageDispenser::CreateBankAccountMessageDispenser(QObject *destination, QObject *owner)
     : IMessageDispenser(destination, owner)
 { }

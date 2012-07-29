@@ -1,13 +1,13 @@
 #ifndef IEMITRPCBANKSERVERBROADCASTANDACTIONRESPONSESIGNALSWITHMESSAGEASPARAM_H
 #define IEMITRPCBANKSERVERBROADCASTANDACTIONRESPONSESIGNALSWITHMESSAGEASPARAM_H
 
-#include "iacceptrpcbankserveractionrequestdeliveries.h"
+#include "../../../RpcBankServerAndClientShared/iacceptrpcbankservermessagedeliveries.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessage.h"
 #include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/confirmedbalancedetectedmessage.h"
 
-class IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam : public IAcceptRpcBankServerActionRequestDeliveries
+class IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam : public IAcceptRpcBankServerMessageDeliveries
 {
     Q_OBJECT
 public:

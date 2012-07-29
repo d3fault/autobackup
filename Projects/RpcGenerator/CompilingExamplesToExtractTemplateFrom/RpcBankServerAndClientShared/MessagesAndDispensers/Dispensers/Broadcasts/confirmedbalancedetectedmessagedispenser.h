@@ -5,7 +5,7 @@
 
 #include "../../Messages/Broadcasts/confirmedbalancedetectedmessage.h"
 
-#include "../../../iacceptrpcbankserveractiondeliveries.h"
+#include "../../../iacceptrpcbankservermessagedeliveries.h"
 
 class ConfirmedBalanceDetectedMessageDispenser : public IMessageDispenser
 {
