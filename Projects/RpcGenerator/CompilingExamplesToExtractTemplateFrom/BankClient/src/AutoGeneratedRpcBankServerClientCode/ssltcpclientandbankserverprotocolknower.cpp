@@ -5,26 +5,31 @@
 SslTcpClientAndBankServerProtocolKnower::SslTcpClientAndBankServerProtocolKnower(QObject *parent)
     : IBankServerClientProtocolKnower(parent)
 {
-    m_SslTcpClient = new SslTcpClient(this, ":/clientCa.pem", ":/serverCa.pem", ":/clientPrivateEncryptionKey.pem", ":/clientPublicLocalCertificate.pem", "fuckyou");
+    m_SslTcpClient = new SslTcpClient(this, ":/RpcBankServerClientCA.pem", ":/RpcBankServerCA.pem", ":/RpcBankServerClientPrivateKey.pem", ":/RpcBankServerClientPublicCert.pem", "fuckyou");
     connect(m_SslTcpClient, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
     connect(m_SslTcpClient, SIGNAL(connectedAndEncrypted(QSslSocket*)), this, SLOT(handleConnectedAndEncrypted(QSslSocket*)));
 }
 void SslTcpClientAndBankServerProtocolKnower::init()
 {
+    emit d("SslTcpClientAndBankServerProtocolKnower received init message");
     if(m_SslTcpClient->init())
     {
+        emit d("SslTcpClient successfully initialized");
         emit initialized();
     }
 }
 void SslTcpClientAndBankServerProtocolKnower::start()
 {
+    emit d("SslTcpClientAndBankServerProtocolKnower received start message");
     if(m_SslTcpClient->start())
     {
+        emit d("SslTcpClient successfully started");
         emit started();
     }
 }
 void SslTcpClientAndBankServerProtocolKnower::stop()
 {
+    emit d("SslTcpClientAndBankServerProtocolKnower received stopped message");
     m_SslTcpClient->stop();
     emit stopped();
 }

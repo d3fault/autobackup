@@ -34,6 +34,8 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServerBusiness *r
     //actualRpcConnections();
     m_RpcBankServer->connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(m_Transporter);
     daisyChainInitStartStopConnections();
+
+    connect(m_Transporter, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }
 /*
 void RpcBankServerClientsHelper::actualRpcConnections()
@@ -59,14 +61,17 @@ void RpcBankServerClientsHelper::daisyChainInitStartStopConnections()
 }
 void RpcBankServerClientsHelper::init()
 {
+    emit d("RpcBankServerClientsHelper received init message");
     QMetaObject::invokeMethod(m_RpcBankServer, "init", Qt::QueuedConnection);
 }
 void RpcBankServerClientsHelper::start()
 {
+    emit d("RpcBankServerClientsHelper received start message");
     QMetaObject::invokeMethod(m_RpcBankServer, "start", Qt::QueuedConnection);
 }
 void RpcBankServerClientsHelper::stop()
 {
+    emit d("RpcBankServerClientsHelper received stop message");
     QMetaObject::invokeMethod(m_Transporter, "stop", Qt::QueuedConnection);
 }
 void RpcBankServerClientsHelper::moveTransporterToItsOwnThreadAndStartTheThread()

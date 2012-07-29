@@ -6,6 +6,9 @@ BankServer::BankServer()
     m_Bitcoin = new BitcoinHelper();
 
     daisyChainInitStartStopConnections();
+
+    connect(m_BankDbHelper, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+    connect(m_Bitcoin, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }
 void BankServer::daisyChainInitStartStopConnections()
 {
@@ -53,13 +56,16 @@ void BankServer::connectRpcBankServerClientActionRequestSignalsToBankServerImplS
 }
 void BankServer::init()
 {
+    emit d("BankServer received init message");
     QMetaObject::invokeMethod(m_BankDbHelper, "init", Qt::QueuedConnection);
 }
 void BankServer::start()
 {
+    emit d("BankServer received start message");
     QMetaObject::invokeMethod(m_BankDbHelper, "start", Qt::QueuedConnection);
 }
 void BankServer::stop()
 {
+    emit d("BankServer received stop message");
     QMetaObject::invokeMethod(m_Bitcoin, "stop", Qt::QueuedConnection);
 }

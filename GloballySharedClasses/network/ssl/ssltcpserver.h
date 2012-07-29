@@ -34,7 +34,6 @@ public:
     virtual QTcpSocket *nextPendingConnection();
     static uint getClientUniqueId(QSslSocket *client);
     QSslSocket *getSocketByUniqueId(uint uniqueId);
-    //void initAndStartListening();
     bool init();
     bool start();
     void stop();

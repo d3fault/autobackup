@@ -36,15 +36,17 @@ void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IE
 void BankServerClient::init()
 {
     //TODOmb: if we ever add a backend object, we'd send a queued init to it right here.. and also need a daisyChain() method to get it's initialized() signal
-
+    emit d("BankServerClient received init message");
     emit initialized();
 }
 void BankServerClient::start()
 {
+    emit d("BankServerClient received start message");
     emit started();
 }
 void BankServerClient::stop()
 {
+    emit d("BankServerClient received stopped message");
     emit stopped();
 }
 void BankServerClient::handleCreateBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage)
@@ -71,11 +73,13 @@ void BankServerClient::simulateCreateBankAccountAction()
 {
     CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
     createBankAccountMessage->Username = (QString("randomUsername@") + QDateTime::currentDateTime().toString());
+    emit d(QString("SIMULATING create bank account: ") + createBankAccountMessage->Username);
     createBankAccountMessage->deliver();
 }
 void BankServerClient::simulateGetAddFundsKeyAction()
 {
     GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
     getAddFundsKeyMessage->Username = (QString("randomUsername@") + QDateTime::currentDateTime().toString());
+    emit d(QString("SIMULATING get add funds key: ") + getAddFundsKeyMessage->Username);
     getAddFundsKeyMessage->deliver();
 }

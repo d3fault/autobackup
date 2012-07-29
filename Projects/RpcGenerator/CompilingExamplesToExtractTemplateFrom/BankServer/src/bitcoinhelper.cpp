@@ -10,13 +10,16 @@ void BitcoinHelper::takeOwnershipOfApplicableBroadcastDispensers(RpcBankServerBr
 }
 void BitcoinHelper::init()
 {
+    emit d("BitcoinHelper received init message");
     emit initialized();
 }
 void BitcoinHelper::start()
 {
+    emit d("BitcoinHelper received start message");
     emit started();
 }
 void BitcoinHelper::stop()
 {
+    emit d("BitcoinHelper received stop message");
     emit stopped();
 }

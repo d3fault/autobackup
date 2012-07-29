@@ -5,18 +5,22 @@ BankDbHelper::BankDbHelper()
 }
 void BankDbHelper::init()
 {
+    emit d("BankDbHelper received init message");
     emit initialized();
 }
 void BankDbHelper::start()
 {
+    emit d("BankDbHelper received start message");
     emit started();
 }
 void BankDbHelper::stop()
 {
+    emit d("BankDbHelper received stop message");
     emit stopped();
 }
 void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
 {
+    emit d(QString("BankDbHelper received createBankAccountMessage with user: ") + createBankAccountMessage->Username);
     if(!m_AllUsers.contains(createBankAccountMessage->Username))
     {
         m_AllUsers.append(createBankAccountMessage->Username);
@@ -37,6 +41,7 @@ void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccount
 }
 void BankDbHelper::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
+    emit d(QString("BankDbHelper received getAddFundsKeyMessage with user: ") + getAddFundsKeyMessage->Username);
     if(!m_AllUsers.contains(getAddFundsKeyMessage->Username))
     {
         //TODOreq: user not exist error

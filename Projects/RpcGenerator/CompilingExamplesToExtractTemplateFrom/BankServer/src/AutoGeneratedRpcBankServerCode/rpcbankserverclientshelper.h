@@ -34,6 +34,7 @@ private:
     //void actualRpcConnections();
     void daisyChainInitStartStopConnections();
 signals:
+    void d(const QString &);
     void initialized();
     void started();
     void stopped();

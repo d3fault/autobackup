@@ -8,6 +8,9 @@ BankServerClientTest::BankServerClientTest()
     connect(m_RpcBankServerHelper, SIGNAL(initialized()), this, SIGNAL(initialized()));
     connect(m_RpcBankServerHelper, SIGNAL(started()), this, SIGNAL(started()));
     connect(m_RpcBankServerHelper, SIGNAL(stopped()), this, SIGNAL(stopped()));
+
+    connect(m_BankServerClient, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+    connect(m_RpcBankServerHelper, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }
 void BankServerClientTest::init()
 {

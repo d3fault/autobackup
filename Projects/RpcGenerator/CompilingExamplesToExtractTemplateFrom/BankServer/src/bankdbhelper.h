@@ -15,6 +15,7 @@ public:
 private:
     QList<QString> m_AllUsers; //my actual db for testing lol
 signals:
+    void d(const QString &);
     void initialized();
     void started();
     void stopped();
