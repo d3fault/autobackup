@@ -12,3 +12,5 @@ you down too much and you'll lose energy) and the generator that uses said
 templates.
 
 i want to see all of that done tonight
+
+rofl ended up taking me like a week just to get the compiling examples...
