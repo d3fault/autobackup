@@ -109,3 +109,9 @@ oh and i think i just have unique dispensers for each type... but they can maybe
 maybe a template or something?
 the dispenser needs to be able to work on objects without a destination
 which really does make sense... destination has nothing to do with dispensing/recycling...
+
+
+fuck, i need to elaborate
+client just doesn't have error DELIVERY RIGGING
+but it still does have signals that emit errors to the client business
+hmm i don't think this matters, but i didn't think of it earlier. hope it doesn't bite me in the ass like i'm scared something will...

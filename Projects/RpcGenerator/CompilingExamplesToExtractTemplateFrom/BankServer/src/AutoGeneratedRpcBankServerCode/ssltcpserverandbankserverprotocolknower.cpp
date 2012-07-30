@@ -57,7 +57,7 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
             {
             case RpcBankServerHeader::CreateBankAccountMessageType:
                 {
-                    CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
+                    ServerCreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
                     createBankAccountMessage->Header.MessageType = header.MessageType;
                     createBankAccountMessage->Header.MessageId = header.MessageId;
                     stream >> *createBankAccountMessage;
@@ -66,7 +66,7 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
             break;
             case RpcBankServerHeader::GetAddFundsKeyMessageType:
                 {
-                    GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
+                    ServerGetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
                     getAddFundsKeyMessage->Header.MessageType = header.MessageType;
                     getAddFundsKeyMessage->Header.MessageId = header.MessageId;
                     stream >> *getAddFundsKeyMessage;

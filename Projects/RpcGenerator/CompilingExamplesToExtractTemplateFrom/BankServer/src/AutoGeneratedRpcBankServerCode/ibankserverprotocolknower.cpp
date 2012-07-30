@@ -12,7 +12,7 @@ void IBankServerProtocolKnower::takeOwnershipOfActionsAndSetupDelivery()
     m_CreateBankAccountMessageDispenser = m_RpcBankServerActionDispensers->takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(this);
     m_GetAddFundsKeyMessageDispenser = m_RpcBankServerActionDispensers->takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(this);
 }
-void IBankServerProtocolKnower::processCreateBankAccountMessage(CreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId)
+void IBankServerProtocolKnower::processCreateBankAccountMessage(ServerCreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId)
 {
     m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.insert(createBankAccountMessage, uniqueRpcClientId);
 
@@ -24,7 +24,7 @@ void IBankServerProtocolKnower::processCreateBankAccountMessage(CreateBankAccoun
 
     emit createBankAccount(createBankAccountMessage);
 }
-void IBankServerProtocolKnower::processGetAddFundsKeyMessage(GetAddFundsKeyMessage *getAddFundsKeyMessage, uint uniqueRpcClientId)
+void IBankServerProtocolKnower::processGetAddFundsKeyMessage(ServerGetAddFundsKeyMessage *getAddFundsKeyMessage, uint uniqueRpcClientId)
 {
     m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer.insert(getAddFundsKeyMessage, uniqueRpcClientId);
     emit getAddFundsKey(getAddFundsKeyMessage);
@@ -35,7 +35,7 @@ void IBankServerProtocolKnower::createBankAccountDelivery()
 
     //so these transmits right now make it APPEAR i should just connect every .deliverSignal() to a single slot... but for keeping track of pending messages (which i have yet to do), that will turn out not to be the case
 
-    CreateBankAccountMessage *createBankAccountMessage = static_cast<CreateBankAccountMessage*>(sender());
+    ServerCreateBankAccountMessage *createBankAccountMessage = static_cast<ServerCreateBankAccountMessage*>(sender());
     uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.take(createBankAccountMessage);
     myTransmit(createBankAccountMessage, uniqueRpcClientId);
     createBankAccountMessage->doneWithMessage();
@@ -44,14 +44,14 @@ void IBankServerProtocolKnower::createBankAccountDelivery()
 }
 void IBankServerProtocolKnower::getAddFundsKeyDelivery()
 {
-    GetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<GetAddFundsKeyMessage*>(sender());
+    ServerGetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<ServerGetAddFundsKeyMessage*>(sender());
     uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer.take(getAddFundsKeyMessage);
     myTransmit(getAddFundsKeyMessage, uniqueRpcClientId);
     getAddFundsKeyMessage->doneWithMessage();
 }
 void IBankServerProtocolKnower::pendingBalanceDetectedDelivery()
 {
-    PendingBalanceDetectedMessage *pendingBalanceDetectedMessage = static_cast<PendingBalanceDetectedMessage*>(sender());
+    ServerPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = static_cast<ServerPendingBalanceDetectedMessage*>(sender());
     pendingBalanceDetectedMessage->Header.MessageType = RpcBankServerHeader::PendingBalanceDetectedMessageType;
     pendingBalanceDetectedMessage->Header.MessageId = 0;
     emit d(QString("pending balance detected delivery received, about to broadcast it. user: ") + pendingBalanceDetectedMessage->Username);
@@ -62,7 +62,7 @@ void IBankServerProtocolKnower::pendingBalanceDetectedDelivery()
 }
 void IBankServerProtocolKnower::confirmedBalanceDetectedDelivery()
 {
-    ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = static_cast<ConfirmedBalanceDetectedMessage*>(sender());
+    ServerConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = static_cast<ServerConfirmedBalanceDetectedMessage*>(sender());
     confirmedBalanceDetectedMessage->Header.MessageType = RpcBankServerHeader::ConfirmedBalanceDetectedMessageType;
     confirmedBalanceDetectedMessage->Header.MessageId = 0;
     //myTransmit(confirmedBalanceDetectedMessage, 0);
@@ -73,13 +73,23 @@ void IBankServerProtocolKnower::createBankAccountFailedUsernameAlreadyExists()
 {
     //TODOreq: handle errors, perhaps a bool Success at IMessage level and an int reserved for failed enum (only transmitted if that bool Success is false)
     //unsure and have yet to come up with a design for errors
+
+    ServerCreateBankAccountMessage *createBankAccountMessage = static_cast<ServerCreateBankAccountMessage*>(sender());
+    uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.take(createBankAccountMessage);
+    //TODOreq: handle error where the message wasn't in pending for some reason :-/. do it for regular delivery() too...
+    //TODOreq: idfk what to do. stream an enum or something? should it be part of the header (or a success/failed bool)?
+    myTransmit(createBankAccountMessage, uniqueRpcClientId);
+    createBankAccountMessage->doneWithMessage();
 }
 void IBankServerProtocolKnower::createBankAccountFailedPersistError()
+{
+}
+void IBankServerProtocolKnower::getAddFundsKeyFailedUsernameDoesntExist()
 {
 }
 void IBankServerProtocolKnower::getAddFundsKeyFailedUseExistingKeyFirst()
 {
 }
-void IBankServerProtocolKnower::getAddFundsKeyFailedWaitUntilConfirmed()
+void IBankServerProtocolKnower::getAddFundsKeyFailedWaitForPendingToBeConfirmed()
 {
 }

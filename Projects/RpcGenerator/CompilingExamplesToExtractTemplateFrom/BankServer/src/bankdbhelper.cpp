@@ -18,7 +18,7 @@ void BankDbHelper::stop()
     emit d("BankDbHelper received stop message");
     emit stopped();
 }
-void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
+void BankDbHelper::createBankAccount(ServerCreateBankAccountMessage *createBankAccountMessage)
 {
     emit d(QString("BankDbHelper received createBankAccountMessage with user: ") + createBankAccountMessage->Username);
     if(!m_AllUsers.contains(createBankAccountMessage->Username))
@@ -39,7 +39,7 @@ void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccount
         return;
     }
 }
-void BankDbHelper::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
+void BankDbHelper::getAddFundsKey(ServerGetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
     emit d(QString("BankDbHelper received getAddFundsKeyMessage with user: ") + getAddFundsKeyMessage->Username);
     if(!m_AllUsers.contains(getAddFundsKeyMessage->Username))

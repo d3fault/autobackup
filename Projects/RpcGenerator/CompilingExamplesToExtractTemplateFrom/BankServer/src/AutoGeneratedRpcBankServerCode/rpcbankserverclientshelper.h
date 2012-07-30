@@ -5,11 +5,10 @@
 #include <QThread>
 
 #include "irpcbankserverbusiness.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/createbankaccountmessagedispenser.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Actions/getaddfundskeymessagedispenser.h"
-
+#include "MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
+#include "MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
+#include "MessagesAndDispensers/Dispensers/Actions/servercreatebankaccountmessagedispenser.h"
+#include "MessagesAndDispensers/Dispensers/Actions/servergetaddfundskeymessagedispenser.h"
 #include "ibankserverprotocolknower.h"
 
 class RpcBankServerClientsHelper : public QObject

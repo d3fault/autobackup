@@ -6,8 +6,8 @@
 #include <QObject>
 
 #include "iemitrpcbankserveractionrequestsignalswithmessageasparam.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
+#include "MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
+#include "MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
 
 class IRpcBankServerBusiness : public QObject
 {
