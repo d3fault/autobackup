@@ -1,8 +1,6 @@
 #ifndef IRPCBANKSERVERBUSINESS_H
 #define IRPCBANKSERVERBUSINESS_H
 
-#define RPC_BANK_SERVER_CODE // we define this because we _ARE_ the rpc server. this makes us parse our messages correctly using QDataStream
-
 #include <QObject>
 
 #include "iemitrpcbankserveractionrequestsignalswithmessageasparam.h"

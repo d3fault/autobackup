@@ -26,12 +26,12 @@ void BankServerClient::moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThr
 void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam *signalEmitter)
 {
     //Action Responses
-    connect(signalEmitter, SIGNAL(createBankAccountCompleted(CreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountCompleted(CreateBankAccountMessage*)));
-    connect(signalEmitter, SIGNAL(getAddFundsKeyCompleted(GetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage*)));
+    connect(signalEmitter, SIGNAL(createBankAccountCompleted(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountCompleted(ClientCreateBankAccountMessage*)));
+    connect(signalEmitter, SIGNAL(getAddFundsKeyCompleted(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage*)));
 
     //Broadcasts
-    connect(signalEmitter, SIGNAL(pendingBalanceDetected(PendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(PendingBalanceDetectedMessage*)));
-    connect(signalEmitter, SIGNAL(confirmedBalanceDetected(ConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ConfirmedBalanceDetectedMessage*)));
+    connect(signalEmitter, SIGNAL(pendingBalanceDetected(ClientPendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage*)));
+    connect(signalEmitter, SIGNAL(confirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)));
 }
 void BankServerClient::init()
 {
@@ -49,36 +49,36 @@ void BankServerClient::stop()
     emit d("BankServerClient received stopped message");
     emit stopped();
 }
-void BankServerClient::handleCreateBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage)
+void BankServerClient::handleCreateBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage)
 {
     emit d(QString("create bank account message completed for user: ") + createBankAccountMessage->Username);
     createBankAccountMessage->doneWithMessage();
 }
-void BankServerClient::handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage *getAddFundsKeyMessage)
+void BankServerClient::handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
     emit d(QString("get add funds key message completed for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey);
     getAddFundsKeyMessage->doneWithMessage();
 }
-void BankServerClient::handlePendingBalanceDetected(PendingBalanceDetectedMessage *pendingBalanceDetectedMessage)
+void BankServerClient::handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage)
 {
     emit d(QString("pending balance detected for user: ") + pendingBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(pendingBalanceDetectedMessage->PendingBalance, 'f', 8));
     pendingBalanceDetectedMessage->doneWithMessage();
 }
-void BankServerClient::handleConfirmedBalanceDetected(ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage)
+void BankServerClient::handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage)
 {
     emit d(QString("confirmed balance detected for user: ") + confirmedBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(confirmedBalanceDetectedMessage->ConfirmedBalance, 'f', 8));
     confirmedBalanceDetectedMessage->doneWithMessage();
 }
 void BankServerClient::simulateCreateBankAccountAction(QString username)
 {
-    CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
+    ClientCreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
     createBankAccountMessage->Username = username;
     emit d(QString("SIMULATING create bank account: ") + createBankAccountMessage->Username);
     createBankAccountMessage->deliver();
 }
 void BankServerClient::simulateGetAddFundsKeyAction(QString username)
 {
-    GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
+    ClientGetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
     getAddFundsKeyMessage->Username = username;
     emit d(QString("SIMULATING get add funds key: ") + getAddFundsKeyMessage->Username);
     getAddFundsKeyMessage->deliver();

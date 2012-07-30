@@ -13,8 +13,8 @@ public:
     void connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam *signalEmitter);
 private:
     //these dispensers will be in backend objects once i think of some..
-    CreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
-    GetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
+    ClientCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
+    ClientGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 public slots:
     void init();
     void start();
@@ -24,11 +24,11 @@ public slots:
     void simulateCreateBankAccountAction(QString username);
     void simulateGetAddFundsKeyAction(QString username);
 private slots:
-    void handleCreateBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage);
-    void handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void handleCreateBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage);
+    void handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
 
-    void handlePendingBalanceDetected(PendingBalanceDetectedMessage *pendingBalanceDetectedMessage);
-    void handleConfirmedBalanceDetected(ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage);
+    void handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage);
+    void handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage);
 };
 
 #endif // BANKSERVERCLIENT_H

@@ -26,10 +26,11 @@ protected:
     QVBoxLayout *m_Layout;
 private slots:
     void setupGuiAndThenBeginBackendInit();
-    void handleD(const QString &msg);
     void handleBackendInitialized();
     void handleBackendStarted();
     void handleBackendStopped();
+public slots:
+    void handleD(const QString &msg);
 };
 
 #endif // IDEBUGGABLESTARTABLESTOPPABLEFRONTEND_H

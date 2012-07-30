@@ -55,7 +55,7 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
         //Action Responses
         case RpcBankServerHeader::CreateBankAccountMessageType:
             {
-                CreateBankAccountMessage *createBankAccountMessage = getPendingCreateBankAccountMessageById(header.MessageId);
+                ClientCreateBankAccountMessage *createBankAccountMessage = getPendingCreateBankAccountMessageById(header.MessageId);
                 if(createBankAccountMessage)
                 {
                     stream >> *createBankAccountMessage;
@@ -70,7 +70,7 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
         break;
         case RpcBankServerHeader::GetAddFundsKeyMessageType:
             {
-                GetAddFundsKeyMessage *getAddFundsKeyMessage = getPendingGetAddFundsKeyMessageById(header.MessageId);
+                ClientGetAddFundsKeyMessage *getAddFundsKeyMessage = getPendingGetAddFundsKeyMessageById(header.MessageId);
                 if(getAddFundsKeyMessage)
                 {
                     stream >> *getAddFundsKeyMessage;
@@ -86,14 +86,14 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
         //Broadcasts
         case RpcBankServerHeader::PendingBalanceDetectedMessageType:
             {
-                PendingBalanceDetectedMessage *pendingBalanceDetectedMessage = m_PendingBalanceDetectedMessageDispenser->getNewOrRecycled();
+                ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = m_PendingBalanceDetectedMessageDispenser->getNewOrRecycled();
                 stream >> *pendingBalanceDetectedMessage;
                 emit pendingBalanceDetected(pendingBalanceDetectedMessage);
             }
         break;
         case RpcBankServerHeader::ConfirmedBalanceDetectedMessageType:
             {
-                ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = m_ConfirmedBalanceDetectedMessageDispenser->getNewOrRecycled();
+                ClientConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = m_ConfirmedBalanceDetectedMessageDispenser->getNewOrRecycled();
                 stream >> *confirmedBalanceDetectedMessage;
                 emit confirmedBalanceDetected(confirmedBalanceDetectedMessage);
             }

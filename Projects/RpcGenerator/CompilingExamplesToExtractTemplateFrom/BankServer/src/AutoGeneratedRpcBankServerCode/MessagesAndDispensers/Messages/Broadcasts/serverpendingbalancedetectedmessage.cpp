@@ -1,5 +1,7 @@
 #include "serverpendingbalancedetectedmessage.h"
 
+#include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessagebase.h"
+
 ServerPendingBalanceDetectedMessage::ServerPendingBalanceDetectedMessage(QObject *owner)
     : IMessage(owner)
 { }

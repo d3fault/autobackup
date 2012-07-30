@@ -3,6 +3,8 @@
 
 #include <QString>
 
+#define PENDING_BALANCE_DETECTED_MESSAGE_PARSE_BROADCAST(qds,strop) qds strop Username; qds strop PendingBalance;
+
 class PendingBalanceDetectedMessageBase
 {
 public:

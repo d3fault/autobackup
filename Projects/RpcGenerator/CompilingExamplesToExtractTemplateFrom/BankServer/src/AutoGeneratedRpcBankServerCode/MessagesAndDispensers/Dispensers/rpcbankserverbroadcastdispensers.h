@@ -12,6 +12,7 @@ public:
     RpcBankServerBroadcastDispensers(IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries *destination);
     ServerPendingBalanceDetectedMessageDispenser *takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner);
     ServerConfirmedBalanceDetectedMessageDispenser *takeOwnershipOfConfirmedBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner);
+
     bool everyDispenserIsCreated();
 private:
     QObject *m_Destination;

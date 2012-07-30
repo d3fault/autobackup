@@ -1,6 +1,6 @@
 #include "irpcbankserverclientbusiness.h"
 
-void IRpcBankServerClientBusiness::setActionDispensers(RpcBankServerActionDispensers *actionDispensers)
+void IRpcBankServerClientBusiness::setActionDispensers(RpcBankServerClientActionDispensers *actionDispensers)
 {
     m_ActionDispensers = actionDispensers;
 }
