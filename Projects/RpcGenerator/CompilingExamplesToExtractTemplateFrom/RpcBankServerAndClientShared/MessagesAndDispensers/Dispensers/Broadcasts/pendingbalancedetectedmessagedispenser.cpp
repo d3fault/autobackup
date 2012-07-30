@@ -10,6 +10,6 @@ PendingBalanceDetectedMessage *PendingBalanceDetectedMessageDispenser::getNewOrR
 IMessage *PendingBalanceDetectedMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
 {
     PendingBalanceDetectedMessage *pendingBalanceDetectedMessage = new PendingBalanceDetectedMessage(this);
-    connect(pendingBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerMessageDeliveries*>(m_Destination), SLOT(pendingBalanceDetectedDelivery()));
+    connect(pendingBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionNonErrorDeliveries*>(m_Destination), SLOT(pendingBalanceDetectedDelivery()));
     return pendingBalanceDetectedMessage;
 }

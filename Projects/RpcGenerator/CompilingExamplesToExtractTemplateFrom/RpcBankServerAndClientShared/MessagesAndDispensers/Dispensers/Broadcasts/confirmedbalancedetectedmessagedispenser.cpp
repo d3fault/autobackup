@@ -11,6 +11,6 @@ ConfirmedBalanceDetectedMessage *ConfirmedBalanceDetectedMessageDispenser::getNe
 IMessage *ConfirmedBalanceDetectedMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
 {
     ConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = new ConfirmedBalanceDetectedMessage(this);
-    connect(confirmedBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerMessageDeliveries*>(m_Destination), SLOT(confirmedBalanceDetectedDelivery()));
+    connect(confirmedBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionNonErrorDeliveries*>(m_Destination), SLOT(confirmedBalanceDetectedDelivery()));
     return confirmedBalanceDetectedMessage;
 }

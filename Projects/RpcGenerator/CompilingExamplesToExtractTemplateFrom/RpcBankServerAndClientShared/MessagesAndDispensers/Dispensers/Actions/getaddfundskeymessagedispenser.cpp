@@ -10,6 +10,6 @@ GetAddFundsKeyMessage *GetAddFundsKeyMessageDispenser::getNewOrRecycled()
 IMessage *GetAddFundsKeyMessageDispenser::getNewOfTypeAndConnectToDestinationObject()
 {
     GetAddFundsKeyMessage *getAddFundsKeyMessage = new GetAddFundsKeyMessage(this);
-    connect(getAddFundsKeyMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerMessageDeliveries*>(m_Destination), SLOT(getAddFundsKeyDelivery()));
+    connect(getAddFundsKeyMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionNonErrorDeliveries*>(m_Destination), SLOT(getAddFundsKeyDelivery()));
     return getAddFundsKeyMessage;
 }

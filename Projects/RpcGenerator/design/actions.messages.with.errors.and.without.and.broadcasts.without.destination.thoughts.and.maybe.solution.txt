@@ -1,0 +1,111 @@
+IMessageDispenser : IRecycle
+
+ClientActionNonErrorDispenser : IMessageDispenser
+ClientBroadcastNoDestinationDispenser : IRecycle
+
+ServerActionWithErrorDispenser : IMessageDispenser
+ServerBroadcastDispenser : IMessageDispenser
+
+
+
+
+
+which means:
+
+IMessage : IRecyclable
+
+ClientActionNonErrorMessage : IMessage
+ClientBroadcastNoDestinationMessage : IRecyclable
+
+ServerActionWithErrorMessage : IMessage
+ServerBroadcastMessage : IMessage
+
+
+
+...............except somehow they should inherit each other too, because they have the same members
+i think i will run into diamon inheritence problem, but idk need to keep thinking about this
+
+
+
+FUCK,
+i can't do:
+
+ClientActionNonErrorMessage : ActionBase, IMessage
+ServerActionWithErrorMessage : ActionBase, ActionErrors, IMessage
+
+
+
+but can i do?
+ClientBroadcastNoDestinationMessage : Broadcast, IRecyclable
+ServerBroadcastMessage : Broadcast, IMessage
+
+
+ActionBase
+{
+  //members
+  QString Username; //etc
+}
+
+IMessage : IRecycleable
+{
+  Q_OBJECT
+signals:
+  deliverSignal();
+}
+
+IRecyclable : QObject
+{
+  Q_OBJECT
+signals:
+  doneWithMessageSignal();
+}
+
+
+
+
+######################################################
+lost my train of thought
+BUT:
+ServerActionErrors : IMessage
+ServerActionWithErrorMessages : ActionBase, ServerActionErrors
+
+MIGHT work...
+
+then i just do
+ClientActionNonErrorMessage : ActionBase, IMessage
+
+
+action base same as above
+
+ServerActionErrors : IMessage
+{
+  Q_OBJECT
+signals:
+  failedReasonXYZSignal();
+}
+######################################################
+
+ok i think that will work, but only solves the action / error problem
+
+
+what about broadcasts not needing a destination on the client?
+
+######################################################
+hmm i think i was just about to solve it before i lost my train of thought...
+
+ServerBroadcastMessage : BroadcastBase, IMessage
+ClientBroadcastMessage : BroadcastBase, IRecyclable
+
+######################################################
+
+
+will that work?
+i think so yea...
+
+but idk i'm scurred of breaking my code more and finding out it doesn't work for some other reason :(
+
+
+oh and i think i just have unique dispensers for each type... but they can maybe still inherit a common IMessageDispenser. maybe?
+maybe a template or something?
+the dispenser needs to be able to work on objects without a destination
+which really does make sense... destination has nothing to do with dispensing/recycling...
