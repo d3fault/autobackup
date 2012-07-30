@@ -24,11 +24,11 @@ void BankServerClientTest::stop()
 {
     m_RpcBankServerHelper->stop();
 }
-void BankServerClientTest::simulateCreateBankAccountAction()
+void BankServerClientTest::simulateCreateBankAccountAction(QString username)
 {
-    QMetaObject::invokeMethod(m_BankServerClient, "simulateCreateBankAccountAction", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_BankServerClient, "simulateCreateBankAccountAction", Qt::QueuedConnection, Q_ARG(QString, username));
 }
-void BankServerClientTest::simulateGetAddFundsKeyAction()
+void BankServerClientTest::simulateGetAddFundsKeyAction(QString username)
 {
-    QMetaObject::invokeMethod(m_BankServerClient, "simulateGetAddFundsKeyAction", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(m_BankServerClient, "simulateGetAddFundsKeyAction", Qt::QueuedConnection, Q_ARG(QString, username));
 }

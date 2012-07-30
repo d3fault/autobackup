@@ -69,17 +69,17 @@ void BankServerClient::handleConfirmedBalanceDetected(ConfirmedBalanceDetectedMe
     emit d(QString("confirmed balance detected for user: ") + confirmedBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(confirmedBalanceDetectedMessage->ConfirmedBalance, 'f', 8));
     confirmedBalanceDetectedMessage->doneWithMessage();
 }
-void BankServerClient::simulateCreateBankAccountAction()
+void BankServerClient::simulateCreateBankAccountAction(QString username)
 {
     CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
-    createBankAccountMessage->Username = (QString("randomUsername@") + QDateTime::currentDateTime().toString());
+    createBankAccountMessage->Username = username;
     emit d(QString("SIMULATING create bank account: ") + createBankAccountMessage->Username);
     createBankAccountMessage->deliver();
 }
-void BankServerClient::simulateGetAddFundsKeyAction()
+void BankServerClient::simulateGetAddFundsKeyAction(QString username)
 {
     GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
-    getAddFundsKeyMessage->Username = (QString("randomUsername@") + QDateTime::currentDateTime().toString());
+    getAddFundsKeyMessage->Username = username;
     emit d(QString("SIMULATING get add funds key: ") + getAddFundsKeyMessage->Username);
     getAddFundsKeyMessage->deliver();
 }

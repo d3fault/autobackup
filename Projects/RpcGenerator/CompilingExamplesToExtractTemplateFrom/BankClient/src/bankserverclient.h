@@ -21,8 +21,8 @@ public slots:
     void stop();
 
     //debug
-    void simulateCreateBankAccountAction();
-    void simulateGetAddFundsKeyAction();
+    void simulateCreateBankAccountAction(QString username);
+    void simulateGetAddFundsKeyAction(QString username);
 private slots:
     void handleCreateBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage);
     void handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage *getAddFundsKeyMessage);

@@ -1,0 +1,2 @@
+lol i recall writing about protobuff and i remember specifically saying i didn't want to follow the rpc generator tangent :-P
+but i'm glad i am. especially glad i'm not using protobuff... what a piece of shit

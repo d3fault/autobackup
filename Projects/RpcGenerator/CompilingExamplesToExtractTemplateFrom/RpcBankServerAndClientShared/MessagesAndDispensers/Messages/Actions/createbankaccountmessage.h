@@ -15,7 +15,6 @@ public:
     void streamIn(QDataStream &in);
     void streamOut(QDataStream &out);
 
-    bool Success;
     QString Username;
 
     void createBankAccountFailedUsernameAlreadyExists();

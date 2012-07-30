@@ -3,6 +3,7 @@
 
 #include <QtGui/QWidget>
 #include <QPushButton>
+#include <QLineEdit>
 
 #include "idebuggablestartablestoppablefrontend.h"
 #include "bankserverclienttest.h"
@@ -15,8 +16,12 @@ public:
     void addButtonsToLayoutAndConnectToBackend();
     ~BankClientDebugWidget();
 private:
+    QLineEdit *m_UsernameLineEdit;
     QPushButton *m_SimulateCreateBankAccountButton;
     QPushButton *m_SimulateGetAddFundsKeyButton;
+private slots:
+    void handleSimulateCreateBankAccountClicked();
+    void handleSimulateGetAddFundsKeyClicked();
 };
 
 #endif // BANKCLIENTDEBUGWIDGET_H

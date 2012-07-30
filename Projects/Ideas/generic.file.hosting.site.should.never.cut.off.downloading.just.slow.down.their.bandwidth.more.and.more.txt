@@ -1,0 +1,23 @@
+i'm not sure if sharebees is doing this, but it appears so (could be my imagination)
+
+but anyways
+
+for free file hosting site
+
+like linear/exponential speed decreasing if they download too much shit in a row
+
+
+
+like maybe 300 kb/s (my target is fast enough to stream x264 720p without stuttering. 1 mb/s is wasteful)
+for the first file/700mb
+then like 250 kb/s for the next if it's within an hour or some arbitrary number
+
+all the way down to what my sharebees is getting atm rofl: 10 kb/s
+
+
+just pause from downloading or buy premium and your shit goes back up
+
+
+this is a shitty solution (file hosts sound like they'd require them to be profitable imo), but is superior to "hourly download limits" and other throttling mechanisms
+
+so a user is never denied a file... they are just allocated less bandwidth.

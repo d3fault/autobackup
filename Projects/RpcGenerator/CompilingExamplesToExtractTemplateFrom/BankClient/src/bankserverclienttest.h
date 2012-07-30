@@ -20,8 +20,8 @@ public slots:
     void start();
     void stop();
 
-    void simulateCreateBankAccountAction();
-    void simulateGetAddFundsKeyAction();
+    void simulateCreateBankAccountAction(QString username);
+    void simulateGetAddFundsKeyAction(QString username);
 };
 
 #endif // BANKSERVERCLIENTTEST_H

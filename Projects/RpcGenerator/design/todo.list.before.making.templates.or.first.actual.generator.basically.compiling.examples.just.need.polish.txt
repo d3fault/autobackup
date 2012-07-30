@@ -1,0 +1,31 @@
+todo
+{
+  figure out/implement:
+    appId //abc as a whole is an appId
+    clientId //one abc/wt 'node' is a client
+    messageId //one request from one client
+  []
+
+  error messages (actions only)
+  []
+
+  code stability. try not to crash from errors. we need to do like whitelist processing (so to speak). blacklist stuff should definitely not get in... but should also not crash the app. i haven't detected a crash yet, but should walk through the code anyways and add checking where it makes sense (now that it functions! that was a better first step fo sho)
+  []
+
+  sslSocket.bytesAvailable(); // bool m_DidntGetMessageForCurrentHeaderYet; <-(when we don't have enough bytesAvailable) and: RpcBankServerHeader *m_CurrentHeader; those two come to mind.... so that we can still get (or at least try to get if enough bytes are available) the message the next time readyRead() is emitted. basically i want a robust readyRead slot
+  ^^^similarly, we should keep reading messages until bytesAvailable() is less than header.messageSize (i just took messageSize out.. but kinda want to put it back in now)
+  ^^^^^to be overly robust, i should also make sure bytesAvailalbe() > sizeof(RpcBankServerHeader) too....
+  (problems with messageSize: basically the only way i can think of doing it is by streaming (QDataStream) onto a byte array and then counting that. another way i could do it is by simply asking the IMessage itself (pure virtual), but i'd have to manually calculate the size that goes in front of each variable. QDataStream documentation has these numbers, but that's shitty to hardcode them. for example: when streaming a QString, first the size of the QString is put on in a quint32, then the QString itself. streaming onto a byte array is also safter because i have no idea if say for example the size of a QString changes when you encode it (wrong word?) before streaming it. a byte array has a down side of now having to stream twice. two copy operations. IMessage -> byteArray -> socket, where each array is a stream/copy operation. currently I do IMessage -> socket and am very happy with it. i do recall some Qt code that used a byte array, streamed in the size, the message, then rewound and wrote the size of the message at the beginning. if i do use a bytearray intermediate, that method would work. but that isn't the problem at all. or maybe i'm just overthinking this. maybe QDataStream will just wait for more data if there isn't enough there? is bytesAvailable mainly to be used when not using a stream (manual bytes and shit, ugly)??? need to research this. there's also the random duplication of the byte array size, which can't be helped because Qt inserts it transparently lol)
+  ^^^^^^the documentation for the constructor: QDataStream::QDataStream(QIODevice * d) says i need to manually make sure there's enough data available. at least now i know.
+  []
+
+  broadcasts vs. events? since all the clients within an appId are known (in this case at least) to share a db (they are each a node in a couchbase cluster), who does the writing if i send the broadcast to every client? events on the other hand could just be to one client (now i have to figure out how to decide which)
+  []
+
+  message caching if not connected (or not?). for broadcasts i could just see if my allConnectedClients list is zero and then write to some queue until they aren't (which means i have to check that queue (or associated bool) each time allConnectedClients is greater than zero..)
+  []
+
+  handle disconnects better fuck that socket error. it should cleanly disconnect but also be able to handle a non-clean one (maybe non-clean implies we expect them to come back so we cache the messages they miss? there would still be potentially lost messages already written to socket before the non-clean disconnect is noticed). perhaps a stream log and future messages come with requests that say "we got up to point xyz in the stream log so now you can purge it". this way if they non-cleanly dc they can send the last point that their stream log is at when they come back and the server can bring them back up to speed. maybe this is all pointless and overkill? the stream-checkpoint-this-is-where-i-am-and-how-much-i-have-received probably shouldn't be sent with every message (overkill), but maybe a maximum time in between (so it COULD be every message if they aren't very often). also, the stream log can be two ways. the server can say "we-got-this-many-requests-from-you-am-i-missing-any?" when it sends it's responses. basically just robust (and ACROSS connection drops! tcp does not do this) message ensuring...
+  ^^^perhaps also message ordering should be verified? if you get a message back that was requested after another one, you don't process it until you get the other back. and yea if you wait too long you send some message 'hey-what-the-fuck-what-happened-to-this-message-eh?' (analogous to re-sending the request... except smarter)
+  []
+}
