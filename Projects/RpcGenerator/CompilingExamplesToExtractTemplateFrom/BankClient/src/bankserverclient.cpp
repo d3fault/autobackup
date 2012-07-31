@@ -29,6 +29,13 @@ void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IE
     connect(signalEmitter, SIGNAL(createBankAccountCompleted(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountCompleted(ClientCreateBankAccountMessage*)));
     connect(signalEmitter, SIGNAL(getAddFundsKeyCompleted(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage*)));
 
+    //Action Errors
+    connect(signalEmitter, SIGNAL(createBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage*)));
+    connect(signalEmitter, SIGNAL(createBankAccountFailedPersistError(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountFailedPersistError(ClientCreateBankAccountMessage*)));
+    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage*)));
+    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage*)));
+    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage*)));
+
     //Broadcasts
     connect(signalEmitter, SIGNAL(pendingBalanceDetected(ClientPendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage*)));
     connect(signalEmitter, SIGNAL(confirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)));
@@ -57,6 +64,31 @@ void BankServerClient::handleCreateBankAccountCompleted(ClientCreateBankAccountM
 void BankServerClient::handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
     emit d(QString("get add funds key message completed for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey);
+    getAddFundsKeyMessage->doneWithMessage();
+}
+void BankServerClient::handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage *createBankAccountMessage)
+{
+    emit d(QString("create bank account message failed, username already exists for user: ") + createBankAccountMessage->Username);
+    createBankAccountMessage->doneWithMessage();
+}
+void BankServerClient::handleCreateBankAccountFailedPersistError(ClientCreateBankAccountMessage *createBankAccountMessage)
+{
+    emit d(QString("create bank account message failed, persist error for user: ") + createBankAccountMessage->Username);
+    createBankAccountMessage->doneWithMessage();
+}
+void BankServerClient::handleGetAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
+{
+    emit d(QString("get add funds key message failed, username doesn't exist' for user: ") + getAddFundsKeyMessage->Username);
+    getAddFundsKeyMessage->doneWithMessage();
+}
+void BankServerClient::handleGetAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
+{
+    emit d(QString("get add funds key message failed, use existing key first for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey); //TODOreq: determine if an action returning as an ERROR should even be able to specify anything. like do we get the 'existing key' from the server via the message or from our local cache?? all up to me really
+    getAddFundsKeyMessage->doneWithMessage();
+}
+void BankServerClient::handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
+{
+    emit d(QString("get add funds key message failed, wait for pending to be confirmed for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey);
     getAddFundsKeyMessage->doneWithMessage();
 }
 void BankServerClient::handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage)

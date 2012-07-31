@@ -1,5 +1,7 @@
 #include "bankdbhelper.h"
 
+#include <QDateTime> //debug
+
 BankDbHelper::BankDbHelper()
 {
 }
@@ -20,7 +22,6 @@ void BankDbHelper::stop()
 }
 void BankDbHelper::createBankAccount(ServerCreateBankAccountMessage *createBankAccountMessage)
 {
-    emit d(QString("BankDbHelper received createBankAccountMessage with user: ") + createBankAccountMessage->Username);
     if(!m_AllUsers.contains(createBankAccountMessage->Username))
     {
         m_AllUsers.append(createBankAccountMessage->Username);
@@ -29,27 +30,34 @@ void BankDbHelper::createBankAccount(ServerCreateBankAccountMessage *createBankA
             createBankAccountMessage->createBankAccountFailedPersistError();
             return;
         }
+        else
+        {
+            emit d(QString("BankDbHelper created bank account for user: ") + createBankAccountMessage->Username);
+        }
         createBankAccountMessage->deliver();
         return;
     }
     else
     {
-        //TODOreq: errors n shit
+        emit d(QString("BankDbHelper create bank account failed, username exists: ") + createBankAccountMessage->Username);
         createBankAccountMessage->createBankAccountFailedUsernameAlreadyExists();
         return;
     }
 }
 void BankDbHelper::getAddFundsKey(ServerGetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
-    emit d(QString("BankDbHelper received getAddFundsKeyMessage with user: ") + getAddFundsKeyMessage->Username);
     if(!m_AllUsers.contains(getAddFundsKeyMessage->Username))
     {
-        //TODOreq: user not exist error
-        //getAddFundsKeyMessage->get
+        emit d(QString("BankDb get add funds key failed, username doesn't exist: ") + getAddFundsKeyMessage->Username);
+        getAddFundsKeyMessage->getAddFundsKeyFailedUsernameDoesntExist();
     }
     else
     {
         //TODOreq: add to db etc, perhaps relay to bitcoin?
+        //debug:
+        getAddFundsKeyMessage->AddFundsKey = QDateTime::currentDateTime().toString();
+        emit d(QString("BankDb got add funds key: '") + getAddFundsKeyMessage->AddFundsKey + QString("' for user: " ) + getAddFundsKeyMessage->Username);
+
         getAddFundsKeyMessage->deliver();
     }
 }

@@ -54,10 +54,8 @@ void IBankServerProtocolKnower::pendingBalanceDetectedDelivery()
     ServerPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = static_cast<ServerPendingBalanceDetectedMessage*>(sender());
     pendingBalanceDetectedMessage->Header.MessageType = RpcBankServerHeader::PendingBalanceDetectedMessageType;
     pendingBalanceDetectedMessage->Header.MessageId = 0;
-    emit d(QString("pending balance detected delivery received, about to broadcast it. user: ") + pendingBalanceDetectedMessage->Username);
-    //myTransmit(pendingBalanceDetectedMessage, 0);
+    pendingBalanceDetectedMessage->Header.Success = true;
     myBroadcast(pendingBalanceDetectedMessage);
-    //there is no pending queue because we are not 'responding' to anyone
     pendingBalanceDetectedMessage->doneWithMessage();
 }
 void IBankServerProtocolKnower::confirmedBalanceDetectedDelivery()
@@ -65,7 +63,7 @@ void IBankServerProtocolKnower::confirmedBalanceDetectedDelivery()
     ServerConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = static_cast<ServerConfirmedBalanceDetectedMessage*>(sender());
     confirmedBalanceDetectedMessage->Header.MessageType = RpcBankServerHeader::ConfirmedBalanceDetectedMessageType;
     confirmedBalanceDetectedMessage->Header.MessageId = 0;
-    //myTransmit(confirmedBalanceDetectedMessage, 0);
+    confirmedBalanceDetectedMessage->Header.Success = true;
     myBroadcast(confirmedBalanceDetectedMessage);
     confirmedBalanceDetectedMessage->doneWithMessage();
 }
@@ -78,6 +76,7 @@ void IBankServerProtocolKnower::createBankAccountFailedUsernameAlreadyExists()
     uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.take(createBankAccountMessage);
     //TODOreq: handle error where the message wasn't in pending for some reason :-/. do it for regular delivery() too...
     //TODOreq: idfk what to do. stream an enum or something? should it be part of the header (or a success/failed bool)?
+    createBankAccountMessage->fail(ServerCreateBankAccountMessage::FailedUsernameAlreadyExists);
     myTransmit(createBankAccountMessage, uniqueRpcClientId);
     createBankAccountMessage->doneWithMessage();
 }
@@ -86,10 +85,26 @@ void IBankServerProtocolKnower::createBankAccountFailedPersistError()
 }
 void IBankServerProtocolKnower::getAddFundsKeyFailedUsernameDoesntExist()
 {
+    ServerGetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<ServerGetAddFundsKeyMessage*>(sender());
+    uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer.take(getAddFundsKeyMessage);
+    getAddFundsKeyMessage->fail(ServerGetAddFundsKeyMessage::FailedUsernameDoesntExist); //sets IMessage->Header.Success to false, which causes IMessage::quint32 failedReason to be set with the enum and also streamed. it isn't streamed when success is true. broadcasts have no use for the Success/failReason shit, so maybe it should be in a class that only Actions inherit? Actions on both client and server need it, and neither Broadcasts on client nor server need it. errors are action specific. FUCK, Success is in the _header_...... i could just not stream it for broadcasts, but then i have to do expensive switching... or stream an additional bool 'isAction'.... which would cost the same as just streaming Success in the first place rofl...
+
+    myTransmit(getAddFundsKeyMessage, uniqueRpcClientId);
+    getAddFundsKeyMessage->doneWithMessage();
 }
 void IBankServerProtocolKnower::getAddFundsKeyFailedUseExistingKeyFirst()
 {
+    ServerGetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<ServerGetAddFundsKeyMessage*>(sender());
+    uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer.take(getAddFundsKeyMessage);
+    getAddFundsKeyMessage->fail(ServerGetAddFundsKeyMessage::FailedUseExistingKeyFirst);
+    myTransmit(getAddFundsKeyMessage, uniqueRpcClientId);
+    getAddFundsKeyMessage->doneWithMessage();
 }
 void IBankServerProtocolKnower::getAddFundsKeyFailedWaitForPendingToBeConfirmed()
 {
+    ServerGetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<ServerGetAddFundsKeyMessage*>(sender());
+    uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer.take(getAddFundsKeyMessage);
+    getAddFundsKeyMessage->fail(ServerGetAddFundsKeyMessage::FailedWaitForPendingToBeConfirmed);
+    myTransmit(getAddFundsKeyMessage, uniqueRpcClientId);
+    getAddFundsKeyMessage->doneWithMessage();
 }

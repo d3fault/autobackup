@@ -9,6 +9,12 @@
 class GetAddFundsKeyMessageBase
 {
 public:
+    enum GetAddFundsKeyFailedReasonsEnum
+    {
+        FailedUsernameDoesntExist = 0,
+        FailedUseExistingKeyFirst,
+        FailedWaitForPendingToBeConfirmed
+    };
     QString Username;
     QString AddFundsKey;
 };

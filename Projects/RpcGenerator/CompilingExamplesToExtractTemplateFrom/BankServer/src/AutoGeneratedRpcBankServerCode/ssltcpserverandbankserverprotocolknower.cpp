@@ -60,6 +60,7 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
                     ServerCreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
                     createBankAccountMessage->Header.MessageType = header.MessageType;
                     createBankAccountMessage->Header.MessageId = header.MessageId;
+                    createBankAccountMessage->Header.Success = true;
                     stream >> *createBankAccountMessage;
                     processCreateBankAccountMessage(createBankAccountMessage, SslTcpServer::getClientUniqueId(secureSocket));
                 }
@@ -69,6 +70,7 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
                     ServerGetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
                     getAddFundsKeyMessage->Header.MessageType = header.MessageType;
                     getAddFundsKeyMessage->Header.MessageId = header.MessageId;
+                    getAddFundsKeyMessage->Header.Success = true;
                     stream >> *getAddFundsKeyMessage;
                     processGetAddFundsKeyMessage(getAddFundsKeyMessage, SslTcpServer::getClientUniqueId(secureSocket));
                 }
@@ -95,6 +97,8 @@ void SslTcpServerAndBankServerProtocolKnower::myTransmit(IMessage *message, uint
     QSslSocket *socket = m_SslTcpServer->getSocketByUniqueId(uniqueRpcClientId);
     QDataStream stream(socket);
     stream << message->Header;
+    if(!message->Header.Success)
+        stream << message->FailedReasonEnum;
     stream << *message;
 
 

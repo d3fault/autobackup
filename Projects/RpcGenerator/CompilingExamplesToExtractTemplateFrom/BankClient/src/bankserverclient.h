@@ -24,9 +24,18 @@ public slots:
     void simulateCreateBankAccountAction(QString username);
     void simulateGetAddFundsKeyAction(QString username);
 private slots:
+    //Actions Responses
     void handleCreateBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage);
     void handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
 
+    //Action Errors
+    void handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage *createBankAccountMessage);
+    void handleCreateBankAccountFailedPersistError(ClientCreateBankAccountMessage *createBankAccountMessage);
+    void handleGetAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void handleGetAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+
+    //Broadcasts
     void handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage);
     void handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage);
 };

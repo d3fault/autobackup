@@ -12,6 +12,8 @@ class IMessage : public IRecycleableAndStreamable
 public:
     explicit IMessage(QObject *owner);
     void deliver();
+    void fail(quint32 failedReasonEnum);
+    quint32 FailedReasonEnum;
 signals:
     void deliverSignal();
 };

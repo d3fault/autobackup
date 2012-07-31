@@ -46,6 +46,11 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
     {
         RpcBankServerHeader header;
         stream >> header;
+        quint32 failedReasonEnum; //TODO: sure aren't streaming it every time, but do we really have to alloc it every time? just stack alloc so w/e... but still...
+        if(!header.Success)
+        {
+            stream >> failedReasonEnum;
+        }
 #if 0
         if(header.MessageSize > 0) //could compare m_SslTcpClient->bytesAvailable() and return if not enough, but if there aren't enough left then we need to eh put the header BACK so we re-read it next time the slot gets called or something??? maybe i should just scrap headers altogether... but i like how i can delegate the stream operator to the message type itself :(. perhaps i can have a 2-stage header?? doesn't help with solving this particular problem, but does help with the message ID thing a bit (maybe? unsure)
         {
@@ -59,8 +64,29 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
                 if(createBankAccountMessage)
                 {
                     stream >> *createBankAccountMessage;
-                    emit createBankAccountCompleted(createBankAccountMessage);
-                    //processCreateBankAccountResponseReceived();
+                    if(header.Success)
+                    {
+                        emit createBankAccountCompleted(createBankAccountMessage);
+                    }
+                    else
+                    {
+                        switch(failedReasonEnum)
+                        {
+                        case ClientCreateBankAccountMessage::FailedUsernameAlreadyExists:
+                            {
+                                emit createBankAccountFailedUsernameAlreadyExists(createBankAccountMessage);
+                            }
+                        break;
+                        case ClientCreateBankAccountMessage::FailedPersistError:
+                            {
+                                emit createBankAccountFailedPersistError(createBankAccountMessage);
+                            }
+                        break;
+                        default:
+                            //TODOreq: unknown error? maybe a generic one that they all have?
+                        break;
+                        }
+                    }
                 }
                 else
                 {
@@ -74,8 +100,34 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
                 if(getAddFundsKeyMessage)
                 {
                     stream >> *getAddFundsKeyMessage;
-                    emit getAddFundsKeyCompleted(getAddFundsKeyMessage);
-                    //processGetAddFundsKeyResponseReceived();
+                    if(header.Success)
+                    {
+                        emit getAddFundsKeyCompleted(getAddFundsKeyMessage);
+                    }
+                    else
+                    {
+                        switch(failedReasonEnum)
+                        {
+                        case ClientGetAddFundsKeyMessage::FailedUsernameDoesntExist:
+                            {
+                                emit getAddFundsKeyFailedUsernameDoesntExist(getAddFundsKeyMessage);
+                            }
+                        break;
+                        case ClientGetAddFundsKeyMessage::FailedUseExistingKeyFirst:
+                            {
+                                emit getAddFundsKeyFailedUseExistingKeyFirst(getAddFundsKeyMessage);
+                            }
+                        break;
+                        case ClientGetAddFundsKeyMessage::FailedWaitForPendingToBeConfirmed:
+                            {
+                                emit getAddFundsKeyFailedWaitForPendingToBeConfirmed(getAddFundsKeyMessage);
+                            }
+                        break;
+                        default:
+                            //unknown/generic error?
+                        break;
+                        }
+                    }
                 }
                 else
                 {

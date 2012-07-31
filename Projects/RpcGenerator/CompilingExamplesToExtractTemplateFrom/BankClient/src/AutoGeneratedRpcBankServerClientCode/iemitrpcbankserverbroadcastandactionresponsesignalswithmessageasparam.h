@@ -17,6 +17,13 @@ signals:
     void createBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage);
     void getAddFundsKeyCompleted(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
 
+    //Action Errors
+    void createBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage *createBankAccountMessage);
+    void createBankAccountFailedPersistError(ClientCreateBankAccountMessage *createBankAccountMessage);
+    void getAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void getAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void getAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+
     //Broadcasts
     void pendingBalanceDetected(ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage);
     void confirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage);

@@ -9,6 +9,11 @@
 class CreateBankAccountMessageBase
 {
 public:
+    enum CreateBankAccountFailedReasonsEnum
+    {
+        FailedUsernameAlreadyExists = 0,
+        FailedPersistError
+    };
     bool Success; //keeping this here so my stream operator doesn't break, will deal with it later TODOreq. i don't need or want it though... but have nothing else to return lmao (code needs to be ok with that)
     QString Username;
 };
