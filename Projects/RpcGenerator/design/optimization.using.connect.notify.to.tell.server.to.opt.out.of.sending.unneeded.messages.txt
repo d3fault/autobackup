@@ -1,0 +1,9 @@
+the client does not have to connect to the rpcserverhelper's signals
+
+as a TODOoptimization, i could use connectNotify() to determine whether or not to even send the messages for those signals accross the network. it appears to have a race condition, but as long as the user only connects once at the startup, there isn't a race condition. also maybe we should default to sending messages across the network for every message (is pretty much the race condition i was just talking about) until we get our first action request or something which then can tell us which ones the client business is really connected to. at this point we can stop sending the messages they aren't connected to (this is to account for when a production server goes down and comes back up... we could get and miss lots of messages if we have to opt into their reception (rather than opt-out on first action request as i just said))
+
+
+
+TECHNICALLY though, they shouldn't have the message (all 3 (actionResponse,actionError,broadcast) apply) in the input xml file that rpc generator processes
+
+but there might be situations where certain sibling clients listen to errors or messages and others don't. idfk can't predict future

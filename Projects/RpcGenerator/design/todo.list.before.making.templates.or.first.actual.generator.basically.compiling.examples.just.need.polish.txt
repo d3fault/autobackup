@@ -7,9 +7,10 @@ todo
   []
 
   error messages (actions only)
-  []
+  [hacky]
 
   code stability. try not to crash from errors. we need to do like whitelist processing (so to speak). blacklist stuff should definitely not get in... but should also not crash the app. i haven't detected a crash yet, but should walk through the code anyways and add checking where it makes sense (now that it functions! that was a better first step fo sho)
+  ^^^TODOreq: test that receiving an/multiple invalid message(s) does not crash (well already seen it not crash) and that we can still receive non-invalid messages afterwards. maybe use a magic token at the beginning of a message for this
   []
 
   sslSocket.bytesAvailable(); // bool m_DidntGetMessageForCurrentHeaderYet; <-(when we don't have enough bytesAvailable) and: RpcBankServerHeader *m_CurrentHeader; those two come to mind.... so that we can still get (or at least try to get if enough bytes are available) the message the next time readyRead() is emitted. basically i want a robust readyRead slot
@@ -19,7 +20,7 @@ todo
   ^^^^^^the documentation for the constructor: QDataStream::QDataStream(QIODevice * d) says i need to manually make sure there's enough data available. at least now i know.
   []
 
-  broadcasts vs. events? since all the clients within an appId are known (in this case at least) to share a db (they are each a node in a couchbase cluster), who does the writing if i send the broadcast to every client? events on the other hand could just be to one client (now i have to figure out how to decide which)
+  broadcasts vs. events? since all the clients within an appId are known (in this case at least) to share a db (they are each a node in a couchbase cluster), who does the writing if i send the broadcast to every client? events on the other hand could just be to one client (now i have to figure out how to decide which) and the client can notify his siblings or something, idfk. i guess really it depends on if there's a 'cache' in the client layer. i do sort of want one... but if it overcomplicates shit then i'm not going to worry about it
   []
 
   message caching if not connected (or not?). for broadcasts i could just see if my allConnectedClients list is zero and then write to some queue until they aren't (which means i have to check that queue (or associated bool) each time allConnectedClients is greater than zero..)
