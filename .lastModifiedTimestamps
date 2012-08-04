@@ -12,7 +12,7 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032808
+Documents/minddump/:1386032821
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -23,7 +23,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032808
+Documents/minddump/dreams/:1386032821
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -319,6 +319,7 @@ Documents/minddump/lsfjsofuwlrjasdfaiskfyhawiydkfuasfoulkerw.txt:1344077299
 Documents/minddump/lskfjasfopwieruslafkjsdfoiuwerkldsfjoiu.txt:1339487667
 Documents/minddump/lucid.dream.tom.old.man.jennifer.aniston.unrealistic.car.physics.txt:1334610367
 Documents/minddump/make.the.best.of.it.asdlfjksdlfjsowiuriowersafdj.txt:1337280879
+Documents/minddump/man.im.dumb.this.backup.is.actually.waaaay.overdue.more.than.i.thought.txt:1344097655
 Documents/minddump/manipulating.everyone.i.want.to.fuck.txt:1322578892
 Documents/minddump/meh.these.words.are.just.a.summary.but.say.enough.imo.txt:1339839160
 Documents/minddump/mental.orgasm.right.before.a.sudden.death.txt:1320302226
@@ -1485,7 +1486,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386032808
+Projects/libAvGraphicsItem2/design/:1386032821
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1657,7 +1658,7 @@ Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 autobackupScripts/:1321106464
-autobackupScripts/linux/:1344094404
+autobackupScripts/linux/:1344098506
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -1673,12 +1674,13 @@ autobackupScripts/linux/droid.conversationBackup.pull.zip.and.shred.sh:133320254
 autobackupScripts/linux/installAllRpmsInThisDir.sh:1324208617
 autobackupScripts/linux/mount.2x.750gb.drives.sh:1321491435
 autobackupScripts/linux/polaroid.backup.and.shred.sh:1336416210
+autobackupScripts/linux/steps.to.staticBackup.txt:1344098506
 autobackupScripts/linux/sync.toSync.and.shred.sh:1336416361
 autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1344096086
+autobackupScripts/win/.directory:1344099004
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

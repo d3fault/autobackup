@@ -1,0 +1,16 @@
+ignorance is bliss
+
+and i shouldn't do backups while drunk anymore
+dumbass.
+
+a) backed up my ~/autobackup/ folder instead of /mnt/750x*/ structure.. which has the git push copy of ~/autobackup/ plus lots of other shit (pics etc)
+b) left my truecrypt key in the 'backup' folder of keepass file, right after making the password really short. this one is less my fault.. but still
+
+
+also, regarding (a), if i just get the structure and also copy dirstructure.txt manually into my static backup, i don't have to worry about getting ~/autobackup/
+timestamps were the only reason i wanted to get ~/autobackup/ manually (on top of the /mnt/750x*/ structure.. since git push doesn't do timestamps)
+
+basically what (a) means is that my 1tb drives don't have even old copies of /mnt/750x*/ structure... because i overwrite it with a truecrypt file every time hahaha. they only have ~/autobackup/... which is useful but doesn't contain everything i want
+
+i should put the dirstructure.txt file in /mnt/750x*/autobackup/, even though it's a push-only git repo folder
+(but this is only true during staticBackup creation shit)

@@ -1,0 +1,25 @@
+steps to staticBackup:
+
+create truecrypt container large enough to hold all contents of /mnt/750x*/ folder
+
+
+cp -av the contents (don't use a wildcard in cp command or else we'll miss hidden files)
+if you want to copy the CONTENTS of a folder _without_ copying the folder itself, but without using a wildcard (so you don't miss hidden files), cd into the dir and then do cp -av . ./../dest/
+
+
+cd /mnt/750x1/
+cp -av . /staticBackupTruecryptShitFolder/
+-----OR----- (since they are identical)
+cd /mnt/750x2/
+cp -av . /staticBackupTruecryptShitFolder/
+
+then
+cp ~/autobackup/dirstructure.txt /staticBackupTruecryptShitFolder/autobackup/
+
+then finally cp ./dismountedStaticBackup-dated-etc /*tbDriveMounted/staticBackupToBeOverwritten
+
+md5sum em both for good measure
+
+
+
+then copy over passwords and shit
