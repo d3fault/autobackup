@@ -12,7 +12,7 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032794
+Documents/minddump/:1386032808
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -23,7 +23,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032794
+Documents/minddump/dreams/:1386032808
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -506,7 +506,7 @@ Projects/AdAgency/src/BitcoinServer/:1333472064
 Projects/AdAgency/src/BitcoinServer/optionally.secure.as.fuck.server.impl.txt:1333472064
 Projects/AdAgency/src/WtFrontEnd/:1333472019
 Projects/AdAgency/src/WtFrontEnd/wt.code.that.interfaces.with.AppDb.and.UsernameDb.txt:1333472019
-Projects/AdCaptcha/:1329917437
+Projects/AdCaptcha/:1344095454
 Projects/AdCaptcha/design/:1329932208
 Projects/AdCaptcha/design/depreciating.values.starting.at.twice.the.previous.slots.amount.not.DOUBLING.PER.DAY.as.i.like.to.see.it.THERE.IS.ALGORITHM.STUFF.IN.HERE.txt:1329932185
 Projects/AdCaptcha/design/security.concerns.will.always.eat.away.at.my.brain.who.cares.if.your.customer.funds.get.jacked.i.mean.obviously.they.do.but.cover.your.own.ass.FIRST.txt:1329917474
@@ -831,7 +831,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
 Projects/Prototypes/:1342234412
-Projects/Prototypes/AudioVideoBuffers/:1327617847
+Projects/Prototypes/AudioVideoBuffers/:1344095659
 Projects/Prototypes/AudioVideoBuffers/design/:1327617616
 Projects/Prototypes/AudioVideoBuffers/design/AudioVideoBuffersOverviewDetailed.dia:1327575511
 Projects/Prototypes/AudioVideoBuffers/design/Buffers.Synchronous.Alloc.I.give.up.just.gonna.try.to.code.it.dia:1327617616
@@ -855,7 +855,7 @@ Projects/Prototypes/AudioVideoBuffers/src/localfile.cpp:1327620579
 Projects/Prototypes/AudioVideoBuffers/src/localfile.h:1327619948
 Projects/Prototypes/AudioVideoBuffers/src/main.cpp:1326662366
 Projects/Prototypes/Benchmarks/:1340371993
-Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/:1340382019
+Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/:1344095688
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/:1340540220
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/Tests/:1340401210
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/Tests/mutexusingheaprecyclingdatagenerator.cpp:1340400428
@@ -924,7 +924,7 @@ Projects/Prototypes/QSslTest1/src/SecureServer/ssltcpserver.cpp:1330088250
 Projects/Prototypes/QSslTest1/src/SecureServer/ssltcpserver.h:1330074096
 Projects/Prototypes/QSslTest1/src/shared/:1329942208
 Projects/Prototypes/QSslTest1/src/shared/protocol.h:1329942208
-Projects/Prototypes/QtBroadcastServerWtClient/:1333038486
+Projects/Prototypes/QtBroadcastServerWtClient/:1344095796
 Projects/Prototypes/QtBroadcastServerWtClient/design/:1333011399
 Projects/Prototypes/QtBroadcastServerWtClient/design/initial.design.txt:1333011399
 Projects/Prototypes/QtBroadcastServerWtClient/src/:1334710923
@@ -985,7 +985,7 @@ Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/:1331460005
 Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/sharedprotocol.h:1331252119
 Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/userBankAccount.h:1331460005
 Projects/Prototypes/WebsiteAutomator/:1320055410
-Projects/Prototypes/WtServerPostTest/:1332675938
+Projects/Prototypes/WtServerPostTest/:1344095866
 Projects/Prototypes/WtServerPostTest/src/:1333034917
 Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/:1332677175
 Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/DispatchThread.C:1332677175
@@ -1019,11 +1019,11 @@ Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/QtObject.h:1287240871
 Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/README.txt:1287240871
 Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/hello.C:1332589261
 Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/wtwithqtMOD2.pro:1332540761
-Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/:1325016224
+Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/:1344095723
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/src/:1325630078
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/src/consoleLibAvReadAviHeaderFromMemoryTest.pro:1325014868
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/src/main.cpp:1325522963
-Projects/Prototypes/libAvAudioPlayer/:1324915075
+Projects/Prototypes/libAvAudioPlayer/:1344095745
 Projects/Prototypes/libAvAudioPlayer/src/:1326544225
 Projects/Prototypes/libAvAudioPlayer/src/libAvAudioPlayer.pro:1324565742
 Projects/Prototypes/libAvAudioPlayer/src/libavaudioplayer.cpp:1326489296
@@ -1036,7 +1036,7 @@ Projects/Prototypes/libAvAudioPlayer/src/qtaudioplayer.h:1324567910
 Projects/Prototypes/libAvAudioPlayer/src/threadsafequeuebymutex.cpp:1326484513
 Projects/Prototypes/libAvAudioPlayer/src/threadsafequeuebymutex.h:1324568777
 Projects/Prototypes/libAvAudioPlayer/final.notes.on.functionality.txt:1324915075
-Projects/Prototypes/libAvAudioPlayer2/:1326545531
+Projects/Prototypes/libAvAudioPlayer2/:1344095761
 Projects/Prototypes/libAvAudioPlayer2/design/:1324915532
 Projects/Prototypes/libAvAudioPlayer2/design/initial.spec.txt:1324915532
 Projects/Prototypes/libAvAudioPlayer2/src/:1331376324
@@ -1065,7 +1065,7 @@ Projects/Prototypes/pluginIDEandRunner/src/main.cpp:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginIDEandRunner.pro:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginideandrunnermainwidget.cpp:1326313092
 Projects/Prototypes/pluginIDEandRunner/src/pluginideandrunnermainwidget.h:1326313092
-Projects/Prototypes/rpcMessageDeliveryAndRecycling/:1341445221
+Projects/Prototypes/rpcMessageDeliveryAndRecycling/:1344095815
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/:1342607788
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/:1341465164
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/messageDispensers/actions/:1341463773
@@ -1099,7 +1099,7 @@ Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcclientshelperanddelive
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcclientshelperanddeliveryacceptorandnetwork.h:1341361742
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcserverbusinessimpl.cpp:1341464643
 Projects/Prototypes/rpcMessageDeliveryAndRecycling/src/rpcserverbusinessimpl.h:1341462918
-Projects/Prototypes/rpcMessageDeliveryAndRecyclingThreadedBetter/:1342238833
+Projects/Prototypes/rpcMessageDeliveryAndRecyclingThreadedBetter/:1344095836
 Projects/Prototypes/rpcMessageDeliveryAndRecyclingThreadedBetter/src/:1342641825
 Projects/Prototypes/rpcMessageDeliveryAndRecyclingThreadedBetter/src/messageDispensers/:1342241736
 Projects/Prototypes/rpcMessageDeliveryAndRecyclingThreadedBetter/src/messageDispensers/actions/:1341838401
@@ -1206,7 +1206,7 @@ Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.cp
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.h:1320134193
 Projects/RpcGenerator/:1343597837
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1342939005
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/:1343684519
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/:1344095898
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1343745353
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1343743436
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/:1343680851
@@ -1258,7 +1258,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bank
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclienttest.cpp:1343653217
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclienttest.h:1343653118
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/main.cpp:1342947944
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/:1343741985
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/:1344095911
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1343745355
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/:1343741972
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/:1343667910
@@ -1379,7 +1379,7 @@ Projects/WebsiteAutomator/src/websiteaction.cpp:1320065635
 Projects/WebsiteAutomator/src/websiteaction.h:1320065677
 Projects/WebsiteAutomator/src/websiteautomator.cpp:1320063447
 Projects/WebsiteAutomator/src/websiteautomator.h:1320063371
-Projects/designEqualsImplementation/:1321628481
+Projects/designEqualsImplementation/:1344095494
 Projects/designEqualsImplementation/design/:1342949604
 Projects/designEqualsImplementation/design/100.percent.lgpl.95.percent.profit.goes.to.them.5.percent.to.me.txt:1322953540
 Projects/designEqualsImplementation/design/100.percent.transparent.business.except.for.security.lol.how.do.i.do.security.does.the.community.do.it.for.me.lol.txt:1322065974
@@ -1466,7 +1466,7 @@ Projects/designEqualsImplementation/src/designEqualsImplementation.pro:132377425
 Projects/designEqualsImplementation/src/main.cpp:1323576439
 Projects/designEqualsImplementation/src/projectcontroller.cpp:1323777755
 Projects/designEqualsImplementation/src/projectcontroller.h:1323777746
-Projects/dinosaurAlphabetGame/:1323598042
+Projects/dinosaurAlphabetGame/:1344095523
 Projects/dinosaurAlphabetGame/design/:1323591210
 Projects/dinosaurAlphabetGame/design/player.selects.what.dinosaur.eats.the.letters.txt:1323591210
 Projects/dinosaurAlphabetGame/src/:1331376485
@@ -1478,14 +1478,14 @@ Projects/dinosaurAlphabetGame/src/dinosauralphabetgamewidget.h:1323603801
 Projects/dinosaurAlphabetGame/src/inputkeyfilter.cpp:1323597337
 Projects/dinosaurAlphabetGame/src/inputkeyfilter.h:1323593397
 Projects/dinosaurAlphabetGame/src/main.cpp:1323603423
-Projects/layoutAppendTriggersGuiUpdate/:1322120632
+Projects/layoutAppendTriggersGuiUpdate/:1344095576
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/:1322122714
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate.pro:1322120080
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.cpp:1322122646
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
-Projects/libAvGraphicsItem2/:1324382749
-Projects/libAvGraphicsItem2/design/:1386032794
+Projects/libAvGraphicsItem2/:1344095614
+Projects/libAvGraphicsItem2/design/:1386032808
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1504,7 +1504,7 @@ Projects/libAvGraphicsItem2/src/frontend/rawaudioplayer.cpp:1324386668
 Projects/libAvGraphicsItem2/src/frontend/rawaudioplayer.h:1324386627
 Projects/libAvGraphicsItem2/src/libAvGraphicsItem2.pro:1324380479
 Projects/libAvGraphicsItem2/src/main.cpp:1324461019
-Projects/libAvGraphicsItem3/:1327003418
+Projects/libAvGraphicsItem3/:1344095628
 Projects/libAvGraphicsItem3/design/:1326545331
 Projects/libAvGraphicsItem3/design/Buffers.Overview.Push.To.Init.and.Pull.While.Progressing.wtf.both.dia:1326544897
 Projects/libAvGraphicsItem3/design/Class.Diagram.and.how.I.want.the.libraries.to.be.modularized.dia:1326545331
@@ -1546,7 +1546,7 @@ Solutions/Anonymous Bitcoin Computing/design/protobuf.vs.struct.and.enum.proto.t
 Solutions/Anonymous Bitcoin Computing/design/public.ssl.key.can.have.many.to.one.relationship.with.sub.bank.accounts.txt:1340180431
 Solutions/Anonymous Bitcoin Computing/design/specific.small.oneserver.accountless.implementation.txt:1340538900
 Solutions/Anonymous Bitcoin Computing/design/use.paxos.you.moron.it.isnt.that.tough.of.a.decision.its.still.pretty.scalable.txt:1338547630
-Solutions/Anonymous Bitcoin Computing/src/:1340179769
+Solutions/Anonymous Bitcoin Computing/src/:1344095952
 Solutions/Anonymous Bitcoin Computing/src/AppDb/:1337825795
 Solutions/Anonymous Bitcoin Computing/src/AppDb/Actions/:1336172121
 Solutions/Anonymous Bitcoin Computing/src/AppDb/Actions/createbankaccountaction.cpp:1336172121
@@ -1650,11 +1650,14 @@ Solutions/Anonymous Bitcoin Computing/src/shared/WtFrontEndAndAppDbProtocol.h:13
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
 Solutions/BlueBox/:1325623915
-Solutions/BlueBox/A Suitable Video Player/:1325623733
-Solutions/BlueBox/Bitcoin Ad Agency/:1325623706
-Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1325623915
+Solutions/BlueBox/A Suitable Video Player/:1344096014
+Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021
+Solutions/BlueBox/Bitcoin Ad Agency/:1344096033
+Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
+Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
+Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 autobackupScripts/:1321106464
-autobackupScripts/linux/:1343536975
+autobackupScripts/linux/:1344094404
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -1665,7 +1668,7 @@ autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
 autobackupScripts/linux/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
 autobackupScripts/linux/dismount.2x.750gb.drives.sh:1321491794
-autobackupScripts/linux/droid.backup.and.shred.sh:1336416161
+autobackupScripts/linux/droid.backup.and.shred.sh:1344093051
 autobackupScripts/linux/droid.conversationBackup.pull.zip.and.shred.sh:1333202549
 autobackupScripts/linux/installAllRpmsInThisDir.sh:1324208617
 autobackupScripts/linux/mount.2x.750gb.drives.sh:1321491435
@@ -1675,7 +1678,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1344081018
+autobackupScripts/win/.directory:1344096086
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
