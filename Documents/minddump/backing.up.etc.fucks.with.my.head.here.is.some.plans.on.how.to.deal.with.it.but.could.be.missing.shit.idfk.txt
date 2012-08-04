@@ -1,0 +1,78 @@
+ahh i think i remember now
+
+it was my description of the merging
+
+but also cognitive dissonance on if i should even head that direction atm
+
+should i stick with static backup method?
+
+wrote this then left it open and played solitaire and wrote a few other docs in between
+
+but i'm sure you can match what it goes with ;-P
+
+
+anyways
+
+multiple sources (1tbx1, 1tbx2)
+multiple destinations (750x1, 750x2... and then later 1tbx1 and 1tbx2 again (after formatting / changing keys))
+
+hashes from sources have to be checked
+timestamps too
+i should choose which of the two conflicts to use (unless only difference is timestamps, in which case it chooses earlier one)
+it should be fail proof in case hashing algorithm uses all my memory or i fail for some other reason
+i guess it should just work on large files in general. should test that before trying to use it
+
+see now i already forgot the rest
+
+
+i like the idea of an index keeping the timestamps + filenames
+but i want that index to be incremental
+
+and like in chunks also
+
+so i can update it incrementally every time i save (750s etc)
+and i can increment it every time i connect 1tbs
+
+
+fuckin a so complicated
+
+but i do think i only ever need to use it once
+
+i just need to organize it better in the future
+
+right now i feel so fucking messy
+
+it's messing with my head
+
+
+i also want to minimize it
+
+get rid of [most] movies
+games too
+
+make my shit fit on whatever
+
+aside: also make minimal minimal (maybe just without vids i've made?) of text (code too) + pictures on a dual layer dvd-r
+MAGNET PROOF
+
+fucking breaking bad scared the shit out of me
+
+text + code + pictures are most valuable to me
+
+videos follow directly after
+
+then the timestamps for all of the above
+
+
+then.........
+
+well that's it
+
+don't care that much about keeping tv shows + movies + games etc...
+
+but that dual layer dvd-r is a tangent worth exploring
+sort of like static backup mode :-P
+but magnet proof
+
+and i want to hide multiple copies all around
+etc

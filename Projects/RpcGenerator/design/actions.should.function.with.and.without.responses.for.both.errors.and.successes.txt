@@ -1,0 +1,10 @@
+action no response && response feasible/forseeable
+
+
+
+createBankAccount has no response whether it is an error or not (just success or error + enum)
+
+it's feasible to think that getAddFundsKey's error 'useExistingKeyFirst' returns the existing key. but the success returns a new key also.
+
+
+every error has an enum describing the error... but that's about it
