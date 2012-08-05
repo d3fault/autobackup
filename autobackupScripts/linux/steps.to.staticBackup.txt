@@ -14,7 +14,8 @@ cd /mnt/750x2/
 cp -av . /staticBackupTruecryptShitFolder/
 
 then
-cp ~/autobackup/dirstructure.txt /staticBackupTruecryptShitFolder/autobackup/
+########cp ~/autobackup/dirstructure.txt /staticBackupTruecryptShitFolder/autobackup/
+^^^actually nvm because the dirstructure.txt is IN the autobackup that is pushed.
 
 then finally cp ./dismountedStaticBackup-dated-etc /*tbDriveMounted/staticBackupToBeOverwritten
 
