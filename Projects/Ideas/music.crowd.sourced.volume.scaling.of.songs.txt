@@ -1,0 +1,20 @@
+volume normalization sucks
+last.fm squashes it's songs
+
+HOWEVER
+volume fixing is handy
+
+some songs are too loud
+some are too quiet
+
+crowd sourced "this song is too loud" and "this song is too quiet" [relative to other songs] buttan in the music client fixes it
+
+we don't squash the graph (normalization)
+we merely scale it up or down (raise/lower volume of entire song)
+
+
+
+
+also, if the user is just listening to their first song since starting the client (or radio station stream or whatever), their opinion isn't really valid because they haven't listened to anything else yet... so maybe it's their hardware's volume that's too low/high. you can only notice a song too high/low when you've been listening to a series of songs
+
+^^to detect that, we could recognize the pattern (each entry is a song 'correction' (or lack thereof)): no-complaint, too-high, too-high, [etc]..... which would mean that the first one was really only too low. we could notify the user after the 2nd too high and say "are you sure that the first song wasn't just too low?". the opposite pattern is true for when the first song is too low (if they report following songs too high)
