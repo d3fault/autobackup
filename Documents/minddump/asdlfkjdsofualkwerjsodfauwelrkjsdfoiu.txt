@@ -1,0 +1,3 @@
+use this don't release it on qt mailing list
+not time based releases of "the project" (a subject on the mailing list)
+event based with timestamp memorization

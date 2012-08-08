@@ -1,0 +1,5 @@
+clientside imessage::getNewOrRecycled() should set the message id to be sha1(uniqueClientId cat messageCounter cat datetimeToString)... and it should only be set once on the getNew portion. we don't want to waste time hashing new message IDs... we just want to make sure the ones we have are unique from all other clients (hence unique client id), all our own other messages (messageCounter)... and for safety's sake... the dateTime is thrown in.
+
+
+but we use the same chunk of code on the server...
+...except the server should be using the message id that it reads off of the network (the client-set one). perhaps some #ifdef RPC_CLIENT code for the message id setting? that is definitely the easiest solution... albeit slightly hacky. i think it's ok though, let's do it.

@@ -1,0 +1,59 @@
+//TODOreq: RPC_BANK_SERVER_UNIQUE_CLIENT_ID needs to be set. it would be optimal to have the Rpc Generator itself set it... and i specify how many clients i want etc. this would go hand in hand with my Rpc Generator setting up all the Ssl Certs etc too. i'd love to be able to say "Generate 10 clients  and 1 server" and it does all the magic for me. which fuck leads me to another question: mutliple servers (sharing same db). need to write about this in it's own doc
+
+
+^^^ that is in irecycleabledispenser.cpp
+
+fuck my brain is going to explode just thinking about that. but i definitely do want the servers to be scalable like that. why else would i use couchbase? and how does a client decide which server to choose? round-robin or specialized load balancing? specialized = YET ANOTHER TANGENT jesus fucking christ i'm only one person!
+
+
+
+
+so i mean
+
+the rpc server will be a couchbase client... as well as a couchbase node?
+is that how i want it?
+
+or do i want the rpc server's to only be a couchbase client and to have dedicated couchbase nodes?
+
+is there a point at which it's unhealthy to scale everything together?
+
+my fucking brain hurts
+
+
+option 0 (stretched out):
+
+Load Balancer (1 or a few, DNS'd) ->
+    Wt Front End (couchbase client for username db) + Rpc Client to AppDb (many, each with own internet connection, and preferably a shared internal LAN) ->
+	AppDb (couchbase client for appdb) + Rpc Server for AppDb + Rpc Client for BankServer (many, all on internal LAN) ->
+	    AppDb Couchbase Cluster Nodes (usernames in a vbucket, appdb info in another vbucket. this data is not considered 'secure') (many, all on internal LAN)
+
+	    BankServer (couchbase client for bankserverdb) + Rpc Server for BankServer (many, each with own internet connection HOSTED LOCALLY IN PERSON!!!) ->
+		BankServer Couchbase Cluster Nodes (each appdb has it's own vbucket. data is considered secure) (many, all on internal LAN hosted locally also)
+
+Note: AppDb is a client to both it's own couchbase cluster and to the BankServer via Rpc shit
+
+option 1 (compacted-but-still-secure):
+
+Load Balancer (1 or a few, DNS'd) ->
+    Wt Front End (Couchbase Client + Node Both for Username Db) + AppDb (Couchbase Client + Node Both for AppDb, different vbucket than Username Db) + Rpc Client?????? what the fuck am i an Rpc Client (wt) and Rpc Server (appdb) both combined? maybe the cross-thread rpc impl?? ->
+	BankServer (Rpc Server for BankServer) + Couchbase Client + Couchbase Node... all hosted locally. each one has it's own internet connection but also a LAN connection to all the other sibling Bank Servers (for couchbase'ness)
+
+
+and there is of course lots of combinations in between 0 and 1
+
+i think i need to visualize all of this on a diagram with appIds and clientIds and messageIds and shit. i should choose the one that scales the best.
+also, am i going to be re-using the same set of [ALL OF THE SERVERS] for different applications? gut says yes, certain-logic (failover/raid-proof?) says no
+
+i've talked before about 'giant fucking binaries' containing all of my code for every project etc... and it is a good way to not waste resources...
+
+but if i accidentally illegal one and it gets raided, all the rest go down too fml.
+i guess just be careful
+
+or any possibly-illegal ones (any sliver of chance of raid) should be on their own setup... and hell... preferably on tor/anon'd servers. but this breaks my devotion to being 100% truthful (impossible but i will try!)
+
+
+so option 0 has, including loadbalancer(s), 6 'rings'. 2 of those rings are purely couchbase db clusters
+option 1 has 3 rings. 2 of those rings (the main 2. the other is just loadbalancers) double as couchbase clients and nodes
+
+i feel like i'm going to throw up at the complexity of this
+or just give up and shoot myself in the face.

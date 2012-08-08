@@ -1,0 +1,7 @@
+prototype: a basic client/server example (can just be across threads/very-basic for prototype) that uses the request/response logging idea as well as the atomic message id shit. atomic meaning.. yes we re-use the message id... but not until we've received a response to the first one. oh and also message ORDERING is important. we do not process responses that shouldn't have come yet. maybe after 5 (or some 'n') message received without receiving a message that's supposed to be processed before those 5 (or a timeout, if shit's going too slow)... we re-send the request (as a special 'where-the-fuck' message).
+
+for the prototype, i should do a qRand() % 10 == 0 as the rate of which i drop messages. so 1 out of every 10 or so will be dropped at random and i want the prototype to recover and deal with it appropriately
+
+YET-ANOTHER-FUCKING-TANGENT-ROFL
+
+but shit this will be a pretty robust motherfucker if i do it right (not to be confused with reading-off-of-QIODevice-robustity (using bytesAvailable() etc)

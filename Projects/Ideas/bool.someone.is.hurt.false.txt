@@ -1,0 +1,1 @@
+i should have a bool indicator overlay indicator to indicate whether someone is being hurt. it shall remain false until an inquiry from a police department in which case THEY are responsible for answering 'how' i am responsible for 'what' actions.

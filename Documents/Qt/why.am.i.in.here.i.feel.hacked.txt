@@ -1,0 +1,21 @@
+just smoked spice
+my logic is implementable
+
+i talk to myself out loud and learn from it
+talking/thinking to myself and recording it
+my logic is implementable
+talking is just logic
+walking through the logic
+i can/should completely zone out
+i need to give myself work
+like a high level design and then set a set of requirements for each "item"
+and then just walk through them linearly
+i can simplify the thinking process indefinitely(i haven't found a spot where i couldn't abstract something?)
+high level design
+requirements design
+timeline / requirements order of implementation (individualization of each so i can derive anything and either customize it or make it one step closer to machine code.
+idea
+design
+code
+
+only one initial.idea.txt in the root of a folder with the project that is to become's src folder (had file then backspaced it then let it go again then backspaced it again)

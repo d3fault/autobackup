@@ -1,5 +1,5 @@
 Documents/:1341011328
-Documents/Qt/:1341529788
+Documents/Qt/:1344456043
 Documents/Qt/interoperable-diagrams/:1341534418
 Documents/Qt/interoperable-diagrams/current.noninteroperable.design.png:1341534383
 Documents/Qt/interoperable-diagrams/current.noninteroperable.design.svg:1341531095
@@ -12,7 +12,8 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032877
+Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
+Documents/minddump/:1386032892
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -23,7 +24,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032877
+Documents/minddump/dreams/:1386032892
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -32,6 +33,7 @@ Documents/minddump/dreams/godfather.pt.2.dream.night.after.watching.txt:13440765
 Documents/minddump/dreams/grassy.hill.snowboarding.elementary.school.classmates.txt:1344305969
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
 Documents/minddump/dreams/iron.man.train.raid.with.10.seconds.of.elbow.conscience.txt:1340076931
+Documents/minddump/dreams/lkasjfdosduwljkerosduifsdlkfjwourweroijsldfkouierw.txt:1344460678
 Documents/minddump/dreams/matt.200ft.fall.1500.ambulance.bill.on.me.txt:1340898045
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
 Documents/minddump/dreams/molly.oval.blowjob.and.burrito.txt:1344441317
@@ -78,11 +80,14 @@ Documents/minddump/asdflkjasdfouiweoriasfdlkjasdfouiopiuqrwqwrelkjoasduasdflkj.t
 Documents/minddump/asdflkjdsaflasjdfouwearklsafkjhsadfoulkerj.txt:1335804974
 Documents/minddump/asdflkjsdfouwerouiweroufouisdffffffffffrfrrrrrrrrrrrreeeeeeeeeeeeee.txt:1340578286
 Documents/minddump/asdflkjweorusdflkjwerouwriqhwrelksjfdoaiwuerlk.txt:1342222556
+Documents/minddump/asdflkjwoeurlksdfjouwrjosdufwerkjous.txt:1344453518
+Documents/minddump/asdflksjdfowiuerlkjsdfoiurwekljsdf.txt:1344462674
 Documents/minddump/asdflskdfjwoerusdlfkjweoarusaofdiuwerlksjdfouwerlkj.txt:1340183876
 Documents/minddump/asdkfljsdfouwerljsfousadf.idk.if.i.want.to.use.this.txt:1341010624
 Documents/minddump/asdlfjasdfouwerljdsfouawkhsfiywersdf.txt:1344286577
 Documents/minddump/asdlfjasdofuwlekrjsaofusadlfjoewurlsajjflsjk.txt:1335805201
 Documents/minddump/asdlfkjasodfuwlrkjsdfoiauyoraworuwlkjsfdoasulkjewr.txt:1344306193
+Documents/minddump/asdlfkjdsofualkwerjsodfauwelrkjsdfoiu.txt:1344462688
 Documents/minddump/asdlfkjoweurarweourwlkjsadfdfsdufasoiu.txt:1337329406
 Documents/minddump/asdlfkjsdfoiuwerlkjsdfaoiusdlkjerw.txt:1340925359
 Documents/minddump/asdlfkjsdfouiawerlkjsdfasodfiuwlerkjsfdoulk.txt:1339319247
@@ -99,6 +104,7 @@ Documents/minddump/asflkajsouweraoweiruasldkfjsadflkjouwerl.txt:1337329431
 Documents/minddump/asflkjsfoweuirlsakjfaiosydufakrewoiuawlkjwer.txt:1344078257
 Documents/minddump/asflkjwaoerusadlfkjawoeruasldfkjaoulkjsaifoweriou.txt:1343535023
 Documents/minddump/asflksdfjaowurasldfkjawoeruasflkjawroulfkjaorwuelkfj.txt:1344306459
+Documents/minddump/asflksdjaflsadjfouw.txt:1344457993
 Documents/minddump/asfowiurlaskfjowiurlksfjlkwroiuasflkjweroiu.txt:1339487566
 Documents/minddump/asfsalkjfweoruisladkfjsadfiusadofiwuerlkwaroiusaflkjweoriulk.txt:1342232591
 Documents/minddump/asjdflaskfjwoiufsdlkjweroiusaflkjeroult.txt:1339319274
@@ -193,6 +199,7 @@ Documents/minddump/fasdlkfjaowurlsdkfjawlerlsfjsaofusdflkwjrlejoidfualkhsakdfh.t
 Documents/minddump/fasfdsdklfjsdfouwelkrjsdfoiusdfkjwer.txt:1338992844
 Documents/minddump/fasjkflasdjfoweurjflsdfhsdofysaihasj.txt:1338547645
 Documents/minddump/fasldkfjasdflkjweoriuasdlfkjsafoiuwerlkjsfoasdu.txt:1338793609
+Documents/minddump/faslkjsadofuwerlasdfaifhsdakfjhweruoiudfslkwr.txt:1344454328
 Documents/minddump/father.son.relationships.fsadlkfjsadfoiuwerlkj.txt:1339058778
 Documents/minddump/fdasljoruaweoruasfjasdlkfjdgasdufasodfuasdofasjlk.txt:1326546122
 Documents/minddump/fdlsfjasodfuaweruaosdfjsdlkfjouilkj.risky.adslfkjsadlkfj.txt:1334790700
@@ -327,6 +334,7 @@ Documents/minddump/love.is.a.self.centered.thought.but.what.isnt.lol.saljkfdsljf
 Documents/minddump/love.you.qt.nokia.lgpl.etc.wooooo.txt:1322082918
 Documents/minddump/lsadjfoualjksafouwlrjosfdualwrjowiruasofuiaksfhaskfh.txt:1343315488
 Documents/minddump/lsadjfsdofusdofjsdlkfjsdofywaeiryasfkjsdflj.txt:1332315602
+Documents/minddump/lsakjdfasdfouwrlkjdsfourl.txt:1344457535
 Documents/minddump/lsakjfasdofuiasodfiaslkrjawelkjfsadfoisdfuoasdflkjrasofpudfojalkr.txt:1327534420
 Documents/minddump/lsdjfaowuralsjfaworuaowruawfljsadlfkjsofuweorjwlkjsfdosaudfwjerlkj.txt:1343313151
 Documents/minddump/lsfjsofuwlrjasdfaiskfyhawiydkfuasfoulkerw.txt:1344077299
@@ -425,6 +433,7 @@ Documents/minddump/shitty.backup.operative.but.i.really.really.need.an.offsite.b
 Documents/minddump/sladfjsadofualerkjsdfoiawfkajsdhfuorlaksjf.txt:1344076055
 Documents/minddump/sladjfouiwerljalskjfasofudsadlkjer.txt:1333731966
 Documents/minddump/sldkfjowerulsdkfjsdfoiuwelrkjsfoiu.txt:1339936095
+Documents/minddump/so.fucking.high.txt:1344456089
 Documents/minddump/so.many.options.rofl.maybe.i.should.do.both.idfk.alfjasdofuwlrkja.txt:1343476580
 Documents/minddump/so.what.about.sentences.inside.of.tangents.then.hmmm.txt:1325705881
 Documents/minddump/soon.i.will.have.a.name.and.be.somebody.i.can.feel.it.finish.this.fucking.code.you.fucking.moron.txt:1334481293
@@ -466,6 +475,7 @@ Documents/minddump/when.pi.is.compromised.you.need.to.reflash.arduino.paranoid.t
 Documents/minddump/where.i.am.and.what.i.am.doing.2011.12.12-12.38.am.txt:1323675512
 Documents/minddump/while.not.dead.is.really.while.true.since.it.is.true.as.long.as.we.can.evaluate.it.txt:1333103136
 Documents/minddump/woeriusdalfkjaworiusdfkhjaflksjfh.txt:1339059113
+Documents/minddump/wrote.all.3.of.these.a.while.ago.my.saving.is.the.most.distracting.thing.i.do.i.need.to.automate.it.asep.txt:1344456141
 Documents/minddump/wrote.this.before.the.other.actually.txt:1337980906
 Documents/minddump/wt.is.awesome.because.only.binary.touches.deployment.server.and.binaries.are.harder.to.modify.txt:1331019877
 Documents/minddump/yes.i.have.to.reinvent.the.wheel.a.bit.but.i.will.be.in.a.position.that.no.man.on.earth.will.be.in.unless.they.do.the.same.lol.life.is.great.in.2012.txt:1330170749
@@ -593,7 +603,7 @@ Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfilesystemwatcher2.h:13431312
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.cpp:1343124786
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.h:1343123172
 Projects/ForFun/QFileSystemWatcher2TestForFun/changes.to.existing.qfsw.main.class.txt:1343131983
-Projects/Ideas/:1344298073
+Projects/Ideas/:1344458038
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -677,6 +687,7 @@ Projects/Ideas/bitcoin.irl.transfer.security.phone.app.thingy.txt:1326662820
 Projects/Ideas/bitcoin.music.selling.set.your.own.price.app.txt:1341081219
 Projects/Ideas/black.screen.white.text.to.save.batteries.and.you.know.what.kindle.screen.might.be.worth.looking.at.txt:1339058821
 Projects/Ideas/block.generation.plus.flattr.but.we.cant.have.a.21.mil.cap.and.scalability.is.a.huge.issue.txt:1334609777
+Projects/Ideas/bool.someone.is.hurt.false.txt:1344458038
 Projects/Ideas/bool.update.equals.true.d3fault.txt:1325049002
 Projects/Ideas/boostrap.the.planet.instead.of.hack.the.planet.ya.know.asdlkfjaweoriuasdlfkjsfoiu.sameshit.txt:1339823683
 Projects/Ideas/broadcasting.live.i.dont.even.have.to.do.anything.tbh.txt:1328137796
@@ -1226,8 +1237,8 @@ Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.h:
 Projects/RpcGenerator/:1343597837
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1342939005
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/:1344095898
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1343745353
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1343743436
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1344454529
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1344443220
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/:1343680851
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/Dispensers/:1343686903
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/Dispensers/Actions/:1343686095
@@ -1264,7 +1275,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/Auto
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/iemitrpcbankserverbroadcastandactionresponsesignalswithmessageasparam.cpp:1343684686
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/iemitrpcbankserverbroadcastandactionresponsesignalswithmessageasparam.h:1343743436
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/irpcbankserverclientbusiness.cpp:1343684907
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/irpcbankserverclientbusiness.h:1343684934
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/irpcbankserverclientbusiness.h:1344443220
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverhelper.cpp:1343685395
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverhelper.h:1343685381
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/ssltcpclientandbankserverprotocolknower.cpp:1343743436
@@ -1278,7 +1289,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bank
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclienttest.h:1343653118
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/main.cpp:1342947944
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/:1344095911
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1343745355
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1344454532
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/:1343741972
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/:1343667910
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/Dispensers/:1343685792
@@ -1339,12 +1350,12 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bank
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bitcoinhelper.cpp:1343674004
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bitcoinhelper.h:1343676799
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/main.cpp:1342611929
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/:1343741347
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/:1344453686
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/:1342624118
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/:1343686812
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/:1344453619
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/Broadcasts/:1343680806
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.cpp:1343675499
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.h:1343686812
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.cpp:1344444554
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.h:1344453619
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/:1343740974
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/:1343742296
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessagebase.cpp:1343661935
@@ -1365,10 +1376,10 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndCli
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/SslCAs/RpcBankServerClientCA.pem:1328728714
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/iacceptrpcbankserveractionnonerrordeliveries.cpp:1343657441
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/iacceptrpcbankserveractionnonerrordeliveries.h:1343657503
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1343741347
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1344453686
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1342606724
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1342611815
-Projects/RpcGenerator/design/:1344307177
+Projects/RpcGenerator/design/:1344446609
 Projects/RpcGenerator/design/actions.messages.with.errors.and.without.and.broadcasts.without.destination.thoughts.and.maybe.solution.txt:1343661601
 Projects/RpcGenerator/design/actions.should.function.with.and.without.responses.for.both.errors.and.successes.txt:1344076612
 Projects/RpcGenerator/design/delivery.Overview.dia:1343473655
@@ -1377,10 +1388,13 @@ Projects/RpcGenerator/design/header.messge.id.or.imessage.message.id.client.vs.s
 Projects/RpcGenerator/design/i.think.this.is.a.one.night.project.that.will.be.used.for.the.rest.of.my.life.txt:1343597819
 Projects/RpcGenerator/design/keep.pending.requests.client.side.in.case.of.connection.drop.at.the.very.least.txt:1343509399
 Projects/RpcGenerator/design/make.the.rpc.shared.folder.path.customizable.txt:1343676050
+Projects/RpcGenerator/design/message.id.set.once.per.recycled.message.on.client.and.server.doesnt.set.it.just.reads.it.from.network.txt:1344442963
 Projects/RpcGenerator/design/old.rpc.generator.overall.flow.without.errors.dia:1343655414
 Projects/RpcGenerator/design/optimization.using.connect.notify.to.tell.server.to.opt.out.of.sending.unneeded.messages.txt:1343745088
+Projects/RpcGenerator/design/overall.abc.server.setup.thoughts.idfk.what.to.do.txt:1344446609
 Projects/RpcGenerator/design/rpc.generator.overall.flow.with.action.errors.dia:1343658192
 Projects/RpcGenerator/design/todo.list.before.making.templates.or.first.actual.generator.basically.compiling.examples.just.need.polish.txt:1344307177
+Projects/RpcGenerator/design/todo.prototype.message.ensuring.and.integrate.ofc.txt:1344444812
 Projects/RpcGenerator/design/unsure.still.how.to.do.client.matching.but.know.i.want.rpc.server.impl.to.be.oblivious.of.neighboring.rpc.server.impls.in.their.own.vbuckets.txt:1342609839
 Projects/WebsiteAutomator/:1320055392
 Projects/WebsiteAutomator/design/:1320068442
@@ -1504,7 +1518,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386032877
+Projects/libAvGraphicsItem2/design/:1386032892
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1698,7 +1712,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1344442173
+autobackupScripts/win/.directory:1344462854
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

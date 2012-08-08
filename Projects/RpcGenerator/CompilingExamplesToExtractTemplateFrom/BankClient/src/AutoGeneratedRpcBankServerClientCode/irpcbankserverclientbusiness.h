@@ -1,6 +1,8 @@
 #ifndef IRPCBANKSERVERCLIENTBUSINESS_H
 #define IRPCBANKSERVERCLIENTBUSINESS_H
 
+#define RPC_BANK_SERVER_CLIENT_CODE
+
 #include <QObject>
 
 #include "iemitrpcbankserverbroadcastandactionresponsesignalswithmessageasparam.h"
