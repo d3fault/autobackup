@@ -4,10 +4,14 @@ todo
     appId //abc as a whole is an appId
     clientId //one abc/wt 'node' is a client
     messageId //one request from one client
+  this has to do with 'broadcasts vs. events?' item down below
   []
 
   error messages (actions only)
   [hacky]
+
+  request definitely has response, but response doesn't always have parameters. if response is error, it DEFINITELY has an error enum, and it optionally (same as before) has an error response parameter. an example of a non-error response parameter: QString AddFundsKey for Request: GetAddFundsKey. the QString AddFundsKey might also be used with the error enum for GetAddFundsKey::UseExistingKeyFirst ... but should they use the same name? or should the response parameter in the error case be called QString ExistingKey??? Or should it even return an add funds key (meaning we store it on the client)? Do the generic use case.... as in the one that can be used in every use case. supported hackily is better than unsupported.
+  []
 
   code stability. try not to crash from errors. we need to do like whitelist processing (so to speak). blacklist stuff should definitely not get in... but should also not crash the app. i haven't detected a crash yet, but should walk through the code anyways and add checking where it makes sense (now that it functions! that was a better first step fo sho)
   ^^^TODOreq: test that receiving an/multiple invalid message(s) does not crash (well already seen it not crash) and that we can still receive non-invalid messages afterwards. maybe use a magic token at the beginning of a message for this
@@ -23,7 +27,8 @@ todo
   broadcasts vs. events? since all the clients within an appId are known (in this case at least) to share a db (they are each a node in a couchbase cluster), who does the writing if i send the broadcast to every client? events on the other hand could just be to one client (now i have to figure out how to decide which) and the client can notify his siblings or something, idfk. i guess really it depends on if there's a 'cache' in the client layer. i do sort of want one... but if it overcomplicates shit then i'm not going to worry about it
   []
 
-  message caching if not connected (or not?). for broadcasts i could just see if my allConnectedClients list is zero and then write to some queue until they aren't (which means i have to check that queue (or associated bool) each time allConnectedClients is greater than zero..)
+  message caching if not connected (or not?). for broadcasts i could just see if my allConnectedClients list is zero and then write to some queue until they aren't (which means i have to check that queue (or associated bool) each time allConnectedClients is greater than zero..).
+  this relates to 'handle disconnects' item below
   []
 
   handle disconnects better fuck that socket error. it should cleanly disconnect but also be able to handle a non-clean one (maybe non-clean implies we expect them to come back so we cache the messages they miss? there would still be potentially lost messages already written to socket before the non-clean disconnect is noticed). perhaps a stream log and future messages come with requests that say "we got up to point xyz in the stream log so now you can purge it". this way if they non-cleanly dc they can send the last point that their stream log is at when they come back and the server can bring them back up to speed. maybe this is all pointless and overkill? the stream-checkpoint-this-is-where-i-am-and-how-much-i-have-received probably shouldn't be sent with every message (overkill), but maybe a maximum time in between (so it COULD be every message if they aren't very often). also, the stream log can be two ways. the server can say "we-got-this-many-requests-from-you-am-i-missing-any?" when it sends it's responses. basically just robust (and ACROSS connection drops! tcp does not do this) message ensuring...

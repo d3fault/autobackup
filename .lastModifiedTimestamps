@@ -12,7 +12,7 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
-Documents/minddump/:1386032863
+Documents/minddump/:1386032877
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -23,7 +23,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032863
+Documents/minddump/dreams/:1386032877
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -34,6 +34,7 @@ Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.tx
 Documents/minddump/dreams/iron.man.train.raid.with.10.seconds.of.elbow.conscience.txt:1340076931
 Documents/minddump/dreams/matt.200ft.fall.1500.ambulance.bill.on.me.txt:1340898045
 Documents/minddump/dreams/mcrib.black.nun.frodo.baggins.quick.judgement.txt:1331245841
+Documents/minddump/dreams/molly.oval.blowjob.and.burrito.txt:1344441317
 Documents/minddump/dreams/paxos.mostly.awake.almost.asked.my.mom.to.help.me.decipher.txt:1338978881
 Documents/minddump/2.pussy.asdlfijasouweorjsdfoawufpaufasdlkfjasfowruasf.or.just.not.ready.txt:1343312878
 Documents/minddump/2.streams.always.hidden.as.just.1.idfk.txt:1338898350
@@ -1367,7 +1368,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndCli
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1343741347
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1342606724
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1342611815
-Projects/RpcGenerator/design/:1344076612
+Projects/RpcGenerator/design/:1344307177
 Projects/RpcGenerator/design/actions.messages.with.errors.and.without.and.broadcasts.without.destination.thoughts.and.maybe.solution.txt:1343661601
 Projects/RpcGenerator/design/actions.should.function.with.and.without.responses.for.both.errors.and.successes.txt:1344076612
 Projects/RpcGenerator/design/delivery.Overview.dia:1343473655
@@ -1379,7 +1380,7 @@ Projects/RpcGenerator/design/make.the.rpc.shared.folder.path.customizable.txt:13
 Projects/RpcGenerator/design/old.rpc.generator.overall.flow.without.errors.dia:1343655414
 Projects/RpcGenerator/design/optimization.using.connect.notify.to.tell.server.to.opt.out.of.sending.unneeded.messages.txt:1343745088
 Projects/RpcGenerator/design/rpc.generator.overall.flow.with.action.errors.dia:1343658192
-Projects/RpcGenerator/design/todo.list.before.making.templates.or.first.actual.generator.basically.compiling.examples.just.need.polish.txt:1343744679
+Projects/RpcGenerator/design/todo.list.before.making.templates.or.first.actual.generator.basically.compiling.examples.just.need.polish.txt:1344307177
 Projects/RpcGenerator/design/unsure.still.how.to.do.client.matching.but.know.i.want.rpc.server.impl.to.be.oblivious.of.neighboring.rpc.server.impls.in.their.own.vbuckets.txt:1342609839
 Projects/WebsiteAutomator/:1320055392
 Projects/WebsiteAutomator/design/:1320068442
@@ -1503,7 +1504,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386032863
+Projects/libAvGraphicsItem2/design/:1386032877
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1541,7 +1542,7 @@ Projects/libAvGraphicsItem3/src/libAvGraphicsItem3.pro:1327004311
 Projects/libAvGraphicsItem3/src/main.cpp:1327003410
 Solutions/:1331868448
 Solutions/Anonymous Bitcoin Computing/:1334997525
-Solutions/Anonymous Bitcoin Computing/design/:1340538900
+Solutions/Anonymous Bitcoin Computing/design/:1344307265
 Solutions/Anonymous Bitcoin Computing/design/AppDb.will.push.all.updates.to.every.Wt.Front.End.this.may.need.to.change.later.txt:1334343874
 Solutions/Anonymous Bitcoin Computing/design/Get.Balance.And.Database.Efficiency.Thoughts.And.Potential.Solutions.IDFK.dia:1333876018
 Solutions/Anonymous Bitcoin Computing/design/Use.Case--WtFrontEnd2AppDb2BankServer--Basic.Request.dia:1335879492
@@ -1697,7 +1698,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1344306579
+autobackupScripts/win/.directory:1344442173
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
