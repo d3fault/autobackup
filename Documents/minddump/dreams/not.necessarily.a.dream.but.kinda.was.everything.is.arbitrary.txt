@@ -1,0 +1,51 @@
+everything is arbitrary
+seriously had the most fucked up night last night tossing and turning in bed
+i frequently woke up and nothing made any sense
+my mom came in my room last night to ask me if i was going to eat dinner (slept for like 15+ hours rofl) and i just mumbled some jibberish at her and then she slammed the door
+
+i kept thinking about the 'meet the teacher' event i took my nephew to the other day. he and this little girl were just sitting there playing with blocks and like toy frog things (or something. it's in the pics). what is put into their heads from here on out is completely arbitrary and we already have a defined system of 'knowledge' that we'll be injecting / molding.
+
+
+i thought of (partially awake?) a 360 degree direction of shit and you can only ever veer off to another half of a 90 degree field that all humans fall within. i thought of who/what would be in the other half. inconceivable (by definition) beings that communicated in some weird way
+
+i fall within that 90 degrees. i am not weird enough.
+
+
+but tossing and turning and reset'ing my brain all through the night was... torturous almost
+
+i was just so god damn confused
+i felt like i've accomplished nothing (it's true!)
+
+my accomplishments from when i was sitting in that desk playing with frogs is the same as it is now: zilch
+
+
+i also wondered if the girl i was sitting next to playing with frogs was molly...
+
+
+just fucking weird
+mind reset
+everything arbitary became forgotten
+
+except of course the arbitrary logic to process thought (how could one ever forget that?)
+i'm glad it was temporary
+it felt like insanity
+
+i knew i was 'sleeping' but i didn't know what was going on
+
+i tried to tackle my problems of programming but all i could really conceptuatlize was that i needed to simplify the problem better (later on after my thoughts came back to me i did actually get some thinking accomplished here. will write about it momentarily)
+
+
+i don't know if this counts as a dream because it was real
+
+oh btw i thought of something cool
+
+'dreams are real because they are experienced in the first person and they seem real at the time'
+^life falls under the same definition
+
+have i written that before?
+everything i wrote yesterday while high on spice is a blur to me
+i wonder if i even saved it properly
+
+my worst fear is an overwrite
+but git would catch that :-D
+TODOreq: parse old git logs and try to detect overwrites (they'd be called "rewrite" in git lingo.. but aren't necessarily the same~)

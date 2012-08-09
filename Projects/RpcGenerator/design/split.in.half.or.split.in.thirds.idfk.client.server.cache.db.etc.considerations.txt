@@ -1,0 +1,23 @@
+i can conceptualize it differently
+
+either:
+
+Front End: Wt/AppDb-Cache
+Back End: BankServer/Db
+
+where db and appdb-cache are the same thing but appdb is on 3rd party servers to absorb bandwidth costs, which could allow db itself to verify all logical transactions (only DURING transactions, minimal traffic!). meaning yes we'd store the final copies of the bank stuff... but also the final copies of the appdb logic as well (who owns what) and do the actual processing of it. the appdb becomes a cache layer only pretty much and might be able to be integrated with rpc generator. but then it makes the rpc client a cache... not a traditional client. integrating with rpc generator is not necessary but might come in handy in the future
+
+
+
+Front End: Wt
+Back End: AppDb
+|
+Front End: AppDb
+Back End: Bank Server
+
+
+with an rpc connection in between each front/back end
+
+
+it really depends entirely on how i CHOOSE to design it...
+i don't know which is better.

@@ -1,0 +1,7 @@
+rpc server:
+header contains clientId and messageId
+body contains appId
+
+clientId = who to send message back to (message 'ensuring' too)
+messageId = just a re-used/unique messageId so we don't get confused which is which etc. also to get back into context. it is re-used ATOMICALLY, in that it can't be re-used until it has been responded to.
+appId = specific to the functionality that the rpc SERVER (the business itself!!!) provides. some rpc servers might be singular and not need it... but bank server let's each app have it's own bank 'account' (appId)
