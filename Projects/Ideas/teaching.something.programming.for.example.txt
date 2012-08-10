@@ -1,0 +1,11 @@
+you just ask a question
+like, "using object oriented programming, build a _class_ using three _methods_ and two _properties_ that performs some basic functionality"
+it's a quiz, and once they answer it (it gets approved by an approver/someone-higher-up), they get to the next section/question.
+using these types of questions, programming can be taught.
+they should all be human-read so there is at least a shred of a chance that a cool/original solution is found as well (they should be notified -- there is guarantee his superiors/graders will find out and chance they will attempt to rip him off. this is why it needs to be ON the system. prior works patent prevention by means of copyleft licensing. just like i seek)
+each of the "_" surrounded words in the question are clickable and expand into a series of optional-but-helpful sub-quizzes that can be skipped at any time if you can answer the main question.
+there is text/paragraph(s)-describing the subject before the sub-quiz is given -- of course skippable.. but we do keep track of which ones were read (even if skipped).
+this is a privacy concern i am processing
+i think lots would want privacy here
+but i know it's wasted effort
+this is a log-everything-publically-because-hackers-could-do-that-anyways-and-its-the-only-true-combatant-to-data-theft

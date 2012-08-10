@@ -1,0 +1,2 @@
+listening to music that is copyrighted is a valid 'legal excuse' (can be used as such) to have your inbound-audio not broadcast along with your own audio out. free/libre music can be streamed alongside (unsure if it should be stripped out or noise cancelled out or what.. but my output needs to be clearly distinguishable somehow. i think this might be impossible without headphones of some sort... but i don't want them :()
+so because i'm aiming for 100% truth mode, i am not even physically able to stream copyrighted.
