@@ -14,7 +14,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386032921
+Documents/minddump/:1386032936
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -25,7 +25,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032921
+Documents/minddump/dreams/:1386032936
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -98,6 +98,7 @@ Documents/minddump/asdljfasdfjasouiwarlkjsdfpasioufasjdflkoij.txt:1330950450
 Documents/minddump/asdlkfjaowurlaskfdjowurlsjdfouwlrk.txt:1343560983
 Documents/minddump/asdlkfjwerouisfdlksajfasdfasdkfhsdfasfdkljweoriulfasjkf.txt:1339323819
 Documents/minddump/asfasdljfaslfjowieursakjfasdfjsladfjasdofiuawerlkjasfdljasdf.txt:1335804444
+Documents/minddump/asfdhsadfkhasfkjwljalksfdjsldfjasldwerulksjoweuflksdjfoulkjrwe.txt:1344736203
 Documents/minddump/asfdlaskjfowaeuralsdjfasdofusadfljsdfoasdfoiweryqwrkodfa.txt:1334824695
 Documents/minddump/asfdljasdofuwlerjsodfulwerkjsoafulkj.txt:1343505473
 Documents/minddump/asfkjsldfkjsouiwerlkjwerousdaflk.txt:1340448634
@@ -501,10 +502,10 @@ Documents/nobodyme/pre.censored.humans.implement.apes.implement.something.txt:13
 Documents/nobodyme/website.worst.case.scenario.i.become.embarrassed.txt:1323683547
 GloballySharedClasses/:1343686227
 GloballySharedClasses/network/:1343476853
-GloballySharedClasses/network/ssl/:1343651240
-GloballySharedClasses/network/ssl/ssltcpclient.cpp:1343651240
+GloballySharedClasses/network/ssl/:1344737871
+GloballySharedClasses/network/ssl/ssltcpclient.cpp:1344737871
 GloballySharedClasses/network/ssl/ssltcpclient.h:1343589409
-GloballySharedClasses/network/ssl/ssltcpserver.cpp:1343595693
+GloballySharedClasses/network/ssl/ssltcpserver.cpp:1344737821
 GloballySharedClasses/network/ssl/ssltcpserver.h:1343595657
 GloballySharedClasses/idebuggablestartablestoppablebackend.h:1342940658
 GloballySharedClasses/idebuggablestartablestoppablefrontend.cpp:1343123450
@@ -612,7 +613,7 @@ Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfilesystemwatcher2.h:13431312
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.cpp:1343124786
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.h:1343123172
 Projects/ForFun/QFileSystemWatcher2TestForFun/changes.to.existing.qfsw.main.class.txt:1343131983
-Projects/Ideas/:1344623409
+Projects/Ideas/:1344735578
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -682,6 +683,7 @@ Projects/Ideas/abstract.and.use.gpg.to.have.web.of.trust.functionality.without.h
 Projects/Ideas/actually.considering.forking.qt.youve.got.balls.my.friend.fuck.nokia.and.long.live.free.software.wouldnt.be.able.to.without.txt:1339679135
 Projects/Ideas/ad.based.videogame.would.be.good.place.to.use.ad.agency.txt:1330720584
 Projects/Ideas/alphabet.electronic.confirmations.through.arduino.per.letter.txt:1328219880
+Projects/Ideas/also.probably.maybe.the.default.bytestream.by.as.in.written.by.d3fault.but.maybe.also.some.sort.of.special.d3fault.code.thingo.txt:1344735578
 Projects/Ideas/anonymity.requests.and.responses.there.is.a.visual.png.that.goes.with.it.txt:1323476151
 Projects/Ideas/arduino.enabled.offline.write.only.hack.proof.airgap.automated.backup.system.txt:1340617799
 Projects/Ideas/asdlkfjweaoriusdflkjawoiusdfsakfhjsadfjoweirl.txt:1339229095
@@ -1250,7 +1252,7 @@ Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.h:
 Projects/RpcGenerator/:1343597837
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1342939005
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/:1344095898
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1344454529
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1344743895
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1344443220
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/:1343680851
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/Dispensers/:1343686903
@@ -1302,7 +1304,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bank
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclienttest.h:1343653118
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/main.cpp:1342947944
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/:1344095911
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1344454532
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1344743896
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/:1343741972
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/:1343667910
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/Dispensers/:1343685792
@@ -1392,7 +1394,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndCli
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1344453686
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1342606724
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1342611815
-Projects/RpcGenerator/design/:1344526464
+Projects/RpcGenerator/design/:1344737406
 Projects/RpcGenerator/design/actions.messages.with.errors.and.without.and.broadcasts.without.destination.thoughts.and.maybe.solution.txt:1343661601
 Projects/RpcGenerator/design/actions.should.function.with.and.without.responses.for.both.errors.and.successes.txt:1344076612
 Projects/RpcGenerator/design/client.id.message.id.app.id.figured.out.txt:1344526156
@@ -1408,7 +1410,7 @@ Projects/RpcGenerator/design/optimization.using.connect.notify.to.tell.server.to
 Projects/RpcGenerator/design/overall.abc.server.setup.thoughts.idfk.what.to.do.txt:1344446609
 Projects/RpcGenerator/design/rpc.generator.overall.flow.with.action.errors.dia:1343658192
 Projects/RpcGenerator/design/split.in.half.or.split.in.thirds.idfk.client.server.cache.db.etc.considerations.txt:1344526464
-Projects/RpcGenerator/design/todo.list.before.making.templates.or.first.actual.generator.basically.compiling.examples.just.need.polish.txt:1344307177
+Projects/RpcGenerator/design/todo.list.before.making.templates.or.first.actual.generator.basically.compiling.examples.just.need.polish.txt:1344737406
 Projects/RpcGenerator/design/todo.prototype.message.ensuring.and.integrate.ofc.txt:1344444812
 Projects/RpcGenerator/design/unsure.still.how.to.do.client.matching.but.know.i.want.rpc.server.impl.to.be.oblivious.of.neighboring.rpc.server.impls.in.their.own.vbuckets.txt:1342609839
 Projects/WebsiteAutomator/:1320055392
@@ -1533,7 +1535,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386032921
+Projects/libAvGraphicsItem2/design/:1386032936
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1727,7 +1729,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1344626884
+autobackupScripts/win/.directory:1344743903
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

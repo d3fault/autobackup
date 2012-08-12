@@ -116,6 +116,9 @@ void SslTcpServer::incomingConnection(int handle)
 
         secureSocket->setLocalCertificate(*m_ServerPublicLocalCertificate);
 
+        //makes us request + REQUIRE that the client cert is valid. client does this to us by default, but we don't do it to him by default. i should still explicitly set it for client
+        secureSocket->setPeerVerifyMode(QSslSocket::VerifyPeer);
+
         m_PendingConnections.enqueue(secureSocket);
 
         secureSocket->startServerEncryption();

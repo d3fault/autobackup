@@ -93,6 +93,7 @@ bool SslTcpClient::init()
     this->setCaCertificates(m_AllMyCertificateAuthorities);
     this->setPrivateKey(*m_ClientPrivateEncryptionKey);
     this->setLocalCertificate(*m_ClientPublicLocalCertificate);
+    this->setPeerVerifyMode(QSslSocket::VerifyPeer);
 
 
     connect(this, SIGNAL(encrypted()), this, SLOT(handleEncrypted()));
