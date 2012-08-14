@@ -1,0 +1,1 @@
+RESOURCES += network/ssl/testcerts/client/ssltcpclienttestcerts.qrc

@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource>
+        <file alias="ServerCA.pem">../bothCAs/ServerCA.pem</file>
+        <file alias="ClientCA.pem">../bothCAs/ClientCA.pem</file>
+	<file>ClientPrivateKey.pem</file>
+	<file>ClientPublicCert.pem</file>
+    </qresource>
+</RCC>

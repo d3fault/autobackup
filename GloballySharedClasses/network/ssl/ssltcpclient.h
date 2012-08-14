@@ -28,7 +28,7 @@ class SslTcpClient : public QSslSocket
 public:
     explicit SslTcpClient(QObject *parent, const QString &clientCaFile, const QString &serverCaFile, const QString &clientPrivateEncryptionKeyFile, const QString &clientPublicLocalCertificateFile, const QString &clientPrivateEncryptionKeyPassPhrase);
     bool init();
-    bool start();
+    bool start(); //TODOreq: start only returns true if we successfully initiate the connection... but my code might be interpretting it as "the socket is connected, encrypted, and ready to be written to". i actually think QAbstractSocket is ok with this (though what happens to the writes if the connection drops due to SSL errors, for example?)
     void stop();
 private:
     QList<QSslCertificate> m_AllMyCertificateAuthorities;
