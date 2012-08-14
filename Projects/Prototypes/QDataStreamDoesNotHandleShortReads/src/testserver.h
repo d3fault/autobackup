@@ -5,6 +5,7 @@
 #include <QDataStream>
 
 #include "ssltcpserver.h"
+#include "simpleassprotocol.h"
 
 class TestServer : public QObject
 {
@@ -14,6 +15,9 @@ public:
 private:
     SslTcpServer *m_Server;
     QSslSocket *m_ClientSocket;
+
+    bool m_WaitingForHeader;
+    MyMessageHeader *m_CurrentHeader;
 signals:
     void d(const QString &);
     void initialized();

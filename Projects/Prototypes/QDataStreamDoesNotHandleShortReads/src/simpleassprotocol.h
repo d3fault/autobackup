@@ -11,21 +11,24 @@ struct MyMessageHeader
         MessageBType
     };
 
-    quint32 MessageMagic;
+    //quint32 MessageMagic;
     quint32 MessageType;
+    quint32 MessageSize;
 };
 //quint32 MyMessageHeader::MessageMagic = (quint32)0xA0B0C0D0;
 
 inline QDataStream &operator>>(QDataStream &in, MyMessageHeader &header)
 {
-    in >> header.MessageMagic;
+    //in >> header.MessageMagic;
     in >> header.MessageType;
+    in >> header.MessageSize;
     return in;
 }
 inline QDataStream &operator<<(QDataStream &out, MyMessageHeader &header)
 {
-    out << header.MessageMagic;
-    out << header.MessageMagic;
+    //out << header.MessageMagic;
+    out << header.MessageType;
+    out << header.MessageSize;
     return out;
 }
 

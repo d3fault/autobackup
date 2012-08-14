@@ -1,11 +1,9 @@
 #include "testserver.h"
 
-#include "simpleassprotocol.h"
-
 TestServer::TestServer(QObject *parent) :
-    QObject(parent)
+    QObject(parent), m_WaitingForHeader(true)
 {
-    //m_SizeExpecting = sizeof(MessageHeader);
+    m_CurrentHeader = new MyMessageHeader();
 }
 void TestServer::init()
 {
@@ -51,11 +49,16 @@ void TestServer::handleClientSentUsData()
 {
     //sender or m_ClientSocket... they are/should be/will be the same for this test
 
+    emit d(QString("Bytes Available (start): ") + QString::number(m_ClientSocket->bytesAvailable()));
     QDataStream stream(m_ClientSocket);
+
+#ifdef TYPICAL_SHORT_READING_AND_FAILING
     while(!stream.atEnd())
     {
+        emit d(QString("Bytes Available (pre header): ") + QString::number(m_ClientSocket->bytesAvailable()));
         MyMessageHeader header;
         stream >> header;
+        emit d(QString("Bytes Available (post header): ") + QString::number(m_ClientSocket->bytesAvailable()));
         switch(header.MessageType)
         {
         case MyMessageHeader::MessageAType:
@@ -80,78 +83,74 @@ void TestServer::handleClientSentUsData()
             break;
         }
     }
-
-#ifdef PROPOSED_SOLUTION
+#else
     while(!stream.atEnd())
     {
         qint64 bytesAvailableToStart = m_ClientSocket->bytesAvailable();
-        if(bytesAvailableToStart >= m_SizeExpecting)
+        if(bytesAvailableToStart >= (qint64)sizeof(quint32))
         {
-            switch(m_IntStateKeeperTracker)
+            if(m_WaitingForHeader)
             {
-            case 0:
-            {
-                //read in header, if headerSize is available
-                if(bytesAvailableToStart >= sizeof(MessageHeader))
+                if(bytesAvailableToStart >= (((qint64)(sizeof(MyMessageHeader))) + ((qint64)(sizeof(quint32)))))
                 {
-                    //MessageHeader header;
-                    stream >> *m_CurrentHeader;
-
-                    quint64 bytesAvailableAfterReadingHeader = m_ClientSocket->bytesAvailable();
-                    if(bytesAvailableToStart == bytesAvailableAfterReadingHeader)
+                    quint32 magic;
+                    stream >> magic;
+                    if(magic == (quint32)0xA0B0C0D0)
                     {
-                        emit d("ERROR: bytesAvailable() doesn't decrease as stream ... err.. streams");
-                    }
+                        //MessageHeader header;
+                        stream >> *m_CurrentHeader;
 
-                    m_SizeExpecting = reinterpret_cast<qint64>(header.messageBodySize);
-                    ++m_IntStateKeeperTracker; //or a bool m_AmReadingBody; vs. header, or vice versa
+                        qint64 bytesAvailableAfterReadingHeader = m_ClientSocket->bytesAvailable();
+                        if(bytesAvailableToStart == bytesAvailableAfterReadingHeader)
+                        {
+                            emit d("ERROR: bytesAvailable() doesn't decrease as stream ... err.. streams");
+                        }
+
+                        emit d(QString("server incoming client message body size according to network: ") + QString::number(m_CurrentHeader->MessageSize));
+                        m_WaitingForHeader = false;
+                    }
                 }
                 else
                 {
-                    //break seems like it'd make sense, but we want to wait for more bytesToBeRead and stream.atEnd won't return true yet... so we return instead
                     return;
                 }
             }
-            //break; -- we don't break because we want to process the next step
-            case 1:
+            else
             {
-                if(m_ClientSocket->bytesAvailable() > m_SizeExpecting)
+                if(bytesAvailableToStart >= (qint64)(m_CurrentHeader->MessageSize))
                 {
-                    switch(m_CurrentHeader.MessageType)
+                    switch(m_CurrentHeader->MessageType)
                     {
-                    case MessageAType:
+                    case MyMessageHeader::MessageAType:
                         {
-                            MessageABody messageBody; //*messageBody = m_Dispenser.getNewOrRecycled();
-                            stream >> messageBody;
-                            emit d(messageBody.dbgName + QString(" message received from client"));
+                            MyMessageABody body; //*messageBody = m_Dispenser.getNewOrRecycled();
+                            stream >> body;
+                            QString commaSpace(", ");
+                            emit d(QString::number(body.RandomInt1) + commaSpace + QString::number(body.RandomUInt2) + commaSpace + body.RandomString1 + commaSpace + body.RandomString2);
                         }
                     break;
-                    case MessageBType:
+                    case MyMessageHeader::MessageBType:
                         {
-                            MessageBBody messageBody;
-                            stream >> messageBody;
-                            emit d(messageBody.dbgName + QString(" message received from client"));
+                            MyMessageBBody body;
+                            stream >> body;
+                            QString commaSpace(", ");
+                            emit d(QString::number(body.RandomInt1) + commaSpace + QString::number(body.RandomUInt2) + commaSpace + body.RandomString1 + commaSpace + body.RandomString2);
                         }
                     break;
                     default:
                         break;
                     }
-                    ++m_IntStateKeeperTracker;
+                    m_WaitingForHeader = true;
                 }
                 else
                 {
                     return;
                 }
             }
-            case 99999: //at the end, we set m_SizeExpecting back to header size
-                {
-                    m_SizeExpecting = sizeof(MessageHeader);
-                    m_IntStateKeeperTracker = 0;
-                }
-            break; // we DO break at the very end, so as not to go into default: section
-            }
-            default:
-            break;
+        }
+        else
+        {
+            return;
         }
     }
 #endif

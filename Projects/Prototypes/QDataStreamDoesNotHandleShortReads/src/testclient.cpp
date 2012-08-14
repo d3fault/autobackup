@@ -66,57 +66,66 @@ void TestClient::handleServerSentUsData()
 }
 void TestClient::sendNextChunkOfActionRequestMessage()
 {
-    QDataStream stream(m_ServerSocket);
-    switch(m_MessageSendStage)
+    streamOutHelper(m_ServerSocket, m_MessageSendStage);
+    m_MessageSendStage++;
+    if(m_MessageSendStage > 6)
     {
-    case 0:
-        {
-            emit d("sending stage 0");
-            stream << (quint32)0xA0B0C0D0;
-            ++m_MessageSendStage;
-        }
-    //break;
-    case 1:
-        {
-            emit d("sending stage 1");
-            stream << ((quint32) (m_CurrentMessageTypeIsA ? MyMessageHeader::MessageAType : MyMessageHeader::MessageBType));
-            ++m_MessageSendStage;
-        }
-    //break;
-    case 2:
-        {
-            emit d("sending stage 2");
-            stream << (qint32)3843;
-            ++m_MessageSendStage;
-        }
-    //break;
-    case 3:
-        {
-            emit d("sending stage 3");
-            stream << (quint32)923730;
-            ++m_MessageSendStage;
-        }
-    //break;
-    case 4:
-        {
-            emit d("sending stage 4");
-            stream << QString(QString("lol fucken first test string @ ") + QDateTime::currentDateTime().toString());
-            ++m_MessageSendStage;
-        }
-    //break;
-    case 5:
-        {
-            emit d("sending stage 5");
-            stream << QString("string 2");
-            ++m_MessageSendStage;
-        }
-    //break;
-    default:
-    {
-        emit d("reached end of stages, going back to 0");
         m_MessageSendStage = 0;
-        m_CurrentMessageTypeIsA = !m_CurrentMessageTypeIsA; //a becomes b, b becomes a
     }
-    //break;
+}
+void TestClient::streamOutHelper(QIODevice *device, int stage)
+{
+    QDataStream stream(device);
+
+    if(stage == 0 || stage == -1)
+    {
+        emit d("sending stage 0");
+        stream << (quint32)0xA0B0C0D0;
+    }
+    if(stage == 1 || stage == -1)
+    {
+        emit d("sending stage 1");
+        if(stage == 1)
+        {
+            QByteArray *arrayForSizing = new QByteArray();
+            QBuffer *buffer = new QBuffer(arrayForSizing);
+            buffer->open(QIODevice::ReadWrite);
+            streamOutHelper(buffer, -1);
+            quint32 sizeWritten = (quint32)(arrayForSizing->size());
+            stream << sizeWritten;
+            emit d(QString("Message Size: ") + QString::number(sizeWritten));
+            buffer->close();
+            delete buffer;
+            delete arrayForSizing;
+        }
+        else
+        {
+            stream << (quint32)12345; //not needed, just need to stream something to count the size of the size when CALCULATING* the [actual] size
+        }
+    }
+    if(stage == 2 || stage == -1)
+    {
+        emit d("sending stage 2");
+        stream << ((quint32) (m_CurrentMessageTypeIsA ? MyMessageHeader::MessageAType : MyMessageHeader::MessageBType));
+    }
+    if(stage == 3 || stage == -1)
+    {
+        emit d("sending stage 3");
+        stream << (qint32)3843;
+    }
+    if(stage == 4 || stage == -1)
+    {
+        emit d("sending stage 4");
+        stream << (quint32)923730;
+    }
+    if(stage == 5 || stage == -1)
+    {
+        emit d("sending stage 5");
+        stream << QString("lol fucken first test string");
+    }
+    if(stage == 6 || stage == -1)
+    {
+        emit d("sending stage 6");
+        stream << QString("string 2");
     }
 }

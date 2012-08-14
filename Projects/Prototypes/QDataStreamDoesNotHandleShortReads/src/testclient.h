@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QDataStream>
 #include <QDateTime>
+#include <QBuffer>
 
 #include "ssltcpclient.h"
 
@@ -17,6 +18,7 @@ private:
     SslTcpClient *m_Client;
     QSslSocket *m_ServerSocket;
     quint32 m_MessageSendStage;
+    void streamOutHelper(QIODevice *device, int stage = -1);
 signals:
     void d(const QString &);
     void initialized();
