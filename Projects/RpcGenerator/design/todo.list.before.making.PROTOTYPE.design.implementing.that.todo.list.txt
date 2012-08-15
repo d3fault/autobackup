@@ -7,7 +7,7 @@ prototype
     robust-never-shortreading-message-handling
     []
     
-    guarantee to client once synchronous (to "serverhelper") call is complete that the message will be delivered and responded to, so long as client does not crash
+    guarantee to client once synchronous (to "serverhelper") call is complete that the message will be delivered and responded to, so long as client does not crash. it is not really synchronous... but it is with respect to the network request we are guaranteeing
     []
 
     guarantee to client side of network communication (still serverhelper) from server side of network communication (clientshelper and actual business implementation) once
@@ -22,7 +22,7 @@ prototype
     []
 
     appId would make a create "magic" cookie. a great*
-    []
+    //[]
     ...
     but then it's too intertwined with the message protocol
     ...
@@ -43,7 +43,7 @@ prototype
     agree on like a list of a range of message IDs. use a ring buffer communication to ensure message id buffer is never empty. we ensure between client and server that the agreed upon list is consistent. we only need to send the 'starting message id' and 'ending message id' out of some pre-allocated "pool of message IDs perhaps with some random transformation applied to the order in which we are extracting the messageIDs [for use] out of the message ID pool. and we also need to put a 'verifier' (hash-of-ordering-perhaps? but something cheaper maybe. crc32 would work for example) so say for example we have 100 messageIDs in the pool we will at first request 50 'randomly selected' [the same way by both client + server] and then the ordering of those 50 messages is agreed upon before any of the transactions can take place. receiving a message id that isn't expected immediately triggers a "where is message-xyz (missing)?" in which it can hopefully be resolved by the "synchronous" guarantee and just re-send the message. -----AFTER we have processed 25 of these said message (size is arbitrary but needs to be relatively large so as to always get the next batch of 25 before they are needed... else we block :(), the 50-75 range of messageIDs is chosen out of that 100. and then the 75-100 range is chosen after 50 have been processed. and then they are all reset and up for grabs again in the agreed-upon-random-selection... which is changed from last time (and new 'starting and ending' IDs as well). we could make it so that if we run out of messageIDs and have to block, the poolSize doubles. so the server will auto-scale the messageID pool appropriately. it can communicate with the client and tell it what poolSize to set. the server determines the size because (a) it is being waited upon and (b) it processes multiple clients... so it's values would be higher anyways and therefore a better worst case scenario. the poolSize should also be large enough that the "range agree" messages (their additional cost) is well jusityied justified*. especially since there will be many more of the even smaller and more frequent poolSelectFourthAgreeMessage (that message includes beginning and ending id and the hash verification ---- or perhaps just the hash verification and the "apply-random-transform" (datetime hash (salted?)?) data). rangeAgree is done on client startup/init (one of the two, but before main mode of operation)... AND ALSO when server needs to scale it up to cease blocking (rarely). but poolSelectFourthAgreeMessage happens every poolSize/4 messages no matter what
     []
 
-    there should be a timer that times out and sees if any of the messages have gotten stuck in the business impl
+    there should be a timer that times out and sees if any of the messages have gotten stuck in the business impl -- perhaps also one on the client side (would have to be longer than the business one though, for obvious reasons.. the message has to travel accross the network so it will take longer)
     []
 
     i envision using bit-arrays as an optimal way of communicating (hopefully by hitchhiking -- but 1-second timeout can send them also) the "request received, here's your guarantee" message. there is no data on it pointing to what message it is.. but that can be figured out by comparing lists. the bit array is arbitrarily large.. it might even be able to be zero(??? message behind 'fast-self-guaranteeing-message' ???). fast-self-guaranteeing-message: you mark a messageId and the guarantee waits for < 1 second and so isn't "where's this message checked upon" but the first message it can "hitch a ride on" is itself. so like the very first message would be this. aside from that, we want to shove as many bits available onto the bit array whenever we have a message to send. for this reason, the bitstream should be processed and accounted for BEFORE processing the message we are hitchhiking on... because the first bit in the array could be the guarantee for the message it's hitchhiking on... and we can't process a message that hasn't even been guaranteed first. figured out: it CAN be zero. the guarantee bit array can be zerolen. example: send 5 messages that are all 5 processed faster than 1 second... and all 5 processed faster (added to guarantee bit array before) than any of the messages can be responded to. the size-5 bit array/guarantee will hitchhike on the first message back, and the 2-5th do not have any bit array guarantees (but COULD for example have 6+ if they came in in the meantime)
@@ -68,5 +68,6 @@ prototype
   {
     blocking detection of poolSize scaling. if the server ever blocks to wait for more messageIDs in the message stream, then we double poolSize in hopes that it doesn't happen again. initially, just start off with 100/4 and don't worry about scaling automatically. can manually if i need to (probably won't, but might)
     []
+    ^^^this is a chance to my dispenser logic.. but is also similar to it. i still need the dispenser/owner thread logic stuff, so my work won't be wasted. this is just an upgrade to it... especially the stream log / matching / verifying part of it
   }
 }
