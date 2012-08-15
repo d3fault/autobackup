@@ -1,0 +1,19 @@
+am i just duplicating the functionality of TCP?
+how does TCP/QSslSocket handle disconnects?
+how about sending while disconnected?
+
+i obviously want my guarantee/verify shit to work across disconnects/reconnects
+
+
+also, what about my failed-too-slow-but-we'll-hang-onto-your-request-in-case-the-winner-fails-for-some-other-reason queue?
+
+does that have anything to do with message guarantee'ing/verifying?
+
+it involves intricate knowledge of the business impl... so i'm guessing NO (unless i ever get around to making auto-caching clients.. but the more i think about that the more it hurts my brain)
+
+guarantees are for messages
+we don't care that they respond with success or fail
+
+so they'll be guaranteed to be responded to
+but they'll sit in a queue until they fail (or succeed in certain rare cases)
+also, TODOreq: we need to ensure ample time (maybe along with the guarantee?) is allocated before we dispatch a "what happened to this request? i got this guarantee but no response" message... if it's sitting in a failed-too-slow queue. in most cases, it will be handled pretty fast... but i can think of scenarios where they wouldn't be processed fast enough (woot.com "random crap" comes to mind. waiting minutes to be processed. we'd have to have a separate message "request accepted" and then a broadcast for "request confirmed" i guess if that was the case. getting into the queue would be the response in that case. we're talking about 2 queues now...)

@@ -1,0 +1,11 @@
+the Guarantees.And.Verification.overall.message.flow.dia diagram does not take into account the messages to/from server/client regarding the stream logs themselves. per-client, we need to agree on 2 sets of 100 messageIDs. the client will create the first list of messageIDs... which is used for request guarantees.... and the server will create the second list of messageIDs... which is used for response/broadcast verifications. i am unsure atm how the client will come up with those messageIDs... or if for the case of a response, if it should be the same messsageID as the request. perhaps in those cases, they can just be the numbers 0-100. KISS. so a single uchar to keep track of em (256/4 is smarter than 100/4, might as well...)... but that's besides the point
+
+point is: separate messages are needed just to keep the stream logs synchronized
+
+
+perhaps the request stream log can just be messageID'd 0-100 also?
+
+since each client has his own stream log(s), it shouldn't really matter that the messageID is so complex...
+we just want to ensure every one is received and also that they are processed in order. can do that with 0-100
+
+the only benefit of doing some random-ordered-hash is that we are putting more emphasis/guarantee that the ordering will be constant. you'd be less likely to 'accidentally' get teh right order. this doesn't seem like it'd bring any value realistically...

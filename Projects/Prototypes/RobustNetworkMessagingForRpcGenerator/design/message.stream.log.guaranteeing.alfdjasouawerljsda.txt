@@ -1,0 +1,37 @@
+so i guess the purpose of "guaranteeing" at 2 levels is so we can have 3 levels of caching?
+
+the rpc "client" (client business) caches it's requests to the rpc server helper
+it receives a guarantee for the message... but still caches the message locally in case rpc server helper crashes (in the case that they are the same binary, this is useless)
+-when it receives it's 2nd guarantee (the one from the SERVER, not the serverhelper), then it can safely delete the local cache'd request
+
+the "serverhelper" / client-side-of-rpc-connection caches it's request to the actual server
+it receives a guarantee message, but still caches the message locally in case the server goes down
+-this cache'd request is never deleted until the message is responded to (and perhaps verified/stream-logged that it has been responded to????? TODOreq figure out 'where to stop verifying')
+
+the "server" caches it's requests to the business code. just like with the client, they are likely to be the same binary so it does not do MUCH. in fact, the cache'd request is the same request we process. we just keep a pointer to it in the "clientshelper" / generated-server so that in the event the business loses it (???), we can re-request it or something (TODOreq: really, i gotta figure out that something or else this is all worthless)
+
+
+
+
+
+
+client business		rpc client		rpc server
+
+      G1		<--guarantee();
+      G2			G2		<--guarantee();
+
+
+client business can forget about the cached message when it receives G2
+because after that, it is cached/guaranteed by both the rpc client and the rpc server
+but there isn't really any point of forgetting... seeing as we're going to match the response back up to the request. it just CAN (worthless)
+
+
+fuck man i'm underestimating this robust network code shit methinks
+
+
+
+also, who keeps the stream log?
+
+the client + server?
+
+or the business impls?

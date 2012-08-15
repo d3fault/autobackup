@@ -14,7 +14,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386032982
+Documents/minddump/:1386032998
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -25,7 +25,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386032982
+Documents/minddump/dreams/:1386032998
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -92,6 +92,7 @@ Documents/minddump/asdjfoiurlksjafoiualsjdfsakdfhhrfualkj.txt:1344528560
 Documents/minddump/asdkfljsdfouwerljsfousadf.idk.if.i.want.to.use.this.txt:1341010624
 Documents/minddump/asdlfjasdfouwerljdsfouawkhsfiywersdf.txt:1344286577
 Documents/minddump/asdlfjasdofuwlekrjsaofusadlfjoewurlsajjflsjk.txt:1335805201
+Documents/minddump/asdlfjkasdfouwerlkjsdfiahsfkasdfouwerlkj.txt:1345074277
 Documents/minddump/asdlfkjasodfuwlrkjsdfoiauyoraworuwlkjsfdoasulkjewr.txt:1344306193
 Documents/minddump/asdlfkjdsofualkwerjsodfauwelrkjsdfoiu.txt:1344462688
 Documents/minddump/asdlfkjoweurarweourwlkjsadfdfsdufasoiu.txt:1337329406
@@ -1069,6 +1070,23 @@ Projects/Prototypes/RemoteBankManagementTest/src/WebFacingAppClient/serverCA.pem
 Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/:1331460005
 Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/sharedprotocol.h:1331252119
 Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/userBankAccount.h:1331460005
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/Guarantees.And.Verifications.overall.message.flow.dia:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/failed-too-slow.message.queue.considerations.pretty.sure.its.part.of.business.logic.idfk.txt:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/message.stream.log.guaranteeing.alfdjasouawerljsda.txt:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/stream.log.synchronization.messages.thoughts.adlfjkasdfowueraladjfsa.txt:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/RobustNetworkMessagingForRpcGenerator.pro:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/main.cpp:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/mainwidget.cpp:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/mainwidget.h:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/robustnetworkmessagingforrpcgeneratortest.cpp:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/robustnetworkmessagingforrpcgeneratortest.h:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/testclient.cpp:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/testclient.h:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/testserver.cpp:1345074277
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/testserver.h:1345074277
 Projects/Prototypes/WebsiteAutomator/:1320055410
 Projects/Prototypes/WtServerPostTest/:1344095866
 Projects/Prototypes/WtServerPostTest/src/:1333034917
@@ -1576,7 +1594,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386032982
+Projects/libAvGraphicsItem2/design/:1386032998
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1770,7 +1788,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1345062524
+autobackupScripts/win/.directory:1345074277
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521
