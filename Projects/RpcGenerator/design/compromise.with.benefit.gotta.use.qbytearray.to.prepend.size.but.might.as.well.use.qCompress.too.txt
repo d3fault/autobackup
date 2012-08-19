@@ -1,0 +1,16 @@
+compromise with a benefit
+
+since i'm starting to become pretty sure i need to stream my messages into a qbytearray, get the size of the qbytearray, and put it in the stream before the qbytearray so that i can check that there's enough bytesAvailable() and never short-read
+
+i might as well also use qCompress... which operates on qbytearray :)
+
+
+... i think (but could be wrong) that bandwidth will be my most expensive commodity...
+
+qCompress will become more valuable as rpc message sizes increase
+
+i still don't know if the rpc generator is useful for large binary files
+i might need a "send1mbChunkOfFile" type of action and split the files up that way (too small and my message overhead isn't worth it)
+i should somehow (if possible. if not, at least use the two together or something) integrate with couchbase's suggested document size of 2mb
+my rpc messages are really about the same "requirements" in that sense
+^re:integration -- there's some add-on or something for couchbase that splits up files into 2mb parts behind the scenes. it's a couchbase-client extension or something i forget. that's what i mean. it should all be transparent. i'd love a db/rpc that can handle small and large messages/files both efficiently :)

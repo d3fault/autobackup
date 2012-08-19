@@ -1,0 +1,40 @@
+cohesion
+the same reason i need to be a symbol
+or a rallypoint
+
+because people need to single something out and refer to it
+whether a company or individual
+
+there needs to be cohesion
+
+so when thinking about how tons of my ideas can/will be jacked after i release them
+who really cares?
+
+i'll have community
+
+not only that, i can re-jack free copies of my own jacked ideas (assuming they're licensed properly)
+...or i could suck them up into my own community. i should do this so as not to piss anybody off. and because i didn't earn it.
+
+however
+
+there can/should/will be only one place where you can see all of d3fault's ideas in action: d3fault
+
+tons of various sporatic singular ripoffs
+
+none with cohesion
+
+trying to understand the internet
+trying to understand open source culture
+trying to understand human interaction
+trying to understand the human mind (and how it prefers to rally behind things)
+
+taking advantage of them all, i will prop myself up
+my name
+my persons
+
+d3fault will be many things
+and they can/should/will all interoperate smoothly
+
+100% Qt/C++ Native LGPL
+Wt is GPL
+but i can/should abstract the presentation layer away to make that irrelevant (and so i can make my own later)

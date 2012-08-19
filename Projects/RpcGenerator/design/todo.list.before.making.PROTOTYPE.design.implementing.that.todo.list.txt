@@ -68,6 +68,6 @@ prototype
   {
     blocking detection of poolSize scaling. if the server ever blocks to wait for more messageIDs in the message stream, then we double poolSize in hopes that it doesn't happen again. initially, just start off with 100/4 and don't worry about scaling automatically. can manually if i need to (probably won't, but might)
     []
-    ^^^this is a chance to my dispenser logic.. but is also similar to it. i still need the dispenser/owner thread logic stuff, so my work won't be wasted. this is just an upgrade to it... especially the stream log / matching / verifying part of it
+    ^^^this is a change to my dispenser logic.. but is also similar to it. i still need the dispenser/owner thread logic stuff, so my work won't be wasted. this is just an upgrade to it... especially the stream log / matching / verifying part of it
   }
 }
