@@ -14,7 +14,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033030
+Documents/minddump/:1386033047
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -25,7 +25,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033030
+Documents/minddump/dreams/:1386033047
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -76,6 +76,7 @@ Documents/minddump/alkfjsdlkfjwoeirusdfkjsdflkjworusokerwoerusdlkj.txt:134044978
 Documents/minddump/alkjfdasdlfkweroiuuuuuuupusaflk.lke.like.interesting.tags.these.are.ejaculation.tags.txt:1338992975
 Documents/minddump/alksweruuoiasufdkasjfdslkfsuoiweroit.txt:1338993193
 Documents/minddump/all.devices.are.equal.and.should.be.clone.mode.txt:1322863520
+Documents/minddump/alsfkjasdofuwlrjsadfihawrsdofiuawkljasdfkasdfouwrelk.txt:1345449411
 Documents/minddump/alskfjaewofuaslfkjsdfouawerjsadflaspuk.txt:1324474911
 Documents/minddump/asdfkajsdfoiuweralkjfsdfasdfuyaoreiuasflakjsdfpouwer.txt:1334829442
 Documents/minddump/asdflaskjfasofuwlkrjofauasofuuwroiyqarafou.txt:1343931397
@@ -127,6 +128,7 @@ Documents/minddump/askfjslfkwjeoriuslfdklkjsfosiuwerlkjsdfouiwerlk.txt:133995133
 Documents/minddump/asklfjslfkjwoeruaflskjsdflkashlfkjsfd.cheesy.possibly.manipulative.but.also.cool.txt:1339487634
 Documents/minddump/asldfjaowurlaskfjdakshfaskdfhaklfhasdfiouwerlkj.txt:1343932118
 Documents/minddump/asldfjasdfjworusdlfkjweorusdlfkjweakrhsdfjoruwerlkjsadfouwrekl.launch.or.die.txt:1345422883
+Documents/minddump/asldfjasdlfjasdfouwerljksdafaskdhfweru.txt:1345448438
 Documents/minddump/asldfjasdofuwaelrjewoiurel.fuck.titles.asldfjasdlfjsadou.txt:1333103102
 Documents/minddump/asldfjsadflksajdfwiouersadlfjk.laaaaaunch.txt:1339936544
 Documents/minddump/asldfjsadofuwerljsdfsoufwaklrjsadfkjsdfoius.txt:1344191928
@@ -1464,9 +1466,11 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndCli
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1344453686
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1342606724
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1342611815
-Projects/RpcGenerator/design/:1345412294
+Projects/RpcGenerator/design/:1345453502
 Projects/RpcGenerator/design/actions.messages.with.errors.and.without.and.broadcasts.without.destination.thoughts.and.maybe.solution.txt:1343661601
 Projects/RpcGenerator/design/actions.should.function.with.and.without.responses.for.both.errors.and.successes.txt:1344076612
+Projects/RpcGenerator/design/asldfjasdfljasdofuwearljasdfkahsdfweorujsdkafawoeiur.txt:1345448360
+Projects/RpcGenerator/design/cache.on.client.methinks.no.but.bank.definitely.has.one.whether.generated.or.hackily.added.is.tbd.txt:1345453502
 Projects/RpcGenerator/design/client.id.message.id.app.id.figured.out.txt:1344526156
 Projects/RpcGenerator/design/compromise.with.benefit.actually.no.benefit.just.compromise.rofl.txt:1345412294
 Projects/RpcGenerator/design/compromise.with.benefit.gotta.use.qbytearray.to.prepend.size.but.might.as.well.use.qCompress.too.txt:1345359419
@@ -1485,6 +1489,7 @@ Projects/RpcGenerator/design/split.in.half.or.split.in.thirds.idfk.client.server
 Projects/RpcGenerator/design/todo.list.before.making.PROTOTYPE.design.implementing.that.todo.list.txt:1345074327
 Projects/RpcGenerator/design/todo.list.before.making.templates.or.first.actual.generator.basically.compiling.examples.just.need.polish.txt:1345058743
 Projects/RpcGenerator/design/todo.prototype.message.ensuring.and.integrate.ofc.txt:1344444812
+Projects/RpcGenerator/design/trying.to.figure.shit.out.and.KISS.but.meh.asdlfjasdfouwrljsadfasoufwer.txt:1345449228
 Projects/RpcGenerator/design/unsure.still.how.to.do.client.matching.but.know.i.want.rpc.server.impl.to.be.oblivious.of.neighboring.rpc.server.impls.in.their.own.vbuckets.txt:1342609839
 Projects/WebsiteAutomator/:1320055392
 Projects/WebsiteAutomator/design/:1320068442
@@ -1608,7 +1613,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033030
+Projects/libAvGraphicsItem2/design/:1386033047
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1802,7 +1807,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1345425393
+autobackupScripts/win/.directory:1345453515
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

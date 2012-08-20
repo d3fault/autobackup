@@ -1,0 +1,340 @@
+stream log
+WAL
+whatever you want to call it
+
+is it worth doing?
+is it even necessary for couchbase?
+
+is it even what i'm thinking of?
+
+i'm picturing the client and server sides of the rpc connection
+
+'message ensuring'
+
+and
+
+WAL
+
+are SIMILAR kinda
+
+but not.
+
+
+message ensuring is transparent and integrated directly into rpc and has nothing to do with business
+
+WAL would be
+
+EVEN IF both of them are implemented using couchbase
+
+but really, i don't want to make the rpc generator depend on ANY db
+
+
+so i should have per-client 'segments' (like 100/4 idea i was on about earlier)
+
+
+fuck man
+
+so lost
+
+especially when it comes to multiple clients and multiple servers
+
+WHICH FUCKING SERVER DO I CHOOSE?
+
+round robin?
+consistent (evenly divided)?
+
+
+i don't think the matter answers (lol) TOOO much
+
+so long as the fucker is scalable
+
+so long as it benefits from couchbase scalability
+it matters not
+
+you're definitely overthinking this fucker
+
+your procrastination shit
+
+but i still need to conjure a solution before i can continue
+
+bah just think out loud: or whatever you call it since you're typing :(
+
+:
+ok my eyes are closed now an di am visualizing ABC. multiple website viewers/users are connected to a single wt. there are other wt's, so together the wts form a couchbase cluster AT THE VERY LEAST for the username db. or maybe not since you want the SAME SEGMENT OF WT CODE (?????)... or at least BINARY.... to be able to handle future projects. if you make them all... fuck. what? you can do different vbuckets for different username dbs...
+
+you could also integrate the username db directly into the appdb concept.... which actually does make sense since the username db is specific only to that appdb... db
+
+fuck man
+you have so many options now with scalability
+i love couchbase but i am also so fucking confused
+
+i can't believe i'm still nowhere near the bank server in my in-head design
+
+and yet i'm already confused on the proper direction.
+
+
+maybe i should approach it backwards
+
+bank server: one "appdb" / "appId" has a bank account
+
+
+i want all my projects to uuse the same wt cluster
+i want all my projects to use the same appdb cluster
+i want all my projects to use the same bank cluster
+
+each project has a different vbucket FOR EACH
+
+so maybe i should abstract it by project
+
+perhaps a huge re-design is what i need
+
+i mean sure all my work needs to then transform
+
+but sometimes that's for the better
+
+
+PROJECT.abc(wtRepresentation,appDbWithWtCommunication...appDbWithBankServerRpcCommunication,bankServer)
+
+the wt <--> appdb shit is like "i am on this page so send me updates" subscribes shits thingos IDFK
+
+there was a reason i conjured up appdb
+
+and i didn't want to do everything in wt/qt
+i for some reason wanted a business layer backend (appdb)
+
+to perform logic
+
+perhaps the "purchase slot" code itself??
+
+i really forget rofl
+this sucks.
+
+
+
+FUCK IT
+
+it's not that complicated of a thing
+
+taking into consideration ALL of the knowledge you possess
+
+re-design it
+or design it from scratch
+
+guh
+
+user --createBankAccount (perhaps at register)--> Wt FUCK WHERE IS THAT SHOTGUN
+
+
+THIS HAS NOTHING TO DO WITH THE RPC GENERATOR, which i need to fucking finish already
+it's becoming too large of a tangent
+
+i fucking had it functioning
+
+IT WAS FUCKING FUNCTIONING
+
+then i made that giant ass todo list and fuck.
+
+'message ensuring'
+
+
+
+an rpc client makes a fucking request. so long as the client itself does not crash, we are guaranteed to get a response.
+WHAT IF IT DOES CRASH?????? does server hold response until it comes back? according to my design from a few days ago: yep
+fucking pain in the ass to code...
+
+
+WAL is business-centric (by definition!)
+message ensuring is a form of WAL
+
+lol wut? no wonder my brain keeps fucking exploding.
+
+message ensuring does not know about message contents
+
+WAL does. the client picks or starts up and the first thing it does is look at the WAL. i guess to see if it crashed before processing something? could something be in the WAL but not yet message-ensured? YES. fml. fuck race conditions.
+
+
+SO THAT BEING SAID, MAYBE I SHOULD JUST USE A FUCKING WAL ONLY AND SAY FUCK THE MESSAGE ENSURING? scheme up some stupid ass messageId method (who gives a fuck, so long as they are unique) and just FUCKING DO IT.
+
+
+who cares about that compromise with the qbytearray
+sure it's an extra copy for EVERY SINGLE FUCKING RPC ACTION/BROADCAST
+but fucking short-reading is waaaaaay worse.
+
+
+so what would the WAL consist of?
+let's try a sample/example
+
+and do my appdb and bankserver hold mirror copies of the appdb business?
+
+createBankAccount:
+purchaseSlotFiller:
+
+the thing is, the slot filler has NOTHING TO DO WITH the bank server
+so unless i decide to make my "local/trusted" server the hard-copy and my "appdb" the cache... WHICH COMPLETELY FUCKS UP MY BRAIN WHEN TRYING TO CONCEPTUALIZE AN 'rpc'... because it isn't anymore.. it's like cache filling/notifying/whatever/something
+
+
+decisions decisions decisions
+
+yes
+yes steven pussy ass bitch
+
+DECIDE.
+stop fucking procrastinating
+
+you haven't done jack shit with your life
+and you're over optimizing this stupid ass fucking code
+
+hell, it isn't even enjoyable [anymore]
+it will probably become enjoyable again once i get passed this
+
+SO FUCK
+get passed it.
+
+decide something
+
+anything
+
+so long as it functions
+right?
+
+isn't that my requirement?
+
+the nature of bitcoin means i don't give a shit if i get hacked
+
+i just format the server and re-install the binaries (or something? maybe this time adding tons of 'hack detection' code? rinse and repeat until you detect + fix)
+
+YOU WILL ONLY BE JACKED FOR AS LONG AS YOU ARE HACKED + UNNOTICED
+bitcoin is crazy secure
+
+dispatch your shit to offline account
+gg.
+
+
+that being said
+
+...
+
+i want to be secure
+
+for my clients
+and for myself rofl
+
+secure now is better than secure later... (duh)
+
+
+especially... well maybe not especially... but "optionallySecureAsFuck" shit makes it even better (though a full hack means it's meaningless)
+
+TODOreq: only keep so much on the server ready to be dispersed instantly. larger requests should be handled/verified manually. this does really fuck shit up... and make it complicated.... but it also keeps me from getting completely FUCKED
+
+then again i mean i could always "fake" fuck myself and just jack my own customer's money rofl
+...just sayin
+
+fuck this
+
+fuck abc
+
+not as in i'm going to stop it
+
+
+but jesus fucking christ
+
+the only reason i want it is so i can launch a fucking live video stream and have automated advertising on it
+
+THAT'S ____IT_____
+
+it does not deserve nearly this much attention
+
+you are OCD or something.
+
+spending months on this stupid ass support project
+
+sure.... it IS a fucking bank...
+rofl.
+
+but it's also just a stupid ass support project
+
+one that i do hope/anticipate to move out on too
+
+so shit
+maybe i should care more?
+
+maybe i'm not caring ENOUGH?
+
+what if i move out and don't get around to 'launching' and am hacked and then don't have rent rofl
+
+well
+
+idfk.
+
+launch fast i guess
+
+or don't move out until you're ready to launch
+
+i'm scared pissless
+i feel like my muscles have no energy in them
+maybe it's malnutrition
+maybe it's fear
+
+
+FUCK YOU
+yes you
+whoever you are
+
+me? everyone? both?
+fuck everything.
+
+now i'm just blogging my emotions
+get back on track. code that motherfucker.
+
+
+WAL
+
+
+
+bank
+
+abc
+
+
+appdb
+
+
+should WAL also be my "project log" (come back to WAL-item and mark it as 'processed', for example. what if i crash before i mark it as processed even though it has been processed.... now i might process it twice FUCK jesus so many god damn motherfucking error scenarios my brain is going to fucking explode i swear to god suicide sounds so great right about now)
+
+
+ok fuck
+
+think of the generic bank scenario
+
+code that.
+
+fuck abc (for now)
+
+just think bank
+think re-usable
+
+think bank
+a fucking bank
+
+it isn't that complex
+
+now
+
+ignoring completely abc
+
+does this entail a WAL?
+a process log?
+a WAL on the client or the server or both?
+how does message ensuring factor in... or does it (is it specific only to rpc code?)
+
+
+see the thing is
+coding the functionality itself is easy
+
+it's accounting for infinite error cases that really starts to fuck my mind
+if i just send a message and swap some balance around... fucking EASY gg
+
+hell i've already done it in my remote bank management test project...
+
+but factor in scaling and race conditions and dropped connections and client crashing and server crashing
+============================== MINDFUCK

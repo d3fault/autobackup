@@ -1,0 +1,13 @@
+bank is a shit example/first because it is a contradiction
+i say i don't want a cache in the client
+but i definitely DO for bank
+even if it's hardcoded/hacky
+think of the "balance"
+i don't want a request to the rpc server (bank server) every time the user logs in to their account (and there's a balance variable)
+
+but for the vast majority of rpc shit... there is no caching
+
+
+should i have rpc generator be able to generate in two modes (cache-on-client) or should i hackily add the caching ability just for bank server?
+
+no fucking clue but it makes me understand at least a tiny bit why i keep getting so god damn confused
