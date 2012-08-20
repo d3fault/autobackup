@@ -1,0 +1,2 @@
+my goal for this week (while parents are at work)
+finish to at least a workable point the "compiling examples" and have a functioning rpc generator based off it
