@@ -118,7 +118,11 @@ bool SslTcpClient::start()
 }
 void SslTcpClient::stop()
 {
-    this->close();
+    if(this->isSslConnectionGood())
+    {
+        this->disconnectFromHost();
+        this->close();
+    }
     emit d("stopping ssl tcp client");
 }
 void SslTcpClient::handleEncrypted()
@@ -142,4 +146,8 @@ void SslTcpClient::handleSslErrors(QList<QSslError> sslErrors)
 void SslTcpClient::handleSocketError(QAbstractSocket::SocketError abstractSocketError)
 {
     emit d("abstract socket error #" + QString::number(abstractSocketError));
+}
+bool SslTcpClient::isSslConnectionGood()
+{
+    return ( ( this->isValid() ) && ( this->state() == QAbstractSocket::ConnectedState ) && ( this->isEncrypted() ) );
 }

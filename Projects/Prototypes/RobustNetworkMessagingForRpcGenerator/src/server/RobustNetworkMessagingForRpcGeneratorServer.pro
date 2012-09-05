@@ -13,6 +13,6 @@ HEADERS  += mainwidget.h \
     robustnetworkmessagingforrpcgeneratortestserver.h \
     testserver.h
 
-include(../../../../GloballySharedClasses/debuggableStartableStoppableBackendAndFrontend.pri)
-include(../../../../GloballySharedClasses/ssltcpserver.pri)
-include(../../../../GloballySharedClasses/ssltcpservertestcerts.pri)
+include(../../../../../GloballySharedClasses/debuggableStartableStoppableBackendAndFrontend.pri)
+include(../../../../../GloballySharedClasses/ssltcpserver.pri)
+include(../../../../../GloballySharedClasses/ssltcpservertestcerts.pri)

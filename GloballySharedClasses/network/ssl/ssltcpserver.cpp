@@ -85,6 +85,13 @@ bool SslTcpServer::init()
         return false;
     }
     emit d("server public local certificate is not null");
+    if(!m_ServerPublicLocalCertificate->isValid())
+    {
+        emit d("server public local certificate is not valid");
+        return false;
+    }
+    emit d("server public local certificate is valid");
+
 
     connect(this, SIGNAL(newConnection()), this, SLOT(handleNewConnectionNotYetEncrypted()));
 
@@ -102,7 +109,7 @@ bool SslTcpServer::start()
 }
 void SslTcpServer::stop()
 {
-    this->close();
+    this->close(); //TODOreq: close() doesn't do shit for existing connections, but might disallow future ones? i need to keep track of connected clients and then call QSslSocket::disconnectFromHost on them to disconnect cleanly
     emit d("stopping ssl tcp server");
 }
 void SslTcpServer::incomingConnection(int handle)
@@ -216,4 +223,8 @@ QSslSocket *SslTcpServer::getSocketByUniqueId(uint uniqueId)
 QList<uint> SslTcpServer::getAllConnectedUniqueIds()
 {
     return m_EncryptedSocketsBySerialNumber.keys();
+}
+bool SslTcpServer::isSslConnectionGood(QSslSocket *socketToCheck)
+{
+    return ( ( socketToCheck->isValid() ) && ( socketToCheck->state() == QAbstractSocket::ConnectedState ) && ( socketToCheck->isEncrypted() ) );
 }

@@ -1,15 +1,15 @@
 #include <QtGui/QApplication>
 #include "mainwidget.h"
 
-#include "robustnetworkmessagingforrpcgeneratortest.h"
+#include "robustnetworkmessagingforrpcgeneratortestserver.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    RobustNetworkMessagingForRpcGeneratorTest test;
+    RobustNetworkMessagingForRpcGeneratorTestServer testServer;
 
-    mainWidget w(&test);
+    mainWidget w(&testServer);
     w.show();
 
     return a.exec();

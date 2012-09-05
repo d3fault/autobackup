@@ -1,0 +1,34 @@
+web access (wt "proxied" (to be invented)): ad supported. same functionality, unless n/a or impossible... but for the most part will be 1:1
+binary access: you become part of the dht (in a future version?), you get all the functionality including actual anonymity. you might by default offer web access. should they get a cut of the ad revenue then? maybe...
+
+
+
+should the designEquals have a web front end?
+
+i guess it's possible :-P
+
+
+also possible to do a centrally hosted one
+
+in which case i don't know what them running the binary locally will do for them except make shit faster... but won't do much for uploading/downloading... then again being on a dht doesn't do much either... they'd still have to upload/download
+
+
+
+but in ANY case the main concept is simple: web access is supported by ads, binary is free software and ad free
+
+
+reason/rationale: downloading "adblock plus" or even adding an exception to adblock is just as difficult as downloading the binary. it should just be a click->run binary... none of this install bullshit
+
+but multi-user (os user, that is) might be welcomed? they could have a different app-user per os-user or something... ya know? idfk
+
+
+
+
+
+
+NOBODY WILL USE A BINARY IF IT HAS ADS... ESPECIALLY IF IT'S OPEN SOURCE ROFL
+nobody gives a fuck about ads on the web
+
+
+
+and ideally, getting them to install a dht version would be the main goal of this... grow the fuck out of the network. but network safety is a huge deal lol.... but now this discussion becomes completely d3fault/dht related and i'm not going to go there..
