@@ -1,0 +1,69 @@
+ok so now a tech doc. tryin to figure out my steps
+
+RPC: i need to figure out how/where QAbstractSocket really fails. i need to simulate network failure and also application crashing (kill 9 or whatever) and restarting. i might not need message ensuring, but i really don't know. the asynchronous'ness of the application as a whole might mean i should NOT do "stream logging" where i make sure everything is done in the correct order. perhaps they should just race to the atomicity of the couchbase cluster? i need to take care of clients not getting a response from server, and also server not getting response from business impl. this really confuses me. if only i had a function that i could call the business impl and then check that some 'responded' flag is set. and if it isn't, then i send a generic failed. BUT IN REALITY: if i code the business impl right, this shouldn't be needed. the thing is, there might be lots of places where i could forget to emit the generic failed. also even though i am simulating the whole signal/slot thing over network, it is not the same. for starters, i only have one listener. if i want multiple, i need to delegate appropriately and make sure only one (preferably the delegate / middle man) responds to the message. both would have the capability, which is unsafe as fuck. another thing is that just because the client "emits" the signal, doesn't mean the "slot" on the server gets called. the network may have failed... whereas if they're both on the same comp, a signal/slot will most likely never fail (i think?)
+
+ABC: caching of the bank? should probably NOT integrate this with RPC initially... but idfk. might turn out to be smarter to do so. just make sure to allow the rpc generator to not use the caching functionality. also, do i want the abc appdb to be stored on a 'cheap front end' as a cache AND on the server (presumably the same servers storing the bank shit)... as the 'master copy back end'? when i think about all of this at the same time as the rpc message ensuring and rpc auto caching, my mind gets close to exploding. no wonder it's taken me so long to follow up. i've been dozing off to kbreakout etc pondering all these fucking scenarios and shit
+
+FUTURE SCALING APPS: KISS is all i really have to say. DON'T implement rpc caching [yet] (ESPECIALLY SINCE THE RPC SERVER HAS NO IDEA HOW THE RPC SERVER **BUSINESS** IS STORING IT'S DATA.. IN A COUCHBASE CLUSTER IN THIS EXAMPLE, BUT DOESN'T HAVE TO BE. THIS IS GENERIC RPC WE'RE TALKING ABOUT HERE! (think about that 'amazon aws' competitor thing. the generated rpc interface provides a data interface (may also include impl(s)?)... so the business impl can just use the rpc server interface (since it's implementing slots for it anyways) and inside of those slots can call on the data interface. this design/idea comes in handy when thinking about how the fuck i'd implement the caching layer too... but i think it still needs more thought. also needs thought on stale data for READs to the cache. am i pushing everything now? i have no idea and this is why i want to KISS for now))
+
+--- honestly though.. KISS **ASIDE (for duration of this text)**, auto-caching like that would be pro as fuck if implemented in a scalable manner. in some cases however, it would only slow shit down. forums etc where writes are frequent... the write would go through to the master copy. so it'd have to go to the cache'd layer second becuase the change has to hit the master first. idfk. hackily (at the very least), i want to / need to cache the bank account details for the user. the balance! can't afford to do a GET to the master server every time the user logs into their fucking account and looks at their balance...
+HOWEVER, as i've seen: adding that layer of caching overcomplicates teh logic of keeping the data up to date and random fucking shit like that. race conditions too possibly idfk i can't remember but i remember something about 2 race conditions. i think one of which was just going from client to server... so nvm. and the other was the db itself... which couchbase solves (FUCK YEA COUCHBASE). or at least i think it was the 2nd race condition... need to double check that haha.. i know i wrote about it somewhere...
+so if rpc generator takes care of all the stale shit, it might actually prove to be way the fuck easier... especially in the long run
+
+
+
+BUT OK BACK ON FUCKING TRACK
+
+KISS
+
+KISS MOTHER FUCKER
+
+jesus fucking christ
+
+one man army up in this bitch
+
+you can only code so much
+
+you're 23, thank god
+but still, time is NOT on your side.
+
+i should figure out the rpc message ensuring
+
+then just fucking implement it and "gold" it
+i mean... make the fucking generator first of all...
+
+that's really it
+
+the client shit comes later
+
+
+tackle one thing at a time
+
+your next task will be abcappdb + bank cache
+
+oh and fuck, another confusion:
+abcappdb is an rpc server
+bank cache is [potentially, though not right now] an rpc client
+
+actually this isn't a confusion
+i was thinking if abcappdb did auto-caching and had a master copy on the bank cluster
+that in that scenario abcappdb would be an rpc client also
+
+this is true, and i was confused momentarily on how that would affect the Wt rpc client (abc appdb rpc shit)
+but it really doesn't
+
+'forwarding' the rpc client interface to the wt shit (although possibly auto-generated later!*) is easy as fuck and just a matter of creating methods etc
+
+
+
+
+RANDOM FUCKING IDEA: i define "pages" in the cluster and each page has a "value" that it can either read or write or both. the "page" in the bank cluster is auto-cached out to the abcappdb... and from there it can auto-generate the "viewing page so send me updates" registration code in the wt logic. "i am viewing page: bank account -- so register me to get updates for all those variables... and be prepared to accept writes to these(we don't really have to mention this, but could):". this does not sound like KISS rofl... but it sure sounds handy ;-)
+
+
+a page is just a collection of functionality... but we don't do the [wt] markup... we only mention the variables involved. perhaps a generator could generate a sample markup, but it doesn't have to..
+
+i mean i'm really getting to the point where i'm talking about creating a markup of the application and then generating it...
+
+which is crossing over into a field i'd rather not enter into [yet, because i want to factor in other shit such as desktop usage]
+
+sounds an awful lot like designEquals if you ask me...
