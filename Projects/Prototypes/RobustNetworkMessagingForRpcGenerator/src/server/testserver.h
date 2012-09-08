@@ -27,6 +27,8 @@ public slots:
 private slots:
     void handleClientConnectedAndEncrypted(QSslSocket *newClientSocket);
     void handleDataReceivedFromClient();
+    void handleBytesWrittenToClient(qint64);
+    void handleStateChanged(QAbstractSocket::SocketState newState);
 };
 
 #endif // TESTSERVER_H

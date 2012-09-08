@@ -14,7 +14,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033131
+Documents/minddump/:1386033148
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -25,7 +25,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033131
+Documents/minddump/dreams/:1386033148
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -263,6 +263,7 @@ Documents/minddump/future.privacy.concerns.there.is.no.privacy.maybe.thats.what.
 Documents/minddump/gaysex.asldfjksadfoiuwerlkjsdfoiujl.txt:1338898364
 Documents/minddump/get.smart.before.ehh.getting.smart.lol.wtf.idk.txt:1321758445
 Documents/minddump/gfs.dht.private.business.thoughts.asdflkjasdfowiueroaiuasdfkashdfaoiwer.txt:1339240363
+Documents/minddump/going.insane.is.submitting.to.ignorance.so.isnt.really.going.insane.though.may.seem.like.it.txt:1347077827
 Documents/minddump/good.self.talk.one.of.many.to.come.now.that.ive.passed.the.kaylee.barrier.txt:1339317675
 Documents/minddump/hacked.md5sum.you.never.know.txt:1338125857
 Documents/minddump/had.this.in.previous.doc.but.then.thought.about.how.i.might.accidentally.publically.release.it.if.i.do.try.to.hide.my.std.worries.but.man.youre.negative.so.chill.txt:1339229364
@@ -1101,7 +1102,7 @@ Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/failed-too-slow
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/message.stream.log.guaranteeing.alfdjasouawerljsda.txt:1345065378
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/stream.log.synchronization.messages.thoughts.adlfjkasdfowueraladjfsa.txt:1345070392
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/:1346875497
-Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/:1346887414
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/:1347113312
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/RobustNetworkMessagingForRpcGeneratorClient.pro:1346874914
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/main.cpp:1346874750
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/mainwidget.cpp:1346883592
@@ -1110,15 +1111,15 @@ Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/robustnetwo
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/robustnetworkmessagingforrpcgeneratortestclient.h:1346883640
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/testclient.cpp:1346884493
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/testclient.h:1346883831
-Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/:1346887411
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/:1347113314
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/RobustNetworkMessagingForRpcGeneratorServer.pro:1346874820
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/main.cpp:1346874759
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/mainwidget.cpp:1346882381
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/mainwidget.h:1346882254
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/robustnetworkmessagingforrpcgeneratortestserver.cpp:1346882427
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/robustnetworkmessagingforrpcgeneratortestserver.h:1346882325
-Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/testserver.cpp:1346886930
-Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/testserver.h:1346886888
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/testserver.cpp:1347113241
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/testserver.h:1347112943
 Projects/Prototypes/WebsiteAutomator/:1320055410
 Projects/Prototypes/WtServerPostTest/:1344095866
 Projects/Prototypes/WtServerPostTest/src/:1333034917
@@ -1633,7 +1634,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033131
+Projects/libAvGraphicsItem2/design/:1386033148
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1827,7 +1828,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1346887724
+autobackupScripts/win/.directory:1347113319
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

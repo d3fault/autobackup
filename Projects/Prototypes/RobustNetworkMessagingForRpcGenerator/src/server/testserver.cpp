@@ -45,6 +45,9 @@ void TestServer::handleClientConnectedAndEncrypted(QSslSocket *newClientSocket)
     connect(newClientSocket, SIGNAL(readyRead()), this, SLOT(handleDataReceivedFromClient()));
     m_Client = newClientSocket;
     m_ClientDataStream = new QDataStream(m_Client);
+    connect(m_Client, SIGNAL(bytesWritten(qint64)), this, SLOT(handleBytesWrittenToClient(qint64)));
+    connect(m_Client, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(handleStateChanged(QAbstractSocket::SocketState)));
+    m_Client->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 }
 void TestServer::handleDataReceivedFromClient()
 {
@@ -88,11 +91,19 @@ void TestServer::sendMessageToPeer()
         */
 
 
-        if(!SslTcpServer::isSslConnectionGood(m_Client))
+        /*if(!SslTcpServer::isSslConnectionGood(m_Client))
         {
             m_ShitIsFucked = true;
             emit d("connection is no longer good, here's what was sent last to the QIODevice. it needs to be queued for next connection");
             emit d(blah);
-        }
+        }*/
     }
+}
+void TestServer::handleBytesWrittenToClient(qint64 bytesWritten)
+{
+    emit d(QString::number(bytesWritten) + QString(" bytes were written to the client"));
+}
+void TestServer::handleStateChanged(QAbstractSocket::SocketState newState)
+{
+    emit d(QString("State Changed: ") + QString::number(newState));
 }
