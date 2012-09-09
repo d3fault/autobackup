@@ -15,12 +15,18 @@ private:
     QDataStream *m_ServerStream;
     SslTcpClient *m_Client;
     quint32 m_DebugMessageNum;
+
+    quint16 m_IncomingMessageSize;
+    bool m_OnFirstMessage;
+
+    void readHelper();
 public slots:
     void init();
     void start();
     void stop();
 
     void sendMessageToPeer();
+    void readSecondMessage();
 private slots:
     void handleConnectedAndEncrypted(QSslSocket *socketToServer);
     void handleServerSentUsData();

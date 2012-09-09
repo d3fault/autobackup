@@ -21,6 +21,7 @@ private:
     QLineEdit *m_MsDelayLineEdit;
     QPushButton *m_StartSendingMessagesButton;
     QPushButton *m_StopSendingMessagesButton;
+    QPushButton *m_ReadSecondMessageButton;
     QTimer *m_MessageSendTimer;
 private slots:
     void toggleSendingMessages();

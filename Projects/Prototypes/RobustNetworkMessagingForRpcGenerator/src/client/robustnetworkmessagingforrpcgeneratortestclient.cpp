@@ -32,3 +32,7 @@ void RobustNetworkMessagingForRpcGeneratorTestClient::sendMessageToPeer()
 {
     QMetaObject::invokeMethod(m_Client, "sendMessageToPeer", Qt::QueuedConnection);
 }
+void RobustNetworkMessagingForRpcGeneratorTestClient::readSecondMessage()
+{
+    QMetaObject::invokeMethod(m_Client, "readSecondMessage", Qt::QueuedConnection);
+}

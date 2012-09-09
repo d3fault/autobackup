@@ -3,6 +3,8 @@
 void TestClient::init()
 {
     m_DebugMessageNum = 0;
+    m_IncomingMessageSize = 0;
+    m_OnFirstMessage = true;
     m_Client = new SslTcpClient(this, ":/ClientCA.pem", ":/ServerCA.pem", ":/ClientPrivateKey.pem", ":/ClientPublicCert.pem", "fuckyou");
 
     connect(m_Client, SIGNAL(connectedAndEncrypted(QSslSocket*)), this, SLOT(handleConnectedAndEncrypted(QSslSocket*)));
@@ -39,16 +41,19 @@ void TestClient::handleConnectedAndEncrypted(QSslSocket *socketToServer)
     emit d("connected to server");
     connect(socketToServer, SIGNAL(readyRead()), this, SLOT(handleServerSentUsData()));
     m_ServerStream = new QDataStream(socketToServer);
+
+    socketToServer->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+    socketToServer->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
 }
 void TestClient::handleServerSentUsData()
 {
-    emit d("server sent us data");
-
-    while(!m_ServerStream->atEnd())
+    if(m_OnFirstMessage)
     {
-        QString text;
-        (*m_ServerStream) >> text;
-        emit d(text);
+        readHelper();
+    }
+    else
+    {
+        emit d("we got a readyRead, but we're no longer on the first message so we're going to intentionally ignore it [for now] to see what happens");
     }
 }
 void TestClient::sendMessageToPeer()
@@ -66,5 +71,57 @@ void TestClient::sendMessageToPeer()
         ++m_DebugMessageNum;
 
         (*m_ServerStream) << blah;
+    }
+}
+void TestClient::readHelper()
+{
+    emit d("server sent us data");
+
+    /*while(!m_ServerStream->atEnd())
+    {
+        QString text;
+        (*m_ServerStream) >> text;
+        emit d(text);
+    }*/
+
+    if(m_IncomingMessageSize == 0)
+    {
+        if(m_Client->bytesAvailable() < (qint64)sizeof(quint16))
+        {
+            return;
+        }
+        (*m_ServerStream) >> m_IncomingMessageSize;
+
+        emit d(QString("Incoming Message Size: ") + QString::number(m_IncomingMessageSize));
+    }
+
+    if(m_Client->bytesAvailable() < (qint64)m_IncomingMessageSize)
+    {
+        return;
+    }
+
+    QString theMessage;
+    (*m_ServerStream) >> theMessage;
+
+    emit d("we read in a message:");
+    emit d(theMessage);
+
+    if(m_Client->bytesAvailable() > 0)
+    {
+        emit d(QString("we still have ") + QString::number(m_Client->bytesAvailable()) + QString(" on the socket to be read..."));
+    }
+
+    m_IncomingMessageSize = 0;
+    m_OnFirstMessage = false;
+}
+void TestClient::readSecondMessage()
+{
+    if(m_OnFirstMessage)
+    {
+        emit d("lol wut haven't read first message yet?");
+    }
+    else
+    {
+        readHelper();
     }
 }

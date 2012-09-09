@@ -19,6 +19,7 @@ public slots:
     void stop();
 
     void sendMessageToPeer();
+    void readSecondMessage();
 };
 
 #endif // ROBUSTNETWORKMESSAGINGFORRPCGENERATORTESTCLIENT_H

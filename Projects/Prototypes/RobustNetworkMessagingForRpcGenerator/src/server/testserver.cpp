@@ -4,6 +4,7 @@ void TestServer::init()
 {
     m_DebugMessageNum = 0;
     m_ShitIsFucked = false;
+    m_SendIndex = 0;
     m_Server = new SslTcpServer(this, ":/ServerCA.pem", ":/ClientCA.pem", ":/ServerPrivateKey.pem", ":/ServerPublicCert.pem", "fuckyou");
 
     connect(m_Server, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleClientConnectedAndEncrypted(QSslSocket*)));
@@ -47,7 +48,9 @@ void TestServer::handleClientConnectedAndEncrypted(QSslSocket *newClientSocket)
     m_ClientDataStream = new QDataStream(m_Client);
     connect(m_Client, SIGNAL(bytesWritten(qint64)), this, SLOT(handleBytesWrittenToClient(qint64)));
     connect(m_Client, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(handleStateChanged(QAbstractSocket::SocketState)));
+
     m_Client->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+    m_Client->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
 }
 void TestServer::handleDataReceivedFromClient()
 {
@@ -62,19 +65,62 @@ void TestServer::handleDataReceivedFromClient()
 }
 void TestServer::sendMessageToPeer()
 {
-    if(m_Client && !m_ShitIsFucked/*&& SslTcpServer::isSslConnectionGood(m_Client)*/)
+    if(m_Client /*&& SslTcpServer::isSslConnectionGood(m_Client)*/)
     {
-        QString blah;
-        blah.append(QDateTime::currentDateTime().toString());
-        blah.append(QString(" - "));
-        blah.append(QString::number(m_DebugMessageNum));
-        blah.append(QString("\n"));
+        if(m_SendIndex == 0)
+        {
+            QByteArray msg1;
+            QDataStream msg1s(&msg1, QIODevice::WriteOnly);
 
-        emit d(QString("Sending Message Num: ") + QString::number(m_DebugMessageNum));
+            //placeholder size
+            msg1s << (quint16)0;
 
-        ++m_DebugMessageNum;
+            msg1s << QString("here is a random fucking message 1 of a random fucking length that is meh lol wut hi sup k bye\n");
 
-        (*m_ClientDataStream) << blah;
+            //rewind, write actual size (can't rewind on a QTcpSocket "device()" i'd imagine... just confirmed that. it's sequential if i recall correctly... and seek() only works on randomly accessible devices (byte arrays, files)
+            msg1s.device()->seek(0);
+            msg1s << ((quint16)(msg1.size() - sizeof(quint16)));
+
+
+            //now we actually write the shit to the QTcpSocket, but we don't do it with QDataStream so this way we see how many bytes were written [to the buffer i think?]
+            qint64 bytesWrittenToBufferForMsg1 = m_Client->write(msg1);
+            emit d(QString::number(bytesWrittenToBufferForMsg1) + QString(" bytes were returned from QIODevice::write() -- just to buffer i think #1"));
+        }
+        else if(m_SendIndex == 1)
+        {
+            QByteArray msg2;
+            QDataStream msg2s(&msg2, QIODevice::WriteOnly);
+
+            msg2s << (quint16)0;
+
+            QString blah;
+            blah.append("message 2 -- ");
+            blah.append(QDateTime::currentDateTime().toString());
+            blah.append(QString(" - "));
+            blah.append(QString::number(m_DebugMessageNum));
+            blah.append(QString("\n"));
+
+            msg2s << blah;
+
+            msg2s.device()->seek(0);
+            msg2s << ((quint16)(msg2.size() - sizeof(quint16)));
+
+
+            qint64 bytesWrittenToBufferForMsg2 = m_Client->write(msg2);
+            emit d(QString::number(bytesWrittenToBufferForMsg2) + QString(" bytes were returned from QIODevice::write() -- just to buffer i think #2"));
+        }
+        else
+        {
+            emit d("done with this test... nothing to send");
+        }
+
+        ++m_SendIndex;
+
+        //emit d(QString("Sending Message Num: ") + QString::number(m_DebugMessageNum));
+
+        //++m_DebugMessageNum;
+
+        //(*m_ClientDataStream) << blah;
 
         /* -- ok nvm this didn't do jack shit. it probably only responds to QIODevice::close(); i got the AbstractError #1 and it kept sending. i commented out the if(m_Client && isSslConnectionGood) statement for the test, because AbstractError #1 does at least make SslConnectionGood return false so we don't continue. HOWEVER now i have the idea of checking that the connection is good AFTER i write to it using QDataStream. it will hopefully have the same effect. that way there isn't a race condition where i check the ssl connection is good, then it becomes bad before i can send. it's only a few lines down, but it's a possibility!! if i were to detect that the connection is bad, having the 'previously attempted to send' message available would be very nifty as then i can start queueing the messages :). how i currently have it coded means the previously sent message (that we JUST would have figured out failed) is long gone. it existed in this slot in a different context.
 
@@ -101,7 +147,7 @@ void TestServer::sendMessageToPeer()
 }
 void TestServer::handleBytesWrittenToClient(qint64 bytesWritten)
 {
-    emit d(QString::number(bytesWritten) + QString(" bytes were written to the client"));
+    emit d(QString::number(bytesWritten) + QString(" bytes were written to the client. this means that many were tcp ack'd?"));
 }
 void TestServer::handleStateChanged(QAbstractSocket::SocketState newState)
 {

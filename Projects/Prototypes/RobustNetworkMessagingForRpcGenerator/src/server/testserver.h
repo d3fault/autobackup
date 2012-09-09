@@ -18,6 +18,8 @@ private:
     QSslSocket *m_Client;
     quint32 m_DebugMessageNum;
     bool m_ShitIsFucked;
+
+    quint16 m_SendIndex;
 public slots:
     void init();
     void start();
