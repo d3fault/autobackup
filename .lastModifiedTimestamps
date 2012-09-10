@@ -14,7 +14,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033165
+Documents/minddump/:1386033183
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -25,7 +25,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033165
+Documents/minddump/dreams/:1386033183
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -58,10 +58,12 @@ Documents/minddump/accept.it.and.all.over.the.place.including.a.nice.tor.robot.d
 Documents/minddump/adfalsdjfowurlasjfoaufsioafhdkasdhfaisfuwerjosudflasjfouwerlk.txt:1343313796
 Documents/minddump/adflkjasdfoiausdflkajweraoirusdaflkjsadfouasdflkjsdfoiu.txt:1335804858
 Documents/minddump/adlsfjasdofuwerlkjsdofuwlerjasofduwaerkhsadfkjhsdfoiuwer.txt:1340748559
+Documents/minddump/afasdfashdflaskfjsaflfskjasfdouwerlkjsdfsldkfj.txt:1347266336
 Documents/minddump/afdljsadfoualkjsaofuasflroflalsdfjkasouewrl.txt:1344286704
 Documents/minddump/aflasjdflasfoweurasdlkfjhasifhawerkjsdofuwerlk.txt:1344286874
 Documents/minddump/aflaskdjfowuralsfkjaowurlsadjfoawurelsdfwoeruijsdflkj.txt:1344287488
 Documents/minddump/afldaksjfoulkjaawresfdouwljfasufdoasijdflasjfdowuwelrjk.txt:1345424345
+Documents/minddump/afljasdflkjasdfowulsdjfasdlfjsaldfjweorulfdkj.txt:1347266660
 Documents/minddump/afljsdafoasuflsadjfkashfasdkfuourwljrafouawersfdasdfljkwoerul.txt:1345423349
 Documents/minddump/aflkasjdfasdlfjwoerusdlfjasfdokhafksadjfoiuwerlk.txt:1344287349
 Documents/minddump/aflkjsadfouwerljsdfsdafhksdhfasdfuweroiuwrelk.txt:1345058159
@@ -324,6 +326,7 @@ Documents/minddump/kfjasdfoaiufsldajfweorusdlfk.txt:1322579120
 Documents/minddump/kind.of.like.a.cev.but.not.idk.just.thought.it.up.asdlfkjsdfouwljsdfowerusfdlj.txt:1345964822
 Documents/minddump/kinda.wanna.post.the.first.part.of.this.on.nobodyme.txt:1323374534
 Documents/minddump/kjsdafouwlkrjosufwlaekjrsfoiuwrjsdfkjwerou.txt:1342938608
+Documents/minddump/lakfjalsdkjfasdfhskfdhsafouwlrjsdflasjdfwoeur.txt:1347266323
 Documents/minddump/lasdfjsadofiuwerlkjasfoiywrasufdioawerlkjsoafiusdflkj.txt:1337283195
 Documents/minddump/lasdjkfdsfjsadfouwerlsjdfiawhrlksdjfoiuwerlk.txt:1344286047
 Documents/minddump/lasdkfjsodfuawlrkjafhsfkhasdfasdfweoruasflej.txt:1343931061
@@ -1634,7 +1637,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033165
+Projects/libAvGraphicsItem2/design/:1386033183
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1828,7 +1831,7 @@ autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1336414986
 autobackupScripts/linux/yumDownloadOnly.sh:1324208603
 autobackupScripts/linux/zoom.backup.and.shred.sh:1336416385
 autobackupScripts/win/:1321107358
-autobackupScripts/win/.directory:1347202949
+autobackupScripts/win/.directory:1347268117
 autobackupScripts/win/dismount.3x.750gb.drives.bat:1319976778
 autobackupScripts/win/droid.cygwin.commands.sh:1320867701
 autobackupScripts/win/droid.sync.with.3x.750gb.drives.bat:1320867521

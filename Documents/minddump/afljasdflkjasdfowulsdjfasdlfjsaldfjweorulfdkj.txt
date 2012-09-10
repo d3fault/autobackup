@@ -1,0 +1,11 @@
+slow and steady, just like that fucking turtle
+turns out i do need to implement an ack layer for my rpc connection management shit
+
+been stuck on this probably for so long, but glad I at least know now
+
+slow and steady
+
+I feel like after this rpc connection shit it'll be a nice downhill ride to riches (i'll probably be proven wrong)
+
+
+an afterthought to my research into tcp's ack'ing... it's the compress+encrypted (from ssl) byte size anyways that it's acking (or does that even matter? probably not now that i think about it fuck this sentence...)

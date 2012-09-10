@@ -1,0 +1,13 @@
+at a screen where you enter a password by typing it in
+
+you could have lots of options like "reverse password" or "shift fourths" ETC (there are literally infinite of these)
+
+but the point is: all those checkboxes (all unchecked by default) drastically (randomly?) modify the pitches that pressing each key makes
+
+perhaps even the order of the keys you press could factor in, so your password scrambles it's own tones on top of that
+
+
+but yea, the only reason this would be handy is if you had a pretty damn fucking long password and needed audio clues to help you know you're inputting it correctly
+
+
+there probably most likely (but MAYBE not) is a vulnerability where someone listening to you inputting your password can (by brute force and having the computer analyze a recording of you pressing the keys) crack it... so you'd need to be in a secure area that you are sure nobody else can listen in on. this wouldn't be a password you'd enter often, but perhaps for decrypting (from something) a master public enryption key (i use that to "add" to my 'archive' / d3fs shit. maybe not public encryption key, maybe it's private encryption. All I know is it's what I keep on my device (perhaps offline raspi) at all times so I never have to enter a password to append. Maybe even some revoking abilities would be nice or someshit idfk? The most important thing is that data is secured (offline copy) and at least attempted to be secured online (because 'once something is online, it is always out there')
