@@ -237,10 +237,11 @@ bool QuickDirtyAutoBackupHalperBusiness::existsAndIsNotDirNorSymLink(const QStri
     {
         return false;
     }
-    if(!m_FileInfo.isFile())
+    //guess linux devices don't count as files. i bet they don't in windows either :-P
+    /*if(!m_FileInfo.isFile())
     {
         return false;
-    }
+    }*/
     if(m_FileInfo.isSymLink())
     {
         return false;
