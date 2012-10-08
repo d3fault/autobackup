@@ -1,0 +1,45 @@
+because 7 links/layers of people is all you need to know everyone in the world, it should be the number of redundant layers globally.
+if you lose 1 (how? disconnect or becoming un-trusted. either or both or them plus more? <- since that question is underterminable you should use whitelist programming to CONFIRM that you can acess all 7 peers. the identification schemes should be random hashes yet still all confirmable) you still have access to 6 other copies. i meant copies not peers. but also peers? should they be non-rotating? periodic-rotating? or every-fucking-"datagram"/Message-rotating
+
+i am clearly talking about d3fault
+but the rotating every-fucking-Message mode would be useful on the RpcGenerator too
+fuck yea merging [lives, not repos]
+
+at least that's what it feels like
+
+
+fuck anyways back to the 7 factor redundancy + 7 factor anonymity (if desired) built in/together integrated "operating system" / "system suite" / "distribution" / "application" (plugins vs. applications. Go! (sameshit imo)). it is also sort of an "office suite" or "computing environment" (since we're doing software development as well) because i want a basic ass (but well (as in good) ... .. ... err i forget well made... HISTORIZED/logged/persisted/streamed/observed(because the view to the data is equally important, hence a timeline when saying HISTORIZED))
+
+that's it!
+
+i call it historized
+bool historized = true;
+
+
+
+
+
+class PieceOfInformation
+{
+	bool historized = true; //guarantees that we have 7 factor redundancy and 7 factor anonymity when accessing that Piece of Information
+	
+
+	QByteArry theData; //couchbase "document" equivalent, so storing any kind of blob
+	
+	^^perhaps the data shouldn't be here and we should just have:
+	QByteArray theKeyToCouchbaseEsqDocument; // /movies/Alice, /mOviEs/aLicE In, /MOVIES/ALICE_IN_WONDERLAND, /movies/alice+in+wonderland, i think this is a tangent about aliasing in general which fuck i am not going to think about right now
+and:	QByteArray theSha512Verifier;
+};
+
+
+shit back to 7 link/layers
+something i've been putting off saying:
+3 is effective* for both, but over over under. 3 has a somewhat decent chance of data loss whereas 7 has a ridiculously low chance. it is overkill. that is the point. overkill is good for data integrity. data integrity is vital. whether anonymous or not. every PieceOfInformation should be read with the author disregarded. i could create a custom view (non default view, except for me (bitch to code) and anyone who opts in) that excludes the author. or maybe just a "show author" button that when clicked on for the first time has a remember? + checkbox or something idfk settings to get an easy opt-in and also not bug people indefinitely. choose once.
+
+idk why i put the asterisk there
+
+i mean i do, i wanted to say that 7 is a better number (guess it came out backwards)
+but now i am starting to think that i meant a different word altogether. efficient? no. something more along the lines of "adequate".
+
+
+i know it's possible and i know it's difficult

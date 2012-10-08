@@ -1,0 +1,22 @@
+I've been thinking a lot lately about the GPL license behind Wt
+It kinda sucks
+
+but it's also easily the best web toolkit around~
+
+so my solution for dealing with it has become:
+keep any code that 'links to' (and therefore becomes GPL from cancer) Wt able to work with POD
+whether it's built into the RPC CLIENT (for 'abc app db rpc server' functionality), or if the rpc client is still on the other side of this POD relationship... is unknown at the moment
+
+but what is known is that i can use a basic ass template method to define my website as a whole, as well as individual pages/views, up to individual pieces of functionality and the calls they represent on the non-POD side
+
+basically it will become a web toolkit that creates GUIs and 'connections' to/from a more dynamic back-end which will be LGPL at all times
+the hope is that the GPL infected code stays small and portable
+
+
+
+
+and while i'm on the subject might as well get this down:
+wtwithqt uses a qthread per connection
+my current prototyping code uses a qthread per server app
+but perhaps the best solution is to do it like wt itself: thread POOLing
+i'll have to look into this. it'll probably involve read lockers in all the pools with occassional writelocker grabbing? idfk maybe not~ maybe data access/racing is done on a different level? couchbase db access or w/e IDFK where i am in my head in the design, srsly

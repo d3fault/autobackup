@@ -1,0 +1,44 @@
+the panel / taskbar at the bottom should be a timeline view of macro-items
+showing you your task just as normal, but it's right smack dab in the middle
+or perhaps a bit to the right
+the start menu is still to the very far left
+as are shortcuts to applications (macro tasks/items/timelineNodes)
+
+as opposed to micro items: keystrokes, frames. actually i think words instead of keystrokes. but we need to be able to record the backspacing of multiple words also. fucking complex idfk how it wouuld pan out perfectly. just know it's possible
+
+is changing a view in an app a macro item? should it show up on the taskbar?
+i'd think yes
+everything should
+old applications
+so like x11 apps or win32 apps
+would just have one "view" (the entire app itself, since it's impossible to add post-creation. or at least difficult, definitely not impossible durr)
+you could do a lot of shit in napster.exe and then go to an integrated view-is-macro-item. every-task-within-view-is-micro-item-with-macro-item-parent.
+
+
+class TimelineItem
+{
+	QDateTime DateTime;
+	QByteArray Data;
+	[optional] QString TitleOrSubject; //or perhaps this is identified in NoSql? maybe the NoSql title should be the DateTime (as precise as it needs to be to avoid collission, using randomness (not giving a fuck) to disperse collissions). but since we are also adding precision during those collission dispersions, both of them remain accurate enough. the network also auto-scales in this way. if we detect we are being too precise (too many trailing zeros), we remove precision. it shouldn't change (un-scale, less precision) realtime but with occassional probes. scaling out, adding precision, should be done "when needed" on demand. collision dispersion. we want to get to the point where collissions do not happen. that's how precise the timestamps should auto scale to... and it is a variable amount depending on the network size/load.
+}
+
+class MacroItem : TimelineItem
+{
+}
+class MicroItem : TimelineItem
+{
+	TimelineItem *ParentMacroItem;
+	int MacroItemIndexIntoParentMacroItem; //could use NoSql to embed this in the name as part of the key maybe? or something. idfk.
+}
+
+via inheritence (writing this backwards)
+MicroItems: ImageFrames /* used in both pictures and videos (how2doI,B,w/eFrames?)*/, WordsOrKeystrokesOrSomething[SomeKindOfRecordableHistoryForTypingWhichIncludesWPM/CPMembeddedOrAttached]
+MacroItems: Documents, SourceFiles(perhaps head/source merged as a "Class" instead?), Pictures, Videos, GameSessions(recordings thereof. i guess this would just be a video sub-type???), wowNotMuchElseWtf. maybe Books which are compilations of Documents just like Video is compilation of Pictures + Audio. oh right Audio. AudioFile (used as "song" and in Videos (along with Pictures)). but idk Books sounds less vital. I think Documents can sustain Books as a concept so idfk.
+
+do i want to KISS?
+what level do i implement "songs" and possibly Books?
+song is just in the GUI? an illusion/word-trickery for the user?
+a tag for an AudioFile? both these ideas sound good, perhaps in combination? //when populating gui: if(inTags("song")) { wordToUseInstead = "Song"; } or something
+where do tags go?
+as in, where is the data stored?
+a member of TimelineItem? (QList<Tag> Tags)

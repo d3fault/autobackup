@@ -1,0 +1,21 @@
+ip addresses are publically viewable [edit: on something like a "forum post", for example]
+it is always the equivalent of seeing a tor exit node IP
+whether or not they release the public decryption key is what makes it publically readable or not
+whether it has a name attached, or perhaps is signed by a certain key, is what makes it attached to a given username (anon doesn't have this)
+perhaps what makes something anon vs. not-anon is whether the user KEEPS the signing key or whatever "identifier" that is generated just for that item
+they could release the item anon, keep the key, then claim it later bu publishing it
+or just never publish it
+or delete it
+or publish it at the same time as releasing it
+
+it seems implied that the key is an item itself
+this seems like circular reasoning
+the key is an item that requires a key that requires a key ad infinium
+
+so perhaps the data storage level is a separate level (non-guaranteed pretty much) than the d3fault filesystem level (data guranteed, shifting to servers where needed)
+and there are perhaps further abstractions or maybe abstracting it to d3fault filesystem is enough to say "this is a piece of data" vs. "this is a key that unlocks a piece of data" without the circular reasoning
+a solution can definitely be attained
+
+i need to design well.
+i need designEquals
+perhaps as a pre-requisite :-/

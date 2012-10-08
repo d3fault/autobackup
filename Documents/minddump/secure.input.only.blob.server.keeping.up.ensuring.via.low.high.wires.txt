@@ -1,0 +1,23 @@
+perhaps the best/only way for a secure/offline "input-only" document binary blob server to be secure is for it to NOT decode the input qrcode/video and just store it as is
+without even touching it. without even decoding, decrypting, or decompressing it... there is MINIMAL (very fucking minimal. we're storing a bitmap!) chance of hack. however, this means we can't verify / follow along that we're all caught up with the stream etc. it would be an assumption that might bight me in the ass after years of it running. how would i be able to say "i missed some".
+
+a solution to "i missed some":
+fucking single electronic wires. high low only.
+
+offline binary blob server raises it high to say "ok got that 'piece'". should we do parity checking before it? is that a security risk too? yes potentially rofl. still, this removes the "rush" factor.
+and since we have to go low before the next one is delivered, maybe just 2 output-only-single-bit-electricity lines that are alternating piece of piece... to get rid of the race condition.
+
+if when the input-only-offline machine receives a "HIGH" saying 'i got the current piece of data from the qrcode/video', the _other_ line is STILL high... we know something's fucked up and.... idk... should wait or something? this sounds kinda like serial ish except it's not.
+
+then for the next piece, the line is low when the other is HIGH. or perhaps the input-only-offline machine just waits for that "one high, one low" state before proceeding to the next chunk of data.
+
+so-
+startup: low,low
+input-only-offline machine broadcasts qrcode/video of 1 piece of data. a 'document', 'blob', or just a 'piece' of a document (maybe splitting occurs on a different level and one 'frame' is one 'blob' for the server's point of view)
+input-only secure/offline blob server reads that blob, SHOULD verify it although that in itself is a risk rofl, then raises: high,low
+input-only-offline machine sees the high,low and sends the next piece
+input-only secure/offline blob server sees the piece has changed, sets to low,low, reads the blob, then does low,high
+input-only-offline machine sees the low,high and sends the next piece
+
+
+there might not even be a race condition and i might just be overthinking this and maybe only one wire of low/high is needed.

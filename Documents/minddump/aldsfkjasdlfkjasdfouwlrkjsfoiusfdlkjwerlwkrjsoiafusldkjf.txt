@@ -1,0 +1,47 @@
+by serializing the svg into couchbase json documents
+it is easy to make a backwards compatible z realtime-addin
+and also to update the xyz coords of the "group" of "svg-items" that represent "ME"
+in a synchronized/distributed/scalable/alwaysOnline/alwaysUpdateable way
+just like d3fault
+because it will use/be d3fault
+i'm tired of my life
+i'm tired of dying while doing nothing
+
+i mean yes i am actively working towards something
+but gah i feel like i am impatient as fuck
+ya know?
+so hard to keep my cool
+so hard to stay calm
+hack on
+shit's boring, fun, and necessary at the same time
+i need to 'get money out of the way'
+but i also feel like i'm under a rock
+and will never make it
+so i'm tempted to burst through
+break on through to the other side
+throw it all up in the air
+but then what will i DO
+at least this way i know a linear path to my goals
+that's all that's needed...
+why would i throw it all up in the air?
+pointless.
+
+
+
+so close i can taste it
+mmmmmmmmmmmmm
+success~
+
+gg noobs
+
+lol fucking noob
+stop fantasizing
+get back to coding
+you're taking such a big tangent with this QuickDirtyAutoBackupHalper
+but i do feel it will be worth it in the end :)
+it's quick, it's dirty, it's ALMOST DONE (just need to do commit slot), and it's going to be functional
+it will save time and allow me to commit when using my sync-to-backups-strategy without losing the ability to customize the commit message. but also makes it optional for if i don't know what to put because they're just a series of text document commits
+hell i can add containers at any time and git push will push all the shit.
+fuck yea!
+so pro as fuck shiiiiit yea
+but lol this isn't going to get you any dollars

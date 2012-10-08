@@ -1,0 +1,16 @@
+my randomness
+the grand total hash of all my data
+say, some 4096+ length hash
+is used as the predetermined-yet-LENGTHY-'random'-aka-pseudorandom(re-generable/re-traceable) seed
+i tattoo that grand total hash on my arm
+i take pictures of it multiple times and put them on the network. multiple angles multiple distances
+i refer to them to compare to my own arm
+if they look photoshopped i know i'm hacked
+they can change my arm and they can change my pictures (but they cannot change my brain/memory (actually they probably could :-/))
+but changing both my arm and the pictures without me noticing would be incredibly hard
+and to make it so nobody notices that i'm gone/kidnapped (required for brain/memory erasing)
+AND that my friends/peers irl nubs surrounding me don't also notice the changing of that hash
+
+what the FUCK does having a consistent random (guaranteed random imo) number stream give me?
+rofl
+nothing.

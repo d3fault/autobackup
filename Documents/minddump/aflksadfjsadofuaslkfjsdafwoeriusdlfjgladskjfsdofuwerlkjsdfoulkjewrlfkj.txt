@@ -1,0 +1,29 @@
+that vectore representation of myself that i made in the "tobey family tree"
+i should read-only-derive (copy-on-write) from it and make it stand up
+the 2 dimensional space should be published realtime to a network, with clients viewing it in realtime
+i should extend it to 3d viewing/greographic-coordinates (still cg space)
+
+but the point is, my rectangles should all become real and stand up out of teh chair and walk away into WHITE-NOTHINGNESS-3D-SPACE
+my gps coords constantly logged and updated RELATIVE TO THE A) 3D-MESH-OF-RECTANGLES (BECAME POLYGONS) AND B) ACTUAL PHYSICAL SELF
+should also videotape the whole thing and explain/document it (which includes releasing this document hello noobs)
+
+if i take a picture or video, it is implanted into whiteness
+if any of the family members in the picture use the hardware/software that i invent (why wouldn't they? bored noobs are bored), they too begin to walk around
+
+the 3d space is shared both virtually (via networks and i guess that 7-layer-redundancy-and-7-layer-anonymity-factor-perhaps-in-the-mix-but-this-sounds-hard-atm) and physically (AKA IRL)
+
+because anonymity can only be achieved when broadcasting anonymously 24/7,
+public viewings are still distributed*/persisted/somethingLikeThat anonymously. public viewings merely have the private decryption key attachedto/embedded-in/distributed-or-whatever-alongside the message
+
+
+i will have a lot of "data frames" (documents become files.. pieces of paper in teh virtual world) in the 3d space surrounding the original tobey family tree
+
+it can be a game simultaneously, but there definitely shouldn't be griefing (unless you do something like opt into fps mode ya know?)
+you walk around in a trail of documents
+they're just fucking laying there
+other real life humans that were standing where you are now standing left those documents there
+they are all CC-BY-SA and the whole fucking thing is inline-editable with all code pieces LGPL
+
+
+good luck bro
+rofl.

@@ -1,0 +1,5 @@
+rogue code on input-only secure/offline blob server could use my 1 or 2 'got-it' wires as serial communication to leak data. it is technically output but we're using the output on such a low level that it does not become a security risk unless rogue code is executed. which is why we don't want to even touch the "blobs" because we might get infected just from verifying/decrypting/decompressing/STORING*********** them
+
+
+the storing vulnerability would be like a filesystem (or couchbase etc) vulnerability. fml.
+perhaps this entire idea sucks?

@@ -1,0 +1,81 @@
+was just pondering about security right now
+i've been getting even more paranoid lmfao
+security is a bitch, that's for sure
+
+how do i know that my offline debian box isn't hacked?
+how do i know the copy of debian i installed wasn't hacked before i even got it?
+how do i know that it isn't hiding my data/keys in some portion of my read/write thumb drive and my online machine (obviously/easily hacked) isn't transparently relaying it to the network?
+
+sure my offline <-- usb signed .deb files --> online tactic is waaaay the fuck more secure than just keeping my secure/offline machine connected to the interbutts
+
+but it's very dependent on the debian copy i installed on the secure/offline machine being authentic to begin with
+debian is distributed via http, not https...
+they probably have some fancy way of doing gpg verification etc
+but i think even that can be forged/broken
+
+
+i just now came up with a good way of keeping my offline machine up to date without chance of data ever going OUT of offline machine
+that's my biggest concern
+
+installing malicious software is still a concern
+but private data leaving the offline machine (keys most importantly) is the biggest concern
+hacked debian installed + read/write usb drive going back and forth between online/offline = PLAUSIBLE that it's using whitespace hiding etc tactics to leak my data
+
+SOLUTION (only to data ever getting OUT, but not to keeping malicious software from coming IN):
+-online machine writes to CD-R or CD-RW. doesn't matter which. i thought CD-R would be better if you "close" the writing afterwards but i don't trust that anyways, so CD-RW is adequate and saves on costs in the end too
+-offline machine reads via CD-ROM _ONLY_. it is vital that the offline machine does not have the physical capability to write. DVD-ROM works too.. but you just need something without writing capability
+
+...and that's about it...
+
+my USB method sucks.
+
+
+another solution, though harder to setup: Online machine qrcode/video encodes it (with parity/etc) onto analog video line that Offline machine captures and decodes. I've already thought of this in other scenarios. reading about that CEC shit in HDMI scurred the fuck out of me. I was planning on using the HDMI port in RaspPi to do my "video output only" tactic, but CEC = 2-way communication = LOL = fuck that shit.
+Analog is where it's at <3
+
+
+I cannot have an offline machine that uses the analog video or cd-r/rom method both directions
+
+if the offline machine accepts foreign input using one of the above methods, it CANNOT output _EVER_ (even using the above methods)
+if the offline machine outputs using one of the above methods, it CANNOT accept foreign input _EVER_ (even using the above methods)
+
+because the software itself cannot be trusted
+
+even a source code download -> compile can't
+because 
+a) the machine compiling it has to be trusted
+b) good fucking luck actually reading/verifying the code. a single missed vulnerability and you're fucked. impossible.
+
+
+It is reasonable to think that a "secure document server" (two-way using above tactic) can be created, though great care must be taken with how the data is processed.
+
+the data read in from the analog video line must be stored and nothing more. the code storing it must be robust and secure. no escaping/overflowing/etc... which is a difficult task in itself
+the data can later be retrieved (by 'offline' (not really) machine writing via analog video line), and the document is served up as a binary blob
+
+keeping it 1-way is the most secure...
+but then it becomes a giant headache of "how do i release something created in offline input-only environment" AND "how do i install more software or get any kind of input on an output-only environment"?
+
+i do think the first input-only environment is something i want more
+but idfk not really
+i also want an output-only environment wtf :-/
+
+even a screencast of offline machine's desktop relayed through online machine to the interbutts (output-only) can leak data/keys in the form of whitespace obfuscation/etc ... but this is only a concern if foreign input is accepted (though not necessarily. the vanilla debian install might include the hacks already to embed shit in whitespace (my only hope against that is that i'll be creating the qrcode/video shit from scratch on the offline machine, so it would be fairly difficult for hacks to be created for software that doesn't yet exist (though this is temporary. if after a few years i upgrade my debian or accept ANY patches/new-software, then the hacks can be supplanted (assuming an already hacked debian machine with 'signed deb files' controlled by h4x0rz. they own the debian machine so can sign any software they like))))
+
+
+so i guess what i'm saying is
+
+i just now finally solved input-only security...
+...but have not yet solved output-only security [in the long term (with upgradeability)]
+
+my custom output-only method would be REASONABLY secure so long as i didn't upgrade ANY packages
+and i shouldn't need to: the machine is not connected to a network, and the software on it is reasonably stable
+so if i install a hacked debian copy on the offline machine, code the qrcode/video output, and never install/upgrade foreign code (even if it's supposedly signed/authentic)... i can have output-only security.
+
+
+i'm really starting to confuse myself now with what version of security i want
+obviously i can have multiple offline machines
+but like
+idfk
+
+i want the input-only security because i want to use new software. i want to code with up to date libraries. common sense.
+i want output-only security because i want to record/publish the software creation process itself. not necessarily a screencast through the qrcode/video (though maybe also?)... i can do any protocol i want through it so that d3fault's protocol of keystrokes and whatever data files onto timelining synchronization (as well as eventual ONLINE publishing) can be done securely

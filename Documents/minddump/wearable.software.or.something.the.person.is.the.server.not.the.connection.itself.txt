@@ -1,0 +1,8 @@
+a persons ability to / requirement to stay online for output 24/7 makes THEM a server
+a node in the network
+they might have or might need multiple redundant i/o networks (basically just a cox (cable) subscription as well as a qwest (dsl) one and perhaps a satellite (dish) one)
+
+perhaps the load is distributed evenly among the three?
+and failovers mean the load is distributed evenly among the 2
+etc until overload (which can prompt the gui (NON-MODAL-QUESTIONS/NOTIFICATIONS-ONLY) and ask user if they want to show a high level process viewer of bandwidth loads and allow you to control whether a certain process is on or off. or maybe just allow you to define which ones to take off in what order. but then you got to take into consideration what is high load and if this is why human interaction is helpful.
+

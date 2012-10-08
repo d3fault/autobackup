@@ -1,0 +1,38 @@
+another thing i didn't think about till now is that the input-only machine will have the master copy of all the data
+not the output-only machine
+
+for example: an incoming instant message will never get to the output-only machine
+
+the input-only-offline machine gets both:
+a) all output
+b) all input
+
+there is no way to securely get it to output only machine (hence output ONLY)
+
+but i shouldn't let it sit on the input-only machine because a rogue 'signed deb file' might some day destroy all dataz
+
+an output-only WIRE coming from the input-only-offline machine going to ANOTHER input-only machine, this one set up as a 'secure document object blob server' (write only perhaps?!) is a safER master copy... though still isn't COMPLETELY safe because signed deb files could hypothetically inject malicious code into the output-only WIRE
+
+so:
+how fo safely backup valuable input, such as an incoming instant message?
+
+
+also: i'm starting to think that there's no point in me physically seeing the input-only-offline machine. maybe me (and everyone else) seeing only the input-only-MIMICKING-online machine is good enough? TODOreq: i'd definitely need a way for input-only-offline-machine to say "hey i missed those bytes [of qrcode/video] or whatever". a realtime OS would help but as long as i pick low enough bandwidth for qrcode/video transfer it should be reliable. still, since i'm not physically monitoring the input-only-offline-machine in this circumstance it needs to make sure it fukken saves all of the analog stream.
+
+there could also be a way to 'rewind' the qrcode/video analog stream whenever i miss one. the 'complaining' could tell me what time range it missed and i could just re-wind it on the output-only-offline-machine and re-play it
+
+which brings me to a completely different subject (sorta)
+replay'ability
+
+if my box input only box(es) are processing RAW commands, then replayability becomes a problem because:
+apt-get update && apt-get install qt-sdk will always install the latest version when the replay'er is.. replaying.
+so perhaps they should all be special/replayable d3fault-oriented commands only?
+
+i want them to be replayable for various reasons
+1) hacking of input-only-mimicking-online-machine, needing to 'bring him back up to speed' automatically
+2) just good backup practice in general
+3) the ability for others to get the EXACT SAME ENVIRONMENT on their machine(s)
+4) timeline rewind/fast forwarding just as a basic user interaction
+
+
+my head hurts.
