@@ -586,6 +586,8 @@ nothing to commit (working directory clean)
             //TODOoptional: a progress bar that updates itself with the git push command lol, fuck that
         }
 
+        emit d("commit (and optional push) appears to have completed because we did not error out");
+
         //verify
         //do verification of the working dir's git log against our commit message (and PERHAPS the time, but maybe only extracting it for the next step-)
         //do verification of the push'd locations by comparing the git commit message and/or the timestamps to the working dir's
