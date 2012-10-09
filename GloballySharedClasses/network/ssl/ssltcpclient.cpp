@@ -96,6 +96,11 @@ bool SslTcpClient::init()
     this->setPeerVerifyMode(QSslSocket::VerifyPeer);
 
 
+    //as per CRIME
+    QSslConfiguration sslConfiguration = this->sslConfiguration();
+    sslConfiguration.setSslOption(QSsl::SslOptionDisableCompression, true);
+    this->setSslConfiguration(sslConfiguration);
+
     connect(this, SIGNAL(encrypted()), this, SLOT(handleEncrypted()));
     connect(this, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
     connect(this, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError(QAbstractSocket::SocketError)));

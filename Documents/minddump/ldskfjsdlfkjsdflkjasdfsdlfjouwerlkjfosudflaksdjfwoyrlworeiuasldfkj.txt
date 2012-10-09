@@ -1,0 +1,7 @@
+with my quick dirty auto-backkup i have gained commit message ability for auto-backup with tree timestamping, as well as kept my truecrypt physical volumes from having to be mounted during active development. mounting, committing, pushing, and dismounting has become a matter/minimum of two button clicks.
+
+right now i know my truecrypt physical devices are not spinning because there is nothing on the entire device that is mounted. the entire device (750gb drive(s), 2 of em) is is unmounted. i can also mount as read-only which only mounts one of the devices. thinking about adding round-robin distribution to which "first" read-only one gets mounted
+
+perhaps i could add a "hash this set of mounted (read-only) shit", write those results to a file... and then when i mount another device that has had that hash result file pushed to it, it compares it's own files (read-only) checksums. i feel like i need to be actively detecting bit rot. the longer i DON'T detect it, the more likely i am to suffer it twice. and i only have two copies FML FML FML. still 2 is a lot better than 1 rofl. a lot. still, not that much. i mean 3 is good. 7 is overkill. I wish I had 7. I should get 7. I like how git push just "catches up" no matter how far behind the commit history is of the target bare repo. I want that for all my files. Currently, I am not storing "binary files" under git. Exception: png images.
+
+But bah who cares about any of this. I need to pick back up on rpc generator ASAP. I can't lose focus or I'll drift off into insanity and blow my fucking brains out.

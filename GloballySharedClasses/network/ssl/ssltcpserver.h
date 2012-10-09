@@ -3,6 +3,7 @@
 
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QSslSocket>
+#include <QtNetwork/QSslConfiguration>
 #include <QtNetwork/QSslCertificate>
 #include <QtNetwork/QSslKey>
 #include <QQueue>

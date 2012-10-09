@@ -1,0 +1,37 @@
+Fuck I think I may have forgotten where I left off
+I know the general vicinity (RPC Message "ensuring"), but forget precisely what my next course of action is
+
+I also need to finalize the overall design because I don't think I 100% get it
+
+ABC Business
+this | dataBackingThisAccessedByCouchbaseSmartClient
+this | rpcGeneratorClientSaasPoweringTheBitcoinBankFunctionalityThroughMultipleRedundantYetEquivalentConnectionsInWhichTheSaasServerAlsoUsesACouchbaseSmartClientToAccessHisData
+
+these were supposed to go next to each other, but that rpcGenerator... part got too long
+
+Bank Server
+	this | dataBackingThisAccessByCouchbaseSmartClient
+rpcGeneratorBitcoinBankServerWithMultipleClientsAndJustGenerallyTheKnowledgeThatMyNeighborServersAlsoCanAccessTheSameDataAsMeAndCanThereforeServeClientsThatIdontKnow | this
+
+the "|" is like a data access layer or something
+
+there would also be (indicating an entirely different connection/relationship... and it PROBABLY WILL (but I'm unsure) use rpc generator):
+
+ABC Business
+rpcGeneratorAbcServerWithMultipleClientsWhereinEachClientIsUltimatelyThoughPerhapsNotImmediatelyAWtWApplication | this
+
+
+
+what I'm getting at is:
+a) I need to figure out if ABC and Bank Server will actually contain different data (ABC logic in ABC Only. Cached Bank Server in ABC also --- vs --- Same data on both layers, but with the wt-web-facing-clients only having a read cache to it that is somehow synchronized. We're essentially talking about synchronized Couchbase clusters. Couchbase's recent cluster mirroring utility is of no use to us because it is not realtime.)
+b) a basic ass "ensuring" scheme between a single client and a single server is a decent starting point before modifying the code to accomadate multiple clients. I am unsure tbh if I need to add code to make the server aware that his neighbors are exact replicas of himself. If I need to change any code for "multiple servers" (even if they don't even talk to one another (they might, idfk atm)). I think I need to figure out the answer to that parenthesis question because I think it relates to my overall scalable server design and would be dumb not to know.
+
+
+
+God I had this understood so much better when I was writing the Generic TCP Acker shit on the Qt lists. Maybe I should just re-read them? Here is one downside to writing QuickDirtyAutoBackupHalper.
+
+But tbh it's nice as fuck to write some code and USE it for once. I'm not sure there are very many times that has happened. MP3 Sleep is another one I can remember. The work tip + wage calculator was another. Not very often and they usually aren't very interesting/fun. QuickDirty is no exception to that, it just saves me a bunch of commands really (then again that's really all programming ever does. It's just that the amount of commands you can save yourself can ultimately free you up to do SO MUCH MORE _instead_ [of typing commands all day]).
+
+I would like to build another incarnation of MP3 sleep someday that turns off my speakers physically and perhaps unplugs everything too via Arduino. The existence of batteries + Arduino means that that is possible. I can physically unplug myself and shut myself down before the battery runs out. Can I also disconnect the battery to prevent further draining? Not sure that's necessary or possible. Also would probably need the battery to plug myself back in. I guess I am saying I like the security of not being plugged in (even to the wall's electricity. back-shock scurrs me a tiny bit) via air gap security rather than an on/off switch/circuit which can be fried and overridden. The air gap security needs to obviously have insulation of some sort and not be fry'able.
+
+I am glad I am doing this. I am glad I am committed. I am glad I am doing something. Anything. Fuck it.

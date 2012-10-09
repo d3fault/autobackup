@@ -2,6 +2,7 @@
 #define SSLTCPCLIENT_H
 
 #include <QtNetwork/QSslSocket>
+#include <QtNetwork/QSslConfiguration>
 #include <QtNetwork/QSslCertificate>
 #include <QtNetwork/QSslKey>
 #include <QList>
