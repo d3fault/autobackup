@@ -1,0 +1,34 @@
+I am not sure if solving the Generic Acker is necessary in getting Rpc to have application layer acking for all it's input messages
+
+in a way, they sound like they are solving the same problem
+
+however, when attempting to solve Generic Acker mentally, I begin to think of "definitions" etc which make me think the problem is more tied to Rpc Generator. For example, I think the Generic Acker should allow each "action" or "method" or "protocol api call" or "generically acked message" should be able to have the ack and/or processed-ack choice... which leads us to ask: where do we define that relationship?
+
+I do remember having something along the lines of "<RequestResponseDataVar>" in my xml for Rpc Generator... but meh nvm that's a response not a processed ack.
+see this is hard fml
+
+IMO: fuck it
+
+well not really
+but prioritize Rpc Generator
+
+do you even think Generic Acker is relevant or are you skewed into thinking it is because you have the Rpc Generator already imagined in place?
+
+In that case, you might be leaking info to qt mailing lists lmao
+fuck it
+
+But I digress from trying to actually tackle the problem: Rpc Generator Message Ensuring
+
+
+
+I was thinking something like a fukken class that represents all my servers
+see servers means nothing in this sense
+I guess just Rpc Servers?
+
+the client has a smartclient ish (serverhelper is what i call em, note this one would be servershelper) ability to send to the servers
+handles round robin distribution as well as fail over
+
+so yea i think that smart client, which is custom by me, should block and not return until it has written into a physically-local couchbase cluster both the data and a reference to the data in a timeline fashion, representing ALL CACHED REQUESTS etc and a replay-able history / double logging. I guess the main idea pulled from this is that I want this timeline to be monitored by all parties or at least to be able to fail over the delivery'ing/[TODOreq:eventually returning of the response to Wt too] / ensuring to the rpc server cluster backing. the rpc clients cluster is written to sort of like a WAL. This is our guarantee of response from ourselves. As long as one of the client clusters is online (and I guess it's implied that the cluster is even readable at that point), messages written to it by [now-failed] clients will be delivered. I guess just [ANY-CLIENT] checks the timeline at a later stage like for example after the server has acked it or perhaps after the acked-process... idfk. At some other point we can check the timestamps of... a few... of the previous ones. If they are above a certain threshhold, we re-send the requests on our behalf. The race condition between us now sending it and the original senders request actually getting through needs to be accounted for. Every message/action should have a unique ID. the id should match in the client and server clusters. Those clusters are just two timeline clusters (i think?). Should we check all previously un-responded-to messages to see if they are the same type as us and if they are the same value we know we are beaten to the punch? i remember something about raceCondition1() and raceCondition2() being similar as fuck. fuck is this the right solution?
+
+
+since my server or whatever accesses the smart client is on it's own thread, it's ok to block. i mean basically just make sure not to block other crucial threads or the gui thread

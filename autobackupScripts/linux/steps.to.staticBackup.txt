@@ -3,15 +3,23 @@ steps to staticBackup:
 create truecrypt container large enough to hold all contents of /mnt/750x*/ folder
 
 
-cp -av the contents (don't use a wildcard in cp command or else we'll miss hidden files)
-if you want to copy the CONTENTS of a folder _without_ copying the folder itself, but without using a wildcard (so you don't miss hidden files), cd into the dir and then do cp -av . ./../dest/
+cp -avi the contents (don't use a wildcard in cp command or else we'll miss hidden files)
+if you want to copy the CONTENTS of a folder _without_ copying the folder itself, but without using a wildcard (so you don't miss hidden files), cd into the dir and then do cp -avi . ./../dest/
+
+cp ./ ./../dest/ also works
+but i have recently added the i command. it does not affect the a or v but it simply forces asking before overwriting. i think it would be safer to use in certain situations. even if i just press 'n' over and over and then save the screen dump of what went wrong and then never process it until way later when i get bored enough to write a 'file.overwrite.conflicts.not.resolved.txt' file PROCESSOR that gives me a GUI to do the fixing. For now, I say just copy both. But maybe that's not a good solution idk tbh. It really depends if you want to do conflicts before the copy is considered 'done' or if you want to just copy both on conflict and sort them out later. i should abstract the 'do-you-consider-this-piece-done' logic out between during-copy conflict resolution and post-copy conflict resolution via file.overwrite.conflicts.not.resolved.txt processing. every overwrite should just say filename.txt.MAGICSTRINGspecificToTheSourceSoWeKeepConflictsFromMultipleSourcesSeparateAndRememberWhoIsDestinationToo
+
+but i mean the point is that there's a string concatenated to the end of the filename and it is used as an identifier later in the file.overwrite.conflicts.not.resolved.txt file
+perhaps in that file is where i define what the source is/was and the magic string associated to that source
+so from that i can append the magic string and the rest of the -generic- ending (other sources end with the same string)
+so i just iterate over the output spat out by the cp -avi or maybe it'd be a qt app doing it for safer detection i guess and easier writing/parsing too lol. It could be a binary file but can just as easily be a text file. That's the problem with the git setup. It is not binary blob friendly. It is text/source oriented. It does it's job well.
 
 
 cd /mnt/750x1/
-cp -av . /staticBackupTruecryptShitFolder/
+cp -avi . /staticBackupTruecryptShitFolder/
 -----OR----- (since they are identical)
 cd /mnt/750x2/
-cp -av . /staticBackupTruecryptShitFolder/
+cp -avi . /staticBackupTruecryptShitFolder/
 
 then
 ########cp ~/autobackup/dirstructure.txt /staticBackupTruecryptShitFolder/autobackup/
