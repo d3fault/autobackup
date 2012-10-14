@@ -1,0 +1,80 @@
+bah just been thinking a lot lately, but haven't solved it yet
+
+so I mean I've identified that [so far] there are 3 types of Rpc Messages
+
+
+---------------------->
+'Slots' / Action REQUESTS:
+void createBankAccount(QString username);
+QString addFundsKey = getAddFundsKey(QString username);
+
+---------------------->
+<----------------------
+'Signals' / Action RESPONSES:
+void createBankAccountCompleted(); //also failedReasons<>();
+void getAddFundsKeyCompleted(QString addFundsKey);
+
+
+<----------------------
+'Signals' / Broadcasts:
+void pendingAmountDetected(double pendingAmount);
+
+
+
+
+
+___HOWEVER____
+
+each of them translate into methods of a different signature if you consider the ACK'ing properties of each. note that the below descriptions are SYNCHRONOUS, which is _NOT_ how the system actually functions. It just helps me describe them better. each 'bool success =' is the ACK. success being true is the ACK, success being false either means we didn't ACK (we retry other servers before this btw...) or an error occured.. whatever the error may be (keeping with the faulty synchronous design, we'd 'probe' for those error codes later ;-) (or realistically, those error codes come back (with the async signal back) as 'out' params naw mean?))
+
+'Slots' / Actions (both REQUESTS and RESPONSES):
+bool success = createBankAccount(QString username);
+bool success = getAddFundsKey(in QString username, out double addFundsKey);
+
+'Signals' / Broadcasts:
+bool success = pendingAmountDetected(out double pendingAmount);
+
+
+
+
+
+success is defined by no errors.
+in our slots in the business, i should TODOreq make the code paths so that setting Header->Success (or w/e) to true _ONLY_ happens after I've whitelist verified that it should happen. At the end of the slot, I should call IMessage->deliver(); no matter what. If we don't set success = true, or if we don't call setFailedReason<x>(); _BEFORE_ the deliver(), we return with a generic error code 'unknown' or something. (we never want to hang!!! TODOreq: deal with hangs means I need another 'pending' list (for each action/broadcast) in the clientshelper code on the rpc server side of the connection. 'oh the business didn't return in averageMsTimeForThatSpecificActionTimes150percent (the same algorithm used on the rpcserverhelper side (rpc client) pending list for each action/broadcast. Hell actually if designed right, it would be cheap in terms of the amount of code I have to write to do both with the same chunk of code. It's the same algorithm, just with different timings)).
+
+0.000
+Rpc Client -----> Rpc Server
+Rpc Client <----- Rpc Server
+50.000 ms elapsed
+
+0.000
+RpcClientsHelper Rpc Server -----> Rpc Server Business Message-Specific Slot
+RpcClientsHelper Rpc Server <----- Rpc Server Business Message-Specific Slot
+3.000 ms elapsed
+
+
+given that the second 'number' / 'average' will always be shorter than the first by the fucking laws of physics, <IDFK WHAT I CAN CONCLUDE FROM THAT, BUT SURELY SOMETHING>
+
+so I mean I start with something high like '3 seconds (3000 ms)' if the QQueue or QList or whatever I'm using to store the last N (say, 100) recorded times (each message has it's own timings) ... [if the qlist] is empty... and only after I've put in a few recorded times (after startup period), we then average out the recorded time it took... and then take that number and times it by 1.5 or whatever. could even be 2, idfk. try different values.
+
+so if a message takes longer than 1.5x the calculated average to be delivered, we TODOreq: do something. tell the rpc client (assuming we ARE the rpc server and the rpc server business is who lost it)? if we are the Rpc Client... then I mean yea we a) re-send or b) try another server (though the trying of another server should not be Rpc Generator specific TODOreq (actually I guess it _CAN_ (should is the question), but it also needs single use to be figured out as well). Rpc Generator needs to be able to function at a very basic 1client/1server setup of course. Re-Send, Try-Neighbors, Error-Out. trying neighbors only tries ones we know ('know') are online. If one of our neighbors is offline then we periodically ping is just like TCP or whatever would do. We need separate logic to determine long-term downtimes from the initial detecting of down-time --> retrying of a neighbor. That initial detection can/should be used by the long-term downtime detection/poller/whatever, but we should not at that point have to figure out which of our neighbors are online. We should just know from the initialization period.
+
+
+I'm just not sure if the overhead of having a timer per message type is worth it. It does scale nicely in that we only need 1 createBankAccountMessage timer (to monitor the QList<CreateBankAccountMessage*> m_PendingCreateBankAccountMessages;). We only need to calculate the qlist of averages for that specific message type only whenever the timer times out. It might be ridiculously low though (for business layer response timings) so TODOreq maybe I should set a minimum amount of ms that overrides all the averaging bullshit.
+
+So each message now has to poll for the time
+poll for the time again once the business layer has returned
+calculate response time
+add response time to a qlist (originally thought qcache but i have no key value)
+
+then the timer times out every 10ms or whatever and then counts those 100x response time values, adds them up, then divides by 100. TBH this math isn't _THAT_ hardcore... but I do wonder if it's worth it overall. It might be worth than I think and it might be completely insignificant. I am unsure. For now however I do value it because it is my solution in my head so far (which still might change...). It is my ACK'ing scheme of sorts.
+
+
+
+ALSO --- ACK vs. Response
+-createBankAccount has no return value, just success or any of the error codes. In the code I have written (Rpc Generator template), deliver(); is equivalent to what I want ACK/success to be.
+-But deliver(); is also used in GetAddFundsKey to initiate the response [with the key in the response!]
+-And lastly, the broadcasts never have a return value, the concept of success, or even the concept of failure... BUT WE DEFINITELY STILL WANT TO ACK THEIR RECEPTION. Oh and even though they don't have RETURN values, they definitely do have a variable amount of values. I use deliver(); for broadcasts too...
+
+^^^highlights the '3 types' problem as well
+
+Is my deliver(); method adequate or is it too confusing?

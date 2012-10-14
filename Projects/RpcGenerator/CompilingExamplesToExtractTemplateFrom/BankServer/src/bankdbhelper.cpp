@@ -34,7 +34,7 @@ void BankDbHelper::createBankAccount(ServerCreateBankAccountMessage *createBankA
         {
             emit d(QString("BankDbHelper created bank account for user: ") + createBankAccountMessage->Username);
         }
-        createBankAccountMessage->deliver();
+        createBankAccountMessage->deliver(); //TODOreq: the overall flow of code for these slots should be re-written/designed so that instead of defaulting to success unless a failed* is called, a genericFailed* is called by default. the deliver() has to be opted into (whitelist programming), and the errors are handled wherever detected just like in the current code...
         return;
     }
     else

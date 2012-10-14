@@ -56,7 +56,7 @@ void IBankServerProtocolKnower::pendingBalanceDetectedDelivery()
     pendingBalanceDetectedMessage->Header.MessageId = 0;
     pendingBalanceDetectedMessage->Header.Success = true;
     myBroadcast(pendingBalanceDetectedMessage);
-    pendingBalanceDetectedMessage->doneWithMessage();
+    pendingBalanceDetectedMessage->doneWithMessage(); //TODOreq: shouldn't this be after the ACK? might have to re-send it... i guess it depends on the guarantees made by myBroadcast. if before it returns it writes to a couchbase db and WAL promises the delivery, then yes calling doneWithMessage() now is probably* ok. just make sure you know to allocate one whenever we are walking the WAL (either as us or a neighbor [same code, different machine]). getNewOrRecycled _cannot_ be used (bitcoin thread owns dispenser). so maybe we shouldn't do doneWithMessage until the ack IS here??? idfk
 }
 void IBankServerProtocolKnower::confirmedBalanceDetectedDelivery()
 {
