@@ -1,0 +1,114 @@
+ABC Business (or mb just all rpc client/cache whatever, incl. bank server prolly) -> [ multi-server-sender-client [ retryOnceWithMessageTimeoutHandling_StatefulConnectionEmitsOnDcEtc ] ] -> [ server [ retryOnceWithMessageTimeoutHandling_DcIsNaBecauseItsJustAccrossThreads ] ] -> rpc business
+
+
+OR just:
+
+ABC Business (or mb just all rpc client/cache whatever, incl. bank server prolly) -> [ multi-server-sender-client [ retryOnceWithMessageTimeoutHandling_StatefulConnectionEmitsOnDcEtc ] ] -> [ server ] -> rpc business
+
+
+
+
+It really depends on the robustness of the rpc business
+but then again, not _ALWAYS_
+the code paths in the rpc business might always call deliver();
+but that doesn't mean the rpc business won't crash...
+
+theoretically/technically/probably/definitely infinite code paths. inifinite rpc business implementations
+
+CANNOT rely on user to call deliver()
+but the code won't even work once (while developing/testing) if they don't---
+
+are the overheads of doing the message timeouts on the rpcclientshelper (rpc server, non business) worth it? doing it on the rpc client side of things just seems like common sense (also is going to be my ACK scheme [for actions only (broadcasts don't have replies, so happens-before relationship ACK'ing can't be used)] i guess?? [happens-before relationship])
+
+
+
+
+I can conceptualize a state machine so that a caller can simplify his logic
+for example (not only one): the multi-server-sender-client can try every server before returning an error (no connection etc) to the caller
+
+
+fuck that state machine because i suck at coding state machines in Qt :-P (need to get bettar imo because it's a clean way to code/design)
+
+
+
+back to the point
+
+i mean idfk
+i gotta figure this shit out before i can/should write the code
+if i don't figure it out then i'll just be masturbating
+even though i fucking love masturbating
+time is of the essence.
+
+
+
+i do feel like i'm making progress with my thoughts
+and i do feel like i'm at the top of a mountain
+well i mean... ALMOST
+
+once i know what to do, i am there
+
+i am at the top of the mountain
+
+downhill from here
+famous last words that i've used plenty of times before
+
+but it always seems that way..
+..until you encounter your next problem :-P
+
+but srsly shit's gonna be a breeze from now on i hope
+
+can't wait to USE the fucking generator
+
+and actually very excited to fuck around with couchbase
+mmmmmmm clusters
+mmmmmmmmmmm N-server atomic writes
+mmmmmmmmmmmmmmm CAS
+mmmmmmmmmmmmmmmmmm CAS abstraction via write-only-if-not-exist (racing to the createBankAccount or purchaseSlotFillerForSlot)
+
+
+fuckin ACKs n shit.
+fuck.
+so boring
+
+but it's the only thing in my mind it feels like
+
+ok not entirely
+
+thinking also about writing a multi-hdd synchronizer using Qt + git add/git commit/git push/git fsck
+main downer: for binary files the git clone will pull every revision. maybe a shallow clone (depth=1) is the solution but i've heard pushing back then becomes a problem [sometimes]
+so like on a new OS install i just do:
+
+#text is cheap, so we are ok with pulling the entire revision history
+git clone /path/to/an/external/hdd/of/which/i/should/have/many/text/ master
+#binaries aren't, so only get the latest. this op will still take a long ass time haha.. but it's only once per OS install so w/e. it allows us to version track binaries/music... so might be worth it? (might have music in it's own repo so i can clone it by itself if i don't want all the other shit)
+git clone /path/to/external/hdd/.../many/binaries/ master depth=1 # i have never run this command, verify syntax of depth switch
+...basically what i'm getting at is that i might be overcomplicating a solution for my multi-hdd sync shit. i love how git push doesn't care how far behind the receiver is. git push catches up!!! that is tbh the hardest part of coding my own hdd sync'ing solution. knowing HOW FAR BEHIND the push-receiver is from the current/working
+......and shit, i just discovered git fsck and fuck me that makes everything sooooooooooooooooooooo much easier........ hahahaha periodically running git fsck on the externals = protection from bit rot. fuck bit rot shit scares the fuck out of me. i'm so out-of-sync and unorganized and blah i just want to throw up, such a headache. that and trying to make a buck with this fucking ABC shit which always tends to YAT. fml. future looks great but right now i have a giant headache. git fsck is actually helping me with that :)... just need to figure out solution for binaries and BLAMO ima fuckin write some other Quick/Dirty util for multi-external-hdd-sync'ing + verifying. TODOoptional: maybe like a root file identifier on each external... but really is that even necessary if i'm just git push'ing? git will figure out how much it needs, hence my identifier isn't needed unless i come up with my own hacky solution. better stick with git... tons of devs use it so it should be robust too (i hope)
+here's what my externals SHOULD look like:
+/text/
+/files/
+/music/
+
+text is source/documents, or anything that belongs in git (.svg files count imo)
+files is binary files. pictures, games, movies, tv shows, anything i want to keep that should not go in git (but lol i will put it in there anyways)
+music is just like files, but separated out so i can clone the repo faster (still using depth=1). there will be lots of cases where I'll want a copy of my music (putting it on my droid etc)
+
+fuck TODOreq: i need to make sure i only ever have one working copy [of the binary/music shallow clones] because i think otherwise merge'ing becomes an issue. i honestly don't know though. i might be able to push one into externalHdd1, the other into externalHdd2, then MERGE the two externals... then push the results back to both? idk sounds like a pain in the ass which is why i'm not 100% sure about using git shallow clones for binaries...
+
+digress
+
+
+fuck idk what to even write now
+
+idk what to even think
+
+is the
+
+shit closed my eyes and followed that train of thought until i forgot where it came from :-P
+
+oh right
+
+is the happens-before relationship method that i'll be using for actions a sufficient ACK scheme???
+
+how do I ack the replies?
+keep them in a m_PendingCreateBankAccountREPLIES on the RpcClientsHelper / rpc server.... so that we can pull it out and re-send it if/when the rpc client sends us a 'this motherfucker time out, what happened to it' message? but then now how do i ACK the success scenario? should I search the m_PendingReplies on each new request (since we're recycling the messageId)? That seems SORT OF expensive until you think about the costs of actually ACK'ing the reply. if it's not in the m_PendingReplies, that means we're on our first use of that particulat messageId. we do not use timers of any kind around the m_PendingReplies. I guess we perhaps can/should coordinate with our dispenser somehow with the m_PendingReplies. What I'm getting at is that we might as well just use the m_PendingReply for the new request! TODOreq: just make sure to reset the state of the request/reply

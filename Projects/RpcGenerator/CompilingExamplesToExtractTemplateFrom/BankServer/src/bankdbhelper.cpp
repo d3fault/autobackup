@@ -22,6 +22,7 @@ void BankDbHelper::stop()
 }
 void BankDbHelper::createBankAccount(ServerCreateBankAccountMessage *createBankAccountMessage)
 {
+#if 0
     if(!m_AllUsers.contains(createBankAccountMessage->Username))
     {
         m_AllUsers.append(createBankAccountMessage->Username);
@@ -43,6 +44,39 @@ void BankDbHelper::createBankAccount(ServerCreateBankAccountMessage *createBankA
         createBankAccountMessage->createBankAccountFailedUsernameAlreadyExists();
         return;
     }
+#endif
+
+    THIS METHOD IS CURRENT, BUT THE BACKING CODE IS NOT YET THERE. WE ARE CHANGING FROM THE ABOVE #ifdef'd out code above...
+            WHITELIST PROGRAMMING FTW
+            ALSO, the getAddFundsKey method below needs to be converted to whitelist programming mode...
+            need to:
+                make failed methods use flagging instead of acting like deliver
+                make deliver handle failed flags
+
+        //TODOreq: not sure where it goes exactly, but need to set Header.Success to false just before the dispenser dispenses it. we don't want to keep the old state of a recycled message.... but i mean this is a TODOreq for all of the properties of the messages, not just the success boolean
+
+    if(!m_AllUsers.contains(createBankAccountMessage->Username))
+    {
+        m_AllUsers.append(createBankAccountMessage->Username);
+        if(!m_AllUsers.contains(createBankAccountMessage->Username)) //this will never happen, but might in production environment. need to handle persist errors
+        {
+            createBankAccountMessage->createBankAccountFailedPersistError();
+        }
+        else
+        {
+            emit d(QString("BankDbHelper created bank account for user: ") + createBankAccountMessage->Username);
+            createBankAccountMessage->Header.Success = true; //TODOoptional: instead of setting a bool, just a success(); function would do (to align with the failed methods. doesn't matter much~. in fact, setting a bool might even be faster... but idk mb not with dereferencing. fuck these premature optimizations, get out of my brain!!!!)
+        }
+    }
+    else
+    {
+        emit d(QString("BankDbHelper create bank account failed, username exists: ") + createBankAccountMessage->Username);
+        createBankAccountMessage->createBankAccountFailedUsernameAlreadyExists();
+    }
+
+    //TODOreq: change functionality of the failed methods so that they only set up flagging (and i guess allow multiple failed reasons? TODOoptional that one is). I want deliver(); to be used _ALWAYS_. if you call it without setting Success to true, we returna generic error message
+
+    createBankAccountMessage->deliver();
 }
 void BankDbHelper::getAddFundsKey(ServerGetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
