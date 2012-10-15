@@ -1,0 +1,8 @@
+d3fault -> ad supported -> abc -> rpc -> generic ack
+
+more like (reversing):
+
+
+rpc -> abc -> move out -> prepare launch (not sure what code is here yet) -> launch -> perhaps some quick/dirty apps live for fun etc (dat text editor?) -> D3FAULT -> ????????????????????????????????????????????????the-possibilities-are-endless-with-lgpl-and-infinite-time-but-i-get-giddy-thinking-about-it
+
+oh and also i'll do my own personal projects after d3fault... err like... into d3fault... naw mean? those question marks are for 3rd parties... but i have plenty of app ideas myself :)

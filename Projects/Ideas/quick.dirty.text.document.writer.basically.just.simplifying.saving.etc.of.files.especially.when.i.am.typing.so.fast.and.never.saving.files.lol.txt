@@ -1,0 +1,37 @@
+my current method of saving into /minddump/ is to fucking pound my keyboard to reduce by orders of magnitude that i will overwrite a file
+
+instead i should write a quick/dirty app to handle text only
+yes, i do want to make a text app for d3fault... but that one will be a shit ton more functional
+
+just do a tab based thing with like a new doc button
+each tab has a radio boolean switch: automatic filename [default] | filename: , and a line edit for when they select filename mode. filename mode should still check that it's not overwriting a file, they both should. automatic filename just uses like the timestamp i guess. timestamp from when i pressed the new doc button or from when i press save?
+
+
+and at the bottom of it all (the tab widget), a 'save all' button.
+
+
+maybe you can't change tabs if the filename line edit is empty? forcing you to choose a filename
+
+gah and then the timestamps will all be the same when i hit 'save all' :(, fuck. maybe touch.exe would come in handy?
+
+idk but yea this method of pounding the keyboard is quite stupid lmfao.... it's time consuming too. auto filenames is handy like my auto-commit message... ya know? opt-OUT = perfect
+
+a persistable line edit for your minddump working dir (for use with auto filename). probably shouldn't operate on multiple paths... but should probably let you specify a different dir when you type a filename... writing into minddump isn't ALWAYS desired...
+
+
+
+
+i also hate having to browse to my minddump folder every damn time lmfao (i think i can fix this, but not even sure if i want to because i don't always want to save there!!!)
+
+perhaps a second persisted line edit for 'initial dir of filename chooser dialog', so i can set it to /home/d3fault/autobackup/.... which is really the ideal place imo
+
+
+
+a checkbox: auto-save on new document <-- so does that mean the timestamp is when it's saved (when the new is pressed for the next?) really i think it should be the beginning
+but they are both important really
+hence, d3fault.
+lol...
+fuck this quickdirty shit
+d3fault's text editor will be a million times better...
+replay keystrokes at average characters per minute speed mmmmmmmmmmm
+for d3fault: first keystroke should be the 'start' time. if you backspace, it starts over? but then do i discard the backspace'd data? save it elsewhere? save it in the internal-backspaced-thingo-that-i-havent-even-designed-lawl?

@@ -1,0 +1,1 @@
+TODOreq: does deleting a file from your working directory tracked by git and then running that git gc command or whatever.... does it get rid of the file? i would think not because how else would you be able to check out an old revision of the tree????

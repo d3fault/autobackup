@@ -21,6 +21,8 @@ git push path/to/bare/repo/ master
 
 you can also use --theirs, but i think using --mine is safer as --theirs is already pushed to the bare repo. perhaps a Quick/Dirty app can detect these scenarios and let the user choose? or just do --mine and spit out debug info saying "we found and fixed a conflict with our own copy (the old copy is saved)"
 
+HOWEVER TODOreq: detecting a conflict might be a detection of bit rot! i am unsure tbh. need to think about this further. we probably should run git fsck before any such operation occurs... and after too but i mean if we're talking about multiple hundreds of gb then meh nahhhhh
+
 idfk
 
 also: git add --intent-to-add .

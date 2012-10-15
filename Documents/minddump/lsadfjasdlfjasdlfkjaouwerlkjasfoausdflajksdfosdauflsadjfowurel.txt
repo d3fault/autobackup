@@ -1,0 +1,22 @@
+can't you do an empty, or at least relatively empty (1 txt file), git clone of a bare binary repo... just to get yourself in a position so that you can push into it?
+
+it might also be possible to re-build/generate/whatever the FOLDER structure (only)
+
+filename conflicts do become an issue though
+
+i am unsure if this is even possible... but it might be
+
+
+ahh wait i think i just got it
+it's probably not possible.
+
+
+git clone depth 1 has nothing to do with working dir
+there is a command in clone to tell it to not set up the working dir
+aka, it said something like 'do not check out the working dir after cloning'
+so the clone just populates the .git folder
+the checkout is what you're thinking of
+but by then, ALL of the [latest, as per depth 1] files have already been copied into .git
+
+
+....so nvm
