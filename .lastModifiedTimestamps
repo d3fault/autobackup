@@ -14,7 +14,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033334
+Documents/minddump/:1386033354
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -25,7 +25,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033334
+Documents/minddump/dreams/:1386033354
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -78,6 +78,7 @@ Documents/minddump/agnostic.theist.not.god.but.for.other.peoples.perspectives.li
 Documents/minddump/akfljsafoawurlkjsfdulwrkjasofduawlerkj.txt:1343327146
 Documents/minddump/aldfkjasdlfjsadflkjasfouwelrkjsadflasdkjfowuerlajkdf.txt:1346871201
 Documents/minddump/aldsfkjasdlfkjasdfouwlrkjsfoiusfdlkjwerlwkrjsoiafusldkjf.txt:1349007088
+Documents/minddump/alfjadslfjkasdofuwelrjsflkjsdfoasduflsajrowuerlwkjeroausfdlskj.txt:1350338944
 Documents/minddump/alfjaosufsdlkfjworusldfkjoweurkdfsjowuerwlaekj.txt:1342615331
 Documents/minddump/alkfjsdlkfjwoeirusdfkjsdflkjworusokerwoerusdlkj.txt:1340449786
 Documents/minddump/alkjfdasdlfkweroiuuuuuuupusaflk.lke.like.interesting.tags.these.are.ejaculation.tags.txt:1338992975
@@ -279,6 +280,7 @@ Documents/minddump/future.privacy.concerns.there.is.no.privacy.maybe.thats.what.
 Documents/minddump/gaysex.asldfjksadfoiuwerlkjsdfoiujl.txt:1338898364
 Documents/minddump/get.smart.before.ehh.getting.smart.lol.wtf.idk.txt:1321758445
 Documents/minddump/gfs.dht.private.business.thoughts.asdflkjasdfowiueroaiuasdfkashdfaoiwer.txt:1339240363
+Documents/minddump/git.clone.depth.requires.file.colon.slash.slash.schema.or.else.depth.is.ignored.txt:1350334907
 Documents/minddump/going.insane.is.submitting.to.ignorance.so.isnt.really.going.insane.though.may.seem.like.it.txt:1347077827
 Documents/minddump/good.self.talk.one.of.many.to.come.now.that.ive.passed.the.kaylee.barrier.txt:1339317675
 Documents/minddump/hacked.md5sum.you.never.know.txt:1338125857
@@ -593,7 +595,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1344899708
 GloballySharedClasses/ssltcpclient.pri:1344899198
 GloballySharedClasses/ssltcpserver.pri:1344899078
 GloballySharedClasses/ssltcpservertestcerts.pri:1344900176
-Pictures/:1386033334
+Pictures/:1386033354
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -701,7 +703,7 @@ Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfilesystemwatcher2.h:13431312
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.cpp:1343124786
 Projects/ForFun/QFileSystemWatcher2TestForFun/src/qfsw2testwidget.h:1343123172
 Projects/ForFun/QFileSystemWatcher2TestForFun/changes.to.existing.qfsw.main.class.txt:1343131983
-Projects/Ideas/:1346881655
+Projects/Ideas/:1350338393
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -869,6 +871,7 @@ Projects/Ideas/made.up.currency.aldfjsdlajksadflkj.txt:1337294960
 Projects/Ideas/main.master.will.be.unsiftable.but.will.still.be.interesting.as.fuck.and.have.some.benefits.i.am.pretty.damn.sure.txt:1338793745
 Projects/Ideas/make.sure.not.to.piss.people.off.heres.how.i.attract.an.audience.etc.txt:1338798882
 Projects/Ideas/malicious.commits.must.be.detected.by.me.but.i.can.have.pre.screeners.too.txt:1338205267
+Projects/Ideas/manage.external.hdds.including.detecting.bitrot.with.GIT.yeeeeaaaaa.and.mb.a.quick.dirty.app.controlling.it.txt:1350339053
 Projects/Ideas/megaupload.shit.kicker.completely.anon.bitcoin.next.project.after.abc.rpc.generator.tangent.txt:1343103296
 Projects/Ideas/megaupload.shit.kicker.completely.anon.bitcoin.next.project.after.abc.txt:1343103238
 Projects/Ideas/megaupload.shit.kicker.should.be.decentralized.and.raid.proof.eventually.txt:1343326149
@@ -1424,7 +1427,7 @@ Projects/QuickDirtyAutoBackupHalper/src/mainwidget.h:1349620703
 Projects/QuickDirtyAutoBackupHalper/src/qdabh.icon.svg:1350329437
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.cpp:1349624127
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.h:1348734985
-Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1349800189
+Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1350339206
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.h:1349623955
 Projects/RpcGenerator/:1343597837
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1342939005
@@ -1726,7 +1729,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033334
+Projects/libAvGraphicsItem2/design/:1386033354
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

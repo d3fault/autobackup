@@ -47,6 +47,7 @@ void QuickDirtyAutoBackupHalperBusiness::readSettingsAndProbeMountStatus()
         emit brokenStateDetected();
         return;
     }
+    //TODOoptional: do a git status and send the results to the GUI. this basically just tells us what files we're working with. what we're about to commit. it will also help with writing the commit message...
 }
 void QuickDirtyAutoBackupHalperBusiness::scanForMountedRelevantContainers(QList<QPair<QString, QString> > *listOfRelevantContainers)
 {

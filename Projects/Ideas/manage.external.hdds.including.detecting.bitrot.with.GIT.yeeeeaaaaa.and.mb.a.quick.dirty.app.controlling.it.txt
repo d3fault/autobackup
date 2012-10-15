@@ -1,0 +1,47 @@
+after playing around with git shallow cloning (procrastinating business work (almost said 'real' work, but shit this is pretty important imo)), I _THINK_ git shallow clone will work for my binaries :-D
+
+i just need to make note of two things (i will hopefully write a Quick/Dirty app so i can forget this :-P)
+
+git clone --depth 1 repoPath cloneToPath
+repoPath _MUST_ start with file:// or else it is cloned using --local, which basically is git's attempt at saving disk space. i think it uses symlinks or something. considering where i'll be cloning from is an external hard drive, this is NOT ok. forgetting the file:// is crucial. i doubt the repo would even work anymore after dc'ing the external hdd lol (but idfk)
+
+if i make 2x shallow clones using the above method, i _CAN_ still merge them
+i tested this out, it works fine
+
+BUT THERE'S A NOTE I SHOULD MENTION:
+git is stupid and modifies binaries whenever there's a conflict (you gotta git pull from the second shallow clone and then git will detect the conflict that was pushed into the bare repo by the first shallow clone)
+with text files, this is fine... but a binary cannot have >>>>>>>>>>>> and <<<<<<<<<<<<< injected into it (expecting the user to fix it)
+
+so to resolve this, you don't fix it manually like with text files... you use:
+git checkout --mine -- filename(s)
+then:
+git commit -am "resolving conflicts"
+then git push will work
+git push path/to/bare/repo/ master
+
+you can also use --theirs, but i think using --mine is safer as --theirs is already pushed to the bare repo. perhaps a Quick/Dirty app can detect these scenarios and let the user choose? or just do --mine and spit out debug info saying "we found and fixed a conflict with our own copy (the old copy is saved)"
+
+idfk
+
+also: git add --intent-to-add .
+is handy for delaying the copying of files until the commit
+
+i'm kinda excited though because i really really want to remedy my situation
+
+have a metric fuck ton of files sitting in truecrypt archives where the filesystem's timestamp is a value that i cherrish (i don't trust it!)
+have 2x 1tb HDDs and want to do a conflict-resolving-merge only of relevant files (taking out games and movies and tv shows, fuck that)
+
+i want to trim down my 1tb of crap to as small as i can get it
+so i can make shit tons of copies
+
+AND i can check their integrity easily with git fsck
+and keep them up to date with git push :)
+
+this manual merge is going to be a fucking pain in the ass. ima mount them as read-only while i do it, because i really really don't trust those timestamps hahaha. gotta compare sha1, timestamps (take earlier?!), missing files, blah blah fucking blah. also want to ignore certain directories %root%/Movies, %root%/Games, etc... i need a Quick/Dirty just for this 2x 1tb -> git bare repo setup
+
+
+honestly if i knew how to do a git --list to LOOK at the tree without first cloning it, then i would store them all as bare repos on the 1tb HDDs
+
+and i could also checkout certain files specifically if i needed to. fuck yea git is amazing. i think i can still push them back in too!!!!!
+
+man fuck coding my own (aside from d3fault :-P... which i do still wonder if i might incorporate git with (GPL bah (might not matter since i'm calling git from command line? can i put a GPL binary and an LGPL binary in the same .zip? (in the case of windows. for linux i just make git a dependency lol))))... git is amazing (just kinda hard to use... soooooo much functionality)

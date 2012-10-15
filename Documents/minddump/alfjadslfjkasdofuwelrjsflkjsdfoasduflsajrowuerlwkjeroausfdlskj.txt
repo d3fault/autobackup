@@ -1,0 +1,39 @@
+i like my quickdirtyautobackuphalper SOOOOOO much idk how to even explain it
+
+it just helps with sanity
+
+my old fedora setup called scripts on startup and shutdown to mount the tc containers
+which meant they were mounted whenever the machine was on
+
+
+i would never want to leave the machine on.
+(sure they are supposed to spin-down... right? (no clue))
+
+
+i just know they're way more likely to not be spinning if they aren't even fucking mounted
+
+
+
+
+that and typing fucking commands and manually pushing and then infinite tree dir.structure committing and then not being able to use a commit message with auto backup... and with a commit message i lose the tree dir structure and the auto-commit so then i'd try to find some random reason to make a file and then auto-commit just so my previous commit message would be pushed to the 2x750gb drives
+
+basically i want this:
+
+whatever-os/working: autobackup is clone of text, ETC ETC however the FUCK i want. don't have to clone binaries, don't have to clone music...
+
+750x1: /text/,/binaries/,/music/
+750x2: /text/,/binaries/,/music/
+1TBx1: /text/,/binaries/,/music/
+1TBx2: /text/,/binaries/,/music/
+
+also, implied: /hddRoot/lol (container), /hddRoot/sdrowssaP/Passwords.kdb, /hddRoot/sdrowssaP/old.passwords.kdb
+
+so everything i described is inside of 'lol'
+
+5 fucking copies would make me feel so much better
+
+especially if i could easily check them for bit rot with git fsck <3 <3 <3 <3
+
+also have a 500gb laying around in case i shrink it enough... and of course i want to definitely make a non-magnetic copy. SSD or DVD-R idgaf but i do want one fo sho ya know?
+
+right now i _ALMOST_ have the above solution except it's really only with my autobackup folder... so much shit on those 1tb files i want to get/track... but also a lot i should get rid of lol
