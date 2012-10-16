@@ -6,6 +6,9 @@ ClientGetAddFundsKeyMessageDispenser::ClientGetAddFundsKeyMessageDispenser(IAcce
 ClientGetAddFundsKeyMessage *ClientGetAddFundsKeyMessageDispenser::getNewOrRecycled()
 {
     return static_cast<ClientGetAddFundsKeyMessage*>(privateGetNewOrRecycled());
+    /*ClientGetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<ClientGetAddFundsKeyMessage*>(privateGetNewOrRecycled());
+    getAddFundsKeyMessage->Header.MessageId =
+    return getAddFundsKeyMessage;*/
 }
 IRecycleableAndStreamable *ClientGetAddFundsKeyMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {

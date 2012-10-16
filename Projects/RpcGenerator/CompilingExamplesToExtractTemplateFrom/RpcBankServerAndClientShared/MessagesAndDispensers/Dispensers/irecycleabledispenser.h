@@ -5,7 +5,7 @@
 
 #include "../Messages/irecycleableandstreamable.h"
 
-//TODOreq: add string "RpcBankServer" to IMessageDispenser and to IMessage... so we can use multiple rpc client/server generated code instances side by side
+//TODOreq: add string "RpcBankServer" to IMessageDispenser and to IMessage... so we can use multiple rpc client/server generated code instances side by side. <- maybe not. maybe they can share this code. I have no idea until I try it... but not yet!!!
 class IRecycleableDispenser : public QObject
 {
     Q_OBJECT

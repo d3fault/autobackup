@@ -1,0 +1,5 @@
+so will the abc db store the username or will the bank server?
+both?
+
+probably both but with different values 'under' each
+and actually the 'smart' keys / design shit that couchbase encourages will probably mean this isn't an issue or even a deal.... but I am not ready to think about that yet

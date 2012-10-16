@@ -1,0 +1,9 @@
+sadly i put a lot of design effort into my failed<reason> methods, making them function just like deliver() :-/
+
+and now i just want the methods to set a flag and continue on to deliver() :-P
+whitelist programming is worth a rewrite/redesign SORRY BRO DATA SECURITY FIRST lawl ofc
+
+
+i need to look at those old .dia files I made that helped me understand the IMessage/deliver/failed/etc design overall... because holy shi----
+
+...because oh fuck i can't remember the design at all. I mean I sort of do... I just remmeber it's a) complex and b) squeezed really tight, so re-organizing is going to be a bitch [especially if idfk wtf I'm doin lawlawlawl]. Find dem designs!!!

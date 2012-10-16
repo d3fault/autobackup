@@ -17,7 +17,7 @@ struct RpcBankServerHeader
         PendingBalanceDetectedMessageType,
         ConfirmedBalanceDetectedMessageType
     };
-    quint32 MessageId;
+    quint32 MessageId; //had this as QByteArray, but decided to change it [back? right?] to quint32.. because isn't MD5 exactly 32 bits? perfect fit and saves me from the QByteArray size parameter :)
     quint32 MessageType;
     bool Success; //bah we don't need this for the action request. we could do some #ifdef magic to make it not be streamed just like i used to for the messages themselves.. since i don't want to read it when i'm on the server reading IN, but i do want to read it when i'm on the client reading IN (etc). i think i have been over/prematurely optimizing. FML. god fucking damnit. it's a bad habit and i need to kill it with fire. seriously a really limiting habit. you won't go nearly as far in life if you don't get rid of it. at the same time, the world has enough Java implements (enough idiots that don't optimize)
 };

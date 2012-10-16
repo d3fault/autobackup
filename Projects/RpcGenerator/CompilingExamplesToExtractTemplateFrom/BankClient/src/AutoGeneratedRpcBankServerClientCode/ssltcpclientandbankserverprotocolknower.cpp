@@ -46,7 +46,7 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
     {
         RpcBankServerHeader header;
         stream >> header;
-        quint32 failedReasonEnum; //TODO: sure aren't streaming it every time, but do we really have to alloc it every time? just stack alloc so w/e... but still...
+        quint32 failedReasonEnum; //TODO: sure aren't streaming it every time, but do we really have to alloc it every time? just stack alloc so w/e... but still. Fuck you, I've since learned stack allocs are practically free lmfao. especially a measily quint32 (no heap d ptr)
         if(!header.Success)
         {
             stream >> failedReasonEnum;
@@ -60,6 +60,8 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
         //Action Responses
         case RpcBankServerHeader::CreateBankAccountMessageType:
             {
+                //TODOreq: get our new timestamp, find out the difference between the pre-transmit one, and record that in some list thingy lol
+
                 ClientCreateBankAccountMessage *createBankAccountMessage = getPendingCreateBankAccountMessageById(header.MessageId);
                 if(createBankAccountMessage)
                 {
@@ -96,6 +98,8 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
         break;
         case RpcBankServerHeader::GetAddFundsKeyMessageType:
             {
+                //TODOreq: get our new timestamp, find out the difference between the pre-transmit one, and record that in some list thingy lol
+
                 ClientGetAddFundsKeyMessage *getAddFundsKeyMessage = getPendingGetAddFundsKeyMessageById(header.MessageId);
                 if(getAddFundsKeyMessage)
                 {

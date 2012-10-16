@@ -1,0 +1,19 @@
+the whole of ABC and my caching layer is basically summarized by this:
+a user browses a page in Wt, which does a blocking queued get(if-in-cache)+register-for-updates
+
+if it's in the cache, the get'd results are shown. if updated values are on their way (in transit etc), we have registered for them AT THE SAME TIME (this is crucial. it needs to be the same thread thingo)
+
+if it's not in the cache, we disable the Wt GUI and say "Loading..." and then dispatch a queued (not blocking)...... ACTUALLY SCRATCH THAT. the dispatch can be dispatched right around the if-in-cache/register-for-updates code. if we're not in the cache, we dispatch a queued (rpc message!!!!!!!!!!!!!!!???????????) get to the ABC layer (rpc cache layer? it is my Rpc Client in my mind atm... so i mean they could be on the same server and communicate via QLocalSocket if you want...??)
+
+So basically it's a pull-only-when-needed cache layer?
+or something
+
+fuck i'm not sure if this is panning out
+don't I need to register on the middle/abc-business/rpc-cache layer too? telling him that _I_ (not my user, but this Wt node) need updates for XYZ as well (combine all my users into a giant 'i-am-interested-in-these-values' object/message)?
+
+
+
+damnit the design used to make sense..... ROFL
+either gotta figure it out again or read old ass shit that i don't even know where to look for
+
+fuck it, not thinking about that for now. got enough to deal with

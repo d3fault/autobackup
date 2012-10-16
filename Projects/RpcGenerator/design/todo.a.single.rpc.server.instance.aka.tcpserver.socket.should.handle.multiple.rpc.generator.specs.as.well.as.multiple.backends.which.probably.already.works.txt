@@ -1,0 +1,5 @@
+Since I'm now quite sure that I'll now be using ABC layer as a cache-only layer (but rpc generator doesn't [need to] know that!!!! it thinks the middle layer (abc prior to this doc) is just a regular old rpc client/business) for BOTH the abc data as well as the bank server data.... I need to make it so one instance of rpc server (rpcclientshelper) can use 2x 'rpc generator profiles' (input xml) .... as well as communicate with 2x back ends. but this is for later after I get the basic ass functionality of ACK'ing etc in place which is what I'm working on right now
+
+as for the handling multiple businesses, it probably already works. i already hand some actions to bitcoinhelper and some to bankdbhelper...
+
+the tcp server is really what needs to be singular... and the protocol it speaks to the client needs to allow for different 'rpc server' services. in some senses, this is like an appId... but I've previously used that term way to frequently so it's now kind of ambiguious (i've used it to mean the identifier of what bank account to select. TODOreq: bankAccountId lawl f0rg0t)
