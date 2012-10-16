@@ -1,0 +1,18 @@
+an overview of what I'm about to attempt, because I'll likely forget in the midst of it.
+
+-messageIds, fuck I don't know what to do for these anymore :-/
+-the message size pre-pending code needs to be inserted. nothing new here
+-pending lists for each action on the rpc client, matching them up with results, also 1 timer per action type that times out using an averageLength*1.5 = 'time-to-re-ask' scheme. the time-to-re-ask message should be slightly different than the original request... so rpc server will be able to see it and easily know what the fuck's up. he'll have the answers. either the message never made it or our response didn't or the business never returned. is there another one?
+-pending lists for each action on the rpc server, matching them up with results.
+-ack the broadcasts. will have to create an ack type i bet... specifically for broadcasts.. since actions seem to be going the 'happens-before' route (with cool timeout functionality i invented (something like that makes me wonder if someone else came up with it also. wouldn't surprise me at all))
+-make the whitelist programming in the slots in the business all good and whatnot. need to modify the dispenser/imessage logic too?
+-the way our rpc server ack's his action response to the rpc client is by watching the message ID until it is re-used by a *new* action request (specifically, not the 'time-to-re-ask' message thingo, which will also have the same message Id)
+
+3000ms 'starting point' for the time-to-re-ask timeout, until we get > 0 results with which we can perform averaging maths on. this is for both rpc clients pending list and rpc servers. actually rpc server's should probably be shorter, maybe 15000ms? that gives him 1.5 seconds to re-send the message into the business. but shit, if i am losing messages in the business then something's definitely fucked. idk i seem to have convinced myself to code it anyways :-/. It's not for me, it's for future users of Rpc Generator. I know how to code the business right, obviously. Then again, I can't stop/predict crashes in the business... so maybe it'll benefit me too. idfk. How would I even handle that case? Just after the second failed attempt at sending it into the business... return a generic error (or perhaps a specialized error? (TODOreq: or perhaps a specialized error for ME (private dev log) and a generic error message for Wt-USERS))
+
+--EVENTUALLY:
+if the rpc server's time-to-re-ask thing fails once (so that means we actually failed twice total), we back out/up (in the design in mah brain it makes sense!) to the layer that selects servers.... and select a different one. oh and we'd also mark the one that just failed as offline or whatever (which'd start it's own periodic 'ping' thingy to detect when it comes back)
+
+
+
+^^^^^^^^^there's no way in hell i'm going to code all of this before passing out

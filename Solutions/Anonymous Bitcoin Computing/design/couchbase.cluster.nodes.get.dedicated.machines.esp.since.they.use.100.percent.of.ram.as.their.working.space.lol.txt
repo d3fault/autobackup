@@ -1,0 +1,1 @@
+For my local server cluster, I don't think the Qt Rpc Server logic.. which might end up being the bulk of the actual logic if I do this shit right :)... should be on the same machines as the Couchbase cluster. The Couchbase clusters need more stability. Can't have random business code crashing and then bringing down part of my db cluster
