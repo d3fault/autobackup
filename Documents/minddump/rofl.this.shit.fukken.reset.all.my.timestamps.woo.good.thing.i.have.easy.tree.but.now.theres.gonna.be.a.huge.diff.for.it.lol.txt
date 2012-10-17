@@ -1,0 +1,15 @@
+a test commit because idfk i'm paranoid as balls now that i realize I cloned my bare git repo without specifying file://
+so it used hardlinks, 'if possible'
+what the fuck does that even mean?????
+does it check that the source/destination are on different mount points (and it's impossible if they are?)
+i sure as fuck hope so
+
+how have i even been able to commit etc?
+and run git fsck?
+
+seriously pretty sure it shouldn't have even worked if i was dismounted, hardlinked to a file in the dismounted, and then did a git fsck
+
+still i don't trust it!!!
+so i am doing a git clone file:// this time
+
+and then i just git remote rm origin to make it forget about /media/truecrypt1/autobackup/ forever :)

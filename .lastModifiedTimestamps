@@ -14,7 +14,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033476
+Documents/minddump/:1386033497
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -25,7 +25,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033476
+Documents/minddump/dreams/:1386033497
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -454,6 +454,7 @@ Documents/minddump/retardation.can.strike.at.any.moment.txt:1323374872
 Documents/minddump/revenge.type.shit.falsjkfsadfouiwerlkjfsdoafiuaslkejoul.txt:1338983694
 Documents/minddump/ride.a.wave.to.go.fast.or.float.and.be.bored.txt:1340275568
 Documents/minddump/rofl.falksdjfasdofjwelrkjsdofjsdlfkjsdofiusghdafgaslkfjwoeursldfkjasfsdlkjweorulskdf.txt:1349254872
+Documents/minddump/rofl.this.shit.fukken.reset.all.my.timestamps.woo.good.thing.i.have.easy.tree.but.now.theres.gonna.be.a.huge.diff.for.it.lol.txt:1350439646
 Documents/minddump/sadfjowurlaskjfsadofiusadfjlweriyafsdhsadfsdf.txt:1331634861
 Documents/minddump/sadfljsdflsajroweusadfljwieryusodfudslakjfworeul.txt:1344530224
 Documents/minddump/sadflkasdjfoualrkjsadfouaslfkjsadfosadjflkwerousfdlksdjfoukdfghaksdfouwerlk.txt:1349074194
@@ -607,7 +608,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1344899708
 GloballySharedClasses/ssltcpclient.pri:1344899198
 GloballySharedClasses/ssltcpserver.pri:1344899078
 GloballySharedClasses/ssltcpservertestcerts.pri:1344900176
-Pictures/:1386033476
+Pictures/:1386033497
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -733,7 +734,7 @@ Projects/ForFun/QWidgetCleanObserverPatternExample/src/maincleanobserverpatterne
 Projects/ForFun/QWidgetCleanObserverPatternExample/src/maincleanobserverpatternexamplewidget.h:1350380355
 Projects/ForFun/QWidgetCleanObserverPatternExample/src/qwidgetcleanobserverpatternexampletest.cpp:1350384299
 Projects/ForFun/QWidgetCleanObserverPatternExample/src/qwidgetcleanobserverpatternexampletest.h:1350381047
-Projects/Ideas/:1350341761
+Projects/Ideas/:1350439951
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -859,6 +860,7 @@ Projects/Ideas/easy.compiling.mode.abc.singalong.song.free.content.junkie.mode.g
 Projects/Ideas/economy.is.stupid.prove.and.abuse.it.simultaneously.adlsfjsdlfjsadlfjldfoisdu.txt:1331074252
 Projects/Ideas/electromagneticity.seems.like.it.could.generate.more.power.than.it.consumes.txt:1328236762
 Projects/Ideas/exact.backspace.time.noted.and.submitted.with.sentence.which.is.single.message.length.or.tangent.parenthesis.idfk.txt:1338003267
+Projects/Ideas/finding.earliest.creation.date.timestamps.for.all.my.fuckin.methods.ive.come.up.with.is.going.to.be.a.bitch.and.i.still.dunno.wtf.to.do.with.em.completely.txt:1350439951
 Projects/Ideas/finger.potentiometer.keyboard.alphabet.layout.still.need.numbers.tho.kthx.txt:1323456734
 Projects/Ideas/fingers.music.making.24x7.even.while.coding.until.i.grow.gills.txt:1341168391
 Projects/Ideas/flip.a.coin.to.decide.future.gender.rofl.asdlfjasdfoiuwerlakjoiuerou.txt:1334400060
@@ -1423,7 +1425,7 @@ Projects/Prototypes/timelineFileStore/timelineFileStore/timelinenode.cpp:1320133
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinenode.h:1320133807
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.cpp:1320134193
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.h:1320134193
-Projects/QuickDirtyAutoBackupHalper/:1349692031
+Projects/QuickDirtyAutoBackupHalper/:1350439376
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/:1348865438
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/QuickDirtyAutoBackupHalper.pro:1348500720
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/main.cpp:1348500703
@@ -1441,7 +1443,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.cp
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.h:1348569501
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:1348566704
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
-Projects/QuickDirtyAutoBackupHalper/src/:1350383483
+Projects/QuickDirtyAutoBackupHalper/src/:1350439966
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1349098196
 Projects/QuickDirtyAutoBackupHalper/src/easytree.cpp:1349099224
 Projects/QuickDirtyAutoBackupHalper/src/easytree.h:1349098565
@@ -1757,7 +1759,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033476
+Projects/libAvGraphicsItem2/design/:1386033497
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

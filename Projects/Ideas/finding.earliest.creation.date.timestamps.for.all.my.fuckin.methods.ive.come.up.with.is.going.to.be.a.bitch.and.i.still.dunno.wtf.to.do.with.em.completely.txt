@@ -1,0 +1,18 @@
+while it certainly is handy to have a revised / tracked / updated tree with all the timestamps
+
+i do think about d3fault ultimately
+finding that 'earliest' timestamp available
+and then NOT updating it :)
+
+but yea all sorts of custom tools would be needed to make such a file
+
+/mnt/750x1/ has filesystem timestamps
+/truecrypt1tb/ has filesystem timestamps
+/autobackup/ has dir.structure.txt which _WAS_ rolling (so we need to un-roll it, and record all of the 'earliest dates' seen for files)
+same with our easy tree setup now
+/autobackup/ has .quickDirtyAutoBackupHalperDirStructure, which is rolling as well :-/
+
+oh and also i have renamed dir.structure.txt to .dirstructure.txt.old.from.tree.command -- which just complicates things as when i un-roll, the name will go back to dir.structure.txt :-/
+
+
+FUCKIN HEADACHE
