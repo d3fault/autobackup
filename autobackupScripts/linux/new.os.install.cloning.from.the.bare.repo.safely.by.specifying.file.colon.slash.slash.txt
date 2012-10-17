@@ -1,0 +1,22 @@
+on a new OS install, you want to clone from one of your many [synchronized!] bare repos
+
+[text/source]
+
+to do this:
+cd ~
+git clone file:///path/to/mounted/device/autobackup/ autobackup
+cd autobackup
+git remote rm origin
+
+the last command is so we don't get random 'you are ahead of origin by 1' etc
+and the file:// part is necessary to _FORCE_ git to actually copy the files and not just use hard links. i think it only does hard links when they're on the same fs anyways but it's not a risk i am willing to take because being wrong has devastating results. then again, i'm still here aren't i? they probably check filesystem boundaries i guess. but i still wish it didn't want to use hard links by default. stupid
+
+
+[binaries/music]
+cd ~
+git clone --depth 1 file:///path/to/mounted/device/binariesAndMusicBareRepo/ binariesAndOrMusicEtc
+
+...for this one, i don't think I want to remove the remote origin... but i could be wrong idfk lol. doubt it matters. but yea i mean i did test pushing from a shallow clone and i think it will be ok for me. i even resolved 2 conflicting shallow clones and pushed the merged conflict into the initial source! with binaries is a tad harder because git's retarded and modifies the conflict file lmfao... but iirc the command to fix it is just:
+git checkout --mine/--theirs -- filename.exe
+
+OR SOMETHING. i have the exact solution in some other doc somewhere...

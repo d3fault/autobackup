@@ -1,0 +1,13 @@
+so maybe i can leverage git in helping me merge my 2x1tb drives?
+and perhaps even my 500gb drive as well?
+
+
+was thinking of doing it manually in Qt/C++ using QCryptographicHash and QFile............
+
+but idfk
+it still just sounds like a fucken headache
+
+and on top of all that, i want to remove a fuck ton of /Movies and /Games.... but I still want their existence to be rememembered hahahahahaahahahaha so fucking complex of requirements. i want d3fault :(
+
+
+TODOreq: aside: my 'earliest timestamp' figure-outer needs to handle renames as well... as in renames mentioned in the dir.structure.txt file(s).... but perhaps we can leverage git to actually tell us about renames? we'll be walking the history anyways so maybe it's not a huge deal

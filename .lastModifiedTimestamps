@@ -14,7 +14,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033497
+Documents/minddump/:1386033518
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -25,7 +25,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033497
+Documents/minddump/dreams/:1386033518
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -551,6 +551,7 @@ Documents/minddump/trade.ya.some.paranoia.for.fame.ok.datll.be.tree.fitty.txt:13
 Documents/minddump/trust.i.dont.need.yours.dslfjsdlfjsadofuaskfuasldfuasdljfoaiuf.txt:1328745875
 Documents/minddump/uhhm.it.was.typing.of.the.dead.and.i.played.it.fuck.yea.txt:1338993178
 Documents/minddump/unreliable.servers.used.only.for.hotspot.offloading.txt:1338898457
+Documents/minddump/walking.the.git.history.yeyyyyaeeeeaaaaa.sounds.sooooooo.fun.FML.txt:1350440694
 Documents/minddump/we.all.rip.off.and.derive.from.each.other.whether.we.know.it.or.not.it.shouldnt.be.illegal.to.do.so.txt:1341790594
 Documents/minddump/we.are.all.genetic.remixes.sldafjkasoiuerweroiu.and.of.our.brain.memes.txt:1338993092
 Documents/minddump/we.can.automate.most.if.not.all.service.jobs.with.ease.txt:1323683805
@@ -608,7 +609,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1344899708
 GloballySharedClasses/ssltcpclient.pri:1344899198
 GloballySharedClasses/ssltcpserver.pri:1344899078
 GloballySharedClasses/ssltcpservertestcerts.pri:1344900176
-Pictures/:1386033497
+Pictures/:1386033518
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1759,7 +1760,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033497
+Projects/libAvGraphicsItem2/design/:1386033518
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -1935,7 +1936,7 @@ Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 autobackupScripts/:1349691249
-autobackupScripts/linux/:1349691267
+autobackupScripts/linux/:1350441253
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -1944,13 +1945,14 @@ autobackupScripts/linux/LiveCDinstallAndConfigExtra/keepassx.config.ini:13380747
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/vagalume-config.xml:1337881282
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
-autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1348400113
+autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1350440345
 autobackupScripts/linux/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
 autobackupScripts/linux/dismount.2x.750gb.drives.sh:1321491794
 autobackupScripts/linux/droid.backup.and.shred.sh:1344093051
 autobackupScripts/linux/droid.conversationBackup.pull.zip.and.shred.sh:1333202549
 autobackupScripts/linux/installAllRpmsInThisDir.sh:1324208617
 autobackupScripts/linux/mount.2x.750gb.drives.sh:1321491435
+autobackupScripts/linux/new.os.install.cloning.from.the.bare.repo.safely.by.specifying.file.colon.slash.slash.txt:1350441253
 autobackupScripts/linux/polaroid.backup.and.shred.sh:1336416210
 autobackupScripts/linux/steps.to.staticBackup.txt:1349809723
 autobackupScripts/linux/sync.toSync.and.shred.sh:1336416361
