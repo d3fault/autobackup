@@ -10,7 +10,7 @@ class ClientCreateBankAccountMessageDispenser : public IRecycleableDispenser
 {
     Q_OBJECT
 public:
-    explicit ClientCreateBankAccountMessageDispenser(IAcceptRpcBankServerActionNonErrorDeliveries *destination, QObject *owner);
+    explicit ClientCreateBankAccountMessageDispenser(IAcceptRpcBankServerActionDeliveries *destination, QObject *owner);
     ClientCreateBankAccountMessage *getNewOrRecycled();
 protected:
     IRecycleableAndStreamable *newOfTypeAndConnectToDestinationObjectIfApplicable();

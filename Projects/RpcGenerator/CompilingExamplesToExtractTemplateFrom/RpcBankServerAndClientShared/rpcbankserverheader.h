@@ -6,35 +6,53 @@
 //this is my "protocol"
 //i get the size of the message and the type, then i use my dispenser for that type and get the type. i then pass off delegating the rest of the message (i am only the header) to the type itself via it's datastream operator overloads
 //^^^^OLD
-//now i just have the type and the message id. the size was unattainable unless i first stream into a byte array and count it.. so fuck that.
-struct RpcBankServerHeader
+
+//TODOoptimization: it's plausible that we don't have to read the message first into a QByteArray (after making sure we have enough bytes) if we just eat/ignore the QByteArray size parameter that QDataStream puts on there... unsure tbh
+
+//TODOreq: is streaming out over the network using two successive << operations guaranteed that they are both received by the receiver in that order? Is it possible for this to happen:
+/*
+    same Client reading in all the shit (via >>) whenever it receives it
+
+    Server1 streams out (<<) MessageHeader;
+    Server2 streams out (<<) MessageHeader || MessageBody; //any message. the point is, can it get in between em like that?
+    Server1 streams out (<<) MessageBody;
+
+    I think the 'socket' nature of networking means that won't happen. One socket/pointer thingo represents one 'server' (peer, w/e)
+
+    SO I _THINK_ THE ANSWER IS NO, IT IS NOT DANGEROUS
+*/
+
+struct RpcBankServerMessageHeader
 {
     enum MessageTypeEnum
     {
-        InvalidMessageType = 0,
+        InvalidMessageType = 0x0,
         CreateBankAccountMessageType,
         GetAddFundsKeyMessageType,
         PendingBalanceDetectedMessageType,
         ConfirmedBalanceDetectedMessageType
     };
-    quint32 MessageId; //had this as QByteArray, but decided to change it [back? right?] to quint32.. because isn't MD5 exactly 32 bits? perfect fit and saves me from the QByteArray size parameter :)
-    quint32 MessageType;
-    bool Success; //bah we don't need this for the action request. we could do some #ifdef magic to make it not be streamed just like i used to for the messages themselves.. since i don't want to read it when i'm on the server reading IN, but i do want to read it when i'm on the client reading IN (etc). i think i have been over/prematurely optimizing. FML. god fucking damnit. it's a bad habit and i need to kill it with fire. seriously a really limiting habit. you won't go nearly as far in life if you don't get rid of it. at the same time, the world has enough Java implements (enough idiots that don't optimize)
+    quint16 MessageSize;
+    quint16 MessageMagicAndRpcServiceId;
+    quint32 MessageId; //had this as QByteArray, but decided to change it [back? right? backspaced and forgot what it was lol] to quint32.. because isn't MD5 exactly 32 bits? perfect fit and saves me from the QByteArray size parameter :)
+    quint16 MessageType;
 };
-inline QDataStream &operator>>(QDataStream &in, RpcBankServerHeader &message)
+inline QDataStream &operator>>(QDataStream &in, RpcBankServerMessageHeader &message)
 {
+    in >> message.MessageSize;
+    in >> message.MessageMagicAndRpcServiceId;
     in >> message.MessageId;
     in >> message.MessageType;
-    in >> message.Success; //TODOoptimization: don't stream in Success on server, do stream in Success on client, don't stream out Success on client, do stream out Success on server -- similar to how i used to do IMessage stream shit with ifdefs
     return in;
 }
-inline QDataStream &operator<<(QDataStream &out, const RpcBankServerHeader &message)
+inline QDataStream &operator<<(QDataStream &out, const RpcBankServerMessageHeader &message)
 {
-    //TODOoptimization: we could detect a broadcast by seeing if messageId is 0 and then not streaming out the message id. but it means on the client i'd have to receive the header in 2 stages (figure out if it's a broadcast or not and then get the message id if applicable). not worth it imo... (also you'd have to change the order of them, but that's given)
+    //TO DONEoptimization: we could detect a broadcast by seeing if messageId is 0 and then not streaming out the message id. but it means on the client i'd have to receive the header in 2 stages (figure out if it's a broadcast or not and then get the message id if applicable). not worth it imo... (also you'd have to change the order of them, but that's given)
+    //^^^^^^^SOLUTION: we _DO_ want to stream out the message id, even for broadcasts. for broadcasts, we need it for our ACK
+    out << message.MessageSize;
+    out << message.MessageMagicAndRpcServiceId;
     out << message.MessageId;
     out << message.MessageType;
-    out << message.Success;
     return out;
 }
-
 #endif // RPCBANKSERVERHEADER_H

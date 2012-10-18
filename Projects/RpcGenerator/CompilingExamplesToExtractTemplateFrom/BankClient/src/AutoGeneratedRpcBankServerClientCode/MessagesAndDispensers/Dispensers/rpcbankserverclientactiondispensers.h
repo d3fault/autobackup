@@ -9,14 +9,14 @@
 class RpcBankServerClientActionDispensers
 {
 public:
-    RpcBankServerClientActionDispensers(IAcceptRpcBankServerActionNonErrorDeliveries *destination);
+    RpcBankServerClientActionDispensers(IAcceptRpcBankServerActionDeliveries *destination);
 
     ClientCreateBankAccountMessageDispenser *takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner);
     ClientGetAddFundsKeyMessageDispenser *takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(QObject *owner);
 
     bool everyDispenserIsCreated();
 private:
-    IAcceptRpcBankServerActionNonErrorDeliveries *m_Destination;
+    IAcceptRpcBankServerActionDeliveries *m_Destination;
 
     ClientCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ClientGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;

@@ -10,7 +10,7 @@ class ClientGetAddFundsKeyMessageDispenser : public IRecycleableDispenser
 {
     Q_OBJECT
 public:
-    explicit ClientGetAddFundsKeyMessageDispenser(IAcceptRpcBankServerActionNonErrorDeliveries *destination, QObject *owner);
+    explicit ClientGetAddFundsKeyMessageDispenser(IAcceptRpcBankServerActionDeliveries *destination, QObject *owner);
     ClientGetAddFundsKeyMessage *getNewOrRecycled();
 protected:
     IRecycleableAndStreamable *newOfTypeAndConnectToDestinationObjectIfApplicable();

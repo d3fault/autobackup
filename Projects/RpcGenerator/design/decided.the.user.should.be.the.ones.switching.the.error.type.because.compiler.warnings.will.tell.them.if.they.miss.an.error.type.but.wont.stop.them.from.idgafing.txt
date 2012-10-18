@@ -1,0 +1,63 @@
+hmmmm
+so I'm definitely in the process of changing failed<reason> to just be flagging etc...
+
+but on the rpc client, should the returned/emitted response also use flagging? currently each failed<reason> has it's own signal (no generic error signal yet)
+
+it's really just a matter of: where do i want to do switch(failedReason)?
+in the auto generated code?
+or have the user do it?
+
+this is what a user slot would hypothetically look like if each response (incl all errors) were flags:
+
+void handleCreateBankAccountCompleted(CBAM *message)
+{
+	if(message->success)
+	{
+		//woot, update GUI etc however
+	}
+	else //failed for either a reason or for an unknown reason, generically
+	{
+		switch(message->failedReason)
+		{
+			case CBAM::failedReasonUsernameAlreadyExists:
+				//update gui saying dat
+			break;
+			case CBAM::failedReasonPersistError:
+				//try again, or fail if tried and failed too many times? idfk how to handle this yet... hopefully never fails
+			break;
+			case CBAM::failedReasonInvalidReason: //the flag's default state...
+			default:
+				//fail generically, just output some generic ass error "Unable to complete your request at this time, please try again later"
+			break;
+		}
+	}	
+}
+
+
+vs.
+
+//current design
+void handleCreateBankAccountCompletedSuccessfully(CBAM *message);
+void handleCreateBankAccountCompletedFailedReasonX(CBAM *message);
+void handleCreateBankAccountCompletedFailedReasonY(CBAM *message);
+void handleCreateBankAccountCompletedFailedReasonUnknown(CBAM *message);
+
+
+both designs allow the user to not give a fuck about certain errors... but seriously it's just however i choose to design this shit. Should the user be responsible for doing the switch, or should my auto-generated code??
+
+pro of single method (business code switch):
+	-they can like have a local QString response, then populate it based on the switch'ing, then return it
+	-it forces them in a way, but not really (compiler WARNING), to catch every switch type... including the generic error
+pro of one signal/slot per error type (auto-generated code switch):
+	-the overall design is simplified. shorter methods tend to make code easier to read. also less code to write (in teh method(s). no need to switch etc)... but not really if you factor in all the slots you have to set up
+
+
+i wonder if this design decision has larger ramifications than i realize [right now]
+
+like I mean, AN actual business implementation using the code would make this easier to decide. Tbh though, I don't think it mattes. I do like the compiler warning feature of the first, however... so I think I'm going to go with that. It is also consistent with how my server operates... but that isn't very relevant
+
+can I have more than one failed reason? Should I do a flagging technique? I mean a REAL flagging technique. I am not sure it makes sense to have multiple errors... since as soon as we detect ONE we should stop testing for more...
+
+idfk
+
+decision: compiler warnings ftw. perfect balance of "YOU FORGOT TO LISTEN TO ERROR XYZ" + letting you not give a fuck about certain error types. a simple default: in the switch catches anything you don't care about. not sure if i need that "Invalid" error type... but it makes me more comfortable knowing we'll catch a success = false but without an error type chosen. OH WAIT THAT'S THE GENERIC ERROR LOL they are one and the same. So yea I guess Invalid/Generic error type has value of 0x0. We set the state to that whenever the message is dispensed

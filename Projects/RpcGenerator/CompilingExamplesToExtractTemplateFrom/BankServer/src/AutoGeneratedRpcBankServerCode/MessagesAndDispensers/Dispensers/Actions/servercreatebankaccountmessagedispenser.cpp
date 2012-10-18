@@ -1,22 +1,17 @@
 #include "servercreatebankaccountmessagedispenser.h"
 
-ServerCreateBankAccountMessageDispenser::ServerCreateBankAccountMessageDispenser(IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries *destination, QObject *owner)
+ServerCreateBankAccountMessageDispenser::ServerCreateBankAccountMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination, QObject *owner)
     : IRecycleableDispenser(destination, owner)
 { }
-ServerCreateBankAccountMessage *ServerCreateBankAccountMessageDispenser::getNewOrRecycled()
+CreateBankAccountMessage *ServerCreateBankAccountMessageDispenser::getNewOrRecycled()
 {
-    return static_cast<ServerCreateBankAccountMessage*>(privateGetNewOrRecycled());
+    return static_cast<CreateBankAccountMessage*>(privateGetNewOrRecycled());
 }
 IRecycleableAndStreamable *ServerCreateBankAccountMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {
-    ServerCreateBankAccountMessage *createBankAccountMessage = new ServerCreateBankAccountMessage(this);
+    CreateBankAccountMessage *createBankAccountMessage = new ServerCreateBankAccountMessage(this);
 
-    //delivery
-    connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionNonErrorDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
-
-    //errors
-    connect(createBankAccountMessage, SIGNAL(createBankAccountFailedUsernameAlreadyExistsSignal()), static_cast<IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries*>(m_Destination), SLOT(createBankAccountFailedUsernameAlreadyExists()));
-    connect(createBankAccountMessage, SIGNAL(createBankAccountFailedPersistErrorSignal()), static_cast<IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries*>(m_Destination), SLOT(createBankAccountFailedPersistError()));
+    connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
 
     return createBankAccountMessage;
 }

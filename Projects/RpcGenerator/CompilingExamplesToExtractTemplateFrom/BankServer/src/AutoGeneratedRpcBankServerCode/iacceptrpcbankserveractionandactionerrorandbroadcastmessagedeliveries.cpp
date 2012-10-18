@@ -1,5 +1,0 @@
-#include "iacceptrpcbankserveractionandactionerrorandbroadcastmessagedeliveries.h"
-
-IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries::IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries(QObject *parent) :
-    IAcceptRpcBankServerActionNonErrorDeliveries(parent)
-{ }

@@ -47,35 +47,65 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
         QDataStream stream(secureSocket);
         while(!stream.atEnd())
         {
-            RpcBankServerHeader header; //stack alloc because there is no dptr. might change this if i want header to hold client response data etc
-            stream >> header;
+            RpcBankServerMessageHeader header; //stack alloc because there is no dptr. might change this if i want header to hold client response data etc
+
+            //TODOreq: we can't use a member bool 'headerReceived' because this class is shared amongst all the sockets/peers, and each one has a different state of where it is in reading. so I might need a hash just for that fml... or I could change that static_cast above to be my implemented TcpSslClient and add a bool member (wait no i can't it ISN't one!!! we never instantiate that on the server side)
+            //TODOreq: we also can't use a member 'currentHeader' for the very same reason as above
+            //^^^^^^^^^I'm thinking a solution (to both i guess) would be a hash where the socket is the key. if we don't have the header yet, it is not in the hash (slight optimization to make searching faster). we return a default value of 0 when it isn't there. actually fuck the 'headerReceived' one has no need for a value in that case... but the 'currentHeader' does have a value for the hash: the header itself. of course i could just combine the two and just use a hash. I should only add it when we don't have enough bytesAvailable() to satisfy the header. if we do, there is no reason to remember it. So it can/should be called something like QHash<QSocket*,RpcBankServerMessageHeader*> m_HashOfHeadersAwaitingMoreData; -- the header is a pointer because I've found that it just works better that way. updating in place without having to re-insert..
+            //and of course, if we don't have enough data for the header itself... we just break.. and when we come back, our test looking into that hash will fail, which tells us we don't have the header :-P
+
+            TODO LEFT OFF
+#if 0 // temporary, just while i code because i intentionally broke it
+            if(!got header)
+            {
+                if(secureSocket->bytesAvailable() >= sizeof(RpcBankServerMessageHeader))
+                {
+                    stream >> header;
+                    got header = true, or something? read above TODOreq
+                }
+                else
+                {
+                    break; //return would work too. we just want to get out of the while(!atEnd()) cycle, because it might still be returning true... and we've determined that whatever IS left... isn't enough.
+                }
+            }
+
+            //if we get here, that means we've gotten our header already
+            if(secureSocket->bytesAvailable() >= header.MessageSize) //got header && enough
+#endif
+            {
+                if(header.MessageSize > 0)
+                {
+                    //can probably steal this code from below :)
+                }
+                else //TODOreq: make sure that broadcasts without any parameter types (haven't thought of any, but it definitely sounds like a use case that could occur are handled correctly. those are the only ones that should get to else statement. actions without parameters will still have a size > 0 because Success and ErrorCode are stored in the message. keeping this statement empty might be ok.. but then again maybe we shouldn't even perform the check > 0 to begin with? maybe we should just be ok with it and continue as usual? that's what my old code does. i have it #ifdef'd out..
+                {
+
+
+                }
+            }
 #if 0
             if(header.MessageSize > 0)
             {
 #endif
             switch(header.MessageType)
             {
-            case RpcBankServerHeader::CreateBankAccountMessageType:
+            case RpcBankServerMessageHeader::CreateBankAccountMessageType:
                 {
-                    ServerCreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
-                    createBankAccountMessage->Header.MessageType = header.MessageType;
-                    createBankAccountMessage->Header.MessageId = header.MessageId;
-                    createBankAccountMessage->Header.Success = true;
+                    CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
+                    copyLocalHeaderToMessageHeader(header, createBankAccountMessage);
                     stream >> *createBankAccountMessage;
                     processCreateBankAccountMessage(createBankAccountMessage, SslTcpServer::getClientUniqueId(secureSocket));
                 }
             break;
-            case RpcBankServerHeader::GetAddFundsKeyMessageType:
+            case RpcBankServerMessageHeader::GetAddFundsKeyMessageType:
                 {
                     ServerGetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
-                    getAddFundsKeyMessage->Header.MessageType = header.MessageType;
-                    getAddFundsKeyMessage->Header.MessageId = header.MessageId;
-                    getAddFundsKeyMessage->Header.Success = true;
+                    copyLocalHeaderToMessageHeader(header, getAddFundsKeyMessage);
                     stream >> *getAddFundsKeyMessage;
                     processGetAddFundsKeyMessage(getAddFundsKeyMessage, SslTcpServer::getClientUniqueId(secureSocket));
                 }
             break;
-            case RpcBankServerHeader::InvalidMessageType:
+            case RpcBankServerMessageHeader::InvalidMessageType:
             default:
                 emit d("error: got invalid message type from client");
             break;

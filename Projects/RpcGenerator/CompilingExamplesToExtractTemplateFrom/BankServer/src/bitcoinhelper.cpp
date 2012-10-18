@@ -3,8 +3,7 @@
 #include <QDateTime> //debug
 
 BitcoinHelper::BitcoinHelper()
-{
-}
+{ }
 void BitcoinHelper::takeOwnershipOfApplicableBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers)
 {
     m_PendingBalanceDetectedMessageDispenser = broadcastDispensers->takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(this);

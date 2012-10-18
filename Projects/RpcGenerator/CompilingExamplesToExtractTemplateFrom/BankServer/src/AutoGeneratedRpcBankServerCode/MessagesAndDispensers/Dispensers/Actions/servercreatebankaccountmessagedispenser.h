@@ -3,15 +3,15 @@
 
 #include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.h"
 
-#include "../../Messages/Actions/servercreatebankaccountmessage.h"
-#include "../../../iacceptrpcbankserveractionandactionerrorandbroadcastmessagedeliveries.h"
+#include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
+#include "../../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
 
 class ServerCreateBankAccountMessageDispenser : public IRecycleableDispenser
 {
     Q_OBJECT
 public:
-    ServerCreateBankAccountMessageDispenser(IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries *destination, QObject *owner);
-    ServerCreateBankAccountMessage *getNewOrRecycled();
+    ServerCreateBankAccountMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination, QObject *owner);
+    CreateBankAccountMessage *getNewOrRecycled();
 protected:
     IRecycleableAndStreamable *newOfTypeAndConnectToDestinationObjectIfApplicable();
 };

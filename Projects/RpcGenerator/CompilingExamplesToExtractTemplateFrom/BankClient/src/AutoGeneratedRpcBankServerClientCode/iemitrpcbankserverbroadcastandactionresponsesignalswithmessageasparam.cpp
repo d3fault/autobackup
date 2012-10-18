@@ -1,5 +1,5 @@
 #include "iemitrpcbankserverbroadcastandactionresponsesignalswithmessageasparam.h"
 
 IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam::IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam(QObject *parent) :
-    IAcceptRpcBankServerActionNonErrorDeliveries(parent)
+    IAcceptRpcBankServerActionDeliveries(parent)
 { }

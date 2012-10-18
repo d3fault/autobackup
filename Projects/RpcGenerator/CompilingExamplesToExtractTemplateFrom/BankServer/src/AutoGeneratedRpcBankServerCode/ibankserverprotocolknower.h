@@ -4,16 +4,16 @@
 #include <QObject>
 #include <QHash>
 
-#include "iemitrpcbankserveractionrequestsignalswithmessageasparam.h"
-#include "MessagesAndDispensers/Messages/Actions/servercreatebankaccountmessage.h"
-#include "MessagesAndDispensers/Messages/Actions/servergetaddfundskeymessage.h"
+#include "iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
+#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
 #include "MessagesAndDispensers/Messages/Broadcasts/serverpendingbalancedetectedmessage.h"
 #include "MessagesAndDispensers/Messages/Broadcasts/serverconfirmedbalancedetectedmessage.h"
 #include "MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
 #include "MessagesAndDispensers/Dispensers/Actions/servercreatebankaccountmessagedispenser.h"
 #include "MessagesAndDispensers/Dispensers/Actions/servergetaddfundskeymessagedispenser.h"
 
-class IBankServerProtocolKnower : public IEmitRpcBankServerClientActionRequestSignalsWithMessageAsParam
+class IBankServerProtocolKnower : public IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries
 {
     Q_OBJECT
 public:
@@ -24,6 +24,8 @@ private:
     RpcBankServerActionDispensers *m_RpcBankServerActionDispensers;
     QHash<ServerCreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer;
     QHash<ServerGetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer;
+
+    inline void copyLocalHeaderToMessageHeader(const RpcBankServerMessageHeader &localHeader, IRecycleableAndStreamable *message);
 protected:
     ServerCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ServerGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
@@ -44,6 +46,7 @@ public slots:
     virtual void init()=0;
     virtual void start()=0;
     virtual void stop()=0;
+
     //outgoing Action responses
     void createBankAccountDelivery(); //deliver'd from rpc server impl. our IRpcBankServerClientProtocolKnower on rpc client also inherits IAcceptRpcBankServerActionDeliveries
     void getAddFundsKeyDelivery();
@@ -52,13 +55,7 @@ public slots:
     void pendingBalanceDetectedDelivery();
     void confirmedBalanceDetectedDelivery();
 
-    //errorrs, delivered similarly to .deliver()
-    void createBankAccountFailedUsernameAlreadyExists();
-    void createBankAccountFailedPersistError(); //for some reason i don't like this error anymore. perhaps because it is not an error you'd want to show a user
-    void getAddFundsKeyFailedUsernameDoesntExist();
-    void getAddFundsKeyFailedUseExistingKeyFirst();
-    void getAddFundsKeyFailedWaitForPendingToBeConfirmed();
-
+    //OLD AS FUCK:
     //my IAcceptRpcBankServerActionDeliveries doesn't account for errors atm, fml. actually i don't think it matters. actually yes it does. because my CreateBankAccountMessage on the rpc client has no need for rigging the errors like deliver()'ing... we just emit them (the errors) as a parameter to the rpc client impl
     //i don't want to have 2 sets of messages. bullshit. reallly though, who gives a shit. auto-generated is auto-generated
     //fml i am overcomplicating the FUCK out of this

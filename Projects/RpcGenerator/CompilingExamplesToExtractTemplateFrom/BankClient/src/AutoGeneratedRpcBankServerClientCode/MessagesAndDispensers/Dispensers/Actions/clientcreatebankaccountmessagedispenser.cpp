@@ -1,6 +1,6 @@
 #include "clientcreatebankaccountmessagedispenser.h"
 
-ClientCreateBankAccountMessageDispenser::ClientCreateBankAccountMessageDispenser(IAcceptRpcBankServerActionNonErrorDeliveries *destination, QObject *owner)
+ClientCreateBankAccountMessageDispenser::ClientCreateBankAccountMessageDispenser(IAcceptRpcBankServerActionDeliveries *destination, QObject *owner)
     : IRecycleableDispenser(destination, owner)
 { }
 ClientCreateBankAccountMessage *ClientCreateBankAccountMessageDispenser::getNewOrRecycled()
@@ -11,7 +11,7 @@ IRecycleableAndStreamable *ClientCreateBankAccountMessageDispenser::newOfTypeAnd
 {
     ClientCreateBankAccountMessage *clientCreateBankAccountMessage = new ClientCreateBankAccountMessage(this);
 
-    connect(clientCreateBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionNonErrorDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
+    connect(clientCreateBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
 
     return clientCreateBankAccountMessage;
 }

@@ -1,0 +1,14 @@
+I don't swear by coding like a dumbass manager would
+If you have the mental capacity to code your project without making a single design: GREAT
+have at it. a lot of times, designs don't help at all or just confuse you and it's easier to just write the code than to do it in UML
+
+the problem arises when working on larger projects. trying to see where/how all the pieces fit together becomes a shit ton easier when you have a design right in front of you
+
+... and it's not like you can't just whip out a design based on already written code if you need halp thinking
+
+
+TODOoptimization: i haven't even thought about this yet, but it MIGHT be a good feature of designEquals to be able to extract designs from source as well
+
+like if you make a design in designEquals, then you go into C++ mode or whatever and then while in C++ mode add a class etc, when you go back into designEquals it should be there!
+
+my current mental capacity cannot handle that, however. right now i'd say you need to back out to designEquals and then add the class from there instead, then when you go back into C++ mode for the first class, you can now communicate with the second/new one (maybe an #include... or maybe a fucking arrow in designEquals? idfk)

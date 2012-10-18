@@ -3,15 +3,15 @@
 
 #include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.h"
 
-#include "../../Messages/Actions/servergetaddfundskeymessage.h"
-#include "../../../iacceptrpcbankserveractionandactionerrorandbroadcastmessagedeliveries.h"
+#include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
+#include "../../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
 
 class ServerGetAddFundsKeyMessageDispenser : public IRecycleableDispenser
 {
     Q_OBJECT
 public:
-    ServerGetAddFundsKeyMessageDispenser(IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries *destination, QObject *owner);
-    ServerGetAddFundsKeyMessage *getNewOrRecycled();
+    ServerGetAddFundsKeyMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination, QObject *owner);
+    GetAddFundsKeyMessage *getNewOrRecycled();
 protected:
     IRecycleableAndStreamable *newOfTypeAndConnectToDestinationObjectIfApplicable();
 };

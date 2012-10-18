@@ -3,7 +3,11 @@
 
 #include <QObject>
 
-#include "iemitrpcbankserveractionrequestsignalswithmessageasparam.h"
+#define WE_ARE_RPC_BANK_SERVER_CODE
+
+//TODOreq: add our messages etc to the meta object system. register() or something i forget. I might be able to do it in a file that's shared between client/server... but meh who cares for now. This is our entry point atm so I'll just leave this note here...
+
+#include "iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
 #include "MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
 #include "MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
 
@@ -14,7 +18,7 @@ public:
     //the reason for the two following virtuals is so our rpc generated code will call them (it still assumes (well, not enetirely) they are used correctly) in the correct order. because if we move the backend business objects, they can't "pull" the thread ownership (or something. idfk. taking safest route possible)
     virtual void instructBackendObjectsToClaimRelevantDispensers()=0; //broadcasts for rpc server impl, actions for rpc client impl
     virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()=0;
-    virtual void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerClientActionRequestSignalsWithMessageAsParam *actionRequestSignalEmitter)=0;
+    virtual void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *actionRequestSignalEmitter)=0;
 
     void setBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers);
 protected:

@@ -1,0 +1,18 @@
+designEquals rationale:
+
+When designing in dia, I consider my brain to be on auto-pilot. Understanding the project as a whole is DRASTICALLY easier.
+
+When coding/implementing a design, you just refer to the design over and over and over and it's pretty fucking easy. It is also auto pilot... though it's a lot more tedious and time consuming
+
+not related to rationale:
+Trying to change your design in the middle of coding is a fucking nightmare. I mean, in your brain. If you don't HAVE a design. Coding without a design will almost always lead to a giant fucking headache
+
+re: path to launch
+...all the bits are in place in my brain (design), now it's just time to write them down (code)...
+
+
+
+
+
+
+so fucking pumped.
