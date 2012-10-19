@@ -1,0 +1,17 @@
+So idk just came up with this while sleeping/waking up:
+Basically just an option for the users to choose whether or not they want the message timeout averaging thingo
+
+IDEALLY it'd be a pre-compile switch, but it could really be both. You could OPT-OUT of the averaging/timing by passing into the constructor a RpcGenerator::StaticTimeout or something.
+
+RpcGenerator(RpcGenerator::MessageTimeoutPolicy = RpcGenerator::AveragePerMessageType, int timeoutLength = 3000);
+
+timeoutLength is used for two things:
+a) specifying the initial timeout length when using averaging and we don't have any results to average yet
+b) when passing in StaticTimeout, is the static timeout length for all the message types
+
+
+
+
+FLAW:
+the Broadcasts ACK themselves, but we'd need to somehow communicate to the server the settings we provided to the rpc generator's client (constructor).
+HACKY-SOLUTION: let them choose different ACK'ing policies for Actions and Broadcasts. this is easiest and fuck it, good enough (especially if the generated code is what chooses for us). Like the Rpc Generator GUI could have a radio button switch for which to do, and then it sets up the source for you (in this version, it would obviously be better to do the #ifdef'd our averaging code (an optimization) method. BUT, providing them the ability to change it at run-time is certainly possible. You could even elaborate on the design and allow them to specify timeoutLengths PER message/broadcast type... but I don't care to think about that right now. I like the averaging idea for the time being... but TODOreq: once I have a full server load (just a single [client] server is fine for now), I should see how much the averaging code is costing me by removing it (after I MANUALLY look at the averages and pick a smart timeoutLength that accomadates all of them. 1500ms would probably be enough. (note, i pick 3000 for the starting point just to be on the safer side))

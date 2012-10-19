@@ -1,18 +1,6 @@
 #include "getaddfundskeymessage.h"
 
-void GetAddFundsKeyMessage::setFailedUsernameDoesntExist()
-{
-    setErrorCode(GetAddFundsKeyMessage::FailedUsernameDoesntExist);
-}
-void GetAddFundsKeyMessage::setFailedUseExistingKeyFirst()
-{
-    setErrorCode(GetAddFundsKeyMessage::FailedUseExistingKeyFirst);
-}
-void GetAddFundsKeyMessage::setFailedWaitForPendingToBeConfirmed()
-{
-    setErrorCode(GetAddFundsKeyMessage::FailedWaitForPendingToBeConfirmed);
-}
-
+//TODOreq: inline these, too lazy for now
 void ServerGetAddFundsKeyMessage::streamIn(QDataStream &in)
 {
 #ifdef WE_ARE_RPC_BANK_SERVER_CLIENT_CODE

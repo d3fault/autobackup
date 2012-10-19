@@ -1,4 +1,4 @@
-#include "iemitrpcbankserveractionrequestsignalswithmessageasparam.h"
+#include "iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
 
 IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries::IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries(QObject *parent)
     : IAcceptRpcBankServerActionDeliveries(parent)

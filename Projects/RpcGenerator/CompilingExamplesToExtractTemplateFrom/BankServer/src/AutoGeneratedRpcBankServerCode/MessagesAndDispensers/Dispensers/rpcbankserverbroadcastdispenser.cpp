@@ -1,6 +1,6 @@
 #include "rpcbankserverbroadcastdispensers.h"
 
-RpcBankServerBroadcastDispensers::RpcBankServerBroadcastDispensers(IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries *destination)
+RpcBankServerBroadcastDispensers::RpcBankServerBroadcastDispensers(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination)
     : m_Destination(destination), m_PendingBalanceDetectedMessageDispenser(0), m_ConfirmedBalanceDetectedMessageDispenser(0)
 { }
 ServerPendingBalanceDetectedMessageDispenser *RpcBankServerBroadcastDispensers::takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner)

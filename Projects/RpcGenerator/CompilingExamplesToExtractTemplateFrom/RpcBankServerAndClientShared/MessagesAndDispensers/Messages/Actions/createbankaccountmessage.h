@@ -23,8 +23,8 @@ public:
     QString Username;
 
     //Errors
-    inline void setFailedUsernameAlreadyExists();
-    inline void setFailedPersistError();
+    inline void setFailedUsernameAlreadyExists() { setErrorCode(CreateBankAccountMessage::FailedUsernameAlreadyExists); }
+    inline void setFailedPersistError() { setErrorCode(CreateBankAccountMessage::FailedPersistError); }
 protected:
     void streamIn(QDataStream &in);
     void streamOut(QDataStream &out);

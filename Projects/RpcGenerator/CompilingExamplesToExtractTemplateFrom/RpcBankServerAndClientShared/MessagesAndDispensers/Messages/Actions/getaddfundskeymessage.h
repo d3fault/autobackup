@@ -24,9 +24,9 @@ public:
     QString AddFundsKey;
 
     //Errors
-    inline void setFailedUsernameDoesntExist();
-    inline void setFailedUseExistingKeyFirst();
-    inline void setFailedWaitForPendingToBeConfirmed();
+    inline void setFailedUsernameDoesntExist() { setErrorCode(GetAddFundsKeyMessage::FailedUsernameDoesntExist); }
+    inline void setFailedUseExistingKeyFirst() { setErrorCode(GetAddFundsKeyMessage::FailedUseExistingKeyFirst); }
+    inline void setFailedWaitForPendingToBeConfirmed() { setErrorCode(GetAddFundsKeyMessage::FailedWaitForPendingToBeConfirmed); }
 protected:
     void streamIn(QDataStream &in);
     void streamOut(QDataStream &out);

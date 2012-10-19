@@ -1,14 +1,5 @@
 #include "createbankaccountmessage.h"
 
-void CreateBankAccountMessage::setFailedUsernameAlreadyExists()
-{
-    setErrorCode(CreateBankAccountMessage::FailedUsernameAlreadyExists);
-}
-void CreateBankAccountMessage::setFailedPersistError()
-{
-    setErrorCode(CreateBankAccountMessage::FailedPersistError);
-}
-
 void ServerCreateBankAccountMessage::streamIn(QDataStream &in)
 {
 #ifdef WE_ARE_RPC_BANK_SERVER_CLIENT_CODE

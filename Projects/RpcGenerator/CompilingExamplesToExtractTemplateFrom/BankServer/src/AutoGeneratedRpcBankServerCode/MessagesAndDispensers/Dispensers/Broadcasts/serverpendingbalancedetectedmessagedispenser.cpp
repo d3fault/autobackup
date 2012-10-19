@@ -1,6 +1,6 @@
 #include "serverpendingbalancedetectedmessagedispenser.h"
 
-ServerPendingBalanceDetectedMessageDispenser::ServerPendingBalanceDetectedMessageDispenser(IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries *destination, QObject *owner)
+ServerPendingBalanceDetectedMessageDispenser::ServerPendingBalanceDetectedMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination, QObject *owner)
     : IRecycleableDispenser(destination, owner)
 { }
 ServerPendingBalanceDetectedMessage *ServerPendingBalanceDetectedMessageDispenser::getNewOrRecycled()

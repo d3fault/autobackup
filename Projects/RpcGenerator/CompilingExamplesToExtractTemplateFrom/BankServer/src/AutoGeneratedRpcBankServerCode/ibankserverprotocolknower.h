@@ -22,8 +22,8 @@ public:
     void takeOwnershipOfActionsAndSetupDelivery();
 private:
     RpcBankServerActionDispensers *m_RpcBankServerActionDispensers;
-    QHash<ServerCreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer;
-    QHash<ServerGetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer;
+    QHash<CreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer;
+    QHash<GetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer;
 
     inline void copyLocalHeaderToMessageHeader(const RpcBankServerMessageHeader &localHeader, IRecycleableAndStreamable *message);
 protected:
@@ -34,8 +34,8 @@ protected:
     virtual void myBroadcast(IMessage *message)=0;
 
     //we only have process* classes for Action requests
-    void processCreateBankAccountMessage(ServerCreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId);
-    void processGetAddFundsKeyMessage(ServerGetAddFundsKeyMessage *getAddFundsKeyMessage, uint uniqueRpcClientId);
+    void processCreateBankAccountMessage(CreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId);
+    void processGetAddFundsKeyMessage(GetAddFundsKeyMessage *getAddFundsKeyMessage, uint uniqueRpcClientId);
     //the point of the process* is to add them to a pending list. and then after we append to the list we also emit. since we are auto-generated, process* doesn't have to. it makes no difference who emits, but by having a process() for each, we simplify the design imo
 signals:
     void d(const QString &);
