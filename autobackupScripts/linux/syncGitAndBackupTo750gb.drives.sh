@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 cd ~/autobackup/
 tree -DXs --timefmt %s -o dirstructure.txt
 git add .

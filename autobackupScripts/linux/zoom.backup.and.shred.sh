@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 read -n1 -r -p "make sure the device is mounted in: /media/FC30-3DA9/" key
 cd /media/FC30-3DA9/STEREO/
 

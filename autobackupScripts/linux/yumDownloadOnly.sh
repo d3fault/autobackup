@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 epochTime=`date +%s`
 newDir=/home/d3fault/updates/updateAt`echo $epochTime`/
 mkdir `echo $newDir`

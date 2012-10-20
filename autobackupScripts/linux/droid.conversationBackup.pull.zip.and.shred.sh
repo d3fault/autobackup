@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 read -n1 -r -p "make sure the device is mounted in: /media/FF64-0C05/" key
 cd /media/FF64-0C05/Android/data/net.ugorji.android.conversationbackup/files/
 cp -av ./*.zip /mnt/750x1/droid/conversationBackup/

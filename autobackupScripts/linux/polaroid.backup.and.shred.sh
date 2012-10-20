@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 read -n1 -r -p "make sure the device is mounted in: /media/9CB5-7BF4/" key
 cd /media/9CB5-7BF4/DCIM/200MOVIE/
 
