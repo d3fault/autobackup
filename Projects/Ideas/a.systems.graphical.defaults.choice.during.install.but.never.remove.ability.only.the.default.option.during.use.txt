@@ -1,0 +1,11 @@
+when setting up a system, a user should be given a choice:
+a) I prefer minimalism and performance, with the ability to opt-in to graphical enhancements.
+b) I prefer a visually pleasing graphical environment, with the ability to opt-out on a case-by-case basis.
+
+
+So for example, this would set up EVERYTHING (perhaps just by setting an environment variable a la Gentoo style) how the user wants. The simplest/first example I can think of: thumbnails in a fucking file viewer. I _FUCKING HATE_ thumbnails. I don't want my file explorer to come to a crawl.. or my CPU to jump to 100%... just from ENTERING A FUCKING DIRECTORY. If I want to view an image, I will click it and view it in an image viewer. If I want to view them all, I know I can easily enable thumbnail view...
+
+... that's a simple example but it would apply to lots of other things as well.
+
+
+I'm not sure what the choice should be by default. Personally, I'd obviously like the minimalism. But I also acknowledge that most people have a bunch of semen in their brain and like pretty graphics effects and other gay shit. It's not like it would be hard for me, the more advanced user, to opt-in to minimalism (a). Whereas the typical person who would choose (b) just presses NEXT NEXT NEXT NEXT NEXT at every wizard they ever encounter, so we should accomadate (to an extent) these users by defaulting to (b).

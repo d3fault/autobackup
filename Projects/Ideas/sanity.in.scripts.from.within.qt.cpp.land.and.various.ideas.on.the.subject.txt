@@ -1,0 +1,30 @@
+perhaps in my C++ utilities that automate backing up or just performing various actions, I should first show the user (myself) the full command line about to be executed and say: "does this seem sane???"
+
+...or perhaps a checkbox in the GUI: ask-before-each-command [ ]...
+if I'm using something that I use and see work every day (QuickDirtyAutoBackupHalper), I leave it unchecked. If it's like an occassional "git push && git gc" command (well, not really, those aren't that dangerous, but I mean something I run less frequently on a drive that isn't connected often)... I check the box and shit.
+
+
+Also even with it checked I should be able to press: "Yes for All" type thing... if I'm thinking that the rest of the [memorized?] commands will be safe (or are the same, just repeated N times and I don't want to press "OK/Yes" N more times..)
+
+
+this is an expansion/elaboration (AND ALSO MY FIRST TIME WRITING DOWN (been thinking about it only over the past few weeks, namely during QuickDirtyAutoBackup creation)) of my QProcess inheriter:
+
+TODOoptional TODOreq TODOoptimization idfk which:
+
+class MyProcessor : public QProcess //nvm but keep reading at "ACTUALLY"
+{
+	//idfk what goes in here to be SPECIFIC, but:
+	//each process call should output via emit d() for me. both errors and stdout. this doesn't mean I always process stderr, but I get to choose per-command what response I want
+	
+	//ACTUALLY this probably wouldn't be an inheritence of QProcess, but a hasA QProcess. I want an ability to like run a series of commands and if ANY of them return an error, they stop. this is kinda relating to that #!/bin/qtzcript thing, but idk not directly as I am talking about typing in C++ land right now (it could be both, importing the contents of #!/bin/qtzcript for me).
+	//I'm basically just talking about like static helper functions that allow me to specify if errors are ok, whether to return stderr in output (with which i WILL be processing), etc etc. One of which could be like:
+	addStep("someCommand", ProcessStdOutAndStdError, "Successfully Completed", "Error"); // the last two parameters being strings to look for on success and failure, respectively (only success is needed for whitelist programming ;-P). And in the case of truecrypt, I might even want to allow EXACTLY ONE "error" (all dismounted error)... and could have some static helper for that too?
+	//perhaps even the ability to specify some boolean verifier for each process 'step', to be evaluated after the completion of a step (each step has it's own)
+	//steps are individual QProcess calls, but simplified for me and run "all together" so that i don't have to write the code to stop after each one if an error occurs.
+	//like a foreach(steps) { if(!exec(step)) { stop_processing_steps! } }
+	//but that's behind the scenes
+	//you load it up like:
+	//steps.add("truecrypt -m /blah/");
+	//steps.add("cp -avi ./ /dest/");
+	//^^^and re: that cp example, I should use Qt's cp instead i think? should I allow steps to just be Qt methods as well? you get the idea. a lot of design needs to go into making this well, and perhaps QtScript is what I want instead?????????????????
+}

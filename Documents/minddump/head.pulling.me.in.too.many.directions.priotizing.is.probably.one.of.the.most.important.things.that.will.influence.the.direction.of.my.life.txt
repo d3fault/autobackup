@@ -1,0 +1,21 @@
+head's pulling me in too many directions:
+
+a) a debian post.install and pre.format script/thing. packages + specific configurations backing up + restoring (firefox bookmarks, keepassx settings, etc)
+b) auto backup <- this is my practical / USED-NAO-ASAP / INEEDIT stuff, which I'm constantly expanding (or thinking about expanding). Right now I want to put everything in git and have ALL my shit synchronized among 7x drives, where I can plug any of them in at any point and just type: git push && git gc and bam, I know I'm up to date AND verified. what to do with my massive folder of binaries is in question. I also want to sync/compare/merge my 2x 1tb drives as I'm sure data rot has taken it's toll on at least ONE file. merge'ing them will be a project all in itself that will probably take weeks -_- (but I need to know a destination plan for the merged output: git or something). custom merge app etc. Oh and there's that old as fuck 500gb external that might have data on it too? Might even have data on it that's not on the 1tb drives... I simply do not know. But I do want to merge it in so I can format it and use it as one of the 7x drives :). THE MORE THE MERRIER. FUCK YOU BIT ROT
+c) Rpc Generator -> Abc -> Launch -> Life -> woot
+d) Overall security concerns between input only and output only. My theory is certainly correct (no need to prove), but I just can't commit to actually doing it. I want an input-only "data-only" device with which my devbox can communicate with and backup to, because my devbox currently (despite being offline) is NOT input only or output only (i import and export via usb all the time), thus is it [theoretically] vulnerable. I also worry about typing in a command wrong or something and accidentally deleting shit. my devbox is kinda scary, but having those 7x drives easily sync'able means I can backup a lot easier than I currently can now, and puts less risk on the devbox itself. rm -rfv / ya know? ESPECIALLY WHEN THESE FUCKING SCRIPTS WORK DIFFERENT ON EACH PLATFORM GAH FUCK YOU [someone (richard stallman/gnu-peeps? linus? linux community as a whole? redhat? debian community? idfk who is to blame. fuck you though)]
+d) d3fault itself, although this kinda falls under (c) ... it's just like post-launch stuff I'm thinking about... not the path to it, which is (c) itself
+
+
+I definitely should prioritize (c) and (b).... and fuckin aye cognitive dissonance won't let me decide what the fuck to do with (d). Like I'd be unable to do anything right now, because I don't have enough figured out. Should my devbox be input-only or output-only?
+If input-only, how do I publish works?
+If output-only, how do I code/test against up to date libraries?
+
+speaking of which, my testing platform (and hell, my dev platform) should probably be different from my "backup" shit. I guess this kinda correlates with the whole "input-only-data-server-only-box-behind-devbox" thing.. but meh I am not functional yet it rly sucks fml :(
+^reasoning: typo even in C++ code could fuck shit up (though i definitely trust my own C++ way over (my own or anybody else's) scripts n shit)
+
+
+
+
+
+OH RIGHT AND I CAN'T FORGET: gotta 'live now'. carpe diem. can't ONLY plan and work towards the future... else I'll fucking waste my whole life away (unless freeze + immortal works out, in which case I could justify working/planning for my entire [pre-frozen] life so as to have cool shit to work with (fork of a fork of a fork of a fork of a fork of a fork of a fork of a project i started mb? fuck yea free software/rms) when I am thawed)

@@ -1,0 +1,31 @@
+I hate scripts.
+
+so on Fedora, #!/bin/sh at the top works fine with a read -n command
+debian, it errors our (NOT STOPPING!!!!) saying unsupported -_-
+
+so I decided yesterday I'll just put #!/bin/bash at the top, maybe it's the safer more supported way?
+
+but while running my cleanAptEtc.sh script with #!/bin/bash at the top, my:
+echo "\n"
+line actually echos the string: \n
+ROFL.
+/bin/sh outputs a newline as it should
+
+... but yea you get the fucking idea ...
+
+
+I HAVE SEEN ENOUGH
+
+-differing functionality accross platforms (probably due to ln -s usage if i had to guess)
+-the removal of certain features of certain commands (read -n)
+
+= enough
+
+Fuck that shit, I'm going to script in Qt/C++.
+
+Hell, maybe I could/can/should make a Qt interpretter (THAT DOES NOT VARY IN FUNCTIONALITY ACCROSS _ANY_ PLATFORM, windows included :-P)
+
+#!/bin/qtzcript
+
+'Z' so as not to be confused with the actual class: QtScript :-/
+...or maybe the actual class QtScript can help? but I think that's more for scripting inside of an application (maybe that's what i want tbh, idfk atm), idfk. never used it or even looked at it
