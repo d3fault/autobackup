@@ -24,9 +24,15 @@ private:
     RpcBankServerActionDispensers *m_RpcBankServerActionDispensers;
     QHash<CreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer;
     QHash<GetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer;
-
-    inline void copyLocalHeaderToMessageHeader(const RpcBankServerMessageHeader &localHeader, IRecycleableAndStreamable *message);
 protected:
+    inline void copyLocalHeaderToMessageHeader(const RpcBankServerMessageHeader &localHeader, IRecycleableAndStreamable *message)
+    {
+        message->Header.MessageSize = localHeader.MessageSize;
+        message->Header.MessageMagicAndRpcServiceId = localHeader.MessageMagicAndRpcServiceId;
+        message->Header.MessageId = localHeader.MessageId;
+        message->Header.MessageType = localHeader.MessageType;
+    }
+
     ServerCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ServerGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 

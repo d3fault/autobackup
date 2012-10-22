@@ -10,6 +10,6 @@ ServerPendingBalanceDetectedMessage *ServerPendingBalanceDetectedMessageDispense
 IRecycleableAndStreamable *ServerPendingBalanceDetectedMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {
     ServerPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = new ServerPendingBalanceDetectedMessage(this);
-    connect(pendingBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries*>(m_Destination), SLOT(pendingBalanceDetectedDelivery()));
+    connect(pendingBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), SLOT(pendingBalanceDetectedDelivery()));
     return pendingBalanceDetectedMessage;
 }

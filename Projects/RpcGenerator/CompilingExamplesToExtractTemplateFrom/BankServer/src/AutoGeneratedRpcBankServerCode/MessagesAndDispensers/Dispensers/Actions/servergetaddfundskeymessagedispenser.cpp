@@ -9,7 +9,7 @@ GetAddFundsKeyMessage *ServerGetAddFundsKeyMessageDispenser::getNewOrRecycled()
 }
 IRecycleableAndStreamable *ServerGetAddFundsKeyMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {
-    GetAddFundsKeyMessage *getAddFundsKeyMessage = new ServerGetAddFundsKeyMessage(this);
+    GetAddFundsKeyMessage *getAddFundsKeyMessage = new GetAddFundsKeyMessage(this);
 
     //delivery
     connect(getAddFundsKeyMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), SLOT(getAddFundsKeyDelivery()));

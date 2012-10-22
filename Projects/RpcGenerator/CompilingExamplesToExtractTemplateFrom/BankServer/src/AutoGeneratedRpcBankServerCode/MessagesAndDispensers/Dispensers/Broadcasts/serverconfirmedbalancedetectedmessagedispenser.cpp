@@ -10,6 +10,6 @@ ServerConfirmedBalanceDetectedMessage *ServerConfirmedBalanceDetectedMessageDisp
 IRecycleableAndStreamable *ServerConfirmedBalanceDetectedMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {
     ServerConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = new ServerConfirmedBalanceDetectedMessage(this);
-    connect(confirmedBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries*>(m_Destination), SLOT(confirmedBalanceDetectedDelivery()));
+    connect(confirmedBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), SLOT(confirmedBalanceDetectedDelivery()));
     return confirmedBalanceDetectedMessage;
 }

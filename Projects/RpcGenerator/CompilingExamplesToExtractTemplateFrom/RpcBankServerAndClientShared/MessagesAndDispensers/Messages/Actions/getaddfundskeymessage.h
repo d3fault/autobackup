@@ -12,6 +12,7 @@ class GetAddFundsKeyMessage : public IActionMessage
 {
     Q_OBJECT
 public:
+    GetAddFundsKeyMessage(QObject *parent);
     enum GetAddFundsKeyFailedReasonsEnum
     {
         FailedUsernameDoesntExist = 0x1,
@@ -19,7 +20,7 @@ public:
         FailedWaitForPendingToBeConfirmed
     };
 
-    //Parameters
+    //Action Parameters
     QString Username;
     QString AddFundsKey;
 

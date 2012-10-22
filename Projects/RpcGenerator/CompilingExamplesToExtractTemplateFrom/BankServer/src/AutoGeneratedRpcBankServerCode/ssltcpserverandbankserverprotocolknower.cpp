@@ -63,6 +63,8 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
 
                     //we now know enough to allocate our message of a specific type. After we do that, we also have to copy the local/stack header onto the message's header pointer on the heap
 
+                    //TODOreq: after all this, did I even add the ACK code for actions yet rofl? What the fuck have I been doing with this huge refactor. Way too much changing gah -_-
+
                     switch(header.MessageType)
                     {
                     case RpcBankServerMessageHeader::CreateBankAccountMessageType:
@@ -75,6 +77,10 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
                     default:
                     {
                         //TODOreq: handle this better, because we'll segfault if we get to copyLocalHeaderToMessageHeader. I'm not sure how whitelist programming factors in here. It should never happen... but we need to handle the case where it does. Maybe just eat the message? But how do we know that MessageSize is reliable? I guess that's what my Magic is for? Now I gotta figure out what to do if the magic fails :-/. I guess just be in an infinite "read-header" loop until magic matches? But then it makes me think magic should be the first POD and should be read uniquely independent of the header. Because what if somehow we just 'shifted' our header/messages on accident a bit (rogue bytes idfk). Basically a read-magic loop is a better loop because it will ensure alignment. The read-header loop means we might read magic into some other member of the header (id or type or whatever) and then consume it / skip it on accident. The magic could even be half in the Id and half in the Type or something, lmfao. Actually yea I do like that design... keep reading until we read in the correct magic. I mean yea also gotta check that there's enough bytes available to read in magic... but that's implied. Perhaps we need to separate Magic with RpcServiceId... but that's not a biggy. I am unsure. I envision a switch(magic) { case RpcServices::BankServer: } etc with the 'default' of that switch being the code path for my read-magic loop?
+                        //Come to think of it, even if we do a magic-read loop to find the start of a message, erroneous data could have shifted the stream of bytes by half of a magic type. So REALLY, we need to like read one bit/char/byte(?) at a time, verifying step by step that it is indeed magic. only after all 'x' (8? 32?) parts of magic are found IN A ROW do we know a message header will follow. As soon as we detect one bit/char of magic being wrong, we go back to searching for only the first bit/char of magic. This is the absolute most robust and recoverable protocol I can conceive... and I'm quite proud of it :)................. ESPECIALLY SO FUCKING PUMPED THAT AFTER THIS RPC GENERATOR IS CODED, I SHOULD THEORETICALLY NEVER HAVE TO TOUCH NETWORK/PROTOCOL CODE EVER AGAIN WOOOOOOOO FUCK YEA ABSTRACTION: CODE ONCE (well!!!!!), FORGET.
+                        //^^^Making that all play nicely with bytesAvailable() and keeping track of which part of magic we are looking for PER-SOCKET sounds like a bitch, but it's definitely doable :)
+                        //^^^^^I think optimally I'd be able to read in all x bits/chars of magic (but the header and message itself we'll always wait and read in one go) within one iteration of while(!stream.atEnd()), because we don't want to get that "what part of magic am i looking for for this socket" out of the hash it's stored in over and over and over (x times if I only extracted one bit/char per atEnd() iteration: WASTE OF CYCLES YO). it'd be a special loop just for magic that just keeps reading bytesAvailable() until either finished, not enough left (wait), or wrong fucking one (in which case we start over? maybe for the 'wrong fucking one' we yes do definitely start over... but can still be in that bytesAvailable loop as [THE SAME EXACT TYPE OF] an optimization?)
+
                         emit d("error: got invalid message type from client");
                         return;
                     }
@@ -101,7 +107,7 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
             quint16 messageSize = messageOnlyIfWeHaveAlreadyReadItsHeaderAndNeedMoreDataForTheMessageItself__OrElseZero->Header.MessageSize; //this optimization only saves me from a single extra deref (and however much looking up a member costs) in the next two if statements. premature optimize? prolly lolly
             if(secureSocket->bytesAvailable() >= messageSize)
             {
-                if(messageSize > 0) //TODOreq: i think I should take this out because a successful createBankAccount message will have no MessageData. There is simply nothing to return (FALSE, 'Success' (and optional ErrorCode) is in the MessageData). TODOreq: don't stream the empty QByteArray onto the network when MessageSize is zero (because QByteArray has a header for the size of it's own <--- TODOreq: hmm maybe we can just peek() at that instead of storing the MessageSize?????? I mean, it's there anyways!!!). And of course, don't try to read it in (won't be there) if the MessageSize is zero ---------- ACTUALLY THAT IS WRONG, I think. Success is always streamed, and it's _INSIDE_ the MessageData. So perhaps this MessageSize > 0 _IS_ what I want?
+                if(messageSize > 0) //TODOreq: i think I should take this out because a successful createBankAccount message will have no MessageData. There is simply nothing to return (FALSE, 'Success' (and optional ErrorCode) is in the MessageData). TODOreq: don't stream the empty QByteArray onto the network when MessageSize is zero (because QByteArray has a header for the size of it's own <--- TODOreq: hmm maybe we can just peek() at that instead of storing the MessageSize?????? I mean, it's there anyways!!! So if the peek'd array size is zero do I still stream it out? I guess it doesn't matter if I hackily consume it at a quint32 or stream in the array, since no data follows the quint32 size byte array header. test/prototype this, and I think still streaming the array is the safer approach (but if I'm right, it won't make a difference a single bit)). And of course, don't try to read it in (won't be there) if the MessageSize is zero ---------- ACTUALLY THAT IS WRONG, I think. Success is always streamed, and it's _INSIDE_ the MessageData. So perhaps this MessageSize > 0 _IS_ what I want?
                 {
                     //this would be where I'd call that hypothetical tryReadingMessageIfEnoughData? or actually maybe before both those if's? idfk. You know come to think of it having the TWO WHOLE LINES that I use for streaming/processing duplicated in the header switch... isn't that fucking big of a deal at all. Oh and also the check to see if the sizes are good enough. Oh wait now I'm back to saying I should put it in a method :-P. facepalm.jpg
 
@@ -112,13 +118,13 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
                             //Hmmm, I think I should store the IRecycleableStreamableMessage inside the hash as the value instead of the Header. If we get a header, we will always allocate the message. So in effect it's the same. And the message has a header with it..
 
                             stream >> *messageOnlyIfWeHaveAlreadyReadItsHeaderAndNeedMoreDataForTheMessageItself__OrElseZero;
-                            processCreateBankAccountMessage(messageOnlyIfWeHaveAlreadyReadItsHeaderAndNeedMoreDataForTheMessageItself__OrElseZero, SslTcpServer::getClientUniqueId(secureSocket)); //TODOreq: fix/change/whatever UniqueClientId shit so we can move this slot to our parent interface somewhere
+                            processCreateBankAccountMessage(static_cast<CreateBankAccountMessage*>(messageOnlyIfWeHaveAlreadyReadItsHeaderAndNeedMoreDataForTheMessageItself__OrElseZero), SslTcpServer::getClientUniqueId(secureSocket)); //TODOreq: fix/change/whatever. UniqueClientId shit so we can move this slot to our parent interface somewhere
                         }
                     break;
                     case RpcBankServerMessageHeader::GetAddFundsKeyMessageType:
                         {
                             stream >> *messageOnlyIfWeHaveAlreadyReadItsHeaderAndNeedMoreDataForTheMessageItself__OrElseZero;
-                            processGetAddFundsKeyMessage(messageOnlyIfWeHaveAlreadyReadItsHeaderAndNeedMoreDataForTheMessageItself__OrElseZero, SslTcpServer::getClientUniqueId(secureSocket));
+                            processGetAddFundsKeyMessage(static_cast<GetAddFundsKeyMessage*>(messageOnlyIfWeHaveAlreadyReadItsHeaderAndNeedMoreDataForTheMessageItself__OrElseZero), SslTcpServer::getClientUniqueId(secureSocket));
                         }
                     break;
                     case RpcBankServerMessageHeader::InvalidMessageType:
@@ -134,8 +140,6 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
                 }
                 else //TODOreq: make sure that broadcasts without any parameter types (haven't thought of any, but it definitely sounds like a use case that could occur are handled correctly. those are the only ones that should get to else statement. actions without parameters will still have a size > 0 because Success and ErrorCode are stored in the message. keeping this statement empty might be ok.. but then again maybe we shouldn't even perform the check > 0 to begin with? maybe we should just be ok with it and continue as usual? that's what my old code does. i have it #ifdef'd out..
                 {
-                    //TODOreq: after resolving the above TODOreqs, handle the [error] case where we receive empty MessageData. Another scenario I can envision where there's an empty MessageData is a broadcast without parameters. Oh fuck I already wrote about that just above, but then forgot about it in the two days I haven't been coding :-P
-
                     //============CASES WHERE MESSAGE_DATA IS ZERO=========
                     /*
                       Broadcasts without a parameter. I can't think of any off the top of my head, but there are most likely use cases. It's analogous to signals in Qt without parameters... which happens quite frequently
@@ -156,78 +160,6 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
             }
         } // while(!stream.atEnd())
     } // if(QSslSocket *secureSocket = static_cast<QSslSocket*>(sender()))
-
-#if 0
-
-            //old below
-
-            RpcBankServerMessageHeader header; //stack alloc because there is no dptr. might change this if i want header to hold client response data etc
-
-            //TODOreq: we can't use a member bool 'headerReceived' because this class is shared amongst all the sockets/peers, and each one has a different state of where it is in reading. so I might need a hash just for that fml... or I could change that static_cast above to be my implemented TcpSslClient and add a bool member (wait no i can't it ISN't one!!! we never instantiate that on the server side)
-            //TODOreq: we also can't use a member 'currentHeader' for the very same reason as above
-            //^^^^^^^^^I'm thinking a solution (to both i guess) would be a hash where the socket is the key. if we don't have the header yet, it is not in the hash (slight optimization to make searching faster). we return a default value of 0 when it isn't there. actually fuck the 'headerReceived' one has no need for a value in that case... but the 'currentHeader' does have a value for the hash: the header itself. of course i could just combine the two and just use a hash. I should only add it when we don't have enough bytesAvailable() to satisfy the header. if we do, there is no reason to remember it. So it can/should be called something like QHash<QSocket*,RpcBankServerMessageHeader*> m_HashOfHeadersAwaitingMoreData; -- the header is a pointer because I've found that it just works better that way. updating in place without having to re-insert..
-            //and of course, if we don't have enough data for the header itself... we just break.. and when we come back, our test looking into that hash will fail, which tells us we don't have the header :-P
-
-            TODO LEFT OFF
-#if 0 // temporary, just while i code because i intentionally broke it
-            if(!got header)
-            {
-                if(secureSocket->bytesAvailable() >= sizeof(RpcBankServerMessageHeader))
-                {
-                    stream >> header;
-                    got header = true, or something? read above TODOreq
-                }
-                else
-                {
-                    break; //return would work too. we just want to get out of the while(!atEnd()) cycle, because it might still be returning true... and we've determined that whatever IS left... isn't enough.
-                }
-            }
-
-            //if we get here, that means we've gotten our header already
-            if(secureSocket->bytesAvailable() >= header.MessageSize) //got header && enough
-#endif
-            {
-                if(header.MessageSize > 0)
-                {
-                    //can probably steal this code from below :)
-                }
-                else //TODOreq: make sure that broadcasts without any parameter types (haven't thought of any, but it definitely sounds like a use case that could occur are handled correctly. those are the only ones that should get to else statement. actions without parameters will still have a size > 0 because Success and ErrorCode are stored in the message. keeping this statement empty might be ok.. but then again maybe we shouldn't even perform the check > 0 to begin with? maybe we should just be ok with it and continue as usual? that's what my old code does. i have it #ifdef'd out..
-                {
-
-
-                }
-            }
-#if 0
-            if(header.MessageSize > 0)
-            {
-#endif
-            switch(header.MessageType)
-            {
-            case RpcBankServerMessageHeader::CreateBankAccountMessageType:
-                {
-                    CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
-                    copyLocalHeaderToMessageHeader(header, createBankAccountMessage);
-                    stream >> *createBankAccountMessage;
-                    processCreateBankAccountMessage(createBankAccountMessage, SslTcpServer::getClientUniqueId(secureSocket));
-                }
-            break;
-            case RpcBankServerMessageHeader::GetAddFundsKeyMessageType:
-                {
-                    ServerGetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
-                    copyLocalHeaderToMessageHeader(header, getAddFundsKeyMessage);
-                    stream >> *getAddFundsKeyMessage;
-                    processGetAddFundsKeyMessage(getAddFundsKeyMessage, SslTcpServer::getClientUniqueId(secureSocket));
-                }
-            break;
-            case RpcBankServerMessageHeader::InvalidMessageType:
-            default:
-                emit d("error: got invalid message type from client");
-            break;
-            }
-            //} if(header.MessageSize > 0)
-        }
-    }
-#endif
 }
 
 //These myTransmit and myBroadcast slots can also probably go to a parent interface. I see no Ssl specific code in there...
@@ -235,23 +167,21 @@ void SslTcpServerAndBankServerProtocolKnower::myTransmit(IMessage *message, uint
 {
     //Action Responses + Broadcasts
 
-    //TODOreq -- uniqueRpcClientId is 0 for broadcasts... and perhaps if the action broadcasts it's response?
-    //TODOreq: this isn't directly related to this method, but i need to make note of it somewhere. only one of the broadcast receivers should write the broadcast value to the db (assuming a shared-among-broadcast-receivers couchbase cluster)... so maybe that implies i should just broadcast to one client and then let him notify his siblings? or something? idfk
+    //TODOreq: this isn't directly related to this method, but i need to make note of it somewhere. only one of the broadcast receivers should write the broadcast value to the db (assuming a shared-among-broadcast-receivers couchbase cluster)... and the client that receives the broadcast is responsible for notifying his neighbors (his neighbors, and perhaps even himself, write themselves to their shared couchbase db to indicate whether or not they are interested in a particular broadcast)
 
-    //TODOreq: handle the case where none of broadcast's servers (clients) are online, nobody to send to wtf
+    //TODOreq: handle the case where none of broadcast's servers (clients) are online, nobody to send to wtf. maybe just queue it until we get one? This might burst a bunch of broadcasts. This leads me to another thing that I've already thought about but have now forgotten: when client comes online, how does he get "up to speed" with the server? Do we only read when requested? Should we just drop these broadcasts then (still write them to our local couchbase db of course)? They can/will be pulled as data at some later date... but if the clients are offline then  I mean they have nobody (Wt users) to notify anyways, ya know?
 
-    //TODOreq: it is better to only have to instantiate QDataStream once [per socket methinks?], not every time I want to send something. But gah doesn't that mean that I'd have to look up the QDataStream from a hash lol just like my IRecycleableAndStreamable* storing for the header shit? Is this efficient? Again, the max size of the hash will only ever be CLIENT_COUNT... so like a few hundred or so? Allocating QDataStream over and over vs. a hash lookup. ALSO, maybe I can just use one shared QDataStream? That might have [hidden] performance implictions... but hell, it might not. QDataStream isn't even a QObject type (not sure how that factors in). What I mean to say that it's mostly just data. You'd be changing it's internal QIODevice* that it's operating on. Hell, that sounds a lot cheaper than a hash lookup TODOreq do that instead maybe after some thinking and IDEALLY testing.
+    //TODOreq TODOoptimization actually, but not needed for now: it is better to only have to instantiate QDataStream once [per socket methinks?], not every time I want to send something. But gah doesn't that mean that I'd have to look up the QDataStream from a hash lol just like my IRecycleableAndStreamable* storing for the header shit? Is this efficient? Again, the max size of the hash will only ever be CLIENT_COUNT... so like a few hundred or so? Allocating QDataStream over and over vs. a hash lookup. ALSO, maybe I can just use one shared QDataStream? That might have [hidden] performance implictions... but hell, it might not. QDataStream isn't even a QObject type (not sure how that factors in). What I mean to say that it's mostly just data. You'd be changing it's internal QIODevice* that it's operating on. Hell, that sounds a lot cheaper than a hash lookup TODOreq do that instead maybe after some thinking and IDEALLY testing.
 
     QSslSocket *socket = m_SslTcpServer->getSocketByUniqueId(uniqueRpcClientId);
     QDataStream stream(socket);
+    //TODOreq: I think I'll be pulling Magic out of header and streaming it individually... so I'll probably need to put that here later
     stream << message->Header;
-    if(!message->Header.Success)
-        stream << message->FailedReasonEnum;
     stream << *message;
 }
 void SslTcpServerAndBankServerProtocolKnower::myBroadcast(IMessage *message)
 {
-    //TODOreq: didn't I change the design for this such that we only choose one client to send the broadcast to, and he is responsible for notifying his neighbors (after writing to the couchbase cluster, and then performing a lookup into the couchbase cluster to find which of his neighbors are interested or not (whether or not he is interested is 'slightly' irrelevant)
+    //TODOreq: didn't I change the design for this such that we only choose one client to send the broadcast to, and he is responsible for notifying his neighbors (after writing to the couchbase cluster, and then performing a lookup into the couchbase cluster to find which of his neighbors are interested or not (whether or not he is interested is 'slightly' irrelevant, because he will know from looking at his in-memory data whether or not he is interested... (and he should notify his wt users before even looking into couchbase db for interested neighbors: it is likely that there is only wt user interested in the broadcast, so we want to deliver it to that wt user asap ya dig?))
 
     //TODOreq: meh I'm not sure if i can do this anymore. not a HUGE deal if I can't, just slightly less efficient: the client that uhh... performs the "GetAddFundsKey" action should be the receiver of the "pendingBalanceDetected" and "confirmedBalanceDetected" broadcasts. I have to somehow associate the Action to the two Broadcasts.... but fuck I gots no clue how to do that atm rofl. It would be nice to somehow make it a part of the functionality of the Rpc Generator (so I can use the same 'smart-broadcast' type thing in other rpc services), but I might settle for hacking in the code on a case by case basis
 

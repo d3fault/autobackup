@@ -1,0 +1,44 @@
+title of thread (even if response): "DAT BOOTSTRAP"
+
+m_ListOfReasonsToFork.append("stupid security policy");
+
+qWarning << m_ListOfReasonsToFork;
+
+/*
+
+prints:
+
+m_ListOfReasonsToFork
+[
+	"bindings to framework (qml) getting more attention than framework itself",
+	"CLA forces you to give up more rights than LGPL",
+	"arrogant leadership",
+	"opinion-based decision making process",
+	"stupid security policy"
+]
+
+*/
+
+
+if(m_ListOfReasonsToFork.size() > 0)
+{
+	if(m_SelfFinanciallySustainableWaitCondition.wait(MAX_LIFE_LENGTH))
+	{
+		if(m_ListOfReasonsToFork.size() > 0) // things may have changed during the time waiting (should mutex protect this, but eh PSEUDOCODE IS PSEUDOCODE)
+		{
+			fork(); //not to be confused with the kernel land fork()
+		}
+	}
+	else
+	{
+		die();
+	}
+}
+return codeIndefinitely(); // "never" returns, sort of like app.exec() ... except instead of the application ending, it's my life. Also this never actually returns anything, just like shutting down windows with an app running -_-. The process just terminates all-of-the-sudden
+
+
+// on a different thread
+while(true)
+{
+	codeIn_user_Land(); // eventually wakes up the wait condition above
+}

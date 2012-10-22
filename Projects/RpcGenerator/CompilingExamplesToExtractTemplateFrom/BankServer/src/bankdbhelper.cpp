@@ -21,30 +21,6 @@ void BankDbHelper::stop()
 }
 void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccountMessage)
 {
-#if 0
-    if(!m_AllUsers.contains(createBankAccountMessage->Username))
-    {
-        m_AllUsers.append(createBankAccountMessage->Username);
-        if(!m_AllUsers.contains(createBankAccountMessage->Username)) //this will never happen, but might in production environment. need to handle persist errors
-        {
-            createBankAccountMessage->createBankAccountFailedPersistError();
-            return;
-        }
-        else
-        {
-            emit d(QString("BankDbHelper created bank account for user: ") + createBankAccountMessage->Username);
-        }
-        createBankAccountMessage->deliver(); //TODOreq: the overall flow of code for these slots should be re-written/designed so that instead of defaulting to success unless a failed* is called, a genericFailed* is called by default. the deliver() has to be opted into (whitelist programming), and the errors are handled wherever detected just like in the current code...
-        return;
-    }
-    else
-    {
-        emit d(QString("BankDbHelper create bank account failed, username exists: ") + createBankAccountMessage->Username);
-        createBankAccountMessage->createBankAccountFailedUsernameAlreadyExists();
-        return;
-    }
-#endif
-
     /*
     THIS METHOD IS CURRENT, BUT THE BACKING CODE IS NOT YET THERE. WE ARE CHANGING FROM THE ABOVE #ifdef'd out code above...
             WHITELIST PROGRAMMING FTW
@@ -54,7 +30,7 @@ void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccount
                 [ ] make deliver handle failed flags
     */
 
-        //TODOreq: not sure where it goes exactly, but need to set Header.Success to false just before the dispenser dispenses it. we don't want to keep the old state of a recycled message.... but i mean this is a TODOreq for all of the properties of the messages, not just the success boolean
+        //TODOreq: not sure where it goes exactly, but need to set Header.Success to false just before the dispenser dispenses it. we don't want to keep the old state of a recycled message.... but i mean this is a TODOreq for all of the properties of the messages, not just the success boolean. Here's an idea for it: a virtual void resetParameters() that is implemented at the lowest level (IRecycleable?), and overwritten CALLING THE PARENT resetting all the child parameters as necessary. Test/Verify: a base non-cast'd pointer calling a virtual method will execute the most-recently-overwritten virtual instead. PRETTY SURE this is true.. but it's a little more dangerous than having a pure virtual because if I forget to override it in my child, I don't get errors. Or just a pure virtual implemented where relevant. idgaf
 
     if(!m_AllUsers.contains(createBankAccountMessage->Username))
     {
@@ -78,9 +54,6 @@ void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccount
         emit d(QString("BankDbHelper create bank account failed, username exists: ") + createBankAccountMessage->Username);
         createBankAccountMessage->setFailedUsernameAlreadyExists();
     }
-
-    //TODOreq: change functionality of the failed methods so that they only set up flagging (and i guess allow multiple failed reasons? TODOoptional that one is). I want deliver(); to be used _ALWAYS_. if you call it without setting Success to true, we returna generic error message
-
     createBankAccountMessage->deliver();
 }
 void BankDbHelper::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
@@ -88,6 +61,8 @@ void BankDbHelper::getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage)
     if(m_AllUsers.contains(getAddFundsKeyMessage->Username))
     {
         //TODOreq: add to db etc, perhaps relay to bitcoin? handle other error cases too... which is why i need to be in bitcoin lol. i'm thinking we should send it to bitcoin FIRST, then have him relay his results to us... and then we call deliver after adding it to the db. I'm not really sure about though... need to figure out precisely how I'm going to store bitcoin user data and where (TODOreq: another thing I've been thinking about is each 'service' server will have it's own bitcoindb.db file, so later accesses need to get back to the right service or we might find that the user doesn't have an account in the bitcoindb.db on that particular rpc service server. one way to solve this is to just use global non-user-specific bitcoindb.db files and then to store all the information in the couchbase cluster. this will lead to weird balancing issues, and we might even have to shift around bitcoins from rpc-server to rpc-server in order to have enough for a payout etc. i'm not sure about this altogether but a solution doesn't sound too difficult. obviously if i get better at bitcoin (use a library instead of the binary directly) then I can just store all the values in the couchbase cluster like normal...)
+
+        //since this is all "user" code in relation to Rpc Generator, I should ignore it for now. Just wanna get Rpc up and running and then I can do this shit later when I have couchbase up and running :-P
 
         //debug:
         getAddFundsKeyMessage->AddFundsKey = QDateTime::currentDateTime().toString();

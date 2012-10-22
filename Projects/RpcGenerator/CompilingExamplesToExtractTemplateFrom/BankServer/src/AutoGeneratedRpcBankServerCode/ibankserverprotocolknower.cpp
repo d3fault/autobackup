@@ -12,17 +12,11 @@ void IBankServerProtocolKnower::takeOwnershipOfActionsAndSetupDelivery()
     m_CreateBankAccountMessageDispenser = m_RpcBankServerActionDispensers->takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(this);
     m_GetAddFundsKeyMessageDispenser = m_RpcBankServerActionDispensers->takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(this);
 }
-void IBankServerProtocolKnower::copyLocalHeaderToMessageHeader(const RpcBankServerMessageHeader &localHeader, IRecycleableAndStreamable *message)
-{
-    message->Header.MessageSize = localHeader.MessageSize;
-    message->Header.MessageMagicAndRpcServiceId = localHeader.MessageMagicAndRpcServiceId;
-    message->Header.MessageId = localHeader.MessageId;
-    message->Header.MessageType = localHeader.MessageType;
-}
 void IBankServerProtocolKnower::processCreateBankAccountMessage(CreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId)
 {
     m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.insert(createBankAccountMessage, uniqueRpcClientId);
 
+    //I think this is old, idfk:
     //TODOreq: perhaps check the list already by value to see if we're already working on the same request?
     //if we are, it still might fail and then we should process this one. so i need to atomically access a list in that case, a list of "pendingCollissionsAwaitingFinalizatioin"
     //the list is mutex-grabbed+cleared AFTER we transmit the message back to
@@ -47,6 +41,9 @@ void IBankServerProtocolKnower::createBankAccountDelivery()
     myTransmit(createBankAccountMessage, uniqueRpcClientId);
     createBankAccountMessage->doneWithMessage();
 
+    //I think the below is old too, but shit I can't remember the ACK scheme solution I came up with xD. Wasn't it two lists: m_PendingInBusiness and m_AlreadyProcessedAndReturnedButWeCheckInHereWhenTheSameIdComesWeKnowClientGotIt --- or was that for broadcasts? Where the fuck did I put that design. How much of it do I have coded :-/?????? Fuck.
+
+    //^^^^^^^^^^^^^^
     //TODOreq: unsure of ordering of transmit and removing from pending hash. probably doesn't matter? no fucking clue tbh. changed it from .remove to .value and then to .take -- i guess i don't have a choice on the ordering? i think it only matters that the backend impl has in fact finished with the pending. so even if one does get through, the backend impl will catch it definitely
 }
 void IBankServerProtocolKnower::getAddFundsKeyDelivery()
@@ -59,10 +56,12 @@ void IBankServerProtocolKnower::getAddFundsKeyDelivery()
 void IBankServerProtocolKnower::pendingBalanceDetectedDelivery()
 {
     ServerPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = static_cast<ServerPendingBalanceDetectedMessage*>(sender());
-    pendingBalanceDetectedMessage->Header.MessageType = RpcBankServerMessageHeader::PendingBalanceDetectedMessageType; //TODOreq: shouldn't this be set by the dispenser or something? somewhere in the message itself? where the fuck am i seeing the MessageType for actions (find MessageType usages = solution)
+    pendingBalanceDetectedMessage->Header.MessageType = RpcBankServerMessageHeader::PendingBalanceDetectedMessageType; //TODOreq: shouldn't this be set by the dispenser or something? somewhere in the message itself? where the fuck am i setting the MessageType for actions (find MessageType usages = solution). The answer lies somewhere in the client code, as the server never sets a message type (except when reading a message type off the network from the client)
     pendingBalanceDetectedMessage->Header.MessageId = 0;
     myBroadcast(pendingBalanceDetectedMessage);
-    pendingBalanceDetectedMessage->doneWithMessage(); //TODOreq: shouldn't this be after the ACK? might have to re-send it... i guess it depends on the guarantees made by myBroadcast. if before it returns it writes to a couchbase db and WAL promises the delivery, then yes calling doneWithMessage() now is probably* ok. just make sure you know to allocate one whenever we are walking the WAL (either as us or a neighbor [same code, different machine]). getNewOrRecycled _cannot_ be used (bitcoin thread owns dispenser). so maybe we shouldn't do doneWithMessage until the ack IS here??? idfk
+    pendingBalanceDetectedMessage->doneWithMessage(); //old TODOreq: shouldn't this be after the ACK? might have to re-send it... i guess it depends on the guarantees made by myBroadcast. if before it returns it writes to a couchbase db and WAL promises the delivery, then yes calling doneWithMessage() now is probably* ok. just make sure you know to allocate one whenever we are walking the WAL (either as us or a neighbor [same code, different machine]). getNewOrRecycled _cannot_ be used (bitcoin thread owns dispenser). so maybe we shouldn't do doneWithMessage until the ack IS here??? idfk
+
+    //TODOreq: Pretty sure my broadcasts still need their ACK'ing scheme to be implemented...
 }
 void IBankServerProtocolKnower::confirmedBalanceDetectedDelivery()
 {
@@ -75,13 +74,9 @@ void IBankServerProtocolKnower::confirmedBalanceDetectedDelivery()
 #if 0 // leaving this huge chunk of code here because i see a bunch of TODOreqs that I don't feel like reading
 void IBankServerProtocolKnower::createBankAccountFailedUsernameAlreadyExists()
 {
-    //TODOreq: handle errors, perhaps a bool Success at IMessage level and an int reserved for failed enum (only transmitted if that bool Success is false)
-    //unsure and have yet to come up with a design for errors
-
     CreateBankAccountMessage *createBankAccountMessage = static_cast<CreateBankAccountMessage*>(sender());
     uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.take(createBankAccountMessage);
     //TODOreq: handle error where the message wasn't in pending for some reason :-/. do it for regular delivery() too...
-    //TODOreq: idfk what to do. stream an enum or something? should it be part of the header (or a success/failed bool)?
     createBankAccountMessage->fail(CreateBankAccountMessage::FailedUsernameAlreadyExists);
     myTransmit(createBankAccountMessage, uniqueRpcClientId);
     createBankAccountMessage->doneWithMessage();

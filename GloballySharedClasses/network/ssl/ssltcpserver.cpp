@@ -200,6 +200,7 @@ void SslTcpServer::handleConnectedAndEncrypted()
         //lol found out i already had one from commented out connection management attempt
         m_EncryptedSocketsBySerialNumber.insert(getClientUniqueId(secureSocket), secureSocket);
         //i wonder if it's  more efficient to just store teh socket. this way at least i ensure only 1 per cert (don't i?)
+        //also, do I need an authentication/identification scheme on top of the certs?????
 
         emit clientConnectedAndEncrypted(secureSocket);
     }

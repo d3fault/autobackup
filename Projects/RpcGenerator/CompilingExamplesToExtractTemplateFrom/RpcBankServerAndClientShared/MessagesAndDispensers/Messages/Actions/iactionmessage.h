@@ -9,7 +9,7 @@ class IActionMessage : public IMessage
 {
     Q_OBJECT
 public:
-    explicit IActionMessage(QObject *parent = 0);
+    explicit IActionMessage(QObject *parent);
 
     inline void setSuccessful() { m_Successful = true; }
     inline bool isSuccessful() { return m_Successful; }
@@ -22,14 +22,17 @@ private:
 protected:
     inline void setErrorCode(quint8 errorCode) { m_ErrorCode = errorCode; } //action messages call this from within setFailed<reason>();
 
+
+//TODOreq: I think perhaps I should only stream in/out m_ErrorCode depending on m_Successful (think before changing) for both of the below... but for now to KISS I'm going to just always stream both in/out. I've made too many changes already, I'll be lucky if it even works :-/. Dynamic/minimal protocols ftw :). I was about to write right here that I should put m_ErrorCode in a safe state just in case they accidentally call it... but there is no safe state. There is no "non-error" state. 0x0 is "GenericError"... so I _GUESS_ we could set it to that... but well-written user code (WHICH WE CANNOT RELY ON) should never access m_ErrorCode unless we're not m_Successful
+
 #ifdef WE_ARE_RPC_BANK_SERVER_CLIENT_CODE
-    inline void streamSuccessAndErrorCodeIn(QDataStream &in) { in >> Success; in >> ErrorCode; }
+    inline void streamSuccessAndErrorCodeIn(QDataStream &in) { in >> m_Successful; in >> m_ErrorCode; }
 #endif
 
 //we have to be one or the other
 
 #ifdef WE_ARE_RPC_BANK_SERVER_CODE
-    inline void streamSuccessAndErrorCodeOut(QDataStream &out) { out << Success; out << ErrorCode; }
+    inline void streamSuccessAndErrorCodeOut(QDataStream &out) { out << m_Successful; out << m_ErrorCode; }
 #endif
 };
 

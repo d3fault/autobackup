@@ -10,3 +10,5 @@ so i can modify and test the compiling version of my generated code. i can add
 to the generated code as well as the extraction script as needed... but should
 always have a compiling/working CompilingExamplesToExtractTemplateFrom example
 before updating the extract script. and before running it (implied)
+
+should also strip out comments so I don't ever accidentally add comments to the template version. The compileable version is the master copy.

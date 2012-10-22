@@ -5,12 +5,12 @@ RpcBankServerBroadcastDispensers::RpcBankServerBroadcastDispensers(IEmitRpcBankS
 { }
 ServerPendingBalanceDetectedMessageDispenser *RpcBankServerBroadcastDispensers::takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner)
 {
-    m_PendingBalanceDetectedMessageDispenser = new ServerPendingBalanceDetectedMessageDispenser(static_cast<IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries*>(m_Destination), owner);
+    m_PendingBalanceDetectedMessageDispenser = new ServerPendingBalanceDetectedMessageDispenser(static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), owner);
     return m_PendingBalanceDetectedMessageDispenser;
 }
 ServerConfirmedBalanceDetectedMessageDispenser *RpcBankServerBroadcastDispensers::takeOwnershipOfConfirmedBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner)
 {
-    m_ConfirmedBalanceDetectedMessageDispenser = new ServerConfirmedBalanceDetectedMessageDispenser(static_cast<IAcceptRpcBankServerActionAndActionErrorAndBroadcastMessageDeliveries*>(m_Destination), owner);
+    m_ConfirmedBalanceDetectedMessageDispenser = new ServerConfirmedBalanceDetectedMessageDispenser(static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), owner);
     return m_ConfirmedBalanceDetectedMessageDispenser;
 }
 bool RpcBankServerBroadcastDispensers::everyDispenserIsCreated()

@@ -9,7 +9,7 @@ CreateBankAccountMessage *ServerCreateBankAccountMessageDispenser::getNewOrRecyc
 }
 IRecycleableAndStreamable *ServerCreateBankAccountMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {
-    CreateBankAccountMessage *createBankAccountMessage = new ServerCreateBankAccountMessage(this);
+    CreateBankAccountMessage *createBankAccountMessage = new CreateBankAccountMessage(this);
 
     connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
 
