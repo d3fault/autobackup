@@ -38,8 +38,12 @@ void IBankServerProtocolKnower::createBankAccountDelivery()
 
     CreateBankAccountMessage *createBankAccountMessage = static_cast<CreateBankAccountMessage*>(sender());
     uint uniqueRpcClientId = m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.take(createBankAccountMessage);
+
+    //Should this go after myTransmit? It probably doesn't make a difference...
+    m_FinishedProcessingAndWeHaveSentItBackToClientButWeAreWaitingForSomeSortOfAckOnOurResponse.append(createBankAccountMessage);
+
     myTransmit(createBankAccountMessage, uniqueRpcClientId);
-    createBankAccountMessage->doneWithMessage();
+    //createBankAccountMessage->doneWithMessage();
 
     //I think the below is old too, but shit I can't remember the ACK scheme solution I came up with xD. Wasn't it two lists: m_PendingInBusiness and m_AlreadyProcessedAndReturnedButWeCheckInHereWhenTheSameIdComesWeKnowClientGotIt --- or was that for broadcasts? Where the fuck did I put that design. How much of it do I have coded :-/?????? Fuck.
 
@@ -61,7 +65,7 @@ void IBankServerProtocolKnower::pendingBalanceDetectedDelivery()
     myBroadcast(pendingBalanceDetectedMessage);
     pendingBalanceDetectedMessage->doneWithMessage(); //old TODOreq: shouldn't this be after the ACK? might have to re-send it... i guess it depends on the guarantees made by myBroadcast. if before it returns it writes to a couchbase db and WAL promises the delivery, then yes calling doneWithMessage() now is probably* ok. just make sure you know to allocate one whenever we are walking the WAL (either as us or a neighbor [same code, different machine]). getNewOrRecycled _cannot_ be used (bitcoin thread owns dispenser). so maybe we shouldn't do doneWithMessage until the ack IS here??? idfk
 
-    //TODOreq: Pretty sure my broadcasts still need their ACK'ing scheme to be implemented...
+    //TODOreq: Pretty sure my broadcasts still need their ACK'ing scheme to be implemented... but I'm going to wait until my Action's ACK-ing scheme is in place + working to do it (since I'll steal it's code :-P)
 }
 void IBankServerProtocolKnower::confirmedBalanceDetectedDelivery()
 {

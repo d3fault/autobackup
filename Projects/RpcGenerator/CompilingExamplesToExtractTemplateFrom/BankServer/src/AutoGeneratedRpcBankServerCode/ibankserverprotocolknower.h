@@ -22,8 +22,29 @@ public:
     void takeOwnershipOfActionsAndSetupDelivery();
 private:
     RpcBankServerActionDispensers *m_RpcBankServerActionDispensers;
-    QHash<CreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer;
-    QHash<GetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer;
+
+
+
+
+
+
+    //these two hashes are used for figuring out wich client requested it..... BUT....
+    -QHash<CreateBankAccountMessage*, uint> m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer;
+    -QHash<GetAddFundsKeyMessage*, uint> m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer;
+
+    //....perhaps instead I should store the entire message as pending in the business? (maybe I still need those above for clientIDs only, idfk. doubt it though, just need to consolidate the clientId into the message or header or something). All I'm saying is that right now, they have very similar purposes so should probably be combined somehow
+    QList<CreateBankAccountMessage*> m_PendingCreateBankAccountMessagesInBusiness;
+
+    //....and again when it's pending an ACK. If it's in this list, all it means is we think we've sent it back to the client. Our (the server's!!!) 'ACK' is when we get the same MessageId again without the 'retryBit' set. If it is set, it didn't get our response, so we pull it out of the list and send it again :-P. TODOreq: there is a race condition where we receive a message with a retry bit set because the client has sent it just before receiving our first/original delivery. If we get it with retryBit set, we'd send it again :-/ and the client will receive the same message twice!!!!! Once just moments after sending message again with retryBit set, and another when we get the message with retryBit set and send it again. A solution to this is to have truly unique IDs per-message, but then my server's ACK'ing scheme for actions needs to be redesigned. FML
+    QList<CreateBankAccountMessage*> m_FinishedProcessingAndWeHaveSentItBackToClientButWeAreWaitingForSomeSortOfAckOnOurResponse;
+
+    //TODOoptimization^: I can use the QIODevice* as a key into a hash to optimize the above two 'types' (pending vs. ack-ing).. but for every action type of course
+
+
+
+
+
+
 protected:
     inline void copyLocalHeaderToMessageHeader(const RpcBankServerMessageHeader &localHeader, IRecycleableAndStreamable *message)
     {

@@ -30,7 +30,7 @@ class SimpleSingleFrontendWidget : public QWidget
 public:
     SimpleSingleFrontendWidget(QWidget *parent = 0);
 private:
-    //Even though all of our GUI objects are pointers, we do not have to worry about calling delete on them (rule of thumb: any time you 'new' something, you also need to 'delete' it. This is an exception to that rule) because of QObject's child/parent relationship. When we call this->setLayout(m_Layout), 'this' becomes the parent of m_Layout and all child objects (everything we add to the layout becomes a child of m_Layout), and deletes it (and all children) for us when 'this' is destroyed
+    //Even though all of our GUI objects are pointers, we do not have to worry about calling delete on them (rule of thumb: any time you 'new' something, you also need to 'delete' it. This is an exception to that rule) because of QObject's child/parent relationship. When we call this->setLayout(m_Layout), 'this' becomes the parent of m_Layout and all child objects (everything we add to the layout becomes a sibling of m_Layout), and deletes it (and all children) for us when 'this' is destroyed
     QVBoxLayout *m_Layout;
     QLabel *m_StringToHashLabel;
     QLineEdit *m_StringToHashLineEdit;
