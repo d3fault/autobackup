@@ -1,0 +1,132 @@
+########## NO ERRORS USE CASE ##############
+
+Client
+pending.add()
+	->
+		Server
+		businessPending.add()
+				->
+					Business
+				<-
+		businessPending.remove()
+		responseAckPending.add()
+	<-
+pending.remove()
+
+//next message that uses the same Id
+
+pending.add()
+	->
+		responseAckPending.remove()
+		businessPending.add()
+				->
+		//etc (same shit, just demonstrating responseAckPending.remove())
+
+
+
+
+
+
+########## BUSINESS EATS THAT SHIT ERROR CASE ##############
+
+Client
+pending.add()
+	->
+		Server
+		businessPending.add()
+				->
+					Business
+
+
+pendingTimeout()
+retryBit.set()
+	->
+		identifies-business-pending // Should we instead retry? What if the business is just really really slow :-/????
+		//should i leave it in businessPending in case business comes back? take it out so we know we already generically error'd it (TODOreq: this would be the error case where we receive a message that's not in pending. i remember writing that in my comments in code)
+	<-
+Generic Error
+
+
+
+
+
+########## REQUEST LOST ON NETWORK ##############
+
+Client
+pending.add()
+	->
+
+pendingTimeout()
+retryBit.set()
+	->
+		Server
+		hmm-we-never-got-dat-shit TODOreq: our server will think that since the pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE) (except when there is no previous message, which is only for the first message) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or ?????
+		businessPending.add()
+				->
+					Business
+				<-
+		//continues as no errors use case
+
+
+
+
+########## RESPONSE LOST ON NETWORK ##############
+
+Client
+pending.add()
+	->
+		Server
+		businessPending.add()
+				->
+					Business
+				<-
+		businessPending.remove()
+		responseAckPending.add()
+	<-
+//doesnt-get-it
+
+timeout()
+retryBit.set()
+	->
+		orly-well-here-it-is-AGAIN-mofo // this is our false described positive above, but this time we're doing it right :)
+		//still doesn't remove it from responsePending() though. only do that when retryBit is _NOT_ set
+	<-
+pending.remove()
+//woot
+
+
+
+########## REQUEST LOST ON NETWORK TWICE ##############
+//TODOreq. basically after the second timeout, Client (which is really ServerHelper) emits a signal telling the class that can see every ServerHelper that this particular ServerHelper is no longer suitable (aka offline). At that point he tries a different ServerHelper, if any are available (if not, errors out)
+
+########## RESPONSE LOST ON NETWORK TWICE ##############
+//pretty much the same as the request being lost twice... but this is far less likely to happen...
+//TODOreq: the response might come JUST AFTER the second timeout(), but we've already initiated error'ing out. I guess we should undo that error out (but not the message portion of it! (HOLY SHIT WHAT THE FUCK HUGE ERROR IN DESIGN: THE BUSINESS HAS ALREADY SUCCESSFULLY PERFORMED IT'S OPERATION AT THIS POINT. HOW THE WHAT THE FUCK? DO I NEED TO MAKE SURE THAT THE NEXT _SERVERHELPER_ OVERWRITES THE SAME PLACE USING A CAS? SHOULD I HAVE SOME WAY WHERE I CAN SEE THAT THAT SAME EXACT REQUEST SUCCEEDED PREVIOUSLY BUT I DIDN'T KNOW IT? IE BE AWARE OF THIS EXACT ERROR CASE? Possibly a fix: unique message IDs and some sort of a stream log or something so the second server can be all like "hmm dis shit already happened I ain't gonna try it again. oh and here's the result from it since we are smart as fuck and know what this error case is *pulls result from db* ")), telling our parent that this ServerHelper is in fact functioning (although it's slow as fuck haha (could extend timeout periods or just decide not to use it just for that fact (all depends HOW MUCH slower really)))
+
+
+
+########## RETRY RACE CONDITION ############## //TODOreq: are there more? like perhaps where the message is still in the business? brain hurts
+//SOLUTION: Client can see it's local copy of the message that the retryBit is set, so it is prepared to receive and ignore the second response. I think this means we can't do pending.remove() yet... or perhaps we need a new special list just for this use case?????? ACTUALLY client has no way of knowing if a second is coming unless a responseRetry bit is set. if it isn't set, we know it's the first so add the message to m_ListOfMessagesThatWeRetriedAndAreNowExpectingAduplicateResponse. if responseRetry bit is set, we know that the first message was lost and the second one is going to be the only one we get
+
+Client
+pending.add()
+	->
+		Server
+		businessPending.add()
+				->
+					Business
+				<-
+		businessPending.remove()
+		responseAckPending.add()
+	<-
+//that ^ response is still on the network when we timeout() below, but really it could be anywhere after we do responseAckPending.add() on it (about to be sent)
+timeout()
+retryBit.set()
+	->
+we-get-the-first-response-now
+pending.remove()
+		orly-well-here-it-is-AGAIN-mofo
+	<-
+we-get-the-same-response-again :-/
+not-in-pending-so-can't-remove
+
