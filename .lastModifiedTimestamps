@@ -15,7 +15,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033740
+Documents/minddump/:1386033763
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -26,7 +26,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033740
+Documents/minddump/dreams/:1386033763
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -198,6 +198,7 @@ Documents/minddump/cube.grid.plox.txt:1323509054
 Documents/minddump/d3fault.copy.on.write.nothing.new.here.i.don.thtink.fuck.iasd.asdlfjaslfkj.txt:1337639246
 Documents/minddump/d3fault.is.my.normal.aslfjasldfjasdfouwerlksajdfasdofiulk.txt:1339839173
 Documents/minddump/dalfkasdlfkjsdafouwerlkjasdflkjsdfosuflwkejroufsdlkfjasodufwlekrjsousdflk.txt:1349689967
+Documents/minddump/dalfkjasdlfjsadfoulwerjaosfusdlakfjwaoerulasdfj.txt:1351116443
 Documents/minddump/dasfljsdofiuareouasklfjsadlfjsaofujasdlkfjas.txt:1331350458
 Documents/minddump/data.flossing.visulizing.data.flow.through.an.app.and.network.for.fun.alsfjsadlfj.txt:1338978628
 Documents/minddump/dear.diary.adlfkjasofuwyrdlfkjworeiuslfdkjwaoerui.txt:1340899854
@@ -447,6 +448,7 @@ Documents/minddump/oiurqoweirqweklajsdfvckjfasdlfkweorusaflk.txt:1338993116
 Documents/minddump/oiwurlsakjfwoeriuafdkshadfkhlsadfweoriu.txt:1339229126
 Documents/minddump/ok.guess.i.was.wrong.if.you.use.encryption.ROUNDS.then.user.passwords.do.scale.txt:1343325984
 Documents/minddump/ok.i.will.but.first.a.bit.about.my.paranoia.txt:1342605480
+Documents/minddump/only.reason.im.not.100.percent.sure.is.because.i.didnt.check.the.day.before.lol.lsfkjasdflkajsdfoausflkasdjfoasdufwerkjsdfoul.txt:1351111322
 Documents/minddump/open.source.is.double.edged.sword.but.ultimately.worth.it.txt:1328317146
 Documents/minddump/output.only.can.have.selective.as.fuck.input.txt:1322779096
 Documents/minddump/paranoia.and.brainwash.would.flood.in.dont.do.this.txt:1340447574
@@ -628,7 +630,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1344899708
 GloballySharedClasses/ssltcpclient.pri:1344899198
 GloballySharedClasses/ssltcpserver.pri:1344899078
 GloballySharedClasses/ssltcpservertestcerts.pri:1344900176
-Pictures/:1386033740
+Pictures/:1386033763
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -723,7 +725,20 @@ Projects/BlueBox/design/video.player.widget.should.be.under.a.side.company.NOT.d
 Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual.parsing.etc.txt:1324238851
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
-Projects/ForFun/:1350802791
+Projects/ForFun/:1351104297
+Projects/ForFun/CleanThreadingExample/:1351114220
+Projects/ForFun/CleanThreadingExample/src/:1351121922
+Projects/ForFun/CleanThreadingExample/src/CleanThreadingExample.pro:1351113610
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingbackend1.cpp:1351112785
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingbackend1.h:1351111651
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingbackend2.cpp:1351113472
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingbackend2.h:1351113324
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingexampletest.cpp:1351114156
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingexampletest.h:1351109901
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingfrontendwidget.cpp:1351114260
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingfrontendwidget.h:1351114260
+Projects/ForFun/CleanThreadingExample/src/main.cpp:1351109451
+Projects/ForFun/CleanThreadingExample/src/objectonthreadhelper.h:1351119857
 Projects/ForFun/QFileSystemWatcher2TestForFun/:1343131983
 Projects/ForFun/QFileSystemWatcher2TestForFun/design/:1343131976
 Projects/ForFun/QFileSystemWatcher2TestForFun/design/fuck.this.too.lazy.lmfao.aldkfjasldfjoiurel.what.a.waste.i.guess.it.was.a.little.fun.txt:1343131976
@@ -743,7 +758,7 @@ Projects/ForFun/QSettingsFun/src/main.cpp:1348513026
 Projects/ForFun/QSettingsFun/src/mainwidget.cpp:1348562776
 Projects/ForFun/QSettingsFun/src/mainwidget.h:1348561194
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/:1350801999
-Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/:1351021850
+Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/:1351121923
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/SimpleSingleFrontEndWithTwoBackEndsExample.pro:1350801765
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/main.cpp:1350801765
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglebackend1.cpp:1350801765
@@ -1787,7 +1802,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033740
+Projects/libAvGraphicsItem2/design/:1386033763
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
