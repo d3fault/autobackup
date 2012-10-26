@@ -1,19 +1,17 @@
 #!/bin/bash
-read -n1 -r -p "make sure the device is mounted in: /media/FF64-0C05/" key
-cd /media/FF64-0C05/DCIM/Camera/
-cp -av ./ /mnt/750x1/droid/camera/
-cp -av ./ /mnt/750x2/droid/camera/
+read -n1 -r -p "make sure the device is mounted in: /media/disk/" key
+cd /media/disk/DCIM/Camera/
+cp -avi ./ /media/truecrypt1/droid/camera/
+cp -avi ./ /media/truecrypt2/droid/camera/
 cd ..
 cd ..
-cp -av ./recording*.3gpp /mnt/750x1/droidSoundRecorder/
-cp -av ./recording*.3gpp /mnt/750x2/droidSoundRecorder/
-cd ./DCIM/Camera/
-read -n1 -r -p "done copying, press a key to start shredding" key
-shred -fuv --iterations=1 ./*
+cp -avi ./recording*.3gpp /media/truecrypt1/droidSoundRecorder/
+cp -avi ./recording*.3gpp /media/truecrypt2/droidSoundRecorder/
+read -n1 -r -p "done copying, press a key to start deleting" key
+#shred -fuv --iterations=1 ./*
+cd ./DCIM/
+rm -rfv ./Camera/
+rm -rfv ./.thumbnails/
+#shred -fuv --iterations=1 ./*
 cd ..
-cd ./.thumbnails/
-shred -fuv --iterations=1 ./*
-cd ..
-cd ..
-shred -fuv --iterations=1 ./recording*.3gpp
-
+rm -rfv ./recording*.3gpp

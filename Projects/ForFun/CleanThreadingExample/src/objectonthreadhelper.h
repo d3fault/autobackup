@@ -4,6 +4,7 @@
 #include <QThread>
 
 
+#ifdef ORIG_ATTEMPT
 template <class UserObjectInTemplate>
 class ObjectOnThreadHelperTemplateHack : public QThread
 {
@@ -39,8 +40,6 @@ protected:
 signals:
     void objectIsReadyForConnections();
 };
-
-#ifdef ORIG_ATTEMPT
 
 template <class UserObject>
 class ObjectOnThreadHelper : public QThread

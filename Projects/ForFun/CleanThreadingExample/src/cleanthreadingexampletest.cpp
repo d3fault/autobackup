@@ -4,12 +4,12 @@ CleanThreadingExampleTest::CleanThreadingExampleTest(QObject *parent) :
     QObject(parent), m_CleanedUpBackends(false)
 {
     //Before starting the thread on which our backend object will live, we connect to the helper so that he can notify us (which happens right after the object is instantiated) when the object is ready to be connected to
-    connect(&m_BackendObject1ThreadHelper, SIGNAL(objectIsReadyForConnections()), this, SLOT(handleBackendObject1isReadyForConnections()));
+    connect(&m_BackendObject1ThreadHelper, SIGNAL(objectCleanThreadingBackend1IsReadyForConnectionsOnly(CleanThreadingBackend1*)), this, SLOT(handleBackendObject1isReadyForConnections(CleanThreadingBackend1*)));
     //Start the helper/thread. This is where our object gets instantiated and objectIsReadyForConnections() is emitted
     m_BackendObject1ThreadHelper.start();
 
     //Same thing, but for our second backend object/helper/thread
-    connect(&m_BackendObject2ThreadHelper, SIGNAL(objectIsReadyForConnections()), this, SLOT(handleBackendObject2isReadyForConnections()));
+    connect(&m_BackendObject2ThreadHelper, SIGNAL(objectCleanThreadingBackend2IsReadyForConnectionsOnly(CleanThreadingBackend2*)), this, SLOT(handleBackendObject2isReadyForConnections(CleanThreadingBackend2*)));
     m_BackendObject2ThreadHelper.start();
 
     //We connect the QCoreApplication::aboutToQuit() signal to our CleanThreadingExampleTest::handleAboutToQuit() slot. It has to be called using a Direct Connection, otherwise the application would continue shutting down (not letting us properly clean up) after the aboutToQuit() signal is emitted. The slot is called using a Qt::DirectConnection for us (Qt determines at runtime what thread a destination object/slot lives on). Since 'this' lives on the main/GUI thread, specifying Qt::DirectConnection is redundant
@@ -45,11 +45,9 @@ void CleanThreadingExampleTest::cleanupBackendObjectsIfNeeded()
         m_CleanedUpBackends = true;
     }
 }
-void CleanThreadingExampleTest::handleBackendObject1isReadyForConnections()
+void CleanThreadingExampleTest::handleBackendObject1isReadyForConnections(CleanThreadingBackend1 *backend1)
 {
     //When this slot is called, our backend object (the type we specified in the template parameter) is instantiated and ready to be connected to. It is on it's own thread, so calling methods it directly is unsafe (unless you use a QMutex to protect data accessed by both the thread and the method you call directly, of course. Connecting signals/slots to an object on another thread is thread-safe
-
-    CleanThreadingBackend1 *backend1 = m_BackendObject1ThreadHelper.getPointerToObjectOnThreadToBeUsedOnlyForConnections();
 
     //GUI signals ---> backend object slots
     //"Do Something!". Usually triggered by user input. Triggered by button clicks a lot of the time, but also triggered in this application by changing the random number generator's properties. Note that our GUI emits the "requested" signals after catching the clicked() and textChanged() signals and first sanitizing the user input, which is all handled in our GUI class
@@ -59,11 +57,9 @@ void CleanThreadingExampleTest::handleBackendObject1isReadyForConnections()
     //"Something happened!". It could be anything. This is how a backend threads safely update the GUI without locking it up. The signals are emitted from the backend threads... and after Qt's signals/slots awesomeness takes place: the slots are called on the GUI thread
     connect(backend1, SIGNAL(hashGenerated(const QString &)), &m_Gui, SLOT(handleHashGenerated(const QString &)));
 }
-void CleanThreadingExampleTest::handleBackendObject2isReadyForConnections()
+void CleanThreadingExampleTest::handleBackendObject2isReadyForConnections(CleanThreadingBackend2 *backend2)
 {
     //All of the comments in handleBackendObject1isReadyForConnections() apply here too
-
-    CleanThreadingBackend2 *backend2 = m_BackendObject2ThreadHelper.getPointerToObjectOnThreadToBeUsedOnlyForConnections();
 
     connect(&m_Gui, SIGNAL(updateRandomNumberGeneratorPropertiesRequested(int,int)), backend2, SLOT(updateRandomNumberGeneratorProperties(int,int)));
     connect(backend2, SIGNAL(randomNumberResultsGathered(const QString &)), &m_Gui, SLOT(handleRandomNumberResultsGathered(const QString &)));
