@@ -13,7 +13,7 @@ by triggering a much slower count/verify
 
 if that much slower count/verify completes, then we record the acceptable error of margin (in a more accurate double format)
 future group().group() balance checkings should be zero within that error of margin
-a larger one and we we-trigger the slow count/verify again
+a larger one and we re-trigger the slow count/verify again
 
 we could also keep track of each error of margin and report spikes
 

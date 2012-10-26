@@ -42,7 +42,8 @@ pendingTimeout()
 retryBit.set()
 	->
 		identifies-business-pending // Should we instead retry? What if the business is just really really slow :-/????
-		//should i leave it in businessPending in case business comes back? take it out so we know we already generically error'd it (TODOreq: this would be the error case where we receive a message that's not in pending. i remember writing that in my comments in code)
+		//should i leave it in businessPending in case business comes back? take it out so we know we already generically error'd it (TODOreq: this would be the error case where we receive a message that's not in pending. i remember writing that in my comments in code). I'm starting to think that if I ever detect this, I should fucking shut down _EVERYTHING_, including other servers. It should really never happen. But will it? Will couchbase or bitcoin crashing cause it? I'm actually inclined to say NO because our business code is a QObject/Qt... not bitcoin/couchbase directly. My business code will need to be able to deal with couchbase/bitcoin going offline or crashing or erroring or whatever... and then return an error. So if I _DO_ see a case where the business eats it, there's a much larger issue at hand.
+	
 	<-
 Generic Error
 
@@ -60,7 +61,7 @@ pendingTimeout()
 retryBit.set()
 	->
 		Server
-		hmm-we-never-got-dat-shit TODOreq: our server will think that since the pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE) (except when there is no previous message, which is only for the first message) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or ?????
+		hmm-we-never-got-dat-shit TODOreq: false positive: our server will think that since the pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE with same id) (except when there is no previous message, which is only for the first message with that id) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or ?????
 		businessPending.add()
 				->
 					Business
@@ -88,7 +89,7 @@ pending.add()
 timeout()
 retryBit.set()
 	->
-		orly-well-here-it-is-AGAIN-mofo // this is our false described positive above, but this time we're doing it right :)
+		orly-well-here-it-is-AGAIN-mofo // this is the same as our described above false positive, but this time we're doing it right :)
 		//still doesn't remove it from responsePending() though. only do that when retryBit is _NOT_ set
 	<-
 pending.remove()
@@ -101,7 +102,9 @@ pending.remove()
 
 ########## RESPONSE LOST ON NETWORK TWICE ##############
 //pretty much the same as the request being lost twice... but this is far less likely to happen...
-//TODOreq: the response might come JUST AFTER the second timeout(), but we've already initiated error'ing out. I guess we should undo that error out (but not the message portion of it! (HOLY SHIT WHAT THE FUCK HUGE ERROR IN DESIGN: THE BUSINESS HAS ALREADY SUCCESSFULLY PERFORMED IT'S OPERATION AT THIS POINT. HOW THE WHAT THE FUCK? DO I NEED TO MAKE SURE THAT THE NEXT _SERVERHELPER_ OVERWRITES THE SAME PLACE USING A CAS? SHOULD I HAVE SOME WAY WHERE I CAN SEE THAT THAT SAME EXACT REQUEST SUCCEEDED PREVIOUSLY BUT I DIDN'T KNOW IT? IE BE AWARE OF THIS EXACT ERROR CASE? Possibly a fix: unique message IDs and some sort of a stream log or something so the second server can be all like "hmm dis shit already happened I ain't gonna try it again. oh and here's the result from it since we are smart as fuck and know what this error case is *pulls result from db* ")), telling our parent that this ServerHelper is in fact functioning (although it's slow as fuck haha (could extend timeout periods or just decide not to use it just for that fact (all depends HOW MUCH slower really)))
+//TODOreq: the response (either first or second. first if business is slow, second if first really did get lost on network) might come JUST AFTER the second timeout(), but we've already initiated error'ing out. I guess we should undo that error out (but not the message portion of it! (HOLY SHIT WHAT THE FUCK HUGE ERROR IN DESIGN: THE BUSINESS HAS ALREADY SUCCESSFULLY PERFORMED IT'S OPERATION AT THIS POINT. HOW THE WHAT THE FUCK? DO I NEED TO MAKE SURE THAT THE NEXT _SERVERHELPER_ OVERWRITES THE SAME PLACE USING A CAS? SHOULD I HAVE SOME WAY WHERE I CAN SEE THAT THAT SAME EXACT REQUEST SUCCEEDED PREVIOUSLY BUT I DIDN'T KNOW IT? IE BE AWARE OF THIS EXACT ERROR CASE? Possibly a fix: unique message IDs and some sort of a stream log or something so the second server can be all like "hmm dis shit already happened I ain't gonna try it again. oh and here's the result from it since we are smart as fuck and know what this error case is *pulls result from db* ")), telling our parent that this ServerHelper is in fact functioning (although it's slow as fuck haha (could extend timeout periods or just decide not to use it just for that fact (all depends HOW MUCH slower really)))
+//basically the second server to try it needs to see what the fuck happened to the first server? It would be a decent check to begin with... and especially for the error case just described (where the write DID go through).
+//I need ample timing for the business. Need to find that sweet spot between "not timing out too slowly" and "not giving business enough time". I like my averaging * 1.5 idea because it scales automatically. 1.5 might not be enough, maybe x3 is a good amount? I really don't want to error out and have another server try the same shit just because my timeout was too low :(. I think I need to redesign and incorporate a stream log FML. I am unsure. "Smart Keys" with CAS might/_SHOULD_ be enough... but then the rpc generator functioning properly depends on the business code. This is not good. I think it will have to anyways :-/. What the fuck my brain just exploded.
 
 
 
@@ -119,7 +122,7 @@ pending.add()
 		businessPending.remove()
 		responseAckPending.add()
 	<-
-//that ^ response is still on the network when we timeout() below, but really it could be anywhere after we do responseAckPending.add() on it (about to be sent)
+//that ^ response is still on the network when we timeout() below, but really it could be anywhere after we do responseAckPending.add() on it (about to be sent). If Server gets our timeout/second-request (with retryBit set) before responseAckPending.add(), then this is the "business eats it" error case...
 timeout()
 retryBit.set()
 	->
@@ -130,3 +133,27 @@ pending.remove()
 we-get-the-same-response-again :-/
 not-in-pending-so-can't-remove
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The problem with the stream log is that it adds an extra step to the CAS-race, so I'm not sure if it is OK. Do I declare an intention to grab a spot regardless of if it's taken? Surely it would be stupid to check that the mainValue is available, put my stream log intention in place, and then grab it. What if it disappears in the meantime? Declaring only my intention might make sense. Do I also then record my results? All of this would be unique-id-per-message-never-reusing-one-ever, of course. This solves the problem of a second server being able to see what the fuck how far the first server got in the business. If he only declared his intention, we could do the rest. If the stream log has an intention and the actual CAS-mainValue but no intention-result, we could put the intention-result (TODOreq: it CAS the intention-result against the first server. If it loses then we know the first server is online but really really slow?) in and return the CAS-mainValue safely. Our handler... the client that called the first server, then us as the second server... will know to ignore the first server's slow ass response. So even if we lose that CAS for the intention-result, we should still return the CAS-mainValue??
+
+
+I need to re-lookup how I did that "balance transfer" shit. I remember it was pretty fuckin complex. Maybe that's how I need every single one of my operations to be?
+
+I guess I should also CAS the stream log intention too. I should CAS all 3 points. Intention, Actual, Result. Losing the first or third means the first server is still online (we'd have god knowledge at that point... since it would be the same exact code as running on the first server (except the first server won't ever lose the CAS for Intention or Result)). Losing the second simply means another Wt-user beat me to the punch. I mean ideally we'd disable even their ability to make such an intention/request in Wt's GUI... but race conditions mean that's impossible realistically.
+
+
+The more I type down here, the more I think I need dat stream log :-P. But I should check that balance shit before deciding. I think the balance example WAS POSSIBLY a hacky stream log implementation hahahaha. It was specific to balance only... but it was the same concept (I think)

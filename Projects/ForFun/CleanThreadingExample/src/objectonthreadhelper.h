@@ -3,8 +3,27 @@
 
 #include <QThread>
 
+#ifdef FAILED_MACRO_ATTEMPT
 
-#ifdef ORIG_ATTEMPT
+#define DECLARE_INTENT_TO_USE_OBJECT_ON_THREAD(UserObjectType) \
+    class UserObjectType##OnThreadHelper : public QThread \
+    { \
+        Q_##OBJECT \
+    public: \
+        explicit UserObjectType##OnThreadHelper(QObject *parent = 0) : QThread(parent) { } \
+    protected: \
+        virtual void run() \
+        { \
+            UserObjectType qobj; \
+            emit object##UserObjectType##IsReadyForConnectionsOnly(&qobj); \
+            exec(); \
+        } \
+    signals: \
+        void object##UserObjectType##IsReadyForConnectionsOnly(UserObjectType *object); \
+};
+
+#endif
+
 template <class UserObjectInTemplate>
 class ObjectOnThreadHelperTemplateHack : public QThread
 {
@@ -18,7 +37,14 @@ public:
 private:
     UserObjectInTemplate *m_PointerToObject;
 protected:
-    virtual void run() { }
+    virtual void run()
+    {
+        UserObjectInTemplate userObject;
+        m_PointerToObject = &userObject;
+        emit objectIsReadyForConnections();
+        exec(); //We stay in this event loop until QThread::quit() is called
+        m_PointerToObject = 0; //just in case for some reason they ask for it again :-/
+    }
 //signals:
     virtual void objectIsReadyForConnections() = 0;
 };
@@ -31,11 +57,7 @@ public:
 protected:
     virtual void run()
     {
-        UserObject userObject;
-        m_PointerToObject = &userObject;
-        emit objectIsReadyForConnections();
-        exec(); //We stay in this event loop until QThread::quit() is called
-        m_PointerToObject = 0; //just in case for some reason they ask for it again :-/
+
     }
 signals:
     void objectIsReadyForConnections();
@@ -65,6 +87,5 @@ protected:
 signals:
     void objectIsReadyForConnections();
 };
-#endif
 
 #endif // OBJECTONTHREADHELPER_H

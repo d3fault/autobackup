@@ -15,18 +15,18 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033786
+Documents/minddump/:1386033810
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
 Documents/minddump/couchbase/askdjfowuroursl.abc.maps.figured.out.txt:1340023017
-Documents/minddump/couchbase/floats.and.doubles.fuck.couchbase.kinda.sucks.now.lawl.txt:1340207540
+Documents/minddump/couchbase/floats.and.doubles.fuck.couchbase.kinda.sucks.now.lawl.txt:1351248301
 Documents/minddump/couchbase/i.dont.think.i.need.taps.but.i.might.use.them.anyways.idfk.txt:1340091825
 Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.json.views.but.not.for.just.the.key.and.value.data.if.i.use.Check-And-Set.txt:1339951812
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033786
+Documents/minddump/dreams/:1386033810
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -88,6 +88,7 @@ Documents/minddump/aldfkjasdlfjsadflkjasfouwelrkjsadflasdkjfowuerlajkdf.txt:1346
 Documents/minddump/aldsfkjasdlfkjasdfouwlrkjsfoiusfdlkjwerlwkrjsoiafusldkjf.txt:1349007088
 Documents/minddump/alfjadslfjkasdofuwelrjsflkjsdfoasduflsajrowuerlwkjeroausfdlskj.txt:1350338944
 Documents/minddump/alfjaosufsdlkfjworusldfkjoweurkdfsjowuerwlaekj.txt:1342615331
+Documents/minddump/alfjasldfjasldfjsadouwlrkjsdfoualjwerousdfalkjasdfoul.txt:1351247233
 Documents/minddump/alkfjsdlkfjwoeirusdfkjsdflkjworusokerwoerusdlkj.txt:1340449786
 Documents/minddump/alkjfdasdlfkweroiuuuuuuupusaflk.lke.like.interesting.tags.these.are.ejaculation.tags.txt:1338992975
 Documents/minddump/alksweruuoiasufdkasjfdslkfsuoiweroit.txt:1338993193
@@ -630,7 +631,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1344899708
 GloballySharedClasses/ssltcpclient.pri:1344899198
 GloballySharedClasses/ssltcpserver.pri:1344899078
 GloballySharedClasses/ssltcpservertestcerts.pri:1344900176
-Pictures/:1386033786
+Pictures/:1386033810
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -726,19 +727,19 @@ Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
 Projects/ForFun/:1351104297
-Projects/ForFun/CleanThreadingExample/:1351241070
-Projects/ForFun/CleanThreadingExample/src/:1351243467
+Projects/ForFun/CleanThreadingExample/:1351245715
+Projects/ForFun/CleanThreadingExample/src/:1351245974
 Projects/ForFun/CleanThreadingExample/src/CleanThreadingExample.pro:1351241028
 Projects/ForFun/CleanThreadingExample/src/cleanthreadingbackend1.cpp:1351112785
 Projects/ForFun/CleanThreadingExample/src/cleanthreadingbackend1.h:1351111651
 Projects/ForFun/CleanThreadingExample/src/cleanthreadingbackend2.cpp:1351113472
 Projects/ForFun/CleanThreadingExample/src/cleanthreadingbackend2.h:1351113324
 Projects/ForFun/CleanThreadingExample/src/cleanthreadingexampletest.cpp:1351241178
-Projects/ForFun/CleanThreadingExample/src/cleanthreadingexampletest.h:1351241183
+Projects/ForFun/CleanThreadingExample/src/cleanthreadingexampletest.h:1351245821
 Projects/ForFun/CleanThreadingExample/src/cleanthreadingfrontendwidget.cpp:1351114260
 Projects/ForFun/CleanThreadingExample/src/cleanthreadingfrontendwidget.h:1351114260
 Projects/ForFun/CleanThreadingExample/src/main.cpp:1351109451
-Projects/ForFun/CleanThreadingExample/src/objectonthreadhelper.h:1351193842
+Projects/ForFun/CleanThreadingExample/src/objectonthreadhelper.h:1351245890
 Projects/ForFun/QFileSystemWatcher2TestForFun/:1343131983
 Projects/ForFun/QFileSystemWatcher2TestForFun/design/:1343131976
 Projects/ForFun/QFileSystemWatcher2TestForFun/design/fuck.this.too.lazy.lmfao.aldkfjasldfjoiurel.what.a.waste.i.guess.it.was.a.little.fun.txt:1343131976
@@ -917,7 +918,7 @@ Projects/Ideas/how.to.create.truly.free.society.fuck.the.concept.of.an.ISP.txt:1
 Projects/Ideas/howfo.rape.a.small.amount.of.data.adlfjasldfjasdljf.txt:1337806513
 Projects/Ideas/i.cant.even.remember.what.this.was.but.it.goes.with.the.node.before.it.and.i.remember.it.was.complicated.txt:1338796570
 Projects/Ideas/idol.a.day.SECURE.VOTING.SYSTEM.TEST.CASE.txt:1332403258
-Projects/Ideas/if.i.did.this.theyd.probably.point.cameras.at.me.from.space.flsadjdfsoiwer.txt:1339058994
+Projects/Ideas/if.i.did.this.theyd.probably.point.cameras.at.me.from.space.flsadjdfsoiwer.txt:1351251166
 Projects/Ideas/important.pivotal.discussion.with.myself.txt:1340178215
 Projects/Ideas/increasing.packet.size.automatically.for.minimal.header.loss.txt:1339521728
 Projects/Ideas/incrementally.proven.legit.sadfkjsdlfkjwoeriusafdlkj.txt:1340447344
@@ -1638,7 +1639,7 @@ Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1347560549
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/placeholder.file.so.folder.doesnt.get.deleted.txt:1347560549
 Projects/RpcGenerator/design/:1351051042
 Projects/RpcGenerator/design/3.message.types.actions.without.responses.actions.with.responses.and.broadcasts.a.lot.of.thoughts.in.here.txt:1350212940
-Projects/RpcGenerator/design/MESSAGE.TRANSMISSION.ERROR.USE.CASES.and.also.the.typical.success.case.need.to.study.and.solve.this.txt:1351051145
+Projects/RpcGenerator/design/MESSAGE.TRANSMISSION.ERROR.USE.CASES.and.also.the.typical.success.case.need.to.study.and.solve.this.txt:1351248154
 Projects/RpcGenerator/design/acking.timers.per.message.and.fuck.idk.thoughts.of.all.kinds.readme.again.later.txt:1350333039
 Projects/RpcGenerator/design/actions.messages.with.errors.and.without.and.broadcasts.without.destination.thoughts.and.maybe.solution.txt:1343661601
 Projects/RpcGenerator/design/actions.should.function.with.and.without.responses.for.both.errors.and.successes.txt:1344076612
@@ -1802,7 +1803,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033786
+Projects/libAvGraphicsItem2/design/:1386033810
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

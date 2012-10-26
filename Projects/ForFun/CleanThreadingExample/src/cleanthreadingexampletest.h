@@ -2,25 +2,7 @@
 #define CLEANTHREADINGEXAMPLETEST_H
 
 #include <QObject>
-#include <QThread> //aldfjasdlf
 #include <QCoreApplication>
-
-#define DECLARE_INTENT_TO_USE_OBJECT_ON_THREAD(UserObjectType) \
-    class UserObjectType##OnThreadHelper : public QThread \
-    { \
-        Q_##OBJECT \
-    public: \
-        explicit UserObjectType##OnThreadHelper(QObject *parent = 0) : QThread(parent) { } \
-    protected: \
-        virtual void run() \
-        { \
-            UserObjectType qobj; \
-            emit object##UserObjectType##IsReadyForConnectionsOnly(&qobj); \
-            exec(); \
-        } \
-    signals: \
-        void object##UserObjectType##IsReadyForConnectionsOnly(UserObjectType *object); \
-};
 
 #include "objectonthreadhelper.h"
 #include "cleanthreadingbackend1.h"
