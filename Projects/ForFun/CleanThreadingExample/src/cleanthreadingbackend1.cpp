@@ -1,3 +1,18 @@
+/*
+Copyright (c) 2012, d3fault <d3faultdotxbe@gmail.com>
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL
+THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE
+*/
 #include "cleanthreadingbackend1.h"
 
 CleanThreadingBackend1::CleanThreadingBackend1(QObject *parent) :
@@ -15,7 +30,7 @@ void CleanThreadingBackend1::thrashHashStringNtimes(const QString &stringToThras
     //It returns a QByteArray as well
     QByteArray hashResult;
 
-    //These two numbers are here to limit the rate at which we update the GUI. When I first made this project, I didn't have the limiters in place and the GUI still locked up (despite us being on our own thread) because it was receiving way too many signals too frequently (the GUI was locking up because it was spending all it's time processing them). This limiter slows things down a bit... but as long as your actual backend threads are doing some real work in between updating the GUI, you won't need limiters like this. It should be a trivial exercise to take them out (else, why are you reading this?)
+    //These two "DEBUG_limit" numbers are here to limit the rate at which we update the GUI. When I first made this example, I didn't have the limiters in place and the GUI still locked up (despite us being on our own thread) because it was receiving way too many signals too frequently (the GUI was locking up because it was spending all it's time processing them). This limiter slows things down a bit... but as long as your actual backend threads are doing some real work in between updating the GUI, you won't need limiters like this. It should be a trivial exercise to take them out (else, why are you reading this?)
     quint8 DEBUG_limiter = 0;
     const quint8 DEBUG_limiterEmitEvery = 100;
 

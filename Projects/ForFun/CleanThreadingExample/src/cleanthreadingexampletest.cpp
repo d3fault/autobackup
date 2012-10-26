@@ -1,15 +1,30 @@
+/*
+Copyright (c) 2012, d3fault <d3faultdotxbe@gmail.com>
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL
+THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE
+*/
 #include "cleanthreadingexampletest.h"
 
 CleanThreadingExampleTest::CleanThreadingExampleTest(QObject *parent) :
     QObject(parent), m_CleanedUpBackends(false)
 {
     //Before starting the thread on which our backend object will live, we connect to the helper so that he can notify us (which happens right after the object is instantiated) when the object is ready to be connected to
-    connect(&m_BackendObject1ThreadHelper, SIGNAL(objectCleanThreadingBackend1IsReadyForConnectionsOnly(CleanThreadingBackend1*)), this, SLOT(handleBackendObject1isReadyForConnections(CleanThreadingBackend1*)));
+    connect(&m_BackendObject1ThreadHelper, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleBackendObject1isReadyForConnections()));
     //Start the helper/thread. This is where our object gets instantiated and objectIsReadyForConnections() is emitted
     m_BackendObject1ThreadHelper.start();
 
     //Same thing, but for our second backend object/helper/thread
-    connect(&m_BackendObject2ThreadHelper, SIGNAL(objectCleanThreadingBackend2IsReadyForConnectionsOnly(CleanThreadingBackend2*)), this, SLOT(handleBackendObject2isReadyForConnections(CleanThreadingBackend2*)));
+    connect(&m_BackendObject2ThreadHelper, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleBackendObject2isReadyForConnections()));
     m_BackendObject2ThreadHelper.start();
 
     //We connect the QCoreApplication::aboutToQuit() signal to our CleanThreadingExampleTest::handleAboutToQuit() slot. It has to be called using a Direct Connection, otherwise the application would continue shutting down (not letting us properly clean up) after the aboutToQuit() signal is emitted. The slot is called using a Qt::DirectConnection for us (Qt determines at runtime what thread a destination object/slot lives on). Since 'this' lives on the main/GUI thread, specifying Qt::DirectConnection is redundant
@@ -20,7 +35,7 @@ CleanThreadingExampleTest::CleanThreadingExampleTest(QObject *parent) :
 }
 CleanThreadingExampleTest::~CleanThreadingExampleTest()
 {
-    cleanupBackendObjectsIfNeeded(); //This is not necessary for this particular example, but if you're doing it wrong and your 'this' goes out of scope before QCoreApplication::aboutToQuit() is emitted, this is a safety measure to ensure that we've cleaned up our backend objects. Note that for the example this should (WILL) never happen. Looking at our main(), QCoreApplication::aboutToQuit() will be emitted before CleanThreadingExampleTest ('this') goes out of scope... so ideally we'll be calling our cleanupBackendsIfNeeded() method from our handleAboutToQuit() slot
+    cleanupBackendObjectsIfNeeded(); //This is not necessary for this particular example, but if you're doing it wrong and your 'this' goes out of scope before QCoreApplication::aboutToQuit() is emitted, this is a safety measure to ensure that we've cleaned up our backend objects. Note that for the example this should (WILL) never happen. Looking at our example's main(), we know that QCoreApplication::aboutToQuit() will be emitted before CleanThreadingExampleTest ('this') goes out of scope... so ideally we'll be calling our cleanupBackendsIfNeeded() method from our handleAboutToQuit() slot [first]
 }
 void CleanThreadingExampleTest::cleanupBackendObjectsIfNeeded()
 {
@@ -45,21 +60,25 @@ void CleanThreadingExampleTest::cleanupBackendObjectsIfNeeded()
         m_CleanedUpBackends = true;
     }
 }
-void CleanThreadingExampleTest::handleBackendObject1isReadyForConnections(CleanThreadingBackend1 *backend1)
+void CleanThreadingExampleTest::handleBackendObject1isReadyForConnections()
 {
     //When this slot is called, our backend object (the type we specified in the template parameter) is instantiated and ready to be connected to. It is on it's own thread, so calling methods it directly is unsafe (unless you use a QMutex to protect data accessed by both the thread and the method you call directly, of course. Connecting signals/slots to an object on another thread is thread-safe
 
+    CleanThreadingBackend1 *backend1 = m_BackendObject1ThreadHelper.getObjectPointerForConnectionsOnly();
+
     //GUI signals ---> backend object slots
-    //"Do Something!". Usually triggered by user input. Triggered by button clicks a lot of the time, but also triggered in this application by changing the random number generator's properties. Note that our GUI emits the "requested" signals after catching the clicked() and textChanged() signals and first sanitizing the user input, which is all handled in our GUI class
+    //"Do Something!". Usually triggered by user input. Triggered by button clicks a lot of the time, but also triggered in this application by changing the random number generator's properties. Note that our GUI emits the "requested" signals after catching the clicked() and textChanged() signals and sanitizing the user input first, which is all handled in our GUI class
     connect(&m_Gui, SIGNAL(thrashHashStringNtimesRequested(const QString &, int)), backend1, SLOT(thrashHashStringNtimes(const QString &, int)));
 
     //backend signals ---> GUI slots
-    //"Something happened!". It could be anything. This is how a backend threads safely update the GUI without locking it up. The signals are emitted from the backend threads... and after Qt's signals/slots awesomeness takes place: the slots are called on the GUI thread
+    //"Something happened!". It could be anything. This is how a backend threads safely update the GUI without locking it up. The signals are emitted from the backend threads... and after Qt's signals/slots awesomeness takes place, the slots are called on the GUI thread
     connect(backend1, SIGNAL(hashGenerated(const QString &)), &m_Gui, SLOT(handleHashGenerated(const QString &)));
 }
-void CleanThreadingExampleTest::handleBackendObject2isReadyForConnections(CleanThreadingBackend2 *backend2)
+void CleanThreadingExampleTest::handleBackendObject2isReadyForConnections()
 {
     //All of the comments in handleBackendObject1isReadyForConnections() apply here too
+
+    CleanThreadingBackend2 *backend2 = m_BackendObject2ThreadHelper.getObjectPointerForConnectionsOnly();
 
     connect(&m_Gui, SIGNAL(updateRandomNumberGeneratorPropertiesRequested(int,int)), backend2, SLOT(updateRandomNumberGeneratorProperties(int,int)));
     connect(backend2, SIGNAL(randomNumberResultsGathered(const QString &)), &m_Gui, SLOT(handleRandomNumberResultsGathered(const QString &)));

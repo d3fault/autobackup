@@ -1,91 +1,65 @@
+/*
+Copyright (c) 2012, d3fault <d3faultdotxbe@gmail.com>
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL
+THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE
+*/
 #ifndef OBJECTONTHREADHELPER_H
 #define OBJECTONTHREADHELPER_H
 
 #include <QThread>
 
-#ifdef FAILED_MACRO_ATTEMPT
-
-#define DECLARE_INTENT_TO_USE_OBJECT_ON_THREAD(UserObjectType) \
-    class UserObjectType##OnThreadHelper : public QThread \
-    { \
-        Q_##OBJECT \
-    public: \
-        explicit UserObjectType##OnThreadHelper(QObject *parent = 0) : QThread(parent) { } \
-    protected: \
-        virtual void run() \
-        { \
-            UserObjectType qobj; \
-            emit object##UserObjectType##IsReadyForConnectionsOnly(&qobj); \
-            exec(); \
-        } \
-    signals: \
-        void object##UserObjectType##IsReadyForConnectionsOnly(UserObjectType *object); \
-};
-
-#endif
-
-template <class UserObjectInTemplate>
-class ObjectOnThreadHelperTemplateHack : public QThread
-{
-    //Q_OBJECT
-public:
-    explicit ObjectOnThreadHelperTemplateHack(QObject *parent = 0) : QThread(parent), m_PointerToObject(0) { }
-    UserObjectInTemplate *getPointerToObjectOnThreadToBeUsedOnlyForConnections() //dirty hack because template types can't be signal parameters :(
-    {
-        return m_PointerToObject;
-    }
-private:
-    UserObjectInTemplate *m_PointerToObject;
-protected:
-    virtual void run()
-    {
-        UserObjectInTemplate userObject;
-        m_PointerToObject = &userObject;
-        emit objectIsReadyForConnections();
-        exec(); //We stay in this event loop until QThread::quit() is called
-        m_PointerToObject = 0; //just in case for some reason they ask for it again :-/
-    }
-//signals:
-    virtual void objectIsReadyForConnections() = 0;
-};
-
-class ObjectOnThreadHelper : public ObjectOnThreadHelperTemplateHack<UserObject>
+//This base class is just a hack around MOC not playing nicely with templates
+class ObjectOnThreadHelperBase : public QThread
 {
     Q_OBJECT
 public:
-    ObjectOnThreadHelper(QObject *parent = 0) : ObjectOnThreadHelperTemplateHack<UserObject>(parent) { }
+    explicit ObjectOnThreadHelperBase(QObject *parent = 0) : QThread(parent), m_TheObject(0) { }
 protected:
-    virtual void run()
-    {
-
-    }
+    QObject *m_TheObject;
+    virtual void run() = 0;
 signals:
-    void objectIsReadyForConnections();
+    void objectIsReadyForConnectionsOnly();
 };
 
-template <class UserObject>
-class ObjectOnThreadHelper : public QThread
+template<class UserObjectType>
+class ObjectOnThreadHelper : public ObjectOnThreadHelperBase
 {
-    Q_OBJECT
 public:
-    explicit ObjectOnThreadHelper(QObject *parent = 0) : QThread(parent), m_PointerToObject(0) { }
-    UserObject *getPointerToObjectOnThreadToBeUsedOnlyForConnections() //dirty hack because template types can't be signal parameters :(
+    UserObjectType *getObjectPointerForConnectionsOnly()
     {
-        return m_PointerToObject;
+        return static_cast<UserObjectType*>(m_TheObject);
     }
-private:
-    UserObject *m_PointerToObject;
 protected:
     virtual void run()
     {
-        UserObject userObject;
-        m_PointerToObject = &userObject;
-        emit objectIsReadyForConnections();
-        exec(); //We stay in this event loop until QThread::quit() is called
-        m_PointerToObject = 0; //just in case for some reason they ask for it again :-/
+        //The user's object is allocated on the stack right when the thread starts
+        UserObjectType theObject;
+
+        //We remember it's address in a member pointer so the thread that created us can request it when they respond to our objectIsReadyForConnectionsOnly() signal. Due to limitations with MOC, we cannot emit a templated type
+        m_TheObject = &theObject;
+
+        //Tell whoever created us that the object is ready for connections
+        emit objectIsReadyForConnectionsOnly();
+
+        //Enter the event loop and do not leave it until QThread::quit() or QThread::terminate() are called
+        exec();
+
+        //Just in case they ask for it again (they shouldn't)
+        m_TheObject = 0;
+
+
+        //'theObject' is destroyed when it goes out of scope. Qt can safely handle signals/slots to a non-existing object, so you don't have to worry about disconnect()'ing them
     }
-signals:
-    void objectIsReadyForConnections();
 };
 
 #endif // OBJECTONTHREADHELPER_H

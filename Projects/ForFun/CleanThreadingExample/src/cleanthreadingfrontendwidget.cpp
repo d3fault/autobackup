@@ -1,14 +1,29 @@
+/*
+Copyright (c) 2012, d3fault <d3faultdotxbe@gmail.com>
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL
+THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE
+*/
 #include "cleanthreadingfrontendwidget.h"
 
 CleanThreadingFrontendWidget::CleanThreadingFrontendWidget(QWidget *parent)
     : QWidget(parent)
 {
-    //This isn't a necessity, but is a technique used to get an application to launch faster. Basically we are deferring the initializing of our GUI objects to a later date so we can just get the [empty] window up and shown asap. In this case, Qt::QueuedConnection is not redundant. If left out, Qt::AutoConnection would see that we're on the same thread as 'this' (obviously) and call setupGui() using a Qt::DirectConnection
+    //This isn't a necessity, but is a technique used to get an application to launch faster. Basically we are deferring the initializing of our GUI objects to a later date so we can just get the [empty] window up and shown asap. In this case, Qt::QueuedConnection is not redundant. If we left it out, Qt::AutoConnection would see that we're on the same thread as 'this' (obviously) and call setupGui() using a Qt::DirectConnection
     QMetaObject::invokeMethod(this, "setupGui", Qt::QueuedConnection);
 }
 void CleanThreadingFrontendWidget::setupGui()
 {
-    //allocate all of our Gui widgets
+    //Allocate and set up all of our GUI widgets
     m_Layout = new QVBoxLayout();
 
     m_StringToHashLabel = new QLabel("String To Hash:");
@@ -33,13 +48,13 @@ void CleanThreadingFrontendWidget::setupGui()
     m_TimerOutputLabel = new QLabel("Backend Timer Object Output");
     m_TimerOutputPlainTextEdit = new QPlainTextEdit();
 
-    //Now add all of the widgets to m_Layout, including some HBoxLayouts to make certain content be horizontal
+    //Now add all of the widgets to m_Layout, including some QHBoxLayouts to make certain content be horizontal
     QHBoxLayout *hasherParamsHboxLayout = new QHBoxLayout();
     hasherParamsHboxLayout->addWidget(m_StringToHashLabel);
     hasherParamsHboxLayout->addWidget(m_StringToHashLineEdit);
     hasherParamsHboxLayout->addWidget(m_NumberOfTimesToHashTheStringLabel);
     hasherParamsHboxLayout->addWidget(m_NumberOfTimesToHashTheStringLineEdit);
-    m_Layout->addLayout(hasherParamsHboxLayout); //Just like widgets, the layout becomes a child object and so gets deleted automatically
+    m_Layout->addLayout(hasherParamsHboxLayout); //Just like widgets, the layout becomes a child object and gets deleted automatically
 
     m_Layout->addWidget(m_HashItButton);
 
@@ -60,7 +75,7 @@ void CleanThreadingFrontendWidget::setupGui()
     outputViewsHBoxLayout->addWidget(m_TimerOutputPlainTextEdit);
     m_Layout->addLayout(outputViewsHBoxLayout);
 
-    //Finally, set the layout. This is when the layout, it's sub-layouts, and all the widgets it is organizing become children of 'this'
+    //Finally, set the layout. This is when the layout, it's sub-layouts, and all the widgets it is organizing become children of 'this'. The sub-layouts become children of their parent layouts, but every widget added to every layout/sub-layout/sub-sub-layout (continuing infinitely) becomes a direct child of 'this'.
     this->setLayout(m_Layout);
 
     //Connect to our button's clicked() signal. Sometimes you can connect a button's clicked signal directly to the signal that our backend object is connected to (our thrashHashStringNtimesRequested() signal), but in this case we need to pull variables out of a few line edits before emitting thrashHashStringNtimesRequested(); Note: you could also use QMetaObject::invokeMethod() inside of handleHashItButtonClicked(), but it's easier to send arguments using emit in my opinion
