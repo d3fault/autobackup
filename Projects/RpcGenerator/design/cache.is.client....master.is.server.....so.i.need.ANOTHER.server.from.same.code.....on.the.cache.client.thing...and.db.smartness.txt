@@ -1,0 +1,23 @@
+My Rpc Generator is so fucking sexy... I just need an ack scheme... which means I need a way to deal with errors... which means I *think* I need a stream log... which means I need to integrate / be smart with the db... which means I might as well build in the "cache/master" shit in the db.
+
+
+So basically I don't need to get rid of my current Rpc Generator code... I just need expose the SSL / networking portion of it.... again?
+
+What I'm currently coding is just the communication between the cache and the master...
+If the cache and master are tightly integrated (and auto generated), then there is no user code involved.
+
+BUT it's not a waste since I can steal/use the code/design to just put a "server" (wt talks to him. wt is a client) right where my "client" (client is really just cache now) is
+
+
+
+something like that
+
+
+
+
+I hope to figure this out on that backpacking trip
+
+
+
+
+I hope I don't bitch out or forget :-P

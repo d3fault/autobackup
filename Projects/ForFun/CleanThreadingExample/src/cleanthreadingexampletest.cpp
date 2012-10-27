@@ -30,6 +30,8 @@ CleanThreadingExampleTest::CleanThreadingExampleTest(QObject *parent) :
     //We connect the QCoreApplication::aboutToQuit() signal to our CleanThreadingExampleTest::handleAboutToQuit() slot. It has to be called using a Direct Connection, otherwise the application would continue shutting down (not letting us properly clean up) after the aboutToQuit() signal is emitted. The slot is called using a Qt::DirectConnection for us (Qt determines at runtime what thread a destination object/slot lives on). Since 'this' lives on the main/GUI thread, specifying Qt::DirectConnection is redundant
     connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(handleAboutToQuit()) /*, Qt::DirectConnection*/);
 
+    connect(&m_Gui, SIGNAL(debugStopBackendsRequested()), this, SLOT(handleAboutToQuit()));
+
     //Show the widget/window:
     m_Gui.show();
 }
@@ -54,7 +56,12 @@ void CleanThreadingExampleTest::cleanupBackendObjectsIfNeeded()
         // d) End the actual thread (when QThread::run() goes out of scope)
         //If We don't wait for them, the applicatioin will continue shutting down and the threads might not have cleaned themselves up properly. For example, the backend threads might write the contents of a "QString m_EventLog" to file in their destructor. If you don't call wait(), the application will continue shutting down before or during that write to file... resulting in data loss/corruption which could be disastrous to you
         m_BackendObject1ThreadHelper.wait();
+
+        //If we do a direct connection then we'll beat a lot of the backend messages that are queued to the GUI lol... and the message appears in the midst of a bunch of hashes. Note that if you press "STOP" while hashing... wait() prevents us from updating the GUI. So it _DOES_ freeze. But since we're simulating a shutdown, this is fine. If we were doing a "STOP" that was NOT simulating a shutdown... we should not be wait()'ing on the thread right afterwards... so our GUI would not lock up. For the shutdown event, yes you do want your GUI to lock up while you wait for the backend thread. Normally it won't be doing something so stupid as hashing 500k hashes lmfao... so would respond faster? I guess I should try pressing CLOSE in the middle of hashing. I should see the same exact effect. The GUI freezes for a few seconds, then closes [because we don't have time to read anything once wait() finishes]. LoL just tried it. The result: the window closed right away, but the IDE stayed in debug mode (the app was still running) until the 500k hash cycle completed :-P. Makes perfect sense, since the Test, GUI, and Backend Threads are completely independent of each other. Just not what I was expecting at first (is why we test :-P)
+        QMetaObject::invokeMethod(&m_Gui, "handleHashGenerated", Qt::QueuedConnection, Q_ARG(QString,"Backend 1 Stopped Successfully"));
+
         m_BackendObject2ThreadHelper.wait();
+        QMetaObject::invokeMethod(&m_Gui, "handleRandomNumberResultsGathered", Q_ARG(QString,"Backend 2 Stopped Successfully"));
 
         //Don't clean up twice :-P
         m_CleanedUpBackends = true;

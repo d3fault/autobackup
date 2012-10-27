@@ -46,12 +46,16 @@ private:
     QLabel *m_TimerOutputLabel;
     QPlainTextEdit *m_TimerOutputPlainTextEdit; //Output for Backend Object 2
 
+    QPushButton *m_DebugStopBackendsTestButton; //Because when closing the window, I don't get to see the results!
+
     //We store the current numbers to detect if changes actually occurred when the user types in a new number
     int m_CurrentMaxNumberToGenerate, m_CurrentNumberToWatchFor;
 signals:
     //The two signals that the backends react to
     void updateRandomNumberGeneratorPropertiesRequested(int maxNum, int numberToWatchFor);
     void thrashHashStringNtimesRequested(const QString &, int);
+
+    void debugStopBackendsRequested();
 public slots:
     void setupGui();
 

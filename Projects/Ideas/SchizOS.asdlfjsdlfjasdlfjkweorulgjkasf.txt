@@ -1,0 +1,43 @@
+SchizOS
+
+a "hacked by default" reference implementation of Debian that passes their integrity checks (Release file checks out)
+
+it should also contain the whitespace obfuscating offline->online hack that i'm so afraid of (and the spark to my "input only" and "output only" solutions)
+
+the checksums and signatures for all debs + binaries also check out. we hack the filesystem layer. it doesn't have to be a very portable hack. proof of concept
+
+
+
+taking it further, we should also be able to corrupt a perfectly sound copy of the debian source code
+
+the means in which we do that is through a hacked "compiler os"
+
+
+the checksums and signatures will all check out
+
+
+the method in which we do this is by injecting our code into the source files just before compiling
+we know what filename, or at the very least the "blob of text" to 'look for'... and then insert our changes 'before', 'after', or 'in between' the blob of text(s). we do not use checksums as those change far too frequently
+
+if it does not compile, we remove that injected chunk of code as well as it's dependencies in a "back off" approach so that we can still get in as many other hacks as possible. so perhaps they do get a valid debian compilation... but us updating our hacked shit to keep up is trivial also
+
+
+
+a reference implementation of windows + mac
+
+
+
+as well as just the "virus" portion of it (applicable on top of any regular installation) are distributed freely
+
+
+the windows/mac reference implementations would need to be distributed through bittorrent etc
+
+but the debian one would be libre ofc
+
+
+
+i think i've written about this before :-/
+i know i've thought about it before
+i wonder if when i wrote about it before if it was in as much detail?
+am i losing my mind?
+lol relevant title

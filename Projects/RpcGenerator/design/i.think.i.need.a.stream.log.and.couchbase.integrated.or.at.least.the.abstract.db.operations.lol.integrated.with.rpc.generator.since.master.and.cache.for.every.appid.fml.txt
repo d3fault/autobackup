@@ -1,0 +1,44 @@
+I think Rpc/Abc needs to err..
+
+
+I think my problem is one of high scale design
+
+my "appdb" is now just a cache layer
+
+the web server layer
+
+
+bank db and app db are final 'copies' on the 'rpc server'
+the cache is on the 'appdb'
+
+
+so the ACTUAL rpc connection, where any CLIENT business logic goes, is all the way over in wt land (even if it's still on the same MACHINE as the cache / 'appdb'. each layer (client/server... or appdb/bank if you want to think old fashioned) has a set of couchbase clusters backing it. they are not running directly on the machines, but they are on the same LAN. There is a WAN in between client/server. Cox/Qwest/etc connections to my house form the server. We try to keep load down as much as possible. Client is outsourced web servers acting as caches only. It uses a "get + subscribe" method to read... and of course writes just pass through.
+
+
+
+But this implies a stream log design which I have yet to come up with. Even worse, I have yet to prototype/code it. But at least I'm starting to understand my problem better. Stream log also means I can have multiple layers of verification/sanity-checks in place.
+
+
+There is definitely a stream log on the server.
+
+I do not know if there is a stream log on the client.
+
+
+
+WAIT A MINUTE ORDERING DOES NOT MATTER SO SHOULD IT IN MY STREAM LOG? GUH SO CONFUS.
+
+
+Have I bit off more than I can chew?
+
+Should I just become an hero? I'll admit it's been tempting lately.
+Should I just release books with nothing else backing it? I do think I could retire off of it. I have a shit fucking ton of substance. The only thing is I couldn't release on the internet with advertising because Google would censor me. Dear Sergei and whats-his-face, FUCK YOU. I fucking hate this world.
+
+The only reason I haven't blown my brains out is because I've convinced myself that I can make it better. So much that I won't allow myself to do it until I've tried my best
+
+
+....and I know I won't fail. Just fucking time consuming. I'm at A, I want to be at B.
+
+
+
+
+mfw "click here to see where the internet lives" on google.com ROOOOOFL

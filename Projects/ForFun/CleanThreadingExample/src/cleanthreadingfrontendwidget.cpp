@@ -48,6 +48,8 @@ void CleanThreadingFrontendWidget::setupGui()
     m_TimerOutputLabel = new QLabel("Backend Timer Object Output");
     m_TimerOutputPlainTextEdit = new QPlainTextEdit();
 
+    m_DebugStopBackendsTestButton = new QPushButton("DEBUG: Stop Backends. Simulate Closing the window... without closing the window ;-)");
+
     //Now add all of the widgets to m_Layout, including some QHBoxLayouts to make certain content be horizontal
     QHBoxLayout *hasherParamsHboxLayout = new QHBoxLayout();
     hasherParamsHboxLayout->addWidget(m_StringToHashLabel);
@@ -75,6 +77,8 @@ void CleanThreadingFrontendWidget::setupGui()
     outputViewsHBoxLayout->addWidget(m_TimerOutputPlainTextEdit);
     m_Layout->addLayout(outputViewsHBoxLayout);
 
+    m_Layout->addWidget(m_DebugStopBackendsTestButton);
+
     //Finally, set the layout. This is when the layout, it's sub-layouts, and all the widgets it is organizing become children of 'this'. The sub-layouts become children of their parent layouts, but every widget added to every layout/sub-layout/sub-sub-layout (continuing infinitely) becomes a direct child of 'this'.
     this->setLayout(m_Layout);
 
@@ -83,6 +87,8 @@ void CleanThreadingFrontendWidget::setupGui()
     //Connect to our random number properties' changed() signals... so we can sanitize them and emit them for our backend to eventually process
     connect(m_MaximumPositiveNumberGeneratedLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkTextActuallyChangedAndEmitIfTheyDid()));
     connect(m_NumberToWatchForLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkTextActuallyChangedAndEmitIfTheyDid()));
+
+    connect(m_DebugStopBackendsTestButton, SIGNAL(clicked()), this, SIGNAL(debugStopBackendsRequested()));
 }
 void CleanThreadingFrontendWidget::handleHashItButtonClicked()
 {
