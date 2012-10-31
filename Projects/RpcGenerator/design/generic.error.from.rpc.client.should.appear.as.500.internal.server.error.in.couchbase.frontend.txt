@@ -1,0 +1,10 @@
+the wt way of showing a generic error should be a: 500 Internal Server Error
+that is all.
+
+every hack detection should return that too...
+
+
+...however it should ALSO write somewhere in a "hack detected" log ;-)
+
+which i can analyze and possibly identify "unpredicted VALID user input" cases and fix code accordingly...
+...but will mostly be useful for looking at all the adrian lamo wannabes and lol'ing my ass off :-P

@@ -42,7 +42,9 @@ pendingTimeout()
 retryBit.set()
 	->
 		identifies-business-pending // Should we instead retry? What if the business is just really really slow :-/????
-		//should i leave it in businessPending in case business comes back? take it out so we know we already generically error'd it (TODOreq: this would be the error case where we receive a message that's not in pending. i remember writing that in my comments in code). I'm starting to think that if I ever detect this, I should fucking shut down _EVERYTHING_, including other servers. It should really never happen. But will it? Will couchbase or bitcoin crashing cause it? I'm actually inclined to say NO because our business code is a QObject/Qt... not bitcoin/couchbase directly. My business code will need to be able to deal with couchbase/bitcoin going offline or crashing or erroring or whatever... and then return an error. So if I _DO_ see a case where the business eats it, there's a much larger issue at hand.
+		//should i leave it in businessPending in case business comes back? take it out so we know we already generically error'd it (TODOreq: this would be the error case where we receive a message that's not in pending. i remember writing that in my comments in code). I'm starting to think that if I ever detect this, I should fucking shut down _EVERYTHING_, including other servers. It should really never happen. But will it? Will couchbase or bitcoin crashing cause it? I'm actually inclined to say NO because our business code is a QObject/Qt... not bitcoin/couchbase directly. My business code will need to be able to deal with couchbase/bitcoin going offline or crashing or erroring or whatever... and then return an error. So if I _DO_ see a case where the business eats it, there's a much larger issue at hand. i cannot control the code i call. it might block indefinitely. IDEALLY it won't and i can handle offline/error messages... but being a generic as fuck rpc generator... we have no fucking way of guaranteeing that for every backend. i am still unsure how to deal with this tbh. simply retrying, even if on another server, doesn't sound suitable.
+
+		//i mean i guess ONE solution is to just double the wait period lol??? and then if it STILL fails, then yea return fail for even the second try and then shut everything down just like i said. but yea this is already implied by the client handling the pendingTimeout and retryBit.set(). it will set the same timer again on the retried message. so i guess... we don't do anything? maybe we can respond saying that it's still pending in the business... and we could even extend the period by some order of magnitude (but not TOOOO much, ya know). err order of magnitude is overstating it.... but like 5 seconds instead of 3. give the business plenty of time... but "keep in touch" with the client. let him know that we (the server) are functioning fine... it's the business that's acting up. this is really like my worst error case to deal with heh. i think we should opt towards giving the business extra time (than other error/timeout cases) before SHUTTING DOWN EVERYTHING INCLUDING NEIGHBOR CLIENTS/SERVERS lol. they would also only apply to that particular appId thingo. but remember a client might be using mutliple appIds... so TODOreq we need to make sure that every "appId" that the client is using is still "business working". like our bitcoin appId might get stuck in the business but our bank db one might be perfectly fine. err this is a shit example because they are both bank server. CORRECTION: the abc appId shit might be functioning fine (it is just couchbase stuff) and the bank server appId might have eaten a message in the business and triggered a shutdown. we need to make sure that all inter-dependent appIds are still online before even beginning the rpc message... so as not to enter a fucked state. ALSO rolling back a partial "message" with two appIds where the 2nd (or 3rd.. *gasp*) might have failed. sounds like a BITCH.
 	
 	<-
 Generic Error
@@ -61,7 +63,12 @@ pendingTimeout()
 retryBit.set()
 	->
 		Server
-		hmm-we-never-got-dat-shit TODOreq: false positive: our server will think that since the pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE with same id) (except when there is no previous message, which is only for the first message with that id) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or ?????
+		//hmm-we-never-got-dat-shit TODOreq: false positive: our server will think that since the pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE with same id) (except when there is no previous message, which is only for the first message with that id) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or a single flipping bit so we know if we're on 'next' or 'previous', depending entirely on if it matches ;-)
+
+		//WRONG: oh fuck this false positive also applies to the "business eats it" error case i think. wait no it doesn't because it's in our pending list
+
+		//this false positive might be solved with a single bit. think:timestamping of messages.. except we only need a single bit that flips every time we use a messageId.. just to differentiate from the previous message to detect this false positive. i am unsure but hope!
+
 		businessPending.add()
 				->
 					Business
@@ -100,11 +107,67 @@ pending.remove()
 ########## REQUEST LOST ON NETWORK TWICE ##############
 //TODOreq. basically after the second timeout, Client (which is really ServerHelper) emits a signal telling the class that can see every ServerHelper that this particular ServerHelper is no longer suitable (aka offline). At that point he tries a different ServerHelper, if any are available (if not, errors out)
 
+
+Client
+pending.add()
+	->
+
+pendingTimeout()
+retryBit.set()
+	->
+
+pendingTimeout()
+Generic Error and mark offline //so long as we know it was the requests that were lost and not the responses. I mean idk wtf I'm writing right now because idk how to deal with the response error case. should probably do that first...
+
+
+
+
+
+
 ########## RESPONSE LOST ON NETWORK TWICE ##############
 //pretty much the same as the request being lost twice... but this is far less likely to happen...
 //TODOreq: the response (either first or second. first if business is slow, second if first really did get lost on network) might come JUST AFTER the second timeout(), but we've already initiated error'ing out. I guess we should undo that error out (but not the message portion of it! (HOLY SHIT WHAT THE FUCK HUGE ERROR IN DESIGN: THE BUSINESS HAS ALREADY SUCCESSFULLY PERFORMED IT'S OPERATION AT THIS POINT. HOW THE WHAT THE FUCK? DO I NEED TO MAKE SURE THAT THE NEXT _SERVERHELPER_ OVERWRITES THE SAME PLACE USING A CAS? SHOULD I HAVE SOME WAY WHERE I CAN SEE THAT THAT SAME EXACT REQUEST SUCCEEDED PREVIOUSLY BUT I DIDN'T KNOW IT? IE BE AWARE OF THIS EXACT ERROR CASE? Possibly a fix: unique message IDs and some sort of a stream log or something so the second server can be all like "hmm dis shit already happened I ain't gonna try it again. oh and here's the result from it since we are smart as fuck and know what this error case is *pulls result from db* ")), telling our parent that this ServerHelper is in fact functioning (although it's slow as fuck haha (could extend timeout periods or just decide not to use it just for that fact (all depends HOW MUCH slower really)))
 //basically the second server to try it needs to see what the fuck happened to the first server? It would be a decent check to begin with... and especially for the error case just described (where the write DID go through).
 //I need ample timing for the business. Need to find that sweet spot between "not timing out too slowly" and "not giving business enough time". I like my averaging * 1.5 idea because it scales automatically. 1.5 might not be enough, maybe x3 is a good amount? I really don't want to error out and have another server try the same shit just because my timeout was too low :(. I think I need to redesign and incorporate a stream log FML. I am unsure. "Smart Keys" with CAS might/_SHOULD_ be enough... but then the rpc generator functioning properly depends on the business code. This is not good. I think it will have to anyways :-/. What the fuck my brain just exploded.
+
+
+Client
+pending.add()
+	->
+		Server
+		businessPending.add()
+				->
+					Business
+				<-
+		businessPending.remove()
+		responseAckPending.add()
+	<-
+//doesnt-get-it
+
+timeout()
+retryBit.set()
+	->
+		orly-well-here-it-is-AGAIN-mofo //same code as our RESPONSE LOST ON NETWORK
+	<-
+//doesnt-get-it
+timeout()
+Generic Error + mark offline. //I mean... I don't fucking know. It's highly unlikely that my requests (both of them) will get there and my responses won't. BUT, network routing (taking different paths to and from), I could see it happening. Should I try to respond to a different server? Now I'm just getting desparate... especially since the different server will live in the same LAN as the other server (right??????????? idfk. it will at least when my shit's young methinks). How the FUCK do I deal with this? Do I, for the second server (after marking this one offline), tell him to CAS and if I lose, see if I beat myself? That would detect the responses got lost on the network and that the business is indeed functioning? Or something? The whole process might just be slow? IDFK. I think it's vital that they do CAS each other somehow. Our second might beat our first ROFL. Theoretically. god damn code has so many "theoretically" cases. functional vs. reliable gg. could write a fucking book on the subject. the book would accomplish nothing ;-). as in, it would talk about one "theoretical" error case that just extends infinitely. rofl. "statistical probability" or some shit is of interest right around here. idfk an applicable solution though... god damnit. almost inclined to say there is none. i just can't cross EVERYTHING off my list, ya know? lmfao. theory. god damn i love and hate code. this is why. OK DIPSHIT WHAT IS A _USABLE_ SOLUTION TO THIS PROBLEM??????? HACKY IDGAF, USABLE IDOGAF.
+
+I need to be able to detect and accomodate for the "two responses" (from different servers in this case) IN ANY ORDER ('theoretically ;-)'), similar to how I deal with the two responses (from the same server) in the "RETRY RACE CONDITION" below.
+
+So maybe that^ plus a CAS to the same shit, with a flag set on the second one just as a probing mechanism (or maybe always set? do we always check to see if we are the winner even if our CAS failed? do we always assume we might be the second server? guess this is a TODOoptimization by having it only check on the second. easier to code it for 'every' one. seeing that we lost to ourselves when we are the first server is... uhmm... a WHAT THE FUCK HUGE SANITY CHECK ERROR AND WE SHOULD COMMIT SUICIDE ;-P).
+
+I *think* this is a usable solution... but I cannot verify that it is robust :(.
+
+
+TODOreq: in order for this to be a usable solution, we need to make the fuck sure that both servers are CAS writing to the same spot.
+
+//also, it's not a "COMMIT SUICIDE" scenario if the first is beat by the second (that theoretically bit again). I guess we should just report our results and let the "ServerHelper-Picker" be the one to decide if we commit suicide or not... for he knows if we have a second server attempting it also or not.
+
+
+
+
+
 
 
 
@@ -157,3 +220,142 @@ I guess I should also CAS the stream log intention too. I should CAS all 3 point
 
 
 The more I type down here, the more I think I need dat stream log :-P. But I should check that balance shit before deciding. I think the balance example WAS POSSIBLY a hacky stream log implementation hahahaha. It was specific to balance only... but it was the same concept (I think)
+
+
+
+
+
+
+finally found that fucker, took way too long: Projects/Ideas/abc/couchbase.json.docs.for.bank.scenario.figured.out.txt
+waaaay down where there's a bunch of pound signs "BANK FIGURED OUT". also edited it with this commit but that's besides the point...
+
+
+welll....... shit. aside from being a bitch to understand (i barely even get what the fuck i was talking about)... i don't think it will help with trying to hack around needing a stream log. hell, i still don't even know if i want/need a stream log. hell, i don't even know if i want a cache layer anymore!!! am i just overcomplicating this shit? is keeping 2 couchbase clusters somewhat synchronized overcomplicating the issue and not worth it? i think the design would be a lot easier if i just had wt/abc/bankserver all on the same server/software-stack. but bandwidth to the home isn't cheap! IDFK.
+
+i mean shit i think i'm intertwining the cluster'ness and the rpc'ness too fucking much
+especially since a double-fail will retry on another server and oh god my fucking brain~
+
+TRYING to power through this but i'm having no breakthroughs :(
+
+was hoping i would on that failed backpacking trip...
+
+stream logs are easy
+cached stream logs are ???????
+
+does the cache level have a stream log?
+
+also: ORDERING DOES NOT MATTER, so how will my stream log even work? does stream logging and ordering even have anything to do with each other?
+
+who checks that stream logs "intents" have "results" (in the middle is hte mainValue)???
+
+
+oh god my fucking brain. i don't know what the fuck to do from here. i don't want to overcomplicate rpc generator... but i also don't want to have to solve this same problem again in the future...
+
+
+
+what is a solution that works on both the:
+a) 1-client <--> 1-server NO-CACHE scenario (bleh)
+b) multi-client <--> multi-server + auto-caching-layer scenario (abc)
+?????????????
+
+
+well ok don't even think about caching lol
+we're still on "transport layer" problems
+which is the only network connection in (a)
+and is the cache <--> master network connection in (b) [there is another, the client <--> cache.. but it's copypasta :)]
+
+
+i still think that balance shit kinda maybe has the answer
+i just might not be understanding it well enough
+
+like.... WHAT THE FUCK AM I DOING AT A LOW AS FUCK / ABSTRACT LEVEL?????
+i don't know.
+
+/re-reads
+
+balance: we're journaling into something we read. during read (startup etc), we error check
+
+i don't think this is a good solution because what the fuck am i talking about? read? this is bullshit. maybe it works ok for balance but what the fuck? i don't think it translates well... and shit i'm starting to think it's not even sufficient for balance
+
+well shit dont' need to explain that more if it's fucked.
+
+
+
+god fucking damnit. MY BRAIN.
+
+
+it sucks that making it FUNCTIONAL is so fucking easy... but making it SECURE/SAFE/RELIABLE/RECOVERABLE/ETFUCKINGCETRA is damn near impossible
+
+perhaps my goals are too high?
+
+
+but shit i ain't no noob
+
+i forsee the problems, therefore i should prepare for them!!!
+
+
+
+i'm fucking losing it
+
+dangling this launch over my head is getting me pumped
+
+i'm more and more fearless
+
+which is good...
+
+...cept i spout random bullshit on facebook all the damn time.
+
+
+i feel like my spouting is getting ripped off more and more
+probably paranoia
+but nonetheless
+
+
+
+------------BACK TO THE POINT------------
+
+
+blabh albha blah balhbalbhalbhalbhalbhalhbalhbalhbalhbalhbalhbalhblahblhablhalbhalhb
+
+
+fuck this. i think i should try to hackily solve those identified problems above. fuck stream logging. i hope at least.
+
+
+
+
+
+
+I THINK A HARD-ACKING-SCHEME IS THE EASIEST TO CODE. WHO CARES ABOUT 100% EFFICIENCY WHEN THE DESIGN IS RIDICULOUSLY SIMPLIFIED. HARD ACKING MEANING... WE FUCKING ACK EVERY REQUEST AND _THAT IS THAT_. THE RESPONSE IS NOT CONSIDERED RECEIVED UNTIL IT HAS BEEN ACKED. BUT THEN DO WE ACK THE ACK? OH GOD WHAT THE FUCK? HOW WOULD THE CLIENT (THE RECEIVER OF THE RESPONSE) KNOW THAT THE RESPONSE HAS BEEN ACKED? THE SERVER IS THE ONE WHO RECEIVES THE ACK... SO.... WHAT THE FUCK? DO WE SEND AN 'OK WE ACKED IT LOL NOW IT'S GOOD 2 GO KTHX'? SOUNDS LIKE A FUCKING WASTE OF BANDWIDTH.
+
+
+....................BUT IF THAT _REALLY_ GREATLY SIMPLIFIES THE DESIGN.... FUCK IT. do it faggot.
+
+
+ack the ack the ack the ack the ack the ack. that should be enough acks to guarantee the request/response went through (this is sarcasm.. however it does kind of apply. better MORE THAN ENOUGH than NOT ENOUGH, rite? right now my false positive error case above is suffering from not enough... to which there are two solutions: stream log || ack it first!)
+
+and besides, it's not like we're delaying the 'CAS' race... only the results of it.
+
+
+
+i don't like that i need to round trips to the server for a single message
+but that's how i'd ack a response.
+
+
+i guess i could start responding to the wt-user before (just before) the response ack. it's less important, ya know? what is important is that we do it before re-using the key. what's cheaper? generating a series of keys and keeping the client/server using the same series.... or acking the response? how would using a series of keys even let me ack a previous response? if i never re-use the key, i do not know. perhaps a timestamp of the message request time (set when the client receives it) is my solution the the false positve? yes the retryBit is set, but the timestamp does not match so we say "ok this is a new message that we are retrying". i didn't even plan to have a timestamp... but i guess i _COULD_. so now we're talking about an extra byte or so of overhead per message. certainly cheaper than two round trips... and PROBABLY cheaper than keeping an infinite/sync'd stream log between client/server (idk for sure).... but idk if this is my perfect solution. does it solve the other problems... this timestamping?
+
+an alternative to timestamping is to use like a ridiculously low precision counter. all we really need to be able to do is to differentiate ourselves from the previous message... SOOOO i think a single fucking bit is enough. yes a bit is a byte in memory... but is it also a byte on the qdatastream encoded network? i think NOT. so it is efficient as fuck without doing all that timestamp shit. if the bit is set and our pending one isn't, we have detected that false positive and know it's a retry for a newer message. we ack the old one. hmmm i quite like this solution. fucken cheap. we only toggle that bit when getting a message for recycle. /me goes through other error conditions to make sure this shit works. HAVE I FOUND IT????
+
+yes. as einstein says: the solutions to the most complex problems are often very simple. a single flipping bit. rofl. BUT, this does not solve my "response lost on network twice" error case... especially the part where it comes just after the second timeout(). but shit that problem sounds so ridiculously hard to solve... even with a stream log.
+
+woot for powering through one problem.
+
+now if i can solve that response lost on network twice.... hrrmmmmm
+
+well for one thing, that problem is indescernable from the 'request lost on network twice' error... because we don't get any communication back from the server in both cases. whatever. in the request case we don't have to worry about the business having processed it, so it's actually a simplified version of the same error. solve response, solve request.
+
+
+I _THINK_ I have a usable solution for this shit... but I need to prototype it in the simplest form. YAT. Hopefully my last, though I very much doubt that. I need to "fake" each scenario and recover from it. Ordering of messages needn't matter. They are not inter-dependent. At least, not in my ABC case. And making them inter-dependent should be a business logic detail I *think*.
+
+
+
+still NO FUCKING CLUE how this factors into cache/master... but as I've said: that's a different problem than transport/acking. will be copypaste'ish too methinks. one problem at a time mofo
