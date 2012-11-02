@@ -16,6 +16,7 @@
 #include <QIcon>
 #include <QStyle>
 #include <QMouseEvent>
+#include <QtTest/QTest>
 
 class mainWidget : public QWidget
 {

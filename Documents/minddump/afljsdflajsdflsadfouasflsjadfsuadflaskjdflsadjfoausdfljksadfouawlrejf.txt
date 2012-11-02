@@ -1,0 +1,65 @@
+got such a massive headache with this "need to re-organize my backups" shit
+idfk if git submodules help
+they are something i would like to use
+but I don't know if they're what I want
+like I can't even conceptualize what I'm saying...
+just when I factor in backing up of git submodules it gives me a fucking headache
+
+it also destroys my timeline model
+something a single git repo follows
+i guess that's why i don't like it
+
+Am I willing to settle with 2 repos (3 if I have a special 'music' one)?
+
+text/binary?
+
+The binary one will be like 50+ gigs
+ROFL
+
+I'm just.... unsure
+
+
+
+
+
+
+and then there's this fucking mess/headache of organizing everything
+including the timestamps
+getting missing
+detecting corruption/bit-rot
+getting revisions
+and repos are randomly encountered too!!!
+so I need to... unroll... them????
+or whatever that way of combining two is...
+...and I need to do it without losing the timestamps
+
+
+now you see why I have such a massive headache?
+
+Then gotta factor in: "I'm probably forgetting something".
+
+well yea there's a few svn repos too... LMFAO
+
+
+OH RIGHT, censorship
+
+I want to do my censorship during this backup reorganization
+I don't want to censor much
+just anything I deem worthy (explicitly NOT mentioning what that might be)
+still dunno if ima censor my mentioning censoring~
+lewl. that would include this
+
+so does that mean this entire document or just this text??
+
+
+SEEEEEEE???? FUCKING HEADACHE!!!!!!!
+
+supposed to like... build a fucking tool... to help with all this...
+
+and I'm supposed to trust this tool with MY VALUABLE AS FUCK FILES
+GAAAAAAHHHHHHHHHHHHHHHHHHh
+alpha tool, never before used, with my files :-/
+
+I guess as long as I always have a "untouched being pulled from" copy of all my files, I shouldn't have anything to worry about?
+
+but I still am/do/will

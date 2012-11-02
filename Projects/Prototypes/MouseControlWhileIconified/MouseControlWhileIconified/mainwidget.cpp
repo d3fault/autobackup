@@ -49,14 +49,16 @@ void mainWidget::handleTimerTimedOut()
 #if FIGURE_OUT_MOUSE_CLICKS_N_SHIT_YO
         if(m_TimerStep == 3)
         {
-            QMouseEvent *mousePressEvent = new QMouseEvent(QMouseEvent::MouseButtonPress, newPoint, Qt::RightButton, 0, 0);
+            QTest::mouseClick(m_DesktopWidget.screen(), Qt::RightButton, 0, newPoint);
+
+            //QMouseEvent *mousePressEvent = new QMouseEvent(QMouseEvent::MouseButtonPress, newPoint, Qt::RightButton, 0, 0);
             //QCoreApplication::sendEvent(m_DesktopWidget.screen(), &mousePressEvent);
             //QCoreApplication::sendEvent(this, &mousePressEvent);
-            QCoreApplication::postEvent(m_DesktopWidget.screen(), mousePressEvent);
+            //QCoreApplication::postEvent(m_DesktopWidget.screen(), mousePressEvent);
 
-            QMouseEvent *mouseReleaseEvent = new QMouseEvent(QMouseEvent::MouseButtonRelease, newPoint, Qt::RightButton, 0, 0);
+            //QMouseEvent *mouseReleaseEvent = new QMouseEvent(QMouseEvent::MouseButtonRelease, newPoint, Qt::RightButton, 0, 0);
             //QCoreApplication::sendEvent(m_DesktopWidget.screen(), &mouseReleaseEvent);
-            QCoreApplication::postEvent(m_DesktopWidget.screen(), mouseReleaseEvent);
+            //QCoreApplication::postEvent(m_DesktopWidget.screen(), mouseReleaseEvent);
         }
 #endif
     }

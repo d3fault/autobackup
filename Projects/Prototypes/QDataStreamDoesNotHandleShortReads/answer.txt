@@ -1,0 +1,8 @@
+no it does not so you should use a messageSize shit in front of each message, and make sure bytesAvailable()
+
+but you also have to make sure sizeof(typeof(messageSize)) > bytesAvailable() too :-P
+
+
+
+
+and of course, to get each message "aligned" (for lack of a better word), the first part of the message, before even the messageSize, is the magic... which we read in one character at a time. we do this in case we get un-aligned so our protocol fixes itself :-D. robust as fuck.

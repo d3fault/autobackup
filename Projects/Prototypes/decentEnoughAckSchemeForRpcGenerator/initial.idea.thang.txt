@@ -1,0 +1,83 @@
+re: /RpcGenerator/design/MESSAGE.TRANSMISSION.ERROR.USE.CASES.and.also.the.typical.success.case.need.to.study.and.solve.this.txt
+
+this prototype is based off of everything accomplished in there
+
+
+AND i am including the following thoughts on the subject:
+
+holy fucking shit i am aiming for perfection
+i am being retarded
+i just need it functional
+"tcp is good enough for most cases"
+THIS IS SO FUCKING TRUE IT ISN'T EVEN FUNNY
+your ack layer on top of it is just extra frosting
+
+you CANNOT guarantee shit like you want
+it's just fucking impossible
+
+no matter what design you come up with,
+the business always "might eat it"
+AND the response "might not get here"
+
+very much more likely that the request won't get there if the response doesn't
+
+but i mean holy fucking shit dude you'd drive yourself insane trying to solve those
+i mean shit you already are.
+
+
+
+you're starving
+not actually
+but you're certainly driving yourself insane
+
+
+OH MY FUCKING GOD ABC IS SUCH A BASIC PIECE OF SHIT
+
+and you are deprived of everything you desire
+
+which you have already planned
+etc
+
+
+until you "perfect" the design
+
+
+FUCK IT
+
+you will be hacked.
+
+shit will crash.
+
+with bitcoin, it does not matter [much]
+
+
+as long as you're sending your coins to offline machine keys periodically/often
+who gives a shit
+
+as long as you advise others to do the same
+fuck them if they get screwed
+FUCK THEM.
+
+you cannot trust your software
+you cannot advise others to do the same
+google/facebook/microsoft/paypal/etc all fucking lie
+that is their business strategy
+"we are stable/secure/etc"
+fuck them.
+
+i will tell the truth at least.
+
+i want somewhat stability
+and i will get it
+because i'm fucking 1337
+
+
+BUT this perfection shit
+trying to solve PERFECTLY the functionality/design
+you're retarded.
+
+make it functional
+
+there's already too much to code and too little time to live
+
+code

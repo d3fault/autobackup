@@ -1,0 +1,326 @@
+For some reason I've got coder's block
+like
+idfk
+
+the design is complicated and hard to implement
+"average response time + 150%"
+and
+retries
+and
+try-other-server-on fail
+
+
+idfk
+
+I _GET_ it
+but coding it is another story
+
+I just feel dumb all the sudden
+what the fuck am I doing?
+pounding teh keyboard...
+
+
+I want to go browse the web instead.. but holy shit dude that's seriously so fucking boring I want to stab my eyes out.
+
+
+I can't stand the internet anymore
+I can't stand computers anymore
+
+BUT I NEED TO UTILIZE THEM
+or kill myself
+
+I have no other skills.
+
+Anti-social creeper scares employers away
+I'm not ashamed of it
+but getting a job at mcdonalds is basically impossible
+I've got a name'ish
+probably more than I know
+
+I wish I'd shut up
+not beause of shame
+but because of leakage
+You need to cold turkey that shit
+Earn it.
+LAUNCH.
+
+yes, that's what I'm _TRYING_ to do...
+
+
+just fucking failing is all
+paranoia will be gone INSTANTLY
+aren't you pumped?
+fuck yes i am
+god i feel sick to my stomach in my current state
+feel squeezed
+and starving
+even after i've just ate
+it's a different kind of feeling
+that no food can satisfy
+
+suicide sounds so nice
+been thinking about it a lot lately
+fantacizing
+mmmmmmmmmmmmm nothingness
+
+
+i literally stare at a blank screen all day
+and just like... refresh... n shit.
+it's sick.
+i wake up and turn it on and then INSTANTLY i am like "uhhh now what"
+i mean sure facebook keeps me amused for a grand 20 seconds
+my friends' dumb bullshit and pictures
+
+
+i go to facebook, xkcd, questionablecontent, qt dev/interest mailing lists, qt home page, qt planet
+....and occassionally /b/ (try not to)....
+
+THAT'S IT
+i am on the computer staring at those SLOW AS FUCK MOVING pages all damn day
+i _WANT_ to be coding
+coding is at least stimulating
+but jesus fucking christ it's so hard to get in the zone
+or if i want to, Caydon impending within a few hours
+isn't worth it etc
+
+FUCK YOU CAYDON
+not you you
+but you know, YOU
+fuck babysitting.
+
+fuck "impending person arriving here"
+mom, dad, caydon
+FUCK YOU ALL
+GET OUT OF MY LIFE/BRAIN
+it's already difficult enough as it is
+
+if I lived on my own I'd be more in a permanent state of coding
+I've been there before
+shit was so cash
+I will get there again
+or I'll kill myself
+I will enhance it
+enhance the fuck out of it
+that's my goal in life
+that's about it
+enhanced state of permanently coding
+
+no shame
+no paranoia
+freedom of information
+in and out
+
+fuck proprietary/brainwash
+i will socialize
+but i will NOT socialize with anyone who won't let me license our conversations under BY-SA/mb-something-else
+
+i'm starting to want a LGPL-like content license
+
+idk
+
+I mean my brain tries so hard to convince itself that BY-SA/LGPL is the perfect combo
+
+I say things like "yea content/information needs to be cancerously SA (gpl-ish), but code should be allowed to be used for profit! hence LGPL!"
+
+it actually does kind of fit
+information NEEDS to stay free
+software USING free software, does not
+
+SHOULD, but realistically can not
+hard to profit in certain markets if your source is readily available to your competitors
+every advantage you create, they get instantly/free/cheap
+
+information, on the other hand, doesn't even have that parrallel
+
+"information USING free information" ????
+doesn't make sense
+
+that's called knowledge
+and they already own the rights to their own knowledge
+can license it under anything they want
+there is no "links against"
+
+derives from, yes
+but that's completely different, in both software/information cases
+
+derivatives need to stay free
+cancerously so
+LGPL provides that for software
+BY-SA provides it for information
+
+
+
+
+
+
+seeeee how fucking elaborate I'm getting with convincing myself that LGPL/BY-SA is perfect combo?
+wait, didn't I just contradict myself?
+
+"i want lgpl-like for content"
+"there is no link-against analog for content"
+
+....
+
+
+soo.....
+maybe it IS the perfect combo?
+I mean it's not like you farted and then landed on it
+You've analyzed plenty of licenses
+
+
+what do I mean by LGPL-like?
+what did I write in that email to CC peeps?
+
+/me looks it up
+
+
+ahh kk
+
+my reasoning was that I am ok with them deriving into a more restrictive format, becoming more preventative of commercialization IN THEIR DERIVATIVE (not my initial work)
+
+just like LGPL code can become GPL in a fork, and that fork can no longer be linked against in proprietary shit...
+
+I'd be fine with that for content, yea
+
+but now what was I just talking about 5 mins ago?
+
+
+oh right, there's no link-against analog
+there doesn't need to be
+the derivative is merely made MORE restrictive
+which is fine (don't go TOO far that direction though of course ;-))
+
+idk
+
+
+LGPL is nice because it's basically GPL but allows proprietary code to link against it
+content does have this analogy because:
+"link against" really means "i learned from it" and therefore their knowledge is theirs and can be licensed under ANYTHING they choose
+
+
+so even if there was an LGPL equivalent, it would be pointless.
+i don't even need to tackle the derivative/NonCommercial-nao concept
+because, "LGPL is [...] basically GPL"
+
+IT IS ALREADY NON-COMMERCIAL <3
+the derivatives, that is.
+
+
+HENCE CONCLUSION: LGPL/BY-SA is perfect combo
+
+
+
+now I'm just a little.. eh... confused about mixing the two
+
+I mean not really
+
+text documents, pictures, videos, are obviously/easily BY-SA
+but COMMENTS WITHIN CODE... some of which are FUCKING HUGE... are not code...
+
+
+you know what
+obviously they fall under LGPL too...
+and therefore are basically the fucking same as BY-SA (because of what I explained above)
+
+at least, I _THINK_ this is the case...
+
+
+I'm in love with ellipsis and parenthesis.
+
+
+
+
+but then it really becomes: if comments/WORDS can be LGPL and shit
+then why shouldn't my documents/pictures/videos also?
+
+
+what does it mean to link to in that case?
+
+
+how about a video (their original work) with a thumbnail/smaller video (mine) within it that's LPGL?
+is that a "link-to" case????
+even if it's full, that is
+
+
+UNDER THOSE CIRCUMSTANCES I AM OK WITH THEM RELEASING THEIR VIDEO UNDER ANY LICENSE THEY WISH
+so long as my video within retains it's rights.
+so even if that is a "link to" scenario... which I have no fucking clue if it is... it's ok.
+
+
+OR, is that a derivative and my license now applies?
+I really don't know.
+
+
+
+hmmm
+what I said in that email appears to be wrong
+GPL is not NonCommercial
+it can be sold
+just the source needs to be provided
+
+see, there's no "compiled" analog either rofl
+mah brain hurtz
+
+When I'm nearing launch, I should ask the stallman for advice
+"should I just release my documents etc, some of which are code, under lgpl?"
+
+he'd obviously try to convince me to use GPL :-P
+but no thanks I'm in love with your "necessary evil" :)
+
+
+
+
+
+
+
+
+
+
+and now for something completely different
+
+
+BSD/CC-BY
+do I really give a shit if soemone takes my shit and derives/privatizes it, so long as they give me credit?
+Yes.
+
+
+Yes I do.
+FUCK YES I do.
+
+
+I am using Copyleft to combat Copyright.
+
+
+Yes, I think ALL content should be public domain...
+...but reality in 2012 does not have that. Copyright runs rampant and holds up etc.
+
+Releasing in public domain/bsd(almost-public-domain) is a recipe for disaster
+it's inviting the stealing/privatization
+
+"original work by d3fault"
+.......
+
+on a massive now-proprietary derivative library?
+NO FUCKING THANKS
+fuck you copyright bastards
+die in a fire
+
+well that settles that
+
+
+i will continue to release shit I don't give a fuck about as BSD
+code examples or whatever, like that CleanThreadingExample class
+idgaf about it
+it isn't valuable *enough*
+but I mean that's all pre-launch blah blah
+
+post-launch I'll just do LGPL/BY-SA "by default"
+CAN opt-in to BSD, but probably won't out of laziness :)
+
+Should also provide that for anybody else contributing also
+
+GPL-esq is the minimum
+Public Domain is the maximum
+
+your proprietary bullshit is not allowed (knowledge, code, ANYTHING. _FUCK OFF_)
+and that is that

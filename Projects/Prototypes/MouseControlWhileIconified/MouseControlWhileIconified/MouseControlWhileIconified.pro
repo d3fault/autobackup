@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui testlib
 
 TARGET = MouseControlWhileIconified
 TEMPLATE = app

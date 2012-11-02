@@ -15,7 +15,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386033907
+Documents/minddump/:1386033931
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -26,7 +26,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386033907
+Documents/minddump/dreams/:1386033931
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -71,6 +71,7 @@ Documents/minddump/aflaskdjfowuralsfkjaowurlsadjfoawurelsdfwoeruijsdflkj.txt:134
 Documents/minddump/afldaksjfoulkjaawresfdouwljfasufdoasijdflasjfdowuwelrjk.txt:1345424345
 Documents/minddump/afljasdflkjasdfowulsdjfasdlfjsaldfjweorulfdkj.txt:1347266660
 Documents/minddump/afljsdafoasuflsadjfkashfasdkfuourwljrafouawersfdasdfljkwoerul.txt:1345423349
+Documents/minddump/afljsdflajsdflsadfouasflsjadfsuadflaskjdflsadjfoausdfljksadfouawlrejf.txt:1351848307
 Documents/minddump/aflkasjdfasdlfjwoerusdlfjasfdokhafksadjfoiuwerlk.txt:1344287349
 Documents/minddump/aflkjasdflkjasdfoiuwrlekjsdafousdfluowrljfouerlk.txt:1350511649
 Documents/minddump/aflkjdsflasdjfoweurlkjfasdfoasduglsadkfjsadofuwaelfkjsdfouaseflkj.txt:1348891877
@@ -409,6 +410,7 @@ Documents/minddump/lkasjdfowiurlaskjdfasofdiuywerkjasfdoiuwerlkj.txt:1338993127
 Documents/minddump/lkasjfdosaiuwelkrjsdfoisudfklhsadflkjsdfsoiwurelkdf.txt:1339487679
 Documents/minddump/lkdsjfofiualwrkjaosdfuiawlekrjaworiuweorilkjsdfoiul.txt:1340579117
 Documents/minddump/lkfajasofuaworuawerjsdfaofuasodfupawruqworiuj234082421lewkrjklfshdfj.txt:1327634418
+Documents/minddump/lkfalsdkfjasdlfkjasdlfjsadofuwralfdjasdlfghasdlfkjsdfouwrelkjsdfousdflkjsdfsdlkjsadf.txt:1351847849
 Documents/minddump/lkfjsdafoisaudflwekjroewirusdfjsdlfkjasdfoiusdflkjsdfoiuewrkj.txt:1335963194
 Documents/minddump/lkjasdflsadjfoiawueflkajsdfosadufaslkfjsadlfjsdfuoiewrlkj.txt:1337710495
 Documents/minddump/lkjasdfoaiuerlkjasfoiuwerlkjsawreoiuweroqjfalkjasfd.txt:1339677494
@@ -615,7 +617,7 @@ Documents/nobodyme/havents.posted.this.yet.but.considering.evolution.leads.to.wa
 Documents/nobodyme/internet.show.uncensored.dht.network.etc.TITLE.txt:1323323105
 Documents/nobodyme/pre.censored.humans.implement.apes.implement.something.txt:1320774800
 Documents/nobodyme/website.worst.case.scenario.i.become.embarrassed.txt:1323683547
-GloballySharedClasses/:1344900176
+GloballySharedClasses/:1351842755
 GloballySharedClasses/network/:1343476853
 GloballySharedClasses/network/ssl/:1350940086
 GloballySharedClasses/network/ssl/testcerts/:1344899950
@@ -635,15 +637,18 @@ GloballySharedClasses/network/ssl/ssltcpclient.cpp:1349797976
 GloballySharedClasses/network/ssl/ssltcpclient.h:1349797862
 GloballySharedClasses/network/ssl/ssltcpserver.cpp:1350940086
 GloballySharedClasses/network/ssl/ssltcpserver.h:1349797928
+GloballySharedClasses/threading/:1351842643
+GloballySharedClasses/threading/objectonthreadhelper.h:1351842660
 GloballySharedClasses/debuggableStartableStoppableBackendAndFrontend.pri:1344898899
 GloballySharedClasses/idebuggablestartablestoppablebackend.h:1342940658
 GloballySharedClasses/idebuggablestartablestoppablefrontend.cpp:1343123450
 GloballySharedClasses/idebuggablestartablestoppablefrontend.h:1343686227
+GloballySharedClasses/objectonthreadhelper.pri:1351842838
 GloballySharedClasses/sslclienttestcerts.pri:1344899708
 GloballySharedClasses/ssltcpclient.pri:1344899198
 GloballySharedClasses/ssltcpserver.pri:1344899078
 GloballySharedClasses/ssltcpservertestcerts.pri:1344900176
-Pictures/:1386033907
+Pictures/:1386033931
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1053,7 +1058,7 @@ Projects/ProjectGoOutside/haha.initial.design.shits.idfk.but.go.outside.the.two.
 Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge.deal.to.me.also.i.should.not.neglect.these.ideas.txt:1329935001
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1350871960
+Projects/Prototypes/:1351841680
 Projects/Prototypes/AudioVideoBuffers/:1344095659
 Projects/Prototypes/AudioVideoBuffers/design/:1327617616
 Projects/Prototypes/AudioVideoBuffers/design/AudioVideoBuffersOverviewDetailed.dia:1327575511
@@ -1104,11 +1109,11 @@ Projects/Prototypes/GenericAcker/design/:1350050661
 Projects/Prototypes/GenericAcker/design/initial.design.simple.sendMessage.got.lost.towards.the.end.not.sure.this.is.what.i.want.dia:1350049517
 Projects/Prototypes/GenericAcker/design/not.sure.this.is.the.right.thing.aswerouwoeariuasflkj.txt:1350050661
 Projects/Prototypes/MouseControlWhileIconified/:1350874094
-Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/:1350883859
-Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/MouseControlWhileIconified.pro:1350871985
+Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/:1351841105
+Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/MouseControlWhileIconified.pro:1351840253
 Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/main.cpp:1350872442
-Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwidget.cpp:1350883853
-Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwidget.h:1350880556
+Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwidget.cpp:1351840527
+Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwidget.h:1351840579
 Projects/Prototypes/ProtocolMessageMastery/:1329818277
 Projects/Prototypes/ProtocolMessageMastery/src/:1329827905
 Projects/Prototypes/ProtocolMessageMastery/src/Protocol/:1329833192
@@ -1127,7 +1132,7 @@ Projects/Prototypes/ProtocolMessageMastery/src/ProtocolServer/mainserverwidget.c
 Projects/Prototypes/ProtocolMessageMastery/src/ProtocolServer/mainserverwidget.h:1329819009
 Projects/Prototypes/ProtocolMessageMastery/src/ProtocolServer/protocolserver.cpp:1329941892
 Projects/Prototypes/ProtocolMessageMastery/src/ProtocolServer/protocolserver.h:1329833868
-Projects/Prototypes/QDataStreamDoesNotHandleShortReads/:1344907108
+Projects/Prototypes/QDataStreamDoesNotHandleShortReads/:1351840784
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/:1344922058
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/QDataStreamDoesNotHandleShortReads.pro:1344907939
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/datastreamdoesnothandleshortreadsbackend.cpp:1344908268
@@ -1140,6 +1145,7 @@ Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testclient.cpp:134491
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testclient.h:1344910966
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testserver.cpp:1344916742
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testserver.h:1344915758
+Projects/Prototypes/QDataStreamDoesNotHandleShortReads/answer.txt:1351840895
 Projects/Prototypes/QSslTest1/:1329936215
 Projects/Prototypes/QSslTest1/src/:1330088607
 Projects/Prototypes/QSslTest1/src/SecureClient/:1343589488
@@ -1230,14 +1236,14 @@ Projects/Prototypes/RemoteBankManagementTest/src/WebFacingAppClient/serverCA.pem
 Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/:1331460005
 Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/sharedprotocol.h:1331252119
 Projects/Prototypes/RemoteBankManagementTest/src/sharedProtocol/userBankAccount.h:1331460005
-Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/:1346874604
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/:1351842976
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/:1345070392
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/Guarantees.And.Verifications.overall.message.flow.dia:1345068465
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/failed-too-slow.message.queue.considerations.pretty.sure.its.part.of.business.logic.idfk.txt:1345069701
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/message.stream.log.guaranteeing.alfdjasouawerljsda.txt:1345065378
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/design/stream.log.synchronization.messages.thoughts.adlfjkasdfowueraladjfsa.txt:1345070392
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/:1346875497
-Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/:1350054294
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/:1351848452
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/RobustNetworkMessagingForRpcGeneratorClient.pro:1346874914
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/main.cpp:1346874750
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/client/mainwidget.cpp:1347199931
@@ -1255,6 +1261,7 @@ Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/robustnetwo
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/robustnetworkmessagingforrpcgeneratortestserver.h:1346882325
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/testserver.cpp:1347200647
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/testserver.h:1347200506
+Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/this.design.is.outdated.methinks.txt:1351842982
 Projects/Prototypes/WtServerPostTest/:1344095866
 Projects/Prototypes/WtServerPostTest/src/:1333034917
 Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/:1332677175
@@ -1293,6 +1300,20 @@ Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/:1344095723
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/src/:1325630078
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/src/consoleLibAvReadAviHeaderFromMemoryTest.pro:1325014868
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/src/main.cpp:1325522963
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/:1351844893
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/design/:1351844923
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/design/Action.ack.Broadcast.ack.and.Ack.ack.figured.out.this.is.going.to.be.harder.to.prototype.than.to.design.lol.txt:1351845123
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/:1351842291
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/:1351848452
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/ClientDecentEnoughAckScheme.pro:1351843468
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/clientdecentenoughackschemebackend.cpp:1351848449
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/clientdecentenoughackschemebackend.h:1351844202
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/clientdecentenoughackschemetest.cpp:1351843343
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/clientdecentenoughackschemetest.h:1351843099
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/clientmainwidget.cpp:1351843318
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/clientmainwidget.h:1351843271
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/src/ClientDecentEnoughAckScheme/main.cpp:1351842487
+Projects/Prototypes/decentEnoughAckSchemeForRpcGenerator/initial.idea.thang.txt:1351842045
 Projects/Prototypes/easyTreeTest/:1349093890
 Projects/Prototypes/easyTreeTest/src/:1349093881
 Projects/Prototypes/easyTreeTest/src/easyTreeTest.pro:1349007791
@@ -1819,7 +1840,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386033907
+Projects/libAvGraphicsItem2/design/:1386033931
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

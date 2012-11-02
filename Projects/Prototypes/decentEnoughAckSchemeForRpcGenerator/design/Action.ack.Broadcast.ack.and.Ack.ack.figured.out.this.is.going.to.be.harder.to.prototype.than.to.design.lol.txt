@@ -1,0 +1,17 @@
+we ack our Actions using a "happens-before" relationship. the response is the ack.
+
+we ack our broadcasts manually, since there is no response
+
+for both cases, we lazy-ack (re-used-id-seen+FLIPPED-BIT-TO-NOT-GET-FALSE-POSITIVES-WITH-RETRY-BIT-SET) the acks themselves
+
+acking the ack is way less important, but should still be done
+
+all acking the ack does is says "ok you can forget about that message now, we will not ask for it again" etc
+storing it in memory until then is cheap. realistically with my message re-use design it'll be like 1-100 messages later that we ack the ack (the "proof" of this only exists in my brain/design... and who gives a shit how long it takes!)
+there is no additional bandwidth costs with this method, and it does add robustity on top of the TCP layer
+
+
+
+
+aside: wondering if I should just try to surgically implant this into my CompilingRpcGeneratorTemplateToExtractFrom....
+.... because I'm a little, eh, worried, about the overhead of simulating the situation. I already have the situation so maybe I should just use it? But FUCK dude that code's already such a fucking zombie, I might make it worse :-/
