@@ -15,10 +15,14 @@ public:
     inline bool isSuccessful() { return m_Successful; }
     inline quint8 errorCode() { return m_ErrorCode; }
     inline void resetSuccessAndErrorCode() { m_Successful = false; m_ErrorCode = 0; }
+    inline bool toggleBit() { return m_ToggleBit; }
+    inline void flipToggleBit() { m_ToggleBit = !m_ToggleBit; }
 private:
     //Both sides have the members. It's just a matter of whether or not you stream them in or out
     bool m_Successful;
     quint8 m_ErrorCode; //TODOreq: decide if you think 256 failed reasons per action is enough. probably is (famous last words)
+    bool m_ToggleBit; //TODOoptimization: since a bool takes a byte of memory, it might be worth it to keep all my toggle bits for messages in a QBitArray as a memory optimization. However if I have to store an index into that bit array, then it defeats the purpose rofl... soo.... idfk....
+    //TODOreq: stream the toggle bit where appropriate. Off the top of my head, I think it's streaming cases are the opposite of when I stream success/error-code. There is no use for it in the response I don't think. Only in request. Could be wrong?
 protected:
     inline void setErrorCode(quint8 errorCode) { m_ErrorCode = errorCode; } //action messages call this from within setFailed<reason>();
 

@@ -1,3 +1,5 @@
+change in designs below: any time a retry bit is set, we mean the toggle bit is NOT flipped. actually fuck i might need retryBit on the client... but i'm doing the server right now and it APPEARS redundant. can always add it back later...
+
 ########## NO ERRORS USE CASE ##############
 
 Client
@@ -63,7 +65,7 @@ pendingTimeout()
 retryBit.set()
 	->
 		Server
-		//hmm-we-never-got-dat-shit TODOreq: false positive: our server will think that since the pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE with same id) (except when there is no previous message, which is only for the first message with that id) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or a single flipping bit so we know if we're on 'next' or 'previous', depending entirely on if it matches ;-)
+		//hmm-we-never-got-dat-shit TODOreq: false positive: our server will think that since the ack-pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE with same id) (except when there is no previous message, which is only for the first message with that id) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or a single flipping bit so we know if we're on 'next' or 'previous', depending entirely on if it matches ;-)
 
 		//WRONG: oh fuck this false positive also applies to the "business eats it" error case i think. wait no it doesn't because it's in our pending list
 
@@ -97,7 +99,7 @@ timeout()
 retryBit.set()
 	->
 		orly-well-here-it-is-AGAIN-mofo // this is the same as our described above false positive, but this time we're doing it right :)
-		//still doesn't remove it from responsePending() though. only do that when retryBit is _NOT_ set
+		//still doesn't remove it from responsePending() though. only do that when the toggle bit flips
 	<-
 pending.remove()
 //woot
@@ -128,7 +130,7 @@ Generic Error and mark offline //so long as we know it was the requests that wer
 //pretty much the same as the request being lost twice... but this is far less likely to happen...
 //TODOreq: the response (either first or second. first if business is slow, second if first really did get lost on network) might come JUST AFTER the second timeout(), but we've already initiated error'ing out. I guess we should undo that error out (but not the message portion of it! (HOLY SHIT WHAT THE FUCK HUGE ERROR IN DESIGN: THE BUSINESS HAS ALREADY SUCCESSFULLY PERFORMED IT'S OPERATION AT THIS POINT. HOW THE WHAT THE FUCK? DO I NEED TO MAKE SURE THAT THE NEXT _SERVERHELPER_ OVERWRITES THE SAME PLACE USING A CAS? SHOULD I HAVE SOME WAY WHERE I CAN SEE THAT THAT SAME EXACT REQUEST SUCCEEDED PREVIOUSLY BUT I DIDN'T KNOW IT? IE BE AWARE OF THIS EXACT ERROR CASE? Possibly a fix: unique message IDs and some sort of a stream log or something so the second server can be all like "hmm dis shit already happened I ain't gonna try it again. oh and here's the result from it since we are smart as fuck and know what this error case is *pulls result from db* ")), telling our parent that this ServerHelper is in fact functioning (although it's slow as fuck haha (could extend timeout periods or just decide not to use it just for that fact (all depends HOW MUCH slower really)))
 //basically the second server to try it needs to see what the fuck happened to the first server? It would be a decent check to begin with... and especially for the error case just described (where the write DID go through).
-//I need ample timing for the business. Need to find that sweet spot between "not timing out too slowly" and "not giving business enough time". I like my averaging * 1.5 idea because it scales automatically. 1.5 might not be enough, maybe x3 is a good amount? I really don't want to error out and have another server try the same shit just because my timeout was too low :(. I think I need to redesign and incorporate a stream log FML. I am unsure. "Smart Keys" with CAS might/_SHOULD_ be enough... but then the rpc generator functioning properly depends on the business code. This is not good. I think it will have to anyways :-/. What the fuck my brain just exploded.
+//I need ample timing for the business. Need to find that sweet spot between "not timing out too slowly" and "not giving business enough time". I like my averaging * 1.5 idea because it scales automatically. 1.5 might not be enough, maybe x3 is a good amount? I really don't want to error out and have another server try the same shit just because my timeout was too low :(. I think I need to redesign and incorporate a stream log FML. I am unsure. "Smart Keys" with CAS might/_SHOULD_ be enough... but then the rpc generator functioning properly depends on the business code. This is not good. I think it will have to anyways :-/. What the fuck my brain just exploded. I'm retarded.
 
 
 Client

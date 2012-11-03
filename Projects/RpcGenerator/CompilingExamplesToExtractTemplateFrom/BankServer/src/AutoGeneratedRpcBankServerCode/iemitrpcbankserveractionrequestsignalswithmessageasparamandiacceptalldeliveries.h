@@ -14,7 +14,7 @@ class IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliv
 public:
     IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries(QObject *parent = 0);
 signals:
-    //Incoming Action Requests
+    //Incoming Action Requests. TODOoptional: maybe add the word "Requested" to these signals. Semantics...
     void createBankAccount(CreateBankAccountMessage *createBankAccountMessage);
     void getAddFundsKey(GetAddFundsKeyMessage *getAddFundsKeyMessage);
 public slots:
