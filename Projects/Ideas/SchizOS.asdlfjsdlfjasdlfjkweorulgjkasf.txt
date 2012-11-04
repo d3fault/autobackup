@@ -41,3 +41,10 @@ i know i've thought about it before
 i wonder if when i wrote about it before if it was in as much detail?
 am i losing my mind?
 lol relevant title
+
+
+
+
+other shit is hacked webcam + wifi drivers. to the user, they should appear disabled and perhaps not even installed. they should be able to co-exist neatly with when the user installs them.
+
+for the webcam example, a lot of times there is a light that is lit up. the hacked drivers should not light this up. I *think* since we are the driver that we can control this... but I really don't fucking know lmfao. It really depends on how the hardware is implemented. A database of "there is a light that comes on and we can't stop it", so the webcam hack portion is disabled. SchizOS needs to be as undetectable as possible as a POC that my paranoia is justified :-P. I already _KNOW_ it is, but a POC would help others logic their way through paranoia as well.... and much much faster than it took me xD

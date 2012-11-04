@@ -94,3 +94,79 @@ LIFE
 grr I'm mad.
 
 time to suicide
+
+
+
+
+
+
+################################################# NVM EVERYTHING ABOVE LOL#################################
+
+woot did some thinking before/during watching that movie during a break
+RPC GENERATOR _IS NOT_ worthless
+
+
+you are, or just happened to be, thinking about a case where it is less beneficial
+
+i am NOT collapsing. I will still have a cache layer
+
+
+but the design for it will be... tough.
+
+
+
+Views will be cached and I should hard-cache them... on the cache. They do not 'update' via 'push' periodically. I should basically just hard-cache a View query (search result page, for example) on the 'appdb'/cache layer and make it so that all pulls for the same query are read from the appdb/cache. WITH A 1 MINUTE LIMIT.
+
+
+There are two types of "pages", so to speak. The underlying values are what is important.
+
+Ex: Search Results -- If the underlying values are pulled via a View Query, then they are NOT GUARANTEED TO BE UP TO DATE ANYWAYS.
+Ex: /slot/dogfood -- If the underlying values are pulled as direct values, then a) I 'subscribe' to updates for it during the GET [which passes THROUGH the appdb/cache to the bankserver/master (TODOreq: there are two 'subscribes': wt-user subscribing to cache, and cache subscribing to master)... and b) they are up to date always, since they are direct pulls from couchbase and not obtained via View Query
+
+
+View Queries are stale data. They are necessary because of that "3 Rs" problem. It is infeasible to perform searches (etc) otherwise. So you have to choose the right underlying technology when creating a page. I can only think of those 2 types.
+
+
+
+"The contents of this page may be out of date by a few minutes"
+
+vs.
+
+"This shit is up to fucking date no doubt guaranteed and hell, we even push you new values as they arrive ;-)" <-- assuming javascript/ajax
+
+
+
+the first message... notifying of out of date.. should be on every page that it applies IMO. craigslist search results only pull every 15 minutes, for example.. but i'd want something a bit more frequent. 1 minute maybe? I mean this is a value that you can/should be able to change PER-PAGE (using the Vew 'type', if you know what I mean). my point in mentioning craigslist is that I find it fucking annoying that like... they don't notify you (except right after you post) that the shit might be lagged or whatever. You should optionally/additionally specify just when the View Query was run... ya know?
+
+I think craigslist *might* be a piece of shit (not using efficient dht Views/map)... and that's why they do every 15 minutes. MAYBE THEY HAVE TO DO IT MANUALLY BAHAHAHAHAHAHAHAHAHAHAHAHA. I have no way of knowing without seeing the source and quite frankly I don't give a shit.
+
+God I fucking love my design/solution/path. C++ ftw.
+
+Facebook: Java/PHP
+
+
+ROOOOOOFL
+
+
+
+
+hahahahhahahahahahha
+
+google is C++ internal (gfs), but they use fucking python and random ass languages every which way
+
+I'm going to have a strict C++ only policy. Fuck your python shit. Fuck any scripting environment shit. GTFO. Unncecessary overhead. While I'm on the subject of making fun of other languages, fuck your virtual machines too!!!! God people are so fucking stupid. So many idiots in this world. I stand (sit) alone. In the dark. In silent. Typity typing my lil fingers raw in a fucked up weird ass state of depression and excitement. SO FUCKING PUMPED, yet so fucking.... pissed/depressed/anticipatory/hungry(not-food)/lonely/sad/angry/deprived. It comes and goes. Right now I feel like I can do anything. When I wake up tomorrow I might be back in a state of depression :-P. I am glad I figured out the caching/rpc solution.
+
+
+BTW you were getting confused as fuck with the 'how does rpc generator factor into views' shit because you were thinking too... individual... with your values. With the 'up to date' page types, then YES each value is like an Rpc Get (should combine them but that's a different subject~ TODOreq). But with Views, your Rpc Call is getting the entire fucking view's contents in one go. For search result example, the query, and what page, and the sorting options, are your Rpc Action PARAMETERS. Your result will be somewhat large, but it will be a good size chunk of info for Rpc Generator shit.
+
+
+re:TODOreq about combining above: I think each 'page get' (which is also a subscribe ;-P) will/should be an Rpc Action. Not individual values. This is all shit I need to work out / formally design later.... but not right now. I am glad that my Rpc Generator didn't just become fucking USELESS a few hours ago :-D. Really boosted my spirits. It's just that I encountered (in my brain) something I hadn't thought about yet: how Views factor in with Rpc Generator.
+
+
+
+
+ok now back to trying to figure out a ClientId solution for being able to interchange TCP/LAN, SSL/WAN, QLocalSocket/Same-machine :-D
+Fucking pumped. I will be an spirititititititit.
+
+
+oh and ideally I want all 3 of those 'server types' to be listening simultaneously (maximally. minimally I can select which one to enable (at run-time or compile time????? no fucking clue. need to decide that too lmfao))

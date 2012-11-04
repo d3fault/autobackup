@@ -1,0 +1,111 @@
+So I'm thinking that the Rpc Generator GUI should have 3 checkboxes, with the "SSL Server / WAN" box being the only one checked by default. It should be a compile time switch what servers are running. It _COULD_ be run-time, but I can't think of a case where I'd need it.
+
+I am also wondering about the overheads of having all 3 running 24/7 and not giving a fuck. I mean actually this is a bad idea we don't want to accept TCP sockets from WAN 24/7 lmfao. But you get the idea. If nobody is connected, what cost is lost? Memory? That it? Idfk just trying to wrap my head around all this. I'm leaning towards an interface that all 3 types implement. My interface that rpc generator communicates with. Server encapsulates them. Shit now I'm thinking since server encapsulates them, maybe he should be able to [at run-time] be able to enable/disable each type.
+
+TODOreq: This would imply some sort of "Server" (read above!!!) inter-communication, completely separate of the 'server types' I am enabling/disabling. What I mean is this: since we're dealing with a CLUSTER of servers, I need to be able to communicate with that "Server" (think: management control type communication) and tell it which types to enable/disable. So like I'd have a machine that is my "Battlestation" (rofl I like that name :-P), and he can send updated binaries to each of the bitches (outward-facing servers, but I guess he'd also control the inner-couchbase-cluster via the REST api as well).... and more to the point at hand: tell them to enable/disable server TYPES for a specific Rpc Service. Another Example: On the same machine I might have 2 Rpc Services. Maybe 'neighbor notifying' (for wt<-->wt machines) which would use tcp... and then like a typical Abc Rpc Service, using ssl. They are in the same binary (and I guess the Abc Rpc Service is like exposed cache layer [transparent to user, and optional: 'neighbor notifying' has no use for the cache/master concept]) and function independent of each other.
+
+
+I'm still unsure WHY I'd need to be able to disable/enable tcp/ssl/localsocket server TYPES at run-time, however. I just feel like it wouldn't be that much harder to do.
+
+
+
+I also need to work out the logistics of my 'binary updating' mechanism. It's going to be a bitch, unless I bring down my network for a minute or two of course...
+
+
+
+but anyways, I need to stay on course.
+
+
+I don't think I should worry about having 3 up at once at all for the time being
+
+I think my priority should be having the 3 be inter-changeable at compile time. It's a good balance of 'getting shit done' and 'future proofing'.
+
+
+I don't even have a need for tcp/localsocket right now... AND EVEN WHEN I DO I CAN STILL USE SSL AND JUST EAT THE FUCKING OVERHEAD FOR THE TIME BEING. IT IS ENTIRELY AN OPTIMIZATION TO USE THE OTHER TYPES. TODOoptimization
+
+
+
+
+I am vastly underestimating the power of Rpc Generator
+
+in my brain it is only serving web content/services
+
+LOL
+
+this shit will be able to be used in so many fucking place it isn't even funny. since it's in C++ it can/will/should be used any time two processes need to communicate. whether remote or on the same machine. FUCK YEA ABSTRACTION. FUCK YEA CODE ONCE AND FORGET. FUCK YEA PROGRAMMING. FUCK YEA DOING THE HARD WORK UP FRONT (i often tell myself that right now is the most difficult part of my life (i don't know if i'm right)). FUCK YEA NEVER HAVING TO WRITE NETWORKING PROTOCOLS/CODE EVER AGAIN. define your rpc service and BAM fucking done. FUCKING.DONE.
+
+there's a quote that's been stewing in my brain lately, have been tempted to post in on facefuck: "My favorite part of learning is forgetting".
+
+
+
+<3 <3 <3 programming. It is orgasmic at times.
+
+
+
+
+
+BACK TO THE _FUCKING_ POINT.
+
+
+Inter-changeable at compile time for now, but keep in mind that it might be at run-time later. And multiple/simultaneous. The ClientIds should be... apathetic of the underlying server type. Once the message leaves the "Server" (that encapsulates all 3 types or whatever, as well as 'hello'-ing), we read in the magic/header/message then give it to business. The magic and business etc shit DOES NOT NEED TO KNOW OR GIVE A SHIT WHAT TYPE OF MESSAGE IT WAS FROM. It only sends back to the "Server" the completed result with the associated (and type-independent / specific-connection-independent) ClientId. The "Server" then gives it to the appropriate underlying server and bam they are all 3 running simultaneously with no problems. I guess I like the idea of "Server" giving the clients their Ids. It should use a server-specific salt and randomness etc.. so maybe a quint32 md5sum? It should only be done during 'hello'. Should the client even see it? Fuck, it needs to. Upon reconnect it provides it again. It's sort of like a cookie. Maybe I should just call it that. It is a TEMPORARY identifier that is server issued. And later the client provides it upon reconnection. The persistence of my cookie should last until reboot (whether of binary or of machine). _BAM_ I love pounding the keyboard and barely having to think~
+
+The cookie is only provided during the 'hello' phase. It is also only given to the client (if none provided) during the hello phase. I need a hard-coded protocol for this hello phase... but I'll never have to code it ever again for any fucking network protocol shit I ever do WOOOOOO).
+
+So I mean shit this is easy: the cookie is just a variable in the client's memory. LoL.
+
+
+
+From a higher level class design perspective I still don't quite grasp it. Who communicates with the "Server" ???? He has to be able to listen to some post-'hello' 'connectionReadyForAction' signal at which point we connect the readyRead to our Rpc Service (magic read, header read, message read, etc). But the "Server" needs to manage the initial "connectedAndEncrypted". The client should just say 'hello'. If it has a cookie it provides it at the same time. If the server sees that no cookie is provided, one is issued during a 'welcome' message. The client then says 'thank you for welcoming me', this time providing a cookie no matter what. This is an ack of sorts. It will be hacky but who gives a shit if it's a bit inefficient as it is only done at the beginning. Perhaps during the 'welcome' message the cookie is sent to the client no matter what (even if one was provided during 'hello'), just to simplify the protocol (less use cases to deal with). Once the server receives the 'thank you for welcoming me' + cookie, we are ack'd and verified and our 'hello' state is done and we can now emit the 'connectionReadyForAction' signal. All of this will need to be on the same thread as our other message processing stuff. Cannot / should not access a QIODevice from multiple threads simultaneously. Our 'hello' stuff is really only barely used anyways. I think I need to / should prototype this 'hello' stuff, as well as the 'readyForAction' signal and connecting of readyRead to the actual rpc service. Despite 'readyForAction' being a signal, it can/should-be/NEEDS-to-be(???) a direct connection because we are going to disconnect the readyRead from the "Server" ('hello' processor etc) and then connect it to the Rpc Service's handleReadyRead. If it is not done in one unit of execution then readyRead might be emitted during the DC and we might miss it TODOreq. There are other solutions to this probably but the issue definitely exists.
+
+
+
+STILL, who the fuck 'sees' my "Server" and "Rpc Service" ???
+
+/me opens up Rpc Generator and examines current code / design. Who owns my irpcbankserverprotocolknower ??
+
+
+
+DISGUSTING, RpcBankServerClientsHelper owns a pointer to it's interface, which is an implementation of SslAndIRpcBank[...], but the disgusting part is that I'm creating the QTcpServer on the RpcBankServerClientsHelper thread (in the constructor) and then doing .moveToThread later lmfao. TODOreq: even if I need initialize slots etc, the QTcpServer should be instantiated on the thread in which it will live. For now the code works so eh fuck it lolol I'm just testing etc this is not production. BUT ALSO maybe I should just have it live on the same thread as RpcBankServerClientsHelper (assuming that's on a backend thread also). This goes with what I said above about the DC readyRead race condition anyways. I don't need _THAT_ many threads. IIRC I think I overdid it lmfao. GUI thread (should be un-used mostly), RpcBankServerClientsHelper thread, and Business threads (it can use sub-threads however it pleases).
+
+
+....but back to the point again. I made a TODOreq for that thread shit and will change, it, but now I need to think about it from another concept of seeing the "Server" and the "Rpc Service". "Server" handles connections for various server types, and clients/ids, and hello shit. TODOreq: MAYBE also disconnect shit but I really don't know atm. One problem at a time.
+
+
+
+Ahh yes my RpcBankServerClientsHelper is currently on the GUI thread, and should remain so, because I need to properly set up taking ownership of the Actions and Dispensers etc. I guess it could move threads later... but right now it is on the main thread.
+
+
+
+aside:
+If I am going to 'combine' values of a 'realtime page' into a single Rpc Action (instead of like 10 rpc actions lmfao), and some of the values are ABC specific and some of the values are BankServer specific... does this mean that BankServer is really just a backend of Abc rpc service? Or should I do 2 Rpc Actions? One for abc and one for bankserver? Man this is a headache lmfao. I think having BankServer be a business of ABC is fine. TODOreq: my current Rpc Generator compiling does not really conform to this. Wait yes it does. The BankServer functions just become Abc functions really... simple as that. "create bank account" IS NOW an abc rpc service action. big frickin whoop. same with get add funds key. good, i don't need to change my examples that I'm using to code rpc generator :-P
+
+
+gah I am getting fucking hella confused and can't find any designs to help me see it bettar :(.. does this mean I should make some lmfao? God damnit why is coding so hard? There goes my great feeling... now I just have a headache. This is why you design WHILE you code. designEquals would have saved me a headache. Perhaps I should re-arrange the insides of m_Transporter so that there's a "Server" in it as well as a "Rpc Service".... or just make it smart enough to handle both... since it currently IsA Rpc Service :-/... idfk...
+
+
+...he does 'hasA' SslTcpServer... so maybe yes the inside of m_Transporter is what I should re-arrange. still dfk.
+
+/me keeps analyzing...
+
+
+
+I think I need a somewhat large re-design for this.
+Which makes me think I should properly design + prototype it FIRST.
+instead of trying to hack it in. lol.
+
+
+man all this for ClientIds. You were definitely under-estimating them :-P...
+
+
+right now my 'rpc service' (ibankserverprotocolknower) is implemented by my 'server TYPE' (ssltcpserverandbankserverptocolknower)
+
+whereas I want:
+
+Something { ServerHelloer, RpcService }
+
+just what/where that Something is idfk. all 3 should be on the same thread, as mentioned above for a readyRead disconnect/reconnect race condition.
+
+
+ServerHelloer issues cookies, will eventually be able to handle all 3 server TYPES at once, and just tells 'Something' when that connection is ready for action (then Something connects it's readyReady to RpcService :-P)
+
+god my fucking brain hurts time to shotgun myself in the heart and get my first/last dmt trip (if i do my brain then no trip most likely)
