@@ -33,14 +33,14 @@ struct RpcBankServerMessageHeader
         ConfirmedBalanceDetectedMessageType
     };
     quint16 MessageSize;
-    quint16 MessageMagicAndRpcServiceId;
+    quint16 RpcServiceId;
     quint32 MessageId; //had this as QByteArray, but decided to change it [back? right? backspaced and forgot what it was lol] to quint32.. because isn't MD5 exactly 32 bits? perfect fit and saves me from the QByteArray size parameter :)
     quint16 MessageType;
 };
 inline QDataStream &operator>>(QDataStream &in, RpcBankServerMessageHeader &message)
 {
     in >> message.MessageSize;
-    in >> message.MessageMagicAndRpcServiceId;
+    in >> message.RpcServiceId;
     in >> message.MessageId;
     in >> message.MessageType;
     return in;
@@ -50,7 +50,7 @@ inline QDataStream &operator<<(QDataStream &out, const RpcBankServerMessageHeade
     //TO DONEoptimization: we could detect a broadcast by seeing if messageId is 0 and then not streaming out the message id. but it means on the client i'd have to receive the header in 2 stages (figure out if it's a broadcast or not and then get the message id if applicable). not worth it imo... (also you'd have to change the order of them, but that's given)
     //^^^^^^^SOLUTION: we _DO_ want to stream out the message id, even for broadcasts. for broadcasts, we need it for our ACK
     out << message.MessageSize;
-    out << message.MessageMagicAndRpcServiceId;
+    out << message.RpcServiceId;
     out << message.MessageId;
     out << message.MessageType;
     return out;

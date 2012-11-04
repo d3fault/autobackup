@@ -11,9 +11,3 @@ void IMessage::deliver()
 {
     emit deliverSignal();
 }
-#if 0
-void IMessage::fail(quint32 failedReasonEnum)
-{
-    this->FailedReasonEnum = failedReasonEnum;
-}
-#endif

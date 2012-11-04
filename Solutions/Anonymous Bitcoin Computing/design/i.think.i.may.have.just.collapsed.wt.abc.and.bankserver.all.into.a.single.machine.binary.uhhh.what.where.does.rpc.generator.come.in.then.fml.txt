@@ -1,0 +1,96 @@
+I'm not sure my cache/master plan will even fucking work lmfao. BUT IT'S OK. My Rpc Generator that I'm currently working on has nothing to do with that.
+
+
+My reasoning for doubt: How do I query a view on the cache?
+EXACTLY
+
+brain = fucked
+
+
+the query needs to be done on the master, and therefore the cache is a fucking useless layer.
+
+fuck it~
+
+
+
+HOWEVER, hmmm...
+
+
+
+wait what
+
+what the fuck is the point of rpc generator now?
+
+
+Wt clients on outsourced <--> Bank Server?
+or
+Wt/Qt(appdb/bankserver) on one machine? IDFK ANYMORE LUL
+
+
+i mean sure it has uses for other shit
+
+
+but like, uhm, what?
+
+if everything's on the same machine i don't need this rpc layer (but can use it with QLocalSocket lol)
+
+
+
+what the fuck
+
+
+is
+
+
+the purpose
+
+
+of rpc generator
+
+
+
+if there is no middle layer?
+
+
+
+did i just collapse my entire design into a single-machine design?
+
+
+oh fuck....
+
+
+
+
+again, it isn't COMPLETELY wasted
+for example, inter-'neighbor' communication could use it (broadcast notification)
+
+
+lots of future apps would use it
+
+
+but will ABC????
+
+
+I don't know what I'm doing anymore...
+
+
+even if I don't use Rpc Generator for ABC, should I still finish it because I'm balls deep in the logic? I want to say yes (I hate leaving projects ALMOST-FINISHED gah)
+
+but I also need to launch asep to get teh blingz
+
+FUCK
+MY
+LIFE
+
+i wish i never wrote this document
+
+what made you think keeping two couchbase clusters synchronized like that was a good idea?
+I'll tell you what: most operations are GETs, thus require no master hit
+
+FUCK
+MY
+LIFE
+
+grr I'm mad.
+
+time to suicide

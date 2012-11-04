@@ -10,10 +10,11 @@
 /*
 struct Message
 [
+    quint32 MagicAndSYNC, //we read it in by the smallest unit possible at a time (char?) until we've seen all of magic, then we know a header follows
     struct MessageHeader
     [
         quint16 MessageSize,
-        quint16 MessageMagicAndRpcServiceId,
+        quint16 RpcServiceId,
         quint32 MessageId,
         quint16 MessageType
     ],
@@ -40,8 +41,6 @@ class IMessage : public IRecycleableAndStreamable
 public:
     explicit IMessage(QObject *owner);
     void deliver();
-    //void fail(quint32 failedReasonEnum);
-    //quint32 FailedReasonEnum;
 signals:
     void deliverSignal();
 };

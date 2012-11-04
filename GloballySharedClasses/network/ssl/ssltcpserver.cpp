@@ -92,6 +92,15 @@ bool SslTcpServer::init()
     }
     emit d("server public local certificate is valid");
 
+    QSslConfiguration sslConfiguration = QSslConfiguration::defaultConfiguration();
+    sslConfiguration.setSslOption(QSsl::SslOptionDisableCompression, true); //as per CRIME
+
+    //set up ssl defaults for all future connections
+    sslConfiguration.setCaCertificates(m_AllMyCertificateAuthorities);
+    sslConfiguration.setPrivateKey(*m_ServerPrivateEncryptionKey);
+    sslConfiguration.setLocalCertificate(*m_ServerPublicLocalCertificate);
+    sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyPeer); //makes us request + REQUIRE that the client cert is valid. client does this to us by default, but we don't do it to him by default. i should still explicitly set it for client
+    QSslConfiguration::setDefaultConfiguration(sslConfiguration);
 
     connect(this, SIGNAL(newConnection()), this, SLOT(handleNewConnectionNotYetEncrypted()));
 
@@ -117,20 +126,6 @@ void SslTcpServer::incomingConnection(int handle)
     QSslSocket *secureSocket = new QSslSocket(this);
     if(secureSocket->setSocketDescriptor(handle))
     {
-        secureSocket->setCaCertificates(m_AllMyCertificateAuthorities);
-
-        secureSocket->setPrivateKey(*m_ServerPrivateEncryptionKey);
-
-        secureSocket->setLocalCertificate(*m_ServerPublicLocalCertificate);
-
-        //makes us request + REQUIRE that the client cert is valid. client does this to us by default, but we don't do it to him by default. i should still explicitly set it for client
-        secureSocket->setPeerVerifyMode(QSslSocket::VerifyPeer);
-
-        //as per CRIME
-        QSslConfiguration sslConfiguration = secureSocket->sslConfiguration();
-        sslConfiguration.setSslOption(QSsl::SslOptionDisableCompression, true);
-        secureSocket->setSslConfiguration(sslConfiguration);
-
         m_PendingConnections.enqueue(secureSocket);
 
         secureSocket->startServerEncryption();
@@ -180,11 +175,56 @@ void SslTcpServer::handleConnectedAndEncrypted()
     QSslSocket *secureSocket = qobject_cast<QSslSocket*>(sender());
     if(secureSocket)
     {
+        //I don't know what I want to use for the clientId. It's a pretty simple problem, yes, but I do need to keep in mind that I want Rpc Generator to perhaps someday function accross threads/processes(?) as well. QLocalSocket for same-machine Rpc Services. SOOOO things like Ip Address and Ssl Cert Serial # are useless. PERHAPS the client _SENDS_ me his client ID upon connection establishment? And Does that mean he sends it with every message too???? Sounds quite wasteful, but perhaps necessary'ish?
+        //I like the idea of the server issuing a clientId upon connection, BUT then how will he know if the client has already connected? The client providing his own clientId helps greatly in detecting stale/actually-disconnected connections (and then we update them with the new/valid socket :-P)
+        //I looked at QLocalSocket and QAbstractSocket... and they don't have any matching methods ('drop in QLocalSocket replacement') for identifying the client. SOOOOO it looks like the most portable/future-proof way is to have the client report his own ID. Still not sure if he needs to send it with every message... but really I don't THINK that should be necessary. Premature optimization much? IDFK tbh. Overhead is overhead. Let's pro/con this shit!
+
+        //---ClientId sent during 'hello' only
+        //pro: less protocol overhead per-message
+
+        //---ClientId sent with every message
+        //con: more protocol overhead per-message
+
+        //ok that didn't fucking help at all rofl...
+
+        //what I'm wondering though is like, with the 'hello' method, when receiving a message, the socket pointer will be consistent. OK. Then we look up the ClientId that we stored during 'hello' and write it to the message. We find it by looking it up _BY_ the socket pointer (TODOreq: we should never even get to that code segment until a successful 'hello'). After the business processes it, we do the opposite: get the socket pointer by clientId. we do primitive tests to see if it's still online (LOL that statement took me so many weeks to understand), then send it. If we detect using primitive tests that the connection isn't good (or if during sending a boolean returns false telling us [with greater certainty] that the connection is gone), then we queue that shit up. TODOreq: however if we cleanly disconnect (TODOreq: clean disconnects should _WAIT_ for messages in business imo) in the meantime, there is no reason to queue. So I guess that parenthesis TODOreq negates the TODOreq that came right before it? If you don't wait, you haven't cleanly disconnected! (and then we queue~). TODOreq: no clue how long I should queue for, but it makes sense that we'd eventually give up and that a reconnect would be so fucking 'out of whack/sync' that there is no point in sending the queue'd shit anyways. BUT for the 1-second disconnect/reconnect case, it makes sense to queue dat shiz. Man this logic is getting confusing, I feel like I need a diagram of use cases that involves clean/dirty disconnects, as well as reconnects. Lots more use cases than I admit. I'm getting away from the point though... ClientIds
+        //vs
+        //there is nothing really special/complicated/hard-to-understand-or-grasp about sending the clientId with every message. We don't have to depend on the socket pointer to look up a clientId... however we do need to save the socket pointer by clientId somehow then? Hmmm now I'm definitely leaning towards that 'hello' method.
+
+        //FALSE: BOTH CASES REQUIRE THE SAME AMOUNT OF MEMORY/LOOKUPS, 'hello' method requires less network protocol overhead (valuable!). 'hello' does require less bandwidth overhead, but the non-hello method does not have to look up the clientId by the socket pointer for each message... so it's one less lookup. fuck it.
+
+        //they both have to look up the socket pointer by clientId, of course. that is the connection-independent functionality that I desire.
+
+        //I do wonder if all of this shit, the 'hello' and 'clean-disconnect' + intermediate 'ready-for-action' states should be put into another class that that 'hasA' 'this'. IDK tbh.
+        //HOLY SHIT I KNOW ONE THING: I'm in ssl-specific code... so yea it probably definitely should go in another class lmfao. One that allows me to use Tcp Sockets for LAN connections (no ssl required), ssl sockets for WAN connections, and QLocalSocket for same-machine connections. Each of those use the hello/ready/cleanDisconnectPlz states ON TOP OF the underlying socket. And the client reports his own clientId during hello. I'm still unsure how clean disconnects will work. Maybe the client just puts himself in a "don't send more to this server" mode and then just waits and then sends a dc message (or maybe none at all... just a tcp disconnect???). Maybe the server rejects new messages for that clientId once we enter cleanDisconnectPlz? I guess it could be either, but having the client do it sounds like the better solution/design. I'm probably goign to remove the existing ClientId code from this class, which'll probably break other code (inb4 git submodules :-()
+
+        //another solution is to just derive from qtcpsocket/qsslsocket/qlocalsocket AS WELL AS some interface with a pure virtual 'uniqueClientId', and just let each implement it however. But meh. IDK. Is that better? The same? Which is easier? Are their cons of it that I'm just not seeing?
+
+        //TODOreq: think about the possibility of an Rpc Service on a machine that can talk to all 3 of those kinds of sockets. Holy shit my brain just exploded. It's definitely plausible that you'd have a qlocalsocket/same-machine client, a tcp/LAN client, and an ssl/WAN client all at the same time. I guess I should choose the solution that accomodates for that crazy/awesome hypothetical use case. ROBUST AS FUCK YESPLZKTHXBAI (WHO CARES IF I LOSE MY SANITY AND OPTIMIZE MYSELF INTO NON-EXISTENCE)
+
+
+        //ok my brain just asploded
+        //and I _MIGHT_ have found an argument for having QLocalSocket derive from the same base as qtcp/udp/etc
+        //like err yea they only need to be QIODevice for streaming in/out
+        //but what the fuck, are connect/disconnect the same?
+        //gah all of this is easily avoided if i have each of them implement a special pure virtual interface
+        //but i also don't want to O_o?
+        //idfk.
+
+        //DROP IN REPLACEMENT MY ASS
+        //QLocalSocket has 'connectToServer', QAbstractSocket has 'connectToHost', which also has a port specifier -_-
+
+        //So basically... my actual 'server' should be apathetic/unaware of what kind of sockets we are listening on. It should emit QIODevices* (or maybe a special interface I create?) after it does the verifying of 'hello'.
+
+        //TODOreq: if the server gets the same client id, we should also check that it really is the same? I might accidentally use the same client id for a localsocket and an sslsocket for example. The server should be able to detect this (or even if they are the same type: both sslsockets for example) and then be all like "invalid client id motherfucker". When the client receives that he should report it to some error reporting utility that is sent directly to my email or whatever. A place where high priority errors are reported (for example, hack attempts are NOT reported here (but if somehow I manage to detect a successfull hack (without being able to simultaneously prevent it? unlikely), that should be reported to the high priority error email addy as well)). <-- this is an argument in favor of having the server provide clientIds during 'hello'. I guess the client would just have to memorize the clientId and know to send it during the re-connect phase. If the machine goes offline or whatever (aside from being far too our of sync) we will have lost the ClientId and have to get another. Hmmmmmmm decisions/designs/thinking/etc fml.
+        //currently I'm thinking the ClientId would be hardcoded, but the ClientId could also be like a fucking md5(mac+rand()+timestamp+salt) and generated on app startup....
+        //TODOidfk: ^^relating to comment just above, perhaps a persistent-between-machine-reboot permaClientId would be valuable in letting the server know that "hey, that queue you are saving for me is way the fuck outdated so just get rid of it lol". BUT then I now run into the same problem of "same perma client id as some other client" ROOOOOFL my brain~)
+
 #ifdef ABC_CONNECTION_MANAGEMENT
         uint clientSerialNumber = secureSocket->peerCertificate().serialNumber().toUInt();
         if(m_EncryptedSocketsBySerialNumber.contains(clientSerialNumber))
         {
-            //TODOreq: they've already connected... which i guess would mean that they lost connection and are now reconnecting... and we didn't detect it and remove them
+            //TODOreq: they've already connected... which i guess would mean that they lost connection and are now reconnecting... and we didn't detect it and remove them. TODOreq: we need to detect it and remove them (also). This would be some sort of check during the sending phase I suppose? A bool that some shit returns will become false? Should test/verify this
             //TODOreq: deal with the un-flushed queue of shit we thought we sent or something or whatever idfk. don't just forget
             m_EncryptedSocketsBySerialNumber[clientSerialNumber] = secureSocket; //for now, just overwrite the old socket
         }
@@ -200,7 +240,7 @@ void SslTcpServer::handleConnectedAndEncrypted()
         //lol found out i already had one from commented out connection management attempt
         m_EncryptedSocketsBySerialNumber.insert(getClientUniqueId(secureSocket), secureSocket);
         //i wonder if it's  more efficient to just store teh socket. this way at least i ensure only 1 per cert (don't i?)
-        //also, do I need an authentication/identification scheme on top of the certs?????
+        //also, do I need an authentication/identification scheme on top of the certs????? idfk, but am going to use one anyways
 
         emit clientConnectedAndEncrypted(secureSocket);
     }

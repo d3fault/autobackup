@@ -21,7 +21,7 @@ void IBankServerProtocolKnower::processCreateBankAccountMessage(CreateBankAccoun
 
     if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
     {
-        //so it's in there, now we need to determine if we're lazy ack'ing an old message or if we want to re-send the response. this is why we lazy ack to begin with...
+        //so it's in the ack awaiting ack list, now we need to determine if we're lazy ack'ing an old message or if we want to re-send the response. this is why we lazy ack to begin with...
 
         if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->toggleBit() == createBankAccountMessage->toggleBit())
         {
