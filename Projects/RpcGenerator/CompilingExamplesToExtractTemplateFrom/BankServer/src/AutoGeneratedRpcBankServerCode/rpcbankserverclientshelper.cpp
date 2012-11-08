@@ -5,6 +5,7 @@
 RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServerBusiness *rpcBankServer)
     : m_RpcBankServer(rpcBankServer)
 {
+    //TODOreq: the constructor of transporter currently sets up a QTcpServer, but we're still on the GUI thread. And later we move it another thread. The QTcpServer should be instantiated from the thread in which it will be used on. I am about to re-design shit anyways so it might work out easily idfk.
     m_Transporter = new SslTcpServerAndBankServerProtocolKnower();
 
     //as opposed to, on the rpc client: m_Transporter = new SslTcpSocketAndBankServerClientProtocolKnower

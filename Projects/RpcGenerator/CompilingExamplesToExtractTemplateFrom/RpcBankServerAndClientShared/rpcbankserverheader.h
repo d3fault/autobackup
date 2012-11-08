@@ -22,6 +22,8 @@
     SO I _THINK_ THE ANSWER IS NO, IT IS NOT DANGEROUS
 */
 
+//TODOoptional: might be able to shorten something like RpcServiceId by a single bit using C bit fields and then to use it for some other bool... like success or retryBit or toggleBit or responseRetryBit... you get the idea. bit fields I can get maximum efficiency (i don't need quint16 for RpcServiceId, but quint8 isn't enough! for example)... but I'm not ready for that optimization.
+
 struct RpcBankServerMessageHeader
 {
     enum MessageTypeEnum

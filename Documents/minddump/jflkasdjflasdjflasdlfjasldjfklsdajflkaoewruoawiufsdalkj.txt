@@ -1,0 +1,4 @@
+if(!openSource)
+{
+	secure = false;
+}
