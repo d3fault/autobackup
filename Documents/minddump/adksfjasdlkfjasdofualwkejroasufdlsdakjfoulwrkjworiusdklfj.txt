@@ -1,0 +1,74 @@
+offline/devbox conversion to 'input only' complete
+I added a DVD-Rom drive to it
+
+before it was just 3x HDDs and i'd use a read/write usb thumb to move shit around
+
+
+
+
+this is not sufficient, but is an improvement i guess????
+
+good practice or something
+
+meh
+
+i need to output
+
+already as we speak my keepass db is out of sync
+offline version is newer
+it's just YTMND, but the point remains valid
+
+
+
+that whole multi-machine input-only/output-only (multiples thereof) combo design is still stewing in my subconscious
+i might need to create my own OS
+but actually I think what I really need is just an environment, WHICH I AM GOING TO MAKE ANYWAYS
+
+so I can just do it all on Qt
+
+
+but the whack ass design won't work with other parts of the operating system(s???) that aren't... integreated... with my environment
+
+replay'able
+
+or something
+
+so confusing
+
+
+but yea, this input-only machine mode is only a SLIGHT gain
+
+
+it only means data is less likely to leak (until i plug in that usb and negate the effects lmfao...)
+
+
+
+
+input can still corrupt my files permanently, regardless of encryption status. dd if=/dev/zero of=/dev/sda|b|c == i am dead :(
+
+that's why i need an output only box TOO
+
+and they all need to harmoniously work together
+my fucking brain hurts
+
+i don't trust filesystem drivers
+
+
+ACTUALLY
+tbh
+
+i do.
+
+but in the long run: i don't and shouldn't
+
+
+but right the fuck now
+i am unknown
+
+and my usb method is PROBABLY (famous last words) 'safe enough'
+
+
+
+but considering THERE EXISTS a design where you don't have to!!!! i should use it.
+even if i have to invent it.
+fuck yea

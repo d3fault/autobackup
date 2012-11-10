@@ -15,7 +15,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386034032
+Documents/minddump/:1386034058
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -26,7 +26,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386034032
+Documents/minddump/dreams/:1386034058
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -62,6 +62,7 @@ Documents/minddump/accept.it.and.all.over.the.place.including.a.nice.tor.robot.d
 Documents/minddump/adfalsdjfowurlasjfoaufsioafhdkasdhfaisfuwerjosudflasjfouwerlk.txt:1343313796
 Documents/minddump/adflkjasdflskadjfsdfhsldafkjsdalfkjsadfoowuroiuwerkjfsdaf.txt:1350406742
 Documents/minddump/adflkjasdfoiausdflkajweraoirusdaflkjsadfouasdflkjsdfoiu.txt:1335804858
+Documents/minddump/adksfjasdlkfjasdofualwkejroasufdlsdakjfoulwrkjworiusdklfj.txt:1352547100
 Documents/minddump/adlsfjasdofuwerlkjsdofuwlerjasofduwaerkhsadfkjhsdfoiuwer.txt:1340748559
 Documents/minddump/afasdfashdflaskfjsaflfskjasfdouwerlkjsdfsldkfj.txt:1347266336
 Documents/minddump/afdlaksdjfaosdiuwelkrjsdfohasfkjsdfowuetrlkjgadsgdfgoiuwarasdfj.txt:1348364611
@@ -74,6 +75,7 @@ Documents/minddump/afljsdafoasuflsadjfkashfasdkfuourwljrafouawersfdasdfljkwoerul
 Documents/minddump/afljsdflajsdflsadfouasflsjadfsuadflaskjdflsadjfoausdfljksadfouawlrejf.txt:1351848307
 Documents/minddump/aflkasjdfasdlfjwoerusdlfjasfdokhafksadjfoiuwerlk.txt:1344287349
 Documents/minddump/aflkjasdflkjasdfoiuwrlekjsdafousdfluowrljfouerlk.txt:1350511649
+Documents/minddump/aflkjasdflsakjdflsadkjfowuerlkjsadfosdauiflsdkajfoawerulksajdfsoaduflk.txt:1352458979
 Documents/minddump/aflkjdsflasdjfoweurlkjfasdfoasduglsadkfjsadofuwaelfkjsdfouaseflkj.txt:1348891877
 Documents/minddump/aflkjdsflkjsadfouwlrekjsdfusdaofiuwerlkjsdfouiasdflkjwre.txt:1350679333
 Documents/minddump/aflkjsadfouwerljsdfsdafhksdhfasdfuweroiuwrelk.txt:1345058159
@@ -667,7 +669,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1344899708
 GloballySharedClasses/ssltcpclient.pri:1344899198
 GloballySharedClasses/ssltcpserver.pri:1344899078
 GloballySharedClasses/ssltcpservertestcerts.pri:1344900176
-Pictures/:1386034032
+Pictures/:1386034058
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1078,7 +1080,7 @@ Projects/ProjectGoOutside/haha.initial.design.shits.idfk.but.go.outside.the.two.
 Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge.deal.to.me.also.i.should.not.neglect.these.ideas.txt:1329935001
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1351841680
+Projects/Prototypes/:1352367770
 Projects/Prototypes/AudioVideoBuffers/:1344095659
 Projects/Prototypes/AudioVideoBuffers/design/:1327617616
 Projects/Prototypes/AudioVideoBuffers/design/AudioVideoBuffersOverviewDetailed.dia:1327575511
@@ -1134,6 +1136,21 @@ Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/MouseC
 Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/main.cpp:1350872442
 Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwidget.cpp:1351840527
 Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwidget.h:1351840579
+Projects/Prototypes/MultiClientServerTypesHelloer/:1352367775
+Projects/Prototypes/MultiClientServerTypesHelloer/src/:1352367937
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/:1352463712
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/MultiServerHelloer.pro:1352461324
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/main.cpp:1352459098
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverbusiness.cpp:1352462663
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverbusiness.h:1352462342
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloer.cpp:1352459783
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloer.h:1352462674
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloertest.cpp:1352461364
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloertest.h:1352461353
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.cpp:1352459714
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.h:1352459707
+Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/:1352368983
+Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/helloprotocol.h:1352368983
 Projects/Prototypes/ProtocolMessageMastery/:1329818277
 Projects/Prototypes/ProtocolMessageMastery/src/:1329827905
 Projects/Prototypes/ProtocolMessageMastery/src/Protocol/:1329833192
@@ -1556,7 +1573,7 @@ Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.h:1348734985
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1350339206
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.h:1349623955
 Projects/RpcGenerator/:1343597837
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1342939005
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1352364632
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/:1350052293
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1350503142
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1350503142
@@ -1610,8 +1627,8 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bank
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclienttest.h:1343653118
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/main.cpp:1342947944
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/:1350684478
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1352104323
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/:1352103188
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1352463713
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/:1352365356
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/:1343667910
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/Dispensers/:1350938919
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/Dispensers/Actions/:1350939193
@@ -1646,9 +1663,9 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/Auto
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/irpcbankserverbusiness.h:1350940865
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverclientshelper.cpp:1352103188
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverclientshelper.h:1343676708
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/ssltcpserverandbankserverprotocolknower.cpp:1351937843
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/ssltcpserverandbankserverprotocolknower.cpp:1352365356
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/ssltcpserverandbankserverprotocolknower.h:1350680482
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/BankServer.pro:1350515100
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/BankServer.pro:1352364718
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bankdbhelper.cpp:1350946386
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bankdbhelper.h:1350516120
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bankserver.cpp:1351017358
@@ -1660,6 +1677,9 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bank
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bitcoinhelper.cpp:1350515621
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/bitcoinhelper.h:1343676799
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/main.cpp:1342611929
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/GlobalRpcShared/:1352367704
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/GlobalRpcShared/multiserverandhelloer.cpp:1352367704
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/GlobalRpcShared/multiserverandhelloer.h:1352367282
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/:1352103637
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/:1342624118
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/:1350939631
@@ -1861,7 +1881,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386034032
+Projects/libAvGraphicsItem2/design/:1386034058
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

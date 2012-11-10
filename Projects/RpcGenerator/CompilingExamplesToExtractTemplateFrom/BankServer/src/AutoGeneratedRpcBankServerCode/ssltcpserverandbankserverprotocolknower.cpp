@@ -5,13 +5,13 @@
 SslTcpServerAndBankServerProtocolKnower::SslTcpServerAndBankServerProtocolKnower(QObject *parent)
     : IBankServerProtocolKnower(parent)
 {
-    m_SslTcpServer = new SslTcpServer(this, ":/RpcBankServerCA.pem", ":/RpcBankServerClientCA.pem", ":/RpcBankServerPrivateKey.pem", ":/RpcBankServerPublicCert.pem", "fuckyou" /* TODOopt: make it so when starting the server we are prompted for this passphrase. this way it is only ever stored in memory... which is an improvement but still not perfect */);
+    -m_SslTcpServer = new SslTcpServer(this, ":/RpcBankServerCA.pem", ":/RpcBankServerClientCA.pem", ":/RpcBankServerPrivateKey.pem", ":/RpcBankServerPublicCert.pem", "fuckyou" /* TODOopt: make it so when starting the server we are prompted for this passphrase. this way it is only ever stored in memory... which is an improvement but still not perfect */);
     connect(m_SslTcpServer, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
     connect(m_SslTcpServer, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleClientConnectedAndEncrypted(QSslSocket*)));
 }
 void SslTcpServerAndBankServerProtocolKnower::init()
 {
-    emit d("SslTcpServerAndBankServerProtocolKnower received init message");
+    -emit d("SslTcpServerAndBankServerProtocolKnower received init message");
     if(m_SslTcpServer->init())
     {
         emit d("SslTcpServer successfully initialized");
@@ -20,7 +20,7 @@ void SslTcpServerAndBankServerProtocolKnower::init()
 }
 void SslTcpServerAndBankServerProtocolKnower::start()
 {
-    emit d("SslTcpServerAndBankServerProtocolKnower received init message");
+    -emit d("SslTcpServerAndBankServerProtocolKnower received init message");
     if(m_SslTcpServer->start())
     {
         emit d("SslTcpServer successfully started");
