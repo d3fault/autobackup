@@ -1,0 +1,35 @@
+Free Software vs. Proprietary
+
+I am reminded of being in my pre-calc class in 12th grade
+
+my math teacher was making a point
+that none of the other students seemed to grasp
+
+I can't remember the exact equations
+
+but they were something like
+
+
+50^2
+vs.
+.000001^3
+
+which will end up being higher approaching infinity?
+
+I raised my hand (abnormal) and gave a perfect description that the teacher loved
+something along the lines of:
+"The number with the higher exponent will ALWAYS be higher than the lesser exponent when approaching infinity"
+
+
+yada yada
+
+do you see the parrallel with free software? keep reading if not
+
+Propriety software will have tons of money thrown at it so it might be better at first
+but in the long term, free software ALWAYS surpasses proprietary
+
+even if it's 20 generations from now
+it will happen
+
+proprietary software dies on a storage medium
+free software lives on in derivatives indefinitely

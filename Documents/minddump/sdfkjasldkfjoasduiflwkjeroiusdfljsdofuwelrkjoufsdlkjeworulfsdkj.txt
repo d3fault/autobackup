@@ -1,0 +1,82 @@
+My output only input only solution will probably depend on some kind of persistent indefinite filesystem (foreverfilesystem mb) to have replayability
+
+
+the "output only" (which is KEYBOARD/MOUSE (or fingers) "input" only + RELAYING_THAT_INPUT_AS_OUTPUT_TO_OTHER_MACHINES_AFTER_RECORDING_IT) machine, teh only safe one, needs to be able to replay it's shit (the keyboard/mouse/fingers events) and the foreverfilesystem or whatever acts THE SAME AS IT DID THE FIRST TIME
+
+god so hard to conceptualize
+
+
+d3fault: environment
+
+I AM AN ENVIRONMENT
+
+not an os
+not an app
+
+
+hack proof hopefully (input/output only machines)
+
+dht on a completely different... level... a different part of the design. the online interaction part.
+
+
+
+
+i definitely have my work cut out for me
+for my entire fucking life
+
+
+
+i like that wording though: environment
+
+OS apathetic environment
+
+plugins are apps
+and development is a) inline editable b) designEquals (hopefully)
+and development is also optional. it is intended for end-users as well. they are key. FREEDOM OF INFORMATION HAS NOTHING TO DO WITH SOFTWARE DEVELOPMENT.
+
+row row fight the powa
+
+
+
+the contents of my hard drive would surely be targetted if an evil malicious entity wanted to control information
+one might exist but i guess he doesn't know of the details of my overthrow
+how foolproof it is
+it's going to work
+
+once i launch there's no turning back
+once copies of all my work have been distributed globally
+i'll sleep so much better
+and there's no erasing it
+
+i need to STFU until then
+
+this shit is valuable
+
+but MAYBE
+just MAYBE
+'they' support it
+and just want to rip me off for profit lmfao
+
+
+still need to stfu either way
+
+because they can/will patent the stolen ideas
+preventing me from implementing them
+though i will hopefully just ignore patents
+
+i want to live on mars
+and say "lol wut?" to dmca requests/patent-compliance-sue'ages
+etc
+
+fuckin corporatism
+my dad buys into it
+
+idiots.
+
+there is nobody driving
+greed is pulling in many directions
+that is all
+
+
+oh and i _GUESS_ there's also the chance that they support it and won't interfere/steal
+but i doubt that. i doubt that very much. humans are easily corruptable. at least one of them is.

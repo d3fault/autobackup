@@ -1,0 +1,100 @@
+inline editable int main
+i'm not sure how it will work in terms of... getting to the 'backend' portion of the code
+you right click a gui and say 'edit', that brings you to the 'frontend' portion of the code (the '<something>Widget.cpp' or whatever)
+
+but depending on how I do my shit, it may or may not link to the backend
+
+
+
+I flip flop on the matter currently
+I have a helper that sets up the backend as a member of the front-end
+I also have designed and written about rapid prototyping saying that the frontend and backend should be ignorant of each other
+
+I lean towards the latter (ignornace on both end), but then: how do I get to the backend when I have gone right-click->edit and am now in the front-end who does not know the backend?
+
+
+
+like this:
+
+
+===UNAWARE===
+
+
+	-> Backend
+Test
+	-> Frontend
+
+
+...the "Test" connect()s the signals for each
+
+
+vs.
+
+
+===FRONTEND OWNS===
+
+
+Frontend -> Backend
+
+...the Frontend connects() to the backend
+
+
+
+
+
+
+I flip flop to this day
+
+MOST OF THE TIME, a frontend is made for a specific backend
+there is no re-use
+
+
+
+however, and video players are a perfect example, this is not always the case
+there are other cases but i can't think of any
+and it also supports the rapid prototyping model better by having the two unaware
+
+BUT
+rapid prototyping is usually about testing the backend
+GUI code is either not re-used or easily re-usable regardless via cut-paste shit
+
+
+the most important factor is that the backend is unaware of the frontend
+no disagreement there
+
+
+but it presents a problem for inline int main..... how do i get to the backend?
+
+
+perhaps after further integration with designEquals (mind = blown), this will be more... apparent... or a solution will be visible
+
+the visual 'layers' of an application
+'impl' -> 'design' -> 'code'
+
+etc
+
+right-click -> edit could take you to a design view where you are seeing the GUI 'node' and can see the 'test' (won't be called that in actual large 'spined' applications of course) and can easily navigate to the associated backend. it should be visibly near or something idfk this is nowhere near being implemented :(
+
+all the more reason to launch
+so i can begin
+
+and share the design idea and have others start work on it as well
+
+
+god i really DON'T want to have a job like linus
+just approving patches all fucking day
+
+that would fucking BLOW
+
+but i mean how else am I going to accept contributions??????
+
+
+I guess I just stay in design land and then accept code contributions for designs?
+
+but then there's design submissions that i have to now accept
+lmfao
+
+at least it will be a formal process (i hope)
+
+linus has no formal design acceptance process for the linux kernel
+and it would probably not fit as easily into that model, where shit is less.... visual (err this sentence makes very little sense. disregard it)
