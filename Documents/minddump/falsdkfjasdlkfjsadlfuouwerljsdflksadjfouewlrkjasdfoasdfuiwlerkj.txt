@@ -1,0 +1,138 @@
+I'm starting to think I should LAUNCH + abc simultaneously
+
+I just need a loan or whatever
+
+like 10k or so
+
+for a house + servers + bandwidth
+
+
+
+i'm just worried that ABC might take all my time or distractions and take too long to profit
+
+whereas LAUNCH would _REFER_ people to ABC + make money on it's own
+and i really really really want to launch
+PLUS
+liability of censorship
+i'd have an awesome aliby for not censoring ABC sites
+i am the only person running it and i am broadcasting 24/7
+i could even try to make the argument that i do not have to censor people
+take time out of my finite life to support YOUR censorship
+fuck you.
+
+
+i'm just a bit worried of ABC being shutdown before i have the chance to launch
+
+
+and that ABC alone is too bare and/or too empty to be profitable
+could be wrong but idk if i am willing to risk it
+
+
+idk, i'll sit on this and let my subconscious process it for a bit
+
+
+i definitely do want to launch ASAP
+
+
+fuck.
+my.
+life.
+
+
+
+hackily launch
+safely
+but hackily
+
+as in, be hack-proof
+
+output only box to broadcast from
+etc
+
+3-internal/offline 'copies' before even broadcasting
+
+but don't like code this from scratch
+
+daisy chain existing tools for the time being!
+
+TIME IS OF THE ESSENCE
+
+you will die.
+
+
+also if you launch abc + self simultaneously then abc + rpc gen should be LGPL'd simultaneously too~
+whereas if i launch abc first then idfk what my game plan is.... GPL + sell resale licenses + 'support' ????
+
+that resale license + 'support' nonsense could CONSUME THE REST OF MY FUCKING LIFE (apartment complex layouts)
+
+idk if i can afford to become distracted
+
+how much do you think you could get in credit card loans?
+
+10k?
+
+idfk, but perhaps...
+
+10k is SHIT
+
+10k is CHEAP
+
+10k is NOTHING
+
+
+i could probably get friends to loan me 10k (between nick + jeff alone)
+i could probably get family to loan me 10k (especially just between all 4 grandparents that are still alive)
+
+
+but credit cards should be my first attempt.... because i don't like to mix loans with people i want to continue talking to
+it's easy to ignore a collection agency
+but my grandparents + friends? :( teh suck
+
+that's assuming it fails
+
+it won't.
+
+i know it won't
+
+i am more sure it won't when i factor in my own launch into the mix
+so now i'm leaning towards that
+ABC would be a distraction
+LGPL'ing it means i get free work
+free patches
+etc :)
+
+clones too
+
+BUT WORTH IT
+
+i am a freedom of information advocate
+not a fucking profiting whore (bill gates, i'm looking at you)
+
+
+yes now i'm quite sure i will launch
+
+cost of launch becomes 10k instead of 5k or so...
+
+
+big fucking whoop.
+
+renting a house until i become profitable enough to buy said house is cheap as fuck
+
+an apartment won't do
+shared walls won't do
+
+preferrably with a basement
+idk why
+
+this is doable
+
+dude i just moved up my own launch date by like a few months at the very least
+
+but there's still a good amount to code until then
+a good amount
+
+reporters will knock on my door and i will ignore them.
+
+
+GET TO WORK BITCH. code that helloer
+fuck multi-server for now, just make sure it is future proof for that

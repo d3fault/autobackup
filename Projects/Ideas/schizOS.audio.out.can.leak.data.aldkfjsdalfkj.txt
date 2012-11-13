@@ -1,0 +1,36 @@
+fuckin paranoia and procrastination
+
+moved a few mp3s to this offline/devbox
+
+listening to them is POTENTIALLY/THEORETICALLY leaking data
+
+inaudible frequencies
+
+TODO: schizOS, use this technique
+
+inaudible frequencies could be outputting to my celly (tracking/recording device) all kinds of data
+
+
+jesus fucking christ being smart is a whatcha-ma-callit
+curse?
+
+
+meh
+igorance is bliss.
+
+
+that complex output-only/input-only solution that i haven't solved yet doesn't have this problem
+
+music players need to be un-trusted
+
+
+the mp3s don't even necessarily need to be corrupt
+only the software needs to be
+not even necessarily the music player (mplayer in this case)
+
+the underlying drivers could be injecting inaudible tones
+
+think: dial-up internet
+
+
+fml
