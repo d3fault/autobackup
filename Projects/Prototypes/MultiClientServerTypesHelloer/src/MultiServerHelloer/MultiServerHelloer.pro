@@ -17,3 +17,5 @@ HEADERS  += serverwidget.h \
     multiserverbusiness.h
 
 include(../../../../../GloballySharedClasses/objectonthreadhelper.pri)
+include(../../../../../GloballySharedClasses/ssltcpserver.pri)
+include(../../../../../GloballySharedClasses/ssltcpservertestcerts.pri)
