@@ -1,0 +1,126 @@
+i need a massive fucking import app/script
+my brain hurts
+
+should i use git?
+
+custom?
+
+
+none?
+
+
+
+
+
+I NEED TO MAKE A 'TIMELINE' PROTOCOL/STRUCTURE/FORMAT ANYWYAS: FACT
+
+git does not play nicely with large files or repository
+
+i want the 'entire fucking internet' to be in one repository
+
+
+so.......
+
+idfk.
+
+
+but on the shorter term: should i use git :-P?
+
+because it's here and it works
+
+
+
+
+
+.....
+.......
+
+
+idfk.
+fml
+
+
+
+i hate thinking about this
+
+
+but i also need to fucking code something asap
+
+
+
+not asap
+but... soon.
+
+
+
+i want to merge and be able to check (git gc) everything on every drive periodically
+
+it will help me sleep better
+
+
+
+
+FFUUUUUUUUUUUUUUCCCCCCCCCKKKKKKKKK
+
+
+
+how to get a working dir:
+git clone
+./fixTimestampsFromCloneByUsingTouchAndPullingTimestampsFromSomeFileThatGotCloned.sh
+
+
+
+
+
+right now every time i clone i lose timestamps
+KIND OF
+
+they are still in that file
+
+but the entire file gets rewritten and all the files have identical timestamps (the time of the clone)
+disgusting.
+
+
+that script won't be too hard to write
+
+but it makes me wonder like where i should store the timestamps
+yea i already have a solution for that
+
+but i've never parsed it
+
+though i could.
+
+
+and i also need to err
+
+
+
+account for those erroneous timestamps
+'roll back'
+
+i need to be able to parse that timestamp file
+and git repos
+and i guess even svn repos
+
+and i need to get the earliest timestamp
+but then again: NOT
+the earliest would be the creation date, but it does/should get updated each time it is modified
+
+oh god my brain hurts.
+
+
+and then factor in merging all the 'sources'
+
+and then asking me what to do with each file
+
+finding diffs (potential corruptions)
+
+
+
+
+aaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+
+
+
+ONE REPO TO RULE THEM ALL
+/me grabs shotgun and does it
