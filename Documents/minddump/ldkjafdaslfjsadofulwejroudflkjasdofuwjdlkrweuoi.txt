@@ -1,0 +1,5 @@
+QByteArray data = anonymize(obfuscate(aesEncrypt(compress(QByteArray(QString("i am gay"))))));
+
+
+
+(i'm not really gay but you get the point. so much effort to hide bool gay = true, lmfao. human brains are retarded)
