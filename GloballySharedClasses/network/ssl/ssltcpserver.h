@@ -33,6 +33,7 @@ class SslTcpServer : public QTcpServer
     Q_OBJECT
 public:
     explicit SslTcpServer(QObject *parent, const QString &serverCaFile, const QString &clientCaFile, const QString &serverPrivateEncryptionKeyFile, const QString &serverPublicLocalCertificateFile, const QString &serverPrivateEncryptionKeyPassPhrase);
+    ~SslTcpServer();
     virtual QTcpSocket *nextPendingConnection();
     static bool isSslConnectionGood(QSslSocket *socketToCheck);
     static uint getClientUniqueId(QSslSocket *client);

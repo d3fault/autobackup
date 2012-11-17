@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+#if 0
 struct HelloMessage
 {
     enum HelloMessageType
@@ -88,5 +89,5 @@ inline QDataStream &operator<<(QDataStream &out, Message &message)
 
     return out;
 }
-
+#endif
 #endif // HELLOPROTOCOL_H

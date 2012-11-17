@@ -3,6 +3,15 @@
 SslTcpServer::SslTcpServer(QObject *parent, const QString &serverCaFile, const QString &clientCaFile, const QString &serverPrivateEncryptionKeyFile, const QString &serverPublicLocalCertificateFile, const QString &serverPrivateEncryptionKeyPassPhrase) :
     QTcpServer(parent), m_ServerCaFile(serverCaFile), m_ClientCaFile(clientCaFile), m_ServerPrivateEncryptionKeyFile(serverPrivateEncryptionKeyFile), m_ServerPrivateEncryptionKeyPassPhrase(serverPrivateEncryptionKeyPassPhrase), m_ServerPublicLocalCertificateFile(serverPublicLocalCertificateFile)
 { }
+SslTcpServer::~SslTcpServer()
+{
+    if(isListening())
+    {
+        this->stop();
+    }
+    delete m_ServerPrivateEncryptionKey;
+    delete m_ServerPublicLocalCertificate;
+}
 bool SslTcpServer::init()
 {
     if(!QSslSocket::supportsSsl())

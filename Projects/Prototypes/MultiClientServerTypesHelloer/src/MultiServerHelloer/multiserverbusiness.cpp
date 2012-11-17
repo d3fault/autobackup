@@ -3,7 +3,8 @@
 MultiServerBusiness::MultiServerBusiness(QObject *parent) :
     QObject(parent)
 {
-    connect(&m_Helloer, SIGNAL(connectionHasBeenHelloedAndIsReadyForAction(QIODevice*,quint16)), this, SLOT(newConnectionPassedHelloPhase(QIODevice*,quint16)));
+    connect(&m_Helloer, SIGNAL(connectionHasBeenHelloedAndIsReadyForAction(QIODevice*,quint16)), this, SLOT(newConnectionPassedHelloPhase(QIODevice*,quint16))); //careful coding must ensure that this is a direct connection (but we still shouldn't explicitly make it direct, because that means you coded it wrong (though i _GUESS_ you could take on the responsibility of mutex protecting etc, lol glhf))
+    connect(&m_Helloer, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
 }
 void MultiServerBusiness::startAll3Listening()
 {
@@ -13,8 +14,7 @@ void MultiServerBusiness::newConnectionPassedHelloPhase(QIODevice *theConnection
 {
     m_ActiveConnectionIdsByIODevice.insert(theConnection, clientId);
 
-    //disconnect anyone who is listening to readyRead (the helloer in this case)
-    disconnect(theConnection, SIGNAL(readyRead()), 0, 0);
+    //the emitter has already disconnected himself
 
     //connect it to ourselves
     connect(theConnection, SIGNAL(readyRead()), this, SLOT(clientSentUsData()));

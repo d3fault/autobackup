@@ -20,6 +20,7 @@ signals:
     void startAll3ListeningRequested();
 public slots:
     void initGui();
+    void handleD(const QString &msg);
 };
 
 #endif // SERVERWIDGET_H

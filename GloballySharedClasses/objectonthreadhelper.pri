@@ -1,3 +1,3 @@
 INCLUDEPATH += $$system(pwd)/threading
 
-HEADERS += threading/objectonthreadhelper.h
+HEADERS += $$system(pwd)/threading/objectonthreadhelper.h
