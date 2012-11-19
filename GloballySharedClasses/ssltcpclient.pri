@@ -1,5 +1,5 @@
 INCLUDEPATH += $$system(pwd)/network/ssl
 
-SOURCES += network/ssl/ssltcpclient.cpp
+SOURCES += $$system(pwd)/network/ssl/ssltcpclient.cpp
 
-HEADERS += network/ssl/ssltcpclient.h
+HEADERS += $$system(pwd)/network/ssl/ssltcpclient.h

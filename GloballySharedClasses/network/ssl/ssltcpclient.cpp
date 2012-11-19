@@ -3,6 +3,15 @@
 SslTcpClient::SslTcpClient(QObject *parent, const QString &clientCaFile, const QString &serverCaFile, const QString &clientPrivateEncryptionKeyFile, const QString &clientPublicLocalCertificateFile, const QString &clientPrivateEncryptionKeyPassPhrase)
     : QSslSocket(parent), m_ClientCaFile(clientCaFile), m_ServerCaFile(serverCaFile), m_ClientPrivateEncryptionKeyFile(clientPrivateEncryptionKeyFile), m_ClientPrivateEncryptionKeyPassPhrase(clientPrivateEncryptionKeyPassPhrase), m_ClientPublicLocalCertificateFile(clientPublicLocalCertificateFile)
 { }
+SslTcpClient::~SslTcpClient()
+{
+    if(this->isOpen())
+    {
+        this->close();
+    }
+    delete m_ClientPrivateEncryptionKey;
+    delete m_ClientPublicLocalCertificate;
+}
 bool SslTcpClient::init()
 {
     if(!QSslSocket::supportsSsl())
@@ -90,10 +99,11 @@ bool SslTcpClient::init()
     emit d("client public local certificate is valid");
 
 
+    //in the server comments i mention conflicts of setting the default configuration. by doing it this way, i am overriding even the default configuration... so those conflicts do not appear. but if i do change this client to use default configuration shit, then they will appear
     this->setCaCertificates(m_AllMyCertificateAuthorities);
     this->setPrivateKey(*m_ClientPrivateEncryptionKey);
     this->setLocalCertificate(*m_ClientPublicLocalCertificate);
-    this->setPeerVerifyMode(QSslSocket::VerifyPeer);
+    this->setPeerVerifyMode(QSslSocket::VerifyPeer); //perhaps a boolean switch in constructor for whether this is enabled
 
 
     //as per CRIME

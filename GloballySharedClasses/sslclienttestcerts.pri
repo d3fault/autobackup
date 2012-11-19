@@ -1,1 +1,1 @@
-RESOURCES += network/ssl/testcerts/client/ssltcpclienttestcerts.qrc
+RESOURCES += $$system(pwd)/network/ssl/testcerts/client/ssltcpclienttestcerts.qrc

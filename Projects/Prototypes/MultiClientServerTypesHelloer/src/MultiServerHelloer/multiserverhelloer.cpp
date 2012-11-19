@@ -9,6 +9,7 @@ MultiServerHelloer::MultiServerHelloer(QObject *parent) :
 }
 MultiServerHelloer::~MultiServerHelloer()
 {
+    //TODOreq: not sure, but i think i need to iterate through all pending/active connections and delete them? disconnect first? no fucking clue
     delete m_SslTcpServer;
 }
 void MultiServerHelloer::startAll3Listening()

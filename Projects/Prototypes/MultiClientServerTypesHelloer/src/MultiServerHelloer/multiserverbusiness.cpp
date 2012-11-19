@@ -3,14 +3,14 @@
 MultiServerBusiness::MultiServerBusiness(QObject *parent) :
     QObject(parent)
 {
-    connect(&m_Helloer, SIGNAL(connectionHasBeenHelloedAndIsReadyForAction(QIODevice*,quint16)), this, SLOT(newConnectionPassedHelloPhase(QIODevice*,quint16))); //careful coding must ensure that this is a direct connection (but we still shouldn't explicitly make it direct, because that means you coded it wrong (though i _GUESS_ you could take on the responsibility of mutex protecting etc, lol glhf))
-    connect(&m_Helloer, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
+    connect(&m_ServerHelloer, SIGNAL(connectionHasBeenHelloedAndIsReadyForAction(QIODevice*,quint32)), this, SLOT(newConnectionPassedHelloPhase(QIODevice*,quint32))); //careful coding must ensure that this is a direct connection (but we still shouldn't explicitly make it direct, because that means you coded it wrong (though i _GUESS_ you could take on the responsibility of mutex protecting etc, lol glhf))
+    connect(&m_ServerHelloer, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
 }
 void MultiServerBusiness::startAll3Listening()
 {
-    m_Helloer.startAll3Listening();
+    m_ServerHelloer.startAll3Listening();
 }
-void MultiServerBusiness::newConnectionPassedHelloPhase(QIODevice *theConnection, quint16 clientId)
+void MultiServerBusiness::newConnectionPassedHelloPhase(QIODevice *theConnection, quint32 clientId)
 {
     m_ActiveConnectionIdsByIODevice.insert(theConnection, clientId);
 
@@ -28,7 +28,7 @@ void MultiServerBusiness::clientSentUsData()
 
     if(client)
     {
-        quint16 clientId = m_ActiveConnectionIdsByIODevice.value(client, 0);
+        quint32 clientId = m_ActiveConnectionIdsByIODevice.value(client, 0);
         if(clientId > 0)
         {
             //read the message into a recycled container or whatever the fuck

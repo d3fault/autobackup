@@ -13,15 +13,15 @@ class MultiServerBusiness : public QObject
 public:
     explicit MultiServerBusiness(QObject *parent = 0);
 private:
-    MultiServerHelloer m_Helloer;
+    MultiServerHelloer m_ServerHelloer;
 
     //this is only for assigning a clientId when reading the message off the network. When sending to the network, we only need it's clientId and the MultiServer figures out the QIODevice for us, ****WHICH MAY HAVE CHANGED IN THE MEANTIME****
-    QHash<QIODevice*,quint16> m_ActiveConnectionIdsByIODevice;
+    QHash<QIODevice*,quint32> m_ActiveConnectionIdsByIODevice;
 signals:
     void d(const QString &);
 public slots:
     void startAll3Listening();
-    void newConnectionPassedHelloPhase(QIODevice *theConnection, quint16 clientId);
+    void newConnectionPassedHelloPhase(QIODevice *theConnection, quint32 clientId);
     void clientSentUsData();
 };
 

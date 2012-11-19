@@ -71,7 +71,7 @@ private:
     static void streamOutMagic(QDataStream *ds);
 signals:
     void d(const QString &);
-    void connectionHasBeenHelloedAndIsReadyForAction(QIODevice*, quint16);
+    void connectionHasBeenHelloedAndIsReadyForAction(QIODevice*, quint32);
 private slots:
     void handleNewClientConnected(QIODevice *newClient);
     void handleNewClientSentData();

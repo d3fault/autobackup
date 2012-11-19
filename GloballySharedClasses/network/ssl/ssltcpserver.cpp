@@ -101,6 +101,9 @@ bool SslTcpServer::init()
     }
     emit d("server public local certificate is valid");
 
+    //TODOreq: using/overriding the default configuration like this means that i don't need to do it on the client if i do it on the server and vice versa. in fact, there is now an issue with the CA certificates... but the issue will only arise if you use client/server in the same project (unlikely, but i've done it before in tests and such). same with the private key. the server has a private key and the client has a private key. for them to see each other's, and especially to USE each other's... will fuck shit up. perhaps i should move this code back into the handlenewConnectionNotYetEncrypted... though it is a slightl 'optimization' to put it here. Things like VerifyPeer are not going to be used in EVERY project anyways (though probably will for most of mine). etc etc.
+    //for the client it only makes sense to use override the 'default configuration' in the constructor anyways. each 'init' is a new socket... so it'd be setting the default configuration over and over and over (whereas server is only initialized once). but then of course by moving it to the constructor (BACK* to the constructor i should say ;-P), i lose the ability to emit signals etc telling me if the certs etc are all valid and shit. it is often that typos etc make my certs invalid
+    //on the subject of emitting in constructors. one way to do it would be to pass in some 'interface' all the time that can be called to emit debug shit. it's sloppy hack and will uglify my code, but meh, would work. fuckin Qt with not having signals in constructors gah. i realize what i'm saying may appear strange at first, but then NOT having signals in the constructor is actually inconsistent with the rest of the code blocks. even the destructor can emit signals (TODOoptional: wtf can a sender() be null by the time a queued message is received... say if the signal is dispatched in the destructor... but even if it's just delete'd moments/lines later. i think yes. weird case i've never thought up TODOreq: make sure anywhere you use sender() that you check it is still alive)
     QSslConfiguration sslConfiguration = QSslConfiguration::defaultConfiguration();
     sslConfiguration.setSslOption(QSsl::SslOptionDisableCompression, true); //as per CRIME
 
@@ -109,6 +112,8 @@ bool SslTcpServer::init()
     sslConfiguration.setPrivateKey(*m_ServerPrivateEncryptionKey);
     sslConfiguration.setLocalCertificate(*m_ServerPublicLocalCertificate);
     sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyPeer); //makes us request + REQUIRE that the client cert is valid. client does this to us by default, but we don't do it to him by default. i should still explicitly set it for client
+    //TODO: perhaps whether or not to use PeerVerify should be a constructor bool that is saved and applied to each incoming connection. the server should still be usable in non-peer-verify mode
+
     QSslConfiguration::setDefaultConfiguration(sslConfiguration);
 
     connect(this, SIGNAL(newConnection()), this, SLOT(handleNewConnectionNotYetEncrypted()));
