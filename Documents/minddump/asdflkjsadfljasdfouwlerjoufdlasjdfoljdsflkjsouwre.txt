@@ -1,0 +1,29 @@
+i think there's a pretty decent chance that my 1tb drives are compromised. this pretty much means anything/everything before roughly a year ago to this day (i think it was november or so right?) is compromised.
+
+
+everything up to then was mostly rubbish anyways. i mean hell yea tons of great ideas left and right... but way less precision in how i will maneuver/launch. if anything is being ripped off and stolen from, it is that.
+
+everything since has used a newer password.
+
+
+
+there was one point where i changed my password db to use a MUCH weaker password (my worthless password db) and AN IMPORTANT KEY (the 1tb truecrypt key) remained in the BACKUP folder. FUUUUUUUUCK. as for whether or not i am compromised is completely dependent on if my 1tb drive was 'backed up' during the time i was vulnerable. i removed it from the backup folder in keepass and then shredded the vulnerable .kdb
+
+
+fuck you keepass, backups compromise.
+
+
+it could even lead to my downfall. 'the fall of rome'. 'the fall of d3fault'.
+
+
+
+but i cling to the fact that NOBODY GIVES A SHIT ABOUT ME
+
+
+and i try to keep myself silent (despite the burning desire to the contrary) so as not to attract more attention.
+
+
+my newer password is much less likely to have been compromised, but i still feel disgusting having my other data readable/DELETABLE like that. barf. fuck this world.
+
+
+i need to launch for my own sanity's sake. if i don't i am going to definitely blow my brains out. there is no arguing otherwise. i am being squeezed into this launching. yet i want to be left alone. you squeeze me into launching and then squeeze me into silence. i am being squeezed. FUCK. is this where i start punching and kicking and shooting and screaming and killing.... all in the name of self defense? the way ceasar overthrew rome and was justified for doing so. i don't know. guh, i just want to be left alone and to not be losing my mind wondering if my data is about to be deleted/stolen/corrupt(BIT ROT FUUUUUCK). is that so much to ask for? no, it isn't. fuck you all.

@@ -1,0 +1,1 @@
+the mere fact that the 'sync' command exists makes me hate linux/unix/etc. what fucking idiot in their right mind would allow write buffers to remain unflushed. i hope your eyelids are ripped from your face.
