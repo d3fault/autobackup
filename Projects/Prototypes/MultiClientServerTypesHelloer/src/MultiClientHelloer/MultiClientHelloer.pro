@@ -14,12 +14,14 @@ SOURCES += main.cpp\
         clientwidget.cpp \
     multiclienthelloertest.cpp \
     multiclientbusiness.cpp \
-    multiclienthelloer.cpp
+    multiclienthelloer.cpp \
+    ../ServerClientShared/networkmagic.cpp
 
 HEADERS  += clientwidget.h \
     multiclienthelloertest.h \
     multiclientbusiness.h \
-    multiclienthelloer.h
+    multiclienthelloer.h \
+    ../ServerClientShared/networkmagic.h
 
 include(../../../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../../../GloballySharedClasses/ssltcpclient.pri)

@@ -29,12 +29,30 @@ void MultiClientHelloer::addSslClient()
         return;
     }
     emit d("new ssl client initialized and started");
-
-
 }
+//TODOoptimization: somehow we could use different objects for the slot we are connecting the readyRead signal to. i have barely thought this out and can't even really completely understand how it would work, but the idea is that a readyRead (applies to both hello phase and regular message phase) doesn't have to look up the clientId in a hash. the clientId becomes a member of the object that the slot lives on, and each connection now gets it's own object. i think it is an optimization because Qt already has to look up the object anyways... so this saves us from having to look up the clientId in a hash AS WELL. it might be slightly more memory intensive... but probably not even a relevant amount. PREMATURE OPTIMIZATION so fuck it for now, however
+//in a sense i am / would be connecting readyRead to a slot on ClientHelloStatus (though it wouldn't be a struct any longer)
+//in essence also ;-P LOL WUT
+//it has nothing to do with multiple threads. i still don't understand how thread pools (per connection) work ;-P, QTcpSocket etc can't be used from multiple threads at the same time! bollocks! OH YOU MEAN THE 'PROCESSING' / 'BACKEND' THREADS? but then they must be synchronized if they access common data. fuck you. TODOreq: research if having multiple couchbase 'smart clients' on the same machine/process (but different threads) has a performance advantage. i'd imagine they can be in a different process, so they can PROBABLY be in different threads (would it be a 'smart client' per thread? OR the same thread-safe smart-client (think: pointer or object or whatever) used by all of those threads????? don't remember seeing anything about this on couchbase, so might need to ask on the forums etc :-)
 void MultiClientHelloer::handleClientFinishedInitialConnectPhaseSoStartHelloing(QIODevice *newClient)
 {
+    ClientHelloStatus *status = m_ClientHelloStatusesByIODevice.value(newClient, 0);
+    if(!status)
+    {
+        emit d("failed to find ClientHelloStatus for new connection");
+        return;
+    }
 
+    //dispatch hello
+    QDataStream streamToServer(newClient);
+    QByteArray helloMessage;
+    QDataStream messageBuildingStream(&helloMessage, QIODevice::WriteOnly);
+    messageBuildingStream << false; //TODOreq: test supplying the cookie in the hello (setting this to true + sending the cookie)
+    NetworkMagic::streamOutMagic(&streamToServer);
+    streamToServer << helloMessage;
+
+    status->m_ClientHelloState = ClientHelloStatus::HelloDispatched;
+    connect(newClient, SIGNAL(readyRead()), this, SLOT(handleServerSentUsData()));
 }
 void MultiClientHelloer::handleServerSentUsData()
 {

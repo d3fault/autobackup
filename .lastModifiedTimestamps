@@ -15,7 +15,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386034276
+Documents/minddump/:1386034305
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -26,7 +26,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386034276
+Documents/minddump/dreams/:1386034305
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -327,6 +327,7 @@ Documents/minddump/fkajfsdfoiawuralskjfasoefiuj.txt:1322518457
 Documents/minddump/fkjdsafousdfowajrlksjflksdjfoisduflsdkjf.txt:1328137833
 Documents/minddump/flajdflasdjflsdajfoausdltrjojrweljsdfoult.txt:1352102895
 Documents/minddump/flajflasdjfasdfaoweurlsfjksdfoasuflwkjerweroqurkqjrewqeoruqwlkjsdflsjdafl.txt:1350340687
+Documents/minddump/flakjfdslkjfosaduflsadjkfowuerlkjdfoiusdfouweroufdlskjfl.txt:1353449537
 Documents/minddump/flakjsdflkjasdfalsdkjfouerkljasdfoasufwerljkasdofu.txt:1351480158
 Documents/minddump/flasdjfosdfusadfjsdlfkjasdfoasdpufsadlfkjsdofu.txt:1332913082
 Documents/minddump/flasjkdflasdkjfoasudflkjaweoriuasfljsadfouasdfljasdofuwlaker.txt:1352009745
@@ -523,6 +524,7 @@ Documents/minddump/oiurqoweirqweklajsdfvckjfasdlfkweorusaflk.txt:1338993116
 Documents/minddump/oiwurlsakjfwoeriuafdkshadfkhlsadfweoriu.txt:1339229126
 Documents/minddump/ok.guess.i.was.wrong.if.you.use.encryption.ROUNDS.then.user.passwords.do.scale.txt:1343325984
 Documents/minddump/ok.i.will.but.first.a.bit.about.my.paranoia.txt:1342605480
+Documents/minddump/on.friends.and.being.myself.and.also.not.dying.because.of.simple.heart.failure.asldfjkalsdjfosaduflwkjeroudflksdforewfslkjflk.txt:1353449040
 Documents/minddump/only.reason.im.not.100.percent.sure.is.because.i.didnt.check.the.day.before.lol.lsfkjasdflkajsdfoausflkasdjfoasdufwerkjsdfoul.txt:1351111322
 Documents/minddump/open.source.at.MY.launch.or.ABC.launch.or.should.I.combine.the.two.but.then.how.does.i.move.out.abc.is.my.bootstrap.remember.ah.well.fuck.it.txt:1352012128
 Documents/minddump/open.source.is.double.edged.sword.but.ultimately.worth.it.txt:1328317146
@@ -717,7 +719,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386034276
+Pictures/:1386034305
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1188,30 +1190,31 @@ Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwi
 Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwidget.h:1351840579
 Projects/Prototypes/MultiClientServerTypesHelloer/:1352367775
 Projects/Prototypes/MultiClientServerTypesHelloer/src/:1353348139
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/:1353355503
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/MultiClientHelloer.pro:1353349575
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/:1353449609
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/MultiClientHelloer.pro:1353444167
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/clientwidget.cpp:1353349308
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/clientwidget.h:1353349300
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/main.cpp:1353348714
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/multiclientbusiness.cpp:1353350290
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/multiclientbusiness.h:1353350114
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/multiclienthelloer.cpp:1353351990
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/multiclienthelloer.h:1353351822
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/multiclienthelloer.cpp:1353448182
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/multiclienthelloer.h:1353447840
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/multiclienthelloertest.cpp:1353349244
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/multiclienthelloertest.h:1353349114
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/:1353355504
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/MultiServerHelloer.pro:1353170993
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/main.cpp:1352459098
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/:1353449610
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/MultiServerHelloer.pro:1353444182
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/main.cpp:1353442723
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverbusiness.cpp:1353349831
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverbusiness.h:1353350011
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloer.cpp:1353351815
-Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloer.h:1353349849
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloer.cpp:1353447568
+Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloer.h:1353445843
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloertest.cpp:1353173421
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multiserverhelloertest.h:1353173375
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.cpp:1353172717
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.h:1353172302
-Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/:1353171297
-Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/helloprotocol.h:1353171297
+Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/:1353447669
+Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/networkmagic.cpp:1353447669
+Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/networkmagic.h:1353445768
 Projects/Prototypes/ProtocolMessageMastery/:1329818277
 Projects/Prototypes/ProtocolMessageMastery/src/:1329827905
 Projects/Prototypes/ProtocolMessageMastery/src/Protocol/:1329833192
@@ -1943,7 +1946,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386034276
+Projects/libAvGraphicsItem2/design/:1386034305
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

@@ -9,14 +9,13 @@
 #include <QDateTime>
 
 #include "ssltcpserver.h"
-
-#define MAGIC_BYTE_SIZE 4 //if you change this, you also need to change the m_MagicExpected array to match and also the 'stream magic' helper function
+#include "../ServerClientShared/networkmagic.h"
 
 //this entire prototype is more about testing out magic robustity than hello'ing. hello'ing is fucking easy, but i've never done the robust magic shit i'm attempting (and plan to use in normal message use too, not just this hello shit)
 
 struct ServerHelloStatus
 {
-    ServerHelloStatus() { m_ServerHelloState = AwaitingHello; m_CurrentMagicByteIndex = 0; m_MagicGot = false; m_HasCookie = false; }
+    ServerHelloStatus() { m_ServerHelloState = AwaitingHello; m_HasCookie = false; }
     enum ServerHelloState
     {
         HelloFailed,
@@ -27,20 +26,15 @@ struct ServerHelloStatus
     ServerHelloState m_ServerHelloState;
     //ServerHelloState serverHelloState() { return m_ServerHelloState; }
 
-    void setMagicGot(bool toSet) { m_MagicGot = toSet; }
-    bool needsMagic() { return !m_MagicGot; }
     void setCookie(const quint32 &cookie) { m_HasCookie = true; m_Cookie = cookie; }
     quint32 cookie() { if(!m_HasCookie) { m_Cookie = generateCookie(); /* after inventing the universe of course, that's implied */ m_HasCookie = true; } return m_Cookie; } //suddenly i am hungry
 
     static quint32 overflowingClientIdsUsedAsInputForMd5er; //the datetime element is added to make the overflowing irrelevant
 
-    static const quint8 m_MagicExpected[MAGIC_BYTE_SIZE];
-
-    quint8 m_CurrentMagicByteIndex;
-    bool m_MagicGot;
-
     bool m_HasCookie;
     quint32 m_Cookie;
+
+    NetworkMagic m_NetworkMagic;
 
     static quint32 generateCookie()
     {
@@ -67,8 +61,6 @@ private:
 
     //done with hello phase. our business sends us a message to send and an id to send it to and we take care of the rest
     QHash<quint32, QIODevice*> m_ClientsByCookie;
-
-    static void streamOutMagic(QDataStream *ds);
 signals:
     void d(const QString &);
     void connectionHasBeenHelloedAndIsReadyForAction(QIODevice*, quint32);

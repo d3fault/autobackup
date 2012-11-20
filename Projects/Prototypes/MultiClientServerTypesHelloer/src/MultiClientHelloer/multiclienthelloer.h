@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "ssltcpclient.h"
+#include "../ServerClientShared/networkmagic.h"
 
 struct ClientHelloStatus
 {

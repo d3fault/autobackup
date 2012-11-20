@@ -1,5 +1,4 @@
 #include <QtGui/QApplication>
-#include "serverwidget.h"
 
 #include "multiserverhelloertest.h"
 
