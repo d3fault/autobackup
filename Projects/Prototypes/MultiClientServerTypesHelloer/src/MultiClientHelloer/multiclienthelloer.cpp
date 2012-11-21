@@ -51,9 +51,77 @@ void MultiClientHelloer::handleClientFinishedInitialConnectPhaseSoStartHelloing(
     NetworkMagic::streamOutMagic(&streamToServer);
     streamToServer << helloMessage;
 
-    status->m_ClientHelloState = ClientHelloStatus::HelloDispatched;
+    status->m_ClientHelloState = ClientHelloStatus::HelloDispatchedAwaitingWelcome;
     connect(newClient, SIGNAL(readyRead()), this, SLOT(handleServerSentUsData()));
 }
 void MultiClientHelloer::handleServerSentUsData()
 {
+    emit d("got data from server");
+    QIODevice *socketToServer = static_cast<QIODevice*>(sender());
+    if(socketToServer)
+    {
+        ClientHelloStatus *clientHelloStatus = m_ClientHelloStatusesByIODevice.value(socketToServer, 0);
+        if(clientHelloStatus)
+        {
+            QDataStream networkStreamToServer(socketToServer);
+
+            while(!networkStreamToServer.atEnd())
+            {
+                if(!clientHelloStatus->m_NetworkMagic.consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic(socketToServer))
+                {
+                    return; //better luck next time. there is no need to 'continue;' because the function itself has it's own loop doing that
+                }
+
+                emit d("got passed magic check");
+
+                if(!ByteArrayMessageSizePeekerForIODevice::enoughBytesAreAvailableToReadTheByteArrayMessage(socketToServer))
+                {
+                    return;
+                }
+
+                emit d("got enough data to read the message");
+
+
+                QByteArray tehFukkenMezzage;
+                networkStreamToClient >> tehFukkenMezzage;
+                clientHelloStatus->m_NetworkMagic.messageHasBeenConsumedSoPlzResetMagic();
+
+                if(!tehFukkenMezzage.isNull() && !tehFukkenMezzage.isEmpty())
+                {
+                    QDataStream messageReadstream(&tehFukkenMezzage, QIODevice::ReadOnly);
+
+                    ClientHelloStatus::ClientHelloState currentState = clientHelloStatus->m_ClientHelloState;
+                    switch(currentState)
+                    {
+                        case ClientHelloStatus::HelloDispatchedAwaitingWelcome:
+                        {
+                            //read the welcome
+                            //dispatch the thank you
+
+                            clientHelloStatus->m_ClientHelloState = ClientHelloStatus::WelcomeReceivedThankYouForWelcomingMeSentAwaitingOkStartSendingBro;
+                        }
+                        break;
+                        case ClientHelloStatus::WelcomeReceivedThankYouForWelcomingMeSentAwaitingOkStartSendingBro:
+                        {
+                            //read the ok start sending bro
+                        }
+                        break;
+                        case ClientHelloStatus::HelloFailed:
+                        default:
+                            //TODOreq: handle errors n shit. dc?
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            //somehow received data from a client who skipped the handleNewClientConnected phase, wtf? should never happen. mb block the sender or fuck i have no idea what to do
+            //we can also get here because our cookie gets removed/'deleted'. i mean, we still shouldn't get here... but let me just say that it's very unlikely to get to the 'default:' case in the switch. we're much more likely to get here :-P. STILL, they should both error out the same way... (which is????)
+        }
+    }
+    else
+    {
+        //invalid sender... should also never happen
+    }
 }

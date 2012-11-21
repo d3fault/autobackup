@@ -10,6 +10,7 @@
 
 #include "ssltcpserver.h"
 #include "../ServerClientShared/networkmagic.h"
+#include "../ServerClientShared/bytearraymessagesizepeekerforiodevice.h"
 
 //this entire prototype is more about testing out magic robustity than hello'ing. hello'ing is fucking easy, but i've never done the robust magic shit i'm attempting (and plan to use in normal message use too, not just this hello shit)
 

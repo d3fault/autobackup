@@ -23,14 +23,16 @@ struct NetworkMagic
 {
     NetworkMagic();
 
-    static const quint8 m_MagicExpected[MAGIC_BYTE_SIZE];
+    static const quint8 MagicExpected[MAGIC_BYTE_SIZE];
     quint8 m_CurrentMagicByteIndex;
     bool m_MagicGot;
 
-    void setMagicGot(bool toSet);
-    bool needsMagic();
-
     static void streamOutMagic(QDataStream *ds);
+
+    static QDataStream m_MagicReadingNetworkStream;
+
+    bool consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic(QIODevice *deviceToLookForMagicOn);
+    void messageHasBeenConsumedSoPlzResetMagic();
 };
 
 #endif // NETWORKMAGIC_H

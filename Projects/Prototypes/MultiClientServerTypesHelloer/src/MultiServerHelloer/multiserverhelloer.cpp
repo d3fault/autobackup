@@ -60,86 +60,34 @@ void MultiServerHelloer::handleNewClientSentData()
             while(!networkStreamToClient.atEnd())
             {
 
-                //we read in all of the bytes available on at a time until we either run out of bytes (TODOreq: but we need to remember the state of magic and pick up when we get more bytes!) or we have seen 'magic', and then let it pass to the message processing part
 
-                //this if statement is to skip reading in magic if we previously got it (so magic would be 'good'), but we didn't have enough data... but we don't want to or need to read in magic again. we don't "need" it. the magicIsGood() below can't be in an "else" because we still want to continue with the normal message processing if we happen to get magic in one go. TODOreq: there is a rare case where we have JUST enough to read in magic but not enough to read in the message. that's the purpose of the 'needsMagic' check
-                if(serverHelloStatus->m_NetworkMagic.needsMagic())
+                if(!serverHelloStatus->m_NetworkMagic.consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic(newClient))
                 {
-                    emit d("need magic");
-                    if(newClient->bytesAvailable() < 1)
-                    {
-                        return; //needs moar bytes
-                    }
-
-                    quint8 magicPiece;
-                    networkStreamToClient >> magicPiece;
-
-                    if(NetworkMagic::m_MagicExpected[serverHelloStatus->m_NetworkMagic.m_CurrentMagicByteIndex] == magicPiece)
-                    {
-                        ++serverHelloStatus->m_NetworkMagic.m_CurrentMagicByteIndex;
-
-                        //possible off by one, but i thought pretty hard on it and think it's ok...
-                        if(serverHelloStatus->m_NetworkMagic.m_CurrentMagicByteIndex == MAGIC_BYTE_SIZE)
-                        {
-                            //done with magic
-                            serverHelloStatus->m_NetworkMagic.setMagicGot(true);
-                            serverHelloStatus->m_NetworkMagic.m_CurrentMagicByteIndex = 0; //for next time, though we could do this when doing setMagicGot(false) below (after reading in a full message)
-                        }
-                        else
-                        {
-                            continue; //needz moar magic, and we may or may not have more bytes
-                        }
-                    }
-                    else
-                    {
-                        //we got an unexpected byte, so we restart the magic seeking process. this doesn't necessarily mean we are out of bytes
-                        serverHelloStatus->m_NetworkMagic.m_CurrentMagicByteIndex = 0;
-                        continue;
-                    }
+                    return; //better luck next time. there is no need to 'continue;' because the function itself has it's own loop doing that
                 }
 
-                emit d("got passed magic check");
 
+                emit d("got passed magic check");
 
                 //we get here:
                 //a) if we read in all of magic just above
                 //b) we read in magic previously but didn't have enough to read in the message
-                //c) same as (b), but we didn't even have enough bytes to read in the message size (i guess?)
+                //c) same as (b), but we didn't even have enough bytes to read in the message SIZE (i guess?)
 
                 //read message size, message body, use it or whatever
 
 
-                if(newClient->bytesAvailable() < sizeof(quint32))
+                if(!ByteArrayMessageSizePeekerForIODevice::enoughBytesAreAvailableToReadTheByteArrayMessage(newClient))
                 {
-                    return; //needs moar bytes
+                    return;
                 }
 
-                QByteArray peekedByteArraySizeRaw = newClient->peek(sizeof(quint32)); //TODOreq: recycle/clear this byte array in production use of course
-
-                quint32 peekedByteArraySize;
-                //qint64 bytesPeeked = newClient->peek((char*)&peekedByteArraySize /* i just threw up, but i _THINK_ this will work? */, sizeof(quint32)); //TODOreq: this might not work because we're not longer using QDataStream's encoding/decoding??? little endian etc etc, who the fuck knows. i can't remember if i wrote this or only thought it, but i could read the raw bytes (by peeking) into a byte array and then qdatastream them out of it, lmfao hack but sounds a little safer i suppose...
-                //if(bytesPeeked != sizeof(quint32))
-                if(peekedByteArraySizeRaw.size() != sizeof(quint32))
-                {
-                    emit d("error adlfkjasdfouwe02408"); //woot
-                    return; //needs moar bytes (we should never get here beause we check bytesAvailable above)
-                }
-                QDataStream peekDecoderStream(&peekedByteArraySizeRaw, QIODevice::ReadOnly); //TODOreq: recycle this in production use too
-                peekDecoderStream >> peekedByteArraySize; //i guess re-use that quint32 also... but it's a cheap stack alloc vs. a heap lookup SO MAYBE NOT (but the QByteArray and QDataStream are heap no matter what... so.... (premature ejaculation much?))
-
-                if(peekedByteArraySize != 0xFFFFFFFF && peekedByteArraySize != 0x0) //we still want to read in the message if it's null or empty. we 'know' we have enough bytes if it's either of these two values (null or zero). TODOreq: make sure that a zero sized array still streams a zero. it very likely does, but the doc is slightly ambiguious on the matter (whereas null arrays it explicitly says that it'll be fffetc)
-                {
-                    if((newClient->bytesAvailable()-sizeof(quint32)) < peekedByteArraySize) //we check to see if there's enough bytesAvailable that the byteArray requires, but we don't count the quint32 'byte array size' that we peeked in that calculation
-                    {
-                        return; //needs moar bytes!
-                    }
-                }
 
                 emit d("got enough data to read the message");
                 //if we get here, we got enough to read in the qbytearray (including it's size, which we peeked :-P)
                 QByteArray tehFukkenMezzage;
                 networkStreamToClient >> tehFukkenMezzage; //woo. consume the message. we _know_ we have enough bytes!
-                serverHelloStatus->m_NetworkMagic.setMagicGot(false); //only after reading in a full message, set magicGot back to false
+                serverHelloStatus->m_NetworkMagic.messageHasBeenConsumedSoPlzResetMagic();
 
                 if(!tehFukkenMezzage.isNull() && !tehFukkenMezzage.isEmpty())
                 {
@@ -174,7 +122,7 @@ void MultiServerHelloer::handleNewClientSentData()
                                 serverHelloStatus->setCookie(cookieFromClient);
                             }
 
-                            QByteArray welcomeMessage; //TODOreq: magic for client ++++ we need to stream into this bytearray using a qdatastream noob, not append! way to fail
+                            QByteArray welcomeMessage;
                             QDataStream messageWriteStream(&welcomeMessage, QIODevice::WriteOnly);
                             messageWriteStream << serverHelloStatus->cookie(); //generates OR confirms cookie
 

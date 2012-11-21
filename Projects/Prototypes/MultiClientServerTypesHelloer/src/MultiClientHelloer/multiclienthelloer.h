@@ -5,6 +5,7 @@
 
 #include "ssltcpclient.h"
 #include "../ServerClientShared/networkmagic.h"
+#include "../ServerClientShared/bytearraymessagesizepeekerforiodevice.h"
 
 struct ClientHelloStatus
 {
@@ -13,10 +14,11 @@ struct ClientHelloStatus
     {
         HelloFailed,
         AwaitingConnection,
-        HelloDispatched,
+        HelloDispatchedAwaitingWelcome,
         WelcomeReceivedThankYouForWelcomingMeSentAwaitingOkStartSendingBro
     };
     ClientHelloState m_ClientHelloState;
+    NetworkMagic m_NetworkMagic;
 };
 
 class MultiClientHelloer : public QObject

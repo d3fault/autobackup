@@ -1,0 +1,3 @@
+this just in: i hate networking code :-P
+
+soooooooooo excited for when rpc generator is "finished" (will probably have tons of patches though :-() and i never have to touch it again!!!

@@ -9,14 +9,16 @@ SOURCES += main.cpp\
     multiserverhelloertest.cpp \
     multiserverhelloer.cpp \
     multiserverbusiness.cpp \
-    ../ServerClientShared/networkmagic.cpp
+    ../ServerClientShared/networkmagic.cpp \
+    ../ServerClientShared/bytearraymessagesizepeekerforiodevice.cpp
 
 HEADERS  += serverwidget.h \
     ../ServerClientShared/helloprotocol.h \
     multiserverhelloertest.h \
     multiserverhelloer.h \
     multiserverbusiness.h \
-    ../ServerClientShared/networkmagic.h
+    ../ServerClientShared/networkmagic.h \
+    ../ServerClientShared/bytearraymessagesizepeekerforiodevice.h
 
 include(../../../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../../../GloballySharedClasses/ssltcpserver.pri)
