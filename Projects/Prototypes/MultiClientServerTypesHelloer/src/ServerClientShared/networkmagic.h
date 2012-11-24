@@ -29,7 +29,7 @@ struct NetworkMagic
 
     static void streamOutMagic(QDataStream *ds);
 
-    static QDataStream m_MagicReadingNetworkStream;
+    QDataStream m_MagicReadingNetworkStream;
 
     bool consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic(QIODevice *deviceToLookForMagicOn);
     void messageHasBeenConsumedSoPlzResetMagic();

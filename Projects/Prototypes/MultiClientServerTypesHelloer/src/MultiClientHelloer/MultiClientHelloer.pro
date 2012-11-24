@@ -15,13 +15,15 @@ SOURCES += main.cpp\
     multiclienthelloertest.cpp \
     multiclientbusiness.cpp \
     multiclienthelloer.cpp \
-    ../ServerClientShared/networkmagic.cpp
+    ../ServerClientShared/networkmagic.cpp \
+    ../ServerClientShared/bytearraymessagesizepeekerforiodevice.cpp
 
 HEADERS  += clientwidget.h \
     multiclienthelloertest.h \
     multiclientbusiness.h \
     multiclienthelloer.h \
-    ../ServerClientShared/networkmagic.h
+    ../ServerClientShared/networkmagic.h \
+    ../ServerClientShared/bytearraymessagesizepeekerforiodevice.h
 
 include(../../../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../../../GloballySharedClasses/ssltcpclient.pri)

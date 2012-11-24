@@ -9,7 +9,7 @@
 
 struct ClientHelloStatus
 {
-    ClientHelloStatus() { m_ClientHelloState = AwaitingConnection; }
+    ClientHelloStatus() { m_ClientHelloState = AwaitingConnection; m_Cookie = 0; }
     enum ClientHelloState
     {
         HelloFailed,
@@ -19,6 +19,8 @@ struct ClientHelloStatus
     };
     ClientHelloState m_ClientHelloState;
     NetworkMagic m_NetworkMagic;
+    quint32 m_Cookie;
+    ByteArrayMessageSizePeekerForIODevice *m_IODevicePeeker;
 };
 
 class MultiClientHelloer : public QObject
@@ -29,6 +31,8 @@ public:
     ~MultiClientHelloer();
     void addSslClient();
 private:
+    void clientFinishedInitialConnectPhaseSoStartHelloing(QIODevice *newClient);
+
     //still in connecting or hello phase
     QHash<QIODevice*, ClientHelloStatus*> m_ClientHelloStatusesByIODevice;
 
@@ -36,8 +40,9 @@ private:
     QHash<quint32, QIODevice*> m_ConnectionsByCookie;
 signals:
     void d(const QString &);
+    void connectionHasBeenHelloedAndIsReadyForAction(QIODevice*, quint32);
 private slots:
-    void handleClientFinishedInitialConnectPhaseSoStartHelloing(QIODevice *newClient);
+    void handleSslConnectionEstablished(QSslSocket *sslConnection);
     void handleServerSentUsData();
 };
 

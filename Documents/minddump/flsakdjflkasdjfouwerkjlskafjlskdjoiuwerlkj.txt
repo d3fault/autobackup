@@ -1,0 +1,7 @@
+i don't see why not having root changes anything
+you still have full access to the cpu (crunching numbers)
+you still have network access
+
+a virus can install itself into a user account and even autostart at startup (usually, depending on the window manager ~/.kde/autostart etc)
+you cannot overwrite their system files but it really depends on what you want the machine for
+if you just want to utilize it's resources (store files, crunch numbers), you don't need root anyways...

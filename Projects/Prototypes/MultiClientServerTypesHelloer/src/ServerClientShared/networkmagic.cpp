@@ -30,7 +30,7 @@ bool NetworkMagic::consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf
 
     while(deviceToLookForMagicOn->bytesAvailable() > 0)
     {
-        networkStreamToClient >> potentialMagicPiece;
+        m_MagicReadingNetworkStream >> potentialMagicPiece;
 
         if(NetworkMagic::MagicExpected[m_CurrentMagicByteIndex] == potentialMagicPiece)
         {

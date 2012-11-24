@@ -18,7 +18,7 @@ void MultiServerHelloer::startAll3Listening()
     {
         m_SslTcpServer = new SslTcpServer(this, ":/ServerCA.pem", ":/ClientCA.pem", ":/ServerPrivateKey.pem", ":/ServerPublicCert.pem", "fuckyou");
         connect(m_SslTcpServer, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
-        connect(m_SslTcpServer, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleClientConnectedAndEncrypted(QSslSocket*)));
+        connect(m_SslTcpServer, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleSslClientConnected(QSslSocket*)));
 
         if(m_SslTcpServer->init())
         {
@@ -37,14 +37,16 @@ void MultiServerHelloer::startAll3Listening()
         {
             emit d("ssl tcp server failed to initialize");
         }
-
     }
 }
-void MultiServerHelloer::handleNewClientConnected(QIODevice *newClient)
+void MultiServerHelloer::newClientConnected(QIODevice *newClient)
 {
     emit d("new client connected, starting hello status");
     m_ServerHelloStatusesByIODevice.insert(newClient, new ServerHelloStatus()); //TODOreq: delete ServerHelloStatus somewhere (dc? dupe detected? both? idfk)
     connect(newClient, SIGNAL(readyRead()), this, SLOT(handleNewClientSentData()));
+
+    //delete m_ServerHelloStatusesByIODevice.value(newClient)->m_IODevicePeeker;
+    m_ServerHelloStatusesByIODevice.value(newClient)->m_IODevicePeeker = new ByteArrayMessageSizePeekerForIODevice(newClient);
 }
 void MultiServerHelloer::handleNewClientSentData()
 {
@@ -77,7 +79,7 @@ void MultiServerHelloer::handleNewClientSentData()
                 //read message size, message body, use it or whatever
 
 
-                if(!ByteArrayMessageSizePeekerForIODevice::enoughBytesAreAvailableToReadTheByteArrayMessage(newClient))
+                if(!serverHelloStatus->m_IODevicePeeker->enoughBytesAreAvailableToReadTheByteArrayMessage())
                 {
                     return;
                 }
@@ -122,7 +124,7 @@ void MultiServerHelloer::handleNewClientSentData()
                                 serverHelloStatus->setCookie(cookieFromClient);
                             }
 
-                            QByteArray welcomeMessage;
+                            QByteArray welcomeMessage; //if i change the structure of this welcome message, i need to change the code in the client for the 'thank you', which just re-sends the welcome message (it is just a hack since they are identical for now)
                             QDataStream messageWriteStream(&welcomeMessage, QIODevice::WriteOnly);
                             messageWriteStream << serverHelloStatus->cookie(); //generates OR confirms cookie
 
@@ -189,4 +191,8 @@ void MultiServerHelloer::handleNewClientSentData()
     {
         //invalid sender... should also never happen
     }
+}
+void MultiServerHelloer::handleSslClientConnected(QSslSocket *sslClient)
+{
+    newClientConnected(sslClient);
 }

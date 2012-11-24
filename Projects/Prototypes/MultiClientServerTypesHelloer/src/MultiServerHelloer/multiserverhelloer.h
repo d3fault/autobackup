@@ -14,6 +14,8 @@
 
 //this entire prototype is more about testing out magic robustity than hello'ing. hello'ing is fucking easy, but i've never done the robust magic shit i'm attempting (and plan to use in normal message use too, not just this hello shit)
 
+//TODOreq: not a huge priority, but there should be a periodic timeout to clear out old incomplete hellos. if for some reason the hello didn't finish and it's still in any one of the states, it will remain their indefinitely (and theoretically/potentially leak memory). obviously also applies to client as well
+
 struct ServerHelloStatus
 {
     ServerHelloStatus() { m_ServerHelloState = AwaitingHello; m_HasCookie = false; }
@@ -36,12 +38,13 @@ struct ServerHelloStatus
     quint32 m_Cookie;
 
     NetworkMagic m_NetworkMagic;
+    ByteArrayMessageSizePeekerForIODevice *m_IODevicePeeker;
 
     static quint32 generateCookie()
     {
         QByteArray md5Input;
         md5Input.append(QString::number(++overflowingClientIdsUsedAsInputForMd5er) + QDateTime::currentDateTime().toString() + QString::number(qrand())); //no idea if this is a security issue, but could add some salt to this also (but then the salt has to be generated (which means it's salt has to be generated (etc)))
-        return ((quint32)(QCryptographicHash::hash(md5Input, QCryptographicHash::Md5).toUInt()));
+        return ((quint32)(QCryptographicHash::hash(md5Input, QCryptographicHash::Md5).toUInt())); //for the time being, i'm just not going to give a shit about the truncation. lol /lazy
     }
 };
 
@@ -56,6 +59,7 @@ private:
     SslTcpServer *m_SslTcpServer;
 
 
+    void newClientConnected(QIODevice *newClient);
 
     //still in hello phase
     QHash<QIODevice*, ServerHelloStatus*> m_ServerHelloStatusesByIODevice;
@@ -66,7 +70,7 @@ signals:
     void d(const QString &);
     void connectionHasBeenHelloedAndIsReadyForAction(QIODevice*, quint32);
 private slots:
-    void handleNewClientConnected(QIODevice *newClient);
+    void handleSslClientConnected(QSslSocket *sslClient);
     void handleNewClientSentData();
 };
 

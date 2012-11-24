@@ -4,6 +4,7 @@
 #include <QIODevice>
 #include <QByteArray>
 #include <QDataStream>
+#include <QBuffer>
 
 //TODOreq: this is NOT thread safe, since they all use the same byte array and data stream [as an optimization]. Magic _IS_ thread-safe because each connection (and therefore thread) has it's own NetworkMagic object. This is just a peek helper utility so it's a bit different in that respect
 
@@ -12,10 +13,12 @@
 class ByteArrayMessageSizePeekerForIODevice
 {
 public:
-    static bool enoughBytesAreAvailableToReadTheByteArrayMessage(QIODevice *ioDeviceToPeekByteArrayMessageSizeOn);
+    ByteArrayMessageSizePeekerForIODevice(QIODevice *ioDeviceToPeek);
+    bool enoughBytesAreAvailableToReadTheByteArrayMessage();
 private:
-    static QByteArray m_PeekedByteArraySizeRaw;
-    //static QDataStream m_PeekDecoderStream;
+    char m_RawSizePeekCharArray[sizeof(quint32)];
+    QIODevice *m_IODeviceToPeek;
+    QByteArray m_PeekedByteArraySizeRaw;
 };
 
 #endif // BYTEARRAYMESSAGESIZEPEEKERFORIODEVICE_H
