@@ -1,0 +1,61 @@
+Software News
+libre
+etc
+
+I will perhaps become that
+maybe worldly, but probably not
+"approving commits all day every day" (as linus now does)
+could translate into "TALKING ABOUT commits all day every day"
+thus, software news...
+
+
+also i think that the underlying software that i use for my medium being libre is a useful tool for other individuals to start their own news... CORPORATIONS(??? jk)... giving the power back to the people or whatever *insert-cheesy-line-here*
+their news can/will be worldly
+
+
+my name is what will retain
+my name is the only reason it will work
+broadcasting, etc
+LIBRE means i can easily be jacked, yes
+BUT NOBODY CAN BECOME ME
+ABC will get profit because my stream will refer to it
+the software for the stream, as well as abc, are libre
+easily jacked
+if no stream, no reason to stick with it
+but MY NAME (d3fault woot) is what makes it stick
+or whatever
+
+
+
+i don't know where i'm going to broadcast at
+d3fault.com/net/org?
+nobodyme?
+
+
+i kinda want to keep d3fault as the homepage for 'd3fault', the dream project... dht etc...
+and also web-interface to it too?
+
+i think d3fault should be both native (qt) and interpretted (js/html)
+
+
+make a gui thing that can handle both, etc whatever. have thought about this lots
+
+
+d3fault frong page should... show the stream?
+ok so.... both?
+
+but with nobodyme
+idfk
+
+d3fault front page is the 'profile view' of the 'software' (the js/html view of it)... DEFAULTING to user: d3fault
+if they are logged in with cookies, it shows their own page (or perhaps any page of their choosing), just like facebook
+
+perhaps nobodyme is the stream only?
+the.... backed up... version of the stream...? stays online even when cluster goes down (bug etc)?
+like the random 'live stream of [video-game x]' plastered on /b/ lately... with an ABC ad at the top :)
+
+d3fault will TRANSFORM/upgrade/evolve _AROUND_ the stream (stream is always there), but nobodyme remains relatively static (aside from the stream lol...) and... empty (aside from one abc ad).
+
+d3fault and nobodyme start off the same at launch i guess? i don't know what the ad slot would be labled. if they'd share one or if they each have their own
+
+idfk

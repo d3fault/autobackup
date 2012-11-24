@@ -1,0 +1,31 @@
+LGPL
+
+Richard Stallman doesn't like it. "Necessary Evil".
+
+I see where he's coming from, and almost agree.
+
+
+Free Software is about creating a free/open society
+
+I completely support that
+
+
+
+BUT HE DOES NOT FACTOR IN THE BOOTSTRAP FACTOR
+
+
+
+Businesses exist. The current world runs on business.
+
+
+Just watched last week's boardwalk empire:
+LGPL is like two opposing currents coming together to form GIANT WAVES
+Business -> [lgpl-software] <- Free Software
+
+
+
+It has the best of both words.
+I will not acknowledge proprietary software ON MY STREAM.
+but they can exist, idgaf.
+
+Them using my software MAKES THEM DEPENDENT ON IT (just like that BSD saying 'give them the rope to hang themselves with'), but unlike BSD forces them to push PATCHES back upstream. GPL does not have that. They only get patches from fellow free software. Patches alone can, in the grand scheme of things, make a GIANT FUCKING WAVE. Keep the software alive. Etc.
