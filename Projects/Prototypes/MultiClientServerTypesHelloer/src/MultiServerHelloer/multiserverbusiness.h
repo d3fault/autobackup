@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QListIterator> //debug
 
 #include "multiserverhelloer.h"
 
@@ -18,11 +19,13 @@ private:
     //this is only for assigning a clientId when reading the message off the network. When sending to the network, we only need it's clientId and the MultiServer figures out the QIODevice for us, ****WHICH MAY HAVE CHANGED IN THE MEANTIME****
     QHash<QIODevice*,quint32> m_ActiveConnectionIdsByIODevice;
 signals:
+    void atLeastOneClientIsConnected(bool theSignalNameIsTrue);
     void d(const QString &);
 public slots:
     void startAll3Listening();
     void newConnectionPassedHelloPhase(QIODevice *theConnection, quint32 clientId);
     void clientSentUsData();
+    void DBG_sendMessageToClient(const QString &message);
 };
 
 #endif // MULTISERVERBUSINESS_H

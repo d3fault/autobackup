@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QLineEdit>
 
 class ServerWidget : public QWidget
 {
@@ -16,10 +17,14 @@ private:
     QVBoxLayout *m_Layout;
     QPlainTextEdit *m_Debug;
     QPushButton *m_StartAll3Listening;
+    QLineEdit *m_MessageLineEdit;
+    void sendMessageToBusiness();
 signals:
     void startAll3ListeningRequested();
+    void messageSendRequested(const QString &message);
 public slots:
     void initGui();
+    void setReadyForBusinessMessageInteraction(bool ready);
     void handleD(const QString &msg);
 };
 

@@ -39,6 +39,20 @@ void MultiServerHelloer::startAll3Listening()
         }
     }
 }
+void MultiServerHelloer::sendMessageArrayToClientId(const QByteArray &message, quint32 clientId)
+{
+    QIODevice *clientIODevice = m_ClientsByCookie.value(clientId, 0);
+    if(clientIODevice)
+    {
+        QDataStream networkStream(clientIODevice);
+        NetworkMagic::streamOutMagic(networkStream);
+        networkStream << message;
+    }
+    else
+    {
+        //TODOreq: stale or something idfk
+    }
+}
 void MultiServerHelloer::newClientConnected(QIODevice *newClient)
 {
     emit d("new client connected, starting hello status");

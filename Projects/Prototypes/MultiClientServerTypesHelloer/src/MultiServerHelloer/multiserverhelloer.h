@@ -55,6 +55,7 @@ public:
     explicit MultiServerHelloer(QObject *parent = 0);
     ~MultiServerHelloer();
     void startAll3Listening();
+    void sendMessageArrayToClientId(const QByteArray &message, quint32 clientId);
 private:
     SslTcpServer *m_SslTcpServer;
 

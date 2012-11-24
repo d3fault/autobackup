@@ -1,0 +1,11 @@
+"everything should be public domain"
+yes
+
+but that is ridiculously hard/impossible with source->binary translations
+"the binary is public domain?"
+meh
+
+can't FORCE public domain upon people
+they can always just not publish the source
+
+(not acknowledging / running said binaries is _A_ solution)

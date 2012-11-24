@@ -20,17 +20,20 @@ void MultiServerBusiness::newConnectionPassedHelloPhase(QIODevice *theConnection
     connect(theConnection, SIGNAL(readyRead()), this, SLOT(clientSentUsData()));
 
 
+    emit atLeastOneClientIsConnected(true); //TODOreq: on disconnects, see if at least one is still connected and emit false. it's just overly testing though so fuck it...
+
     //TODOreq: remove old connections with this clientId here (perhaps before inserting the new connection)
 }
 void MultiServerBusiness::clientSentUsData()
 {
     QIODevice *client = static_cast<QIODevice*>(sender());
 
-    if(client)
+    if(client) //TODOreq: is this even going to verify anything since it's not a dynamic_cast or qobject_cast ??
     {
         quint32 clientId = m_ActiveConnectionIdsByIODevice.value(client, 0);
         if(clientId > 0)
         {
+            TODO LEFT OFF -- and do the client side of course
             //read the message into a recycled container or whatever the fuck
             //set it's clientId
             //process it
@@ -38,6 +41,7 @@ void MultiServerBusiness::clientSentUsData()
 
             //later (not in here):
             //deliver() received, send to multi server using clientId
+            //^^^^DBG_sendMessageToClient is pretty much this for this prototype/test
         }
         else
         {
@@ -47,5 +51,22 @@ void MultiServerBusiness::clientSentUsData()
     else
     {
         //cast failed wtf invalid sender()? should never happen
+    }
+}
+void MultiServerBusiness::DBG_sendMessageToClient(const QString &message)
+{
+    //this is simulating broadcasts (without neighbor notification) i guess... lol fuck it. this is very hacky and only used for this testing
+
+    QByteArray theMessageAsArray;
+    QDataStream theMessageStream(&theMessageAsArray, QIODevice::WriteOnly);
+    theMessageStream << message;
+
+    QList<quint32> clientIds = m_ActiveConnectionIdsByIODevice.values();
+    QListIterator<quint32> it(clientIds);
+
+    while(it.hasNext())
+    {
+        quint32 currentClientId = it.next();
+        m_ServerHelloer.sendMessageArrayToClientId(theMessageAsArray, currentClientId); //TODOreq: so i guess it's more of like the server that's aware of all the connections that is communicated to by Id, it is NOT _ONLY_ a "helloer". A rename is in order... but i havent' come up with anything yet...
     }
 }
