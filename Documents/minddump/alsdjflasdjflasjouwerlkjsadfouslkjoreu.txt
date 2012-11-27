@@ -1,0 +1,143 @@
+what am i doing?
+have i lost perspective?
+
+what's with this freedom/libre... motive
+scenario
+requirement
+etc
+
+so i choose to make LGPL my software minimum
+and BY-SA my content minimum
+
+GREAT
+
+it makes sense i SUPPOSE
+
+for me, my LEGAL site/PLACE?
+
+i still haven't even fully conceptualized what i want to ACCEPT
+
+i will definitely OUTPUT in LGPL/BY-SA
+and patches/submissions to my software will also require similar
+
+even communication IRL i guess with humans should be BY-SA
+or SOMETHING
+
+
+but i am losing perspective
+
+
+"you can't force public domain, because binaries can always be released and the source withheld"
+
+
+which SOMEHOW ties into: on the dht, licenses are IRRELEVANT. it's "open source" or "closed source" (where closed source is not allowed)
+even the retarded ass non-distributeable *open source* microsoft licenses still BECOME valuable on the dht
+
+the dht follows no laws of a government
+it only follows laws of logic
+
+
+so.... am i losing perspective?
+
+
+
+TODOreq: when i am 'broadcasting live' on the dht, do i still need to abide by the 'legality' of lgpl/by-sa ETC (even though my peers (anons) will not)? should i go anon at some point?
+
+
+this is a weird ultra contradiction that just shows i haven't thought out the transition
+i have to create the dht first, obviously...
+
+
+
+
+
+so i guess after the dht is up... is when i'll allow myself to listen to music and watch proprietary movies etc?
+
+or will i opt out of the freedom i have worked so hard to create/provide/attain(???what word fits???)
+everything on the dht is public domain. binaries are not interesting. they can still be there, but they will not be linked to (or integrated) because nobody will be interested in them. perhaps this is untrue but i know for a good number of us (intelligent programmers), this holds true
+
+
+
+
+i don't know what the fuck i'm doing anymore
+god damnit
+delusions of grandure?
+is this plan really as good as it sounded yesterday?
+
+
+
+
+how far of 
+how much am i going to utilize my plans..
+i want to have the ability to swap out back ends.
+
+so i can still code 'timeline' shit on my business dht
+which of course needs to abide by legality in order to not get raided...
+and i guess i want to be able to have TWO backends? in case public dht is unstable? three would be optimal but i haven't any other ideas (this is excluding the fact that i'm going to have OFFLINE (input-only backup machines REMOTELY, as well as output-only machines LOCALLY (before hitting the net)) backups galore, which are inaccessible by the public of course)
+
+
+
+is it as possible as i hope though?
+i can get so distracted with business dht
+lose perspective completely
+like i have just demonstrated
+
+
+i guess i haven't lost perspective
+d3fault is still my dream goal and always has been. i have always said i want to document the creation of it.
+
+
+i just haven't figured out INTEGRATION completely between post-d3fault and pre-d3fault/post-abc-and-self-launch(which is asep)
+i guess i'll respond to DMCA notices.... for as long as i HAVE to
+prison isn't worth taking a stand
+LGPL/BY-SA for input are my way of doing that
+
+
+i dream of a society of LGPL/BY-SA only content
+but then i remember dht doesn't give a fuck about laws. proprietary content (warez, piracy) is very welcome!!!
+
+
+
+willl the business applications (that use the swappable backends) simply not allow piracy/warez until they exist on the dht?
+sure you can download the source and create YOUR OWN business dht and allow piracy/warez on it... but you will very likely be raided...
+dht is raid proof
+it's just that dht is too difficult for me to code right now
+AAAANNNDDDDD i need/want/must document it fully, the sole (well, not sole) purpose of 'launching/abc'. err abc is like a way of making money simultaneously. both with the stream and as a fully functional transe-- business.
+
+
+
+clearly i am moving too slowly. procrastinating too damn much. i'm spending insane amounts of time on a tool to help me create abc.
+dependency hell: d3fault -> launch (so i can document creation of d3fault) -> abc (so i can profit from launch stream by showing an ad next to it, but also a side business (ad agency) that looks very promising woot) -> rpc generator (so i can create abc functionality, as well as future application functionality, with ease)
+i like that i have a plan
+that is my path
+i haven't worked out fully what i'm going to do once i've gotten d3fault functional. maybe.... nothing? continue living in that libre-only world until death? perhaps carve out a section on d3fault that is libre-only and call it my home? other content is still welcome, but not referenced. sort of like how fedora does it :-P (imo should be more like debian, with opting into the non-libre content being ridiculously easy (but actually should probably be EVEN EASIER than both :-P))
+
+
+lazy solution: decide, and document your deciding process, once it's clearly time to decide (which isn't now)
+potential downsides: losing focus again, incompatibilities between 'swappable backends' somehow fucking everything up (losing a lot of code), idfk
+
+factoring a Qt fork makes my head explode, fuck that for now (the time to decide that is right around designEquals and InlineEditable (especially with the two integrated)
+
+
+i may very well die before even getting close to either of those two projects. especially at the rate i am moving. fuck.
+
+i know one thing: there's no way in hell i would make users of designEquals/InlineEditable sign a CLA with Digia before welcoming their patches [to the low-as-fuck level C++ framework supporting it all (WHICH IS ALSO INLINE-EDITABLE)]
+
+
+
+essentially the entire fucking OS should be inline editable. the Qt framework/layer is just a piece.
+i might need to make an entire new OS for this purpose, but hopefully can just use another one as a starting point to save lots of time (i'm leaning towards BSD (open,free,idgaf but prolly open because SECURE BY DEFAULT), because i can cancerously re-license the code under LGPL :-)... whereas linux is GPL and i cannot convert it to LGPL)
+
+
+it might turn out that i don't give a shit about proprietary content
+that's unlikely because there will probably always be movies i want to see and music i want to listen to...
+but i do think that there's a decent chance that i'll be joined by so many that there's enough [LGPL/BY-SA] content to keep me entertained indefinitely
+
+
+
+the toughest part to comprehend and/or find a solution to is: even after the dht is up and stable, my streaming of my own life still cannot utilize the dht to view proprietary material (movies namely), because then i have de-anonimized it and can be held responsible legally and sued etc. REGARDLESS OF WHAT _I_ DO, i am still committed to creating the software to support such a situation. if it turns out that i am myself cannot partake in my creation, so be it. there is a greater good that comes from it. individual vs. society == :-D society wins that one... but only because i cannot please myself no matter what (unless SOMEONE ELSE BECOMES ME ALL THE SUDDEN AND DOES THIS SHIT FOR ME). if i do nothing then i cannot partake, and if i create it i cannot partake because i have a light shining on me and every action watched. i must be good because i cannot get away with evil.
+
+
+
+
+a large part of me thinks that the changes that tor/bitcoin are bringing to this world are going to bring it to a crumble. i can envision so many ways of terrorizing society all from the comfort of your laptop. perhaps it will bring about the end of the world. oh well ^_^, enjoy the now :-). i know for a mathematical fact that it cannot be stopped. my dht relies on it.
