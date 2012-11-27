@@ -1,0 +1,9 @@
+open news consortium
+play on:
+news corporation
+
+
+it would be a hub of independent news reporters
+as well as a place to download the software
+or perhaps NOT download any software, can all be browser-based (or both)
+like facebook profiles except not. news 'channels' instead
