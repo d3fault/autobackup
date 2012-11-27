@@ -1,0 +1,21 @@
+MultiServerAbstraction
+could handle:
+a) hello phase
+b) localsocket/tcp/ssl abstraction
+c) magic finding
+d) message byte array size peeking
+e) message reading, once enough bytes are available
+
+then it just emits messageRead(QByteArray message, quint32 clientId) and business handles it
+the business and MultiServerAbstraction have to be on the same thread
+note that by business i really mean "protocolknower" (in rpc generator context)
+there is of course more business, protocolknower emits the messages to those businesses (bitcoin, couchbase, etc) after examining the content of the message. i guess it also has to stream out from the qbytearray into whatever message type it figures out it is. it's in the header of the qbytearray message (but worth noting that the header is INSIDE the message itself)
+
+
+[magic,qba-size,qba-body[messageType,etc]]
+
+
+then a similar/opposite function to MultiServerAbstraction (perhaps called via signal/slot mechanism (though it is an TODOoptimization to NOT do it that way. interface method is ~10x faster apparently)): 'sendMessageToClient(QByteArray message, quint32 clientId)'
+very similar except sends to the client
+whether or not it's the same socket pointer is irrelevant and abstracted by MultiServerAbstraction
+i guess they could even become a local peer in the meantime, but that's a case i can't envision ever happening lol...

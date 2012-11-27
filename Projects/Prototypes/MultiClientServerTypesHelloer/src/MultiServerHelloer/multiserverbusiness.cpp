@@ -33,7 +33,11 @@ void MultiServerBusiness::clientSentUsData()
         quint32 clientId = m_ActiveConnectionIdsByIODevice.value(client, 0);
         if(clientId > 0)
         {
-            TODO LEFT OFF -- and do the client side of course
+            MultiServerAbstraction design makes more sense to use here than to copy/paste code the magic finding / message size peeking methods here. protocol knower shouldnt have to deal with an iodevice at all (except there will be one hidden: qbuffer... when we wrap the byte array in a qdatastream in order to decipher the message and handle its protocl implementation. what this means is i think i need a new prototype lmfao. should probably design it first tbh)
+
+
+            QString theMessageText;
+
             //read the message into a recycled container or whatever the fuck
             //set it's clientId
             //process it
