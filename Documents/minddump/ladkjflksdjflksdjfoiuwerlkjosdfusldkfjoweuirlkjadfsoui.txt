@@ -1,0 +1,30 @@
+i came to the conclusion yesterday that i need to rewrite the compiling example(s) for rpc generator. the threading is fucked. i will probably use objectonthreadhelper for it. still, that realization sent me into a huge state of depression. like i felt like i had lost all my work [on rpc generator]
+
+
+that definitely isn't so
+
+i've been thinking about it on and off since then (as much as my brain WANTS to, don't want to force myself to think about it when i'm feeling all depressed n shit), and i realized that the [overall] design and... err... problems that i have navigated... are not lost. the old compiling examples can/will be referred to heavily during the rewrite. i started to think about how big the compiling example(s) are, and actually they don't even seem all that big. they are tweaked and optimized heavily (and still incomplete), but they are not large overall. a rewrite will take a matter of days (i hope).
+
+
+the state of depression is when i layed down and started fantacizing about suicide (i can't remember if it was earlier today or yesterday, but i now think it was yesterday? everything's been a blur lately)
+
+i fucking hate coding
+
+
+i thought about ditching coding completely
+
+i mean obviously i can't yet
+
+but i thought about post-launch about basically focusing on music + software-news
+patch acceptance can be delegated, as can the actual coding
+
+
+but idk
+i actually do like coding
+AT TIMES
+
+and i kind of want to continue
+like... the thought i had that makes me want to continue: the current state of coding sucks and i will improve upon and abstract it (design equals, etc) so that it BECOMES fun. so that it BECOMES less tedious. i hate it now but supposedly i will like it in the future
+
+
+still, i also like the idea of just being a fucking musician. a simpler life. an 'in the moment' life. this coding shit is always 'working towards something'. that is DEFINITELY soooooooooo fucking true right now especially. god damnit i hate the state i am in.
