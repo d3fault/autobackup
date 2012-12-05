@@ -1,0 +1,4 @@
+i think (i've mentioned this before) i want to see a shrink after i've launched (because i have trust issues AND because i want to see myself potentially hypnotized :-P), just to be sure there aren't "mental cobwebs" i'm missing
+
+bool sane = true;
+assert(sane);
