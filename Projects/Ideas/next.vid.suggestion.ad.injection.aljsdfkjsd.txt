@@ -1,0 +1,9 @@
+"next vid" youtube "grid" advertisement grid node injection (at random coordinates)
+it's so easy to 'censor' ads by just injecting a black box or whatever on top of them
+ABC won't be adblock plus blockable (since ads will be loaded locally and not in some /ad/ folder that matches the whitelist)
+
+however one good place to put the ad is:
+when youtube videos end, they go to a screen where like 9 videos to view "next" are presented in a grid
+choose a random x, choose a random y... show one ad there, the other 8 are video suggests
+zzzzz
+the underlying client software (that the user can parse/automate) cannot know the difference between the two

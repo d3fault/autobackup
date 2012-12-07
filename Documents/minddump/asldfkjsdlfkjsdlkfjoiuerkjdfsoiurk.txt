@@ -1,0 +1,310 @@
+[originally wrote this at the end of next.vid.grid.suggestion.ad.injection (or something) idea. the previous document. but decided to break into own document because i veer way away from that "Idea"]
+this doesn't belong here really, just writing it down (isn't much important anyways):
+a static image on top of a video (encoded INTO the video) is also censorable (so long as it's coordinates and size are static)
+a black box could be placed over it realtime (either encoded also (if you were re-distributing it for example), or just a graphical overlay at presentation time
+in place of a black box (for both cases) could also be YOUR OWN CUSTOM AD, lawl
+i guess this highlights the benefits of anonymity
+if i am public/live/realtime i would NOT be able to do this 'legally' by constantly updating my 'stream stealing parser' (that injects/overwrites a static ad) for youtube or whatever (actually youtube doesn't do this, but i DO like to think of COUNTER-ATTACKS to my own solutions: my counter to THAT counter is the above randomly placed ad in the 'next video' grid). if i update the 'youtube stream parser/stealer' in public/open, google will likely sue the shit out of me. whereas it's trivial to do anonymous
+
+
+
+as of yesterday i am starting to lean towards harnessing anonymity
+i made some pretty strong statements that i think are bound to get me... imprisoned, lmfao
+you know, treason and the like
+EVEN THOUGH I THINK IT SHOULD BE THE UNITED STATES WHO LEADS THE WAY TO DO IT
+what is the difference between someone committing treason (by speaking their mind) and a politician submitting a bill that modifies the way things are?
+
+
+
+i think that "you must pay for entertainment and you must pay MORE to be able to output" is a huuuuuuge (understated yesterday) and giant accidental*** fault that the free market has brought about
+i say accidental because i think humans are too stupid to form an illuminati and do it on purpose (or at least to do it secretly and get away with it)
+proof: home connections have lots of download, tiny bits of upload, and "entertainment" is all "copyright infringement" -_-
+that's it. that's my argument. fuck off and die.
+still it's thrown us into a nasty state of.... brainwash and stupidity and... the opposite of individuality
+the only 'free' entertainment is advertisement based... and advertising tells you (by it's very nature) what to think and do!!!!!
+
+even 'free/libre' entertainment/media/etc COSTS MONEY (by the laws of physics (or i guess i should say... free market?)) to... deliver...
+
+
+we need a worldwide human owned (there is no government) 'network' where all content is libre
+solar powered and completely automated
+no-one owns it
+no-one profits from it
+bollocks i'll be assassinated long before any of this is implemented
+
+
+
+SO I GUESS I SHOULD BE ANON?
+meh
+decisions decisions
+it's only the rest of my life
+and it's not like i die if i choose the wrong answer
+oh wait-
+
+
+
+argument: nobody will rally behind an 'anon'/coward
+so very true
+counter-argument: faces/names can and will be assassinated by 'them' (those benefitting most from 'free market' bullshit (it isn't politicians only or insurance companies only (bullworth) or gas companies only. it's ALL OF THEM. even stock market brokers. basically if you predict/feel/think that you'll be worse off by the 'worldwide communism' you'll very likely hire someone to have ME (or whatever face) assassinated. also there are religioius nuts to worry about on top of all that. shit now i'm REALLY leaning towards hiding in anonymity. it also solves my drug problems :-P))
+
+
+
+obviously i can be both
+i can be a singer songwriter and be famous only for that
+and even some software bullshit
+
+and have a completely huge and unknown 'underground' (though still PUBLIC) anon/tor/bitcoin.... project... thing....
+i want to do 2 things:
+1) i want to publicize ALL of this
+2) i want to not be assassinated
+
+contrafuckingdiction.
+if i go public and actually am the leader i wish to be, i will surely be assassinated
+in this fucking day and age
+2012
+i'd likely die before a year of being launched
+fuck
+scary
+
+
+
+
+hmmm
+am i saying.... that.... with 'relative certainty'.... that i'd be assassinated if i 'launched' and went 100% public?
+even though i _WANT_ very much to believe in this infinite universe theory that i WON'T be assassinated?????
+the '6 revolver duds' luck is horse shit. i will/would die
+6 revolver bullets = you die
+launch publically = you die
+
+sure, SLIGHT AS FUCK chance of not dying (i would say that the odds of those two are nearing similar: 99.9999% for revolver.. and like 95% for launch publically (no hiding ANYTHING))
+
+
+though really, it depends WHAT I DO once i am launched
+my words now are more or less meaningless
+but if i follow through with them
+i have so many branches of... will...
+and clearly not enough time for all of them
+i could stick purely to software and i'd perhaps lessen the chance of being assassinated down to.... 70%...
+you know?
+but trying to create a worldwide 'nation' on... the internet... or something (i'm still not even sure what the fuck i'm on about)... will very likely get me assassinated
+that's just being realistic
+'relative certainty'
+
+
+
+zeus fucking damnit
+does this mean all bets are off?
+maybe i should just kill myself now
+AHAH!
+if i am going to kill myself then i have nothing to lose by launching publically!
+zeus fuck nuggets i keep flip flopping back and forth and back and forth
+
+
+
+it was an interesting as fuck discovery yesterday
+that 'nothing will change' from my perspective
+except that i will 'know' i am being watched
+paranoia of assassination still lingers
+always will...
+but nothing really changes
+i sit and code
+EXCEPT I CAN _START_ FUCKING CODING GAAAAHHHHH
+but yea that's an aside really
+i need to figure out the shape of my persons before i can do that
+that's what this is about
+how will i live
+how am i going to choose to live
+even if i do choose to utilize the tool that is anonymity, HOW MUCH will i keep private and HOW MUCH will i go public with?
+what about my dirty fucking conscience leaking private shit publically?
+and... and... what about that 'knowing i am being watched' (as a sense of comfort)
+it will go away during private times!!!!
+gah!!~~ there is no winning
+be private, be paranoid, live
+go public, be slightly less paranoid, die
+hmm i mean srsly paranoia sucks and all...
+but life vs. death
+isn't much of a decision at all really is it?
+can i say with 'relative certainty' that i will die if i go public?
+AND, should i give a shit since staying private makes me want to off myself?
+
+Weigh the two:
+a) Relative Certainty I will be assassinated if I go 100% public
+b) Depression invoked from staying private making me want to off myself
+
+
+
+perhaps this idea I've thought up previously but I don't think I've written about is my perfect solution:
+on a DHT, such as Freenet, or any network really (could even be ON abc (with me claiming ownership of abc, but NOT of this particular user's content), i publish content under a pseudonym that is NOT in ANY WAY tied to me. the only consistency in the pseudonym is that it's signed with a private key (this private key cannot lead back to me. i should shred it in the worst case scenario).
+a hopefully maximal worst-case-scenario is not that they 'decrypt' my shit and see my private content (because i HAVE NONE. all 'private' shit (stuff that would get me assassinated) is released anon/pseudo (but still SIGNED!!!).... but that they brute-force-generate the private key and can now write messages on my behalf. whoop-de-fucking-do
+all i then have to do is say: this key is compromised
+it doesn't matter who says it
+if they say 'this key is compromised' or if i say 'this key is compromised'
+it is compromised
+and until either party says it, the messages are deemed legit
+
+i can/should publish the words on numerous networks. Freenet, TBP, and perhaps even my own LGPL/BY-SA _ONLY_ network: Abc (or maybe another 'made up' network that merely utilizes Abc's advertising network (both of which are publically owned by me :-P (but don't have to be if i want to... spread my eggs around in different baskets by using tor/bitcoin anonymity/pseudonyms/etc)))
+
+
+
+
+
+actually the more i think about it, the more i am leaning towards that
+it still has elements of "fun" to it
+bluebox, cryptohackering, shit-i-am-PRIVELIDGED-in-knowing-and-being-able-to-perform
+but it still has legitimacy and public'ness??
+
+
+idk though
+i'd always be afraid
+AFRAID OF WHAT?
+nobody will steal your shit if you publicize it (privately)
+oh god my brain just fucking exploded
+publicize meaning... publish. not 'publically claim'
+i need to make up new terms to remove ambiguity
+
+
+AND YES, i plan on building a dht to automate all of this still (d3fault)... HOWEVER, initially i will utilize existing technologies (client/server bullshit (ABC)... but also Freenet/TPB for good measure and reliability)
+i can't afford to wait until d3fault is stable before i start publishing (whether privately or publically or both). life is too short
+
+
+i do like this idea quite much
+the only thing i need to "hide" is the private signing key
+should i use the tappy toes method to APPEAR online 100%?
+i think it would be hard
+that's why it would work ;-)
+shit i've just given myself away
+i can't publish this privately OR publically
+lmfao
+"you know the guy at the top of the pyramid whose advertising system i am USING?" that's me ;-)
+fuck what do i do with this document then?
+shred it? good thoughts now wasted and erased from all human history and knowledge
+i value information far too much!!!
+
+perhaps a 
+oh god
+i've said it again haven't i
+a time bomb 'expected-to-be-decrypted-eventually' tc container type thing (numerous containers though prolly in teh long run) for docs like that that don't fit in either case? i could put the 'name translations' documents in them... so my changing the name "kaylee" to "samantha" everywhere can be... un-translated?
+
+fuck
+it's like i'm reinventing d3fault except with shorter-term-and-easier-to-implement solutions
+
+but how long would it all stay encrypted for? i can't predict when quantum computers will be advanced enough to decrypt shit fast as fuck. could be 5 years for all i know!
+
+fuck i should just kill myself now
+NO THERE IS NOTHING TO LOSE IF YOU ARE SUICIDAL
+
+i guess that's how this all started isn't it
+it's the state i was in when i started writing
+i actually think there's a lesson to be learned from that
+a valuable and useful lesson
+that if you are in a state where you have nothing to lose and nobody can hear you: you will be honest with yourself and be yourself?
+or something?
+i'm really quite worried that state will go away once i start PUBLISHING (whether private or public (does this mean i've decided to maintain a private 'branch'? i guess idk i am undecided but considering it HEAVILY))
+
+
+i feel as though my life is important
+as though i can modify the "graph" line thingy of the rate of human.... intelligence... or freedom... or something
+i only have a small leg on the graph, but it is a PIVOTING "angle" leg thing...
+absent minded scientists are full in charge of... continuing the line (beit upwards)...
+but fuckheads like me change the direction of history
+we just happen to get assassinated for it xD
+ceasar, lincoln, kennedy.... yada yada
+i sound arrogant as fuck... but i AM being realistic
+what i choose to do with my life is important
+actually not necessarily
+it isn't "is" important
+it CAN BE important
+the 10% incline can be changed to 40% i'd say if i play my cards right and write good softwares etc
+it could only become 11% if i am assassinated too soon and my shit is compromised and deleted or kept private and 'credit dispersed' among many (so as to have less of an impact)
+YOU BASTARDS
+it could also become 99% if i am assassinated at the right point in time
+
+perhaps i should fake/stage my own assassination?
+that way i can do the 99% thing as well as hide in private (STILL FUCKING ALIVE!!!!!! THAT'S THE KEY!!!!)
+sure 99% is definitely pushing it but fuck, this 10% rate that the free market has earned us (up from .005%, free market isn't ALL bad ;-P) is a slow and dreadful crawl. we might very well go extinct before we reach the 'line on the y-axis where we are self sustainable and free/libre/intelligent/STABLE'
+
+
+there are no limits except that which the frozing committee approving 'is this human worth reviving?' would... approve of..
+so pretty much don't kill and rape and steal.... and you can do whatever the fuck you want
+staging your own assassination is somewhat sad. will make your family members sad etc....
+but it's surely justifiable (especially if i'm using it to stay the fuck alive!)
+those are my laws
+the laws i can conjur up
+the laws of man
+'do no harm'
+it's easy
+it's common fucking sense
+this highly contradictory and dangerous justice system currently in implementation can and should be ignored
+except that will get me thrown into prison lmfao
+to paraphrase Jack Kevorkian: i regret killing that guy (putting him out of his misery) because i lost a large portion of my life in prison because of it
+he didn't change his views
+he just regretted his actions
+therefore i can/should(?????) utilize anonymity to.... ignore the stupid laws of the united fucking states of america in 2012
+i really really really hope you humans in charge of the revival committee are intelligent. i hope the stupid gets weeded out. i really do
+i'm even tempted to say "if you are all still stupid, DON'T revive me".... but really i'd take revival among stupids over no revival at all. i'll just become a recluse again lmfao....
+so is that it then?
+i'm deciding to become a recluse??
+a recluse who publishes EVERYTHING
+some under an anonymous psuedonym?
+some under his actual name?
+
+i guess that would only make me a partial recluse...
+gah
+
+and i'd always be worried that "someone figured it out" and is now coming to kill me
+i'd be gunned down in broad daylight and my friends would all be like "wtf why did that just happen?" and it would take YEARS for them to get it
+
+
+ROFL
+do i want:
+my friends to understand why i was killed when i am killed
+vs.
+my friends to be confused at why i was killed when i am killed
+
+
+in the end: i am dead -- it doesn't matter
+
+but as far as causing a pivot
+if they understand right as it happens, the pivot will have more... lift
+
+
+
+this life just fell into my lap
+i didn't ask for it i didn't look for it
+i just knew i wanted to DO SOMETHING with my life
+
+
+
+however, the case where my friends do not know why i am killed right when i am killed... is a much safer reality to live in. my 'secrets' will remain relatively unknown (EXCEPT _NOT_.. just unknown purely in that they are attached to ME)
+
+
+fact: keeping secrets makes you safer
+
+FUCK.
+FUCK.THIS.REALITY.IN.2012.
+FUCK.
+
+
+
+
+DON'T GIVE A FUCK, LIVE FULL BLAST, ENJOY LIFE AND DO NOT FEAR DEATH BECAUSE IT COMES NO MATTER WHAT
+vs.
+secrets make you safer
+
+
+to secret or not to secret, that is the BALLSACK
+fuck off
+all of you
+kill yourselves and leave this world to me
+to make software (lol, no media to put on the software if everyone is dead) and music and dance about in the woods like in a dream world / trip
+
+
+
+i don't know anymore
+i guess i never did
+i just WANT to go into this fantasy '100% public fearless' mode...
+i know we'll have it in the future
+when we're STABLE
+drugs will be allowed
+thoughts will be welcome
+fuck, borntoosoon
