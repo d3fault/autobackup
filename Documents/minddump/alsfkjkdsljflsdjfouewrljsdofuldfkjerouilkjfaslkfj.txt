@@ -1,0 +1,191 @@
+fork/change/take/plugin*(?) git blobs filenames (which are sums of the data!) and use them as the key to putting them on a couchbase cluster
+you should teach the common man how to set up a secure/redundant cluster
+fuck CIRCULAR REASONING
+err no, DEPENDENCY ERROR
+have to be recording to/on said cluster in order to livecode the creation of the secure/redundant cluster
+WHEN IN DOUBT, AIM ANOTHER CAMERA AT IT
+so perhaps i need a screencast at the very least
+i mean like a private one
+wtf benefit does that bring?
+i would have to say shit to make it beneficial
+how the fuck do i launch asep?
+i code my motherfucking ass off, that's how!
+why am i not doing that?
+i am
+well not REALLY
+but i am definitely trying to code my motherfucking ass off
+it's just hard to get into it
+such boring shit
+look i had another "eureka moment earlier i think in teh shower"
+i am now working on code that i find extremely boring and hate
+this is like "booster" code and it is and can be and should be hacky
+just fucking WORK
+like set up cardboard software
+you just need to capture the creation of it as best as you can
+so i need to be MOVED OUT
+and therein lies the problem
+i won't be moved out until
+a) i have the abc software done
+b) i get angel funding?
+
+i don't know how angel funding will work. i think if i just ask every single human i know and offer them some GOOD (but not stupid) "interest rate" or whatever % cut with a hard limit maximum that they can earn (cut stragglers loose! i have to be freeeeeeeeeee it is the principle of it. i cannot (will not) "owe" anyone money indefinitely. fuck that shit)
+
+
+
+not only is it (coding) hard to get into, it's also something that needs a lot of planning (designing). i am currently planning by writing this fuckign document. isn't that good enough?
+
+no you idiot, it isn't. because it takes much longer to write it than it does to say it
+you're living your life on slow motion by typing everything in
+perhaps it will even be slow-mo when saying everything out loud?
+what if when you can't hear yourself speak and it becomes autopilot (with some mechanism to detect and notify you when you stop speaking (holy shit i've already coded that))?
+
+
+either way, trying to verbosely capture yourself creating the creation recorder (abc) is a fucking stupid task
+kill it with fire
+
+
+but earlier to get to this train of thought i commissioned a "self-keylogger" and said "fuck coding it live"
+
+
+
+
+files without "flow" recordings (average words per paragraph (the speed. or whatever that useful stat is) such as this one (where we'll only have a timestamp creation date or whatever) can somehow refer to a "globalAverageCharactersPerSecond" (i guess that was the speed i was referring to?) for their playback speed. they cannot submit anything to the global average characters per second calculator because they were not recorded properly
+
+
+
+
+self-keylogger unfortunately, DEPENDS on launching asep. since launching ASEP doesn't depend on self-keylogger, i just have to launch asep.
+yes it is boring you need to power through it fucker and then later in life you will enjoy programming [again? (i want to say yes but am unsure)] (and i did mean "again" as in... in this life (not previous/alternate/future multiverses). do i even like programming? or do i just like THINKING of programs! designing them and their features. i think i can easily get myself in a position of only designing software tbh. if i wanted it. but i do not. it is an abstraction but it is a costly one. the abstraction of delegation needs to be done automatically so that i am programming as/when it happens. i should just mark a class/stub "boring" which auto-hires a code monkey to create it. since my code is LGPL he knows exactly what to do. i only have to code the "spine"/connectors of the programming. make everything...... "fit"/work. the most fun part. though i can opt to NOT do it... but then i require 1 human being to do the coding for me. fuck depending on anyone. you can't have your cake (be secure) and eat it to (not practice security))
+
+no idea if i did that close parenthesis the right amount of times FUCK MY LIFE xkcd should have the parenthesis version of his newest xkcd.
+the worst part about that one is that i have the tangentify code already complete!
+
+
+
+
+
+i am in a weird but solvable******** dependency hell
+i just have to trim the fat tbh...
+rpc -> abc (angel funding) -> simultaneous self+abc launch (using abc (and therefore advertising the use of it)) is a good "minimal plan"
+i don't see why you're taking so fucking long on it
+you can visualize 
+you know* the code path
+still i guess i CAN visualize it
+the "design" (uml and/or graphical "nodes" xD) in my head
+a mental image doesn't make you insane!
+it's how your fucking brain works
+weird but true
+
+yes it's shit, but it's a FUCKING BOOTSTRAP
+"bitcoin wave" (doesn't require bitcoin however)
+THEN i can code shit that's interesting
+i also might lose the balls once i see abc is "successful" and have made a full time job (WILL HAPPEN!) out of maintaining it and consider that a "good enough" life especially since then i will have "earned a respectable image" that i might be... attached to... or just... too lazy to "ditch"... because of the convenience factor. perhaps i NEED to launch abc and self simultaneously? i mean i do plan to as of way before this doc but that is like final nail in coffin type shit right there
+
+I DON'T WANT TO BE A "MILDLY SUCCESSFUL SOFTWARE CREATOR" guy blending in with and hiding from society
+i am too shy for collaboration to work and i am too paranoid for privacy to work
+i am smart enough to know that i want collaboration to work and smart enough to know that paranoia is unhealthy so fuck being private/"SECURE"
+i argue that being insecure is more secure
+being insecure means "the general public" can watch your shit and make sure it isn't changed
+it is very very difficult for you (one brain!) to monitor that you "aren't" hacked (shit "jacked" and/or deleted and/or held hostage rofl)
+i shall simplify the matter with "output-only" boxes so that you only have to maintain physical security (MUUUUUCH _EASIER_ tbh than "network security")
+"network security" isn't fool proof. the tiniest bug in the software or network stack can become a security issue wherein the system and/or data can become corrupt
+"output-only" is fool proof in that no new software is ever allowed (because there is no input from outside computers). that includes mere "packets" from other computers.
+why am i just "summing up" my objectives and life project thingies?
+i'll just lose this document anyways :-P
+fukken saved never to be read again evar!
+that's how most docs are
+but not code
+and not designs
+those are frequently updated and even referred to (by each other, by "docs"(???? maybe??? never thought of this i don't think), and by "projects" (speaking "code projects" here in that they are compileable and runnable (and inline editable?? ;-)))
+
+i have a healthy amount of coding in front of me and i want to take a huge fucking bight of it
+it makes me think of (lol wtf "bight"... bite) a carls jr double western burger
+delicious and healthy at the same fucking time
+well at least filling, idk how healthy it is (and don't care. they wouldn't be selling it if it was poisonously unhealthy)
+unless you know we change the definition of "poison" to be anything that gives us nutrition but is still overall "unhealthy" for us (which i think would include a shit ton of food (double western included, admittedly)).... which i hope we don't do (but it might be necessary for immortality (but i bet we can replicate it indistinguishably while simultaneously making it healthy)
+unless it's the unhealthy "chemical reactions" that we are addicted to in the first place
+fuck.
+i need to learn some fucking chemistry
+i am retarded on the issue
+
+
+speaking of doing that bite of code
+i want to err... highlight-further/elaborate/merely-mention that the coding does not begin until after i am launched
+launching is the process of beginning videotaping
+essentially
+and you're going to be ghetto-rigging that shit (and possibly live-coding a replacement later :-D?)
+oh and broadcasting live i of course didn't mention xD
+
+
+rofl at the pun(s)
+bite of code
+i wonder if that should be the name of the stream
+fuck it
+ANYWAYS:
+-byte of code
+-[a little] bit of code
+-[exactly 1] bit of code
+-motherfucking bomb ass hamburger metaphorical representing my life goal/software (d3fault) - (actual meaning)
+
+
+i wouldn't be shocked at all if the domain was taken
+it's somewhat short and catchy'ish
+also a decent chance that it's free!!!
+
+i think it beats "the most boring and necessary show in all existence"
+(which i never planned as a domain obviously :-P (but could/would have bought it i bet))
+
+biteofcode is short enough to be easy enough to type, catchy, accidental/true, SHORTER, able to be both name of stream AND domain (the other one is too long)
+but also long enough to not be taken MAYBE
+it is 2012 after all
+LOTS of shit is taken
+but LOTS of shit is free
+domains are fucking stupid anyways
+i mean not the general use case of domains
+just "the internet" in 2012. we are dumb.
+i'm not
+doing do the hypothetical thinking for "the dumb" as well
+don't*
+hah just trapped them (level 3 understands why level 2 gets more confused than they should have, while level 1 is of course lost)
+
+should i just go by "Steven"?
+nah life is arbitrary
+therefore your name should be too
+i am clearly/definitely still Steven
+but i can request people to call me anything [else] i want
+d3fault is fucking amazing.
+
+
+what i have learned from aliases
+slipknot6d9 and even d3fault
+you have to not be afraid of getting involved in a community and sharing your opinion, asking questions, contributing programs if you're good enough at it.... and at the end of the day: looking stupid. you are going to continually grow in intelligence so if you can't confidently look back in time and say "i was stupid there" then you aren't being bold enough with what you say. it is impossible to always be right but ON THE WHOLE: every thought is valuable
+we add them all together and study them closely... and we can get the truth....
+what is that truth: why would you expect me to know?
+we can analyze this shit later (all of ours) after the frozing
+
+
+
+
+
+
+i envision a dystopia where humans are all living right next to and/or near the "TALL" (or perhaps just horizontally large?) "frozing station" with the ever-growing amount of humans being trucked in
+if you can't envision a beautiful world to interact with/in aside from the "normalcy" and automated world that robots provide... you are not smart. you do not truly understand the world. you should somehow get smarter. could be anything from taking a math class, english class, thereapy, or even dropping acid
+
+dropping acid
+well in my case just psychedellic drugs in general...
+were what i needed
+i was so... lost...
+"what should i do with my life?"
+i knew i wanted to do something with software obviously...
+...though shit even when i was first getting into software i only wanted it to be a hobby
+I WANTED IT TO BE A HOBBY FOR THE VERY SAME REASON I WANT IT TO BE LIBRE: SO IT REMAINS FREE OF "DIRECTION" IN THE FORM OF "PROFIT"
+it applies to both:
+a) my computer usage... whether "doing what i'm told" for an employer or not
+b) wat
+
+i forget
+
+fuck it
+
+i've written enough
+oh and i forgot one part: man i've said some stupid shit as both slipknot6d9 and as d3fault

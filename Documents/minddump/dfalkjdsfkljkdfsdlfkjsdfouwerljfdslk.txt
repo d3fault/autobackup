@@ -1,0 +1,40 @@
+i am a paranoid schizophrenic because of proprietary software, and free software(lgpl)/content(by-sa) is going to save my life in that it is going to make me sane. i have never been sane and it is quite possible no-one(almost backspaced that out and put "nobody". i genuinely can't decide which of the two is proper'er" since my nobodyme stunt) has
+
+i am fucking relying on filesystem timestamps
+
+but i mean, filesystem is filesystem
+EXACTLY
+gah filesystem's suck. i don't htink that singlequote belonged there
+
+i hate leaving things incorrecting but i hate not showing the backspaced characters
+
+i need an automated solution to that problem
+
+
+time to code my very first keylogger
+fuck doing this "live"
+
+but OH FUCK
+it DEPENDS on the timeline backend
+doesn't it?
+
+
+isn't timeline a live-required item?
+
+is mine going to be local-only-saveable?
+
+
+exactry, the question of "howto-save" the data becomes a problem
+as we very well know it already is.
+
+for those reading, now "how to save" in the traditional file->save sense, but
+fuck explaining to nimwits. speak at your level of intelligence only
+
+
+
+
+won't minds "dance" around each other because each wouldn't know for sure if the other one is listening to what he is saying, regardless of whether or not their mouth is moving? do the "speakers" get access to the list of listeners? in an "anonymous" system, definitely not?
+what i mena is regardless of whether or not they have the "black thing" in front of their mouth? they wouldn't make eye-contact and would also be thinking "are they listening to me?" without saying it... because it IS possible to look at someone and say something, think something completely different, and make eye contact and "emotional conversation" through the use of body gestures and facial expressions.... ALL AT THE SAME TIME?
+so even if you do have this machine on, it's still not anywhere near 100% mode.
+your output and your input should all be programmatically CONTROLLED
+(rofl this would all definitely be opt-in/controlled)
