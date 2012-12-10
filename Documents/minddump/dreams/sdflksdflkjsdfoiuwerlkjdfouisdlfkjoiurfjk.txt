@@ -1,0 +1,260 @@
+i had a dream where a person who's name i don't want to mention gave me a hand job and it felt good. was a wet dream except i didn't cum. i definitely woke up and beat off to the dream though. we were like on a wagon thing and a whole bunch of my friend's were around and we were like under a blanket and someone else was hooking up with someone else on the wagon but they were like going at it a lot more, whereas the girl giving me my handjob was more subtle/sneaky about it. most of the people didn't realize i was getting a handjob and i remember trying to keep as straight a face as possible so people don't see me like moaning or whatever. one other girl, who i was trying to impress (bet you can guess this one), was also on the wagon and was looking into my eyes (SOUL!) to see if she could confirm what she was pretty sure was going on. in fact i think she was sitting on like a barrel that was on the wagon so she had a birds eye view and could see the other girl's arm/wrist going under the blanket right around where my cock was. (originally wrote "codk". lol code + cock?). pretty sure she knew anyways but HAD TO MAINTAIN FACIAL EXPRESSION (lack thereof) just in case! i was pro at it barely even moved. tons of porn comes in handy amirite?
+
+
+well that dream is i guess worth mentioning (since they all are! practice!) but i woke up questioning whether or not i should write about it. as you can see i opted toward censoring the girl's name. this is a question of "being myself" vs. "going all out / not giving a fuck"
+rather, i want being myself to be not giving a fuck
+but i feel inclined to censor it
+i feel like the censoring of her name is a slippery slope
+this particular dream is not that big of a deal (lindsay rossing HII. oh and it was david/robinson (one of the two, not sure which) doing it with my aunt robyn, rofl), but it brings up a much more important issue of: what am i going to censor? obviously i am leaning towards NOTHING but as CERTAIN thoughts creep into my mind (i don't control what thoughts i have! they just... happen! *especially* with dreams!!!), i sometimes consider not "documenting" them
+"perhaps that is better not mentioned"
+
+i need to be fearless
+it is the only way i can live free
+attain bliss
+make the most of my life
+etc
+all these other words that robots cannot understand
+
+
+
+emotion is a chemical reaction
+therefore only a human (chemical being! robots aren't (yet?)) can emote
+since those words INVOKE EMOTION in order to be... "understood", robots... mechanical/programmatic robots... cannot FEEL the CHEMICAL REACTION (bro)
+
+
+back on track
+am i willing to potentially piss of my entire friends and family circle?
+where will my dreams end? who will they leave alone?
+what previous thoughts are off limits to my dreams/thoughts?
+isn't thinking about which are offlimits the same thing as thinking about them? (yes!)
+the answer HAS TO BE: none
+
+i am certainly not "without sin" but i haven't done anything to warrant prison or death
+once you murder someone you can never say that
+so you shouldn't murder anyone... ever... because then you'd have an area of your brain that is off limits
+having an area of your brain that is off limits will most likely result in insanity
+or at the very least: less sanity
+you won't be able to fully say you trust someone (*cough* even though you shouldn't ;-)), even if you trust them you can't believe they trust you because you know for a fact that you are hiding something from them and you'll always wonder if they know you're hiding something but just not letting you know they know and meh you get the idea: the entire trust model is shit from then on out. you'll [almost] always have something to hide
+
+i have nothing to hide
+few minor offenses here and there, big friggin whoop
+i think the worst thing i have ever done was killing that
+fuck i can't remember what it was called
+perhaps that is my brain simulating a punishment
+not a hardcore punishment, but simulating what extinction is like
+since you are unable to even think of the animal's name (SHEEEEP!!), it is similar to how previously extinct animals are. there are probably MILLIONS of species that have gone extinct without leaving a trace of their existence. our books are empty as fuck
+i feel bad about it but am glad it was not a human
+a human has self awareness and there is no turning back from killing a human
+the sheep will possibly net me a bit of trouble, but nothing like prison or the electric chair
+i don't really care what punishment i get because at the end of the day, the sheep isn't coming back
+no punishment to me will change that. lining the politicians' pockets won't do a damn thing (except serve as a negative reinforcement to me, which i don't need. i have regret. one of my few regrets in life)
+
+
+
+another regret might be: waiting so damn long to launch
+but really i can't say it is
+i've been working through A LOT of shit
+logically in docs and actually in code
+i mean sure i might have been able to launch sooner
+but i've actually never been more SURE about it than i am right now
+these past few days have been vital
+
+i had to grow up, learn to read, learn math, teach myself to code, figure out what reality is (drugs halped a lot here), then come up with a plan and implement it
+since i am ALREADY in the implementation stage, i am doing fine :-D
+i am in the implementation stage because i knew the goal: retirement
+what to do after the retirement (which will probably be on day 1 :-D) is what i had to work out recently
+and i did
+so i've got a REALLY REALLY REALLY long path now
+i don't just have the a -> b
+i have the a -> b -> c
+and note this has nothing to do with ABC the project :-D
+just funny that it showed up here
+a = where i am now
+b = retirement
+c = wat do after retirement (cooooooooooooode :-D)
+
+i can see 10 years into the future
+software will be so much better by then
+all (WELL DEFINITELY NOT ALL <3 <3 OPEN SOURCE FUCK YEA I LOVE YOU ALL) because of me (us!)
+i think i can take the credit of "setting some direction"
+not all of it
+but eh, it's like how a CEO is "in charge of a company"
+i will TAKE CHARGE of a... segement of computing...
+
+since it's collaborative/free/libre, i am not IN CHARGE of anyone (nor do i want to be)
+
+
+
+oh i finalized the ABC "logo" btw
+A = anarchy 'A' (anarchy represents anonymity very well)
+B = bitcoin 'B'
+C = copyleft 'C' (copyleft is a huge deal in terms of 'computing', so it is a satisfactory representation)
+
+pretty sure wt can do "svg when supported" falling back to "png rendering" (TODOreq: please tell me that png render is cached... would be so stupid if it wasn't. perhaps it's up to me to do? it SHOULD be transparent. but then detecting changes and re-rendering becomes an issue bah)
+
+
+i do think on the front page of it there should be a picture of me naked doing a thumbs up and a speaking bubble saying: "anonymity for you, not for me". the facial expression will be decided 'in the moment' but i'm thinking a douchy smile would go great. a giant picture of me is actually quite costly in terms of bandwidth... so maybe not just because of that. definitely on the "about" or "contact" page though :-P
+
+i will have instructions on how to use tor+bitcoin in a safe/anonymous manner with the site
+
+
+
+linus does not control linux
+here merely steers it
+without him (well, we'd probably just rally behind some other kernel developer) we'd be scrambling
+
+i am the same but with LGPL/BY-SA _USERLAND_ software and content
+d3fault is going to be siiiiiiick
+
+
+
+damnit i keep thinking of like a jillion different applications of "abc" AND of "d3fault"
+i never know if i should merge the two ideas ('swappable backend!!!') or just ditch abc and do d3fault from scratch...
+
+
+obviously i'm going to choose to ditch abc if they can't have their backends swapped...
+i think it has everything to do with the implementation
+^well that's a common sense/stupid statement. of course it does!
+abc -> ad agency -> now a store also i guess since that's pretty easy anyways lmfao. just like silk road except not illegal shit lmfao (HOW DO I MAKE SURE IT ISN'T???????? DOES THE CP/DMCA SHIT HOLD UP HERE 'RIGHT TO NOT BE DISTRACTED' FIT HERE TOO???). perhaps maybe illegal shit does occur but i just don't pay any attention to it because i can't because i'm streaming? i should allow suggestions as to how i should handle cp/dmca/illegal-sales but with the requirement that i am not forced to continually process input. such a gesture would further highlight the absurdity of the requests being made by the plaintiffs (most likely movie studios, but possibly the FBI or DEA (funny how that works :-P (actually MOST likely is movie studios pushing the FBI/DEA to 'do their job' even though both of them understand my argument completely... they'd raid me and make me prove myself innocent. fucking bullshit. calling it right now, i will be forced to prove my innocence)))
+
+
+
+raids can be done before trials
+servers can be shut down before a trial
+how is that "innocent until proven guilty"?
+it isn't.
+
+
+shutting down the servers is the punishment
+actually no it isn't
+it is the unlawful action
+so, do they take the man charging at them with a gun drawn yelling to court before shooting them to protect themselves?
+does the same logic even apply? there is no imminent threat
+i think case law at the very least has shown us that servers can be raided + shut down before guilt has been proven
+
+this is why i want to:
+a) be the only person with access to the servers
+b) live among the servers (on a golden afternoon)
+
+i want them to be in my house
+or, i want to live in a commercial building?
+what is the difference
+
+it HAS TO be legal for me to live with my servers
+i cannot be forced to entrust a "security guard" (high school diploma'd human being -_-) with access to my servers
+
+
+
+
+i need to put myself in a situation where a tresspasser can get in with RELATIVE EASE (physically blocking is a waste of time)
+the distance in which they tresspass has lots of warnings and deterrents (thin wooden doors that must be broken down), just to ensure guilt
+the distance is greater than, by a reasonable amount (such that the fastest runner in the world can't beat the helper/friend), an amount someone with a BIT of trust can intercept them and physically detain them. i suppose it should be a cop or a security guard (i think security guards are 'qualified' to detain?). this is more or less how office buildings do it except there's usually just a secretary lmfao
+i will have video cameras everywhere. in every cooridor and both tunnels for the intruder and security guard
+i will watch on screen the tresspasser and i will signal the security guard to intercept him?
+i think if he manages to subdue the security guard that i can lawfully plant automated guns in the next "length", but they probably can't be automated like AI auto-shooting, only automated like "remote control" :-D, and i can of course as a completely different side-project create an AI auto-shooting mechanism (modular software ftw) for a paintball or airsoft experiment and like so what if it's a coincidence that the software implements the same INTERFACE (IRemotelyControlledGun), the implementation is what dictates whether or not it auto-shoots ;-P
+
+
+i wonder if i'd be brought up on charges for "making it too easy for someone to set up an automated auto-shooting gun turret"
+KNOWLEDGE = POWER
+
+
+what if remote controlled mini-tanks were sent in to get me and the turret on top was controlled by the same software i released?
+"that'd teach him" (sort-of... i'd be dead :-/)
+
+on one hand i want it because it's valuable self defense
+on the other: it can be used against me
+
+SOUNDSLIKE NUKES <3 </3
+rofl
+
+knowledge = power
+
+perhaps i need steel door vaults
+
+
+how will i fend from anonymous?
+what if anonymous turns it's head and bites me?
+am i the man who tames anonymous like a snake charmer?
+because i understand (technically and philosophically and politically) and endorse it?
+or does it not matter because anonymous thrives on chaos and will do something just for the lulz?
+
+
+do i now want to go private in hiding again ROFL?
+
+guh.
+
+funny that i'd be hiding FROM anonymous by being anonymous MYSELF
+
+wow what an interesting question: should i be afraid of myself?
+i know what i am capable of
+therefore i know what others are capable of (and gave a great demonstration of how i'd be giving them a helping hand just above (note: they don't need my help))
+all it takes is a bored malicious idiot
+there are so many of those it's fucking scary
+bored = thinks up random shit to do = targets me
+malicious = doesn't give a fuck about murder, might even enjoy it
+idiot = doesn't understand that by killing me he is guaranteed to not be immortal
+
+
+
+at what point does "giving convicts in prison for life (or on death row)" become "making convicts immortal" ??
+
+seeing as becoming immortal is going to be a gradual thing, we need to have a cut-off point SOMEWHERE (killers don't deserve immortality (otherwise let me know please so i can go on a fun killing spree ^_^))
+it is inhumane to deny a person medicine
+it is unintelligent to keep killers alive
+even if they are still locked up in prison: they have no role and no purpose and are consuming energy indefinitely. i guess once we get to the point where energy is PRACTICALLY infinite then it doesn't matter much.
+
+maybe we can put prisoners in "ships" by themselves that are launched off into the universe in search of new life. and if they find a planet that is viable then they notify 'earth' (how2handle false alarms? maybe they are cryo-frozen the whole time until the ship detects a potential one? fuuuuck demolition man might happen i hope it doesn't). i guess if they happen to find a viable place then they should win their freedom also 'yay lottery'.
+
+
+wouldn't that mean every single ship will EVENTUALLY (infinite space!!!!!!!!!!!) run into a potential life-sustaining planet?
+should the requirement be that we can live there (not that we'll need it by then!!) or that life has evolved on it already (way cooler)
+
+
+i linger too much on the infinite multiverse theory too much
+infinite multiverse != crazy ass probabilities everywhere
+i don't even know what the above line means exactly
+i kinda get what i'm trying to say
+but i can't mathematically quantify it
+
+
+BECAUSE IN AT LEAST ONE UNIVERSE, THERE _ARE_ CRAZY ASS PROBABILITIES EVERYWHERE (PROTIP: IT'S THIS ONE)
+
+
+
+i definitely got way off topic here, way more than just a dream that i don't know if i should censor or not
+gah was going to end the doc after teh above line but i realized i didn't answer the question yet :-/
+i probably just digressed into oblivion :-D
+so what the fuck
+you yea i did answer it: fuck family/friends. be yourself to the max and you'll meet new people [hopefully]
+
+what about that anon one?
+should i be scared of anon?
+should i be scared?
+no
+fuck death. it comes no matter what.
+EVEN IN INFINITE MULTIVERSE THEORIES
+(though in at least one... we escape the great collapse? omg mindfuck +/ EUREKA!!!!!!!)
+
+
+EUREKA!
+as long as we keep on trying to escape from the great collapse every single fucking time, we will get it eventually?
+meh i don't know if that's necessarily true
+perhaps there's a mathematical limitation? we can't consume enough energy to escape an explosion of ALL THE ENERGY?
+maybe that's the "final bootstrap"
+out-logic'ing physics itself!
+perhaps it isn't possible
+but perhaps it is...
+it makes logical sense to say it is
+if you can fly far enough away from the 'center' point (you'd have to obviously get way further than "all the energy" because it all gets sucked in on the collapse), then surely you can not be affected by it?
+on the other hand, you'd need an insane amount of energy. perhaps the "big bang" doesn't harness energy to it's fullest potential and us mastering things like nuclear fission and nuclear fusion (or other reactions that my tiny programming brain can't even conjure up) gives us a better... ratio... and we can escape the collapse? i genuinely don't know. i wish i was a physicist and chemist
+but i think i'd probably have to be on the "bleeding edge" of both of those research areas in order to have any fun or make any discoveries. then again if i am made "indefinite" then i definitely should go for it. does that mean i should go for it now? idfk. i'd say no... pre-frozing you should stick with shit that is FUN and ATTAINABLE
+it would take probably the rest of my entire life to become a good chemist AND physicist (but maybe not!?) so if post-frozing never happens then it will all have been a waste
+
+fuck death fuck death fuck death i am not afraid of you anon because you are just a bored malicious idiot and that means you are just a person and that means that in at least one other universe, you do not exist
+
+i highly doubt that would stop said "bored malicious idiot" from attacking
+anything i say won't make a damn difference
+i will most likely be assassinated
+
+i should say things to my family like "i'm sorry for you guys because you have to witness my assassination in millions/billions/trillions/lots (because infinity has no scale) of universes"
+lol there is no point to saying it except for effect

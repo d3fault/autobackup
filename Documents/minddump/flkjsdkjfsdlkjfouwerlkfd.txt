@@ -1,0 +1,27 @@
+abc should be like an ebay type deal (as well as ad thing, of course)
+with the auto-decaying price rates feature
+PERHAPS doubling if there are multiple items of the same thing? i am unsure if doubling is the right idea... it should increase to meet that "demand" but DOUBLE!??!?! sounds like way overkill. if only i could factor in the "rate of purchasers" into it and make the algorithm "constandly pulling upward" but not too much that they won't buy
+it also works in a simple manner for single items
+you set a starting price, a minimum price, and a time to decay (linear decay from starting to minimum), then even an overall time (it stays at minimum price for this long. it includes the decay time implicitly (and must be greater than or equal to it as well, obviously))
+
+
+so it's KIND OF like ebay except DEFINITELY NOT
+
+
+
+i think the whole "decaying rates" pricing functionality is probably patentable but i shouldn't attempt a patent and i should release it all open source
+i think the whole "doubling after every purchase" thing MIGHT be patentable, but less sure. it's MUCH more interesting when selling advertising slotFillers than allowing sellers to sell "items" to each other
+
+
+
+i'm trying to think of that "scaling pulling upwards" algorithm and just can't. maybe just having the "doubling" be like 1.25 instead for item sales or even something lower (or customizeable??). having it be automatically scaling would be best. if it detects like huuuuge demand it could go into 2 mode
+
+i guess "how much to double" is based entirely on when the last sale was, and the sales-per-second for all sales before it?
+if they're buying shit right when it's listed then you choose a number closer to 2... but if it's "a while" (which is a relative term anyways damnit) then the number is closer to 1?
+
+something tells me if i can solve that "perfect formula" then i could be an trillion dollars on stock market
+
+
+still i don't think finding one that's "good enough" should be too hard...
+
+doubling is an excellent constant factor for advertising space
