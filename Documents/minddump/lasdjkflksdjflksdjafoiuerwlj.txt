@@ -1,0 +1,45 @@
+at dinner, my parents told me about "McAfee", a "computer programmer" (i'm guessing the one responsible for the anti-virus) that he fled bolivia or some fucking country because he was threatened and his dog was poisoned and then his neighbor was killed
+
+they concluded that the guy who fled probably did it
+i think it's pretty easy to see how "killing his neighbor" is a good way to fuck with him
+
+my paranoia of course makes me think my parents were... programmed.. to say that to me, as well as the following
+
+they said something about "obama is looking into application makers" or something, but they said it like he was "trying to shut them down" or something? lol i don't even get what that means, you can't halt knowledge dead in it's tracks. they also randomly spurred on about "the UN is taking over the internet!" and shit like "they're going to tax it" and shit lmfao basic right wing programming imo
+UN does want to control it (but they can't), but it's because of corporate influence that they want to do so
+
+i explained that all you have to do is put an antenna on your house if your ISP blocks access
+
+
+
+we should ditch the ISP
+the cost of internet should be the cost of the hardware (antenna + computer + maybe-router(optional-i-guess (and is just a computer anyways!))?) plus the electric and maintenance costs
+idfk about you, but antennas and electricity are cheap as FUCK
+
+we'd probably have to go back quite a few years in terms of bandwidth (though maybe not? i haven't a clue. probably entirely based on how much you drop on an antenna i bet, so the spread wouldn't be even, as it should be (for optimal overall speed))
+but the stability would be superior
+especially if you have a solar power + maybe even a "pulley infinite power bullshitter" rigged to guarantee you 24/7 worth of that wattage of power. if you buy enough solar power cells it is already definitely possible
+
+the cost of internet should be zero
+
+
+the DISTANCE (not necessarily the throughput (not sure how this works)) of the antenna should only be enough to reach like maybe 3 or 4 houses in all directions (or directional i guess lmfao) and then "stop" so that there aren't too many damn signals all over the damn sky everywhere
+
+i bet this is illegal according to the FCC
+well the FCC can suck my dick
+i should seek advising from them, ignore them when they say i cannot do it legally [without "purchasing" a block]
+it has to be a human right (originally had written "legal right" but i am pretty damn sure i meant to write "human" :-/?)
+i mean i'm not saying it is now
+but it definitely should be
+
+i have the right to broadcast
+the current infrastructure is set up to make it difficult to do so
+download speeds are disproportional to upload speeds
+i mean yea it's all supply/demand
+but it's still bullshit
+
+we don't need to even interact with the old internet
+just create our own
+simple as that
+
+a nice fre software gui application/system (both a cross platform application and an OS!) to go with it == gg

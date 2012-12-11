@@ -18,7 +18,7 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServerBusiness *r
     m_RpcBankServer->setBroadcastDispensers(m_BroadcastDispensers);
     m_Transporter->setActionDispensers(m_ActionDispensers);
 
-    m_RpcBankServer->instructBackendObjectsToClaimRelevantDispensers();
+    m_RpcBankServer->instructBackendObjectsToClaimRelevantBroadcastDispensers();
 
     if(!m_BroadcastDispensers->everyDispenserIsCreated())
         return; //TODOreq: return false. even though shit, it's called from a constructor. maybe just set up an initFailed flag and throw an error? an ASSERT or something? Just fucking error out because it means they didn't set up their user code properly. can't emit d("error") because we're in constructor and therefore not connected

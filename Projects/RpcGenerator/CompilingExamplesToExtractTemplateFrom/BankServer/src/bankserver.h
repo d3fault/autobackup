@@ -13,7 +13,7 @@ class BankServer : public IRpcBankServerBusiness
     Q_OBJECT
 public:
     explicit BankServer();
-    void instructBackendObjectsToClaimRelevantDispensers();
+    void instructBackendObjectsToClaimRelevantBroadcastDispensers();
     void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
     void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *actionRequestSignalEmitter);
 private:

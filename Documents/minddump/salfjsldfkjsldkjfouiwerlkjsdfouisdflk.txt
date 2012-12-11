@@ -1,0 +1,205 @@
+how can someone simultaneously experience new music and also verify that he isn't listening to copyrighted material he doesn't have the rights to listen?
+broadcasting factored in and IT IS IMPOSSIBLE
+
+ESPECIALLY if you're detached / far removed from the copyrighted material so much that you don't even know of it's existence (because you don't want to! nobody can force you to acknowledge and follow proprietary media)
+
+suddenly the law(s?) backing the dmca seems weak
+
+
+there is no "list of proprietary content you aren't allowed to listen to db" (by definition!!!!), so how am i expected to reasonably filter out data if it is submitted as LGPL/BY-SA?
+
+how also do i do reliable ownership verification? fax is easily forged, as is email
+
+fuck answering that question
+I AM NOT RESPONSIBLE TO _SACRIFICE_ VALUABLE /TIME/ FROM MY *LIFE* TO 'COMPLY' WITH DMCA TAKEDOWN NOTICES
+
+the flip side is also a valid question: how do i do reliable ownership verification for items submitted?
+err i guess i should mention that before i was referring to for takedowns
+
+but for items submitted it is equally impossible to do ownership verification
+
+daft punk may someday choose to (and be able to! rofl @ the worst part of 'selling out') publish their content on my network under BY-SA
+my complete disconnection from 'mainstream proprietary media' gives me a good-alabye/TRUE-IGNORANCE of daft punk in general
+i am minding my own business enjoying LGPL + BY-SA only content (so i know without thinking twice about it that i can rape and fuck and use and change the data to my heart's desire) when all of the sudden i see daft punk submitted. should i DOUBT that it is legit merely because i've heard of it in pre-launch days and it wasn't BY-SA _then_?
+
+i know with relative certainty that at least one band that i like will "join". i don't know who they are, it'll be a surprise for both of us. but i mean it's just fucking bound to happen
+
+i hope daft punk joins :-P
+and lots of others too!
+
+
+
+
+still do i have a good legal position?
+
+it isn't about blatant violation at this point
+sure i have plenty of previous docs discussing techniques for doing so (mainly bluebox, d3fault is about something bigger than coyright violation (though it is also a tool for doing so :-P))
+it's about a life of my own
+escaping proprietary society which has driven me to insanity
+i feel like i'm barely holding on
+but now that i'm barely holding on i feel so comfortable/sure of my grip on sanity
+
+it is both:
+insane (everyone + me) -> sanity (launch)
+sane (everyone + me) -> insane (launch)
+
+possibly also:
+
+more sane (everyone), less sane (me), most sane (launch)
+or vice versa, with me in the middle again
+
+it's all relative to your programming
+relative to YOU
+WHO YOU ARE
+the words themselves are useless because english is knowable by both the sane and insane
+so now that i'm heading towards launching i feel as though there is hope for my sanity
+under that mode i WILL NOT be able to or want to 'comply all day err day' with bullshit requests
+the same go for government requests
+
+except government requests are a lot bigger tbh
+they are the main reason for filming
+
+well not the main
+but a biggy
+
+a definite biggy
+
+google 'resisted' and got credit for resisting way back in the day
+then they caved
+everybody caves
+
+i imagine it like this: a man with a briefcase comes in and makes a 'legal threat' (as in, his threat is worded so that it is not an illegal threat (such as threatening the president's life etc)), and then all the sudden the company has caved
+if i capture that, there's no way they could/would win
+i continually cite "by the people for the people"
+
+THEN AGAIN
+i will probably be giving out the very informatino they seek under LGPL/BY-SA rooofl
+HOWEVER
+it probably won't stop at just information
+they'll want me to put in "backdoors" and shit
+FUUUUUCK THAT
+though i guess the backdoors won't have any effect anyways?
+maybe i am meant to comply (with the US government)????
+idk i need to have a good think about this
+
+perhaps by complying with those legalities then i am gaining merit in terms of ignoring dmca/ceep
+the ceep is really inviting disaster
+i do want to do something about it
+but i also don't want to be bothered
+and i DEFINITELY don't want to hire anyone ever
+or allow people to censor my input
+
+ffffffuuuuuuucccccckkkkk
+
+i need d3fault
+abc will not work :-/
+
+what i mean to say is, community content will not work on d3fault
+abc can just be an advertising business (can hire noobs to make it / censor it for me?). ad agency + search engine (might as well?) + ebay/amazon competitor?
+
+but that's the thing
+abc SHOULD work
+legally
+i should have the fucking right to
+what am i talking about
+is this input to ME (while broadcasting)
+or is it just input into the network?
+it's both really
+input into me while broadcasting has the bigger punishment
+but i also want to allow input into the network just so others can use the software i create? it's stupid otherwise? like for example a gmail clone would make money just with an adSlot on it. "dog food - email", "dog food - advertising", "dog food - shop (ebay/amazon)", "dog food - front page", "dog food - search results", etc
+but i kind of also want to have things like:
+-file hosting
+-social networking "profiles"
+-image board
+
+all 3 of those are 'illicit material' bound and kind of require censoring
+but if i'm the only employee and 
+what the fuck
+
+
+i think i'll find that remaining in output-only mode is actually quite difficult, especially if you want to collaborate with software people (all of the above are way too much code for me to handle alone without at least ONE bug report, and a bug report has a text field (it isn't just an 'enum') for description... which is where idiot lawyers would slide in their dmca notices (i just did your job for you))
+
+so choose now:
+output-only
+input-output both
+
+output-only does sound soooo fucking fun
+but like... i contradict myself way too much by saying certain inputs i want to receive
+OBVIOUSLY i'll go into output-only mode... periodically...
+or... i'll come out of it periodically i should say?
+but i do feel like it's
+not slippery slope
+that's not the right word
+all or nothing
+it isn't output-ONLY anymore
+it's "output-a-lot-of-the-time-but-input-too"
+
+
+i WANT output-only
+a LOT of it
+but i don't want to live in it
+it would lead to dementia i bet
+or i'd just become really really stupid (if i'm not already)
+but i hate that input both modifies my persons and takes unnecessary time processing (compliance slippery slope)
+
+"can't not have your privacy and be inaccessible to lawyers too"
+brilliant.
+privacy in this sense means i am BROADCASTING but not accepting input
+wow there are so many uses of "privacy". shit's fucking ambiguious
+so i can't accept input (from ANYONE) and still be inaccessible to lawyers
+
+privacy != being seen or unseen
+except it is!
+thus, ambiguious!
+need to coin an new term
+
+"being solely within your own will" = output-only mode, no-input "privacy" = asdfasd123
+"not being seen" = no-output mode "privacy", input-mode-irrelevant = boobies456
+
+the privacy modification is happening to different modes of... data flow?
+lol wtf?
+input = listening to someone talk
+output = talking
+
+
+
+i was thinking libre will for the first one which would pretty much be confused with free will :-/
+scurredPrivate for the latter, and private for the first one? the second one isn't not being seen so it is less "scurred"
+
+
+maybe a term hasn't been coined because it's an impossible state to live in?
+i mean i know it's not impossible
+i KNOW i _could_ do it
+but perhaps it's just very mentally challenging? maybe you eventually just cave in most of the time?
+so if i am a file hoster ALSO then...
+i forget what i was going to say
+like... am i talking about accepting input on the broadcast (or am i only going to feature/show/EXPERIENCE my own work!!??? wtf??? sounds like bullshit to me)... or am i going to be sifting through the various files that were uploaded (because i'd have a public index because i'm not a bitch). obviously the file uploader would probably be much more customized (and i'd have them select LGPL/BY-SA :-P (maybe that's it? opt to NOTHING and if they don't pick a license it just stops them dead in there tracks until they do pick a license. and i could like put green brain-absorbing 'Recommended' next to LGPL/BY-SA but really i'd make them linear (though still vertical) from permissive to restrictive <3)). that plus a captcha required to be filled out to upload a file gives me RELATIVE CERTAINTY that the file is actually licensed under what the semi-confirmed-human claims it is
+oh and "Dog Food - Sitewide Captcha" (guess i _could_ split this up too... but idfk. i also don't want to recommend over-splitting on sites that use my service. it would be stupid. but i also don't want to disallow it because that too is stupid. gah maybe i should just have a maximum per domain? idfk tbh)
+
+DMCA notices would need to come through that system i guess, or i could provide a mechanism for them just so i am annoyed LESS
+but I AM JUST ONE PERSON AND PROCESSING THE DMCA NOTICES MIGHT TAKE UP MY ENTIRE LIFE. am i now forced to hire someone for it? is that an "obligation of an ISP? that he wastes precious "life" "time" responding to DMCA notices?"
+
+
+fuck i need to sort out and memorize those two types of privacy
+shit's been confusing me i just didn't even know it!!!
+
+one cannot both collaborate with society and ignore it's tedious and non-stop requests
+i guess really that does apply to ALL SOCIETY, not just DMCA takedown notices lmfao
+the requests could be from bill o'reilly that i am ashamed of myself
+the words might take hold
+input obstructs pure output
+fuck shame
+fuck paranoia
+
+i'm not saying output-only isn't doable
+but it is definitely not doable if you want to collaborate (because collaboration requires input)
+
+and it would appear that if you accept collaboration, you are implicitly now required (from the lack of an alabye) to process "input"... wasting your time (but not in a way in which you desire... such as collaboration)
+
+
+if i had d3fault up and running then i could just not give a shit about dmca notices. just fucking ignore them outright. but since i am a "business dht", then i am required to process dmca requests (IF I SEE THEM! (it's very likely that i won't see them, or even the content that they refer to!~ (this is intentional because i don't care to see anything that isn't at least as permissive as LGPL/BY-SA (however a human can always submit copyrighted material and simply lie about it being LGPL/BY-SA. i MAY OR MAY NOT view it. if i do, i guess i can be liable for dmca takedowns? but i'd also have to see the dmca takedown! so it has to be submitted and somehow streamed to my fucking face. there is often the "dmca" button at the bottom of file hosting sites, but clearly those require an operator behind them. i refuse, utterly refuse, to spend my whole life... all my free time (or even the free time of another free man), processing dmca notices. especially when they are impossible to respond to because there is no "database of copyrighted material" to check against! fucking horseshit world we live in. material is ASSUMED copyrighted. if a dmca takedown is received, the ownership is assumed and the request complied without investigation or questioning of the uploader. i mean yes it is assumed copyrighted, but it is assumed proprietary. that is worse. why does it default to "all rights reserved", a given made up work? oh because it's the only way to take credit for it initially? i guess it makes sense to have it default to maximum as legal text... but MY SYSTEM will set precedent to change that (on a "de facto" level) by defaulting to LGPL/BY-SA. therefore my system is not the same as the legal system's. material uploaded is LGPL/BY-SA by default. OR, i only show/feature-on-stream LGPL/BY-SA or more permissive... but the selection for both is "make a choice" (they can't proceed until they select one (and it should also ask them if they want to remember their selection heh))))))
+
+
+i never realized how many legal implications would be involved with merely "broadcasting yourself live 24/7/365"
+there's gotta be some kind of human rights related issue that some lawyer will come up with and win it for me
+i am quite confident it is a human right

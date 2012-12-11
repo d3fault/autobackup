@@ -1,0 +1,20 @@
+i should devise a message recycling system where the messages are sent back in bulk (because it's expensive to make each one a queued signal/slot call... but a queued signal/slot call is NECESSARY for the actual message being used. just doesn't need to be recycled right away (hence, saving them for one "bulk" recycled))
+
+each time the "getNewOrRecycled" actually has to get a new one, the "amount" of messages should like double or something. perhaps not that drastic, but we definitely want to increase the amount. perhaps just by 1 is good enough and it will auto-scale (TODOreq: but it won't scale back down!!!) and be 'optimal' within a decent amount of time.
+
+
+
+
+#####FUCK ABOVE, BELOW IS WHERE IT'S AT <3##########
+
+perhaps when the recycler has only 1 message left then it will send (TODOreq: piggyback on the 2nd-to-last-message (where we detect there's only one left) to get to the "other" thread, and notify him (regardless of how many there are)
+if we get the very last message before we get the "bulk recycle" message, we know we should increase the threshhold before dispatching the [piggybacking] message that says 'give em back in bulk'
+i guess this means we:
+a) send now when the 3rd-to-last message is checked out (increasing every time 'getNewOrRecycled' gets new
+b) obviously we'd need to increase the amount of messages in the system at this point... but maybe it's already done because getNewOrRecycled got new!!! is one enough? even if it isn't [initially], won't it BECOME enough?
+
+
+i don't know how the 'scaling back down' will work in that case... but it's not a big deal :-P... scaling up is a much more important issue... and i just thought of an efficient as fuck way :-D
+
+
+the other good news is that i don't have to change any of my code yet. i can leave it as a todo and then do it later after compiling has finished it's many many other changes/upgrades. fuck this one for now~. the recycling code is already complex enough and the amount of pending changes for compiling examples is already through the fucking roof (i am about to rewrite it entirely!!!)

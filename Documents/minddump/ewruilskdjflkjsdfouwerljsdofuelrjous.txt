@@ -1,0 +1,10 @@
+i don't like committing when i only have 1 doc saved
+i don't like not committing (docs) before starting to work on some software
+
+often times i want to work on code but then i choose not to because if i don't code it perfectly i might revert and then lose the docs! gah!!!!
+i mean i rarely ever revert but it's definitely possible that it would happen!!!
+i hope that when i do revert i actually save the failed attempt and then like 'grab' the previous version (of the code FILE(s) only) so that the failed change is there too
+
+
+there i have logicked it
+i never 'formally' git revert (as of NOW! go!), so i don't have to worry about uncommitted minddump docs

@@ -1,0 +1,28 @@
+can't decide whether to (for my rpc generator (the compiling examples lol) rewrite):
+1) overwrite / modify-directly the project
+2) move the compiling examples into an "old" folder, but stay in the "Rpc Generator" project folder
+3) make an "Rpc Generator2" folder then just call the project within it Rpc Generator and have the same layout etc...
+
+i actually like the last one, let's go with that
+prior to this doc writing (writing helps me think woot) i was thinking the 3rd option was going to have the project within also named "2"... and didn't like that. but(+t) fuck it, the project within should simply be named without the number
+or does it not matter?
+it DOES matter
+because each "server" and "client" refer to a "serverclientshared", which will be "up" TWO levels now instead of one! (because i put it in "old"
+
+actually that's not true
+but it is true that i'd have to make ServerClientSharedOld or something similar which would mean navigating the previous example (i plan to take from it LIBERALLY) becomes a problem
+another solution is of course to rename the "Rpc Generator" folder to "oldRpcGenerator0" and then put the new one in it's place... but it'll fuck with git... ESPECIALLY in the 'unwrapping' mode where i am able to somehow detect renames and shit... which actually sounds fucking hard if not next to impossible (especially when considering the "rename" + "replace" case i just thought up fml)
+
+
+i really really reall hope i don't lose anything
+and i really really hope i don't release something i shouldn't
+whether it's copyrighted content to ceep to [?????who knows, i have so much data i can't even keep track of it????]... i might regret something
+
+
+should i be liberal in what i allow in?
+i just.... am really scared of deleting something (like the above mentioned method)
+idfk
+gah
+
+
+2 + no-2-in-project-name sounds good enough for now imo. might as well "dodge" that rename issue just in case i forget to take it into account when unrolling/formalizing(?)

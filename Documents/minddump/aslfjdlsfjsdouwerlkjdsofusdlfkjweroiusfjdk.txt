@@ -1,0 +1,118 @@
+output-only machine #0 is our "document" saving stage. it is the safest because it has not yet hit the internet. the machine can never be upgraded using outside code. i am unsure if this means i am unable to type in an upgrade. i would suppose it DOESN'T (because steganographically-hidden worm isn't going to inject itself if i am typing the code in manually (the steganographic worm is the largest concern because bugs are USUALLY NOT RELEVANT because of output-only mode. a primary benefit of output-only mode is you don't even have to trust your own software skills. it can be "vulnerable" and not be "exploitable". whether or not it is stable (should be since you're the only one using it!) is not relevant, even though you'd think it would be. if it is unstable then it is vulnerable, but just because it's vulnerable doens't mean it's unstable). i still shouldn't "test" the written code on the machine in which the software is running (output-only machine #0), but can "CHANGE-TO" it (compile (for first time) on output-only machine #0, swap the already-tested (on input-only machine #1) "code" (which exists on both #0 and #1) with the current one. there should of course be auto-tests and possibly even auto-revert if it fails the auto-tests. being able to comfortably upgrade my output-only codebase is vital to being able to dynamically improve/change/enhance/modify fingers input proceedurs. is that even spelled right? it somehow looks better even though i think it's spelled wrong. does that make any sense? proceed is a word, but the correct spelling is procedures i believe. i did also notice that i wasn't looking at the spelling when i spelled it the first time but i was looking at it the second time
+
+input-only machine #1 is our supposed development machine. it is running qt-creator and has all relevant patches meaning i can do active and up to date development
+all document CREATION (shit from me) needs to be a sort of "protocol api" where i save the fact that i want to create a document, and where it will be placed etc on output-only machine #0... but the SAME ACTION (passed over a yellow video cable in qr-code video) happens on the input-only machine #1. what i mean by it "happens" is that it is like... done in qt-creator. whether it's just typing or the act of doing file->new->filling-shit-out (or just generating the files and modifying the .pro and then somehow refreshing it in qt-creator??? (or it's it's own new IDE? (don't really want to duplicate the work of qt-creator but i don't mind modifying it a bit)))
+
+
+
+there is another input-only machine #2
+it's process is to stored the "rendered files"
+that is a terrible name choice
+but what i mean to get at is that output-only #0 contains "raw data" that is used as "input" to input-only machine #1
+it is used this way as an extra/last-defense security measure. hacking the output-only machine is near-impossible. it must stay physically secure by remaining on your persons at all time. as soon as it is touched, it is potentially hacked. SLIGHT OF HAND EXISTS FUCK OFF better more secure than less
+input-only machine #1 also stores the rendered files, but it also compiles them and uses them!
+input-only machine #2 takes significantly less risk, by only reading and writing documents. it is a pure-db machine that harnesses input-only safety
+it cannot be output from unless it is done in an offline manner (the input-only #2 machine's data is CLONED and put on another drive, which BECOMES input-only machine #1 or output-only machine #0, depending which need to be replaced)
+
+
+there are 3 redundant drives (or perhaps a couchbase db with N replicas!?) backing both the output-only machine #0 and input-only machine #2
+so losses are detected and minimized (as in, we don't tolerate losses and fucking detect them to prevent loss! faulty hardware is immediately replaced. i guess this is why i should use couchbase for this as well? but it doesn't test the drives periodically does it?? it might test the integrity of the data periodically but even that isn't necessarily all the hdd stuff, might be just the in-memory shit)
+input-only machine #1 is cheap to generate from input-only machine #2
+it implicitly also has all of output-only machine #0 data on it as well. input-only machine #2 is the 'master backup', output-only machine #2 is the 'last-resort' backup
+i guess it should be replayable in a sense, but without input-only machine #2's 'master backup' data, replicating the scenarios is difficult or impossible. it does not factor in library versions or even input of any kind. if input is 'requested' then it might change at a later date, so the output-only #0 data can't be replayed that easily (could code around this or maybe change design for it?)
+input-only machine #2 cannot accept "delete" from input-only machine #1, because input-only machine #1 might be hacked (TODOreq: does this give you an AMAZING "alabye" at the convenience of being entirely true?) because it accepts (AND RUNS!!!!) input?
+
+is input-only machine #1 connected to the internet (thus, not input-only)? or does he receive input from yet another machine that IS connected to the internet?
+a) what is the benefit of having input-only machine #1 be input-only? what's wrong with letting it output since it is not "trusted" anyways
+b) how does the output get to the internet since it cannot get out of input-only machine #1? i think output-only #0 outputs to two machines simultaneously. the second one being #input-output machine #3
+
+PERHAPS this is the same machine that feeds input-only machine #1 his data? but what is the benefit to it? does it make input-only machine #1 more secure to be input-only? no. except in the "leaking data" sense. so if i want to have private data (i don't, but i DO want to "code for it?" (to make it attractive to users)), only output-only #0, input-only #1, and input-only #2 would ever see private data. i guess output-only #0 somehow switches off it's output to input-output machine #3 for private data???? but then input-output machine #3 cannot be synchronized with input-only machine #1 (because #1 feeds of "output" (which is ultimately actually INPUT) from input-output #3. it is forwarding internet shit to it. 'up to date libraries'.
+
+
+i only semi-mentioned this before: the data on input-only machine #2 (live copy is on input-only machine #1 (therefore the sliding back in forth is actually happening on here, even though the source doesn't ultimately/only live here)) is the data used to slide back and forth on the timeline. this is why it's called the "master copy". the output-only machine #0's data is "JUST IN CASE" input-only machine #2 is hacked or somehow otherwise fucked. since it accepts input, it can in theory be hacked. that's all there is to it (it is still RELATIVELY SAFE because it does not run it's input or accept delete commands). we are ridiculously careful with input-only machine #2 obviously, and frequently make "snapshot" (followed by a permanent DETACH. keeping it plugged in or plugging it in later means it can become corrupted). each and every detached snapshot should be tested on a offline machine that is dban'd in between each use (hacking the bios could get around this, fuck. but being no-output means being hacked doesn't matter MUCH (they can make me think my data is safe when it isn't? that would be REALLY HARD if not impossible)) to make sure that from the snapshot we can instantiate both input-only machine #1 and input-only machine #2
+input-only machine #1 "grows from" / "compiles from" input-only machine #2. input-only machine #2 should never grow itself into input-only machine #1. it is an irreversable process. essentially it's (worst case scenario) saying: compile and run the malicious source :-P
+
+
+it's hard to think now that i am deciding to give up privacy
+giving up privacy DOES make you secure.. but i'm not sure i want to factor that 'paradigm' into THIS particular design
+
+
+i would like it to be privacy-ish functional but still have the supported ability/mode of being privacy-less
+i guess?
+
+but i also would like to prioritize
+is this "master plan"
+or... is this "launch asep" material?
+
+if it's master plan shit, come up with the rest of it live
+i think my launch asep project is going to be a lot hackier
+coding qr-code video is also something that needs to be documented
+fucking dependency fuckzshit
+
+
+i guess it's not too bad too continue thinking about how the input-output #3 and input-only #1 machines talk...
+if they talk
+so... i'm talking master plan i guess?
+and does that mean privacy yes?
+FUCK
+my brain!
+
+i think it will prove a challenge throughout my life to code/provide "privacy" features that i won't use
+maybe i shouldn't
+maybe privacy mode shouldn't be an option?
+do i want to code for me or for "everyone"?
+
+do i want them to use my software?
+or do i want to change the way they live?
+
+use software = yay privacy is good feature
+change the way they live = give up privacy be free
+
+
+i can even imagine that d3fault will be a different project altogether if i don't factor in privacy...
+i doubt anyone would use it
+maybe everyone would~
+
+privacy comes almost-for-free (bookkeeping, etc) alongside "security", which is necessary for a dht to be STABLE (not necessarily have any privacy functionality... everything might be just... 'available'.. you know?)
+
+
+
+so i know the answer for MYSELF: no privacy
+but relative to what i code: to privacy or not to privacy?
+the a in abc stands for anonymous
+and i intent on having a tutorial on how to use it
+i want to endorse anonymity but not use it myself
+therefore, i want to code privacy functionality in all projects?
+OR do i want to FORCE them into may way of living (as opposed to d3faulting to it :-P) by not offering 'privacy' xD?
+do i want to have sliders for license choosing... or do i want everything to be LGPL/BY-SA (they can of course just modify their copies to be whatever license they want, but everything on MY NETWORK has to be that?)? this isn't strictly relating to privacy... but it does have the same sort of.... philosophical... question?
+"get em while they're young"
+fuck trying to convert
+
+does that also mean fuck current people in general?
+does that mean i am NOT endorsing anonymity?
+what the FUCK?
+
+
+it's complicated
+i love anonymity... but it's not for me
+i'd rather have a name. it makes me feel more sane
+anonymity comes at a price: paranoia
+but it is still a very valuable tool in this day and age
+most people are paranoid of losing their jobs so they use anonymity as a very helpful tool
+it's sad that they are afraid like that and unable to speak their minds, but that's the reality we live in
+when you really really think about it (and in all actuality), i am taking the easy way out. 'video record myself hurrrrrr'. that's my 'easy/quick path to retirement'. abc is like an alternative/insurance for that. i think i'll be profitable within the first few days. MAYBE even the first day. that would be cool. i think i'll be 'retired' (> $500 / mo net profit (i guess NOT including 'costs'? idfk tbh who cares)) within a week also. oh happy day. then i can just code and create LGPL/BY-SA content for the rest of my pathetic and short life
+i'll be able to speak my mind though! who cares if i'm taking the easy way out! maximum free will/speech/thought ASAP. that's my goal. who cares if it's at the cost of "selling out"?
+
+
+my carving d3fault into my fucking forehead (putting black ink in it and pealing the scab over and over and putting ink in every time) is my "advertisement to myself" so that other domains can't merely rip off my stream without showing the ad. ANY viewer can see "d3fault" and then navigate to d3fault.com/net/org from there... or search for the term but i wouldn't be surprised if (and actually anticipate!) i am censored
+
+
+god i fucking hate google
+to think they censored me
+my "how to download movies" did not link to any copyrighted material
+it MENTIONED a copyrighted material
+and for that it was censored
+FUCKING BULLSHIT
+FUCK YOU GOOGLE
+
+i am glad i am creating my own network. larry and sergei deserve to die

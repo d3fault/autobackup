@@ -25,7 +25,7 @@ void BankServer::daisyChainInitStartStopConnections()
     connect(m_Bitcoin, SIGNAL(stopped()), m_BankDbHelper, SLOT(stop()));
     connect(m_BankDbHelper, SIGNAL(stopped()), this, SIGNAL(stopped()));
 }
-void BankServer::instructBackendObjectsToClaimRelevantDispensers()
+void BankServer::instructBackendObjectsToClaimRelevantBroadcastDispensers()
 {
     //db doesn't own any atm
     m_Bitcoin->takeOwnershipOfApplicableBroadcastDispensers(m_BroadcastDispensers);

@@ -1,0 +1,66 @@
+thread backflip manager
+
+because the run path is going downwards and does a backflip to process the data
+
+this optimization tightens that, and does design decision making for you, automatically
+
+
+
+basically for the "slot scheduling itself (queued)" vs. hard loop (even if recursive function) occassionally calling processEvents
+it would have to be somehow related to designEquals i think
+because somehow you'd like declare what is an "interval"
+your application uses timers (only periodically?) and compares the results with other threads on the same system
+i guess hypothetically it doesn't matter if they were nodes on a supercomputer or processes on a machine. they are ultimately the same thing...
+
+
+this is also i think the solution to big file vs. small file dht shit as well?
+because we section a large file into multiple "iterations" (blocks, aka small files)
+
+
+the timing MATH is actually a little bit hard
+but it's all about just "squeezing" it
+i know i can't do it in 1 math function (because i suck at math)
+i bet it can (be 'perfected')
+my squeezing will be an approximation and it will be "good enough" and cheap.
+it will involve two functions. fuck yea programming. fuckin math has too many crazy restrictions
+
+why am i talking SOOOO verbosely?
+because i like to?
+because i am procrastinating?
+because i am broadcasting**?
+because i can't remember the squeeze algorithm?
+
+
+
+i came upon the idea trying to think of how QEventLoop could process multiple events in one "context switch". doesn't it peek into and modify the QEventLoop sometimes??? how can i do that!?!? isn't that the same optimization _I_ want right the fuck now?
+
+but it's more than just combining them automatically
+it's also automatically switching between "don't yield do another iteration" and "yield do another iteration"
+still do another iteration in both, but in one of them it will be in a future event (it defers to "quit" or even other actions entirely, for example)
+
+this problem SOUNDS ridiculously hard
+and indeed i think the true math for it would be
+but i think it'd be possible to ram this metal piece into the crevice of rock right there (visualizing rock climbing)
+
+gah don't go all "fluffy" and "descriptive" on me
+pointless-descriptive
+there is no point to life
+gg
+
+but i mean still should focus on shit that's actually interesting
+perhaps this will be easier when i'm speaking/thinking instead of FUCKING TYPING GGGGAAAAAAHHHHHHHH
+
+
+
+basically the general idea is this: when the time between each call is low, you do a direct call?
+what the fuck does this have to do with files?
+if the iteration takes a while to perform (on average, though we don't have to time it every iteration!!), then it should be a slot scheduling itself (queued)
+if it takes a really long time, then the body of it (user implementation, thus not automateable) should call processEvents periodically
+there is also the ability to simply combine multiple calls of "iteration" into a single slot. this is more or less the same as recursive calls. i guess i need to differentiate/integrate the two
+does "iteration" cover the recursive case too?
+i want to say it does ;-P
+except in the recursive case then it's calling itself (forced non "slot even queued"), the very thing we are trying to automate
+i guess the recursive case is incompatible with the automation then?
+the recursive LOGIC/BUSINESS needs to be re-written to work with "iteration" better somehow
+
+man this fucking idea blows
