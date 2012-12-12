@@ -1,0 +1,160 @@
+I've been reading up on DMCA shit
+still not sure if I'm going to go the whole "ABC = File Storage Site" route (might just be advertising only?
+
+but regardless, the same following "logical problem" applies to "CP" being submitted as an AdSlotFiller
+
+
+
+
+
+I am broadcasting live 24/7/365
+I am the sole proprietor of an LLC (an OSP/ISP in this case, though not always as in the advertising-only + CP example)
+I am the "designated agent" for responding to DMCA notices
+
+
+A works (or an adslotfiller) is infringing (DMCA or CP)
+
+let's rule out videos/music (though they definitely still apply)
+
+a simpler example is an image. a picture.
+
+a picture is shown IN AN INSTANT, whereas music/video requires "playing" the content. dmca takedown notifications should still have the 'designated agent' view and verify the claimed infringing material (meaning i should still play the video/music to verify it is infringing), but the PICTURE example simplifies the "logical problem" to great extent, and additionally applies to ABC as an advertising-only service wherein CP has been submitted (and reported) as an AdSlotFiller (since the advertising model will deal with images only (this may change))
+
+
+how can i simultaneously:
+a) broadcast live 24/7/365
+b) view the 'reported content' (a ("copyrighted" || "child porn") image to verify it is indeed infringing before removing it
+
+My act of verifying is actually MORE HARMFUL by an order of magnitude as I am broadcasting my actions 24/7/365
+I am broadcasting my actions as a means of [trying-to] attain[ing] sanity. I must have the human right to do so, otherwise I do not wish to live in this world and will kill myself
+THE PURSUIT OF HAPPINESS = the pursuit of sanity
+
+Allowing another member, another agent, another employee, another entity, another HUMAN, to do that "infringing verification" for me puts that person in a position of power over me. They are now able to censor me without my knowledge. "In Good Faith" is bullshit. I do not and will not trust another human being.
+
+
+
+The truth, and nothing but the truth, so help me Zeus, is this: this is new territory I am treading. DMCA does not consider it. I will likely be brought to court and the issue tried/tested and perhaps the Supreme Court will have to rule on it. If I do not win, I will kill myself.
+
+
+
+I say DMCA, but I also mean them "child porn" laws too.
+
+
+
+My time argument
+(note: life = time)
+so my "taking away my life" argument
+doesn't even really need to be mentioned...
+
+it's still a valid argument
+that I can't be forced to spend all day every day validating/verifying/responding-to "notices"
+(and of course, can't force another human to waste THEIR life doing it for me (especially since it gives them censoring powers over me))
+
+
+that above parenthesis brings about a completely different thought, which is not related even the tiniest bit to the legal thoughts/text written above.
+this: the government, the free market, society as it exists today, considers ARBITRARY "job creation" such as "dmca/cp notice respondant" to be a GOOD THING. They pretty much consider the arbitrary creation of ANY job to be "good". I disagree. Freedom of time for all beings is the ultimate goal. Arbitrary creation of POINTLESS jobs (a human can crank a wheel 24/7/365 creating electricity and still be considered "productive"? i call bullshit on that. complete fucking waste of a human life) are valued in this piece of shit "free market". I will and do endorse "global welfare" where a decentralized government has the ability to create "PRIZE MONEY" (sort of like the same way bitcoins are created!) in order to maintain the incentive for humans to create (the same incentive that the "free market" is so praised for)... UNDER THE CONDITIONS THAT population control is simultaneously implented. We cannot "open the flood gates" of human procreation (global welfare, "normalcy") without causing mass problems in availability of resources. Economics 101.
+
+Inhumane: Keeping the "solution to survival" private, not erecting a "global welfare"
+Inhumane: Removing incentive to further and better the world
+
+The solution to each "inhumane" negates the other! I did a terrible job of elaborating/explaining that, but the gist of it is there.
+
+Inhumane: Population Control
+Inhumane: Corporations ruling the world (reality 2012)
+
+
+these 4 factor in with each other, which i failed to show, hence the "terrible job"
+
+
+gah
+
+
+-Normalcy
+pro: no more starving children
+con: "flood gates" are at full blast, population control and resources become huge problem
+
+
+-Reality 2012
+pro: "survival of the fittest (A "PRODUCT" and/or "METHOD" OF EVOLUTION!!! (it is harsh, but it works?))" squeezes individuals into being creative (though THEY definitely benefit much more than the world as a whole). population control is in place by allowing children to starve to death
+con: corporations run the world because "money = everything" and children starve to death, despite clear indications that we could build automated machinery to provide food for the world (a look into the "making of raspberry pi" showed inside sony's high tech manufacturing process. but the thing is, manufacturing electronics = profitable. manufacturing food (in such a "normalcy") = isn't. sony just doesn't give a shit, nor do other businesses. because giving a shit (about humanity) means not giving a shit about money, which is the opposite of the mentality that made them such a giant company to begin with)
+
+
+
+
+
+back on subject:
+I don't know how I am expected to comply. With CP-takedown requests at the very least...
+because it's the only thing I am certain of: ABC will be an advertising system (my "stream" will utilize/advertise (double whammy = practically guaranteed profits :-D) it)
+
+I cannot logically comply. There is a logical issue which the Supreme Court needs to deal with.
+I am open to suggestions...
+
+
+
+a) I broadcast the CP-image as I verify it is in fact CP (multiplying by an order of magnitude it's views)
+b) I "trust" another human being to do CP verification/takedowns, giving them power over me in that they can censor me
+
+The "them censoring me" applies much less to the ABC-CP circumstances. It's not like I'm going to go browsing through ABC's AdSlotFillers FOR FUN. In fact I hope to never even see a single one. Not even my own! Input (*especially* advertising) = brainwash (yeh yeh ima hypocrite. it's a bootstrap so fuck off).
+
+For the ABC-CP issue, I will probably just delegate an agent. I still cannot give the agent the power to "delete" permanently... Only to "disallow public access". I cannot and will not every fully trust that agent... and I suppose I'd ultimately have to have the capability to verify that something the hired agent deemed "illegal" is in fact illegal. I plan to have a multi-tiered reporting system, of which I HAVE TO BE at the top. I _HAVE TO BE_ because I am incapable of, and refuse to, trust[ing] others. THUS, the "logical issue" arrives under any and all circumstances. How can I comply?
+
+
+
+
+
+On the subject of "receiving notification". Since I am the agent (because I'm the only employee!), how many hours of my day am I required to forfeit in order to do DMCA noticaton compliance? Will I be forced to go offline during those hours (see above "logical issue")? What is "reasonable"? Imo the government should NEVER use such terms. They are bullshit. I'd go so far as to argue that any time the word "reasonable" is used, the law behind it is completely invalid. Reasonable is subjective. Fair Use relies on this word. On the other hand, there is no way to precisely and mathematically set a point at which 'something' (all kinds of things!) is unreasonable. If 50% is the point at which a film broadcast becomes "unreasonable" under fair use, then you merely need to upload 2 "fair uses" of it... and then the entire works is available online. Shit, the same applies to merely 5%. Upload 20x 5% "fair uses", and the entire work is available!!!! This only really demonstrates the stupidity of reality. We need to get out of the "free market" concept (WHILE KEEPING THE PROS IT PROVIDES!!!!!!!!!!!!!!!!!!!!!!!!) because it relies on concepts such as "reasonable" to exist. Without DMCA/etc/copyright, nobody would create works because they could not profit from them. It's like copyright is a necessary evil that has taken over and become more evil than anybody could have ever predicted. It's time to slay the dragon we have erected. Our "guard dog" isn't very useful if he kills us in our sleep. "Necessary evils" are incredibly dangerous. LoL @ RMS saying LGPL is a necessary evil :-P. I love LGPL xD. One man's "necessary evil" (copyright for 'the people') is another man's favorite tool (copyright for 'media corporations').
+
+
+The concept of "output-only" also arrises, but I don't know how to even consider it, because I am still undecided if I will even use it.
+On one hand, I very much want to go into an output-only mode for creating/coding TONS of projects. Fuck distractions.
+On the other, I want to collaborate. I would quickly BECOME very very stupid (because intelligence is a relative term) if I never allow input through the software I create (whose sole purpose is to increase/ease communication of human parties with the goal of increasing intelligence).
+
+Such "bursts of output-only" wouldn't mean I am output-only. Even a tiny bit of input negates the "only" part.
+
+But the issue is still really relevant to me because the US law is now dictating to me what certain inputs should be? I am FORCED (if I am an ISP) to process/accept/respond-to DMCA notices?
+
+Is this a matter of 'due process'?
+I wonder what happens if I simply don't "open my door" (for dmca notifications)?
+What if I only process 1 a day? And I RIGOROUSLY fact-check the copyright claim?
+That of course brings about a completely different problem: No database of copyrighted works to check AGAINST. _MAYBE_ the Library of Congress has such a.... tool?
+But now isn't the LOC being burdened by private financial institution's gains?
+It seems IMPOSSIBLE for the Library of Congress to respond to each and every copyright claim. How is copyright suppossed to be verified? Do you just ASSUME the claim is not misrepresented?
+
+If you assume the claim is not misrepresented, you can also assume that a work uploaded (so long as the uploader makes the necessary claims/checkboxes/etc) is NOT infringing.
+You already have two competing arguments. What makes the DMCA takedown more approved?
+It is already demonstrated (google reported it) that "33%" of DMCA takedowns were misrepresented and merely competitors trying to fuck with their opponents. Horse Shit.
+
+
+
+
+I can argue and type about this all fucking day
+I can try to understand the legal code and comply with it
+OR I can _NOT_ make abc a file hosting service and focus entirely on d3fault
+d3fault will be agnostic
+d3fault will be indestructable
+d3fault will be "above the law"
+this is reality 2012
+i _KNOW_ it is possible
+if i don't make it, someone else will
+i just want it to be badass
+intuitive, easy to use, etc
+such software ALREADY EXISTS
+the technology is already there
+it merely has to be... accumulated... and... made easier to use
+hence: d3fault
+
+ABC is my financial bootstrap
+maybe i SHOULD make it a file hosting service...
+...and comply with DMCA by having an "agent" below me
+
+So I can FOCUS on d3fault
+ABC is fucking worthless
+why do I give such a shit?
+because
+because i'll be using ABC as my distribution platform?
+and I don't want to get raided?
+and I also VERY MUCH don't want to censor?
+It's a balancing act
+
+I feel like everything in this world is a balancing act
+ONTO NEXT DOC
