@@ -1,0 +1,101 @@
+Fair Use / DMCA doesn't really mention ANYTHING AT ALL relating to a "person who uses music to influence his thoughts so as to produce more [thoughts] (which are spoken out loud in realtime)", where the "more thoughts" are the new work. The new work can even contain multiple full songs playing in the 'background'.
+
+Is such a person forced to wear headphones? What if the music is so fucking loud from the headphones that the music is STILL picked up by the microphone? Is such a person forced to wear headphones with the volume very low?
+
+I like my music loud thank you very much.
+Studies have shown that loud music for some fucking weird ass reason, sounds better [than quiet music].
+It's completely irrational but I know for a fact that it is true. I agree completely. It helps to get your adrenaline* rushing.
+
+
+Adrenaline rush caused by loud music inducing "new thoughts" should be covered under "Fair Use". I think we're quite a ways away from that sticking... but you never know. If you are respectful and actually treat the judges and lawyers nicely, it MIGHT pass. Probably more important would be how good your lawyer is (and how much money you have).
+
+
+This obviously does not cover "lip syncing to" and/or "dancing to", which I am definitely guilty of :-P...
+Fuck it, I can just delete those without giving a shit... :-D
+
+but the ones with NEW ORIGINAL THOUGHTS AND IDEAS.... ffffffffuuuuuucccccccccccckkkkkkkkk that shit.
+The music isn't even all that important,
+as in, it isn't the main part of the work. It is background noise.
+
+
+Do I need to seek a license to listen to music to provoke new thought?
+
+Isn't copyright supposed to be there for furthering science and useful arts? Doesn't my "new thoughts" argument definitely fall under that category?
+
+I think that I am releasing Libre is a weight towards being allowed under fair use... but I doubt it will help any (the other lawyers will discredit it maybe?) :-/.
+
+
+
+
+I am quite bothered by this and this is one of the main reasons I wish to upload all my shit to Freenet right at/before launch. I would feel like utter shit if I had my content raided and deleted etc. MY THOUGHTS!!!!!!!!!!!!
+
+
+Actually I do feel quite...
+"better" isn't the word...
+but... eh.. slightly relieved...
+
+the US Code / Law does... at sheer appearance... sound like it backs me
+not only that, it sounds like it's there to protect me!
+What I mean is... the lawyers and politicians (who are supposedly actually people!) tend to have the right... idea... as to why copyright is needed...
+....this completely contradicts what I see in practice, but the LEGAL CODE is different. The legal code is a comfy bed of logic. THE IN PRACTICE shit is the media corporations shitting all over everybody and stopping progress dead in it's tracks.
+
+I need to make that comfy bed of logic my home. It is the only way I can survive. This is Richard Stallman's approach too, and the reason he INVENTED (LONG LIVE RMS!!!!) Copyleft.
+The thing is... I want to row row fight the powa...
+Copyleft/rms is basically "Don't acknowledge it's existence"
+Whereas I _ULTIMATELY_ want anarchy: LoL Intellectual Property WUT? Copyright WUT?
+
+This also has a weird effect on my coding privacy tools or not. If I am to go for the "libre-only" approach, then there is no/less need for privacy [tools/functionality]. But I don't want that mode [ultimately]... I want anarchy and freedom of data! All data equivalentlly in "public domain". I have to comply with current law, or else be punished by it. This is a fact of life, and unfortunately true in 2012.
+
+
+I think my libre-only LEGAL BOOTSTRAP is the best solution possible given the current reality. Just need to code d3fault ASAP, you know?
+
+
+
+The "data flossing" concept for freenet can be vocalized.
+On a completely unrelated note, the "File Hosting Service" can provide a "list of removed links". This list can be...(;-))... used to check whether links are still valid or not! It's common for file hosting services to provide "link verifiers"... Just usually not in the manner I do (full list). It should be distributed via BitTorrent so people can help each other get the list. Direct HTTP access to said list will probably prove too expensive (Keeps growing and growing and growing). And of course, the list (like everything else) should be backed up on Freenet.
+
+
+
+
+
+
+
+
+A previous work using music in the background (I have plenty of these) where, when recorded, I did not intend on releasing publically (FACT)!
+vs.
+A live broadcast using music in the background
+
+In both cases the music is "in the background" and the main part of the work is "new thought", but they are still entirely different in some other way....
+
+
+
+But both of them ultimately use the same legal (logical!) defense: Music inspires/induces (IT'S SOLE PURPOSE FOR EXISTENCE THANK YOU VERY MUCH) new thought
+To not use music is to have... dull thought... or... less interesting thought...
+Fact: I would not be who I am today without all of the music I have listened to throughout my life
+
+The same applies to movies and books and magazines and pretty much art of all forms.
+
+
+I'm entering a weird kind of... gray area...
+
+
+Listening to a song, then recording my thoughts afterwards: wastes time
+doing them simultaneously to save time (LIFE IS TIME IS PRECIOUS) should be allowed
+
+all in all: copyright law is stupid and i have demonstrated at least one reason why
+
+
+I don't know if I'll win this. I might just comply with the copyright complaints (for the "file hosting service" scenario)... except I don't think DMCA 'safe harbour' applies because I am fully aware that the background music is copyrighted.
+
+The legal thing I would win on (if I do) is fair use.
+Safe Harbour doesn't apply, since I am the author of the "Transformative" / "Derivative" (tbd) works and uploaded them to the File Hosting Service
+
+
+
+
+I definitely think it's bullshit that I can't listen to music while "thinking" (and broadcasting the thinking live).
+
+But ultimately, so as to be more safe from raids... I will probably stick with LIBRE music only (whether pre-d3fault days or even post-d3fault days. Since I am "identifiable" I still cannot breach copyright).
+
+
+The "works generating new thoughts where background music was not considered at the time because the work was never intended to be published" MIGHT be the sole exception... though it also is a huge loophole that would be easy to exploit. I think it should be legal to listen to music and speak/think live simultaneously... but at the end of the day nobody gives a shit what I think (so why am I broadcasting (oh yea, paranoia + documentation (but nobody cares about my documentation (so then just paranoia idfk who cares)))).

@@ -1,0 +1,29 @@
+A human being is allowed to both:
+a) broadcast his existence
+b) run (single-handedly) a file storage facility that is DMCA compliant in the sense that previous works is recognized by the human in (a) is "known to be previoiusly copyrighted", we perform a "DMCA-notice-by-URL" check (because 1) i can see it right in front of my eyes 2) i know it to at least have previously been copyrighted 3) it is a 'hit' in the DMCA-notices-by-URL list of incoming dmca notices (I CANNOT BE FORCED TO RESPOND TO AND VERIFY DMCA NOTICES FOR MY ENTIRE LIFE (THEY COME IN TOO FAST. THE INTERNET IS TOO BIG))) query is performed and only then am I legally/logically liable for DMCA takedowns. If I exist on the system only. If I use nothing from the NON-LIBRE world and am never subjected to it's "advertising-of-proprietary-works-based-culture", then I cannot in good faith know a work (that is submitted to MY network) is infringing copyright NOR DO I HAVE REASON OF SUSPICION to do a DMCA-check against it, because I have yet to have heard of the work prior to it being uploaded.
+
+I can thus stream anything found on said network, because I refuse to allow proprietary content to enter my brain (I can refuse to acknowledge the existence of), and have the human right to do so.
+
+
+
+This is the best legal/human defense ever. It will work or I will kill myself (it will work).
+
+
+
+"Knowledge of previously copyrighted work" includes works that are merely sequels (add a number), regardless of whether or not you knew a sequel was in development. The brand is implicitly copyrighted based on the fact that it's based on a previously known copyrighted work.
+
+
+Another reason I cannot "process incoming DMCA requests", aside from them being indefinite, is that they would surely be exploited for financial gain in that they are directing me (broadcasting taken into consideration) to certain works which results in free advertising to those performing the exploit (regardless of whether or not the work is copyrighted). I think the Infinite-DMCA-Compliance-Equals-No-Life argument is strong enough on it's own, but I also think this one is strong enough on it's own too. It's a backup defense! Or a take-your-pick for the judges :-)
+
+
+elaboration on infinite dmca compliance:
+a) If you spent 1 minute per dmca notice for your entire day/life, you would never be able to process all of them. Hence complying to all incoming notices is not necessary for someone who is both 1) broadcasting 2) sole owner of file hosting service. You would have no life, and still would not be fast enough to keep up with incoming DMCA notices.
+
+or
+
+b) There is SOMEONE whom you have no "check" against below you that is able to censor documents from your view (ILLEGAL). An employee you hire to "process DMCA requests" could just as easily censor from your view important material. I should not be forced to hire someone who has the ability to censor me. I have to have the "final say" in what is copyright infringing and what isn't. I also think that I am the only person legally obligated AND ALLOWED to make that call. My employee is not liable so his getting it wrong isn't non-compliance on my part (or is it since he's "working for me" or "on my behalf" (which is actually dangerous if you think about it (he could get it wrong on purpose but pretend it was an accident (for both censoring of non-infringing works and by not censoring infringing works)))).
+
+
+They'll say to me in the future: "old man, why don't you refer to the sequels of anything?", and I'll just grin like a faggot.
+I hope that day comes where every work I ever see is libre. I will make it come.
+^actually this doesn't make an sense, i don't see what my "reference" has to do with anything. i guess i meant "view"? why don't you "view" any sequels (mainly to works whose prequels i recognize as being copyrighted), but possibly on accident to new-works-sequels (side effect/leftovers, and the reasons 'the kids' will be baffled)

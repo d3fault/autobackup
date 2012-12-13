@@ -1,0 +1,48 @@
+because "trademark use in advertising comparing against competitors" is encouraged!
+
+color code: Y = green check mark graphic, N = red X graphic
+
+not necessarily in that order
+
+			[ABC Trademark]		[Google Trademark]
+Proprietary Content		Y			N
+Is Disallowed
+
+Doesn't spy			Y			N
+on you
+(host proof hosting
+ + "disconnected ads")
+
+Is Secure			Y			N
+(security is opinion
+ my opinion is insecure
+ because of no host
+ proof hosting)
+
+Open Source			Y			N
+ and Free Software
+
+Completely Transparent		Y			N
+
+Free "Gratis"			Y			N
+
+Free "Libre"			Y			N
+
+Doesn't Censor			Y			N
+
+Wizard to launch		Y			N
+ your very own
+^TODOreq
+
+
+
+
+the very last one is:
+
+Uses Advertising		Y			Y
+to stay alive
+
+^^the last one should be the only one where they are both green. because advertisements are arbitrary
+
+Funny, the timing
+Google used to be Free "Gratis" until only recently when they started charging for Business Apps. owned themselves. I had it as a Y initially because idk I thought it was. I guess it depends on what services. For the estimation, I am implying ALL services. Business Apps (using your domain) is a service of Google Inc. and charging to it means that not all of Google Inc.'s services are free "gratis".

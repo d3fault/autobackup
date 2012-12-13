@@ -1,0 +1,28 @@
+After reading more law bullshit, and especially after reading ISP_liability_presentation.ppt , I have come up with 2 *independent* business ideas. I am also being very careful with my words ;-). Sup Noobs (judges, lawyers).
+
+
+Business Idea #1: an LGPL/BY-SA only file uploading service. The user has to opt into whatever license they choose. It is "unselected" by default (and they cannot progress until they select a license). If they choose anything that ISN'T libre, we tell them: "Your kind isn't welcom here. GTFO". It's true. I do not want to infringe copyright. I also don't want copyrighted content on my network. Fuck off and die. They HAVE TO select a libre license (can be MORE PERMISSIVE (CC-BY only, BSD, etc) if they choose.. but cannot be less otherwise it isn't welcome on the network (both legally and IN LINE WITH MY WANTS). Preventing users from submitting code under BY-SA (GPL) is a problem that I have not yet considered or dealth with. Fuck. But it is not an issue to be discussed right now (TODOreq)). The uploaded material that we have received IN GOOD FAITH from the user as being licensed under a LIBRE license means we have the legal right to make unlimited copies of it. We make a copy of the uploaded item into Freenet. Freenet is chosen because it already works and has excellent "availability". It basically cannot go down (but a file can be deleted from it :-/ (I will opt to not keep "delete keys" if possible (security risk!), and hope that they don't 'fade from freenet' too quickly (otherwise i can upload them again?))). The file hosting service does respond to DMCA takedown notices, as well as user deletions, by saying the same message either way: "The file with key: 'lsdkfjdsljwr089340843fkjaskf' (also in URL) has been removed from this network". Just stick with the facts, we don't need to say if the user deleted it, it was a dmca request, or if it was CP. This business falls under the category of "Information Residing on Systems or Networks at Direction of User" (a typical file hosting service).
+
+^^this may or may not be "ABC" itself
+
+Business Idea #2: A Freenet "Transitory Digital Network Communications" ("mere conduit")... proxy. Since we are a freenet proxy, we are not liable for the data that goes through the proxy. There is no "takedown" process because there is nothing to take down. IF we were to put this business under the category of "System Caching", it would also work but would have to respond to DMCA notices. The user is able to request content from Freenet through their browser (http/https) by simply supplying the key of the document they desire. I suppose the proxy can also support uploading to Freenet? Though I guess they 'claim' they have the legal rights to do so? (A simple opt-in checkbox would do here). Downloading FROM Freenet is more important though, so who really cares if it has upload capabilities. I should probably not do the caching idea because then I have to respond to DMCA requests indefinitely for a specified key. It is an expensive service (no caching), so it should be a pay service only.
+
+
+
+
+
+I plan to put all my content up on Freenet right before / during the 'launch' phase because I am ridiculously afraid of "being jacked" or "raided" within the first few hours/days/weeks/months/years of launching. I will of course continually upload MY shit to Freenet as a "worst case scenario" backup solution. It is like a bootstrap because it essentially is everything I want to d3fault to be (except for that it's Java and (A BIGGY) it doesn't retain files FOREVER).
+
+
+
+I don't know if Freenet has 'delete' controls. If it does it might prove to be a legal issue if I conveniently 'forget' the delete keys. I DEFINITELY HAVE THE RIGHT TO DO IT for my own content (SECURITY SECURITY SECURITY), but as a "file hosting service" I might not be able to? This has no legal precedent and has not ever even been mentioned AFAIK. It would make sense to me that I am only liable for the files hosted on my own network, not "copies I have sent to other networks"... but I'm willing to bet that lawyers would chalk it up to some "data retention laws" bullshit that I have no idea what they would cite/invoke.
+
+
+
+I like the idea of having Freenet be a backing store / mirror of all of _MY_ shit because it would definitely help me sleep better at night. A raid accomplishes nothing. I am still "out there". I am still "online". I am still "uncensored". I still "exist".
+
+Java makes me want to barf but eh... sacrifice is sacrifice... bootstrap is bootsrap...
+
+
+
+I should note that on each and every page for business idea #1 (can't just be removed files where it's mentioned!) I should say "All files are mirrored to Freenet upon upload, as per your LIBRE license selection" or something along those lines. Just basically spread the knowledge of the fact that it's on Freenet. I think I need to leave it up to them how they get their data off of Freenet (official client or...). I definitely need to speak to a lawyer before saying more on this subject :-P

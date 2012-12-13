@@ -1,0 +1,84 @@
+The protocol should read like a book that is written linearly, it should also be distributable (couchbase?) and of course not deletable.
+
+
+
+There are a LOT of different "inputs" and even "sub-inputs" to consider, and I'm going to try to list them here (without getting too off-track for each one)...
+
+
+MINIMALLY:
+<item>
+	<timestamp>
+	<data>
+</item>
+
+...where the timestamp is the key? or perhaps there is a "hash" in it too? which is the key? gah.
+
+
+
+-document
+	-tangent
+	-derivative (you or others)
+	-revision (you or others)
+-video
+	-frame
+	-video stream
+	-audio stream
+-audio
+	?-segment?
+	/////unsure how to segment audio. by 1-second gaps? this is crucial because i am going to be recording live 24/7/365 (same with audio)
+-pictures
+	-frames if animated... easy otherwise
+-project/code
+	/////pretty much same as document?????? are tangents now "{ } blocks" instead of parenthesis, or both?
+-emails
+	-messages (to/from "threads" are one email!? OR AT LEAST SHOULD BE GROUPABLE (is this where tagging concept comes in?))
+-git-repos
+	-commits
+	////renames and deletes and "file.structure.txt" type files (and errors within (oops)) need to be accounted for?
+-sms
+	-see: emails. finding where to end the thread is more difficult because there are no "subjects" (usually not used)
+-calls
+	-property: end-time (actually i'm not mentioning properties otherwise this would be growing like a mofo). see 3rd "##" below
+-clicks
+	-drags? should it be mouse-down (loc) and mouse-up (newLoc) ????
+-keypresses
+	-holds? should it be keyDown(key,timeDown (timeDown ins implied by "timestamp")) and keyUp(key, timeUp (ditto)) ???
+-website views
+	/////source saving... or screen capturing... or both? ajax might thwart/negate source saving :(. might be legal issues but fuck the poliec
+-DOCUMENT (all) _VIEWING_ / experiencing
+	////does the viewing/experiencing "document" have an infinite recursion problem? viewing/experiencing a previous viewing/experience creates a new one that refers to the previous viewing/experience? should it be smart enough to point to the original node or only the "previous" viewing node (or both?). "movie watching" and "music listening" (scrobbling equiv) also falls under this category!!!???
+-game playing
+	////clicks/keypresses definitely factor in, but so does screen grabbing as a whole. same-machine vs. vga-splitter different-machine grabbing (no slowdowns during gameplay)
+-fingers state
+	////2 modes: "digital" and "analog", but we should record (a) the mode and (b) the analog position. digital position can be derived from mode and analog position (but we also need to save the "threshhold point" for analog->digital 0->1 shit, which can also change at later dates (finger "training", finding your sweet spot)
+	////how often to "poll" this/these values??? will be expensive to store, but actually fuck it: data is cheap! and this allows you to REPRODUCE music/stuff perfectly and to swap out instruments etc for previously done stuff. like midi except not as limited. also re-play "computer controlling", another fingers use
+	////THE ANALOG DATA SHOULD NEVER BE LOST (nor the digital/analog mode)!!!!!!~~~~~~
+	////i think whether the fingers are controlling the computer itself, or making music etc, is also something i should record??? but wtf how? when i first was writing this i was going to say "are part of the software itself so not as relevant", but now i think it IS relevant/important/valuable. perhaps just recording them is enough because of replay-ability? but it'd be semi-shoddy because you wouldn't have the EXACT SAME ENVIRONMENT (unless it was a specialized environment. input-only/output-only machines design runs into same problem)
+
+
+
+## maybe the "derivative" and "revision" terms apply to each type, not just "document"?
+## where does tagging factor in?
+## for "calls" this is especially relevant: is the "timestamp" when we begin (yes!) or when we end? it also applies to docs... which actually usually are when it "ends" (i plan to change that). they are whenever you last hit "save" :(
+## pretty sure i've written about this before: an encrypted video might want to have a single frame decrypted, but it might not be an i-frame so it might depend on other frames, whose key we might not have because we do not want to expose?
+
+
+
+
+
+
+
+
+
+i was originally writing this for LifeShaper... the target output of LifeShaper....
+...but now I'm seeing it's WAAAAAAAAY out of the scope of A->B. It is something that needs to be done/finalized "live" during B->C.
+But SHIT now what the fuck how does LifeShaper work exactly now WTF? Is it a more simplified "protocol" that doesn't deal with sub-nodes etc? Just "GET IT AND GET IT IN FULL AND THE TIMESTAMP TOO AND WE'LL CUSTOMIZE THE FUCK OUT OF IT LATER"????
+
+
+
+
+there are still the issue of derivatives to consider with LifeShaper
+Unless my output is a git repository?????
+
+
+I could accept input of all kinds (lots/all(?) of the ones mentioned above), and write + commit the files, along with updating the "file.structure.txt" file... and be happy with just that? renames are still a big issue but eh fuck. idfk.
