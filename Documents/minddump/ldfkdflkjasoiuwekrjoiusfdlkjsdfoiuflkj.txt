@@ -1,0 +1,27 @@
+a typo in software controlling "machines that can print + assemble + activate themselves" could cause an infinite loop to seriously fuck up some real life shit. especially if they are auto-harvesting. i'm talking about with no AI whatsoever. we'd probably be in better shape if there was _ANY_ AI (some dumb AI solves this, some ACTUAL AI obviosly does too (unless the AI is malicious)). just dumb and poorly-formed software
+the machines build themselves at an exponential rate
+so that is HYPOTHETICALLY how fast they could "dig up the earth and assemble it into more clones of itself"
+which is ridiculously fast
+
+
+AND NOW FOR SOME FUN MATH:
+
+
+1m x 1m x1m self assembler
+say it takes... 20 minutes to build and activate a clone of itself
+and let's assume they set themselves right next to each other and don't spread out. there is no "defragging issue" in this (although there will be in a real situation)
+actually for simplicity's sake i'm going to only calculate the width appropriate stuff.. and i'm going to measure it against the surface of the earth (whereas i was planning to do the volume initially... but meh)
+
+
+damn i suck at math
+staring at bc -_-
+
+
+510072000=2^x lost idfk what to do
+
+
+
+
+
+
+i could see this as a prank / hack that people might do in the future. the government/police will be forced to blow it up / otherwise destroy it (perhaps deactivate it electronically? (doing it without erasing the software would be ideal))

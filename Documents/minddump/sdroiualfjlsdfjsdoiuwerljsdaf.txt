@@ -1,0 +1,38 @@
+if my "musically induced new thoughts/works are transformative, not derivative" case fails
+then it is ABSOLUTELY MANDATORY that i erect a LIBRE-net (there are already others, but none i control~)
+
+life is finite
+time alive is short
+you can't expect me to PAUSE my "proprietary works" just to be able to speak/think
+listen to a 5 minute song, pause, speak for 5 minutes
+you've now halved your free time in your life, gg
+FUCK THAT SHIT
+
+A work should be LIBRE by default
+derivative works have just as much value as transformative works
+when i said "there isn't enough room in this intellectual bubble", i was half right. i need to elaborate
+it's so stuffy in this media-driven society that it becomes hard to make transformative works. it is much easier to make derivative works
+derivative works are still incredibly valuable
+int main { cout << "hello world" << endl; } could be the original works
+and an entire fucking OS/app can be the derivative of it
+that's obviously an extreme example, but a valid example nonetheless
+
+
+
+
+i didn't realize until recently just how AMAZING copyleft is
+copyleft harnesses the "fair use" 4-point balancing mechanism
+a works published that is a derivative of a proprietary works that is NOT fair use... becomes ILLEGAL CONTENT
+i don't really understand what happens to it to be honest
+the idea of "illegal content" just sounds silly
+the author of the derivative does not have the right to distribute it
+does he even have the right to look at it on his own computer?
+it's just silly. this reality is bullshit :-P
+
+HOWEVER, when a derivative (proprietary or not, but proprietary makes a better example!) fails the "fair use" test, that proprietary works becomes LIBRE!!! huuuuge win
+it's like stealing content into the domain of "libre" :-D
+amazing
+they can't "unpublish" it because they're butthurt it's not proprietary any longer
+it's too late by then!
+the proprietary work magically transforms into a libre work
+(whether or not the source is available is a different story, but reverse engineering it now becomes legal too!)

@@ -1,0 +1,45 @@
+"you guys are working on a shitty binding to Qt when you should be improving the meritocratic system"
+aka automating it
+i am quoting what i am resisting saying on the qt mailing list
+because it is leaky-as-fuck
+but also common-sense-as-fuck
+but also: nobody is doing it
+
+
+
+
+"what is your goal?"
+followed directly by
+"what is it you can't do?"
+
+help you select the "right" timeline followed by the right part (index, timewise) of the timeline "stream" (timeline implies stream!)
+i see them as like lines going upwards and to the right because they are like a bitcoin blockchain each. they are "stacks"
+they have 3d
+
+
+
+
+
+3 servers "randomly chosen" doing the "operation" (they must agree)
+7+ servers (3 of which are the ones above) are needed for a mathematical agreement verification. they are selected the same "random" way
+the 3 servers write their results as the next chain block
+
+it is not based on luck*cpupower like bitcoin
+but is instead "predictably-randomly (with the content as the seed)" generated!
+it can even be time based to give "users" time to submit
+all submissions go into pending and get a timestamp right as they are received
+then every few minutes there is a paxos agree on the sha512(etc) of all the content received
+the entire paxos network must then acknowledge/accept the winner, and then using that sha512 as the seed to the random-number generator, they know who the "7" are. they might also during that same "predictable-random-generator" stage get their paths from the 7 (only one is needed to get the answer from). as in like calculate them. each node in their path also makes the same calculation. everybody knows who everybody is sending to/from and knows the final destination
+you are only your key at this level
+there is a tor'ization (perhaps just using the tor library in binary-initiation-mode?) level below it to give anonymity between an IP address and a public key
+obviously anybody keeping records of who is online/offline can quickly determine which key belongs to them
+because the results of every transmission are eventually-persisted (no rush) among the network. it could even be the very next 'commit' that everyone is notified, but it isn't a rush? we just have to keep somewhat-up-to-date "offline records" because only the "data + predetermined key" is periodically agreed on
+actually this won't work because "users" (to rock the vote) are too cheap
+i need to make it expensive to be a "user" by adding in the bitcoin protocol in it's entirety. it might even need to be on the main block chain?
+but i think just using the code and customizing it and having my own chain MIGHT be good enough?
+nah there's no way to do a paxos agree
+users are still cheap
+there has to be incentive to want to be a single user
+there isn't one
+it makes no difference to the bitcoin block generator (person) if they have a thousand users on their supercomputer or just one
+i think this idea might suck (but maybe parts of it are good?)

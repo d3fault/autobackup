@@ -1,0 +1,12 @@
+operate at whatever speed you can understand everything and be right a vast majority of the time
+this is common sense but i am really glad i wrote it
+this gives > 50% of your infinity/2 (boolean equation fallicious) alternate universes prevailance somehow
+perhaps as high as 99.99999999999% (but on the scale of infinity, 50% is equal to 99.99~%)
+you can only ever be sure 99.9999999999999999999~%, or 99.9~%
+or 99.99999~
+or just true
+or just 1
+
+unix sucks because it returns 0 for true
+good thing Qt abstracts unix :-)
+fuck scripts!

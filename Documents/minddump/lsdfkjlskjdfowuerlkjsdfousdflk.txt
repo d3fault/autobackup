@@ -1,0 +1,17 @@
+allowing information to be submitted into a "pending" stage and then to "go into effect" at an agreed time (and it's agreed which pieces "are in") allows a N-size network to synchronize with itself.
+because of that, all communication is done through BitTorrent-like distribution, which only really means active caching
+all this does is save/distribute bandwidth costs
+where bittorrent has "supply/demand" characteristics, my network (abc? d3fault?) will have predetermined "send paths"
+you get a set amount of "send paths" that is dependent entirely on how many of them you used the previous iteration. but you always get at least one to use
+maybe one is too few and you need 3?
+if you frequently post and stuff, you can
+nah fuck long term keeping track of em
+it scales to zero as soon as they aren't using it
+but then how does one contribute?
+once you join the network, you get 1 until it proves successful
+then you get three until you use any of them, then you get double however many you used last time?
+it's like a warmup period... but perhaps it shouldn't exist? would piss people off maybe? actually yea definitely
+
+it is impossible to stay "synchronized" and not have a warmup period that isn't wastefully-expensive because of the pre-generating of "paths" (and associated delivery cost of each (saving bandwidth is why they scale (i guess we could have 7 every synchronization instead of 1 and then it'd be PLENTY (but wasteful) and we could still use the doubling technique to accomodate for hardcore users with 7 being a hard minimium i guess?)))
+your compliance/response with respect to whether you ignored them or used them is expected on the next SYNC
+you fill them out regardless. it is just a sort of handshake for the network to have a sense of integrity (but it certainly isn't proof of it). it is also used to determine how many you will have next time (hard-coded formulas). the entire network shares its paths with the entire network

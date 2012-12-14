@@ -1,0 +1,5 @@
+man my brain was realling hurting for a second there
+my "moc-hack" _CAN_ use QMeta* classes to do it's generating, but it _CANNOT_ use the meta-object system around the objects it is generating classes *for*. I was trying to determine "can i use QMeta* classes?" for a while and kept confusing myself. Now I know why.
+
+
+this is because MOC is generating the stuff needed to use the meta object system at runtime, but we are not at that runtime. we are at compile time. the contents of the current meta object system are the MOC application guts itself. useless
