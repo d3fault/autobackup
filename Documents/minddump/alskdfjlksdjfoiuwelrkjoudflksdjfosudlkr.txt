@@ -1,0 +1,77 @@
+reality 2012 "the internet": the concept of "illegal content" exists (HORSE SHIT I SAY) and you, the individual, are forced to be ON NOTICE as internet police to help with the act of censoring.
+
+
+I will fight it. I will win.
+
+
+I wouldn't be surprised if the DMCA gets struck down altogether as being unconstitutional. That would be a big win. Too many laws are written/passed with corporations in mind. The individual is more important.
+
+
+
+Aside: Google, being a corporation, isn't ALL bad. It is comprised of many people. Some of which are bad (whether explicitly, or because they're "in power" and "stupid" (a dangerous combination)), some of which are good. I have to commend Google a tiny bit for their recent change to advertising on mobile. I was playing Air Traffic Control and accidentally tapped one of the ads in it. I've written about this vulnerability before, and Google has recognized and responded to it (independently or because they're spying on me lolol? (probably independently, it isn't that hard to figure out))! Their ads now require 2 taps to go to the link. It like asks "are you sure?" kind of thing. Commendable, but doesn't make up for all the other bullshit they pull left and right. Censoring bastards.
+
+
+
+
+
+I think I don't want a BY-SA/LGPL combo anymore, I only want LGPL. LGPL is essentially GPL (BY-SA) when not applied to software. I read the LGPL in it's entirety for the first time yesterday, and I THINK it might work for non-software "works". When defining a "Library", it mentions "and/or data". Data = everything = "works". However one of the points in the terms for redistributing a modification state that the release must be a software library (lowercase l) itself. I don't see how modified data (video, pictures, etc) could possibly meet that qualification.
+
+I am considering, though not sure if I am capable/up-to-it, writing my own license that is LIKE the LGPL but for content and software both. I am not a lawyer and I am unsure if I can just copy/paste/modify the LGPL and/or BY-SA and clash them together to make my own license. This is something a lawyer would be good for. I'd of course call it the "d3fault" license :-P. It would be a pun because it would be the default license ;-P (or at least have the word "Recommended:" in front of it -- I should default to "nothing"... making them CHOOSE before proceeding (this is a huge defense for my court case imo. the user has to take action! (and even providing "all rights reserved" option and then saying "your content isn't welcome here" is a win too. the ones that aren't accepted should be selectable but gray'd out. if they select them and press next, the message "not welcome here" is shown. if they choose nothing, "choose a license" is shown))).
+
+
+I will allow public-domain/bsd/lgpl content on my network, but you can only derive into "more restrictive or equal" licensing. However the option to derive into GPL/proprietary is not available. Your content is not welcome here. Funny how I mention GPL/proprietary next to each other :-P. RMS would raeg. I like the LGPL approach because it leverages the currently existing "free market". GPL is great if we're living in the futuristic society where capitalism is gone (cube grid). But we aren't. Also I should note that hopefully by then everything is public domain. If everything is public domain, it's similar to everything being GPL. GPL is just ahead of it's time, so it isn't viable in today's market. LGPL is "liberty" + "business" combined. GPL is just liberty.
+
+
+
+Hmm I seem to have contradicted an earlier thought. I do want to allow GPL, but I don't want to view it IN MY OWN VIEW. I guess I don't want GPL anymore. >= LGPL or gtfo. I dunno, need to think on this some more.
+
+
+No restrictions: Public Domain
+Attribution restriction: MIT, BSD, etc
+Libre-for-derivs restriction: LGPL (and/or possibly a "d3fault" license)
+
+
+
+I don't think RMS would give a shit if I copied/pasted from LGPL heavily, changed it up, and CALLED IT SOMETHING DIFFERENTLY. It says it can be copied/distributed, but only verbatim. It makes sense because LGPL 2.1 needs to always be LGPL 2.1 --- he just doesn't mention whether or not you can modify it and call it something else. Still, being RMS I doubt he'd give a shit :-). LGPL might be good enough and if it is I should just stick with it for recognizability (and because writing my own sounds like a daunting task (could hire a lawyer?)). There might also be a LGPL-equivalent license already available that works with content... I'm just too afraid to type "lgpl content license" in google because I'm a paranoid motherfucker and "THEY'LL BE ABLE TO DECIPHER MY PLANS MUAHAHAHAHA"
+
+aside: I feel like everything I do on the internet. Every click and every mouse hover and everything I say... goes to a "think tank" where it is heavily analyzed and attempted to be deciphered. I know it COULD happen, therefore my brain assumes it IS happening. I need to launch asep because I'm losing my fucking mind. Fuck you greedy corporations.
+
+
+
+
+
+The "fair use" balance thing makes it incredibly hard to think about licensing legality. You have to word your shit right in your license so that it is up to a judge to be the ultimate decider of fair use. I think a judge would pick a different point in their "fair use" decision if they knew it was a "free software" case, and the infringing works wouldn't become "illegal" but would instead because "libre". I think they'd be happier making illegal content (bastards). Or maybe they don't even consider it (they SHOULDN'T, but they WILL/DO (hardly/no cases yet :-/)), idfk. It is subjective so it's case-by-case and that makes it bullshit.
+
+
+LGPL for content means "a works can USE another works in it's entirety so long as the original use maintains libre status". Differentiating "using" vs. "deriving" is the biggest challenge... and is what "fair use" tries to decide. It's all subjective, so all bullshit. We should do away with copyright law. But in this "free market" (capitalism), that is impossible. The free market depends on it. We need to change the government/society/world before that can happen.
+
+
+OR WE CAN USE THE LAWS THAT ARE CURRENTLY IN PLACE TO OUR ADVANTAGE (-Richard Stallman (I'm just paraphrasing his "copyleft" invention (he should patent it ;-P)))
+MUAHAHAHAHAAH
+That's the approach I will take. Because I am born too soon. I will create a society and step into it. Others will join, lots will stay behind. The society has nothing to do with vulgarity, only libre.
+
+The default society uses "all rights reserved".
+The d3fault society uses libre.
+
+
+
+I tend to disagree with RMS on the subject of liberty. GPL forces works-using to also be GPL. This makes the "sell new works incorporating `libre` works" not viable. Liberty must accomodate for business, because business exists. It is a sort of play on "give them the rope with which to hang themselves" (-some bsd license article), except now with the addition: "and force them to show you how they escaped from near death"... which equates to: make them release their bug fixes or incremental improvements! The overall quality of the software will benefit from business using it.
+
+
+
+
+
+Oh continuing that thought about allowing GPL content to be on the network (but not in my view most of the time): I was thinking about dipping my toes in that GPL water/content from time to time because I know it will probably be a more productive channel. They'll all derive my LGPL content into GPL for their extensions etc. BUT the sole reason for doing so is "keeping up with" them. Essentially: stealing their ideas :-D. If I like their GPL idea which is an addition to (cancerously modifying (I'm ok with it) my LGPL license) my content, I take the IDEA ITSELF (which has no license) and can implement it in LGPL (or pay someone to do it). The same KIND-OF applies to proprietary content, but I think that subjecting my brain to it's existence is a danger in itself. I don't want to do it. Not the "immenent threat" kind of danger... but a brainwashing-you-subtlely-and-slowly-making-you-lose-your-mind-muahaha-give-us-money-kthx-bai kind of way.
+
+Others will do the honors of examining ideas that are proprietary and building them in GPL. I'll get sloppy seconds :-P and not even have to know of the proprietary implementation. OR I can just not allow GPL content on the network, which will slightly/passively force people into using the LGPL or better (or they'll just fork it all into a network that has a GPL option and put it on that: go for it). Gah I just don't know. Decisions decisions.
+
+
+
+Random: LIBRE-Porn :)
+
+
+
+
+
+
+I believe incrememental improvements are the fastest way for humanity to become stable. Traditional copyright "all rights reserved" does not allow for that. Copyright and patents are slowing us down.

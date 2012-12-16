@@ -1,0 +1,1 @@
+a row of hard drives where each "row" has a stack of hard drives and each one represents a "full snapshot in working state" and is not dependent on the previous stack or of the "future" stacks

@@ -1,0 +1,25 @@
+If I had a nickel for every time I thought: "I finally know what I want to do with my life!", I'd ballsack.
+
+It feels more and more exhilerating and true every time it happens. This libre society mode has me pumped. I will launch because I have nothing here for me in this land of silence. Not launching means I am in proprietary land and I'd rather put a bullet through my head than live here for the rest of my life. I have direction. I have mission. I have objective.
+
+I hope that I get even more direction after I've "caught up" with my trip. "Reporting in, brain!" and then I receive even more instructions :-D.
+
+
+Buying a country like TPB tried to sounds tempting. But really I think "running a country" has a lot of "protocol overhead" and would bore the fucking shit out of me. Still, I'd love if "d3fault by default" was law.
+
+
+
+ACTUALLY WHAT THE FUCK THAT MAKES NO SENSE hahahaha
+I make no sense.
+If "a works is libre by default"
+then every work is either GPL or Public Domain
+LGPL is only relevant WHEN THERE IS proprietary content
+so LGPL is a bootstrap for the modern capitalist "free market" society. It is irrelevant when content is libre by default.
+
+
+
+
+I'm also leaning towards using "d3fault.com/net/org" domain instead of ABC. I am unsure about this, but since it's exploding in what it will be... I'm leaning towards it. d3fault is also a lot easier to remember/write than abc (hence that flurb alias or whatever the fuck it was. squirb?).
+
+
+So d3fault would have to TRANSFORM then into it's dht-self, when the time is appropriate. Fuck it, makes no difference really. (except there's no stable mirror????? idfk could use an alternate domain for it or even just subdomain stable.d3fault.net). d3fault.net becomes stable.d3fault.net when d3fault.net becomes a dht. They are PIXEL PERFECT identical matches, but one is backed by a couchbase business cluster (stable), and the other a probably-vulnerable dht :-D. Fuck it. Fuck it. FUck it. Decide this later.

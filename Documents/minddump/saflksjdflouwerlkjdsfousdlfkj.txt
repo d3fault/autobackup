@@ -1,0 +1,15 @@
+I do not want to be a shemale, because female upkeep is (sounds) annoying.
+I do not want to be a politician, because I don't want to be bored by trying to "represent my constituents". I _COULD_ easily still get elected methinks. The power and capability is tempting... but I think it would contradict my life's work. I'd get "caught up" in the mess and probably ultimately forget. To quote a great firefox article regarding IE I read many years ago: "You can't polish poop into a diamond. You have to start from scratch". I should also note that I could probably very easily get away with "focusing only on things that interest me", because it's exactly what all/most politicians already do. "Representing your constituents" is bullshit and impossible. However, it's what they're SUPPOSED to be doing. Just because other politicians are doing a shitty job at being politicians, doesn't mean I should lower myself to their level and join them and do a shitty job as well. The politician has an impossible job, it's no wonder they do it so shittily.
+
+
+class PlanetWidePeopleRunGovernment : public USA, public UN, public China, public Russia
+{
+	QList<QString> m_ListOfPoliticiansAKAjustRegularPeople;
+}
+
+the end
+
+It is not treason, it is inheritence.
+
+
+Mathematically it makes sense. >= 50% of population = majority. Convincing the various governments to "give up their power" will probably be impossible though. It would make it go much more smoothly... but I just don't see it happening really. Rationale: politicians are humans and humans are greedy and easily corrupt and will cling to their power and even die for it. They will chalk it up to (in their minds) "dying for their country"... when it's really "dying for greed/power".

@@ -1,0 +1,11 @@
+I don't want any of my software to ever require admin privs. Userland is the shit.
+The reason the userland separation exists is to protect from data corruption etc as a means of security
+My system will not trust individual systems in general. You can use it from any system and you get realtime updates as to whether or not what you are actively typing is being saved. The system cannot lie to you (because? because.. uhm.. a friend of yours somehow verifies it? wtf is this (active (person) or passive (robot)))
+
+DELETE PROOF
+to protect from when i am drunk "blogging" ;-P
+i am always afraid i'm going to fucking shrom
+*format my computer
+wtfz
+to shrom: to erase and/or corrupt your data
+somehow shoorms got in there too idfk?

@@ -1,0 +1,11 @@
+TODOreq: i just realized i could code my desktop background
+reality enhanced vision
+computer enhanced vision
+i forget what it's called
+but it's just software image processing/realtime modification
+nothing impossibly complex
+we could also have "secure zones" (outsiders not allowed)
+where humans have "behind-the-walls" "arrows" (player/teammate icons in a game) so you know where everyone is at all times and their thought-stream is one "click" / "selection" away. it needs to be LGPL/libre in order to not give the "players" paranoid schizophrenia.
+i will be the most sane (because I WILL CODE IT (therefore i will understand it "best" (at least initially). others would have to go through all the source and read it's entirety in order to fully understand what i understand and to feel the exact same sort of "safety" (mental safety) that i feel. outsiders would call me paranoid (schizophrenic, or just insane). fuck em.
+
+was staring at the background for like 10 minutes before having that thought
