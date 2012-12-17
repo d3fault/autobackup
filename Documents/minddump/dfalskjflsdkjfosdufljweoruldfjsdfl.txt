@@ -1,0 +1,12 @@
+the only way to have even a tiny bit of usable security is to use KEY FILES stored on a thumb drive (which are only ever connected to an output-only machine (or perhaps i mean input only? i am unsure tbh)) which is physically secured by keeping it in your anus. pickpockets can take shit from you with ease, etc.
+
+the system in which you interact with must also be DELETE PROOF (dht etc), to account for the case where you are shot with a fucking tranquelizer dart and put to sleep and your key files are extracted
+
+
+upon waking up with key files compromised, you do not have data loss and can mark at which point submissions are NOT yours by starting a new identity (which requires video communication/verification/something-like-that with a known friend... and perhaps multiple) and identifying new keyfiles (new systems entirely!)
+
+
+
+
+
+there is still the vulnerability where you are held at gunpoint to pretend that everything is peachy. this is what having videocameras everywhere is intended to prevent

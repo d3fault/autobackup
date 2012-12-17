@@ -1,0 +1,1 @@
+A human must first understand the inner workings of his own brain in it's entirety before he can begin to attempt to code a true AI

@@ -1,0 +1,18 @@
+At what point does a class1 that "hasA" class2 become merely a class2 forwarder?
+if class 1 abstracts class2 entirely, it is certainly a transformative work
+if class 1 only contains the exact functionality that class2 provides, then it's just a [pointless, except for the fact that they can now be "proprietary" under the terms of the LGPL!] derivative
+if class1 only has one piece of functionality from class2 exposed, then isn't it just a helper to class2 for the main body of class1? this might not matter
+
+at what point does adding functionality to class1 become "adding functionality ONTO class2", making it a derivative?
+say it starts off abstracting class1 altogether but then eventually adds the (through progressive git commits) entirety of class2. does this also not matter because we are still providing class1 libre (as a requirement)?
+
+modifying class2's source code is OBVIOUSLY derivative
+but there are other ways to "extend a work" other than modifying it's source directly
+
+plugin vs. core piece of functinality in a single work
+work vs. potentially-lots-of-works-released-as-a-single-work
+i guess this is why .dlls are recommended... to make it a separate work (and the whole of it a combination of works)
+
+it's still silly that it's up to how you code it
+and not based on the general concept itself
+(although the general concept is definitely hard (if not impossible) to put into words)
