@@ -2,11 +2,16 @@
 
 #include <QDateTime> //debug
 
-BankDbHelper::BankDbHelper()
+BankDbHelper::BankDbHelper(QObject *parent)
+    : QObject(parent)
 { }
-void BankDbHelper::init()
+void BankDbHelper::initialize(RpcBankServerClientsHelper *rpcBankServerClientsHelper)
 {
     emit d("BankDbHelper received init message");
+
+    connect(rpcBankServerClientsHelper, SIGNAL(createBankAccount(CreateBankAccountMessage*)), this, SLOT(createBankAccount(CreateBankAccountMessage*)));
+    connect(rpcBankServerClientsHelper, SIGNAL(getAddFundsKey(GetAddFundsKeyMessage*)), this, SLOT(getAddFundsKey(GetAddFundsKeyMessage*)));
+
     emit initialized();
 }
 void BankDbHelper::start()

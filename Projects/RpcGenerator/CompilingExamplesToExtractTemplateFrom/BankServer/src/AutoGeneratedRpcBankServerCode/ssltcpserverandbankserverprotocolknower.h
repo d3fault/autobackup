@@ -7,7 +7,7 @@
 
 #include "network/ssl/ssltcpserver.h"
 
-class SslTcpServerAndBankServerProtocolKnower : public IBankServerProtocolKnower
+class SslTcpServerAndBankServerProtocolKnower : public RpcBankServerClientsHelper
 {
     Q_OBJECT
 public:

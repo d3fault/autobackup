@@ -1,0 +1,4 @@
+Programming sucks because...
+boolean tests don't escelate scoping
+async programming requires tons of flags
+sync programming is shit

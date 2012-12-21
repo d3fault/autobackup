@@ -1,0 +1,15 @@
+ssl = WAN
+tcp = LAN
+qlocalserver/socket = process
+thread = same-app
+
+
+thread needs special shit where the object that is passed across the "network" is used on both sides. it should pretty much BE/BECOME signals/slots. The entire thing could theoretically _BECOME_ signals/slots, where "Automatic" connections determine ssl/tcp/local/queued/direct instead of just queued/direct.
+
+
+
+You are in effect creating that. It should be one of the prominent features in your Qt fork :-P, of course including hardware accelerated QWidgets.
+
+
+
+Doing the magic needed for "same-app" with regard to message recycling (making sure it DOESN'T get recycled at normal times?? idk and not willing to investigate further [yet]) might not be possible... but even without it, you could still "become" the signals/slots. Processing header files isn't THAT hard broski, especially since they're all in the .pro file. Processing them "correctly" (and accounting for all C/C++ compatible formats) might be a challenge, but I'm actually more than willing to be there are libraries to help with this. MOC _IS_ a code generator, just like RpcGenerator is/will-be. The difference is I'm going to parse an easy XML file as input initially.

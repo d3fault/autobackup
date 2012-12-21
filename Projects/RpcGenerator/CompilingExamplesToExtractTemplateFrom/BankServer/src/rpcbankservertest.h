@@ -27,24 +27,32 @@ private:
 
     //Initialize
     inline void emitInitializedIfBusinessAndClientsHelperAreInitialized() { if(checkBusinessAndClientsHelperAreInitialized()) emit initialized(); }
-    inline bool checkBusinessAndClientsHelperAreInitialized() {return (m_RpcBankServerInitialized && m_RpcBankServerClientsHelperInitialized); }
+    inline bool checkBusinessAndClientsHelperAreInitialized() { return (m_RpcBankServerInitialized && m_RpcBankServerClientsHelperInitialized); }
     bool m_RpcBankServerInitialized;
     bool m_RpcBankServerClientsHelperInitialized;
 
+    //connections-only pointers
+    RpcBankServer *m_RpcBankServer;
     RpcBankServerClientsHelper *m_RpcBankServerClientsHelper;
+
+    void daisyChainConnections();
 signals:
     void d(const QString &);
     void initialized();
+
     void initializeRpcBankServerRequested(RpcBankServerClientsHelper*);
     void initializeRpcBankServerClientsHelperRequested(MultiServerAbstractionArgs);
-public slots:
-    void start();
-    void stop();
 
+    void startRpcBankServerRequested();
+    //start clients helper daisy chains to bank server's started() signal
+
+public slots:
     void handleRpcBankServerInstantiated();
+    void handleRpcBankServerInitialized();
+
     void handleRpcBankServerClientsHelperIntantiated();
     void handleRpcBankServerClientsHelperInitialized();
-    void handleRpcBankServerInitialized();
+    void handleRpcBankServerClientsHelperStarted();
 };
 
 #endif // RPCBANKSERVERTEST_H

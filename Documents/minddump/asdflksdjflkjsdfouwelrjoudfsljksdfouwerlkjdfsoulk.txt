@@ -1,0 +1,45 @@
+how2book
+
+write file1.txt
+it's 100 lines long
+commit to git
+
+later, remove 80 lines of it
+commit to git
+
+
+
+If I showed a 'diff', then the 80 lines would appear twice! Once for adding and once for removing. This is wasteful when talking about pages in a book.
+
+
+I definitely want the removed lines to be in the book
+I definitely want the fact that they were removed in the book
+
+
+I guess I can do them like diff patches, just specifying coordinates (EXCEPT _IN_ THE BOOK, INTENDED FOR THE READER TO PARSE) of shit.
+
+
+The same really does apply to adding-to/modifying a previous document, except there isn't the problem of mentioning the lines twice like there is with removing.
+
+
+For the internet/d3fault/etc, the solution is easy: leave it because it is fine
+But when factoring in "minddump" book, it has to be considered or else I'll waste space OR not get everything out there (if I just used the latest revisions of each, the deleted lines wouldn't be in the book :-/ (perhaps this is OK? should I stop removing lines? I have source files with tons of comments in them and I tend to prune them as they become irrelevant. Git records this, but should the 'book'?))
+
+
+
+A git repo is not meant to be the contents of a book.
+Rofl.
+
+
+Meh I say fuck it... it can just be "bonus content" available on the internet only. Just random comments in source yada yada... big friggin whoop.
+
+
+Hell even showing "file adds" in the book is quite stupid because then there's no context for the rest of the file! I mean sure we could give them the page number and column position and line number of where the addition is, but they'd have to flip back and forth in their book in order for it to make any sense?
+
+There is always the option of not releasing anything relating to "versioned" stuff or even source code altogether (though I tend to write a lot of doc-type-shit in the comments lawl), just having the minddump book be a snapshot of WORD DOCS (no svg pics either, for example). minddumps, dreams, designs (text, not dia), ETC. It would still be a hefty book and provide a lot of data... but I don't think it would fully represent what I'm trying to accomplish. The text documents before the source edits are entirely relevant, IMO. My state of mind is reflected in my code. I am now just going really fucking fast to try to close parenthesis (I can visualize this in my brain but meh putting it into words is a bit difficult) in my code. Lol typo: mode. My + Code.
+
+
+the minddump [series] will have to just be 'snapshots' of the content i guess... who gives a fuck they aren't that important anyways :-)... the internet copies are a gillion (JILLION! I AM TWELVE) times more important (parseable, for one thing)
+
+
+Yea fuck it, i "want" source + revisions... and am allowed to fool around with trying to get them... but I will settle for just a snapshot of documents (non-source) if I have to...

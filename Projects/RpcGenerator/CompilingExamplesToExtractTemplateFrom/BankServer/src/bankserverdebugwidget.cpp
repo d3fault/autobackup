@@ -1,7 +1,7 @@
 #include "bankserverdebugwidget.h"
 
 bankServerDebugWidget::bankServerDebugWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent), m_BusinessStarted(false)
 {
     m_Layout = new QVBoxLayout();
     m_Debug = new QPlainTextEdit();
@@ -18,22 +18,42 @@ bankServerDebugWidget::bankServerDebugWidget(QWidget *parent)
     m_Layout->addWidget(m_StopBusinessButton);
 
     connect(m_StartBusinessButton, SIGNAL(clicked()), this, SIGNAL(startBusinessRequested()));
+    connect(m_StartBusinessButton, SIGNAL(clicked()), this, SLOT(disableUserInteraction()));
+
+    //no need to wait for these user interactions to complete (disabling the gui) because the design of the protocol shit is inherently asynchronous and it would be stupid if it weren't. starting and stopping is another matter. i SHOULD be able to spam click these and they should work perfectly fine
     connect(m_SimulatePendingBalanceDetectedBroadcastButton, SIGNAL(clicked()), this, SIGNAL(simulatePendingBalanceDetectedBroadcastRequested()));
     connect(m_SimulateConfirmedBalanceDetectedBroadcastButton, SIGNAL(clicked()), this, SIGNAL(simulateConfirmedBalanceDetectedBroadcastRequested()));
-    connect(m_StopBusinessButton, SIGNAL(clicked()), this, SIGNAL(stopBusinessRequested()));
 
-    setGuiEnabled(false); //We wait for initialized
+    connect(m_StopBusinessButton, SIGNAL(clicked()), this, SIGNAL(stopBusinessRequested()));
+    connect(m_StopBusinessButton, SIGNAL(clicked()), this, SLOT(disableUserInteraction()));
+
+    disableUserInteraction(); //We wait for initialized
 }
-void bankServerDebugWidget::setGuiEnabled(bool enabled)
+void bankServerDebugWidget::setUserInteractionEnabled(bool enabled)
 {
-    m_SimulatePendingBalanceDetectedBroadcastButton->setEnabled(enabled);
-    m_SimulateConfirmedBalanceDetectedBroadcastButton->setEnabled(enabled);
+    m_StartBusinessButton->setEnabled(enabled);
+    m_SimulatePendingBalanceDetectedBroadcastButton->setEnabled(enabled && m_BusinessStarted);
+    m_SimulateConfirmedBalanceDetectedBroadcastButton->setEnabled(enabled && m_BusinessStarted);
+    m_StopBusinessButton->setEnabled(enabled);
 }
 void bankServerDebugWidget::handleD(const QString &msg)
 {
+    enableUserInteraction();
     m_Debug->appendPlainText(msg);
 }
-void bankServerDebugWidget::businessInitialized()
+void bankServerDebugWidget::handleBusinessInitialized()
 {
-    setGuiEnabled(true);
+    handleD("gui noticed business has initialized");
+}
+void bankServerDebugWidget::handleBusinessStarted()
+{
+    m_BusinessStarted = true;
+    enableUserInteraction();
+    handleD("gui noticed business has started");
+}
+void bankServerDebugWidget::handleBusinessStopped()
+{
+    m_BusinessStarted = false;
+    enableUserInteraction();
+    handleD("gui noticed business has stopped");
 }

@@ -27,12 +27,22 @@ struct NetworkMagic
     quint8 m_CurrentMagicByteIndex;
     bool m_MagicGot;
 
-    static void streamOutMagic(QDataStream *ds);
+    static inline void streamOutMagic(QDataStream *ds)
+    {
+        *ds << MagicExpected[0];
+        *ds << MagicExpected[1];
+        *ds << MagicExpected[2];
+        *ds << MagicExpected[3];
+    }
 
     QDataStream m_MagicReadingNetworkStream;
 
     bool consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic(QIODevice *deviceToLookForMagicOn);
-    void messageHasBeenConsumedSoPlzResetMagic();
+    inline void messageHasBeenConsumedSoPlzResetMagic()
+    {
+        m_MagicGot = false;
+        m_CurrentMagicByteIndex = 0;
+    }
 };
 
 #endif // NETWORKMAGIC_H

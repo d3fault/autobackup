@@ -8,13 +8,6 @@ const quint8 NetworkMagic::MagicExpected[MAGIC_BYTE_SIZE] =  { 'F', 'U', 'C', 'K
 NetworkMagic::NetworkMagic()
     : m_CurrentMagicByteIndex(0), m_MagicGot(false)
 { }
-void NetworkMagic::streamOutMagic(QDataStream *ds)
-{
-    *ds << MagicExpected[0];
-    *ds << MagicExpected[1];
-    *ds << MagicExpected[2];
-    *ds << MagicExpected[3];
-}
 bool NetworkMagic::consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic(QIODevice *deviceToLookForMagicOn)
 {
     if(m_MagicGot)
@@ -54,9 +47,4 @@ bool NetworkMagic::consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf
 
     //we only get here if we read all the bytes available without ever seeing magic
     return false;
-}
-void NetworkMagic::messageHasBeenConsumedSoPlzResetMagic()
-{
-    m_MagicGot = false;
-    m_CurrentMagicByteIndex = 0;
 }

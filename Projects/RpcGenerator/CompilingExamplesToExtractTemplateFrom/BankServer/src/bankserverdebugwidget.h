@@ -17,15 +17,21 @@ private:
     QPushButton *m_SimulatePendingBalanceDetectedBroadcastButton;
     QPushButton *m_SimulateConfirmedBalanceDetectedBroadcastButton;
     QPushButton *m_StopBusinessButton;
-    void setGuiEnabled(bool enabled);
+    void setUserInteractionEnabled(bool enabled);
+    bool m_BusinessStarted;
 signals:
     void startBusinessRequested();
     void simulatePendingBalanceDetectedBroadcastRequested();
     void simulateConfirmedBalanceDetectedBroadcastRequested();
     void stopBusinessRequested();
+private slots:
+    void disableUserInteraction() { setUserInteractionEnabled(false); }
+    void enableUserInteraction() { setUserInteractionEnabled(true); }
 public slots:
     void handleD(const QString &msg);
-    void businessInitialized();
+    void handleBusinessInitialized();
+    void handleBusinessStarted();
+    void handleBusinessStopped();
 };
 
 #endif // BANKSERVERDEBUGWIDGET_H

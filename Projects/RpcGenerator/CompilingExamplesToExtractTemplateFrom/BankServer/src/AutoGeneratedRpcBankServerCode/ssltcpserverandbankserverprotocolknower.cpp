@@ -3,7 +3,7 @@
 #include "../../RpcBankServerAndClientShared/rpcbankserverheader.h"
 
 SslTcpServerAndBankServerProtocolKnower::SslTcpServerAndBankServerProtocolKnower(QObject *parent)
-    : IBankServerProtocolKnower(parent)
+    : RpcBankServerClientsHelper(parent)
 {
     -m_SslTcpServer = new SslTcpServer(this, ":/RpcBankServerCA.pem", ":/RpcBankServerClientCA.pem", ":/RpcBankServerPrivateKey.pem", ":/RpcBankServerPublicCert.pem", "fuckyou" /* TODOopt: make it so when starting the server we are prompted for this passphrase. this way it is only ever stored in memory... which is an improvement but still not perfect */);
     connect(m_SslTcpServer, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
