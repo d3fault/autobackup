@@ -1,7 +1,7 @@
 #include "ssltcpserver.h"
 
-SslTcpServer::SslTcpServer(QObject *parent, const QString &serverCaFile, const QString &clientCaFile, const QString &serverPrivateEncryptionKeyFile, const QString &serverPublicLocalCertificateFile, const QString &serverPrivateEncryptionKeyPassPhrase) :
-    QTcpServer(parent), m_ServerCaFile(serverCaFile), m_ClientCaFile(clientCaFile), m_ServerPrivateEncryptionKeyFile(serverPrivateEncryptionKeyFile), m_ServerPrivateEncryptionKeyPassPhrase(serverPrivateEncryptionKeyPassPhrase), m_ServerPublicLocalCertificateFile(serverPublicLocalCertificateFile)
+SslTcpServer::SslTcpServer(QObject *parent) :
+    QTcpServer(parent)
 { }
 SslTcpServer::~SslTcpServer()
 {
@@ -12,16 +12,17 @@ SslTcpServer::~SslTcpServer()
     delete m_ServerPrivateEncryptionKey;
     delete m_ServerPublicLocalCertificate;
 }
-bool SslTcpServer::init()
+void SslTcpServer::initialize(SslTcpServerArgs sslTcpArgs)
+    : m_SslTcpServerArgs(sslTcpArgs)
 {
     if(!QSslSocket::supportsSsl())
     {
         emit d("ssl is not supported");
-        return false;
+        return;
     }
 
     //Server CA is what the client's use to verify the authenticity of the server. It is a "List", but in our case only contains our server's Local Certificate. It has to be 'securely' copied to the client connection. both sides have it set. On this side, we only use it when loading our public local certificate to see if it's on the list (and verify against it).
-    QFile serverCaFileResource(m_ServerCaFile);
+    QFile serverCaFileResource(sslTcpArgs.ServerCaFilename);
     serverCaFileResource.open(QFile::ReadOnly);
     QByteArray serverCaByteArray = serverCaFileResource.readAll();
     serverCaFileResource.close();
@@ -30,44 +31,47 @@ bool SslTcpServer::init()
     if(serverCA.isNull())
     {
         emit d("the server CA is null");
-        return false;
+        return;
     }
     emit d("the server CA is not null");
     if(!serverCA.isValid())
     {
         emit d("the server CA is not valid");
-        return false;
+        return;
     }
     emit d("the server CA is valid");
 
-    //Client CA is a list of certificates that the server uses to verify the authenticity of the clients. each client can use the same certificate, but for our purposes we're going to have each client having a unique certificate. it is how we will identify them.
-    QFile clientCaFileResource(m_ClientCaFile);
-    clientCaFileResource.open(QFile::ReadOnly);
-    QByteArray clientCaByteArray = clientCaFileResource.readAll();
-    clientCaFileResource.close();
+    if(sslTcpArgs.UseClientCA2WaySecurity)
+    {
+        //Client CA is a list of certificates that the server uses to verify the authenticity of the clients. each client can use the same certificate, but for our purposes we're going to have each client having a unique certificate. it is how we will identify them.
+        QFile clientCaFileResource(sslTcpArgs.ClientCaFilename);
+        clientCaFileResource.open(QFile::ReadOnly);
+        QByteArray clientCaByteArray = clientCaFileResource.readAll();
+        clientCaFileResource.close();
 
-    QSslCertificate clientCA(clientCaByteArray);
-    if(clientCA.isNull())
-    {
-        emit d("client CA is null");
-        return false;
+        QSslCertificate clientCA(clientCaByteArray);
+        if(clientCA.isNull())
+        {
+            emit d("client CA is null");
+            return;
+        }
+        emit d("client CA is not null");
+        if(!clientCA.isValid())
+        {
+            emit d("client CA is not valid");
+            return;
+        }
+        emit d("client CA is valid");
+
+        m_AllMyCertificateAuthorities.append(clientCA);
     }
-    emit d("client CA is not null");
-    if(!clientCA.isValid())
-    {
-        emit d("client CA is not valid");
-        return false;
-    }
-    emit d("client CA is valid");
 
     m_AllMyCertificateAuthorities.append(serverCA);
-    m_AllMyCertificateAuthorities.append(clientCA);
-
 
     //Server Private Encryption Key is the private portion of our Local Certificate
-    QByteArray serverPrivateEncryptionKeyPassPhraseByteArray(m_ServerPrivateEncryptionKeyPassPhrase.toUtf8()); //TODO: not sure if .toUtf8() is right... even though it does in fact return a QByteArray. idfk what kind it expects.. shit doesn't say
+    QByteArray serverPrivateEncryptionKeyPassPhraseByteArray(sslTcpArgs.ServerPrivateEncryptionKeyPassPhrase.toUtf8()); //TODO: not sure if .toUtf8() is right... even though it does in fact return a QByteArray. idfk what kind it expects.. shit doesn't say
 
-    QFile serverPrivateEncryptionKeyFileResource(m_ServerPrivateEncryptionKeyFile);
+    QFile serverPrivateEncryptionKeyFileResource(sslTcpArgs.ServerPrivateEncryptionKeyFilename);
     serverPrivateEncryptionKeyFileResource.open(QFile::ReadOnly);
     QByteArray serverPrivateEncryptionKeyByteArray = serverPrivateEncryptionKeyFileResource.readAll();
     serverCaFileResource.close();
@@ -77,12 +81,12 @@ bool SslTcpServer::init()
     if(m_ServerPrivateEncryptionKey->isNull())
     {
         emit d("server private encryption key is null");
-        return false;
+        return;
     }
     emit d("server private encryption key is not null");
 
     //Server Public Local Certificate is the public decryption key that we send to our client
-    QFile serverPublicLocalCertificateFileResource(m_ServerPublicLocalCertificateFile);
+    QFile serverPublicLocalCertificateFileResource(sslTcpArgs.ServerPublicLocalCertificateFilename);
     serverPublicLocalCertificateFileResource.open(QFile::ReadOnly);
     QByteArray serverPublicLocalCertificateByteArray = serverPublicLocalCertificateFileResource.readAll();
     serverPublicLocalCertificateFileResource.close();
@@ -91,13 +95,13 @@ bool SslTcpServer::init()
     if(m_ServerPublicLocalCertificate->isNull())
     {
         emit d("server public local certificate is null");
-        return false;
+        return;
     }
     emit d("server public local certificate is not null");
     if(!m_ServerPublicLocalCertificate->isValid())
     {
         emit d("server public local certificate is not valid");
-        return false;
+        return;
     }
     emit d("server public local certificate is valid");
 
@@ -105,31 +109,37 @@ bool SslTcpServer::init()
     //for the client it only makes sense to use override the 'default configuration' in the constructor anyways. each 'init' is a new socket... so it'd be setting the default configuration over and over and over (whereas server is only initialized once). but then of course by moving it to the constructor (BACK* to the constructor i should say ;-P), i lose the ability to emit signals etc telling me if the certs etc are all valid and shit. it is often that typos etc make my certs invalid
     //on the subject of emitting in constructors. one way to do it would be to pass in some 'interface' all the time that can be called to emit debug shit. it's sloppy hack and will uglify my code, but meh, would work. fuckin Qt with not having signals in constructors gah. i realize what i'm saying may appear strange at first, but then NOT having signals in the constructor is actually inconsistent with the rest of the code blocks. even the destructor can emit signals (TODOoptional: wtf can a sender() be null by the time a queued message is received... say if the signal is dispatched in the destructor... but even if it's just delete'd moments/lines later. i think yes. weird case i've never thought up TODOreq: make sure anywhere you use sender() that you check it is still alive)
     //An example of where the defaults will conflict is when using Rpc Generator as both a client and a Service (two unrelated ones). AbcAppDb... or my 'cache' layer... idfk what it is at this point... may... or may not... function as both. There are many other unforseen/invented scenarios where an application runs as both an Rpc Client and Rpc Server.
-    QSslConfiguration sslConfiguration = QSslConfiguration::defaultConfiguration();
-    sslConfiguration.setSslOption(QSsl::SslOptionDisableCompression, true); //as per CRIME
-
     //set up ssl defaults for all future connections
-    sslConfiguration.setCaCertificates(m_AllMyCertificateAuthorities);
-    sslConfiguration.setPrivateKey(*m_ServerPrivateEncryptionKey);
-    sslConfiguration.setLocalCertificate(*m_ServerPublicLocalCertificate);
-    sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyPeer); //makes us request + REQUIRE that the client cert is valid. client does this to us by default, but we don't do it to him by default. i should still explicitly set it for client
+    sslTcpArgs.SslConfiguration.setSslOption(QSsl::SslOptionDisableCompression, true); //as per CRIME
+    sslTcpArgs.SslConfiguration.setCaCertificates(m_AllMyCertificateAuthorities);
+    sslTcpArgs.SslConfiguration.setPrivateKey(*m_ServerPrivateEncryptionKey);
+    sslTcpArgs.SslConfiguration.setLocalCertificate(*m_ServerPublicLocalCertificate);
+    if(sslTcpArgs.UseClientCA2WaySecurity)
+    {
+        sslTcpArgs.SslConfiguration.setPeerVerifyMode(QSslSocket::VerifyPeer); //makes us request + REQUIRE that the client cert is valid. client does this to us by default, but we don't do it to him by default. i should still explicitly set it for client
     //TODO: perhaps whether or not to use PeerVerify should be a constructor bool that is saved and applied to each incoming connection. the server should still be usable in non-peer-verify mode
+    }
+    else
+    {
+        sslTcpArgs.SslConfiguration.setPeerVerifyMode(QSslSocket::AutoVerifyPeer);
+    }
 
-    QSslConfiguration::setDefaultConfiguration(sslConfiguration);
+    QSslConfiguration::setDefaultConfiguration(sslTcpArgs.SslConfiguration);
 
     connect(this, SIGNAL(newConnection()), this, SLOT(handleNewConnectionNotYetEncrypted()));
 
     return true;
 }
-bool SslTcpServer::start()
+void SslTcpServer::start()
 {
-    if(this->listen(QHostAddress::LocalHost, 6969))
+    if(this->listen(m_SslTcpServerArgs.HostAddress, m_SslTcpServerArgs.Port))
     {
-        emit d("now listening on port 6969");
-        return true;
+        emit d(QString("now listening for ssl tcp connections on ") + m_SslTcpServerArgs.HostAddress.toString() + QString(":") + QString::number(m_SslTcpServerArgs.Port));
     }
-    emit d("listen failed");
-    return false;
+    else
+    {
+        emit d("ssl tcp server listen failed");
+    }
 }
 void SslTcpServer::stop()
 {

@@ -1,15 +1,12 @@
 #include <QtGui/QApplication>
-#include "bankservertest.h"
-#include "bankserverdebugwidget.h"
+#include "rpcbankservertest.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    BankServerTest bankServerTest;
-
-    bankServerDebugWidget w(&bankServerTest);
-    w.show();
+    RpcBankServerTest rpcBankServerTest;
+    Q_UNUSED(rpcBankServerTest)
 
     return a.exec();
 }

@@ -1,30 +1,28 @@
-#include "bitcoinhelper.h"
+#include "rpcbitcoinhelper.h"
 
 #include <QDateTime> //debug
 
-BitcoinHelper::BitcoinHelper()
+RpcBitcoinHelper::RpcBitcoinHelper(QObject *parent)
+    : QObject(parent)
 { }
-void BitcoinHelper::takeOwnershipOfApplicableBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers)
+void RpcBitcoinHelper::initialize(RpcBankServerClientsHelper *rpcBankServerClientsHelper)
 {
-    m_PendingBalanceDetectedMessageDispenser = broadcastDispensers->takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(this);
-    m_ConfirmedBalanceDetectedMessageDispenser = broadcastDispensers->takeOwnershipOfConfirmedBalanceDetectedMessageDispenserRiggedForDelivery(this);
-}
-void BitcoinHelper::init()
-{
-    emit d("BitcoinHelper received init message");
+    m_PendingBalanceDetectedMessageDispenser = rpcBankServerClientsHelper->broadcastDispensers()->takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(this);
+    m_ConfirmedBalanceDetectedMessageDispenser = rpcBankServerClientsHelper->broadcastDispensers()->takeOwnershipOfConfirmedBalanceDetectedMessageDispenserRiggedForDelivery(this);
+
     emit initialized();
 }
-void BitcoinHelper::start()
+void RpcBitcoinHelper::start()
 {
     emit d("BitcoinHelper received start message");
     emit started();
 }
-void BitcoinHelper::stop()
+void RpcBitcoinHelper::stop()
 {
     emit d("BitcoinHelper received stop message");
     emit stopped();
 }
-void BitcoinHelper::simulatePendingBalanceDetectedBroadcast()
+void RpcBitcoinHelper::simulatePendingBalanceDetectedBroadcast()
 {
     ServerPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = m_PendingBalanceDetectedMessageDispenser->getNewOrRecycled();
     pendingBalanceDetectedMessage->Username = (QString("randomUsername@") + QDateTime::currentDateTime().toString());
@@ -32,7 +30,7 @@ void BitcoinHelper::simulatePendingBalanceDetectedBroadcast()
     emit d(QString("SIMULATING pending balance detected broadcast for user: ") + pendingBalanceDetectedMessage->Username);
     pendingBalanceDetectedMessage->deliver();
 }
-void BitcoinHelper::simulateConfirmedBalanceDetectedBroadcast()
+void RpcBitcoinHelper::simulateConfirmedBalanceDetectedBroadcast()
 {
     ServerConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = m_ConfirmedBalanceDetectedMessageDispenser->getNewOrRecycled();
     confirmedBalanceDetectedMessage->Username = (QString("randomUsername@") + QDateTime::currentDateTime().toString());

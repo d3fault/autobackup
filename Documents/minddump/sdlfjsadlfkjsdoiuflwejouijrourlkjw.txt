@@ -1,0 +1,42 @@
+I was trying to think with respect to Caydon...
+trying to think of a way to get him to behave better in school
+I'm worried he's going to get kicked out (aside: didn't i say i'm going to use periods more than newlines now?). So I was trying to come up with some way for him to understand: There's playground behavior/mode and classroom behavior/mode. In playground mode, by all means: GO WILD. GO CRAZY. HAVE FUCKING FUN. Don't be mean and don't hurt anyone, but aside from that there are no rules. I'm not really sure I like clumping cuss words into "being mean" (they can and are used in non-mean ways all the time: "sup mothafucka?")... but I definitely want him to understand that they are not ALLOWED in school.
+
+I thought about giving him a toggle switch (2-way rocker, like the one I mentioned a while ago lmfao). It doesn't have to be plugged into any electronics... it's just something to give him the concept of two modes. We could practice it at home and I could even control loud music with it. We'd dance/fight-dance while on "playground" mode, then I'd make him sit perfectly still (over-do it ;-P) with his hands neatly folded on the desk in front of him. I'd explain to him that it's just ACTING (tbc).
+
+We could even give the toggle switch to his teacher and she could flip the switch for him as he goes outside. I think it would work because it's silly and fun and easy to comprehend for pretty much anybody.
+
+Eventually, we explain to him that THE SWITCH IS IN YOUR HEAD! YOU HAVE _CONTROL_!
+
+
+
+....which is where I caught myself and realized that this has way more to do with just Caydon. It applies to me too. My behavior... can be controlled. It is acting. Human behavior is BASED UPON control/acting.
+
+
+
+When I word it like that, I begin to lean towards "don't control... don't act"... BECAUSE: we have enough self-controlled actors in this world (businessmen, politicians, ETC. pretty much if you have a job, you have to ACT however your boss expects)... but also I think I want to put more emphasis on the content of those parenthesis: nobody can NOT act. Nobody has the ability to NOT act. Nobody has the financial viability and independence required to NOT act.
+
+I can/will/do(not-yet)... so I should take advantange of the luxury of not having to give a fuck?
+
+
+Kaylee once called me a "funny asshole". Perhaps I should embrace it and be glad that I am at least funny? It's who I am in my natural state. I can not and will not act my life away. I will not contro-
+
+
+
+Control. Is a good thing. Computer Programming is all about control. Doing what you want it to do. You control the computer. I dominate you my 0s and 1s. Suck my dick. HUMAN LIFE is all about control. What I mean is, perhaps it's a... positive force... in this world. I'd argue that it definitely WAS a positive force. No doubt. Animals can't afford to not be in control of themselves. They can't afford to be sporatic because they'd likely starve to death (perhaps lions are the exception (also humans :-P (but then again, maybe lions turn on each other just like humans do? independence is needed for both?))). That I am using the word "afford" separates me. I _CAN_ afford to lose control. It also sounds blissful. I just...
+...
+...
+...
+...
+want to be a family man, TOO.
+
+I'm starting to think it's a contradiction. That I can't have my cake and eat it too.
+
+
+
+I think I'm talking about a toggle switch of my own (actually shit, I've already written about one!!!). It is "nothing held back" mdoe... but is ESSENTIALLY: bool control = true; ... then control = false; for "nothing held back" mode. I want to (and will!) toggle it. It sounds fun to do. I will be in whichever mode I enjoy more. Whichever mode I feel like being in. Ironically I can/will code in both... so coding doesn't require "control"... it just IS control. So when you yourself are not controlling yourself, you still have the capability of controlling... other(s?). This could apply to "a reckless king (not controlling himself) controlling his slaves", and also "a drugged up d3fault (not controlling himself) controlling his computers". I'm digressing. What am I trying to solve here? What am I trying to figure out? "How to behave", essentially. Is my "bool control" toggle siwtch (stream tag!) enough to be considered "family friendly"? Is yet another tag ("vulgar") needed to separate "code written while not controlling myself" from "porn made while not controlling myself" (the prior of which is still family friendly but they are both control = false)??? Will all this tagging slow me down (yes)? Will it be significant (no, unless I do it often)?
+
+
+Perhaps SFW should just be a crowd-sourced whitelist of all my content? I _COULD_ do it myself, but it would be hard to do? Are there things I will say/do in control mode that would also warrant... NOT being family friendly (aka SFW)? Or is it only that the opposite holds true: some non-controlled things/words are family friendly (namely, code)?? What I mean is that it should be opt-in SFW, not SFW by default. I really have no idea if I'll be the one controlling that tag (or if I even WANT to. sounds like a royal fucking pain in the ass imo).
+
+"How to behave" defines a man. It is, in effect, them. Acting/controlling eventually becomes second nature (or should that be first nature?) and you become who you try to be. It becomes habitual. That is called programming of the mind. We can, over time, program ourselves to be whoever/however we want. I am merely wondering if I should aim to program myself as a more... respectable... family friendly... figure. THAT I CAN ABSTRACTLY THINK ABOUT SUCH A CONCEPT MEANS I AM NOT YOUR TYPICAL HUMAN. I am "scheming". I am sociopathing. Look at me go! Fuck it, it's life. That's all around us. It happens whether you notice it or not. The person you are talking to is doing it, whether they admit it or not. At least I admit it. At least I understand it. I am trying to utilize it, but wondering if it's even worth the hassle.

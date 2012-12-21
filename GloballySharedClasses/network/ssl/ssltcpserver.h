@@ -28,19 +28,31 @@ and the cert/private-key on the server only
 If you want 2-way authentication (stronger), give the client it's own CA. the process is [additionally] reversed and both sides then have 2 CA certs. their own and their peer's
 */
 
+struct SslTcpServerArgs
+{
+    QHostAddress HostAddress;
+    quint16 Port;
+    QSslConfiguration SslConfiguration;
+    QString ServerCaFilename;
+    bool UseClientCA2WaySecurity;
+    QString ClientCaFilename;
+    QString ServerPrivateEncryptionKeyFilename;
+    QString ServerPublicLocalCertificateFilename;
+    QString ServerPrivateEncryptionKeyPassPhrase;
+};
 class SslTcpServer : public QTcpServer
 {
     Q_OBJECT
 public:
-    explicit SslTcpServer(QObject *parent, const QString &serverCaFile, const QString &clientCaFile, const QString &serverPrivateEncryptionKeyFile, const QString &serverPublicLocalCertificateFile, const QString &serverPrivateEncryptionKeyPassPhrase);
+    explicit SslTcpServer(QObject *parent = 0);
     ~SslTcpServer();
     virtual QTcpSocket *nextPendingConnection();
     static bool isSslConnectionGood(QSslSocket *socketToCheck);
     static uint getClientUniqueId(QSslSocket *client);
     QSslSocket *getSocketByUniqueId(uint uniqueId);
     QList<uint> getAllConnectedUniqueIds();
-    bool init();
-    bool start();
+    void initialize(SslTcpServerArgs sslTcpArgs);
+    void start();
     void stop();
 private:
     QQueue<QSslSocket*> m_PendingConnections;
@@ -49,12 +61,7 @@ private:
     QSslKey *m_ServerPrivateEncryptionKey;
     QSslCertificate *m_ServerPublicLocalCertificate;
 
-    //simply passing from constructor to init
-    QString m_ServerCaFile;
-    QString m_ClientCaFile;
-    QString m_ServerPrivateEncryptionKeyFile;
-    QString m_ServerPrivateEncryptionKeyPassPhrase;
-    QString m_ServerPublicLocalCertificateFile;
+    SslTcpServerArgs m_SslTcpServerArgs;
 protected:
     void incomingConnection(int handle);
 signals:

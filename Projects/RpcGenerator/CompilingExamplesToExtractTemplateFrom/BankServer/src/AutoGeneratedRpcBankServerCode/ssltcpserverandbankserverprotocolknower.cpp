@@ -12,7 +12,7 @@ SslTcpServerAndBankServerProtocolKnower::SslTcpServerAndBankServerProtocolKnower
 void SslTcpServerAndBankServerProtocolKnower::init()
 {
     -emit d("SslTcpServerAndBankServerProtocolKnower received init message");
-    if(m_SslTcpServer->init())
+    if(m_SslTcpServer->initialize())
     {
         emit d("SslTcpServer successfully initialized");
         emit initialized();

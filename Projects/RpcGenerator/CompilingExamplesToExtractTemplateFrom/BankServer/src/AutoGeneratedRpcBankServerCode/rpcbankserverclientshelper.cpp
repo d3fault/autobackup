@@ -2,9 +2,13 @@
 
 #include "ssltcpserverandbankserverprotocolknower.h"
 
-RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServerBusiness *rpcBankServer)
-    : m_RpcBankServer(rpcBankServer)
+RpcBankServerClientsHelper::RpcBankServerClientsHelper(QObject *parent)
+    : IBankServerProtocolKnower(parent), m_Initialized(false)
 {
+    m_ActionDispensers = new RpcBankServerActionDispensers(this);
+    m_BroadcastDispensers = new RpcBankServerBroadcastDispensers(this);
+
+#if 0
     //TODOreq: the constructor of transporter currently sets up a QTcpServer, but we're still on the GUI thread. And later we move it another thread. The QTcpServer should be instantiated from the thread in which it will be used on. I am about to re-design shit anyways so it might work out easily idfk.
     m_Transporter = new SslTcpServerAndBankServerProtocolKnower();
 
@@ -12,16 +16,10 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServerBusiness *r
     //IBankServerProtocolKnower is a layer of separation between the protocol and the network, just like before
     //IBankServerClientProtocolKnower exists too, serves the same purpose... but is comprised of different signatures and slots instead of signals vice versa etc. they APPEAR similar but are not.
 
-    m_ActionDispensers = new RpcBankServerActionDispensers(m_Transporter);
-    m_BroadcastDispensers = new RpcBankServerBroadcastDispensers(m_Transporter);
-
     m_RpcBankServer->setBroadcastDispensers(m_BroadcastDispensers);
     m_Transporter->setActionDispensers(m_ActionDispensers);
 
     m_RpcBankServer->instructBackendObjectsToClaimRelevantBroadcastDispensers();
-
-    if(!m_BroadcastDispensers->everyDispenserIsCreated())
-        return; //TODOreq: return false. even though shit, it's called from a constructor. maybe just set up an initFailed flag and throw an error? an ASSERT or something? Just fucking error out because it means they didn't set up their user code properly. can't emit d("error") because we're in constructor and therefore not connected
 
     m_Transporter->takeOwnershipOfActionsAndSetupDelivery();
 
@@ -37,33 +35,13 @@ RpcBankServerClientsHelper::RpcBankServerClientsHelper(IRpcBankServerBusiness *r
     daisyChainInitStartStopConnections();
 
     connect(m_Transporter, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+#endif
 }
-/*
-void RpcBankServerClientsHelper::actualRpcConnections()
-{
-    connect(m_Transporter, SIGNAL(createBankAccount(CreateBankAccountMessage*)), m_RpcBankServer, SLOT(createBankAccount(CreateBankAccountMessage*)));
-    connect(m_Transporter, SIGNAL(getAddFundsKey(GetAddFundsKeyMessage*)), m_RpcBankServer, SLOT(getAddFundsKey(GetAddFundsKeyMessage*)));
-}
-*/
-void RpcBankServerClientsHelper::daisyChainInitStartStopConnections()
-{
-    //daisy-chain connections
-    //init
-    connect(m_RpcBankServer, SIGNAL(initialized()), m_Transporter, SLOT(init()));
-    connect(m_Transporter, SIGNAL(initialized()), this, SIGNAL(initialized()));
-
-    //start
-    connect(m_RpcBankServer, SIGNAL(started()), m_Transporter, SLOT(start()));
-    connect(m_Transporter, SIGNAL(started()), this, SIGNAL(started()));
-
-    //stop -- reverse order
-    connect(m_Transporter, SIGNAL(stopped()), m_RpcBankServer, SLOT(stop()));
-    connect(m_RpcBankServer, SIGNAL(stopped()), this, SIGNAL(stopped()));
-}
-void RpcBankServerClientsHelper::init()
+void RpcBankServerClientsHelper::initialize(MultiServerAbstractionArgs multiServerAbstractionArgs)
 {
     emit d("RpcBankServerClientsHelper received init message");
-    QMetaObject::invokeMethod(m_RpcBankServer, "init", Qt::QueuedConnection);
+    m_MultiServerAbstraction.initialize(multiServerAbstractionArgs);
+    emitInitializedSignalIfReady();
 }
 void RpcBankServerClientsHelper::start()
 {
@@ -74,6 +52,10 @@ void RpcBankServerClientsHelper::stop()
 {
     emit d("RpcBankServerClientsHelper received stop message");
     QMetaObject::invokeMethod(m_Transporter, "stop", Qt::QueuedConnection);
+}
+void RpcBankServerClientsHelper::handleDoneClaimingBroadcastDispensers()
+{
+    emitInitializedSignalIfReady();
 }
 void RpcBankServerClientsHelper::moveTransporterToItsOwnThreadAndStartTheThread()
 {
