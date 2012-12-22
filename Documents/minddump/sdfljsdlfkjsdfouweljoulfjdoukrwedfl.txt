@@ -1,0 +1,31 @@
+Stream Log (Action Log (Timeline of Events))
+vs.
+Not Saving User Data On Servers
+
+
+I really don't know what I want. If I consider the 'a' in abc, then yea I'd say don't save any user details or even transactions in the long run. Save as much as is needed for verifications/etc but then delete old shit?
+^Fail, FBI/etc can still save that shit [permanently], so deleting it [later], or not saving it, accomplishes nothing
+
+
+And my other approach that I'm leaning towards: Publish every user detail. Provide instructions on how to attain anonymity, but publish EVERY user detail. The entire contents of the database should be public. We should show the world just how crazy/scary/powerful these data mining technologies really are. We do nothing that [company x] doesn't do, we just don't lie about it and/or hide it from our users. Everything from IP addresses to even "hoverOvers" on html elements can be recorded (there is a sweet spot of data-gathering vs. bandwidth-utilization, find it).
+
+
+
+Obviously it would be inefficient to offer the contents of the database to the public directly. It would equate to a SaaS but without any place for profit (and/or charge premium service to said database 'streams'). The bandwidth simply could not be justified. This is where BitTorrent factors in :-). I could release (daily, PERIODICALLY, whenever) snapshots of the db as a whole on torrent and the bandwidth would be shared among the world. Since it is LGPL content ONLY, I have the legal right to do it.
+
+Day 1 might contain 'illegal content' that has yet to be reported and/or acted upon
+Day 2 would contain, in the 'index' of sorts, the notice of it's removal
+
+I have talked earlier about publishing 'censored keys' in a giant list. This is a way to (AND REASON TO) do so. Users who want to comply with the law need to know what keys to delete!
+
+
+Someone could easily compile a [less-periodic, say.. monthly/weekly] snapshot of "everything sans censoring" by iterating over the daily snapshots and compiling them together. BTW there can/should be two torrents released daily: incremental/differential and sum snapshot. The incremental/differential is for bandwidth saving obviously.
+
+The sum snapshots would have to be... removed. Err, I would have to remove my servers as a peer in the torrent when "illegal content" is reported in said snapshot. By this point others will have it and the torrent will very likely stay alive. There is a time issue with this: A notice is received before a snapshot can be taken = it never makes it into the daily. There is always the Freenet copy :-P.
+
+Back on what I was saying, someone could compile monthly or whatever an "EVERYTHING" snapshot with no censoring and release it through torrent. This data is hopefully what would eventually become the starting point for d3fault. Maybe for legal reasons I only submit the non-illegal-content... content... and then let my users fill in the rest. But I definitely want to (NEED TO, AS EXPLAINED EARLIER) keep a timeline record of the keys of all associated content. The keys are important (the timing is important to me) and also vital (users need to know which of their content is illegal). "Link To" law is bullshit. It won't hold up against that vital justification. A user has no other way of identifying the illegal content except through it's keys.
+
+
+There could be multiple huge instances of "abc" software running at different places/companies/individuals/whatever. The periodic snapshots could be shared/accumulated amongst them (and of course regular users) and the content itself could be aggregated throughout. Think Newsgroups but without the server/client model. Since it is all LGPL content, copying is a-ok. I think newsgroups operate under some ISP safe harbor provision anyways, idfk.
+
+Fuck man suddenly I just want to off myself and not give a shit anymore.

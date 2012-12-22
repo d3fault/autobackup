@@ -1,0 +1,38 @@
+Red Parenthesis where current ones are large'ish without overlapping other letters* and they are auto-inserted as you type like Qt-Creator. The most important part: the 'context before' (say... 200 characters. It can/should-be/IS arbitrary and can even be user-defined. is also red, though not oversized. If there are other parenthesis in it, they are shown collapsed maybe or respect how user left them. or BOTH, though i am not sure how that would be done. the 200 characters limit skips over parenthesis sections altogether, so you only see THAT CONTEXT in red <- solution woot. It is meant to get you to be able to SOFTWARE-SELECT trains of thoughts and be able to remember all of them simultaneously and add to them as you think shit up? Almost everything is a derivative of something before it. It is perhaps even true that everything is a derivative and we only some of the time NOTICE it being a derivative.
+
+If everything is a reaction to an action (well aside from wanting to know what the first action was), [lol paused here and realized that Red shit would come in handy] then we are all at least on the physical level, derivative. Definitely. We are chemical so therefore derivative. Consciousness, on the other hand... is definitely way more complex than reaction/action. Once self awareness factors into it, our brains override the action/reaction behavior that does not require brainmatterconscience to 'process'/occur.
+Our brains process, the physical world around us occurs.
+
+
+So the red highlighting is temporary until you start typing. You're either looking at the past by then or you know what to write. You do not need the red anymore.
+
+
+
+onCLoseParenthesis()
+{
+	m_Highlighting = true;
+	contexts.current.highlightPreviousXignoringParenthesis(int x = 200, QColor::Red);
+}
+onCharacterPressed()
+{
+	if(m_Highlighting)
+	{
+		m_Highlighting = false;
+		//contexts.currentOrPerhapsEvenPreviousIfTheyJustTypedAParenthesis
+		Context toDisable;
+		if(keyPressed == OpenParenthesis)
+		{
+			toDisable = contexts.current.previous;
+		}
+		else
+		{
+			toDisable = contexts.current;
+		}
+		toDisable.disableHighlighting;
+	}
+}
+
+This pseudo-code is clearly going in the book. I'm also going to code this right now. It will have a simple timestamp-NOT-OVERWRITING-hyphen-sha1.txt
+
+If the timestamp and sha1 are matching, what the fuck?
+I wanted to say it should reference the first one, but now I'm getting way too overkill. KISS. Can always change it later and even easily import it (<<<<<<<<<--------- FAMOUS FUCKING LAST WORDS)
