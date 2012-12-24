@@ -61,7 +61,7 @@ protected:
     ServerCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ServerGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 
-    void messageReceived(QByteArray *message, quint16 clientId);
+    void messageReceived(QByteArray *message, quint32 clientId);
     virtual void myTransmit(IMessage *message, uint uniqueRpcClientId)=0;
     virtual void myBroadcast(IMessage *message)=0;
 

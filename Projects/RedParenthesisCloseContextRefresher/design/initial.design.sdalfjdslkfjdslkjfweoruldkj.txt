@@ -35,4 +35,11 @@ onCharacterPressed()
 This pseudo-code is clearly going in the book. I'm also going to code this right now. It will have a simple timestamp-NOT-OVERWRITING-hyphen-sha1.txt
 
 If the timestamp and sha1 are matching, what the fuck?
-I wanted to say it should reference the first one, but now I'm getting way too overkill. KISS. Can always change it later and even easily import it (<<<<<<<<<--------- FAMOUS FUCKING LAST WORDS)
+I wanted to say it should reference the first one, but now I'm getting way too overkill. KISS. Can always change it later and even easily import it (<<<<<<<<<--------- FAMOUS FUCKING LAST WORDS (though it is ridiculously trivial in this instance))
+
+
+
+
+
+
+mfw Qt Creator does the red "parenthesis expansion" animation on close parenthesis :-P. I like dat plus more permanent + context highlighting of characters too... duplicate work is duplicate

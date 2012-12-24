@@ -1,7 +1,7 @@
 #include "rpcbankserverclientshelper.h"
 
 RpcBankServerClientsHelper::RpcBankServerClientsHelper(QObject *parent)
-    : IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries(parent), m_MultiServerAbstraction(this), m_Initialized(false)
+    : IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries(parent), m_MultiServerAbstraction(this, this), m_Initialized(false)
 {
     m_ActionDispensers = new RpcBankServerActionDispensers(this);
     takeOwnershipOfActionsAndSetupDelivery();
@@ -14,8 +14,9 @@ void RpcBankServerClientsHelper::takeOwnershipOfActionsAndSetupDelivery()
     m_CreateBankAccountMessageDispenser = m_ActionDispensers->takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(this);
     m_GetAddFundsKeyMessageDispenser = m_ActionDispensers->takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(this);
 }
-void RpcBankServerClientsHelper::messageReceived(QByteArray *message, quint16 clientId)
+void RpcBankServerClientsHelper::messageReceived(QByteArray *message, quint32 clientId)
 {
+    //this design sucks. I don't need clientId to be passed around like this, I just need the deliver() signals to be connected to the right "connection objects" depending on which "connection object" read the request. the only exception to that really is broadcasts, which would iterate/round-robin a list typically not used. It saves me a hash lookup for each message because the signals/slot mechanism performs the lookup (that has to be performed anyways) for me. It would take some redesigning to the dispener logic, but is definitely do-able :-/. Man I've got like 20 fucking optimizations/changes in progress right now, my brain's going to explode. And to think, this application worked at one point. There was one commit where it fucking worked! No ack scheme (aside from shitty TCP ack), but it worked! I'm starting to wonder if I'll ever see it in working state ever again. This is a mess. Sorting this mess out SEEMS like a prerequisite to my life. Perhaps it is, but perhaps a complete startover from scratch would save me a lot of sanity? Meh I doubt it, perhaps a design from scratch accomodating all these pending changes? Followed of course by a new implementation of it? Or do I keep hacking/chipping away at this POS? This is a great point to sync/backup/stop/etc for the holidays (going out of town etc). Fuck My Life
 }
 void RpcBankServerClientsHelper::processCreateBankAccountMessage(CreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId)
 {
@@ -168,6 +169,7 @@ void RpcBankServerClientsHelper::start()
 void RpcBankServerClientsHelper::beginStoppingProcedure()
 {
     //TODOreq: make it so incoming Action Requests are rejected with special error code, perhaps by calling a method on m_MultiServerAbstraction... or just by setting up a flag and responding directly to any incoming Action Requests right away in 'this'
+    //^^ It makes more sense to have 'this' take care of it, since that 2-stage server-shutdown procedure is specific to the rpc generator. HOWEVER it might be a race condition that a message is in MultiServerAbstraction still? I don't even know what the fuck I mean by this, probably wrong...
 
     emit beginningStopProcedureInitiated();
 }

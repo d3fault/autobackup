@@ -19,6 +19,8 @@ private:
     char m_RawSizePeekCharArray[sizeof(quint32)];
     QIODevice *m_IODeviceToPeek;
     QByteArray m_PeekedByteArraySizeRaw;
+    QBuffer m_PeekedByteArraySizeRawBuffer;
+    QDataStream m_PeekedByteArraySizeDataStream;
 };
 
 #endif // BYTEARRAYMESSAGESIZEPEEKERFORIODEVICE_H

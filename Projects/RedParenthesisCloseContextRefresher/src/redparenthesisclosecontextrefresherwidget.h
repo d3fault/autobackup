@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
 
 #include "redparenthesisclosecontextrefresherplaintextedit.h"
 
@@ -14,6 +16,8 @@ public:
     ~RedParenthesisCloseContextRefresherWidget();
 private:
     QVBoxLayout *m_Layout;
+    QPushButton *m_LeftButton;
+    QPushButton *m_RightButton;
     RedParenthesisCloseContextRefresherPlainTextEdit *m_Red;
     QPlainTextEdit *m_Debug;
 };

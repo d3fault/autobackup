@@ -1,0 +1,6 @@
+class Life
+{
+	bool m_The;
+	Life(bool the = true) : m_The(the) { }
+	~Life() { m_The = false; }
+}

@@ -7,7 +7,7 @@
 
 #include "multiserverhelloer.h"
 
-//this class represents the same as "ibankserverprotocolknower" in Rpc Generator Compiling, server. I will soon be taking the "i" out of the name because it's only derivative (ssltcpserverandbankserverprotocolknower) will become a child (of sorts, minus the protocol knower portion) of the MultiServerHelloer. We need to be on the same thread as the helloer because we at some point need to atomically disconnect the helloer from the readyRead and connect readyRead to our own business slot that can handle messages. To guarantee that they're on the same thread we COULD use the "interface" model (pass ourselves as an interface to the Helloer), but with careful coding signals/slots can be used... which is better design anyways
+//this class represents the same as "rpcbankserverclientshelper" in Rpc Generator Compiling, server. I will soon be taking the "i" out of the name because it's only derivative (ssltcpserverandbankserverprotocolknower) will become a child (of sorts, minus the protocol knower portion) of the MultiServerHelloer. We need to be on the same thread as the helloer because we at some point need to atomically disconnect the helloer from the readyRead and connect readyRead to our own business slot that can handle messages. To guarantee that they're on the same thread we COULD use the "interface" model (pass ourselves as an interface to the Helloer), but with careful coding signals/slots can be used... which is better design anyways
 class MultiServerBusiness : public QObject
 {
     Q_OBJECT

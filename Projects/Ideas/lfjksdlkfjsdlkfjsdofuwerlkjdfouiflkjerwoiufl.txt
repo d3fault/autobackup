@@ -1,0 +1,42 @@
+BitTorrent Video
++
+Http Server
++
+Advertisement Slot (default to sitewide one ONLY IF it isn't in use (i guess what i set the minimum to is very important))
++
+Automated Wizard to set all that up
+
+
+
+They provide the servers, you provide the software
+Profit
+
+
+
+
+The "minimum-slot-filler-price-for-USERS-OF-said-site" (i am the admin/site-owner/software-ip-owner-whatever/but-i-also-KINDA-think-i-should-share-this) automatically scales based on a number of predetermined variables such as price per gigabyte in bandwidth
+
+
+The advertising SITE (ABC) is business-dht hosted.
+The idea above merely utilizes an ad slot on it.
+
+
+Since it is p2p, ISPs are not allowed to block it. They cannot refuse us the right to broadcast. Yes we are all meant to broadcast onto it as well. Why else would it be p2p video? I don't mean "video chat" (though that certainly is a possibility just by each user turning on the other person's stream). p2p video means
+
+a) the whole distributes the videos using their bandwidth
+OR
+b) you only help distribute videos you view
+
+
+(b) is more efficient
+(a) might be necessary in order to scale properly and keep videos alive indefinitely
+Freenet uses (a) plus an anonymity / randomization layer
+
+
+It would be trivial to put tor in between
+meh idfk what I'm saying anymore...
+
+
+
+there is a difference between distribution (helping distribute) and storing
+an ideal service/setup/software-solution has both

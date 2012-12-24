@@ -1,14 +1,27 @@
 #include "redparenthesisclosecontextrefresherplaintextedit.h"
 
 RedParenthesisCloseContextRefresherPlainTextEdit::RedParenthesisCloseContextRefresherPlainTextEdit(QWidget *parent) :
-    QPlainTextEdit(parent), m_OpenParenthesis("("), m_CloseParenthesis(")"), m_DontTrigger(false)
+    QPlainTextEdit(parent), m_OpenParenthesis("("), m_CloseParenthesis(")"), m_CurrentlyHighlighting(false), m_DontTrigger(false)
 {
     connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(handleCursorPositionChanged()));
 
-    QMetaObject::invokeMethod(this, "setCursorToBeginning", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, "getFirstPosition", Qt::QueuedConnection);
+}
+void RedParenthesisCloseContextRefresherPlainTextEdit::setHighlightCurrentContext(bool highlight)
+{
+    if(!m_CurrentlyHighlighting && !highlight)
+    {
+        return;
+    }
+
+    m_CurrentlyHighlighting = highlight;
+
+    emit d((highlight ? QString("enabling") : QString("disabling")) + QString(" highlighting"));
 }
 bool RedParenthesisCloseContextRefresherPlainTextEdit::parseParenthesisAndValidate()
 {
+    m_Document = document()->toPlainText();
+
     if(m_Document.count(m_OpenParenthesis) != m_Document.count(m_CloseParenthesis))
     {
         return false;
@@ -16,12 +29,12 @@ bool RedParenthesisCloseContextRefresherPlainTextEdit::parseParenthesisAndValida
 
     m_OpenParenthesisLocations.clear();
     m_CloseParenthesisLocations.clear();
-    catelogOccurances(&m_OpenParenthesisLocations, m_OpenParenthesis);
-    catelogOccurances(&m_CloseParenthesisLocations, m_CloseParenthesis);
+    catalogOccurances(&m_OpenParenthesisLocations, m_OpenParenthesis);
+    catalogOccurances(&m_CloseParenthesisLocations, m_CloseParenthesis);
 
     return !tooManyCloseParenthesisInArow();
 }
-void RedParenthesisCloseContextRefresherPlainTextEdit::catelogOccurances(QList<int> *catalog, QString character)
+void RedParenthesisCloseContextRefresherPlainTextEdit::catalogOccurances(QList<int> *catalog, QString character)
 {
     int currentOccurance = 0;
     while(true)
@@ -50,15 +63,56 @@ bool RedParenthesisCloseContextRefresherPlainTextEdit::tooManyCloseParenthesisIn
             return true;
         }
     }
-    emit d("valid parenthesis");
     return false;
 }
-void RedParenthesisCloseContextRefresherPlainTextEdit::setCursorToBeginning()
+void RedParenthesisCloseContextRefresherPlainTextEdit::keyPressEvent(QKeyEvent *e)
 {
-    if(textCursor().movePosition(QTextCursor::Start))
+    if(e->key() == Qt::Key_ParenRight)
+    {
+        //see if it's too many (matching amount), and if so, just SKIP over to the right over one of them if there are any to the right. if there aren't any to the right, do nothing
+
+        //we disable the user the ability to add in a close parenthesis that doesn't belong (but still sanitize input of that fact (when opening a file for example))
+
+        if(parseParenthesisAndValidate())
+        {
+            e->ignore();
+
+            int currentPosition = textCursor().position();
+            QString potentialCloseParenth = m_Document.mid(currentPosition, 1);
+
+            if(potentialCloseParenth == m_CloseParenthesis)
+            {
+                //todo move over right 1
+                m_DontTrigger = true;
+                QTextCursor tempCursor = textCursor();
+                int origPosition = tempCursor.position();
+
+                tempCursor.setPosition(origPosition+1);
+                setTextCursor(tempCursor);
+                m_DontTrigger = false;
+
+                setHighlightCurrentContext(true);
+            }
+            else
+            {
+                //do nothing. don't move forward, don't put in parenthesis
+                emit d("too many close parenthesis. preventing you hahahahahahaha");
+            }
+        }
+    }
+
+    if(e->isAccepted())
+    {
+        QPlainTextEdit::keyPressEvent(e);
+    }
+}
+void RedParenthesisCloseContextRefresherPlainTextEdit::getFirstPosition()
+{
+    m_PreviousPosition = textCursor().position();
+    /*if(textCursor().movePosition(QTextCursor::Start))
     {
         m_PreviousPosition = textCursor().position();
-    }
+    }*/
 }
 void RedParenthesisCloseContextRefresherPlainTextEdit::handleCursorPositionChanged()
 {
@@ -71,8 +125,6 @@ void RedParenthesisCloseContextRefresherPlainTextEdit::handleCursorPositionChang
     if(currentPosition == m_PreviousPosition)
         return;
 
-
-    m_Document = document()->toPlainText();
     if(parseParenthesisAndValidate())
     {
 
@@ -83,14 +135,13 @@ void RedParenthesisCloseContextRefresherPlainTextEdit::handleCursorPositionChang
         if(moveDistance == 1)
         {
             QString potentialCloseParenth = m_Document.mid(currentPosition-1, 1);
-            emit d(potentialCloseParenth);
             if(potentialCloseParenth == m_CloseParenthesis)
             {
-                //emit d("close parenthesis detected");
+                setHighlightCurrentContext(true);
             }
             else
             {
-                //emit d("stopping highlighting");
+                setHighlightCurrentContext(false);
             }
         }
     }
@@ -102,12 +153,40 @@ void RedParenthesisCloseContextRefresherPlainTextEdit::handleCursorPositionChang
         {
             m_DontTrigger = true;
             //m_PreviousPosition = currentPosition;
+
+            int origPosition = textCursor().position();
+            //tempCursor.setKeepPositionOnInsert(true);
+            //setTextCursor(tempCursor);
+
             textCursor().insertText(")");
+
             //textCursor().setPosition(m_PreviousPosition);
-            textCursor().movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 3);
+            //textCursor().movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 3);
+
+            QTextCursor tempCursor = textCursor();
+            tempCursor.setPosition(origPosition);
+            //textCursor().movePosition(QTextCursor::Left);
+            //tempCursor.setKeepPositionOnInsert(false);
+            setTextCursor(tempCursor);
             m_DontTrigger = false;
         }
     }
 
     m_PreviousPosition = currentPosition;
+}
+
+void RedParenthesisCloseContextRefresherPlainTextEdit::moveCursorLeft()
+{
+    /*if(!textCursor().movePosition(QTextCursor::Left))
+    {
+        emit d("can't move left");
+    }*/
+}
+void RedParenthesisCloseContextRefresherPlainTextEdit::moveCursorRight()
+{
+    //textCursor().setKeepPositionOnInsert();
+    /*if(!textCursor().movePosition(QTextCursor::Right))
+    {
+        emit d("can't move right");
+    }*/
 }

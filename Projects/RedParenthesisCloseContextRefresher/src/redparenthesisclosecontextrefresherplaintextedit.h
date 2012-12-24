@@ -17,15 +17,22 @@ private:
     QList<int> m_OpenParenthesisLocations;
     QList<int> m_CloseParenthesisLocations;
 
+    void setHighlightCurrentContext(bool highlight);
+    bool m_CurrentlyHighlighting;
     bool parseParenthesisAndValidate();
-    void catelogOccurances(QList<int>* catalog, QString character);
+    void catalogOccurances(QList<int>* catalog, QString character);
     bool tooManyCloseParenthesisInArow();
     bool m_DontTrigger;
+protected:
+    virtual void keyPressEvent(QKeyEvent *e);
 signals:
     void d(const QString &);
 private slots:
-    void setCursorToBeginning();
+    void getFirstPosition();
     void handleCursorPositionChanged();
+public slots:
+    void moveCursorLeft();
+    void moveCursorRight();
 };
 
 #endif // REDPARENTHESISCLOSECONTEXTREFRESHERPLAINTEXTEDIT_H

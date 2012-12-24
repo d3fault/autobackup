@@ -21,7 +21,7 @@
 //HOWEVER, broadcasts still need to go to a 'global connection-object' (one that sees all connections) in order to function. mass redesign required sounds like.... and fuuuuuck i'm already in the middle of a mass redesign so FUCK YOU [for now]
 struct NetworkMagic
 {
-    NetworkMagic();
+    NetworkMagic(QIODevice *ioDeviceToLookForMagicOn);
 
     static const quint8 MagicExpected[MAGIC_BYTE_SIZE];
     quint8 m_CurrentMagicByteIndex;
@@ -35,9 +35,9 @@ struct NetworkMagic
         *ds << MagicExpected[3];
     }
 
-    QDataStream m_MagicReadingNetworkStream;
+    QDataStream m_DataStreamToLookForMagicOn;
 
-    bool consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic(QIODevice *deviceToLookForMagicOn);
+    bool consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic();
     inline void messageHasBeenConsumedSoPlzResetMagic()
     {
         m_MagicGot = false;

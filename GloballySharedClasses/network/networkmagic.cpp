@@ -5,10 +5,12 @@ const quint8 NetworkMagic::MagicExpected[MAGIC_BYTE_SIZE] =  { 'F', 'U', 'C', 'K
 //just wikipedia'd that shit. MD5 _IS_ 128-bit... WHAT THE FUCK? guh 32 hexadecimal characters * 4 = 128. idiot. i guess i see where i got confused: 32 hex digits vs. 32 bits. lmfao. guess my cookie/clientId needs to be bigger too, fml. also, is magic big enough at 32-bits? 4 ascii characters? what are the chances that ciphertext will spit out MAGIC on accident (we'd also have to be 'out-of-sync' with messages... which should NEVER happen anyways (but robust coding means we should allow for it and recover from it))
 //tl;dr: you are a noob, noob
 
-NetworkMagic::NetworkMagic()
-    : m_CurrentMagicByteIndex(0), m_MagicGot(false)
-{ }
-bool NetworkMagic::consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic(QIODevice *deviceToLookForMagicOn)
+NetworkMagic::NetworkMagic(QIODevice *ioDeviceToLookForMagicOn)
+    : m_DataStreamToLookForMagicOn(ioDeviceToLookForMagicOn)
+{
+    messageHasBeenConsumedSoPlzResetMagic();
+}
+bool NetworkMagic::consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic()
 {
     if(m_MagicGot)
     {
@@ -19,17 +21,15 @@ bool NetworkMagic::consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf
 
 
     quint8 potentialMagicPiece;
-    m_MagicReadingNetworkStream.setDevice(deviceToLookForMagicOn); //not sure how slow this function is, but a TODOoptimization would be to put all of this shit in a macro within the same 'business' or something or other idfk my brain hurts but it is probably possible to not make it have to be set every time. we might need MORE datastreams, but eh fuck it
 
-    while(deviceToLookForMagicOn->bytesAvailable() > 0)
+    while(m_IoDeviceToLookForMagicOn->bytesAvailable() > 0)
     {
-        m_MagicReadingNetworkStream >> potentialMagicPiece;
+        m_DataStreamToLookForMagicOn >> potentialMagicPiece;
 
         if(NetworkMagic::MagicExpected[m_CurrentMagicByteIndex] == potentialMagicPiece)
         {
             ++m_CurrentMagicByteIndex;
 
-            //possible off by one error (solution is probably to move that ++ to below this if statement), but i thought pretty hard on it and think it's ok...
             if(m_CurrentMagicByteIndex == MAGIC_BYTE_SIZE)
             {
                 //done with magic
