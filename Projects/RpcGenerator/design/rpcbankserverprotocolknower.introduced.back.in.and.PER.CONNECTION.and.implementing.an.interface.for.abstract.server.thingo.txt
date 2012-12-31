@@ -1,0 +1,5 @@
+an rpcbankserverprotocolknower per connection
+same with action dispenser (connections point back to related rpcbankserverprotocolknower)
+special single broadcast dispensper, child of MultiServerAbstraction
+
+signals/slots resolves the proper object :-), all that's difficult is connection magic :-P.. but that's a one-time thing...

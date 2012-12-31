@@ -1,0 +1,188 @@
+Fuck the LGPL and MPL. RMS's strategy for creating a libre ecosystem is to cancerously force works using to also be libre. His mission is understandable and I agree with it to an extent. However, as I've previously written, it is not viable in the current ecoysystem/free-market/reality-2012 because it is useless to businessmen/proprietors (and of course, I/we hate proprietors :-P). Still, the double penetration method is the best recipe for gaining users, and gaining users is the number one key to world domination.
+
+To the point: I need a new license, that basically equates to "weak strong copyleft" :-). The copyleft should be weak in that WORKS USING can be proprietary or _ANY_ license... but it should be strong copyleft in that the original work itself must "be licensed under the same licensing" (just like GPL).
+
+
+There is a... tendancy... to allow LGPL/MPL code to be transformed into GPL code. A GPL community can take it and transform it and not give anything back (EXCEPT EVERYTHING!!) to the LGPL project. This has the same problem as proprietary software (sort of... not really though): your work gets raped and you can no longer use it.
+
+
+RMS's _METHODS_ can/should be used, but we disagree on the "sweet spot". I understand where he's coming from, definitely. GPL/etc is meant to create an open and free society that is wholly free.
+
+
+
+AS I HAVE FIGURED OUT PREVIOUSLY: the only way for such a society to exist is for copyright law to be rewritten/abolished to begin with (thus making the GPL moot... and also LGPL/whatever-i-come-up-with (still calling it DPL as per previous document :-P))
+
+
+
+LGPL is the sweetspot
+bug fixes (from proprietors) are worth letting them use your stuff and even making money off of it
+And of course libre/free software can still use the works
+just not GPL anymore lmfao.
+Fuck em.
+
+
+I might reverse this altogether: GPL community/etc might be too valuable to ditch altogether.
+
+
+I just want the following: original works retains libre licensing
+libre = work itself is "free" / open source, AND can be "used" by proprietary AND/OR "libre" (woot infinite loop detected (just like GPL)) works (not derivatives)
+
+
+
+
+Jack GPL's "viral licence propagation" technique... add in LGPL's "proprietary can USE me, so long as modifications TO me are published"... and damn motherfucker that sounds like a badass license :-).
+
+
+I'd also want it to be worded so that it accounts for both software and content, but the software licenses do supposedly also work with content anyways :-P.
+
+
+Should seem obvious: proprietary "using" me needs attribution and distribution (of libre work) in source form, ofc.
+
+
+TIME TO LAWYER MODE XD as if I don't already have enough shit going through this singular brain. I need multithreading/mult-core/supercomputer(aka outsourcing smartly).
+
+
+
+
+
+
+I'm trying to think how this would even work. Would I be able to use LGPL shit? Use, yes. Derive from? Nope. So does this mean I'd need to START WITH a bsd-esq stack and "dpl"-ify it (virally consume it's soul). Can I still code in Qt, my favorite framework? Would I have to recreate Qt from scratch/BSD?
+
+I could steal it's design etc and maybe make it more security oriented? Cross platform security is a mild contradiction, however. Not entirely... just mostly :-P. Your framework is only as secure as the underlying OS. So the Windows "QPA plugin" might give the user a false sense of security..... but if they're using Windows then they have no chance of being secure anyways: nothing of value was lost.
+
+
+I can LINK-TO LGPL code (just like proprietary can LINK-TO LGPL), but I'm trying to... visualize... conceptualize... the LIBRE-NET as a whole. Can I host LGPL then? Do I allow it on the network? _CAN_ I allow it on the network (obviously I _CAN_, but does it... contradict/conflict with what I'm trying to accomplish (viral LGPL community/network/codebase/etc)?)
+
+
+RMS created LGPL, so it's very easy to see why he'd allow GPL code to consume it. "Lesser", "necessary evil", etc. Now there's just like this de-facto standard that free/open-source software has to be GPL-Compliant. I don't really see the reason for it. I see why it's attractive: Metric fuck tons of code is GPL... but I don't see why it's necessary. It isn't. Just like GPL was a game changer back in the day, so too will/should my license be?
+
+
+TECHNICALLY, according to "my" license... I don't give a shit what license your (non derivative) work is licensed under... so GPL is a-OK. But the GPL _ITSELF_ does not allow it's own work to link against or even use anything that isn't also GPL. Rubbish. RESTRICTIVE "free" software. Isn't that a logical contradiction ;-)?
+
+Oh wait mine too falls under that same logical contradiction: fuck it.
+
+
+The work itself needs maximum exposure. Proprietary works USING do not harm the libre work itself (in fact they help it: free bug fixes).
+
+
+
+Libre and Free are now ambiguious. I have so many ambiguities in my brain it fucking hurts. "Node", [to be continued]...
+
+
+
+GPL works do not get the same kind of exposure. I mean they DO, but they don't get nearly as much as they could get if they allowed proprietary "using" of themselves (for obvious reasons: proprietors are a much larger portion of society).
+
+
+
+The libre, open'ness, permission to modify, do what you want with it, yada yada "5 freedoms" (or however many)... are all in tact! GPL is too restrictive, that's all there is to it. I don't know of a single license that is what I want. I even emailed the CC guys a while ago asking them for what I am just now realizing is the same thing I am describing now. I compared it to the GPL... but I didn't know at the time that I really only meant the viral nature of it.
+
+
+LGPL is perfect.... only if it forces itself to stay LGPL. That it can "become" GPL is bullshit. I have no problem with GPL/proprietary USING my work (would-be-LGPL), but the GPL itself is incompatible with me.
+
+
+I am not incompatible with GPL.
+The GPL is incompatible with me.
+(this has the same effect, despite being the direct opposite)
+
+
+
+Soo.... fuck you, RMS (;-P <3). I have done more drugs than you. GPL is great because it mimics what society SHOULD be like (and once it is, GPL becomes moot). Ignoring outright reality in 2012, however, is foolish. LEVERAGE/boostrap from this free market / proprietary bullshit.
+
+
+
+His... justification... for LGPL is different. He does mention the "gets more users" pro of LGPL... but the main reason it exists... FOR HIM (TO HIM (in his mind)), is as a way for libraries THAT ALREADY HAVE PROPRIETARY COUNTERPARTS to still be able to compete with them. So basically... we're just coming at it from different angles. I think he underestimates the value of the "getting more users". I think that's the most important part. You can't change society unless you ARE society. His GPL strategy is too bold and doesn't play well with capitalism. It goes against it (and rightly so!!!). It is similar to "refusing to mention" that I like (not related to any of this), but instead is just "refusing to operate with".
+
+
+
+FORCED MAXIMUM INTEROPERABILITY = "DPL"
+vs.
+FORCED [tempted to write "LIBRE" here.. but... ambiguious gah] something = GPL
+
+something = ????
+
+something = forced non-interoperability with proprietary works
+
+I like mine though. Forced maximum interoperability.
+LGPL/MPL do technically have the most interoperability...
+...but they're VULNERABLE in that GPL code can consume them.
+I hope to fix that vulnerability with my new license. Basically just need to read/understand/combine/hack the MPL/LGPL/GPL to pieces/together until I have something I like :). Fucking sue me RMS (who doesn't explicitly give permission to modify LGPL/GPL like MPL does :-P). Go ahead, contradict yourself :).
+
+
+
+I think I need a list of "DPL-Compatible" licenses in the same sense that there exists a list of GPL-Compatible licenses. Here's to hoping I don't stop coding and become a Free Software advocate for the rest of my days. A noble cause, sure... but I enjoy coding way the fuck too much :-P.
+
+
+
+
+Man this changes tons of shit in my brain. I have no idea what the LIBRE-NET will consist of.
+Are my only two DPL-Compatible licenses the LGPL/MPL for now??? I mean yea BSD/public-domain is of course implied.. that goes without mentioning.
+BUT WHAT DOES IT MEAN?????
+
+The Network: Hi, I'm a website and I only accept DPL-Compatible licensing.
+
+Does that mean they can upload LGPL/MPL???
+
+YES
+woot figured it out
+man had a moment of downs there :-P
+Just like I'm going to accept Public Domain/BSD
+I will accept LGPL/MPL
+PD/BSD/LGPL can all _BECOME_ GPL...
+...but I will _NOT_ allow deriving into GPL _ON THE NETWORK_. You can take it offline (or start your own using the same source even!) and derive into whatever you want.
+
+
+Meh, I'm not sure this is A-OK. Why wouldn't everyone just choose LGPL then? Why would they choose DPL?
+
+
+Ahah, I've stumbled upon a tiny bit of confusing logic. Whether or not to allow works to be submitted/uploaded/worked-upon on the site/network when they are licensed under LGPL/MPL. I was inclined initially to say "no, because they are more restrictive". They are NOT more restrictive... they are just vulnerable to the cancer that is GPL. VULNERABLE != restrictive. So long as I tell would-be GPL-derivers to fuck off and die, I _THINK_ it should be alright to allow LGPL on the network? Since the LGPL licensing cannot be revoked, we'll always have our "latest LGPL release" and just use that. Any GPL-consumed derivatives would simply never be mentioned (and of course, not allowed on the network).
+
+^^^Still, I think there is a... problem.... of sorts.... to ALLOWING the users of the network... to select LGPL. Perhaps we simply warn and recommend against it? Of course RMS would campaign and tell errbody to select LGPL... but whatever (this assuming the network gains popularity (this assuming I don't shoot myself in the face before such a time)). Let him cry.
+
+
+On one hand: I'll be handicapping myself by not being GPL-Compatible
+On the other: This is no different from when RMS invented the GPL way back when. Everything was proprietary etc :-P
+
+
+
+"Rigid Copyleft" (as opposed to Strong vs. Weak)
+The double penetration factor is lessened by the lack of GPL-Compatibility (though it still exists.. but only with itself (and maybe LGPL/MPL? I haven't figured that out entirely yet))
+
+
+Ok, so I've concluded: DPL can use LGPL/MPL (could be wrong but pretty damn sure (they allow proprietary... so...))
+BUT, can LGPL/MPL use DPL? mind = exploding
+
+It's hard to consider such a scenario since the license and any software under it do not yet exist!
+
+
+
+I think... NO.... and here's the kicker
+Brace for lulz.
+The reason LGPL/MPL can't use DPL is because the DPL is too restrictive!!! It places a restriction on itself (JUST LIKE HOW THE GPL DOES), but that restriction makes it incompatible with LGPL/MPL. Similarly, an LGPL/MPL project cannot "include" (or even use/link-to) a GPL software and still be LGPL. It would become GPL.
+
+LGPL/MPL have a certain amount of "license retaining" that make it incompatible with DPL. DPL obviously does too. One of them would have to change licenses, and neither one can (well, LGPL/MPL can become GPL... but not DPL as required).
+
+DPL can "use" LGPL/MPL because that is exactly what LGPL was originally created for: to be used as a library. It's only that the opposite doesn't hold true: an LGPL work cannot include DPL because then some of the work is LGPL and some is DPL.
+
+So I think it will come to the point where a lot of code and edits are done to LGPL software on the network... and that might even extend so far that the DPL becomes completely irrelevant and rarely used. Then again, most of the content users (the social networking portion of the... network (should one exist), etc) will be fucking retards and just stick with the D3FAULT (see wut i did thar?).
+
+
+
+LGPL can use more permissive. It can use public domain, bsd, mpl, lpgl...
+...but it cannot use more restrictive. It cannot use GPL (well it can, but it BECOMES GPL in the process), it cannot use DPL, it cannot use proprietary
+
+
+
+LGPL and DPL are equally permissive, but the LGPL is vulnerable to the GPL virus. RMS sees that as a good thing, I disagree.
+
+
+
+It isn't.... _THAT_ bad.... to be vulnerable to the GPL virus. I wasn't planning on allowing GPL->Proprietary on the network anyways... so it doesn't make MUCH of a difference in practice. It is still impossible for the work to become proprietary (GPL is not proprietary by any means!), so it isn't a huuuuuuuuge deal if I end up going with LGPL out of laziness, name brand recognition, gpl-compatibility, or whatever reason I pull out of my ass.
+
+
+
+
+
+
+Am I wrong in my assumption that LGPL/GPL can't "use" proprietary? How the fuck does a GPL interface to a binary blob work (raspberry pi has one!)????? Especially when it's "linked to" it....???
+
+Perhaps LGPL _CAN_ use DPL after all?? just not inclusively? maybe only when linking-to it? just like the required separation between proprietary and lgpl.. maybe the same would/does exist between lgpl and dpl? I have no idea anymore, I need to sleep on this (and of course do research too)

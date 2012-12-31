@@ -1,0 +1,6 @@
+I'm thinking about modifying the Mozilla Public License 2 and calling it the d3fault public license
+
+The main thing I want to change is: removal of the bookkeeping clause (l2 'diff' kthxbai)
+
+
+but yea I thought of something funny/cool to go with it: "DPL" (formally: d3fault public license)... AKA `double penetration license`. Free Software advocates fuck you in the vagina while Proprietary bloodsuckers fuck you in the butt. For maximum exposure of software/information/etc.

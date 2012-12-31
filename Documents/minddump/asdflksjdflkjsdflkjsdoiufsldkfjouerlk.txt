@@ -1,0 +1,3 @@
+The statement, which I believe was made by RMS, that "you should license your contributions under the terms of the original project's" is bullshit. It assumes that the creator made the right choice in the first place. Obviously, it lessens license merging complications... but I mean it from a different angle: a FUCK TON of thought goes into choosing the proper license... and just because "they did it first" doesn't mean their license choosing was perfect.
+
+Similarly, RMS created "free" to mean viral... and for some fucking reason, since he did it first, everybody tries so fucking hard to be "GPL-Compatible". I think "free" should mean viral... but the "end-point" should not be gpl-only (not usable by proprietors). Bleh~

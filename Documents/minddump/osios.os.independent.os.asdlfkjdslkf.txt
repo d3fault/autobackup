@@ -1,0 +1,16 @@
+osios (.com?)
+OS independent OS
+basically the d3fault "environment"
+Windows, Mac, Linux, BSD, etc... (Qt)...
+Reinvent windowing system (fuck it)
+EGLFS (no-x) works seemlessly as OS, which is ADDITIONALLY standalone distribution (bsd because of DPL compatibility?)
+All the others just have it as an app that has a "workspace" of windows, which are the apps (aka plugins (there is no difference, fuck the police))
+
+
+basically i just like the acronym "OSIOS", it might even be better than "d3fault" (which of course will remain my name no matter what)
+
+
+OSIOS (os/env) vs. d3fault (dht/etc) ??
+aren't they one in the same??
+
+so confus, especially when factoring in the non-dht earlier edition (ABC? wtf?)
