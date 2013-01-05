@@ -1,0 +1,33 @@
+I'm in a really weird state right now. Ever since writing those docs in burst a few days ago (6'ish?) I've just been sitting around thinking a bunch. I feel like I'm re-evaluating EVERYTHING. I feel as though I have solved a bunch of local-problems and am now back on the scale of "infinity" in terms of problem solving. On December 31st, I sat outside in a chair and puffed on a cuban cigar for like 2 hours doing nothing but thinking and soaking in the sun rays. I don't go outside much so going out and sitting in the sun is "variety" for me. I felt..... so incredibly bored. I felt bored by everything, good or bad. I thought about EVERYTHING I ever thought about doing, and it all sounded boring. I tried to think of something interesting, but simply couldn't. EVENTUALLY I thought "heroin" and "dmt" sounded fun, but only on the short-term... AND mostly because I haven't tried either of them [yet]. Sky diving and flying a fighter jet also sounded boring, despite me not doing those either. I can imagine what both are like, unlike the heroin/dmt (the question mark is intriguing). Still, I knew heroin/dmt wouldn't bring me lifelong fulfillment... only short term bliss.
+
+I thought about EXTREME EVIL and tortue and rape and killing (all for fun), and it sounded boring.
+I thought about EXTREME GOOD and solving world hunger (etc) and tripping balls day in and day out and writing software(*****) and bliss, and it sounded boring.
+
+
+***** = I think this was the first time ever that writing software has sounded boring to me
+
+
+
+
+
+
+
+I *think* it was the discovery of "unrestrained is relative to your goal" that has given me this huge change of.... mental status? I feel like.... I don't know how to explain it. Lazy? Bleh? I am unable to write software, but I think/hope that's just because my parents are home for Christmas break.
+
+
+I have mainly just been sitting around doing nothing but thinking. Having cool thoughts (that dream I just wrote about/had was a result! (I wouldn't be writing this if I hadn't turned on my comp to write that dream)).
+
+
+I've also been processing legal text, since that's easy and mindless. I'm trying to merge GPL v3 with LGPL v3. Damn you RMS for not unifying them!! I know it can be done, but it's not going to be as easy as modifying the MPL 2.0 would be (I want the Tiviozation/patent/dmca stuff in v3 kthxbai). I'm considering doing a draft and trying to combine them into DPL v1 :-D. Basically just LGPL but doesn't "fallback" to GPL.
+
+
+
+RMS and I have the same ideas for software freedom, we just disagree and where the proprietary/free divide should be. He says "at the process level", I say "at the linking to library" level.
+
+In the end it's really all the same. You can write a library to call the process and it has the same effect. GPL really only accomplishes "slowdown" in performance by making you use cross-process calls instead of just library calls. This performance loss might not even be noticeable... but it certainly affects PROGRAMMING STYLES. It is much hackier to marshal your arguments through a program's command line arguments than it is to formally call the exposed API from a library.
+
+
+I'm digressing.
+
+
+The point of this doc is just to attempt to explain this weird state I'm in. It's like a daze. I feel indefinite already. TIME IS RELATIVE AFTER ALL ;-)
