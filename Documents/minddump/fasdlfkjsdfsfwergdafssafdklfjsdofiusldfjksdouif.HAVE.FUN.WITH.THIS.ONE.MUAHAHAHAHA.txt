@@ -1,0 +1,10 @@
+Here's an idea that up until just recently (my recent comitting to launch wooooot), I was considering doing [and never mentioning even in these texts]: two "independent" businesses (controlled by one person via tor pseudonyms)
+a) company 1 releases parodies of every episode of TV Show X, substituting the audio with FUNNY DIALOG. It should strive to be high quality so as to appear legitimate. The parody work, writing, voice acting, etc, can all be outsourced
+b) copmany 2 releases parodies of every episode of TV Show X, substituding the video with FUNNY SKITS/etc. Sameshit but video.
+
+And last but not least, you release (as a company or just however really, it doesn't matter) an application that pulls RSS feeds from both companies, ANDS them together, and notifies the user when both feeds show Episode Y. It synchronizes the video from company 1 with the audio from video 2. They both have the exact same length, which is based on the length of the original episode.
+
+
+Parody law says this is covered and legal and legitimate. Certainly they would shut down any "single person" doing it... hence the need for tor/pseudonyms.
+
+In reality, I doubt it would even last. The warez'd copies of the TV Show would be somehow targetted and a judge would be bought off (they are cheap) and one or both of the companies would be raided. Maybe after a long trial it would be "legalized"... but maybe they'd rewrite copyright law?? Weird because parody law is vital to free speech IMO. I have no idea what the solution to this is: good thing it isn't my problem because I do not support the copyright movement. I abide by it [a la copyleft ;-P] because it is there, but I am still against it.

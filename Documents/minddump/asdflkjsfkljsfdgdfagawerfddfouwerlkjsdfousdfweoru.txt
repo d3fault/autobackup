@@ -1,0 +1,48 @@
+I am tempted to just use LGPL/GPL for my work, out of convenience. I am tempted to just use the MPL 2.0, because it is very easily modified, for my work. Those are two different statements, but can also be combined into one to form a 3rd (remove -> GPL etc is the 2nd statement alone).
+
+Another random idea I just had: add the ability to convert to DPL to the MPL 2.0 secondary licenses list, and release a placeholder DPL that grants no rights (all rights reserved) just until I sort shit out. This way I can convert everything later, so long as I properly use the "DPL or any later version" bullshit (that I myself consider a vulnerability: what if RMS decides BSD-esq is the way to go while on his death bed?).
+
+
+Really though, I think I can hack it. Merging GPLv3 and LGPLv3 doesn't sound TOO hard; in fact it sounds fun. I'm a BIT worried about the legality of it: what the fuck is the copyright on the license itself!?!?!? However I think, and am pretty confident in the fact, that RMS encourages sharing and modifying and copying ;-). He only has the "verbatim copies" clause at the top so that nobody can change the GPL itself! So long as you rename it, I doubt he'd give a shit about mere borrowing of "words" (code). I myself don't plan on adding further restrictions to what others do with my license (though I guess I'll still have the verbatim copies clause: perhaps with additional clarity like MPL does on what you can / cannot do with it), so he *probably* won't give a shit. THEN AGAIN, GPL/LGPL is his baby so he might get emotionally distressed by it. Should I ask permission? Would that "give too much away"? I need to lay low until launch. FML.
+
+
+I think GPL works can use DPL just fine and dandy, but only in the same manner that GPL can use proprietary/etc works: with a link exception. The copyright owner can do whatever he pleases with his project, but without giving a link exception when releasing his work as GPL, nobody else can LEGALLY link against it (because everything, including what is linked to, must be GPL in order to comply with the terms of the GPL). This is the same as what people had to do with MPL 1.1.
+
+gah I keep forgetting to write that I don't know what I was on about with the "bookkeeping clause" being in MPL: I don't see it. Was that apache or some other one???
+
+Free is entirely subjective. Public Domain is most free and can be raped without attribution, BSD is second-most free and can be raped with attribution, DPL/LGPL is pretty free and can be raped with attribution, so long as what is raped remains free. GPL is somewhat free and can NOT be raped; uses of it must be free as well.
+
+Since it cannot be raped, it is of no use to businesses. This is not ENTIRELY true, but is true for programming businesses who wish to "link against" some library directly. The alternative being writing a wrapper to call an executable: A MERE SLOW DOWN AND FORCED ADDITIONAL MARSHALLING --- BUT NOTHING MORE.
+
+GPL:
+args -> stringify -> parse(stringArgs) -> args
+DPL/LGPL:
+args -> args
+
+
+
+I wish I could convince RMS to convert all GPL to LGPL equivalent: then it'd be peachy. He could do this because of the "or later versions" clause.
+
+On one hand, they are similar if not the same. On the other, this completely DESTROYS the "open source business model": Release GPL for community and sell licenses for software companies. HOWEVER, I'd also argue that such setups are downright retarded because they require copyright assignment and/or CLA signing for the community to contribute to the project [and the company to continue sublicensing/selling it].
+
+
+...continuing what I was attempting to say a while ago about exponents...
+
+The exponential increase in end users when using DPL/LGPL model more than makes up for the short term gains of the open source business model.
+^^^This is especially (ONLY!?!?!?!?!?!?!?!?) true when you're in the advertising business <3 ;-).
+At the very least, it is DEFINITELY true that the product will be superior in the long run. Short term, the company has more money to pour into the product to build it up. Long term, the community (including tons of software companies) care for it and add to it and maintain it. This is definitely an interesting area of research and... and.... and.... I guess I'm not even 100% sure of it.
+
+
+Speaking of being 100% sure, here's one I thought up (unrelated to above):
+Some might say I lack confidence; to them I say I will be confident once I have solved perfection (I will never be confident).
+
+
+
+
+
+I am a bit sad that I won't be able to use BY-SA content. There is so much of it and it is of excellent quality, that I feel as though I am missing out. However it is also a clean slate for me to start from scratch without distraction from.
+
+I *think* I have the "heart of the works" problem solved and figured out: the heart of the works included is a derivative according to law, so if it were GPL/BY-SA, then the surrounding/embodying/LINKING-TO text/works itself virally becomes GPL/BY-SA. This restriction is lifted ever so gently with LGPL so that a work linking to another, even though it typically/generally is considered a derivative by law, is allowed and considered a separate work. How the LGPL can retain enforcement on the original work to keep it's libre status is beyond me. That "lifting ever so gently" must be it. It delicately severs the "original work" with "a work that combines the work" (or something). It's like open heart surgery on copyright law: crazy shit.
+
+
+It's hard to consider how DPL/LGPL factors into music remixing. I genuinely have no fucking clue. Say I sample and modify 5 seconds of a DPL'd song and use it a few times in another original work. There is tons of other music occuring SIMULTANEOUSLY during the time that the 5 seconds sampled is played (so it is not easily 'removed' aka 'distributed in source form'(?????????????)). I have no idea what it would equate to, but PERHAPS it would "become" typical GPL/BY-SA again, since the link-to stuff is software-specific? I haven't a clue and it would be up to a judge and lawyers to argue and hash it out. Fair Use also factors in, but is a different matter entirely (sampling is not covered under Fair Use afaik).
