@@ -1,0 +1,18 @@
+a 3d sha1-random "pre-planned" (calculatable) required "document transmission" (doc is fixed size or "max", but this is irrelevant/arbitrary) "dht cluster". joining the network takes a paxos agree and atomic switch to all knowing that the new node(s) have joined, since more than one can join per atomic switch/paxos agree.
+
+ALL CONNECTION DROPS ARE REPORTED
+
+it is hard to "fake nodes" because there is a bandwidth requirement (say.. x copies of ("docSizeMax" or less))!
+
+the bandwidth is evenly and randomly distributed across the network
+
+
+adding a node (in attempt to game the system) is expensive because it requires that you donate a set amount of bandwidth per fake client
+
+
+
+meh this in theory shouldn't be gamed but in practice would be gamed to uselessness
+
+
+
+i'm not sure if it's required/related/relevant, but every connection should be a tor link?
