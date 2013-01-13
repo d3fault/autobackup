@@ -1,0 +1,22 @@
+BY-SA / LGPL In/Compatibilities
+
+Even though I'm pretty sure that the LGPL is essentially BY-SA when applied to content (double checking this as we speak), there is an incompatibility between the two because allowing BY-SA content to be *submitted* allows GPL users such as RMS to submit code in a book/novel format and have it licensed under GPL. For that reason ALONE, we cannot allow BY-SA'd content on the network. Everything must be DPL or more permissive.
+
+BY-SA is GPL compatible through the "mirroring" property. It does not provide direct compatibility, it is just essentially "the same". I would argue that even my DPL license provides mirroring compatibility with GPL. RMS and I merely disagree on where the proprietary/free divide should be. He will probably never change his mind on the subject and I understand his argument entirely: it's very easy to wrap a LGPL/DPL lib and to make it, in effect, proprietary. EXCEPT THEY STILL HAVE TO COMPLY WITH LGPL/DPL SO WHO GIVES A FUCK? It is equally easy to wrap a process and to make a proprietary wrapper to it. There is only "system overhead". Wow huge accopmlishment with GPL there RMS.
+
+
+Allowed on "d3fault" or "Abc" (no idea what ima call it):
+Tier 0: Public Domain, CC-0
+Tier 1: CC-BY, BSD, MIT, etc (none with bookkeeping clauses or any other bullshit (not sure about advertising clause. it isn't a huge deal since trademark law covers it anyways))
+***Tier 3: d3fault public license*** <-- recommended, bolded, PERHAPS even displayed first instead of last?
+
+None of the licenses are selected initially. The user must opt into one and also perform a captcha on the same page. Uploading in bulk is possible, with only one captcha per bulk upload? It would otherwise be negated by the ability to compress/bundle files together into one anyways.
+
+
+
+
+
+To elaborate on a different problem, I don't see how/where (in my head/designs) the "import read-only LGPL library" comes into play. It is perhaps integrated with the..................... IDE(????)..... that is provided? Am I going to attempt to provide a web-IDE in addition to a client-side-binary IDE? I know it is possible, but can it be done? Of course it can be done. It is simply a matter of doing. There will be significantly less rush when I am doing it because it will be post-launch. I have enough lingering thoughts about simultaneous web/local applications (same code base ;-P), so I doubt I'll forget it. However, I am probably entirely right. The importing of LGPL-read-only "backing libs" is without a doubt an IDE feature. The only mindfuck that I just now noticed was that the entire system itself needs to be "Inline Editable" through itself, and importing LGPL-Read-Only backing libs for.... myself.... sounds complicated. Complicated, but not impossible.
+
+
+Because we should own our computing (I agree very much with RMS on this), a local binary of the application (no network dependence... ever... (except obvious functionality)) is provided. To please lazy, stupid, or otherwise "impressed with HTML5" and "all in the browser" individuals (and to collect advertising revenue in the meantime!!! woooot bootstrapping by raping Google's business model (except being entirely less proprietary/bullshit about it (go kill yourselves))), a web front end should be provided. "Compiling" in the in-web IDE will probably mean sending code to the server, which means we need safe sandboxing implemented. We could ADDTITIONALLY (I am not going to code it, but I will welcome it) provide browser plugins that call local binaries (compiler in this case). There are already projects existing on the internet that do exactly that. I lol at their stupidity and pointlessness. If you have to install a plugin, you might as well install an app. My web front end will require no plugins whatsoever. It is up for debate whether or not JavaScript will be a *requirement*. Surely I can provide a lot of the functionality with Witty, which functions both with/without JavaScript. However there is certain "interactive" functionality that cannot be performed without JavaScript. Consider DesignEquals and clicking and dragging a "UML Class" thing, for example.

@@ -1,0 +1,9 @@
+To take advantage of people's general stupidity, I will call DPL "rigid copyleft". Even though it's taking advantage of (incorrectly on purpose) the way RMS refers to "weak copyleft", I am indeed AGREEING with him that LGPL/MPL is weak copyleft... except that it is weak only because it provides GPL compatibility (not because it allows proprietary use -- the reason RMS calls it weak).
+
+
+Oh and it's also good to use a new buzz word to help differentiate myself from the pack.
+
+
+
+
+IN THE SPIRIT OF 'copyleft', I am taking existing structures and turning them on their head. Just like RMS did with copyright law in general (he's a fucking saint).

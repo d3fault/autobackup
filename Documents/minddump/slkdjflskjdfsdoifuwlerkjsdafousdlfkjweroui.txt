@@ -1,0 +1,1 @@
+To smother my candle of doubt, the fact that there are individuals that release under BSD-style licenses AND GPL-style licenses gives me confidence that my choice isn't just downright stupid. It is somewhat faulty reasoning to arrive there, but it still gives me comfort. Further, there are also LGPL releasers, and that is the license I intend to mimic!

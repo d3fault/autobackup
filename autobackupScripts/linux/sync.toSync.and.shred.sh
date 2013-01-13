@@ -13,7 +13,10 @@ mkdir `echo $new750x2`
 cp -avi ./ "$new750x1"
 cp -avi ./ "$new750x2"
 
-read -n1 -r -p "done copying, press any key to begin shredding" key
+read -n1 -r -p "done copying, press any key to begin deleting" key
 
-find -type f -execdir shred -fuv --iterations=1 '{}' \;
-rm -rfv ./*
+#find -type f -execdir shred -fuv --iterations=1 '{}' \;
+
+cd ..
+rm -rfv ./toSync/
+mkdir ./toSync/
