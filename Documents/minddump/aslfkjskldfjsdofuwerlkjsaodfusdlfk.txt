@@ -1,0 +1,1 @@
+"Aggregate" (GPL) vs. "Combined Works" (LGPL). I argue that Combined Works are identical, because the terms of the forced sharing are still adhered to, despite the "linkage" gaining significant speedups (the only real difference).

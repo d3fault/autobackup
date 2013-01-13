@@ -1,0 +1,30 @@
+string1 = <html><head><body>%_TEMPLATE_STRING_%</body></head></html>
+out(string1.replace(templateString, actualText));
+
+vs.
+
+out(string1_part1);
+out(actualText);
+out(string1_part2);
+
+
+
+I am wondering if the latter faster, because it doesn't require a string replace, just writes to a buffer (more of them though).
+
+
+
+I am wondering if I won't be able to use Witty after all :(. It's ok though, I can hackily create something equivalent that at least works (grid, buttons, text, layout, shit interactions, etc) in a relatively small amount of time, and I could probably also coordinate it with the "local binary GUI" design, though I'm not sure that tangent is worth following [yet???].
+
+
+
+ABC will need to be completed by launch.
+ABC depends on things I want to code during launch :(.
+Do them minimally (this is also good security practice, who knows how secure Witty really is (but I know Witty provides security functionality, something I'd have to reinvent :-/))
+
+
+
+
+
+
+
+re: above. When the actualText is say a username, then we end up having lots of copies of string1 (after it has been replaced), whereas in the second scenario we at the very least save on memory by not having a bunch of slightly modified string1's. Is it worth it though? Probably depends entirely on how cheap/expensive the out() call is -_-...
