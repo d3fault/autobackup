@@ -1,0 +1,23 @@
+Fuck. In gaining confidence of infinite time and infinite re-emergences of the same conscience (different bang instances), I run into again the same old problem of the 6 bullets in the revolver. I can pull the trigger 6 times and live. I _KNOW_ that to be true because "can" is a very weak word. It means that 1 out of 9999999999999999999999999999999999999999999999999999999999999999(infinity really) times, all 6 will be duds and I will live. Since it emerges once, it emerges every time!
+
+
+There will be infinite universes where my family members and the world around me view it as a suicide, but there will also be infinite universes (I should call them "bang instances" from now on) where all 6 were duds! That is how infinity works. It is a mindfuck, but it is true.
+
+
+
+So the question remains unanswerable and plaguing my mind: How Secure Should I Be? This is a boring question when relating to computer software: be as secure as you can etc because as long as you have backups, a hack is not a big deal. When factoring in MY LIFE, however, it is a much more difficult and important question. Do I bury myself in a bunker? I fear of flooding in that instance. I fear of poison food in all instances (cyanide roulette is a bleh solution to it).
+
+
+I need to both care and not care simultaneously. It is impossible. It isn't about living an "optimal" life, as I know that such a thing does not exist. It is about choosing which side to lean more towards! Err on the side of.... caring too much? By default, it appears to make sense.
+
+
+
+OK PERFECT
+FUCKING SOLVED JACKPOT
+Err on the side of caring too much, while attempting to care as little as possible.
+
+
+Oh my god that is fucking such a beautiful structure of logic. I just orgasmed in my brain as I thought of it. It is a FUNCTION that accepts input (the worldly events) and is portable and flexible to every scenario.
+
+
+It is not foolproof (can still die and/or be defeated (this is true under every scenario)), but it still gives you freedom to live. It is not "staying inside forever because going outside is dangerous" (waste of life / too fucking secure). It is a rule of thumb that should be called upon when designing security infrastructure. Live by that and you are MOST LIKELY (only hopefully really, there is no way to calculate such a thing) to live both securely and functionally (inb4 OpenBSD motto: Free. Functional. Secure.). I use functional as a "worth it" kind of life.
