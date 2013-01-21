@@ -1,0 +1,12 @@
+I am hiding behind a myriad of meme-referencing identities. I troll the Qt mailing list because I am bored. I try to simultaneously contribute, but code would be more welcomed than words. I have nowhere to output. I need to acknowledge and accept that. Sever the leakage, because all it is is my pressure valve not fully closed. I _WANT_ to output, but I know I shouldn't [yet]. Seal it tight and shut yourself off for just a bit longer. It's a depressing thought to think of living in that mode for the remainder of my life -- so I'll set timeout()s in my brain in case I'm still stuck here in a few years (an hero or try something else?).
+
+
+
+Not sure if related:
+Output clashing should not stop output. You are bound to clash. That is expected. Just because someone disagrees, doesn't mean your output (which is influence) doesn't affect other [silent?] people. In fact, that you feel the need to influence essentially guarantees that you'll clash! If there was nobody to clash with, there would be no reason to influence. I'm writing this thinking about my clashing on Qt mailing lists, but it really applies to any situation. Fuck the haters. "Haters gonna hate".
+
+(Still I should STFU [for other reasons])
+
+
+
+My influence should be targetted and trimmed down. I don't mean to be more silent and careful with my wording like a politician [or anyone employed and/or dependent on another], I just mean to launch and have a goal for your influence and to work towards it. This myriad of faces on Qt mailing lists randomly dropping advice is stupid. It only provides me with 'something to do' and possibly a 'feelsgoodman.jpg' for my 'contributions'. Being silent sucks, I should stop using Qt mailing lists for my venting (not that I'm angry).

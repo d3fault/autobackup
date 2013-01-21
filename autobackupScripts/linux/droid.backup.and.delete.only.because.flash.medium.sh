@@ -7,6 +7,7 @@ cd ..
 cd ..
 cp -avi ./recording*.3gpp /media/truecrypt1/droidSoundRecorder/
 cp -avi ./recording*.3gpp /media/truecrypt2/droidSoundRecorder/
+sync
 read -n1 -r -p "done copying, press a key to start deleting" key
 #shred -fuv --iterations=1 ./*
 cd ./DCIM/
