@@ -10,7 +10,7 @@ class IRecycleableDispenser : public QObject
 {
     Q_OBJECT
 public:
-    explicit IRecycleableDispenser(QObject *destination, QObject *owner);
+    explicit IRecycleableDispenser(QObject *destination, QObject *parent);
 private:
     QList<IRecycleableAndStreamable*> m_RecycleList;
     quint32 m_RecycleableMessagesDispensedCount; //TODOreq: use this when destroying to make sure the right amount have been destroyed or whatever

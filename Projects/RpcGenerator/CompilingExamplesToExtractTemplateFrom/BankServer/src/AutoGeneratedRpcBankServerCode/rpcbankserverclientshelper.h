@@ -4,32 +4,35 @@
 #include <QObject>
 #include <QHash>
 
-#include "iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
-#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
+#include "iacceptrpcbankserverbroadcastdeliveries.h"
+//#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
+//#include "../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
 #include "MessagesAndDispensers/Messages/Broadcasts/serverpendingbalancedetectedmessage.h"
 #include "MessagesAndDispensers/Messages/Broadcasts/serverconfirmedbalancedetectedmessage.h"
-#include "MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
+//#include "MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
 #include "MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
-#include "MessagesAndDispensers/Dispensers/Actions/servercreatebankaccountmessagedispenser.h"
-#include "MessagesAndDispensers/Dispensers/Actions/servergetaddfundskeymessagedispenser.h"
+//#include "MessagesAndDispensers/Dispensers/Actions/servercreatebankaccountmessagedispenser.h"
+//#include "MessagesAndDispensers/Dispensers/Actions/servergetaddfundskeymessagedispenser.h"
+#include "rpcbankserverprotocolknowerfactory.h"
 #include "multiserverabstraction.h"
 
-class RpcBankServerClientsHelper : public IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries, IMultiServerBusiness
+//hack: RpcBankServerClientsHelper (this) is a protocol knower too, but only deals with Broadcasts because they need a single connection-apathetic destination, whereas actions will be connected directly to their protocol knower instantiated for their connection. could make a random BroadcastProtocolKnower and ActionProtocolKnower, but who cares for now
+class RpcBankServerClientsHelper : public IAcceptRpcBankServerBroadcastDeliveries
 {
     Q_OBJECT
 public:
     explicit RpcBankServerClientsHelper(QObject *parent = 0);
     inline RpcBankServerBroadcastDispensers *broadcastDispensers() { return m_BroadcastDispensers; }
 private:
-    void takeOwnershipOfActionsAndSetupDelivery();
+    //void takeOwnershipOfActionsAndSetupDelivery();
     inline void emitInitializedSignalIfReady() { if(checkInitializedAndAllBroadcastDispensersClaimed()) emit initialized(); }
     inline bool checkInitializedAndAllBroadcastDispensersClaimed() { return (m_Initialized && m_BroadcastDispensers->everyDispenserIsCreated()); }
     bool m_Initialized;
 
-    RpcBankServerActionDispensers *m_ActionDispensers;
+    //RpcBankServerActionDispensers *m_ActionDispensers;
     RpcBankServerBroadcastDispensers *m_BroadcastDispensers;
 
+    RpcBankServerProtocolKnowerFactory m_RpcBankServerProtocolKnowerFactory;
     MultiServerAbstraction m_MultiServerAbstraction;
 
 
@@ -61,7 +64,7 @@ protected:
     ServerCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ServerGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 
-    void messageReceived(QByteArray *message, quint32 clientId);
+    //void messageReceived(QByteArray *message, quint32 clientId);
     virtual void myTransmit(IMessage *message, uint uniqueRpcClientId)=0;
     virtual void myBroadcast(IMessage *message)=0;
 
@@ -89,8 +92,8 @@ public slots:
 
 
     //outgoing Action responses
-    void createBankAccountDelivery(); //deliver'd from rpc server impl. our IRpcBankServerClientProtocolKnower on rpc client also inherits IAcceptRpcBankServerActionDeliveries
-    void getAddFundsKeyDelivery();
+    //void createBankAccountDelivery(); //deliver'd from rpc server impl. our IRpcBankServerClientProtocolKnower on rpc client also inherits IAcceptRpcBankServerActionDeliveries
+    //void getAddFundsKeyDelivery();
 
     //outgoing Broadcasts
     void pendingBalanceDetectedDelivery();

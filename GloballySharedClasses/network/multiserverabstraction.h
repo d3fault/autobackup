@@ -30,7 +30,7 @@ class MultiServerAbstraction : public QObject
 {
     Q_OBJECT
 public:
-    explicit MultiServerAbstraction(IMultiServerBusiness *serverBusiness, QObject *parent = 0);
+    explicit MultiServerAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent);
     ~MultiServerAbstraction();
     void sendMessage(QByteArray *message, quint32 clientId);
 private:

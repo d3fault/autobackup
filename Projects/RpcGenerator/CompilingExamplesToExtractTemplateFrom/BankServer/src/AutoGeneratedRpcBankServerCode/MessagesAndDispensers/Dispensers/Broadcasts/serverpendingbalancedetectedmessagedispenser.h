@@ -11,7 +11,7 @@ class ServerPendingBalanceDetectedMessageDispenser : public IRecycleableDispense
 {
     Q_OBJECT
 public:
-    ServerPendingBalanceDetectedMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination, QObject *owner);
+    ServerPendingBalanceDetectedMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination, QObject *owner);
     ServerPendingBalanceDetectedMessage *getNewOrRecycled();
 protected:
     IRecycleableAndStreamable *newOfTypeAndConnectToDestinationObjectIfApplicable();

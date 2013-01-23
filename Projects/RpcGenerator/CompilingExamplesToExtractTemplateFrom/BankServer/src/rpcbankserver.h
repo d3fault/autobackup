@@ -15,7 +15,7 @@ public:
     explicit RpcBankServer(QObject *parent = 0);
     void instructBackendObjectsToClaimRelevantBroadcastDispensers();
     void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
-    void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *actionRequestSignalEmitter);
+    void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *actionRequestSignalEmitter);
 private:
     RpcBankServerClientsHelper *m_RpcBankServerClientsHelper;
 

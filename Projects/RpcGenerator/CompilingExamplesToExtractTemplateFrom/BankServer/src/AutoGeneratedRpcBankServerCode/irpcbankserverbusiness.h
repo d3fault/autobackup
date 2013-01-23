@@ -19,7 +19,7 @@ public:
     //the reason for the two following virtuals is so our rpc generated code will call them (it still assumes (well, not enetirely) they are used correctly) in the correct order. because if we move the backend business objects, they can't "pull" the thread ownership (or something. idfk. taking safest route possible)
     virtual void instructBackendObjectsToClaimRelevantBroadcastDispensers()=0; //broadcasts for rpc server impl
     virtual void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()=0;
-    virtual void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *actionRequestSignalEmitter)=0;
+    virtual void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *actionRequestSignalEmitter)=0;
 
     void setBroadcastDispensers(RpcBankServerBroadcastDispensers *broadcastDispensers);
 protected:

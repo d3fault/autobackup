@@ -1,12 +1,15 @@
 #include "rpcbankserverclientshelper.h"
 
 RpcBankServerClientsHelper::RpcBankServerClientsHelper(QObject *parent)
-    : IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries(parent), m_MultiServerAbstraction(this, this), m_Initialized(false)
+    : IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries(parent), m_RpcBankServerProtocolKnowerFactory(this), m_MultiServerAbstraction(&m_RpcBankServerProtocolKnowerFactory, this), m_Initialized(false)
 {
+#if 0
     m_ActionDispensers = new RpcBankServerActionDispensers(this);
     takeOwnershipOfActionsAndSetupDelivery();
+#endif
     m_BroadcastDispensers = new RpcBankServerBroadcastDispensers(this);
 }
+#if 0
 void RpcBankServerClientsHelper::takeOwnershipOfActionsAndSetupDelivery()
 {
     //This method is actually quite worthless now that ClientsHelper and ProtocolKnower have merged... However I'll keep the functionality there JUST IN CASE the destination isn't hte same as the owner in the future. Right now it is, so there doesn't need to be a distinction between the two (as there is in the underlying code... just like broadcast dispensers (except those actually need it))
@@ -14,10 +17,13 @@ void RpcBankServerClientsHelper::takeOwnershipOfActionsAndSetupDelivery()
     m_CreateBankAccountMessageDispenser = m_ActionDispensers->takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(this);
     m_GetAddFundsKeyMessageDispenser = m_ActionDispensers->takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(this);
 }
+#endif
+#if 0
 void RpcBankServerClientsHelper::messageReceived(QByteArray *message, quint32 clientId)
 {
     //this design sucks. I don't need clientId to be passed around like this, I just need the deliver() signals to be connected to the right "connection objects" depending on which "connection object" read the request. the only exception to that really is broadcasts, which would iterate/round-robin a list typically not used. It saves me a hash lookup for each message because the signals/slot mechanism performs the lookup (that has to be performed anyways) for me. It would take some redesigning to the dispener logic, but is definitely do-able :-/. Man I've got like 20 fucking optimizations/changes in progress right now, my brain's going to explode. And to think, this application worked at one point. There was one commit where it fucking worked! No ack scheme (aside from shitty TCP ack), but it worked! I'm starting to wonder if I'll ever see it in working state ever again. This is a mess. Sorting this mess out SEEMS like a prerequisite to my life. Perhaps it is, but perhaps a complete startover from scratch would save me a lot of sanity? Meh I doubt it, perhaps a design from scratch accomodating all these pending changes? Followed of course by a new implementation of it? Or do I keep hacking/chipping away at this POS? This is a great point to sync/backup/stop/etc for the holidays (going out of town etc). Fuck My Life
 }
+#endif
 void RpcBankServerClientsHelper::processCreateBankAccountMessage(CreateBankAccountMessage *createBankAccountMessage, uint uniqueRpcClientId)
 {
     //our first check is for the lazy ack ack, as it is the most likely. we COULD check that it's in business still (I guess this depends on if the retry bit is set?), but since that's less likely we'll check it next
@@ -107,6 +113,7 @@ void RpcBankServerClientsHelper::processGetAddFundsKeyMessage(GetAddFundsKeyMess
     m_UniqueRpcClientIdsByPendingGetAddFundsKeyMessagePointer.insert(getAddFundsKeyMessage, uniqueRpcClientId);
     emit getAddFundsKey(getAddFundsKeyMessage);
 }
+#if 0
 void RpcBankServerClientsHelper::createBankAccountDelivery()
 {
     //perhaps here is best place to keep track of pendings? because after this spot they have all converged and i'd have to do a switch or something (not necessarily if i increaes the size of each message by keeping a pointer to it's pending list. bad idea. better to do it here)
@@ -136,8 +143,11 @@ void RpcBankServerClientsHelper::getAddFundsKeyDelivery()
     myTransmit(getAddFundsKeyMessage, uniqueRpcClientId);
     getAddFundsKeyMessage->doneWithMessage();
 }
+#endif
 void RpcBankServerClientsHelper::pendingBalanceDetectedDelivery()
 {
+    //TODOreq: package as QByteArray and sned to MultiServerAbstraction. old code below
+
     ServerPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = static_cast<ServerPendingBalanceDetectedMessage*>(sender());
     pendingBalanceDetectedMessage->Header.MessageType = RpcBankServerMessageHeader::PendingBalanceDetectedMessageType; //TODOreq: shouldn't this be set by the dispenser or something? somewhere in the message itself? where the fuck am i setting the MessageType for actions (find MessageType usages = solution). The answer lies somewhere in the client code, as the server never sets a message type (except when reading a message type off the network from the client)
     pendingBalanceDetectedMessage->Header.MessageId = 0; //TODOreq: going to need a messageId scheme for broadcasts after all, since I'm going to be manually ack'ing them (and lazy acking the ack itself). But this is for later on after I get actions working...
@@ -158,6 +168,7 @@ void RpcBankServerClientsHelper::initialize(MultiServerAbstractionArgs multiServ
 {
     emit d("RpcBankServerClientsHelper received init message");
     m_MultiServerAbstraction.initialize(multiServerAbstractionArgs);
+    m_Initialized = true;
     emitInitializedSignalIfReady();
 }
 void RpcBankServerClientsHelper::start()

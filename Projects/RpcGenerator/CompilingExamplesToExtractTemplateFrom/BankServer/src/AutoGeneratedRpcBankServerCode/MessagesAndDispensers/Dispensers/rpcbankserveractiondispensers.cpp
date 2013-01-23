@@ -1,6 +1,6 @@
 #include "rpcbankserveractiondispensers.h"
 
-RpcBankServerActionDispensers::RpcBankServerActionDispensers(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination)
+RpcBankServerActionDispensers::RpcBankServerActionDispensers(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination)
     : m_Destination(destination)
 { }
 ServerCreateBankAccountMessageDispenser *RpcBankServerActionDispensers::takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner)

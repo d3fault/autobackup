@@ -8,8 +8,8 @@
 #include <QDateTime>
 #endif
 
-IRecycleableDispenser::IRecycleableDispenser(QObject *destination, QObject *owner)
-    : QObject(owner), m_Destination(destination), m_RecycleableMessagesDispensedCount(0)
+IRecycleableDispenser::IRecycleableDispenser(QObject *destination, QObject *parent)
+    : QObject(parent), m_Destination(destination), m_RecycleableMessagesDispensedCount(0)
 { }
 IRecycleableAndStreamable *IRecycleableDispenser::privateGetNewOrRecycled()
 {

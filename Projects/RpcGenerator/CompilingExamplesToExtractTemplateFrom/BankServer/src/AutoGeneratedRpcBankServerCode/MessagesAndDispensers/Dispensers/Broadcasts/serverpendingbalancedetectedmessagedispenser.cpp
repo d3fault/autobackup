@@ -1,6 +1,6 @@
 #include "serverpendingbalancedetectedmessagedispenser.h"
 
-ServerPendingBalanceDetectedMessageDispenser::ServerPendingBalanceDetectedMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination, QObject *owner)
+ServerPendingBalanceDetectedMessageDispenser::ServerPendingBalanceDetectedMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination, QObject *owner)
     : IRecycleableDispenser(destination, owner)
 { }
 ServerPendingBalanceDetectedMessage *ServerPendingBalanceDetectedMessageDispenser::getNewOrRecycled()
@@ -10,6 +10,6 @@ ServerPendingBalanceDetectedMessage *ServerPendingBalanceDetectedMessageDispense
 IRecycleableAndStreamable *ServerPendingBalanceDetectedMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {
     ServerPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = new ServerPendingBalanceDetectedMessage(this);
-    connect(pendingBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), SLOT(pendingBalanceDetectedDelivery()));
+    connect(pendingBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries*>(m_Destination), SLOT(pendingBalanceDetectedDelivery()));
     return pendingBalanceDetectedMessage;
 }

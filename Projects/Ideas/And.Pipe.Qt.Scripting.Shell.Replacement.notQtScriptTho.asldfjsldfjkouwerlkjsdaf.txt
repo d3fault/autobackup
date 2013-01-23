@@ -1,0 +1,26 @@
+AndPipe
+I fucking hate shell scripts, but you probably already knew that by now [if you are reading chronologically]. I'm still lightly working on (my mind is mainly focusing on other problems) the Qt Scripting environment (but actually I just had the TODOreq realization that in order for it to be robust, I cannot use system() at all... for the same reason shell scripts suck: different implementations perform and/or behave differently), and I can't figure out a way to and that a process completed successfully as well as pipe it's output into another program's input [in shell scripts (easily done with QProcess (though not as script'ish as I'd like. needz hardc0d3))]. That different implementations perform differently can be combatted by the AND'ing process (so maybe we can use QProcess after all?), which checks that the return value was zero. Anything else, we stop execution and of course do not pipe the output into the next process's input. It would of course be a good idea to output (emit d etc?) that process full stdout and stderr (merged or not) once an error is detected. Until an error is detected perhaps only stderr (which should be silent) should be outputted [for user reading]. There could be two split panes however and the full stdout can be ignored, expanded (assuming collapsed at first), or of course read for certain cases. I am digressing from the main point and starting to design the GUI itself (except it should work in a shell too (but I won't cry if it doesn't? (perhaps a compromise between the two (because scriptability of the scripts is an important aspect)))).
+
+echo 'fuck' | grep uck
+echo 'fuck' && grep ----lolwut----
+^^the second example is slightly retarded because the echo'ing of fuck should always result in true, but it still demonstrates the issue: how do you and a process and pipe it's output!?!?!?!?
+
+
+
+
+even if the entire system is hardcoded (aka C++ scripting) and requires recompilation between each use, it is still a better solution than using shell scripts. they are shit.
+
+
+
+
+
+(mfw i am predicting i am wrong and there is a way to and pipe)
+^^STILL, shell scripting encourages a shitty use. I've never once read that you should chain AND all your calls together to make it so errors stop. I mean it's common sense programming to check for errors, but I guess at the end of the day I just hate shell scripting's syntax! Doesn't the 'test' command have different implementations that may or may not (I have no idea (but that is the point: with Qt/C++ I _KNOW_ how it will behave)) behave differently on different platforms? So even if I do check all my calls for errors, shit could still fuck up.
+
+
+
+
+Shell: Too many implementations of shells and of system binaries (that read key comes to mind) that perform differently
+Perl: Overmodulization (Switch.pm are you fucking kidding me?)
+Python: Tabs and whitespace play important role
+C++: Requires re-compiling and isn't always cross platform (but with Qt it can be! :-D)

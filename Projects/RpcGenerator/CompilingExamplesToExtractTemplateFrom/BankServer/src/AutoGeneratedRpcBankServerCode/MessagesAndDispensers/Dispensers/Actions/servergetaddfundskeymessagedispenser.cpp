@@ -1,6 +1,6 @@
 #include "servergetaddfundskeymessagedispenser.h"
 
-ServerGetAddFundsKeyMessageDispenser::ServerGetAddFundsKeyMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination, QObject *owner)
+ServerGetAddFundsKeyMessageDispenser::ServerGetAddFundsKeyMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination, QObject *owner)
     : IRecycleableDispenser(destination, owner)
 { }
 GetAddFundsKeyMessage *ServerGetAddFundsKeyMessageDispenser::getNewOrRecycled()
@@ -12,7 +12,7 @@ IRecycleableAndStreamable *ServerGetAddFundsKeyMessageDispenser::newOfTypeAndCon
     GetAddFundsKeyMessage *getAddFundsKeyMessage = new GetAddFundsKeyMessage(this);
 
     //delivery
-    connect(getAddFundsKeyMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), SLOT(getAddFundsKeyDelivery()));
+    connect(getAddFundsKeyMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries*>(m_Destination), SLOT(getAddFundsKeyDelivery()));
 
     return getAddFundsKeyMessage;
 }

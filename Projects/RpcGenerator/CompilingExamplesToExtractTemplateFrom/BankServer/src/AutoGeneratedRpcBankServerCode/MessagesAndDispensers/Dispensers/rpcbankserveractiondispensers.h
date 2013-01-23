@@ -9,11 +9,11 @@
 class RpcBankServerActionDispensers
 {
 public:
-    RpcBankServerActionDispensers(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination);
+    RpcBankServerActionDispensers(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination);
     ServerCreateBankAccountMessageDispenser *takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner);
     ServerGetAddFundsKeyMessageDispenser *takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(QObject *owner);
 private:
-    IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *m_Destination;
+    IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *m_Destination;
 
     ServerCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ServerGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;

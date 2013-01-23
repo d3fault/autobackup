@@ -26,7 +26,17 @@ private:
     bool m_RpcBankServerClientsHelperInstantiated;
 
     //Initialize
-    inline void emitInitializedIfBusinessAndClientsHelperAreInitialized() { if(checkBusinessAndClientsHelperAreInitialized()) emit initialized(); }
+    inline void emitInitializedIfBusinessAndClientsHelperAreInitialized()
+    {
+        if(checkBusinessAndClientsHelperAreInitialized())
+        {
+            //should 'test' be in charge of the Action connections (broadcasts come pre-rigged), or should RpcBankServer connect them using the copy of RpcBankServerClientsHelper passed in to it for taking ownership of the broadcasts? I suppose it doesn't really matter, but it makes sense for them to be as ignorant of each other as possible (BUT THEN AGAIN, BankServer _already_ depends on knowing ClientsHelper for broadcast setting up... so he won't have 'learned' anything by doing the connections himself)
+            //aside: this blurb doesn't really belong here, but i'm just noting somewhere that my design is changing drastically because of the protocol-knower-per-connection design change. i think i need to do signal relaying: protocolKnower->clientsHelper->bankServer(business). I don't like that relaying must be used, but I don't see another way without ProtocolKnower seeing BankServer(business) and connecting to it's slots on instantiation (new connection). It should be noted however that the messages don't need/use relaying for coming back! they go straight from the bankServer(business) to the protocolKnower, which is specific to the connection :)
+            //Hmm I just realized that it is an optimization to have BankServer(business) do the connections, because that way he can connect directly to the back-ends! Bitcoin, BankDb, etc. Otherwise we'd need more relaying lmfao
+
+            emit initialized();
+        }
+    }
     inline bool checkBusinessAndClientsHelperAreInitialized() { return (m_RpcBankServerInitialized && m_RpcBankServerClientsHelperInitialized); }
     bool m_RpcBankServerInitialized;
     bool m_RpcBankServerClientsHelperInitialized;

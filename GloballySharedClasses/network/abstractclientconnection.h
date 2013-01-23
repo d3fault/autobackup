@@ -9,18 +9,15 @@
 
 #include "networkmagic.h"
 #include "bytearraymessagesizepeekerforiodevice.h"
+#include "iprotocolknower.h"
+#include "iprotocolknowerfactory.h"
 
-class IMultiServerBusiness
-{
-protected:
-    void messageReceived(QByteArray *message, quint32 clientId)=0;
-};
 class AbstractClientConnection : public QObject
 {
 	Q_OBJECT
 public:
     explicit void AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent = 0);
-    static void setServerBusiness(IMultiServerBusiness *serverBusiness);
+    static void setProtocolKnowerFactory(IProtocolKnowerFactory *protocolKnowerFactory);
 private:
     QByteArray m_TheMessageByteArray;
     QBuffer m_TheMessageBuffer;
@@ -29,7 +26,8 @@ private:
     QIODevice *m_IoDeviceToClient;
     QDataStream m_DataStreamToClient;
 
-    static IMultiServerBusiness *m_ServerBusiness;
+    static IProtocolKnowerFactory *m_ProtocolKnowerFactory;
+    IProtocolKnower *m_ProtocolKnower;
 
     enum ServerHelloState
     {
@@ -53,7 +51,7 @@ private:
     quint32 m_Cookie;
 
     static QList<AbstractClientConnection*> m_ListOfHelloedConnections;
-    static AbstractClientConnection *getAddressOfConnectionUsingCookie__OrZero(quint32 cookie)
+    static AbstractClientConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
     {
         int connectionsCount = m_ListOfHelloedConnections.size();
         AbstractClientConnection *currentClientConnection;
@@ -74,7 +72,7 @@ private:
         {
             cookie = generateCookie();
         }
-        while(getAddressOfConnectionUsingCookie__OrZero(cookie));
+        while(getExistingConnectionUsingCookie__OrZero(cookie));
         return cookie;
     }
     static quint32 generateCookie()

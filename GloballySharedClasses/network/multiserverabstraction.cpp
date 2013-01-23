@@ -2,10 +2,12 @@
 
 quint32 ServerHelloStatus::overflowingClientIdsUsedAsInputForMd5er = 0;
 
-MultiServerAbstraction::MultiServerAbstraction(IMultiServerBusiness *serverBusiness, QObject *parent)
+//TODOreq: no idea where this belongs, but make sure not to delete an IProtocolKnower that still has messages that our rigged for delivery() back to it that are still pending in the business. deleting it with messages still in the business would result in the silent failure of the delivery of the messages to the (new?) IProtocolKnower. Not sure if/how/where this factors in, but it probably has something to do with merging? However I think merging means we keep the protocol knower and swap out the IO device? idfk [yet].
+
+MultiServerAbstraction::MultiServerAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent)
     : QObject(parent), m_SslTcpServer(0) /* etc tcp local */
 {
-    AbstractClientConnection::setServerBusiness(serverBusiness);
+    AbstractClientConnection::setProtocolKnowerFactory(protocolKnowerFactory);
     deletePointersAndSetEachFalse();
 }
 MultiServerAbstraction::~MultiServerAbstraction()

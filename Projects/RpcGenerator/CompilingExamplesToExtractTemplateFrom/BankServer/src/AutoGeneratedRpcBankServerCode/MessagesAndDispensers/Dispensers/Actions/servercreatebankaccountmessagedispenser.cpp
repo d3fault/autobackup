@@ -1,7 +1,7 @@
 #include "servercreatebankaccountmessagedispenser.h"
 
-ServerCreateBankAccountMessageDispenser::ServerCreateBankAccountMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries *destination, QObject *owner)
-    : IRecycleableDispenser(destination, owner)
+ServerCreateBankAccountMessageDispenser::ServerCreateBankAccountMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination, QObject *owner)
+    : IRecycleableDispenser(destination, owner) //TODOoptimization: could pass in destination twice here and keep compatibility with broadcasts. our constructor only needs the destination (which _IS_ a qobject/owner/parent)
 { }
 CreateBankAccountMessage *ServerCreateBankAccountMessageDispenser::getNewOrRecycled()
 {
@@ -11,7 +11,7 @@ IRecycleableAndStreamable *ServerCreateBankAccountMessageDispenser::newOfTypeAnd
 {
     CreateBankAccountMessage *createBankAccountMessage = new CreateBankAccountMessage(this);
 
-    connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptAllDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
+    connect(createBankAccountMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries*>(m_Destination), SLOT(createBankAccountDelivery()));
 
     return createBankAccountMessage;
 }
