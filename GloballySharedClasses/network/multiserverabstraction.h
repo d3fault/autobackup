@@ -32,7 +32,7 @@ class MultiServerAbstraction : public QObject
 public:
     explicit MultiServerAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent);
     ~MultiServerAbstraction();
-    void sendMessage(QByteArray *message, quint32 clientId);
+    //void sendMessage(QByteArray *message, quint32 clientId);
 private:
     bool m_BeSslServer, m_BeTcpServer, m_BeLocalServer;
     SslTcpServer *m_SslTcpServer;
@@ -42,9 +42,6 @@ private:
     //still in hello phase
     QList<AbstractClientConnection*> m_ClientConnections;
     QHash<QIODevice*, ServerHelloStatus*> m_ServerHelloStatusesByIODevice;
-
-    //done with hello phase. our business sends us a message to send and an id to send it to and we take care of the rest
-    QHash<quint32, QIODevice*> m_ClientsByCookie;
 
     void handleNewClientConnected(QIODevice *newClient);
 signals:

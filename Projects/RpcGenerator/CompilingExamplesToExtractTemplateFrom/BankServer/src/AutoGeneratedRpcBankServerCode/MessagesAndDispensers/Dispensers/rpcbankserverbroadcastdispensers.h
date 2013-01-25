@@ -4,7 +4,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 
-#include "../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
+#include "../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptactiondeliveries.h"
 
 #include "Broadcasts/serverpendingbalancedetectedmessagedispenser.h"
 #include "Broadcasts/serverconfirmedbalancedetectedmessagedispenser.h"

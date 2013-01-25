@@ -15,6 +15,7 @@ MultiServerAbstraction::~MultiServerAbstraction()
     //TODOreq: flush? Perhaps it's implied when I do the delete? idfk
     deletePointersAndSetEachFalse();
 }
+#if 0
 void MultiServerAbstraction::sendMessage(QByteArray *message, quint32 clientId)
 {
     QIODevice *clientIODevice = m_ClientsByCookie.value(clientId, 0);
@@ -29,6 +30,7 @@ void MultiServerAbstraction::sendMessage(QByteArray *message, quint32 clientId)
         //TODOreq: stale or something idfk, queue?
     }
 }
+#endif
 void MultiServerAbstraction::initialize(MultiServerAbstractionArgs multiServerAbstractionArgs)
 {
     if(multiServerAbstractionArgs.m_SslTcpEnabled)

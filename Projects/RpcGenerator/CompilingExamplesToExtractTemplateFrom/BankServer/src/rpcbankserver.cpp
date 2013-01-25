@@ -110,6 +110,11 @@ void RpcBankServer::handleBankInstantiated()
     connect(bankDbHelper, SIGNAL(stopped()), this, SLOT(handleBankDbStopped()));
 
 
+    //connect Rpc Service's Actions to BankDb slots
+    connect(m_RpcBankServerClientsHelper, SIGNAL(createBankAccountRequested(CreateBankAccountMessage*)), bankDbHelper, SLOT(createBankAccount(CreateBankAccountMessage*)));
+    connect(m_RpcBankServerClientsHelper, SIGNAL(getAddFundsKeyRequested(GetAddFundsKeyMessage*)), bankDbHelper, SLOT(getAddFundsKey(GetAddFundsKeyMessage*)));
+    //etc for each rpc service. also bitcoin backend (and/or ALL backends) would/might have some but doesn't atm
+
     m_BankDbInstantiated = true;
     initializeAllBackendsIfIAmInitializedAndAllBackendThreadsAreInstantiated();
 }

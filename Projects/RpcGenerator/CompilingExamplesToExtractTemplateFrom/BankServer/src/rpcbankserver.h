@@ -20,7 +20,13 @@ private:
     RpcBankServerClientsHelper *m_RpcBankServerClientsHelper;
 
     //Instantiate
-    inline void initializeAllBackendsIfIAmInitializedAndAllBackendThreadsAreInstantiated() { if(m_InitializeSlotCalled && (m_BitcoinInstantiated && m_BankDbInstantiated /* && etc-for-every-backend */)) initializeAllBackends(); }
+    inline void initializeAllBackendsIfIAmInitializedAndAllBackendThreadsAreInstantiated()
+    {
+        if(m_InitializeSlotCalled && (m_BitcoinInstantiated && m_BankDbInstantiated /* && etc-for-every-backend */))
+        {
+            initializeAllBackends();
+        }
+    }
     void initializeAllBackends();
     //self
     bool m_InitializeSlotCalled;

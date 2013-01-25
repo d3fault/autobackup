@@ -1,5 +1,7 @@
 #include "ssltcpserverandbankserverprotocolknower.h"
 
+#if 0
+
 #include "../../RpcBankServerAndClientShared/rpcbankserverheader.h"
 
 SslTcpServerAndBankServerProtocolKnower::SslTcpServerAndBankServerProtocolKnower(QObject *parent)
@@ -163,7 +165,7 @@ void SslTcpServerAndBankServerProtocolKnower::handleMessageReceivedFromRpcClient
         } // while(!stream.atEnd())
     } // if(QSslSocket *secureSocket = static_cast<QSslSocket*>(sender()))
 }
-
+#if 0
 //These myTransmit and myBroadcast slots can also probably go to a parent interface. I see no Ssl specific code in there...
 void SslTcpServerAndBankServerProtocolKnower::myTransmit(IMessage *message, uint uniqueRpcClientId)
 {
@@ -181,6 +183,7 @@ void SslTcpServerAndBankServerProtocolKnower::myTransmit(IMessage *message, uint
     stream << message->Header;
     stream << *message;
 }
+#endif
 void SslTcpServerAndBankServerProtocolKnower::myBroadcast(IMessage *message)
 {
     //TODOreq: didn't I change the design for this such that we only choose one client to send the broadcast to, and he is responsible for notifying his neighbors (after writing to the couchbase cluster, and then performing a lookup into the couchbase cluster to find which of his neighbors are interested or not (whether or not he is interested is 'slightly' irrelevant, because he will know from looking at his in-memory data whether or not he is interested... (and he should notify his wt users before even looking into couchbase db for interested neighbors: it is likely that there is only wt user interested in the broadcast, so we want to deliver it to that wt user asap ya dig?))
@@ -198,3 +201,4 @@ void SslTcpServerAndBankServerProtocolKnower::myBroadcast(IMessage *message)
         myTransmit(message, clientId);
     }
 }
+#endif

@@ -18,10 +18,14 @@ class AbstractClientConnection : public QObject
 public:
     explicit void AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent = 0);
     static void setProtocolKnowerFactory(IProtocolKnowerFactory *protocolKnowerFactory);
+
+    //TODOcleanup: friend class the transmitMessage method to IProtocolKnower so it can be private
+    //TODOreq: inline/implicit optimization mb idfk
+    inline void transmitMessage(QByteArray *message) { NetworkMagic::streamOutMagic(&m_DataStreamToClient); m_DataStreamToClient << *message; }
 private:
-    QByteArray m_TheMessageByteArray;
-    QBuffer m_TheMessageBuffer;
-    QDataStream m_TheMessageDataStream;
+    QByteArray m_ReceivedMessageByteArray;
+    QBuffer m_ReceivedMessageBuffer;
+    QDataStream m_ReceivedMessageDataStream;
 
     QIODevice *m_IoDeviceToClient;
     QDataStream m_DataStreamToClient;
@@ -50,8 +54,9 @@ private:
     bool m_HasCookie;
     quint32 m_Cookie;
 
+    //TODOreq: I'm trying to summon dat merging design... and I just thought I'd note that it makes more sense for the server abstraction to maintain the list of connections. It is ok for the connection abstraction to call the server abstraction to do the same operations below. Semantics though, leaving it for now. Still no clue what to do when I receive the same cookie twice... or if it's good enough security [since I'm using SSL?]...
     static QList<AbstractClientConnection*> m_ListOfHelloedConnections;
-    static AbstractClientConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
+    static inline AbstractClientConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
     {
         int connectionsCount = m_ListOfHelloedConnections.size();
         AbstractClientConnection *currentClientConnection;
@@ -65,7 +70,7 @@ private:
         }
         return 0;
     }
-    static quint32 generateUnusedCookie()
+    static inline quint32 generateUnusedCookie()
     {
         quint32 cookie;
         do
@@ -75,7 +80,7 @@ private:
         while(getExistingConnectionUsingCookie__OrZero(cookie));
         return cookie;
     }
-    static quint32 generateCookie()
+    static inline quint32 generateCookie()
     {
         QByteArray md5Input;
         md5Input.append(QString::number(++overflowingClientIdsUsedAsInputForMd5er) + QDateTime::currentDateTime().toString() + QString::number(qrand())); //no idea if this is a security issue, but could add some salt to this also (but then the salt has to be generated (which means it's salt has to be generated (etc)))
