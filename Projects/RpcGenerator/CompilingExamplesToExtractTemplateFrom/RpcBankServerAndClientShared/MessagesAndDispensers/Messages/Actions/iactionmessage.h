@@ -15,8 +15,8 @@ public:
     inline bool isSuccessful() { return m_Successful; }
     inline quint8 errorCode() { return m_ErrorCode; }
     inline void resetSuccessAndErrorCode() { m_Successful = false; m_ErrorCode = 0; }
-    inline void connectionIndependentClientId() { return m_ConnectionIndependentClientId; }
-    inline void setConnectionIndependentClientId(quint16 newId) { m_ConnectionIndependentClientId = newId; }
+    //inline quint16 connectionIndependentClientId() { return m_ConnectionIndependentClientId; }
+    //inline void setConnectionIndependentClientId(quint16 newId) { m_ConnectionIndependentClientId = newId; }
     inline bool toggleBit() { return m_ToggleBit; }
     inline void flipToggleBit() { m_ToggleBit = !m_ToggleBit; }
 private:
@@ -26,7 +26,7 @@ private:
     bool m_ToggleBit; //TODOoptimization: since a bool takes a byte of memory, it might be worth it to keep all my toggle bits for messages in a QBitArray as a memory optimization. However if I have to store an index into that bit array, then it defeats the purpose rofl... soo.... idfk....
     //TODOreq: stream the toggle bit where appropriate. Off the top of my head, I think it's streaming cases are the opposite of when I stream success/error-code. There is no use for it in the response I don't think. Only in request. Could be wrong?
     //TODOreq: toggle bit applies to broadcasts too!!!!! we lazy-ack the broadcast acks, therefore we use a toggle bit. But it still doesn't need to be transmitted every time (like I don't think ACTIONS need to transmit it for the response, and probably the opposite for BROADCASTS)???? Finding where to put the stream operator(s) is gonna be a bitch lawl. For now leaving it here until I get it working with Actions...
-    quint16 m_ConnectionIndependentClientId; //0 = invalid
+    //quint16 m_ConnectionIndependentClientId; //0 = invalid
 protected:
     inline void setErrorCode(quint8 errorCode) { m_ErrorCode = errorCode; } //action messages call this from within setFailed<reason>();
 

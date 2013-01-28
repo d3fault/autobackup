@@ -5,13 +5,13 @@
 
 #include "../../Messages/Broadcasts/serverconfirmedbalancedetectedmessage.h"
 
-#include "../../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
+#include "../../../iacceptrpcbankserverbroadcastdeliveries_and_iemitactionsforsignalrelayhack.h"
 
 class ServerConfirmedBalanceDetectedMessageDispenser : public IRecycleableDispenser
 {
     Q_OBJECT
 public:
-    ServerConfirmedBalanceDetectedMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination, QObject *owner);
+    ServerConfirmedBalanceDetectedMessageDispenser(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *destination, QObject *owner);
     ServerConfirmedBalanceDetectedMessage *getNewOrRecycled();
 protected:
     IRecycleableAndStreamable *newOfTypeAndConnectToDestinationObjectIfApplicable();

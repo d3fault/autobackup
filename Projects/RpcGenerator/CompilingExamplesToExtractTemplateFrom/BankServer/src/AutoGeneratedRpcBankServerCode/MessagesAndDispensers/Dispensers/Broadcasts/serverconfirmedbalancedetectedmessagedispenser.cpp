@@ -1,6 +1,6 @@
 #include "serverconfirmedbalancedetectedmessagedispenser.h"
 
-ServerConfirmedBalanceDetectedMessageDispenser::ServerConfirmedBalanceDetectedMessageDispenser(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination, QObject *owner)
+ServerConfirmedBalanceDetectedMessageDispenser::ServerConfirmedBalanceDetectedMessageDispenser(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *destination, QObject *owner)
     : IRecycleableDispenser(destination, owner)
 { }
 ServerConfirmedBalanceDetectedMessage *ServerConfirmedBalanceDetectedMessageDispenser::getNewOrRecycled()
@@ -10,6 +10,6 @@ ServerConfirmedBalanceDetectedMessage *ServerConfirmedBalanceDetectedMessageDisp
 IRecycleableAndStreamable *ServerConfirmedBalanceDetectedMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {
     ServerConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = new ServerConfirmedBalanceDetectedMessage(this);
-    connect(confirmedBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries*>(m_Destination), SLOT(confirmedBalanceDetectedDelivery()));
+    connect(confirmedBalanceDetectedMessage, SIGNAL(deliverSignal()), static_cast<IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack*>(m_Destination), SLOT(confirmedBalanceDetectedDelivery()));
     return confirmedBalanceDetectedMessage;
 }

@@ -9,8 +9,7 @@ class IProtocolKnowerFactory : public QObject
 {
     Q_OBJECT
 public:
-    explicit void IProtocolKnowerFactory(QObject *parent) : QObject(parent) { }
-protected:
+    explicit IProtocolKnowerFactory(QObject *parent) : QObject(parent) { }
     virtual IProtocolKnower *getNewProtocolKnower()=0; //TODOreq: caller takes ownership of it, so delete somewhere
 };
 

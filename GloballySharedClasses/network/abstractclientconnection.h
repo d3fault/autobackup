@@ -4,24 +4,26 @@
 #include <QObject>
 #include <QIODevice>
 #include <QDataStream>
-#include <QCryptographicHash>
-#include <QDateTime> //debug(?)
 
 #include "networkmagic.h"
 #include "bytearraymessagesizepeekerforiodevice.h"
-#include "iprotocolknower.h"
-#include "iprotocolknowerfactory.h"
+
+class MultiServerAbstraction;
+class IProtocolKnower;
+class IProtocolKnowerFactory;
 
 class AbstractClientConnection : public QObject
 {
 	Q_OBJECT
 public:
-    explicit void AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent = 0);
-    static void setProtocolKnowerFactory(IProtocolKnowerFactory *protocolKnowerFactory);
+    explicit AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent = 0);
+    static void setMultiServerAbstraction(MultiServerAbstraction *multiServerAbstraction) { m_MultiServerAbstraction = multiServerAbstraction; }
+    static void setProtocolKnowerFactory(IProtocolKnowerFactory *protocolKnowerFactory) { m_ProtocolKnowerFactory = protocolKnowerFactory; }
 
     //TODOcleanup: friend class the transmitMessage method to IProtocolKnower so it can be private
     //TODOreq: inline/implicit optimization mb idfk
     inline void transmitMessage(QByteArray *message) { NetworkMagic::streamOutMagic(&m_DataStreamToClient); m_DataStreamToClient << *message; }
+    quint32 cookie();
 private:
     QByteArray m_ReceivedMessageByteArray;
     QBuffer m_ReceivedMessageBuffer;
@@ -30,6 +32,7 @@ private:
     QIODevice *m_IoDeviceToClient;
     QDataStream m_DataStreamToClient;
 
+    static MultiServerAbstraction *m_MultiServerAbstraction;
     static IProtocolKnowerFactory *m_ProtocolKnowerFactory;
     IProtocolKnower *m_ProtocolKnower;
 
@@ -47,46 +50,8 @@ private:
     ByteArrayMessageSizePeekerForIODevice *m_IODevicePeeker;
 
     void setCookie(const quint32 &cookie) { m_HasCookie = true; m_Cookie = cookie; }
-    quint32 cookie() { if(!m_HasCookie) { m_Cookie = generateUnusedCookie(); /* after inventing the universe of course, that's implied */ m_HasCookie = true; } return m_Cookie; } //suddenly i am hungry
-
-    static quint32 overflowingClientIdsUsedAsInputForMd5er; //the datetime and a call to qrand() is added to make the overflowing irrelevant
-
     bool m_HasCookie;
     quint32 m_Cookie;
-
-    //TODOreq: I'm trying to summon dat merging design... and I just thought I'd note that it makes more sense for the server abstraction to maintain the list of connections. It is ok for the connection abstraction to call the server abstraction to do the same operations below. Semantics though, leaving it for now. Still no clue what to do when I receive the same cookie twice... or if it's good enough security [since I'm using SSL?]...
-    static QList<AbstractClientConnection*> m_ListOfHelloedConnections;
-    static inline AbstractClientConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
-    {
-        int connectionsCount = m_ListOfHelloedConnections.size();
-        AbstractClientConnection *currentClientConnection;
-        for(int i = 0; i < connectionsCount; ++i)
-        {
-            currentClientConnection = m_ListOfHelloedConnections.at(i);
-            if(currentClientConnection->cookie() == cookie)
-            {
-                return currentClientConnection;
-            }
-        }
-        return 0;
-    }
-    static inline quint32 generateUnusedCookie()
-    {
-        quint32 cookie;
-        do
-        {
-            cookie = generateCookie();
-        }
-        while(getExistingConnectionUsingCookie__OrZero(cookie));
-        return cookie;
-    }
-    static inline quint32 generateCookie()
-    {
-        QByteArray md5Input;
-        md5Input.append(QString::number(++overflowingClientIdsUsedAsInputForMd5er) + QDateTime::currentDateTime().toString() + QString::number(qrand())); //no idea if this is a security issue, but could add some salt to this also (but then the salt has to be generated (which means it's salt has to be generated (etc)))
-        return ((quint32)(QCryptographicHash::hash(md5Input, QCryptographicHash::Md5).toUInt())); //for the time being, i'm just not going to give a shit about the truncation. lol /lazy
-    }
-    void potentialMergeCaseAsCookieIsSupplied();
 signals:
     void d(const QString &);
 public slots:

@@ -6,7 +6,7 @@ const quint8 NetworkMagic::MagicExpected[MAGIC_BYTE_SIZE] =  { 'F', 'U', 'C', 'K
 //tl;dr: you are a noob, noob
 
 NetworkMagic::NetworkMagic(QIODevice *ioDeviceToLookForMagicOn)
-    : m_DataStreamToLookForMagicOn(ioDeviceToLookForMagicOn)
+    : m_IoDeviceToLookForMagicOn(ioDeviceToLookForMagicOn), m_DataStreamToLookForMagicOn(ioDeviceToLookForMagicOn)
 {
     messageHasBeenConsumedSoPlzResetMagic();
 }

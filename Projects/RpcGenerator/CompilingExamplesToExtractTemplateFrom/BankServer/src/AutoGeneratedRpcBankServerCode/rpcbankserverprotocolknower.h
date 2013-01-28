@@ -22,6 +22,7 @@ class RpcBankServerProtocolKnower : public IEmitRpcBankServerActionRequestSignal
     Q_OBJECT
 public:
     explicit RpcBankServerProtocolKnower(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter, QObject *parent);
+    virtual void messageReceived(); //QDataStream *messageDataStream);
 private:
     IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *m_SignalRelayHackEmitter;
 
@@ -69,7 +70,7 @@ private:
             else
             {
                 //they are not the same, so we know we're on the next message. We can now recycle the old one: we know we don't need it anymore. The ack has officially been ack'd :-D
-                actionSpecificAckList.remove(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->Header.MessageId);
+                actionSpecificAckList->remove(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->Header.MessageId);
                 messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->doneWithMessage();
 
 
@@ -87,7 +88,7 @@ private:
             //not in ack lazy awaiting ack list, so it might be in business pending... or TODOreq: it might be our first time seeing it and in neither!!!
 
             //hack: the name of the pointer doesn't match our usage, but no point in allocating another one lol. is 'messageOnlyIfPendingInBusiness' from now on
-            messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificPendingInBusinessList->value(createBankAccountMessage->Header.MessageId, 0);
+            messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificPendingInBusinessList->value(actionMessage->Header.MessageId, 0);
 
             //if messageOnlyIfPendingInBusiness really
             if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
@@ -146,8 +147,6 @@ private:
         //transmit
         m_AbstractClientConnection->transmitMessage(&m_TransmitMessageByteArray);
     }
-protected:
-    virtual void messageReceived(QDataStream *messageDataStream);
 public slots:
     void createBankAccountDelivery();
     void getAddFundsKeyDelivery();

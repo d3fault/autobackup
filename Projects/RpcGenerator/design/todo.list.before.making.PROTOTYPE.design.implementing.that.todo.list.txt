@@ -5,7 +5,7 @@ prototype
   requirements
   {
     robust-never-shortreading-message-handling
-    []
+    [x]
     
     guarantee to client once synchronous (to "serverhelper") call is complete that the message will be delivered and responded to, so long as client does not crash. it is not really synchronous... but it is with respect to the network request we are guaranteeing
     []

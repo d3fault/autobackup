@@ -35,6 +35,7 @@ struct NetworkMagic
         *ds << MagicExpected[3];
     }
 
+    QIODevice *m_IoDeviceToLookForMagicOn;
     QDataStream m_DataStreamToLookForMagicOn;
 
     bool consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic();

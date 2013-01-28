@@ -12,7 +12,7 @@ class IProtocolKnower// : public QObject
     //Q_OBJECT
 public:
     //MEH NVM: parent is required because we're going to be using this as a destination target in QObject::connect calls and this makes it so we can't leave out the parent and set it up wrong. I trust threading most with proper thread affinity and proper parent'ing (to tell the truth, the difference seems blurry in the docs)
-    explicit void IProtocolKnower()
+    explicit IProtocolKnower()
     {
         m_TransmitMessageBuffer.setBuffer(&m_TransmitMessageByteArray);
         m_TransmitMessageBuffer.open(QIODevice::WriteOnly);
@@ -24,14 +24,15 @@ public:
         m_TransmitMessageByteArray.clear(); //TODOreq: is this necessary or does "streaming into" it overwrite previous contents?
     }
     inline void setAbstractClientConnection(AbstractClientConnection *abstractClientConnection) { m_AbstractClientConnection = abstractClientConnection; }
+    inline void setMessageReceivedDataStream(QDataStream *messageReceivedDataStream) { m_MessageReceivedDataStream = messageReceivedDataStream; }
+    virtual void messageReceived()=0; //QDataStream *messageDataStream /*, quint32 clientId */);
 private:
-    AbstractClientConnection *m_AbstractClientConnection;
-
-    QByteArray m_TransmitMessageByteArray;
     QBuffer m_TransmitMessageBuffer;
-    QDataStream m_TransmitMessageDataStream;
 protected:
-    virtual void messageReceived(QDataStream *messageDataStream /*, quint32 clientId */)=0;
+    AbstractClientConnection *m_AbstractClientConnection;
+    QDataStream *m_MessageReceivedDataStream;
+    QByteArray m_TransmitMessageByteArray;
+    QDataStream m_TransmitMessageDataStream;
 };
 
 #endif // IPROTOCOLKNOWER_H

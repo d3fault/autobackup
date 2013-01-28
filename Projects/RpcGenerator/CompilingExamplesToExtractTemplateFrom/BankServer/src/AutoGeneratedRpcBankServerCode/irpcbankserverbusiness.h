@@ -8,7 +8,7 @@
 //TODOreq: add our messages etc to the meta object system. register() or something i forget. I might be able to do it in a file that's shared between client/server... but meh who cares for now. This is our entry point atm so I'll just leave this note here.
 //Come to think of it how the fuck did the code work BEFORE? Is it because I'm emitting pointers, which are basically Ints?
 
-#include "iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
+#include "iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptactiondeliveries.h"
 #include "MessagesAndDispensers/Dispensers/rpcbankserveractiondispensers.h"
 #include "MessagesAndDispensers/Dispensers/rpcbankserverbroadcastdispensers.h"
 

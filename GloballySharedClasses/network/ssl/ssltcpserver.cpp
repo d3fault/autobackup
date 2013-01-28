@@ -13,13 +13,13 @@ SslTcpServer::~SslTcpServer()
     delete m_ServerPublicLocalCertificate;
 }
 void SslTcpServer::initialize(SslTcpServerArgs sslTcpArgs)
-    : m_SslTcpServerArgs(sslTcpArgs)
 {
     if(!QSslSocket::supportsSsl())
     {
         emit d("ssl is not supported");
         return;
     }
+    m_SslTcpServerArgs = sslTcpArgs;
 
     //Server CA is what the client's use to verify the authenticity of the server. It is a "List", but in our case only contains our server's Local Certificate. It has to be 'securely' copied to the client connection. both sides have it set. On this side, we only use it when loading our public local certificate to see if it's on the list (and verify against it).
     QFile serverCaFileResource(sslTcpArgs.ServerCaFilename);
@@ -128,7 +128,8 @@ void SslTcpServer::initialize(SslTcpServerArgs sslTcpArgs)
 
     connect(this, SIGNAL(newConnection()), this, SLOT(handleNewConnectionNotYetEncrypted()));
 
-    return true;
+    emit d("ssl tcp server initialized");
+    return;
 }
 void SslTcpServer::start()
 {

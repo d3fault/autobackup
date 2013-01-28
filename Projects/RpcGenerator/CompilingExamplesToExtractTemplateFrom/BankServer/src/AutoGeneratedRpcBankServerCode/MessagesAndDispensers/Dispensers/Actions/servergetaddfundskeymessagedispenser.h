@@ -4,7 +4,7 @@
 #include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.h"
 
 #include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/getaddfundskeymessage.h"
-#include "../../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
+#include "../../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptactiondeliveries.h"
 
 class ServerGetAddFundsKeyMessageDispenser : public IRecycleableDispenser
 {

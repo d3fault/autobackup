@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QHash>
+#include <QCryptographicHash>
+#include <QDateTime> //debug(?)
 
 #include "abstractclientconnection.h"
 
@@ -32,6 +34,18 @@ class MultiServerAbstraction : public QObject
 public:
     explicit MultiServerAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent);
     ~MultiServerAbstraction();
+    inline quint32 generateUnusedCookie()
+    {
+        quint32 cookie;
+        do
+        {
+            cookie = generateCookie();
+        }
+        while(getExistingConnectionUsingCookie__OrZero(cookie));
+        return cookie;
+    }
+    void potentialMergeCaseAsCookieIsSupplied(AbstractClientConnection *newConnectionToPotentiallyMergeWithOld);
+    void connectionDoneHelloing(AbstractClientConnection *abstractClientConnection);
     //void sendMessage(QByteArray *message, quint32 clientId);
 private:
     bool m_BeSslServer, m_BeTcpServer, m_BeLocalServer;
@@ -41,9 +55,32 @@ private:
 
     //still in hello phase
     QList<AbstractClientConnection*> m_ClientConnections;
-    QHash<QIODevice*, ServerHelloStatus*> m_ServerHelloStatusesByIODevice;
 
     void handleNewClientConnected(QIODevice *newClient);
+
+    //TODOreq: Still no clue what to do when I receive the same cookie twice... or if it's good enough security [since I'm using SSL?]...
+    QList<AbstractClientConnection*> m_ListOfHelloedConnections;
+    inline AbstractClientConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
+    {
+        int connectionsCount = m_ListOfHelloedConnections.size();
+        AbstractClientConnection *currentClientConnection;
+        for(int i = 0; i < connectionsCount; ++i)
+        {
+            currentClientConnection = m_ListOfHelloedConnections.at(i);
+            if(currentClientConnection->cookie() == cookie)
+            {
+                return currentClientConnection;
+            }
+        }
+        return 0;
+    }
+    static inline quint32 generateCookie()
+    {
+        QByteArray md5Input;
+        md5Input.append(QString::number(++overflowingClientIdsUsedAsInputForMd5er) + QDateTime::currentDateTime().toString() + QString::number(qrand())); //no idea if this is a security issue, but could add some salt to this also (but then the salt has to be generated (which means it's salt has to be generated (etc)))
+        return ((quint32)(QCryptographicHash::hash(md5Input, QCryptographicHash::Md5).toUInt())); //for the time being, i'm just not going to give a shit about the truncation. lol /lazy
+    }
+    static quint32 overflowingClientIdsUsedAsInputForMd5er; //the datetime and a call to qrand() is added to make the overflowing irrelevant
 signals:
     void d(const QString &);
 private slots:

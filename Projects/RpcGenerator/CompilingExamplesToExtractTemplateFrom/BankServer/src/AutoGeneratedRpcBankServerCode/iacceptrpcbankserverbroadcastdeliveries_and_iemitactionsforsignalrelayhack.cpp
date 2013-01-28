@@ -1,6 +1,5 @@
 #include "iacceptrpcbankserverbroadcastdeliveries_and_iemitactionsforsignalrelayhack.h"
 
-IAcceptRpcBankServerBroadcastDeliveries::IAcceptRpcBankServerBroadcastDeliveries(QObject *parent) :
+IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack::IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack(QObject *parent) :
     QObject(parent)
-{
-}
+{ }

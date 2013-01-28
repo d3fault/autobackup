@@ -1,7 +1,7 @@
 #include "rpcbankserver.h"
 
 RpcBankServer::RpcBankServer(QObject *parent)
-    : QObject(parent), m_RpcBankServerClientsHelper(0), m_InitializeSlotCalled(false), m_BitcoinInstantiated(false), m_BankDbInstantiated(false), m_BitcoinDoneUsingRpcBankServerClientsHelper(false), m_BankDbDoneUsingRpcBankServerClientsHelper(false), m_DoneUsingRpcBankServerDuringInitialization(false), m_BitcoinStarted(false), m_BankDbStarted(false)
+    : QObject(parent), m_RpcBankServerClientsHelper(0), m_InitializeSlotCalled(false), m_BitcoinInstantiated(false), m_BankDbInstantiated(false), m_DoneUsingRpcBankServerDuringInitialization(false), m_BitcoinDoneUsingRpcBankServerClientsHelper(false), m_BankDbDoneUsingRpcBankServerClientsHelper(false), m_BitcoinStarted(false), m_BankDbStarted(false)
 {
     connect(&m_BitcoinThreadHelper, SIGNAL(objectIsReadyForConnectionsOnly()), SLOT(handleBitcoinInstantiated()));
     connect(&m_BankDbHelperThreadHelper, SIGNAL(objectIsReadyForConnectionsOnly()), SLOT(handleBankInstantiated()));

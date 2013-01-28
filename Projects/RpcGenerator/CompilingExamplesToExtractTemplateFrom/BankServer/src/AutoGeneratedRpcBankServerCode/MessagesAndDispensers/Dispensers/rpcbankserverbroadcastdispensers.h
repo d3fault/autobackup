@@ -4,7 +4,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 
-#include "../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptactiondeliveries.h"
+#include "../../iacceptrpcbankserverbroadcastdeliveries_and_iemitactionsforsignalrelayhack.h"
 
 #include "Broadcasts/serverpendingbalancedetectedmessagedispenser.h"
 #include "Broadcasts/serverconfirmedbalancedetectedmessagedispenser.h"
@@ -13,7 +13,7 @@
 class RpcBankServerBroadcastDispensers //client one doesn't have a destination object of any kind, but still uses takeOwnership to handle recycling
 {
 public:
-    RpcBankServerBroadcastDispensers(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *destination);
+    RpcBankServerBroadcastDispensers(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *destination);
     ServerPendingBalanceDetectedMessageDispenser *takeOwnershipOfPendingBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner);
     ServerConfirmedBalanceDetectedMessageDispenser *takeOwnershipOfConfirmedBalanceDetectedMessageDispenserRiggedForDelivery(QObject *owner);
 

@@ -1,7 +1,7 @@
 #ifndef RPCBANKSERVERACTIONDISPENSERS_H
 #define RPCBANKSERVERACTIONDISPENSERS_H
 
-#include "../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptalldeliveries.h"
+#include "../../iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptactiondeliveries.h"
 
 #include "Actions/servercreatebankaccountmessagedispenser.h"
 #include "Actions/servergetaddfundskeymessagedispenser.h"

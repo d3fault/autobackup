@@ -9,7 +9,7 @@
 #endif
 
 IRecycleableDispenser::IRecycleableDispenser(QObject *destination, QObject *parent)
-    : QObject(parent), m_Destination(destination), m_RecycleableMessagesDispensedCount(0)
+    : QObject(parent), m_RecycleableMessagesDispensedCount(0), m_Destination(destination)
 { }
 IRecycleableAndStreamable *IRecycleableDispenser::privateGetNewOrRecycled()
 {
