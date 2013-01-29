@@ -15,7 +15,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386035787
+Documents/minddump/:1386035830
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -26,7 +26,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386035787
+Documents/minddump/dreams/:1386035830
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -387,6 +387,7 @@ Documents/minddump/dfljkasdflkjdslfkweurlkdjsfsdkjf.txt:1356893962
 Documents/minddump/dfljsadlfjasdofuwalekrjosdufsdlafkjoweurlk.txt:1353171617
 Documents/minddump/dflkjdsafjslfkjsdofuwerlkj.txt:1355827615
 Documents/minddump/dflkjsdflksdjfouwerlkjsdafousdflk.txt:1356077651
+Documents/minddump/dfsaldksfjlksdjfsdoiulkwjeroufdslkjdsfou.txt:1359423251
 Documents/minddump/dfslajfaowufsodfjslkfjweoruqproiwuladsjfasdouflkjlksadfoawyeriayhfdsk.txt:1326546357
 Documents/minddump/dgaf.need.to.launch.so.i.can.film.creation.to.fix.this.problem.aslfjkasflsakj.so.trivial.too.txt.trivial.and.fun.txt:1339229597
 Documents/minddump/dht.design.thoughts.difficultuies.but.mb.some.success.too.idk.txt:1338036296
@@ -869,6 +870,7 @@ Documents/minddump/sdflkjsdlfkjslkdjflksdjoiur.txt:1354515758
 Documents/minddump/sdflkjsdlkfjsdfjoiuwerlkjsdfoulkjrwerousdflk.txt:1358805363
 Documents/minddump/sdflkjsfdkljsdfosduiflwkejrousdflkjdfs.txt:1358842872
 Documents/minddump/sdflkjsfkljsdfouwerlkjsdfosdufweljkr.txt:1356894182
+Documents/minddump/sdflkjsflkjsdlkjfosduflkjsdfouewrl.txt:1359416305
 Documents/minddump/sdflkjwerousldfkjwaoeruilsdkfjsaoiufdlk.txt:1341205278
 Documents/minddump/sdflksdjflksdjfouiwerlkjsdfouewrl.txt:1358975551
 Documents/minddump/sdflksdjflsdkjflskdjfouwerlouisdflkjeroiu.txt:1356245249
@@ -883,7 +885,7 @@ Documents/minddump/sdfsdflkjsdfoieuraeirasdlfkjsdflksdfoiurewklj.txt:1338983671
 Documents/minddump/sdfsdlfkjsdlkfjoiwuerlkjsfdousdalkweo.txt:1353780368
 Documents/minddump/sdfsfdsdflkjsdflksdoifuwerlkjdsfoudfljeroul.txt:1356094322
 Documents/minddump/sdfsldkfjsdlfouwlrkjsdofusdlfkj.txt:1353779782
-Documents/minddump/sdfwerpifalksdjflkjsdflksdfousdflkjsdfjksdf.txt:1359375581
+Documents/minddump/sdfwerpifalksdjflkjsdflksdfousdflkjsdfjksdf.txt:1359422428
 Documents/minddump/sdfworiusaldfkjwoiruskadfhwiryskdfjwoeituaofise.txt:1342222912
 Documents/minddump/sdlafjoweurlskdfjoijlskajrweofiuasdlfkjweroiusdlfk.txt:1341204640
 Documents/minddump/sdlafkjsdklfjowiuerlkjsdfoiuerh.txt:1354667942
@@ -1056,7 +1058,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386035787
+Pictures/:1386035830
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1577,8 +1579,8 @@ Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/:135610
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/:1355485092
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/design/:1355485102
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/design/lmfao.asdfjsdlfjoiweurlkjsfdosudfl.txt:1355485102
-Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/:1355483661
-Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/:1355714325
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/:1359420440
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/:1359423257
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/EndResultTarget.pro:1355483938
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/endresulttargetbusiness.cpp:1355482713
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/endresulttargetbusiness.h:1355482674
@@ -1587,7 +1589,7 @@ Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/endres
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/endresulttargettest.cpp:1355484332
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/endresulttargettest.h:1355714250
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/main.cpp:1355481100
-Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/mainwindow.cpp:1355480854
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/mainwindow.cpp:1359417743
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/EndResultTarget/mainwindow.h:1355480854
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/Generator/:1355480746
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/Generator/ObjectOnThreadWithConstructorArgs.pro:1355480619
@@ -1596,6 +1598,20 @@ Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/Generator/list.of.impl
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/Generator/main.cpp:1355480205
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/Generator/mainwindow.cpp:1355480205
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/Generator/mainwindow.h:1355480205
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/ThreadHackQmake/:1359423256
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/ThreadHackQmake/ThreadHackQmake.pro:1359422356
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/ThreadHackQmake/main.cpp:1359421996
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/ThreadHackQmake/threadhackqmake.cpp:1359422501
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/ThreadHackQmake/threadhackqmake.h:1359421486
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/:1359423262
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/WorkingInputTest.pro:1359418497
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/main.cpp:1359417870
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/mainwidget.cpp:1359417675
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/mainwidget.h:1359417675
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/workinginputtest.cpp:1359419160
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/workinginputtest.h:1359418794
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/workinginputtestbusiness.cpp:1359418608
+Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/workinginputtestbusiness.h:1359418585
 Projects/Prototypes/ProtocolMessageMastery/:1329818277
 Projects/Prototypes/ProtocolMessageMastery/src/:1329827905
 Projects/Prototypes/ProtocolMessageMastery/src/Protocol/:1329833192
@@ -2345,7 +2361,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386035787
+Projects/libAvGraphicsItem2/design/:1386035830
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

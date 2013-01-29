@@ -1,0 +1,9 @@
+I love code generators because ultimately they mean we never have to upgrade from C++98. The only (famous last word) reason to move forward to different [incompatible] C++ libraries is for performance reasons. Code generators can take advantage of functionality seemlessly. Some people like to code in strict ISO C++ without any extensions, but the end results is USUALLY incompatibility with older platforms. Code generators allow you to have the best of both worlds.
+
+Interpreters also benefit from this, but they are stupid because they decide to compile at runtime (most of the time) -_-.
+
+A code generator can almost always produce compiling C++98, which is in this day and age the most widely supported system library (with perhaps exception to some libc, but eh they are brothers in my mind (inb4 c++ should code generate [during compile] into c [which is then normally compiled]. i'm down, but C++ is 'fast enough' (funnily the same argument interpreted language fans use (except they are wrong, interpreted is not native))))
+
+
+
+Intepreted (including html) is stupid because it muddies the water between code and user data. W^X feature of OpenBSD comes to mind. Whoever thought that putting JavaScript snippets anywhere in an html page was a good idea should be shot in the face. There are so many vulnerabilities that have arisen from that choice that it makes me face palm. Execution and Display and User Input are three concepts that should.... at a much lower level than interpeted/html-parsed... be considered separately (especially when W^X -like technologies come into play)
