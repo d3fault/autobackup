@@ -1,0 +1,3 @@
+Programming is planning.
+By periodically releasing your decryption key, the agreed-cryptographic-signature(sha1etc) can be then confirmed. I want to say the whole point of that was to write "affirmed".
+I'm not sure those two statements have anything to do with each other.
