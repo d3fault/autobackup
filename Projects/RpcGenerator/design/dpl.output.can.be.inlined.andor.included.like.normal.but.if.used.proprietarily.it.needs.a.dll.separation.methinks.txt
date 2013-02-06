@@ -1,0 +1,3 @@
+TODOoptional: Rpc Generator should have a radio setting (just 2) to what the generated code will be used in. By default it just says "output regular DPL code", and alternatively they can select "output DPL code library'ized for use in a proprietary app".
+
+If there are ever "user configurations" in Rpc Generator, a per-project setting of which radio... and even a global default for which radio... can be set. But with no settings and by default, we default to d3fault public license. Man that was fun to write (I'm retarded).

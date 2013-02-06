@@ -1,0 +1,10 @@
+wasdf - express your movements
+wasd = movement
+asdf = expression
+could be an dpl media hub site thing like i'm talking about
+the "business" version of d3fault as a whole
+broadcast on wasdf.com/d3fault
+
+abc too long of domain etc, but maybe still used for ad-only business (and maybe email/server-shit (but not content hosting))
+
+can/should allow BY-NC and >, pretty much anything that gives me copy + ad rights (ok so maybe NOT BY-NC, but definitely BY-SA and GPL -- just make sure YOU _always_ filter anything < DPL. there will be stuff that you choose not to see (you might be forced by law to not allow BY-SA/GPL because choosing not to see it means you can't comply with DMCA?))

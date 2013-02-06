@@ -1,0 +1,58 @@
+From the server thread, we've either:
+a) Haven't gotten the message
+b) Gotten the message and dispatched it to business (and made note of it)
+c) Gotten it and it's response from the business and sent it back to the client
+d) It is still on the kernel's socket read buffer
+
+All 3 of those are done within a single unit of execution (each), so we know there is no other states for the messages
+Actually I'm adding (d) now, no idea how to handle that one TODOreq handle it
+
+
+
+
+Perhaps I just need to do the 3 Use Case diagrams in dia? Perhaps doing them will be a breeze because I'll have the perfect perspective (design level).
+
+Use Case #1 - Clean Disconnect
+Use Case #2 - Dirty Disconnect, detected by new client connection with matching cookie
+Use Case #3 - Dirty Disconnect, detected by server through socket errors/etc while [attempting-to] receive message
+Use Case #4 - Dirty Disconnect, detected by server through socket errors/etc while [attempting-to] send message
+
+
+
+TODOreq: We will never get another message after a Clean Disconnect message (we do not rely solely on tcp disconnect, we use a special Disconnect message and then wait for the messages received before the Disconnect Message to finish) because the client knows better than to send them, so (d) doesn't always factor in
+
+
+Oh shit just thought of use case #4 (and modifying #3 as they are similar). But hmm, won't those be signals that can come at any time? So can I even differentiate them? Perhaps I'm erroneously associating them with the send/receive "unit of execution(s)". Perhaps they are their own!
+
+
+There is also this:
+a) We either haven't received any messages
+b) All received messages are in business pending
+c) All received messages are in lazy ack state
+d) Some in pending, some in lazy ack state
+e) Every variation of above, with some in kernel socket read buffer
+
+
+
+Basically I need to have an m_Connected bool that is defaulting to false and very carefully set. If I see pretty much any error, I set it to false. Clean disconnects will need special considerations. Meh I think there's way more to it than that. We have to put it in some m_UglyDisconnectMayReconnect hash/queue etc, and TODOreq it still needs to be able to receive Actions (TODOreq: we should make sure it doesn't receive any Broadcasts while in this state) as they come back from the Business, and whether or not we put it in the "ack pending" list for simplicity or into it's own special "haven't-yet-sent-because-ugly-dc-detected"/queue is tbd.
+
+Ok so methinks #3/#4 Use Cases above are the same again: fuck it. They still both need to be CONSIDERED [probably?]. TODOreq consider implications
+
+
+
+
+
+Random: Right now I visualize myself on a board on a ball and I'm balancing back and forth (just left and right). This code is pivotal but actually not all that hard. I guess what I mean is that this code is KEY. With proper designs and understanding, however, it isn't necessarily that complex (einstein's law). The ball is on some the peak of "pyramid" and/or "triangle" which represents a large chunk of code (the rpc generator?)
+
+
+
+
+
+TODOreq: Who is IN CHARGE OF making sure no more Actions come in after the Disconnect Message? It makes sense that the Client is in charge of it, but should my Server be able to handle them and reject them? TODOoptional/optimization(idfk which. TODOrobust? I could see TODOrobust keeping me infinitely and stupidly busy (I do have indefinite time though... soo...hmmm.... ^_^)): to make it more robust we could reject them with a special message code... but for MY OWN CODE I can just make sure that the Client doesn't send any after the Disconnect Message. KISS for now
+
+
+TODOreq: I need to detect the time when "Disconnect Message has been Received" && "The last business pending message was sent back in a response", so at that point the Server will send a "Disconnect Acknowledged You Can Now TCP Disconnect" (does this mean I am in a special state while awaiting that TCP Disconnect?). Also TODOreq: should an ugly disconnect (no tcp disconnect, so like socket errors etc) at this point still give me a clean disconnect? I'd say yes, but any time BEFORE entering that "AwaitingTCPDisconnect" state will result in ugly disconnect. Also it isn't always "TCP Disconnect" (local socket), but just however the underlying socket does a disconnect (maybe ugly is the only way for some?)
+
+TODOreq: after a clean disconnect, should we release the resources? Or even an ugly disconnect that times out (or merges (only some part of it can be released at this point, probably the QIODevice, but not the protocol knower since that is re-used post-merge))
+
+There are obviously a ton of considerations and I wonder if I'm missing any? Maybe they'll become apparent if/when I make those Use Case diagrams??
