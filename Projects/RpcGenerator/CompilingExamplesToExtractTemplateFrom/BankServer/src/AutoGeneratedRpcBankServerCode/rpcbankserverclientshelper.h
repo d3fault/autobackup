@@ -83,6 +83,9 @@ signals:
 public slots:
     void initialize(MultiServerAbstractionArgs multiServerAbstractionArgs);
     void start();
+
+    //TODOreq: While it would be nice to be able to call beginStoppingProcedure on the server using some server GUI etc, for now I'm going to have the client send a "clean disconnect" message and the server just respond to it [when ready]. there seems to be a lot of overlap between "server shutdown" (all clients dc) and "clean disconnect a single client", which needs to be fixed
+    //^^^when implementing the server ability to shutdown and dc all clients, it should basically just "request" to the client a "clean disconnect" message from each client
     void beginStoppingProcedure(); //Stop accepting Action Requests. TODOreq: probably need a special message code for this 'shutdown in progress' telling them that (a) the server is still online for a BIT longer [broadcasts, action requests] (b) it's being shut down so try your action request on another server (or just error out if there aren't any)
     void stop();
 
