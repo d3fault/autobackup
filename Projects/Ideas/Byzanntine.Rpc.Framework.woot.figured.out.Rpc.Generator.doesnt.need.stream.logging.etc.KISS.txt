@@ -1,0 +1,24 @@
+Byzanntine Rpc Framework
+It is a framework because the server/business has to be tightly (or tight-ishly) integrated with the rpc. The client SHOULDN'T be, however. The client should have the same or similar amount of knowledge as a regular old Rpc Generator client.
+
+The idea is that server operations are carefully created and are terminate-able. How to terminate them is up in the air, but I think the only way TO terminate one is to call QThread::terminate on it! How else to get out of a while(true) { } loop?
+
+
+TODOreq: Worst case scenario that byzanntine framework needs to detect and GO DOWN for: Input that causes an infinite loop on every server/business. This would indicate a "vulnerability" type "bug". Inputs like that need to be filtered out!
+
+The general/typical case that byzanntine needs to account for is hardware/software failure. Even corrupt processes that manage to enter an infinite loop still aren't detrimental so long as the other servers/businesses don't become corrupt simultaneously.
+
+
+I think 'proving' correctness is actually quite easy, though I should still read up on the formal ways other solutions to it. Checksums = fucking easy.
+
+I don't know if such byzanntine solutions would be good for certain transactional type database modifications. The byzanntine'ness of it might slow it down and allow people that actually clicked a button after someone else to register their 'cas-race' as first place. It might not be too applicable in bank scenarios or pretty much anywhere we need an atomic write RACE. Perhaps the word 'race' is key there and can be used to separate the different kinds of Requests in a general Rpc Framework (one that handles Byzanntine and... 'Race'... RPCalls)
+
+The terminate needs to be able to be recovered from. Should I use a thread pool then so others aren't affected from the terminate? The data it is writing to disk needs to be replay'able and recoverable (skipping corrupt data). GFS has a neat fault-tolerant 'record append' design that might be of use (even though I have yet to fully solve it). After the terminate, I guess we'd need to get the thread back alive and idle again for future use? That is of course so long as the entire fucking system doesn't go down (we tolerate that fault).
+
+Will these server/business-each writes be multiple entries into GFS? Won't that make 9 copies of one piece of data if each server/business has 3 replicas and we have 3 servers/businesses involved in the byzanntine framework? TODOoptimization: there can most likely be optimizations where the replicas in GFS and the 'other servers/businesses' can be combined to serve the same purpose. The servers/business provide a form of replication (albeit not fs related (so maybe I should ignore this optimization? idfk)), so maybe the GFS replication is overkill and we need to integrate the two?
+
+As fun as this sounds to code, I think I'm going to back burner it because it's just more fucking time before launching. Losing my fucking mind here and need to launch asep kthxbai.
+
+I'm just glad I finally sorted out in my brain the relationship between "Rpc Generator", "Distributed Database", and "stream-log-recoverability-andor-byzantine-correct'ness", the last of which depends on the first two! I've been asking myself a lot lately what to do about Rpc Generator: now I have my answer. Rpc Generator simply REPORTS scenarios: business pending past timeout etc. It won't be used solely with a byzanntine framework so it needs to not depend on it (or the ddb).
+
+That being said, I do like how 2-Phase-Commits/Byzanntine (they are the same problem in my head, even if I am wrong in thinking that) have a nice and simple "timeline-izable" output that my other shit (atomic write racing!) is missing (and can/will probably have hacked in).
