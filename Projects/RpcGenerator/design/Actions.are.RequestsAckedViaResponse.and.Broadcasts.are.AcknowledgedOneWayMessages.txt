@@ -1,0 +1,8 @@
+Actions are RequestsAckedViaResponse (response is lazy ack'd)
+Broadcasts are AcknowledgedOneWayMessages (acks are lazy ack'd)
+
+The response plays the role of an ack in the Actions example, so really they both essentially say "acks are lazy ack'd" in the parenthesis. I simply like those more verbose descriptions of them. It helps me remember what the fuck each one is. You can use Actions in place of broadcasts, but it is more efficient not to (maybe not actually, might be about even). Still, their relationship is GENERALLY: Client -> Action -> Server, and Server -> Broadcast -> Client
+
+TODOoptimization: connectNotify can be used to tell the Server whether or not to even both with broadcasts. pretty sure I have this written elsewhere but just in case
+
+Actions have customizable response types, whereas Broadcasts only have true/false (whether we get an ack or not!)

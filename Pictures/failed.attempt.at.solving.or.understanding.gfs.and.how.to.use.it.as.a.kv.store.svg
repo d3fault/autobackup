@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2294.7485"
+   height="2108.3416"
+   id="svg2911"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="New document 3">
+  <defs
+     id="defs2913" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="532.77513"
+     inkscape:cy="160.18579"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1440"
+     inkscape:window-height="848"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata2916">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-18.226841,-347.73776)">
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="17.142857"
+       y="380.93362"
+       id="text2921"><tspan
+         sodipodi:role="line"
+         id="tspan2923"
+         x="17.142857"
+         y="380.93362">sha1(/appAbc/userprofileBlah1) = df8e379...38a</tspan><tspan
+         sodipodi:role="line"
+         x="17.142857"
+         y="405.93362"
+         id="tspan2925">sha1(/appAbc/userprofileBlah2) = 638ace3...9ff</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="571.74634"
+       y="362.93307"
+       id="text2927"><tspan
+         sodipodi:role="line"
+         id="tspan2929"
+         x="571.74634"
+         y="362.93307">do each of these, on 'set' (k/v), contact</tspan><tspan
+         sodipodi:role="line"
+         x="571.74634"
+         y="387.93307"
+         id="tspan2931">GFS 'master' server (BOTTLENECK), or</tspan><tspan
+         sodipodi:role="line"
+         x="571.74634"
+         y="412.93307"
+         id="tspan2933">do they simply appened to files 'd' and '6'</tspan><tspan
+         sodipodi:role="line"
+         x="571.74634"
+         y="437.93307"
+         id="tspan2935">respectively?</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="576.84125"
+       y="491.5907"
+       id="text2937"><tspan
+         sodipodi:role="line"
+         id="tspan2939"
+         x="576.84125"
+         y="491.5907">Latter makes more sense in order to sustain</tspan><tspan
+         sodipodi:role="line"
+         x="576.84125"
+         y="516.5907"
+         id="tspan2941">high bandwidth etc, but blah I'm still missing</tspan><tspan
+         sodipodi:role="line"
+         x="576.84125"
+         y="541.5907"
+         id="tspan2943">a crucial piece of the puzzle methinks. Some</tspan><tspan
+         sodipodi:role="line"
+         x="576.84125"
+         y="566.5907"
+         id="tspan2945">sort of mapping that my brain can BARELY</tspan><tspan
+         sodipodi:role="line"
+         x="576.84125"
+         y="591.5907"
+         id="tspan2947">conceptualize but isn't fully grasping</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2949"
+       width="165.66502"
+       height="151.52289"
+       x="146.97369"
+       y="695.19849" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3723"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(405.57275,404.8734)"><flowRegion
+         id="flowRegion3725"><rect
+           id="rect3727"
+           width="108.08632"
+           height="31.31473"
+           x="-230.31477"
+           y="348.91391" /></flowRegion><flowPara
+         id="flowPara3729">App (ABC)</flowPara></flowRoot>    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect3731"
+       width="165.66502"
+       height="161.6244"
+       x="658.1109"
+       y="690.14771" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3733"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(491.43572,338.20333)"><flowRegion
+         id="flowRegion3735"><rect
+           id="rect3737"
+           width="125.25892"
+           height="55.558392"
+           x="189.90868"
+           y="407.50275" /></flowRegion><flowPara
+         id="flowPara3739">Ddb Client (GFS Client)</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1.2020098px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 313.17515,733.52118 344.44102,0"
+       id="path3741" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 657.98462,733.39491 620.16704,695.57732"
+       id="path3745" />
+    <path
+       id="path3747"
+       d="m 657.98461,733.45804 -37.81758,37.81759"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="328.10791"
+       y="726.45013"
+       id="text3749"><tspan
+         sodipodi:role="line"
+         id="tspan3751"
+         x="328.10791"
+         y="726.45013">set(sha1(/appAbc/userProfileBlah1), aJsonDocEtc)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="317.51257"
+       y="743.98737"
+       id="text3753"><tspan
+         sodipodi:role="line"
+         id="tspan3755"
+         x="317.51257"
+         y="743.98737">(would really be 'add'/'insert-only'/etc since username is unique)</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3757"
+       style="font-size:16px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(117.18695,318.59201)"><flowRegion
+         id="flowRegion3759"><rect
+           id="rect3761"
+           width="353.55338"
+           height="165.66502"
+           x="195.96959"
+           y="543.87335"
+           style="font-size:16px" /></flowRegion><flowPara
+         id="flowPara3763">According to GFS details, we should be sending a &quot;filename&quot; instead of a &quot;key&quot;. This corresponds to GFS' master/chunkserver relationship meaning that each new key 'set' will require interaction with master. Obviously inefficient, so I must be using it wrong! What the fuck am I doing?</flowPara></flowRoot>    <rect
+       y="1192.1936"
+       x="146.97369"
+       height="151.52289"
+       width="165.66502"
+       id="rect3765"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <flowRoot
+       transform="translate(405.57275,901.86845)"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot3767"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3769"><rect
+           y="348.91391"
+           x="-230.31477"
+           height="31.31473"
+           width="108.08632"
+           id="rect3771" /></flowRegion><flowPara
+         id="flowPara3773">App (ABC)</flowPara></flowRoot>    <rect
+       y="1187.1428"
+       x="658.1109"
+       height="161.6244"
+       width="165.66502"
+       id="rect3775"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <flowRoot
+       transform="translate(491.43572,835.19838)"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot3777"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3779"><rect
+           y="407.50275"
+           x="189.90868"
+           height="55.558392"
+           width="125.25892"
+           id="rect3781" /></flowRegion><flowPara
+         id="flowPara3783">Ddb Client (GFS Client)</flowPara></flowRoot>    <path
+       id="path3785"
+       d="m 313.17515,1230.5162 344.44102,0"
+       style="fill:none;stroke:#000000;stroke-width:1.2020098px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       id="path3787"
+       d="m 657.98462,1230.39 -37.81758,-37.8176"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 657.98461,1230.4531 -37.81758,37.8176"
+       id="path3789" />
+    <text
+       id="text3791"
+       y="1212.3335"
+       x="315.98608"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="1212.3335"
+         x="315.98608"
+         id="tspan3793"
+         sodipodi:role="line">sha1 = hash(/appAbc/userProfileBlah1)</tspan><tspan
+         y="1227.3335"
+         x="315.98608"
+         sodipodi:role="line"
+         id="tspan3799">append(sha1[0], data { sha1[remains], aJsonDocEtc })</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3801"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(138.90523,260.00316)"><flowRegion
+         id="flowRegion3803"><rect
+           id="rect3805"
+           width="302.03561"
+           height="49.497475"
+           x="180.81731"
+           y="972.68311" /></flowRegion><flowPara
+         id="flowPara3807">The amount of the sha1 used in the key (and subsequently the 'remains') is dynamic and more is used in the key as nodes are added to cluster</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="-291.8992"
+       y="942.08813"
+       id="text3809"
+       transform="matrix(0.8660254,-0.5,0.5,0.8660254,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3811"
+         x="-291.8992"
+         y="942.08813">FUCKED</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3813"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(18.226841,347.73776)"><flowRegion
+         id="flowRegion3815"><rect
+           id="rect3817"
+           width="361.63461"
+           height="144.45181"
+           x="177.78685"
+           y="1101.4775" /></flowRegion><flowPara
+         id="flowPara3819"></flowPara></flowRoot>    <flowRoot
+       transform="translate(117.18695,827.70889)"
+       style="font-size:16px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot3821"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3823"><rect
+           style="font-size:16px"
+           y="543.87335"
+           x="195.96959"
+           height="165.66502"
+           width="353.55338"
+           id="rect3825" /></flowRegion><flowPara
+         id="flowPara3827">I don't know if this is right or wrong, but I'm a bit lost on how the GFS knows what offset to use at this point. It gets the chunk location/server from master and caches it, but how does it know where to append? Actually I think the individual chunk servers RETURN that value? But then what do I do with it? Surely I store it, but WHERE?!?!?!?</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#ffff00;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Bitstream Vera Sans"
+       x="-523.58319"
+       y="1390.9133"
+       id="text3829"
+       transform="matrix(0.8660254,-0.5,0.5,0.8660254,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3831"
+         x="-523.58319"
+         y="1390.9133"
+         style="stroke-width:0.30000001">???</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect3833"
+       width="165.66502"
+       height="161.6244"
+       x="658.1109"
+       y="1724.2856" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3835"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(491.43572,1372.3412)"><flowRegion
+         id="flowRegion3837"><rect
+           id="rect3839"
+           width="125.25892"
+           height="55.558392"
+           x="189.90868"
+           y="407.50275" /></flowRegion><flowPara
+         id="flowPara3841">Ddb Client (GFS Client)</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="637.51257"
+       y="1697.8386"
+       id="text3843"><tspan
+         sodipodi:role="line"
+         id="tspan3845"
+         x="637.51257"
+         y="1697.8386">(corresponding to directly above,</tspan><tspan
+         sodipodi:role="line"
+         x="637.51257"
+         y="1712.8386"
+         id="tspan3847">but at a later stage (after the write))</tspan></text>
+    <rect
+       y="1724.2856"
+       x="1227.3966"
+       height="161.6244"
+       width="165.66502"
+       id="rect3849"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <flowRoot
+       transform="translate(1076.4357,1373.0555)"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot3851"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3853"><rect
+           y="407.50275"
+           x="189.90868"
+           height="55.558392"
+           width="125.25892"
+           id="rect3855" /></flowRegion><flowPara
+         id="flowPara3857">Primary Replica</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1.29969525px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1227.1585,1843.2631 -402.70032,0"
+       id="path3859" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 823.98813,1843.1369 37.8176,-37.8176"
+       id="path3861" />
+    <path
+       id="path3863"
+       d="m 823.98813,1843.2 37.8176,37.8176"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="941.79828"
+       y="1837.8385"
+       id="text3865"><tspan
+         sodipodi:role="line"
+         id="tspan3867"
+         x="941.79828"
+         y="1837.8385">appendSuccess(fileOffsetUsed)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="619.96362"
+       y="1906.1648"
+       id="text3869"><tspan
+         sodipodi:role="line"
+         id="tspan3871"
+         x="619.96362"
+         y="1906.1648">The client now knows:</tspan><tspan
+         sodipodi:role="line"
+         x="619.96362"
+         y="1921.1648"
+         id="tspan3873">a) Filename</tspan><tspan
+         sodipodi:role="line"
+         x="619.96362"
+         y="1936.1648"
+         id="tspan3875">b) Primary/Replica Chunk Server IPs for corresponding chunk (lots of chunks per file)</tspan><tspan
+         sodipodi:role="line"
+         x="619.96362"
+         y="1951.1648"
+         id="tspan3877">c) Offset into corresponding chunk that data was written to</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="591.80188"
+       y="1995.7466"
+       id="text3879"><tspan
+         sodipodi:role="line"
+         id="tspan3881"
+         x="591.80188"
+         y="1995.7466">So I guess the problem is reading? How do we (application) know where to read from?</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect3883"
+       width="165.66502"
+       height="151.52289"
+       x="146.97369"
+       y="2138.7065" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3885"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(405.57275,1848.3814)"><flowRegion
+         id="flowRegion3887"><rect
+           id="rect3889"
+           width="108.08632"
+           height="31.31473"
+           x="-230.31477"
+           y="348.91391" /></flowRegion><flowPara
+         id="flowPara3891">App (ABC)</flowPara></flowRoot>    <rect
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect3893"
+       width="165.66502"
+       height="161.6244"
+       x="658.1109"
+       y="2133.6558" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3895"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(491.43572,1781.7113)"><flowRegion
+         id="flowRegion3897"><rect
+           id="rect3899"
+           width="125.25892"
+           height="55.558392"
+           x="189.90868"
+           y="407.50275" /></flowRegion><flowPara
+         id="flowPara3901">Ddb Client (GFS Client)</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1.2020098px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 313.17515,2177.0291 344.44102,0"
+       id="path3903" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 657.98462,2176.9029 -37.81758,-37.8176"
+       id="path3905" />
+    <path
+       id="path3907"
+       d="m 657.98461,2176.966 -37.81758,37.8176"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="346.29065"
+       y="2158.8464"
+       id="text3909"><tspan
+         sodipodi:role="line"
+         id="tspan3911"
+         x="346.29065"
+         y="2158.8464">sha1 = hash(/appAbc/userProfileBlah1)</tspan><tspan
+         id="tspan3913"
+         sodipodi:role="line"
+         x="346.29065"
+         y="2173.8464">read(sha1[0],  sha1[remains])</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="151.56699"
+       y="2097.5317"
+       id="text3923"><tspan
+         sodipodi:role="line"
+         id="tspan3925"
+         x="151.56699"
+         y="2097.5317">Trying to read (aka trying to figure out how to read)</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3927"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="translate(-16.118346,351.77837)"><flowRegion
+         id="flowRegion3929"><rect
+           id="rect3931"
+           width="266.68027"
+           height="184.85793"
+           x="645.48749"
+           y="1954.8551" /></flowRegion><flowPara
+         id="flowPara3933">Based on the input, the client knows where the chunk is (or it can look it up if lease expired), but how/where does it associate the sha[remains] with the offset into the corresponding chunk that the data (aJsonDocEtc) was written to???? Yes a map could be used, but then where is IT stored? Is it the Application's responsibility to store it? Or is it stored and transparently utilized by the client?</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="924.28955"
+       y="2006.3729"
+       id="text3935"
+       transform="translate(18.226841,347.73776)"><tspan
+         sodipodi:role="line"
+         id="tspan3937"
+         x="924.28955"
+         y="2006.3729">QHash&lt;QByteArray fullSha1 (reconstructed?), quint64 correspondingChunkFileOffset /*not to be confused with 'corresponding chunk' */)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="1021.3083"
+       y="2401.5876"
+       id="text3939"><tspan
+         sodipodi:role="line"
+         x="1021.3083"
+         y="2401.5876"
+         id="tspan3943">WTF? It either needs to itself be persisted (I should also add that it should be shared. Each client needs to be able to look it up too!)</tspan><tspan
+         sodipodi:role="line"
+         x="1021.3083"
+         y="2416.5876"
+         id="tspan3947">or else how do we look it back up? Do we persist into a client-only-cluster (clients ARE cluster)? How does that cluster function? Don't</tspan><tspan
+         sodipodi:role="line"
+         x="1021.3083"
+         y="2431.5876"
+         id="tspan3949">we now have a dependency conflict (that cluster runs into same problem?)</tspan></text>
+  </g>
+</svg>

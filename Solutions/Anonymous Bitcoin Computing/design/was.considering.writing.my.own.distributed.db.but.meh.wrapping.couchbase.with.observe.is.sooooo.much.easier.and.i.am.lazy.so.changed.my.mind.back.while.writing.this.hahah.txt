@@ -1,0 +1,26 @@
+I found out the other day, and was very sad to hear, that Couchbase does not write to it's replicas before confirming a write. There is observe, but it uses polling -_-. I am now re-exploring the option of making my own distributed database. It would be modeled after GFS but somehow I feel more stupid on the subject AFTER reading the whitepaper on it. I also wasted like an entire day reading up on different distributed databases. I went from deciding to go with MongoDB to deciding to go with Riak... and the funniest thing is that I did the same exact thing a while back before landing on Couchbase.
+
+Here is what sucks about each one:
+Couchbase = doesn't write to all replicas before confirming write
+MongoDB = locks entire db for one write (lmfao)
+Riak = You implement atomicity yourself in the application code (yuck). No way to "insert-only" without checking via read, and the read->write is not atomic! There's VCLOCK's but they're hard to use and again, need to be used in application layer. Shit design imo. There is no way to fail a write for a key that already has a value. Riak accepts both and then the next read will get both and the *application* is expected to analyze both and choose one and then write it back (just to do a lousy read!). Riak does have freedom in this respect but the freedom comes at a cost of responsibility.
+
+
+
+So now I want to implement my own that is CP-`Blocking-A`
+A key has a single reader/writer
+2 replicas
+writing waits for 2 replicas
+reading blocks/waits until that is done (this is the value you must monitor to know when to scale your cluster OR to instantiate in-cluster cache nodes if read is too high)
+reads and writes are responded to in the order they came in
+reads can obviously be handled simultaneously and from a MRU in-memory cache
+writes block all subsequent reads until replicas write
+
+by doing this, we are Consistent and Partition Tolerant (client times out response, asks replica for read or write (two very different actions from here -- but read is easier and still does the same thing the write would have done (which is elect a new replica and become the new primary (which of the two replicas needs to be determined somehow and i was thinking maybe just to IDFK have some easy and retraceable formula)))... and BLOCKING Available (which, imo, is just as good as always available (the only 'gotcha' is that human intervention is required to scale up every one in a while (this is already true), otherwise you might lose availability)).
+
+
+It sounds easy and difficult simultaneously. It would also be another business I could make money from if I so choosed. It would also take an order of magnitude more hours than I am giving it credit. It would alter my future drastically. I really wish I could just use Couchbase. I could wrap their client with a client of my own that IS OK WITH the observe/polling and blocks writes until observe says what's up. I definitely don't want that shit in my application code, for the same reason I am choosing not to use Riak. I guess maybe I could code the same client wrapper around Riak hypothetically, but tbh I have been unable to wrap my head around the code required. It is either solved on a per-application-logic basis or you can solve it using timestamps. At least couchbase will let you FAIL instead of doing the write. I love CAS!
+
+My wrapper around their client could call the blocking/observe write "Synchonous Write" (cas is another consideration but not relevant atm)
+I could also have a write and call it asynchronousWrite and it could either also do observe and then let me know via some signal that i am connected to, or could just not do observe and not give a shit (or perhaps we are doing a bulk write that will be checked (via observe? how?) later? idfk)... or we could do all 3! synchronousWrite, asynchonousWriteNotifyOnFinish, asynchronousWriteDgaf
+synchronousWrite is what i'd use for most of my operations I think, but the other ones would be handy to have laying around and I could see myself using them eventually... I just can't think of where atm

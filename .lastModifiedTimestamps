@@ -15,7 +15,7 @@ Documents/Qt/dear.nokia.gtfo.txt:1341373118
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386036053
+Documents/minddump/:1386036099
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -26,7 +26,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386036053
+Documents/minddump/dreams/:1386036099
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -1092,7 +1092,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386036053
+Pictures/:1386036099
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1104,10 +1104,13 @@ Pictures/shirts/i.have.considered.your.considerations.t.shirt.sdlfjsdlkfjwoerusd
 Pictures/Head.Eye.i.suck.at.drawing.the.neck.looks.like.a.chin.or.anteater.mouth.lol.svg:1335462127
 Pictures/Microsoft.sitting.on.Nokias.head.i.was.gonna.add.puppet.strings.but.i.like.it.as.is.svg:1337333311
 Pictures/dpl.dicks.everywhere.license.comparison.gave.up.but.you.get.the.point.svg:1356964724
+Pictures/failed.attempt.at.solving.or.understanding.gfs.and.how.to.use.it.as.a.kv.store.svg:1360734271
 Pictures/kaylee.heidi.programming.etc.aldjfalsdjfals.svg:1352187513
 Pictures/perfect.desktop.2011.10.31.png:1320069650
 Pictures/proprietary.gpl.lgpl.thinking.out.loud.trying.to.pinpoint.fair.use.mb.which.is.impossibru.svg:1355706959
+Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-KV-DocumentStore.and.File.relationship.svg:1360588938
 Pictures/works.legality.span.svg:1355298125
+Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
 Projects/:1356170114
 Projects/AdAgency/:1333471837
 Projects/AdAgency/design/:1333472910
@@ -2219,8 +2222,9 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/shared.folders.expl
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1350939281
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1347560549
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/placeholder.file.so.folder.doesnt.get.deleted.txt:1347560549
-Projects/RpcGenerator/design/:1360324082
+Projects/RpcGenerator/design/:1360590740
 Projects/RpcGenerator/design/3.message.types.actions.without.responses.actions.with.responses.and.broadcasts.a.lot.of.thoughts.in.here.txt:1350212940
+Projects/RpcGenerator/design/Actions.are.RequestsAckedViaResponse.and.Broadcasts.are.AcknowledgedOneWayMessages.txt:1360590740
 Projects/RpcGenerator/design/MESSAGE.TRANSMISSION.ERROR.USE.CASES.and.also.the.typical.success.case.need.to.study.and.solve.this.txt:1351937832
 Projects/RpcGenerator/design/ObjectOnThreadHelper.thread.setup.and.server.init.redesign.for.RpcBankServerCompilingExample.dia:1355920458
 Projects/RpcGenerator/design/TODOreq.message.recycling.optimization.by.returning.in.bulk.and.auto.scaling.txt:1355131012
@@ -2404,7 +2408,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386036053
+Projects/libAvGraphicsItem2/design/:1386036099
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -2442,7 +2446,7 @@ Projects/libAvGraphicsItem3/src/libAvGraphicsItem3.pro:1327004311
 Projects/libAvGraphicsItem3/src/main.cpp:1327003410
 Solutions/:1358082071
 Solutions/Anonymous Bitcoin Computing/:1334997525
-Solutions/Anonymous Bitcoin Computing/design/:1355383420
+Solutions/Anonymous Bitcoin Computing/design/:1360590321
 Solutions/Anonymous Bitcoin Computing/design/AppDb.will.push.all.updates.to.every.Wt.Front.End.this.may.need.to.change.later.txt:1334343874
 Solutions/Anonymous Bitcoin Computing/design/Get.Balance.And.Database.Efficiency.Thoughts.And.Potential.Solutions.IDFK.dia:1333876018
 Solutions/Anonymous Bitcoin Computing/design/Use.Case--WtFrontEnd2AppDb2BankServer--Basic.Request.dia:1335879492
@@ -2473,6 +2477,7 @@ Solutions/Anonymous Bitcoin Computing/design/specific.small.oneserver.accountles
 Solutions/Anonymous Bitcoin Computing/design/squirb.alias.basically.just.skin.swap.based.on.domain.txt:1355383420
 Solutions/Anonymous Bitcoin Computing/design/the.beauty.of.it.all.is.in.the.get.if.in.cache.and.register.me.for.updates.to.values.call.thingy.or.something.txt:1350412515
 Solutions/Anonymous Bitcoin Computing/design/use.paxos.you.moron.it.isnt.that.tough.of.a.decision.its.still.pretty.scalable.txt:1338547630
+Solutions/Anonymous Bitcoin Computing/design/was.considering.writing.my.own.distributed.db.but.meh.wrapping.couchbase.with.observe.is.sooooo.much.easier.and.i.am.lazy.so.changed.my.mind.back.while.writing.this.hahah.txt:1360590321
 Solutions/Anonymous Bitcoin Computing/src/:1344095952
 Solutions/Anonymous Bitcoin Computing/src/AppDb/:1337825795
 Solutions/Anonymous Bitcoin Computing/src/AppDb/Actions/:1336172121
