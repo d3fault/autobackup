@@ -1,0 +1,5 @@
+this is an instance. the timeline that the timeline-chairlift is carrying
+the timeline chairlift is merely the coordinates in time
+we have an atomic clock, so one should be used in the coding
+the precision should be scalable and perhaps even auto-scalable
+either way, atomicity isn't hard to represent in code!

@@ -1,0 +1,1 @@
+a form of acknowledgement is to ask a question that uses the item you want to be acknowledged as input. the output should be able to deduce the input and vice versa, pretty sure we have these

@@ -1,0 +1,4 @@
+The Highly Distributed Transaction
+HDT
+It (Google's design) scales horizontally. Each "Transaction" has 3 pre-distinguished "agreers" (primary + secondary replicas) to handle a given key. Since the agreers are pre-calculated (more are bulk calculated (not really though, we use precision hacks) on the fly when needed), there is no cluster-wide synchronization or other sychronization/locks (aside from the 3 synchronizing with each other! TODOreq: they all need to know about each other). This gives moderate performance that is stable (commit/die) and the machines will slow down the overall network as more end-users join.
+It doesn't matter that writes aren't that cheap. Stability is more important. The writes aren't even THAT expensive considering they are guaranteed to be fault tolerant at the point that they say the write is complete. You cannot buy that with a 1-node write.
