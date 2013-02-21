@@ -8,7 +8,7 @@ MultiServerAbstraction *AbstractClientConnection::m_MultiServerAbstraction = 0;
 IProtocolKnowerFactory *AbstractClientConnection::m_ProtocolKnowerFactory = 0;
 
 AbstractClientConnection::AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent)
-    : QObject(parent), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToClient(ioDeviceToClient), m_ServerHelloState(AwaitingHello), m_NetworkMagic(ioDeviceToClient), m_HasCookie(false)
+    : QObject(parent), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToClient(ioDeviceToClient), m_ServerHelloState(AwaitingHello), m_NetworkMagic(ioDeviceToClient), m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false), m_QueueActionResponses(false), m_OldConnectionToMergeOnto(0)
 {
     m_ReceivedMessageBuffer.setBuffer(&m_ReceivedMessageByteArray);
     m_ReceivedMessageBuffer.open(QIODevice::ReadWrite);
@@ -32,7 +32,12 @@ AbstractClientConnection::AbstractClientConnection(QIODevice *ioDeviceToClient, 
         //TODOreq: forgot to set it statically before constructing!
     }
 
-    connect(ioDeviceToClient, SIGNAL(readyRead()), this, SLOT(handleDataReceivedFromClient()));
+    setupConnections();
+}
+AbstractClientConnection::~AbstractClientConnection()
+{
+    m_MultiServerAbstraction->reportConnectionDestroying(this);
+    delete m_ProtocolKnower;
 }
 quint32 AbstractClientConnection::cookie()
 {
@@ -42,6 +47,38 @@ quint32 AbstractClientConnection::cookie()
         m_HasCookie = true;
     }
     return m_Cookie;
+}
+void AbstractClientConnection::mergeNewIoDevice(QIODevice *newIoDeviceToClient)
+{
+    //definitely need to overwrite the io device, but might also need to flush the pending ack list? OR am I going with the design that says the client re-requests them?
+    //also need to re-enable broadcasts
+    //TODOreq: decide what to do with ones that were in business pending during the merge and whose request now correlates with the old connection. if we are strict, we should make them wait for the client to re-request them again. this is a hard to detect bug because queued mode is disabled when they are received from business pending (which is the NORMAL case, except this time it isn't normal because it happened over/during a merge)
+
+    //schedule old io device for deletion (TODOreq: what about disconnection? are we guaranteed to already be disconnected if we get here? does a delete imply a disconnect?)
+    m_IoDeviceToClient->close();
+    m_IoDeviceToClient->deleteLater();
+
+    //overwrite actual io device
+    m_IoDeviceToClient = newIoDeviceToClient;
+
+    setupConnections();
+
+    m_DataStreamToClient.setDevice(newIoDeviceToClient);
+    m_NetworkMagic.setIoDeviceToLookForMagicOn(newIoDeviceToClient);
+    m_IODevicePeeker.setIoDeviceToPeek(newIoDeviceToClient);
+
+    m_MultiServerAbstraction->connectionDoneHelloing(this);
+
+
+    //TODOreq: here would be a good place to put the turn off queue mode code, but i need to make sure to remember that there is a "race condition" where a message is in business pending and never gets queued (or more importantly, re-requested!) because it never runs into code that we own during the entire duration of the merge. it might be a rare race condition, but it could definitely happen
+    this->setQueueActionResponses(false); //TODOreq:^^^^
+}
+void AbstractClientConnection::setupConnections()
+{
+    connect(ioDeviceToClient, SIGNAL(readyRead()), this, SLOT(handleDataReceivedFromClient()));
+    connect(this, SIGNAL(d(QString)), m_MultiServerAbstraction, SIGNAL(d(QString)));
+    //connect(this, SIGNAL(destroyed()), this, SLOT(deleteProtocolKnower())); //hack to delete the 'old' protocol newer when a connection merges. In our connection merge code, we call AbstractClientConnection->deleteLater(), but we can't call it on protocol knower since he isn't a qobject
+    //^^nvm destroyed is emitted just before destructor, but destructor does the same thing! hack not needed
 }
 void AbstractClientConnection::handleDataReceivedFromClient()
 {
@@ -64,7 +101,7 @@ void AbstractClientConnection::handleDataReceivedFromClient()
         //read message size, message body, use it or whatever
 
 
-        if(!m_IODevicePeeker->enoughBytesAreAvailableToReadTheByteArrayMessage())
+        if(!m_IODevicePeeker.enoughBytesAreAvailableToReadTheByteArrayMessage())
         {
             return;
         }
@@ -102,6 +139,9 @@ void AbstractClientConnection::handleDataReceivedFromClient()
                     emit d("got hello from client");
                     bool containsCookie = false;
                     m_ReceivedMessageDataStream >> containsCookie; //still no idea if this takes 1 bit or 1 byte on the stream, but since it's inside a bytearray and we're measuring the size of THAT, it doesn't matter :-D. i like to think/hope/imagine that QDataStream would do a bool + quint32 (cookie) as 33 bits of network data.... but no clue tbh. also when we store it in a qbytearray it very likely rounds up to the nearest byte regardless lmfao... but i mean there are lots of other scenarios where i'd like to think bools are compacted into a single byte (if less than or equal to 8 bools in a row TODOreq: protocol design should make bools in a row if required, rpc generator can do this transparently after parsing the input xml. no fucking clue if i need to... or if bools are even stored as bits or bytes or what, lol)
+
+                    m_OldConnectionToMergeOnto = 0;
+
                     if(containsCookie)
                     {
                         emit d("hello contains cookie, so this is a reconnect i guess");
@@ -113,7 +153,7 @@ void AbstractClientConnection::handleDataReceivedFromClient()
 
                         setCookie(cookieFromClient);
 
-                        m_MultiServerAbstraction->potentialMergeCaseAsCookieIsSupplied(this);
+                        m_OldConnectionToMergeOnto = m_MultiServerAbstraction->potentialMergeCaseAsCookieIsSupplied_returning_oldConnection_ifMerge_or_ZERO_otherwise(this);
                     }
 
                     QByteArray welcomeMessage; //if i change the structure of this welcome message, i need to change the code in the client for the 'thank you', which just re-sends the welcome message (it is just a hack since they are identical for now)
@@ -141,7 +181,29 @@ void AbstractClientConnection::handleDataReceivedFromClient()
                         //Now add it to our active connections list. MIGHT AS WELL make clientId and cookie the same for simplicity. We are overwriting old/stale connections/qiodevices at this point. our parent/business maintains a list of clientIds by qiodevice, so HE can have multiple io devices all pointing to the same clientId (since the new/old iodevice is his key), but we only ever want to have one active connection (the most recent). by allowing the business to have multiple like that we just smooth the transition period between disconnect/instant-reconnect. it is very unlikely but still possible that we'd receive messages from the old qiodevice (TODOreq: when should i delete them? is that necessarily true? should i allow it to be true? does it mean i might get the same message twice? should i make it false so that is never the case? mindfuck)
                         //m_ClientsByCookie.insert(serverHelloStatus->cookie(), newClient);
                         //m_ListOfHelloedConnections.append(this);
-                        m_MultiServerAbstraction->connectionDoneHelloing(this);
+                        if(m_OldConnectionToMergeOnto)
+                        {
+                            //m_OldConnectionToMergeOnto->MERGE_SOMEHOW shit my brain just exploded TODO LEFT OFF
+                            //the problem is that I have 2 abstractClientConnections and 2 protocolKnowers and 2 ioDevices, when I only want one of each. But I want to take/grab all of the "pending ack" and also receive "business pending" (TODOreq) that complete soon and send them over the NEW io device. the old io device is in queue mode at this moment so it doesn't even attempt to send, just adds to the pending ack list
+                            //i think it would be simpler to delete the new 'abstractclientconnection' and 'protocol knower' and (after safely un-childing) moving the iodevice to to the old pair. the old protocol knower already has signals in the business pointed at it's slots, so it's definitely easier that way. TODOreq: might need to explicitly delete the iodevice if i DON'T have it as a child of [whichever of the pair own it, i forget]. Sweet just checked, the io device doesn't have a parent so moving it around is easy. That 'this' and/or 'protocolknower' are parented is irrelevant, can just deleteLater them once the io device is moved.
+
+                            m_OldConnectionToMergeOnto->mergeNewIoDevice(m_IoDeviceToClient);
+
+                            disconnect(m_IoDeviceToClient, SIGNAL(readyRead()), this, SLOT(handleDataReceivedFromClient())); //TO Donereq: we might need to set a member bool to false also just in case there is a race condition where readRead signals have already been emitted??? if we do use the bool method then we don't even explicitly need this disconnect() call, as the deleteLater will handle the disconnections at the disappearance ofthe qobject. maybe if we do get a readyRead when that bool is true, we just call a public readyRead method on m_OldConnectionToMergeOnto (we're post-merge but pre-delete, so that pointer should still be valid). the public readyRead (or even any private ones) should be able to easily handle the case where they are called and they shouldn't have. the above solution might lead to it being called more frequently than it should. but i'd rather have it called more than it should than to miss calls!
+                            //^^we are in pre HelloDone and client knows not to send until okBroStartSending which hasn't even been sent yet, so this disconnect call is perfectly ok. there will not be a readyRead until okStartSendingBro has been received/processed by the client. our own private impl code guarantees that. it is the implicit association (i should combine them into a namespace TODOreq/but also optional because i can always do this later when i NEED to do it (psbly famous last words i am unsure?))
+
+                            QMetaObject::invokeMethod(this, "deleteLater", Qt::QueuedConnection); //we don't need the 'new' abstractClientConnections or the 'new' iprotocolknower (which gets deleted in 'this' destructor), and the 'new' iodevice has already been merged
+                            //it is done queued because we want to ensure that the below okStartSendingBro definitely works
+                        }
+                        else
+                        {
+                            //new connection, not merging
+                            m_MultiServerAbstraction->connectionDoneHelloing(this); //we don't want to activate this 'new' abstractClientConnection as being able to receive broadcasts because it doesn't have all the signals/slots from business already set up etc so fuck it. business pendings need to go to the old io device, and we aren't it
+                        }
+
+                        //TODOreq: now 'this' won't even exist later, so do we even want to continue on this path of execution since deleteLater has been called if we did a merge above? We essentially need to perform the rest of the code path on the old abstract client connection (or at least make that a part of mergeNewIoDevice method). the okStartSendingMessagesBro needs to still be sent, so we might want to continue ONLY this unit of execution and allow deleteLater to do it's stuff... later (guaranteed to be after okStartSendingBro below). BUT, the connectionDoneHelloing(this) bit should definitely change and/or be evaded (simple else { } just above would do). Since the okStartSendingBro deals only with the iodevice, it is ok to let the toBeDeletedLater 'this' to perform it's execution right here and how. TODOreq: in the above mergeNewIoDevice, call connectionDoneHelloing i guess? TODOreq: I might need to disconnect signals/slots from the iodevice to 'this' (which will be deleted later) because otherwise we might make it past this unit of execution when we definitely don't want to?
+
+                        //we don't need to move the okStartSendingBroMessage from below, because it needs to be sent in both the merge and the new connection cases. it is a BIT hacky, but since it is only dependent on the [new] io device, we'll let it go
 
                         //TODOreq: maybe we should emit that the connection is good to go right here so that we GUARANTEE that we won't receive any of the messages (as a response to 'ok start sending messages bro') because we haven't even sent 'ok start sending messages bro' until we've rigged ourselves to listen to readyRead. we don't need readyRead anymore anyways :-P
                         //TODOoptional: i wonder if _WE_ should be responsible for doing the disconnect() to the readyRead instead of the listener of the following emit? it makes more sense i suppose...

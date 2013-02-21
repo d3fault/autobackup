@@ -10,6 +10,10 @@ ByteArrayMessageSizePeekerForIODevice::ByteArrayMessageSizePeekerForIODevice(QIO
 
     //fucking sweet, i love Qt here/now. A 4-byte piece of memory is pointed to by a QByteArray, which is pointed to by a QBuffer (QIODevice), which is pointed to by a QDataStream. All 3 essentially point to the same 4-byte piece of memory :-D
 }
+void ByteArrayMessageSizePeekerForIODevice::setIoDeviceToPeek(QIODevice *ioDeviceToPeek)
+{
+    m_IODeviceToPeek = ioDeviceToPeek;
+}
 bool ByteArrayMessageSizePeekerForIODevice::enoughBytesAreAvailableToReadTheByteArrayMessage()
 {
     qint64 bytesAvailable = m_IODeviceToPeek->bytesAvailable();

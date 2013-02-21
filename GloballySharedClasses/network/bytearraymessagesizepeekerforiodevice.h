@@ -14,6 +14,7 @@ class ByteArrayMessageSizePeekerForIODevice
 {
 public:
     ByteArrayMessageSizePeekerForIODevice(QIODevice *ioDeviceToPeek);
+    void setIoDeviceToPeek(QIODevice *ioDeviceToPeek);
     bool enoughBytesAreAvailableToReadTheByteArrayMessage();
 private:
     char m_RawSizePeekCharArray[sizeof(quint32)];

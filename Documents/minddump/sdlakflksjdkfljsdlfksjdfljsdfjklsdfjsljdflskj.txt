@@ -1,0 +1,4 @@
+maybe it is a good idea to fsync a specific key who's primary replica has gone done (rofl edit: obviously meant to write going down but actually i didn't mean to but thought i did for a sec man i'm high)
+it blocks the possible problem of "all 3 replicas going down before flushing to disk", which is still unlikely but forcing it when a replica fails/faults is a good idea (that might have bad unintended consequences, i am unsure but don't think it will)
+
+unless fsync is what causes the fault to begin with, but i think that would be a coding error and would fuck up the system anyways. i need to test my code on a test network obviously

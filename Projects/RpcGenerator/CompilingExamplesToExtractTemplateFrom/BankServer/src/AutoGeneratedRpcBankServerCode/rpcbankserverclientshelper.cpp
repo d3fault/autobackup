@@ -1,13 +1,25 @@
 #include "rpcbankserverclientshelper.h"
 
 RpcBankServerClientsHelper::RpcBankServerClientsHelper(QObject *parent)
-    : IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack(parent), m_Initialized(false), m_RpcBankServerProtocolKnowerFactory(this, this), m_MultiServerAbstraction(&m_RpcBankServerProtocolKnowerFactory, this)
+    : IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack(parent), m_Initialized(false), m_RpcBankServerProtocolKnowerFactory(this), m_MultiServerAbstraction(&m_RpcBankServerProtocolKnowerFactory, this)
 {
+    RpcBankServerProtocolKnowerFactory::setSignalRelayHackEmitter(this);
 #if 0
     m_ActionDispensers = new RpcBankServerActionDispensers(this);
     takeOwnershipOfActionsAndSetupDelivery();
 #endif
     m_BroadcastDispensers = new RpcBankServerBroadcastDispensers(this);
+}
+void RpcBankServerClientsHelper::sendBroadcastToArandomClient(IMessage *broadcastMessage)
+{
+    AbstractClientConnection *clientConnectionToUseForBroadcast_OR_Zero = m_MultiServerAbstraction.getSuitableClientConnectionNextInRoundRobinToUseForBroadcast_OR_Zero();
+
+    if(clientConnectionToUseForBroadcast_OR_Zero)
+    {
+        static_cast<RpcBankServerProtocolKnower*>(clientConnectionToUseForBroadcast_OR_Zero->protocolKnower())->streamToByteArrayAndTransmit(broadcastMessage);
+        //TODOreq: m_MultiServerAbstraction.bulkBroadcastToAllClients(pendingBalanceDetectedMessage);
+    }
+    //else: no clients connected this might be a good place to cache broadcasts if i ever choose to, but for now i think i'll drop em :-/
 }
 #if 0
 void RpcBankServerClientsHelper::takeOwnershipOfActionsAndSetupDelivery()
@@ -84,6 +96,9 @@ void RpcBankServerClientsHelper::pendingBalanceDetectedDelivery()
     //pendingBalanceDetectedMessage->doneWithMessage(); //old TODOreq: shouldn't this be after the ACK? might have to re-send it... i guess it depends on the guarantees made by myBroadcast. if before it returns it writes to a couchbase db and WAL promises the delivery, then yes calling doneWithMessage() now is probably* ok. just make sure you know to allocate one whenever we are walking the WAL (either as us or a neighbor [same code, different machine]). getNewOrRecycled _cannot_ be used (bitcoin thread owns dispenser). so maybe we shouldn't do doneWithMessage until the ack IS here??? idfk
 
     //TODOreq: Pretty sure my broadcasts still need their ACK'ing scheme to be implemented... but I'm going to wait until my Action's ACK-ing scheme is in place + working to do it (since I'll steal it's code :-P)
+    sendBroadcastToArandomClient(pendingBalanceDetectedMessage);
+
+    //TODOreq: still need to fix MessageId stuff for broadcasts, but yea want to get actions up and acking before fixing broadcasts
 }
 void RpcBankServerClientsHelper::confirmedBalanceDetectedDelivery()
 {
@@ -92,6 +107,8 @@ void RpcBankServerClientsHelper::confirmedBalanceDetectedDelivery()
     confirmedBalanceDetectedMessage->Header.MessageId = 0;
     //myBroadcast(confirmedBalanceDetectedMessage);
     //confirmedBalanceDetectedMessage->doneWithMessage();
+
+    sendBroadcastToArandomClient(confirmedBalanceDetectedMessage);
 }
 void RpcBankServerClientsHelper::initialize(MultiServerAbstractionArgs multiServerAbstractionArgs)
 {

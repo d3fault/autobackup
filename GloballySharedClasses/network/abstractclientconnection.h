@@ -17,6 +17,7 @@ class AbstractClientConnection : public QObject
 	Q_OBJECT
 public:
     explicit AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent = 0);
+    ~AbstractClientConnection();
     static void setMultiServerAbstraction(MultiServerAbstraction *multiServerAbstraction) { m_MultiServerAbstraction = multiServerAbstraction; }
     static void setProtocolKnowerFactory(IProtocolKnowerFactory *protocolKnowerFactory) { m_ProtocolKnowerFactory = protocolKnowerFactory; }
 
@@ -24,7 +25,14 @@ public:
     //TODOreq: inline/implicit optimization mb idfk
     inline void transmitMessage(QByteArray *message) { NetworkMagic::streamOutMagic(&m_DataStreamToClient); m_DataStreamToClient << *message; }
     quint32 cookie();
+    void setQueueActionResponses(bool queueActionResponses) { m_QueueActionResponses = queueActionResponses; }
+    bool queueActionResponses() { return m_QueueActionResponses; }
+    inline IProtocolKnower *protocolKnower() { return m_ProtocolKnower; }
 private:
+    AbstractClientConnection *m_OldConnectionToMergeOnto;
+    void mergeNewIoDevice(QIODevice *newIoDeviceToClient);
+    bool m_QueueActionResponses;
+
     QByteArray m_ReceivedMessageByteArray;
     QBuffer m_ReceivedMessageBuffer;
     QDataStream m_ReceivedMessageDataStream;
@@ -34,7 +42,7 @@ private:
 
     static MultiServerAbstraction *m_MultiServerAbstraction;
     static IProtocolKnowerFactory *m_ProtocolKnowerFactory;
-    IProtocolKnower *m_ProtocolKnower;
+    IProtocolKnower *m_ProtocolKnower; //TODOreq: where is this deleted regularly? I am now looking for deleting it as per it being a part of an unneeded new connection (that is merging with and using an old connection's protocol knower), but I think this still needs to be deleted somewhere during regular flow
 
     enum ServerHelloState
     {
@@ -47,11 +55,12 @@ private:
 
     ServerHelloState m_ServerHelloState;
     NetworkMagic m_NetworkMagic;
-    ByteArrayMessageSizePeekerForIODevice *m_IODevicePeeker;
+    ByteArrayMessageSizePeekerForIODevice m_IODevicePeeker;
 
     void setCookie(const quint32 &cookie) { m_HasCookie = true; m_Cookie = cookie; }
     bool m_HasCookie;
     quint32 m_Cookie;
+    void setupConnections();
 signals:
     void d(const QString &);
 public slots:

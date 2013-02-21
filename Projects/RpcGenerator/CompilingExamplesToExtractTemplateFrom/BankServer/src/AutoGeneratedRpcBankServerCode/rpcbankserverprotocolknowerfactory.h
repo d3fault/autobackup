@@ -14,13 +14,13 @@ class RpcBankServerProtocolKnowerFactory : public IProtocolKnowerFactory
 {
     Q_OBJECT
 public:
-    explicit RpcBankServerProtocolKnowerFactory(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter, QObject *parent) : IProtocolKnowerFactory(parent), m_SignalRelayHackEmitter(signalRelayHackEmitter) { }
+    explicit RpcBankServerProtocolKnowerFactory(QObject *parent) : IProtocolKnowerFactory(parent)
+    { }
+    static void setSignalRelayHackEmitter(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter) { RpcBankServerProtocolKnower::setSignalRelayHackEmitter(signalRelayHackEmitter); }
     IProtocolKnower *getNewProtocolKnower()
     {
-        return new RpcBankServerProtocolKnower(m_SignalRelayHackEmitter, this);
+        return new RpcBankServerProtocolKnower(this); //TODOreq: caller takes ownership, so he must delete!
     }
-private:
-    IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *m_SignalRelayHackEmitter;
 };
 
 #endif // RPCBANKSERVERPROTOCOLKNOWERFACTORY_H

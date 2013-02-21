@@ -21,10 +21,20 @@ class RpcBankServerProtocolKnower : public IEmitRpcBankServerActionRequestSignal
 {
     Q_OBJECT
 public:
-    explicit RpcBankServerProtocolKnower(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter, QObject *parent);
+    static void setSignalRelayHackEmitter(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter) { m_SignalRelayHackEmitter = signalRelayHackEmitter; }
+    explicit RpcBankServerProtocolKnower(QObject *parent);
     virtual void messageReceived(); //QDataStream *messageDataStream);
+    inline void streamToByteArrayAndTransmit(IMessage *message)
+    {
+        //stream to byte array
+        resetTransmitMessage();
+        m_TransmitMessageDataStream << *message;
+
+        //transmit
+        m_AbstractClientConnection->transmitMessage(&m_TransmitMessageByteArray);
+    }
 private:
-    IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *m_SignalRelayHackEmitter;
+    static IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *m_SignalRelayHackEmitter;
 
     ServerCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ServerGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
@@ -144,16 +154,11 @@ private:
         //add it to pending lazy ack ack
         actionSpecificAckList->insert(message->Header.MessageId, message);
 
-        streamToByteArrayAndTransmit(message);
-    }
-    inline void streamToByteArrayAndTransmit(IActionMessage *message)
-    {
-        //stream to byte array
-        resetTransmitMessage();
-        m_TransmitMessageDataStream << *message;
-
-        //transmit
-        m_AbstractClientConnection->transmitMessage(&m_TransmitMessageByteArray);
+        //don't send it if we are in queue mode. our ack list becomes the queue
+        if(!m_AbstractClientConnection->queueActionResponses())
+        {
+            streamToByteArrayAndTransmit(message);
+        }
     }
 public slots:
     void createBankAccountDelivery();

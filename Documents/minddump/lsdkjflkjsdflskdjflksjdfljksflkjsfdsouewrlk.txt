@@ -1,0 +1,21 @@
+I could use git urls to clone them on the client at last chance, but I doubt it really matters anyways if I have to use my own servers for bandwidth.
+I could allow git urls to be used for "lgpl readonly libs"-pulling and lazy-pull them on compile. have to be able to point to specific version obviously, OR (TODOreq good idea in here): we could get an agreement/mental-contract(verbal-contract) that the API won't change even a single bit. basically the rules of Binary Compatibility in Qt/C++ which are extensively documented :).
+
+Now there are two ideas:
+1) just the utilizing of git urls to pull project dependencies at JIT-4-compile (lazy)
+2) "formal contracts" on an API from a specific "source" (git url stream (polled) in this case, but could be any protocol etc)
+
+possibly way OT: perhaps it would be interesting to introduce "content license" that is "source-wide", and included with the "formal contract" negotiation (should it be automated (with human modification still possible of course, but for example: "my default content license for my source would be the dpl")).
+
+I need to make sure the documents released from source have legally been bound to the dpl, which means I would/will distribute the DPL with each and every "software distribution" (module?) that is released if I have to. I think merely referring to it is good enough though, so long as we know it is already on the system and accepted. But you might have to convince a judge of that too! I think in your general source package of significant size, the license size is negligible. Still for patches it's kind of overkill dontcha think?
+
+Perhaps it is best to ask them every time what license to distribute the content under unless the user explicitly selects a permanent default and asks never to be ask again
+
+Do I ask at create or save?
+Does license become a requirement for saving?
+I think yes. It also must be an approved license.
+That still doesn't answer the question. When do I ask the user what license? I guess it doesn't matter, so long as it is gotten before the save! lmfao.
+
+They will be hard pressed to find out that they can't save their content privately under all rights reserved on MY network after they have already typed it, so I should have the system initialized with the "next/save" button not connected to the "next/save" slot. It becomes explicitly connected (and visibly enabled) when an approved license is chosen. DPL or freer. (DPL being freer than GPL). The connection is also severed using Qt's "0 for wild card" disconnect method (or are we in boost land :(?) when they move from an approved license to a non-approved license.
+
+I should perhaps use a CLA to force all of their work on a system (see how gerrit/qt open governance/etc is set up) to be published under the terms of the DPL. I am unsure if they should be migrated into one.

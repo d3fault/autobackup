@@ -22,7 +22,7 @@
 struct NetworkMagic
 {
     NetworkMagic(QIODevice *ioDeviceToLookForMagicOn);
-
+    void setIoDeviceToLookForMagicOn(QIODevice *ioDeviceToLookForMagicOn);
     static const quint8 MagicExpected[MAGIC_BYTE_SIZE];
     quint8 m_CurrentMagicByteIndex;
     bool m_MagicGot;

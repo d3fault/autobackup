@@ -10,6 +10,11 @@ NetworkMagic::NetworkMagic(QIODevice *ioDeviceToLookForMagicOn)
 {
     messageHasBeenConsumedSoPlzResetMagic();
 }
+void NetworkMagic::setIoDeviceToLookForMagicOn(QIODevice *ioDeviceToLookForMagicOn)
+{
+    m_IoDeviceToLookForMagicOn = ioDeviceToLookForMagicOn;
+    m_DataStreamToLookForMagicOn.setDevice(ioDeviceToLookForMagicOn);
+}
 bool NetworkMagic::consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic()
 {
     if(m_MagicGot)

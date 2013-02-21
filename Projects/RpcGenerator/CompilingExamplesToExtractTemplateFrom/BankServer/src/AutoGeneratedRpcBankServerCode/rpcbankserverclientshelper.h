@@ -24,6 +24,7 @@ public:
     explicit RpcBankServerClientsHelper(QObject *parent = 0);
     inline RpcBankServerBroadcastDispensers *broadcastDispensers() { return m_BroadcastDispensers; }
 private:
+    void sendBroadcastToArandomClient(IMessage *broadcastMessage);
     //void takeOwnershipOfActionsAndSetupDelivery();
     inline void emitInitializedSignalIfReady() { if(checkInitializedAndAllBroadcastDispensersClaimed()) emit initialized(); }
     inline bool checkInitializedAndAllBroadcastDispensersClaimed() { return (m_Initialized && m_BroadcastDispensers->everyDispenserIsCreated()); }

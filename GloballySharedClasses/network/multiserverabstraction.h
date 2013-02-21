@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QHash>
 #include <QCryptographicHash>
+#include <QQueue>
 #include <QDateTime> //debug(?)
 
 #include "abstractclientconnection.h"
@@ -44,22 +45,27 @@ public:
         while(getExistingConnectionUsingCookie__OrZero(cookie));
         return cookie;
     }
-    void potentialMergeCaseAsCookieIsSupplied(AbstractClientConnection *newConnectionToPotentiallyMergeWithOld);
+    AbstractClientConnection *potentialMergeCaseAsCookieIsSupplied_returning_oldConnection_ifMerge_or_ZERO_otherwise(AbstractClientConnection *newConnectionToPotentiallyMergeWithOld);
     void connectionDoneHelloing(AbstractClientConnection *abstractClientConnection);
     //void sendMessage(QByteArray *message, quint32 clientId);
+
+    //void roundRobinBroadcastBecauseClientNotifiesNeighbors(IMess pendingBalanceDetectedMessage);
+    AbstractClientConnection *getSuitableClientConnectionNextInRoundRobinToUseForBroadcast_OR_Zero();
+    void reportConnectionDestroying(AbstractClientConnection *connectionBeingDestroyed);
 private:
     bool m_BeSslServer, m_BeTcpServer, m_BeLocalServer;
     SslTcpServer *m_SslTcpServer;
     inline void deletePointersAndSetEachFalse() { delete m_SslTcpServer; /* TODOreq: delete Tcp/Local */ m_BeSslServer = false; m_BeTcpServer = false; m_BeLocalServer = false; }
 
-
-    //still in hello phase
-    QList<AbstractClientConnection*> m_ClientConnections;
-
     void handleNewClientConnected(QIODevice *newClient);
 
-    //TODOreq: Still no clue what to do when I receive the same cookie twice... or if it's good enough security [since I'm using SSL?]...
+    //all connections, regardless of hello state
+    QList<AbstractClientConnection*> m_ListOfConnectionsIgnoringHelloState;
+    //only hello'd connections
     QList<AbstractClientConnection*> m_ListOfHelloedConnections;
+
+    QQueue<AbstractClientConnection*> m_RoundRobinQueue; //this class manages access to it and makes sure it is not empty (lazy fill on first read)
+
     inline AbstractClientConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
     {
         int connectionsCount = m_ListOfHelloedConnections.size();
@@ -81,6 +87,8 @@ private:
         return ((quint32)(QCryptographicHash::hash(md5Input, QCryptographicHash::Md5).toUInt())); //for the time being, i'm just not going to give a shit about the truncation. lol /lazy
     }
     static quint32 overflowingClientIdsUsedAsInputForMd5er; //the datetime and a call to qrand() is added to make the overflowing irrelevant
+    void dontBroadcastTo(AbstractClientConnection *abstractClientConnection);
+    void refillRoundRobinFromHellodConnections();
 signals:
     void d(const QString &);
 private slots:
