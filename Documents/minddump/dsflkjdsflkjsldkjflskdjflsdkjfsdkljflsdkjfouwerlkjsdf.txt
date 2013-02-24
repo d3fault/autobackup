@@ -1,0 +1,6 @@
+Our system could easily differentiate and coordinate "source for compile" and "source for editting/reading". Source for compile has comments and whitespace stripped out. It is probably worth the bandwidth considerations, but we need to make sure it is never seen when trying to open the source (unless explicitly asked for). The diversion/lazy-pull to editting/reading version (could just be patches applied btw!) is transparent to the user by default.
+
+Source for compile is only sent when used as a dependency for some other module. It is not persisted, unless that proves to be a performance improvement. You can disable the optimization.
+
+
+Actually fuck that's not an optimization (even though it is). I want source to be made redundant to the point that it is never even close to becoming lost, so making those extra copies of the comments is worth it!

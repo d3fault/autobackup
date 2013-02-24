@@ -1,0 +1,1 @@
+On a per-generate basis (or at least, a one-to-multi relationship), we should be able to generate templates for the rpc server's business backend (and possibly the backend's backends? or wtf am I talking about here mb need to consolidate?). They seem persistable but yet kind of distant from the concept of a rpc service definition, so I'm not sure they belong in/with it.

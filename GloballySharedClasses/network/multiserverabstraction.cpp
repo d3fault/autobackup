@@ -27,9 +27,8 @@ AbstractClientConnection *MultiServerAbstraction::potentialMergeCaseAsCookieIsSu
         //disable broadcasts (we pick another connection in round robin)
         dontBroadcastTo(oldConnectionToMergeWithMaybe);
 
-        //set actions to queue mode
-        oldConnectionToMergeWithMaybe->setQueueActionResponses(true); //TODOreq: unset it later after merge complete, but make sure you figure out whether or not to send business pending that never noticed a merge occured (e.g. they were in business pending the whole time). i think i am making the client re-request all of them, so that would maybe imply we need yet another list and/or possibly even a new retry mode? there is/could-be retry-on-same-connection and retry-knowing-its-new-connection
-
+        //set merge in progress, snapshotting all message IDs in business pending at this very moment. those ones require the new connection to re-request/retry them
+        oldConnectionToMergeWithMaybe->setMergeInProgress(true); //TODOreq: unset it later after merge complete, but make sure you figure out whether or not to send business pending that never noticed a merge occured (e.g. they were in business pending the whole time). i think i am making the client re-request all of them, so that would maybe imply we need yet another list and/or possibly even a new retry mode? there is/could-be retry-on-same-connection and retry-knowing-its-new-connection... but do i NEED to differentiate between the two?
 
         return oldConnectionToMergeWithMaybe;
 

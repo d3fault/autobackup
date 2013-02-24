@@ -24,6 +24,7 @@ public:
     static void setSignalRelayHackEmitter(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter) { m_SignalRelayHackEmitter = signalRelayHackEmitter; }
     explicit RpcBankServerProtocolKnower(QObject *parent);
     virtual void messageReceived(); //QDataStream *messageDataStream);
+    virtual void notifyOfMergeInProgress();
     inline void streamToByteArrayAndTransmit(IMessage *message)
     {
         //stream to byte array
@@ -46,6 +47,10 @@ private:
 
     QHash<quint32 /*MessageId*/, IActionMessage* /*pending-in-business*/> m_CreateBankAccountMessagesPendingInBusiness;
     QHash<quint32 /*MessageId*/, IActionMessage* /*pending-in-business*/> m_GetAddFundsKeyMessagesPendingInBusiness;
+    //etc for each Action
+
+    QList<quint32> m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected;
+    QList<quint32> m_GetAddFundsKeyMessagesPendingInBusinessWhenMergeDetected;
     //etc for each action
 
     //TODOreq: shit our messages get so easily sent back to our rpc bank server clients helper (the specific connection really) that I don't know where to do pendingInBusiness.remove!!! perhaps in the deliver() logic just before the signal is emitted??? Fuck me this really screws with the design, never thought of that before now. I'll probably need a hack to accomodate it. HAHAHAHA rofl oh just realized I am the same person who receives those signals... so it should be easy once I get that coded :-P. Still worth the TODOreq because I simply didn't have that much coded in the part I'm taking the code from (ported/upgraded/optimized/redesigned)
@@ -60,6 +65,8 @@ private:
         if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
         {
             //so it's in the ack awaiting ack list, now we need to determine if we're lazy ack'ing an old message or if we want to re-send the response. this is why we lazy ack to begin with...
+
+            //edit: for example right here the retry bit should be specified because what if the first request just didn't make it?
 
             if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->toggleBit() == actionMessage->toggleBit())
             {
@@ -103,7 +110,7 @@ private:
             //if messageOnlyIfPendingInBusiness really
             if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
             {
-                //TODOreq: decided that rpc generator will first report the status of the message, and then later ----- actually fuck it that makes unnecessary complications. I should just _ONLY_ check once: the maximum timeout allowed. But the decision remains: I will simply "report" the stuck-in-business error and let the controller-of handle it. There is no need to ask until -----
+                //TO DONEreq (decided i need to have two status checks and the first one is a retry but the second can know whether or not to send the message again (a small optimization TODOoptimization)): decided that rpc generator will first report the status of the message, and then later ----- actually fuck it that makes unnecessary complications. I should just _ONLY_ check once: the maximum timeout allowed. But the decision remains: I will simply "report" the stuck-in-business error and let the controller-of handle it. There is no need to ask until -----
                 //ACTUALLY WAIT THERE IS A REASON
                 //If I _DON'T_ have a 2-phase "eh he's still in pending gimmeh more time" method, then TimeUntilResponseLostCheckingIsPerformed has to EQUAL MaximumTimeAllowedInBusiness. Is it ok to make these equal (because we'd only have one check to handle both)?
                 //^^^^^It doesn't seem TOOOOO harmful, but I'd like to think that I'm giving my business an ample amount of time (some slow down is acceptable versus shutting down everything after all) while still having snappy "response lost here it is again" recovery. That tells me they shouldn't equal each other.
@@ -143,7 +150,7 @@ private:
 
         //emit createBankAccount(createBankAccountMessage);
     }
-    inline void removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(IActionMessage *message, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList)
+    inline void removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(IActionMessage *message, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList, QList<quint32> *actionSpecificBusinessPendingDuringMergeList)
     {
         //remove it from pending business
         if(actionSpecificPendingInBusinessList->remove(message->Header.MessageId) != 1)
@@ -154,9 +161,21 @@ private:
         //add it to pending lazy ack ack
         actionSpecificAckList->insert(message->Header.MessageId, message);
 
-        //don't send it if we are in queue mode. our ack list becomes the queue
-        if(!m_AbstractClientConnection->queueActionResponses())
+        //don't send it if a merge is in progress. our ack list becomes the queue
+        if(!m_AbstractClientConnection->mergeInProgress())
         {
+            //our flagging tells us there isn't a merge in progress, but that doesn't mean there wasn't one while this message was in pending! so we check that now
+            //if(message->Header.MessageId)
+            if(!actionSpecificBusinessPendingDuringMergeList->isEmpty())
+            {
+                if(actionSpecificBusinessPendingDuringMergeList->contains(message->Header.MessageId))
+                {
+                    actionSpecificBusinessPendingDuringMergeList->removeAll(message->Header.MessageId);
+                    //TODOoptimization: verify removeAll only returned one
+
+                    return; //we don't want to stream/transmit this one
+                }
+            }
             streamToByteArrayAndTransmit(message);
         }
     }

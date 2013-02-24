@@ -1,0 +1,3 @@
+One of the options in LifeShaper is "Defer Decision", so I guess somewhere else I have a "Deferal Decision Processor" that I can turn on and off at will.
+
+I feel like the whole system might be safer on a cluster (with full backups also) even during the Life Shaping execution, but that's a dependency problem I might not solve :-/.

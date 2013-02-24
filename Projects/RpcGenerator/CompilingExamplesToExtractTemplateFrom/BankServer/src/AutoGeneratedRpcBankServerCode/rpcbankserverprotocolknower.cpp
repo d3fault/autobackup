@@ -48,11 +48,25 @@ void RpcBankServerProtocolKnower::messageReceived() //QDataStream *messageDataSt
         break;
     }
 }
+void RpcBankServerProtocolKnower::notifyOfMergeInProgress()
+{
+    //we should compile and maintain a list (for each message action type) for all the ones that are in business pending at this very moment
+    m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected.clear();
+    m_GetAddFundsKeyMessagesPendingInBusinessWhenMergeDetected.clear();
+    //etc for each Action
+
+    m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected.append(m_CreateBankAccountMessagesPendingInBusiness.keys());
+    m_GetAddFundsKeyMessagesPendingInBusinessWhenMergeDetected.append(m_GetAddFundsKeyMessagesPendingInBusiness.keys());
+    //etc for each Action
+    //mfw when i almost coded an inline function to do the above operation generically for all actions then lol'd when i decided i'd call it "append" and the solution already existed!
+
+    //then, in their respective delivery slots, we utilize the lists we created here
+}
 void RpcBankServerProtocolKnower::createBankAccountDelivery()
 {
-    removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(static_cast<IActionMessage*>(sender()), &m_CreateBankAccountMessagesAwaitingLazyResponseAck, &m_CreateBankAccountMessagesPendingInBusiness);
+    removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(static_cast<IActionMessage*>(sender()), &m_CreateBankAccountMessagesAwaitingLazyResponseAck, &m_CreateBankAccountMessagesPendingInBusiness, &m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected);
 }
 void RpcBankServerProtocolKnower::getAddFundsKeyDelivery()
 {
-    removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(static_cast<IActionMessage*>(sender()), &m_GetAddFundsKeyMessagesAwaitingLazyResponseAck, &m_GetAddFundsKeyMessagesPendingInBusiness);
+    removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(static_cast<IActionMessage*>(sender()), &m_GetAddFundsKeyMessagesAwaitingLazyResponseAck, &m_GetAddFundsKeyMessagesPendingInBusiness, &m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected);
 }

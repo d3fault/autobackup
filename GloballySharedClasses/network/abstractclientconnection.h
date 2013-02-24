@@ -25,13 +25,13 @@ public:
     //TODOreq: inline/implicit optimization mb idfk
     inline void transmitMessage(QByteArray *message) { NetworkMagic::streamOutMagic(&m_DataStreamToClient); m_DataStreamToClient << *message; }
     quint32 cookie();
-    void setQueueActionResponses(bool queueActionResponses) { m_QueueActionResponses = queueActionResponses; }
-    bool queueActionResponses() { return m_QueueActionResponses; }
+    void setMergeInProgress(bool mergeInProgress);
+    bool mergeInProgress() { return m_MergeInProgress; }
     inline IProtocolKnower *protocolKnower() { return m_ProtocolKnower; }
 private:
     AbstractClientConnection *m_OldConnectionToMergeOnto;
     void mergeNewIoDevice(QIODevice *newIoDeviceToClient);
-    bool m_QueueActionResponses;
+    bool m_MergeInProgress;
 
     QByteArray m_ReceivedMessageByteArray;
     QBuffer m_ReceivedMessageBuffer;
