@@ -1,0 +1,15 @@
+distributed database:
+fsync should be run on a file (key) whose replica (primary or secondary) has been detected to have failed, of course we are fucked if the reason the replica failed is because it fails during the specific fsync -- but that won't be likely to be the case because it means we are hacked lmfao
+
+basically what i'm saying is that on a distributed db, "writing to disk" asynchronously, which buffers to OS kernel ram to group/minimize writes, the write can be considered "done" if it is "written" to 3 different computers, even if it is only the ram [because the kernel buffers it]. But as soon as one of the replicas fails (the other "2" detect it), fsync is run on that particular "key" or "file" or "whatever". so i guess i am saying a "value" (relative to key) should be a file so that i can call operating system file-specific sync'ing functionality (otherwise i could sync the entire contents of ram, but that would be time consuming and unnecessary considering most of the other values would have not had their replicas affected by the failure
+
+each server in the "3" needs it's own UPS, they are only connected via ethernet -- no dependencies otherwise (kvm solution might change that, but those rules apply on a different level)
+
+this has nothing to do with input-only/output-only stuff, i don't even see why i'm mentioning it here
+
+i now find it hilarious that i said "sync" was stupid
+
+still, i think that the method name "write" should never exist in a programming api
+"asynchronousWrite" and "synchronousWrite" methods should be provided (or at least something along the lines of... you get what i'm saying). perhaps with optional "future" returned for the async write, which can be immediately .wait()'d on
+
+fuck me, i don't know how to "sync" on windows. actually i think Qt has QFile::flush which is OS independent? Time to look it up in the docs yay a qt/offline problem :). Qt's docs as of 4.8.1 answer it ambiguiously. fuck. It does say "any" buffers so that kind of means "all" buffers so maybe it is like fsync (which i am guessing is like "sync" but file-specific??? (have never used it)). Pretty sure there was a thread in the mailing list on it a while ago

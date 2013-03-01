@@ -1,0 +1,41 @@
+tcp/udp auto-selector based on lossage detection and reaction (with functional aims, not aim of perfection)
+
+the whole idea depends on a protocol that is tcp/udp/[localsocket (sound familiar ;-P?)] apathetic
+
+//run periodically. enough to be efficient on the long run of days/years/etc, but not too often to spend the majority of the time socket-type-switching frantically because we are at the 50/50 border and basically playing hop-scotch on top of it. udp could "insta" failover to tcp if a "drastic drop in packet loss" (tbd, probably based on current/recent averages) is detected, but tcp should not insta failover back (otherwise we'd have the hop scotch effect). so really, only switching from tcp to udp should have a "minimum time to be tcp until allowing switch to udp" -- this of course does not factor in other protocols, because udp/tcp pretty much cover all of my needs [for now? i have no idea where i'd use anything else tbh]
+switchToMostUdpOrTcpBasedOnPacketRateLoss()
+{
+	packet_rate_loss = calculatePacketRateLoss(); //basically just calculate a percentage of the packets dropped vs. not -- so this should be run on the client i guess? because dropped 'sends'/'requests' (client2server messages) would go unnoticed if the server was doing the calculating!
+	
+	//then we analyze packet_rate_loss and do basic maths that estimate whether or not doing rpc-generator-level-message-acking on udp would be cheaper than tcp-stream-level-acking (MAKE SURE YOU INCLUDE THE RPC-GENERATOR-LEVEL-MESSAGE-ACKING COST IN THE TCP MATH (so that math is used on both sides, therefore it is always cheaper to do udp? unless we have a drop-rate that is better handled at the byte level? which we try to calculate! hence this document), BECAUSE I PAY IT REGARDLESS [unless I ever use this in a non-rpc-generator use, which i currently don't plan to])
+
+	//cost of udp per minute = ((cost of re-sending entire message) * average drops per minute over past minute)
+	//implicit understanding of tcp protocol is required to be able to calculate the "cost of tcp per minute" based on cost of udp per minute -- unless we are using tcp during the calculating (i _THINK_ this data can be probed?), in which case we now have to do that same calculation but now backwards in order to determine udp per minute!
+}
+
+
+i contest that udp is superior to tcp when it is able to be determined that it is stable enough to be used. in a sense, it should be opt'd into (but we don't have to choose a default/initial!). over LAN, udp demonstrates packet loss of nearly 0%... at least that's what i've seen in past works. since we are doing message-level-verification(and OT: authentication) regardless of udp/tcp, we should opt to not doing our verification twice (tcp && rpc). Right now my message level verification in rpc generator comes from 2 places: SSL && TCP. It would be trivial to add a 3rd message verification directly into the message that is being transmitted itself. A crc32 would probably suffice but can use pretty much any one-way-hash. An HMAC would be best but now we're talking about putting ssl on top of udp which is best left to the crypto library devs. I know I could do it in Crypto++ but I don't know that I could do it securely/safely. Actually I have pretty good confidence that I could do it functionally but bugs are so fucking hard to test for and it is so important at that layer that I wouldn't bet on myself being able to one shot it. This is why SSL exists: because doing it yourself right/secure is ridiculously fucking hard.
+
+udp does not need SSL when used on a LAN, so a crc32/md5/sha1 verifier should be used instead (it doesn't matter which i choose, but the size of the output of what is chosen needs to be utilized in some maths above)
+
+a crc32 would serve better than that "end-magic" string i was thinking about doing earlier
+
+the packet loss would need to be calculated on a messageType (rpc generator domain) apathetic part of the design, preferably rpc service id [or whatever] apathetic too. connections to servers even if there are multiple rpc services going over that one connection need to be math'd on a once-per-server(regarldess of service/messageType counts) basis -- doing this with 2 processes on the same machine both using the same server, is difficult but not impossible. those two processes would need to communicate with each other and well whadya know, i just happen to have this rpc generator here but my mind is also exploding at the fact that it'd be depending on itself like that. it's still possible and obviously the udp/tcp selection chosen would be QLocalSocket so none of this document's shit even factors into it because I am pretty damn sure QLocalSocket is going to be next to lossless. It approaches the limit of lossless. However the fuck you'd say that in Calculus
+
+udp over LAN is the primary use case i'd say, but who knows maybe in some years to come our networks will be so reliable that tcp becomes worthless in general? if that ever happens, this auto-selector would permanently be made use of, the only stupid cost at that point being the periodic calculation and attempted auto-selection (or perhaps i could accept a signal randomly to disable it's use/calculating, would be easy (but should _I_ put it in there or just let the open source/libre nature of the software run it's course and let someone else put it in there when the time comes (which is a great deal of years away i'd bet)))
+
+since i want to use rpc generator in both WAN/LAN configurations, an auto-selector would be amazing
+
+basically i just need custom logic for an "encrypted?" checkbox in the gui... behind which i select tcp/ssl or udp/customUdpSsl, and then alternate via auto-selector between both sides of the "or" [respectively depending on encrypted checked variable].
+
+the crc32 message level verification is actually not necessary at all when in ssl mode, so i guess the code should be appropriately ifdef'd, or maybe just written with conditional statements idfk, to opt to not using it if we are already using ssl. i think even tcp's level is good enough [for verification], but in what cases would i want verification but not authentication anyways? If I'm on a LAN (no authentication needed), why wouldn't I be using UDP to begin with? Maybe if it was a really large (business building?) and/or busy LAN???? if i do end up selecting tcp (specifically not ssl!) then i don't need the crc32 in the message anymore
+
+the io-device level protocol has to be able to mutate itself (whether to include crc32 verification) based on the udp/tcp/ssl/customUdpSsl selection (it is also responsible for the decision/"selection"), then. i'm not sure if the data of a protocol (the actual talking) being able to select what protocol (tcp/udp/etc) it runs on and then to modify itself (and coordinate with the peer (network)) to also switch is against the rules of that one 7-layer thingo that I forget the name of (the network layers n shit), but I honestly don't give a shit because your standards shouldn't negate the awesome uses that could come from "breaking the rules". If it's possible, I'm interested. I don't give a fuck about receiving standards approval, I care about efficiency!
+
+OSI Model! Fuck you! :-D
+
+This should definitely be a TODOreq but only after I've launched! It is more for fun and might even prove to be a stupid optimization tbh. No idea but putting this in between me and launching would be stupid
+
+to the client/server of the rpc service, the underlying protocol should always not factor in. the rpc generated code (the guts of compiling examples) should be protocol-smart and ensure us that we're always using verification on some level. it should try to minimize the redundancy, but the tcp/ssl redundancy is acceptable for WAN usage. an example of minimizing redundancy is not doing a crc32 in the message when ssl/tcp is selected
+
+the minimizing redundancy is basically all about a dynamic protocol, which i already have. for example, if "error" is false on an rpc message, there is no QList<errors> following it. a small optimization that still gives you reassurance that there aren't errors
