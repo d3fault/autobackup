@@ -1,0 +1,54 @@
+retryBit, responseRetryBit, toggleBit, wasn't there another one? oh it was just retryBecauseConnectionMerge bit, which COULD just be the retryBit. this document is my attempt at minimizing the use cases. I am writing it with "MESSAGE.TRANSMISSION.ERROR.USE.CASES.etc.txt" open on the left hand side of my screen and will make sure my minimized form covers every use case. I first need to figure it out, and then I need to do the server half of it.
+
+foreach(retry,retryBecauseConnectionMerge,responseRetry,toggle) Bits
+
+#### NO ERRORS USE CASE ####
+
+toggle bit: flips on every message id re-use. it signals both the acknowledgement of the reception of it's previous response, and also a new message
+
+no other flags factor in
+
+
+#### BUSINESS EATS THAT SHIT ERROR CASE ####
+
+ok so now I remember the whole "status1" and "status2" shit. for the business eats that shit error case we are simply going to notify status1 of it and do the same again for status 2. the listener to of the status 2 as it eventually propogates it's way up is responsible for reacting to that data and whether to disable that particular node (byzantine detected) or take the entire cluster offline (my old design which is mostly what i have written down but not what i've been thinking about lately)
+
+i guess perhaps a config variable for the generated rpc service could be whether or not to auto-disable that particular rpc service in the event that a status2 'business ate it' message propagates, but maybe that's getting too far ahead of myself? idfk. KISS but i mean I'm also building a pretty complicated machine so that's also kind of an oxymoron (this isn't that complex compared to what i plan on building in the future, but hopefully by then i can build at a design level (compilable)). I mean it kind of like the "ssl will fail unless ignoreSslErrors" is called. If status2 isn't handled [in a timely manner??? what?], that particular rpc service will simply stall. It is up to the handler to decide what to do. The handler I guess in my most optimal case would be the byzantine engine. He'd now take that machine and put him in verification / error-detection mode (routines) to try to diagnose the problem
+
+KISS: rpc just tells the truth ("still in business") for both status1/2 and that is all [for now]
+
+retryBit: uhh I am tempted to say YES here but really idfk what I should call it. It ultimately doesn't matter except for understandability. Should I call it retry1 and retry2?
+
+
+#### REQUEST LOST ON NETWORK ####
+
+retryBit is used
+
+#### RESPONSE LOST ON NETWORK ####
+
+retryBit is used
+responseRetryBit is used
+
+#### REQUEST LOST ON NETWORK TWICE ####
+
+retryBit is used
+
+well, we don't know that we are eaten in business so we don't know that we aren't either! so we have to assume worst case scenario and just report it, tell the truth, and let a higher up decide. the higher up level would treat this byzantine failure just the same as the business eats it case... just using the other responsive operators output/answers instead and making note not to use this particular faulty server anymore
+
+
+#### RESPONSE LOST ON NETWORK TWICE ####
+
+retryBit is used
+responseRetryBit is used
+
+we handle this the same way as above. i guess the thing to note is that in the byzantine design, a single node isn't solely responsible for a piece of info. we recover from faults by just going around them and notifying the higher levels (which might be humans through error messages (bad hdd etc))
+
+
+#### RETRY RACE CONDITION ####
+
+retryBit and responseRetryBit are used and heavily depend on each other. See that other doc this is based on / referred to (mind just exploded). This is really the only case that requires a responseRetryBit (i _THINK_, but am not sure)
+
+
+
+
+Conclusion: fuck minimizing, KISS and just use them and make it work

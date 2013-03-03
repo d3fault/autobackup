@@ -1,0 +1,12 @@
+this is mis-applied to html/ajax
+
+an html/js snippet contains a sha1 routine
+the server he communicates with is a byzantine server, who cryptographically checks (public keys/signatures/etc) that 3 of his operators all arrived at the same sha1 for that input and sha1 for the output. Only when there is agreement on (a) input sha1, (b) output, (c) output sha1 (probably can be verified during (b)) does the "server" send back the agreed answer. the html/js "client" matches his sha1 with the one returned from the "server". also it's a small TODOoptimization to send the actual request before calculating the sha1 of the input because we will most likely be IO bound by the network.
+
+It would also probably be interesting to use 9 byzantine "operators" and then allow the "server" to respond to the "client" when 5 (quorum) [or more] have agreed.
+
+There is a single point of failure at the server himself. Perhaps this is solved by putting 3+ "servers" in a rotating javascript list. I guess this assumes you can get the html/js itself, but that is an earlier request and so is dependent on success in it's own way? Those 3 servers need to be able to be used interchangably (they operate on the same data at the same time safely) and they will communicate with each other. For example if a request was made to Server0 and he accepted it but died before the response came, after a timeout a new request can be made to Server1 who would then know about the "forwardedRequest" and the response, because Server0 coordinated with a quorum of the ServerNs before even forwarding the request! If Server1 doesn't know about the request, Server0 never got quorum approval for it therefore he never would have forwarded the request to any of the operators to begin with! The instability issue is solved!
+
+It doesn't matter which of the servers we get the html/js from, because inside each and every html/js is auto-round-robin'ing to every server ajax requests! You never have to request the original html/js again (except during obvious times such as upgrade (of it itself)).
+
+Actually the fact that it has to get a quroum between all Servers means they are all a bottleneck Fuck. Still, "a few" might not so bad. Who says we need a quorum of the entire network? Could just be my partition of interest! I am now confused but I think it might still work

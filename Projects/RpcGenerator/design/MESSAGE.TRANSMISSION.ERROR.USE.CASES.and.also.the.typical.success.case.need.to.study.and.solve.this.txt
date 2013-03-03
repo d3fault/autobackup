@@ -65,7 +65,7 @@ pendingTimeout()
 retryBit.set()
 	->
 		Server
-		//hmm-we-never-got-dat-shit TODOreq: false positive: our server will think that since the ack-pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE with same id) (except when there is no previous message, which is only for the first message with that id) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or a single flipping bit so we know if we're on 'next' or 'previous', depending entirely on if it matches ;-)
+		//hmm-we-never-got-dat-shit TOD Onereq: false positive: our server will think that since the ack-pending bit is set, that we want to re-send the responseAckPending (PREVIOUS FUCKING MESSAGE with same id) (except when there is no previous message, which is only for the first message with that id) <<<<<<---- HUGE ERROR IN DESIGN. Fix: never re-use message Ids, or ack them _BEFORE_ using them again, or a single flipping bit so we know if we're on 'next' or 'previous', depending entirely on if it matches ;-)
 
 		//WRONG: oh fuck this false positive also applies to the "business eats it" error case i think. wait no it doesn't because it's in our pending list
 

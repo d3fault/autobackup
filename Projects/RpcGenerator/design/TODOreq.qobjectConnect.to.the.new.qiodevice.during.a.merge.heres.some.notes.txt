@@ -1,0 +1,1 @@
+AbstractClientConnection is probably going to need an enum to tell us what kind of connection type it is so we can cast the iodevice into the proper socket type in order to do connections during a merge. either that or i need a design change. i think i'll take the hack, it's not like there are that many connections

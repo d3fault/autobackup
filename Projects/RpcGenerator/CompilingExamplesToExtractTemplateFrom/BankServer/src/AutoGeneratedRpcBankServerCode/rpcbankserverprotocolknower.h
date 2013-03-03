@@ -110,6 +110,15 @@ private:
             //if messageOnlyIfPendingInBusiness really
             if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
             {
+                //as of right now, both of the business pending checks come here. despite coming at different times, all we have to do is tell the truth. we are still in business! I guess we don't need the 3 different requests to indicate which status they are, simply sending the same message with the toggle bit not changing three times in a row will indicate it!
+                //TODOreq: it is worth noting that the first and second messages that a client sends to the server are the exact same, yet only the second warrants a response ("still in business"). The response to the first one is the answer/response itself! The 3rd message is the same as the second and also warrants the same response. IT IS UP TO THE CLIENT to be able to differentiate between any responses in retryBecauseRequestNetworkTimeout, stillInBusiness[1], retryBecauseBusinessTimedOut, stillInBusiness[2]
+                //TODOreq: there is an amount of custom logic that must be performed to be able to deduce on the client what messages are what. if we receive our answer/response just after we dispatch either of our retry* (also 2->3rd might be even more complicated idfk), then we need to know we're definitely going to get the same answer/response and this time with the responseBit set
+
+    TODO : say "still in business"
+                        TODO LEFT off
+                        and i think i need a message type bit. i need it for clean disconnects, but also for an alleged "still in business" message. i think i'll end up doing a request type, requestResponse type, broadcast type, disconnectPlz type, stillInBusiness type, etc as many as needed
+                        i am getting so close i can taste it
+
                 //TO DONEreq (decided i need to have two status checks and the first one is a retry but the second can know whether or not to send the message again (a small optimization TODOoptimization)): decided that rpc generator will first report the status of the message, and then later ----- actually fuck it that makes unnecessary complications. I should just _ONLY_ check once: the maximum timeout allowed. But the decision remains: I will simply "report" the stuck-in-business error and let the controller-of handle it. There is no need to ask until -----
                 //ACTUALLY WAIT THERE IS A REASON
                 //If I _DON'T_ have a 2-phase "eh he's still in pending gimmeh more time" method, then TimeUntilResponseLostCheckingIsPerformed has to EQUAL MaximumTimeAllowedInBusiness. Is it ok to make these equal (because we'd only have one check to handle both)?
