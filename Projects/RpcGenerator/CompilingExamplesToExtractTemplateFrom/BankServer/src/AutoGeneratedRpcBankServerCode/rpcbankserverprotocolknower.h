@@ -57,6 +57,9 @@ private:
     //TODOreq: figure out if, since it's inline, that they need to be pointers in order to not increase the reference count. since it's inline it might be faster (no deref'ing) to pass by value. idk how inline handles implicitly shared
     inline bool processNewRpcBankServerActionMessage_AND_RecordMessageInBusinessAndReturnTrueIfNeedEmitToBusiness(IActionMessage *actionMessage, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList)
     {
+        //TODOreq: even though this function doesn't use my various bits (retry1, retryBecauseConnectionMerge, ahh isn't this sameshit as messageType below?) in their actual names, I do deem it usable for now. I think once I get to the client implementation portion of this it will become more evident if I actually need to change the designs a bit
+        //TODOreq: i still think i need to add a messageType to differentiate between actionRequests/actionResponses/broadcasts/cleanDisconnectRequest/actionRequestRetry1(expects response). It needs to go over the network ofc. We could share the field with the hello code, but really don't have to since our protocol is dynamic as fuck :). Still it might be wise to do so?
+
         //our first check is for the lazy ack ack, as it is the most likely. we COULD check that it's in business still (I guess this depends on if the retry bit is set?), but since that's less likely we'll check it next
 
         //first just see if it's there. it will most likely be there. if it isn't, it's very likely in business pending...
@@ -191,6 +194,7 @@ private:
 public slots:
     void createBankAccountDelivery();
     void getAddFundsKeyDelivery();
+    //etc for each Action
 };
 
 #endif // RPCBANKSERVERPROTOCOLKNOWER_H

@@ -5,6 +5,8 @@
 #include <QHash>
 #include <QCryptographicHash>
 #include <QQueue>
+#include <QtNetwork/QAbstractSocket>
+#include <QtNetwork/QLocalSocket>
 #include <QDateTime> //debug(?)
 
 #include "abstractclientconnection.h"
@@ -29,12 +31,14 @@ struct MultiServerAbstractionArgs
     bool m_LocalServerEnabled;
 };
 //TODOreq: not a huge priority, but there should be a periodic timeout to clear out old incomplete hellos. if for some reason the hello didn't finish and it's still in any one of the states, it will remain their indefinitely (and theoretically/potentially leak memory). obviously also applies to client as well
+//TODOreq: if the connection we're merging into wasn't finished hello'ing we pretty much just treat it like a new connection. i am afraid there would be errors where messages could get through without hello phase being completed, but idfk tbh
 class MultiServerAbstraction : public QObject
 {
     Q_OBJECT
 public:
     explicit MultiServerAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent);
     ~MultiServerAbstraction();
+    static void setupSocketSpecificDisconnectAndErrorSignaling(QIODevice *ioDeviceToClient, AbstractClientConnection *abstractClientConnection);
     inline quint32 generateUnusedCookie()
     {
         quint32 cookie;
@@ -57,7 +61,7 @@ private:
     SslTcpServer *m_SslTcpServer;
     inline void deletePointersAndSetEachFalse() { delete m_SslTcpServer; /* TODOreq: delete Tcp/Local */ m_BeSslServer = false; m_BeTcpServer = false; m_BeLocalServer = false; }
 
-    void handleNewClientConnected(QIODevice *newClient);
+    AbstractClientConnection *handleNewClientConnected(QIODevice *newClient);
 
     //all connections, regardless of hello state
     QList<AbstractClientConnection*> m_ListOfConnectionsIgnoringHelloState;
@@ -89,6 +93,9 @@ private:
     static quint32 overflowingClientIdsUsedAsInputForMd5er; //the datetime and a call to qrand() is added to make the overflowing irrelevant
     void dontBroadcastTo(AbstractClientConnection *abstractClientConnection);
     void refillRoundRobinFromHellodConnections();
+    void setupQAbstractSocketSpecificErrorConnections(QAbstractSocket *abstractSocket, AbstractClientConnection *abstractClientConnection);
+    void setupSslSocketSpecificErrorConnections(QSslSocket *sslSocket, AbstractClientConnection *abstractClientConnection);
+    void setupQLocalSocketSpecificErrorConnections(QLocalSocket *localSocket, AbstractClientConnection *abstractClientConnection);
 signals:
     void d(const QString &);
 private slots:

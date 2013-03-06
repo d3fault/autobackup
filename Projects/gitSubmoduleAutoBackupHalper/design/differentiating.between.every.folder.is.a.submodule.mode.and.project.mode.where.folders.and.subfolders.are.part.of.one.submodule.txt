@@ -1,0 +1,35 @@
+re: autobackup -> git submodule'ification (because git submodules kick ass and actually potentially save space for full backups (diffs are cheaper to store long term than full checkouts of every revision (but most cases will just have like "a few" checkouts which will still be a space saving optimization to NOT keep copies of (basically just you know, use git bare repos and git submodules to reference specific commits))) as well as their biggest benefit: multiple projects can use specific revisions (whatever was last compiled/tested/etc) of projects they reference. right now i'm using the monolithic approach so every time I update SslTcpServer/Socket for example, every app that uses them breaks :-P. By changing to submodules now, I'll save lots of porting time later. I should have been using submodules all along tbh.
+
+I now have to consider the following:
+
+monolithic -> submodule'd
+submodule'd -> d3fault (monolithic again?)
+
+^^is there also a "launch" phase? Where/When is LifeShaper run? Presumably during the monolithic -> submodule'd (aka SOOOOOON)?
+
+
+submodule is a performance optimization tbh
+
+especially if i can get QFilesystemWatcher to integrate with it so I don't have to use polling :)
+
+but I mean I've yet to work out any lower level details anyways. Am I going to let all-empty-folders generate? How will I populate a specific folder? How will I differentiate between it (populated) and others (shadows or... filesystem... wood-beams metaphorically (because I always recreate folder structures with slight typos and fuck it up))
+
+
+
+ANYWAYS:
+
+The problem that was most needing of being solved, the differentiation between "all folders are submodules" and "projects (incl. folders) are single submodules [and therefore contradict what was just said]" is solved. The solution is to put a file like .gitignore in a central folder to signal that the folders contained therein are full submodules and so shouldn't be "entered" like normal (perhaps still entered, just not the same code path etc) and their subfolders submodulized.
+
+I was thinking of calling it: .stopAssumingEveryFolderBeneathMeIsASubmodule_except_ForAllFoldersInThisDir_and_thisFlagTemporarilyOverridesItselfHereAndNowIfItWasUsedAtAHigherDirectory
+
+kinda complicated name and I thought about calling it ".projectFolder" because I'd primarily be using it with projects.. but it applies to things other than projects so i took that out and also there's lots of gotchas and i didn't want to hide them. There was also the problem of: "projects/prototyptes" needs to have the same sort of "this is a project folder" (and so all it's folders are specific submodules), but when you look at it directly next to.. say... "projects/rpcgenerator", where rpcgenerator folder is a full submodules who's folders are NOT submodulized (as per the flag), you start to understand the "temporarily overriding" feature of that crazy ass filename (which might need to be shortened for portability but idfk who cares). Yes actually it's a bit long and impossible to write unlike .gitignore so i was thinking something along those lines...
+
+You can sort of abstract/extract/generate/come-up-with the fact that at the root directory you'd have some (even if you didn't) .startAssumingEveryFolderBeneathMeIsASubmodule file --- but i think in my app we'll just default to that state?
+
+
+
+I slept on this problem and now feel confident in it and actually really want to code it (will make me more partiton/fault proof too :-D). This is by far the best way to compromise between the two problems.
+
+
+
+Making the filename any less verbose will accidentally trick people into thinking you can do ".stopAssumingEveryFolderBeneathMeIsASubmodule", of which I have no use case for (but I could see someone wanting to use (or perhaps even using myself eventually)). The difference being that all the folders in the dir where the file is placed wouldn't be expected to be submodules themselves (nor their subfolders). The user would be expecting "the folder I place the file in becomes a singular submodule" (which also works but then I need that file in EVERY project folder so fuck that)

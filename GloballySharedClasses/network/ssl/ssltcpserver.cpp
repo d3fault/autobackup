@@ -186,8 +186,8 @@ void SslTcpServer::handleNewConnectionNotYetEncrypted()
     if(newConnection)
     {
         connect(newConnection, SIGNAL(encrypted()), this, SLOT(handleConnectedAndEncrypted()));
-        connect(newConnection, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
-        connect(newConnection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
+        connect(newConnection, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>))); //TODOreq: The user of this class should really handle it, but I mean I could always make it auto-disconnect whenever an error is seen?
+        connect(newConnection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError(QAbstractSocket::SocketError))); //TODOreq: ditto ------ HOWEVER all they really do is provide debug info anyways so I'll just leave them for now
         emit d("got a new connection from nextPendingConnection()");
     }
     else
@@ -298,5 +298,5 @@ QList<uint> SslTcpServer::getAllConnectedUniqueIds()
 }
 bool SslTcpServer::isSslConnectionGood(QSslSocket *socketToCheck)
 {
-    return ( ( socketToCheck->isValid() ) && ( socketToCheck->state() == QAbstractSocket::ConnectedState ) && ( socketToCheck->isEncrypted() ) );
+    return ( ( socketToCheck->isValid() ) && ( socketToCheck->state() == QAbstractSocket::ConnectedState ) && ( socketToCheck->isEncrypted() ) ); //This is NOT a tcp ack guarantee ;-)
 }

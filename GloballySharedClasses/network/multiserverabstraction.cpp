@@ -17,6 +17,49 @@ MultiServerAbstraction::~MultiServerAbstraction()
     //TODOreq: flush? Perhaps it's implied when I do the delete? idfk
     deletePointersAndSetEachFalse();
 }
+void MultiServerAbstraction::setupSocketSpecificDisconnectAndErrorSignaling(QIODevice *ioDeviceToClient, AbstractClientConnection *abstractClientConnection)
+{
+    //the order that we do these is important, because ssl socket is also a tcp socket!
+
+    QSslSocket *sslSocket_ifThatType_orZero = qobject_cast<QSslSocket*>(ioDeviceToClient);
+
+    if(sslSocket_ifThatType_orZero)
+    {
+        //Ssl socket
+        setupSslSocketSpecificErrorConnections(sslSocket_ifThatType_orZero, abstractClientConnection);
+    }
+    else
+    {
+        //Not Ssl Socket, so now try tcp only
+
+        QTcpSocket *tcpSocket_ifThatType_orZero = qobject_cast<QTcpSocket*>(ioDeviceToClient);
+
+        if(tcpSocket_ifThatType_orZero)
+        {
+            //Tcp Socket
+            setupQAbstractSocketSpecificErrorConnections(tcpSocket_ifThatType_orZero, abstractClientConnection);
+        }
+        else
+        {
+            //Not Tcp Socket. In the future we could check for UDP or something else (threads?), but for now our 3rd is going to be localsocket --- but I mean udp is also abstract so it might just get set up if cast-able to qabstract socket at same time as tcp
+
+            QLocalSocket *localSocket_ifThatType_orZero = qobject_cast<QLocalSocket*>(ioDeviceToClient);
+
+            if(localSocket_ifThatType_orZero)
+            {
+                //Local Socket
+                setupQLocalSocketSpecificErrorConnections(localSocket_ifThatType_orZero, abstractClientConnection);
+            }
+            else
+            {
+                //Not Local Socket, so give error [for now]
+                emit d("Couldn't determine what kind of socket type for setting up errors");
+                abstractClientConnection->makeConnectionBad(); //fuck it why not
+            }
+
+        }
+    }
+}
 AbstractClientConnection *MultiServerAbstraction::potentialMergeCaseAsCookieIsSupplied_returning_oldConnection_ifMerge_or_ZERO_otherwise(AbstractClientConnection *newConnectionToPotentiallyMergeWithOld)
 {
     //At this point, our cookie is set with the client-supplied one, but we are not done with the hello phase (we are right int he middle of it!)... so we are not on m_ListOfHelloedConnections (which means we can check against it)
@@ -140,14 +183,14 @@ void MultiServerAbstraction::stop()
         //TODOreq
     }
 }
-void MultiServerAbstraction::handleNewClientConnected(QIODevice *newClient)
+AbstractClientConnection *MultiServerAbstraction::handleNewClientConnected(QIODevice *newClient)
 {
     emit d("new client connected, starting hello phase");
 
     AbstractClientConnection *newClientConnection = new AbstractClientConnection(newClient, this);
     m_ListOfConnectionsIgnoringHelloState.append(newClientConnection); //TODOreq: we need to figure out it's cookie or assign him one. if he gives us a previous one, 'merge' the two connections in this list. What does that involve? Flushing a queue? Doesn't flushing a queue mean finding out (from new connection) where exactly we are? There will be packets that will be IMPLICITLY ack'd at this phase, when we flush the queue from a given point. We may not have received a formal lazy ack ack for the ones that ARE NOT flushed in the queue (the recent coordination told us we didn't need them), but they are now implicitly acked. The reason for that is the disconnection we're recovering from may have lost us the ack ack... but the client might have sent it before knowing the connection sucked. No need to re-send them, just say where we're at and that's good enough. TODOreq _FUCK_ doesn't flushing a queue like that imply a sort of synchroncity? I thought this was supposed to be asynchronous. I'm so confused..... or maybe the lazy ack ack arrives with the retried message... so there is a 1:1 anyways and I don't need to flush any queues because he'll re-send his action requests (TODOreq: broadcasts still need to be sent/synchronized/flushed somehow)
 
-    //connect(newClient, )
+    return newClientConnection;
 }
 void MultiServerAbstraction::dontBroadcastTo(AbstractClientConnection *abstractClientConnection)
 {
@@ -194,9 +237,30 @@ void MultiServerAbstraction::refillRoundRobinFromHellodConnections()
         m_RoundRobinQueue.enqueue(m_ListOfHelloedConnections.at(indexChosenRandomlyFromIndexList));
     }
 }
+void MultiServerAbstraction::setupQAbstractSocketSpecificErrorConnections(QAbstractSocket *abstractSocket, AbstractClientConnection *abstractClientConnection)
+{
+    //TODOreq: shouldn't error detections also go into "potentialMergeMode"? yes. anything except clean disconnect (or never finished hello'ing to begin with!) goes into potential merge mode for a period of time. so i need to do more than just make the connection go bad! basically i think i should have a flag in a signal listening to disconnected that checks whether it was a clean disconnect or not. the bool is only set to disconnectExpected = true whenever a clean disconnect is ready (request queue has been processed and responded to)
+
+    connect(abstractSocket, SIGNAL(error(QAbstractSocket::SocketError)), abstractClientConnection, SLOT(makeConnectionBad()));
+    connect(abstractSocket, SIGNAL(disconnected()), abstractClientConnection, SLOT(makeConnectionBad()));
+    connect(abstractSocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), abstractClientConnection, SLOT(makeConnectionBadIfNewSocketStateSucks(QAbstractSocket::SocketState)));
+}
+void MultiServerAbstraction::setupSslSocketSpecificErrorConnections(QSslSocket *sslSocket, AbstractClientConnection *abstractClientConnection)
+{
+    setupQAbstractSocketSpecificErrorConnections(sslSocket, abstractClientConnection); //since ssl is a layer on top of tcp
+
+    connect(sslSocket, SIGNAL(sslErrors(QList<QSslError>)), abstractClientConnection, SLOT(makeConnectionBad()));
+}
+void MultiServerAbstraction::setupQLocalSocketSpecificErrorConnections(QLocalSocket *localSocket, AbstractClientConnection *abstractClientConnection)
+{
+    //TODOreq: for abstract socket, ssl, and local socket, I am dropping the contents of the erros and just utilizing the fact that an error occured. I should later on hook them up to be debug outputted too -- for debugging purposes only obviously... whereas right now I'm hooking into them for functionality. The same applies to state changes for both local/abstract, i should output each
+    connect(localSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), abstractClientConnection, SLOT(makeConnectionBad()));
+    connect(localSocket, SIGNAL(disconnected()), abstractClientConnection, SLOT(makeConnectionBad()));
+    connect(localSocket, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)), abstractClientConnection, SLOT(makeConnectionBadIfNewQLocalSocketStateSucks(QLocalSocket::LocalSocketState)));
+}
 void MultiServerAbstraction::handleNewSslClientConnected(QSslSocket *newSslClient)
 {
-    handleNewClientConnected(newSslClient);
+    AbstractClientConnection *abstractClientConnectionSoICanConnectToSocketTypeSpecificDisconnectSignals = handleNewClientConnected(newSslClient);
 
-    //connect(newSslClient, SIGNAL(sslErrors(QList<QSslError>)), newSslClient,)
+    setupSslSocketSpecificErrorConnections(newSslClient, abstractClientConnectionSoICanConnectToSocketTypeSpecificDisconnectSignals);
 }
