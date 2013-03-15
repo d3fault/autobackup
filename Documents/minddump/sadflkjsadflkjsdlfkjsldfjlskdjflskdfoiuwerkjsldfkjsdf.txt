@@ -1,0 +1,26 @@
+i should write an app that is a distributed p2p app and it is just a map of 3d space and there are "dots" in it (mb to be replaced with models later, but strictly coordinates would still be badass for now. and KISS). in it would be the earth and the earth would revolve around the sun. the earth is a dot, the sun is a dot, but also each p2p node is a dot! so you can look at yourself in this 3d space rotating around the earth and also revolving around the sun (TODOreq: "zoom to scale" so that you see the entire orbit of earth around sun perfectly (TODOreq: be able to pre-define the "angle of perspective" of that orbit, because TOP-DOWN 'perfectly' etc look weird with 3d, you need some 45 degree angle (which is a good default i guess TODOreq))). people can add points like stars and shit but idfk how they'd get updated. perhaps they just have a math formula for a path? shit that would be some fucking complex ass math (but i wouldn't have to do it (i'd still have to "use" it somehow :-P), fuck yea virtual functions). the earth and p2p distributed app points would/should be the primary goals when developing, their paths somewhat more "hardcoded"/estimated if need be.
+
+the 3d space should use a math library with infinite precision. i am pretty sure crypto++ has one, i remember reading something about it. perhaps not infinite (because you'd run out of ram etc (unless the universe was your hardware ;-P)), but "arbitrary" precision (auto-scales as needed is usually best).
+
+
+the 3d scene that is rendered in opengl needs to be in double/float, so we need to be able to convert back and forth between the arbitrary precision coords and the double/float precision coords.
+
+the network communication can tolerate precision changes (if necessary and appropriate), or maybe it's precision-per-number (or precision-per-message) etc, but i'd think doing a "global precision" (paxos agreed) and periodically updating as needed would be the most optimal solution (with some time down during paxos, but it would grow less and less infrequent).
+
+
+
+
+
+so like i guess i could have the concept of those dots being able to send "messages" (packets, files, take your pick) to each other and it could even be used manually for fucking god who knows what reason (click a dot, send a file to them). still need a way to filter out bots/spam, but captcha is easy. i don't think you should be able to be "hidden" on the network, that doesn't make sense. sure you could use tor in between (free fucking will), but then your exit node would be the dot.
+
+in a sense it would be like the underlying... dht... or distributed db really (wtf i am lost, are messages also retrievable? TODOreq)... for other views/applications/ideas... but i mean it could just be a standalone prototype/demo/fun/dht
+
+
+
+
+
+
+
+
+
+or i could fuck with my 3d space and translate it such that i am 0,0,0 and upright. the 3d space would go from -1.0 to 1.0 with arbitrary/scaling precision (maybe string-based and it just chops off zeros as needed?) and I'd be directly in the middle muahahahahahahahahaha lolololol no point in it and once i move away then i am not longer in the "center" of the universe :( (but then again i'd have multiple centers, one in each spatial multiverse (TODOreq: write an algorithm that deals with "multiverse joins" and recalculating the new "center", it being directly in between the two "centers" of the two multiverses. a 3rd joins, then it's right in the center of all 3, no matter if that means (by some rare chance) that the one in the middle (if they are all 3 aligned) is also in the EXACT "center"... that one is just lucky and that instance of me should shit a brick and feel special for no stupid reason. guess i just wrote that algorithm). but really, it'd probably just be smarter for them to just MERGE their 3d spaces and to pick a new arbitrary center. or maybe i just said the same thing twice? /lost

@@ -1,0 +1,97 @@
+6 "live" drives at once, each of which is an input only machine [as well?]. no the 6 input only ones are pure backup, but sure yea can also exist.
+
+the point is: 3 of them are git-commanded-by-custom-qt-app driven, which i will code now/first, and then 3 of them will be fucking actually efficient and well written. i have no idea. ok question: can i, or is it smart to, use git as a [underlying data storage facility?] long term? what the fuck am i going to do? write my own shit? i could but also don't want to. i mean i DEFINITELY want to for dht, so is that what i'm talking about?
+
+i don't get what the 6 are for anymore
+
+like this: 3 stable, 3 dev
+
+the 3 stable are like "bootstrap" backup solutions that are hacky and possibly using git (at least initially they definitely will)
+
+man this is common sense and i'm not there yet, but the point is that the git solution i come up with can/should be used ON TOP OF (technically, right next to) whatever fancier solutions i come up with in the future. does that also apply to my "autobackup" folder i have right now? should i keep it around as YET ANOTHER copy/backup-format? the reason being is it's simplicity. git submodules might have a bug/vuln and could get hacked/corrupted-on-accident-or-just-LOST-on-accident-too
+
+so should my favorite hobby be writing and implementing simple as fuck backup solutions and giving each and every one it's own dedicated hardware (and perhaps OS variation (OpenBSD primarily (but definitely don't trust IT ("it", not referring to computer worker people) either), but i would argue that the best security uses EVERY solution simultaneously (wouldn't even suggest this if it wasn't so cheap/easy with Qt :-D <3 <3 <3)). just like how i want to spread my money around in different world currencies as safety nets, i should spread my backups around different operating systems and software implementations/designs (randomly paired, because fuck all)
+
+they only need be "completely automated"... because i would lose my mind if i had to run 100 backup solutions manually
+when one breaks, i SMILE because i know i saved myself from losing data!!!!
+
+
+i guess i have to make sure each backup solution also has the ability to feed into another component (kinda like "reduce", except i don't want to imply the operation before is anything like map) which basically just compares every single backup output.
+
+so each one has it's own custom save format or what? i guess if i'm going to take the "use git and gitlike solutions in qt-driven script apps", then yes each DOES have it's own save format. but if i write them from scratch, i *COULD* make them all save in the same format as the "reduce-output-format". TODOreq: design a generic and *perhaps* extendable (not sure tbh) common output format fromwhich comparisons can be ran. if one backup solution doesn't have a certain "column" or "piece of functionality", then that column simply doesn't get compared against any that don't. but there will probably be some REQUIRED_MINIMAL_AKA_INITIAL "columns" or really properties of the data. class data { datetime; data; }
+
+but i mean it would be very common for data to use a "title" property, so properties need to be able to be added dynamically. the datetime; and the data; are the only requirements. what the data is used for, and what additional dynamic properties are used, is an implementation detail specific to each use case.
+
+BTW, my "common backup output format" should also be what i use in the application in C++ in memory. they should literally be the same fucking objects. so i just define stream in/out operators whenever i want to add a new backup solution. each one is running in input only mode, of course.... but the "application" itself is perhaps running on as a Wt WApplication and then connecting to a couchbase (or custom (ya dude databases are fuckin easy and i understand them better when i do custom)) dht for the "main-application-guts-andor-live-andor-master-copy-which-we-are-MAKING-BACKUPS-OF". it doesn't have to be a Wt WApplication, it could be a Qt solution running in memory only (probably shouldn't though!!! 1 copy = guaranteed data loss eventually). I need to make an OS/environment where you always have at least 3 copies running/saving/synchronizing/byzantining-with-fault-tolerance at all times. This would incidentally make for a stable business server (isn't that what I'm coding? have i just connecting two pieces of a puzzle??? or am i confusing issues?).
+
+3 Small Linux Boxes (hah, fuck your binary gpu blob) and a software-controlled (by any of the three independently) video feed switcher between one monitor and 3 computers. the 3 computers also talk together via usb/network/serial/whatever. whichever one is the primary is also the one that receives mouse/kb input? so i guess i need a software-controllable (by multiple sources! HOW???? arduino hack methinks) kvm. the point is, we have fucking byzantine everything (the other two COULD display the very same video feed, but don't until requested in order to save clock cycles/electricity) and when one fails we are notified but never experience downtime. this is NOT to mitigate software bugs, but is to evade hardware failure. This is a good design for an on-body-24/7/365/indefinite-computer-solution (no wow factor in that naming sorry newbs) because MY COMPUTER EXPERIENCE as i have it (especially when being productive) is valuable to me and i never wish to ever lose data ever again. after experiencing it multiple times, it is a gut wrenching feeling and i do still have nightmares about it. actually they keep getting worse (night or two ago my dad "picked up" my computer (i'd flip tbh) and i told him i'd kill him if he dropped it so then he got all huffy and puffy and then smashed it into the ground and i was devistated but the dream didn't go any further than that (yea, i think i'm due for a backup been a few months at the very least... and shit i've had an amazing few months !!!!!!!!!))
+
+.... and it is also a good design for a business server solution!!!
+
+
+
+both of them use the backup-solution-specific "stream in" (qdatastream) solution to get into the backup-solutioni-specific "save" format. the definition should be written so that the stream direction is swappable, so that our "stream out" is automatically defined for us and we can use that to: a) recover my "main/master" copy should it's "3-copy" solution fail and data become lost, b) compare backup solution outputs after they have been saved and at a later date etc periodically via the "common backup output format". INCIDENTALLY, coincidentally, and completely fucking on purpose by me because it's hella fucking smart, the entire application data model (applications use it as a framework for custom applications/functionality/plugins/whatever-you-end-up-calling-them) also uses the "common backup output format".
+
+
+remember, this is is:
+
+/*template <class T>
+class TypeAndVarname
+{
+	T *theVarItself();
+	QString varName();	
+}*/
+
+class IData //meant to be inherited, but still directly instantiable if desired (i don't think dynamic properties can be added THAT way as it would lead to weird code... but the dynamic properties is intended to be used only by inherited classes! they fill it in their constructor and IData defines a ...... maybe i should use a QVariant instead of qba (writing this out of order fml lolol)...
+{
+	//obviously they are properly Q_PROPERTY'd etc
+	QDateTime DateTime;
+	QByteArray Data;
+	QHash<QString /*property-name*/, QByteArray /*property-data*/> OptionalDynamicAppSpecificProperties;
+	
+	//QList<TypeAndVarname*> OptionalDynamicAppSpecificProperties; //the user shouldn't have to worry about streaming in/out this, a class will make the dynamic'ness of it transparent (POSSIBLY [only?] using a code generator but i have no fucking clue atm tbh). also if it might not compile, but the intent should be clear and i'm pretty sure is achievable
+}
+
+that is IT! KISS mothafucka and that is pretty damn KISS. i might need to use like QVariant orsomeshit instead, but who cares. i also thought maybe the solution would involve just streaming types into qbytearray and just keep a QHash<QString /*property-name*/, QByteArray property-data> ......... actually i almost like that solution better. idk. either work i suppose... if that template one gives you too much trouble then just use whatever works (qba definitely will). i'm PRETTY FUCKING SURE i have a requirement to make my custom types streamable (qdatastream) ANYWAYS, so it'd be just re-using that already existing code. yea fuck templates. using the QHash.
+
+
+
+so i need a notepad using qplaintext edit that uses that as a save format (it would be teh one to add the optional title too, but that should come later (and TODOreq: only ever add properties/functionality on a test box because it might crash and corrupt). then i need a "git backup solution" which is JUST a stream in (to save into git) (qdatastream) and then i need to make it stream out (read from git) also for (a) and (b) above.
+
+what the fuck, how am i ever to do a streaming solution (in case of crash in middle of writing) when a qba is my target. perhaps i stream as i receive (nagle's is appropriate for qt app (notepad etc), but not for server unfortunately not money stuff imo -- these the two users of said joining solutions (the two puzzle pieces coming together! weirdly related perfectly (i've been waiting for this day for a long time and knew it was there. just had that deep hunch thingy. may have even written about it?))), but the stream receivers are keeping it in memory until it closes, and THEN it is written to disk as it's finalized qba form. what the fuck is the point of the timestamp then? to show when we started writing the file? IData would be in-memory-updateable via a stream "log" of data type thing, and that same stream is then persisted later after the document is closed or just after like a few minutes of no more typing type thing you know? and perhaps with a hard limit on top of THAT that's a bit higher (choose at own discretion, maybe 10 seconds to save when not typing and force-save-every-30-seconds-at-a-minimum type thing, but customizable numbers (maybe. at the very least, you as a dev have the freedom to change them when compiling for now fuck it))!
+
+
+so now i need to "invent" the notepad-streaming-format that captures backspaces, characters per second on a per sentence basis (maybe? or per doc? i forget), and shit really that's it. oh and i should be able to optionally specify a different previous document (TODOreq: do i need an "id" for my IData? i think so!? or is the timestamp it? idfk gah) as a starting point for the "mutation stream" (that's what i'll call it).
+
+
+TODOreq: the mutation stream/the notepad-streaming-format has similarities to the keyValueGfsClone design, the format specifically obviously. i should find a common point between these two too, using the design i came up with (and just cross my fingers i don't have to change it). this seems important, i'll do it now and even write it's results in the next paragraph(s?):
+
+it looks similar but the key and value are in a qbytearray themselves. the key is known length because the filename is the first portion of the sha1 and the key is the rest. after the key is the the data, and we get the size using a qba peek :) (subtracting key length of course). ok so i understand the design, but what are the similarities and how/can/should i combine them? the format does not have any required fields, so i'm starting to wonder if they can be combined. HOWEVER, it does not make ANY sense to have a key/value without even a single field (ok maybe it might, but for now i'm going to say it doesn't because we can work around the other problem later no biggy (if i decide to not have any fields in the value for some reason)). Nor does it make sense to have a timestamp AT THAT LEVEL (though i'd certainly use one!!) in the gfs clone dht. however i could ADD IT and still consider it beneficial as a whole to the design. could make it the first thing i stream in before the qba as like an int or something (qdatetime is precise enough? is qdatetime my key or what? i've been asking this for a long ass time now it seems. does it need to be unique? i am tempted to say yes because it just simplifies everything down to vectorifying the code which is awesome imo. i think it will make "collisions" / corruptions never happen if coded properly, but really you don't *need* vectors for that, i just think they are a way to do it. bleh still trying to compare this and figure it all out. hmm that file format uses snapshotting of keyValues and keeps track of every change to it. does that apply to this? i could use the snapshotting design but if used without modifying the design, i'd be writing "newData" over and over, which is the FULL CONTENTS OF THE FILE! So if I kept every fucking change like I want to but used that dht/keyValue snapshotting design, it would be very inefficient to re-store the full doc every time a character was pressed. Can I modify the gfs design to allow for streaming notepad saving but without breaking it? should i? i think i should yes. would be sooooo fucking beneficial to have a common backup saving format and a custom dht that i have yet to even write that share file format at the implementation level! would just make my life easier really :-D, that's what programming is all about and fuck yea i should keep looking into it, what was the question? streaming? basically i need to utilize diffs obviously. maybe the notepad app analyzes each document modification and determines whether it should stream a diff or a new doc (with appropriate flag in header to tell which it is). the library to access the file format can/should even transparently decide whether to do a diff or a "new" write. the concepts become confused with mutating and snapshotting, but i think they're different. i'm really getting lost on how they're different now, as they seem so fucking similar the more i think about it. maybe they are, but my impulse tells me they aren't. maybe it's because they're from different app/designs? in the notepad app i want to keep track of backspaced-typos and cpm(doc-level-prolly) etc.
+
+
+the notepad app, as it runs on 3 computers at once, streams each keystroke the instant it receives it (with nagles *enabled*, 200ms is good length for a single human input (as opposed to thousands in the business use case, where i'd have nagles disabled)). the 3 copies keep it in memory only until you stop typing for 10 seconds, at which case it is saved. it is also saved every 30 seconds minimum. the keystrokes are essentially saved as is, but maybe the receiver can merge backspaces in a row into a "backspaced:wordBuiltFromGettingEachKeyFromEachBackspaceReceivedAndThenOrderingThemInReverseSinceYouBackspaceSentThemInReverse". so if you write fuck and then backspace it, the network since we're streaming instantly will be [backspace][backspace][backspace][backspace] but (since the cursor's are synchronized!!! TODOreq) the receivers of those (the other 2 computers (but really N if coded right)) will write in their file format something along the lines of: [backspaced:4] or [backspaced:fuck]. the first one with just the length to backspace seems cheaper actually, we just need to really make sure our cursors are synchronzed really well i guess hahaha (rpc generator over tcp has message order ensuring so woot (but i'd still need an "applyInThisOrder" int with each message on the application level of the OSI design)).
+
+
+
+
+oh i remember now i wanted to find a common file format for my dream dht and a backup solution... not for a business dht.... but eh whatever this is still handy and maybe will work on dream dht too if i'm lucky. that shit is fucking going to be crazy hard to code and i may never even get it to work.
+
+
+
+see ok HUGE FUCKING DIFFERENCE detected: my IData above is not meant to solve revisions, that is solved at another layer (or, in a different library that uses the IData (therefore a different level, BITCH) as underlying storage). i guess i COULD solve it. am i combining these needlessly/stupidly? maybe this is what my subconscious tricked me into doing a while ago and i'm just now getting to it in my forelobe! rofl i'm so high, mb i should just kill myself :)
+
+
+
+i don't know whether i like a lot of the stuff in this doc or not anymore, FUCK.
+
+
+no no
+
+
+you idiot
+
+IData would be the "file" in the gfs dht design... so gfs uses revisions at a different level too... it's file format!
+i guess timestamp would be the time the file (chunk in gfs design terms) was created, but each mutation also has a timestamp that is specific to each. the file timestamp in the gfs design wouldn't be that useful i don't think
+
+no
+i am just confusing myself so hardcore right now, i'm not sure if it's for any good.
