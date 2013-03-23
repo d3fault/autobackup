@@ -24,7 +24,7 @@ public:
     static void setSignalRelayHackEmitter(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter) { m_SignalRelayHackEmitter = signalRelayHackEmitter; }
     explicit RpcBankServerProtocolKnower(QObject *parent);
     virtual void messageReceived(); //QDataStream *messageDataStream);
-    virtual void notifyOfMergeInProgress();
+    virtual void notifyThatQueueActionResponsesHasBeenEnabled();
     inline void streamToByteArrayAndTransmit(IMessage *message)
     {
         //stream to byte array
@@ -37,20 +37,24 @@ public:
 private:
     static IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *m_SignalRelayHackEmitter;
 
+    //Dispensers
     ServerCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ServerGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
     //etc for each Action
 
+    //Action Responses that might be re-requested in certain cases and are awaiting acknowledgement
     QHash<quint32 /*MessageId*/, IActionMessage* /*ack-awaiting-ack*/> m_CreateBankAccountMessagesAwaitingLazyResponseAck;
     QHash<quint32 /*MessageId*/, IActionMessage* /*ack-awaiting-ack*/> m_GetAddFundsKeyMessagesAwaitingLazyResponseAck;
     //etc for each Action
 
+    //Actions that are being processed by the business
     QHash<quint32 /*MessageId*/, IActionMessage* /*pending-in-business*/> m_CreateBankAccountMessagesPendingInBusiness;
     QHash<quint32 /*MessageId*/, IActionMessage* /*pending-in-business*/> m_GetAddFundsKeyMessagesPendingInBusiness;
     //etc for each Action
 
-    QList<quint32> m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected;
-    QList<quint32> m_GetAddFundsKeyMessagesPendingInBusinessWhenMergeDetected;
+    //List of Actions that were in business at the moment we enabled queue mode (which happens both when a dupe cookie is enabled (queue mode is enabled for a couple of milliseconds at most), and also when any socket error signal is received (queue mode stays enabled indefinitely until a new connection with same cookie is detected)
+    QList<quint32> m_CreateBankAccountMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode;
+    QList<quint32> m_GetAddFundsKeyMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode;
     //etc for each action
 
     //TODOreq: shit our messages get so easily sent back to our rpc bank server clients helper (the specific connection really) that I don't know where to do pendingInBusiness.remove!!! perhaps in the deliver() logic just before the signal is emitted??? Fuck me this really screws with the design, never thought of that before now. I'll probably need a hack to accomodate it. HAHAHAHA rofl oh just realized I am the same person who receives those signals... so it should be easy once I get that coded :-P. Still worth the TODOreq because I simply didn't have that much coded in the part I'm taking the code from (ported/upgraded/optimized/redesigned)
@@ -85,7 +89,11 @@ private:
 
                 //re-transmit
                 //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TODOreq: the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
-                streamToByteArrayAndTransmit(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
+                if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
+                {
+                    streamToByteArrayAndTransmit(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
+                }
+                //else: we got a retry from a connection that has since failed or is about to merge, so meh don't bother trying to send it back because the new connection will be the one to do that
             }
             else
             {
@@ -173,8 +181,8 @@ private:
         //add it to pending lazy ack ack
         actionSpecificAckList->insert(message->Header.MessageId, message);
 
-        //don't send it if a merge is in progress. our ack list becomes the queue
-        if(!m_AbstractClientConnection->mergeInProgress())
+        //don't send it if queue mode is enabled (merge in progress or socket error detected). our ack list becomes the queue
+        if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
         {
             //our flagging tells us there isn't a merge in progress, but that doesn't mean there wasn't one while this message was in pending! so we check that now
             //if(message->Header.MessageId)

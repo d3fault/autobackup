@@ -51,6 +51,7 @@ public:
     }
     AbstractClientConnection *potentialMergeCaseAsCookieIsSupplied_returning_oldConnection_ifMerge_or_ZERO_otherwise(AbstractClientConnection *newConnectionToPotentiallyMergeWithOld);
     void connectionDoneHelloing(AbstractClientConnection *abstractClientConnection);
+    void appendDeadConnectionThatMightBePickedUpLater(AbstractClientConnection *abstractClientConnection);
     //void sendMessage(QByteArray *message, quint32 clientId);
 
     //void roundRobinBroadcastBecauseClientNotifiesNeighbors(IMess pendingBalanceDetectedMessage);
@@ -70,10 +71,14 @@ private:
 
     QQueue<AbstractClientConnection*> m_RoundRobinQueue; //this class manages access to it and makes sure it is not empty (lazy fill on first read)
 
+    QList<AbstractClientConnection*> m_ListOfDeadConnectionsThatMightBePickedUpLater;
+
     inline AbstractClientConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
     {
-        int connectionsCount = m_ListOfHelloedConnections.size();
         AbstractClientConnection *currentClientConnection;
+
+        //First check all hello'd connections for the cookie
+        int connectionsCount = m_ListOfHelloedConnections.size();        
         for(int i = 0; i < connectionsCount; ++i)
         {
             currentClientConnection = m_ListOfHelloedConnections.at(i);
@@ -82,6 +87,18 @@ private:
                 return currentClientConnection;
             }
         }
+
+        //Then check all the dead connections too. We don't want to accidentally assign one that might reconnect with same (but still "is" different connection altogether) cookie
+        connectionsCount = m_ListOfDeadConnectionsThatMightBePickedUpLater.size();
+        for(int i = 0; i < connectionsCount; ++i)
+        {
+            currentClientConnection = m_ListOfDeadConnectionsThatMightBePickedUpLater.at(i);
+            if(currentClientConnection->cookie() == cookie)
+            {
+                return currentClientConnection;
+            }
+        }
+
         return 0;
     }
     static inline quint32 generateCookie()

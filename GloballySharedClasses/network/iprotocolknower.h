@@ -26,7 +26,7 @@ public:
     inline void setAbstractClientConnection(AbstractClientConnection *abstractClientConnection) { m_AbstractClientConnection = abstractClientConnection; }
     inline void setMessageReceivedDataStream(QDataStream *messageReceivedDataStream) { m_MessageReceivedDataStream = messageReceivedDataStream; }
     virtual void messageReceived()=0; //QDataStream *messageDataStream /*, quint32 clientId */);
-    virtual void notifyOfMergeInProgress()=0;
+    virtual void notifyThatQueueActionResponsesHasBeenEnabled()=0;
 private:
     QBuffer m_TransmitMessageBuffer;
 protected:

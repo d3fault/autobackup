@@ -1,0 +1,32 @@
+re: that forcer/DO'er change. forcing yourself to do something is just doing it. i like that 3d model thing i created because i know i could make that in openGL/3ds-max/whatever and even code the corresponding todo-list-processor logic to visualize/animate it!!! i very much want to too TODOoptional (had it as a req but eh who cares it's just visual candy ya know?)
+
+TODO List Items correspond nicely with Experiences, because TODO List Items inherit from Experiences (in OO terms)!
+
+
+
+After staring at that .svg for a little, it makes me laugh that the most important concept extracted from it is simply this in code:
+
+
+class TodoListItem : public Experience
+{
+	bool done;
+	//there would be other properties such as to describe what the task actually is and maybe priority or whatever and yea this is expandable as fuck too
+}
+
+
+
+maybe the bool done; belongs in the class Experience, but i'm not sure tbh
+
+
+
+
+
+
+the items actually don't cross through atomically now that i think of it, InProgress would be a valid enum thing as well as NotStarted and Finished.
+
+
+class TodoListItem
+{
+	enum TodoListItemStatus { InvalidTodoListItemStatus /* for safety/whitelist-programming but perhaps not necessary at all */, NotStartedTodoListItemStatus, InProgressTodoListItemStatus, FinishedTodoListItemStatus }
+	TodoListItemStatus Status;
+}

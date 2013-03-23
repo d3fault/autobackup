@@ -48,25 +48,25 @@ void RpcBankServerProtocolKnower::messageReceived() //QDataStream *messageDataSt
         break;
     }
 }
-void RpcBankServerProtocolKnower::notifyOfMergeInProgress()
+void RpcBankServerProtocolKnower::notifyThatQueueActionResponsesHasBeenEnabled()
 {
     //we should compile and maintain a list (for each message action type) for all the ones that are in business pending at this very moment
-    m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected.clear();
-    m_GetAddFundsKeyMessagesPendingInBusinessWhenMergeDetected.clear();
+    m_CreateBankAccountMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode.clear();
+    m_GetAddFundsKeyMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode.clear();
     //etc for each Action
 
-    m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected.append(m_CreateBankAccountMessagesPendingInBusiness.keys());
-    m_GetAddFundsKeyMessagesPendingInBusinessWhenMergeDetected.append(m_GetAddFundsKeyMessagesPendingInBusiness.keys());
+    m_CreateBankAccountMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode.append(m_CreateBankAccountMessagesPendingInBusiness.keys());
+    m_GetAddFundsKeyMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode.append(m_GetAddFundsKeyMessagesPendingInBusiness.keys());
     //etc for each Action
     //mfw when i almost coded an inline function to do the above operation generically for all actions then lol'd when i decided i'd call it "append" and the solution already existed!
 
-    //then, in their respective delivery slots, we utilize the lists we created here
+    //then, in their respective delivery slots, we utilize the lists we created here --- TODOreq: how? did i forget to code something? fml. they aren't referenced/"used" in any way except clear/append above :-/ so i think so. nvm i'm just blind.
 }
 void RpcBankServerProtocolKnower::createBankAccountDelivery()
 {
-    removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(static_cast<IActionMessage*>(sender()), &m_CreateBankAccountMessagesAwaitingLazyResponseAck, &m_CreateBankAccountMessagesPendingInBusiness, &m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected);
+    removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(static_cast<IActionMessage*>(sender()), &m_CreateBankAccountMessagesAwaitingLazyResponseAck, &m_CreateBankAccountMessagesPendingInBusiness, &m_CreateBankAccountMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode);
 }
 void RpcBankServerProtocolKnower::getAddFundsKeyDelivery()
 {
-    removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(static_cast<IActionMessage*>(sender()), &m_GetAddFundsKeyMessagesAwaitingLazyResponseAck, &m_GetAddFundsKeyMessagesPendingInBusiness, &m_CreateBankAccountMessagesPendingInBusinessWhenMergeDetected);
+    removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(static_cast<IActionMessage*>(sender()), &m_GetAddFundsKeyMessagesAwaitingLazyResponseAck, &m_GetAddFundsKeyMessagesPendingInBusiness, &m_GetAddFundsKeyMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode);
 }

@@ -71,7 +71,7 @@ AbstractClientConnection *MultiServerAbstraction::potentialMergeCaseAsCookieIsSu
         dontBroadcastTo(oldConnectionToMergeWithMaybe);
 
         //set merge in progress, snapshotting all message IDs in business pending at this very moment. those ones require the new connection to re-request/retry them
-        oldConnectionToMergeWithMaybe->setMergeInProgress(true); //TODOreq: unset it later after merge complete, but make sure you figure out whether or not to send business pending that never noticed a merge occured (e.g. they were in business pending the whole time). i think i am making the client re-request all of them, so that would maybe imply we need yet another list and/or possibly even a new retry mode? there is/could-be retry-on-same-connection and retry-knowing-its-new-connection... but do i NEED to differentiate between the two?
+        oldConnectionToMergeWithMaybe->setQueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(true); //TODOreq: unset it later after merge complete, but make sure you figure out whether or not to send business pending that never noticed a merge occured (e.g. they were in business pending the whole time). i think i am making the client re-request all of them, so that would maybe imply we need yet another list and/or possibly even a new retry mode? there is/could-be retry-on-same-connection and retry-knowing-its-new-connection... but do i NEED to differentiate between the two?
 
         return oldConnectionToMergeWithMaybe;
 
@@ -93,6 +93,10 @@ AbstractClientConnection *MultiServerAbstraction::potentialMergeCaseAsCookieIsSu
 void MultiServerAbstraction::connectionDoneHelloing(AbstractClientConnection *abstractClientConnection)
 {
     m_ListOfHelloedConnections.append(abstractClientConnection); //TODOreq: this list vs. m_ClientConnections!?!?!?!?!?!?!?!?!?!?!
+}
+void MultiServerAbstraction::appendDeadConnectionThatMightBePickedUpLater(AbstractClientConnection *abstractClientConnection)
+{
+    m_ListOfDeadConnectionsThatMightBePickedUpLater.append(abstractClientConnection);
 }
 AbstractClientConnection *MultiServerAbstraction::getSuitableClientConnectionNextInRoundRobinToUseForBroadcast_OR_Zero()
 {
@@ -194,6 +198,7 @@ AbstractClientConnection *MultiServerAbstraction::handleNewClientConnected(QIODe
 }
 void MultiServerAbstraction::dontBroadcastTo(AbstractClientConnection *abstractClientConnection)
 {
+    //TODOreq: need a socket error -> reconnect with same cookie to be able to find the old connection that socket error'd, but pretty sure we do call (or SHOULD call) dontBroadcastTo when the socket error is detected also...
     int numRemoved = m_ListOfHelloedConnections.removeAll(abstractClientConnection);
 
     if(numRemoved == 1)
@@ -208,13 +213,13 @@ void MultiServerAbstraction::dontBroadcastTo(AbstractClientConnection *abstractC
             }
             else
             {
-                //we had more than 1 of the same in the queue, which means our round robin code is fucked... should never happen if round robin code is clean/correct
+                //we had more than 1 of the same in the queue, which means our round robin code is fucked... should never happen if round robin code (etc, because we build it from m_ListOfHelloedConnections) is clean/correct
             }
         }
     }
     else
     {
-        //wtf should never happen!
+        //wtf should never happen for same reason above!
     }
 
     //abstractClientConnection->transmitMessage();
@@ -222,6 +227,8 @@ void MultiServerAbstraction::dontBroadcastTo(AbstractClientConnection *abstractC
 }
 void MultiServerAbstraction::refillRoundRobinFromHellodConnections()
 {
+    //TODOoptimization: we could 'schedule' this slot (which means we'd have to check within this method that it isn't empty (because another slot could beat us to it and do it on-demand)) whenever a connection is used from the round-robin list and it's the last one. it is a bit slower because now we check whether it's empty on every dequeue, but at least that optimization would move it to being a background task (but not really by much because it still takes clock cycles. the main purpose of the optimization is solely to speed up the time it takes to broadcast. if there are lots of connections it might take longer than desired to send a broadcast because we have to refill the list. a ghetto round robin that just selects a random index into m_ListOfHelloedConnections would be the fastest of course, but then they wouldn't be load balanced in the sense that every connection is used once before they start over. still a bit of load balancing though...
+
     QList<int> indexesRemaining;
 
     int hellodConnectionsSize = m_ListOfHelloedConnections.length();
@@ -253,7 +260,7 @@ void MultiServerAbstraction::setupSslSocketSpecificErrorConnections(QSslSocket *
 }
 void MultiServerAbstraction::setupQLocalSocketSpecificErrorConnections(QLocalSocket *localSocket, AbstractClientConnection *abstractClientConnection)
 {
-    //TODOreq: for abstract socket, ssl, and local socket, I am dropping the contents of the erros and just utilizing the fact that an error occured. I should later on hook them up to be debug outputted too -- for debugging purposes only obviously... whereas right now I'm hooking into them for functionality. The same applies to state changes for both local/abstract, i should output each
+    //TODOreq: for abstract socket, ssl, and local socket, I am dropping the contents of the errors and just utilizing the fact that an error occured. I should later on hook them up to be debug outputted too -- for debugging purposes only obviously... whereas right now I'm hooking into them for functionality. The same applies to state changes for both local/abstract, i should output each
     connect(localSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), abstractClientConnection, SLOT(makeConnectionBad()));
     connect(localSocket, SIGNAL(disconnected()), abstractClientConnection, SLOT(makeConnectionBad()));
     connect(localSocket, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)), abstractClientConnection, SLOT(makeConnectionBadIfNewQLocalSocketStateSucks(QLocalSocket::LocalSocketState)));
