@@ -1,0 +1,23 @@
+the two append-onlys
+"notepad" entries
+db updates
+
+HUGE difference, can be abstracted from to [had:from sans a] a common interface
+or would that be called reverse abstracting? does it make a difference?
+fuck it, back to the technicals
+
+they both benefit from leveldb-like partitioning/"delayed-organizing"
+in fact, it is pretty much that the notepad entries use db updates
+how frequently do we push to the db though?
+every keystroke seems too fast, so does every word. sentence? so any time i see a ". or ? or !" then i flush to db. in coding i could use the semicolon (probably ONLY, except comments will use a concatenation of the text ones plus the semicolon i guess)
+
+in addition to semicolons, the coding "syncCharacters" list should contain special logic (lol wtf not an easy list then?) so that after an if(something) { is typed, the matching close curly bracket is auto-typed and used as the syncCharacter (but our cursor is on the in-between line and properly indented (the sync'd text has that too (but i guess doesn't have to if we strip extra whitespace on saving (which we shouldn't!))))
+
+TODOreq: backspace data should be preserved in both coding and text. essentially this means that the db layer doesn't "optimize out" pointless (seemingly) "diff modification instructions". if we get say "addText["123"],subtractText["123"],addText["whatever-they-typed-afterwards-and-on-up-to-a-period-but-there-could-be-more-subtractTexts-and-even-addTexts-following-which-are-all-grouped-together-in-one-syncUpdateWriteThingo"]" (btw there would probably be coords or other minimizations (we just note that we take 3 characters out at point 0 instead of specifying "take out abc", for example), but i am writing that for ease of understanding mostly)
+
+
+this does make ranting long sentences without ever stopping such as this one but it isn't very short so i mean it's a bad example but you get the fucking idea right i mean i hope you do ok back to the point: (TODOreq: colon in text mode is not a sync character, but might be in code for the switch statement) long sentences such as this that never syncs (TODOreq: should close parenthesis in text mode do a sync? actually sounds like a good idea but idfk. doesn't seem like a good idea in code though because curly braces are better (or after the one statement if not using curly braces)) because we never use a period (ok ignore the one in that parenthesis lol). we could use a "maximum characters(or words/etc) before forcing sync" value (it could even be dynamically user set, and i've even pondered up using minimum timeouts after stopping typing no matter where the point (could even do that IN ADDITION to syncing at end-sentence characters lmfao the options are limitless fuck yea coding)). the max chars before forcing sync is to account for runon sentences, the timeout after stopping typing sync is to account for stopping mid-sentence for possibly hours on end and making sure we don't lose the part that had been typed
+
+it basically means our db-level needs to be apathetic of what it is saving with respect to sentences. we sync AT sentence ends, but the db level doesn't know that. we could also sync mid sentence (both for timeout or because we reached max chars typed without sync) and then append the rest of the sentence onto it later
+
+this could also apply to when the network syncs if the user is using an http/ajax client to access the notepad-text/code application, and in that case the db layer "works with" the same "buffer"/chunk that is sync'd via ajax periodically
