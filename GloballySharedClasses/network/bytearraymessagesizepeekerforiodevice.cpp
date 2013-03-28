@@ -28,6 +28,9 @@ bool ByteArrayMessageSizePeekerForIODevice::enoughBytesAreAvailableToReadTheByte
     //m_PeekedByteArraySizeRaw = ioDeviceToPeekByteArrayMessageSizeOn->peek(sizeof(quint32));
     //qint64 actualPeekedSize = m_IODeviceToPeek->peek(m_PeekedByteArraySizeRaw.data(), sizeof(quint32));
     //m_PeekedByteArraySizeRaw.data()[sizeof(quint32)+1] = '\0';
+
+    //TODOoptimization: it might be faster to store a bool for whether or not we need to retrieve the peeked size and have the peeked size be a member that we can rely on when the bool is true. we simply set the bool back to false (indicating the peeked size is no longer reliable -- it was for the previous message) whenever that one function "a full message has been read" is called (wherever it is... thought it was a method in this class but eh i don't see it. fuck it i know i can find it later)
+
     qint64 actualPeekedSize = m_IODeviceToPeek->peek(m_RawSizePeekCharArray, sizeof(quint32));
     m_PeekedByteArraySizeRawBuffer.seek(0);
 

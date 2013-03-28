@@ -38,7 +38,7 @@ AbstractClientConnection::AbstractClientConnection(QIODevice *ioDeviceToClient, 
 AbstractClientConnection::~AbstractClientConnection()
 {
     m_MultiServerAbstraction->reportConnectionDestroying(this);
-    delete m_ProtocolKnower;
+    delete m_ProtocolKnower; //TO DOnereq: deleting this doesn't seem right since all of them share one. why do i have this here? commenting out for now because i'm pretty damn sure it's wrong. Actually it isn't wrong: each connection gets his own because it simplifies the design and lets our QObject::connections (action responses) able to be delivered to the relevant network connection -- an optimization saving us a lookup into a hash
 }
 quint32 AbstractClientConnection::cookie()
 {
@@ -208,7 +208,7 @@ void AbstractClientConnection::handleDataReceivedFromClient()
                         //do the merge if there's one to do
                         if(m_OldConnectionToMergeOnto)
                         {
-                            //m_OldConnectionToMergeOnto->MERGE_SOMEHOW shit my brain just exploded TODO LEFT OFF
+                            //m_OldConnectionToMergeOnto->MERGE_SOMEHOW shit my brain just exploded TODO /*LEFT */OFF <-- actually i think it might be done idfk
                             //the problem is that I have 2 abstractClientConnections and 2 protocolKnowers and 2 ioDevices, when I only want one of each. But I want to take/grab all of the "pending ack" and also receive "business pending" (TODOreq) that complete soon and send them over the NEW io device. the old io device is in queue mode at this moment so it doesn't even attempt to send, just adds to the pending ack list
                             //i think it would be simpler to delete the new 'abstractclientconnection' and 'protocol knower' and (after safely un-childing) moving the iodevice to to the old pair. the old protocol knower already has signals in the business pointed at it's slots, so it's definitely easier that way. TODOreq: might need to explicitly delete the iodevice if i DON'T have it as a child of [whichever of the pair own it, i forget]. Sweet just checked, the io device doesn't have a parent so moving it around is easy. That 'this' and/or 'protocolknower' are parented is irrelevant, can just deleteLater them once the io device is moved.
 

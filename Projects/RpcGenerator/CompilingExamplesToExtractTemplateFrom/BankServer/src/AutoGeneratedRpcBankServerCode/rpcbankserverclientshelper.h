@@ -56,7 +56,7 @@ private:
 protected:
     inline void copyLocalHeaderToMessageHeader(const RpcBankServerMessageHeader &localHeader, IRecycleableAndStreamable *message)
     {
-        message->Header.MessageSize = localHeader.MessageSize;
+        //message->Header.MessageSize = localHeader.MessageSize;
         message->Header.RpcServiceId = localHeader.RpcServiceId;
         message->Header.MessageId = localHeader.MessageId;
         message->Header.MessageType = localHeader.MessageType;

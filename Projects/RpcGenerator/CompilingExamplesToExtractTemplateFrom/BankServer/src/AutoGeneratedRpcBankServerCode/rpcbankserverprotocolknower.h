@@ -88,7 +88,7 @@ private:
                 //we re-send the old one, but still don't remove it from the ack pending ack. what if this one gets lost too? actually TODOreq: since this would be our second attempt at a response, there is definitely not going to be a third SO it might be ok to say doneWithMessage at this point??????? it would mean that the next time we see the MessageId, it will be treated as though it was the first~ <---- all of this is only true if we only retry exactly once. err, try exactly twice.
 
                 //re-transmit
-                //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TODOreq: the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
+                //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TODOreq (possibly done already): the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
                 if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
                 {
                     streamToByteArrayAndTransmit(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
@@ -122,13 +122,41 @@ private:
             if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
             {
                 //as of right now, both of the business pending checks come here. despite coming at different times, all we have to do is tell the truth. we are still in business! I guess we don't need the 3 different requests to indicate which status they are, simply sending the same message with the toggle bit not changing three times in a row will indicate it!
-                //TODOreq: it is worth noting that the first and second messages that a client sends to the server are the exact same, yet only the second warrants a response ("still in business"). The response to the first one is the answer/response itself! The 3rd message is the same as the second and also warrants the same response. IT IS UP TO THE CLIENT to be able to differentiate between any responses in retryBecauseRequestNetworkTimeout, stillInBusiness[1], retryBecauseBusinessTimedOut, stillInBusiness[2]
-                //TODOreq: there is an amount of custom logic that must be performed to be able to deduce on the client what messages are what. if we receive our answer/response just after we dispatch either of our retry* (also 2->3rd might be even more complicated idfk), then we need to know we're definitely going to get the same answer/response and this time with the responseBit set
+                //TODOreq: it is worth noting that the first (initial), second (retry1/status1), and third (retry2,status2) messages that a client sends to the server are the exact same, yet only the second (and POSSIBLY third, though it can be an optimization to know from the second one whether or not the whole message needs to be resent) warrants a response ("still in business"). The response to the first one is the answer/response itself [assuming no errors and normal conditions]! The 3rd message is the same as the second and also warrants the same response. IT IS UP TO THE CLIENT to be able to differentiate between any responses in retryBecauseRequestNetworkTimeout, stillInBusiness[1], retryBecauseBusinessTimedOut, stillInBusiness[2]
+                //TODOreq: there is an amount of custom logic that must be performed to be able to deduce on the client what messages are what. if we receive our answer/response just after we dispatch either of our retry* (also 2->3rd might be even more complicated idfk), then we need to know we're definitely going to get the same answer/response and this time with the responseBit set (i might have meant to write "responseRETRYbit" right there, idfk)
 
-    TODO : say "still in business"
+#if 0
+    ********TODOreq : say "still in business"********** -- twice too
                         TODO LEFT off
-                        and i think i need a message type bit. i need it for clean disconnects, but also for an alleged "still in business" message. i think i'll end up doing a request type, requestResponse type, broadcast type, disconnectPlz type, stillInBusiness type, etc as many as needed
+                        and i think i need a message type bit. i need it for clean disconnects, but also for an alleged "still in business" message. i think i'll end up doing a request type, requestRetry1(status1) type, requestRetry2(status2) type, requestResponse type, broadcast type, disconnectPlz type, stillInBusiness type (status1 response), stillInBusinessAgainWtfLoLTimeToCrashProllyButThatsNotUpToMe(status2 response), etc as many as needed
                         i am getting so close i can taste it
+#endif
+                        //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->setErrorCode(); or something similar, but error codes are specific to the user's protocol so DEFINITELY NOT THAT. I think I need to delete my old/outdated "Header" class but not sure how to replace it. My brain fucking hurts.
+
+                        //TODO LEFT OFF REALLY IMPORTANT THIS IS THE LATEST (for now rofl) REQUEST PROTOCOL WHEN ALL SAID AND DONE -- this attempt was written after the helloer/qbapeeker/magic etc rewrite. I'm pretty sure all other attempts were written before those and are therefore outdated
+                        //Yet another attempt at finalizing the request protocol on the byte level:
+
+                        //PeekedAndReadInFullAlreadyQByteArray[HelloStatus(Done normally, but we have to re-stream this over and over so that we can eventually get a "DisconnectRequested" status. Other statuses are InitialHello etc),RpcGeneratorAbstractMessageBody[quint32 RpcServiceId, quint32 RpcServiceMessageId(can-repeat-in-other-rpc-service-ids-but-never-within-one), quint32/enum whatThisMessageIs[InitialRequest(fuck toggle bit i guess?),RequestRetry1Status1,RequestRetry2Status2WithMessage,RequestRetry2Status2WithoutMessage], quint32 RpcServiceIdSpecificMessageType (stored as a quint32, but utilized by inheriters to assign special enum types indicating the rpc service methods made available), QByteArray theActualFuckingMessage]]
+
+
+
+
+
+
+
+                    //TODOreq LEFT OFF: say "still in business" motherfucker. the above protocol definition for requests might be my only real accomplishment for the day. still need to implement it and then come back here and USE it... but eh i'm staring at it extra long to make sure i didn't miss anything. fuck yea deftones white pony
+
+
+
+
+
+
+
+
+
+                        //TODOreq: Does the hello level handle the "disconnect requested received so ignoring your request", or does the rpc level handle it? If the rpc level handles it like I'm thinking, we need a custom response type TODOreq that says something like "WontRespondBecauseDisconnectRequestedUseAnotherClient" (mindfuck: does that WontRespond message get ack'd?). Still it does seem like the hello'er level would be involved. Perhaps it also has a disconnect message that is only used AFTER we are sure we are ready to perform a clean disconnect? We could be cute and call it Goodbye ;-P
+
+                    //TODOreq: the difference between the first network timeout and the second business timeout (both detected on client via same way) needs to be greater than the average response time for that connection. We need to give ample time for our RequestRetry1Status1 to be responded to before dispatching the RequestRetry2Status2 (this does relate to whether or not RequestRetry2 will contain the full request again, but also makes common sense even without that optimization)
 
                 //TO DONEreq (decided i need to have two status checks and the first one is a retry but the second can know whether or not to send the message again (a small optimization TODOoptimization)): decided that rpc generator will first report the status of the message, and then later ----- actually fuck it that makes unnecessary complications. I should just _ONLY_ check once: the maximum timeout allowed. But the decision remains: I will simply "report" the stuck-in-business error and let the controller-of handle it. There is no need to ask until -----
                 //ACTUALLY WAIT THERE IS A REASON

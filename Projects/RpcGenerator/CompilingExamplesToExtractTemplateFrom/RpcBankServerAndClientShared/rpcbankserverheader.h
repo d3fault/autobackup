@@ -22,10 +22,13 @@
     SO I _THINK_ THE ANSWER IS NO, IT IS NOT DANGEROUS
 */
 
-//TODOoptional: might be able to shorten something like RpcServiceId by a single bit using C bit fields and then to use it for some other bool... like success or retryBit or toggleBit or responseRetryBit... you get the idea. bit fields I can get maximum efficiency (i don't need quint16 for RpcServiceId, but quint8 isn't enough! for example)... but I'm not ready for that optimization.
+//TODOoptimization: might be able to shorten something like RpcServiceId by a single bit using C bit fields and then to use it for some other bool... like success or retryBit or toggleBit or responseRetryBit... you get the idea. bit fields I can get maximum efficiency (i don't need quint16 for RpcServiceId, but quint8 isn't enough! for example)... but I'm not ready for that optimization.
 
 struct RpcBankServerMessageHeader
 {
+
+    //TODOreq: The header should be generic and re-used for all Rpc Services, but the enum needs to be defined at a rpc service specific level. I think this class entirely might be deleted/rewritten so we'll see
+
     enum MessageTypeEnum
     {
         InvalidMessageType = 0x0,
@@ -34,14 +37,14 @@ struct RpcBankServerMessageHeader
         PendingBalanceDetectedMessageType,
         ConfirmedBalanceDetectedMessageType
     };
-    quint16 MessageSize;
+    //quint16 MessageSize; -- definitely no longer needed because of QByteArrayPeeker <3
     quint16 RpcServiceId;
     quint32 MessageId; //had this as QByteArray, but decided to change it [back? right? backspaced and forgot what it was lol] to quint32.. because isn't MD5 exactly 32 bits? perfect fit and saves me from the QByteArray size parameter :)
     quint16 MessageType;
 };
 inline QDataStream &operator>>(QDataStream &in, RpcBankServerMessageHeader &message)
 {
-    in >> message.MessageSize;
+    //in >> message.MessageSize;
     in >> message.RpcServiceId;
     in >> message.MessageId;
     in >> message.MessageType;
@@ -51,7 +54,7 @@ inline QDataStream &operator<<(QDataStream &out, const RpcBankServerMessageHeade
 {
     //TO DONEoptimization: we could detect a broadcast by seeing if messageId is 0 and then not streaming out the message id. but it means on the client i'd have to receive the header in 2 stages (figure out if it's a broadcast or not and then get the message id if applicable). not worth it imo... (also you'd have to change the order of them, but that's given)
     //^^^^^^^SOLUTION: we _DO_ want to stream out the message id, even for broadcasts. for broadcasts, we need it for our ACK
-    out << message.MessageSize;
+    //out << message.MessageSize;
     out << message.RpcServiceId;
     out << message.MessageId;
     out << message.MessageType;
