@@ -54,13 +54,15 @@ private:
     //TODOoptimization^: I can use the QIODevice* as a key into a hash to optimize the above two 'types' (pending vs. ack-ing).. but for every action type of course. It'd look like: QHash<QIODevice*, QHash<quint32, CreateBankAccountMessage*> > m_PendingCreateBankAccountMessagesInBusinessByMessageIdByClientPointer; OR SOMETHING???? and of course the same thing for acks awaiting acks...
 
 protected:
+#if 0
     inline void copyLocalHeaderToMessageHeader(const RpcBankServerMessageHeader &localHeader, IRecycleableAndStreamable *message)
     {
         //message->Header.MessageSize = localHeader.MessageSize;
         message->Header.RpcServiceId = localHeader.RpcServiceId;
         message->Header.MessageId = localHeader.MessageId;
-        message->Header.MessageType = localHeader.MessageType;
+        message->Header.RpcServiceSpecificMessageType = localHeader.RpcServiceSpecificMessageType;
     }
+#endif
 
     //ServerCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     //ServerGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;

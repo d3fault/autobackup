@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386036990
+Documents/minddump/:1386037042
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386036990
+Documents/minddump/dreams/:1386037042
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -1064,6 +1064,7 @@ Documents/minddump/sldkjflskdjfkljsdjfsjsdfoiu.txt:1355730456
 Documents/minddump/slkdfjslkdjfskdjfkjsdfkljsdfkljsdkfljuwiokljsfsdfkl.txt:1362494365
 Documents/minddump/slkdjflskdjflkjsdfosdfuljkwerjkdfsoiusdelkj.txt:1360823579
 Documents/minddump/slkdjflskjdfsdoifuwlerkjsdafousdlfkjweroui.txt:1358069286
+Documents/minddump/slkfdjsdlkjfsdwerreouflkjweorulkjsdfoulkjelkjfsdlksfdjklsfd.txt:1364944514
 Documents/minddump/slkfjsalkjfdlsdaffskdwerwerasfsdfjfsdofusdlkfjsdlfkj.txt:1360772334
 Documents/minddump/slkfjsdlkjfsdlkjfoiwuerlkjafdousdlfkjwoeiurlkjfoiu.txt:1357937791
 Documents/minddump/so.fucking.high.txt:1344456089
@@ -1144,7 +1145,7 @@ Documents/nobodyme/pre.censored.humans.implement.apes.implement.something.txt:13
 Documents/nobodyme/website.worst.case.scenario.i.become.embarrassed.txt:1323683547
 Documents/a.starting.point.this.is.the.only.thing.i.am.certain.of.txt:1356263099
 GloballySharedClasses/:1358899022
-GloballySharedClasses/network/:1364508052
+GloballySharedClasses/network/:1364943830
 GloballySharedClasses/network/ssl/:1362589985
 GloballySharedClasses/network/ssl/testcerts/:1344899950
 GloballySharedClasses/network/ssl/testcerts/bothCAs/:1344900037
@@ -1163,11 +1164,11 @@ GloballySharedClasses/network/ssl/ssltcpclient.cpp:1353353283
 GloballySharedClasses/network/ssl/ssltcpclient.h:1353351990
 GloballySharedClasses/network/ssl/ssltcpserver.cpp:1362589985
 GloballySharedClasses/network/ssl/ssltcpserver.h:1355917339
-GloballySharedClasses/network/abstractclientconnection.cpp:1364505326
-GloballySharedClasses/network/abstractclientconnection.h:1363992036
+GloballySharedClasses/network/abstractclientconnection.cpp:1364943830
+GloballySharedClasses/network/abstractclientconnection.h:1364942214
 GloballySharedClasses/network/bytearraymessagesizepeekerforiodevice.cpp:1364508052
 GloballySharedClasses/network/bytearraymessagesizepeekerforiodevice.h:1361273674
-GloballySharedClasses/network/iprotocolknower.h:1363989945
+GloballySharedClasses/network/iprotocolknower.h:1364942555
 GloballySharedClasses/network/iprotocolknowerfactory.h:1359371142
 GloballySharedClasses/network/multiserverabstraction.cpp:1363995098
 GloballySharedClasses/network/multiserverabstraction.h:1363995335
@@ -1185,7 +1186,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386036990
+Pictures/:1386037042
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1199,6 +1200,7 @@ Pictures/Microsoft.sitting.on.Nokias.head.i.was.gonna.add.puppet.strings.but.i.l
 Pictures/dpl.dicks.everywhere.license.comparison.gave.up.but.you.get.the.point.svg:1356964724
 Pictures/failed.attempt.at.solving.or.understanding.gfs.and.how.to.use.it.as.a.kv.store.svg:1360734271
 Pictures/force.your.will.here.is.the.programming.design.even.though.this.is.a.construct.of.the.mind.svg:1363911100
+Pictures/i.am.building.a.giant.metaphorical.toggle.switch.asdfoiuwerlkjfdousdfj.svg:1364940499
 Pictures/kaylee.heidi.programming.etc.aldjfalsdjfals.svg:1352187513
 Pictures/lol.metaphor.then.and.now.rpc.generator.is.a.tractor.and.a.tangent.that.bores.me.to.death.and.is.time.consuming.BUT.will.save.time.too.svg:1364417816
 Pictures/perfect.desktop.2011.10.31.png:1320069650
@@ -2238,8 +2240,8 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bank
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclienttest.h:1343653118
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/main.cpp:1342947944
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/:1350684478
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1364511020
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/:1364509173
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1364953447
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/:1364953440
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/:1343667910
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/Dispensers/:1359370686
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/Dispensers/Actions/:1359369765
@@ -2272,10 +2274,10 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/Auto
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/iemitrpcbankserveractionrequestsignalswithmessageasparamandiacceptactiondeliveries.h:1359108287
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/irpcbankserverbusiness.cpp:1342873047
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/irpcbankserverbusiness.h:1359370226
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverclientshelper.cpp:1360836516
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverclientshelper.h:1364508385
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverprotocolknower.cpp:1363991291
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverprotocolknower.h:1364509173
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverclientshelper.cpp:1364947927
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverclientshelper.h:1364952888
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverprotocolknower.cpp:1364953440
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverprotocolknower.h:1364951048
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/rpcbankserverprotocolknowerfactory.h:1361275045
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/ssltcpserverandbankserverprotocolknower.cpp:1364505554
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/ssltcpserverandbankserverprotocolknower.h:1359114012
@@ -2292,12 +2294,12 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/rpcb
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/rpcbitcoinhelper.cpp:1355922526
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/rpcbitcoinhelper.h:1355922519
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/GlobalRpcShared/:1356101712
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/:1364508391
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/:1364951681
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/:1342624118
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/:1359370256
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.cpp:1359370256
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Dispensers/irecycleabledispenser.h:1358910351
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/:1351993359
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/:1364952948
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/:1359373553
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.cpp:1350939682
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h:1359373553
@@ -2311,7 +2313,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndCli
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessagebase.cpp:1343674200
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Broadcasts/pendingbalancedetectedmessagebase.h:1343679455
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/imessage.cpp:1351993359
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/imessage.h:1351993353
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/imessage.h:1364952948
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/irecycleableandstreamable.cpp:1350939136
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/MessagesAndDispensers/Messages/irecycleableandstreamable.h:1350939166
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/SslCAs/:1343590032
@@ -2319,7 +2321,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndCli
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/SslCAs/RpcBankServerClientCA.pem:1328728714
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/iacceptrpcbankserveractiondeliveries.cpp:1350939661
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/iacceptrpcbankserveractiondeliveries.h:1358909227
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1364508391
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/RpcBankServerAndClientShared/rpcbankserverheader.h:1364951681
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/shared.folders.explaination.txt:1353169691
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1350939281
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1347560549
@@ -2533,7 +2535,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386036990
+Projects/libAvGraphicsItem2/design/:1386037042
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

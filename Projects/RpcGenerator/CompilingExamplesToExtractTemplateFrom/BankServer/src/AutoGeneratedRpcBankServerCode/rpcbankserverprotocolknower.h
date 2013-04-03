@@ -25,10 +25,15 @@ public:
     explicit RpcBankServerProtocolKnower(QObject *parent);
     virtual void messageReceived(); //QDataStream *messageDataStream);
     virtual void notifyThatQueueActionResponsesHasBeenEnabled();
-    inline void streamToByteArrayAndTransmit(IMessage *message)
+    inline void streamToByteArrayAndTransmitToClient(IMessage *message)
     {
         //stream to byte array
         resetTransmitMessage();
+
+        //m_AbstractClientConnection->streamDoneHelloingFromServerIntoMessageAboutToBeTransmitted(&m_TransmitMessageByteArray); //pretty sure i can now conclude that "streaming into" a message does not clear/overwrite it. it wouldn't make any sense if it did... how could i stream multiple items into a single qba if that was the case. OR PERHAPS the question was more relating to streaming out of (reading) a QDS and into a singular.... POD (QString counts). does that POD first need resetting? TODOreq (ignore first part of comment lol, it's already handled)
+
+        streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient();
+
         m_TransmitMessageDataStream << *message;
 
         //transmit
@@ -91,7 +96,7 @@ private:
                 //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TODOreq (possibly done already): the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
                 if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
                 {
-                    streamToByteArrayAndTransmit(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
+                    streamToByteArrayAndTransmitToClient(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
                 }
                 //else: we got a retry from a connection that has since failed or is about to merge, so meh don't bother trying to send it back because the new connection will be the one to do that
             }
@@ -129,15 +134,21 @@ private:
     ********TODOreq : say "still in business"********** -- twice too
                         TODO LEFT off
                         and i think i need a message type bit. i need it for clean disconnects, but also for an alleged "still in business" message. i think i'll end up doing a request type, requestRetry1(status1) type, requestRetry2(status2) type, requestResponse type, broadcast type, disconnectPlz type, stillInBusiness type (status1 response), stillInBusinessAgainWtfLoLTimeToCrashProllyButThatsNotUpToMe(status2 response), etc as many as needed
-                        i am getting so close i can taste it
+                    i am getting so close i can taste it -- my tongue now tastes/feels like sandpaper, but that might be because i ate 1.9 lbs of sour patch kids over the course of 3-4 days last week :-/. also drawing that "THEN/NOW" comic put into perspective just how much work is ahead of me FML
 #endif
                         //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->setErrorCode(); or something similar, but error codes are specific to the user's protocol so DEFINITELY NOT THAT. I think I need to delete my old/outdated "Header" class but not sure how to replace it. My brain fucking hurts.
 
                         //TODO LEFT OFF REALLY IMPORTANT THIS IS THE LATEST (for now rofl) REQUEST PROTOCOL WHEN ALL SAID AND DONE -- this attempt was written after the helloer/qbapeeker/magic etc rewrite. I'm pretty sure all other attempts were written before those and are therefore outdated
                         //Yet another attempt at finalizing the request protocol on the byte level:
 
-                        //PeekedAndReadInFullAlreadyQByteArray[HelloStatus(Done normally, but we have to re-stream this over and over so that we can eventually get a "DisconnectRequested" status. Other statuses are InitialHello etc),RpcGeneratorAbstractMessageBody[quint32 RpcServiceId, quint32 RpcServiceMessageId(can-repeat-in-other-rpc-service-ids-but-never-within-one), quint32/enum whatThisMessageIs[InitialRequest(fuck toggle bit i guess?),RequestRetry1Status1,RequestRetry2Status2WithMessage,RequestRetry2Status2WithoutMessage], quint32 RpcServiceIdSpecificMessageType (stored as a quint32, but utilized by inheriters to assign special enum types indicating the rpc service methods made available), QByteArray theActualFuckingMessage]]
+                        //PeekedAndReadInFullAlreadyQByteArray[HelloStatus(Done normally, but we have to re-stream this over and over so that we can eventually get a "DisconnectRequested" (possibly just "Goodbye" because the disconnect REQUEST is at the generic rpc layer, not the hello(/goodbye) layer) status. Other statuses are InitialHello etc),RpcGeneratorAbstractMessageBody[quint32 RpcServiceId, quint32 RpcServiceMessageId(can-repeat-in-other-rpc-service-ids-but-never-within-one), quint32/enum whatThisMessageIs[InitialRequest(fuck toggle bit i guess?),RequestRetry1Status1,RequestRetry2Status2WithMessage,RequestRetry2Status2WithoutMessage], quint32 RpcServiceIdSpecificMessageType (stored as a quint32, but utilized by inheriters to assign special enum types indicating the rpc service methods made available), /*QByteArray*/ theActualFuckingMessageElements (NOT going to be in it's own QBA, will just follow directly after the other stuff since we know the protocol)]]
 
+                        //^^Only when the hello-level status is "Done" do we have an RpcGeneratorAbstractMessageBody following it. During the hello phase (and various stages therein) we usually just follow the status with the cookie (if we have one [at that point or otherwise]) or something
+
+                        //RpcGeneratorAbstractMessageBody could have been another QBA, but right now it is merely "implicitly separated" (comes directly after) from the HelloStatus. This is to save us a quint32 QBAsize on each message... but I'm going to leave it in the above protocol definition to let us know that the two are LOGICALLY separated
+
+                        //Do I really need RpcServiceId? Wouldn't it be alright to let different rpc services (even within the same process) simply use different ports in order to specify different rpc services? I don't think it matters either way. I keep flip-flopping mentally on whether such a scenario would utilize "multiple rpc servers" or "one rpc server that communicates with multiple businesses (based on RpcServiceId)". Obviously for 2 separate processes they would need their own rpc server (and therefore port), so is that the case that I should design.... to? If so, I don't need RpcServiceId!!! TODOreq
+                        //^^In a way it's a matter of memory optimization vs. protocol optimization (duplicate instantions of MultiServerAbstraction that are basically the same but bound to different ports). It's probably smarter to focus on the protocol optimization because bandwidth is way more expensive than memory..... I'm just a little uncertain about the long term and chaotic implications it will have on [??????????everything-that-uses-this-shit??????????]
 
 
 
@@ -224,7 +235,7 @@ private:
                     return; //we don't want to stream/transmit this one
                 }
             }
-            streamToByteArrayAndTransmit(message);
+            streamToByteArrayAndTransmitToClient(message);
         }
     }
 public slots:

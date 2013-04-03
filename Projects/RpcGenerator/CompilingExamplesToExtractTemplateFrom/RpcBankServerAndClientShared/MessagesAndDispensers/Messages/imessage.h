@@ -6,7 +6,7 @@
 
 #include "irecycleableandstreamable.h"
 
-//for lack of a better place, here's what a message looks like (this is just the overall design, the impl is a lot harder ofc):
+//OUTDATED: for lack of a better place, here's what a message looks like (this is just the overall design, the impl is a lot harder ofc):
 /*
 struct Message
 [

@@ -16,36 +16,44 @@ void RpcBankServerProtocolKnower::messageReceived() //QDataStream *messageDataSt
 {
     RpcBankServerMessageHeader header;
     *m_MessageReceivedDataStream >> header;
-    switch(header.MessageType)
+    switch(header.GenericRpcMessageType)
     {
-        case RpcBankServerMessageHeader::CreateBankAccountMessageType:
+        case RpcBankServerMessageHeader::ActionRequestGenericClient2ServerMessageType:
         {
-            CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
-            *m_MessageReceivedDataStream >> *createBankAccountMessage; //this double deref seems sexy for some reason
-            if(processNewRpcBankServerActionMessage_AND_RecordMessageInBusinessAndReturnTrueIfNeedEmitToBusiness(createBankAccountMessage, &m_CreateBankAccountMessagesAwaitingLazyResponseAck, &m_CreateBankAccountMessagesPendingInBusiness))
+            switch(header.RpcServiceSpecificMessageType)
             {
-                m_SignalRelayHackEmitter->emitCreateBankAccountRequested(createBankAccountMessage);
-            }
-        }
-        break;
-        case RpcBankServerMessageHeader::GetAddFundsKeyMessageType:
-        {
-            GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
-            *m_MessageReceivedDataStream >> *getAddFundsKeyMessage;
-            if(processNewRpcBankServerActionMessage_AND_RecordMessageInBusinessAndReturnTrueIfNeedEmitToBusiness(getAddFundsKeyMessage, &m_GetAddFundsKeyMessagesAwaitingLazyResponseAck, &m_GetAddFundsKeyMessagesPendingInBusiness))
-            {
-                m_SignalRelayHackEmitter->emitGetAddFundsKeyRequested(getAddFundsKeyMessage);
-            }
-        }
-        break;
-        //etc for each Action
+                case RpcBankServerMessageHeader::CreateBankAccountMessageType:
+                {
+                    CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
+                    *m_MessageReceivedDataStream >> *createBankAccountMessage; //this double deref seems sexy for some reason
+                    if(processNewRpcBankServerActionMessage_AND_RecordMessageInBusinessAndReturnTrueIfNeedEmitToBusiness(createBankAccountMessage, &m_CreateBankAccountMessagesAwaitingLazyResponseAck, &m_CreateBankAccountMessagesPendingInBusiness))
+                    {
+                        m_SignalRelayHackEmitter->emitCreateBankAccountRequested(createBankAccountMessage);
+                    }
+                }
+                break;
+                case RpcBankServerMessageHeader::GetAddFundsKeyMessageType:
+                {
+                    GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
+                    *m_MessageReceivedDataStream >> *getAddFundsKeyMessage;
+                    if(processNewRpcBankServerActionMessage_AND_RecordMessageInBusinessAndReturnTrueIfNeedEmitToBusiness(getAddFundsKeyMessage, &m_GetAddFundsKeyMessagesAwaitingLazyResponseAck, &m_GetAddFundsKeyMessagesPendingInBusiness))
+                    {
+                        m_SignalRelayHackEmitter->emitGetAddFundsKeyRequested(getAddFundsKeyMessage);
+                    }
+                }
+                break;
+                //etc for each Action
 
-        case RpcBankServerMessageHeader::InvalidMessageType:
-        default:
-        {
-            //TODOreq
+                case RpcBankServerMessageHeader::InvalidMessageType:
+                default:
+                {
+                    //TODOreq
+                }
+                break;
+            }
         }
-        break;
+        break; //case RpcBankServerMessageHeader::ActionRequestGenericClient2ServerMessageType:
+        case SHIT DEFINITELY BROKE MY DESIGN TODAY because we already have/had retry code in the above case and yet this is where it would go with the refactor TODO LEFT OFF or just kill yourself
     }
 }
 void RpcBankServerProtocolKnower::notifyThatQueueActionResponsesHasBeenEnabled()

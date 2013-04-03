@@ -21,7 +21,11 @@ public:
     inline void resetTransmitMessage()
     {
         m_TransmitMessageBuffer.seek(0);
-        m_TransmitMessageByteArray.clear(); //TODOreq: is this necessary or does "streaming into" it overwrite previous contents?
+        m_TransmitMessageByteArray.clear(); //TODOreq: is this necessary or does "streaming into" it overwrite previous contents? read vs. write, bitch! this is write so it would append to the datastream... so it seems very necessary to clear it in this use
+    }
+    inline void streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient()
+    {
+        m_TransmitMessageDataStream << ((quint8)AbstractClientConnection::DoneHelloingFromServer); //semi-hacky but sure beats building yet another QDS inside AbstractClientConnection just to stream it lmfao
     }
     inline void setAbstractClientConnection(AbstractClientConnection *abstractClientConnection) { m_AbstractClientConnection = abstractClientConnection; }
     inline void setMessageReceivedDataStream(QDataStream *messageReceivedDataStream) { m_MessageReceivedDataStream = messageReceivedDataStream; }

@@ -8,7 +8,7 @@ MultiServerAbstraction *AbstractClientConnection::m_MultiServerAbstraction = 0;
 IProtocolKnowerFactory *AbstractClientConnection::m_ProtocolKnowerFactory = 0;
 
 AbstractClientConnection::AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent)
-    : QObject(parent), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToClient(ioDeviceToClient), m_ServerHelloState(AwaitingHello), m_NetworkMagic(ioDeviceToClient), m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_OldConnectionToMergeOnto(0), m_ConnectionGood(false), m_ConnectionType(UnknownConnectionType)
+    : QObject(parent), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToClient(ioDeviceToClient), m_ServerHelloState(InitialHelloFromClient), m_NetworkMagic(ioDeviceToClient), m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_OldConnectionToMergeOnto(0), m_ConnectionGood(false), m_ConnectionType(UnknownConnectionType)
 {
     m_ReceivedMessageBuffer.setBuffer(&m_ReceivedMessageByteArray);
     m_ReceivedMessageBuffer.open(QIODevice::ReadWrite);
@@ -142,32 +142,39 @@ void AbstractClientConnection::handleDataReceivedFromClient()
         {
             //if it's null or empty then we just consume it (already done) and move on to the next message (including getting magic again)
 
-            ServerHelloState currentState = m_ServerHelloState; //it's a copy because we change what we are switching from within the switch, which i *THINK* leads to disaster.. but could be wrong i forget and don't care to test it
-            switch(currentState)
+            //ServerHelloState currentState = m_ServerHelloState; //it's a copy because we change what we are switching from within the switch, which i *THINK* leads to disaster.. but could be wrong i forget and don't care to test it
+
+            //TODOreq: read in the hello state from the message instead of relying on an implied member state
+            quint8 helloStateFromClientInMessage = 0x0;
+            m_ReceivedMessageDataStream >> helloStateFromClientInMessage;
+
+            switch(helloStateFromClientInMessage)
             {
                 //TODOoptional: just as I have a magic to mark the start of each message, I could also have a "string verification" QString that is streamed in at the end (after the regular message params). it can be as simple as "asdf" and would be a lot easier to check than magic, since size is already checked etc. I'd just need to make sure to clear the string I am reading into each time, then after reading in the full message, check that the 'verification string' is in fact 'asdf'. It's I guess just another layer of protection against corruption and whatnot, idfk
                 //^^i can use this in regular rpc generator messages as well and hide the checking from the rpc protocol impl entirely, idfk. perhaps it is overkill. i like overkill (but i don't like WASTE. xml is waste. also that kdab soap shit didn't mention anything about broadcasts (lol comet? laaame) or even message retrying etc. i like my solution))
 
                 //this parser is so fucking ugly compared to my well-formed rpc generator's, it makes me sick.
-                case DoneHelloing: //optimize for DoneHelloing case, as it will be used the most times over and over and over and over and over during production
+                case DoneHelloingFromClient: //optimize for DoneHelloing case, as it will be used the most times over and over and over and over and over during production. TODOoptimization: i think there's also a compiler flag I can use for this to ensure it isn't re-ordered
                 {
                     emit d("got a regular message during production mode (done helloing)");
                     m_ProtocolKnower->messageReceived(); //&m_ReceivedMessageByteArray /*, cookie()*/);
                 }
                 break;
-                case AwaitingHello:
+                //case AwaitingHello:
+                case InitialHelloFromClient:
                 {
                     //read hello
                     emit d("got hello from client");
                     bool containsCookie = false;
                     m_ReceivedMessageDataStream >> containsCookie; //still no idea if this takes 1 bit or 1 byte on the stream, but since it's inside a bytearray and we're measuring the size of THAT, it doesn't matter :-D. i like to think/hope/imagine that QDataStream would do a bool + quint32 (cookie) as 33 bits of network data.... but no clue tbh. also when we store it in a qbytearray it very likely rounds up to the nearest byte regardless lmfao... but i mean there are lots of other scenarios where i'd like to think bools are compacted into a single byte (if less than or equal to 8 bools in a row TODOreq: protocol design should make bools in a row if required, rpc generator can do this transparently after parsing the input xml. no fucking clue if i need to... or if bools are even stored as bits or bytes or what, lol)
+                    //TODOoptimization: could use c bit flags to put containsCookie in the same variable as currentState. currentState has a max of 256 and we only have like.... 6 of them lmfao. DEFINITELY DON'T DO THIS YET, mah brain is already exploding/imploding simultaneously (feelsgood/badman)
 
-                    m_OldConnectionToMergeOnto = 0;
+                    m_OldConnectionToMergeOnto = 0; //this is our flag letting us know whether or not to merge, but it might still be set from an old old old old connection (etc), so we set it back to a reasonable default here and now
 
                     if(containsCookie)
                     {
                         emit d("hello contains cookie, so this is a reconnect i guess");
-                        quint32 cookieFromClient;
+                        quint32 cookieFromClient; //TODOoptional: should i set this to 0x0 and then check later that it isn't?
                         m_ReceivedMessageDataStream >> cookieFromClient;
 
                         //TODOreq: eh i guess at some point (later on, but still has to do with hello protocol) i should trigger the sending of all their queued messages...
@@ -185,10 +192,12 @@ void AbstractClientConnection::handleDataReceivedFromClient()
 
                     NetworkMagic::streamOutMagic(&m_DataStreamToClient);
                     m_DataStreamToClient << welcomeMessage;
-                    m_ServerHelloState = HelloReceivedWelcomeDispatchedAwaitingThankYouForWelcomingMe; //god this is so ugly. If only I had a way to easily generate message interactions cleanly based on some defined protocol... hmmm.....
+                    //m_ServerHelloState = HelloReceivedWelcomeDispatchedAwaitingThankYouForWelcomingMe; //god this is so ugly. If only I had a way to easily generate message interactions cleanly based on some defined protocol... hmmm.....
+                    //^^commented out because that was the "implicit move to next state" (whatever the next message was was ASSUMED to be the "thank you for welcoming me". Now, the client has to specify "thank you for welcoming me". This is both safer and also allows us to send a DisconnectGoodbye message later on
                 }
                 break;
-                case HelloReceivedWelcomeDispatchedAwaitingThankYouForWelcomingMe:
+                //case HelloReceivedWelcomeDispatchedAwaitingThankYouForWelcomingMe:
+                case ThankYouForWelcomingMeFromClient:
                 {
                     emit d("got thank you for welcoming me");
                     //read thank you for welcoming me
@@ -246,7 +255,9 @@ void AbstractClientConnection::handleDataReceivedFromClient()
                         messageWriteStream << cookie();
                         //delete serverHelloStatus; //we don't need it anymore (right?????)
                         //messageWriteStream << QString("ok bro you're good to go"); //lol what else should i send? was thinking of just a bool. it makes no difference, hello doesn't need to be optimized lawl. i mean i guess there should just be an enum/int that identifies which message type it is you know? fuck it, the cookie, although redundant as fuck at this point, will serve as the "ok bro you're good to go"
-                        m_ServerHelloState = DoneHelloing;
+
+                        //m_ServerHelloState = DoneHelloing;
+
                         NetworkMagic::streamOutMagic(&m_DataStreamToClient);
                         m_DataStreamToClient << okStartSendingMessagesBroMessage; //TODOreq: i am forgetting magic for the client in my responses!!!
                     }
@@ -256,8 +267,15 @@ void AbstractClientConnection::handleDataReceivedFromClient()
                     }
                 }
                 break;
-                case ThankYouForWelcomingMeReceivedOkStartSendingBroDispatched: //because we shouldn't get here after we're done with the hello phase. this would be an error that we forgot to disconnect or whatever. in fact, we never even set our enum to this so it shouldn't even exist. we delete the serverHelloStatus because we're done with it.
-                case HelloFailed:
+#if 0
+                //case ThankYouForWelcomingMeReceivedOkStartSendingBroDispatched:
+                case OkStartSendingBroDispatched: //because we shouldn't get here after we're done with the hello phase. this would be an error that we forgot to disconnect or whatever. in fact, we never even set our enum to this so it shouldn't even exist. we delete the serverHelloStatus because we're done with it.
+                    //TODOreq: the above comment is probably no longer true. I think we will get here now and this is where we'd set the connection as "Done" (except NOT using that obsolete/changed enum anymore). Like... making it ready for broadcasts and whatnot? Unsure tbh. But this is sort of our "final ack" for the hello...
+
+                come to think of it I can't see a reason for this enum anymore... so I just ifdef'd it out :-/.
+                    TODOreq: keep in mind (not sure of implications, hence TODOreq) that we are still sending to the client an "ok start sending [action requests], bro".... we just don't have any need to "implicitly remember" that (anymore? considering this case statement was empty we may never have needed to know it!) state. When the client receives it, he knows we are ready to receive messages with the hello state set to DoneHelloing
+#endif
+                case InvalidHelloStateFromClient:
                 default:
                 {
                     //TODOreq: handle errors n shit. dc?
