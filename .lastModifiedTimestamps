@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386037042
+Documents/minddump/:1386037096
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386037042
+Documents/minddump/dreams/:1386037096
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -314,6 +314,7 @@ Documents/minddump/asldfjasdfjworusdlfkjweorusdlfkjweakrhsdfjoruwerlkjsadfouwrek
 Documents/minddump/asldfjasdlfjasdfouwerljksdafaskdhfweru.txt:1345448438
 Documents/minddump/asldfjasdofuiwalerjasdfklasfdourelsfjwer.txt:1347560847
 Documents/minddump/asldfjasdofuwaelrjewoiurel.fuck.titles.asldfjasdlfjsadou.txt:1333103102
+Documents/minddump/asldfjlkjdflksdjfsdfoiulkjrweouslkdfjsdlfkjoiu.txt:1365215432
 Documents/minddump/asldfjlsdjkflksjdfouwelkjroiusfdlkjdsfhflskjflskjdf.txt:1363799367
 Documents/minddump/asldfjsadflksajdfwiouersadlfjk.laaaaaunch.txt:1339936544
 Documents/minddump/asldfjsadofuwerljsdfsoufwaklrjsadfkjsdfoius.txt:1344191928
@@ -593,6 +594,7 @@ Documents/minddump/fsdlfkjslkdfjosudflkjsdfousdflkjsdofulkjsdfousfdlkjsdfouwerkj
 Documents/minddump/fsdljsdlfjksldjfljsdfljsdljflsjdflkjghlkjsofduwejsdfsdflk.txt:1363641618
 Documents/minddump/fsdlkfjdsapfousdflasdjfoawruvoriua937sfsdf.txt:1327893267
 Documents/minddump/fsdlkfjsadlfjsdoiuaelrkajsfd.txt:1338125870
+Documents/minddump/fsdlkjflakjsdfljsfdlkjslkdfjlksdfjoiusdflkjsdoifuwejklrosfiu.txt:1365215706
 Documents/minddump/fsldjflksjdflksjdfousdflkjsdfluoier.txt:1359764060
 Documents/minddump/fsldkafjlskdfjsdlkfjlsdkfjsdkl.txt:1353789874
 Documents/minddump/fslfkjasdfljasdfoasdufjasldfj.txt:1321758509
@@ -974,6 +976,7 @@ Documents/minddump/sdflsdjflkjwourlksjdfouwelrjoufl.txt:1355707892
 Documents/minddump/sdflskadfjlsdkafjouwerlkjsdfasdfoulkjfsdfouwerkj.txt:1351479219
 Documents/minddump/sdflskdjflkjsdfdsouflksjdfousdflkjsdfousfd.txt:1359763844
 Documents/minddump/sdflskdjflskdjflkjsdfouwlekjroiusdflkjsdfoiu.txt:1363563728
+Documents/minddump/sdflskjdflkjsdfousldkjfoiusdfiuiouwerkjlkfj.txt:1365287712
 Documents/minddump/sdflskjdfouwrlkjasfdoiuwerlkjsdf.txt:1340023036
 Documents/minddump/sdflwoierulksdjfxkldjvxlfsdofiuwjskflhasfd.txt:1339058852
 Documents/minddump/sdfoauerwearjsdlkgfsdofysdafkjsdfopsrejukl.txt:1325352425
@@ -1014,6 +1017,7 @@ Documents/minddump/sdlfkjsdlkfjlsdkjflsdkfjsdlkjfsdflkjdsflkjsdf.txt:1362134015
 Documents/minddump/sdlfkjsdlkfjsdlkfjlskdjflsdkjflksdjfslkdjfsofuwelrkj.txt:1362310031
 Documents/minddump/sdlfkjworiuaslfdkjaosalkfweoiurfslfjsofiuwerlkajsdfoiurlek.txt:1339487531
 Documents/minddump/sdlfkowiurlskjfouwelrkjsdofiuasfdlkjwer.txt:1340901411
+Documents/minddump/sdlkfjlskjflkjsdfoiusdlfjsodfiulkdjfsokfoiuwelkrjsdfsdfoiuer.txt:1365218620
 Documents/minddump/sdlkfjsdlfjouwerljsadfklsdjfoul.txt:1355649486
 Documents/minddump/sdlkfjsdlfjsdlkjfoweuroeiu.txt:1355474510
 Documents/minddump/sdlkfjsdlkjflksdjflksdjfj.txt:1355730417
@@ -1186,7 +1190,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386037042
+Pictures/:1386037096
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1339,7 +1343,7 @@ Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefront
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwidget.h:1351021805
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwithtwobackendsexampletest.cpp:1350801765
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwithtwobackendsexampletest.h:1350801765
-Projects/Ideas/:1364421903
+Projects/Ideas/:1365287779
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -1576,6 +1580,7 @@ Projects/Ideas/rpc.eventually.includes.serialization.to.paxos.dht.with.custom.bu
 Projects/Ideas/rpc.solves.designEquals.or.at.least.lots.of.it.should.still.revisit.docs.txt:1342604976
 Projects/Ideas/sanity.in.scripts.from.within.qt.cpp.land.and.various.ideas.on.the.subject.txt:1350762542
 Projects/Ideas/saving.is.a.waste.of.time.but.changing.i.mean.adding.a.title.where.one.was.empty.isnt.txt:1338793653
+Projects/Ideas/scaling.optimization.to.find.sweet.spot.of.recursive.slot.chunk.size.but.the.number.might.suck.idfk.txt:1365287779
 Projects/Ideas/schizOS.audio.out.can.leak.data.aldkfjsdalfkj.txt:1352774261
 Projects/Ideas/seed.hash.chaining.alsdfjasdfoiuwerlakjsdfoasudflk.txt:1337989129
 Projects/Ideas/sell.cs.tag.as.an.ad.slot.lol.asldfjsaldfjsoiusdf.txt:1332971365
@@ -2326,7 +2331,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/shared.folders.expl
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/todo.write.script.to.extract.variable.names.or.shit.from.the.compileable.and.generate.templates.txt:1350939281
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/:1347560549
 Projects/RpcGenerator/TemplatesToUseForGeneratingCode/placeholder.file.so.folder.doesnt.get.deleted.txt:1347560549
-Projects/RpcGenerator/design/:1362316353
+Projects/RpcGenerator/design/:1365287816
 Projects/RpcGenerator/design/3.message.types.actions.without.responses.actions.with.responses.and.broadcasts.a.lot.of.thoughts.in.here.txt:1350212940
 Projects/RpcGenerator/design/Actions.are.RequestsAckedViaResponse.and.Broadcasts.are.AcknowledgedOneWayMessages.txt:1360590740
 Projects/RpcGenerator/design/MESSAGE.TRANSMISSION.ERROR.USE.CASES.and.also.the.typical.success.case.need.to.study.and.solve.this.txt:1362315428
@@ -2374,6 +2379,7 @@ Projects/RpcGenerator/design/rpc.generator.overall.flow.after.making.errors.be.f
 Projects/RpcGenerator/design/rpc.service.id.thoughts.but.no.conclusion.yet.alsdfjldsjkf.txt:1355151259
 Projects/RpcGenerator/design/rpcbankserverprotocolknower.introduced.back.in.and.PER.CONNECTION.and.implementing.an.interface.for.abstract.server.thingo.txt:1356894033
 Projects/RpcGenerator/design/rpcserverShelper.or.rpcserverhelper.idfk.lasdkjflkjsfsoiuwerlkfs.txt:1360829173
+Projects/RpcGenerator/design/scoped.pointer.makes.stronger.guarantees.that.doneWithMessage.will.be.called.txt:1365287816
 Projects/RpcGenerator/design/server.TYPES.need.to.have.drop.in.replaceablility.for.future.proofing.and.i.think.a.largeish.redesign.is.at.hand.fml.txt:1352018828
 Projects/RpcGenerator/design/simple.minimal.message.design.that.helped.me.conclude.that.i.need.an.IActionMessage.class.dia:1350512528
 Projects/RpcGenerator/design/split.in.half.or.split.in.thirds.idfk.client.server.cache.db.etc.considerations.txt:1344526464
@@ -2535,7 +2541,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386037042
+Projects/libAvGraphicsItem2/design/:1386037096
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
