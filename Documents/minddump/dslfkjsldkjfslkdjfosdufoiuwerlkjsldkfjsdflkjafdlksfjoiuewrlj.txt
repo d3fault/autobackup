@@ -1,0 +1,25 @@
+I want everyone to learn programming because of the mindset it gives you. There is one downside though and I'm still working on "fixing"(?) it: you tend to be constantly predicting "things that can go wrong" in your day to day life. Sure it does in effect make you better at life, but it also makes you a negatively thinking person. Always thinking of "error cases" and "worst case scenarios". If you DON'T make this transition of thinking in your brain, you will make a terrible programmer because your code and/or designs will be littered with bugs (logical or otherwise).
+
+
+Solution for me: surely it is possible to toggle your mind in this state. It is simply a matter of knowing what to toggle. How to change thinking. What to will yourself into change thinking. Spitting this sentence out is difficult but you get the general idea I think.
+
+How to choose to think differently, and what to think differently about. What the two choices are (predicting-all-error-cases vs. preparing a reasonable amount but expecting GOOD to happen) and remembering when to initiate the toggle (on computer, off computer). I would say it is true that good mostly happens (especially if you are choosing to will it so). I don't mean good vs. bad(evil), I mean good vs. error. Nothing going wrong for a thing planned is that thing going good. It can also go better than planned.
+
+I think that if you aren't expecting good to happen, you tend to depress yourself. You live in a state of depression but it is not all that bad because nothing really ever goes THAT wrong because you're always ready for it! Still it is the equivalent of always walking with your head down when you should be walking with your head facing forward (glancing up/down/left/right at least somewhat often, perhaps frantically but perhaps casually). Looking "up at the sky" would be the equivalent of always expecting more than what you planned for and so you will be a frequently disappointed "dreamer". This analogy served me quite well. Thank you Mr. Analogy. Why you're welcome d3fault.
+If you're always looking down, you don't see the world around you on a macro level. You only see what's right in front of/around you. The possibilities that could have been but weren't... but not every aspect of your current situation. Not every aspect of WHAT REALLY HAPPENED. You can only focus on an event so much so it follows that you can only focus on a finite amount of things, which means you must make sacrifices no matter what you choose to focus on (unless you have shit tons of video cameras and infinite time, perhaps? lol.). If you're focusing only on "everything that can go wrong" (and believe me, there are lots) then your attention is taken away from [things that you never knew you missed out on]. Whatever they are I will not state they are necessarily significant (though they can (and probably will) be), just that they are "events you never knew you missed out on". That is their minimum.
+
+In a sense it could also be Secure vs. Insecure. To be secure you must constantly be analyzing your environment (for errors/vulns/etc). This applies to both physical and computer security.
+
+Yes the "errors" in the physical and computer world are not even remotely comparable, but the mindset required for scanning for either of them is similar at the very least.
+
+So I am telling myself, right now in this writing, that I should not expect so many bad things to happen IN MY LIFE. Don't interpret this as "drop your security entirely", but I think you should loosen up a bit. You are a tad too far no the paranoid side and you are a tense/clinched-anus social[thing]. Socializer? You admit to being attractive (had: a sexy), but your confidence in yourself does not coincide with that. There are definitely girls that just want your weiner in their butt at bars. You just have to make your weiner available to their butt. That essentially consists of not being socially retarded for long enough that they see you in their geographic vicinity and choose to put their butt on your weiner.
+
+
+OT: I want a girlfriend that will allow me to say (because she has a good sense of humor): "Hi this is <name>, I'm currently parking my weiner in her butt" when introducing her. She should introduce me as "Hi this Steven, I'm currently sucking his dick on our monthly anniversaries in exchange for food, rent and the occassional chunk of cash. Once I trick him into marrying me I'll only suck his dick on our yearly anniversary".
+
+
+
+I hope this doesn't make me a shit coder.
+
+
+Also I doubt I'll commit to this, but it's definitely something to keep in mind for post-launch when you cold turkey courage itself! Fuck the police. The ponies too.
