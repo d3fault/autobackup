@@ -66,45 +66,105 @@ private:
     //TODOreq: figure out if, since it's inline, that they need to be pointers in order to not increase the reference count. since it's inline it might be faster (no deref'ing) to pass by value. idk how inline handles implicitly shared
     inline bool processNewRpcBankServerActionMessage_AND_RecordMessageInBusinessAndReturnTrueIfNeedEmitToBusiness(IActionMessage *actionMessage, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList)
     {
+        //We know this is a new Action Request, but we don't know whether it's messageId has been used before or not. If it has, then we do the final (lazy-as-fuck) ack for the Action Request that previously used that messageId
+        quint16 messageId = actionMessage->Header.MessageId;
+        IActionMessage *messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificAckList->value(messageId, 0);
+
+#if 0 //Compacting this if/else, because this method appears to always 'insert in business' and 'return true' (only as of this recent design refactor of course)
+        if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
+        {
+            //This is a lazy ack ack for a, now successful, previous Action Request
+
+            //We used to have toggleBit for detecting this (whether it's new or old (if old (toggleBit didn't change), it was implied that it was a retry)), but that design has changed and now this method is ONLY called on new Action Requests
+
+            //remove from ackAck list and 'done' the old Action Request
+            actionSpecificAckList->remove(messageId);
+            messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->doneWithMessage();
+
+            //TODOmessageErrors: this is our typical non-error case, but for every time after the first time we use that MessageId
+
+            //insert into business pending and 'return true' (indicating to invoke business) the new Action Request
+            actionSpecificPendingInBusinessList->insert(messageId, actionMessage);
+            return true;
+        }
+        else
+        {
+            //First time seeing this messageId? I'm tempted to write that it might be in business pending, however if that were the case then we wouldn't be in this method, we'd be in the retry1/retry2 method! Client only uses the enum for a new Action Request for the same messageId ONLY AFTER he has first received a response to the first Action Request. Yes this does mean our server is dependent on correct client code, but they are pretty intertwined to begin with so go fuck yourself
+
+            ////TODOmessageErrors: this is our typical non-error case, but only for the first time seeing this MessageId
+
+            //insert into business pending and 'return true' (indicating to invoke business) the new Action Request
+            actionSpecificPendingInBusinessList->insert(messageId, actionMessage);
+            return true;
+        }
+#endif
+        //Here is the above ifdef'd out if/else compacted
+
+        if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
+        {
+            //This is the lazy ack ack for a, now successful, previous Action Request
+
+            //We used to have toggleBit for detecting this (whether it's new or old (if old (toggleBit didn't change), it was implied that it was a retry)), but that design has changed and now this method is ONLY called on new Action Requests
+
+            //remove from ackAck list and 'done' the old Action Request
+            actionSpecificAckList->remove(messageId);
+            messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->doneWithMessage();
+
+            //TODOmessageErrors: this is our typical non-error case, but for every time after the first time we use that MessageId
+        }
+        //else
+        //{
+            //First time seeing this messageId? I'm tempted to write that it might be in business pending, however if that were the case then we wouldn't be in this method, we'd be in the retry1/retry2 method! Client only uses the enum for a new Action Request for the same messageId ONLY AFTER he has first received a response to the first Action Request. Yes this does mean our server is dependent on correct client code, but they are pretty intertwined to begin with so go fuck yourself. TODOreq or perhaps optional/optimization: if client does send an Action Request with the same MessageId with the "New Action Request" enum set before receiving a response to the old one, and the old one is still in business (if it was in lazy ack list then it would still cause problems, just different kinds. we don't know that they actually received it. but i mean faulty client is faulty at this point so...), this method is now not smart enough to handle that properly. It used to be because we used to always check in business pending, but now we don't and have a separate method for retries. If the client is faulty, he can make us insert two messages in business pending with the same messageId, and of course that will fuck shit up royally when we try to remove/etc (our remove code can/should verify that only one was removed, so we can at least detect this case (how can you 'recover' from a faulty client ANYWAYS???))
+            ////TODOmessageErrors: this is our typical non-error case, but only for the first time seeing this MessageId
+        //}
+
+        //insert into business pending and 'return true' (indicating to invoke business) the new Action Request
+        actionSpecificPendingInBusinessList->insert(messageId, actionMessage);
+        return true;
+
+        //this return true now seems worthless since it is always used. but maybe blacklist programming detecting unforseen error cases in the future will change this method to 'return false' somewhere? that and the fact that this method will be called via a macro that is swappable with other methods with matching signatures (and, the 'retry' method, for example... STILL DOES need to be able to return true/false based on whether or not business needs to be invoked)... means we need to keep the bool return variable whether we use it or not (perhaps i'm over-optimizing again with dat macro shit)
+
+        //TODOreq: Below is old design but very important code! As of this moment forward, this method is only for Action Requests, not retries! Still, I should analyze it and it's 'req's thoroughly to make sure the same cases are accounted for AGAIN in the new design. I'm using plusses and minuses to mark each line as 'has been accomodated' (plus) vs. 'not yet' (minus)
+#if 0
         //TODOreq: even though this function doesn't use my various bits (retry1, retryBecauseConnectionMerge, ahh isn't this sameshit as messageType below?) in their actual names, I do deem it usable for now. I think once I get to the client implementation portion of this it will become more evident if I actually need to change the designs a bit
         //TODOreq: i still think i need to add a messageType to differentiate between actionRequests/actionResponses/broadcasts/cleanDisconnectRequest/actionRequestRetry1(expects response). It needs to go over the network ofc. We could share the field with the hello code, but really don't have to since our protocol is dynamic as fuck :). Still it might be wise to do so?
 
         //our first check is for the lazy ack ack, as it is the most likely. we COULD check that it's in business still (I guess this depends on if the retry bit is set?), but since that's less likely we'll check it next
 
         //first just see if it's there. it will most likely be there. if it isn't, it's very likely in business pending...
-        IActionMessage *messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificAckList->value(actionMessage->Header.MessageId, 0);
+        +IActionMessage *messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificAckList->value(actionMessage->Header.MessageId, 0);
 
-        if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
-        {
+        +if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
+        +{
             //so it's in the ack awaiting ack list, now we need to determine if we're lazy ack'ing an old message or if we want to re-send the response. this is why we lazy ack to begin with...
 
             //edit: for example right here the retry bit should be specified because what if the first request just didn't make it?
 
-            if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->toggleBit() == actionMessage->toggleBit())
-            {
+            +if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->toggleBit() == actionMessage->toggleBit())
+            +{
                 //if they are the same, retryBit is implied and we just return the one that's already existing.
                 //TODOreq: wtf do I do with the new one? just recycle it right here right now? I think so but am unsure...
 
                 //it might seem inefficient that we have two copies of the message at this point... BUT WE (client) DON'T KNOW THAT THE FIRST ONE ARRIVED MOTHERFUCKER... so we did have to send the whole request again. HOWEVER, the server has determined it's worthless.
                 //TODOmessageErrors: this is our response retry case
 
-                actionMessage->doneWithMessage(); //doesn't have response filled out anyways~ piss off
+                +actionMessage->doneWithMessage(); //doesn't have response filled out anyways~ piss off
 
                 //we re-send the old one, but still don't remove it from the ack pending ack. what if this one gets lost too? actually TODOreq: since this would be our second attempt at a response, there is definitely not going to be a third SO it might be ok to say doneWithMessage at this point??????? it would mean that the next time we see the MessageId, it will be treated as though it was the first~ <---- all of this is only true if we only retry exactly once. err, try exactly twice.
 
                 //re-transmit
                 //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TODOreq (possibly done already): the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
-                if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
-                {
-                    streamToByteArrayAndTransmitToClient(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
-                }
+                +if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
+                +{
+                    +streamToByteArrayAndTransmitToClient(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
+                +}
                 //else: we got a retry from a connection that has since failed or is about to merge, so meh don't bother trying to send it back because the new connection will be the one to do that
-            }
-            else
-            {
+            -}
+            +else
+            +{
                 //they are not the same, so we know we're on the next message. We can now recycle the old one: we know we don't need it anymore. The ack has officially been ack'd :-D
-                actionSpecificAckList->remove(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->Header.MessageId);
-                messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->doneWithMessage();
+                +actionSpecificAckList->remove(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->Header.MessageId);
+                +messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->doneWithMessage();
 
 
                 //TODOreq: now that that's taken care of, we begin processing the new message
@@ -112,20 +172,20 @@ private:
                 //TODOmessageErrors: this is our typical non-error case, but for every time after the first time we use that MessageId
 
                 //dispatchCreateBankAccountMessageToBusiness(createBankAccountMessage);
-                actionSpecificPendingInBusinessList->insert(actionMessage->Header.MessageId, actionMessage);
-                return true;
-            }
+                +actionSpecificPendingInBusinessList->insert(actionMessage->Header.MessageId, actionMessage);
+                +return true;
+            +}
         }
-        else
-        {
+        -else
+        -{
             //not in ack lazy awaiting ack list, so it might be in business pending... or TODOreq: it might be our first time seeing it and in neither!!!
 
             //hack: the name of the pointer doesn't match our usage, but no point in allocating another one lol. is 'messageOnlyIfPendingInBusiness' from now on
-            messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificPendingInBusinessList->value(actionMessage->Header.MessageId, 0);
+            -messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificPendingInBusinessList->value(actionMessage->Header.MessageId, 0);
 
             //if messageOnlyIfPendingInBusiness really
-            if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
-            {
+            -if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
+            -{
                 //as of right now, both of the business pending checks come here. despite coming at different times, all we have to do is tell the truth. we are still in business! I guess we don't need the 3 different requests to indicate which status they are, simply sending the same message with the toggle bit not changing three times in a row will indicate it!
                 //TODOreq: it is worth noting that the first (initial), second (retry1/status1), and third (retry2,status2) messages that a client sends to the server are the exact same, yet only the second (and POSSIBLY third, though it can be an optimization to know from the second one whether or not the whole message needs to be resent) warrants a response ("still in business"). The response to the first one is the answer/response itself [assuming no errors and normal conditions]! The 3rd message is the same as the second and also warrants the same response. IT IS UP TO THE CLIENT to be able to differentiate between any responses in retryBecauseRequestNetworkTimeout, stillInBusiness[1], retryBecauseBusinessTimedOut, stillInBusiness[2]
                 //TODOreq: there is an amount of custom logic that must be performed to be able to deduce on the client what messages are what. if we receive our answer/response just after we dispatch either of our retry* (also 2->3rd might be even more complicated idfk), then we need to know we're definitely going to get the same answer/response and this time with the responseBit set (i might have meant to write "responseRETRYbit" right there, idfk)
@@ -180,14 +240,14 @@ private:
 
                 //TODOreq: still in business. should we respond with a 'give us more time plox because if this doens't work itself out, shit is FUCKED and everything should shut down'? TODOreq: so does that imply that the client sends us yet another (3rd!!!) try? And if THAT ONE doesn't work, then we're really really fucked? Or should I ignore it (store it?) and set up a timer on the business and then report fucked? I like the idea of staying in communication with the client at this point, even though we don't have much to say except "it's the business, not us". :-/. This is probably one of the hardest use cases to decide what to do... but I guess I'd say opt towards giving him more time before shutting the fuck down... or even trying another server
                 //I'm going to be so ridiculously happy if I never ever encounter this code path. I mean sure during development you are bound to fuck up... but your business MUST respond in production... else we shut everything the fuck down (TODOreq: this is a good as fuck reason to keep applications... servers... whatever.... appIds.... AWAY FROM EACH OTHER. so if one service goes down it doesn't bring down everything else that is working perfectly fine. I guess I could just do it on a per-appId basis... if I really want to keep everything "one-giant-binary-to-rule-them-all" roflrofl good luck stealing my source if the source never touches the server, only binaries do. even though that has nothing to do with me doing them in separate binaries lol. but yea I mean I think you get more efficiency and therefore scalability and therefore profits by having all your services on ONE GIANT DHT. I don't even want to think about 'providing low latency access to overseas countries' though. I guess those would just be copy/pasta different servers/clusters altogether? It'd work for services like email etc where the user has their own account... but for shit like ABC AdDoubles, we need worldwide coordination so it's MUCH easier to just have a giant ass single dht like I said. The latency has to be dealth with either way. Either inter-cluster realtime synchronization (NO-FUCKING-THANKS (not to be confused with cross-cluster backing up, which yea i'll have running 24/7 both ways (or 3 ways etc), but they are DELAYED, not realtime!!! (also: still dunno how rolling back or whatever would work with a delayed/lagged copy. but shit i know one thing: it's better to have a few seconds/minutes outdated copy than NO COPY AT ALL (in the case of fire/explosion/etc lmfao)))) or have the user do it (yes))
-            }
-            else
-            {
+            -}
+            +else
+            +{
                 ////TODOmessageErrors: non-error case, first time seeing this MessageId
                 //dispatchCreateBankAccountMessageToBusiness(createBankAccountMessage);
-                actionSpecificPendingInBusinessList->insert(actionMessage->Header.MessageId, actionMessage);
-                return true;
-            }
+                +actionSpecificPendingInBusinessList->insert(actionMessage->Header.MessageId, actionMessage);
+                +return true;
+            +}
         }
         return false;
 
@@ -208,7 +268,68 @@ private:
         //maybe we can instead connect the clearing of the list to the chosen/conflicting/got-their-first recycle signal after it's finished? so no additional processing needs to be done
 
         //emit createBankAccount(createBankAccountMessage);
+#endif
     }
+    inline bool processRetryRpcBankServerActionMessage_AND_ReturnTrueIfNeedEmitToBusiness(IActionMessage *actionMessage, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList)
+    {
+        //TODOreq: we still need to use toggleBit because there is a false positive where an Action completes successfully, but then when the messageId is used again on the next message, the initial request fails on the network. The client then sends a retry for that messageId, but the server can't tell if the client wants the old Action Request/Response, or if it's a new message that got lost on the network. For some reason I thought my design refactor obsoleted toggleBit, but I guess not as this problem is the same one that made me think of it to begin with!
+        //^^^^^hahahaha now I see why I was using toggleBit as an implicit retry 'bit' (or enum now). It IS... but however does still complicate the design to the point where I don't know how to do responseRetries and yada yada. I might re-optimize this later once I get it up and running TODOoptimization... but oh zeus (had: god) I don't even know if I'll ever see that day
+
+
+        //first just see if it's there. it will most likely be there. if it isn't, it's very likely in business pending. if not there, then we lost the original request on the network and this is our first time seeing the messageId. we may have also lost the original request on the network and have seen the messageId before, in which case there's a false positive that toggleBit is used to solve (to differentiate old and new)
+        quint16 messageId = actionMessage->Header.MessageId;
+        IActionMessage *messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificAckList->value(messageId, 0);
+        if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
+        {
+            //Since it's in the ack awaiting ack list and we're in the retry method, we want to re-send the response. this is why we lazy ack to begin with... but first we check the toggleBit to make sure that we don't accidentally send the response to a previous message. TODOreq: remember, this could be our 'entry point' to a new Action Request (if the initial request got lost on the network (or hell, if the retry1 also got lost on the network (assuming status2 also uses this method, but idfk yet)))
+
+            //edit: for example right here the retry bit should be specified because what if the first request just didn't make it?
+            if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->toggleBit() == actionMessage->toggleBit())
+            {
+                //if they are the same we just return the one that's already existing.
+
+                //TODOmessageErrors: this is our response retry case
+
+                actionMessage->doneWithMessage(); //doesn't have response filled out anyways~ piss off
+
+                //old: (??)
+                //we re-send the old one, but still don't remove it from the ack pending ack. what if this one gets lost too? actually TODOreq: since this would be our second attempt at a response, there is definitely not going to be a third SO it might be ok to say doneWithMessage at this point??????? it would mean that the next time we see the MessageId, it will be treated as though it was the first~ <---- all of this is only true if we only retry exactly once. err, try exactly twice.
+
+                //re-transmit
+                //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TODOreq (possibly done already): the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
+               if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
+                {
+                    streamToByteArrayAndTransmitToClient(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
+                }
+                //else: we got a retry from a connection that has since failed or is about to merge, so meh don't bother trying to send it back because the new connection will be the one to do that
+
+               return false; //the response simply didn't make it back, so it would be erroneous to re-process the request
+            }
+            else
+            {
+                //(sdfouwer08324083): if we get here, it means that a re-used messageId's associated _initial_ Action Request failed over the network. Getting here means that the received message is a brand new Action Request so it should be processed. It also means that we need to ack the previous Action using this messageId? Some of this code should probably be shared with the processNew* class. Perhaps they both just call another inline method.
+
+                //TODOreq
+
+                return true;
+            }
+        }
+        else
+        {
+            //not in ack lazy awaiting ack list, so it might be in business pending... or TODOreq: it might be our first time seeing it and in neither!!! That case is similar to the above else (comment with string 'sdfouwer08324083'), except that it's our first time seeing that messageId (perhaps the two can be consolidated? idfk)
+
+            //hack: the name of the pointer doesn't match our usage, but no point in allocating another one lol. is 'messageOnlyIfPendingInBusiness' from now on
+            messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificPendingInBusinessList->value(messageId, 0);
+
+            //if messageOnlyIfPendingInBusiness really
+            if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
+            {
+                //so we don't really want to return the ASSOCIATED message, but we want to create a message that simply says "hey bitch, the message with messageId is still in business". Where the fuck do I get/allocate/etc such a message? Do I want to ack it? I'm thinking not since the client is already going to be timing out for retry2status2. And once it sends THAT and times out for THAT, then it simply cancels/errors out the request. So acking is err... 'implicit'?? Still dunno where to get it etc. Should I just stack create it and not give a fuck :)? Suddenly I want to write a whitepaper on "deciding when to recycle objects (common cases, such as messages) vs. create them on the fly (uncommon cases, such as 'retry reports')" xD. That one quote pretty much sums it up though. I _COULD_ recycle the retry reports (retryResponses in a sense, but bah that is getting ambiguious as fuck (and ambiguity is the downfall of any programmer (fuck C-style function naming)). I would say that what should really be called a retryResponse would be when a message in the ack list is re-sent to the client without invoking business... but clearly both have ambiguity toward each other so should be overly specific!). Still dunno what the specific type that I'm going to allocate will be. It KIND OF doesn't matter until I remember that the client is very likely going to organize it's messages based on their rpc service specific action type as an optimization =o. Fuck.
+                //Especially considering my message delivery system involves complex parenting and 'rigging' etc, I need to now decide whether to create dispensers (next to the already existing dispensers)... or if I should just make a custom/hacked-together message type. Hmm here's another idea: I could use the "existing" message (TODOreq: thread safety is a must and if it's in business pending, there are certainly risks!) but use it carefully and set the enum as "status report", and then customize the QDS operators (again, to BE thread safe. by not touching them i am being thread safe heh) so that the "message values" aren't streamed (they aren't ready yet anyways). This might be expensive though because now my streaming logic has an extra bool check. Matter? IDFK doubt it but... maybe? TODO LEFT OFF AND THE REST OF THIS METHOD SINCE I THINK THERE ARE MORE ELSE STATEMENTS TO COME
+            }
+        }
+    }
+
     inline void removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(IActionMessage *message, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList, QList<quint32> *actionSpecificBusinessPendingDuringMergeList)
     {
         //remove it from pending business
