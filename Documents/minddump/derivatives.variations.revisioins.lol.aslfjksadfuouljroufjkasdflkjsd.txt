@@ -1,0 +1,8 @@
+derivatives can also be called variations
+the difference isn't much, but variations sounds better to non-technical people.
+
+each variation has revisions, so it stands that each variation has a parent variation (which it was derived from). the exception is an original work, which derives from (conceptually) "zero" or "null-string" or "empty string" or "nothing". a common base class for all types of nodes (music, text, video, etc) should be used and it's more important that it makes sense than it [something].
+
+
+
+revisions of the same variation and variations as a whole mainly differ only in authorship. generally speaking, a revision to a piece of media, even if changed drastically, is only a derivative if it has a different author. so really, the differences between revisions and derivatives/variations (choose your wording) are incredibly subtle! i guess i'm speaking on the data or model level. the differences in PRACTICE will probably be enormous.
