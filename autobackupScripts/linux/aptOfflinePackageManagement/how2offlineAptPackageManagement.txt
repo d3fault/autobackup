@@ -1,0 +1,27 @@
+[It may be a good idea to clear out /etc/lib/apt/lists/ if you are swapping in and out sources.list files. apt-get update should repopulate it but I doubt it will get rid of now-gone sources.list entries]
+
+NOTE: Most of the following scripts require a thumb drive to exist. We should add proper checking of directory's existence tbh
+
+
+If your "apt-get update" (gencaches) is already up to date, skip to step 5
+
+
+1) On an internet connected machine with the same architecture (i386), distro, and identical ***/etc/apt/sources.list file*** (just backup your normal one and swap the matching one in whenever you need to do offline package management), run apt-get update as normal
+
+2) copy i think everything from /etc/lib/apt/lists , which is the result of the apt-get update (but in non-cached form). The "lock" file and the "partial" folder in "lists" can be ignored and/or deleted
+
+3) remove the portable drive from the online machine and plug it into the offline machine. copy the "lists" back into /etc/lib/apt/lists on the offline box using: "cd /thumb/drive/lists/folder/; cp -avi --no-preserve=all ./ /var/lib/apt/lists/
+
+4) run "apt-cache gencaches" to populate the apt cache with the new lists (this is normally done at the end of apt-get update, but that specific command requires internet whereas gencaches does not)
+
+5) run genUpgradeDebUrls.sh and it will make a .txt file with all the .deb urls for all packages + dependencies that need upgrading
+
+6) run genInstallAndDepsDebUrls.sh , passing in all the packages you want to install on the command line. it will make another .txt file next to the upgrade ones for the deb urls of the new packages + dependencies
+
+7) take your two .txt files on the thumb drive to the online machine and run "wget --no-clobber --input-file=FILE" on both text files as input, and output to the same directory. the --no-clobber option will take care of the cases where "upgrade" and "install" files contain the same deb URLs, so we don't download the same package twice
+
+8) take the thumb drive containing all of the .deb files to the offline machine and now run: "cd /path/to/debs/on/thumb/drive; cp -avi --no-preserve=all ./ /var/cache/apt/archives/"
+
+9) run apt-get install, passing in the same packages that you passed to genInstallAndDepsDebUrls.sh
+
+That's it! Since the .deb files are in the cache, apt-get install won't look for them online. This uses the apt security checks as well as the pre/post install scripts for menus and other OS sanity (dpkg -i sucks). Also it does inter-dependent conflict resolutions seemlessly (two dependencies depending on each other), where dpkg does not.

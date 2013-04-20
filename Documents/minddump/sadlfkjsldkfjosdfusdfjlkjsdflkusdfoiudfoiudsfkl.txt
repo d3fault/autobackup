@@ -1,0 +1,16 @@
+Since Ethernet over Power exists, I'm starting to think if I need an air gap for the qr code video capture. As in, shine a video camera at a monitor (or projection) and then the qr code video captured through the video camera can be "safe data" (still shouldn't be executed of course).
+
+This applies to both input-only and output-only machines.
+Input Only: the sender (an online box generally) broadcasts the video and the receiver (input only box) reads it via camera
+Output Only: the sender (the output only box) broadcasts the video and the receiver (an online box generally) reads it via camera
+
+
+CD-ROM is still a safe approach as well because the act of removing it from CD-RW and placing it in CD-ROM is the "air gap".
+
+
+
+
+
+I know it's probably overkill, but it is how I guard against the worst case scenario. If a power cable can send data (the same one in my walls, technically who's to say they can't see what I'm typing right now (since i'm plugged in). Batteries would/should/need to be used as well if I'm taking that ultra-paranoid approach. Charge the batteries, physically (or arduino robot hand controlled (from trusted "side")) place batteries in (should have many of them and be hot-swappable to never have downtime) for air gap.
+
+What I was saying though: if a power cable can transmit data in that manner, then I'm willing to bet a typical RCA (or whatever the case may be) can too!). I already KNOW hdmi can through CeC (lolol). Defective by design.

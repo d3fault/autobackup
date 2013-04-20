@@ -1,0 +1,24 @@
+The d3fault line of software products (which you are currently using a module on) has just released a new piece of functionality (another module) that is deemed "relevant to you[r current configuration]".
+
+The new piece of functionality is: "Auto-License-Selector".
+
+Would you like to opt-in to this functionality or would you like to remain as is, manually selecting your license for each piece of media you contribute (ed2self: typically from scratch, but i guess it could auto-select for "revisions/derivatives" too?)
+
+
+
+
+
+
+
+
+that's a way to help you be on the legal side of safety for having software that is in "DPL BY DEFAULT" mode. It is an opt-in mode. And of course they could use it with the BSD/MIT or even Public Domain (or CC0) "licenses" so there is nothing that specifically selects DPL mode. Yes it happens to be a minimum requirement for that particular network distribution, but that is because it is my free will and a thought out legal decision to not accept proprietary software (this message is not for you rms -- no hard feelings) on my network. _I_ am responsible for being DMCA compliant (LOL AT THE FUCKING FACT THAT A US CITIZEN CAN BE "RESPONSIBLE" FOR SOMETHING FORCIBLY LIKE THAT), so it follows that I can/am-able-to/should(definitely tbh) set whatever arbitrary "minimum" license allowed on my network in which I am held responsible. Get your fucking proprietary bullshit out of here.
+
+It is absolutely "not wanted" (althought they will claim that I am neglecting DMCA notices when I am not answering them 24/7/365 (when would I live?)) for proprietary media to be on my network because the network is viewed through software which makes heavy use of automating "deriving" (everything is a derivative. err i mean: a revision is a derivative -- they are just different wordings for different use cases to help you differentiate the two i guess?). If it is found that a "root" piece of media is All Rights Reserved and I am made aware of this, I am legally responsible for removing (or at least making inaccessible) that "root" piece of media AND ALL FUCKING CHILDREN.
+
+
+
+
+
+Random longshot idea: perhaps the requirement of recording the human that creates a work creating that work as it is being created, is a good requirement. I am going to be doing it for myself ANYWAYS. It is just very dangerous to allow unchecked media (ROFL I SOUND LIKE A CENSORSHIP ADVOCATE WITH THAT PHRASE: THANKS GOVERNEMENT/LAW) on a network that must be DMCA compliant, especially when the media can be derived from.
+
+There is also the "corrupting" effect of integrating a not-yet-discovered-to-be-all-right-reserved piece of media into a pure and known to be DPL project. I can't think of it specifically, but I fear that it may ruin the entire project somehow :-/.
