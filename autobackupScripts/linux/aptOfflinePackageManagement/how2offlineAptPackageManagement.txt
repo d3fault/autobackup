@@ -22,6 +22,7 @@ If your "apt-get update" (gencaches) is already up to date, skip to step 5
 
 8) take the thumb drive containing all of the .deb files to the offline machine and now run: "cd /path/to/debs/on/thumb/drive; cp -avi --no-preserve=all ./ /var/cache/apt/archives/"
 
-9) run apt-get install, passing in the same packages that you passed to genInstallAndDepsDebUrls.sh
+9) run apt-get upgrade (if appropriate) first, then apt-get install (also if appropriate). for install: pass in the same packages that you passed to genInstallAndDepsDebUrls.sh
 
 That's it! Since the .deb files are in the cache, apt-get install won't look for them online. This uses the apt security checks as well as the pre/post install scripts for menus and other OS sanity (dpkg -i sucks). Also it does inter-dependent conflict resolutions seemlessly (two dependencies depending on each other), where dpkg does not.
+
