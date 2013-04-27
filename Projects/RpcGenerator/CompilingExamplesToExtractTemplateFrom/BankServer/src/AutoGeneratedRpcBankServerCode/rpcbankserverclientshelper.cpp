@@ -90,7 +90,7 @@ void RpcBankServerClientsHelper::pendingBalanceDetectedDelivery()
     //TODOreq: package as QByteArray and sned to MultiServerAbstraction. old code below
 
     ServerPendingBalanceDetectedMessage *pendingBalanceDetectedMessage = static_cast<ServerPendingBalanceDetectedMessage*>(sender());
-    pendingBalanceDetectedMessage->Header.RpcServiceSpecificMessageType = RpcBankServerMessageHeader::PendingBalanceDetectedMessageType; //TODOreq: shouldn't this be set by the dispenser or something? somewhere in the message itself? where the fuck am i setting the MessageType for actions (find MessageType usages = solution). The answer lies somewhere in the client code, as the server never sets a message type (except when reading a message type off the network from the client)
+    pendingBalanceDetectedMessage->Header.RpcServiceSpecificMessageType = RpcBankServerMessageHeader::PendingBalanceDetectedRpcBankServerSpecificMessageType; //TODOreq: shouldn't this be set by the dispenser or something? somewhere in the message itself? where the fuck am i setting the MessageType for actions (find MessageType usages = solution). The answer lies somewhere in the client code, as the server never sets a message type (except when reading a message type off the network from the client)
     pendingBalanceDetectedMessage->Header.MessageId = 0; //TODOreq: going to need a messageId scheme for broadcasts after all, since I'm going to be manually ack'ing them (and lazy acking the ack itself). But this is for later on after I get actions working...
     //myBroadcast(pendingBalanceDetectedMessage);
     //pendingBalanceDetectedMessage->doneWithMessage(); //old TODOreq: shouldn't this be after the ACK? might have to re-send it... i guess it depends on the guarantees made by myBroadcast. if before it returns it writes to a couchbase db and WAL promises the delivery, then yes calling doneWithMessage() now is probably* ok. just make sure you know to allocate one whenever we are walking the WAL (either as us or a neighbor [same code, different machine]). getNewOrRecycled _cannot_ be used (bitcoin thread owns dispenser). so maybe we shouldn't do doneWithMessage until the ack IS here??? idfk
@@ -103,7 +103,7 @@ void RpcBankServerClientsHelper::pendingBalanceDetectedDelivery()
 void RpcBankServerClientsHelper::confirmedBalanceDetectedDelivery()
 {
     ServerConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage = static_cast<ServerConfirmedBalanceDetectedMessage*>(sender());
-    confirmedBalanceDetectedMessage->Header.RpcServiceSpecificMessageType = RpcBankServerMessageHeader::ConfirmedBalanceDetectedMessageType;
+    confirmedBalanceDetectedMessage->Header.RpcServiceSpecificMessageType = RpcBankServerMessageHeader::ConfirmedBalanceDetectedRpcBankServerSpecificMessageType;
     confirmedBalanceDetectedMessage->Header.MessageId = 0;
     //myBroadcast(confirmedBalanceDetectedMessage);
     //confirmedBalanceDetectedMessage->doneWithMessage();

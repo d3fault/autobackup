@@ -193,7 +193,7 @@ private:
 #if 0
     ********TODOreq : say "still in business"********** -- twice too
                         TODO LEFT off
-                        and i think i need a message type bit. i need it for clean disconnects, but also for an alleged "still in business" message. i think i'll end up doing a request type, requestRetry1(status1) type, requestRetry2(status2) type, requestResponse type, broadcast type, disconnectPlz type, stillInBusiness type (status1 response), stillInBusinessAgainWtfLoLTimeToCrashProllyButThatsNotUpToMe(status2 response), etc as many as needed
+                        //and i think i need a message type bit. i need it for clean disconnects, but also for an alleged "still in business" message. i think i'll end up doing a request type, requestRetry1(status1) type, requestRetry2(status2) type, requestResponse type, broadcast type, disconnectPlz type, stillInBusiness type (status1 response), stillInBusinessAgainWtfLoLTimeToCrashProllyButThatsNotUpToMe(status2 response), etc as many as needed
                     i am getting so close i can taste it -- my tongue now tastes/feels like sandpaper, but that might be because i ate 1.9 lbs of sour patch kids over the course of 3-4 days last week :-/. also drawing that "THEN/NOW" comic put into perspective just how much work is ahead of me FML
 #endif
                         //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->setErrorCode(); or something similar, but error codes are specific to the user's protocol so DEFINITELY NOT THAT. I think I need to delete my old/outdated "Header" class but not sure how to replace it. My brain fucking hurts.
@@ -336,6 +336,8 @@ private:
                 //if it's not in the pending ack list and it's not in pending business, then we've never seen this message ID before otherwise it would be in one of the two lists. The fact that we got a retry for a new message Id is similar to comment with string 'sdfouwer08324083'. It basically means that the request was lost over the network. The retry made it (otherwise we wouldn't be here/now) but the initial request did not
 
                 //I have no idea if this is the else statement that the TODOreq above is describing... or if it's just another one...
+
+                //TODOreq
             }
         }
     }

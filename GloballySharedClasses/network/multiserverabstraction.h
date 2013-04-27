@@ -38,7 +38,7 @@ class MultiServerAbstraction : public QObject
 public:
     explicit MultiServerAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent);
     ~MultiServerAbstraction();
-    static void setupSocketSpecificDisconnectAndErrorSignaling(QIODevice *ioDeviceToClient, AbstractClientConnection *abstractClientConnection);
+    void setupSocketSpecificDisconnectAndErrorSignaling(QIODevice *ioDeviceToClient, AbstractClientConnection *abstractClientConnection);
     inline quint32 generateUnusedCookie()
     {
         quint32 cookie;
@@ -57,6 +57,7 @@ public:
     //void roundRobinBroadcastBecauseClientNotifiesNeighbors(IMess pendingBalanceDetectedMessage);
     AbstractClientConnection *getSuitableClientConnectionNextInRoundRobinToUseForBroadcast_OR_Zero();
     void reportConnectionDestroying(AbstractClientConnection *connectionBeingDestroyed);
+    void dontBroadcastTo(AbstractClientConnection *abstractClientConnection);
 private:
     bool m_BeSslServer, m_BeTcpServer, m_BeLocalServer;
     SslTcpServer *m_SslTcpServer;
@@ -108,7 +109,6 @@ private:
         return ((quint32)(QCryptographicHash::hash(md5Input, QCryptographicHash::Md5).toUInt())); //for the time being, i'm just not going to give a shit about the truncation. lol /lazy
     }
     static quint32 overflowingClientIdsUsedAsInputForMd5er; //the datetime and a call to qrand() is added to make the overflowing irrelevant
-    void dontBroadcastTo(AbstractClientConnection *abstractClientConnection);
     void refillRoundRobinFromHellodConnections();
     void setupQAbstractSocketSpecificErrorConnections(QAbstractSocket *abstractSocket, AbstractClientConnection *abstractClientConnection);
     void setupSslSocketSpecificErrorConnections(QSslSocket *sslSocket, AbstractClientConnection *abstractClientConnection);

@@ -1,0 +1,34 @@
+I just zoned out into blackness listening to music (FuriousStereo) and then conceptualized/"vizualized" (like UML CEVs essentially) the code that needs to be completed between me and launch (and subsequently (and perhaps more importantly): FINGERS (emphasis goes to Music for the duration of this doc)) and became really excited.
+
+I was doing the WRRRRRRYYYYYYY stance earlier (was so perfect looking) and I think I might have a good yell/WWWWWWWRRRRRRRRRYYYYYYY at/during/after-but-soon-after launch.
+
+
+
+
+But seriously...
+
+... you're stuck on the fucking specification that the Rpc Generator is supposed to spit out (because you made it have a application level ack scheme) code based on input.
+
+After that, finishing the shit needed to put up an ad agency is cake.
+
+You should maybe take shortcuts initially and can go back and 'proper' it later (just don't "depend" (duh offline backups ofc) (idk what i even mean by that. API? am i saying i need a generic+scalable+portable solution? so basically it needs to be a fuse plugin/implementation (etc, but srsly are there no cross platform fs frameworks wtfz!?).
+
+Like the witty shortcut isn't such a bad idea, _especially_ if witty is a plugin for a "web displayer" ("IWebDisplayer" inheriter?) that can be later replaced by a more libre inheriter. Another one is the database. At the time of writing I am considering couchbase or writing my own and don't know which of the two (or... other?) I will choose (rofl @ writing your own (I came back after finishing this doc just to write this sentence including both of these parenthesis of course)). Who cares if I even use Dynamo initially, so long as I never depend on it. I'd rather support Digia though tbh :)... at least there's potential that the revenue will go back into Qt R&D.
+
+
+TODOreq: The IWebDisplay method calls would be 'generically rigged to the web displayer based on rpc generator input'... with no witty-specific calls etc and also overrideable "gui specifications". A simple VBoxLayout with the relevant data added in the order it is specified in the View which specifies ONLY mentions of rpc-generated actions/broadcasts (actions are user input (but may have associated ["current"(?)] value), broadcasts are like... 'new message bitch').
+
+Or perhaps there is a main.view generated that has all the Rpc Generator actions/broadcasts initially and by default (an ugly giant page). It's a generated file but it is meant to be updated. If the file already exists it is not overwritten, [ideally unless they haven't changed it, but detecting that is hard (but not impossibru: need to track revisions)]. So the 'view' files would need to be able to <a href> and i mean sure you could even make it a very limited subset of html if you wanted... but with a custom parser so it doesn't matter anyways. the a href also has a name property for the pretty'ification. The user is expected to create the view that the href points to.
+
+Does this need to cross over into widgets as well... or am I combining too many ideas into one? Holy shit this doc got really really long and suddenly I am less excited [only because launch might be so far away (it is entirely up to me... and as this doc more or less says: I AM TRYING TO MAKE IT A.S.A.P. (had: A.S.S.) because fuck. My life is so boring right now and it has the potential to be amazing. Launch+fingers+music or kill yourself. What do you choose dipshit? You flipped a fuck ton of coins today to try to get yourself to do alternate stuff but ultimately decided (when the options were 'do nothing and relax after making one ez company and retiring' vs. sameshit but launch a weird television-like (internet) stream of you coding and doing miscellaneous computer shit up to and including building FINGERS and becoming a musician (at the time of writing, i can't play any instruments but want to. i can whistle and enjoy it) etc etc all "live" (as in, realtime)) that launching was the better option and then i set the quarter down that had those assigned to each side.
+
+There is nothing else.
+There is nothing else that sounds interesting enough, I guess.
+That's not ENTIRELY true, but launch sounds like my best option overall. Rape/Murder would land me in prison and/or/therefore dead.
+
+
+
+
+Fuck, man....
+
+fuck.

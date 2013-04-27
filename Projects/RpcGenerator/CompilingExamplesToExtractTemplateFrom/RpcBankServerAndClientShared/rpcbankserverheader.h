@@ -51,11 +51,11 @@ struct RpcBankServerMessageHeader
     //TODOreq: The header should be generic and re-used for all Rpc Services, but the enum needs to be defined at a rpc service specific level. I think this class entirely might be deleted/rewritten so we'll see. Since the class is auto-generated and also will be instantiated in memory for each unique rpc service, it doesn't matter whether I separate the generic'ness of it into a different file for re-use or not. Sure I "should", but it really doesn't matter in this case
     enum RpcBankServerSpecificMessageTypeEnum
     {
-        InvalidSpecificMessageType = 0x0,
-        CreateBankAccountSpecificMessageType,
-        GetAddFundsKeySpecificMessageType,
-        PendingBalanceDetectedSpecificMessageType,
-        ConfirmedBalanceDetectedSpecificMessageType
+        InvalidRpcBankServerSpecificMessageType = 0x0,
+        CreateBankAccountRpcBankServerSpecificMessageType,
+        GetAddFundsKeyRpcBankServerSpecificMessageType,
+        PendingBalanceDetectedRpcBankServerSpecificMessageType,
+        ConfirmedBalanceDetectedRpcBankServerSpecificMessageType
     };
     //TODOreq: split the above enum into client2server and server2client. ez but meh i don't feel like prioritizing that JUST YET
 

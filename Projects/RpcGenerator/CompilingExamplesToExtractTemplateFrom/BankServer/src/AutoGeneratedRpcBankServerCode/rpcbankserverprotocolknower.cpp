@@ -2,13 +2,13 @@
 
 #define A_SINGLE_SWITCH_CASE_FOR_A_SINGLE_ACTION(actionWithLeadingUppercase, actionWithLeadingLowercase, methodToCall) \
 { \
-    case RpcBankServerMessageHeader::##actionWithLeadingUppercase##MessageType: \
+    case RpcBankServerMessageHeader::actionWithLeadingUppercase##RpcBankServerSpecificMessageType: \
     { \
-        actionWithLeadingUppercase##Message *##actionWithLeadingLowercase##Message = m_##actionWithLeadingUppercase##MessageDispenser->getNewOrRecycled(); \
-        *m_MessageReceivedDataStream >> *##actionWithLeadingLowercase##Message; /*this double deref seems sexy for some reason*/ \
-        if(##methodToCall##(##actionWithLeadingLowercase##Message, &m_##actionWithLeadingUppercase##MessagesAwaitingLazyResponseAck, &m_##actionWithLeadingUppercase##MessagesPendingInBusiness)) \
+        actionWithLeadingUppercase##Message *actionWithLeadingLowercase##Message = m_##actionWithLeadingUppercase##MessageDispenser->getNewOrRecycled(); \
+        *m_MessageReceivedDataStream >> *actionWithLeadingLowercase##Message; /*this double deref seems sexy for some reason*/ \
+        if(methodToCall(actionWithLeadingLowercase##Message, &m_##actionWithLeadingUppercase##MessagesAwaitingLazyResponseAck, &m_##actionWithLeadingUppercase##MessagesPendingInBusiness)) \
         { \
-            m_SignalRelayHackEmitter->emit##actionWithLeadingUppercase##Requested(##actionWithLeadingLowercase##Message); \
+            m_SignalRelayHackEmitter->emit##actionWithLeadingUppercase##Requested(actionWithLeadingLowercase##Message); \
         } \
     } \
     break; \
@@ -21,7 +21,7 @@
         A_SINGLE_SWITCH_CASE_FOR_A_SINGLE_ACTION(CreateBankAccount, createBankAccount, methodToCall) \
         A_SINGLE_SWITCH_CASE_FOR_A_SINGLE_ACTION(GetAddFundsKey, getAddFundsKey, methodToCall) \
         /*etc for each Action */ \
-        case RpcBankServerMessageHeader::InvalidMessageType: \
+        case RpcBankServerMessageHeader::InvalidRpcBankServerSpecificMessageType: \
         default: \
         { \
             /*TODOreq*/ \
@@ -97,6 +97,7 @@ void RpcBankServerProtocolKnower::messageReceived() //QDataStream *messageDataSt
         break;
         case RpcBankServerMessageHeader::ActionRequestRetry2Status2GenericClient2ServerMessageType: //ditto as above, and perhaps I can/should combine the two pieces of code (make both cases in a row before a single break)
         {
+            //TODOreq
         }
         break;
         case RpcBankServerMessageHeader::BroadcastManualAckGenericClient2ServerMessageType: //never invokes business, so does not use the theorized macro for action requests

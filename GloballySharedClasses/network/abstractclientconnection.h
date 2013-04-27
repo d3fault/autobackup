@@ -18,6 +18,15 @@ class AbstractClientConnection : public QObject
 {
 	Q_OBJECT
 public:
+    enum HelloMessageTypeFromServer
+    {
+        InvalidHelloStateFromServer = 0x0,
+        WelcomeFromServer,
+        OkStartSendingBroFromServer,
+        DoneHelloingFromServer, //this and OkStartSendingBro seem ridiculously similar. OkStartSendingBro is like the "initial" done helloing... whereas this DoneHelloing is used for Action Responses and Broadcasts (OT: also Rpc level "disconnect requested" perhaps, though that isn't finalized atm). Should I combine them?
+        DisconnectGoodbyeAcknowledgedPeaceOutBitchFromServer
+    };
+
     explicit AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent = 0);
     ~AbstractClientConnection();
     static void setMultiServerAbstraction(MultiServerAbstraction *multiServerAbstraction) { m_MultiServerAbstraction = multiServerAbstraction; }
@@ -31,7 +40,7 @@ public:
     {
         //could have just had the caller of this do the streaming himself, but it seems more organized to have it here. Since it's inlined it makes no difference anyways...
 
-        turns out i need a QDS to wrap around the QBA so i'll do the above hack that was just mentioned as being less organized lmfao
+        //turns out i need a QDS to wrap around the QBA so i'll do the above hack that was just mentioned as being less organized lmfao
 
                 it's KIND OF less portable, but the calling class is generated ANYWAYS so it doesnt matter fuck the police. the MultiServerAbstraction and AbstractClientConnection is already pretty specific and dependent on Rpc Generator (the design surely isn't, but the impl seems to be), so this is probably OK for now
 
@@ -77,14 +86,7 @@ private:
 
     //ServerHelloState m_ServerHelloState; -- so I guess instead of storing this as a member associated with the connection (and the server implicitly "knowing" what will come next), I want it to be a part of the protocol sent with each message (typically just "DoneHelloing" sent over and over). The reason for that is because I don't know how else I'd ever be able to "implicitly know" when to do a Disconnect/Goodbye! There wouldn't be a way to do DoneHelloing -> DisconnectGoodbye with my current (err, the currently coded but outdated (updating NOW)) design
 
-    enum HelloMessageTypeFromServer
-    {
-        InvalidHelloStateFromServer = 0x0,
-        WelcomeFromServer,
-        OkStartSendingBroFromServer,
-        DoneHelloingFromServer, //this and OkStartSendingBro seem ridiculously similar. OkStartSendingBro is like the "initial" done helloing... whereas this DoneHelloing is used for Action Responses and Broadcasts (OT: also Rpc level "disconnect requested" perhaps, though that isn't finalized atm). Should I combine them?
-        DisconnectGoodbyeAcknowledgedPeaceOutBitchFromServer
-    };
+
 
     NetworkMagic m_NetworkMagic;
     ByteArrayMessageSizePeekerForIODevice m_IODevicePeeker;

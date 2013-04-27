@@ -8,7 +8,7 @@ MultiServerAbstraction *AbstractClientConnection::m_MultiServerAbstraction = 0;
 IProtocolKnowerFactory *AbstractClientConnection::m_ProtocolKnowerFactory = 0;
 
 AbstractClientConnection::AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent)
-    : QObject(parent), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToClient(ioDeviceToClient), m_ServerHelloState(InitialHelloFromClient), m_NetworkMagic(ioDeviceToClient), m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_OldConnectionToMergeOnto(0), m_ConnectionGood(false), m_ConnectionType(UnknownConnectionType)
+    : QObject(parent), /*m_ServerHelloState(InitialHelloFromClient),*/ m_OldConnectionToMergeOnto(0), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToClient(ioDeviceToClient), m_NetworkMagic(ioDeviceToClient),  m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false)/*, m_ConnectionGood(false)*/
 {
     m_ReceivedMessageBuffer.setBuffer(&m_ReceivedMessageByteArray);
     m_ReceivedMessageBuffer.open(QIODevice::ReadWrite);
@@ -273,7 +273,7 @@ void AbstractClientConnection::handleDataReceivedFromClient()
                     //TODOreq: the above comment is probably no longer true. I think we will get here now and this is where we'd set the connection as "Done" (except NOT using that obsolete/changed enum anymore). Like... making it ready for broadcasts and whatnot? Unsure tbh. But this is sort of our "final ack" for the hello...
 
                 come to think of it I can't see a reason for this enum anymore... so I just ifdef'd it out :-/.
-                    TODOreq: keep in mind (not sure of implications, hence TODOreq) that we are still sending to the client an "ok start sending [action requests], bro".... we just don't have any need to "implicitly remember" that (anymore? considering this case statement was empty we may never have needed to know it!) state. When the client receives it, he knows we are ready to receive messages with the hello state set to DoneHelloing
+                    //TODOreq: keep in mind (not sure of implications, hence TODOreq) that we are still sending to the client an "ok start sending [action requests], bro".... we just don't have any need to "implicitly remember" that (anymore? considering this case statement was empty we may never have needed to know it!) state. When the client receives it, he knows we are ready to receive messages with the hello state set to DoneHelloing
 #endif
                 case InvalidHelloStateFromClient:
                 default:
@@ -288,6 +288,8 @@ void AbstractClientConnection::handleDataReceivedFromClient()
 }
 void AbstractClientConnection::makeConnectionBad()
 {
+    //TODOreq: i guess the proper way to do this is to make it so a connection can only ever go bad once per... 'connection attempt'(???). It stays in the bad state (doesn't jump out of it and doesn't re-enter it) until another FORMAL 'connection attempt'... whatever that means. I mean it like an API call btw, not like a client actually connecting (i don't think). Once the connection is bad, it can never become good... unless we're "starting over". The reason is basically this: we can NOT ignore ssl errors.
+
     //TODOreq: it is probably not good that this will be called when entering Connecting state and so on and so forth (normal operation, pre-connected). We would for example add ourselves to the list of dead connections multiple times. this is getting complicated lol, but i essentially need to only react to socket errors after the connection has first been made good (BUT ACTUALLY THIS IS NOT TRUE, the connection might still go through with DoneHello'ing or whatever even if we receive a ssl socket error or something). I think I need to overhaul/design-bettar my connection management code lmfao... but I think i'm on the right track
 
     //if(m_ConnectionGood)
