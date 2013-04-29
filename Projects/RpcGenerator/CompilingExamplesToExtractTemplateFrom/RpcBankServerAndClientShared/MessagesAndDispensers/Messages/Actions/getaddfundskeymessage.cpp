@@ -3,7 +3,7 @@
 GetAddFundsKeyMessage::GetAddFundsKeyMessage(QObject *parent)
     : IActionMessage(parent)
 { }
-//TODOreq: inline these, too lazy for now
+//TODOoptimization: inline these, too lazy for now
 void GetAddFundsKeyMessage::streamIn(QDataStream &in)
 {
 #ifdef WE_ARE_RPC_BANK_SERVER_CLIENT_CODE

@@ -35,6 +35,7 @@ void BankDbHelper::createBankAccount(CreateBankAccountMessage *createBankAccount
                 [ ] make deliver handle failed flags
     */
 
+        //TODO LEFT OFF -- pretty important before trying to test.. but not that difficult, even though i still dunno where it goes lmfao:
         //TODOreq: not sure where it goes exactly, but need to set Header.Success to false just before the dispenser dispenses it. we don't want to keep the old state of a recycled message.... but i mean this is a TODOreq for all of the properties of the messages, not just the success boolean. Here's an idea for it: a virtual void resetParameters() that is implemented at the lowest level (IRecycleable?), and overwritten CALLING THE PARENT resetting all the child parameters as necessary. Test/Verify: a base non-cast'd pointer calling a virtual method will execute the most-recently-overwritten virtual instead. PRETTY SURE this is true.. but it's a little more dangerous than having a pure virtual because if I forget to override it in my child, I don't get errors. Or just a pure virtual implemented where relevant. idgaf
 
     if(!m_AllUsers.contains(createBankAccountMessage->Username))

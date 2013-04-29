@@ -17,6 +17,8 @@
 //signal relay hack
 #include "iacceptrpcbankserverbroadcastdeliveries_and_iemitactionsforsignalrelayhack.h"
 
+//TODOoptimization: a shit ton of the methods in this header/class can/should go in IProtocolKnower .. but that's an optimization for later, who cares for now when there's much more important and confusing things to be done
+
 class RpcBankServerProtocolKnower : public IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries, public IProtocolKnower
 {
     Q_OBJECT
@@ -24,7 +26,7 @@ public:
     static void setSignalRelayHackEmitter(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter) { m_SignalRelayHackEmitter = signalRelayHackEmitter; }
     explicit RpcBankServerProtocolKnower(QObject *parent);
     virtual void messageReceived(); //QDataStream *messageDataStream);
-    virtual void notifyThatQueueActionResponsesHasBeenEnabled();
+    virtual void queueActionResponsesHasBeenEnabledSoBuildLists();
     inline void streamToByteArrayAndTransmitToClient(IMessage *message)
     {
         //stream to byte array
@@ -34,7 +36,22 @@ public:
 
         streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient();
 
+        //after writing the following line, i just realize that i need to use the appropriate enums in places like... 'here it is again bitch' TODOreq... and probably lots of other places too! that "enum for-each 'find usages'" op should solve this implicitly as well...
+        m_TransmitMessageDataStream << message->Header; //TODOreq: actions pretty much just send the same header back (after updating the GenericRpcType of course), but Broadcasts need to fill out the entire header manually
         m_TransmitMessageDataStream << *message;
+
+        //transmit
+        m_AbstractClientConnection->transmitMessage(&m_TransmitMessageByteArray);
+    }
+    inline void streamToByteArrayAndTransmitToClient_ButDontStreamTheMessageBecauseWeDontNeedItInThisSpecialCase(IMessage *message)
+    {
+        resetTransmitMessage();
+
+        streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient();
+
+        m_TransmitMessageDataStream << message->Header;
+        //coulda used bools etc to not stream this out depending on when it's needed, but it's an optimization to not have to check a bool that's rarely used for every single message. this method is used far less often than the above
+        //m_TransmitMessageDataStream << *message;
 
         //transmit
         m_AbstractClientConnection->transmitMessage(&m_TransmitMessageByteArray);
@@ -62,8 +79,9 @@ private:
     QList<quint32> m_GetAddFundsKeyMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode;
     //etc for each action
 
-    //TODOreq: shit our messages get so easily sent back to our rpc bank server clients helper (the specific connection really) that I don't know where to do pendingInBusiness.remove!!! perhaps in the deliver() logic just before the signal is emitted??? Fuck me this really screws with the design, never thought of that before now. I'll probably need a hack to accomodate it. HAHAHAHA rofl oh just realized I am the same person who receives those signals... so it should be easy once I get that coded :-P. Still worth the TODOreq because I simply didn't have that much coded in the part I'm taking the code from (ported/upgraded/optimized/redesigned)
-    //TODOreq: figure out if, since it's inline, that they need to be pointers in order to not increase the reference count. since it's inline it might be faster (no deref'ing) to pass by value. idk how inline handles implicitly shared
+    //TODOreq (wtf is this old as balls? pretty sure it's done): shit our messages get so easily sent back to our rpc bank server clients helper (the specific connection really) that I don't know where to do pendingInBusiness.remove!!! perhaps in the deliver() logic just before the signal is emitted??? Fuck me this really screws with the design, never thought of that before now. I'll probably need a hack to accomodate it. HAHAHAHA rofl oh just realized I am the same person who receives those signals... so it should be easy once I get that coded :-P. Still worth the TODOreq because I simply didn't have that much coded in the part I'm taking the code from (ported/upgraded/optimized/redesigned)
+
+    //TODOoptimization: figure out if, since it's inline, that they need to be pointers in order to not increase the reference count. since it's inline it might be faster (no deref'ing) to pass by value. idk how inline handles implicitly shared
     inline bool processNewRpcBankServerActionMessage_AND_RecordMessageInBusinessAndReturnTrueIfNeedEmitToBusiness(IActionMessage *actionMessage, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList)
     {
         //We know this is a new Action Request, but we don't know whether it's messageId has been used before or not. If it has, then we do the final (lazy-as-fuck) ack for the Action Request that previously used that messageId
@@ -120,6 +138,7 @@ private:
 
         //insert into business pending and 'return true' (indicating to invoke business) the new Action Request
         actionSpecificPendingInBusinessList->insert(messageId, actionMessage);
+
         return true;
 
         //this return true now seems worthless since it is always used. but maybe blacklist programming detecting unforseen error cases in the future will change this method to 'return false' somewhere? that and the fact that this method will be called via a macro that is swappable with other methods with matching signatures (and, the 'retry' method, for example... STILL DOES need to be able to return true/false based on whether or not business needs to be invoked)... means we need to keep the bool return variable whether we use it or not (perhaps i'm over-optimizing again with dat macro shit)
@@ -159,7 +178,7 @@ private:
                     +streamToByteArrayAndTransmitToClient(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
                 +}
                 //else: we got a retry from a connection that has since failed or is about to merge, so meh don't bother trying to send it back because the new connection will be the one to do that
-            -}
+            +}
             +else
             +{
                 //they are not the same, so we know we're on the next message. We can now recycle the old one: we know we don't need it anymore. The ack has officially been ack'd :-D
@@ -176,32 +195,33 @@ private:
                 +return true;
             +}
         }
-        -else
-        -{
+        +else
+        +{
             //not in ack lazy awaiting ack list, so it might be in business pending... or TODOreq: it might be our first time seeing it and in neither!!!
 
             //hack: the name of the pointer doesn't match our usage, but no point in allocating another one lol. is 'messageOnlyIfPendingInBusiness' from now on
-            -messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificPendingInBusinessList->value(actionMessage->Header.MessageId, 0);
+            +messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificPendingInBusinessList->value(actionMessage->Header.MessageId, 0);
 
             //if messageOnlyIfPendingInBusiness really
-            -if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
-            -{
+            +if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
+            +{
                 //as of right now, both of the business pending checks come here. despite coming at different times, all we have to do is tell the truth. we are still in business! I guess we don't need the 3 different requests to indicate which status they are, simply sending the same message with the toggle bit not changing three times in a row will indicate it!
                 //TODOreq: it is worth noting that the first (initial), second (retry1/status1), and third (retry2,status2) messages that a client sends to the server are the exact same, yet only the second (and POSSIBLY third, though it can be an optimization to know from the second one whether or not the whole message needs to be resent) warrants a response ("still in business"). The response to the first one is the answer/response itself [assuming no errors and normal conditions]! The 3rd message is the same as the second and also warrants the same response. IT IS UP TO THE CLIENT to be able to differentiate between any responses in retryBecauseRequestNetworkTimeout, stillInBusiness[1], retryBecauseBusinessTimedOut, stillInBusiness[2]
                 //TODOreq: there is an amount of custom logic that must be performed to be able to deduce on the client what messages are what. if we receive our answer/response just after we dispatch either of our retry* (also 2->3rd might be even more complicated idfk), then we need to know we're definitely going to get the same answer/response and this time with the responseBit set (i might have meant to write "responseRETRYbit" right there, idfk)
 
 #if 0
     ********TODOreq : say "still in business"********** -- twice too
-                        TODO LEFT off
+                        TO/*DO LEFT */off
                         //and i think i need a message type bit. i need it for clean disconnects, but also for an alleged "still in business" message. i think i'll end up doing a request type, requestRetry1(status1) type, requestRetry2(status2) type, requestResponse type, broadcast type, disconnectPlz type, stillInBusiness type (status1 response), stillInBusinessAgainWtfLoLTimeToCrashProllyButThatsNotUpToMe(status2 response), etc as many as needed
                     i am getting so close i can taste it -- my tongue now tastes/feels like sandpaper, but that might be because i ate 1.9 lbs of sour patch kids over the course of 3-4 days last week :-/. also drawing that "THEN/NOW" comic put into perspective just how much work is ahead of me FML
 #endif
                         //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->setErrorCode(); or something similar, but error codes are specific to the user's protocol so DEFINITELY NOT THAT. I think I need to delete my old/outdated "Header" class but not sure how to replace it. My brain fucking hurts.
 
                         //TODO LEFT OFF REALLY IMPORTANT THIS IS THE LATEST (for now rofl) REQUEST PROTOCOL WHEN ALL SAID AND DONE -- this attempt was written after the helloer/qbapeeker/magic etc rewrite. I'm pretty sure all other attempts were written before those and are therefore outdated
+                        //this is also the protocol not showing 'magic', which comes first of course
                         //Yet another attempt at finalizing the request protocol on the byte level:
 
-                        //PeekedAndReadInFullAlreadyQByteArray[HelloStatus(Done normally, but we have to re-stream this over and over so that we can eventually get a "DisconnectRequested" (possibly just "Goodbye" because the disconnect REQUEST is at the generic rpc layer, not the hello(/goodbye) layer) status. Other statuses are InitialHello etc),RpcGeneratorAbstractMessageBody[quint32 RpcServiceId, quint32 RpcServiceMessageId(can-repeat-in-other-rpc-service-ids-but-never-within-one), quint32/enum whatThisMessageIs[InitialRequest(fuck toggle bit i guess?),RequestRetry1Status1,RequestRetry2Status2WithMessage,RequestRetry2Status2WithoutMessage], quint32 RpcServiceIdSpecificMessageType (stored as a quint32, but utilized by inheriters to assign special enum types indicating the rpc service methods made available), /*QByteArray*/ theActualFuckingMessageElements (NOT going to be in it's own QBA, will just follow directly after the other stuff since we know the protocol)]]
+                        //PeekedAndReadInFullAlreadyQByteArray[HelloStatus(Done normally, but we have to re-stream this over and over so that we can eventually get a "DisconnectRequested" (possibly just "Goodbye" because the disconnect REQUEST is at the generic rpc layer, not the hello(/goodbye) layer) status. Other statuses are InitialHello etc),RpcGeneratorAbstractMessageBody[quint32 RpcServiceId, quint32 RpcServiceMessageId(can-repeat-in-other-rpc-service-ids-but-never-within-one), quint32/enum whatThisMessageIs[examples: InitialRequest(fuck toggle bit i guess?),RequestRetry1Status1,RequestRetry2Status2WithMessage,RequestRetry2Status2WithoutMessage], quint32 RpcServiceIdSpecificMessageType (stored as a quint32, but utilized by inheriters to assign special enum types indicating the rpc service methods made available), /*QByteArray*/ theActualFuckingMessageElements (NOT going to be in it's own QBA, will just follow directly after the other stuff since we know the protocol)]]
 
                         //^^Only when the hello-level status is "Done" do we have an RpcGeneratorAbstractMessageBody following it. During the hello phase (and various stages therein) we usually just follow the status with the cookie (if we have one [at that point or otherwise]) or something
 
@@ -215,7 +235,7 @@ private:
 
 
 
-                    //TODOreq LEFT OFF: say "still in business" motherfucker. the above protocol definition for requests might be my only real accomplishment for the day. still need to implement it and then come back here and USE it... but eh i'm staring at it extra long to make sure i didn't miss anything. fuck yea deftones white pony
+                    //TO DOnereq: say "still in business" motherfucker. the above protocol definition for requests might be my only real accomplishment for the day. still need to implement it and then come back here and USE it... but eh i'm staring at it extra long to make sure i didn't miss anything. fuck yea deftones white pony
 
 
 
@@ -225,7 +245,7 @@ private:
 
 
 
-                        //TODOreq: Does the hello level handle the "disconnect requested received so ignoring your request", or does the rpc level handle it? If the rpc level handles it like I'm thinking, we need a custom response type TODOreq that says something like "WontRespondBecauseDisconnectRequestedUseAnotherClient" (mindfuck: does that WontRespond message get ack'd?). Still it does seem like the hello'er level would be involved. Perhaps it also has a disconnect message that is only used AFTER we are sure we are ready to perform a clean disconnect? We could be cute and call it Goodbye ;-P
+                        //TODOreq (2-layer definitely btw!): Does the hello level handle the "disconnect requested received so ignoring your request", or does the rpc level handle it? If the rpc level handles it like I'm thinking, we need a custom response type TODOreq that says something like "WontRespondBecauseDisconnectRequestedUseAnotherClient" (mindfuck: does that WontRespond message get ack'd?). Still it does seem like the hello'er level would be involved. Perhaps it also has a disconnect message that is only used AFTER we are sure we are ready to perform a clean disconnect? We could be cute and call it Goodbye ;-P
 
                     //TODOreq: the difference between the first network timeout and the second business timeout (both detected on client via same way) needs to be greater than the average response time for that connection. We need to give ample time for our RequestRetry1Status1 to be responded to before dispatching the RequestRetry2Status2 (this does relate to whether or not RequestRetry2 will contain the full request again, but also makes common sense even without that optimization)
 
@@ -261,7 +281,7 @@ private:
         //m_UniqueRpcClientIdsByPendingCreateBankAccountMessagePointer.insert(createBankAccountMessage, uniqueRpcClientId);
 
         //I think this is old, idfk:
-        //TODOreq: perhaps check the list already by value to see if we're already working on the same request?
+        //TODOreq (no idea what the fuck i'm talking about so yes this is probably old): perhaps check the list already by value to see if we're already working on the same request?
         //if we are, it still might fail and then we should process this one. so i need to atomically access a list in that case, a list of "pendingCollissionsAwaitingFinalizatioin"
         //the list is mutex-grabbed+cleared AFTER we transmit the message back to
         //actually this idea sucks
@@ -272,7 +292,7 @@ private:
     }
     inline bool processRetryRpcBankServerActionMessage_AND_ReturnTrueIfNeedEmitToBusiness(IActionMessage *actionMessage, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList)
     {
-        //TODOreq: we still need to use toggleBit because there is a false positive where an Action completes successfully, but then when the messageId is used again on the next message, the initial request fails on the network. The client then sends a retry for that messageId, but the server can't tell if the client wants the old Action Request/Response, or if it's a new message that got lost on the network. For some reason I thought my design refactor obsoleted toggleBit, but I guess not as this problem is the same one that made me think of it to begin with!
+        //TO DOnereq: we still need to use toggleBit because there is a false positive where an Action completes successfully, but then when the messageId is used again on the next message, the initial request fails on the network. The client then sends a retry for that messageId, but the server can't tell if the client wants the old Action Request/Response, or if it's a new message that got lost on the network. For some reason I thought my design refactor obsoleted toggleBit, but I guess not as this problem is the same one that made me think of it to begin with!
         //^^^^^hahahaha now I see why I was using toggleBit as an implicit retry 'bit' (or enum now). It IS... but however does still complicate the design to the point where I don't know how to do responseRetries and yada yada. I might re-optimize this later once I get it up and running TODOoptimization... but oh zeus (had: god) I don't even know if I'll ever see that day
 
 
@@ -281,7 +301,7 @@ private:
         IActionMessage *messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificAckList->value(messageId, 0);
         if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
         {
-            //Since it's in the ack awaiting ack list and we're in the retry method, we want to re-send the response. this is why we lazy ack to begin with... but first we check the toggleBit to make sure that we don't accidentally send the response to a previous message. TODOreq: remember, this could be our 'entry point' to a new Action Request (if the initial request got lost on the network (or hell, if the retry1 also got lost on the network (assuming status2 also uses this method, but idfk yet)))
+            //Since it's in the ack awaiting ack list and we're in the retry method, we want to re-send the response. this is why we lazy ack to begin with... but first we check the toggleBit to make sure that we don't accidentally send the response to a previous message. TODOreq (pretty much done except for status2 implications, so leaving here): remember, this could be our 'entry point' to a new Action Request (if the initial request got lost on the network (or hell, if the retry1 also got lost on the network (assuming status2 also uses this method, but idfk yet)))
 
             //edit: for example right here the retry bit should be specified because what if the first request just didn't make it?
             if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->toggleBit() == actionMessage->toggleBit())
@@ -296,9 +316,10 @@ private:
                 //we re-send the old one, but still don't remove it from the ack pending ack. what if this one gets lost too? actually TODOreq: since this would be our second attempt at a response, there is definitely not going to be a third SO it might be ok to say doneWithMessage at this point??????? it would mean that the next time we see the MessageId, it will be treated as though it was the first~ <---- all of this is only true if we only retry exactly once. err, try exactly twice.
 
                 //re-transmit
-                //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TODOreq (possibly done already): the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
-               if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
+                //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TO DOnereq: the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
+                if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
                 {
+                    messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->Header.GenericRpcMessageType = RpcBankServerMessageHeader::ActionResponseHereItIsAgainGenericServer2ClientMessageType;
                     streamToByteArrayAndTransmitToClient(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
                 }
                 //else: we got a retry from a connection that has since failed or is about to merge, so meh don't bother trying to send it back because the new connection will be the one to do that
@@ -307,16 +328,22 @@ private:
             }
             else
             {
-                //(sdfouwer08324083): if we get here, it means that a re-used messageId's associated _initial_ Action Request failed over the network. Getting here means that the received message is a brand new Action Request so it should be processed. It also means that we need to ack the previous Action using this messageId? Some of this code should probably be shared with the processNew* class. Perhaps they both just call another inline method.
+                //tl;dr: initial request failed over network, request retry made it, message id being re-used
+                //(sdfouwer08324083): if we get here, it means that a re-used messageId's associated _initial_ Action Request failed over the network. Getting here means that the received message is a brand new Action Request (the request *retry* of it) so it should be processed in business. It also means that we need to ack the previous Action using this messageId (we don't need to check the toggleBit again, it was checked to get us into this else statement!)? Some of this code should probably be shared with the processNew* class. Perhaps they both just call another inline method.
 
-                //TODOreq
+                //TODOoptional: could consolidate these two lines into an "ack" method, but they seem simple enough. if however we start checking that remove returns exactly 1 as it _SHOULD_, then we should probably consolidate them to simplify error cases etc
+                actionSpecificAckList->remove(messageId);
+                messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->doneWithMessage();
+
+                //ditto as optional above, but for a 'addToBusinessPending' method. probably less necessary as no error cases (???)
+                actionSpecificPendingInBusinessList->insert(messageId, actionMessage);
 
                 return true;
             }
         }
         else
         {
-            //not in ack lazy awaiting ack list, so it might be in business pending... or TODOreq: it might be our first time seeing it and in neither!!! That case is similar to the above else (comment with string 'sdfouwer08324083'), except that it's our first time seeing that messageId (perhaps the two can be consolidated? idfk)
+            //not in ack lazy awaiting ack list, so it might be in business pending... or TODOreq (pretty sure it's done but i don't trust my binary brain atm because of that dangling 'else' i cant remember): it might be our first time seeing it and in neither!!! That case is similar to the above else (comment with string 'sdfouwer08324083'), except that it's our first time seeing that messageId (perhaps the two can be consolidated? idfk)
 
             //hack: the name of the pointer doesn't match our usage, but no point in allocating another one lol. is 'messageOnlyIfPendingInBusiness' from now on
             messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero = actionSpecificPendingInBusinessList->value(messageId, 0);
@@ -325,25 +352,43 @@ private:
             if(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero)
             {
                 //so we don't really want to return the ASSOCIATED message, but we want to create a message that simply says "hey bitch, the message with messageId is still in business". Where the fuck do I get/allocate/etc such a message? Do I want to ack it? I'm thinking not since the client is already going to be timing out for retry2status2. And once it sends THAT and times out for THAT, then it simply cancels/errors out the request. So acking is err... 'implicit'?? Still dunno where to get it etc. Should I just stack create it and not give a fuck :)? Suddenly I want to write a whitepaper on "deciding when to recycle objects (common cases, such as messages) vs. create them on the fly (uncommon cases, such as 'retry reports')" xD. That one quote pretty much sums it up though. I _COULD_ recycle the retry reports (retryResponses in a sense, but bah that is getting ambiguious as fuck (and ambiguity is the downfall of any programmer (fuck C-style function naming)). I would say that what should really be called a retryResponse would be when a message in the ack list is re-sent to the client without invoking business... but clearly both have ambiguity toward each other so should be overly specific!). Still dunno what the specific type that I'm going to allocate will be. It KIND OF doesn't matter until I remember that the client is very likely going to organize it's messages based on their rpc service specific action type as an optimization =o. Fuck.
-                //Especially considering my message delivery system involves complex parenting and 'rigging' etc, I need to now decide whether to create dispensers (next to the already existing dispensers)... or if I should just make a custom/hacked-together message type. Hmm here's another idea: I could use the "existing" message (TODOreq: thread safety is a must and if it's in business pending, there are certainly risks!) but use it carefully and set the enum as "status report", and then customize the QDS operators (again, to BE thread safe. by not touching them i am being thread safe heh) so that the "message values" aren't streamed (they aren't ready yet anyways). This might be expensive though because now my streaming logic has an extra bool check. Matter? IDFK doubt it but... maybe? TODO LEFT OFF AND THE REST OF THIS METHOD SINCE I THINK THERE ARE MORE ELSE STATEMENTS TO COME
+                //Especially considering my message delivery system involves complex parenting and 'rigging' etc, I need to now decide whether to create dispensers (next to the already existing dispensers)... or if I should just make a custom/hacked-together message type. Hmm here's another idea: I could use the "existing" message (TO DOnereq: thread safety is a must and if it's in business pending, there are certainly risks!) but use it carefully and set the enum as "status report", and then customize the QDS operators (again, to BE thread safe. by not touching them i am being thread safe heh) so that the "message values" aren't streamed (they aren't ready yet anyways). This might be expensive though because now my streaming logic has an extra bool check. Matter? IDFK doubt it but... maybe? TO/* DO LEFT */OFF AND THE REST OF THIS METHOD SINCE I THINK THERE ARE MORE ELSE STATEMENTS TO COME
 
-                //mfw I thought up the next day the fact that we already have a [disposable/temporary] message to use for the response: the request retry! TODOreq I should probably use a custom method for the custom streaming, don't add more code paths (and therefore slowdown) to the typical non-retry case (but if you need to for simplicity's sake, go for it)
+                //mfw I thought up the next day the fact that we already have a [disposable/temporary] message to use for the response: the request retry! TO DOnereq I should probably use a custom method for the custom streaming, don't add more code paths (and therefore slowdown) to the typical non-retry case (but if you need to for simplicity's sake, go for it)
 
                 //TODOreq: there was some special 'if' case that I thought up around here (or it may have been an else to an already existing if, idfk) when my comp was off and now, weeks later, I can't remember what the fuck it was. GOD DAMNIT I SHOULDN'T TAKE SUCH HUGE BREAKS WHEN WORKING ON SUCH IMPORTANT CODE. On that note, my grandpa has died since and I have decided to move out: my dad is a fucking noisy whiny child and it's distracting as fuck: both when I sleep and when I code (I don't code when he's home, ever). Hopefully going to move in with my quiet grandparents. The fact that they'll be home most of the time is irrelevant. I just need to explain to them that I need to be left alone: my grandma will try to use me as her handyman (in the same way she used my [other] grandpa back when he was younger). She'll (they'll) also think I'm cold/detached and lazy as fuck... so the arrangement might not work. I need to explain it well and we need to agree on a list of "chores". What the fuck does this have to do with the req? Get a blog man this is code haha dipshit
+
+                if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
+                {
+                    //set 'still in business'
+                    actionMessage->Header.GenericRpcMessageType = RpcBankServerMessageHeader::ActionResponseToRequestRetry1StillInBusiness1GenericServer2ClientMessageType;
+
+                    //stream it back directly. no need for acks etc. i should maybe use/make a different method than the typical streamToByteArrayAndTransmitToClient(), because that one is set up to stream all the parameters of the Action... and really all i need to stream back is like the message id (header) and the fact that it's still in business (bitch)
+                    streamToByteArrayAndTransmitToClient_ButDontStreamTheMessageBecauseWeDontNeedItInThisSpecialCase(actionMessage);
+
+                    //since we were hackily using the message that was read (the request retry) in order to send the response (still in business), that particular message isn't really relevant since we've confirmed that the actual message is still in business (and it wouldn't be thread safe to use THAT one (the real one))
+                    actionMessage->doneWithMessage();
+                }
+                return false; //the message is still in business, so we return false so that another one isn't dispatched to business lol
             }
             else
             {
-                //if it's not in the pending ack list and it's not in pending business, then we've never seen this message ID before otherwise it would be in one of the two lists. The fact that we got a retry for a new message Id is similar to comment with string 'sdfouwer08324083'. It basically means that the request was lost over the network. The retry made it (otherwise we wouldn't be here/now) but the initial request did not
+                //tl;dr: initial request failed over network, request retry made it, first time seeing message id
+                //if it's not in the pending ack list and it's not in pending business, then we've never seen this message ID before otherwise it would be in one of the two lists. The fact that we got a retry for a new message Id is similar to comment with string 'sdfouwer08324083', except that we don't need to ack previous message with the same messageId. It basically means that the request was lost over the network. The retry made it (otherwise we wouldn't be here/now) but the initial request did not
 
-                //I have no idea if this is the else statement that the TODOreq above is describing... or if it's just another one...
+                //I have no idea if this is the else statement that the TODOreq above is describing... or if it's another one. Maybe it is, maybe it isn't.
 
-                //TODOreq
+                actionSpecificPendingInBusinessList->insert(messageId, actionMessage);
+
+                return true;
             }
         }
     }
 
     inline void removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(IActionMessage *message, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList, QList<quint32> *actionSpecificBusinessPendingDuringMergeList)
     {
+        //TODOreq (done methinks (but maybe enum shit needs to be set in this method? idfk)): isn't this method missing a header send? i think i've refactored header shit so many times that it now doesn't get streamed when sending back to client. i need to figure out this in order to finish up my 'request is still in business' response (which is header ONLY methinks?). it is also worth noting that the header needs to come after both magic and the "hello" header ("DoneHelloing" typically)... so i might have to butcher my code to make that work
+
         //remove it from pending business
         if(actionSpecificPendingInBusinessList->remove(message->Header.MessageId) != 1)
         {
@@ -368,10 +413,12 @@ private:
                     return; //we don't want to stream/transmit this one
                 }
             }
+            message->Header.GenericRpcMessageType = RpcBankServerMessageHeader::ActionResponseGenericServer2ClientMessageType;
             streamToByteArrayAndTransmitToClient(message);
         }
     }
 public slots:
+    //thought about making these slots preprocessor macros since they're so similar, but that's just silly since they're auto-generated anyways! rofl @ my brain seeing them both as being incredibly similar. they both generate code based on input before entering the compiler. It wouldn't accomplish a single thing (since generated code is or can be temporary anyways (HMMMMM, RIGHT? idfk lol... guess the generate step can/should be a part of the toolchain naw mean? TODOoptimization... but still the user needs to be able to #include some generated files... so not sure that's possible and fuck it it's just an optimization anyways... (but if we don't include the rpc generation in the toolchain, then making it a preprocessor macro does have the benefit of saving some space))
     void createBankAccountDelivery();
     void getAddFundsKeyDelivery();
     //etc for each Action

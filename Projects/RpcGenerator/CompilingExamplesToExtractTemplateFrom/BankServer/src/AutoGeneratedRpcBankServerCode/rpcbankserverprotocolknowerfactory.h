@@ -19,7 +19,7 @@ public:
     static void setSignalRelayHackEmitter(IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *signalRelayHackEmitter) { RpcBankServerProtocolKnower::setSignalRelayHackEmitter(signalRelayHackEmitter); }
     IProtocolKnower *getNewProtocolKnower()
     {
-        return new RpcBankServerProtocolKnower(this); //TODOreq: caller takes ownership, so he must delete!
+        return new RpcBankServerProtocolKnower(this);
     }
 };
 

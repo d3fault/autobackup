@@ -37,7 +37,7 @@ private:
     MultiServerAbstraction m_MultiServerAbstraction;
 
 
-    //TODOreq: probably doesn't belong here, but: the second message with the retryBit set _MIGHT_ (won't with TCP tho.. right?) come before the first message without the retry bit set. My toggling bit solution should be able to detect this I think. Could be wrong but oh fuck that would suck
+    //TODOreq: probably doesn't belong here, but: the second message with the retryBit set _MIGHT_ (won't with TCP tho.. right?) come before the first message without the retry bit set. My toggling bit solution should be able to detect this I think. Could be wrong but oh fuck that would suck. UDP doesn't guarantee ordering so if I use it, I need to add a message ordering thing to detect YET ANOTHER FALSE POSITIVE lmfao (a retry for a message (which already uses a toggleBit to evade a false positive for a previous message) that comes before an initial message with a lower 'send order number' (to be invented) should should just ignore the initial/late message)
 
 
 
@@ -48,7 +48,7 @@ private:
     //....perhaps instead I should store the entire message as pending in the business? (maybe I still need those above for clientIDs only, idfk. doubt it though, just need to consolidate the clientId into the message or header or something). All I'm saying is that right now, they have very similar purposes so should probably be combined somehow
     //QHash<quint32 /*MessageId*/, CreateBankAccountMessage* /*pending-in-business*/> m_PendingCreateBankAccountMessagesInBusiness;
 
-    //....and again when it's pending an ACK. If it's in this list, all it means is we think we've sent it back to the client. Our (the server's!!!) 'ACK' is when we get the same MessageId again without the 'retryBit' set. If it is set, it didn't get our response, so we pull it out of the list and send it again :-P. TODOreq: there is a race condition where we receive a message with a retry bit set because the client has sent it just before receiving our first/original delivery. If we get it with retryBit set, we'd send it again :-/ and the client will receive the same message twice!!!!! Once just moments after sending message again with retryBit set, and another when we get the message with retryBit set and send it again. A solution to this is to have truly unique IDs per-message, but then my server's ACK'ing scheme for actions needs to be redesigned. FML
+    //....and again when it's pending an ACK. If it's in this list, all it means is we think we've sent it back to the client. Our (the server's!!!) 'ACK' is when we get the same MessageId again without the 'retryBit' set. If it is set, it didn't get our response, so we pull it out of the list and send it again :-P. TO DOnereq: there is a race condition where we receive a message with a retry bit set because the client has sent it just before receiving our first/original delivery. If we get it with retryBit set, we'd send it again :-/ and the client will receive the same message twice!!!!! Once just moments after sending message again with retryBit set, and another when we get the message with retryBit set and send it again. A solution to this is to have truly unique IDs per-message, but then my server's ACK'ing scheme for actions needs to be redesigned. FML
     //QHash<quint32 /*MessageId*/, CreateBankAccountMessage* /*ack-awaiting-ack*/> m_CreateBankAccountMessagesAwaitingLazyResponseAck;
 
     //TODOoptimization^: I can use the QIODevice* as a key into a hash to optimize the above two 'types' (pending vs. ack-ing).. but for every action type of course. It'd look like: QHash<QIODevice*, QHash<quint32, CreateBankAccountMessage*> > m_PendingCreateBankAccountMessagesInBusinessByMessageIdByClientPointer; OR SOMETHING???? and of course the same thing for acks awaiting acks...
@@ -88,8 +88,8 @@ public slots:
     void start();
 
     //TODOreq: While it would be nice to be able to call beginStoppingProcedure on the server using some server GUI etc, for now I'm going to have the client send a "clean disconnect" message and the server just respond to it [when ready]. there seems to be a lot of overlap between "server shutdown" (all clients dc) and "clean disconnect a single client", which needs to be fixed
-    //^^^when implementing the server ability to shutdown and dc all clients, it should basically just "request" to the client a "clean disconnect" message from each client
-    void beginStoppingProcedure(); //Stop accepting Action Requests. TODOreq: probably need a special message code for this 'shutdown in progress' telling them that (a) the server is still online for a BIT longer [broadcasts, action requests] (b) it's being shut down so try your action request on another server (or just error out if there aren't any)
+    //^^^when implementing the server ability to shutdown and dc all clients, it should basically just "request" to the client a "clean disconnect" message from each client, and it should do it to each one asynchronously of course
+    void beginStoppingProcedure(); //Stop accepting Action Requests. TODOreq: probably need a special message code for this 'shutdown in progress' telling them that (a) the server is still online for a BIT longer [broadcasts (actually we can stop broadcasts right away (but we could also keep them coming if and only if this connection is the very last connection lol, BLAH)), action requests] (b) it's being shut down so try your action request on another server (or just error out if there aren't any)
     void stop();
 
     void handleDoneClaimingBroadcastDispensers();

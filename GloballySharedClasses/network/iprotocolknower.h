@@ -21,7 +21,7 @@ public:
     inline void resetTransmitMessage()
     {
         m_TransmitMessageBuffer.seek(0);
-        m_TransmitMessageByteArray.clear(); //TODOreq: is this necessary or does "streaming into" it overwrite previous contents? read vs. write, bitch! this is write so it would append to the datastream... so it seems very necessary to clear it in this use
+        m_TransmitMessageByteArray.clear(); //TODOoptimization: is this necessary or does "streaming into" it overwrite previous contents? read vs. write, bitch! this is write so it would append to the datastream... so it seems very necessary to clear it in this use
     }
     inline void streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient()
     {
@@ -30,7 +30,7 @@ public:
     inline void setAbstractClientConnection(AbstractClientConnection *abstractClientConnection) { m_AbstractClientConnection = abstractClientConnection; }
     inline void setMessageReceivedDataStream(QDataStream *messageReceivedDataStream) { m_MessageReceivedDataStream = messageReceivedDataStream; }
     virtual void messageReceived()=0; //QDataStream *messageDataStream /*, quint32 clientId */);
-    virtual void notifyThatQueueActionResponsesHasBeenEnabled()=0;
+    virtual void queueActionResponsesHasBeenEnabledSoBuildLists()=0;
 private:
     QBuffer m_TransmitMessageBuffer;
 protected:

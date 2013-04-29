@@ -6,6 +6,7 @@
 
 #define MAGIC_BYTE_SIZE 4 //if you change this, you also need to change the m_MagicExpected array to match and also the 'stream magic' helper function
 
+//TODOreq: pretty sure all/most of the following TODOreqs are outdated by design... but idfk really
 
 //TODOoptimization: that same optimization about keeping clientId as a member right next to a slot (connections have their own OBJECTS) also applies to Magic. In fact I'm considering making a "ConnectionDetails" object that hasA both HelloStatus and Magic... so that ConnectionDetails basically becomes the object which holds the slot that I connect each connection to
 //TODOreq: It would mean that two QIODevices with the same clientId would use the same object (unless we ensure that there are never two 'connected' (both network-y and qobject-y) simultaneously. we need to cleanly handle that disconnect/reconnect case)
@@ -15,7 +16,7 @@
 //TODOreq: the 'multiple [stale] connections use same object-slot' issue is there no matter what, be aware of it
 
 //why does the message need a clientId then? couldn't the object (the one that owns the slot that the specific connection's readyRead is connected to) just contain the QIODevice as a member????? my brain hurts right now. MAKE IT FUNCTIONAL FUCKER!!!!!!! premature optimization.
-//the qiodevice member is simply... overwritten (TODOreq: don't overwrite it when we have half-read or half-written a message) when a new connection is detected. so we still need cookies etc to detect a reconnect, just not a clientId attached to each message [in memory]?
+//the qiodevice member is simply... overwritten (TODOreq (probably never happens because of units of execution?): don't overwrite it when we have half-read or half-written a message) when a new connection is detected. so we still need cookies etc to detect a reconnect, just not a clientId attached to each message [in memory]?
 
 //BASICALLY, and i _THINK_ this holds true: deliver() doesn't need to give a shit which connection-object the message is delivered to. we connect the objects smartly to handle it all for us.
 //HOWEVER, broadcasts still need to go to a 'global connection-object' (one that sees all connections) in order to function. mass redesign required sounds like.... and fuuuuuck i'm already in the middle of a mass redesign so FUCK YOU [for now]

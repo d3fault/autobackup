@@ -19,7 +19,7 @@ void RpcBankServerClientsHelper::sendBroadcastToArandomClient(IMessage *broadcas
         static_cast<RpcBankServerProtocolKnower*>(clientConnectionToUseForBroadcast_OR_Zero->protocolKnower())->streamToByteArrayAndTransmitToClient(broadcastMessage);
         //TODOreq: m_MultiServerAbstraction.bulkBroadcastToAllClients(pendingBalanceDetectedMessage);
     }
-    //else: no clients connected this might be a good place to cache broadcasts if i ever choose to, but for now i think i'll drop em :-/
+    //TODOreq: else: no clients connected this might be a good place to cache broadcasts if i ever choose to, but for now i think i'll drop em :-/
 }
 #if 0
 void RpcBankServerClientsHelper::takeOwnershipOfActionsAndSetupDelivery()

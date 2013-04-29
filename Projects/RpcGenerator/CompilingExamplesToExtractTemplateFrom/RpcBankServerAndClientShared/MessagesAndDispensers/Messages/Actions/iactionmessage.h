@@ -22,8 +22,10 @@ public:
 private:
     //Both sides have the members. It's just a matter of whether or not you stream them in or out
     bool m_Successful;
-    quint8 m_ErrorCode; //TODOreq: decide if you think 256 failed reasons per action is enough. probably is (famous last words)
+    quint8 m_ErrorCode; //TODOreq (it doesn't have a concrete answer dipshit. it is both sufficient and insufficient): decide if you think 256 failed reasons per action is enough. probably is (famous last words)
     bool m_ToggleBit; //TODOoptimization: since a bool takes a byte of memory, it might be worth it to keep all my toggle bits for messages in a QBitArray as a memory optimization. However if I have to store an index into that bit array, then it defeats the purpose rofl... soo.... idfk....
+
+    //TODO LEFT OFF: very important for testing (but first message will work lol?)
     //TODOreq: stream the toggle bit where appropriate. Off the top of my head, I think it's streaming cases are the opposite of when I stream success/error-code. There is no use for it in the response I don't think. Only in request. Could be wrong?
     //TODOreq: toggle bit applies to broadcasts too!!!!! we lazy-ack the broadcast acks, therefore we use a toggle bit. But it still doesn't need to be transmitted every time (like I don't think ACTIONS need to transmit it for the response, and probably the opposite for BROADCASTS)???? Finding where to put the stream operator(s) is gonna be a bitch lawl. For now leaving it here until I get it working with Actions...
     //quint16 m_ConnectionIndependentClientId; //0 = invalid

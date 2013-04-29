@@ -9,7 +9,7 @@
 
 //TODOoptimization: it's plausible that we don't have to read the message first into a QByteArray (after making sure we have enough bytes) if we just eat/ignore the QByteArray size parameter that QDataStream puts on there... unsure tbh
 
-//TODOreq: is streaming out over the network using two successive << operations guaranteed that they are both received by the receiver in that order? Is it possible for this to happen:
+//TO DOnereq: is streaming out over the network using two successive << operations guaranteed that they are both received by the receiver in that order? Is it possible for this to happen:
 /*
     same Client reading in all the shit (via >>) whenever it receives it
 
@@ -48,7 +48,7 @@ struct RpcBankServerMessageHeader
         ReadyForDisconnectGenericServer2ClientMessageType //TODOreq: what about ack'ing THIS (and also the DisconnectRequested above???) --- omfg wat --- TODOreq: make sure every enum type is ack'd in some way or another????? My brain hurts just thinking about this
     };
 
-    //TODOreq: The header should be generic and re-used for all Rpc Services, but the enum needs to be defined at a rpc service specific level. I think this class entirely might be deleted/rewritten so we'll see. Since the class is auto-generated and also will be instantiated in memory for each unique rpc service, it doesn't matter whether I separate the generic'ness of it into a different file for re-use or not. Sure I "should", but it really doesn't matter in this case
+    //TODOreq: The header should be generic and re-used for all Rpc Services (right? unsure about this because we could just use socket differentiation. idfk), but the enum needs to be defined at a rpc service specific level. I think this class entirely might be deleted/rewritten so we'll see. Since the class is auto-generated and also will be instantiated in memory for each unique rpc service, it doesn't matter whether I separate the generic'ness of it into a different file for re-use or not. Sure I "should", but it really doesn't matter in this case
     enum RpcBankServerSpecificMessageTypeEnum
     {
         InvalidRpcBankServerSpecificMessageType = 0x0,
@@ -68,12 +68,12 @@ struct RpcBankServerMessageHeader
     //quint16 MessageSize; -- definitely no longer needed because of QByteArrayPeeker <3
     //quint16 RpcServiceId; -- not sure if needed (it is a matter of choice/design)... but commenting out for now because it makes more sense to use PORTS to differentiate between rpc services (at least i think it does but could be wrong???)... AND it isn't referenced anywwhere anyways!!! BTW OT but semi-relevant: AppId (such as specifying a "bank account" in previous uses/examples/designs/prototypes/etc) is NOT related to RpcServiceId. It would be a "rpc service" specific value, sent at a different level. I have said that before but am now saying it again (whatchu gonna do 'bout it?)
     quint16 MessageId; //changing to quint16 because it would be very unlikely that more than 65536 would be received without a single one being responded to lmfao (and therefore reused). saves us 2 bytes per message! hell even a quint8 would be sufficient on low-load servers. TODOreq: this should be generated kinda like we generate teh cookie: ensuring no dupes in a do-while loop thingo. right now i have it using the current date time as a sort of salt, so it should be good enough (famous last words, hence the req)
-    quint8 GenericRpcMessageType; //TODOreq: use it!
+    quint8 GenericRpcMessageType; //TODOreq: use it! i guess i can use this for both client2server and server2client but, make sure shit is safe (i guess that 8 bits is enough? idfk)
     quint16 RpcServiceSpecificMessageType; //TODOoptimization: this is probably the best value to use c bit fields in... because 256 message types (quint8) is NOT ENOUGH... and 65536 message types is way too much... so that means we have bits that we can steal from it <3! We'd still need to specify and document a maximum amount of message types (and then our input xml protocol parser should verify that the user didn't specify more than the max)
 
 
 
-    //TODOreq: Shit I think I just contradicted completely the "lazy ack ack" design by introducing the "generic type" protocol value... but maybe not. I don't know and have never been more lost in this design as right this very fucking moment. Fantacizing of shotgun to the face etc. I guess if it's just a typical ActionRequest we check to see if it's in lazy ack and then ack it (forget about it) if it is? Otherwise we'll get a ActionRequestRetry and we still check it and in that case, re-send it (or say business pending etc). Bah. Gravity may be in effect but I've hit the titanic's propeller and am now spinning rapidly towards the ocean (kind of fun, but i want to do a pencil dive (or regular dive), not a fucking belly/back flop!)
+    //TO DOnereq (nothing to see here): Shit I think I just contradicted completely the "lazy ack ack" design by introducing the "generic type" protocol value... but maybe not. I don't know and have never been more lost in this design as right this very fucking moment. Fantacizing of shotgun to the face etc. I guess if it's just a typical ActionRequest we check to see if it's in lazy ack and then ack it (forget about it) if it is? Otherwise we'll get a ActionRequestRetry and we still check it and in that case, re-send it (or say business pending etc). Bah. Gravity may be in effect but I've hit the titanic's propeller and am now spinning rapidly towards the ocean (kind of fun, but i want to do a pencil dive (or regular dive), not a fucking belly/back flop!)
     //^^^^Could even, if I want to KISS, do an ActionRequestThatAlsoAcksThisSameMessageId, since the client "knows" when it is! Wouldn't take any extra space and have plenty left in that quint8
     //make sure message IDs are only re-used by the same rpc specific message type (since they are stored separately as an optimization). This may or may not affect what I've just written above
 };

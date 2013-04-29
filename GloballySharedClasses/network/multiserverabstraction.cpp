@@ -2,7 +2,7 @@
 
 quint32 MultiServerAbstraction::overflowingClientIdsUsedAsInputForMd5er = 0;
 
-//TODOreq: no idea where this belongs, but make sure not to delete an IProtocolKnower that still has messages that our rigged for delivery() back to it that are still pending in the business. deleting it with messages still in the business would result in the silent failure of the delivery of the messages to the (new?) IProtocolKnower. Not sure if/how/where this factors in, but it probably has something to do with merging? However I think merging means we keep the protocol knower and swap out the IO device? idfk [yet].
+//TODOreq: no idea where this belongs, but make sure not to delete an IProtocolKnower that still has messages that are rigged for delivery() back to it that are still pending in the business. deleting it with messages still in the business would result in the silent failure of the delivery of the messages to the (new?) IProtocolKnower. Not sure if/how/where this factors in, but it probably has something to do with merging? However I think merging means we keep the protocol knower and swap out the IO device? idfk [yet].
 
 MultiServerAbstraction::MultiServerAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent)
     : QObject(parent), m_SslTcpServer(0) /* etc tcp local */
@@ -15,6 +15,8 @@ MultiServerAbstraction::MultiServerAbstraction(IProtocolKnowerFactory *protocolK
 MultiServerAbstraction::~MultiServerAbstraction()
 {
     //TODOreq: flush? Perhaps it's implied when I do the delete? idfk
+    //^^flush what? ideally everything will have already cleanly disconnected when we get here... so...
+
     deletePointersAndSetEachFalse();
 }
 void MultiServerAbstraction::setupSocketSpecificDisconnectAndErrorSignaling(QIODevice *ioDeviceToClient, AbstractClientConnection *abstractClientConnection)
@@ -71,7 +73,7 @@ AbstractClientConnection *MultiServerAbstraction::potentialMergeCaseAsCookieIsSu
         dontBroadcastTo(oldConnectionToMergeWithMaybe);
 
         //set merge in progress, snapshotting all message IDs in business pending at this very moment. those ones require the new connection to re-request/retry them
-        oldConnectionToMergeWithMaybe->setQueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(true); //TODOreq: unset it later after merge complete, but make sure you figure out whether or not to send business pending that never noticed a merge occured (e.g. they were in business pending the whole time). i think i am making the client re-request all of them, so that would maybe imply we need yet another list and/or possibly even a new retry mode? there is/could-be retry-on-same-connection and retry-knowing-its-new-connection... but do i NEED to differentiate between the two?
+        oldConnectionToMergeWithMaybe->setQueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(true); //TODOreq (pretty sure done): unset it later after merge complete, but make sure you figure out whether or not to send business pending that never noticed a merge occured (e.g. they were in business pending the whole time). i think i am making the client re-request all of them, so that would maybe imply we need yet another list and/or possibly even a new retry mode? there is/could-be retry-on-same-connection and retry-knowing-its-new-connection... but do i NEED to differentiate between the two?
 
         return oldConnectionToMergeWithMaybe;
 
@@ -85,7 +87,7 @@ AbstractClientConnection *MultiServerAbstraction::potentialMergeCaseAsCookieIsSu
         //maybe this will become clear to me once i have the pending shit coded and working???? hmmm, since it depends on it, that actually sounds very likely
 
         //TODOreq: now that I have pending shit and re-organizing coded and compiling, I think ultimately figuring out how to merge depends entirely on my clean disconnecting code (as well as connection failed detected code). clean disconnects should wait for all the messages to flush (that's why it's a 2-part stopping mechanism) and not accept any new requests, disconnect fails should........ ??????? do nothing except be made note of so we don't try to send the messages again? instead of sending to a known failed, we simply queue the [action-response? (broadcasts should know to try ANOTHER/known-working connection)]. Deciding on the two timeouts will be difficult. Timeout 1 = time until clean disconnect stops waiting for message responses (they might be stuck in business????), Timeout 2 = time to hold onto queued/pending/whatever-you-call-em messages because an unclean disconnect was detected
-        //TODOreq: There are potentially two places our unclean disconnect can be detected. The first is when trying to send (abstract socket errors, which ARE ALSO TRIGGERED (so 3 places? 2 of which are caught in the same place?) just whenever noticed by underlying system, not ONLY when sending), the second is when the same cookie as one already in use is received.
+        //TODOreq (pretty sure both points are accounted for): There are potentially two places our unclean disconnect can be detected. The first is when trying to send (abstract socket errors, which ARE ALSO TRIGGERED (so 3 places? 2 of which are caught in the same place?) just whenever noticed by underlying system, not ONLY when sending), the second is when the same cookie as one already in use is received.
     }
     //else: dgaf, continue hello'ing as usual. maybe we deleted their queue already? their cookie doesn't mean shit to us, but we'll still use it... fuck it
     return 0;
@@ -207,11 +209,7 @@ void MultiServerAbstraction::dontBroadcastTo(AbstractClientConnection *abstractC
         if(m_RoundRobinQueue.contains(abstractClientConnection))
         {
             numRemoved = m_RoundRobinQueue.removeAll(abstractClientConnection);
-            if(numRemoved == 1)
-            {
-                //it was in the queue and we removed it because a dc was detected etc
-            }
-            else
+            if(numRemoved != 1)
             {
                 //we had more than 1 of the same in the queue, which means our round robin code is fucked... should never happen if round robin code (etc, because we build it from m_ListOfHelloedConnections) is clean/correct
             }

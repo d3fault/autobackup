@@ -100,7 +100,7 @@ void RpcBankServerProtocolKnower::messageReceived() //QDataStream *messageDataSt
             //TODOreq
         }
         break;
-        case RpcBankServerMessageHeader::BroadcastManualAckGenericClient2ServerMessageType: //never invokes business, so does not use the theorized macro for action requests
+        case RpcBankServerMessageHeader::BroadcastManualAckGenericClient2ServerMessageType: //never invokes business, so does not use the switch macro used with actions here
         {
             //TODOreq
         }
@@ -116,10 +116,10 @@ void RpcBankServerProtocolKnower::messageReceived() //QDataStream *messageDataSt
             //TODOreq: errors etc
         }
         break;
-        //case SHIT DEFINITELY BROKE MY DESIGN TODAY because we already have/had retry code in the above case and yet this is where it would go with the refactor TODO LEFT OFF or just kill yourself
+        //case SHIT DEFINITELY BROKE MY DESIGN TODAY because we already have/had retry code in the above case and yet this is where it would go with the refactor TO/* DO LEFT */ OFF or just kill yourself (opting towards not killing myself (mfw i have to not kill myself in order to opt))
     }
 }
-void RpcBankServerProtocolKnower::notifyThatQueueActionResponsesHasBeenEnabled()
+void RpcBankServerProtocolKnower::queueActionResponsesHasBeenEnabledSoBuildLists()
 {
     //we should compile and maintain a list (for each message action type) for all the ones that are in business pending at this very moment
     m_CreateBankAccountMessagesPendingInBusinessWhenEnablingQueueActionResponsesMode.clear();
