@@ -1,7 +1,7 @@
 #include "easytree.h"
 
 EasyTree::EasyTree(QObject *parent) :
-    QObject(parent), m_Colon(":"), m_DirNamesToIgnore(0), m_FileNamesToIgnore(0), m_FileNamesEndWithIgnoreList(0)
+    QObject(parent), m_Colon(":"), m_TreeTextStream(0), m_DirNamesToIgnore(0), m_FileNamesToIgnore(0), m_FileNamesEndWithIgnoreList(0)
 {
     m_EscapedColon.append("\\"); //lol have to escape my escaper!
     m_EscapedColon.append(m_Colon);
@@ -112,6 +112,11 @@ bool EasyTree::weDontWantToSkipCurrentDirInfo()
 }
 void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList)
 {
+    if(!m_TreeTextStream)
+    {
+        return;
+    }
+
     m_DirWeAreTreeing = absoluteDirString;
     if(!m_DirWeAreTreeing.endsWith("/"))
     {

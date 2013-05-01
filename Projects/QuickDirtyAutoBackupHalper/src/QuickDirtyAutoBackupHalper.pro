@@ -14,9 +14,9 @@ SOURCES += main.cpp\
         mainwidget.cpp \
     quickdirtyautobackuphalper.cpp \
     quickdirtyautobackuphalperbusiness.cpp \
-    easytree.cpp
 
 HEADERS  += mainwidget.h \
     quickdirtyautobackuphalper.h \
     quickdirtyautobackuphalperbusiness.h \
-    easytree.h
+
+include(../../../GloballySharedClasses/easytree.pri)
