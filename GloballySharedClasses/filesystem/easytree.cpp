@@ -1,10 +1,36 @@
 #include "easytree.h"
 
+/*
+Notes for parsing (reading):
+1) Colons in filenames/directory-names are allowed and are the only thing escaped (by a "\")
+2) Directories do not put their size, since it's always 4kb -- which means there is one less colon field for them
+3) Directories always append a slash at the end just to make them easier to differentiate (though #2 is enough tbh)
+4) Creation Date is the first timestamp that appears, then Modified Date
+5) Newlines indicate the end of a record. They are filesystem specific (\r\n on Windows for example) but Qt can handle both without any problems (if you use QTextStream correctly with the "Text" flag)!
+
+6) Not yet: I am working on EasyTreeHasher that adds another field for md5/sha1 (detecting which will be done via the length)... so the hypothetical parser could parse both by seeing that there's +1 "colon field" for each dir/file type (and then it would be imperitive that we identify directories by the trailing slash... since the "directory entry with hash" (+1) will now have the same amount of "colon fields" as the "file entry without a hash". HOWEVER it doesn't make any fucking sense to have a hash for a directory (does it? only thing i could think of is hashing the entry list details after they've been concatenated... but wouldn't this be redundant? pretty sure yes but redundant but not 100% sure) so nevermind lmfao. However I'm not even sure it's wise to make them share a parser (I just know it's possible)
+*/
+
 EasyTree::EasyTree(QObject *parent) :
     QObject(parent), m_Colon(":"), m_TreeTextStream(0), m_DirNamesToIgnore(0), m_FileNamesToIgnore(0), m_FileNamesEndWithIgnoreList(0)
 {
     m_EscapedColon.append("\\"); //lol have to escape my escaper!
     m_EscapedColon.append(m_Colon);
+
+
+    //m_IODevice = new QString();
+    m_TreeTextStream = new QTextStream();
+    m_Dir = new QDir();
+
+    m_Dir->setSorting(QDir::DirsFirst | QDir::Name);
+    QDir::Filters filters;
+    filters |= QDir::Dirs;
+    filters |= QDir::Files;
+    filters |= QDir::NoSymLinks;
+    filters |= QDir::NoDotAndDotDot;
+    filters |= QDir::Readable;
+    filters |= QDir::Hidden;
+    m_Dir->setFilter(filters);
 }
 EasyTree::~EasyTree()
 {
@@ -112,11 +138,6 @@ bool EasyTree::weDontWantToSkipCurrentDirInfo()
 }
 void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList)
 {
-    if(!m_TreeTextStream)
-    {
-        return;
-    }
-
     m_DirWeAreTreeing = absoluteDirString;
     if(!m_DirWeAreTreeing.endsWith("/"))
     {
@@ -133,7 +154,7 @@ void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioD
     }
 
     QFileInfo dirFileInfo(m_DirWeAreTreeing);
-    if(!dirFileInfo.exists() || !dirFileInfo.isDir())
+    if(!dirFileInfo.exists() || !dirFileInfo.isDir()) //TODOreq: ||  !dirFileInfo.isReadable() ?? had mixed results when using the QDir::Readable filter flag but I guess this isn't the exact same. This should ideally be done on each file... but wait a tick can't we still get info on a file we don't have read access to? Oh fuck isn't the answer to that OS specific? Like on one of the OS's then you need the directory to be readable in order to get the attributes for the file entry list, regardless of whether you can read the contents of those files? And on another OS it's.... ????? based on the file itself ????? _IDFK_. I guess... when in doubt.... run as root <3 (FAMOUS FUCKING LAST WORDS BECAUSE HE OVERWROTE HIS SYSTEM PARTITION AND/OR YEARS OF CODE/WORK LAWLAWLAWLAWLAWL. dats why it's a req... I need to figure it the fuck out)
     {
         return;
     }
@@ -148,20 +169,4 @@ void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioD
 
     //emit treeTextGenerated(*m_IODevice);
     //returning means we're done
-}
-void EasyTree::initialize()
-{
-    //m_IODevice = new QString();
-    m_TreeTextStream = new QTextStream();
-    m_Dir = new QDir();
-
-    m_Dir->setSorting(QDir::DirsFirst | QDir::Name);
-    QDir::Filters filters;
-    filters |= QDir::Dirs;
-    filters |= QDir::Files;
-    filters |= QDir::NoSymLinks;
-    filters |= QDir::NoDotAndDotDot;
-    filters |= QDir::Readable;
-    filters |= QDir::Hidden;
-    m_Dir->setFilter(filters);
 }

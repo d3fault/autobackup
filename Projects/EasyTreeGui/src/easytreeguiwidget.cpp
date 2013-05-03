@@ -53,6 +53,7 @@ void EasyTreeGuiWidget::chooseDirToTree()
     aFileDialog.setOption(QFileDialog::ShowDirsOnly, true);
     aFileDialog.setOption(QFileDialog::ReadOnly, true);
     aFileDialog.setFilter(QDir::Dirs | QDir::NoSymLinks | QDir::Drives | QDir::NoDotAndDotDot | QDir::Hidden);
+    aFileDialog.setWindowModality(Qt::WindowModal);
 
     if(aFileDialog.exec() && aFileDialog.selectedFiles().size() > 0)
     {
@@ -65,7 +66,8 @@ void EasyTreeGuiWidget::chooseTreeOutputFilePath()
     aFileDialog.setFileMode(QFileDialog::AnyFile);
     aFileDialog.setViewMode(QFileDialog::List);
     aFileDialog.setFilter(QDir::Files | QDir::Dirs | QDir::NoSymLinks | QDir::Drives | QDir::NoDotAndDotDot | QDir::Hidden);
-    aFileDialog.setOption(QFileDialog::DontConfirmOverwrite, false);
+    aFileDialog.setWindowModality(Qt::WindowModal);
+    aFileDialog.setAcceptMode(QFileDialog::AcceptSave);
 
     if(aFileDialog.exec() && aFileDialog.selectedFiles().size() > 0)
     {

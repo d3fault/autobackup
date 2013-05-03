@@ -621,7 +621,6 @@ void QuickDirtyAutoBackupHalperBusiness::start()
         m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded = new QStringList();
 
         m_EasyTree = new EasyTree();
-        m_EasyTree->initialize();
     }
     if(!QFile::exists(m_PathToTruecryptBinary))
     {

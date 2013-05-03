@@ -2,9 +2,7 @@
 
 EasyTreeGuiBusiness::EasyTreeGuiBusiness(QObject *parent) :
     QObject(parent)
-{
-    m_EasyTree.initialize();
-}
+{ }
 void EasyTreeGuiBusiness::generateEasyTreeFile(const QString &dirToTree, const QString &treeOutputFilePath)
 {
     QFile easyTreeOutputFile(treeOutputFilePath);

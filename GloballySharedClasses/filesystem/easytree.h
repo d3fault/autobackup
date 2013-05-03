@@ -40,7 +40,6 @@ private:
 signals:
     //void treeTextGenerated(const QString &treeText); //it just writes to the passed in QIODevice instead
 public slots:
-    void initialize();
     void generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList);
 };
 

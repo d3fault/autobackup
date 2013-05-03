@@ -1,0 +1,6 @@
+Writing EasyTreeHasher and took a piss break when I thought this up:
+File Access times are pretty stupid.... but then again in the long run they are the equivalent of "Experiences" when you factor in all the Timeline shit :-P
+
+...Still (not related to above): I don't want to rely on FS attributes any longer. I just don't trust them. And WHAT THE FUCK I just realized "touch" doesn't let you modify the creation date... how retarded is that...
+
+Obviously the "cp -a" command can set a creation date... so.... wtf dipshits stop coding shitty operating systems.
