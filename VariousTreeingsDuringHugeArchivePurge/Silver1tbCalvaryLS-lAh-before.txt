@@ -1,0 +1,40 @@
+total 11G
+-rwxr-xr-x 2 d3fault root    1.0K Dec 30  2007 300 Gigger Volume Header
+drwxrwxrwx 1 root    root    4.0K Apr 12  2010 Android Apps
+drwx------ 1 root    root       0 Aug 31  2010 androidbackup
+drwxrwxrwx 1 d3fault root     32K Apr 12  2010 Applications
+drwxrwxrwx 1 root    root       0 Nov  2  2009 Audio Books
+drwxr-xr-x 1 root    root     96K Oct 16  2011 b
+drwxrwxrwx 1 root    root    4.0K Oct 24  2011 backupDrive
+drwxrwxrwx 1 root    root    4.0K Jul 22  2010 Batch Files
+drwxrwxrwx 1 root    root       0 Sep 25  2009 Books
+-rwxrwxrwx 1 root    root      33 Sep 25  2009 checkmd5
+drwxrwxrwx 1 d3fault root    4.0K Apr 14  2010 Code
+drwxr-xr-x 1 root    root     28K Oct 24  2011 Documents
+drwxrwxrwx 1 root    root       0 Mar 25  2009 Drivers
+drwxrwxrwx 1 root    root       0 Jul 22  2010 Droid Backup
+drwxrwxrwx 1 d3fault root    8.0K Jan 25  2009 eBooks
+drwxrwxrwx 1 root    root    4.0K Oct 28  2011 failedLinuxAttemptShitKeepsCrashing
+-rwxr-xr-x 2 root    root    627K Oct 24  2011 FCMD5-sums.MD5
+drwxrwxrwx 1 d3fault root     16K Oct 24  2011 Games
+drwxr-xr-x 1 root    root    4.0K Aug 30  2009 Game Saves
+drwxrwxrwx 1 d3fault root       0 Jan 17  2009 Halo Modding Unreleased
+drwx------ 1 root    root    4.0K Apr  3  2011 Lists
+-rwxrwxrwx 1 root    root      68 Sep 25  2009 makemd5
+drwxr-xr-x 1 root    root    100K Oct 24  2011 Movies
+drwxr-xr-x 1 root    root     32K Oct 24  2011 Music
+drwxrwxrwx 1 d3fault root    4.0K Jan 17  2009 PDA
+drwx------ 1 root    root    8.0K Mar 16  2011 Pictures
+drwxrwxrwx 1 d3fault root    4.0K Jan 17  2009 Playstation
+drwx------ 1 root    root     12K Mar 18  2011 Projects
+drwxrwxrwx 1 root    root       0 Jan 31  2010 $Recycle.Bin
+drwxrwxrwx 1 root    root       0 Apr  3  2011 RECYCLER
+drwxrwxrwx 1 d3fault root       0 Aug 30  2009 Roms
+-rwxr-xr-x 1 d3fault root      86 Jan  2  2008 Shutdown.bat
+-rw------- 1 d3fault d3fault  10G Oct 28  2012 staticBackup_2013-03-15
+-rw-r--r-- 1 d3fault d3fault   60 Mar 15 17:04 staticBackup_2013-03-15.md5sum
+drwxrwxrwx 1 d3fault root    4.0K Aug 30  2009 TV Episodes
+drwxrwxrwx 1 root    root       0 Jul 22  2010 TV Shows
+drwx------ 1 root    root    4.0K Mar 16  2011 Videos
+drwxrwxrwx 1 root    root    4.0K Oct 24  2011 working
+drwxrwxrwx 1 d3fault root    4.0K Jan 31  2010 Xbox
