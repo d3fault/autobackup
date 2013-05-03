@@ -1,0 +1,3 @@
+Sweet I ran it again (I can't remember if I closed it or not)... this time using a large input... and fucking Qt Creator crashed and the app just hung. In fact it's still hanging hahaha. I am so glad to have that testDev dvd-r right this very fucking moment. I also selected md5 this time instead of sha1.. but that shouldn't make a difference. Idk where it's crashing. Pause didn't help for shit and we never even entered the recursive function. Wtf?
+
+STILL IF THIS WAS HAPPENING ON MY DEVBOX I WOULD SERIOUSLY BE FLIPPING OUT AND CRYING etc

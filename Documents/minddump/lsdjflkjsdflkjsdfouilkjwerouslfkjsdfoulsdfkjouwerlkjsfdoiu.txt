@@ -1,0 +1,36 @@
+GOD DAMNIT I JUST SPENT LIKE 2 HOURS TRYING TO GET EITHER AN SSH OR FTP OR TELNET OR WHATEVER CONNECTION WORKING AND I HAD TO FIGURE OUT HOW TO DO A CROSSOVER CONNECTION BY SETTING BOTH COMPUTERS UP WITH A STATIC IP AND SHIT AND THEN FIGHTING MY TESTDEV LIVE-BUILD BECAUSE IT'S FUCKED AND I CAN'T SUDO OR LOGIN AS ROOT SO OBVIOUSLY SETTING UP AN FTP/SSH SERVER WOULD BE A BITCH WITHOUT THAT (THE LIVE-BUILD IS FUCKED, IDK WHY). SO ANYWAYS I INSTALLED AN FTP SERVER ON MY DEVBOX AND THEN HAD TO CONFIG IT READING THE MOST OVERDONE CONFIG MAN PAGE EVER (man vsftpd.conf) TO TRY TO FIGURE OUT HOW THE FUCK TO SET UP A DIR FOR ANON TO DOWNLOAD FROM (UPLOAD IS FORBIDDEN AND I AM HAPPY ENOUGH WITH THAT SECURITY) AND THEN HAD TO 7ZIP THE PROJECT AND THEN HAD TO DO GLOBALLYSHARED FILES ALSO BECAUSE IT INCLUDES SOME OF THEM AND THEN I HAD TO TOUCH ALL THE FILES BECAUSE THE TIMESTAMPS WERE 'IN THE FUTURE' AND QT CREATOR CRIED
+
+After going through all that effort, EasyTreeHash worked on the first fucking try. God damnit I hate when my software works on the first fucking try. It makes me think there's something subtlely wrong with it.
+
+
+But shit dude, now I know how to get the test box up relatively quickly so I can fucking code ANYTHING with confidence now. I used to get aneurisms whenever my devbox segfaulted.... and stuff like "file copy utilities" are the very last fucking thing I would ever test on my devbox. When I coded QuickDirtyAutoBackupHalper it was on a clean devbox install and I hadn't even "git pull"'d my other projects n shit yet. In fact I didn't even have my 2 internal backup drives physically plugged in! This feels so good. It's like............................. idk I'm trying to think of an analogy but the only one I can think of is sex-with-condom vs. without? It's much different though but idk I guess in a sense it's not: chaos that is so complex that it is ridiculously hard to analyze in a timely manner. Get a microscope or get a debugger (LOL PUN)... but now I have this read-only DVD-R and like... what could possibly go wrong if I copy the wrong files or fuck who knows what. Segfault, system crash. NONE OF IT MATTERS BECAUSE I BOOT FROM THE DVD-R AGAIN AND IT'S LIKE IT NEVER HAPPENED MUAHAHAHAHAHAHAHAHAHA. I still need to take the dvd-rw out and put in a dvd-rom but I'm admittedly being way-the-fuck-too-paranoid.
+
+Oh and also it is/was my online machine so if the bios is hacked (and if it can store shit tons of text -- if it has enough room)... then the source could be transmitted whenever I put the comp back online. I'm contemplating taking the bios battery out before I do that. But shit I haven't been using that computer at all lately (using netbook as online box lately... but this testdev box is/was my gaming computer whose PSU/HDD broke like a fucking year ago and I just don't give a shit to fix it. I like it better as a test dev box anyways :). I need to fucking launch.
+
+speaaking of which i know i've said this before but i like to repeat myself: QDateTime::elapsedMSecsSinceEpoch... needs a QDateTime::elapsedMSecsSinceD3faultLaunched counter-part. Why? WHY NOT? <3
+
+
+Bleh really scared still of running that app on my devbox directly even though my first test of it was a success. I am supposedly going to USE it in like minutes/hours to make 2 backups of my 1tb drives (so I'll have 4 now fuck yea!). Oh and I made EasyTreeGui to take hash-less snapshots of my /Movies/, /Games/, /Applications/, and shit possibly even /Music/. Pretty much everything that is copyright infringing is going to be deleted (though I still want to know I had them at one point (ESP for music (though last.fm has a record too woot))). I also want to see if I can get my backup to be < 500gb because I have another external laying around and it would be swell to have yet another copy :-P
+
+Also I am systematically going to keep 2 EasyTreeHash files, one for each 1tb drive. So I can analyze them and maybe write tools as well... for the merge... if there are file differences (assuming yes...). But for now I'm just GENERATING timestamps/hashes + COPYING to 2 additional 1tb drives that I bought just a little ago. I feel like if I have 4 copies then I will have much greater piece of mind. Seriously the more the merrier I don't know how the fuck I have been managing with just 2. OH THAT'S RIGHT I HAVE FUCKING NIGHTMARES AND I LITERALLY WAKE UP HEARING AN AIRPLANE FLY OVER MY HOUSE AND CAN HEAR EVERYTHING VIBRATING AND I THINK INSTANTLY: THERE GOES MY DATA.
+
+Fuck I need an SSD with a master copy as well. They're just so damn expensive :-/... 240gb is the biggest I could ever afford.... but jesus 1000 -> 240.... good luck.
+
+
+But then analyzing further I mean movies and shit are fucking retarded and I bet it's possible I just need to take it nice and slow and make sure I don't delete ANYTHING (_NOT_ _EVEN_ _TIMESTAMPS_) accidentally.
+
+Seriously my source code and minddump docs are like........... 50mb........ TOPS.
+Pics/Vids on phone are going to be the biggest... Oh and dictations of course.
+
+Man I am fucking fuck but also excited for today to be over SO LONG AS I DON'T FUCK SHIT UP.
+
+todo:
+
+test EasyTreeHash a bit more (more files/folders, larger files)
+EasyTreeGui /movies/, /applications/, /games/, .... and idfk if music or not... --- THEN DELETE THEM [after checking that i didn't hide shit in them lmfao]
+make 2x static backups -- which will include the EasyTreeGui (movies/etc) output files -- using tried/true/ugly static backup method
+mount the drives as read-only and then run EasyTreeHash on them --- this way if there is a bug and shit gets fucked, my static backups will have completely up to date and therefore hopefully very safe... copies
+
+if all goes well, i'll have 4x 1tb drives... 2 of which will not longer depend on filesystem attributes. oh wait no i haven't considered how to get the EasyTreeHashOutput onto any of the drives lol. I guess.... 4 more static backups (or hacky ones since it's just going to be a 100kb file or so).... rofl.
+
+Oh I've been up for like..... shit I don't even remember how long at this point (30+ hours) but I'm determined to do this shit before I go to california later today for my grandpa's funeral. That damn testDev disk was such a bitch to create... took me all week. But shit it is so incredibly valuable now that I have made it. I can code/test without shitting my pants. Imagine your fear of a typo wiping out your entire life's work (OH SHIT I AM STILL AT THAT POINT RIGHT THIS VERY MOMENT --- gah need2fastforward to later tonight)
