@@ -11,12 +11,12 @@
 #include <QListIterator>
 #include <QDateTime>
 
-class EasyTreeHasher
+class EasyTreeHasher : public QObject
 {
     Q_OBJECT
 public:
     explicit EasyTreeHasher(QObject *parent = 0);
-    void recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay(const QDir &sourceDir, const QDir &emptyDestinationDir, const QIODevice *easyTreeHashOutputIODevice, QCryptographicHash::Algorithm algorithm);
+    void recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay(QDir &sourceDir, QDir &emptyDestinationDir, QIODevice *easyTreeHashOutputIODevice, QCryptographicHash::Algorithm algorithm);
     ~EasyTreeHasher();
 private:
     static const qint64 m_MaxReadSize;
@@ -41,7 +41,7 @@ private:
     QFile m_DestinationFile2Write;
 
     //The Beef:
-    void copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(const QFileInfoList &filesAndFoldersInCurrentDirToCopyAndTreeAndHash, const QDir &destAlreadyMkdirDAndCDdInto); //that QDir might not be able to be const? I suck at const'ness so idfk
+    void copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(const QFileInfoList &filesAndFoldersInCurrentDirToCopyAndTreeAndHash, QDir &destAlreadyMkdirDAndCDdInto); //that QDir might not be able to be const? I suck at const'ness so idfk
 
     void addDirectoryEntryToEasyTreeHashOutput();
     void copyAndHashSimultaneously(const QDir &destDir);

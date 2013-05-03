@@ -1,9 +1,9 @@
 #include "easytreehasher.h"
 
-qint64 EasyTreeHasher::m_MaxReadSize = 4000000; //~4mb buffer (should probably make this a power of 2? TODOoptimization)
+const qint64 EasyTreeHasher::m_MaxReadSize = 4194304; //4mb (max) read buffer
 
 EasyTreeHasher::EasyTreeHasher(QObject *parent)
-    : QObject(parent), m_Colon(":"), m_DirSeparator("/")
+    : QObject(parent), m_DirSeparator("/"), m_Colon(":")
 {
     m_EscapedColon.append("\\");
     m_EscapedColon.append(m_Colon);
@@ -18,7 +18,7 @@ EasyTreeHasher::EasyTreeHasher(QObject *parent)
     m_ConservativeFiltersForSeeingIfThereAreFilesToCopy |= QDir::NoDotAndDotDot;
     m_ConservativeFiltersForSeeingIfThereAreFilesToCopy |= QDir::Hidden;
 }
-void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay(const QDir &sourceDir, const QDir &emptyDestinationDir, const QIODevice *easyTreeHashOutputIODevice, QCryptographicHash::Algorithm algorithm)
+void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay(QDir &sourceDir, QDir &emptyDestinationDir, QIODevice *easyTreeHashOutputIODevice, QCryptographicHash::Algorithm algorithm)
 {
     if(!sourceDir.exists())
     {
@@ -40,7 +40,7 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
         emit d("Error-ish: There Are No Files In The Source Directory. Or I guess you could say: DONE BITCH I AM SO FAST");
         return;
     }
-    m_SourceDirectoryAbsolutePathLength = sourceDir.canonicalPath().length() + 1; //the extra one is to account for the slash, that canonical path doesn't have here but we will have when calling .remove on some other (child) canonical path
+    m_SourceDirectoryAbsolutePathLength = sourceDir.canonicalPath().length() + 1; //the extra one is to account for the trailing slash, that canonical path returned here doesn't have a trailing slash here but there will be a directory separator when calling .remove on some other (child) canonical path... which is either a sub-file or sub-folder... so the directory separator is obviously needed
 
     QDir::Filters liberalFiltersForDetectingIfDirIsEmpty; //symlinks! system files!
     liberalFiltersForDetectingIfDirIsEmpty |= QDir::Dirs;
@@ -55,9 +55,9 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
         return;
     }
 
-    if(!easyTreeHashOutputFilePath.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+    if(!easyTreeHashOutputIODevice->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
     {
-        emit d("Error: Failed To Open Easy Tree Hash Output File For Writing");
+        emit d("Error: Failed To Open Easy Tree Hash Output Device For Writing");
         return;
     }
 
@@ -72,6 +72,8 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
 
     //leaving in for lulz, i really wrote it:
     //theFuckingRecursiveFunction(GodDamnitImplicitSharingEitherMakesThisTooEasyOrTooHardICantTell);
+
+    emit d("about to call the recursive function for the first time");
 
     copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(initialFileInfoList, emptyDestinationDir);
 
@@ -95,9 +97,9 @@ QString EasyTreeHasher::getCurrentSourceFileInfoPath_ColonEscapedAndRelative()
 {
     return getCurrentSourceFileInfo_RelativePath().replace(m_Colon, m_EscapedColon, Qt::CaseSensitive);
 }
-void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(const QFileInfoList &filesAndFoldersInCurrentDirToCopyAndTreeAndHash, const QDir &destAlreadyMkdirDAndCDdInto)
+void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(const QFileInfoList &filesAndFoldersInCurrentDirToCopyAndTreeAndHash, QDir &destAlreadyMkdirDAndCDdInto)
 {
-    QListIterator<QFileInfoList> it(filesAndFoldersInCurrentDirToCopyAndTreeAndHash);
+    QListIterator<QFileInfo> it(filesAndFoldersInCurrentDirToCopyAndTreeAndHash);
     while(it.hasNext())
     {
         m_CurrentSourceFileInfo = it.next();
@@ -106,9 +108,12 @@ void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoing
         {
             addDirectoryEntryToEasyTreeHashOutput();
 
-            if(destAlreadyMkdirDAndCDdInto.mkdir(m_CurrentFilenameOrDirnameOnly))
+            //I'm more confident that this belongs here than doesn't, but if it doesn't work this will be the first thing to try without:
+            QDir nextDestDir = destAlreadyMkdirDAndCDdInto; //It seems kind of strange that there's no other usages in this method... except ok when you factor in the while loop then it's used lots of times! Bleh. I suck at implicit sharing but should try to learn it better
+
+            if(nextDestDir.mkdir(m_CurrentFilenameOrDirnameOnly))
             {
-                if(destAlreadyMkdirDAndCDdInto.cd(m_CurrentFilenameOrDirnameOnly))
+                if(nextDestDir.cd(m_CurrentFilenameOrDirnameOnly))
                 {
                     //TODOoptimization: can maybe use member variable to lessen heap allocs... but I bet we're IO bound anyways...
                     QDir nextSourceDir(m_CurrentSourceFileInfo.canonicalFilePath());
@@ -116,11 +121,12 @@ void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoing
                     nextSourceDir.setFilter(m_ConservativeFiltersForSeeingIfThereAreFilesToCopy);
 
                     QFileInfoList nextFileInfoList = nextSourceDir.entryInfoList();
-                    copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(nextFileInfoList, destAlreadyMkdirDAndCDdInto);
+                    copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(nextFileInfoList, nextDestDir);
                 }
                 else
                 {
                     //TODOreq: cd failed
+                    emit d("cd failed");
                 }
                 //TODOreq: do i need to cdUp the dest here or does implicit sharing take care of that? wtfz i should just stick with strings etc. At the very least it's confusing to think that the same copy gets mkdir'd/cd'd multiple times in the while(it.hasNext()) loop. That leads me to believe we need to cdUp here...... OR perhaps another solution is to make another QDir on the stack and assign it to destAlreadyMkdirDAndCDdInto... just before the mkdir call (so it (the new one) detaches and we don't have to worry about doing cdUp)... idfk
 
@@ -129,6 +135,7 @@ void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoing
             else
             {
                 //TODOreq: mkdir failed
+                emit d("mkdir failed");
             }
         }
         else if(m_CurrentSourceFileInfo.isFile())
@@ -140,6 +147,7 @@ void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoing
         else
         {
             //TODOreq: perhaps report that some kind of file (special?) was found? idfk. error out?
+            emit d("not a file or a directory");
         }
     }
 }
@@ -191,12 +199,14 @@ void EasyTreeHasher::copyAndHashSimultaneously(const QDir &destDir)
         else
         {
             //TODOreq: destination file open for writing failed -- error'ing out of the recursion is going to be a bitch :-P
+            emit d("destination file open for writing failed");
         }
         m_SourceFile2CopyTreeAndHash.close();
     }
     else
     {
         //TODOreq: source file open for reading failed -- error'ing out of the recursion is going to be a bitch :-P
+        emit d("source file open for reading failed");
     }
 }
 void EasyTreeHasher::addFileEntryToEasyTreeHashOutput()
