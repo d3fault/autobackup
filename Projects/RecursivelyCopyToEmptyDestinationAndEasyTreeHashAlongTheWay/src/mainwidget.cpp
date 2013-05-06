@@ -45,15 +45,19 @@ MainWidget::MainWidget(QWidget *parent)
                 m_CryptographicHashAlgorithmComboBox->setCurrentIndex(0);
             m_BeginOrCancelCopyButton = new QPushButton(m_BeginCopyString);
         controlsRow->addWidget(m_CryptographicHashAlgorithmComboBox);
-        controlsRow->addWidget(m_BeginOrCancelCopyButton);
+        controlsRow->addWidget(m_BeginOrCancelCopyButton, 1);
 
-        m_Debug = new QPlainTextEdit();
+        QHBoxLayout *outputRow = new QHBoxLayout();
+            m_Debug = new QPlainTextEdit();
+            m_Error = new QPlainTextEdit();
+        outputRow->addWidget(m_Debug);
+        outputRow->addWidget(m_Error);
 
     m_Layout->addLayout(sourceDirectoryRow);
     m_Layout->addLayout(emptyDestinationDirectoryRow);
     m_Layout->addLayout(easyTreeHashOutputFilePathRow);
     m_Layout->addLayout(controlsRow);
-    m_Layout->addWidget(m_Debug);
+    m_Layout->addLayout(outputRow);
 
     setLayout(m_Layout);
     //End Layout
@@ -86,6 +90,10 @@ void MainWidget::updateGuiToReflectCopyInProgress()
 void MainWidget::handleD(const QString &msg)
 {
     m_Debug->appendPlainText(msg);
+}
+void MainWidget::handleE(const QString &msg)
+{
+    m_Error->appendPlainText(msg);
 }
 void MainWidget::handleSourceDirectoryBrowseButtonClicked()
 {

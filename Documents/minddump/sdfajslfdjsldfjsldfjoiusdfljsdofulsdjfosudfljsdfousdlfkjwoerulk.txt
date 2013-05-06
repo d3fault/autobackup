@@ -1,0 +1,37 @@
+Truecrypt, Keepass, "Drive Identifier"
+...
+PROFILES
+
+"Add Device"
+etc
+
+Records of integreity checks as well as periodically asking (or forcing?) of them
+
+
+
+
+
+I think I actually came up with this idea while sleeping. It sounded much better while I was alseep.
+
+I just looked at the man page for truecrypt and there's no command line shit I don't think :(.
+
+
+
+
+But I mean really shit I've already put the bulk of the design up there. The basic idea is that through automation I never have to really worry about my syncrhonizing shit as much as I do right now.
+
+The idea with keepass was to have a different password for each "drive", but I'm not sure that really accomplishes much as the password for the master password file is what's ultimately important anyways (though... isn't it better encryption to use separate passwords for each? I actually want to say yes here... but idfk). Command line driving of keepass would make that possible/easy... but also making my own similar using Crytpo++ wouldn't be TOO hard (famous fucking last words, I got enough shit on my plate for now).... and besides security shit isn't something that should be rushed. Better to stick with the de facto standards until you have time to really properly design and polish (AND PUBLISH TO RECEIVE HELP ON) your own.
+
+
+
+The drive identifier should be authenticated... so someone with physical access to the drive can't swap profiles with another one they have physical access to. Which would probably just result in a password mis-match anyways... but who knows what else it could do. The truecrypt master header block thingo would be a good thing to use as a drive identifier... and shit I wouldn't even be surprised if truecrypt lets you dump it via the command line (then could just dump it to a tmpfs partition and bada-bing).
+
+
+
+
+To keep it automated is real fucking neato... but to keep it using publically available tools such as truecrypt/keepass is also smart in case you ever lose your automation tool (because your only copy is... INSIDE the archive... lmfao).
+
+
+Cool the headers can be backed up from the command line... but it says it requires user input.. so idfk if it can be done from command line. Oh fuck it gonna test now on a new container.
+
+Bah requires password and lots of user interaction... but I guess it's still possible if they all use the same password... we'd just have to figure out which one it is... after mounting/decrypting it via truecrypt. idfk.

@@ -42,10 +42,12 @@ private:
     QPushButton *m_BeginOrCancelCopyButton;
 
     QPlainTextEdit *m_Debug;
+    QPlainTextEdit *m_Error;
 signals:
     void copyOperationRequested(const QString &sourceDirectory, const QString &emptyDestinationDirectory, const QString &easyTreeHashOutputFilePath, QCryptographicHash::Algorithm algorithm);
 public slots:
     void handleD(const QString &msg);
+    void handleE(const QString &msg);
     void handleSourceDirectoryBrowseButtonClicked();
     void handleEmptyDestinationDirectoryBrowseButtonClicked();
     void handleEasyTreeHashOutputFilePathBrowseButtonClicked();

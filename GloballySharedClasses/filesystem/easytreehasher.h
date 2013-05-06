@@ -29,6 +29,7 @@ private:
 
     QCryptographicHash *m_Hasher;
     QByteArray m_HashResult;
+    void deleteHasherIfNotZero();
     QTextStream m_EasyTreeHashTextStream;
 
     QString getCurrentSourceFileInfo_RelativePath();
@@ -48,6 +49,7 @@ private:
     void addFileEntryToEasyTreeHashOutput();
 signals:
     void d(const QString &); //use as recoverableError.. just follow the message with "return;"
+    void e(const QString &); //I don't have unrecoverable errors implemented yet (erroring out of recursion is a bitch heh)... but at the very least I want to be able to differentiate between actual errors and simple debug messages. If I receive ANY error messages, I know the output is unreliable
     void nonRecoverableError(const QString &); //does more or less the same as recoverableError, but disables GUI too
 };
 

@@ -21,6 +21,7 @@ private:
     EasyTreeHasher m_EasyTreeHasher;
 signals:
     void d(const QString &);
+    void e(const QString &);
     void copyOperationComplete();
 public slots:
     void recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay(const QString &sourceDirectory, const QString &emptyDestinationDirectory, const QString &easyTreeHashOutputFilePath, QCryptographicHash::Algorithm algorithm);

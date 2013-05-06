@@ -1,0 +1,13 @@
+I think/hope that this coming static backup will be the last one performed... and then I will have FIVE external drives all with the same git-pushable (and git fsck'able woo) data. That's on top of my 3 internal drives. One for the OS and "working copy"... 2 for "backup on every shutdown" (which I do contemplate changing to active RAID-0 for all 3... idfk (My only hesitation is the fact that I've never tested RAID failures... so therefore can't/don't trust them)). I'd trust custom executables (notepad for example) that saved to 3 different locations before I trust RAID. Still saying that I've only lost "a few hours of work" is not TOOOOO bad. I also want to upgrade the OS/working copy to an SSD... which I realized can be only 180gb because holy shit I got rid of so much unnecessary (and "illegal" (LOL AT THE FACT THAT ILLEGAL CONTENT EVEN EXISTS!!!!!!!!!!!!!!!!!!!)) bullshit. Went from like 900gb to 140gb just by deleting random old warez'd shit. I am anticipating my git submodule backup configuration... and also to finally merge the silver/black 1tb backups... and of course to not rely on stupid motherfucking filesystem creation/modified dates ever again.
+
+TODOoptimization: overwrite the changed timestamps in place if there are no files added... instead of rewriting the entire file every time. Still the whole "auto-submodule" approach optimizes most of this problem away... so long as single directories don't contain too many files.
+
+Can't wait to have a mega merged git repo (two i guess.. binary plus text... but both of which mostly just consist of submodules anyways haha (so really... LOTS of git repos lolol)) for all the work that I've never lost. SVN exports and all. So. Fucking. Excited. Oh and of course to have a "tree stats" file that isn't... retarded (but holy shit merging those is/might be a BITCH because I know I've fucked some of them up).
+
+Actually the design I was planning on using for them is now fucked. I can't restore creation date timestamps... so what the fuck? meh I'll figure something out...
+
+...Apparently WINDOWS can hahahahahahahahaha that's just hilarious. Why is 'touch' so stupid?
+
+
+
+...And how the fuck do I make ownership a non-issue for users indefinitely? How did all my shit become root owned? I also am afraid of changing the ownership back because then it will maybe update the modification timestamps needlessly lmfao... but I guess I can easily test that...

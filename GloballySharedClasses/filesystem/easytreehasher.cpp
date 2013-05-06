@@ -3,7 +3,7 @@
 const qint64 EasyTreeHasher::m_MaxReadSize = 4194304; //4mb (max) read buffer
 
 EasyTreeHasher::EasyTreeHasher(QObject *parent)
-    : QObject(parent), m_DirSeparator("/"), m_Colon(":")
+    : QObject(parent), m_DirSeparator("/"), m_Colon(":"), m_Hasher(0)
 {
     m_EscapedColon.append("\\");
     m_EscapedColon.append(m_Colon);
@@ -22,13 +22,13 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
 {
     if(!sourceDir.exists())
     {
-        emit d("Error: The Source Directory Does Not Exist");
+        emit e("The Source Directory Does Not Exist");
         return;
     }
 
     if(!emptyDestinationDir.exists())
     {
-        emit d("Error: The Destination Directory Does Not Exist");
+        emit e("The Destination Directory Does Not Exist");
         return;
     }
 
@@ -51,13 +51,13 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
     emptyDestinationDir.setFilter(liberalFiltersForDetectingIfDirIsEmpty);
     if(emptyDestinationDir.count() > 0)
     {
-        emit d("Error: The Destination Directory Is Not Empty");
+        emit e("The Destination Directory Is Not Empty");
         return;
     }
 
     if(!easyTreeHashOutputIODevice->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
     {
-        emit d("Error: Failed To Open Easy Tree Hash Output Device For Writing");
+        emit e("Failed To Open Easy Tree Hash Output Device For Writing");
         return;
     }
 
@@ -67,13 +67,13 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
         m_EasyTreeHashTextStream.seek(0);
     }
 
-    delete m_Hasher; //multiple runs without closing down application... but changing algorithm in between. QCryptographicHash doesn't provide a way to change the algorithm once instantiated
+    deleteHasherIfNotZero(); //multiple runs without closing down application... but changing algorithm in between. QCryptographicHash doesn't provide a way to change the algorithm once instantiated
     m_Hasher = new QCryptographicHash(algorithm);
 
     //leaving in for lulz, i really wrote it:
     //theFuckingRecursiveFunction(GodDamnitImplicitSharingEitherMakesThisTooEasyOrTooHardICantTell);
 
-    emit d("about to call the recursive function for the first time");
+    emit d("About to call the recursive function for the first time");
 
     copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(initialFileInfoList, emptyDestinationDir);
 
@@ -83,7 +83,16 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
 }
 EasyTreeHasher::~EasyTreeHasher()
 {
-    delete m_Hasher;
+    deleteHasherIfNotZero();
+}
+void EasyTreeHasher::deleteHasherIfNotZero()
+{
+    //I thought C++ allowed it to be deleted even if it is null.. but my shit just segfaulted (ANEURISM) so I guess not? Probably need to update code in "other projects" (lol I guess I'm thinking about releasing this) too...
+    if(m_Hasher)
+    {
+        delete m_Hasher;
+        m_Hasher = 0;
+    }
 }
 QString EasyTreeHasher::getCurrentSourceFileInfo_RelativePath()
 {
@@ -126,28 +135,28 @@ void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoing
                 else
                 {
                     //TODOreq: cd failed
-                    emit d("cd failed");
+                    emit e("cd failed");
                 }
-                //TODOreq: do i need to cdUp the dest here or does implicit sharing take care of that? wtfz i should just stick with strings etc. At the very least it's confusing to think that the same copy gets mkdir'd/cd'd multiple times in the while(it.hasNext()) loop. That leads me to believe we need to cdUp here...... OR perhaps another solution is to make another QDir on the stack and assign it to destAlreadyMkdirDAndCDdInto... just before the mkdir call (so it (the new one) detaches and we don't have to worry about doing cdUp)... idfk
+                //TO DOnereq (a cdUp might have fixed it, but so does the seemingly unncecessary variable introduced: nextDestDir. Sole purpose is so destAlreadyMkdirDAndCDdInto retains current CD when nextDestDir detaches during mkdir/cd): do i need to cdUp the dest here or does implicit sharing take care of that? wtfz i should just stick with strings etc. At the very least it's confusing to think that the same copy gets mkdir'd/cd'd multiple times in the while(it.hasNext()) loop. That leads me to believe we need to cdUp here...... OR perhaps another solution is to make another QDir on the stack and assign it to destAlreadyMkdirDAndCDdInto... just before the mkdir call (so it (the new one) detaches and we don't have to worry about doing cdUp)... idfk
 
-                //TODOreq: also possibly for nextSourceDir, but i think that one is ok actually because it's scoped?
+                //TODOreq(? App seems to work so I highly doubt it): also possibly for nextSourceDir, but i think that one is ok actually because it's scoped?
             }
             else
             {
                 //TODOreq: mkdir failed
-                emit d("mkdir failed");
+                emit e("mkdir failed");
             }
         }
         else if(m_CurrentSourceFileInfo.isFile())
         {
-            copyAndHashSimultaneously(destAlreadyMkdirDAndCDdInto); //m_CurrentSourceFileInfo is member, hash output should be member also
+            copyAndHashSimultaneously(destAlreadyMkdirDAndCDdInto); //m_CurrentSourceFileInfo is member, hash output is member also... so we only need to pass in the [scope-local] dest dir
 
             addFileEntryToEasyTreeHashOutput();
         }
         else
         {
             //TODOreq: perhaps report that some kind of file (special?) was found? idfk. error out?
-            emit d("not a file or a directory");
+            emit e("not a file or a directory");
         }
     }
 }
@@ -179,9 +188,9 @@ void EasyTreeHasher::copyAndHashSimultaneously(const QDir &destDir)
 
                 //Next 3 lines are bulk of program! Entire fucking reason for existence!
 
-                QByteArray readChunkArray = m_SourceFile2CopyTreeAndHash.read(toRead); //One Read
-                m_Hasher->addData(readChunkArray); //1st Utilization of that read
-                m_DestinationFile2Write.write(readChunkArray); //2nd Utilization of that read
+                QByteArray readChunkArray = m_SourceFile2CopyTreeAndHash.read(toRead); //One read (copy)
+                m_Hasher->addData(readChunkArray); //1st Utilization of that read (hash)
+                m_DestinationFile2Write.write(readChunkArray); //2nd Utilization of that read, the write (paste)
 
                 //Efficient as fuck... or premature optimization? YOU BE THE JUDGE!
 
@@ -199,14 +208,14 @@ void EasyTreeHasher::copyAndHashSimultaneously(const QDir &destDir)
         else
         {
             //TODOreq: destination file open for writing failed -- error'ing out of the recursion is going to be a bitch :-P
-            emit d("destination file open for writing failed");
+            emit e("destination file open for writing failed");
         }
         m_SourceFile2CopyTreeAndHash.close();
     }
     else
     {
         //TODOreq: source file open for reading failed -- error'ing out of the recursion is going to be a bitch :-P
-        emit d("source file open for reading failed");
+        emit e("source file open for reading failed");
     }
 }
 void EasyTreeHasher::addFileEntryToEasyTreeHashOutput()
