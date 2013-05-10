@@ -15,9 +15,12 @@ IRecycleableAndStreamable *IRecycleableDispenser::privateGetNewOrRecycled()
 {
     if(!m_RecycleList.isEmpty())
     {
-        return m_RecycleList.takeLast();
+        IRecycleableAndStreamable *recycled = m_RecycleList.takeLast();
+        recycled->resetMessageParameters();
+        return recycled;
     }
     IRecycleableAndStreamable *newMessage = newOfTypeAndConnectToDestinationObjectIfApplicable();
+    newMessage->resetMessageParameters();
 
 #ifdef WE_ARE_RPC_BANK_SERVER_CLIENT_CODE //server uses client-set messageId and so doesn't need to set it ever (well, except when reading it off the network, it sets it to whatever it reads off the network from the client)... so it does not need to generate a message id when dispensing (wasted cycles). TODOreq: make sure I actually do that in the network code haha... I've rewritten it to many times to remember...
     QByteArray messageIdArray;

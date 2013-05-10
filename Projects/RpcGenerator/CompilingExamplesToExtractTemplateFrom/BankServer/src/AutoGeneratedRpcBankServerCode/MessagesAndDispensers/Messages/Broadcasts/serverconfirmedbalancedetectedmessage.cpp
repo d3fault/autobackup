@@ -11,3 +11,7 @@ void ServerConfirmedBalanceDetectedMessage::streamOut(QDataStream &out)
 {
     CONFIRMED_BALANCE_DETECTED_MESSAGE_PARSE_BROADCAST(out,<<);
 }
+void ServerConfirmedBalanceDetectedMessage::resetMessageParameters()
+{
+    resetMessageParametersBase(); //TODOreq: client needs to also call this in it's base-inherited class
+}

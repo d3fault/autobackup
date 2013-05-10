@@ -12,6 +12,8 @@ public:
 
     void streamIn(QDataStream &in);
     void streamOut(QDataStream &out);
+
+    void resetMessageParameters();
 };
 
 #endif // SERVERCONFIRMEDBALANCEDETECTEDMESSAGE_H

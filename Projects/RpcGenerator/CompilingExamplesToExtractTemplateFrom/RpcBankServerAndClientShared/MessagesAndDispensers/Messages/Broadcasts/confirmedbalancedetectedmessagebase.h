@@ -10,6 +10,8 @@ class ConfirmedBalanceDetectedMessageBase
 public:
     QString Username;
     double ConfirmedBalance;
+
+    void resetMessageParametersBase();
 };
 
 #endif // CONFIRMEDBALANCEDETECTEDMESSAGEBASE_H

@@ -5,7 +5,12 @@ ServerCreateBankAccountMessageDispenser::ServerCreateBankAccountMessageDispenser
 { }
 CreateBankAccountMessage *ServerCreateBankAccountMessageDispenser::getNewOrRecycled()
 {
-    return static_cast<CreateBankAccountMessage*>(privateGetNewOrRecycled());
+    CreateBankAccountMessage *createBankAccountMessage = static_cast<CreateBankAccountMessage*>(privateGetNewOrRecycled());
+
+    //Rpc Generator has implicit knowledge that the message is an ActionMessage and then calls resetSuccessAndErrorCode() on them. It does not call it for broadcasts
+    createBankAccountMessage->resetSuccessAndErrorCode();
+
+    return createBankAccountMessage;
 }
 IRecycleableAndStreamable *ServerCreateBankAccountMessageDispenser::newOfTypeAndConnectToDestinationObjectIfApplicable()
 {

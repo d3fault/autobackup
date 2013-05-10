@@ -20,9 +20,12 @@ public:
         FailedWaitForPendingToBeConfirmed
     };
 
-    //Action Parameters
+    //Action Request Parameters
     QString Username;
+    //Action Response Parameters
     QString AddFundsKey;
+
+    void resetMessageParameters();
 
     //Errors
     inline void setFailedUsernameDoesntExist() { setErrorCode(GetAddFundsKeyMessage::FailedUsernameDoesntExist); }

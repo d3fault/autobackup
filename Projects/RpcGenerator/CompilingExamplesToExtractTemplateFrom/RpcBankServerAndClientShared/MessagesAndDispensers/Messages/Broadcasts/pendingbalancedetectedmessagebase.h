@@ -10,6 +10,8 @@ class PendingBalanceDetectedMessageBase
 public:
     QString Username;
     double PendingBalance;
+
+    void resetMessageParametersBase();
 };
 
 #endif // PENDINGBALANCEDETECTEDMESSAGEBASE_H

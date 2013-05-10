@@ -7,7 +7,7 @@
 
 //TODOreq: verify that a response with no parameters like this works. had success their eariler just as a placeholder because I was afraid to have it empty. that semicolon is just a no-op, but might be able to be blank (compiler removes it anyways)
 //#define CREATE_BANK_ACCOUNT_MESSAGE_PARSE_AS_ACTION_RESPONSE_VALUES(qds,strop) qds strop Success;
-#define CREATE_BANK_ACCOUNT_MESSAGE_PARSE_AS_ACTION_RESPONSE_VALUES(qds,strop) ;
+#define CREATE_BANK_ACCOUNT_MESSAGE_PARSE_AS_ACTION_RESPONSE_VALUES(qds,strop) Q_UNUSED(qds);
 #define CREATE_BANK_ACCOUNT_MESSAGE_PARSE_AS_ACTION_REQUEST_PARAMS(qds,strop) qds strop Username;
 
 class CreateBankAccountMessage : public IActionMessage
@@ -23,6 +23,8 @@ public:
 
     //Action Parameters
     QString Username;
+
+    void resetMessageParameters();
 
     //Errors
     inline void setFailedUsernameAlreadyExists() { setErrorCode(CreateBankAccountMessage::FailedUsernameAlreadyExists); }

@@ -13,3 +13,7 @@ void ServerPendingBalanceDetectedMessage::streamOut(QDataStream &out)
 {
     PENDING_BALANCE_DETECTED_MESSAGE_PARSE_BROADCAST(out,<<);
 }
+void ServerPendingBalanceDetectedMessage::resetMessageParameters()
+{
+    resetMessageParametersBase();
+}

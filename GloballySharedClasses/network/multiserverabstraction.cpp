@@ -10,14 +10,14 @@ MultiServerAbstraction::MultiServerAbstraction(IProtocolKnowerFactory *protocolK
     AbstractClientConnection::setMultiServerAbstraction(this);
     AbstractClientConnection::setProtocolKnowerFactory(protocolKnowerFactory);
 
-    deletePointersAndSetEachFalse();
+    deletePointersIfNotZeroAndSetEachEnabledToFalse();
 }
 MultiServerAbstraction::~MultiServerAbstraction()
 {
     //TODOreq: flush? Perhaps it's implied when I do the delete? idfk
     //^^flush what? ideally everything will have already cleanly disconnected when we get here... so...
 
-    deletePointersAndSetEachFalse();
+    deletePointersIfNotZeroAndSetEachEnabledToFalse();
 }
 void MultiServerAbstraction::setupSocketSpecificDisconnectAndErrorSignaling(QIODevice *ioDeviceToClient, AbstractClientConnection *abstractClientConnection)
 {

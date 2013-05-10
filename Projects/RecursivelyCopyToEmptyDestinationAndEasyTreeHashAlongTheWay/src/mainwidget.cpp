@@ -71,6 +71,7 @@ MainWidget::MainWidget(QWidget *parent)
     //End Connections
 
     handleD("Depending on your situation, it may be advisable/REQUIRED that you run this application as root (this is a note to myself because my NTFS partitions are owned by..... who the fuck knows? In my experiences, user can almost never read them though lol)");
+    m_Debug->setMaximumBlockCount(10000); //TODOreq: user input could set this instead
 }
 void MainWidget::updateGuiToReflectCopyInProgress()
 {

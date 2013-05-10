@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+
+//TODOreq: pretty sure this entire class is obsolete just like ssltcpserverandbankserver---, but i'm unsure tbh. definitely want the following define. it can go in another class
 #define WE_ARE_RPC_BANK_SERVER_CODE
 
 //TODOreq: add our messages etc to the meta object system. register() or something i forget. I might be able to do it in a file that's shared between client/server... but meh who cares for now. This is our entry point atm so I'll just leave this note here.

@@ -3,6 +3,11 @@
 GetAddFundsKeyMessage::GetAddFundsKeyMessage(QObject *parent)
     : IActionMessage(parent)
 { }
+void GetAddFundsKeyMessage::resetMessageParameters()
+{
+    Username.clear();
+    AddFundsKey.clear();
+}
 //TODOoptimization: inline these, too lazy for now
 void GetAddFundsKeyMessage::streamIn(QDataStream &in)
 {

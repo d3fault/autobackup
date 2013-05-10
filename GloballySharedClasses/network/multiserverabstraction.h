@@ -61,7 +61,7 @@ public:
 private:
     bool m_BeSslServer, m_BeTcpServer, m_BeLocalServer;
     SslTcpServer *m_SslTcpServer;
-    inline void deletePointersAndSetEachFalse() { delete m_SslTcpServer; /* TODOreq: delete Tcp/Local */ m_BeSslServer = false; m_BeTcpServer = false; m_BeLocalServer = false; }
+    inline void deletePointersIfNotZeroAndSetEachEnabledToFalse() { if(m_SslTcpServer) { delete m_SslTcpServer; m_SslTcpServer = 0; } /* TODOreq: delete Tcp/Local */ m_BeSslServer = false; m_BeTcpServer = false; m_BeLocalServer = false; }
 
     AbstractClientConnection *handleNewClientConnected(QIODevice *newClient);
 

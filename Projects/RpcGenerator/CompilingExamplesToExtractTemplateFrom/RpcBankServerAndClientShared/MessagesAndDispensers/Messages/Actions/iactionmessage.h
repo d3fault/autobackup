@@ -25,24 +25,29 @@ private:
     quint8 m_ErrorCode; //TODOreq (it doesn't have a concrete answer dipshit. it is both sufficient and insufficient): decide if you think 256 failed reasons per action is enough. probably is (famous last words)
     bool m_ToggleBit; //TODOoptimization: since a bool takes a byte of memory, it might be worth it to keep all my toggle bits for messages in a QBitArray as a memory optimization. However if I have to store an index into that bit array, then it defeats the purpose rofl... soo.... idfk....
 
-    //TODO LEFT OFF: very important for testing (but first message will work lol?)
+    //TODO LEFT OFF: very important for testing (but first message will work lol?) <-- pretty sure I'm done with this, but leaving it here because the client still needs it's toggle bit logic. Specifically the flipping of it at appropriate times..
     //TODOreq: stream the toggle bit where appropriate. Off the top of my head, I think it's streaming cases are the opposite of when I stream success/error-code. There is no use for it in the response I don't think. Only in request. Could be wrong?
     //TODOreq: toggle bit applies to broadcasts too!!!!! we lazy-ack the broadcast acks, therefore we use a toggle bit. But it still doesn't need to be transmitted every time (like I don't think ACTIONS need to transmit it for the response, and probably the opposite for BROADCASTS)???? Finding where to put the stream operator(s) is gonna be a bitch lawl. For now leaving it here until I get it working with Actions...
+    //^^using the toggle bit with broadcasts won't be impossible, but atm I have the streaming in IActionMessage, which does not apply to broadcasts. I'll fix this when I'm actually working on the broadcasts... but right now I'm too anxious to see Actions work. Haven't seen it in months.
     //quint16 m_ConnectionIndependentClientId; //0 = invalid
 protected:
     inline void setErrorCode(quint8 errorCode) { m_ErrorCode = errorCode; } //action messages call this from within setFailed<reason>();
 
-
+//Success And Error Code
 //TODOreq: I think perhaps I should only stream in/out m_ErrorCode depending on m_Successful (think before changing) for both of the below... but for now to KISS I'm going to just always stream both in/out. I've made too many changes already, I'll be lucky if it even works :-/. Dynamic/minimal protocols ftw :). I was about to write right here that I should put m_ErrorCode in a safe state just in case they accidentally call it... but there is no safe state. There is no "non-error" state. 0x0 is "GenericError"... so I _GUESS_ we could set it to that... but well-written user code (WHICH WE CANNOT RELY ON) should never access m_ErrorCode unless we're not m_Successful
-
 #ifdef WE_ARE_RPC_BANK_SERVER_CLIENT_CODE
     inline void streamSuccessAndErrorCodeIn(QDataStream &in) { in >> m_Successful; in >> m_ErrorCode; }
 #endif
-
-//we have to be one or the other
-
 #ifdef WE_ARE_RPC_BANK_SERVER_CODE
     inline void streamSuccessAndErrorCodeOut(QDataStream &out) { out << m_Successful; out << m_ErrorCode; }
+#endif
+
+//Toggle Bit
+#ifdef WE_ARE_RPC_BANK_SERVER_CODE
+    inline void streamToggleBitIn(QDataStream &in) { in >> m_ToggleBit; }
+#endif
+#ifdef WE_ARE_RPC_BANK_SERVER_CLIENT_CODE
+    inline void streamToggleBitIn(QDataStream &in) { out << m_ToggleBit; }
 #endif
 };
 

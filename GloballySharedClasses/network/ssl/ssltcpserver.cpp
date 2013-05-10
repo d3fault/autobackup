@@ -1,7 +1,7 @@
 #include "ssltcpserver.h"
 
 SslTcpServer::SslTcpServer(QObject *parent) :
-    QTcpServer(parent)
+    QTcpServer(parent), m_ServerPrivateEncryptionKey(0), m_ServerPublicLocalCertificate(0)
 { }
 SslTcpServer::~SslTcpServer()
 {
@@ -9,8 +9,14 @@ SslTcpServer::~SslTcpServer()
     {
         this->stop();
     }
-    delete m_ServerPrivateEncryptionKey;
-    delete m_ServerPublicLocalCertificate;
+    if(m_ServerPrivateEncryptionKey)
+    {
+        delete m_ServerPrivateEncryptionKey;
+    }
+    if(m_ServerPublicLocalCertificate)
+    {
+        delete m_ServerPublicLocalCertificate;
+    }
 }
 void SslTcpServer::initialize(SslTcpServerArgs sslTcpArgs)
 {
