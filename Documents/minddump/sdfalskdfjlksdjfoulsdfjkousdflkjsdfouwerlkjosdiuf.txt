@@ -1,0 +1,11 @@
+Bank Client <--> Bank Server Helper <--> Network Client <--> Network Server <--> Bank Clients Helper <--> Bank Server
+
+Each stage has two way communication, yes... though that isn't relevant to what I'm about to say...
+
+At application startup for both client and server, we go from left to right (with appropriate classes).
+At application stopping for both client and server, we go from right to left (with appropriate classes).
+
+The client and server have a mirror effect until you see it in the big picture. On the server side we begin by starting the Bank Server itself, but on the client side we begin by starting the bank server helper (and network client). the end effect is that we are starting the bank client, so we may even be calling the bank client and telling it to start (first). but the bank client needs to 
+
+
+oh fuck maybe this is wrong i'm kinda lost but this shit is pretty easy tbh...

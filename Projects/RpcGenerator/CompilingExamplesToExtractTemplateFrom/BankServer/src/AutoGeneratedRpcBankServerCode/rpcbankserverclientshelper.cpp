@@ -129,6 +129,7 @@ void RpcBankServerClientsHelper::beginStoppingProcedure()
     //TODOoptimization: make it so incoming Action Requests are rejected with special error code, perhaps by calling a method on m_MultiServerAbstraction... or just by setting up a flag and responding directly to any incoming Action Requests right away in 'this'
     //^^ It makes more sense to have 'this' take care of it, since that 2-stage server-shutdown procedure is specific to the rpc generator. HOWEVER it might be a race condition that a message is in MultiServerAbstraction still? I don't even know what the fuck I mean by this, probably wrong...
 
+
     emit beginningStopProcedureInitiated();
 }
 void RpcBankServerClientsHelper::stop()

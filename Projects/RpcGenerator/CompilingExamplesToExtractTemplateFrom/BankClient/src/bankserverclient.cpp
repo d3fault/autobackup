@@ -11,6 +11,18 @@ BankServerClient::BankServerClient()
     //simplify it just like the RemoteBankManagementTest did so there's just 2 portions
 
     //yes, there will be actual objects instantiated here... but i can't think of any for the simplified RemoteBankManagementTest example
+
+
+    //to ease the burden of coding, i am stating that all "initialization" required to get BankServerClient in a "react-ready" state needs to be done in the constructor. Other use cases could still use custom logic to daisy chain initialize signals/slots but right now I'm already quite confused with the different times that BankServerClient and RpcBankServerHelper will be initializing. I get it now though. The client is rpc agnostic. oh my god i just figured out my problems. the gui should only talk to test! but test can and does connect the backends directly to the gui. the gui is ignorant of the business, and certain businesses are ignorant of each other! both businesses should be ignorant of the auto generated rpc code half.
+    //Because of the way we are arranging the BankServerClient as react-ready, it makes sense for us to also make the test only communicate through BankServerClient, as Test receives NO GUARANTEES (though this can be hacked around, it shouldn't because the code needs to stand up to many use cases) from the BankServerClient as to how long, if and when, RpcBankServerHelper will even be instantiated/started for! So it can't logically be the one to daisy-chain the two together! Hell, it shouldn't even know about the Rpc*Helper classes... oh my duh...
+    //The Rpc*Helper objects should be mere members on the Server/Client businesses.
+    //It makes sense that the server business definitely be ready for the clientshelper to use it (it is it's data source)
+    //But it doesn't make much sense for the client business to have to be ready for the serverhelper to use it... BECAUSE the client might be awaiting the serverhelper to be ready before marking itself ready. i guess what i mean is: ready to utilize. server business needs to be ready to be utilized by clientshelper. client business needs to be ready to be utilized by serverhelper.
+    //or wait maybe i mistook it momentarily
+    //the server business is ready to utilize the clientshelper/server. it is ready (data source) to do so.
+    //the client business is ready to utilize the serverhelper/client. it is ready (even if just saving a pointer to the backend object to be daisy chained later) to do so. it isn't until we call start on the *helper that anything can/will happen anyways (can for client, will for server).
+    //the client/server are essentially each exactly 1/2 of a "peer" btw
+    //the first one uses it in a much stricter manner. it really has to be really really ready or else the system might fail. the second is like "ok so that particular connection didn't get made, whatever".
 }
 void BankServerClient::instructBackendObjectsToClaimRelevantDispensers()
 {
@@ -40,21 +52,41 @@ void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IE
     connect(signalEmitter, SIGNAL(pendingBalanceDetected(ClientPendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage*)));
     connect(signalEmitter, SIGNAL(confirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)));
 }
-void BankServerClient::init()
+void BankServerClient::handleRpcBankServerHelperInstantiated(RpcBankServerHelper *rpcBankServerHelper)
 {
+    //TODOreq maybe actually do stuff here
+    //connect our signals to it's action slots
+    //connect it's broadcast signals to our slots
+
+    //but also, TODOreq: do start/stop as well?
+
+    //old/obsolete todo methinks:
     //TODOmb: if we ever add a backend object, we'd send a queued init to it right here.. and also need a daisyChain() method to get it's initialized() signal
-    emit d("BankServerClient received init message");
-    emit initialized();
+    emit d("BankServerClient was notified that rpc bank server helper is instantiated");
+    emit instantiationOfRpcBankServerHelperHandled();
 }
-void BankServerClient::start()
+void BankServerClient::startRpcBankServerHelper()
 {
-    emit d("BankServerClient received start message");
-    emit started();
+    emit startRpcBankServerHelperRequested();
 }
-void BankServerClient::stop()
+void BankServerClient::handleRpcBankServerHelperStarted()
 {
-    emit d("BankServerClient received stopped message");
-    emit stopped();
+    //I used to have this slot called "start", but client is user code so it doesn't necessarily start when the bank rpc server client does. The same goes for stopping
+
+    emit d("RpcBankServerClient got word that rpc bank server helper started");
+    emit startOfRpcBankServerHelperHandled();
+}
+void BankServerClient::beginStoppingRpcBankServerHelper()
+{
+    //TODOreq: wait for shit to exit cleanly. use server solution here prolly once implemented
+
+
+    emit stopRpcBankServerHelperRequested();
+}
+void BankServerClient::handleRpcBankServerHelperStopped()
+{
+    emit d("RpcBankServerClient got word that rpc bank server helper stopped");
+    emit stopOfRpcBankServerHelperHandled();
 }
 void BankServerClient::handleCreateBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage)
 {

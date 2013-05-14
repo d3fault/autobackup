@@ -1,0 +1,6 @@
+For my last.fm ripper, I should allow (default at 4.9 hits-per-second, as 5 is the max in their terms. they can change the rate too before or during the operation) the user to click "unthrottle" while we are downloading and showing a progress bar and explaining why it's taking so long. i should warn them that they risk getting their IP banned. This is such an easy app I'm thinking about coding it and releasing binaries on Facebook for it.
+
+Why?
+WHy is that significant?
+Because if I wasn't the author of them, I would not be allowed to post executables on Facebook.
+Or at least I wouldn't have a reasonable excuse to (or not to, i forget which).

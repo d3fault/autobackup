@@ -48,18 +48,26 @@ void RpcBankServerHelper::daisyChainInitStartStopConnections()
 }
 void RpcBankServerHelper::init()
 {
-    emit d("RpcBankServerHelper received init message");
-    QMetaObject::invokeMethod(m_RpcBankServerClient, "init", Qt::QueuedConnection);
+    //old:
+    //emit d("RpcBankServerHelper received init message");
+    //QMetaObject::invokeMethod(m_RpcBankServerClient, "init", Qt::QueuedConnection);
+
+    //TODOreq:
+
+    //then
+    emit initialized();
+
+    //TODOreq: same redo from old->new for start/stop as well
 }
 void RpcBankServerHelper::start()
 {
-    emit d("RpcBankServerHelper received start message");
-    QMetaObject::invokeMethod(m_RpcBankServerClient, "start", Qt::QueuedConnection);
+    //emit d("RpcBankServerHelper received start message");
+    //QMetaObject::invokeMethod(m_RpcBankServerClient, "start", Qt::QueuedConnection);
 }
 void RpcBankServerHelper::stop()
 {
-    emit d("RpcBankServerHelper received stop message");
-    QMetaObject::invokeMethod(m_Transporter, "stop", Qt::QueuedConnection);
+    //emit d("RpcBankServerHelper received stop message");
+    //QMetaObject::invokeMethod(m_Transporter, "stop", Qt::QueuedConnection);
 }
 void RpcBankServerHelper::moveTransporterToItsOwnThreadAndStartTheThread()
 {
@@ -72,4 +80,8 @@ void RpcBankServerHelper::moveBusinessToItsOwnThreadAndStartTheThread()
     m_BusinessThread = new QThread();
     m_RpcBankServerClient->moveToThread(m_BusinessThread);
     m_BusinessThread->start();
+}
+void RpcBankServerHelper::initialize(MultiServerClientAbstractionArgs clientArgs)
+{
+    //TODOreq
 }

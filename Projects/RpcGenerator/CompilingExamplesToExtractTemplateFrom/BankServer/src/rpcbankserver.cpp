@@ -31,6 +31,7 @@ void RpcBankServer::initializeAllBackends()
     emit bankDbInitializeRequested(m_RpcBankServerClientsHelper); //if they all have the same parameters, I can just connect them all to an 'initializeRequested' signal. However not all backends will need/want all rpc service pointers. In fact BankDb doesn't even need this bank server one. I could have set up his connections for him (that's all he uses it for, as opposed to bitcoin who claims broadcast dispensers on it etc)
     //etc
 }
+//On the server side of things, this is called Initialize because the BankServer is specifically an Rpc one. On the client side of things, this is called "handleRpcBankServerHelperInstantiaed" because it could be long living and use multiple rpc server helpers. meanwhile, IT's initialize slot would have been called only once and way earlier in the code
 void RpcBankServer::initialize(RpcBankServerClientsHelper *rpcBankServerClientsHelper)
 {
     //TODOreq: not sure if it matters, but the business should be destructed before the clientshelper? maybe stop (both), sync, then teardown business then teardown clients helper? i'm thinking it might matter because our backends "own" some broadcast dispensers that *MIGHT* go out of scope/be-deleted if/when i delete clients helper? now that i think about it, they're pointers so i doubt it (TODOreq: delete them then!), but still seems like better form to not have dangling pointers or something idfk

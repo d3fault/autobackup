@@ -55,14 +55,11 @@ void RpcBankServerTest::daisyChainConnections()
     //////Android sort of has this already through their Activity life-span virtual overrides stuff, but mine is just to make coding on threads easier and I think my design will be vastly simpler than Android's Activity life-span bullshit setup. I never knew what was what with that... but this threading-only one won't have that same problem.
     ////////So the stop state or whatever would also wait (after async quit'ing each one first (unless order matters)), but that's built into QThread so is easy, which made me think of "what to do if it doesn't respond" which led me to think it could be solved with Byzantine shit which gave me the idea and showed me the connection/similarity between a thread/process lifespan and a distributed database "service". Both of them are solved using byzantine. You could also use the State Machine Generator instead/also/combine-the-terms-somehow to asynchronously instantiate remote byzantine-safe either services or servers, not sure what the difference is but I think understanding that might be important. Does it have to do with loading library vs. launching app similarities?
 
-    connect(&m_BankServerDebugWidget, SIGNAL(startBusinessRequested()), m_RpcBankServer, SLOT(start()));
-    connect(m_RpcBankServer, SIGNAL(started()), m_RpcBankServerClientsHelper, SLOT(start()));
-    connect(m_RpcBankServerClientsHelper, SIGNAL(started()), &m_BankServerDebugWidget, SLOT(handleBusinessStarted()));
 
-    connect(&m_BankServerDebugWidget, SIGNAL(stopBusinessRequested()), m_RpcBankServerClientsHelper, SLOT(beginStoppingProcedure()));
+    connect(m_RpcBankServer, SIGNAL(started()), m_RpcBankServerClientsHelper, SLOT(start()));
+
     connect(m_RpcBankServerClientsHelper, SIGNAL(beginningStopProcedureInitiated()), m_RpcBankServer, SLOT(stop()));
     connect(m_RpcBankServer, SIGNAL(stopped()), m_RpcBankServerClientsHelper, SLOT(stop()));
-    connect(m_RpcBankServerClientsHelper, SIGNAL(stopped()), &m_BankServerDebugWidget, SLOT(handleBusinessStopped()));
 }
 #if 0
 void RpcBankServerTest::start()
@@ -100,12 +97,14 @@ void RpcBankServerTest::stop()
 void RpcBankServerTest::handleRpcBankServerInstantiated()
 {
     m_RpcBankServer = m_RpcBankServerThreadHelper.getObjectPointerForConnectionsOnly();
-    connect(this, SIGNAL(initializeRpcBankServerRequested(RpcBankServerClientsHelper*)), m_RpcBankServer, SLOT(initialize(RpcBankServerClientsHelper*)));
-    connect(m_RpcBankServer, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
-    connect(m_RpcBankServer, SIGNAL(initialized()), this, SLOT(handleRpcBankServerInitialized()));
 
+    connect(m_RpcBankServer, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));    
+
+    //perform as many connections as we can right now, but the ones where bankServerClient and bankServerHelper are being connected to each other need to go in daisyChainConnections
+    connect(this, SIGNAL(initializeRpcBankServerRequested(RpcBankServerClientsHelper*)), m_RpcBankServer, SLOT(initialize(RpcBankServerClientsHelper*)));
+    connect(m_RpcBankServer, SIGNAL(initialized()), this, SLOT(handleRpcBankServerInitialized()));
     connect(&m_BankServerDebugWidget, SIGNAL(startBusinessRequested()), m_RpcBankServer, SLOT(start()));
-    connect(&m_BankServerDebugWidget, SIGNAL(stopBusinessRequested()), m_RpcBankServer, SLOT(stop()));
+    connect(&m_BankServerDebugWidget, SIGNAL(stopBusinessRequested()), m_RpcBankServerClientsHelper, SLOT(beginStoppingProcedure()));
 
     //DEBUG:
     connect(&m_BankServerDebugWidget, SIGNAL(simulatePendingBalanceDetectedBroadcastRequested()), m_RpcBankServer, SIGNAL(simulatePendingBalanceDetectedBroadcastRequested()));
@@ -117,9 +116,33 @@ void RpcBankServerTest::handleRpcBankServerInstantiated()
 void RpcBankServerTest::handleRpcBankServerClientsHelperIntantiated()
 {
     m_RpcBankServerClientsHelper = m_RpcBankServerClientsHelperThreadHelper.getObjectPointerForConnectionsOnly();
-    connect(this, SIGNAL(initializeRpcBankServerClientsHelperRequested(MultiServerAbstractionArgs)), m_RpcBankServerClientsHelper, SLOT(initialize(MultiServerAbstractionArgs)));
+
     connect(m_RpcBankServerClientsHelper, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+
+    connect(this, SIGNAL(initializeRpcBankServerClientsHelperRequested(MultiServerAbstractionArgs)), m_RpcBankServerClientsHelper, SLOT(initialize(MultiServerAbstractionArgs)));
     connect(m_RpcBankServerClientsHelper, SIGNAL(initialized()), this, SLOT(handleRpcBankServerClientsHelperInitialized()));
+
+    //TODOreq (design/semantics/etc):
+    //we've got a weird case where our controller (should be used for initialize/start/stop) is the business also. i'm referring to RpcBankServer itself of course. My point is this: the GUI should never connect to or communicate with the RpcBankServerClientsHelper if we want "proper design"/theory. Basically a stop should look like this:
+    //GUI -> Rpc Bank Server -> Rpc Bank Server Clients Helper (who then WAITS FOR RPC BANK SERVER TO FINISH WORKING ON PENDING ACTIONS BEFORE THEN SHUTTING HIMSELF DOWN (it is worth mentioning that Rpc Bank Server is still instantiated and communicable (and even data accessible i suppose (yes it buys me something but i can't put my thumb on what))) after flushing the pending action queue (or notifying that it has failed to do so given a certain timeout)) -> Rpc Bank Server -> GUI
+    //whereas right now I have it (and it'll still technically work this way, just is improper design):
+    //GUI -> Rpc Bank Server Clients Helper -> Rpc Bank Server [finishes up pending Actions] -> Bank Server Clients Helper -> GUI
+    //They are both KIND OF fine, except that "Rpc Bank Server" is the main business and the core of the app... rpc is just an... extension to it of sorts (even though we depend on rpc atm fml (that's easily fixable by giving the init/start/stop unique-to-rpc-service names just like i'm doing in client. ultimately an include, a member, and some custom-specific-for-rpc-service-method-that-must-exist-anyways is all that's needed to use the Rpc Generator)). It's just us allowing access to the server/data.
+    //I wrote this while doing the similar code in "client" and noticing that I should not be having the GUI communicate with Server Helper but instead with Server Client (who is, btw, multi-rpc-server capable so needs specialized and rpc-service specific signals/slots for starting/stopping each service based on GUI commands (or in teh future, library calls from whatever business wants to use rpc!)
+    //Basically it boils down to more "requested" signals and shit like that. just a change in design really, the order of actual instantiation/initialization stays the same!
+    //^^that TODOreq (design/semantics req) became: i need to make the server also having the same requirements. it essentially already does except for the naming. there would be a namespace collision in the usercode if two rpc services were generated. i just need to use the input name for (had: of) the rpc service a little bit more. instead of "initialize" it should be "handleRpcBankServerHelperInstantiated(ptr2It)". that's in rpc bank server (or soon to also become just "bank server" soon?) btw. yes, rpc bank server also has an initialize THAT INCIDENTALLY might just be calling initialize on itself and/or it's own members! the name becomes ambiguious and i don't think i was affected (or is it effected?) by the ambiguity until more recently. i could be wrong.
+    //Ok figured it out: since the test is the controller and ultimately represents the user code and shoudl be minimized in complexity, we will only have communication between the GUI and the Client/Server Business. The client/server business hides all networking logic from Test (and we use signal relay hack (optimization) as needed)
+    //The businesses themselves do depend on the oh fuck i'm lost as fuck
+    //perhaps i need yet another insulation layer or whatever the fuck it's called. That "fake" word.
+
+    //TODO LEFT OFF TRYING TO FIGURE OUT IF IT'S WORTH IT AND EASY TO MAKE CLIENT/SERVER BUSINESSES EASILY ABLE TO USE MULTIPLE RPC SERVICES
+    //for client it only makes sense if the app is growing
+    //for server it makes sense for more apps (or additionally if the data source is growing, just like with client)
+    //aren't those essentially the same things? what the fuck am i talking about?
+    //gah why did doing sucha trivial task suddenly become so difficult?
+
+    connect(m_RpcBankServerClientsHelper, SIGNAL(started()), &m_BankServerDebugWidget, SLOT(handleBusinessStarted()));
+    connect(m_RpcBankServerClientsHelper, SIGNAL(stopped()), &m_BankServerDebugWidget, SLOT(handleBusinessStopped()));
 
     m_RpcBankServerClientsHelperInstantiated = true;
     initializeBusinessAndClientsHelperIfReady();
@@ -131,6 +154,7 @@ void RpcBankServerTest::handleRpcBankServerClientsHelperInitialized()
 }
 void RpcBankServerTest::handleRpcBankServerClientsHelperStarted()
 {
+    //TODOreq perhaps? saw this empty out of nowhere
 }
 void RpcBankServerTest::handleRpcBankServerInitialized()
 {

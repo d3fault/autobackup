@@ -16,9 +16,11 @@ class RpcBankServerHelper : public QObject
     Q_OBJECT
 public:
     explicit RpcBankServerHelper(IRpcBankServerClientBusiness *rpcBankServerClient);
+#if 0
     void init();
     void start();
     void stop();
+#endif
 private:
     QThread *m_BusinessThread;
     IRpcBankServerClientBusiness *m_RpcBankServerClient;
@@ -36,6 +38,10 @@ signals:
     void initialized();
     void started();
     void stopped();
+public slots:
+    void initialize(MultiServerClientAbstractionArgs clientArgs);
+    void start();
+    void stop();
 };
 
 #endif // RPCBANKSERVERHELPER_H

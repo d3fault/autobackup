@@ -1,0 +1,12 @@
+probe for stability in udp (rpc "message" level authentication (via ssl/etc)) but if there is instability then fallback to tcp, which has a more optimal efficiency rate when dealing with message losses. all we have to do is graph and compare the two's effecision rate (had (two'e)) (lol wtf?) and we'll find the optimal (reasonably estimated, but not perfect (perfect is possible but very difficult maths for me)). wow a typo a while ago i didn't notice: efficiency not efficision. weiron word i just made up. weird yes i let that one go fuck it gah i've been over "tyop recording" jillion s of times.
+
+tcp just works on a byte level whereas d3fault works on a message level. if there aren't any disrutptions now and the network topology is not expected to change anytime soon, there probably won't be [many] disruptions in the future. if there aren't many, a not-authenticating-at-such-a-low-level is less efficient because it ALWAYS (under certain circumstances which must be selected for always to be true) checks at regular byte-counted-and-data-oblivious intervals.
+
+IDataOblivious
+
+i don't know why that's significant but i think that it is. i just forgot why is all. and i'll probably never remember why. but i'm glad it's written down at least.
+
+it has/had some programming significance. just like the introduction to an app or something. there are two introductions to an app: the cpu entry point (int main(argc,argv**);) and then the developer's entry point to the idea/first-line-of-code. this idea <-- may or may not be related to the shit i was talking about but forgot. there was the original idea and then there was the idataoblivious idea. i don't know if they were combined. but i THINK not. could be wrong have no idea as that is the point: i have forgotten it. but i THINK i remember that much.
+
+
+The transport layers are data oblivious therefore it is incorrect to do the message acknowledgement at that layer. We do not shrink/expand message sizes (and they may or may not be used in a "fixed size for anonymity" scheme (now or later or whenever free will ftw)), but that is a side point to
