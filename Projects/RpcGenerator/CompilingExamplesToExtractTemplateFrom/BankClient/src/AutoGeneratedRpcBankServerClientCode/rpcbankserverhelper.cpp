@@ -81,7 +81,15 @@ void RpcBankServerHelper::moveBusinessToItsOwnThreadAndStartTheThread()
     m_RpcBankServerClient->moveToThread(m_BusinessThread);
     m_BusinessThread->start();
 }
-void RpcBankServerHelper::initialize(MultiServerClientAbstractionArgs clientArgs)
+void RpcBankServerHelper::initialize(MultiServerClientAbstractionArgs multiServerClientAbstractionArgs)
 {
-    //TODOreq
+    emit d("RpcBankServerHelper received initialize message");
+    //TODOreq: appears to make sense that the .initailize call below should return a bool and be checked before setting m_Initialized to true...
+    m_MultiServerAbstraction.initialize(multiServerClientAbstractionArgs);
+    m_Initialized = true;
+    emitInitializedSignalIfReady();
+}
+void RpcBankServerHelper::handleDoneClaimingActionDispensers()
+{
+    emitInitializedSignalIfReady();
 }

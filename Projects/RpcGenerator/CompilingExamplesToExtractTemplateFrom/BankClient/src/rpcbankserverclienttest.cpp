@@ -45,7 +45,6 @@ void RpcBankServerClientTest::initializeBankServerClientAndServerHelper()
 void RpcBankServerClientTest::daisyChainConnections()
 {
     connect(m_RpcBankServerHelper, SIGNAL(started()), m_BankServerClient, SLOT(start()));
-
     connect(m_BankServerClient, SIGNAL(beginningStopProcedureInitiated()), m_RpcBankServerHelper, SLOT(stop()));
     connect(m_RpcBankServerHelper, SIGNAL(stopped()), m_BankServerClient, SLOT(stop()));
 }
@@ -79,7 +78,7 @@ void RpcBankServerClientTest::handleRpcBankServerClientInstantiated()
 
         //perform as many connections as we can right now, but the ones where bankServerClient and bankServerHelper are being connected to each other need to go in daisyChainConnections
     connect(this, SIGNAL(rpcBankServerHelperInstantiated(RpcBankServerHelper*)), m_BankServerClient, SLOT(handleRpcBankServerHelperInstantiated(RpcBankServerHelper*))); //I am only able to do the connection, I do not yet have the object that I'll be sending
-    connect(m_BankServerClient, SIGNAL(initialized()), this, SLOT(handleRpcBankServerClientInitialized()));
+    connect(m_BankServerClient, SIGNAL(rpcBankServerHelperInstantiationHandled()), this, SLOT(handleRpcBankServerClientDoneWithServerHelperDuringInitialize()));
     connect(&m_BankServerClientDebugWidget, SIGNAL(startBusinessRequested()), m_BankServerClient, SLOT(startRpcBankServerHelper()));
     connect(m_BankServerClient, SIGNAL(started()), &m_BankServerClientDebugWidget, SLOT(handleBusinessStarted()));
     connect(&m_BankServerClientDebugWidget, SIGNAL(stopBusinessRequested()), m_BankServerClient, SLOT(beginStoppingRpcBankServerHelper()));
@@ -104,9 +103,13 @@ void RpcBankServerClientTest::handleRpcBankServerHelperInstantiated()
     m_RpcBankServerHelperInstantiated = true;
     initializeBusinessAndServerHelperIfReady();
 }
-void RpcBankServerClientTest::handleRpcBankServerClientInitialized()
+void RpcBankServerClientTest::handleRpcBankServerClientDoneWithServerHelperDuringInitialize()
 {
+    m_RpcBankServerClientDoneWithServerHelperDuringInitialize = true;
+    emitInitializedIfBusinessAndServerHelperAreInitialized();
 }
 void RpcBankServerClientTest::handleRpcBankServerHelperInitialized()
 {
+    m_RpcBankServerHelperInitialized = true;
+    emitInitializedIfBusinessAndServerHelperAreInitialized();
 }

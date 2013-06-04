@@ -14,6 +14,7 @@ public:
     ClientCreateBankAccountMessageDispenser *takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner);
     ClientGetAddFundsKeyMessageDispenser *takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(QObject *owner);
 
+    //TODOreq: it actually makes sense that a client might not use every single action that an rpc service exposes... so there isn't really a need to check that. On the flip side, a server DOES need to implement every broadcast... so the bool check makes sense on that side of things (leaving it in for now though)
     bool everyDispenserIsCreated();
 private:
     IAcceptRpcBankServerActionDeliveries *m_Destination;

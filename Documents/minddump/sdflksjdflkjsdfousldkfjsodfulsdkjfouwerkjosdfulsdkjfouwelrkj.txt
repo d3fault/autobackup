@@ -1,0 +1,15 @@
+One man systems (d3fault, which doesn't even yet exist, for example), tend to be superior to mult-man systems. Amongst all the communication and explaination of what is what, innovation is lost.
+
+
+.....that I can receive input (fuck yea free software), patches, etc etc... is just icing on the fucking cake.
+
+
+Getting a company of people to understand a design (a prerequisite for innovating said design) is much more difficult than a person who created it to innovate it himself. On a macro (code) (but micro when dealing with time) scale, it's certainly faster to outsource.... but so much time is dedicated just to bringing each person up to speed... and they usually only ever have the knowledge of the one feature they are working on... so they can't make improvements via TODOetcs on a semi-related feature on the other half of the project... because they simply don't know about it.
+
+
+OMA: feature superior, time (and therefore money) inferior.
+
+
+
+
+I'll take the latter. Money's boring and I have indefinite time (I think/hope).

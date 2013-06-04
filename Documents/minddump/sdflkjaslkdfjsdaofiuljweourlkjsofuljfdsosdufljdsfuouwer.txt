@@ -1,0 +1,16 @@
+The Reason I hate my life (atm) == The reason I hate this specific chunk of code (Rpc Generator) == THE FUCKING REASON I AM CODING RPC GENERATOR TO BEGIN WITH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+I hate networking code and never wish to touch it again. I have, on several occassions, said to myself: "fuck rpc generator i should just take a faster route to a [smaller/different/or-perhaps-just-simpler-design-but-same] project". Each time I do I feel momentarily relieved that I won't have to finish Rpc Generator anymore.... but then I "go over the design in my head" and EACH AND EVERY TIME there's a networking component (almost always), I facepalm.jpg when I realize I'd have to code an ack scheme for it and would therefore be doing exactly what I'm doing now (except less abstract).
+
+Rpc Generator has itself taken a large toll on my life. It is an investment that will mean I never have to touch networking code once it's done. The investment will pay off, but has not yet. It is negatively affecting my feelings about code and life in general. I am a miserable bastard.
+
+
+
+...but deep down I know I love both code and life. I know it because I keep forging through this bullshit. I hate it but I need to finish it ASAP. I've been working on it for far too long and it is and always will be [until finished <3 <3 <3] an enormous fucking headache.
+
+
+
+.......but analyzing this realisitically, it sure as shit beats writing/re-writing networking/ack schemes over and over and over for every project I touch (copy/paste, sure... but it'll still be a PITA (hmm just realized that a "replace string1 in files XYZ with string2" might be a sufficient replacement for Rpc Generator in it's entirety... FML (actually I KNOW it to be true because that's the basic design of Rpc Generator... I'm just saying I could have done it manually too))). I'm just ehh, paying the upfront cost of abstraction etc here/now. If I hacked together ABC asep then the networking/ack shit would probably be too dependent on the business logic and I'd have to untangle it in order to re-use it in another project. Unwinding is almost always harder than properly designing something.
+
+
+I'm saving myself a sliver of sanity per project with this Rpc Generator.... at the cost of all of those slivers of sanity being accounted for NOW. It's fucking me up. Fuck this project, I've never hated one more. Elaboration: this project is ONLY Rpc Generator.... ABC/launch-prep/launch/fingers/etc still have me OH SO GIDDY ;-P.

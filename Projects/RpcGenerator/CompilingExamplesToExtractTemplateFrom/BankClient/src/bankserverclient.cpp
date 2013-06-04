@@ -2,8 +2,16 @@
 
 #include <QDateTime> //debug
 
-BankServerClient::BankServerClient()
+BankServerClient::BankServerClient(QObject *parent)
+    : QObject(parent)
 {
+    connect(this, SIGNAL(doneUsingRpcBankServerHelperDuringInitialization()), this, SLOT(emitInitializedIfDoneWithAllRpcServices()));
+    //etc for each rpc service
+
+
+
+
+
     //instantiate backend business objects here
 
     //m_AnotherRpcServerSayWtSideOfThings = new QObject(); //rpc client's backend business object?
@@ -23,13 +31,6 @@ BankServerClient::BankServerClient()
     //the client business is ready to utilize the serverhelper/client. it is ready (even if just saving a pointer to the backend object to be daisy chained later) to do so. it isn't until we call start on the *helper that anything can/will happen anyways (can for client, will for server).
     //the client/server are essentially each exactly 1/2 of a "peer" btw
     //the first one uses it in a much stricter manner. it really has to be really really ready or else the system might fail. the second is like "ok so that particular connection didn't get made, whatever".
-}
-void BankServerClient::instructBackendObjectsToClaimRelevantDispensers()
-{
-    //once we have backend objects, we'll do backendObject->takeOwnershipOfApplicableActionDispensers(m_ActionDispensers);
-    //for now, we will take ownership for debug/testing etc
-    m_CreateBankAccountMessageDispenser = m_ActionDispensers->takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(this);
-    m_GetAddFundsKeyMessageDispenser = m_ActionDispensers->takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(this);
 }
 void BankServerClient::moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()
 {
@@ -55,15 +56,37 @@ void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IE
 void BankServerClient::handleRpcBankServerHelperInstantiated(RpcBankServerHelper *rpcBankServerHelper)
 {
     //TODOreq maybe actually do stuff here
-    //connect our signals to it's action slots
-    //connect it's broadcast signals to our slots
+    //connect our signals to it's action slots (is this right? doesn't it work by just calling .deliver() on the message?)
+    //connect it's broadcast signals to our slots (pretty sure this is right even if the above relating to actions isn't)
 
     //but also, TODOreq: do start/stop as well?
+
+    //once we have backend objects, we'll do backendObject->takeOwnershipOfApplicableActionDispensers(m_ActionDispensers);
+    //for now, we will take ownership for debug/testing etc
+
+    //Claim Action Dispensers
+    m_CreateBankAccountMessageDispenser = rpcBankServerHelper->actionDispensers()->takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(this);
+    m_GetAddFundsKeyMessageDispenser = rpcBankServerHelper->actionDispensers()->takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(this);
+
+
+    //Setup Broadcast Signals
+    connect(rpcBankServerHelper, SIGNAL(pendingBalanceDetectedBroadcasted(ClientPendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage*)));
+    connect(rpcBankServerHelper, SIGNAL(confirmedBalanceDetectedBroadcasted(ClientConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)));
+
+
+
+    connect(this, SIGNAL(rpcBankServerHelperInstantiationHandled()), rpcBankServerHelper, SLOT(handleDoneClaimingActionDispensers()));
+
 
     //old/obsolete todo methinks:
     //TODOmb: if we ever add a backend object, we'd send a queued init to it right here.. and also need a daisyChain() method to get it's initialized() signal
     emit d("BankServerClient was notified that rpc bank server helper is instantiated");
-    emit instantiationOfRpcBankServerHelperHandled();
+
+    emit rpcBankServerHelperInstantiationHandled();
+}
+void BankServerClient::handleRpcBankServerHelperInitialized()
+{
+    //blah so fucking lost but at the same time this shit's so fucking easy. just a matter of instantiate/initialize/start/stop ordering and daisy chaining etc. blah. used a standalone design on the server for this, starting to look like i'll need to here too...
 }
 void BankServerClient::startRpcBankServerHelper()
 {
@@ -125,12 +148,14 @@ void BankServerClient::handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(Cli
 }
 void BankServerClient::handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage)
 {
-    emit d(QString("pending balance detected for user: ") + pendingBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(pendingBalanceDetectedMessage->PendingBalance, 'f', 8));
+    //TODOreq: just like server already does, ack etc. perhaps all implicitly through the doneWithMessage call? idfk [yet] because broadcasts don't ack like actions do and i haven't coded the broadcast ack yet
+
+    emit d(QString("BankServerClient: pending balance detected for user: ") + pendingBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(pendingBalanceDetectedMessage->PendingBalance, 'f', 8));
     pendingBalanceDetectedMessage->doneWithMessage();
 }
 void BankServerClient::handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage *confirmedBalanceDetectedMessage)
 {
-    emit d(QString("confirmed balance detected for user: ") + confirmedBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(confirmedBalanceDetectedMessage->ConfirmedBalance, 'f', 8));
+    emit d(QString("BankServerClient: confirmed balance detected for user: ") + confirmedBalanceDetectedMessage->Username + QString(" with amount: ") + QString::number(confirmedBalanceDetectedMessage->ConfirmedBalance, 'f', 8));
     confirmedBalanceDetectedMessage->doneWithMessage();
 }
 void BankServerClient::simulateCreateBankAccountAction(QString username)

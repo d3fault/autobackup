@@ -1,0 +1,6 @@
+To outsource is to stop learning/improving. You and you alone have the knowledgeset required to write TODOreq and TODOoptimization etc etc on the fly while coding... on a <everything you have every created> scale. When you outsource, the writer now only has the perspective of that one single outsourced project. They also don't care to give you free ideas (and won't). I often find myself writing "low level" code and I think of a "high level" feature/optimization during it (or vice versa). If you outsource either portion, you lose that ability.
+
+
+
+
+.....and yet, coding is so tedious and time consuming that it's difficult to move forward on a macro scale.

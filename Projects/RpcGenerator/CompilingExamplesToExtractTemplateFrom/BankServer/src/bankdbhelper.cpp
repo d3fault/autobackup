@@ -9,8 +9,8 @@ void BankDbHelper::initialize(RpcBankServerClientsHelper *rpcBankServerClientsHe
 {
     emit d("BankDbHelper received init message");
 
-    connect(rpcBankServerClientsHelper, SIGNAL(createBankAccount(CreateBankAccountMessage*)), this, SLOT(createBankAccount(CreateBankAccountMessage*)));
-    connect(rpcBankServerClientsHelper, SIGNAL(getAddFundsKey(GetAddFundsKeyMessage*)), this, SLOT(getAddFundsKey(GetAddFundsKeyMessage*)));
+    connect(rpcBankServerClientsHelper, SIGNAL(createBankAccountRequested(CreateBankAccountMessage*)), this, SLOT(createBankAccount(CreateBankAccountMessage*)));
+    connect(rpcBankServerClientsHelper, SIGNAL(getAddFundsKeyRequested(GetAddFundsKeyMessage*)), this, SLOT(getAddFundsKey(GetAddFundsKeyMessage*)));
 
     emit initialized();
 }

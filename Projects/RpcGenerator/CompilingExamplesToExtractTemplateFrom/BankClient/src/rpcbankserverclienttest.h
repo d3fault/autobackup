@@ -52,6 +52,18 @@ private:
     bool m_RpcBankServerClientInstantiated;
     bool m_RpcBankServerHelperInstantiated;
 
+    //Initialize
+    inline void emitInitializedIfBusinessAndServerHelperAreInitialized()
+    {
+        if(checkBusinessAndServerHelperAreInitialized())
+        {
+            emit initialized();
+        }
+    }
+    inline bool checkBusinessAndServerHelperAreInitialized() { return (m_RpcBankServerClientDoneWithServerHelperDuringInitialize && m_RpcBankServerHelperInitialized); }
+    bool m_RpcBankServerClientDoneWithServerHelperDuringInitialize;
+    bool m_RpcBankServerHelperInitialized;
+
     //connections-only pointers
     BankServerClient *m_BankServerClient;
     RpcBankServerHelper *m_RpcBankServerHelper;
@@ -78,7 +90,7 @@ public slots:
 private slots:
     void handleRpcBankServerClientInstantiated();
     void handleRpcBankServerHelperInstantiated();
-    void handleRpcBankServerClientInitialized();
+    void handleRpcBankServerClientDoneWithServerHelperDuringInitialize();
     void handleRpcBankServerHelperInitialized();
 };
 

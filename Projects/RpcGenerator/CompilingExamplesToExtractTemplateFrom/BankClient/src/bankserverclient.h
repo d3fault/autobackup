@@ -9,8 +9,7 @@ class BankServerClient /*: public IRpcBankServerClientBusiness*/ : public QObjec
 {
     Q_OBJECT
 public:
-    BankServerClient();
-    void instructBackendObjectsToClaimRelevantDispensers();
+    BankServerClient(QObject *parent = 0);
     void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
     void connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam *signalEmitter);
 private:
@@ -18,7 +17,8 @@ private:
     ClientCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ClientGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 signals:
-    void instantiationOfRpcBankServerHelperHandled();
+    void rpcBankServerHelperInstantiationHandled();
+
     void startRpcBankServerHelperRequested();
     void startOfRpcBankServerHelperHandled();
     void simulateCreateBankAccountActionRequested();
@@ -27,6 +27,7 @@ signals:
     void stopOfRpcBankServerHelperHandled();
 public slots:
     void handleRpcBankServerHelperInstantiated(RpcBankServerHelper *rpcBankServerHelper);
+    void handleRpcBankServerHelperInitialized();
 
     void startRpcBankServerHelper();
     void handleRpcBankServerHelperStarted();
