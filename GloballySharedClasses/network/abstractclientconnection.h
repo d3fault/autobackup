@@ -58,7 +58,7 @@ public:
 protected:
     //bool m_ConnectionGood; -- pretty sure m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection does this job for me (TODOreq: make sure it's checked in all the right places, m_ConnectionGood was a last resort means, aka sloppy and perhaps never was even necessary)
 private:
-    AbstractClientConnection *m_OldConnectionToMergeOnto;    
+    AbstractClientConnection *m_OldConnectionToMergeOnto;
     void mergeNewIoDevice(QIODevice *newIoDeviceToClient);
     bool m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection;
 

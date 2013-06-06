@@ -25,16 +25,16 @@ public:
     }
     inline void streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient()
     {
-        m_TransmitMessageDataStream << ((quint8)AbstractClientConnection::DoneHelloingFromServer); //semi-hacky but sure beats building yet another QDS inside AbstractClientConnection just to stream it lmfao
+        m_TransmitMessageDataStream << ((quint8)AbstractServerConnection::DoneHelloingFromServer); //semi-hacky but sure beats building yet another QDS inside AbstractClientConnection just to stream it lmfao
     }
-    inline void setAbstractClientConnection(AbstractClientConnection *abstractClientConnection) { m_AbstractClientConnection = abstractClientConnection; }
+    inline void setAbstractClientConnection(AbstractServerConnection *abstractClientConnection) { m_AbstractClientConnection = abstractClientConnection; }
     inline void setMessageReceivedDataStream(QDataStream *messageReceivedDataStream) { m_MessageReceivedDataStream = messageReceivedDataStream; }
     virtual void messageReceived()=0; //QDataStream *messageDataStream /*, quint32 clientId */);
     virtual void queueActionResponsesHasBeenEnabledSoBuildLists()=0;
 private:
     QBuffer m_TransmitMessageBuffer;
 protected:
-    AbstractClientConnection *m_AbstractClientConnection;
+    AbstractServerConnection *m_AbstractClientConnection;
     QDataStream *m_MessageReceivedDataStream;
     QByteArray m_TransmitMessageByteArray;
     QDataStream m_TransmitMessageDataStream;

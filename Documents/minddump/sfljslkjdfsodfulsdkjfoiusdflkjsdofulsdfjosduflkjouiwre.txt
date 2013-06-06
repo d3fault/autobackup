@@ -1,0 +1,20 @@
+class Human : public QObject
+{
+	Q_OBJECT
+public:
+	Human() : m_HeartBeating(true) { }
+private:
+	bool m_HeartBeating;
+signals:
+	void good();
+public slot:
+	void howAreYouDoing();
+}
+void Human::howAreYouDoing()
+{
+	if(m_HeartBeating) //holds fingers up to neck to check. mb some self.holdFingersUpToNeck nonsense if you're extra bored... where self is the physical body of the human and "this" (Human) is more of a... mind construct...
+	{
+		emit good();
+	}
+	//no response otherwise
+}

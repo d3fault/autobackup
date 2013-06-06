@@ -53,7 +53,7 @@ void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IE
     connect(signalEmitter, SIGNAL(pendingBalanceDetected(ClientPendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage*)));
     connect(signalEmitter, SIGNAL(confirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)));
 }
-void BankServerClient::handleRpcBankServerHelperInstantiated(RpcBankServerHelper *rpcBankServerHelper)
+void BankServerClient::initialize(RpcBankServerHelper *rpcBankServerHelper)
 {
     //TODOreq maybe actually do stuff here
     //connect our signals to it's action slots (is this right? doesn't it work by just calling .deliver() on the message?)
@@ -74,42 +74,27 @@ void BankServerClient::handleRpcBankServerHelperInstantiated(RpcBankServerHelper
     connect(rpcBankServerHelper, SIGNAL(confirmedBalanceDetectedBroadcasted(ClientConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)));
 
 
-
-    connect(this, SIGNAL(rpcBankServerHelperInstantiationHandled()), rpcBankServerHelper, SLOT(handleDoneClaimingActionDispensers()));
-
-
     //old/obsolete todo methinks:
     //TODOmb: if we ever add a backend object, we'd send a queued init to it right here.. and also need a daisyChain() method to get it's initialized() signal
-    emit d("BankServerClient was notified that rpc bank server helper is instantiated");
+    emit d("Initializing BankServerClient with rpc bank server helper pointer");
 
-    emit rpcBankServerHelperInstantiationHandled();
+    emit initialized();
 }
-void BankServerClient::handleRpcBankServerHelperInitialized()
+void BankServerClient::start()
 {
-    //blah so fucking lost but at the same time this shit's so fucking easy. just a matter of instantiate/initialize/start/stop ordering and daisy chaining etc. blah. used a standalone design on the server for this, starting to look like i'll need to here too...
+    emit d("RpcBankServerClient received start message");
+    emit started();
 }
-void BankServerClient::startRpcBankServerHelper()
-{
-    emit startRpcBankServerHelperRequested();
-}
-void BankServerClient::handleRpcBankServerHelperStarted()
-{
-    //I used to have this slot called "start", but client is user code so it doesn't necessarily start when the bank rpc server client does. The same goes for stopping
-
-    emit d("RpcBankServerClient got word that rpc bank server helper started");
-    emit startOfRpcBankServerHelperHandled();
-}
-void BankServerClient::beginStoppingRpcBankServerHelper()
+void BankServerClient::beginStoppingProcedure()
 {
     //TODOreq: wait for shit to exit cleanly. use server solution here prolly once implemented
+    //so basically it's this: client will now NOT accept any more action requests (from the "left" (gui/user in example/spec)). It can still receive broadcasts and action responses (from the right). It signals it's "right" (RpcBankServerHelper) to stop... which signals us after that's completed... and then we know we're stopped completely and emit stopped()
 
-
-    emit stopRpcBankServerHelperRequested();
+    emit beginStoppingProcedureRequested();
 }
-void BankServerClient::handleRpcBankServerHelperStopped()
+void BankServerClient::finishStoppingProcedure()
 {
-    emit d("RpcBankServerClient got word that rpc bank server helper stopped");
-    emit stopOfRpcBankServerHelperHandled();
+    emit stopped();
 }
 void BankServerClient::handleCreateBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage)
 {

@@ -17,6 +17,7 @@ public:
     void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
     void connectRpcBankServerClientActionRequestSignalsToBankServerImplSlots(IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries *actionRequestSignalEmitter);
 private:
+    //connections only
     RpcBankServerClientsHelper *m_RpcBankServerClientsHelper;
 
     //Instantiate

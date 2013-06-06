@@ -37,7 +37,7 @@ class RpcBankServerClientTest : public QObject
 {
     Q_OBJECT
 public:
-    RpcBankServerClientTest();
+    RpcBankServerClientTest(QObject *parent = 0);
 private:
     BankServerClientDebugWidget m_BankServerClientDebugWidget;
     ObjectOnThreadHelper<BankServerClient> m_RpcBankServerClientThreadHelper;
@@ -46,7 +46,14 @@ private:
     //RpcBankServerHelper *m_RpcBankServerHelper;
 
     //Instantiate
-    inline void initializeBusinessAndServerHelperIfReady() { if(checkBusinessAndServerHelperAreInstantiated()) initializeBankServerClientAndServerHelper(); }
+    inline void initializeBusinessAndServerHelperIfReady()
+    {
+        if(checkBusinessAndServerHelperAreInstantiated())
+        {
+            m_BankServerClientDebugWidget.show();
+            initializeBankServerClientAndServerHelper();
+        }
+    }
     inline bool checkBusinessAndServerHelperAreInstantiated() { return (m_RpcBankServerClientInstantiated && m_RpcBankServerHelperInstantiated); }
     void initializeBankServerClientAndServerHelper();
     bool m_RpcBankServerClientInstantiated;
@@ -60,8 +67,8 @@ private:
             emit initialized();
         }
     }
-    inline bool checkBusinessAndServerHelperAreInitialized() { return (m_RpcBankServerClientDoneWithServerHelperDuringInitialize && m_RpcBankServerHelperInitialized); }
-    bool m_RpcBankServerClientDoneWithServerHelperDuringInitialize;
+    inline bool checkBusinessAndServerHelperAreInitialized() { return (m_RpcBankServerClientInitialized && m_RpcBankServerHelperInitialized); }
+    bool m_RpcBankServerClientInitialized;
     bool m_RpcBankServerHelperInitialized;
 
     //connections-only pointers
@@ -73,7 +80,7 @@ signals:
     void initialized();
     void d(const QString &);
 
-    void rpcBankServerHelperInstantiated(RpcBankServerHelper*);
+    void initializeRpcBankServerClientRequested(RpcBankServerHelper*);
     void initializeRpcBankServerHelperRequested(MultiServerClientAbstractionArgs);
 
     void startRpcBankServerClientRequested();
@@ -90,7 +97,8 @@ public slots:
 private slots:
     void handleRpcBankServerClientInstantiated();
     void handleRpcBankServerHelperInstantiated();
-    void handleRpcBankServerClientDoneWithServerHelperDuringInitialize();
+
+    void handleRpcBankServerClientInitialized(); //effectively handleRpcBankServerClientInitialized, except that he can use more than 1 rpc service.... OR SOMETHING. what? contradicted myself again and again and again i'm so lost and yet i want/need to hack through this stupid piece of shit. figuring out the perfect [high level] "example"/"spec" design can be done later when.... trying to use the rpc generator output in a small sample project for the first time. It makes sense that I'm having a hard to keeping the two separated, when in fact they are NOT (for this example/spec). It's already "simplified" enough that I can re-arrange it easily enough at a later date... so DO THAT!
     void handleRpcBankServerHelperInitialized();
 };
 

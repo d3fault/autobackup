@@ -40,6 +40,10 @@ void BankServerClientDebugWidget::handleSimulateGetAddFundsKeyClicked()
         this->handleD("enter username");
     }
 }
+void BankServerClientDebugWidget::handleBusinessInitialized()
+{
+    handleD("gui noticed business has initialized");
+}
 void BankServerClientDebugWidget::handleBusinessStarted()
 {
     m_BusinessStarted = true;

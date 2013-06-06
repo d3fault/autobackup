@@ -1,0 +1,35 @@
+I still haven't properly/formally decided (or maybe I have and just can't remember?).... what is what... or how each will depend on the other... in the context of Rpc Generation.
+
+Rpc Bank Server
+Bank Server (served via Rpc (only?!?!?!?))
+
+same with client
+
+
+Is the "test" in each the one that deserves the rpc-less name? I guess it ultimately depends on how an actual use of it will look when finished.
+
+I keep thinking I should change the design so that the helpers are simply members of the "RpcBank*" (client/server)... but then they depend on rpc!
+
+A server could be exposed via command line, gui, rpc... etc...
+
+
+I think a client, on the other hand, is pretty engrained in where it gets it's data from (rpc in this case)... so that half doesn't need to be as portable?
+
+
+
+What is both KISS and portable/future-proof? I don't want to overcomplicate it, but I keep doubling back on myself and thinking the current way is somehow... wrong...
+
+Figuring out what is "proper" is sort of difficult when everything's arbitrary (this applies to everything btw).
+
+
+
+That's why I'm making my requirement just: KISS and portable. Whatever WORKS. Could easily spend my entire life optimizing some bullshit and waste it all.
+
+Starting to think this problem is solved/analyzed easier in a diagram application...
+
+
+I basically just need to see a real world use case and then abstract the design/answer out of that... of course, that first real world case would depend on the code I already have... lol... so that complicates a things a bit (however, most of the low level design won't be changing... just the higher up stupid bullshit will...).
+
+
+One thing that won't change: Both the server and client "businesses" will call the dispensers for messages (actions on client, broadcasts on server)... so in THAT sense they both ALREADY depend on the rpc*helpers. Doesn't it also make sense that they then have the rpc*helpers as members? What was my original reasoning for not having them be members? I haven't a clue. I do remember making them no longer Implement interfaces in order to "be" rpc enabled... but I somehow went from that to... the "test" being the ones with the rpc*helpers as members. I wouldn't be surprised if I considered what I'm considering now multiple times and found reasons why not to (order of initialization requirements, etc). I have no clue and that makes me pretty hesitant towards making any changes NOW.
+

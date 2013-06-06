@@ -24,6 +24,7 @@ private slots:
     void handleSimulateCreateBankAccountClicked();
     void handleSimulateGetAddFundsKeyClicked();
 public slots:
+    void handleBusinessInitialized();
     void handleBusinessStarted();
     void handleBusinessStopped();
 };

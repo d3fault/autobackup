@@ -1,0 +1,40 @@
+so I'm starting to think the rpc*helpers should in fact be members on their respective business classes
+
+BankServer.initialize(configSpecifyingRpcServer_ButCouldAlsoSpecifyOtherKindsOfAccessToTheDataServedSuchAsCmdLineForExample);
+//or: bankServer.addServiceExposer(rpcBankServerClientsHelper); -- instead of that arg in initialize
+BankServer.start();
+
+
+RpcBankServerClient.initialize(); //initializes server helper (it's member)
+RpcBankServerClient.start(); //ditto
+
+
+
+
+You'll notice that I've now flipped on what I've said previously: client is rpc specified and server is not! Jesus man how many times am I going to re-arrange the high level design of this shit.
+
+
+
+The client still needs to be able to work with other rpc services. In that case it will be "tied to" two specific rpc services. Their helpers with both be members and the name of it's class should then change as appropriate
+
+
+
+And for future-as-fuck proofing, here's me attempting to do AbcAppDb (middle layer that probably doesn't even exist anymore.. that was once going to be an rpc server and rpc client simultaneously):
+
+class AbcAppDb : public QObject
+{
+private:
+	RpcBankServerHelper *m_RpcBankServerHelper;
+	RpcAppDbServerClientsHelper *m_RpcAppDbServerClientsHelper;
+};
+
+
+ultimately, the bank server is the data source of the app db.. so the bank server needs to be initialized/started before the app db.
+
+I do think there's a nice "sink/source" paradigm that fits this stuff nicely but I can't be fucked to go look it up or rename all my shit accordingly. And tbh I dunno which is which. I just know that THEORETICALLY using interfaces and the like and a fancy framework, I _COULD_ connect RpcBankServerHelper as the "source" of RpcAppDbServerClientsHelper. And on the server half of the network, I could make a database object that then inherits the same thing that the RpcAppDbServerClientsHelper does ont the client side "data source". So if a client is a data source and a server is a data source, wat. wait no it's not. I'm so lost.
+
+Fuck all this but there's something in there that's true and mostly not important.
+
+
+
+fuck this daisy chaining I'm getting way ahead of myself and I'm already confused/lost on such basic INITIALIZATION ORDERING of just 1 level of rpc. It's so simple and I know it is that I'm starting to wonder if my brain is using "denial" or something to keep me from progressing out of... fear that I'm in denial of? IDK. But man this is stupid. Why am I still stuck here? I am not asking the right questions, that's why. I am.... a bit lost.... but the answer lives in the already ready for testing server half! (Inversed maybe but maybe not because it might even double inverse and so remain the same?)

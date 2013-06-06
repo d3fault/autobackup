@@ -17,23 +17,21 @@ private:
     ClientCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ClientGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 signals:
-    void rpcBankServerHelperInstantiationHandled();
+    void initialized();
 
-    void startRpcBankServerHelperRequested();
-    void startOfRpcBankServerHelperHandled();
+    void beginStartProcedureRequested();
+    void started();
+
     void simulateCreateBankAccountActionRequested();
     void simulateGetAddFundsKeyActionRequested();
-    void stopRpcBankServerHelperRequested();
-    void stopOfRpcBankServerHelperHandled();
+
+    void beginStoppingProcedureRequested();
+    void stopped();
 public slots:
-    void handleRpcBankServerHelperInstantiated(RpcBankServerHelper *rpcBankServerHelper);
-    void handleRpcBankServerHelperInitialized();
-
-    void startRpcBankServerHelper();
-    void handleRpcBankServerHelperStarted();
-
-    void beginStoppingRpcBankServerHelper();
-    void handleRpcBankServerHelperStopped();
+    void initialize(RpcBankServerHelper *rpcBankServerHelper);
+    void start();
+    void beginStoppingProcedure();
+    void finishStoppingProcedure();
 
     //debug
     void simulateCreateBankAccountAction(QString username);
