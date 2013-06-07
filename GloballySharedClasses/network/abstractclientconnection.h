@@ -1,7 +1,7 @@
 #ifndef ABSTRACTCLIENTCONNECTION_H
 #define ABSTRACTCLIENTCONNECTION_H
 
-#include <QObject>
+#include "abstractconnection.h"
 #include <QIODevice>
 #include <QDataStream>
 #include <QAbstractSocket>
@@ -14,19 +14,10 @@ class MultiServerAbstraction;
 class IProtocolKnower;
 class IProtocolKnowerFactory;
 
-class AbstractClientConnection : public QObject
+class AbstractClientConnection : public AbstractConnection
 {
 	Q_OBJECT
 public:
-    enum HelloMessageTypeFromServer
-    {
-        InvalidHelloStateFromServer = 0x0,
-        WelcomeFromServer,
-        OkStartSendingBroFromServer,
-        DoneHelloingFromServer, //this and OkStartSendingBro seem ridiculously similar. OkStartSendingBro is like the "initial" done helloing... whereas this DoneHelloing is used for Action Responses and Broadcasts (OT: also Rpc level "disconnect requested" perhaps, though that isn't finalized atm). Should I combine them?
-        DisconnectGoodbyeAcknowledgedPeaceOutBitchFromServer
-    };
-
     explicit AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent = 0);
     ~AbstractClientConnection();
     static void setMultiServerAbstraction(MultiServerAbstraction *multiServerAbstraction) { m_MultiServerAbstraction = multiServerAbstraction; }
@@ -72,17 +63,6 @@ private:
     static MultiServerAbstraction *m_MultiServerAbstraction;
     static IProtocolKnowerFactory *m_ProtocolKnowerFactory;
     IProtocolKnower *m_ProtocolKnower; //TODOreq (pretty sure it lives on and only the IO device changes? I forget tbh rofl. It would still need to be deleted on shutdown/destruct etc tho): where is this deleted regularly? I am now looking for deleting it as per it being a part of an unneeded new connection (that is merging with and using an old connection's protocol knower), but I think this still needs to be deleted somewhere during regular flow
-
-    //TODOreq: I think this enum needs to be in a client/server shared file/class now that I'm making it "the protocol" and not just a "server-only implied state" --- hmm actually perhaps not since all of these are client -> server messages --- oh wait ACTUALLY YES because the client needs to know them in order to set them!!!
-    enum HelloMessageTypeFromClient
-    {
-        InvalidHelloStateFromClient = 0x0,
-        InitialHelloFromClient,
-        ThankYouForWelcomingMeFromClient, //cookie optionally received with hello. if not, we generate and send with welcome. send cookie with welcome either way
-        //OkStartSendingBroDispatched, //cookie receive mandatory and must match welcome. ok start sending bro dispatched should only be sent after we have connected up to the server IMPL/main-business one (and disconnected from our hello'er one). client does not actually start sending until he receives "ok start sending bro"
-        DoneHelloingFromClient, //TODOreq (what bitch? we don't use states no mo!): put the connection in this state during the connect-to-other-slot phase and ADDITIONALLY, when detecting a reconnection, the provided cookie has to be able to look up a connection with the same cookie and that other connection (don't look up ourselves!) has to be in the DoneHelloing phase (or perhaps UglyDisconnectDetected state if/when it exists) for us to be able to... merge the connections. meh this seems pointless, probably is. Merging sounds easy and hard at the same time, idfk anymore
-        DisconnectGoodbyeFromClient //TODOreq: as of this writing all I've done is put in this enum value. It may need to involve "disconnect REQUESTing", but I am pretty sure that is done at the generic rpc "status" level and not the hello level (here). A DisconnectRequested (Rpc Message Type) will be a DoneHelloing hello type.... I THINK but am unsure atm. Shit is in progress atm
-    };
 
     //ServerHelloState m_ServerHelloState; -- so I guess instead of storing this as a member associated with the connection (and the server implicitly "knowing" what will come next), I want it to be a part of the protocol sent with each message (typically just "DoneHelloing" sent over and over). The reason for that is because I don't know how else I'd ever be able to "implicitly know" when to do a Disconnect/Goodbye! There wouldn't be a way to do DoneHelloing -> DisconnectGoodbye with my current (err, the currently coded but outdated (updating NOW)) design
 

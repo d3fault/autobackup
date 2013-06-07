@@ -8,7 +8,7 @@ MultiServerClientAbstraction *AbstractServerConnection::m_MultiServerClientAbstr
 IProtocolKnowerFactory *AbstractServerConnection::m_ProtocolKnowerFactory = 0;
 
 AbstractServerConnection::AbstractServerConnection(QIODevice *ioDeviceToClient, QObject *parent)
-    : QObject(parent), m_OldConnectionToMergeOnto(0), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToClient(ioDeviceToClient), m_NetworkMagic(ioDeviceToClient),  m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false)
+    : QObject(parent), m_OldConnectionToMergeOnto(0), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToServer(ioDeviceToClient), m_NetworkMagic(ioDeviceToClient),  m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false)
 {
     m_ReceivedMessageBuffer.setBuffer(&m_ReceivedMessageByteArray);
     m_ReceivedMessageBuffer.open(QIODevice::ReadWrite);
@@ -18,7 +18,7 @@ AbstractServerConnection::AbstractServerConnection(QIODevice *ioDeviceToClient, 
     {
         m_ProtocolKnower = m_ProtocolKnowerFactory->getNewProtocolKnower();
         m_ProtocolKnower->setMessageReceivedDataStream(&m_ReceivedMessageDataStream);
-        m_ProtocolKnower->setAbstractClientConnection(this);
+        m_ProtocolKnower->setAbstractConnection(this);
     }
     else
     {
@@ -32,6 +32,22 @@ AbstractServerConnection::AbstractServerConnection(QIODevice *ioDeviceToClient, 
 
     setupConnectionsToIODevice();
     connect(this, SIGNAL(d(QString)), m_MultiServerClientAbstraction, SIGNAL(d(QString)));
+
+
+
+    //send initial hello. TODOreq: where will my entry point for reconnects be (re-send cookie)?
+
+    //build byte array message
+    QByteArray helloMessageByteArray;
+    QDataStream helloMessageDataStream(&helloMessageByteArray, QIODevice::WriteOnly);
+    helloMessageDataStream << (quint8)AbstractConnection::InitialHelloFromClient;
+    helloMessageDataStream << false; //no cookie (if true, cookie follows)
+
+    //stream magic header
+    NetworkMagic::streamOutMagic(&m_DataStreamToServer);
+
+    //stream message
+    m_DataStreamToServer << helloMessageByteArray;
 }
 AbstractServerConnection::~AbstractServerConnection()
 {
@@ -42,7 +58,8 @@ quint32 AbstractServerConnection::cookie()
 {
     if(!m_HasCookie)
     {
-        m_Cookie = m_MultiServerClientAbstraction->generateUnusedCookie();
+        //TODOreq: fix cookie logic because client does not generate one ever (though it can submit one when reconnecting). It'll probably be much simpler logic than what is on the server (and don't get confused by the fact that this is called AbstractServerConnection. It lives on the client)
+        //m_Cookie = m_MultiServerClientAbstraction->generateUnusedCookie();
         m_HasCookie = true;
     }
     return m_Cookie;
@@ -74,7 +91,7 @@ void AbstractServerConnection::mergeNewIoDevice(QIODevice *newIoDeviceToClient)
     m_MultiServerClientAbstraction->setupSocketSpecificDisconnectAndErrorSignaling(m_IoDeviceToClient, this);
 
     //set io device as underlying io device for a few helper objects :-P
-    m_DataStreamToClient.setDevice(newIoDeviceToClient);
+    m_DataStreamToServer.setDevice(newIoDeviceToClient);
     m_NetworkMagic.setIoDeviceToLookForMagicOn(newIoDeviceToClient);
     m_IODevicePeeker.setIoDeviceToPeek(newIoDeviceToClient);
 
@@ -85,13 +102,13 @@ void AbstractServerConnection::mergeNewIoDevice(QIODevice *newIoDeviceToClient)
 }
 void AbstractServerConnection::setupConnectionsToIODevice()
 {
-    connect(m_IoDeviceToClient, SIGNAL(readyRead()), this, SLOT(handleDataReceivedFromClient()));
+    connect(m_IoDeviceToClient, SIGNAL(readyRead()), this, SLOT(handleDataReceivedFromServer()));
 }
-void AbstractServerConnection::handleDataReceivedFromClient()
+void AbstractServerConnection::handleDataReceivedFromServer()
 {
-    emit d("got data from client");
+    emit d("got data from server");
 
-    while(!m_DataStreamToClient.atEnd())
+    while(!m_DataStreamToServer.atEnd())
     {
         if(!m_NetworkMagic.consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic())
         {
@@ -109,95 +126,67 @@ void AbstractServerConnection::handleDataReceivedFromClient()
         emit d("got enough data to read the message");
 
         m_ReceivedMessageByteArray.clear();
-        m_DataStreamToClient >> m_ReceivedMessageByteArray;
+        m_DataStreamToServer >> m_ReceivedMessageByteArray;
         m_ReceivedMessageBuffer.seek(0);
         m_NetworkMagic.messageHasBeenConsumedSoPlzResetMagic();
 
         if(!m_ReceivedMessageByteArray.isNull() && !m_ReceivedMessageByteArray.isEmpty())
         {
-            quint8 helloStateFromClientInMessage = 0x0;
-            m_ReceivedMessageDataStream >> helloStateFromClientInMessage;
+            quint8 helloStateFromServerInMessage = 0x0;
+            m_ReceivedMessageDataStream >> helloStateFromServerInMessage;
 
-            switch(helloStateFromClientInMessage)
+            switch(helloStateFromServerInMessage)
             {
-                case DoneHelloingFromClient:
+                case DoneHelloingFromServer:
                 {
                     emit d("got a regular message during production mode (done helloing)");
                     m_ProtocolKnower->messageReceived();
                 }
                 break;
-                //case AwaitingHello:
-                case InitialHelloFromClient:
+                case WelcomeFromServer:
                 {
-                    //read hello
-                    emit d("got hello from client");
-                    bool containsCookie = false;
-                    m_ReceivedMessageDataStream >> containsCookie;
-                    m_OldConnectionToMergeOnto = 0;
-                    if(containsCookie)
-                    {
-                        emit d("hello contains cookie, so this is a reconnect i guess");
-                        quint32 cookieFromClient;
-                        m_ReceivedMessageDataStream >> cookieFromClient;
+                    //read welcome
+                    emit d("got welcome from server with cookie: ");
+                    quint32 cookie;
+                    m_DataStreamToServer >> cookie;
+                    setCookie(cookie);
+                    emit d(QString::number(cookie));
 
-                        setCookie(cookieFromClient);
 
-                        m_OldConnectionToMergeOnto = m_MultiServerClientAbstraction->potentialMergeCaseAsCookieIsSupplied_returning_oldConnection_ifMerge_or_ZERO_otherwise(this);
-                    }
-
-                    QByteArray welcomeMessage;
-                    QDataStream messageWriteStream(&welcomeMessage, QIODevice::WriteOnly);
+                    //build thank you for welcoming me message
+                    QByteArray thankYouForWelcomingMeByteArray;
+                    QDataStream messageWriteStream(&thankYouForWelcomingMeByteArray, QIODevice::WriteOnly);
+                    messageWriteStream << (quint8)AbstractConnection::ThankYouForWelcomingMeFromClient;
                     messageWriteStream << cookie();
 
-                    NetworkMagic::streamOutMagic(&m_DataStreamToClient);
-                    m_DataStreamToClient << welcomeMessage;
+                    //send thank you for welcoming me message
+                    NetworkMagic::streamOutMagic(&m_DataStreamToServer);
+                    m_DataStreamToServer << thankYouForWelcomingMeByteArray;
                 }
                 break;
-                case ThankYouForWelcomingMeFromClient:
+                case OkStartSendingBroFromServer:
                 {
-                    emit d("got thank you for welcoming me");
-                    //read thank you for welcoming me
-                    quint32 cookieForConfirming;
-                    m_ReceivedMessageDataStream >> cookieForConfirming;
-                    if(cookieForConfirming == cookie())
+                    //read ok start sending bro
+                    quint32 cookie;
+                    m_DataStreamToServer >> cookie;
+                    if(cookie == cookie())
                     {
-                        emit d("the thank you for welcoming me cookie matched our previous cookie (whether we generated it or the client supplied it)");
-
-                        if(m_OldConnectionToMergeOnto)
-                        {
-                            disconnect(m_IoDeviceToClient, 0, 0, 0);
-
-                            m_OldConnectionToMergeOnto->mergeNewIoDevice(m_IoDeviceToClient);
-
-                            QMetaObject::invokeMethod(this, "deleteLater", Qt::QueuedConnection);
-                        }
-                        else
-                        {
-                            //new connection, not merging
-                            m_MultiServerClientAbstraction->connectionDoneHelloing(this);
-                        }
-
-                        QByteArray okStartSendingMessagesBroMessage;
-                        QDataStream messageWriteStream(&okStartSendingMessagesBroMessage, QIODevice::WriteOnly);
-                        messageWriteStream << cookie();
-
-                        NetworkMagic::streamOutMagic(&m_DataStreamToClient);
-                        m_DataStreamToClient << okStartSendingMessagesBroMessage;
+                        //TODOreq: how do i set myself up to be in DoneHelloing???? Do I just ignore this message? What the fuck is the point of it? How do I say. I'm going to use 'connectionDoneHelloing' which was copy/pasted from the server code, for now. At first glance it appears ok to call it, but what happens after that and the backing design etc have to be re-examined and maybe modified (or maybe it's fine, who knows (i used to and will again (hmm sounds like life)))
+                        m_MultiServerClientAbstraction->connectionDoneHelloing(this);
                     }
                     else
                     {
-
+                        //TODOreq: cookie with ok start sending bro (probably over-verified at this point and not likely to happen anyways) didn't match one seen/set/something earlier... so handle this error appropriately. still have the same problem in server (except that time, the verification is actually a good idea) so the two can probably be solved together
                     }
                 }
                 break;
-                case InvalidHelloStateFromClient:
+                case InvalidHelloStateFromServer:
                 default:
                 {
                     //TODOreq: handle errors n shit. dc?
                 }
                 break;
             }
-
         }
     }
 }

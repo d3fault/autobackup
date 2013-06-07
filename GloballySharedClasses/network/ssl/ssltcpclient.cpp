@@ -1,7 +1,8 @@
 #include "ssltcpclient.h"
 
-SslTcpClient::SslTcpClient(QObject *parent, const QString &clientCaFile, const QString &serverCaFile, const QString &clientPrivateEncryptionKeyFile, const QString &clientPublicLocalCertificateFile, const QString &clientPrivateEncryptionKeyPassPhrase)
-    : QSslSocket(parent), m_ClientCaFile(clientCaFile), m_ServerCaFile(serverCaFile), m_ClientPrivateEncryptionKeyFile(clientPrivateEncryptionKeyFile), m_ClientPrivateEncryptionKeyPassPhrase(clientPrivateEncryptionKeyPassPhrase), m_ClientPublicLocalCertificateFile(clientPublicLocalCertificateFile)
+SslTcpClient::SslTcpClient(QObject *parent)
+    : QObject(parent), m_ClientPrivateEncryptionKey(0), m_ClientPublicLocalCertificate(0) /*, const QString &clientCaFile, const QString &serverCaFile, const QString &clientPrivateEncryptionKeyFile, const QString &clientPublicLocalCertificateFile, const QString &clientPrivateEncryptionKeyPassPhrase)
+    : QSslSocket(parent), m_ClientCaFile(clientCaFile), m_ServerCaFile(serverCaFile), m_ClientPrivateEncryptionKeyFile(clientPrivateEncryptionKeyFile), m_ClientPrivateEncryptionKeyPassPhrase(clientPrivateEncryptionKeyPassPhrase), m_ClientPublicLocalCertificateFile(clientPublicLocalCertificateFile)*/
 { }
 SslTcpClient::~SslTcpClient()
 {
@@ -9,18 +10,27 @@ SslTcpClient::~SslTcpClient()
     {
         this->close();
     }
-    delete m_ClientPrivateEncryptionKey;
-    delete m_ClientPublicLocalCertificate;
+    if(m_ClientPrivateEncryptionKey)
+    {
+        delete m_ClientPrivateEncryptionKey;
+        m_ClientPrivateEncryptionKey = 0;
+    }
+    if(m_ClientPublicLocalCertificate)
+    {
+        delete m_ClientPublicLocalCertificate;
+        m_ClientPublicLocalCertificate = 0;
+    }
 }
-bool SslTcpClient::init()
+void SslTcpClient::initialize(SslTcpClientArgs sslTcpClientArgs)
 {
     if(!QSslSocket::supportsSsl())
     {
         emit d("ssl is not supported");
-        return false;
+        return;
     }
+    m_SslTcpClientArgs = sslTcpClientArgs;
 
-    QFile clientCaFileResource(m_ClientCaFile);
+    QFile clientCaFileResource(sslTcpClientArgs.ClientCaFilename);
     clientCaFileResource.open(QFile::ReadOnly);
     QByteArray clientCaByteArray = clientCaFileResource.readAll();
     clientCaFileResource.close();
@@ -29,17 +39,17 @@ bool SslTcpClient::init()
     if(clientCA.isNull())
     {
         emit d("the client CA is null");
-        return false;
+        return;
     }
     emit d("the client CA is not null");
     if(!clientCA.isValid())
     {
         emit d("the client CA is not valid");
-        return false;
+        return;
     }
     emit d("the client CA is valid");
 
-    QFile serverCaFileResource(m_ServerCaFile);
+    QFile serverCaFileResource(sslTcpClientArgs.ServerCaFilename);
     serverCaFileResource.open(QFile::ReadOnly);
     QByteArray serverCaByteArray = serverCaFileResource.readAll();
     serverCaFileResource.close();
@@ -48,23 +58,22 @@ bool SslTcpClient::init()
     if(serverCA.isNull())
     {
         emit d("server CA is null");
-        return false;
+        return;
     }
     emit d("server CA is not null");
     if(!serverCA.isValid())
     {
         emit d("server CA is not valid");
-        return false;
+        return;
     }
     emit d("server CA is valid");
 
     m_AllMyCertificateAuthorities.append(clientCA);
     m_AllMyCertificateAuthorities.append(serverCA);
 
+    QByteArray clientPrivateEncryptionKeyPassPhraseByteArray(sslTcpClientArgs.ClientPrivateEncryptionKeyPassPhrase.toUtf8());
 
-    QByteArray clientPrivateEncryptionKeyPassPhraseByteArray(m_ClientPrivateEncryptionKeyPassPhrase.toUtf8());
-
-    QFile clientPrivateEncryptionKeyFileResource(m_ClientPrivateEncryptionKeyFile);
+    QFile clientPrivateEncryptionKeyFileResource(sslTcpClientArgs.ClientPrivateEncryptionKeyFilename);
     clientPrivateEncryptionKeyFileResource.open(QFile::ReadOnly);
     QByteArray clientPrivateEncryptionKeyByteArray = clientPrivateEncryptionKeyFileResource.readAll();
     clientPrivateEncryptionKeyFileResource.close();
@@ -74,12 +83,11 @@ bool SslTcpClient::init()
     if(m_ClientPrivateEncryptionKey->isNull())
     {
         emit d("client private encryption key is null");
-        return false;
+        return;
     }
     emit d("client private encryption key is not null");
 
-
-    QFile clientPublicLocalCertificateFileResource(m_ClientPublicLocalCertificateFile);
+    QFile clientPublicLocalCertificateFileResource(sslTcpClientArgs.ClientPublicLocalCertificateFilename);
     clientPublicLocalCertificateFileResource.open(QFile::ReadOnly);
     QByteArray clientPublicLocalCertificateByteArray = clientPublicLocalCertificateFileResource.readAll();
     clientPublicLocalCertificateFileResource.close();
@@ -88,17 +96,24 @@ bool SslTcpClient::init()
     if(m_ClientPublicLocalCertificate->isNull())
     {
         emit d("client public local certificate is null");
-        return false;
+        return;
     }
     emit d("client public local certificate is not null");
     if(!m_ClientPublicLocalCertificate->isValid())
     {
         emit d("client public local certificate is not valid");
-        return false;
+        return;
     }
     emit d("client public local certificate is valid");
 
+    sslTcpClientArgs.SslConfiguration.setSslOption(QSsl::SslOptionDisableCompression, true);
+    sslTcpClientArgs.SslConfiguration.setCaCertificates(m_AllMyCertificateAuthorities);
+    sslTcpClientArgs.SslConfiguration.setPrivateKey(*m_ClientPrivateEncryptionKey);
+    sslTcpClientArgs.SslConfiguration.setLocalCertificate(*m_ClientPublicLocalCertificate);
 
+    QSslConfiguration::setDefaultConfiguration(sslTcpClientArgs.SslConfiguration);
+
+#if 0
     //in the server comments i mention conflicts of setting the default configuration. by doing it this way, i am overriding even the default configuration... so those conflicts do not appear. but if i do change this client to use default configuration shit, then they will appear
     this->setCaCertificates(m_AllMyCertificateAuthorities);
     this->setPrivateKey(*m_ClientPrivateEncryptionKey);
@@ -110,33 +125,38 @@ bool SslTcpClient::init()
     QSslConfiguration sslConfiguration = this->sslConfiguration();
     sslConfiguration.setSslOption(QSsl::SslOptionDisableCompression, true);
     this->setSslConfiguration(sslConfiguration);
+#endif
 
     connect(this, SIGNAL(encrypted()), this, SLOT(handleEncrypted()));
     connect(this, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
     connect(this, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
 
-    return true;
+    emit d("ssl tcp client initialized");
+    return;
 }
-bool SslTcpClient::start()
+void SslTcpClient::start()
 {
+    if(this->state() != QSslSocket::UnconnectedState)
+    {
+        emit d("ssl tcp client was told to start, but is not in an unconnected state");
+        return;
+    }
+
+    this->connectToHostEncrypted(m_SslTcpClientArgs.HostAddress, m_SslTcpClientArgs.Port);
     if(this->state() == QSslSocket::UnconnectedState)
     {
-        this->connectToHostEncrypted("localhost", 6969);
-        if(this->state() != QSslSocket::UnconnectedState)
-        {
-            emit d("attempting to connect to host encrypted on port 6969");
-            return true;
-        }
+        emit d("ssl tcp client connectToHostEncrypted didn't bring us out of UnconnectedState");
+        return;
     }
-    emit d("failed to start connecting to host. already connected?");
-    return false;
+
+    emit d(QString("ssl tcp client attempting to connect to ") + m_SslTcpClientArgs.HostAddress.toString() + QString(":") + QString::number(m_SslTcpClientArgs.Port));
 }
 void SslTcpClient::stop()
 {
-    if(this->isSslConnectionGood())
+    if(isOpen())
     {
-        this->disconnectFromHost();
-        this->close();
+        disconnectFromHost();
+        close();
     }
     emit d("stopping ssl tcp client");
 }
@@ -162,7 +182,9 @@ void SslTcpClient::handleSocketError(QAbstractSocket::SocketError abstractSocket
 {
     emit d("abstract socket error #" + QString::number(abstractSocketError));
 }
+#if 0
 bool SslTcpClient::isSslConnectionGood()
 {
     return ( ( this->isValid() ) && ( this->state() == QAbstractSocket::ConnectedState ) && ( this->isEncrypted() ) );
 }
+#endif

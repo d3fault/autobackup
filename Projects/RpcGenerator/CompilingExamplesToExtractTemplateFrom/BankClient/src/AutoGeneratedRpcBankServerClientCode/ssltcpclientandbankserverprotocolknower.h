@@ -1,6 +1,7 @@
 #ifndef SSLTCPCLIENTANDBANKSERVERPROTOCOLKNOWER_H
 #define SSLTCPCLIENTANDBANKSERVERPROTOCOLKNOWER_H
 
+#if 0
 #include "ibankserverclientprotocolknower.h"
 
 #include "network/ssl/ssltcpclient.h"
@@ -22,5 +23,6 @@ public slots:
     void start();
     void stop();
 };
+#endif
 
 #endif // SSLTCPCLIENTANDBANKSERVERPROTOCOLKNOWER_H

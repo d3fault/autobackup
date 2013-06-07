@@ -35,11 +35,13 @@ IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack * Rpc
 RpcBankServerProtocolKnower::RpcBankServerProtocolKnower(QObject *parent) :
     IEmitRpcBankServerActionRequestSignalsWithMessageAsParamAndIAcceptActionDeliveries(parent)
 {
-    //TODOoptional: now might be a good place to runtime check that the signal relay hack emitter static is not zero, but i trust my segfaults (though I don't trust the segfaults themselves GAH i need a dedicated test box)
+    //TODOoptional: now might be a good place to runtime check that the signal relay hack emitter static is not zero, but i trust my segfaults (though I don't trust the segfaults themselves GAH i need a dedicated test box). Do this on client too
 
     m_CreateBankAccountMessageDispenser = new ServerCreateBankAccountMessageDispenser(this, this);
     m_GetAddFundsKeyMessageDispenser = new ServerGetAddFundsKeyMessageDispenser(this, this);
     //etc for each Action
+
+    //^^^OHHHH that's how I do it. No need for "ActionDispenser" anymore.. (and on the client, no need for "BroadcastDispenser" :)
 }
 //TO DOneoptimization: the datastream never changes so we don't need to pass it in as an arg. we could set it in the constructor etc
 void RpcBankServerProtocolKnower::messageReceived() //QDataStream *messageDataStream)

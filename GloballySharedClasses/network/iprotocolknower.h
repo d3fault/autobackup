@@ -5,7 +5,7 @@
 #include <QByteArray>
 #include <QBuffer>
 
-#include "abstractclientconnection.h"
+#include "abstractconnection.h"
 
 class IProtocolKnower// : public QObject
 {
@@ -25,16 +25,16 @@ public:
     }
     inline void streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient()
     {
-        m_TransmitMessageDataStream << ((quint8)AbstractServerConnection::DoneHelloingFromServer); //semi-hacky but sure beats building yet another QDS inside AbstractClientConnection just to stream it lmfao
+        m_TransmitMessageDataStream << ((quint8)AbstractConnection::DoneHelloingFromServer); //semi-hacky but sure beats building yet another QDS inside AbstractClientConnection just to stream it lmfao
     }
-    inline void setAbstractClientConnection(AbstractServerConnection *abstractClientConnection) { m_AbstractClientConnection = abstractClientConnection; }
+    inline void setAbstractConnection(AbstractConnection *abstractConnection) { m_AbstractConnection = abstractConnection; }
     inline void setMessageReceivedDataStream(QDataStream *messageReceivedDataStream) { m_MessageReceivedDataStream = messageReceivedDataStream; }
     virtual void messageReceived()=0; //QDataStream *messageDataStream /*, quint32 clientId */);
-    virtual void queueActionResponsesHasBeenEnabledSoBuildLists()=0;
+    virtual void queueActionResponsesHasBeenEnabledSoBuildLists()=0; //TODOreq: isn't this server only? Should this file be shared or copy/pasted or even abstracted further? Hell even #ifdef's work and I might need to use them for the streamDoneHelloing shit above. Who cares how hacky this shit is I just NEEEEEEEEEEEEEEEEEEEEEEEED to get it done (was tempted to put /want after that 'need', but eh it's starting to look like a need. Seriously there's nothing else I can do with my life except progress forward (feels good man))
 private:
     QBuffer m_TransmitMessageBuffer;
 protected:
-    AbstractServerConnection *m_AbstractClientConnection;
+    AbstractConnection *m_AbstractConnection;
     QDataStream *m_MessageReceivedDataStream;
     QByteArray m_TransmitMessageByteArray;
     QDataStream m_TransmitMessageDataStream;

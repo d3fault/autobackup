@@ -1,0 +1,3 @@
+The question of multi client and single client (multi server makes sense) is ultimately a matter of "system" vs "app". Monolithic singular app or Modular etc. But really they are both the same at the VERY end of the day. It's just a matter of design simplicity and arbitrations...
+
+I don't know which to choose tbh. The more future proof one sounds like multi, but the simpler one sounds like single. God damnit I'm hitting yet another stupid ass retarded dead end wall hahahaha. I'm seriously considering rewriting both of the entire examples and making them as simple and minimal as fuck (but those are famous last words because I'm combining lots of technologies/ideas and it would probably grow back to the same size haha owned).

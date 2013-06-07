@@ -22,7 +22,7 @@ void RpcBankServerClientTest::initializeBankServerClientAndServerHelper()
     //if there are multiple rpc services that the client needs to also connect to and get dispensers from, they are passed in as arguments here. client DEPENDS on whatever rpc shit he uses, so it makes sense after all to put that in an initialize slot. omg wtf rofl.
     emit initializeRpcBankServerClientRequested(m_RpcBankServerHelper); //TODOreq: the ServerClient both connects it's SIGNALS (which just happen to contain GUI for debugging ultimately connected) to the m_RpcBankServerHelper's Action SLOTS, and addtitionally connects to m_RpcBankServerHelper's Broadcast SIGNALS (which just happen to be connect to GUI slots for debugging)
 
-    MultiServerClientAbstractionArgs serverClientArgs;
+    MultiServerClientsAbstractionArgs serverClientArgs;
     serverClientArgs.m_SslTcpEnabled = true;
     serverClientArgs.m_SslTcpServerArgs.Port = 6969;
     serverClientArgs.m_SslTcpServerArgs.UseServerCA2WaySecurity = true; //this might be already implied for client, so maybe we can take it out i forget
@@ -83,7 +83,7 @@ void RpcBankServerClientTest::handleRpcBankServerHelperInstantiated()
 
     connect(m_RpcBankServerHelper, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 
-    connect(this, SIGNAL(initializeRpcBankServerHelperRequested(MultiServerClientAbstractionArgs)), m_RpcBankServerHelper, SLOT(initialize(MultiServerClientAbstractionArgs)));
+    connect(this, SIGNAL(initializeRpcBankServerHelperRequested(MultiServerClientsAbstractionArgs)), m_RpcBankServerHelper, SLOT(initialize(MultiServerClientsAbstractionArgs)));
     connect(m_RpcBankServerHelper, SIGNAL(initialized()), this, SLOT(handleRpcBankServerHelperInitialized()));
     connect(&m_BankServerClientDebugWidget, SIGNAL(startBusinessRequested()), m_RpcBankServerHelper, SLOT(start()));
 

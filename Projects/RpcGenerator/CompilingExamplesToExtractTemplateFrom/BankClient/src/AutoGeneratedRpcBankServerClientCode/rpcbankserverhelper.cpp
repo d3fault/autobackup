@@ -1,10 +1,9 @@
 #include "rpcbankserverhelper.h"
 
-#include "ssltcpclientandbankserverprotocolknower.h"
-
-RpcBankServerHelper::RpcBankServerHelper(IRpcBankServerClientBusiness *rpcBankServerClient)
-    : m_RpcBankServerClient(rpcBankServerClient)
+RpcBankServerHelper::RpcBankServerHelper(QObject *parent)
+    : IAcceptRpcBankServerClientActionDeliveries_AND_IEmitBroadcastsForSignalRelayHack(parent), m_RpcBankServerClientProtocolKnowerFactory(this), m_MultiServerClientAbstraction(&m_RpcBankServerClientProtocolKnowerFactory, this)
 {
+    RpcBankServerClientProtocolKnowerFactory::setSignalRelayHackEmitter(this);
     //m_Transporter = new SslTcpClientAndBankServerProtocolKnower();
 
     //m_ActionDispensers = new RpcBankServerClientActionDispensers(m_Transporter);
@@ -67,20 +66,6 @@ void RpcBankServerHelper::init()
 
     //TODOreq: same redo from old->new for start/stop as well
 }
-#endif
-void RpcBankServerHelper::start()
-{
-    emit d("RpcBankServerHelper received start message");
-    m_MultiServerClientAbstraction.start();
-    emit started();
-}
-void RpcBankServerHelper::stop()
-{
-    emit d("RpcBankServerHelper received stop message");
-    m_MultiServerClientAbstraction.stop();
-    emit stopped();
-}
-#if 0
 void RpcBankServerHelper::moveTransporterToItsOwnThreadAndStartTheThread()
 {
     m_TransporterThread = new QThread();
@@ -94,15 +79,27 @@ void RpcBankServerHelper::moveBusinessToItsOwnThreadAndStartTheThread()
     m_BusinessThread->start();
 }
 #endif
-void RpcBankServerHelper::initialize(MultiServerClientAbstractionArgs multiServerClientAbstractionArgs)
+void RpcBankServerHelper::initialize(MultiServerClientsAbstractionArgs multiServerClientAbstractionArgs)
 {
     emit d("RpcBankServerHelper received initialize message");
     //TODOreq: appears to make sense that the .initailize call below should return a bool and be checked before setting m_Initialized to true...
-    m_MultiServerClientAbstraction.initialize(multiServerClientAbstractionArgs);
+    m_MultiServerClientAbstraction.initializeAndStartConnections(multiServerClientAbstractionArgs); //TODOreq: can't start here because we don't know if all action dispensers are claimed yet (emitInitializedSignalIfReady)!!!! Fuck man I need to sleep on this design and meh this merge is going to take forever but at least most of it is relatively easy... TODO LEFT OFF
     m_Initialized = true;
     emitInitializedSignalIfReady();
 }
 void RpcBankServerHelper::handleBusinessDoneClaimingActionDispensersAndConnectingToBroadcastSignals()
 {
     emitInitializedSignalIfReady();
+}
+void RpcBankServerHelper::startAllThatHaveBeenInitialized()
+{
+    emit d("RpcBankServerHelper received start message");
+    m_MultiServerClientAbstraction.start();
+    emit started();
+}
+void RpcBankServerHelper::stopAll()
+{
+    emit d("RpcBankServerHelper received stop message");
+    m_MultiServerClientAbstraction.stop();
+    emit stopped();
 }

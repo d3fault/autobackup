@@ -1,0 +1,44 @@
+Ok I think I figured out the purpose of multi-client
+
+
+It is for redundancy-for-free/cheap designs....
+
+
+One "client" which is like an http server in my first use of it.... can/will have multiple connections to various servers.
+
+
+When doing an Action Request, I round robin which connection I use. This provides load balancing and auto failover.
+
+
+On the server side, each server has it's own dedicated (probably through different ISPs and physical connections) outward connection, but internally all the servers are using the same data set (DHT). THAT is the purpose of multi-client. The fact that your http "zone" will have multiple http clients (all using multiple connections to the multiple servers) just confuses you, but is not relevant [yet (at this level in the design)].
+
+It's like a nicely wrapped gift from myself in the past. Such a nice design once I remember it hahahahahahahahahahahahahahahahahahahahahahahahahahahahahaha (same applies to life ;-P)
+
+
+
+err for the life variant, it's... "once I re-figure-it-out"
+
+
+
+
+
+Action Responses can come from a different "server" (multi-client is essentially just masking the fact that there's one server (and confusingly, the fact that there's a client for every server as well haha). It makes it appear as though there is only one client.
+
+And of course, broadcasts can come from any server. To the "business" of the "MultiSeverClientAbstraction", there is just one server. And at the end of the day it's true, because we only have one data set (one dht). The fact that there's a redundancy layer on the data set is irrelevant.
+
+
+
+
+HOLY SHIT THIS RPC GENERATOR IS PRO AS FUCK I JUST REALIZED (remembered). It will be, once it fucking works. Gah. A prerequisite to me enjoying life. I could sell this one rpc generator and be set for life (but nahhhhhhhh ;-P)....
+
+
+
+
+
+
+Picture 20 "clients" each with 20 connections to 20 servers all round robin. Such a beautiful visual especially when you even add yet another layer to the left (or would that just be the thousands of "end users"? depends on my caching/design strategy (unfinished TODO)). Scalable and redundant as fuck. COME AT ME BRO
+
+
+
+
+All of the servers that the MultiServerClientAbstraction connects to need to be the same rpc service / data set.... and all of the clients that the MultiServerAbstraction receives as incoming connections need to be the same rpc service. Need different instantiations (and in that case, probably processes) for different rpc services.

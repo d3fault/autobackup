@@ -66,7 +66,7 @@ private:
     AbstractClientConnection *handleNewClientConnected(QIODevice *newClient);
 
     //all connections, regardless of hello state
-    QList<AbstractClientConnection*> m_ListOfConnectionsIgnoringHelloState; //TODOreq: wtf is the point of this? i append to it and remove from it.. but never do anything else with it. So I can probably delete it!?!?
+    QList<AbstractClientConnection*> m_ListOfConnectionsIgnoringHelloState; //TODOreq: wtf is the point of this? i append to it and remove from it.. but never do anything else with it. So I can probably delete it!?!? -- I think it might be used later in finishing ack scheme and maybe with the timing out/flushing failed connections stuff?
 
     //only hello'd connections
     QList<AbstractClientConnection*> m_ListOfHelloedConnections;

@@ -58,7 +58,6 @@ void MultiServerAbstraction::setupSocketSpecificDisconnectAndErrorSignaling(QIOD
                 emit d("Couldn't determine what kind of socket type for setting up errors");
                 abstractClientConnection->makeConnectionBad(); //fuck it why not
             }
-
         }
     }
 }

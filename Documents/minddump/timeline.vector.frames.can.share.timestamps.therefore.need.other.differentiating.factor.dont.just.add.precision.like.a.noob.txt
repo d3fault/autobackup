@@ -1,0 +1,1 @@
+At every tick, there are at most [roughly] 7 billion vector frames with identical timestamps. So I guess what I'm getting at is that "timeline" needs to account for this? And can't a human have multiple vector frame submissions per tick? Like... multiple devices... multiple camera [angles], etc...?

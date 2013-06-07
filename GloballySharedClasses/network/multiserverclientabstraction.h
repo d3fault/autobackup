@@ -11,25 +11,24 @@
 
 #include "abstractserverconnection.h"
 
-#include "ssl/ssltcpclient.h"
+#include "ssltcpclient.h"
 
-struct MultiServerClientAbstractionArgs
+struct MultiServerClientsAbstractionArgs
 {
-    MultiServerClientAbstractionArgs() { m_SslTcpEnabled = false; m_TcpEnabled = false; m_LocalServerEnabled = false; }
+    //for the client, each list is iterated and that's how many connections are set up... TODOoptimization would make sense to be able to add/remove connections later, but I like having my "initialize" able to take ALL of them and my start() require none. Flexible/future-proof
 
     //SSL
-    SslTcpServerClientArgs m_SslTcpServerClientArgs; //TODOreq: ssl server shit shouldn't use these custom args objects, only our multi server abstraction code should (unless the ssl server shit becomes specific only to multi server abstraction (which it isn't or shouldn't be (if it is, i'll copy/paste un-merge the two... for future uses)))
-    bool m_SslTcpEnabled;
+    QList<SslTcpClientArgs> SslTcpClientsArgs;
 
     //TCP
-    QHostAddress m_TcpHostAddress;
-    quint16 m_TcpPort;
-    bool m_TcpEnabled;
+    QList<QPair<QHostAddress /*host*/,quint16/*port*/> > TcpClientsArgs;
 
     //LOCALSERVER
-    QString m_LocalServerName;
-    bool m_LocalServerEnabled;
+    QList<QString> LocalServersNames;
 };
+
+//ACTUALLY I THINK THE BELOW TODOreq is now false, but meh leaving just in case because my mind is double backing left and right all the fucking time. Feels great because it's the only way to progress... but feels bad because it means I have to be wrong quite often. Ok I sort of got into the whole "life" meaning of what I was saying and away from simply programming there...
+//TODOreq: hmm actually not sure this makes any sense heh. It makes sense for a server to be multi-protocol... but doesn't really make any sense for a client to be multi-protocol (unless it has 'try other server' mechanisms built in'... but those should go at a different/higher level, not this one!) Still going to continue with this design out of sheer laziness :). Like I mean the protocol connection types can/should share a common base (THEY SHOULD IN QT ALREADY BUT DON'T FUCKING NOOBS ;-P), but they don't need to all live in one class like this (whereas in the server it makes sense for them to)
 class MultiServerClientAbstraction : public QObject
 {
     Q_OBJECT
@@ -55,11 +54,12 @@ public:
     void reportConnectionDestroying(AbstractServerConnection *connectionBeingDestroyed);
     void dontBroadcastTo(AbstractServerConnection *abstractClientConnection);
 private:
-    bool m_BeSslClient, m_BeTcpServer, m_BeLocalServer;
-    SslTcpClient *m_SslTcpClient;
-    inline void deletePointersIfNotZeroAndSetEachEnabledToFalse() { if(m_SslTcpClient) { delete m_SslTcpClient; m_SslTcpClient = 0; } /* TODOreq: delete Tcp/Local */ m_BeSslClient = false; m_BeTcpServer = false; m_BeLocalServer = false; }
+    //SslTcpClient *sslTcpClient;
+    //MultiServerClientAbstractionArgs m_MultiServerClientAbstractionArgs;
 
-    AbstractServerConnection *handleNewClientConnected(QIODevice *newClient);
+    AbstractServerConnection *handleNewConnectionToServer(QIODevice *newClient);
+    QList<QIODevice*> m_ListOfIODevicesIgnoringConnectionAndHelloState; //TODOreq: use this to clear out stale/failed connections i guess. On the server it has a different means of organizing the connections
+
     QList<AbstractServerConnection*> m_ListOfConnectionsIgnoringHelloState;
     QList<AbstractServerConnection*> m_ListOfHelloedConnections;
 
@@ -107,9 +107,9 @@ private:
 signals:
     void d(const QString &);
 private slots:
-    void handleNewSslClientConnected(QSslSocket* newSslClient);
+    void handleConnectedToSslServer(QSslSocket* sslSocketToServer);
 public slots:
-    void initialize(MultiServerClientAbstractionArgs multiServerClientAbstractionArgs);
+    void initializeAndStartConnections(MultiServerClientsAbstractionArgs multiServerClientAbstractionArgs);
     void start();
     void stop();
 };

@@ -10,8 +10,8 @@ class BankServerClient /*: public IRpcBankServerClientBusiness*/ : public QObjec
     Q_OBJECT
 public:
     BankServerClient(QObject *parent = 0);
-    void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
-    void connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam *signalEmitter);
+    //void moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads();
+    //void connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam *signalEmitter);
 private:
     //these dispensers will be in backend objects once i think of some..
     ClientCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
@@ -41,12 +41,14 @@ private slots:
     void handleCreateBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage);
     void handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
 
+#if 0
     //Action Errors
     void handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage *createBankAccountMessage);
     void handleCreateBankAccountFailedPersistError(ClientCreateBankAccountMessage *createBankAccountMessage);
     void handleGetAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
     void handleGetAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
     void handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+#endif
 
     //Broadcasts
     void handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage);

@@ -1,5 +1,6 @@
 #include "ssltcpclientandbankserverprotocolknower.h"
 
+#if 0
 #include "../../RpcBankServerAndClientShared/rpcbankserverheader.h"
 
 SslTcpClientAndBankServerProtocolKnower::SslTcpClientAndBankServerProtocolKnower(QObject *parent)
@@ -12,7 +13,7 @@ SslTcpClientAndBankServerProtocolKnower::SslTcpClientAndBankServerProtocolKnower
 void SslTcpClientAndBankServerProtocolKnower::init()
 {
     emit d("SslTcpClientAndBankServerProtocolKnower received init message");
-    if(m_SslTcpClient->init())
+    if(m_SslTcpClient->initialize())
     {
         emit d("SslTcpClient successfully initialized");
         emit initialized();
@@ -168,3 +169,4 @@ void SslTcpClientAndBankServerProtocolKnower::myTransmit(IMessage *message)
     stream << message->Header;
     stream << *message;
 }
+#endif

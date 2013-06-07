@@ -1,0 +1,4 @@
+I think for Rpc Clients that don't use all the action types (don't claim all the action dispensers), they should have to call some method stating that they don't want the error checking that all dispensers are created. There are multiple solutions to this brewing in my head, but I like that one the best. By default you are notified of errors, but you can opt into ignoring them (especially since the errors wouldn't be important if they don't want those actions anyways)...
+
+
+On a completely unrelated note, I lack a way of ensuring the clients are listening to "all of" the broadcast [types]. Since those are regular old signals (OH WAIT JUST REMEMBER I CAN USE CONNECT NOTIFY FUCK YEA JUST CAME UP WITH A SOLUTION IN REALTIME TODOreq do it later though hahahahah)

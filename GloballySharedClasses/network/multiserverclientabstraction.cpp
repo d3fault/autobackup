@@ -3,16 +3,14 @@
 quint32 MultiServerClientAbstraction::overflowingClientIdsUsedAsInputForMd5er = 0;
 
 MultiServerClientAbstraction::MultiServerClientAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent)
-    : QObject(parent), m_SslTcpClient(0) /* etc tcp local */
+    : QObject(parent)
 {
-    AbstractServerConnection::setMultiServerAbstraction(this);
+    AbstractServerConnection::setMultiServerClientAbstraction(this);
     AbstractServerConnection::setProtocolKnowerFactory(protocolKnowerFactory);
-
-    deletePointersIfNotZeroAndSetEachEnabledToFalse();
 }
 MultiServerClientAbstraction::~MultiServerClientAbstraction()
 {
-    deletePointersIfNotZeroAndSetEachEnabledToFalse();
+    //TODOreq: IDFK what, but dc/delete shit sounds about right...
 }
 void MultiServerClientAbstraction::setupSocketSpecificDisconnectAndErrorSignaling(QIODevice *ioDeviceToClient, AbstractServerConnection *abstractClientConnection)
 {
@@ -100,22 +98,37 @@ void MultiServerClientAbstraction::reportConnectionDestroying(AbstractServerConn
         //TODO errors n shit, this should never happen
     }
 }
-void MultiServerClientAbstraction::initialize(MultiServerClientAbstractionArgs multiServerClientAbstractionArgs)
+void MultiServerClientAbstraction::initializeAndStartConnections(MultiServerClientsAbstractionArgs multiServerClientAbstractionArgs)
 {
-    if(multiServerClientAbstractionArgs.m_SslTcpEnabled)
+    //m_MultiServerClientAbstractionArgs = multiServerClientAbstractionArgs;
+    int currentProtocolConnectionCount = multiServerClientAbstractionArgs.SslTcpClientsArgs.size();
+    for(int i = 0; i < currentProtocolConnectionCount; ++i)
     {
-        m_BeSslClient = true;
-        m_SslTcpClient = new SslTcpClient(this);
-        connect(m_SslTcpClient, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
-        connect(m_SslTcpClient, SIGNAL(clientConnectedAndEncrypted(QSslSocket*)), this, SLOT(handleNewSslClientConnected(QSslSocket*)));
-        m_SslTcpClient->initialize(multiServerClientAbstractionArgs.m_SslTcpServerArgs);
+        SslTcpClient *sslTcpClient = new SslTcpClient(this);
+        connect(sslTcpClient, SIGNAL(d(const QString &)), this, SIGNAL(d(const QString &)));
+        connect(sslTcpClient, SIGNAL(connectedAndEncrypted(QSslSocket*)), this, SLOT(handleConnectedToSslServer(QSslSocket*)));
+        sslTcpClient->initialize(multiServerClientAbstractionArgs.SslTcpClientsArgs.at(i));
+        //AbstractServerConnection *abstractServerConnection = new AbstractServerConnection(sslTcpClient, this);
+        //m_ListOfConnectionsIgnoringHelloState.append(abstractServerConnection);
+        m_ListOfIODevicesIgnoringConnectionAndHelloState.append(sslTcpClient);
+        sslTcpClient->start();
+    }
+    currentProtocolConnectionCount = multiServerClientAbstractionArgs.TcpClientsArgs.size();
+    for(int i = 0; i < currentProtocolConnectionCount; ++i)
+    {
+        //TODOreq
+    }
+    currentProtocolConnectionCount = multiServerClientAbstractionArgs.LocalServersNames.size();
+    for(int i = 0; i < currentProtocolConnectionCount; ++i)
+    {
+        //TODOreq
     }
 }
 void MultiServerClientAbstraction::start()
 {
     if(m_BeSslClient)
     {
-        m_SslTcpClient->start();
+        sslTcpClient->start();
     }
     if(m_BeTcpServer)
     {
@@ -130,7 +143,7 @@ void MultiServerClientAbstraction::stop()
 {
     if(m_BeSslClient)
     {
-        m_SslTcpClient->stop();
+        sslTcpClient->stop();
     }
     if(m_BeTcpServer)
     {
@@ -141,9 +154,9 @@ void MultiServerClientAbstraction::stop()
         //TODOreq
     }
 }
-AbstractServerConnection *MultiServerClientAbstraction::handleNewClientConnected(QIODevice *newClient)
+AbstractServerConnection *MultiServerClientAbstraction::handleNewConnectionToServer(QIODevice *newClient)
 {
-    emit d("new client connected, starting hello phase");
+    emit d("new server connection established, starting hello phase");
 
     AbstractServerConnection *newClientConnection = new AbstractServerConnection(newClient, this);
     m_ListOfConnectionsIgnoringHelloState.append(newClientConnection);
@@ -204,9 +217,9 @@ void MultiServerClientAbstraction::setupQLocalSocketSpecificErrorConnections(QLo
     connect(localSocket, SIGNAL(disconnected()), abstractClientConnection, SLOT(makeConnectionBad()));
     connect(localSocket, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)), abstractClientConnection, SLOT(makeConnectionBadIfNewQLocalSocketStateSucks(QLocalSocket::LocalSocketState)));
 }
-void MultiServerClientAbstraction::handleNewSslClientConnected(QSslSocket *newSslClient)
+void MultiServerClientAbstraction::handleConnectedToSslServer(QSslSocket *sslSocketToServer)
 {
-    AbstractServerConnection *abstractClientConnectionSoICanConnectToSocketTypeSpecificDisconnectSignals = handleNewClientConnected(newSslClient);
+    AbstractServerConnection *abstractClientConnectionSoICanConnectToSocketTypeSpecificDisconnectSignals = handleNewConnectionToServer(sslSocketToServer);
 
-    setupSslSocketSpecificErrorConnections(newSslClient, abstractClientConnectionSoICanConnectToSocketTypeSpecificDisconnectSignals);
+    setupSslSocketSpecificErrorConnections(sslSocketToServer, abstractClientConnectionSoICanConnectToSocketTypeSpecificDisconnectSignals);
 }

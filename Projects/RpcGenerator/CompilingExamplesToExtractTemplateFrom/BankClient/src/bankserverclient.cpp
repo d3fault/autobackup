@@ -5,21 +5,13 @@
 BankServerClient::BankServerClient(QObject *parent)
     : QObject(parent)
 {
-    connect(this, SIGNAL(doneUsingRpcBankServerHelperDuringInitialization()), this, SLOT(emitInitializedIfDoneWithAllRpcServices()));
-    //etc for each rpc service
-
-
-
-
-
-    //instantiate backend business objects here
+    //instantiate backend business objects here, when they exist
 
     //m_AnotherRpcServerSayWtSideOfThings = new QObject(); //rpc client's backend business object?
     //TODO^ having a single project be both a client and server is a future project. don't lose track of your objective
     //simplify it just like the RemoteBankManagementTest did so there's just 2 portions
 
     //yes, there will be actual objects instantiated here... but i can't think of any for the simplified RemoteBankManagementTest example
-
 
     //to ease the burden of coding, i am stating that all "initialization" required to get BankServerClient in a "react-ready" state needs to be done in the constructor. Other use cases could still use custom logic to daisy chain initialize signals/slots but right now I'm already quite confused with the different times that BankServerClient and RpcBankServerHelper will be initializing. I get it now though. The client is rpc agnostic. oh my god i just figured out my problems. the gui should only talk to test! but test can and does connect the backends directly to the gui. the gui is ignorant of the business, and certain businesses are ignorant of each other! both businesses should be ignorant of the auto generated rpc code half.
     //Because of the way we are arranging the BankServerClient as react-ready, it makes sense for us to also make the test only communicate through BankServerClient, as Test receives NO GUARANTEES (though this can be hacked around, it shouldn't because the code needs to stand up to many use cases) from the BankServerClient as to how long, if and when, RpcBankServerHelper will even be instantiated/started for! So it can't logically be the one to daisy-chain the two together! Hell, it shouldn't even know about the Rpc*Helper classes... oh my duh...
@@ -32,6 +24,7 @@ BankServerClient::BankServerClient(QObject *parent)
     //the client/server are essentially each exactly 1/2 of a "peer" btw
     //the first one uses it in a much stricter manner. it really has to be really really ready or else the system might fail. the second is like "ok so that particular connection didn't get made, whatever".
 }
+#if 0
 void BankServerClient::moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThreads()
 {
     //no backend objects atm
@@ -41,6 +34,7 @@ void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IE
     //Action Responses
     connect(signalEmitter, SIGNAL(createBankAccountCompleted(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountCompleted(ClientCreateBankAccountMessage*)));
     connect(signalEmitter, SIGNAL(getAddFundsKeyCompleted(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage*)));
+
 
     //Action Errors
     connect(signalEmitter, SIGNAL(createBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage*)));
@@ -53,6 +47,7 @@ void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IE
     connect(signalEmitter, SIGNAL(pendingBalanceDetected(ClientPendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage*)));
     connect(signalEmitter, SIGNAL(confirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)));
 }
+#endif
 void BankServerClient::initialize(RpcBankServerHelper *rpcBankServerHelper)
 {
     //TODOreq maybe actually do stuff here
@@ -106,6 +101,7 @@ void BankServerClient::handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage
     emit d(QString("get add funds key message completed for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey);
     getAddFundsKeyMessage->doneWithMessage();
 }
+#if 0
 void BankServerClient::handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage *createBankAccountMessage)
 {
     emit d(QString("create bank account message failed, username already exists for user: ") + createBankAccountMessage->Username);
@@ -131,6 +127,7 @@ void BankServerClient::handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(Cli
     emit d(QString("get add funds key message failed, wait for pending to be confirmed for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey);
     getAddFundsKeyMessage->doneWithMessage();
 }
+#endif
 void BankServerClient::handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage *pendingBalanceDetectedMessage)
 {
     //TODOreq: just like server already does, ack etc. perhaps all implicitly through the doneWithMessage call? idfk [yet] because broadcasts don't ack like actions do and i haven't coded the broadcast ack yet

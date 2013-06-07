@@ -81,7 +81,7 @@ signals:
     void d(const QString &);
 
     void initializeRpcBankServerClientRequested(RpcBankServerHelper*);
-    void initializeRpcBankServerHelperRequested(MultiServerClientAbstractionArgs);
+    void initializeRpcBankServerHelperRequested(MultiServerClientsAbstractionArgs);
 
     void startRpcBankServerClientRequested();
 public slots:

@@ -190,6 +190,7 @@ void AbstractClientConnection::handleDataReceivedFromClient()
 
                     QByteArray welcomeMessage; //if i change the structure of this welcome message, i need to change the code in the client for the 'thank you', which just re-sends the welcome message (it is just a hack since they are identical for now)
                     QDataStream messageWriteStream(&welcomeMessage, QIODevice::WriteOnly);
+                    messageWriteStream << (quint8)AbstractConnection::WelcomeFromServer;
                     messageWriteStream << cookie(); //generates OR confirms cookie
 
                     NetworkMagic::streamOutMagic(&m_DataStreamToClient);
@@ -254,6 +255,7 @@ void AbstractClientConnection::handleDataReceivedFromClient()
 
                         QByteArray okStartSendingMessagesBroMessage;
                         QDataStream messageWriteStream(&okStartSendingMessagesBroMessage, QIODevice::WriteOnly);
+                        messageWriteStream << (quint8)AbstractConnection::OkStartSendingBroFromServer;
                         messageWriteStream << cookie();
                         //delete serverHelloStatus; //we don't need it anymore (right?????)
                         //messageWriteStream << QString("ok bro you're good to go"); //lol what else should i send? was thinking of just a bool. it makes no difference, hello doesn't need to be optimized lawl. i mean i guess there should just be an enum/int that identifies which message type it is you know? fuck it, the cookie, although redundant as fuck at this point, will serve as the "ok bro you're good to go"
@@ -284,7 +286,6 @@ void AbstractClientConnection::handleDataReceivedFromClient()
                 }
                 break;
             }
-
         }
     }
 }
