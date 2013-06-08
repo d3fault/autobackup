@@ -1,0 +1,3 @@
+The difference between a programmer and a psychologist (aside from the fact the programmers DO as well as 'study') is that psychologists search for patters in and analyze the output of /dev/random.
+
+We both study operating systems on computers, however.

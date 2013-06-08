@@ -1,0 +1,7 @@
+I like that it would be ridiculously easy to use Google's protobuf on top of my Rpc Generator. The messages would simply be one parameter: a byte array with the packed protobuf message.
+
+Protobuf has a fail interface for rpc that's incomplete as fuck. They basically laugh at you and say "well you COULD use this in rpc... but we're going to leave out all the important stuff like transport".
+
+My motherfucking Rpc Generator has 3 protocols and does the same thing protobuf already does (idk which is more efficient, but i'd imagine theres is (i have room for improvement and know it -- wouldn't be surprised if ours ended up being roughly the same size at the end of the day (after i optimize))), and I might add a UDP/Encrypted one later as a further optmization :-P
+
+The point of this doc is me saying that I DON'T NEED TO OPTIMIZE [message param stuff] IF I DON'T WANT TO I CAN JUST USE PROTOBUF LOL

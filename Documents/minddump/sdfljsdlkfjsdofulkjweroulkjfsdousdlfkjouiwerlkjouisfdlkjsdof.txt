@@ -1,0 +1,23 @@
+My brain lols when it thinks: I could make a turnkey site for selling Rpc Generator (GPL/Business dual license business model)... _USING_ Rpc Generator :-).
+
+
+I think ultimately I'm going to end up having a "Payment Processor" gateway thingo... which my "Advertising Service" uses... which my "Profiles and Video Channel" site uses... (this is my first time mentioning the payment processor as standalone).
+
+It just makes sense because it's very little extra overhead from what I already have to code. And is more future proof because if I get into E-Retail or something for example then I'd already have a payment processor...
+
+
+
+
+
+That I have a 4th layer is what separates me from the rest. I'm going to utilize all 3 at once... and the 4th being my launch/channel.... activate them all simultaneously (after extensive testing of course (ez)). How the fuck could that business plan fail? It would only fail if I run out of time. I could do that shit in a matter of months AT THIS RATE. That was not true (though I always knew it COULD be true) before last week. I was crawling along then... woulda taken years.
+
+
+
+
+The walmart effect of code (?): coding faster makes coding easier because you forget less of what you're coding? or something
+
+if you take huge breaks and go really slow then you're going to forget way more shit and have to remember it. the time spent remembering further (barely) increases how much time you spend coding (and so you forget a bit more)
+
+
+
+squashing it all together and keeping it nice and fresh in your brain is definitely the best way to go. that's what i'm doing now :)

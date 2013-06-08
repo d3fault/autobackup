@@ -1,3 +1,4 @@
+#if 0
 #include "ibankserverclientprotocolknower.h"
 
 IBankServerClientProtocolKnower::IBankServerClientProtocolKnower(QObject *parent) :
@@ -43,7 +44,7 @@ void IBankServerClientProtocolKnower::processGetAddFundsKeyResponseReceived(GetA
 #endif
 void IBankServerClientProtocolKnower::createBankAccountDelivery()
 {
-    ClientCreateBankAccountMessage *createBankAccountMessage = static_cast<ClientCreateBankAccountMessage*>(sender());
+    CreateBankAccountMessage *createBankAccountMessage = static_cast<CreateBankAccountMessage*>(sender());
     //TODOoptimization: perhaps use friend class shit to hide the Header from the user? right now it's just public. ESPECIALLY since they can access the header (right after .getNewOrRecycled()) and before it is even set (right here)
     //createBankAccountMessage->Header.MessageId = getUniqueMessageId();
     createBankAccountMessage->Header.MessageType = RpcBankServerHeader::CreateBankAccountMessageType;
@@ -67,7 +68,7 @@ void IBankServerClientProtocolKnower::createBankAccountDelivery()
 }
 void IBankServerClientProtocolKnower::getAddFundsKeyDelivery()
 {
-    ClientGetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<ClientGetAddFundsKeyMessage*>(sender());
+    GetAddFundsKeyMessage *getAddFundsKeyMessage = static_cast<GetAddFundsKeyMessage*>(sender());
     //getAddFundsKeyMessage->Header.MessageId = getUniqueMessageId();
     getAddFundsKeyMessage->Header.MessageType = RpcBankServerHeader::GetAddFundsKeyMessageType;
     //conflict resolution
@@ -82,18 +83,18 @@ void IBankServerClientProtocolKnower::getAddFundsKeyDelivery()
 
     myTransmit(getAddFundsKeyMessage);
 }
-ClientCreateBankAccountMessage *IBankServerClientProtocolKnower::getPendingCreateBankAccountMessageById(quint32 messageId)
+CreateBankAccountMessage *IBankServerClientProtocolKnower::getPendingCreateBankAccountMessageById(quint32 messageId)
 {
-    ClientCreateBankAccountMessage *createBankAccountMessage = m_PendingCreateBankAccountMessagesById.value(messageId, 0);
+    CreateBankAccountMessage *createBankAccountMessage = m_PendingCreateBankAccountMessagesById.value(messageId, 0);
     if(createBankAccountMessage)
         m_PendingCreateBankAccountMessagesById.remove(messageId);
     return createBankAccountMessage;
     //so a goal of mine was to keep the message matching OUT of the Transporter impl... but seeing as i'm trying to stream onto a cached message... how the fuck am i supposed to do that?? this line should somehow be in IBankServerClientProtocolKnower. maybe a regular protected method call actually? want to get it working first fuck it
     //^^decided it's easier to make the methods than to change the hashes from private to protected (it isn't really, but this is better design anyways)
 }
-ClientGetAddFundsKeyMessage *IBankServerClientProtocolKnower::getPendingGetAddFundsKeyMessageById(quint32 messageId)
+GetAddFundsKeyMessage *IBankServerClientProtocolKnower::getPendingGetAddFundsKeyMessageById(quint32 messageId)
 {
-    ClientGetAddFundsKeyMessage *getAddFundsKeyMessage = m_PendingGetAddFundsKeyMessagesById.value(messageId, 0);
+    GetAddFundsKeyMessage *getAddFundsKeyMessage = m_PendingGetAddFundsKeyMessagesById.value(messageId, 0);
     if(getAddFundsKeyMessage)
         m_PendingGetAddFundsKeyMessagesById.remove(messageId);
     return getAddFundsKeyMessage;
@@ -105,4 +106,5 @@ uint IBankServerClientProtocolKnower::getUniqueMessageId()
     //our current method will overflow :-/ -- though i doubt it will happen while testing (in production it surely would)
     //maybe a hash (md5/sha1/crc32) of the current timestamp + the message pointer as an int concatenated? that would solve dupes problem fo sho
 }
+#endif
 #endif

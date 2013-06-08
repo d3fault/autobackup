@@ -19,12 +19,12 @@ public:
     inline void emitGetAddFundsKeyRequested(GetAddFundsKeyMessage *getAddFundsKeyMessage) { emit getAddFundsKeyRequested(getAddFundsKeyMessage); }
 
     //inline void streamIMessageIntoByteArray(IMessage *messageInput, QByteArray *byteArrayOutput) { }
-public slots:
-    virtual void pendingBalanceDetectedDelivery()=0;
-    virtual void confirmedBalanceDetectedDelivery()=0;
 signals:
     void createBankAccountRequested(CreateBankAccountMessage*);
     void getAddFundsKeyRequested(GetAddFundsKeyMessage*);
+public slots:
+    virtual void pendingBalanceDetectedDelivery()=0;
+    virtual void confirmedBalanceDetectedDelivery()=0;
 };
 
 #endif // IACCEPTRPCBANKSERVERBROADCASTDELIVERIES_AND_IEMITACTIONSFORSIGNALRELAYHACK_H

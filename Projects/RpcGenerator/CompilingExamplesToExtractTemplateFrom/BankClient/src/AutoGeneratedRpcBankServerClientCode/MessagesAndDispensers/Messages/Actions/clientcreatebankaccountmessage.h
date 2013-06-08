@@ -1,8 +1,10 @@
-#ifndef CLIENTCREATEBANKACCOUNTMESSAGE_H
-#define CLIENTCREATEBANKACCOUNTMESSAGE_H
+#if 0
+#ifndef ClientCreateBankAccountMessage_H
+#define ClientCreateBankAccountMessage_H
 
 #include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/imessage.h"
 #include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessagebase.h"
+#include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessage.h"
 
 class ClientCreateBankAccountMessage : public IMessage, public CreateBankAccountMessageBase
 {
@@ -14,4 +16,5 @@ public:
     void streamOut(QDataStream &out);
 };
 
-#endif // CLIENTCREATEBANKACCOUNTMESSAGE_H
+#endif // ClientCreateBankAccountMessage_H
+#endif

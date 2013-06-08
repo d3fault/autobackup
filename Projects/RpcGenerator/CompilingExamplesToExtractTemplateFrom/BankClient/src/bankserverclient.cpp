@@ -32,16 +32,16 @@ void BankServerClient::moveBackendBusinessObjectsToTheirOwnThreadsAndStartTheThr
 void BankServerClient::connectRpcBankServerSignalsToBankServerClientImplSlots(IEmitRpcBankServerBroadcastAndActionResponseSignalsWithMessageAsParam *signalEmitter)
 {
     //Action Responses
-    connect(signalEmitter, SIGNAL(createBankAccountCompleted(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountCompleted(ClientCreateBankAccountMessage*)));
-    connect(signalEmitter, SIGNAL(getAddFundsKeyCompleted(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage*)));
+    connect(signalEmitter, SIGNAL(createBankAccountCompleted(CreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountCompleted(CreateBankAccountMessage*)));
+    connect(signalEmitter, SIGNAL(getAddFundsKeyCompleted(GetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage*)));
 
 
     //Action Errors
-    connect(signalEmitter, SIGNAL(createBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage*)));
-    connect(signalEmitter, SIGNAL(createBankAccountFailedPersistError(ClientCreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountFailedPersistError(ClientCreateBankAccountMessage*)));
-    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage*)));
-    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage*)));
-    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage*)));
+    connect(signalEmitter, SIGNAL(createBankAccountFailedUsernameAlreadyExists(CreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountFailedUsernameAlreadyExists(CreateBankAccountMessage*)));
+    connect(signalEmitter, SIGNAL(createBankAccountFailedPersistError(CreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountFailedPersistError(CreateBankAccountMessage*)));
+    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedUsernameDoesntExist(GetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedUsernameDoesntExist(GetAddFundsKeyMessage*)));
+    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedUseExistingKeyFirst(GetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedUseExistingKeyFirst(GetAddFundsKeyMessage*)));
+    connect(signalEmitter, SIGNAL(getAddFundsKeyFailedWaitForPendingToBeConfirmed(GetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(GetAddFundsKeyMessage*)));
 
     //Broadcasts
     connect(signalEmitter, SIGNAL(pendingBalanceDetected(ClientPendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage*)));
@@ -59,14 +59,20 @@ void BankServerClient::initialize(RpcBankServerHelper *rpcBankServerHelper)
     //once we have backend objects, we'll do backendObject->takeOwnershipOfApplicableActionDispensers(m_ActionDispensers);
     //for now, we will take ownership for debug/testing etc
 
-    //Claim Action Dispensers
+    //Claim Action Dispensers (Requests)
     m_CreateBankAccountMessageDispenser = rpcBankServerHelper->actionDispensers()->takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(this);
     m_GetAddFundsKeyMessageDispenser = rpcBankServerHelper->actionDispensers()->takeOwnershipOfGetAddFundsKeyMessageDispenserRiggedForDelivery(this);
 
+    //Setup Action Response Signals
+    connect(rpcBankServerHelper, SIGNAL(createBankAccountCompleted(CreateBankAccountMessage*)), this, SLOT(handleCreateBankAccountCompleted(CreateBankAccountMessage*)));
+    connect(rpcBankServerHelper, SIGNAL(getAddFundsKeyCompleted(GetAddFundsKeyMessage*)), this, SLOT(handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage*)));
 
     //Setup Broadcast Signals
     connect(rpcBankServerHelper, SIGNAL(pendingBalanceDetectedBroadcasted(ClientPendingBalanceDetectedMessage*)), this, SLOT(handlePendingBalanceDetected(ClientPendingBalanceDetectedMessage*)));
     connect(rpcBankServerHelper, SIGNAL(confirmedBalanceDetectedBroadcasted(ClientConfirmedBalanceDetectedMessage*)), this, SLOT(handleConfirmedBalanceDetected(ClientConfirmedBalanceDetectedMessage*)));
+
+
+    connect(rpcBankServerHelper, SIGNAL(readyForActionRequests()), this, SLOT(handleRpcBankServerHelperReadyForActionRequests()));
 
 
     //old/obsolete todo methinks:
@@ -80,6 +86,12 @@ void BankServerClient::start()
     emit d("RpcBankServerClient received start message");
     emit started();
 }
+void BankServerClient::handleRpcBankServerHelperReadyForActionRequests()
+{
+    //This could have been connected by 'test' directly to the GUI to like enable some fucking buttons (simulate) or god who knows what the possibilities are endless. Because it really doens't matter [for now] and because KISS, I'll just take it here and emit d saying what happened :-P. In actual applications, this is a key component of the business logic! It lets us know that the rpc service is ready to motherfucking rpc serve.
+
+    emit d("Rpc Bank Server Helper is now ready for Action Requests [because > 0 clients established connection to the server]");
+}
 void BankServerClient::beginStoppingProcedure()
 {
     //TODOreq: wait for shit to exit cleanly. use server solution here prolly once implemented
@@ -91,38 +103,38 @@ void BankServerClient::finishStoppingProcedure()
 {
     emit stopped();
 }
-void BankServerClient::handleCreateBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage)
+void BankServerClient::handleCreateBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage)
 {
     emit d(QString("create bank account message completed for user: ") + createBankAccountMessage->Username);
     createBankAccountMessage->doneWithMessage();
 }
-void BankServerClient::handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
+void BankServerClient::handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
     emit d(QString("get add funds key message completed for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey);
     getAddFundsKeyMessage->doneWithMessage();
 }
 #if 0
-void BankServerClient::handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage *createBankAccountMessage)
+void BankServerClient::handleCreateBankAccountFailedUsernameAlreadyExists(CreateBankAccountMessage *createBankAccountMessage)
 {
     emit d(QString("create bank account message failed, username already exists for user: ") + createBankAccountMessage->Username);
     createBankAccountMessage->doneWithMessage();
 }
-void BankServerClient::handleCreateBankAccountFailedPersistError(ClientCreateBankAccountMessage *createBankAccountMessage)
+void BankServerClient::handleCreateBankAccountFailedPersistError(CreateBankAccountMessage *createBankAccountMessage)
 {
     emit d(QString("create bank account message failed, persist error for user: ") + createBankAccountMessage->Username);
     createBankAccountMessage->doneWithMessage();
 }
-void BankServerClient::handleGetAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
+void BankServerClient::handleGetAddFundsKeyFailedUsernameDoesntExist(GetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
     emit d(QString("get add funds key message failed, username doesn't exist' for user: ") + getAddFundsKeyMessage->Username);
     getAddFundsKeyMessage->doneWithMessage();
 }
-void BankServerClient::handleGetAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
+void BankServerClient::handleGetAddFundsKeyFailedUseExistingKeyFirst(GetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
     emit d(QString("get add funds key message failed, use existing key first for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey); //TODOreq: determine if an action returning as an ERROR should even be able to specify anything. like do we get the 'existing key' from the server via the message or from our local cache?? all up to me really
     getAddFundsKeyMessage->doneWithMessage();
 }
-void BankServerClient::handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage)
+void BankServerClient::handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(GetAddFundsKeyMessage *getAddFundsKeyMessage)
 {
     emit d(QString("get add funds key message failed, wait for pending to be confirmed for user: ") + getAddFundsKeyMessage->Username + QString(" with key: ") + getAddFundsKeyMessage->AddFundsKey);
     getAddFundsKeyMessage->doneWithMessage();
@@ -142,14 +154,14 @@ void BankServerClient::handleConfirmedBalanceDetected(ClientConfirmedBalanceDete
 }
 void BankServerClient::simulateCreateBankAccountAction(QString username)
 {
-    ClientCreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
+    CreateBankAccountMessage *createBankAccountMessage = m_CreateBankAccountMessageDispenser->getNewOrRecycled();
     createBankAccountMessage->Username = username;
     emit d(QString("SIMULATING create bank account: ") + createBankAccountMessage->Username);
     createBankAccountMessage->deliver();
 }
 void BankServerClient::simulateGetAddFundsKeyAction(QString username)
 {
-    ClientGetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
+    GetAddFundsKeyMessage *getAddFundsKeyMessage = m_GetAddFundsKeyMessageDispenser->getNewOrRecycled();
     getAddFundsKeyMessage->Username = username;
     emit d(QString("SIMULATING get add funds key: ") + getAddFundsKeyMessage->Username);
     getAddFundsKeyMessage->deliver();

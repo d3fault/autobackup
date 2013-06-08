@@ -4,6 +4,7 @@
 #include <QHash>
 
 #include "iprotocolknower.h"
+#include "abstractclientconnection.h"
 
 #include "../../RpcBankServerAndClientShared/rpcbankserverheader.h"
 
@@ -34,27 +35,27 @@ public:
 
         //m_AbstractClientConnection->streamDoneHelloingFromServerIntoMessageAboutToBeTransmitted(&m_TransmitMessageByteArray); //pretty sure i can now conclude that "streaming into" a message does not clear/overwrite it. it wouldn't make any sense if it did... how could i stream multiple items into a single qba if that was the case. OR PERHAPS the question was more relating to streaming out of (reading) a QDS and into a singular.... POD (QString counts). does that POD first need resetting? TODOreq (ignore first part of comment lol, it's already handled)
 
-        streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient();
+        streamDoneHelloingIntoMessageAboutToBeTransmitted();
 
         //after writing the following line, i just realize that i need to use the appropriate enums in places like... 'here it is again bitch' TODOreq... and probably lots of other places too! that "enum for-each 'find usages'" op should solve this implicitly as well...
         m_TransmitMessageDataStream << message->Header; //TODOreq: actions pretty much just send the same header back (after updating the GenericRpcType of course), but Broadcasts need to fill out the entire header manually
         m_TransmitMessageDataStream << *message;
 
         //transmit
-        m_AbstractClientConnection->transmitMessage(&m_TransmitMessageByteArray);
+        m_AbstractConnection->transmitMessage(&m_TransmitMessageByteArray);
     }
     inline void streamToByteArrayAndTransmitToClient_ButDontStreamTheMessageBecauseWeDontNeedItInThisSpecialCase(IMessage *message)
     {
         resetTransmitMessage();
 
-        streamDoneHelloingFromServerIntoMessageAboutToBeTransmittedToClient();
+        streamDoneHelloingIntoMessageAboutToBeTransmitted();
 
         m_TransmitMessageDataStream << message->Header;
         //coulda used bools etc to not stream this out depending on when it's needed, but it's an optimization to not have to check a bool that's rarely used for every single message. this method is used far less often than the above
         //m_TransmitMessageDataStream << *message;
 
         //transmit
-        m_AbstractClientConnection->transmitMessage(&m_TransmitMessageByteArray);
+        m_AbstractConnection->transmitMessage(&m_TransmitMessageByteArray);
     }
 private:
     static IAcceptRpcBankServerBroadcastDeliveries_AND_IEmitActionsForSignalRelayHack *m_SignalRelayHackEmitter;
@@ -317,7 +318,7 @@ private:
 
                 //re-transmit
                 //messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->deliver(); //TO DOnereq: the handler of deliver() expects only to see messages coming from business. It removes them from the pending in business. It shouldn't matter that we remove our messageId/message from a hash that we aren't in, but it is a worthwhile optimization to NOT do so. It also re-appends us to our ack-awaiting-ack list... so maybe I should just call myTransmit here directly instead???? just don't have that clientId, but I think I'm going to be adding that as a member of IActionMessage anyways???? (it does not apply to broadcast I don't think? (aside from them special client-prioritized broadcasts that I'm not even sure I can use yet lmfao, which'd probably include a db lookup of some sort to figure out who that client is anyways? really no fucking clue))
-                if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
+                if(!static_cast<AbstractClientConnection*>(m_AbstractConnection)->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
                 {
                     messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero->Header.GenericRpcMessageType = RpcBankServerMessageHeader::ActionResponseHereItIsAgainGenericServer2ClientMessageType;
                     streamToByteArrayAndTransmitToClient(messageOnlyIfTheAckIsLazyAwaitingAck__OrElseZero);
@@ -358,7 +359,7 @@ private:
 
                 //TODOreq: there was some special 'if' case that I thought up around here (or it may have been an else to an already existing if, idfk) when my comp was off and now, weeks later, I can't remember what the fuck it was. GOD DAMNIT I SHOULDN'T TAKE SUCH HUGE BREAKS WHEN WORKING ON SUCH IMPORTANT CODE. On that note, my grandpa has died since and I have decided to move out: my dad is a fucking noisy whiny child and it's distracting as fuck: both when I sleep and when I code (I don't code when he's home, ever). Hopefully going to move in with my quiet grandparents. The fact that they'll be home most of the time is irrelevant. I just need to explain to them that I need to be left alone: my grandma will try to use me as her handyman (in the same way she used my [other] grandpa back when he was younger). She'll (they'll) also think I'm cold/detached and lazy as fuck... so the arrangement might not work. I need to explain it well and we need to agree on a list of "chores". What the fuck does this have to do with the req? Get a blog man this is code haha dipshit
 
-                if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
+                if(!static_cast<AbstractClientConnection*>(m_AbstractConnection)->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
                 {
                     //set 'still in business'
                     actionMessage->Header.GenericRpcMessageType = RpcBankServerMessageHeader::ActionResponseToRequestRetry1StillInBusiness1GenericServer2ClientMessageType;
@@ -385,6 +386,7 @@ private:
         }
     }
 
+    //Action Responses -- sending them back to the client
     inline void removeFromPendingInBusiness_AND_addToAwaitingAck_And_StreamToByteArray_And_Transmit(IActionMessage *message, QHash<quint32, IActionMessage*> *actionSpecificAckList, QHash<quint32, IActionMessage*> *actionSpecificPendingInBusinessList, QList<quint32> *actionSpecificBusinessPendingDuringMergeList)
     {
         //TODOreq (done methinks (but maybe enum shit needs to be set in this method? idfk)): isn't this method missing a header send? i think i've refactored header shit so many times that it now doesn't get streamed when sending back to client. i need to figure out this in order to finish up my 'request is still in business' response (which is header ONLY methinks?). it is also worth noting that the header needs to come after both magic and the "hello" header ("DoneHelloing" typically)... so i might have to butcher my code to make that work
@@ -399,7 +401,7 @@ private:
         actionSpecificAckList->insert(message->Header.MessageId, message);
 
         //don't send it if queue mode is enabled (merge in progress or socket error detected). our ack list becomes the queue
-        if(!m_AbstractClientConnection->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
+        if(!static_cast<AbstractClientConnection*>(m_AbstractConnection)->queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection())
         {
             //our flagging tells us there isn't a merge in progress, but that doesn't mean there wasn't one while this message was in pending! so we check that now
             //if(message->Header.MessageId)
@@ -414,7 +416,7 @@ private:
                 }
             }
             message->Header.GenericRpcMessageType = RpcBankServerMessageHeader::ActionResponseGenericServer2ClientMessageType;
-            streamToByteArrayAndTransmitToClient(message);
+            streamToByteArrayAndTransmitToClient(message);            
         }
     }
 public slots:

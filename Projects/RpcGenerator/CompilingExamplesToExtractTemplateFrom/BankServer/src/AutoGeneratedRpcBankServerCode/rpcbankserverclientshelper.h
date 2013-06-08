@@ -1,6 +1,10 @@
 #ifndef RPCBANKSERVERCLIENTSHELPER_H
 #define RPCBANKSERVERCLIENTSHELPER_H
 
+#ifndef WE_ARE_RPC_BANK_SERVER_CODE
+#define WE_ARE_RPC_BANK_SERVER_CODE
+#endif
+
 #include <QObject>
 #include <QHash>
 

@@ -8,7 +8,7 @@ MultiServerAbstraction *AbstractClientConnection::m_MultiServerAbstraction = 0;
 IProtocolKnowerFactory *AbstractClientConnection::m_ProtocolKnowerFactory = 0;
 
 AbstractClientConnection::AbstractClientConnection(QIODevice *ioDeviceToClient, QObject *parent)
-    : QObject(parent), /*m_ServerHelloState(InitialHelloFromClient),*/ m_OldConnectionToMergeOnto(0), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToClient(ioDeviceToClient), m_NetworkMagic(ioDeviceToClient),  m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false)/*, m_ConnectionGood(false)*/
+    : AbstractConnection(ioDeviceToClient, parent), /*m_ServerHelloState(InitialHelloFromClient),*/ m_OldConnectionToMergeOnto(0), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_IoDeviceToClient(ioDeviceToClient), m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false)/*, m_ConnectionGood(false)*/
 {
     m_ReceivedMessageBuffer.setBuffer(&m_ReceivedMessageByteArray);
     m_ReceivedMessageBuffer.open(QIODevice::ReadWrite);
@@ -20,7 +20,7 @@ AbstractClientConnection::AbstractClientConnection(QIODevice *ioDeviceToClient, 
     {
         m_ProtocolKnower = m_ProtocolKnowerFactory->getNewProtocolKnower();
         m_ProtocolKnower->setMessageReceivedDataStream(&m_ReceivedMessageDataStream);
-        m_ProtocolKnower->setAbstractClientConnection(this);
+        m_ProtocolKnower->setAbstractConnection(this);
     }
     else
     {
@@ -86,7 +86,7 @@ void AbstractClientConnection::mergeNewIoDevice(QIODevice *newIoDeviceToClient)
     m_MultiServerAbstraction->setupSocketSpecificDisconnectAndErrorSignaling(m_IoDeviceToClient, this);
 
     //set io device as underlying io device for a few helper objects :-P
-    m_DataStreamToClient.setDevice(newIoDeviceToClient);
+    m_DataStreamToPeer.setDevice(newIoDeviceToClient);
     m_NetworkMagic.setIoDeviceToLookForMagicOn(newIoDeviceToClient);
     m_IODevicePeeker.setIoDeviceToPeek(newIoDeviceToClient);
 
@@ -108,7 +108,7 @@ void AbstractClientConnection::handleDataReceivedFromClient()
 {
     emit d("got data from client");
 
-    while(!m_DataStreamToClient.atEnd())
+    while(!m_DataStreamToPeer.atEnd())
     {
         if(!m_NetworkMagic.consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic())
         {
@@ -135,7 +135,7 @@ void AbstractClientConnection::handleDataReceivedFromClient()
         //if we get here, we got enough to read in the qbytearray (including it's size, which we peeked :-P)
         //QByteArray tehFukkenMezzage;
         m_ReceivedMessageByteArray.clear(); //TODOreq: is this necessary or does "streaming into" it overwrite previous contents?
-        m_DataStreamToClient >> m_ReceivedMessageByteArray; //woo. consume the message. we _know_ we have enough bytes!
+        m_DataStreamToPeer >> m_ReceivedMessageByteArray; //woo. consume the message. we _know_ we have enough bytes!
         m_ReceivedMessageBuffer.seek(0);
         m_NetworkMagic.messageHasBeenConsumedSoPlzResetMagic();
 
@@ -193,8 +193,8 @@ void AbstractClientConnection::handleDataReceivedFromClient()
                     messageWriteStream << (quint8)AbstractConnection::WelcomeFromServer;
                     messageWriteStream << cookie(); //generates OR confirms cookie
 
-                    NetworkMagic::streamOutMagic(&m_DataStreamToClient);
-                    m_DataStreamToClient << welcomeMessage;
+                    NetworkMagic::streamOutMagic(&m_DataStreamToPeer);
+                    m_DataStreamToPeer << welcomeMessage;
                     //m_ServerHelloState = HelloReceivedWelcomeDispatchedAwaitingThankYouForWelcomingMe; //god this is so ugly. If only I had a way to easily generate message interactions cleanly based on some defined protocol... hmmm.....
                     //^^commented out because that was the "implicit move to next state" (whatever the next message was was ASSUMED to be the "thank you for welcoming me". Now, the client has to specify "thank you for welcoming me". This is both safer and also allows us to send a DisconnectGoodbye message later on
                 }
@@ -262,8 +262,8 @@ void AbstractClientConnection::handleDataReceivedFromClient()
 
                         //m_ServerHelloState = DoneHelloing;
 
-                        NetworkMagic::streamOutMagic(&m_DataStreamToClient);
-                        m_DataStreamToClient << okStartSendingMessagesBroMessage; //TODOreq (done pretty sure, but should double check): i am forgetting magic for the client in my responses!!!
+                        NetworkMagic::streamOutMagic(&m_DataStreamToPeer);
+                        m_DataStreamToPeer << okStartSendingMessagesBroMessage; //TODOreq (done pretty sure, but should double check): i am forgetting magic for the client in my responses!!!
                     }
                     else
                     {

@@ -1,7 +1,7 @@
 #include "bankserverclientdebugwidget.h"
 
-BankServerClientDebugWidget::BankServerClientDebugWidget(RpcBankServerClientTest *bankClientTest, QWidget *parent)
-    : IDebuggableStartableStoppableFrontend(bankClientTest, parent)
+BankServerClientDebugWidget::BankServerClientDebugWidget(QWidget *parent)
+    : QWidget(parent)
 { }
 void BankServerClientDebugWidget::addButtonsToLayoutAndConnectToBackend()
 {

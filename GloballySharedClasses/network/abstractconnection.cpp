@@ -1,6 +1,5 @@
 #include "abstractconnection.h"
 
-AbstractConnection::AbstractConnection(QObject *parent) :
-    QObject(parent)
-{
-}
+AbstractConnection::AbstractConnection(QIODevice *ioDeviceToPeer, QObject *parent) :
+    QObject(parent), m_DataStreamToPeer(ioDeviceToPeer), m_NetworkMagic(ioDeviceToPeer)
+{ }

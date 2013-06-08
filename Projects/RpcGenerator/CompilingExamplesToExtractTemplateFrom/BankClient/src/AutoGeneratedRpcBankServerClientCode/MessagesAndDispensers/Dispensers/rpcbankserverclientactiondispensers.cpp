@@ -3,7 +3,7 @@
 RpcBankServerClientActionDispensers::RpcBankServerClientActionDispensers(IAcceptRpcBankServerActionDeliveries *destination)
     : m_Destination(destination), m_CreateBankAccountMessageDispenser(0), m_GetAddFundsKeyMessageDispenser(0)
 { }
-ClientCreateBankAccountMessageDispenser * RpcBankServerClientActionDispensers::takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner)
+ClientCreateBankAccountMessageDispenser *RpcBankServerClientActionDispensers::takeOwnershipOfCreateBankAccountMessageDispenserRiggedForDelivery(QObject *owner)
 {
     m_CreateBankAccountMessageDispenser = new ClientCreateBankAccountMessageDispenser(m_Destination, owner);
     return m_CreateBankAccountMessageDispenser;

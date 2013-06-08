@@ -17,6 +17,7 @@ private:
     ClientCreateBankAccountMessageDispenser *m_CreateBankAccountMessageDispenser;
     ClientGetAddFundsKeyMessageDispenser *m_GetAddFundsKeyMessageDispenser;
 signals:
+    void d(const QString &);
     void initialized();
 
     void beginStartProcedureRequested();
@@ -30,6 +31,7 @@ signals:
 public slots:
     void initialize(RpcBankServerHelper *rpcBankServerHelper);
     void start();
+    void handleRpcBankServerHelperReadyForActionRequests();
     void beginStoppingProcedure();
     void finishStoppingProcedure();
 
@@ -38,16 +40,16 @@ public slots:
     void simulateGetAddFundsKeyAction(QString username);
 private slots:
     //Actions Responses
-    void handleCreateBankAccountCompleted(ClientCreateBankAccountMessage *createBankAccountMessage);
-    void handleGetAddFundsKeyCompleted(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void handleCreateBankAccountCompleted(CreateBankAccountMessage *createBankAccountMessage);
+    void handleGetAddFundsKeyCompleted(GetAddFundsKeyMessage *getAddFundsKeyMessage);
 
 #if 0
     //Action Errors
-    void handleCreateBankAccountFailedUsernameAlreadyExists(ClientCreateBankAccountMessage *createBankAccountMessage);
-    void handleCreateBankAccountFailedPersistError(ClientCreateBankAccountMessage *createBankAccountMessage);
-    void handleGetAddFundsKeyFailedUsernameDoesntExist(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
-    void handleGetAddFundsKeyFailedUseExistingKeyFirst(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
-    void handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(ClientGetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void handleCreateBankAccountFailedUsernameAlreadyExists(CreateBankAccountMessage *createBankAccountMessage);
+    void handleCreateBankAccountFailedPersistError(CreateBankAccountMessage *createBankAccountMessage);
+    void handleGetAddFundsKeyFailedUsernameDoesntExist(GetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void handleGetAddFundsKeyFailedUseExistingKeyFirst(GetAddFundsKeyMessage *getAddFundsKeyMessage);
+    void handleGetAddFundsKeyFailedWaitForPendingToBeConfirmed(GetAddFundsKeyMessage *getAddFundsKeyMessage);
 #endif
 
     //Broadcasts

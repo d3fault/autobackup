@@ -1,4 +1,5 @@
-#include "clientcreatebankaccountmessage.h"
+#if 0
+#include "ClientCreateBankAccountMessage.h"
 
 #include "../../../../../../RpcBankServerAndClientShared/MessagesAndDispensers/Messages/Actions/createbankaccountmessagebase.h"
 
@@ -13,3 +14,4 @@ void ClientCreateBankAccountMessage::streamOut(QDataStream &out)
 {
     CREATE_BANK_ACCOUNT_MESSAGE_PARSE_AS_ACTION_REQUEST_PARAMS(out,<<);
 }
+#endif

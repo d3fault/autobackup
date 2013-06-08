@@ -1,3 +1,4 @@
+#if 0
 #ifndef IRPCBANKSERVERBUSINESS_H
 #define IRPCBANKSERVERBUSINESS_H
 
@@ -133,3 +134,4 @@ signals:
 
 
 #endif // IRPCBANKSERVERBUSINESS_H
+#endif

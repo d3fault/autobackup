@@ -15,7 +15,7 @@ IRecycleableAndStreamable *IRecycleableDispenser::privateGetNewOrRecycled()
 {
     if(!m_RecycleList.isEmpty())
     {
-        IRecycleableAndStreamable *recycled = m_RecycleList.takeLast();
+        IRecycleableAndStreamable *recycled = m_RecycleList.takeLast(); //Why last? Memory fragmentation reduction, bro. No idea if it actually helps though heh...
         recycled->resetMessageParameters();
         return recycled;
     }

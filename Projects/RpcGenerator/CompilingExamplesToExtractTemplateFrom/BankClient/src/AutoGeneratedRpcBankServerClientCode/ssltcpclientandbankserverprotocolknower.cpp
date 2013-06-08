@@ -63,7 +63,7 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
             {
                 //TODOreq: get our new timestamp, find out the difference between the pre-transmit one, and record that in some list thingy lol
 
-                ClientCreateBankAccountMessage *createBankAccountMessage = getPendingCreateBankAccountMessageById(header.MessageId);
+                CreateBankAccountMessage *createBankAccountMessage = getPendingCreateBankAccountMessageById(header.MessageId);
                 if(createBankAccountMessage)
                 {
                     stream >> *createBankAccountMessage;
@@ -75,12 +75,12 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
                     {
                         switch(failedReasonEnum)
                         {
-                        case ClientCreateBankAccountMessage::FailedUsernameAlreadyExists:
+                        case CreateBankAccountMessage::FailedUsernameAlreadyExists:
                             {
                                 emit createBankAccountFailedUsernameAlreadyExists(createBankAccountMessage);
                             }
                         break;
-                        case ClientCreateBankAccountMessage::FailedPersistError:
+                        case CreateBankAccountMessage::FailedPersistError:
                             {
                                 emit createBankAccountFailedPersistError(createBankAccountMessage);
                             }
@@ -101,7 +101,7 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
             {
                 //TODOreq: get our new timestamp, find out the difference between the pre-transmit one, and record that in some list thingy lol
 
-                ClientGetAddFundsKeyMessage *getAddFundsKeyMessage = getPendingGetAddFundsKeyMessageById(header.MessageId);
+                GetAddFundsKeyMessage *getAddFundsKeyMessage = getPendingGetAddFundsKeyMessageById(header.MessageId);
                 if(getAddFundsKeyMessage)
                 {
                     stream >> *getAddFundsKeyMessage;
@@ -113,17 +113,17 @@ void SslTcpClientAndBankServerProtocolKnower::handleMessageReceivedFromRpcServer
                     {
                         switch(failedReasonEnum)
                         {
-                        case ClientGetAddFundsKeyMessage::FailedUsernameDoesntExist:
+                        case GetAddFundsKeyMessage::FailedUsernameDoesntExist:
                             {
                                 emit getAddFundsKeyFailedUsernameDoesntExist(getAddFundsKeyMessage);
                             }
                         break;
-                        case ClientGetAddFundsKeyMessage::FailedUseExistingKeyFirst:
+                        case GetAddFundsKeyMessage::FailedUseExistingKeyFirst:
                             {
                                 emit getAddFundsKeyFailedUseExistingKeyFirst(getAddFundsKeyMessage);
                             }
                         break;
-                        case ClientGetAddFundsKeyMessage::FailedWaitForPendingToBeConfirmed:
+                        case GetAddFundsKeyMessage::FailedWaitForPendingToBeConfirmed:
                             {
                                 emit getAddFundsKeyFailedWaitForPendingToBeConfirmed(getAddFundsKeyMessage);
                             }

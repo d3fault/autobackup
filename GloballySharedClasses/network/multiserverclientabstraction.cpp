@@ -1,7 +1,5 @@
 #include "multiserverclientabstraction.h"
 
-quint32 MultiServerClientAbstraction::overflowingClientIdsUsedAsInputForMd5er = 0;
-
 MultiServerClientAbstraction::MultiServerClientAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent)
     : QObject(parent)
 {
@@ -53,25 +51,17 @@ void MultiServerClientAbstraction::setupSocketSpecificDisconnectAndErrorSignalin
         }
     }
 }
-AbstractServerConnection *MultiServerClientAbstraction::potentialMergeCaseAsCookieIsSupplied_returning_oldConnection_ifMerge_or_ZERO_otherwise(AbstractServerConnection *newConnectionToPotentiallyMergeWithOld)
-{
-    AbstractServerConnection *oldConnectionToMergeWithMaybe = getExistingConnectionUsingCookie__OrZero(newConnectionToPotentiallyMergeWithOld->cookie());
-    if(oldConnectionToMergeWithMaybe)
-    {
-        dontBroadcastTo(oldConnectionToMergeWithMaybe);
-
-        oldConnectionToMergeWithMaybe->setQueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(true);
-        return oldConnectionToMergeWithMaybe;
-    }
-    return 0;
-}
 void MultiServerClientAbstraction::connectionDoneHelloing(AbstractServerConnection *abstractClientConnection)
 {
+    //TODOreq: It makes sense that we would then notify the business or something/someone that the rpc service is now ready to be used. We need at least 1 connection for that to be true. By ready, I mean: Action Requests can now be.... requested...
+    //^^^(the business is expected to ALREADY be ready for broadcasts before that notification, BUT realistically none will come until we have at least 1 connection)
     m_ListOfHelloedConnections.append(abstractClientConnection);
-}
-void MultiServerClientAbstraction::appendDeadConnectionThatMightBePickedUpLater(AbstractServerConnection *abstractClientConnection)
-{
-    m_ListOfDeadConnectionsThatMightBePickedUpLater.append(abstractClientConnection);
+
+    if(!m_ReadyForActionRequests)
+    {
+        m_ReadyForActionRequests = true;
+        emit readyForActionRequests();
+    }
 }
 AbstractServerConnection *MultiServerClientAbstraction::getSuitableClientConnectionNextInRoundRobinToUseForBroadcast_OR_Zero()
 {
@@ -88,7 +78,6 @@ AbstractServerConnection *MultiServerClientAbstraction::getSuitableClientConnect
     }
 
     return 0;
-
 }
 void MultiServerClientAbstraction::reportConnectionDestroying(AbstractServerConnection *connectionBeingDestroyed)
 {
@@ -126,33 +115,11 @@ void MultiServerClientAbstraction::initializeAndStartConnections(MultiServerClie
 }
 void MultiServerClientAbstraction::start()
 {
-    if(m_BeSslClient)
-    {
-        sslTcpClient->start();
-    }
-    if(m_BeTcpServer)
-    {
-        //TODOreq
-    }
-    if(m_BeLocalServer)
-    {
-        //TODOreq
-    }
+    //TODOreq
 }
 void MultiServerClientAbstraction::stop()
 {
-    if(m_BeSslClient)
-    {
-        sslTcpClient->stop();
-    }
-    if(m_BeTcpServer)
-    {
-        //TODOreq
-    }
-    if(m_BeLocalServer)
-    {
-        //TODOreq
-    }
+    //TODOreq
 }
 AbstractServerConnection *MultiServerClientAbstraction::handleNewConnectionToServer(QIODevice *newClient)
 {
@@ -192,6 +159,7 @@ void MultiServerClientAbstraction::refillRoundRobinFromHellodConnections()
         indexesRemaining.append(i);
     }
 
+    //TODOoptimization: don't call .length() so fucking much (code is in server also). This refill method will be called pretty often tbh
     while(indexesRemaining.length() > 0)
     {
         int randomIndexIntoIndexList = (qrand() % indexesRemaining.length());

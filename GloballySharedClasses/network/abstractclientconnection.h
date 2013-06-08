@@ -37,9 +37,6 @@ public:
 
     }
 #endif
-
-    //TODOreq (think it's done but leaving in for server->client unfinished code): Need to have a QBA that encapsulates both the "DoneHelloing" state and also the "actual message" (which is passed in full below). Something like: QBA[HelloState,ActualMessage_QBA-also_OnlyIfHelloStateIsDoneHelloing]. The only downside to this is that we have introduced another quint32 for another QBA! Is there some way I can combine them without going batshit insane? Hmm just realized this is for server -> client stuff, which I'm not even completely balls deep into yet. It is still relevant but also like the "opposite side of the coin" too. In streamToByteArrayAndTransmit I could call a method in this to stream the HelloState just before streaming the message contents themselves to get rid of the added quint32 for the extra qba, but what will it be? DoneHelloing? I'm starting to think I don't need an "Ok start sending bro" because that is essentially the server telling the client "DoneHelloing". Do I have client -> server and server -> client statuses mixed up unintentionally? My brain hurts and I think yes. Either way it's a TODOreq: that all of the non-DoneHelloing cases need to ALSO manually stream the hello status where appropriate (in the switch statement down below), similar to how they also manually stream magic themselves...
-    inline void transmitMessage(QByteArray *message) { /*if(m_ConnectionGood) {*/ NetworkMagic::streamOutMagic(&m_DataStreamToClient); m_DataStreamToClient << *message; /*}*/ }
     quint32 cookie();
 
     //right now when setMergeInProgress is called, it's when a matching cookie is seen and we have yet to see any socket errors etc. It's easy to 'guarantee' (except not) that a merge is in progress (the hello might still fail? we could still dc? idfk). However I still want to "MAYBE" do a merge whenever a socket error (unclean disconnect via makebad etc) is detected. It's more of like a setMergeMaybeInProgress though because we have no idea if they'll be back (for my systems, yes, it's a safe assumption that anyone that doens't cleanly disconnect will be back, but there's no way in hell i'd ever let my code assume that! needs to timeout and flush the queue after a period of no reconnect). basically i'm just trying to think while i type, what should i do inside makeConnectionBad with relation to the merge? I mean it's semantics but I still need to figure it out. This isn't necessarily right to call it a merge in progress, it's more like a potential merge in progress and the actual merge happens right after the new connections finishes hello'ing (TODOreq: make sure it only happens then)
@@ -58,7 +55,7 @@ private:
     QDataStream m_ReceivedMessageDataStream;
 
     QIODevice *m_IoDeviceToClient;
-    QDataStream m_DataStreamToClient;
+    //QDataStream m_DataStreamToClient;
 
     static MultiServerAbstraction *m_MultiServerAbstraction;
     static IProtocolKnowerFactory *m_ProtocolKnowerFactory;
@@ -66,9 +63,6 @@ private:
 
     //ServerHelloState m_ServerHelloState; -- so I guess instead of storing this as a member associated with the connection (and the server implicitly "knowing" what will come next), I want it to be a part of the protocol sent with each message (typically just "DoneHelloing" sent over and over). The reason for that is because I don't know how else I'd ever be able to "implicitly know" when to do a Disconnect/Goodbye! There wouldn't be a way to do DoneHelloing -> DisconnectGoodbye with my current (err, the currently coded but outdated (updating NOW)) design
 
-
-
-    NetworkMagic m_NetworkMagic;
     ByteArrayMessageSizePeekerForIODevice m_IODevicePeeker;
 
     void setCookie(const quint32 &cookie) { m_HasCookie = true; m_Cookie = cookie; }

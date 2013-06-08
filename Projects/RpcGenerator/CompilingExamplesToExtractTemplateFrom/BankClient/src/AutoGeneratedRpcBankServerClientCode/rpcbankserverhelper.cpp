@@ -1,7 +1,7 @@
 #include "rpcbankserverhelper.h"
 
 RpcBankServerHelper::RpcBankServerHelper(QObject *parent)
-    : IAcceptRpcBankServerClientActionDeliveries_AND_IEmitBroadcastsForSignalRelayHack(parent), m_RpcBankServerClientProtocolKnowerFactory(this), m_MultiServerClientAbstraction(&m_RpcBankServerClientProtocolKnowerFactory, this)
+    : IAcceptRpcBankServerClientActionDeliveries_AND_IEmitActionsAndBroadcastsBothWithMessageAsParamForSignalRelayHack(parent), m_RpcBankServerClientProtocolKnowerFactory(this), m_MultiServerClientAbstraction(&m_RpcBankServerClientProtocolKnowerFactory, this)
 {
     RpcBankServerClientProtocolKnowerFactory::setSignalRelayHackEmitter(this);
     //m_Transporter = new SslTcpClientAndBankServerProtocolKnower();
@@ -13,6 +13,8 @@ RpcBankServerHelper::RpcBankServerHelper(QObject *parent)
 
     //m_BroadcastDispensers = new RpcBankServerClientBroadcastDispensers(this);
     //TODOreq: not sure where Broadcast Dispensers gets new'd because I'm not sure where ActionDispensers gets new'd in the server equivalent of this code...
+
+    connect(&m_MultiServerClientAbstraction, SIGNAL(readyForActionRequests()), this, SIGNAL(readyForActionRequests()));
 
 #if 0
     m_RpcBankServerClient->setActionDispensers(m_ActionDispensers);
@@ -81,9 +83,13 @@ void RpcBankServerHelper::moveBusinessToItsOwnThreadAndStartTheThread()
 #endif
 void RpcBankServerHelper::initialize(MultiServerClientsAbstractionArgs multiServerClientAbstractionArgs)
 {
+    m_MultiServerClientAbstractionArgs_HACK2PASS2START = multiServerClientAbstractionArgs;
+
     emit d("RpcBankServerHelper received initialize message");
     //TODOreq: appears to make sense that the .initailize call below should return a bool and be checked before setting m_Initialized to true...
-    m_MultiServerClientAbstraction.initializeAndStartConnections(multiServerClientAbstractionArgs); //TODOreq: can't start here because we don't know if all action dispensers are claimed yet (emitInitializedSignalIfReady)!!!! Fuck man I need to sleep on this design and meh this merge is going to take forever but at least most of it is relatively easy... TODO LEFT OFF
+
+
+
     m_Initialized = true;
     emitInitializedSignalIfReady();
 }
@@ -91,13 +97,48 @@ void RpcBankServerHelper::handleBusinessDoneClaimingActionDispensersAndConnectin
 {
     emitInitializedSignalIfReady();
 }
-void RpcBankServerHelper::startAllThatHaveBeenInitialized()
+void RpcBankServerHelper::start()
 {
     emit d("RpcBankServerHelper received start message");
+
+    m_MultiServerClientAbstraction.initializeAndStartConnections(m_MultiServerClientAbstractionArgs_HACK2PASS2START); //TO DOnereq: can't start here because we don't know if all action dispensers are claimed yet (emitInitializedSignalIfReady)!!!! Fuck man I need to sleep on this design and meh this merge is going to take forever but at least most of it is relatively easy... TODO LEFT OFF
+    //We need the broadcast dispensers to be claimed because a broadcast might come right away on a connection that's been started. Just a race condition but definitely worth fixing
+    //^^Moving this to "start" is one way of making sure broadcasts are already connected to... but it's still a TODOreq I think to have "initialize" and "start" work properly. Fuck it for now
+    //TODOreq: i think this the first time i realized it [recently]: We also need to make sure that the Action RESPONSE signals are connected to as well? I can use the same connect notify scheme I devised for broadcasts (and of course ignoring certain Action Request dispenser claims should handle ignoring the Action Response signal connections -- shouldn't require more calls)
+
     m_MultiServerClientAbstraction.start();
+
     emit started();
 }
-void RpcBankServerHelper::stopAll()
+void RpcBankServerHelper::createBankAccountDelivery()
+{
+    //ehhh wat
+
+
+    //aren't action requests supposed to be delivered directly to their protocol knower?
+    //yes
+
+    //BUT
+
+    //that would mean that the business would need a dispenser for each connection...
+    //so NO
+
+    //TODOreq: i could do a round robin in the getNewOrRecycled function in order to make the action requests go directly to protocol knowers of specific connections, OR i can just leave it as a single dispenser and have it send action requests to here, who then send them to multi server who does round robin'ing etc
+
+    //it's just weird because i thought i already coded this in protocol knower!
+
+
+
+    //Actually starting to think maybe my design is broken. Broadcasts on the server will have the same problem and the code I have in place for them doesn't really do anything with acks (therefore doesn't do anything with protocol knower). We _COULD_ do the ack'ing right here but then it'd be less efficient.
+    //Ugg I feel sick to my stomach while thinking about how fucked the design [might] be
+    //TODO LEFT OFF -- I have this exact same method (already coded) in the inherited protocol knower, where it appears to belong as an optimization so we only ever have to search in lists of messages that belong to a given connection. Doing it here means we'd have to search all messages in all connections when doing operations. Starting to like that round robin in getNewOrRecycled idea, but I bet even that would be a bitch to implement.
+
+    //I also might be able to just hackily pass it to multi server abstraction who then picks a protocol knower from round robin and then protocol knower does it's regular schtick (which is already coded) -- sort of like the signal relay hack emitter except for slots lol
+}
+void RpcBankServerHelper::getAddFundsKeyDelivery()
+{
+}
+void RpcBankServerHelper::stop()
 {
     emit d("RpcBankServerHelper received stop message");
     m_MultiServerClientAbstraction.stop();

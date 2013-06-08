@@ -47,7 +47,7 @@ protected:
     inline void streamToggleBitIn(QDataStream &in) { in >> m_ToggleBit; }
 #endif
 #ifdef WE_ARE_RPC_BANK_SERVER_CLIENT_CODE
-    inline void streamToggleBitIn(QDataStream &in) { out << m_ToggleBit; }
+    inline void streamToggleBitOut(QDataStream &out) { out << m_ToggleBit; }
 #endif
 };
 

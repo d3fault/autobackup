@@ -152,7 +152,7 @@ void SslTcpServer::start()
 }
 void SslTcpServer::stop()
 {
-    if(isOpen())
+    if(isListening())
     {
         close(); //TODOreq: close() doesn't do shit for existing connections, but might disallow future ones? i need to keep track of connected clients and then call QSslSocket::disconnectFromHost on them to disconnect cleanly
     }

@@ -9,7 +9,7 @@ class BankServerClientDebugWidget : public QWidget
 {
     Q_OBJECT
 public:
-    BankServerClientDebugWidget(RpcBankServerClientTest *bankClientTest, QWidget *parent = 0);
+    BankServerClientDebugWidget(QWidget *parent = 0);
     void addButtonsToLayoutAndConnectToBackend();
 private:
     QLineEdit *m_UsernameLineEdit;

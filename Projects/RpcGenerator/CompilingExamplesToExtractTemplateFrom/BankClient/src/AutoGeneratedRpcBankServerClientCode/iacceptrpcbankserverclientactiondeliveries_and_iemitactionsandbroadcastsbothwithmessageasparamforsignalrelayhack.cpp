@@ -1,0 +1,6 @@
+#include "iacceptrpcbankserverclientactiondeliveries_and_iemitactionsandbroadcastsbothwithmessageasparamforsignalrelayhack.h"
+
+IAcceptRpcBankServerClientActionDeliveries_AND_IEmitActionsAndBroadcastsBothWithMessageAsParamForSignalRelayHack::IAcceptRpcBankServerClientActionDeliveries_AND_IEmitActionsAndBroadcastsBothWithMessageAsParamForSignalRelayHack(QObject *parent) :
+    IAcceptRpcBankServerActionDeliveries(parent)
+{
+}

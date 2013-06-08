@@ -36,23 +36,13 @@ public:
     explicit MultiServerClientAbstraction(IProtocolKnowerFactory *protocolKnowerFactory, QObject *parent);
     ~MultiServerClientAbstraction();
     void setupSocketSpecificDisconnectAndErrorSignaling(QIODevice *ioDeviceToClient, AbstractServerConnection *abstractClientConnection);
-    inline quint32 generateUnusedCookie()
-    {
-        quint32 cookie;
-        do
-        {
-            cookie = generateCookie();
-        }
-        while(getExistingConnectionUsingCookie__OrZero(cookie));
-        return cookie;
-    }
-    AbstractServerConnection *potentialMergeCaseAsCookieIsSupplied_returning_oldConnection_ifMerge_or_ZERO_otherwise(AbstractServerConnection *newConnectionToPotentiallyMergeWithOld);
+    //AbstractServerConnection *potentialMergeCaseAsCookieIsSupplied_returning_oldConnection_ifMerge_or_ZERO_otherwise(AbstractServerConnection *newConnectionToPotentiallyMergeWithOld);
     void connectionDoneHelloing(AbstractServerConnection *abstractClientConnection);
-    void appendDeadConnectionThatMightBePickedUpLater(AbstractServerConnection *abstractClientConnection);
+    //void appendDeadConnectionThatMightBePickedUpLater(AbstractServerConnection *abstractClientConnection);
 
     AbstractServerConnection *getSuitableClientConnectionNextInRoundRobinToUseForBroadcast_OR_Zero();
     void reportConnectionDestroying(AbstractServerConnection *connectionBeingDestroyed);
-    void dontBroadcastTo(AbstractServerConnection *abstractClientConnection);
+    void dontBroadcastTo(AbstractServerConnection *abstractClientConnection); //TODOreq: I think the corresponding client version of this should be dontSendActionRequestsTo ??? but idfk tbh. And honestly I keep wondering if round robin'ing is the way to go. Shouldn't they select the fastest server and stick with that? Nah there's no load balancing with that strategy heh. "Always load balancing" better than "Load balancing periodically" ?????? IDFK
 private:
     //SslTcpClient *sslTcpClient;
     //MultiServerClientAbstractionArgs m_MultiServerClientAbstractionArgs;
@@ -64,8 +54,6 @@ private:
     QList<AbstractServerConnection*> m_ListOfHelloedConnections;
 
     QQueue<AbstractServerConnection*> m_RoundRobinQueue;
-
-    QList<AbstractServerConnection*> m_ListOfDeadConnectionsThatMightBePickedUpLater;
 
     inline AbstractServerConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
     {
@@ -80,31 +68,17 @@ private:
                 return currentClientConnection;
             }
         }
-
-        connectionsCount = m_ListOfDeadConnectionsThatMightBePickedUpLater.size();
-        for(int i = 0; i < connectionsCount; ++i)
-        {
-            currentClientConnection = m_ListOfDeadConnectionsThatMightBePickedUpLater.at(i);
-            if(currentClientConnection->cookie() == cookie)
-            {
-                return currentClientConnection;
-            }
-        }
-
         return 0;
     }
-    static inline quint32 generateCookie()
-    {
-        QByteArray md5Input;
-        md5Input.append(QString::number(++overflowingClientIdsUsedAsInputForMd5er) + QDateTime::currentDateTime().toString() + QString::number(qrand()));
-        return ((quint32)(QCryptographicHash::hash(md5Input, QCryptographicHash::Md5).toUInt()));
-    }
-    static quint32 overflowingClientIdsUsedAsInputForMd5er;
     void refillRoundRobinFromHellodConnections();
     void setupQAbstractSocketSpecificErrorConnections(QAbstractSocket *abstractSocket, AbstractServerConnection *abstractClientConnection);
     void setupSslSocketSpecificErrorConnections(QSslSocket *sslSocket, AbstractServerConnection *abstractClientConnection);
     void setupQLocalSocketSpecificErrorConnections(QLocalSocket *localSocket, AbstractServerConnection *abstractClientConnection);
+
+    bool m_ReadyForActionRequests; //so we don't emit the signal over and over on each client connect
 signals:
+    void readyForActionRequests(); //this is kinda like "started" really except that it means we have at least one connection. started() might imply that the connections are still connecting
+    void unableToAcceptActionRequests(); //TODOreq: when the last connection to server is lost or something. Should also set m_ReadyForActionRequests to false
     void d(const QString &);
 private slots:
     void handleConnectedToSslServer(QSslSocket* sslSocketToServer);

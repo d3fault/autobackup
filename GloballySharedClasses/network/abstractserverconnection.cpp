@@ -8,7 +8,7 @@ MultiServerClientAbstraction *AbstractServerConnection::m_MultiServerClientAbstr
 IProtocolKnowerFactory *AbstractServerConnection::m_ProtocolKnowerFactory = 0;
 
 AbstractServerConnection::AbstractServerConnection(QIODevice *ioDeviceToClient, QObject *parent)
-    : QObject(parent), m_OldConnectionToMergeOnto(0), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_IoDeviceToClient(ioDeviceToClient), m_DataStreamToServer(ioDeviceToClient), m_NetworkMagic(ioDeviceToClient),  m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false)
+    : AbstractConnection(ioDeviceToClient, parent), m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false), m_IoDeviceToClient(ioDeviceToClient), m_IODevicePeeker(ioDeviceToClient), m_HasCookie(false)
 {
     m_ReceivedMessageBuffer.setBuffer(&m_ReceivedMessageByteArray);
     m_ReceivedMessageBuffer.open(QIODevice::ReadWrite);
@@ -44,10 +44,10 @@ AbstractServerConnection::AbstractServerConnection(QIODevice *ioDeviceToClient, 
     helloMessageDataStream << false; //no cookie (if true, cookie follows)
 
     //stream magic header
-    NetworkMagic::streamOutMagic(&m_DataStreamToServer);
+    NetworkMagic::streamOutMagic(&m_DataStreamToPeer);
 
     //stream message
-    m_DataStreamToServer << helloMessageByteArray;
+    m_DataStreamToPeer << helloMessageByteArray;
 }
 AbstractServerConnection::~AbstractServerConnection()
 {
@@ -56,49 +56,9 @@ AbstractServerConnection::~AbstractServerConnection()
 }
 quint32 AbstractServerConnection::cookie()
 {
-    if(!m_HasCookie)
-    {
-        //TODOreq: fix cookie logic because client does not generate one ever (though it can submit one when reconnecting). It'll probably be much simpler logic than what is on the server (and don't get confused by the fact that this is called AbstractServerConnection. It lives on the client)
-        //m_Cookie = m_MultiServerClientAbstraction->generateUnusedCookie();
-        m_HasCookie = true;
-    }
+    //TODOreq: fix cookie logic because client does not generate one ever (though it can submit one when reconnecting). It'll probably be much simpler logic than what is on the server (and don't get confused by the fact that this is called AbstractServerConnection. It lives on the client)
+
     return m_Cookie;
-}
-void AbstractServerConnection::setQueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(bool queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection)
-{
-    if(queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection != m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection)
-    {
-         m_QueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection = queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection;
-
-         if(queueActionResponsesBecauseTheyMightBeReRequestedInNewConnection)
-         {
-             m_ProtocolKnower->queueActionResponsesHasBeenEnabledSoBuildLists();
-         }
-    }
-}
-void AbstractServerConnection::mergeNewIoDevice(QIODevice *newIoDeviceToClient)
-{
-    m_IoDeviceToClient->close();
-    m_IoDeviceToClient->deleteLater();
-
-    //overwrite actual io device pointer
-    m_IoDeviceToClient = newIoDeviceToClient;
-
-    //connect to new io device
-    setupConnectionsToIODevice();
-
-    //connect to socket-specific error signals. let multiserverabstraction do it, because he does it initially and is better suited to knowing socket-specific functionality
-    m_MultiServerClientAbstraction->setupSocketSpecificDisconnectAndErrorSignaling(m_IoDeviceToClient, this);
-
-    //set io device as underlying io device for a few helper objects :-P
-    m_DataStreamToServer.setDevice(newIoDeviceToClient);
-    m_NetworkMagic.setIoDeviceToLookForMagicOn(newIoDeviceToClient);
-    m_IODevicePeeker.setIoDeviceToPeek(newIoDeviceToClient);
-
-    //add us to our done hello'ing list, which means we can be selected in broadcasts round robin selection
-    m_MultiServerClientAbstraction->connectionDoneHelloing(this);
-
-    setQueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(false);
 }
 void AbstractServerConnection::setupConnectionsToIODevice()
 {
@@ -108,7 +68,7 @@ void AbstractServerConnection::handleDataReceivedFromServer()
 {
     emit d("got data from server");
 
-    while(!m_DataStreamToServer.atEnd())
+    while(!m_DataStreamToPeer.atEnd())
     {
         if(!m_NetworkMagic.consumeFromIODeviceByteByByteLookingForMagic_And_ReturnTrueIf__Seen_or_PreviouslySeen__And_FalseIf_RanOutOfDataBeforeSeeingMagic())
         {
@@ -126,7 +86,7 @@ void AbstractServerConnection::handleDataReceivedFromServer()
         emit d("got enough data to read the message");
 
         m_ReceivedMessageByteArray.clear();
-        m_DataStreamToServer >> m_ReceivedMessageByteArray;
+        m_DataStreamToPeer >> m_ReceivedMessageByteArray;
         m_ReceivedMessageBuffer.seek(0);
         m_NetworkMagic.messageHasBeenConsumedSoPlzResetMagic();
 
@@ -148,7 +108,7 @@ void AbstractServerConnection::handleDataReceivedFromServer()
                     //read welcome
                     emit d("got welcome from server with cookie: ");
                     quint32 cookie;
-                    m_DataStreamToServer >> cookie;
+                    m_DataStreamToPeer >> cookie;
                     setCookie(cookie);
                     emit d(QString::number(cookie));
 
@@ -160,15 +120,15 @@ void AbstractServerConnection::handleDataReceivedFromServer()
                     messageWriteStream << cookie();
 
                     //send thank you for welcoming me message
-                    NetworkMagic::streamOutMagic(&m_DataStreamToServer);
-                    m_DataStreamToServer << thankYouForWelcomingMeByteArray;
+                    NetworkMagic::streamOutMagic(&m_DataStreamToPeer);
+                    m_DataStreamToPeer << thankYouForWelcomingMeByteArray;
                 }
                 break;
                 case OkStartSendingBroFromServer:
                 {
                     //read ok start sending bro
                     quint32 cookie;
-                    m_DataStreamToServer >> cookie;
+                    m_DataStreamToPeer >> cookie;
                     if(cookie == cookie())
                     {
                         //TODOreq: how do i set myself up to be in DoneHelloing???? Do I just ignore this message? What the fuck is the point of it? How do I say. I'm going to use 'connectionDoneHelloing' which was copy/pasted from the server code, for now. At first glance it appears ok to call it, but what happens after that and the backing design etc have to be re-examined and maybe modified (or maybe it's fine, who knows (i used to and will again (hmm sounds like life)))
@@ -193,10 +153,6 @@ void AbstractServerConnection::handleDataReceivedFromServer()
 void AbstractServerConnection::makeConnectionBad()
 {
         m_MultiServerClientAbstraction->dontBroadcastTo(this);
-
-        m_MultiServerClientAbstraction->appendDeadConnectionThatMightBePickedUpLater(this);
-
-        setQueueActionResponsesBecauseTheyMightBeReRequestedInNewConnection(true);
 }
 void AbstractServerConnection::makeConnectionBadIfNewQAbstractSocketStateSucks(QAbstractSocket::SocketState newState)
 {
