@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386038703
+Documents/minddump/:1386038772
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386038703
+Documents/minddump/dreams/:1386038772
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -650,6 +650,7 @@ Documents/minddump/fsdalfkjsdalfjoaualwekjrosfdlfjowieurlasjfoasiufdlwkjer.txt:1
 Documents/minddump/fsdalkfjslkdjfsdofulkwjerousdaflkjsdfoulkjer.txt:1366492472
 Documents/minddump/fsdfaljkdsflkjsdofuwelrkjdfsoudsfljewr.txt:1353780691
 Documents/minddump/fsdfjsdlfsdofiyusdfjsdlfk.txt:1328117345
+Documents/minddump/fsdfkjsdlkfjsoduflkjweroiulsjfdousdfljsdofuljwerousd.txt:1370746250
 Documents/minddump/fsdfkljlkjsfjslfkjsdlfkjsfoiyuweoriuasdhgasdlfkjbkfsoiuerlk.txt:1363641940
 Documents/minddump/fsdfljasouwrlksjafdoauelrkjsdfoult.txt:1344077974
 Documents/minddump/fsdfljlsdkjfoulkjewroulkjsfdoiuasldkfjoiuwelrkjoiusdflkj.txt:1370468105
@@ -767,6 +768,7 @@ Documents/minddump/lakdfjsdlakjfouwerlkjsdfouwelrkjsdf.txt:1353781349
 Documents/minddump/lakfjalsdkjfasdfhskfdhsafouwlrjsdflasjdfwoeur.txt:1347266323
 Documents/minddump/lakjdfjasdflkjoeuwrsdaflhsdfhsdlkjsdkj.txt:1355210436
 Documents/minddump/lakjfasldfjasdlfjkasdoffsldkfwaoeurlksjfdsdflaskdfjwoeryklfhasdfouwelrkjsf.txt:1350341255
+Documents/minddump/laksjdflksdjafousdlfjoisduflkjouiwerlkjouilsjdfousdflkjouwer.txt:1370738200
 Documents/minddump/lasdfjsadofiuwerlkjasfoiywrasufdioawerlkjsoafiusdflkj.txt:1337283195
 Documents/minddump/lasdjkfdsfjsadfouwerlsjdfiawhrlksdjfoiuwerlk.txt:1344286047
 Documents/minddump/lasdjkflkjsdfoiuwelrkjoduflkjsdfousdflkjsweoriulk.txt:1358887430
@@ -1203,6 +1205,7 @@ Documents/minddump/slakdjfasodfiuslkdfjowurelsdfkjosfuwrejowur.txt:1344528796
 Documents/minddump/slakfjslfdjosdufjksdfousdlfjsdofusdkjfosufouwerkjafsdfoi.txt:1368537023
 Documents/minddump/sldakfjlksdjfosdufljsdfousdfjouwejklkfjlksdfoiuwerjk.txt:1365399387
 Documents/minddump/sldakjfsdjfoiuwerljdsofu.txt:1355647223
+Documents/minddump/sldfjkslkdfjosdiuflkjwoeirulkjsdfousdlkfjouljsdfoj.txt:1370737009
 Documents/minddump/sldfjlsdjflsdjfhhljglajflskdjfls.txt:1355831484
 Documents/minddump/sldfjsdlafjsdalkfjoiuwerlkjsdfousdflk.txt:1356355477
 Documents/minddump/sldfkjasdofuwlrkjsafdihsdfkajoruwerlksjdfourl.txt:1345058845
@@ -1211,6 +1214,7 @@ Documents/minddump/sldfkjsdlkfjoiuwerlkjsdfousdlkjreoul.txt:1355649672
 Documents/minddump/sldfkjskldjfosduflkjowuierlkjoiusdflkjsdofulkjsdfouwelkrj.txt:1370237543
 Documents/minddump/sldfksdjlfdskafjsourwljdfsouerkldfslk.txt:1358906326
 Documents/minddump/sldjkfsadofiuoierulfjsdkfjsdk.txt:1353789547
+Documents/minddump/sldkfjaskdljfousdflkjwoewerrqwerwerfdsurljfodsuflkjsdfoul.txt:1370746128
 Documents/minddump/sldkfjowerulsdkfjsdfoiuwelrkjsfoiu.txt:1339936095
 Documents/minddump/sldkfjsldkjfslkdjflsdkjflskdjfdsoiu.txt:1361422894
 Documents/minddump/sldkfjslkdjflksdjfsdofusdlkfjsdlfjsdfoiuwerlkjsdf.txt:1360777233
@@ -1367,7 +1371,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386038703
+Pictures/:1386038772
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -2772,7 +2776,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386038703
+Projects/libAvGraphicsItem2/design/:1386038772
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -2990,7 +2994,7 @@ VariousTreeingsDuringHugeArchivePurge/Silver1tbCalvaryeBooksEasyTree.txt:1367596
 VariousTreeingsDuringHugeArchivePurge/externals.which.is.which.txt:1367597729
 VariousTreeingsDuringHugeArchivePurge/k3.wpl:1264978231
 autobackupScripts/:1349691249
-autobackupScripts/linux/:1366494423
+autobackupScripts/linux/:1370740716
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -3010,16 +3014,19 @@ autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
 autobackupScripts/linux/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
 autobackupScripts/linux/dismount.2x.750gb.drives.sh:1350716638
-autobackupScripts/linux/droid.backup.and.delete.only.because.flash.medium.sh:1358469389
-autobackupScripts/linux/droid.conversationBackup.pull.zip.and.shred.sh:1358469443
+autobackupScripts/linux/droid.backup.and.delete.only.because.flash.medium.sh.bak:1358469389
+autobackupScripts/linux/droid.backup.pictures.required.and.optionally.conversation.backup.and.camtimer.pics.and.csipsimple.recordings.and.delete.all.after.too.sh:1370744088
+autobackupScripts/linux/droid.conversationBackup.pull.zip.and.shred.sh.bak:1358469443
 autobackupScripts/linux/enable.vga.only.monitor.if.connected.sh:1350618566
 autobackupScripts/linux/installAllRpmsInThisDir.sh:1324208617
 autobackupScripts/linux/laptop.screen.only.sh:1350618576
 autobackupScripts/linux/mount.2x.750gb.drives.sh:1350716644
 autobackupScripts/linux/new.os.install.cloning.from.the.bare.repo.safely.by.specifying.file.colon.slash.slash.txt:1350441253
-autobackupScripts/linux/polaroid.backup.and.shred.sh:1351234310
+autobackupScripts/linux/polaroid.backup.and.shred.sh:1370739530
+autobackupScripts/linux/polaroid.backup.and.shred.sh.bak:1351234310
+autobackupScripts/linux/sony.ic.recorder.backup.and.delete.sh:1370738506
 autobackupScripts/linux/steps.to.staticBackup.txt:1349809723
-autobackupScripts/linux/sync.toSync.and.shred.sh:1358071524
+autobackupScripts/linux/sync.toSync.and.shred.sh:1370736718
 autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1350716632
 autobackupScripts/linux/yumDownloadOnly.sh:1350716657
 autobackupScripts/linux/zoom.backup.and.shred.sh:1351237228

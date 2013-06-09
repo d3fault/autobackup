@@ -1,10 +1,10 @@
 #!/bin/bash
 
-DIR_TO_SYNC=/media/PENDRIVE/toSync
-DIR1_TO_SYNC_TO=/media/truecrypt1/onlineSyncs
-DIR2_TO_SYNC_TO=/media/truecrypt2/onlineSyncs
+DIR_TO_SYNC="/media/IC RECORDER/VOICE/FOLDER01"
+DIR1_TO_SYNC_TO=/media/truecrypt1/sonyIC
+DIR2_TO_SYNC_TO=/media/truecrypt2/sonyIC
 
-read -n1 -r -p "make sure the device is mounted in: $DIR_TO_SYNC -- and that both backup drives are mounted and writeable" key
+read -n1 -r -p "make sure the device is mounted in: $DIR_TO_SYNC -- and that both backup drives are mounted and writeable. We will only sync the FOLDER01 folder" key
 
 if [ -d "$DIR_TO_SYNC" ]; then
 	if [ -d "$DIR1_TO_SYNC_TO" ]; then
@@ -23,11 +23,9 @@ if [ -d "$DIR_TO_SYNC" ]; then
 
 			read -n1 -r -p "done copying, press any key to begin deleting (now is a good time to 'sync')" key
 
-			cd ..
-			rm -rfv ./toSync/
-			mkdir ./toSync/
+			rm -rfv ./*
 
-			echo "Done syncing toSync";
+			echo "Done syncing Sony IC";
 		else
 			echo "$DIR2_TO_SYNC_TO does not exist. Is it mounted?";
 		fi

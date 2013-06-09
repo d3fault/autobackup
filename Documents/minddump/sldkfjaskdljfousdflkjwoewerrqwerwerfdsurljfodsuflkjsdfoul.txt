@@ -1,0 +1,5 @@
+I want to document and.... figure out... how those one bugs that "aren't there until you figure them out". I record myself (video) using the software: no bug. I notice the bug in the code (video). I try the software again and now the bug is present (video).
+
+Double back analyze all video/code stages until it can be figured out.
+
+It will probably never happen because it does not make sense ;-)..... except I've seen it happen first hand! It's just a matter of it happening to me... again! Pretty rare but also an interesting subject. Maybe I can find out the underlying reason to the occurance (althought it's probably different for each).
