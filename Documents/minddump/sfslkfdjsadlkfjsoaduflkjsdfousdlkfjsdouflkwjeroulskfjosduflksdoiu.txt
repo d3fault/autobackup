@@ -1,0 +1,7 @@
+A hacker is a human being that is able to change his perspective, on demand, into any object. Generally, when mass media refers to them, they are controlling the perspective of networking servers (usually multiple and/or third party (illegally)).
+
+In object oriented programming, we refer to these objects as "objects".
+
+An object is can be a real thing or just an abstract thought (as with a networking server (all programming is just abstract thought stored electrically (or magnetically if you're poor like me) and also "executed" (pretty much an electronic rube goldberg's machine -- except we don't have to manually 'reset' ours ;-))), and a programmer is able to, in his mind, BECOME the object and think about what kinds of operations and attributes it has.
+
+When creating an object, a pointer to the object is available to us as 'this'.

@@ -167,23 +167,23 @@ void MultiServerClientAbstraction::refillRoundRobinFromHellodConnections()
         m_RoundRobinQueue.enqueue(m_ListOfHelloedConnections.at(indexChosenRandomlyFromIndexList));
     }
 }
-void MultiServerClientAbstraction::setupQAbstractSocketSpecificErrorConnections(QAbstractSocket *abstractSocket, AbstractServerConnection *abstractClientConnection)
+void MultiServerClientAbstraction::setupQAbstractSocketSpecificErrorConnections(QAbstractSocket *abstractSocket, AbstractServerConnection *abstractServerConnection)
 {
-    connect(abstractSocket, SIGNAL(error(QAbstractSocket::SocketError)), abstractClientConnection, SLOT(makeConnectionBad()));
-    connect(abstractSocket, SIGNAL(disconnected()), abstractClientConnection, SLOT(makeConnectionBad()));
-    connect(abstractSocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), abstractClientConnection, SLOT(makeConnectionBadIfNewSocketStateSucks(QAbstractSocket::SocketState)));
+    connect(abstractSocket, SIGNAL(error(QAbstractSocket::SocketError)), abstractServerConnection, SLOT(makeConnectionBad()));
+    connect(abstractSocket, SIGNAL(disconnected()), abstractServerConnection, SLOT(makeConnectionBad()));
+    connect(abstractSocket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), abstractServerConnection, SLOT(makeConnectionBadIfNewSocketStateSucks(QAbstractSocket::SocketState)));
 }
-void MultiServerClientAbstraction::setupSslSocketSpecificErrorConnections(QSslSocket *sslSocket, AbstractServerConnection *abstractClientConnection)
+void MultiServerClientAbstraction::setupSslSocketSpecificErrorConnections(QSslSocket *sslSocket, AbstractServerConnection *abstractServerConnection)
 {
-    setupQAbstractSocketSpecificErrorConnections(sslSocket, abstractClientConnection);
+    setupQAbstractSocketSpecificErrorConnections(sslSocket, abstractServerConnection);
 
-    connect(sslSocket, SIGNAL(sslErrors(QList<QSslError>)), abstractClientConnection, SLOT(makeConnectionBad()));
+    connect(sslSocket, SIGNAL(sslErrors(QList<QSslError>)), abstractServerConnection, SLOT(makeConnectionBad()));
 }
-void MultiServerClientAbstraction::setupQLocalSocketSpecificErrorConnections(QLocalSocket *localSocket, AbstractServerConnection *abstractClientConnection)
+void MultiServerClientAbstraction::setupQLocalSocketSpecificErrorConnections(QLocalSocket *localSocket, AbstractServerConnection *abstractServerConnection)
 {
-    connect(localSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), abstractClientConnection, SLOT(makeConnectionBad()));
-    connect(localSocket, SIGNAL(disconnected()), abstractClientConnection, SLOT(makeConnectionBad()));
-    connect(localSocket, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)), abstractClientConnection, SLOT(makeConnectionBadIfNewQLocalSocketStateSucks(QLocalSocket::LocalSocketState)));
+    connect(localSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), abstractServerConnection, SLOT(makeConnectionBad()));
+    connect(localSocket, SIGNAL(disconnected()), abstractServerConnection, SLOT(makeConnectionBad()));
+    connect(localSocket, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)), abstractServerConnection, SLOT(makeConnectionBadIfNewQLocalSocketStateSucks(QLocalSocket::LocalSocketState)));
 }
 void MultiServerClientAbstraction::handleConnectedToSslServer(QSslSocket *sslSocketToServer)
 {

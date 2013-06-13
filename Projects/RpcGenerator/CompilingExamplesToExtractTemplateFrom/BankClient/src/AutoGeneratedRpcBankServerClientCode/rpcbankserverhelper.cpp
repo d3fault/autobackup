@@ -39,6 +39,9 @@ RpcBankServerHelper::RpcBankServerHelper(QObject *parent)
     connect(m_Transporter, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 #endif
 }
+void RpcBankServerHelper::sendActionRequestToArandomServer(IActionMessage *actionRequest)
+{
+}
 #if 0
 void RpcBankServerHelper::daisyChainInitStartStopConnections()
 {

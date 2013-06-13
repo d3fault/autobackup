@@ -57,23 +57,23 @@ private:
 
     inline AbstractServerConnection *getExistingConnectionUsingCookie__OrZero(quint32 cookie)
     {
-        AbstractServerConnection *currentClientConnection;
+        AbstractServerConnection *currentServerConnection;
 
         int connectionsCount = m_ListOfHelloedConnections.size();        
         for(int i = 0; i < connectionsCount; ++i)
         {
-            currentClientConnection = m_ListOfHelloedConnections.at(i);
-            if(currentClientConnection->cookie() == cookie)
+            currentServerConnection = m_ListOfHelloedConnections.at(i);
+            if(currentServerConnection->cookie() == cookie)
             {
-                return currentClientConnection;
+                return currentServerConnection;
             }
         }
         return 0;
     }
     void refillRoundRobinFromHellodConnections();
-    void setupQAbstractSocketSpecificErrorConnections(QAbstractSocket *abstractSocket, AbstractServerConnection *abstractClientConnection);
-    void setupSslSocketSpecificErrorConnections(QSslSocket *sslSocket, AbstractServerConnection *abstractClientConnection);
-    void setupQLocalSocketSpecificErrorConnections(QLocalSocket *localSocket, AbstractServerConnection *abstractClientConnection);
+    void setupQAbstractSocketSpecificErrorConnections(QAbstractSocket *abstractSocket, AbstractServerConnection *abstractServerConnection);
+    void setupSslSocketSpecificErrorConnections(QSslSocket *sslSocket, AbstractServerConnection *abstractServerConnection);
+    void setupQLocalSocketSpecificErrorConnections(QLocalSocket *localSocket, AbstractServerConnection *abstractServerConnection);
 
     bool m_ReadyForActionRequests; //so we don't emit the signal over and over on each client connect
 signals:

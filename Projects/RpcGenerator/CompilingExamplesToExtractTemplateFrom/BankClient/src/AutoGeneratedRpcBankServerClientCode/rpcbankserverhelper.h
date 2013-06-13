@@ -34,6 +34,7 @@ public:
     explicit RpcBankServerHelper(QObject *parent = 0);
     inline RpcBankServerClientActionDispensers *actionDispensers() { return m_ActionDispensers; }
 private:
+    void sendActionRequestToArandomServer(IActionMessage *actionRequest);
     MultiServerClientsAbstractionArgs m_MultiServerClientAbstractionArgs_HACK2PASS2START;
     inline void emitInitializedSignalIfReady() { if(checkInitializedAndAllActionDispensersClaimed()) { emit initialized(); } }
     inline bool checkInitializedAndAllActionDispensersClaimed() { return (m_Initialized && m_ActionDispensers->everyDispenserIsCreated()); }

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386038772
+Documents/minddump/:1386038841
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386038772
+Documents/minddump/dreams/:1386038841
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -566,6 +566,7 @@ Documents/minddump/fasdlkfjaowurlsdkfjawlerlsfjsaofusdflkwjrlejoidfualkhsakdfh.t
 Documents/minddump/fasfaslfkjsdlkfjsodfusldkjfogsdflsoiuwerlkjsdf.txt:1356083163
 Documents/minddump/fasfdsdklfjsdfouwelkrjsdfoiusdfkjwer.txt:1338992844
 Documents/minddump/fasfkjasdflkjasdfouwerlkjsdfousdflkjweorufsdlkjwoeurl.txt:1352986254
+Documents/minddump/fasjdflksjadfouwlekrjousdlfjsdoifuwejroiulkjdsfosidufosudfj.txt:1370993395
 Documents/minddump/fasjkflasdjfoweurjflsdfhsdofysaihasj.txt:1338547645
 Documents/minddump/fasldfjasldkjfoulwjeroiulsjadfouiwelkrjoiusdfljksoduf.txt:1370688978
 Documents/minddump/fasldfkjlksdjfsdouflwekrjoudflkjadsfoudflkeroufdl.txt:1358378588
@@ -1096,6 +1097,7 @@ Documents/minddump/sdflkjwerousldfkjwaoeruilsdkfjsaoiufdlk.txt:1341205278
 Documents/minddump/sdflksdjflksdjfouiwerlkjsdfouewrl.txt:1358975551
 Documents/minddump/sdflksdjflsdkjflskdjfouwerlouisdflkjeroiu.txt:1356245249
 Documents/minddump/sdflksdjfsdoiuflkjweourljasdfusodifujlkwejoirukljsdfousdkfu.txt:1370572542
+Documents/minddump/sdflksjdfjdsfoulewroiusdlkfjosduflkjweoirulskdfjoiusdrlkjoiuwe.txt:1370994716
 Documents/minddump/sdflksjdflkjsdfougljsoufsdlkjfaodiuoweruf.txt:1363799991
 Documents/minddump/sdflksjdflkjsdfoulsdjfousldfjousdlfjsdofuwerlkj.txt:1367053646
 Documents/minddump/sdflksjdflkjsdfousldkfjsodfulsdkjfouwerkjosdfulsdkjfouwelrkj.txt:1370303547
@@ -1191,8 +1193,10 @@ Documents/minddump/sfljslfkjsdlkfjsdofusdlfjsdlfkjoweiuljkfsdf.txt:1359855527
 Documents/minddump/sfljslkjdfsodfulsdkjfoiusdflkjsdofulsdfjosduflkjouiwre.txt:1370483531
 Documents/minddump/sflkjsdflkjsdofulwjrosdflksdfjouiwerlk.txt:1356075371
 Documents/minddump/sflkjslfkjskjflsjfksjflkjslfkjslfdkjsadfysdflkjsdflkjsfd.txt:1362974956
+Documents/minddump/sflksadjfljsdfouwljerousdflkjsdoifuuoerkjsdfouisdflkjweorulkjsfdousdflkjoiuwelrkjoui.txt:1371119869
 Documents/minddump/sflksjdfkljsdfoiuwelrkjsdoifulk.txt:1355651622
 Documents/minddump/sflskfjsldfjkouwrljouirwlkjoiusfslkfjwoerulkjfsadfouwerlkj.txt:1353409552
+Documents/minddump/sfslkfdjsadlkfjsoaduflkjsdfousdlkfjsdouflkwjeroulskfjosduflksdoiu.txt:1371119367
 Documents/minddump/shame.alfjsadfouwarlkjsfdosudfaaksldjfwaeruol.txt:1344286354
 Documents/minddump/shitty.backup.operative.but.i.really.really.need.an.offsite.backup.plox.txt:1324576937
 Documents/minddump/sklfjsdkfjsdlkfjsdofiuwelrkjsdfoiul.txt:1356170079
@@ -1320,7 +1324,7 @@ GloballySharedClasses/filesystem/easytreehashitem.cpp:1368380608
 GloballySharedClasses/filesystem/easytreehashitem.h:1368380608
 GloballySharedClasses/filesystem/easytreeparser.cpp:1368380686
 GloballySharedClasses/filesystem/easytreeparser.h:1368380686
-GloballySharedClasses/network/:1370688532
+GloballySharedClasses/network/:1370998417
 GloballySharedClasses/network/ssl/:1370686848
 GloballySharedClasses/network/ssl/testcerts/:1344899950
 GloballySharedClasses/network/ssl/testcerts/bothCAs/:1344900037
@@ -1351,8 +1355,8 @@ GloballySharedClasses/network/iprotocolknower.h:1370688532
 GloballySharedClasses/network/iprotocolknowerfactory.h:1367229617
 GloballySharedClasses/network/multiserverabstraction.cpp:1370579075
 GloballySharedClasses/network/multiserverabstraction.h:1370578395
-GloballySharedClasses/network/multiserverclientabstraction.cpp:1370685246
-GloballySharedClasses/network/multiserverclientabstraction.h:1370685259
+GloballySharedClasses/network/multiserverclientabstraction.cpp:1370998417
+GloballySharedClasses/network/multiserverclientabstraction.h:1370998417
 GloballySharedClasses/network/networkmagic.cpp:1361275960
 GloballySharedClasses/network/networkmagic.h:1367230309
 GloballySharedClasses/threading/:1355913363
@@ -1371,7 +1375,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386038772
+Pictures/:1386038841
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -2407,8 +2411,8 @@ Projects/RedParenthesisCloseContextRefresher/src/redparenthesisclosecontextrefre
 Projects/RpcGenerator/:1343597837
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1353169598
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/:1370686905
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1370734557
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1370734526
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1370998705
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1370998704
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/:1343680851
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/Dispensers/:1370688310
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/MessagesAndDispensers/Dispensers/Actions/:1370688336
@@ -2451,11 +2455,11 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/Auto
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverclientprotocolknower.cpp:1370672669
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverclientprotocolknower.h:1370671778
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverclientprotocolknowerfactory.h:1370687218
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverhelper.cpp:1370734526
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverhelper.h:1370689730
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverhelper.cpp:1370998704
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/rpcbankserverhelper.h:1370998455
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/ssltcpclientandbankserverprotocolknower.cpp:1370687418
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/ssltcpclientandbankserverprotocolknower.h:1370563559
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/BankServerClient.pro:1370687313
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/BankServerClient.pro:1370997386
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclient.cpp:1370687419
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclient.h:1370689371
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/bankserverclientdebugwidget.cpp:1370687248
@@ -2465,7 +2469,7 @@ Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/main
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/rpcbankserverclienttest.cpp:1370678341
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/rpcbankserverclienttest.h:1370595036
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/:1350684478
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1370690288
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/:1370998707
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/:1370688674
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/:1343667910
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankServer/src/AutoGeneratedRpcBankServerCode/MessagesAndDispensers/Dispensers/:1359370686
@@ -2776,7 +2780,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386038772
+Projects/libAvGraphicsItem2/design/:1386038841
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -2812,7 +2816,7 @@ Projects/libAvGraphicsItem3/src/frontend/videoplayerwidget.cpp:1327006070
 Projects/libAvGraphicsItem3/src/frontend/videoplayerwidget.h:1327005797
 Projects/libAvGraphicsItem3/src/libAvGraphicsItem3.pro:1327004311
 Projects/libAvGraphicsItem3/src/main.cpp:1327003410
-Solutions/:1358082071
+Solutions/:1371117445
 Solutions/Anonymous Bitcoin Computing/:1334997525
 Solutions/Anonymous Bitcoin Computing/design/:1360590321
 Solutions/Anonymous Bitcoin Computing/design/AppDb.will.push.all.updates.to.every.Wt.Front.End.this.may.need.to.change.later.txt:1334343874
@@ -2958,6 +2962,19 @@ Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 Solutions/d3faultPublicLicense/:1358082091
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1358806482
+Solutions/launchASEPbecauseRedAlert/:1371128235
+Solutions/launchASEPbecauseRedAlert/an.note.saldfkjsdlakfjoweurljoufssdlkf.txt:1371120857
+Solutions/launchASEPbecauseRedAlert/clickableSvgQuoteChristmasTreeUnquote.svg:1371121165
+Solutions/launchASEPbecauseRedAlert/index.2.html:1371128097
+Solutions/launchASEPbecauseRedAlert/index.3.html:1371126908
+Solutions/launchASEPbecauseRedAlert/index.4.html:1371126888
+Solutions/launchASEPbecauseRedAlert/index.html:1371126798
+Solutions/launchASEPbecauseRedAlert/initial.idea.explained.some.txt:1371117803
+Solutions/launchASEPbecauseRedAlert/launchPlaceholderSvgStickFigureMeditating.svg:1371128864
+Solutions/launchASEPbecauseRedAlert/meAnalyzingTheSituationWithPoliceHelicopterJuryAimingBothGunAndNetAtMe.svg:1371125630
+Solutions/launchASEPbecauseRedAlert/meAutoGrapplingTheFuckOutOfThereBecauseRedAlert.svg:1371123108
+Solutions/launchASEPbecauseRedAlert/pursuingHappiness.svg:1371126578
+Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1371128052
 VariousTreeingsDuringHugeArchivePurge/:1367600874
 VariousTreeingsDuringHugeArchivePurge/Black1tbCalvaryAndroidAppsEasyTree.txt:1367599569
 VariousTreeingsDuringHugeArchivePurge/Black1tbCalvaryApplicationsEasyTree.txt:1367599638
