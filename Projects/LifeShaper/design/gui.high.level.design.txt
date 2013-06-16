@@ -1,0 +1,28 @@
+Select Input EasyTreeHash File: [Browse]	Select Point To Continue From: [Browse Or Paste Single EasyTreeHash Line]
+
+
+[Start Iterating EasyTreeHash File]
+
+
+Analysis:
+
+[File Stats Go Here]
+
+[Copy Path To Clipboard], [Open in Mousepad] [Launch With Default Application], [Open File/Folder in Explorer], [Open Folder in Terminal], [Open in Iceweasel (optimization if I leave Iceweasel open)]
+^^^Not all of these apply to folders so the ones that don't should be gray'd out when dealing with a folder
+
+
+Micro Decisions:
+
+File:	Leave Behind	Iffy Copyright	Defer Decicion	Bring Forward Text	Bring Forward Binary	Use _This_ As Replacement
+Folder (Recursive):	[ditto]
+
+
+Macro Decisions:
+[Quit Application But Save Point I'm At]
+
+
+[DEBUG OUTPUT]
+-Each Decision
+-All git/process output
+-"Done Iterating EasyTreeHash File"

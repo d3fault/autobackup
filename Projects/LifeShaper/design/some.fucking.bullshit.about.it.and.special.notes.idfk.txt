@@ -1,0 +1,61 @@
+SECTIONS:
+-Regular Files In Old Archive = These don't have revisions so they should be easiest to deal with. Need to make sure the "staticBackup" file isn't processed OR SOMETHING
+-Git, SVN, Zip, Rar, Etc... Files/Folders/STRUCTURES =
+-750x* backups (which do include yet another git structure (autobackup))
+-Scans (though I could throw these in my 750x backups before doing them, it's still worth noting that I need to do the scans)
+
+
+[SPECIAL NOTES]
+-I've changed filenames of EasyTree -- and possibly even formats :-/
+-I've "lost" all timestamps of an EasyTree (or variant), possibly multiple times! They aren't completely lost since they're in git commits. Need to somehow detect them: "every file's timestamp just changed to >= XXXXX" or something and then while still 'processing' the git repo, ignore those timestamps. BUT IF ONE CHANGES YET AGAIN then that means we actually modified the file and we only want the old/orig timestamp and the newest one, but not the one in between that was accidental
+-References in EasyTree/variants to files left behind shouldn't be there, but probably not a huge deal if they are (famous last words?). The EasyTrees themselves probably need special processing so that they 'merge into' whatever I use for output, BUT we probably don't need them to still exist afterwards.
+-What to do with git commit messages?
+-Overlapping timestamps. Multiple git repos, git repos with files with timestamps older than regular files -- wat
+-Filename/folder duplicates should be accounted for by appending some fucking random string or something. Who cares for now so long as nothing is lost. I don't think I'll see [m]any of these.
+-Do I want to do the binary/text split now or later? Potentially huge time saver to do it now...
+-Deleted files in git repos
+-I'll bet $1 I'm forgetting something huge here and will facepalm.jpg so fucking hard later on...
+
+
+OUTPUT/TARGET: Still undecided if I want a monolithic git dir or the git submodules plan. I do know I want to use EasyTree for all timestamp stuff... and possibly/probably even EasyTreeHash???? But actually that's redundant if we're using git (the timestamps are not). Still wondering if there will be intermediate stage during processing or if the processing is itself the copying! I think intermediate stage makes sense, but it could be either or. The reason I want an intermediate stage is so I can analyze all my .txt files "to.leave.behind.txt, "to.decide.on.txt", "to.bring.forward.txt", "iffy.copyright.txt"... and make sure that all of the lines from the input EasyTreeHash file have been accounted for in one of those files. Only after that verification does copying begin. So let's talk about the structure of to.bring.forward.txt. First thoughts are that it will just be an EasyTreeHash line....... which definitely makes sense for regular files... but FUCK HOW DO I DEAL WITH REVISIONS IN GIT ETC????? To date I've never unrolled/re-rolled or really automatically processed a git repo... except for simply appending to it. Now I need to analyze each diff and do something with timestamps too (easy tree shit). Man oh man my head hurts. Contemplating so many contemplations. Deciding so many decisions. Bah there's a time for blogging and that is later.
+
+
+
+
+
+
+
+
+
+
+So I think I want to do the git submodule output. It is just cleaner, albeit a bit more complicated at first. This is what my directory structure will look like:
+
+dpl.v1.txt
+copyright.txt (says that data/* is copyrighted by the license in DPL.1.txt)
+data/
+data/text
+data/binary
+data/.BareGitRepoSources
+(perhaps a .bat or perl script to un-bare everything in .BareGitRepoSources to text and binary, for user viewing etc (be sure to copyright this script if it's not stored in data/))
+
+
+Regular files are freaking easy. I recurse into the first directories seen until there are no more directories. I then make that deepest folder a repository, cdUp, then go onto the next directory doing the same recursing-until-no-more-dirs operation. If after the cdUp (same one), there are no more folders... then I make that directory a git repository that uses each of the folders as submodules. There may or may not be files in that dir, but we aren't attempting to make a "purely configuration" type of thing anyways (and besides, having no files only matters at the root folder if you are going for that). That's pretty much it, eventually you get back to the root folder and have submodule'd all of the child folders and you make it a freaking git repo pointing to the submodules.
+
+All sounds simple but actually is more complicated when you understand that the data itself needs to be in a git bare repo in data/.BareGitRepoSources. I suppose a good way to organize those repos (they are BARE && FULL (as opposed to "uninitialized submodules"... or even "FULLy initialized [non-bare]" later)) is by just putting the word SLASH in whenever a slash appears in the full relative path. so like (already in data/text for example): documentsSLASHminddumpSLASHdreams would be the name of a git bare repo, that a submodule pointer in data/text/documents/minddump/dreams would point to. That is confusing two issues though because minddump/dreams is a git repo RIGHT NOW ALREADY and I have not yet figured out how to do git unrolling/re-rolling. Pretend as if it were a regular file for that example.
+
+I guess each 'folder' will have it's own easy tree file as well. They are non-recursive, UNLESS they are in that special exception for "Projects" where folders are not auto-submoduled (but can manually be!). The projects easy tree files ARE recursive. Fuck, if the folder is a submodule (manually), we need to make sure that the EasyTree file somehow knows this otherwise it will generate duplicate metadata (timestamps). Not a huge deal but definitely worth nothing TODOreq.
+
+
+Git is really fucking hurting my head right now. Like, my strategy is ridiculously complex and I just can't wrap my head around it. I think the reason is because I am not professional with git to begin with. I know what it can do but I suck at making it do what I want it to do. I frequent the man pages (and then I write wrapper apps to do my bidding (APPEND IS ALL I HAVE EVER DONE FOR NOW LOLOLOL)). So basically I need to just play around with .git and get comfortable with it. Need to know how to iterate over history (TODOreq: branches too!!!!!!!!!!!!!!!!!!1 fuck, what? I don't think I use them but it is still a good idea to know how and have your app compatible with them. At the VERY least you should check for alternate branches existing and then notify the user so that no data is ever lost). I need to figure out what I want to do... what I need to do... with git... and then I need to go play around with it on my test box and get comfortable with the commands. I suck at git even though I know it's [pretty] powerful (I can do better (d3fault)). My test box is booting but I'm still like "wtf" at what I'm even trying to do!
+
+Regular Git Repo -> Git Auto-Submodulized (same output as Regular)
+
+For regular since I only have `latest`, it's easy for me to figure out. But in my autobackup git repo, some files have tons of revisions!
+
+WHAT THE FUCK DO I DO WITH DELETED FILES? Yes they are in my git repo... but if I don't take great care I might miss them. Will they exist as a repo in .BareGitRepoSources but not have a submodule reference (if they are an entire folder, for example)? They would then have a submodule reference in a previous revision of it's parent directory still... sure...
+Ok my mind just fucking exploded. Aren't the submodule references only going to, initially, point to the latest version? I just entered the realm of timestamping (incl. system time automatic changing) and my mind esploded agen.
+
+What if a single git commit (and it's commit message) stretch across multiple folders... that are then submodulized by me? What is even my question? Something about how do I split them up?
+
+If I try to merge "Projects" folders I will probably overwrite shit, especially folders called "d3fault" hahahahaha. But it also is stupid to keep them separate.
+

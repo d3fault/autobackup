@@ -1,12 +1,12 @@
                          d3fault public license (draft)
                        Version 1, 13 January 2013
 
- Copyright (C) 2013 d3fault <http://d3fault.net/>
+ Copyright (C) 2013 Steven Curtis Wieler II <http://d3fault.net/>
  Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
 
                             Preamble
 
-	When we say free, we are talking about the same free as in Freedom of Information. It also helps to think about Freedom of Speech, though that front seems to be doing alright on it's own. This license is created with the sole purpose of furthering Freedom of Information. The word free is ambiguious with gratis (free of cost), which has nothing to do with free how we mean it. Richard Stallman is a pioneer on the subject and this license is very similar to his GNU General Public License. We differ with him not on the definition of freedom, but only in how free software can be utilized by other non-free works. This is a Copyleft Free Software license similar to the LGPL or Mozilla Public License, with the difference being that there is no fallback to GPL. We are utilizing Copyleft to guarantee that our works remain usable by both Freedom of Information advocates and Proprietors. The necessity for the latter is based on bootstrap theory: we need to depend on proprietors to help make our projects large and self-sustaining. A project that gets no [feature] updates but continual bugfixes is very much alive. Allowing proprietors to rape the functionality of a work exponentially increases the work's exposure, thereby falls in line with the goals of Freedom of Information.
+	When we say free, we are talking about the same free as in Freedom of Information. It also helps to think about Freedom of Speech, though that front seems to be doing alright on it's own. This license is created with the sole purpose of furthering Freedom of Information. The word free is ambiguious with gratis (free of cost), which has nothing to do with free how we mean it. This is a Free Software license that utilizes Copyleft to guarantee that works released under it remain usable by both Freedom of Information advocates and Proprietors alike. The justification for the latter is based upon bootstrap theory: we need to depend on proprietors to help make our projects large and self-sustaining. A project that gets no [feature] updates but continual bugfixes is very much alive. Allowing proprietors to exploit the functionality of a work exponentially increases that work's exposure, thereby falling in line with the goals of Freedom of Information.
 
 	
 
@@ -245,9 +245,9 @@ TODOreq: re-insert 'revised versions' for "Program" (GPL). Safer to have both, f
 
   22. Revised Versions of the d3fault public license.
 
-	d3fault may publish revised and/or new versions of the d3fault public license from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
+	Steven Curtis Wieler II may publish revised and/or new versions of the d3fault public license from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
 
-	Each version is given a distinguishing version number. If the Library as you received it specifies that a certain numbered version of the d3fault public license "or any later version" applies to it, you have the option of following the terms and conditions either of that published version or of any later version published by the Free Software Foundation. If the Library as you received it does not specify a version number of the d3fault public license, you may choose any version of the d3fault public license ever published by d3fault.
+	Each version is given a distinguishing version number. If the Library as you received it specifies that a certain numbered version of the d3fault public license "or any later version" applies to it, you have the option of following the terms and conditions either of that published version or of any later version published by the Steven Curtis Wieler II. If the Library as you received it does not specify a version number of the d3fault public license, you may choose any version of the d3fault public license ever published by Steven Curtis Wieler II.
 
 	If the Library specifies that a proxy can decide which future versions of the d3fault public license can be used, that proxy's public statement of acceptance of a version permanently authorizes you to choose that version for the Library.
 
