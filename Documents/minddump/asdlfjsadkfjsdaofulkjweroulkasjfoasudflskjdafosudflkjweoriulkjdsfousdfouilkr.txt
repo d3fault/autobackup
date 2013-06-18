@@ -1,0 +1,1 @@
+I have written about trying to get to a state where all I have to do is "think" and I "program". That is the very definition of life. Sure, I can do it with C++ too (I intend to)... but I never realized until just now that I've been doing it all along.

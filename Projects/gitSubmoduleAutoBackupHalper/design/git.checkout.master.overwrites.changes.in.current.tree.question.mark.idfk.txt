@@ -1,0 +1,1 @@
+I think if you accidentally (as part of a superproject via F2'ing into it) modified a submodule and then wanted to commit it, when you type git checkout master... all of your changes are overwritten? TODOreq find out because this could potentially ruin my fucking day.

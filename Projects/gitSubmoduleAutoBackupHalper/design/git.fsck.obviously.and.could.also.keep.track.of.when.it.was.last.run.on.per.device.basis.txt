@@ -1,1 +1,6 @@
 Obviously it would have git fsck functionality and also be able to work with various external hard drives. I am not sure if it should be "smart" about them and give them IDs and remember them etc. It could remember "last fsck run time" and run it when it's plugged in, if it hasn't been run in [x] (or hardcoded initially (few months? idfk. i won't even sync them THAT often, at least not some of them)).
+
+Added later:
+The git fsck only really needs to be run on the bare repos (from which submodules are referenced). It will probably be a matter of iterating a single directory (not recursively (but maybe if I use sharding so that folder doesn't have too many files)) and doing git fsck inside each folder.
+
+So my OS drive will have the non-bare clones and be all recursively nested and sexy... and my 2x 750 drives will have the bare repos that are like ugly'ly side by side.

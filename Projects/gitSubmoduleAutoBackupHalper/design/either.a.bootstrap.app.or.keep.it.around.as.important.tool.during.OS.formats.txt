@@ -1,1 +1,8 @@
 I guess I need a bootstrap app that "unfolds" the long-term storage and also "touches" the datetimes for everything back to how it should be. But I mean I suppose this is/would/should be a piece of functionality of the main app, so maybe it is all one? Still would be a bitch to have to initialize all the git submodules by hand to have to dig out the app itself to then compile it to then let it unfold [the rest (or just scrap the manually-unfolded area)]. Keeping a copy of that app's source handy when doing an OS format would definitely be a good idea. I don't mind compiling it, I just mind manually unfolding.
+
+actually it's very easy to do manually
+git clone <root>
+cd <root>
+git submodule update --init --recursive
+
+At least for /text/... /binary/ still needs some work on it (for example now researching how a git submodule update --init --recusrive --depth=1 can be accomplished, or if it can). OK just read it can, but I'm not going to implement that yet. Binaries will have full depth for now. It makes no difference if I implement it later.

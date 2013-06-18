@@ -1,0 +1,5 @@
+Git Submodules make Rapid Prototyping sexy/fun (single source). You code code code the "test" app connected to the submodulized lib in peace and then when the lib is ready you simply bump the submodule revision being pointed to in the app using it. Modifications to a submodule from within a superproject sound actually kind of confusing.
+
+What if two projects are at the same revision and they both change 'master' and then push to 'master' and their changes are different? It does sound like a branch would/should be created, but what would it be called!?!?
+
+It's for this reason that, for now, I will only modify submodules from a parent/official/test location and then pull them in via reference later.

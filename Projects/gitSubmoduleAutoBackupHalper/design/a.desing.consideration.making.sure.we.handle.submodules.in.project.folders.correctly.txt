@@ -1,0 +1,1 @@
+TODOreq: submodules inside a project folder (however deep in that project folder) need to be safely accounted for. That submodule might even have N more submodules (n being in the recursive sense, but ALSO the sibling sense) that need to be accounted for.

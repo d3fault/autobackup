@@ -1,0 +1,7 @@
+Premature optimization is the root of all evil. It is the sole reason I have not "launched" (my only goal in life atm). Premature optimization allows you to still think you are going forward. It tricks you into believing you are still making progress. You granualize specifics that are unimportant and, while they do benefit the end result [a bit], waste precious time. If your goal is launch and you estimate a week, 2 days into it your estimation should not have grown to a month. Launch is, all things considered, a silly and easy project. Why it has taken so long is.... ACTUALLY KNOWN: premature optimization.
+
+Post-launch, I will allow myself to prematurely optimize to my heart's content. Pre-launch, it is very stupid. It is perhaps these conflicting views that allows me to prematurely optimize?
+
+It is because I enjoy the very act of programming... and am not business oriented so have no vital need for "results"... that I can/will prematurely optimize indefinitely.
+
+It is because I need to launch ASEP because my fucking life won't be enjoyed until I launch... that I shouldn't/won't prematurely optimize at all.
