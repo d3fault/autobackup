@@ -1,0 +1,3 @@
+I like C++ because when it comes to 'make sure your variables are cleaned up', all you have to do (if you follow the same rules I do) is check in your header file for an asterisk in front of the variable name and then handle that variable where appropriate.
+
+The rules I follow: don't allocate on the heap in the source file... unless it has parenting that deletes it... or unless you delete it within the same scope. All heap allocations deserve/need to be members in the header.

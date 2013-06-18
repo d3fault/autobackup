@@ -1,0 +1,7 @@
+the ability to specify values for a slot parameter that doesn't even exist for the signal which it is being connected to
+ex:
+connect(m_SomeButton, SIGNAL(clicked()), this, SLOT(setGuiEnabled(false))); //setGuiEnabled may also set m_SomeButton to disabled
+
+that's the most basic example i can think of. really it just needs like a slot to be generated that simply calls what you want with the value specified. it will just make applications overall more easily connectable...
+
+definitely can/should/will life in designEquals at the very least..

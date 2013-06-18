@@ -1,0 +1,1 @@
+outputEveryThought() || suicide();
