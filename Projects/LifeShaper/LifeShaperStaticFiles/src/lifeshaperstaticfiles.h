@@ -29,7 +29,7 @@ private:
     QTextStream *m_TextStreamPointerForRecursionHacksLoL;
     bool m_FirstTimeInProcessNextLineForRecursion;
     QString m_RecursionStartsWithFilePathToDetectWhenParentComes;
-    bool m_SpecialCaseForUseTHIStextStreamAndOnlyForDirs;
+    bool m_RecordFollowingChildrenDuringRecursion;
 
     QString m_LeaveBehindFilename;
     QString m_IffyCopyrightFilename;
@@ -56,6 +56,9 @@ private:
     void processNextLineOrNotifyOfCompletion();
     bool outputFilesExistInFolder(QString basePath);
     void cleanUp();
+
+    QString m_Colon;
+    QString m_EscapedColon;
 signals:
     void nowProcessingEasyTreeHashItem(QString /*line*/, QString /*relativeFilePath*/, bool /*isDirectory*/, qint64 /*fileSize_OR_zeroIfDir*/, QString /*creationDateTime*/, QString /*lastModifiedDateTime*/);
     void stoppedRecursingDatOperationBecauseParentDirEntered();

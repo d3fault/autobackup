@@ -9,7 +9,7 @@ Analysis:
 
 [File Stats Go Here]
 
-[Copy Path To Clipboard], [Open in Mousepad] [Launch With Default Application], [Open File/Folder in Explorer], [Open Folder in Terminal], [Open in Iceweasel (optimization if I leave Iceweasel open)]
+[Copy Path To Clipboard], [Open in Mousepad] [Launch With Default Application], [Open File/Folder in Explorer], [Open Folder in Terminal], [Open in Iceweasel (optimization if I leave Iceweasel open)], [Open in mplayer]
 ^^^Not all of these apply to folders so the ones that don't should be gray'd out when dealing with a folder
 
 

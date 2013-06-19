@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386039053
+Documents/minddump/:1386039126
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386039053
+Documents/minddump/dreams/:1386039126
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -183,6 +183,7 @@ Documents/minddump/alsdfjsldkjfowuerlkjsdaofusdlkjewoiulkjrewr.txt:1355342390
 Documents/minddump/alsdfkjadsofiuwelkjroudslkfjsdouewrjkdlsafkj.txt:1353779304
 Documents/minddump/alsdfkjlasdkfjasdfoiuwrlkjsdfousdflkjsdfouwerlkjadf.txt:1351478751
 Documents/minddump/alsdjflasdjflasjouwerlkjsadfouslkjoreu.txt:1353908205
+Documents/minddump/alsdkfjalskdjfosdauflkjsdfousdlkfjousdlkfjouwerlkjosusdfkasjdflkjweoudflkjasdf.txt:1371593489
 Documents/minddump/alsdkfjldjfsdoiuffoiwuerlkjadoifusdlkfjsdfouwerlj.txt:1363797709
 Documents/minddump/alsfkjasdfjsdfoiuwrelajsfasf.txt:1346038953
 Documents/minddump/alsfkjasdofuwlrjsadfihawrsdofiuawkljasdfkasdfouwrelk.txt:1345449411
@@ -302,6 +303,7 @@ Documents/minddump/asdlfkjsdlkfjdslkfjouewrlkjfukjsdflk.txt:1354739971
 Documents/minddump/asdlfkjsdlkfjldjfoiudsfljdsfoiewroiuslfdkjdsf.txt:1365441941
 Documents/minddump/asdlfkjsdlkfjsdjourljsdofuwerlkjdoful.txt:1355475899
 Documents/minddump/asdlfkjsdofuwelakrjsdfaoiuwerlkjsdfouawerlaskdlfhslfj.txt:1345964846
+Documents/minddump/asdlfkjslakdfjsoduflskjdfoausdflkjweoulkjsdfouisdflkjourewljsodfusdflkj.txt:1371597303
 Documents/minddump/asdlfkjsldfkjsldkjfsadofulkjweorukjsdfsdfouiwerkjouisfdlkjasdfousdflkjoweuirl.txt:1371551453
 Documents/minddump/asdlfkkdsljfklsdjfsdoaiuflksdjfouwerlkj.txt:1358143155
 Documents/minddump/asdlfksadlkfjsldkjfouwerlkjdfousdflkjewroulkj.txt:1355128364
@@ -616,6 +618,7 @@ Documents/minddump/fkjdsafousdfowajrlksjflksdjfoisduflsdkjf.txt:1328137833
 Documents/minddump/fklsjdflksdjfousdfksjdfoiwuerlkjoiusdflkjsdoiufsldkjfosduflkjouil.txt:1370665419
 Documents/minddump/flajdflasdjflsdajfoausdltrjojrweljsdfoult.txt:1352102895
 Documents/minddump/flajflasdjfasdfaoweurlsfjksdfoasuflwkjerweroqurkqjrewqeoruqwlkjsdflsjdafl.txt:1350340687
+Documents/minddump/flajsdflkjasdlkfjsadlfkjswersfwerdfoulkwjeroweruslsdafsdfdkfjosudflkjweroulksfjd.txt:1371602339
 Documents/minddump/flakjfdslkjfosaduflsadjkfowuerlkjdfoiusdfouweroufdlskjfl.txt:1353449537
 Documents/minddump/flakjfkldjsfosduflwekjsdofusdlkjrweousdflkjoru.txt:1358976932
 Documents/minddump/flakjsdflkjasdfalsdkjfouerkljasdfoasufwerljkasdofu.txt:1351480158
@@ -788,6 +791,7 @@ Documents/minddump/lasdjkfdsfjsadfouwerlsjdfiawhrlksdjfoiuwerlk.txt:1344286047
 Documents/minddump/lasdjkflkjsdfoiuwelrkjoduflkjsdfousdflkjsweoriulk.txt:1358887430
 Documents/minddump/lasdjkflksdjflksdjafoiuerwlj.txt:1355193539
 Documents/minddump/lasdkfjlksjdfjsdfkljsdflkjsdfuoiewurlkjsfdl.txt:1368520794
+Documents/minddump/lasdkfjslkdjfsdoufldjsfoulkwejrouisadflkjsdofulwkerjousdlfkjsdaofulwekrjousdflk.txt:1371592256
 Documents/minddump/lasdkfjsodfuawlrkjafhsfkhasdfasdfweoruasflej.txt:1343931061
 Documents/minddump/lasfjoasufalwkerjosdfuaslkfjasofukwrhosuflkwreoul.txt:1343930476
 Documents/minddump/laskdfjosudfwlerjaofyasklfjwourlaskfjouwrpuwr.txt:1344187959
@@ -859,6 +863,7 @@ Documents/minddump/lkjsdflkjsadlfkjsdflkjsdlfkjsdflkjsdfllk.txt:1360771354
 Documents/minddump/lkjsdflkjsdalfkoiuerlkjsdofusdlfkjewroulkjfldk.txt:1355300830
 Documents/minddump/lkjsdflkjsdfousldkjfosudfljkwerouilkjsdfousdflkjweoruilkjsdf.txt:1370588226
 Documents/minddump/lkjsfdiuweroiusdflkjsdfghkjshdf.txt:1338992999
+Documents/minddump/lksadfjlkasdjfouwelrkjouflkjasodfulkwjerouasdlfkjsdofulkwjerousdflkjasdofuwe.txt:1371607431
 Documents/minddump/lksajdfsdajfoisdufsdaljfdslkjfaoj.tangent.but.should.come.full.circle.txt:1328859655
 Documents/minddump/lksdajfoasfdiuwlerkjsdfoiusafdlkwjeroiuasfdkj.txt:1339229267
 Documents/minddump/lksdjafourjsflksdfoaurposaiufslkfjdsoiul.txt:1329096358
@@ -1021,6 +1026,7 @@ Documents/minddump/saldjflsdajflkdsajfoiweurjsdfljsdalfksdouflsejfls.txt:1352185
 Documents/minddump/saldkfjlksadjflksdfoudslfkjsdfljksdfewroiudsfjkl.txt:1359513769
 Documents/minddump/saldkfjlsakdjflksjadflkjsadfsdflkjsdlfkjsdlkfjsdlfkjsdflkjsdflk.txt:1363145680
 Documents/minddump/saldkfjlsdkjflkjsdfouwerlkjsdfdsfooiuwelkjdf.txt:1361168676
+Documents/minddump/saldkfjlskdjfouwelrkjousdflkjsdofulkjweroulsdfjousdflkj.txt:1371592635
 Documents/minddump/saldkfjlskdjfsdoufsdljkfouewr.txt:1359368190
 Documents/minddump/saldkfjsdkljfsouflkjsdfouiwerljosdifusdfl.txt:1359253390
 Documents/minddump/saldkfjsdlkfjsdlfjosduflsdkjfosdufsadflkjsdfosduflkjweroudsalfkj.txt:1353056817
@@ -1113,6 +1119,7 @@ Documents/minddump/sdflkjsflkjsdfouwelrjouslfkjsdofulsdjfouwlkrjouisdflkjsdoifjs
 Documents/minddump/sdflkjsflkjsdlkjfosduflkjsdfouewrl.txt:1359416305
 Documents/minddump/sdflkjsldfkjsdofusldfkjsodfulsdkjfosudfljgskjdfousdflkj.txt:1368559131
 Documents/minddump/sdflkjwerousldfkjwaoeruilsdkfjsaoiufdlk.txt:1341205278
+Documents/minddump/sdflksajdfouwerlkjsodfusldkfjouerfljasdflkjsdaofsdfjsldfkjlskdfj.txt:1371590744
 Documents/minddump/sdflksdjflksdjfouiwerlkjsdfouewrl.txt:1358975551
 Documents/minddump/sdflksdjflsdkjflskdjfouwerlouisdflkjeroiu.txt:1356245249
 Documents/minddump/sdflksdjfsdoiuflkjweourljasdfusodifujlkwejoirukljsdfousdkfu.txt:1370572542
@@ -1166,6 +1173,7 @@ Documents/minddump/sdlfjlsjfsdofulkjwoeriulkjsfdousdflkjsdofulkjwerouisfdlk.txt:
 Documents/minddump/sdlfjlskdjflkjeroukhsflksdjflksdjflk.txt:1355828835
 Documents/minddump/sdlfjlskdjflsdkjflksjdfsldkjfjsdkfsdl.txt:1360823299
 Documents/minddump/sdlfjsadlfkjsdoiuflwejouijrourlkjw.txt:1356063149
+Documents/minddump/sdlfjsadlkfjouwerljosudflaksjdfouwlkrjoudsflkjsadfouewlrkjoudfs.txt:1371591009
 Documents/minddump/sdlfjsldkjfouljweroiudflkjsdflsdfuoiuerlk.txt:1356073877
 Documents/minddump/sdlfkdslkfjsdkljfsodiuflkjdsfousdflkjlfdkjasdfoiusdfklj.txt:1359543179
 Documents/minddump/sdlfkjasdfoualwjkersdfskdfjsdflkjflkjasfouiwerkwasofusdlfk.txt:1350505348
@@ -1398,7 +1406,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386039053
+Pictures/:1386039126
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1420,6 +1428,7 @@ Pictures/kaylee.heidi.programming.etc.aldjfalsdjfals.svg:1352187513
 Pictures/lol.metaphor.then.and.now.rpc.generator.is.a.tractor.and.a.tangent.that.bores.me.to.death.and.is.time.consuming.BUT.will.save.time.too.svg:1364417816
 Pictures/perfect.desktop.2011.10.31.png:1320069650
 Pictures/proprietary.gpl.lgpl.thinking.out.loud.trying.to.pinpoint.fair.use.mb.which.is.impossibru.svg:1355706959
+Pictures/the.world.is.dangerous.so.i.need.to.censor.my.hard.drive.whoops.svg:1371594791
 Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-KV-DocumentStore.and.File.relationship.svg:1360588938
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
@@ -1859,19 +1868,19 @@ Projects/Ideas/youtube.video.reposter.retarded.spam.idea.txt:1322357399
 Projects/Ideas/yum.fedora.liveusb.automation.but.kinda.ties.in.with.d3fault.ultimately.the.public.encryption.key.concept.txt:1338022568
 Projects/LifeShaper/:1371559115
 Projects/LifeShaper/LifeShaperStaticFiles/:1371563570
-Projects/LifeShaper/LifeShaperStaticFiles/src/:1371583667
+Projects/LifeShaper/LifeShaperStaticFiles/src/:1371609031
 Projects/LifeShaper/LifeShaperStaticFiles/src/LifeShaperStaticFiles.pro:1371559414
-Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfiles.cpp:1371583594
-Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfiles.h:1371583051
+Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfiles.cpp:1371608966
+Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfiles.h:1371607753
 Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfilesbusiness.cpp:1371579528
 Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfilesbusiness.h:1371579505
 Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfilestest.cpp:1371579657
 Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfilestest.h:1371559551
-Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfileswidget.cpp:1371583465
-Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfileswidget.h:1371579592
+Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfileswidget.cpp:1371608966
+Projects/LifeShaper/LifeShaperStaticFiles/src/lifeshaperstaticfileswidget.h:1371607745
 Projects/LifeShaper/LifeShaperStaticFiles/src/main.cpp:1371559344
 Projects/LifeShaper/design/:1371389105
-Projects/LifeShaper/design/gui.high.level.design.txt:1371560887
+Projects/LifeShaper/design/gui.high.level.design.txt:1371601636
 Projects/LifeShaper/design/keep.vs.copyright.infringing.vs.shred.txt:1355303184
 Projects/LifeShaper/design/sdlfkjskdlfjwerufkljsfdouisdfourwe.txt:1358069032
 Projects/LifeShaper/design/some.fucking.bullshit.about.it.and.special.notes.idfk.txt:1371539937
@@ -2430,7 +2439,7 @@ Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.h:1348734985
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1367557927
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.h:1349623955
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/:1367834769
-Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/:1368380737
+Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/:1371607832
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay.pro:1367560982
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/main.cpp:1367535156
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/mainwidget.cpp:1368114280
@@ -2834,7 +2843,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386039053
+Projects/libAvGraphicsItem2/design/:1386039126
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

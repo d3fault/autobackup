@@ -1,8 +1,11 @@
 #include "lifeshaperstaticfiles.h"
 
 LifeShaperStaticFiles::LifeShaperStaticFiles(QObject *parent) :
-    QObject(parent), m_FirstTimeInProcessNextLineForRecursion(true), m_LeaveBehindFilename("leave.behind.files.txt"), m_IffyCopyrightFilename("iffy.copyright.files.txt"), m_DeferDecisionFilename("defer.decision.files.txt"), m_BringForwardFilename("bring.forward.files.txt"), m_UseTHISasReplacementFilename("use.this.as.replacement.files.txt"), m_CurrentEasyTreeHashItem(0)
-{ }
+    QObject(parent), m_FirstTimeInProcessNextLineForRecursion(true), m_LeaveBehindFilename("leave.behind.files.txt"), m_IffyCopyrightFilename("iffy.copyright.files.txt"), m_DeferDecisionFilename("defer.decision.files.txt"), m_BringForwardFilename("bring.forward.files.txt"), m_UseTHISasReplacementFilename("use.this.as.replacement.files.txt"), m_CurrentEasyTreeHashItem(0), m_Colon(":")
+{
+    m_EscapedColon.append("\\");
+    m_EscapedColon.append(m_Colon);
+}
 LifeShaperStaticFiles::~LifeShaperStaticFiles()
 {
     cleanUp();
@@ -20,6 +23,7 @@ void LifeShaperStaticFiles::startIteratingEasyTreeHashFile(QIODevice *easyTreeHa
 
     if(!lineLeftOffFrom_OR_emptyString.trimmed().isEmpty())
     {
+        emit d(QString("you are attempting to resume at line: ") + lineLeftOffFrom_OR_emptyString);
         if(!outputFilesExistInFolder(outputFilesFolder))
         {
             emit d("some or all of your output files don't exist, so we cannot resume");
@@ -67,7 +71,7 @@ void LifeShaperStaticFiles::startIteratingEasyTreeHashFile(QIODevice *easyTreeHa
         //the line isn't empty, so we try to find where we left off
         bool foundWhereLeftOff = false;
 
-        while(m_EasyTreeHashTextStream.atEnd())
+        while(!m_EasyTreeHashTextStream.atEnd())
         {
             m_CurrentLine = m_EasyTreeHashTextStream.readLine();
             if(m_CurrentLine == lineLeftOffFrom_OR_emptyString)
@@ -80,6 +84,10 @@ void LifeShaperStaticFiles::startIteratingEasyTreeHashFile(QIODevice *easyTreeHa
         {
             emit d("you supplied a line left off at, but we couldn't find it in the easy tree hash file");
             return; //an error imo
+        }
+        else
+        {
+            emit d(QString("picking up at found line: ") + lineLeftOffFrom_OR_emptyString);
         }
     }
     else
@@ -162,10 +170,14 @@ void LifeShaperStaticFiles::leaveBehind()
 {
     m_LeaveBehindTextStream << m_CurrentLine << endl;
     emit d(QString("leaving behind: ") + m_CurrentEasyTreeHashItem->relativeFilePath());
+    if(m_CurrentEasyTreeHashItem->isDirectory())
+    {
+        m_RecursiveUntilParent = true;
+    }
     if(m_RecursiveUntilParent)
     {
         m_TextStreamPointerForRecursionHacksLoL = &m_LeaveBehindTextStream;
-        m_SpecialCaseForUseTHIStextStreamAndOnlyForDirs = false;
+        m_RecordFollowingChildrenDuringRecursion = true;
         m_FirstTimeInProcessNextLineForRecursion = true;
     }
     processNextLineOrNotifyOfCompletion();
@@ -174,10 +186,14 @@ void LifeShaperStaticFiles::iffyCopyright()
 {
     m_IffyCopyrightTextStream << m_CurrentLine << endl;
     emit d(QString("iffy copyright: ") + m_CurrentEasyTreeHashItem->relativeFilePath());
+    if(m_CurrentEasyTreeHashItem->isDirectory())
+    {
+        m_RecursiveUntilParent = true;
+    }
     if(m_RecursiveUntilParent)
     {
         m_TextStreamPointerForRecursionHacksLoL = &m_IffyCopyrightTextStream;
-        m_SpecialCaseForUseTHIStextStreamAndOnlyForDirs = false;
+        m_RecordFollowingChildrenDuringRecursion = true;
         m_FirstTimeInProcessNextLineForRecursion = true;
     }
     processNextLineOrNotifyOfCompletion();
@@ -186,10 +202,14 @@ void LifeShaperStaticFiles::deferDecision()
 {
     m_DeferDecisionTextStream << m_CurrentLine << endl;
     emit d(QString("deferring decision: ") + m_CurrentEasyTreeHashItem->relativeFilePath());
+    if(m_CurrentEasyTreeHashItem->isDirectory())
+    {
+        m_RecursiveUntilParent = true;
+    }
     if(m_RecursiveUntilParent)
     {
         m_TextStreamPointerForRecursionHacksLoL = &m_DeferDecisionTextStream;
-        m_SpecialCaseForUseTHIStextStreamAndOnlyForDirs = false;
+        m_RecordFollowingChildrenDuringRecursion = true;
         m_FirstTimeInProcessNextLineForRecursion = true;
     }
     processNextLineOrNotifyOfCompletion();
@@ -198,10 +218,13 @@ void LifeShaperStaticFiles::bringForward()
 {
     m_BringForwardTextStream << m_CurrentLine << endl;
     emit d(QString("bringing forward: ") + m_CurrentEasyTreeHashItem->relativeFilePath());
+
+    //bringing forward a directory is NOT implicitly recursive, like the others
+
     if(m_RecursiveUntilParent)
     {
         m_TextStreamPointerForRecursionHacksLoL = &m_BringForwardTextStream;
-        m_SpecialCaseForUseTHIStextStreamAndOnlyForDirs = false;
+        m_RecordFollowingChildrenDuringRecursion = true;
         m_FirstTimeInProcessNextLineForRecursion = true;
     }
     processNextLineOrNotifyOfCompletion();
@@ -214,7 +237,7 @@ void LifeShaperStaticFiles::useTHISasReplacement(QString replacementFilePath)
     {
         replacementFilePath2.append("/");
     }
-    m_UseTHISasReplacementTextStream << replacementFilePath2 << QString(":") << m_CurrentLine << endl;
+    m_UseTHISasReplacementTextStream << replacementFilePath2.replace(m_Colon, m_EscapedColon, Qt::CaseSensitive) << m_Colon << m_CurrentLine << endl;
 
     emit d(QString("using replacement for: ") + m_CurrentEasyTreeHashItem->relativeFilePath());
     if(m_CurrentEasyTreeHashItem->isDirectory())
@@ -223,7 +246,7 @@ void LifeShaperStaticFiles::useTHISasReplacement(QString replacementFilePath)
     }
     else
     {
-        //file
+        //file. the one case where having the recursion checkbox checked does not make sense
         if(m_RecursiveUntilParent)
         {
             emit d("can't recursively 'use this as replacement' on your file because you can only supply one replacement at a time -- but can on directories (none of the files will be listed and they all get the timestamp of the dir when copied/added)");
@@ -234,7 +257,7 @@ void LifeShaperStaticFiles::useTHISasReplacement(QString replacementFilePath)
     if(m_RecursiveUntilParent) //because if it's a directory, we already handle it recursively in a sense -- for this op only
     {
         m_TextStreamPointerForRecursionHacksLoL = &m_UseTHISasReplacementTextStream;
-        m_SpecialCaseForUseTHIStextStreamAndOnlyForDirs = true; //setting this to true tells our recursion logic to not print anything into the useThis dir after the dir itself. TODOreq: notify the user that all their timestamps will be lost and set to the timestamps of the dir. the user is expected to remake the dir structure as they see fit, so it doesn't make sense to keep file stats around
+        m_RecordFollowingChildrenDuringRecursion = false; //setting this to false tells our recursion logic to not print anything into the useThis dir output file after the dir itself (because it's children will change drastically probably). TODOreq: notify the user that all their timestamps will be lost and set to the timestamps of the dir. the user is expected to remake the dir structure as they see fit, so it doesn't make sense to keep file stats around
         m_FirstTimeInProcessNextLineForRecursion = true;
     }
     processNextLineOrNotifyOfCompletion();
@@ -270,7 +293,7 @@ void LifeShaperStaticFiles::processNextLineOrNotifyOfCompletion()
             QList<QString> pathSegments = currentRelativePath.split("/");
             if(pathSegments.size() < 2)
             {
-                emit d("cannot recurse the root directory you dolt -- mainly because we dunno when parent comes haha i suck"); //TODOoptional
+                emit d("cannot recurse the root directory you dolt -- mainly because we dunno when parent comes haha i suck. we have processed the file that you had selected, however"); //TODOreq: bug because we get stopped and the only place we know to resume at has already been processed. so if we resume from there we'll get a dupe entry. dupe entries are not accounted for atm
                 return;
             }
             QString filenameOnly = pathSegments.takeLast(); //take off filename portion
@@ -314,7 +337,7 @@ void LifeShaperStaticFiles::processNextLineOrNotifyOfCompletion()
                     //come to think of it, recursively "using this replacement for all rest files until parent" makes no fucking sense. zeus damnit. but i mean yea clicking 'use this replacement' on a dir is implicitly recursive and shouldn't write the files/folders within
                 }
                 }*/
-                if(!m_SpecialCaseForUseTHIStextStreamAndOnlyForDirs) //the dir when you select 'use this replacement' has already been written, but we still need to recursively iterate and skip over the lines below it [until we get to parent]
+                if(m_RecordFollowingChildrenDuringRecursion) //the dir when you select 'use this replacement' has already been written, but we still need to recursively iterate and skip over the lines below it [until we get to parent]
                 {
                     *m_TextStreamPointerForRecursionHacksLoL << m_CurrentLine << endl; //no need to parse it, just paste it!
                     emit d(QString("recursively adding: ") + m_CurrentLine + QString(" to whatever you selected -- we don't know at this layer lol"));
@@ -323,11 +346,14 @@ void LifeShaperStaticFiles::processNextLineOrNotifyOfCompletion()
             }
             else
             {
-                //must have entered parent, disable recursion! we should also tell the GUI to un-check it's checkbox too!
+                emit d("we entered the parent directory after performing a recursive operation");
                 m_RecursiveUntilParent = false;
                 m_FirstTimeInProcessNextLineForRecursion = true;
-                m_SpecialCaseForUseTHIStextStreamAndOnlyForDirs = false;
+                m_RecordFollowingChildrenDuringRecursion = true;
                 emit stoppedRecursingDatOperationBecauseParentDirEntered();
+
+                //next line now that recursion stuff is disabled
+                processCurrentEasyTreeHashLineRegularly();
             }
         }
         else

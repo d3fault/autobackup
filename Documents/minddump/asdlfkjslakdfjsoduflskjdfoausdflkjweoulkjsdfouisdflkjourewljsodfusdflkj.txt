@@ -1,0 +1,3 @@
+A secure operating system is not possible because trust is needed...... UNLESS you code your own assembler in binary and c compiler in assembler and so on and so forth...
+
+...best case scenario you manually type in (because how would you 'copy' it without relying on someone else's tools?) ones that already exist and for which the source is available... but you'd still need to make sure they didn't put a backdoor in the mountains of confusing/complex ass code. You have to understand each and every line and be confident that it is both correct, necessary, and secure.

@@ -12,39 +12,57 @@ LifeShaperStaticFilesWidget::LifeShaperStaticFilesWidget(QWidget *parent)
     QPushButton *inputEasyTreeFileBrowseButton = new QPushButton(tr("Browse"));
     inputEasyTreeFileRow->addWidget(inputEasyTreeFileBrowseButton);
 
+    QHBoxLayout *lineLeftOffOnLastRunRow = new QHBoxLayout();
+    lineLeftOffOnLastRunRow->addWidget(new QLabel(tr("Line Last Left Off On:")));
+    m_LineLeftOffOnLastRunLineEdit = new QLineEdit();
+    lineLeftOffOnLastRunRow->addWidget(m_LineLeftOffOnLastRunLineEdit, 1);
+
     QHBoxLayout *inputDirThatEasyTreeFileSpecifiesRow = new QHBoxLayout();
     inputDirThatEasyTreeFileSpecifiesRow->addWidget(new QLabel(tr("Input Dir Corresponding To Easy Tree Hash File:")));
     m_InputDirThatEasyTreeFileSpecifiesLineEdit = new QLineEdit();
     inputDirThatEasyTreeFileSpecifiesRow->addWidget(m_InputDirThatEasyTreeFileSpecifiesLineEdit, 1);
     QPushButton *inputDirThatEasyTreeFileSpecifiesBrowseButton = new QPushButton(tr("Browse"));
+    inputDirThatEasyTreeFileSpecifiesRow->addWidget(inputDirThatEasyTreeFileSpecifiesBrowseButton);
 
     QHBoxLayout *outputFilesDirRow = new QHBoxLayout();
     outputFilesDirRow->addWidget(new QLabel(tr("Output Folder To Put Files In:")));
     m_OutputFilesDirLineEdit = new QLineEdit();
     outputFilesDirRow->addWidget(m_OutputFilesDirLineEdit, 1);
     QPushButton *outputFilesDirBrowseButton = new QPushButton(tr("Browse"));
-    outputFilesDirRow->addWidget(outputFilesDirBrowseButton);
-
-    QHBoxLayout *lineLeftOffOnLastRunRow = new QHBoxLayout();
-    lineLeftOffOnLastRunRow->addWidget(new QLabel(tr("Line Last Left Off On:")));
-    m_LineLeftOffOnLastRunLineEdit = new QLineEdit();
-    lineLeftOffOnLastRunRow->addWidget(m_LineLeftOffOnLastRunLineEdit, 1);
+    outputFilesDirRow->addWidget(outputFilesDirBrowseButton);    
 
     m_StartIteratingEasyTreeHashFile = new QPushButton(tr("Start Iterating Easy Tree Hash File [from where we left off]"));
     m_StopIteratingEasyTreeHashFile = new QPushButton(tr("Stop Iterating"));
 
     m_CurrentEasyTreeHashLineLineEdit = new QLineEdit();
 
-    //Attributes
+    //Analysis
     QHBoxLayout *currentFilePathRow = new QHBoxLayout();
     m_RelativeFilePathLabel = new QLabel();
-    currentFilePathRow->addWidget(m_RelativeFilePathLabel);
-    m_CopyAbsolutePathToClipboard = new QPushButton("Copy Absolute Path To Clipboard");
-    currentFilePathRow->addWidget(m_CopyAbsolutePathToClipboard);
+    QFont boldFont = m_RelativeFilePathLabel->font();
+    boldFont.setBold(true);
+    m_RelativeFilePathLabel->setFont(boldFont);
+    currentFilePathRow->addWidget(m_RelativeFilePathLabel, 1);
 
+    QHBoxLayout *analysisButtonsRow = new QHBoxLayout();
+    m_CopyAbsolutePathToClipboard = new QPushButton("Copy Absolute Path To Clipboard");
+    analysisButtonsRow->addWidget(m_CopyAbsolutePathToClipboard);
+    QPushButton *openWithMousepadButton = new QPushButton("Open In Mousepad");
+    analysisButtonsRow->addWidget(openWithMousepadButton);
+    QPushButton *launchWithDefaultApplicationButton = new QPushButton("Launch With Default");
+    analysisButtonsRow->addWidget(launchWithDefaultApplicationButton);
+    QPushButton *viewInTerminalButton = new QPushButton("View In Terminal");
+    analysisButtonsRow->addWidget(viewInTerminalButton);
+    QPushButton *viewInWebBrowserButton = new QPushButton("View In Web Browser");
+    analysisButtonsRow->addWidget(viewInWebBrowserButton);
+    QPushButton *openWithMplayerButton = new QPushButton("mplayer");
+    analysisButtonsRow->addWidget(openWithMplayerButton);
+
+
+    //Attributes
     QHBoxLayout *currentFileAttribsRow = new QHBoxLayout();
     m_IsDirLabel = new QLabel();
-    m_IsDirLabel->setMinimumSize(100, 100);
+    m_IsDirLabel->setMinimumSize(50, 50);
     m_FileSizeLabel = new QLabel();
     m_CreationDateTimeLabel = new QLabel();
     m_LastModifiedDateTimeLabel = new QLabel();
@@ -71,16 +89,23 @@ LifeShaperStaticFilesWidget::LifeShaperStaticFilesWidget(QWidget *parent)
     m_FilePathForTHISreplacement = new QLineEdit();
     replacementDecisionRow->addWidget(m_Use_THIS_AsReplacementButton);
     replacementDecisionRow->addWidget(m_FilePathForTHISreplacement, 1);
+    m_Use_THIS_AsReplacementBrowseButton = new QPushButton(tr("Browse"));
+    replacementDecisionRow->addWidget(m_Use_THIS_AsReplacementBrowseButton);
 
     m_Debug = new QPlainTextEdit();
     m_Debug->setMaximumBlockCount(2000); //so we don't run out of memory
 
     m_Layout->addLayout(inputEasyTreeFileRow);
     m_Layout->addLayout(lineLeftOffOnLastRunRow);
+    m_Layout->addLayout(inputDirThatEasyTreeFileSpecifiesRow);
+    m_Layout->addLayout(outputFilesDirRow);
     m_Layout->addWidget(m_StartIteratingEasyTreeHashFile);
+    m_Layout->addWidget(m_StopIteratingEasyTreeHashFile);
     m_Layout->addWidget(m_CurrentEasyTreeHashLineLineEdit);
     m_Layout->addLayout(currentFilePathRow);
+    m_Layout->addLayout(analysisButtonsRow);
     m_Layout->addLayout(currentFileAttribsRow);
+    m_Layout->addWidget(m_ApplyToThisAndAllFollowingUntilParentDirReEntered);
     m_Layout->addLayout(mainDecisionsRow);
     m_Layout->addLayout(replacementDecisionRow);
     m_Layout->addWidget(m_Debug);
@@ -97,15 +122,23 @@ LifeShaperStaticFilesWidget::LifeShaperStaticFilesWidget(QWidget *parent)
     connect(m_StartIteratingEasyTreeHashFile, SIGNAL(clicked()), this, SLOT(handleStartIteratingEasyTreeHashFileButtonClicked()));
     connect(m_StopIteratingEasyTreeHashFile, SIGNAL(clicked()), this, SLOT(handleStopIteratingEasyTreeHashFileButtonClicked()));
 
-    connect(m_ApplyToThisAndAllFollowingUntilParentDirReEntered, SIGNAL(toggled(bool)), this, SIGNAL(recursionFromCurrentChanged(bool)));
-
     connect(m_CopyAbsolutePathToClipboard, SIGNAL(clicked()), this, SLOT(handleCopyAbsolutePathToClipboardClicked()));
+
+    connect(openWithMousepadButton, SIGNAL(clicked()), this, SLOT(handleOpenWithMousepadClicked()));
+    connect(launchWithDefaultApplicationButton, SIGNAL(clicked()), this, SLOT(handleLaunchWithDefaultApplicationClicked()));
+    connect(viewInTerminalButton, SIGNAL(clicked()), this, SLOT(handleOpenDirectoryInTerminalClicked()));
+    connect(viewInWebBrowserButton, SIGNAL(clicked()), this, SLOT(handleOpenInWebBrowserlClicked()));
+    connect(openWithMplayerButton, SIGNAL(clicked()), this, SLOT(handleOpenInMplayerClicked()));
+
+    connect(m_ApplyToThisAndAllFollowingUntilParentDirReEntered, SIGNAL(toggled(bool)), this, SIGNAL(recursionFromCurrentChanged(bool)));
 
     connect(m_LeaveBehindButton, SIGNAL(clicked()), this, SLOT(aDecisionButtonWasClicked()));
     connect(m_IffyCopyrightButton, SIGNAL(clicked()), this, SLOT(aDecisionButtonWasClicked()));
     connect(m_DeferDecicionButton, SIGNAL(clicked()), this, SLOT(aDecisionButtonWasClicked()));
     connect(m_BringForwardButton, SIGNAL(clicked()), this, SLOT(aDecisionButtonWasClicked()));
     connect(m_Use_THIS_AsReplacementButton, SIGNAL(clicked()), this, SLOT(aDecisionButtonWasClicked()));
+
+    connect(m_Use_THIS_AsReplacementBrowseButton, SIGNAL(clicked()), this, SLOT(handleBrowseForReplacementButtonClicked()));
 
     connect(m_LeaveBehindButton, SIGNAL(clicked()), this, SIGNAL(leaveBehindDecided()));
     connect(m_IffyCopyrightButton, SIGNAL(clicked()), this, SIGNAL(iffyCopyrightDecided()));
@@ -141,6 +174,11 @@ void LifeShaperStaticFilesWidget::setDecisionsButtansEnabled(bool enabled)
     m_BringForwardButton->setEnabled(enabled);
     m_Use_THIS_AsReplacementButton->setEnabled(enabled);
     m_FilePathForTHISreplacement->setEnabled(enabled);
+    m_Use_THIS_AsReplacementBrowseButton->setEnabled(enabled);
+}
+QString LifeShaperStaticFilesWidget::getFullPathOfCurrentItem()
+{
+    return (m_InputDirThatEasyTreeFileSpecifies + m_RelativeFilePathLabel->text());
 }
 void LifeShaperStaticFilesWidget::handleInputEasyTreeFileBrowseButtonClicked()
 {
@@ -157,6 +195,7 @@ void LifeShaperStaticFilesWidget::handleInputEasyTreeFileBrowseButtonClicked()
 void LifeShaperStaticFilesWidget::handleInputDirThatEasyTreeFileSpecifiesBrowseButtonClicked()
 {
     QFileDialog fileDialog;
+    fileDialog.setFileMode(QFileDialog::Directory);
     fileDialog.setOption(QFileDialog::ReadOnly, true);
     fileDialog.setFilter(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden);
     fileDialog.setWindowModality(Qt::WindowModal);
@@ -169,6 +208,7 @@ void LifeShaperStaticFilesWidget::handleInputDirThatEasyTreeFileSpecifiesBrowseB
 void LifeShaperStaticFilesWidget::handleOutputFilesFolderBrowseButtonClicked()
 {
     QFileDialog fileDialog;
+    fileDialog.setFileMode(QFileDialog::Directory);
     fileDialog.setFilter(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden);
     fileDialog.setWindowModality(Qt::WindowModal);
 
@@ -200,6 +240,19 @@ void LifeShaperStaticFilesWidget::handleStartIteratingEasyTreeHashFileButtonClic
     {
         lineLeftOffFrom.append(m_LineLeftOffOnLastRunLineEdit->text());
     }
+
+    //TODOreq: use the corresponding input dir/files with analysis buttons etc
+    if(m_InputDirThatEasyTreeFileSpecifiesLineEdit->text().trimmed().isEmpty())
+    {
+        handleD("select input dir corresponding to easy tree hash content");
+        return;
+    }
+    m_InputDirThatEasyTreeFileSpecifies = m_InputDirThatEasyTreeFileSpecifiesLineEdit->text();
+    if(!m_InputDirThatEasyTreeFileSpecifies.endsWith("/"))
+    {
+        m_InputDirThatEasyTreeFileSpecifies.append("/");
+    }
+
     setGuiEnabledBasedOnWhetherStarted(true);
     emit startIteratingEasyTreeHashFileRequested(m_InputEasyTreeFileLineEdit->text(), m_OutputFilesFolder, lineLeftOffFrom);
 }
@@ -211,8 +264,38 @@ void LifeShaperStaticFilesWidget::handleStopIteratingEasyTreeHashFileButtonClick
 void LifeShaperStaticFilesWidget::handleCopyAbsolutePathToClipboardClicked()
 {
     QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(m_OutputFilesFolder + m_RelativeFilePathLabel->text());
+    clipboard->setText(getFullPathOfCurrentItem());
     handleD("copied to clipboard");
+}
+void LifeShaperStaticFilesWidget::handleOpenWithMousepadClicked()
+{
+    QStringList mousepadArgs;
+    mousepadArgs.append(getFullPathOfCurrentItem());
+    QProcess::startDetached("/usr/bin/mousepad", mousepadArgs);
+}
+void LifeShaperStaticFilesWidget::handleLaunchWithDefaultApplicationClicked()
+{
+    QDesktopServices::openUrl(QUrl(QString("file://") + getFullPathOfCurrentItem()));
+}
+void LifeShaperStaticFilesWidget::handleOpenDirectoryInTerminalClicked()
+{
+    QStringList terminalArgs;
+    //QString fullPath = getFullPathOfCurrentItem();
+    //QString fullPathInQuotes = fullPath.endsWith("/") ? (QString("\"") + fullPath + QString("\"")) : (fullPath.contains("/") ? (fullPath.left(fullPath.length()-fullPath.lastIndexOf("/"))) : ((QString("\"") + m_InputDirThatEasyTreeFileSpecifies + (QString("\""))))); //real men
+    terminalArgs.append(QString("--working-directory=") + getFullPathOfCurrentItem());
+    QProcess::startDetached("/usr/bin/xfce4-terminal", terminalArgs);
+}
+void LifeShaperStaticFilesWidget::handleOpenInWebBrowserlClicked()
+{
+    QStringList iceWeaselArgs;
+    iceWeaselArgs.append(getFullPathOfCurrentItem());
+    QProcess::startDetached("/usr/bin/iceweasel", iceWeaselArgs);
+}
+void LifeShaperStaticFilesWidget::handleOpenInMplayerClicked()
+{
+    QStringList mplayerArgs;
+    mplayerArgs.append(getFullPathOfCurrentItem());
+    QProcess::startDetached("/usr/bin/mplayer", mplayerArgs);
 }
 void LifeShaperStaticFilesWidget::handleNowProcessingEasyTreeHashItem(QString easyTreeHashLine, QString relativeFilePath, bool isDirectory, qint64 fileSize_OR_zeroIfDir, QString creationDateTime, QString lastModifiedDateTime)
 {
@@ -245,6 +328,20 @@ void LifeShaperStaticFilesWidget::handleNowProcessingEasyTreeHashItem(QString ea
 void LifeShaperStaticFilesWidget::handleStoppedRecursingDatOperationBecauseParentDirEntered()
 {
     m_ApplyToThisAndAllFollowingUntilParentDirReEntered->setChecked(false);
+}
+void LifeShaperStaticFilesWidget::handleBrowseForReplacementButtonClicked()
+{
+    QFileDialog fileDialog;
+    fileDialog.setFileMode(QFileDialog::ExistingFile);
+    fileDialog.setOption(QFileDialog::ReadOnly, true);
+    //TODOoptional: custom filter based on whether current item is file or folder
+    fileDialog.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+    fileDialog.setWindowModality(Qt::WindowModal);
+
+    if(fileDialog.exec() && fileDialog.selectedFiles().size() > 0)
+    {
+        m_FilePathForTHISreplacement->setText(fileDialog.selectedFiles().at(0));
+    }
 }
 void LifeShaperStaticFilesWidget::handleUseTHISasReplacementClicked()
 {
