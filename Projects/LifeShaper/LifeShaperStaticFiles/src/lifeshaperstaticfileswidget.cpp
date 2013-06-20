@@ -51,8 +51,8 @@ LifeShaperStaticFilesWidget::LifeShaperStaticFilesWidget(QWidget *parent)
     analysisButtonsRow->addWidget(openWithMousepadButton);
     QPushButton *launchWithDefaultApplicationButton = new QPushButton("Launch With Default");
     analysisButtonsRow->addWidget(launchWithDefaultApplicationButton);
-    QPushButton *viewInTerminalButton = new QPushButton("View In Terminal");
-    analysisButtonsRow->addWidget(viewInTerminalButton);
+    //QPushButton *viewInTerminalButton = new QPushButton("View In Terminal");
+    //analysisButtonsRow->addWidget(viewInTerminalButton);
     QPushButton *viewInWebBrowserButton = new QPushButton("View In Web Browser");
     analysisButtonsRow->addWidget(viewInWebBrowserButton);
     QPushButton *openWithMplayerButton = new QPushButton("mplayer");
@@ -112,8 +112,10 @@ LifeShaperStaticFilesWidget::LifeShaperStaticFilesWidget(QWidget *parent)
     setLayout(m_Layout);
 
     handleD(tr("Debug window has maximum line count of 2k just FYI"));
-    handleD(tr("note: for a directory, 'use this as replacement' button has recursion implied. also, you cannot recursively 'use this as a replacement' for a file, because you can't supply more than one replacement in the GUI"));
-    handleD(tr("when replacing a dir, you must select a dir to replace it or else you will get undefined results"));
+    handleD(tr("note #1: for a directory, 'use this as replacement' button has recursion implied. also, you cannot recursively 'use this as a replacement' for a file, because you can't supply more than one replacement in the GUI"));
+    handleD("note #2: leave behind, iffy copyright, and defer decision are all implicitly recursive when the target is a directory");
+    handleD(tr("note #3: when replacing a dir, you must select a dir to replace it as 'this' or else you will get undefined results"));
+    handleD("note #4: be aware of the bug when trying to do a recursive decision on a file in the root directory. it will error out but the first entry will still be added. if you try to resume from that entry, it will be inserted as a duplicate");
 
     connect(inputEasyTreeFileBrowseButton, SIGNAL(clicked()), this, SLOT(handleInputEasyTreeFileBrowseButtonClicked()));
     connect(inputDirThatEasyTreeFileSpecifiesBrowseButton, SIGNAL(clicked()), this, SLOT(handleInputDirThatEasyTreeFileSpecifiesBrowseButtonClicked()));
@@ -126,7 +128,7 @@ LifeShaperStaticFilesWidget::LifeShaperStaticFilesWidget(QWidget *parent)
 
     connect(openWithMousepadButton, SIGNAL(clicked()), this, SLOT(handleOpenWithMousepadClicked()));
     connect(launchWithDefaultApplicationButton, SIGNAL(clicked()), this, SLOT(handleLaunchWithDefaultApplicationClicked()));
-    connect(viewInTerminalButton, SIGNAL(clicked()), this, SLOT(handleOpenDirectoryInTerminalClicked()));
+    //connect(viewInTerminalButton, SIGNAL(clicked()), this, SLOT(handleOpenDirectoryInTerminalClicked()));
     connect(viewInWebBrowserButton, SIGNAL(clicked()), this, SLOT(handleOpenInWebBrowserlClicked()));
     connect(openWithMplayerButton, SIGNAL(clicked()), this, SLOT(handleOpenInMplayerClicked()));
 
@@ -277,6 +279,7 @@ void LifeShaperStaticFilesWidget::handleLaunchWithDefaultApplicationClicked()
 {
     QDesktopServices::openUrl(QUrl(QString("file://") + getFullPathOfCurrentItem()));
 }
+#if 0
 void LifeShaperStaticFilesWidget::handleOpenDirectoryInTerminalClicked()
 {
     QStringList terminalArgs;
@@ -285,6 +288,7 @@ void LifeShaperStaticFilesWidget::handleOpenDirectoryInTerminalClicked()
     terminalArgs.append(QString("--working-directory=") + getFullPathOfCurrentItem());
     QProcess::startDetached("/usr/bin/xfce4-terminal", terminalArgs);
 }
+#endif
 void LifeShaperStaticFilesWidget::handleOpenInWebBrowserlClicked()
 {
     QStringList iceWeaselArgs;
@@ -302,6 +306,8 @@ void LifeShaperStaticFilesWidget::handleNowProcessingEasyTreeHashItem(QString ea
     m_CurrentEasyTreeHashLineLineEdit->setText(easyTreeHashLine);
 
     m_RelativeFilePathLabel->setText(relativeFilePath);
+
+    m_CurrentItemIsDir = isDirectory;
 
     if(isDirectory)
     {
@@ -332,10 +338,23 @@ void LifeShaperStaticFilesWidget::handleStoppedRecursingDatOperationBecauseParen
 void LifeShaperStaticFilesWidget::handleBrowseForReplacementButtonClicked()
 {
     QFileDialog fileDialog;
-    fileDialog.setFileMode(QFileDialog::ExistingFile);
     fileDialog.setOption(QFileDialog::ReadOnly, true);
     //TODOoptional: custom filter based on whether current item is file or folder
-    fileDialog.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+    QDir::Filters filter = fileDialog.filter();
+    filter |= QDir::NoDotAndDotDot;
+    filter |= QDir::Hidden;
+    if(m_CurrentItemIsDir)
+    {
+        fileDialog.setFileMode(QFileDialog::Directory);
+        filter |= QDir::Dirs;
+        filter |= QDir::Drives;
+    }
+    else
+    {
+        fileDialog.setFileMode(QFileDialog::ExistingFile);
+        filter |= QDir::Files;
+    }
+    fileDialog.setFilter(filter);
     fileDialog.setWindowModality(Qt::WindowModal);
 
     if(fileDialog.exec() && fileDialog.selectedFiles().size() > 0)

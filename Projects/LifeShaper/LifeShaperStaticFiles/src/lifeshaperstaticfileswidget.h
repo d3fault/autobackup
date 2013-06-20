@@ -63,6 +63,7 @@ private:
     void setDecisionsButtansEnabled(bool enabled);
 
     QString getFullPathOfCurrentItem();
+    bool m_CurrentItemIsDir;
 signals:
     void startIteratingEasyTreeHashFileRequested(QString easyTreeHashFile, QString outputFilesFolder, QString lineLeftOffFrom);
     void stopIteratingRequested();
@@ -83,7 +84,7 @@ public slots:
     void handleCopyAbsolutePathToClipboardClicked();
     void handleOpenWithMousepadClicked();
     void handleLaunchWithDefaultApplicationClicked();
-    void handleOpenDirectoryInTerminalClicked();
+    //void handleOpenDirectoryInTerminalClicked();
     void handleOpenInWebBrowserlClicked();
     void handleOpenInMplayerClicked();
 
