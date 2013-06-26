@@ -1,7 +1,7 @@
 #include "lifeshaperstaticfiles.h"
 
 LifeShaperStaticFiles::LifeShaperStaticFiles(QObject *parent) :
-    QObject(parent), m_FirstTimeInProcessNextLineForRecursion(true), m_LeaveBehindFilename("leave.behind.files.txt"), m_IffyCopyrightFilename("iffy.copyright.files.txt"), m_DeferDecisionFilename("defer.decision.files.txt"), m_BringForwardFilename("bring.forward.files.txt"), m_UseTHISasReplacementFilename("use.this.as.replacement.files.txt"), m_CurrentEasyTreeHashItem(0), m_Colon(":")
+    QObject(parent), m_RecursiveUntilParent(false) /* WTF isn't bool default constructed to false? Didn't have this before and my app was doing recursive bring forward when picking up from a line. Setting to false here fixed it. WAT? Put a breakpoint on that slot to set it to true too and it was never hit */, m_FirstTimeInProcessNextLineForRecursion(true), m_LeaveBehindFilename("leave.behind.files.txt"), m_IffyCopyrightFilename("iffy.copyright.files.txt"), m_DeferDecisionFilename("defer.decision.files.txt"), m_BringForwardFilename("bring.forward.files.txt"), m_UseTHISasReplacementFilename("use.this.as.replacement.files.txt"), m_CurrentEasyTreeHashItem(0), m_Colon(":")
 {
     m_EscapedColon.append("\\");
     m_EscapedColon.append(m_Colon);

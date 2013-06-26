@@ -1,0 +1,1 @@
+make an app to check each of the sorted easy tree outputs for a case where the hash is longer than it should be. this is to detect a possible error i may have made while manually modifying them: i may have forgot to leave a newline at the very end so an entry might be on the same line as the one before it.

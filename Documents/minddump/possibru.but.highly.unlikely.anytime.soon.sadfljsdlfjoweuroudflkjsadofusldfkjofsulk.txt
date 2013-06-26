@@ -1,0 +1,1 @@
+Hackers (who are also chemists) could use very carefully crafted smoke bombs to disrupt your "air gap" of an input-only -> output-only (or vice versa) data transfer mechanism. The carefully crafted smoke bombs could modify the light molecules as they travel through the air and could modify (or perhaps intercept?) the contents of the data being transferred.

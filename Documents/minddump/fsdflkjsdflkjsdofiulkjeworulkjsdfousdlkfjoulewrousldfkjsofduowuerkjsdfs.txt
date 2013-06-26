@@ -1,0 +1,5 @@
+There is no perfect autobalancing function because it must always be periodically analyzed and adjusted. Now "periodically" requires it's own perfect autobalancing function.
+
+Humans have implicit relativity. Coding that shit is near impossibru (but obviously possible because we are computers).
+
+It is the same problem as the AI problem.

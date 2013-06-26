@@ -1,0 +1,1 @@
+an app that goes through the final results displaying only the images (and perhaps videos), so i can double check them

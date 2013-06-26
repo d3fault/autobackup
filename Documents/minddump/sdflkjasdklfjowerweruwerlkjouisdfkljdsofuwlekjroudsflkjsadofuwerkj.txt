@@ -1,0 +1,3 @@
+TODOreq: enter ram lottery, wait until drawn, DON'T UTILIZE IT. RamCount += 1 (makes up for... you know...)
+
+Hell I'm surprised hippies etc don't already do this with all sorts of animals (free idea you're welcome)

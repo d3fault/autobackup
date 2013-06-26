@@ -1,0 +1,6 @@
+I want to implement documentation software.
+I want to document myself implementing documentation software.
+I want to implement the documenting of myself implementing the documentation software.
+That's where I am right now. Going to ghetto-rig-bootstrap the implementation of me documenting myself, so I can finally fucking begin implementing the documentation software.
+
+It's not surprising I've made absolutely no progress (especially with my tendency to prematurely optimize), given the weird ass motherfucking dependency hell I'm in.

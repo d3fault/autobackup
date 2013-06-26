@@ -1,0 +1,1 @@
+The accounting app should make sure that no entry is in two different lists, in addition to making sure that every entry is accounted for (it's main purpose)

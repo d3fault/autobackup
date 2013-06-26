@@ -1,0 +1,1 @@
+Extracting a password from someone doesn't necessarily require a hammer to teh head. You can probably just hook them up to a lie detector and then go over every letter of the alphabet saying "is this the first letter of your password?" (etc for each letter of their password). Would be really hard to beat.

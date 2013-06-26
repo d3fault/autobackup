@@ -1,0 +1,4 @@
+when we see a "bring forward" entry for a folder, all we should do is make the directory. It would be a huge error to copy it and all it's contents.
+right now the only way i am able to process individually the contents of a dir is to bring that dir forward (even if i don't want to bring forward any of the contents of it!). we will end up having empty directories on our structure brought forward, but that's ok
+
+For an iffy copyright entry for a folder... well all it's children will have been recursively added to iffy copyright anyways so that one you could copy recursively or just mkdir and do each child individually (the result is the same)
