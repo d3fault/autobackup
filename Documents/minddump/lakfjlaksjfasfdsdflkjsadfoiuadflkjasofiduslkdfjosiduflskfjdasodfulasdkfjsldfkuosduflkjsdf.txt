@@ -1,0 +1,7 @@
+The simplest form of output only type shit would just be two arduinos. One has a single (or I guess multiple if you want more speed) pin in "write" mode... the other had the equal amount of pins in "read" mode.
+
+You have to maintain physical security of the output only machine (incl arduino) in order to stay confident in the probable fact that your programming is only ever writing. You can speed up the binary pulses until your reader detects errors... and then throttle back to a comfortable (100%-ish) transmission no-error rate. Still need verification/checksums etc... but that rate needs to be manually found by a human. The feedback approach is not usable because that requires writing to the output only machine.
+
+The machine reading... can be hacked to pieces without you giving a shit. It can/should upload to some remote server that then gives a confirmation hash and you can also calculate that on the output only machine and use that to verify that the [possibly/probably] hacked "reading" machine did in fact upload/publish to the world.
+
+You obviously have other "input only" (for backup purposes) intercepting that same signaling and retain an offline copy at all times (at least until you can confirm with your eyes that it was successfully put on some censorship resistent network).
