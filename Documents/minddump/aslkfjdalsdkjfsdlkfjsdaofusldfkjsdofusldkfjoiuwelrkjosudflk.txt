@@ -1,0 +1,4 @@
+Environment == Context
+
+Environment being your surroundings and peers, physical
+Context being your... pre-train of thought... thought
