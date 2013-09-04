@@ -6,6 +6,14 @@
 
                             Preamble
 
+	d3fault public license
+TODOreq: check spelling of derivable		(aka) Informally: derivable public license
+		(aka) Informally: double penetration license
+
+	In a perfect world, all information would be in the public domain. In this world, the existence of copyright means that the public domain is not a suitable place to release information. Copyleft uses copyright law to mimic the perfect world where all information is in the public domain. It does so by placing restrictions on the information guaranteeing that it remains free. "No! You may NOT proprietize this information and restrict it's ability to spread!" -- something the public domain allows because of the existence of a copyright system (no copyright system, no problem). Copyleft says that a work may be used for any purpose so long as the original work, and it's derivatives, remain unrestricted. This is how a perfect world with public domain and no copyright system would function.
+
+TODOreq: merge above and below paragraphs
+
 	When we say free, we are talking about the same free as in Freedom of Information. It also helps to think about Freedom of Speech, though that front seems to be doing alright on it's own. This license is created with the sole purpose of furthering Freedom of Information. The word free is ambiguious with gratis (free of cost), which has nothing to do with free how we mean it. This is a Free Software license that utilizes Copyleft to guarantee that works released under it remain usable by both Freedom of Information advocates and Proprietors alike. The justification for the latter is based upon bootstrap theory: we need to depend on proprietors to help make our projects large and self-sustaining. A project that gets no [feature] updates but continual bugfixes is very much alive. Allowing proprietors to exploit the functionality of a work exponentially increases that work's exposure, thereby falling in line with the goals of Freedom of Information.
 
 	
