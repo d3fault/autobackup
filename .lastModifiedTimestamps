@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386040358
+Documents/minddump/:1386040439
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386040358
+Documents/minddump/dreams/:1386040439
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -516,6 +516,7 @@ Documents/minddump/dlsfjlaskjflaskjdfosaduflsdjfouwlerjoulsdfofjdsofuwlekjrousad
 Documents/minddump/dlsfjlsadjfsdofulsdjfodsuflsjdfoulwekjrouldsjfoasudfl.txt:1378269565
 Documents/minddump/dlskfajlskdajflksjdflkjsaldfkjslkdafjsdlkjfsdlkjfsdouflkjwer.txt:1363128551
 Documents/minddump/dlskfjasdlkfjsdafloiuwerkljsodfusldkfjsdofulskdfjoulksdf.txt:1377208284
+Documents/minddump/dlskfjsldkfjsdofulskdjfosudflkjsdofulksdjfouilkfjfosdfouierlk.txt:1378426418
 Documents/minddump/does.belong.in.nobodyme.or.minddump.are.they.merging.omg.what.is.going.on.ahhh.txt:1322071222
 Documents/minddump/dont.feel.too.bad.for.lexi.for.she.knows.only.pain.and.pleasure.asldkfjasdfoiwerul.txtexcept.thats.why.i.would.pity.her.sadface.txt:1339229307
 Documents/minddump/dont.launch.your.a.creep.launch.and.youre.a.god.txtpluse.txt:1339059093
@@ -1517,7 +1518,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386040358
+Pictures/:1386040439
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1539,6 +1540,7 @@ Pictures/kaylee.heidi.programming.etc.aldjfalsdjfals.svg:1352187513
 Pictures/lol.metaphor.then.and.now.rpc.generator.is.a.tractor.and.a.tangent.that.bores.me.to.death.and.is.time.consuming.BUT.will.save.time.too.svg:1364417816
 Pictures/perfect.desktop.2011.10.31.png:1320069650
 Pictures/proprietary.gpl.lgpl.thinking.out.loud.trying.to.pinpoint.fair.use.mb.which.is.impossibru.svg:1355706959
+Pictures/sdflkjsldkfjsadfoulkjweroukljdfouifsdlkj.svg:1378274278
 Pictures/the.world.is.dangerous.so.i.need.to.censor.my.hard.drive.whoops.svg:1371594791
 Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-KV-DocumentStore.and.File.relationship.svg:1360588938
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
@@ -2958,7 +2960,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386040358
+Projects/libAvGraphicsItem2/design/:1386040439
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -3139,7 +3141,7 @@ Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 Solutions/d3faultPublicLicense/:1358082091
-Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378258148
+Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/launchASEPbecauseRedAlert/:1371128235
 Solutions/launchASEPbecauseRedAlert/an.note.saldfkjsdlakfjoweurljoufssdlkf.txt:1371120857
 Solutions/launchASEPbecauseRedAlert/clickableSvgQuoteChristmasTreeUnquote.svg:1371121165
@@ -3197,9 +3199,9 @@ autobackupScripts/linux/LiveCDinstallAndConfigExtra/install.all.rpms.via.yum.and
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/keepassx.config.ini:1338074788
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/vagalume-config.xml:1337881282
 autobackupScripts/linux/aptOfflinePackageManagement/:1366495827
-autobackupScripts/linux/aptOfflinePackageManagement/genInstallAndDepsDebUrls.sh:1366496005
-autobackupScripts/linux/aptOfflinePackageManagement/genUpgradeDebUrls.sh:1366496076
-autobackupScripts/linux/aptOfflinePackageManagement/how2offlineAptPackageManagement.txt:1366499011
+autobackupScripts/linux/aptOfflinePackageManagement/genInstallAndDepsDebUrls.sh:1378373315
+autobackupScripts/linux/aptOfflinePackageManagement/genUpgradeDebUrls.sh:1378373179
+autobackupScripts/linux/aptOfflinePackageManagement/how2offlineAptPackageManagement.txt:1378373813
 autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944
