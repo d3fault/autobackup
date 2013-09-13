@@ -1,0 +1,21 @@
+The perfect operating system does not depend on any operating system (fuck yea Qt) and is also:
+
+1) Single definition (the design, using designEqualsImplementation)
+2) From that single design a library containing the core functionality is generated
+3) From that single design a default GUI which can be overrided using virtuals (or something) is generated -- linking to library
+4) From that single design a command line app, which is basically the library but accessible via command line, is generated --linking to library
+
+
+Additionally: all of it should be inline editable and each action should be timeline versioned and roll-back-able and probably tons of other features I've written about in scattered docs throughout the years.
+
+
+Whether the changes/shit are shared publically is really a political (configuration) decision: for me they will be because fuck privacy. It does not exist. But the system can/should be able to operate in offline only mode. Also when it is online/dht/freenet-rewritten-in-CPP-and-permanent-mode, there should still be a full offline copy of your own data and offline mode should sync when reconnected later on etc.
+
+
+Everything should be >= DPL, including the bios and GPU driver.
+(GPL is decent but incurs a process overhead that is quite frankly pointless. Allowing linking gives you compile time checking of API usage as well (fuck strings via process-calls)).
+
+
+It should use a GUI that is compatible with Qt Quick first and foremost (fuck QML/JS though) but is also able to be natively software rendered (I mean seriously, how hard is it to write a software renderer to use the same scene graph as Qt Quick).
+
+On Windows and perhaps other operating systems, the GUI should be able to be used as an overlay that is key combo activated. This might not be that hard but I've only ever theorized doing it (but I've looked at the backing code to do it and am pretty sure it should work).

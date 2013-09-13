@@ -1,0 +1,7 @@
+Given: I am a computer programmer with knowledge of cryptography.
+
+Option 1: I sit in silence. This is, or at least leads to, insanity.
+Option 2: I speak publically. This is treason if I am "exporting custom cryptographic software" without first getting permission (how does one obtain permission for a live stream of his thoughts before he thinks them?) and treason is punishable by the death penalty.
+Option 3: I speak privately. This, aside from also being/leading-to insanity because it is _essentially_ sitting in silence, leads to insanity because all means of securing private data can be broken eventually... and there is also the fact that the NSA and/or hackers don't need a warrant to tap into your cell phone if the battery is still inserted (so typing into an offline machine (woo doing dat rite nao) is one way to avoid that but is still vulnerable to the fact that all security measures can be broken eventually).
+
+Decision: Please give me a gun so I can blow my fucking head off.
