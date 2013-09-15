@@ -1,0 +1,29 @@
+As an addition to what I was describing as the perfect OS, regarding it's GUI shit.
+
+
+Basically a custom-but-compatible-with(first-and-foremost)-qscenegraph/qtquick... scene graph (who gives a shit if it's also a scene graph... seeing as it will be processed at compile time (whereas the QSG one is utlized at run time).
+
+Basically "a shit ton of rectangles" that can specify type and shit.
+
+The target outputs are (ideally):
+
+1) QSceneGraph first and foremost
+2) Hopefully we can just use the QSceneGraph results (render into frame buffer object or something?) for using as an overlay UI for displaying on top of games, but maybe custom is needed :(
+3) QGraphicsScene/View when OpenGL is not available (there is also the case where OpenGL is available but you still want to use it for some damn reason (why!?!?), since QGraphicsScene/View supports both software and hardware rendering (but it's hardware rendering is not as tuned etc as QSceneGraph's). We're using it here mainly for it's software rendering capabilities that QSceneGraph lacks
+4) HTML
+5) Regular old fashioned widgets
+
+
+All of the above need a design paradigm to be invented or something so that there is the front-end (the above being examples of front ends) and back-end and some sort of way of establilshing connections between the two. HTML, however, is even tricker, as it needs it's connections to go over network calls _AND_ the business needs to be able to handle multiple users at once. I have written about that before blah blah blah.
+
+
+
+Now that I've written this it actually sounds fairly damn simple (aside from the backend integration which needs some serious design considerations): A fucking scene graph compiler would be easy as shit, for all 5 of the above targets.
+
+
+The bit about back-ends is basically that I want them to be on a different thread than the GUI (is this even the case for video games where responding to mouse input needs to be hella fast? I'm actually leaning towards no but I'm unsure tbh). However I don't want to spawn a new thread for each backend object used by the front end (and obviously all front ends are on the gui thread). What I'm saying is that "generically spawning a backend thread for each backend object" won't cut it. The backend objects should share a backend thread (unless they explicitly require one (in which case they would set it up themselves FROM the global backend thread)).
+
+
+As easy as this would be to hack a quick/dirty solution, ultimately I start factoring in how it can/should/will play with DesignEqualsImplementation and how I still haven't landed on a clean design pattern for front-ends/back-ends (though not for lack of trying! just look at all my varied attempts thoughout my projects).
+
+For example: DesignEqualsImplementation handling [custom] GUI is not even something I've begun to consider. Certainly it will do it eventually (and ideally it will be exactly what I described above: a scene graph compiler (but visual creation thereof if you desire), but I'm still stuck on the programmatic object interaction and design. Making console apps etc. Focusing on the DESIGN (think:UML) for now instead of the design (think:GUI). Gui is pretty easy shit tbh... the UML-type design is way more important for a programmer's sanity.

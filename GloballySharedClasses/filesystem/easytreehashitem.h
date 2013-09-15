@@ -22,14 +22,7 @@ public:
     QDateTime lastModifiedDateTime();
     bool hasHash();
     QByteArray hash();
-private:
-    QString m_RelativeFilePath;
-    bool m_IsDirectory;
-    qint64 m_FileSize;
-    QDateTime m_CreationDateTime;
-    QDateTime m_LastModifiedDateTime;
-    bool m_HasHash;
-    QByteArray m_Hash;
+    QString toColonSeparatedLineOfText();
 
     void setRelativeFilePath(const QString &relativeFilePath);
     void setIsDirectory(bool isDirectory);
@@ -38,7 +31,14 @@ private:
     void setLastModifiedDateTime(const QDateTime &lastModifiedDateTime);
     void setHasHash(bool hasHash);
     void setHash(const QByteArray &hash);
-
+private:
+    QString m_RelativeFilePath;
+    bool m_IsDirectory;
+    qint64 m_FileSize;
+    QDateTime m_CreationDateTime;
+    QDateTime m_LastModifiedDateTime;
+    bool m_HasHash;
+    QByteArray m_Hash;
 
     static const QString m_Colon;
     static QString m_TempStringToInsertForEscapedColons; //even though it's a member (optimization) it is still generated on each invocation (whenever an escaped colon is seen)

@@ -1,0 +1,24 @@
+#ifndef COPYANDMERGEANEASYTREEFILEANDAREPLACEMENTEASYTREEFILEWHILEVERIFYINGRELEVANTFILESGUI_H
+#define COPYANDMERGEANEASYTREEFILEANDAREPLACEMENTEASYTREEFILEWHILEVERIFYINGRELEVANTFILESGUI_H
+
+#include <QObject>
+#include <QCoreApplication>
+
+#include "objectonthreadhelper.h"
+#include "copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfiles.h"
+#include "copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfileswidget.h"
+
+class CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFilesGui : public QObject
+{
+    Q_OBJECT
+public:
+    explicit CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFilesGui(QObject *parent = 0);
+private:
+    ObjectOnThreadHelper<CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles> m_BusinessThread;
+    CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFilesWidget m_Gui;
+private slots:
+    void handleCopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFilesInstantiated();
+    void handleAboutToQuit();
+};
+
+#endif // COPYANDMERGEANEASYTREEFILEANDAREPLACEMENTEASYTREEFILEWHILEVERIFYINGRELEVANTFILESGUI_H

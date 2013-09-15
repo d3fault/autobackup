@@ -121,6 +121,26 @@ QByteArray EasyTreeHashItem::hash()
 {
     return m_Hash;
 }
+//currently only being used by files right now (in easytreehasher), but would probably work with directories
+QString EasyTreeHashItem::toColonSeparatedLineOfText()
+{
+    QString relative = relativeFilePath();
+    QString ret = relative.replace(m_Colon, m_ColonEscaped);
+    if(!isDirectory())
+    {
+        ret += m_Colon + fileSize();
+    }
+    else
+    {
+        ret += "/"; //trailing slash for directories
+    }
+    ret += m_Colon + QString::number(creationDateTime().toMSecsSinceEpoch()/1000) + m_Colon + QString::number(lastModifiedDateTime().toMSecsSinceEpoch()/1000);
+    if(hasHash())
+    {
+        ret += (m_Colon + hash().toHex());
+    }
+    return ret;
+}
 void EasyTreeHashItem::setRelativeFilePath(const QString &relativeFilePath)
 {
     m_RelativeFilePath = relativeFilePath;

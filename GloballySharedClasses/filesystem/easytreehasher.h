@@ -11,42 +11,41 @@
 #include <QListIterator>
 #include <QDateTime>
 
+#include "easytreehashitem.h"
+
 class EasyTreeHasher : public QObject
 {
     Q_OBJECT
 public:
     explicit EasyTreeHasher(QObject *parent = 0);
     void recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay(QDir &sourceDir, QDir &emptyDestinationDir, QIODevice *easyTreeHashOutputIODevice, QCryptographicHash::Algorithm algorithm);
-    ~EasyTreeHasher();
+    static EasyTreeHashItem* copyAndHashSimultaneously(const QFileInfo &sourceFileInfoWithAbsolutePath, const QDir &destDir, QCryptographicHash::Algorithm cryptographicHashAlgorithm);
 private:
     static const qint64 m_MaxReadSize;
-    QString m_DirSeparator;
+    static const QString m_DirSeparator;
     QString m_Colon;
     QString m_EscapedColon;
 
     QDir::Filters m_ConservativeFiltersForSeeingIfThereAreFilesToCopy;
     QDir::SortFlags m_SortFlags;
 
-    QCryptographicHash *m_Hasher;
-    QByteArray m_HashResult;
-    void deleteHasherIfNotZero();
+    QCryptographicHash::Algorithm m_CryptographicHashAlgorithm;
+
     QTextStream m_EasyTreeHashTextStream;
 
     QString getCurrentSourceFileInfo_RelativePath();
     QString getCurrentSourceFileInfo_FilenameOrDirnameOnly();
+    static QString getFilenameOrDirnameOnly(QString filepathOrDirPath);
     QString getCurrentSourceFileInfoPath_ColonEscapedAndRelative();
+    static QString getRelativeFilePath(const QFileInfo &fileInfo);
     int m_SourceDirectoryAbsolutePathLength;
     QString m_CurrentFilenameOrDirnameOnly; //dir name or file name
     QFileInfo m_CurrentSourceFileInfo;
-    QFile m_SourceFile2CopyTreeAndHash; //Treeing is done by the QFileInfo though...
-    QFile m_DestinationFile2Write;
 
     //The Beef:
     void copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(const QFileInfoList &filesAndFoldersInCurrentDirToCopyAndTreeAndHash, QDir &destAlreadyMkdirDAndCDdInto); //that QDir might not be able to be const? I suck at const'ness so idfk
 
     void addDirectoryEntryToEasyTreeHashOutput();
-    void copyAndHashSimultaneously(const QDir &destDir);
-    void addFileEntryToEasyTreeHashOutput();
 signals:
     void d(const QString &); //use as recoverableError.. just follow the message with "return;"
     void e(const QString &); //I don't have unrecoverable errors implemented yet (erroring out of recursion is a bitch heh)... but at the very least I want to be able to differentiate between actual errors and simple debug messages. If I receive ANY error messages, I know the output is unreliable

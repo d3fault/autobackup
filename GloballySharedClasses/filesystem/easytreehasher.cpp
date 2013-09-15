@@ -1,9 +1,10 @@
 #include "easytreehasher.h"
 
 const qint64 EasyTreeHasher::m_MaxReadSize = 4194304; //4mb (max) read buffer
+const QString EasyTreeHasher::m_DirSeparator = "/";
 
 EasyTreeHasher::EasyTreeHasher(QObject *parent)
-    : QObject(parent), m_DirSeparator("/"), m_Colon(":"), m_Hasher(0)
+    : QObject(parent), m_Colon(":")
 {
     m_EscapedColon.append("\\");
     m_EscapedColon.append(m_Colon);
@@ -67,8 +68,7 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
         m_EasyTreeHashTextStream.seek(0);
     }
 
-    deleteHasherIfNotZero(); //multiple runs without closing down application... but changing algorithm in between. QCryptographicHash doesn't provide a way to change the algorithm once instantiated
-    m_Hasher = new QCryptographicHash(algorithm);
+    m_CryptographicHashAlgorithm = algorithm;
 
     //leaving in for lulz, i really wrote it:
     //theFuckingRecursiveFunction(GodDamnitImplicitSharingEitherMakesThisTooEasyOrTooHardICantTell);
@@ -81,30 +81,26 @@ void EasyTreeHasher::recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay
 
     emit d("The Recursive Copy/Tree/Hash Function Has Finished");
 }
-EasyTreeHasher::~EasyTreeHasher()
-{
-    deleteHasherIfNotZero();
-}
-void EasyTreeHasher::deleteHasherIfNotZero()
-{
-    //I thought C++ allowed it to be deleted even if it is null.. but my shit just segfaulted (ANEURISM) so I guess not? Probably need to update code in "other projects" (lol I guess I'm thinking about releasing this) too...
-    if(m_Hasher)
-    {
-        delete m_Hasher;
-        m_Hasher = 0;
-    }
-}
 QString EasyTreeHasher::getCurrentSourceFileInfo_RelativePath()
 {
     return m_CurrentSourceFileInfo.canonicalFilePath().remove(0, m_SourceDirectoryAbsolutePathLength);
 }
 QString EasyTreeHasher::getCurrentSourceFileInfo_FilenameOrDirnameOnly()
 {
-    return m_CurrentSourceFileInfo.canonicalFilePath().split(m_DirSeparator,QString::SkipEmptyParts).last();
+    return getFilenameOrDirnameOnly(m_CurrentSourceFileInfo.canonicalFilePath());
+}
+QString EasyTreeHasher::getFilenameOrDirnameOnly(QString filepathOrDirPath)
+{
+    return filepathOrDirPath.split(m_DirSeparator,QString::SkipEmptyParts).last();
 }
 QString EasyTreeHasher::getCurrentSourceFileInfoPath_ColonEscapedAndRelative()
 {
     return getCurrentSourceFileInfo_RelativePath().replace(m_Colon, m_EscapedColon, Qt::CaseSensitive);
+}
+QString EasyTreeHasher::getRelativeFilePath(const QFileInfo &fileInfo)
+{
+    QString ret = fileInfo.canonicalFilePath();
+    return ret.remove(0, fileInfo.canonicalPath().length() + 1); //.replace(m_Colon, m_EscapedColon, Qt::CaseSensitive);
 }
 void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(const QFileInfoList &filesAndFoldersInCurrentDirToCopyAndTreeAndHash, QDir &destAlreadyMkdirDAndCDdInto)
 {
@@ -149,9 +145,20 @@ void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoing
         }
         else if(m_CurrentSourceFileInfo.isFile())
         {
-            copyAndHashSimultaneously(destAlreadyMkdirDAndCDdInto); //m_CurrentSourceFileInfo is member, hash output is member also... so we only need to pass in the [scope-local] dest dir
+            EasyTreeHashItem *easyTreeHashItem = copyAndHashSimultaneously(m_CurrentSourceFileInfo, destAlreadyMkdirDAndCDdInto, m_CryptographicHashAlgorithm);
 
-            addFileEntryToEasyTreeHashOutput();
+            if(!easyTreeHashItem)
+            {
+                emit e("there was an error in the copy/hash routine, check stderr");
+                return; //TODOreq: error out of recursion properly
+            }
+
+            m_EasyTreeHashTextStream << easyTreeHashItem->toColonSeparatedLineOfText() << endl;
+
+            //Debug:
+            emit d("Copied/Tree'd/Hashed: " + m_CurrentFilenameOrDirnameOnly);
+
+            delete easyTreeHashItem;
         }
         else
         {
@@ -164,22 +171,35 @@ void EasyTreeHasher::addDirectoryEntryToEasyTreeHashOutput()
 {
     m_EasyTreeHashTextStream << getCurrentSourceFileInfoPath_ColonEscapedAndRelative() << m_DirSeparator;
 
-    //stream a colon, the file size, another colon, the creation date, another colon, the last modified date, and lastly a newline
+    //stream a colon, the creation date, another colon, the last modified date, and lastly a newline
     m_EasyTreeHashTextStream << m_Colon << QString::number(m_CurrentSourceFileInfo.created().toMSecsSinceEpoch()/1000) << m_Colon << QString::number(m_CurrentSourceFileInfo.lastModified().toMSecsSinceEpoch()/1000) << endl;
 
     //Debug:
     emit d("Entering/Making Dir: " + m_CurrentFilenameOrDirnameOnly);
 }
-void EasyTreeHasher::copyAndHashSimultaneously(const QDir &destDir)
+//caller takes owner of returned EasyTreeHasher
+EasyTreeHashItem *EasyTreeHasher::copyAndHashSimultaneously(const QFileInfo &sourceFileInfoWithAbsolutePath, const QDir &destDir, QCryptographicHash::Algorithm cryptographicHashAlgorithm)
 {
-    m_Hasher->reset();
-    m_SourceFile2CopyTreeAndHash.setFileName(m_CurrentSourceFileInfo.canonicalFilePath());
-    if(m_SourceFile2CopyTreeAndHash.open(QFile::ReadOnly))
+    EasyTreeHashItem *easyTreeHashItem = 0;
+
+    QCryptographicHash hasher(cryptographicHashAlgorithm);
+    QString sourceAbsoluteCanonicalFilePath(sourceFileInfoWithAbsolutePath.canonicalFilePath());
+    QFile sourceFile2CopyTreeAndHash(sourceAbsoluteCanonicalFilePath);
+    if(sourceFile2CopyTreeAndHash.open(QFile::ReadOnly))
     {
-        m_DestinationFile2Write.setFileName(destDir.canonicalPath() + m_DirSeparator + m_CurrentFilenameOrDirnameOnly);
-        if(m_DestinationFile2Write.open(QFile::WriteOnly))
+        QFile destinationFile2Write(destDir.canonicalPath() + m_DirSeparator + getFilenameOrDirnameOnly(sourceAbsoluteCanonicalFilePath));
+        if(destinationFile2Write.open(QFile::WriteOnly))
         {
-            qint64 bytesAvail = m_SourceFile2CopyTreeAndHash.bytesAvailable();
+            easyTreeHashItem = new EasyTreeHashItem();
+            easyTreeHashItem->setIsDirectory(false);
+            easyTreeHashItem->setHasHash(true);
+            QString relativeFilePath = getRelativeFilePath(sourceFileInfoWithAbsolutePath);
+            easyTreeHashItem->setRelativeFilePath(relativeFilePath);
+            easyTreeHashItem->setFileSize(sourceFileInfoWithAbsolutePath.size());
+            easyTreeHashItem->setCreationDateTime(sourceFileInfoWithAbsolutePath.created());
+            easyTreeHashItem->setLastModifiedDateTime(sourceFileInfoWithAbsolutePath.lastModified());
+
+            qint64 bytesAvail = sourceFile2CopyTreeAndHash.bytesAvailable();
             qint64 toRead;
             while(bytesAvail > 0)
             {
@@ -188,40 +208,35 @@ void EasyTreeHasher::copyAndHashSimultaneously(const QDir &destDir)
 
                 //Next 3 lines are bulk of program! Entire fucking reason for existence!
 
-                QByteArray readChunkArray = m_SourceFile2CopyTreeAndHash.read(toRead); //One read (copy)
-                m_Hasher->addData(readChunkArray); //1st Utilization of that read (hash)
-                m_DestinationFile2Write.write(readChunkArray); //2nd Utilization of that read, the write (paste)
+                QByteArray readChunkArray = sourceFile2CopyTreeAndHash.read(toRead); //One read (copy)
+                hasher.addData(readChunkArray); //1st Utilization of that read (hash)
+                destinationFile2Write.write(readChunkArray); //2nd Utilization of that read, the write (paste)
 
-                //Efficient as fuck... or premature optimization? YOU BE THE JUDGE!
+                //Efficient as fuck... or premature optimization? YOU BE THE JUDGE! 'man tee' would have saved me bundles of time xD. Ahh well fuck it I still hate shell scripting. I even knew about tee before writing this... but I didn't realize it worked on stdout and didn't know about the anonymous pipe stuff. I thought it was mainly for saving/showing "debug [text] output" only, not splitting binary output :-P
 
 
-                bytesAvail = m_SourceFile2CopyTreeAndHash.bytesAvailable();
+                bytesAvail = sourceFile2CopyTreeAndHash.bytesAvailable();
             }
 
             //TODOoptional: we could check that both file sizes are the same here if we wanted...
 
-            m_HashResult = m_Hasher->result(); //TODOoptional: mb an #ifdef debug or some shit to see if we want to waste cpu cycles sending the result() to the GUI... for now fuck it, i just want errors~
+            easyTreeHashItem->setHash(hasher.result()); //TODOoptional: mb an #ifdef debug or some shit to see if we want to waste cpu cycles sending the result() to the GUI... for now fuck it, i just want errors~
 
-            m_DestinationFile2Write.flush();
-            m_DestinationFile2Write.close();
+            destinationFile2Write.flush();
+            destinationFile2Write.close();
         }
         else
         {
             //TODOreq: destination file open for writing failed -- error'ing out of the recursion is going to be a bitch :-P
-            emit e("destination file open for writing failed");
+            qWarning("destination file open for writing failed");
         }
-        m_SourceFile2CopyTreeAndHash.close();
+        sourceFile2CopyTreeAndHash.close();
     }
     else
     {
         //TODOreq: source file open for reading failed -- error'ing out of the recursion is going to be a bitch :-P
-        emit e("source file open for reading failed");
+        qWarning("source file open for reading failed");
     }
-}
-void EasyTreeHasher::addFileEntryToEasyTreeHashOutput()
-{
-    m_EasyTreeHashTextStream << getCurrentSourceFileInfoPath_ColonEscapedAndRelative() << m_Colon << m_CurrentSourceFileInfo.size() << m_Colon << QString::number(m_CurrentSourceFileInfo.created().toMSecsSinceEpoch()/1000) << m_Colon << QString::number(m_CurrentSourceFileInfo.lastModified().toMSecsSinceEpoch()/1000) << m_Colon << m_HashResult.toHex() << endl;
 
-    //Debug:
-    emit d("Copied/Tree'd/Hashed: " + m_CurrentFilenameOrDirnameOnly);
+    return easyTreeHashItem;
 }
