@@ -1,0 +1,22 @@
+decompilable, aka clean room friendly
+
+On my network "Fair Use" (non-decompileable) will still be "allowed" in the ">= DPL only" section (TAG), but there will be another subset (TAG) of the ">= DPL only" section that is clean room friendly.
+
+I took a picture of myself doing the "thinker" pose on the toilet for lulz, and after looking at the resulting image I saw that in the background was a picture of a beach.
+
+The entire image itself probably falls under fair use, but if I were to cut out the picture of the beach out of the same image and then distribute those pixels by themself, it would probably constitute copyright infringement. Therefore, the image is NOT decompilable/clean-room-friendly.
+
+
+I would like that on the network/system the image can be doctored (black/transparent ink, or even if you want to get fancy just coordinates that are utilized in realtime to blank out the offending content) and then moved to the clean room section/tag. It should then have a property/tag telling the image that it was derived from and the reason for it's derivision(sp?). It pointing to a separate object would pretty much account for if you permanently modified the image (black ink)... but if you use coordinates to JIT black out the offending content (the picture of the beach), then those coordinates would be something along the lines of "needsToBlackOutThesePolygonsInOrderToBeCleanRoomFriendly:{someArrayOfPolygons}" as just a property of the original image (a space saving technique).
+
+
+
+Politically, I would like to operate (live) only ever in a clean room environment. It would be the sanest environment feasible. However it would be alright if from time to time that I display on my stream the me viewing of the full fair use image, so long as both the image itself (coincidentally residing on the network) and the stream of me viewing the image (not my face, but the desktop screen broadcast).... since it too will be then uploaded to the network... are marked (at least initially (supposing we use poly coord fixing method)) "non-clean-room-friendly". I guess an image can contain "non-clean-room-friendly" markings and also the "needsToBlackedOutThesePolygons..." tag later and the seeing of both of those together negates the first "non-clean-room-friendly" tag (when rendered utilizing the polygons).
+
+
+I still think it's worth mentioning that a clean-room-friendly image, if permanently modified, should still point back to (for archiving/interest purposes) the original fair use but non-clean-room-friendly image... should that method be used instead.
+
+Technologically speaking, the polygon coords method is definitely better engineering and more space saving... but business (objectively) speaking, irreversibly changing the image and just pointing back to the original (would it be "derives from" or some special "is identical to this one except has been made clean room friendly" ?? probably doesn't matter but derives from usually implies _MORE_ change than simply making clean-room-friendly) would be easier/faster to code.
+
+
+Perhaps even we could utilize both methods... because for example modifying a video to get rid of non-decompilable things would require a pretty intense piece of software if using the coordinate polygon method (though that is still doable lawl).
