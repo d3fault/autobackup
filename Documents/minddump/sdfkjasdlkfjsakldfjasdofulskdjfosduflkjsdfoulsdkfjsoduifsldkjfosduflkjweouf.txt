@@ -1,0 +1,5 @@
+I don't get what's so difficult about the hanging prisoner paradox. It's either faulty reasoning on the prisoner's fault that he can't be hung on friday (and thursday (and so forth)), or the judge's statement that he will find out at exactly noon on the day he is to be executed is false.
+
+He can be "surprised" that he will be executed on Friday, but the surprise will not come at noon on Friday. Because of deductive reasoning the "surprise" that he will be executed on Friday comes at noon on Thursday (when he isn't told that he will be executed that day).
+
+Elaborating for the idiots: Each day that passes without him being executed increases the chances that he will be executed on a given day. On monday he has a 1/5 chance of being executed, Tuesday = 1/4, Wednesday = 1/3, Thursday = 1/2. Since thursday is 50:50 then the prisoner can use deductive reasoning to calculate that he will definitely be executed on Friday (if of course, he isn't executed on Thursday). He just won't be "surprised" on Friday at noon like the judge stated, unless he's a fucking moron. The other 4 days do have their surprises at noon the day of execution.
