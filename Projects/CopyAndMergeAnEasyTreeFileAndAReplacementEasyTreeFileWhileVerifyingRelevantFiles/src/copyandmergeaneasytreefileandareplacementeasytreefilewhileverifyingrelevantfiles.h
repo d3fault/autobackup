@@ -4,8 +4,11 @@
 #include <QObject>
 #include <QIODevice>
 #include <QFile>
+#include <QDir>
 #include <QTextStream>
 #include <QFileInfo>
+#include <QScopedPointer>
+#include <QCryptographicHash>
 
 #include "easytreehashitem.h"
 #include "easytreehasher.h"
@@ -21,7 +24,7 @@ signals:
     void d(const QString &);
 public slots:
     void copyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles(const QString &regularEasyTreeFileName, const QString &replacementFormattedEasyTreeFileName, const QString &sourceBaseDirCorrespondingToEasyTreeFile, const QString &destinationDirToCopyTo, const QString &outputEasyTreeFileName);
-    void copyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles(QIODevice *regularEasyTreeFile, QIODevice *replacementFormattedEasyTreeFile, const QString &sourceBaseDirCorrespondingToEasyTreeFile, const QString &destinationDirToCopyTo, QIODevice *outputEasyTreeFile);
+    void copyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles(QIODevice *regularEasyTreeFile, QIODevice *replacementFormattedEasyTreeFile, const QString &sourceBaseDirCorrespondingToEasyTreeFile, const QString &destinationDirToCopyToString, QIODevice *outputEasyTreeFile);
 };
 
 #endif // COPYANDMERGEANEASYTREEFILEANDAREPLACEMENTEASYTREEFILEWHILEVERIFYINGRELEVANTFILES_H

@@ -21,3 +21,4 @@ HEADERS  += mainwidget.h \
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../GloballySharedClasses/easytreehasher.pri)
+include(../../../GloballySharedClasses/easytreehashitem.pri)

@@ -62,6 +62,8 @@ CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles
     m_Debug = new QPlainTextEdit();
     layout->addWidget(m_Debug);
 
+    m_Debug->appendPlainText("Make sure your replacements file does not contain any dir entries as those currently lead to undefined results");
+
     setLayout(layout);
 }
 void CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFilesWidget::handleD(const QString &msg)

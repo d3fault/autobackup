@@ -19,7 +19,7 @@ class EasyTreeHasher : public QObject
 public:
     explicit EasyTreeHasher(QObject *parent = 0);
     void recursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay(QDir &sourceDir, QDir &emptyDestinationDir, QIODevice *easyTreeHashOutputIODevice, QCryptographicHash::Algorithm algorithm);
-    static EasyTreeHashItem* copyAndHashSimultaneously(const QFileInfo &sourceFileInfoWithAbsolutePath, const QDir &destDir, QCryptographicHash::Algorithm cryptographicHashAlgorithm);
+    static EasyTreeHashItem* copyAndHashSimultaneously(const QFileInfo &sourceFileInfoWithAbsolutePath, const QDir &destDir, QCryptographicHash::Algorithm cryptographicHashAlgorithm, int absoluteSourcePathLengthWithTrailingSlash);
 private:
     static const qint64 m_MaxReadSize;
     static const QString m_DirSeparator;
@@ -37,7 +37,6 @@ private:
     QString getCurrentSourceFileInfo_FilenameOrDirnameOnly();
     static QString getFilenameOrDirnameOnly(QString filepathOrDirPath);
     QString getCurrentSourceFileInfoPath_ColonEscapedAndRelative();
-    static QString getRelativeFilePath(const QFileInfo &fileInfo);
     int m_SourceDirectoryAbsolutePathLength;
     QString m_CurrentFilenameOrDirnameOnly; //dir name or file name
     QFileInfo m_CurrentSourceFileInfo;

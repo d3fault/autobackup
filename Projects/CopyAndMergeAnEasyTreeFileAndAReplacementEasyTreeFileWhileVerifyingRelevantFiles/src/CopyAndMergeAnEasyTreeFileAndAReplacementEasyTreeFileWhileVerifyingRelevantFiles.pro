@@ -21,3 +21,5 @@ HEADERS  += copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingr
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../GloballySharedClasses/easytreeparser.pri)
+include(../../../GloballySharedClasses/easytreehasher.pri)
+include(../../../GloballySharedClasses/easytreehashitem.pri)

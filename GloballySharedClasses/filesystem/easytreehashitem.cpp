@@ -5,23 +5,25 @@ const QString EasyTreeHashItem::m_ColonEscaped = "\\:";
 QString EasyTreeHashItem::m_TempStringToInsertForEscapedColons = "ASDF";
 
 EasyTreeHashItem::EasyTreeHashItem(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), m_AbsoluteReplacementFilePath("")
 { }
-EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QString &lineOfText, QObject *parent)
+EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QString &lineOfText, bool lineOfTextSuppliesAbsoluteReplacementFilePath, QObject *parent)
 {
+    //TODOrobust: Input sanitization. For example, splitAtColons.takeFirst() requires that > 0 entries exist
+
     EasyTreeHashItem *ret = new EasyTreeHashItem(parent);
 
     bool usingTempStringForEscapedColons = false;
-    QString lineOfTextmodifiable = lineOfText;
+    QString lineOfTextModifiable = lineOfText;
     if(lineOfText.contains(m_ColonEscaped))
     {
         //insert a random string into the shit just to differentiate it from the other colons when splitting
         usingTempStringForEscapedColons = true;
-        EasyTreeHashItem::m_TempStringToInsertForEscapedColons = generateStringNotInString_ButMakeSureTheOutputDoesntContainAcolon(lineOfTextmodifiable);
-        lineOfTextmodifiable.replace(m_ColonEscaped, m_TempStringToInsertForEscapedColons);
+        EasyTreeHashItem::m_TempStringToInsertForEscapedColons = generateStringNotInString_ButMakeSureTheOutputDoesntContainAcolon(lineOfTextModifiable);
+        lineOfTextModifiable.replace(m_ColonEscaped, m_TempStringToInsertForEscapedColons);
     }
 
-    QStringList splitAtColons = lineOfTextmodifiable.split(m_Colon, QString::SkipEmptyParts);
+    QStringList splitAtColons = lineOfTextModifiable.split(m_Colon, QString::SkipEmptyParts);
 
     if(usingTempStringForEscapedColons)
     {
@@ -35,6 +37,11 @@ EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QStr
         }
     }
 
+    if(lineOfTextSuppliesAbsoluteReplacementFilePath)
+    {
+        QString temp = splitAtColons.takeFirst();
+        ret->setAbsoluteReplacementFilePath(temp); //too many times I've seen when you pass a "take" into a "set" that the implicit sharing causes it to get deleted before being set.... or something
+    }
 
     ret->setIsDirectory(splitAtColons.at(0).endsWith("/"));
     ret->setRelativeFilePath(splitAtColons.at(0));
@@ -128,7 +135,7 @@ QString EasyTreeHashItem::toColonSeparatedLineOfText()
     QString ret = relative.replace(m_Colon, m_ColonEscaped);
     if(!isDirectory())
     {
-        ret += m_Colon + fileSize();
+        ret += m_Colon + QString::number(fileSize());
     }
     else
     {
@@ -140,6 +147,10 @@ QString EasyTreeHashItem::toColonSeparatedLineOfText()
         ret += (m_Colon + hash().toHex());
     }
     return ret;
+}
+QString EasyTreeHashItem::absoluteReplacementFilePath()
+{
+    return m_AbsoluteReplacementFilePath;
 }
 void EasyTreeHashItem::setRelativeFilePath(const QString &relativeFilePath)
 {
@@ -168,6 +179,10 @@ void EasyTreeHashItem::setHasHash(bool hasHash)
 void EasyTreeHashItem::setHash(const QByteArray &hash)
 {
     m_Hash = hash;
+}
+void EasyTreeHashItem::setAbsoluteReplacementFilePath(const QString &absoluteReplacementFilePath)
+{
+    m_AbsoluteReplacementFilePath = absoluteReplacementFilePath;
 }
 QString EasyTreeHashItem::generateStringNotInString_ButMakeSureTheOutputDoesntContainAcolon(const QString &inputStringToCheckGeneratedOutputAgainst)
 {

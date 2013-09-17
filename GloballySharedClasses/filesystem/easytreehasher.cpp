@@ -97,11 +97,6 @@ QString EasyTreeHasher::getCurrentSourceFileInfoPath_ColonEscapedAndRelative()
 {
     return getCurrentSourceFileInfo_RelativePath().replace(m_Colon, m_EscapedColon, Qt::CaseSensitive);
 }
-QString EasyTreeHasher::getRelativeFilePath(const QFileInfo &fileInfo)
-{
-    QString ret = fileInfo.canonicalFilePath();
-    return ret.remove(0, fileInfo.canonicalPath().length() + 1); //.replace(m_Colon, m_EscapedColon, Qt::CaseSensitive);
-}
 void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoingTheSameWhileMkDiringIntoDestinationOhAndAlsoWritingEverythingToEasyTreeHashOutputIODeviceRofl(const QFileInfoList &filesAndFoldersInCurrentDirToCopyAndTreeAndHash, QDir &destAlreadyMkdirDAndCDdInto)
 {
     QListIterator<QFileInfo> it(filesAndFoldersInCurrentDirToCopyAndTreeAndHash);
@@ -145,7 +140,7 @@ void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoing
         }
         else if(m_CurrentSourceFileInfo.isFile())
         {
-            EasyTreeHashItem *easyTreeHashItem = copyAndHashSimultaneously(m_CurrentSourceFileInfo, destAlreadyMkdirDAndCDdInto, m_CryptographicHashAlgorithm);
+            EasyTreeHashItem *easyTreeHashItem = copyAndHashSimultaneously(m_CurrentSourceFileInfo, destAlreadyMkdirDAndCDdInto, m_CryptographicHashAlgorithm, m_SourceDirectoryAbsolutePathLength);
 
             if(!easyTreeHashItem)
             {
@@ -167,6 +162,7 @@ void EasyTreeHasher::copyEachOfTheseFilesToTheDestinationAndRecurseIntoDirsDoing
         }
     }
 }
+//this method is semi-outdated now that we've migrated to EasyTreeHashItem::toColonSeparatedLineOfText -- but if it ain't broke don't fix it
 void EasyTreeHasher::addDirectoryEntryToEasyTreeHashOutput()
 {
     m_EasyTreeHashTextStream << getCurrentSourceFileInfoPath_ColonEscapedAndRelative() << m_DirSeparator;
@@ -178,7 +174,7 @@ void EasyTreeHasher::addDirectoryEntryToEasyTreeHashOutput()
     emit d("Entering/Making Dir: " + m_CurrentFilenameOrDirnameOnly);
 }
 //caller takes owner of returned EasyTreeHasher
-EasyTreeHashItem *EasyTreeHasher::copyAndHashSimultaneously(const QFileInfo &sourceFileInfoWithAbsolutePath, const QDir &destDir, QCryptographicHash::Algorithm cryptographicHashAlgorithm)
+EasyTreeHashItem *EasyTreeHasher::copyAndHashSimultaneously(const QFileInfo &sourceFileInfoWithAbsolutePath, const QDir &destDir, QCryptographicHash::Algorithm cryptographicHashAlgorithm, int absoluteSourcePathLengthWithTrailingSlash)
 {
     EasyTreeHashItem *easyTreeHashItem = 0;
 
@@ -193,7 +189,7 @@ EasyTreeHashItem *EasyTreeHasher::copyAndHashSimultaneously(const QFileInfo &sou
             easyTreeHashItem = new EasyTreeHashItem();
             easyTreeHashItem->setIsDirectory(false);
             easyTreeHashItem->setHasHash(true);
-            QString relativeFilePath = getRelativeFilePath(sourceFileInfoWithAbsolutePath);
+            QString relativeFilePath = sourceAbsoluteCanonicalFilePath.mid(absoluteSourcePathLengthWithTrailingSlash);
             easyTreeHashItem->setRelativeFilePath(relativeFilePath);
             easyTreeHashItem->setFileSize(sourceFileInfoWithAbsolutePath.size());
             easyTreeHashItem->setCreationDateTime(sourceFileInfoWithAbsolutePath.created());

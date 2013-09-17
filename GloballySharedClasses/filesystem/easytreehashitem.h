@@ -14,7 +14,7 @@ class EasyTreeHashItem : public QObject
     Q_OBJECT
 public:
     EasyTreeHashItem(QObject *parent = 0);
-    static EasyTreeHashItem *newEasyTreeHashItemFromLineOfText(const QString &lineOfText, QObject *parent = 0); //works with files, directories, and with or without hashes
+    static EasyTreeHashItem *newEasyTreeHashItemFromLineOfText(const QString &lineOfText, bool lineSuppliesReplacement = false, QObject *parent = 0); //works with files, directories, and with or without hashes -- and a mode switch bool to process replacement formatted entries (the replacement is the first part of the entry)
     QString relativeFilePath();
     bool isDirectory();
     qint64 fileSize();
@@ -24,6 +24,8 @@ public:
     QByteArray hash();
     QString toColonSeparatedLineOfText();
 
+    QString absoluteReplacementFilePath();
+
     void setRelativeFilePath(const QString &relativeFilePath);
     void setIsDirectory(bool isDirectory);
     void setFileSize(qint64 fileSize);
@@ -31,6 +33,8 @@ public:
     void setLastModifiedDateTime(const QDateTime &lastModifiedDateTime);
     void setHasHash(bool hasHash);
     void setHash(const QByteArray &hash);
+
+    void setAbsoluteReplacementFilePath(const QString &absoluteReplacementFilePath);
 private:
     QString m_RelativeFilePath;
     bool m_IsDirectory;
@@ -39,6 +43,8 @@ private:
     QDateTime m_LastModifiedDateTime;
     bool m_HasHash;
     QByteArray m_Hash;
+
+    QString m_AbsoluteReplacementFilePath;
 
     static const QString m_Colon;
     static QString m_TempStringToInsertForEscapedColons; //even though it's a member (optimization) it is still generated on each invocation (whenever an escaped colon is seen)

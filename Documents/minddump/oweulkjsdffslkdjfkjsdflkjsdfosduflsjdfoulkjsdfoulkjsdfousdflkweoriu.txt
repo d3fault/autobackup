@@ -1,0 +1,7 @@
+What gives me confidence in testing/debugging/running my software is the same thing that makes me sad about life/existence: non-permanence.
+
+AKA relativity negating a statement's truth.
+
+Statement: A system without permanence need not care about errors/crashing/etc.
+r1: Relative to a LiveCD on a computer with no HDD plugged in testing out software, this is true.
+r2: Relative to the emergence of life in existence (the universe) and all information learned, this is false.
