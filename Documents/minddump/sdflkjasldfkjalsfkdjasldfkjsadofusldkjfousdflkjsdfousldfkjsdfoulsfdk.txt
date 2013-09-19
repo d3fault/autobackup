@@ -1,0 +1,19 @@
+header comments
+
+Guh I realized that I think all of my header comments are in a weird exception that LGPLv3 makes (and a commonly used 2.1 exception states) about "material" in headers being usable in OTHER works and not subject to copyleft. I mean yes this is a necessary exception to allow proprietary to be able to use headers etc etc.... but I am wondering if it applies to comments in my header files? I write comments liberally in my projects and I have never put any thought as to whether I am in the header file or the implementation file (will from now on heh). Like have I written good copyright-able ideas/functionality-specifications that would now not be copylefted if I didn't first [re]move them? I've written way too much but I would guess that I've written at least one valuable thing in a header file lol.
+
+I'm still not even certain about the implication... but when the license is as vague as "material" in the header being usable [and not subject to copyleft].... it's probably true.
+
+I'm thinking about asking on some GNU mailing lists or something... or perhaps just toughing it out and fixing it (guhhhhhh)..... or even perhaps just not having the initial relase as copyleft (but with the declaration of intent to copyleft all the material). Maybe I can write a script to move the comments into some other file (but then they'll probably never be seen again LoL).... or even the implementation (but doing that cleanly would be a bitch (and there isn't always a corresponding implementation)).
+
+Guh idk how to solve this problem or if it even is one.... but holy shit am I glad I thought of it before launch. I wonder what else I'm missing now that I'll be pissed I forgot to think about post launch. Perhaps an "all rights reserved" initial release is safest until I consult a lawyer and slowly one by one release everything (but gah that sounds like such a snore (and especially to do live (though then again could also serve as a sort of "demo" of my work for those too lazy/dumb to click))).
+
+
+Actually shit just thought of the easiest/best solution: all rights reserved initial release for header files, copyleft initial release for EVERYTHING ELSE. headers can easily be re-created (and i'll get around to it too) by those that want to use the implementation (and API _cannot_ be copyrighted, so they "can"!!!)... and it will give me time to move the comments out of the headers for the proper copyleft release.
+
+
+Also OT but I think I'm going to use the network requirement. I might change my mind on it later (but need to do that before accepting collaboration), but I think it's safer to default to the "more restrictive" option so then I can always loosen my sphlincter if I decide that the "gimmeh source when interfaced via network" is too restrictive. The reverse (starting permissive) is not possible. I readily admit that the network requirement might prove to be a mistake (need to consult nerds and lawyers to determine).
+
+My reasoning is that I'm taking the extremist route of "non-derivable (had:non-copylefted) data shall not enter my brain"... so the network requirement is analog to words/information coming from someone else I suppose.
+
+I just wonder how much it ruins the whole "can be used by proprietary" shit that LGPL provides. There is no LGPL + network license currently out so my abomination might be downright stupid and un-usable (again, can always relax it later).
