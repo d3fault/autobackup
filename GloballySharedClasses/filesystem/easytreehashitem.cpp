@@ -95,7 +95,7 @@ EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QStr
         {
             ret->setHasHash(true);
             ++dynamicIndexForFilesAndDirectories; //it's merely an optimization to have this right here, but it needs to go outside of the if(!isDirectory()) check if i ever add more fields (i think, but could be wrong actually)
-            ret->setHash(splitAtColons.at(dynamicIndexForFilesAndDirectories).toLatin1());
+            ret->setHash(QByteArray::fromHex(splitAtColons.at(dynamicIndexForFilesAndDirectories).toLatin1()));
         }
     }
     return ret;

@@ -23,7 +23,7 @@ void CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevant
     }
     if(!QFile::exists(destinationDirToCopyTo))
     {
-        emit d("Destination Dir To Copy To Does Not Exist");
+        emit d("Destination Dir To Copy To Does Not Exist"); //TODOreq: verify it's empty, error out if it isn't
         return;
     }
     if(QFile::exists(outputEasyTreeFileName))
@@ -46,8 +46,8 @@ void CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevant
         return;
     }
 
-    QFile outputEasyTreeFile(replacementFormattedEasyTreeFileName);
-    if(!outputEasyTreeFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    QFile outputEasyTreeFile(outputEasyTreeFileName);
+    if(!outputEasyTreeFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
     {
         emit d("Failed to open output easy tree file for writing");
         return;
@@ -121,21 +121,31 @@ void CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevant
             }
             else //file
             {
-                --somehow this is broken and I can't figure out why
-                QFileInfo destinationFileInfo(absoluteDestinationFilePath);
-                QDir absoluteDestinationDir(destinationFileInfo.canonicalPath());
-                //first check that the file's dir exists, then make it if it doesn't. we don't bother writing about the dir to the output easy tree file though
+                int lastSeparatorIndex = absoluteDestinationFilePath.lastIndexOf("/", -1, Qt::CaseSensitive);
+                if(lastSeparatorIndex <= -1)
+                {
+                    emit d("didn't find a single slash in absolute destination dir. wtf? absoluteDestinationFilePath:" + absoluteDestinationFilePath);
+                    return;
+                }
+                QString absoluteDestinationDirStringIncludingTrailingSlash = absoluteDestinationFilePath.left(lastSeparatorIndex + 1);
 
+                QDir absoluteDestinationDir(absoluteDestinationDirStringIncludingTrailingSlash);
+                //first check that the file's dir exists, then make it if it doesn't. we don't bother writing about the dir to the output easy tree file though
                 if(!absoluteDestinationDir.exists())
                 {
-                    if(!absoluteDestinationDir.mkpath(destinationFileInfo.canonicalPath()))
+                    if(!absoluteDestinationDir.mkpath(absoluteDestinationDirStringIncludingTrailingSlash))
                     {
-                        emit d(QString("failed to make path: ") + destinationFileInfo.canonicalPath());
+                        emit d(QString("failed to make path: ") + absoluteDestinationDirStringIncludingTrailingSlash);
                         return;
                     }
                 }
 
-                QScopedPointer<EasyTreeHashItem> generatedDestinationEasyTreeHashItem(EasyTreeHasher::copyAndHashSimultaneously(sourceFileInfo, absoluteDestinationDir, QCryptographicHash::Md5 /*TODOoptional: newEasyTreeHashItemFromLineOfText should also set what algorithm is being used so we can auto select the algorithm to use during the copy. hard coding as md5 for now because lazy and KISS. Also, when I change it here I need to change it below for replacements as well*/, sourceBaseDirWithTrailingSlashLength));
+                EasyTreeHashItem *generatedDestinationEasyTreeHashItem = EasyTreeHasher::copyAndHashSimultaneously(sourceFileInfo, absoluteDestinationDir, QCryptographicHash::Md5 /*TODOoptional: newEasyTreeHashItemFromLineOfText should also set what algorithm is being used so we can auto select the algorithm to use during the copy. hard coding as md5 for now because lazy and KISS. Also, when I change it here I need to change it below for replacements as well*/, sourceBaseDirWithTrailingSlashLength);
+                if(!generatedDestinationEasyTreeHashItem)
+                {
+                    emit d("generatedDestinationEasyTreeHashItem is null for regular entry, so there was an error during copying. check stderr");
+                    return;
+                }
                 if(parsedSourceEasyTreeHashItem->hash() != generatedDestinationEasyTreeHashItem->hash())
                 {
                     emit d(QString("checksum calcualted during copy (") + generatedDestinationEasyTreeHashItem->hash().toHex() + QString(") did not match the source's hash in easy tree input (") + parsedSourceEasyTreeHashItem->hash().toHex() + QString(")"));
@@ -144,6 +154,8 @@ void CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevant
 
                 outputEasyTreeFileTextStream << currentLine << endl; //again, no need to re-format it. only replacements need to call dest->toCommaSeparatedLineOfText, since they have a new hash
                 ++numberOfEntriesProcessed;
+
+                delete generatedDestinationEasyTreeHashItem;
             }
         }
     }
@@ -177,25 +189,67 @@ void CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevant
             }
 
             QString absoluteDestinationFilePath(destinationBaseDirToCopyToWithTrailingSlash + parsedSourceReplacementEasyTreeHashItem->relativeFilePath());
-            QFileInfo destinationFileInfo(absoluteDestinationFilePath);
+
+            int lastSeparatorIndex = absoluteDestinationFilePath.lastIndexOf("/", -1, Qt::CaseSensitive);
+            if(lastSeparatorIndex <= -1)
+            {
+                emit d("didn't find a single slash in absolute destination dir. wtf? absoluteDestinationFilePath:" + absoluteDestinationFilePath);
+                return;
+            }
+            QString absoluteDestinationDirStringIncludingTrailingSlash = absoluteDestinationFilePath.left(lastSeparatorIndex + 1);
+
+            QDir absoluteDestinationDir(absoluteDestinationDirStringIncludingTrailingSlash);
 
             //destination folder exists (make it if not (copy/paste from regular file entries above))
-            QDir absoluteDestinationDir(destinationFileInfo.canonicalPath());
             if(!absoluteDestinationDir.exists())
             {
-                if(!absoluteDestinationDir.mkpath(destinationFileInfo.canonicalPath()))
+                if(!absoluteDestinationDir.mkpath(absoluteDestinationDirStringIncludingTrailingSlash))
                 {
-                    emit d(QString("failed to make path: ") + destinationFileInfo.canonicalPath());
+                    emit d(QString("failed to make path: ") + absoluteDestinationDirStringIncludingTrailingSlash);
                     return;
                 }
             }
 
-            EasyTreeHashItem *generatedDestinationEasyTreeHashItem = EasyTreeHasher::copyAndHashSimultaneously(sourceReplacementFileInfo, absoluteDestinationDir, QCryptographicHash::Md5 /*see usage in regular file entry*/, sourceBaseDirWithTrailingSlashLength);
+            //re-using variables and also getting the correct length for sourceBaseDirWithTrailingSlashLength before calling copyAndHashSimultaneously. each "replacement" can have a different source dir (therefore length), whereas "regular" entries all have the same so we don't need to re-calculate it every time
+            //it is incorrect to send in the absolute replacement file path length as the final argument to copyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles, but it is safe. After the copy is complete we will fix the relativeFilePath to contain the correct relative path
+            lastSeparatorIndex = parsedSourceReplacementEasyTreeHashItem->absoluteReplacementFilePath().lastIndexOf("/", -1, Qt::CaseSensitive);
+            if(lastSeparatorIndex <= -1)
+            {
+                emit d("didn't find a single slash in replacement absolute file path. wtf? absoluteReplacementFilePath:" + parsedSourceReplacementEasyTreeHashItem->absoluteReplacementFilePath());
+                return;
+            }
+            sourceBaseDirWithTrailingSlashLength = parsedSourceReplacementEasyTreeHashItem->absoluteReplacementFilePath().left(lastSeparatorIndex + 1).length();
+
+            EasyTreeHashItem *generatedDestinationEasyTreeHashItem = EasyTreeHasher::copyAndHashSimultaneously(sourceReplacementFileInfo, absoluteDestinationDir, QCryptographicHash::Md5 /*see comment in regular file entry*/, sourceBaseDirWithTrailingSlashLength);
+            if(!generatedDestinationEasyTreeHashItem)
+            {
+                emit d("generatedDestinationEasyTreeHashItem is null for replacement entry, so there was an error during copying. check stderr");
+                return;
+            }
+
+            //As a hack, generatedDestinationEasyTreeHashItem->relativeFilePath() only has the filename portion of the entry. We need to hackily add back in the "relative dir"
+            QString filenameOnly = generatedDestinationEasyTreeHashItem->relativeFilePath(); //has final/replacement filename [only]
+            QString parsedOriginalRelativeFilePath = parsedSourceReplacementEasyTreeHashItem->relativeFilePath(); //has the relative path we need, but the old pre-replacement filename
+            lastSeparatorIndex = parsedOriginalRelativeFilePath.lastIndexOf("/", -1, Qt::CaseSensitive);
+            if(lastSeparatorIndex > -1)
+            {
+                //there is a slash somewhere
+                QString relativeFolderPathWithTrailingSlash = parsedOriginalRelativeFilePath.left(lastSeparatorIndex + 1);
+                //apply the hacky fix
+                generatedDestinationEasyTreeHashItem->setRelativeFilePath(relativeFolderPathWithTrailingSlash + filenameOnly);
+            }
+            //else -- //no slash found is not an error, it just means that the path goes directly in the destination base dir -- so the filename by itself is already correct
+
+            //We want to use the old timestamps from the original file, not the replacement file. We do want to use the fileSize and hash of the replacement file though
+            generatedDestinationEasyTreeHashItem->setCreationDateTime(parsedSourceReplacementEasyTreeHashItem->creationDateTime());
+            generatedDestinationEasyTreeHashItem->setLastModifiedDateTime(parsedSourceReplacementEasyTreeHashItem->lastModifiedDateTime());
 
             //no hash check since definitely using a new hash
 
             outputEasyTreeFileTextStream << generatedDestinationEasyTreeHashItem->toColonSeparatedLineOfText() << endl;
             ++numberOfEntriesProcessed;
+
+            delete generatedDestinationEasyTreeHashItem;
         }
     }
 

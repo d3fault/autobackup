@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386040945
+Documents/minddump/:1386041030
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386040945
+Documents/minddump/dreams/:1386041030
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -68,6 +68,7 @@ Documents/minddump/dreams/ldsfkjasldkjfdslfjasdofulsadkjfosaudflksjadfousldkfjas
 Documents/minddump/dreams/ljsdfsdjfouwerlkjfousdlfkjsdofuilkjrew.txt:1355643914
 Documents/minddump/dreams/lkasjfdosduwljkerosduifsdlkfjwourweroijsldfkouierw.txt:1344460678
 Documents/minddump/dreams/lkdfjlaskjdflaksdjfaosdfulasdkjfosaduflkajsdofuaslkdfjoasduflskdajfosudflk.txt:1379106183
+Documents/minddump/dreams/lkfjslkjdfalskdjflskdjflskdjfosduflksdjfousdflkjsdfousldkfjosdfulksdjfsdf.txt:1379689934
 Documents/minddump/dreams/lkjaslkfjaskdlfjsdfuouwelrkjosduflksjdfouiwelrjkoiusfdljfoiusadlkfj.txt:1379397196
 Documents/minddump/dreams/lsdkfjlsdkjfouslkjreworuljfsoduflsdjfouwerl.txt:1366067544
 Documents/minddump/dreams/lskdjflksjdflksjdfouflkjsdofusdlfjsoduflkjweroiujsdf.txt:1377721281
@@ -549,6 +550,7 @@ Documents/minddump/dsfljksdfdgrtetwerfdsjflsdkjfosurwlkjousflkjdsf.txt:135854312
 Documents/minddump/dsfljsdlfkjsdfouwelrjodsfuldsfjoerwul.txt:1356153677
 Documents/minddump/dsfljsldfjlsdjflsjdfljsdflkjslfkdjsdlkfjowuiersldkjflsdkjf.txt:1366535988
 Documents/minddump/dsflkasjdflkjasdfousdlfkjsodfusldkjfsodiuflsdkjfosduflkjweroulkjsdfoiu.txt:1372883147
+Documents/minddump/dsflkjasdflkjsldkfjasodfulsdkjfousdflkjouflsksdf.txt:1379698245
 Documents/minddump/dsflkjasdflsdoiufwjeroulkjdfoiuslkdfjoufsdfouweoriufsdlkjsfl.txt:1370292127
 Documents/minddump/dsflkjdsflkjsldkjflskdjflsdkjfsdkljflsdkjfouwerlkjsdf.txt:1361428493
 Documents/minddump/dsflkjflskdjfoiulkwejroulasjfdousdflkjweoruljsdfou.txt:1370571131
@@ -1494,12 +1496,12 @@ Documents/nobodyme/pre.censored.humans.implement.apes.implement.something.txt:13
 Documents/nobodyme/website.worst.case.scenario.i.become.embarrassed.txt:1323683547
 Documents/a.starting.point.this.is.the.only.thing.i.am.certain.of.txt:1356263099
 GloballySharedClasses/:1379408701
-GloballySharedClasses/filesystem/:1379418062
+GloballySharedClasses/filesystem/:1379703079
 GloballySharedClasses/filesystem/easytree.cpp:1367560353
 GloballySharedClasses/filesystem/easytree.h:1367557899
 GloballySharedClasses/filesystem/easytreehasher.cpp:1379418062
 GloballySharedClasses/filesystem/easytreehasher.h:1379417993
-GloballySharedClasses/filesystem/easytreehashitem.cpp:1379411297
+GloballySharedClasses/filesystem/easytreehashitem.cpp:1379703079
 GloballySharedClasses/filesystem/easytreehashitem.h:1379406678
 GloballySharedClasses/filesystem/easytreeparser.cpp:1379255514
 GloballySharedClasses/filesystem/easytreeparser.h:1368380686
@@ -1555,7 +1557,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386040945
+Pictures/:1386041030
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1670,9 +1672,9 @@ Projects/BlueBox/design/webkit.for.plugin.install.and.update.curl.for.the.actual
 Projects/BlueBox/design/wow.really.fucking.cool.ad.based.no.laundering.needed.qt.5.service.provider.design.txt:1324233381
 Projects/BlueBox/blob.data.db.just.gives.a.decryption.password.for.a.blob.id.BUT.THE.USER.HAS.TO.ANSWER.A.CAPTCHA.txt:1328070892
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/:1379253607
-Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/:1379420353
+Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/:1379705964
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles.pro:1379408611
-Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfiles.cpp:1379420348
+Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfiles.cpp:1379704862
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfiles.h:1379408181
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfilesgui.cpp:1379253678
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfilesgui.h:1379250799
@@ -2613,7 +2615,7 @@ Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.h:1348734985
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1367557927
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.h:1349623955
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/:1367834769
-Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/:1379418043
+Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/:1379693082
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay.pro:1379410416
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/main.cpp:1367535156
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/mainwidget.cpp:1368114280
@@ -3018,7 +3020,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386040945
+Projects/libAvGraphicsItem2/design/:1386041030
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
