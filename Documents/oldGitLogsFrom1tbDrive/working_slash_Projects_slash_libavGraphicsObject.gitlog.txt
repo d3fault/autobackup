@@ -1,0 +1,26 @@
+commit 7b6327e8b6e171da6aa4a79024c8bec86e57d126
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Sep 15 21:06:13 2011 -0700
+
+    hacky basic prototype with no audio and crappy sync'ing. BUT IT WORKS. decoder thread sleeps for 33ms after each decode, render thread (which isn't even implemented yet) sleeps 30ms after
+    presenting the frame to the GUI. the reason for these sleeps is so they don't overwrite them before they can be played. still need to implement a buffer, renderer, and use audio
+
+commit 05bdbb5dd68bbb590db33e4452e1f98dc4dbbf11
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Sep 13 21:07:10 2011 -0700
+
+    about to start some redesigning. introducing LibAVDecoder and QtAVRenderer. might mess somethig up
+
+commit f015b40ca4ea61f30b1e151c2bf81cd80c89224e
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Sep 13 19:17:26 2011 -0700
+
+    compiling but not tested. added the GUI front end but still need to test it. not sure if QtLibAV should have subThreads or just do all the work itself. plus thinking about how to sync with
+    audio design
+
+commit f976273776f0c1a735b63b85f50a7d568a255366
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Sep 13 17:04:43 2011 -0700
+
+    initial commit. it is in a debugging state that doesn't use threads very well, but it works. it saves every 100th frame as a .png for about 1500 before it crashes. oshi-, probably running out
+    of memory

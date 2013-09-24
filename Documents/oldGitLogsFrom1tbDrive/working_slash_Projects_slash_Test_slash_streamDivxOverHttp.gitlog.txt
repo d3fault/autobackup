@@ -1,0 +1,31 @@
+commit 7d4842ea4e44cc0708d98855ac342198ea4edec4
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Aug 11 10:48:42 2011 -0700
+
+    added text field for user supplied url and tested it with a decent size video file. it worked, but only after like 5 minutes. shit doesn't stream -_-...
+
+commit b264f9e40a5ef664ef203fc5ca8bf84284423b02
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Aug 10 21:33:28 2011 -0700
+
+    changed video size to be a minimum, tested with .mpg/.avi
+
+commit 614c6b7a7319fe348c7a769521d93cbfb29b57a7
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Aug 2 20:39:32 2011 -0700
+
+    added auto-resizing based on video width/height and added play button text
+
+commit 10372be5d02864c69e5fb25b67741b9bb56df20e
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Aug 2 19:56:21 2011 -0700
+
+    got Phonon:VideoPlayer (as opposed to Phonon::VideoWidget) working with a QUrl. it's pretty fucking picky. load(MediaSource) doesn't work, but play(MediaSource) does. i'm not sure if this
+    solution will let me SAVE + STREAM the file though, as i want the final app to do. still, STREAM by itself is probably good enough :)
+
+commit 5730a2b86843789521a3bc3ab05142f9aa86b087
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Jul 28 15:57:09 2011 -0700
+
+    adding working sample that only plays videos from hard drive. for some reason QUrl (commented out) doesn't work. oh well, i plan on getting the bytes off the net from either
+    QNetworkAccessManager or curl (so i can save + stream at same time)

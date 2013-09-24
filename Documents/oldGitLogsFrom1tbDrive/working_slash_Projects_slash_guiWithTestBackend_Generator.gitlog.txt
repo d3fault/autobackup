@@ -1,0 +1,117 @@
+commit ac1e724ad37092c2fea11ebc350bcbc5ec2aab19
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Oct 19 01:40:02 2011 -0700
+
+    designs and licensing thoughts
+
+commit d1d7f9e162f8b3ec38f11e3f461361e67b2a5e27
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Oct 17 02:15:04 2011 -0700
+
+    mostly just comment changes but i might have broke source. also added some designs
+
+commit 349f2a447da82ea45f8155c8fe16e8c37064c37e
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Oct 15 11:54:49 2011 -0700
+
+    trimmed down a bunch of arguments QList<QString> code by placing it in common. fixed small bug where every slot was named "handle" + DEBUG_SIGNAL_NAME, instead of "handle" + newSignalName
+
+commit 7fa8a4fbb270074ce463ce45d83f2fd295da1583
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Oct 15 03:37:05 2011 -0700
+
+    refactored non-objectnode specific code into a common file as static members. trying to trim objectnode.cpp down
+
+commit b91a64f5d0ae616034703277a982a58df102a887
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Oct 15 03:08:52 2011 -0700
+
+    design change, addConnection is now receiveEmitsFrom. functionally equivalent, worthless commit
+
+commit a8362c5f79ec9900febbb04c3bfd947b84bd1be4
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Oct 15 02:38:11 2011 -0700
+
+    removed old TODOs and changed comments around. worthless commit
+
+commit df1a011e60585307bb1e548cb7e3e3b396b66010
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Oct 15 02:34:59 2011 -0700
+
+    made it so that we generate our handle[SignalName] slot properly for each connection added
+
+commit 4c834e5b5d965ae89495055fd048e62d7bd63895
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Oct 15 01:08:24 2011 -0700
+
+    basic design changes but no functional difference. also added some design to the comments. the frontend's name now has nothing to do with the backend's name... whereas before frontend was
+    backend+"Widget" (it still is, but the choice is up to the generator/user)
+
+commit 2198b6a59e33746659ef786af6f44223e7298eb8
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Oct 14 18:37:46 2011 -0700
+
+    added design/realization about inline editable
+
+commit 45036437f123a132b873cecda41054db104924c3
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Oct 14 02:10:13 2011 -0700
+
+    touched up a few TODOs and changed some comments n stuff
+
+commit e578b471cdf96b0f04acf01e34479cd49c75be0b
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Oct 14 01:59:57 2011 -0700
+
+    made it so connections come before the startObject event. i feel like this is de ja vu... didn't i already commit this? wtf did i just change...
+
+commit e26c0780ded45b75bc38b1e118e45997e0108e06
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Oct 14 01:45:29 2011 -0700
+
+    i was right and saved a few lines of code. on one hand idk why i didn't just do it before... on the other... premature ejacula-
+
+commit df58a38cf77f070310ce6875a307f76a61d34dc1
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Oct 14 01:33:25 2011 -0700
+
+    successfully got definitions to be added by adding a member to ListOfMembers... now onto moving blocks of code around to take advantage of this
+
+commit 46233e87d938205e748e97a3b5bdd0af33217f64
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Oct 14 01:16:36 2011 -0700
+
+    design change. doesn't make sense to have connection parameters in my addBackend call. also i should probably make addConnection public... if it isn't already. addBackend (well,
+    actualAddBackend really) is now what adds the connection to the backend's dbg signal. every object has it.
+
+commit fd3e0b77d5b840286414e406f6f60b0a6b65031b
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Oct 14 00:07:27 2011 -0700
+
+    generated gui code, plus found a good spot to put object member's instantiation code. i shouldn't have to instantiate them manually...
+
+commit 9117342de5ef52ffca49fc91168290b3dee63695
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Oct 13 23:20:39 2011 -0700
+
+    need to generate constructor/destructor, need to be able to put generated code inside of a generated method. %CONSTRUCTOR_COMMANDS% inside of constructor(), for example
+
+commit 41eb5e59905e25717d82f65e8b381da7b68e9a69
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Oct 13 23:13:10 2011 -0700
+
+    fixed the previous problem with the ".h" in the source include'd header file. a tiny bit hacky, but honestly, i was expecting a much larger hack to be required... so i'm happy enough
+
+commit 288465073a55de585277b74ec3bf146cc347d052
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Oct 13 23:02:50 2011 -0700
+
+    misc fixes and added code to auto-include headers... with preference towards foward includes. temporarily broken though because we need to add a .h to our include in the .cpp, but then it'll
+    add a .h to any Qt types as well (which we always force to be in the header, not that that's relevant). so i either have #include <generatedProject> or #include <QThread.h>, both of which
+    can't be found
+
+commit 616737cd6feda27870ae50d42b97182279f8e28f
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Oct 13 20:56:07 2011 -0700
+
+    breakOut from RapidPrototyping (b85e9ad2f104f7802b1b5ace53788c79feacb622-78490a714d07d88313b333f8f1eb37fd8195abe0)

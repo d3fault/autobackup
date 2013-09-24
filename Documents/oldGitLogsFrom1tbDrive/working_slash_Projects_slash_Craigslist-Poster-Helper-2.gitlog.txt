@@ -1,0 +1,17 @@
+commit 9a83159a73917d1c3b4e5e622505cc5dca5574fb
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Jun 23 04:44:31 2011 -0700
+
+    added nothing but made it compile
+
+commit 0c1e35ce3c403d1bd5122414e2d7dd349424b056
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Jun 7 21:55:15 2011 -0700
+
+    committing because i'm backing up repos... as far as i can remember it's in a non-working state. the design is getting a bit complicated... but i think it's still manageable and possible
+
+commit ccc4423c04b8c79582d03d09d9b243bb66850167
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon May 16 21:42:52 2011 -0700
+
+    initial commit of new design. got tired of sifting through all that ugly code in the original "Craigslist Poster Helper" so i'm just re-do'ing it and gonna copy/paste from it (selectively)

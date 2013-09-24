@@ -1,0 +1,193 @@
+commit 05e817064689bcbda89af4aaf84ace68470cdc19
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Oct 17 02:15:56 2011 -0700
+
+    idkidc i moved dis shit into it's own repo
+
+commit 78490a714d07d88313b333f8f1eb37fd8195abe0
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Oct 13 13:54:43 2011 -0700
+
+    changed a crap ton of the design around.. way more dynamic n stuff now. still lots of work to be done, but it's compiling/outputting. this is a checkpoint at the very least (in case i screw
+    something up soon)
+
+commit 4dd1fc62a2714fcf627e22f17d0f5341b8e58b4d
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Oct 12 03:45:39 2011 -0700
+
+    added a good idea that i can use as the start of releasing everything always.. but lol idk if it'd transition as well into the dht etc...
+
+commit 891119bc3dc17ee09765c554f6186216e95e9bb0
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Oct 12 03:31:32 2011 -0700
+
+    added ability for user to specify the generated project name
+
+commit fa58caf99e16cbcbde595eb1a18c5b9388dfcc36
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Oct 12 03:17:15 2011 -0700
+
+    added design for long-time-thought-up persistent objects
+
+commit 667527ae20e9645db98ee769b84eb875fb98ed83
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Oct 12 03:12:33 2011 -0700
+
+    hacky and needs further abstraction, but i'm trying to keep it simple, stupid. i'm actually quite impressed with this first design. seems easily extendable. *sucks own dick*. haven't made it
+    generate the .pro file yet, but after that it should be version 0.0.1 COMPLETE/stable/something?/ready-for-further-abstraction!!!
+
+commit b85e9ad2f104f7802b1b5ace53788c79feacb622
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Oct 11 20:21:07 2011 -0700
+
+    finished 1/2 of guiWithTestBackend_Generator with basic design in place. should be extensible. now just need to parcelize/write it to files. i think i got too carried away i hope this works
+
+commit 20ff9d5655c32596cb0e25fea869aff573116851
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Oct 11 18:11:34 2011 -0700
+
+    fucken broke trying to add dh2overTcpTest2Server, but dgaf i can still refer to it's code and learned from making it. added the design for the next step, which i intend to return to after
+    trying something entirely awesome/better/different
+
+commit 94f28aca68129a244fb15b0b144411708ccd0e3e
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Oct 11 14:13:33 2011 -0700
+
+    forgot to commit on last close i guess... committing before starting new work
+
+commit 468f87a078f2dfe96880b9db2ca0244df0905979
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Oct 3 22:52:54 2011 -0700
+
+    added server. compiles, doesn't crash... but also doesn't work as intended :(
+
+commit bd03076669f80d8b5896820859ae92714b657647
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Oct 3 20:41:07 2011 -0700
+
+    finished client enough for testing, now onto the server. some shared server/client code (reading the public keys from the network datastream) already implemented
+
+commit 6f9a4c870363e4c8da9afb3bbfbf672d28e32385
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sun Oct 2 11:02:23 2011 -0700
+
+    upgraded dh init params, everything working so far. off to brunch with the grandparents. fuck the police
+
+commit 45c402628dcc3827a90ea6c326c97a1d8b832215
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sun Oct 2 10:31:00 2011 -0700
+
+    beginning of attempt 2 for secure tcp socket/server. socket is basically in dh-unified.cpp state, where it does both ends of dh (on a separate thread). design in place etc...
+
+commit 8c2af4d00025d5cfca3bfcc16647d32c0686267a
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Sep 30 11:48:32 2011 -0700
+
+    fixed comments. still not sure why this isn't working. the extracted/transmitted agreed value length and the size of the first public key block/extracted size (388 and 384 respectively) even
+    match what the client sends. why the fuck does this crash?
+
+commit 87b69b9683057e4da1c25ad24082802584de9324
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Sep 30 11:39:42 2011 -0700
+
+    fixed some bugs. actually got both sides to not crash and got server to say "failed to agree". the agreed value length didn't match what the client said. now i changed it and it crashes before
+    getting there fml
+
+commit 381f5e98f9652b302ef2c227fc525294f974e10f
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Sep 30 10:37:34 2011 -0700
+
+    moved dh init code to after our object is actually instantiated. now it REALLY should work. and it does. well, the init does... but now weird random errors about logging/reporting errors.
+    wtfz?
+
+commit 71c0b960ce5aef519da662de267271d363b922b8
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Sep 30 10:27:03 2011 -0700
+
+    realized i didn't initialize dh params in server lol. added code to try to initialize them. compiles but doesn't work. can't figure out why. strange thing is, it's the same init code i've already seen work on the client
+
+commit 0796d416969b1a0b4ca23a2ed31eeca31213aadb
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Sep 30 09:57:59 2011 -0700
+
+    re-designed client/server so they both use the same codebase. from my observations, it SHOULD be working... but in practice, server keeps crashing with various random errors. most
+    common/unknown: read in psymtab, but not in symtab
+
+commit 7b10db21acd69bf69b9ce324db368d45b65f3eb3
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 20:16:45 2011 -0700
+
+    added secure tcp server which was pretty similar to secure tcp client. they both compile and SHOULD work, but don't. server crashes on instantiating p modulus Integer for some reason...
+
+commit 279c696d2417f9aa6931f478992e2206dda50012
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 13:37:39 2011 -0700
+
+    client appears to be done, need to code server to test
+
+commit fadd799323b4ad2d835682e8ea1ad74efbbe8dc8
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 10:18:11 2011 -0700
+
+    eh finished the code where the server sends back the same thing that we sent to it. doesn't compile because we can't DataStream >> *SecByteBlock; lol
+
+commit 6e7cb65230fb0a80056f7c1f02e8a59ee6f05547
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 09:54:28 2011 -0700
+
+    eh got some more code done using QDataStream over the TCP socket but my current design sucks, need to think of a new one
+
+commit 7eee9c6f00aa9acb71431da01d799e28d9cdff28
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 05:06:54 2011 -0700
+
+    compiling/not-finished. need to abstract my server commands into a m_Server class. xml commands command/data formatting behind the scenes
+
+commit d1dc7b6a4845fb102ab72226a29a106456be4fed
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 03:16:03 2011 -0700
+
+    added diffie-hellman parameters generator
+
+commit 18dd561f52587689d15b50d8393547b15f81ca58
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 11:34:20 2011 -0700
+
+    added diffie key generator to generate a 3072 bit param... but can't figure out how to convert from Integer to QString lol
+
+commit c97738fc6f03776396e875f147d989f19c528a7c
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 07:41:29 2011 -0700
+
+    made it so you can run as many encrypts/decrypts as you want per session + added error handling (which is how i solved the first problem <3). still not sure if i'm showing the key in the GUI
+    properly. todo next: make it so encrypt/decrypt button reads in the key from the text box (even though it'll still be auto-randomly generated at launch)
+
+commit aca72b6d83c69579a3ef85b660887ff631ec03ba
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 07:15:50 2011 -0700
+
+    WORKING FUCK YEA. was just a small bug, forgot to convert the QString to ASCII before decrypting. there is still the following bug: can only encrypt 1 string before app crashes
+
+commit 2276b309db4520ac61425ffc7988f9fdaca0259e
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 07:02:58 2011 -0700
+
+    lol got it to work by hard copying the variable output into the variable output. so it has to do with my marshalling into/out of qt's QString. BUT IT WORKS. WOOOOO
+
+commit f98a509ddc6ce75e25af048941d925de98a11b41
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 06:58:57 2011 -0700
+
+    beautiful/documented code that SHOULD work, but doesn't. it's failing during the verification phase. we should catch this so the app doesn't crash
+
+commit 2d7b80d6d29e7ea0098c01b408fc7b925f6bcc68
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 06:12:39 2011 -0700
+
+    eh doesn't work. think i need to do StringSink <- Base64Encoder <- AuthenticatedEncryptor <- Base64Decoder, or something? maybe not that final decoder
+
+commit 2f70c921d9a28f812b586abfa3864bdf23edcd1d
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 02:14:45 2011 -0700
+
+    sloppy but APPEARS to work encrypting only. i think i need to chain filters like this: b64dec -> authenc -> enc -> b64dec. idk though. kinda makes sense?

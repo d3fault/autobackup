@@ -1,0 +1,127 @@
+commit abc93b1a23d6f0c066b38f7dbc0300e716e5e949
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Oct 24 17:41:44 2011 -0700
+
+    committing before doing a large backup. everything in pushToBackups is pointless in the end. i was using that as a backup... but i did not lose data.
+
+commit b7d7042dd30e3bf5042ddb68b823cb9bb572090f
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Oct 19 01:37:33 2011 -0700
+
+    qfile::copy sucks
+
+commit 8e6cd0aaa5541f05a15b4a78be2c3daa53aa4194
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Oct 17 02:17:33 2011 -0700
+
+    barracade but not much else
+
+commit cb520d8876641fcd011014d7230d62014d7b3060
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Oct 12 03:18:44 2011 -0700
+
+    been a while since i sync'd with y/z, fml
+
+commit 89fedf81adc02238fac624dd107a122b8741ac64
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 20:21:55 2011 -0700
+
+    saldkjfsdlkfjasldkjf what is teh point of this
+
+commit 3c6063854d47db2f2d24f373a0da3d5e76ef51c3
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 11:36:39 2011 -0700
+
+    asjdflaskdfjalsk
+
+commit 66031d21bdec8cb8ce08b45013ed354a7490ca31
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 21 04:50:55 2011 -0700
+
+    alsdjkfweoruasfldj
+
+commit 8b789c417253031c3e360a14967fb5af3f5a2588
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Sep 20 02:11:12 2011 -0700
+
+    blah blajsdafljowuerlsadjkfsdaofu git commits don't make sense over a batch of various Documents.
+
+commit e289dc05e040c84f387e714a0cf124c873dccd74
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Sep 16 05:31:22 2011 -0700
+
+    wow lol been pretty creative and productive lately. suck my dick
+
+commit 79f7ee6930c015ef176ec7f0ee191f79c1e88d48
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Sep 6 13:05:53 2011 -0700
+
+    lol wut a bunch of ideas and text files
+
+commit d010fb63e99c19e3388aa814036720b7ff150691
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sun Aug 21 09:51:58 2011 -0700
+
+    a few more ideas about easy video downloader... i'm contemplating which path to take... or how to take both, if both
+
+commit 3456cf967496090beba4795d3b825746b9efe3fc
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Aug 20 05:22:07 2011 -0700
+
+    blah blah blah i think i am going to start coding soon
+
+commit 6a2c17e624b634ccc9d1bd9779fdca499c8d5439
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Aug 10 21:36:42 2011 -0700
+
+    blah blah blah
+
+commit d975e6ebe1e79ab1b8e02899823a01006f443cc8
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Jul 28 09:02:51 2011 -0700
+
+    blah blah blah added a bunch of ideas and minddumps, what's the point of this commit message if i don't commit after every one?
+
+commit 2895e239ffcf14e6e0e770518e82ce6b4abf0d66
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Jun 23 04:42:07 2011 -0700
+
+    added a lot of documents, as well as a plan for how to proceed forward
+
+commit 1b493d6e8118df4609d32a460c383b0a6c7d9461
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Jun 7 22:11:25 2011 -0700
+
+    bah another commit/backup, nothing really to say about it...
+
+commit 9454bfdc23b5ef815c1924a658085dcfdac7f740
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Apr 29 22:53:53 2011 -0700
+
+    adding misc files fuck if i know what they are. bah i'm not preserving timestamps FML
+
+commit 68c29ee99966bff04406152dcbf5fa6f4f0bbaab
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Apr 16 02:56:29 2011 -0700
+
+    added these all in somewhat chronological order but then saved them all at the same time. i need to implement auto-saving in SOMETHING already. use first line, who gives a fuck. first sentence
+    or line. done. why the fuck not. naming shit is a pain anyways. people would catch on and type accordingly. or they wouldn't give a fuck and type normally. hopefully the latter
+
+commit eccd0a015c195737b53aba63ae4d16664ee24c8e
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Apr 15 01:06:22 2011 -0700
+
+    legal anonymity is/should be the goal of my remailer design
+
+commit 3cdfd9e37da7210c69b2d20dd35b1a13877efb1e
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Apr 14 23:30:54 2011 -0700
+
+    all my money ideas suck so i'm back into focusing on d3fs/3xistence.. had another idea about a 'statistics' category/mode/whatever. school/entertainment/????/statistics or
+    music/movies/???????/statistics.... this is something worth considering either way. those will all be different, no doubt
+
+commit d88b8d94300216881c17f9606eab855225e65f8a
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Apr 12 23:25:42 2011 -0700
+
+    re-doing repo because each project needs to be in it's own repo. documents don't need to be separated though, i doubt i'll revert these..

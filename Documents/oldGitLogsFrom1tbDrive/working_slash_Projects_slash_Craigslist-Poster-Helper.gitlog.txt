@@ -1,0 +1,145 @@
+commit e1cc0b023f957db1d41360848aa52724970b8f31
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Jun 23 04:43:34 2011 -0700
+
+    added some more designs and figured out quite a bit more on how it will function
+
+commit 572fb820d8ae97ad88cf04824167a1650e9b3f35
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Jun 7 21:54:19 2011 -0700
+
+    idk where i'm at but committing because backing up repos
+
+commit 95dde34f3d621d9774ba552da75ff8b497c0ec82
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon May 16 18:41:08 2011 -0700
+
+    committing with unemplemented 'new' design partially implemented. not really a good commit point but i felt like doing it anyways
+
+commit 210de4b3f8cd7367a0a66761a6992fc7783600e3
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri May 13 07:43:17 2011 -0700
+
+    got the captcha image to show up in my GUI. FUCK YEA. code is ugly and i REALLY want to refactor it.
+
+commit 0c257ab2d07fc16be6f61e775085cef4c65142aa
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue May 10 05:48:17 2011 -0700
+
+    everything's ugly as fuck now eh because i added login captcha detection (which has since gone away). need to refactor the FUCK out of this... but want to get it working first. anyways i'm
+    gonna make a prototype to see if my code for setting the label to an image is right. i've seen the image data in the debug function ~~~~~
+
+commit e9840c67e8217eb9892bfbc42ff7e9d923a77b17
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sun May 8 04:16:33 2011 -0700
+
+    changed all of the posts except for the actual ad post itself to use application/x-www-form-urlencoded instead of multipart/form-data
+
+commit ed58802c3aa5ec93f3e5a9119d67bc81abe8b9b8
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sun May 8 03:44:12 2011 -0700
+
+    got to the captcha page. didn't test it but maybe i did i forget. either way pretty sure it works. i'm going to go back and change all the previous POSTs to x-url-encoded instead of all being
+    multipart/form type POSTs. all of them except the actual ad post i believe. should be easy to change... but committing in case i break some shit
+
+commit 3ba680ac9e3f7311aacf4b91f8687247399ab239
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sun May 8 00:07:16 2011 -0700
+
+    eh going to have to do the special logic method apparently, but shouldn't be too hard. if(file_exists(blah)) etc. also, it only APPEARS to be working... as in i got to the preview page and
+    everything looks peachy. i did not sniff the traffic (because i don't know how to sniff https traffic in wireshark) to make sure that the blank filenames are even being uploaded... but
+    craigslist didn't complain, so eh... idk..
+
+commit 393ad916545266a955a8ed79fb5e99285d9dbfd1
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat May 7 23:59:59 2011 -0700
+
+    the current way i have image file posting set up SEEMS correct to me, but it doens't work with a blank filename. my browser seems to be fine with sending a blank filename. i'm going to try
+    doing CURLOPT_FILENAME without CURLOPT_FILE... but then i'm going to need special logic to switch between the two depending on whether or not the user is actually uploading a file. i wish
+    libcurl would just accept no filename and just do it just like the browser
+
+commit f8826af5441f7fe747d25fc7e6d1dda360e22a8a
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat May 7 21:42:24 2011 -0700
+
+    got to where i read all the (weirdly named) input fields from the CREATE POSTING html. tested, working. now need to make curl mimic the submit... and later on need to submit images/etc too.
+    fuck where am i going to have images in the List<ItemsToPost*> ?? I guess a path to a local image will do idk, i'll deal with that later. also is more work for when I code a list generator for
+    a client etc...
+
+commit bd61f69ec2acccd84b13cb5f5a3792d540ed1fbb
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat May 7 09:46:14 2011 -0700
+
+    added a version 2 design based on user interactions instead of parsing html... about to refactor code to get me out of like 12 curly brackets. gonna reverse the logic the return null for fails
+
+commit 1a8d76ce64fa41e69c97f8e1cc1a104c27dd3a09
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat May 7 05:22:09 2011 -0700
+
+    successfully emulated clicking 'Go' button after logging in. fuck yea. fixed a bug where redirect URLs would break if they had a colon in them. aka http:// ... doesn't affect relative URLs. i
+    need to remember to do CURLOPT_HTTPHEADER bullshit every time i use curl to POST something so i don't get 100 CONTINUE http status bullshits that seem to break my shit. fuckers.
+
+commit 78e5b622b3b380e36387418ca7454ca1bff05e13
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat May 7 05:06:45 2011 -0700
+
+    oh god what a pain in the ass. how was it even working earlier? i fixed the login sequence but there's still a few bugs that are probably more mangeable. QString.toLocal8bit() returns a
+    temporary variable that if not stored (see the random ass QByteArrays), get deleted from memory and fuck everything up. the solution was easy, figuring out the problem was a royal pain in the
+    ass. fuck.
+
+commit ecb28c2758b608680f2129ae34df880ec8742d85
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat May 7 03:07:59 2011 -0700
+
+    eh coded up to after the clicking of the "go" button to start posting... it looks like it would work, even compiles... but now my old code for logging in isn't working. maybe there's a
+    recaptcha on the login page (saw it once before), idfk. going to revert to the old/working commit and investigate.
+
+commit 745703a36cddbdc7c7784250b40be871d729365f
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat May 7 02:03:53 2011 -0700
+
+    got libcurl working, cookies working (so much fucking eaiser than qnetworkaccessmanager's method gah), and LOG IN working. stops at "home of <email>" atm... but wanted to commit in case i
+    break something soon
+
+commit 7ea76531a2ea588808ecf3fc346135df043e0883
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed May 4 22:59:31 2011 -0700
+
+    eh fukken qt network sucks at dealing with cookies/location headers so about to try using curl
+
+commit faba157c2336d21b0fd61f5f06b06240166f579d
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sun May 1 17:25:33 2011 -0700
+
+    committing un-tested un-compiled partial implementation of craigslist login. did html request and stopped mid login-post
+
+commit 90df9b63d9acab11e16f0f13acf4c1c77d792166
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sun May 1 14:47:36 2011 -0700
+
+    misc changes to UI, future features to be implemented etc. now starting the parsing.
+
+commit 69e5462c33979c8462bc3e0d3ee9bf57b3cc65a4
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Apr 30 03:07:15 2011 -0700
+
+    eh random fuckin changes still haven't started parsing craigslist since i'm wondering if i should use a proxy etc. should the entire business be anon? it's actually quite ez...
+
+commit a4814970f1d9b5f389f490c1c6e1efa715d5a5b7
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Apr 30 01:07:24 2011 -0700
+
+    tested, debugged, compiled working. just need to implement actual craigslist parsing code and it's pretty much done (lol yea right. something else will break)
+
+commit d4d6562a1dad52fec3c22d2a75775027df1450d3
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Sat Apr 30 00:47:24 2011 -0700
+
+    refactored code to have business logic on a different thread so the gui doesn't have to ever block. not yet tested, but compiles.
+
+commit 6a39b39d7c2b0f89684309433491e508298a02fb
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Fri Apr 29 22:49:59 2011 -0700
+
+    adding initial repo with compiling functionality and basic design. going to move all the business logic into a separate thread so i can block it until the user responds to the captcha (on the
+    gui thread)

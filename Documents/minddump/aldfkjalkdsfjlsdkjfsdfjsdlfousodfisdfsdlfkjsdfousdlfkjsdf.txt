@@ -1,0 +1,9 @@
+Counter-argument: all the universes up to the point you turn the nozzle to release the nitrous are identical (is this true?) which means that the PRNG will be seeded the same in each, which means that whatever random number you get in 1, you will get in all 100. So you'd have a 99% chance of just dying :-/.
+
+You split every vector frame, yes, but you are also infinite universes combined into one identical one that have yet to split (they split in future vector frames). This "test" relies on the splitting of 100 universes when the random number is generated.
+
+I could be wrong and we could have split plenty of times before then to give the PRNG ample entropy.
+
+There is no such thing as a RNG. If there was, this problem would be solved.
+
+I'm still racking my brain for the benefits of it even working... because if I can't think of any then it will be easy as hell to stop giving a shit about it.

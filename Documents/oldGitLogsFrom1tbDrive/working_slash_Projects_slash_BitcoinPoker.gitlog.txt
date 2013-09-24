@@ -1,0 +1,24 @@
+commit da4cffc253f98f4e1f4809cce7e6670f274d7e74
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 20:21:00 2011 -0700
+
+    tcp means i don't have to verify that packets made it to their destination (right?) and i can bundle it preconfigured/with tor easily too
+
+commit 731fbcbbcc47555b39b2f3df59528bf052fac659
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 28 03:16:40 2011 -0700
+
+    random designs + generated a 3072 bit PQG for using to initialize a diffie-hellman handshake
+
+commit 3e5e0fc647966b57390f6dda4d6b037ecae54550
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Mon Sep 26 11:35:40 2011 -0700
+
+    added a few designs.. not sure what changed in the cpp file
+
+commit b193645b4bfd5aa1cd497fd44aa5dfcbd8e1e645
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Sep 21 04:53:00 2011 -0700
+
+    ok so i want to get really rich for doing very little. Initial commit contains compiling basic structure of overall app, including a non-finished login/register/edit-user-details window and a
+    to-be-implemented room list tab

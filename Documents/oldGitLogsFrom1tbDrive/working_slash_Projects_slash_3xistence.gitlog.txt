@@ -1,0 +1,29 @@
+commit 36a6ee334e130ae61b9b86f2ef8efd6924357084
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Wed Aug 10 21:26:40 2011 -0700
+
+    added 3 designs
+
+commit 171117dd2543d7f30d8fba5cccba79ea5720cd5a
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Jul 28 09:03:42 2011 -0700
+
+    added 2 ideas. packet ensurer (basically like tcp but with encryption built in) and radio buttons to opt in/out of new features on upgrade
+
+commit d356611b8b45b3f19a43193886407962af5c9bb0
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Thu Jun 23 04:42:47 2011 -0700
+
+    inspect button and data timeline vs. user timeline
+
+commit 005383fa6fdffa1016dc5ee87517339e9c09b37b
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Jun 7 21:53:33 2011 -0700
+
+    adding a few designs
+
+commit 76dad411de2a1501154ce5e598265d5dcb156c61
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Apr 12 23:14:05 2011 -0700
+
+    re-doing repo once again because i need each project to be in its own repo -_-

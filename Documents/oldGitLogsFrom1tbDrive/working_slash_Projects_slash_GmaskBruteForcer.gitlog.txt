@@ -1,0 +1,6 @@
+commit 0bc2b9c445f53dd4006d0aacda5869b4a103c99f
+Author: U-d3fault-win7\d3fault <d3fault@d3fault-win7.(none)>
+Date:   Tue Sep 20 02:05:54 2011 -0700
+
+    initial nonworking commit. spent too much time trying to get basic coordinate bullshit working and gave up. it still has a good design and can be changed to a
+    QLabel/QPixmap for the rectangle selection, but nothing of value really in here...
