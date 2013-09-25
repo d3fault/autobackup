@@ -1,0 +1,17 @@
+I've been trying to formalize this argument to make it more solid but have not been having luck... so I'll just dump what I know and hope someone else can form a solid argument from it. I do still think there is something there. In fact I'm almost certain of it.
+
+The free market is floating. Money has no backing value except what people are willing to buy/sell things for, just like bitcoin :).
+
+There are lots of sectors where a limited resource is priced similarly: in one example, internet bandwidth (talking about servers).
+
+Something something about how corporations control patents for the most advanced video codecs.
+
+Video is vital to freedom of information.
+
+So somehow conclude that the price of internet bandwidth is related to what the most advanced video codecs (which are patent encumbered) can provide.
+
+Something about it almost always being too expensive to use the inferior alternatives BECAUSE of the floating nature of the free market/moneys.
+
+Guh was excited for VP9 but now idk wtf it's patent status is (and determining that is near impossible). Come on, Daala!
+
+Random-OT: I think that the overwhelming vast majority of granted patents could be considered "obvious" given some piece of prior art. DO YOUR AMERICAN DUTY AND BREAK THOSE FUCKING PATENTS! THEY ARE INVALID (and the USPTO doesn't give a shit because they get $10k a pop for granting them (and in their defense, verifying a patent application against "all prior art" is near impossible)).
