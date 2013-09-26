@@ -1,0 +1,36 @@
+I bought a foldable keyboard and tiny linux computer case.... and am not excited for this new chapter of my life. Even though I know it will bring me a different/new sanity and perhaps even piece of mind with respect to the integrity of my data... the requirements it imposes on my day to day life (essentially, bulky pockets) sound draining/tiring. Do I bring the ultra secure linux box into my shower room as well? Should I keep the shower curtain slid over enough so that I can stare at my pants with the linux box in them? The house I live in currently has a "washroom" (sink) and "shower/bathroom" sub-room. I usually leave my clothes in the washroom (although we do call the washroom a bathroom in these days ;-PxD:_)LOlLcowbowOkTipsy), should I now leave them on top of the toilet or at least in the same room as the shower/pisser? Won't the moisture in the air damage the electronics? Would a plastic bag solve that problem?
+
+I plan to put a fucking blanket over my head and of course fingers as I type in "the password" (which I have yet to even come up with/memorize).
+
+I plan to give myself sub-bitcoin accounts, like spending accounts, where I would worry a fuck ton less if the password/monies was compromised.
+
+On top of that TODOreq just thought of this: I should keep even the "ultra secure" moneys behind multiple passwords and "shuffle" them monthly, so that even if a supercomputer was aimed at my bitcoins they'd only get, say, 1/10th of the total... OR they'd have to hold onto the password until the other 9 were cracked (since I can notice when 1/10th moves).. and by then I'd have shuffled them again (say, once a month). I'm not sure what I just thought up provides any security at all... but I'll tell you this: having all my moneys behind a password in my fucking head sounds scary and difficult. I am NOT excited to have a series of characters that I a) must memorize and b) cannot say (especially difficult when thoughts are patched to mouth input) bouncing around the innards of my brain.
+
+The FDIC thing that banks provides is really an admittance that your shit can get hacked. It's just a "we can break/bend/(and-ultimately-MAKE) the rules as we see fit" tactic by the government to give it's users peace (had:piece) of mind. Sure it's 100k max but eh that's better than nothing. Still, the cost of it (well, there was no cost prior to bitcoin's emergence :-D) is giving up control of your money: politicians/government can "freeze" your assets if you look at them wrong. The fucking bastards. (If you are reading this and you are a government employee of any kind and you have frozen assets as a tactic, you're most likely a corrupt piece of shit and should kill yourself, thanks).
+
+I contemplate "friends". I contemplate getting my friends to be the holders of my passwords. Maybe not all of them, but some of them. Err ambiguous. By that I mean: not all of the money (but also definitely not all of my friends haha). That bitcoin is "public" means I can detect if my friends betray me. Distributed trust.
+
+I want to install Debian soft float instead of Raspbian because who the fuck is the Raspbian guy (distributed trust to debian devs >). I don't need speed, so soft float is fine.
+
+My friends taking drastically different lives might be more able/willing to hold onto a password in such a manner. I want to open the drain to my brain and let _EVERYTHING_ out. It is a contradiction.
+
+I also don't trust _ANYBODY_, but I mean it's fucking stupid hard to function on a day to day basis without trusting _ANYBODY_. When everything's said and done I think I could trust a few of my friends to not steal my money and to hold onto passwords in their brains and nothing more for me. I could do all the scripting and organizing and yada yada for them, but they'd JUST have the password in their brains.
+
+Would I have to pay them off? Would it be worth the cost? What if they got "approached"?
+
+The model of friend trust also fails if they/everyone is in "minddump" mode like I intend to be. I would be taking advantage of the fact that my friends are NOT in/wanting-to-be-in the same minddump mode as me. What if that changes? I certainly wouldn't be able to blame them for wanting to transition! Hell, I'd even encourage the transition (shit is gonna be so cash).
+
+Security is a bitch.
+
+There is no longer such a thing as "security through obscurity" when you're fucking broadcasting 24/7/365/death. What I mean to say is that even though security through obscurity is bullshit, it still does slow down the adversaries A BIT... except it doesn't slow them down at all if you're broadcasting everything.
+
+
+New thought after a pause: how can I store a password without ever knowing what it is? Flashed into my brain (abstract something from this) is a tattoo on the underside of my arm where I simply never look at my arm. It is a barcode or qrcode that I scan to "login". I could keep something on my persons somehow that it the password... but what if I am then personally physically compromised (politicians control the police)? My brain is actually safer in that case. Fuck this idea sucks.
+
+ANYWHERE external = vulnerable
+ANYWHERE internal = I cannot minddump
+
+
+
+
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK

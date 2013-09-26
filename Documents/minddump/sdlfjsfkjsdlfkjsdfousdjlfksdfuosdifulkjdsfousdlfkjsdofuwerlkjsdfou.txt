@@ -1,0 +1,32 @@
+I've run LifeShaperStaticFiles on my 1tb drive and am working up a design for how to organize it all and re-thinking password strategies etc etc. Obviously running dban, KeePass, and Truecrypt are on the agenda no matter what solution I come up with....
+
+...but that's just the thing, I'm stuck because I know everything I come up with is hackable!
+
+I'm also factoring in Bitcoin stuff:
+a) I want all my data to be shared, so yes I need a temporary password that will last me until launch (that I'll then give out)
+b) I want a permanent life long password for bitcoins (and other special exceptions)
+
+(a) is essentially a result of long analysis at the very fact that (b) is now trying to solve: nothing is secure!!!
+
+
+I have 3 "tiny $35 linux computers" and I am thinking about dedicating one to "ultra secure" mode (which is what I'm attempting to design).
+
+First off, it is based on the assumption that the OS I'll be installing on it's SD card isn't compromised (and that the system doing the MD5/SHA1 isn't compromised (or the dd command isn't etc)).
+
+From there I have to keep the computer and flash disk the OS is residing on on my persons at all time: physical compromise is security compromise (I don't even trust this very devbox I am typing into anymore because I've left the house numerous times, hah).
+
+Then I have to keep the keyboard on me at all times too (physical keylogger can be placed in one), so I was thinking about buying a foldable/mesh keyboard that I could cram into my pocket. The mouse isn't an issue.
+
+Then a new hack I just thought up: the monitor. You could place a screen recording device in the monitor itself. How this is a breach is contextual. If you are writing data that you want to be kept secret, then this would compromise that. But however if you are merely managing passwords and truecrypt containers, then with CAREFUL usage you can avoid it being a security leak if you never allow your passwords to be on the screen. That, or I need to carry a small monitor ($15 online woot) in yet another pocket!
+
+All this leads me to say the following [again]: only a hacker can get remotely close to protecting himself from hackers. Expecting the average human to do it is ridiculous.
+
+The linux box on my persons at all time can use storage devices (not on persons at all times) for backing itself up etc, but it always needs to verify etc all that shit with data on itself. Restoring from a crash of the box on your persons is difficult, perhaps you should write down a reference point md5sum and also keep that on your persons.
+
+As for what the linux OS will actually contain: some combination of scripts and keepass files and shit. IDFK [yet]
+
+I'm obviously going to move all money into bitcoin at all times once launched because lol banks and politicians are corrupt pieces of shit. Thanks Satoshi whatever the fuck your name is, you've allowed this life to happen...
+
+That being said, I will file taxes with extreme prejudice!
+
+OT: Summarize Steven/d3fault in one sentence: he's the kind of guy that would lobby to make lobbying illegal.

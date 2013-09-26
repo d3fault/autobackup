@@ -1,0 +1,55 @@
+network clause
+I am unsure as fuck about the network clause (but it is still safer to use by default since I can remove it later).
+
+In a given existence/society, a being/human interacting (sending/receiving information) with a system should get the source code to said system. "Freedom of Information" to the max. Therefore, I do want network clause.
+
+But then I contradict myself by saying that I will allow proprietary "linking" (software) to DPL licensed works. Allowing, and even helping to build, the interaction with a system that does not promote freedom of information (I calculate it as an investment: getting them (proprietary business scum) to depend on your works ultimately makes them (your works) stronger)
+
+
+I'm sitting here thinking and stumbling into tons of contradictions etc. They're all mostly related to the stupid vagueness behind the meaning of the word "freedom". I am considering GPLv3! I am considering AGPL! I am considering DPL no network clause!
+
+GPL differs from LGPL in that you pay process overhead and don't get compile time checking, but that cost is only paid to proprietors wishing to [effectively] "link to" your app (though they cannot FORMALLY (software) do it). So you can still "use" GPL in a proprietary product, but you must respect the process boundary.
+
+LGPL has the same flaw but it is just organized differently. If you wish to "extend"/use an LGPL work, you simply make your extension a "work that uses a library" (Qt Add-Ons are a good example of this. They are EFFECTIVELY extensions and therefore the same fucking code base as Qt itself (or at least, they COULD be)). You name your files appropriately and put them in their own namespace and folder and viola, all of the sudden it's a "work using a library" instead of a proprietary modification "in" the source code that would require LGPL compliance.
+
+The differences are subtle and increasingly easier and easier as software designs become more and more modular (a welcome change to the programmer wishing to retain his sanity).
+
+
+So, then what? Permissive free software license? Maximizes availability of software (in line with freedom of information goal), but doesn't forcibly remain available to future recipients (not in line with FoI). Pros/Cons/Tradeoffs, LEGAL FUCKING JARGON.
+
+I'm quite sure I want to use Copyleft in some form or another.
+
+
+GPL _would_ give me access to shit tons more software/libraries/content (BY-SA woo)...
+
+
+AGPL-esq seems incredibly suiting for my lifelong super project: d3fault (dht)
+
+Yes I could pick and choose licenses as I go along (default to the more restrictive at launch, then permissify (by removing network clause) at own pace and where deemed appropriate). Note I am still stuck on whether that sentence means "DPLN -> DPL" or "AGPL -> GPL".
+
+
+Perhaps an initial launch with one of the very restrictive CC licenses... so that the information can still be seen/copied, but defer deciding whether to allow commercial use (which I'm largely for) and more difficult to answer: forced availability over network. <-- This is as opposed to an "all rights reserved" initial launch and then doing the same thing (like what ima do for headers (err yea same applies to headers tbh -- can/maybe-should restrictive-as-fuck CC them initially)).
+
+
+The network clause only applies where it is applicable (rofl). If the app/lib/etc(a text document or photo) don't "provide network access", then the license functions as though the network clause wasn't even there!
+
+
+TODOreq
+What I'm having trouble analyzing is the fact that there is no ALGPL license. Proprietary linkage allowed but source code to the library that "the works using a library" is using (hah self referential suck my dick! (a tool of lawyers)) must be made available if......
+Is it:
+a) Any of the proprietary application is interacted with via the network
+b) The library is interacted with via the network
+?????????
+
+What if the library is only interacted with THROUGH the proprietary portion (the library, as received by the proprietors, doesn't provide network access)?... then are they required to distribute the source code of the library? AGPL simplifies all this by only allowing GPL to link to it. Perhaps my question can be answered by determinig if a GPL work using an AGPL network library (the AGPL portion provides the network access) must also provide the source code of the GPL work? *turns on internet machine and looks*
+
+I still don't know the answer. I know this though: I am stupid.
+
+
+Semi-OT (just not relating ONLY to copyright): Just as it takes a seasoned hacker to practice security, it takes a lawyer to practice lawfulness. Seeing as security and lawfulness are pretty big fucking deals, what the fuck do we expect out of our citizens??? Law is fucking crazy complex and subjective (and growing!). You need a lawyer standing behind you approving every move you're about to make. If every human needs a lawyer to live, then when do the lawyers get to live (trick question: lawyers aren't human (they love the thought of being on the clock 24/7))?
+
+
+"users interacting with it remotely through a computer network" is vague as fuck. does it include indirect interaction!?!?!? I read a question on StackExchange about a guy setting up an business/arcade and wondering if users playing games over LAN counts as interacting. No good answers and fuck if I know.
+
+
+Hmm actually that idea of using a restrictive CC license for everything initially is stupid because it doesn't mention what happens relating to the distribution of the source of the work in compiled form. Wouldn't a CC-BY-NC-ND piece of source code be [...and here there is no answer to the question I can barely formulate...] blah blah blah idfk but at least there probably is NOT copyleft applied to it so FOOEY.

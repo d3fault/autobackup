@@ -1,0 +1,10 @@
+"A proposition is only a proposition until it is known"
+^Is itself a proposition, and "not yet known" (because nothing is known)
+^^But then that is the very claim of the sentence itself, therefore it is known!
+
+I got this ater reading about that "No one knows this very sentence" stuff and hearing the logic student's counter-argument to it on plato.stanford.edu/entries/epistemic-paradoxes/
+
+At least that's what I think his counter-argument was (that the claim that nobody knows this very sentence is only a proposition (woot simplified wording))... they used terminology I didn't really understand. "key inference rule" = "only a proposition until known" ?
+
+
+OT: I learned coding because I wanted to make games and because it fascinated me overall... but only recently am I realizing that programming and philosophy have the same backing: logic. I accidentally am a philosopher? Programming is like logic training but not nearly as tedious, boring, and dry as philosophy [can be]. It also has [semi(lol electricity/"data")-]tangible results, whereas philosophy is resides entirely in theory.
