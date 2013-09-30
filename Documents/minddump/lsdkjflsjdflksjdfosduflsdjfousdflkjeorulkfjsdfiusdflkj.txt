@@ -1,0 +1,17 @@
+I haven't been doing anything at all these past few days... unless you count thinking. I'm trying to come up with a design for cryptography (the hardest kind). To secure my bullshit data and my (more importantly) bitcoin scheissa. I mean a fucking truecrypt container with a keepass db inside is all I can come up with before.......... either losing interest or just........ idfk perhaps following a tangent in my brain created on the fly each time I attempt to analyze it further????
+
+KISS and Secure are fucking contradictions.
+
+I'll have to remember that and apply each to different projects accordingly.
+
+I think (had:feel) I'm seeing an order of magnitude more "data jackery" lately. "They" see me about to launch and are raping as much as possible before I do. Good, go for it. Go fuck yourselves. Sometimes I wish my data would get jacked(deleted too) so then I could launch without having to LifeShape all this fucking bullshit. To start from scratch actually sounds easier. I even contemplate it by considering putting EVERYTHING in a "encrypted but intentionally forgotten (as in, never known) password tc container".
+
+Meh, there's too much good shit to not release... I'll truck along... but zeus (had:god) damn I need to launch soon or ima fuckin blow my brains out.
+
+It's weird that I see it (the/my data) as both unimportant and important. I'm willing to truck along and delay my "launch" thingo.... but I acknowledge that it's all fucking worthless and ............... I could do with shredding it all if I needed to (or something (jacked etc)).
+
+The foldable keyboard should come tomorrow. Case already came (case provides no security, just pocket nicery). Another thing I want to write (because somehow I feel that writing it will make me remember it better (true and false)) is that I cannot connect the keyboard through a USB hub (unless i carry the USB hub on my persons at all times as well). The USB hub could be opened and a "bus data logger" could easily be implanted. Again, mouse doesn't matter (unless exclusively giving seed data to a password/PRNG generator (like keepassx)... and since keepassx also accepts keyboard input for that step, it shouldn't be a problem). I'm glad I got the B model of that $35 linux box... 2 USB ports = 1 for the keyboard, one for the hub (mouse, thumb drive, etc).
+
+Security is fucking crazy. As in, you are either an "extremist" or you fucking fail at it. There is no middle ground. It is boolean.
+
+I know I'm contradicting myself entirely but I have no choice. I certainly couldn't carry cash on my persons... LOL.

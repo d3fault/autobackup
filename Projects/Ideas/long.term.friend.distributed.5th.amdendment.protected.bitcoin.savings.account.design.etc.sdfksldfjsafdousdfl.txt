@@ -1,0 +1,48 @@
+A keyboard/screen could already have a data logger in it before it is shipped to me! What I suppose is important is that nobody gets a hold of it AFTER I use it [and of course, never let it out of my sight]. When I am done with it (or perhaps at intervals), I should destroy it so that if there was a recording device inside, it too is destroyed.
+
+Wireless transmitters of course shit all over all of this security... and if I was destroying and buying new ones at regular intervals, "they"'d surely become smart enough to implant a wireless transmitter. So I should keep the same one..... but then potentially ALL the data is recorded. What if I am apprehended and don't have time to destroy it? Fail.
+
+Perhaps I have to build all my own keyboards? Even then, an arduino or any chip anywhere used can come to me pre-hacked. Recording devices and wireless transmitters just keep getting smaller and smaller and smaller and HOLY FUCKING SHIT THERE IS NO SUCH THING AS SECURITY HOW AM I GUNNA MANAGE MAH MONEYS xD (old news is old, but damnit I _MUST_ make an exception for moneys -- I don't have a choice!).
+
+Also regarding trusting friends, they could probably be "compelled" (legally (although probably by corrupt as motherfucking politicians for corrupt reasons)) to divulge the keys since 5th amendment only applies to yourself.
+
+A solution to this MIGHT be to "share" keys. I have half the key, they have the other half... and BEHIND the combination of BOTH keys is BOTH of our moneys/whatever-we-are-protecting. That way, they CAN use the 5th amendment. Hmmmmmmmmmmmmmm there might be something to this idea especially with use with lots of friends. I think it might also allow them to live "as me" and divulge everything? Oh wait no it doesn't and it also doesn't let me anymore :(. But it still is...... SAFER.
+
+We'd have to have meetings underneath blankets together and all carry keyboards/linux boxes on our persons 24/7/365
+
+I think it scales up to more than 2 people as well. The finished key could be dependent on 5 people. But I think just doing 2 people max (you + them) and doing that multiple times with multiple friends is safer. For exmaple, what if one of your friends dies and you lose the key? I suppose an "overlapping" strategy might fix this, too!
+
+Each "bitcoin keyset" (a portion of your total) is redundantly shared with A FEW friends, 3 sounds reasonable as 2 might die near each other (HHHHHMMMMMMMMM THIS SOUNDS AWFULLY FAMILIAR ;-) ;-) ROFLROFLROFL). You'd have to trust your friends a lot of course and the more you share a single keyset with, the harder it becomes to deduce an unfaithful friend if they jack you (but perhaps actions can be monitored by each other under the blanket together: to be sure they only "transfer out" (new sub-accounts etc) from their own account -- and you have to be there for them to have access to the one with yours in it anyways (they have 2 other friends they could visit (using these same numbers)).
+
+Man I didn't expect this doc to get so involved/advanced and to possibly come up with the best solution yet! TODOreq: dooeeet
+
+
+And remember, that their half of the key also protects their own shit (both of your shit) is vital to them being able to legally plead the 5th.
+
+
+
+
+LOL: damnit I need more friends xD
+
+
+
+
+The friend identifying you IN PERSON and only "going under the blanket with YOU" adds an order of magnitude of security. You can _ACCIDENTALLY_ divulge _ALL_ of your keys (or your one master key)... and there would be no loss of moneys as long as your friends were trustworthy and you came up with a new master key and transferred the bitcoins to new keys. Of course, if two friends "accidentally" divulge information at the same time as each other (unlikely), then that "bitcoin keyset" (a slice of your "savings" account, so to speak) can/would be lost (likely within minutes/seconds if you're both broadcasting 24/7/365).
+
+Man I've confused the fuck out of myself trying to analyze the underlying technicals precisely... but I'm "pretty damn sure" (tm) there's a sound design in there somewhere.
+
+
+
+
+
+
+WAAAAAAAAAAYYYY the fuck more secure than banks.
+
+
+
+Also funny/important: I think you need to have 2 blankets... or one person needs to stand outside while the other is typing in password. Or perhaps three? One covering both of you and you each have your own underneath. You stand in your individual ones and type your master passwords, then take both of them off to only be together in the one larger blanket and there you watch each other transfer YOUR/THEIR OWN bitcoins out to sub-accounts.
+
+
+What machine the authentication is done on, and mandating that the memory with both keys is wiped prior to leaving the blanket session, is essential. As a hack, I'll simply say: _MY_ machine (although it might be a different dedicated one idfk). Too hard to trust that your friend's machine isn't compromised is the point (though their thumb drive/etc getting compromised isn't an issue (hash verifications etc)). For me in particular I'll just be selfish and not trust any of my friend's machines... but in the grander sense it really is an issue [for other people]. Deciding whose machine is more trustworthy (they BOTH have to not let it out of their sight etc).
+
+Man fuckin hell we should just put our computers in our bodies, lot easier that way.

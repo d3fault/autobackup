@@ -1,0 +1,1 @@
+I am a computer program that takes random/undefined chunks of memory and executes them. Sure, do that long enough and you get the perfect program (a human (err 'perfect' is used lightly here))... but the amount of trial and error that came before me (all errors resulting in death) makes me want to vomit. Reproduction/Natural-Selection decreased the error rate, but [something].
