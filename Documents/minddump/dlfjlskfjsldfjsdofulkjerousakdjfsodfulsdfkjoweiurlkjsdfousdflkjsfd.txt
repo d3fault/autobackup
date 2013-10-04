@@ -1,0 +1,9 @@
+Linearity
+
+I hate the stupid arbitrarily defined circularity(sp?) of the world we live in. It's fucking depressing at best. 0-24, 0-7, 0-30, 0-365, repeat 0-365 roughly a hundred times and you're dead.
+
+I want to live in a box where there is no day time or night time (ehh I contradict myself because I do still want to go outdoors and see the sun etc... but FOR THE PURPOSE OF THIS DOCUMENT:) and the only time is Unix Time. The only "relative dates" are your birthday and your estimated death range. "Now" is a percent (for date), or the exact Unix Time for time. You can break it up into arbitrary easier-on-the-brain sub-units if you want (devise/make-up/arbitrate a plan)... that's one thing the circular bullshit gives you. I don't want to know about days in the week (depressing), I don't want to know about days in the month (depressing), I don't want to know when Christmas, New Years, my or anyone else's birthday is (depressing). Since it is arbitrary in the first place, I'd like to experiment with using a purely linear calendar. Coincidentally it fits the whole "timeline" thing I'm always obsessing about (less so lately) perfectly.
+
+
+
+OT: The definition of arbitrary is arbitrary.

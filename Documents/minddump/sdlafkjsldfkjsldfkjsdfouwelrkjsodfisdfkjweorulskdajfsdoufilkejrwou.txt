@@ -1,0 +1,20 @@
+ISubconsciousThought
+IConsciousThought : ISubconsciousThought
+
+IFeel derives from both ISubconsciousThought and IConsciousThought
+ISee, ISmell, ITaste, IHear all derive from IFeel (see "feels" light molecules, smell "feels" flavored air molecules, taste "feels" flavored solid molecules, hear "feels" sound waves/vibrations).
+
+That IFeel derives from both sub/conscious thought is what really confuses me.
+
+Subconscious thought is our emotion. It is sensory bombardment. It is likely the most complex system in existence. The creme de le crop of our universe/evolution. It's going to take us a while to fully understand it, but surely it is possible.
+
+Perhaps it is better stated that IFeel is a protected property on ISubconsciousThought that IConsciousThought inherits?
+
+The point is, feel travels up to you (your conscious) through your subconscious. But it is still "utilized"/"analyzed" at each level. A virtual override that calls the base implementation?
+
+We can focus on a certain feeling with our conscience, but we can also let our subconscious do all that stuff for us... while still "feeling" it.
+
+
+Semi-OT now: our conscience (our OS) and the underlying hardware (brain) communicate through the subconscious, which is why we don't have direct access to MPUs etc. The subconscious/hardware interface is strictly computer (though it is likely quantum/whatever), and the laws of physics and all mathematical problems are able to be asked by our subconscious to existence/hardware, if only it knew what to ask. Our conscience is like an OS yet on top of that. It started from scratch. It is PURE logic/etc (obviously emotion gives us an appreciation of life (or the opposite: fear of death gives you appreciation of life)) and does not have access to the raw processing power that the subconscious does. The conscience is what gives us self awareness, which allows us to ask questions we want to know.
+
+Our conscience is the simple self aware open source operating system, and our subconscience is the monolithic binary blob firmware interface to our hardware.
