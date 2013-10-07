@@ -1,0 +1,5 @@
+If words can move mountains, code can create them (mountains).
+
+Ingredients are to Recipes what Binaries are to Source Code (the analogy isn't perfect, just cute).
+
+Lawyers and programmers both define and interpret complex logic. The difference is that I, a/the programmer, don't expect my end-users to fully understand what's been written.

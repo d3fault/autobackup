@@ -1,0 +1,11 @@
+API can't be copyrighted, DMCA circumvention circumvention
+Also semi-OT: don't use trademarks in API xD (Qt does)
+
+API can't be copyrighted (Sun/Oracle v. Google), so if you wish to circumvent "security" which is DMCA protected, clean room implement the same API and then circument your own product (since you never restricted yourself from doing so).
+
+It makes me giggle thinking how this document itself can now be considered circumvention. Come at me bro.
+
+
+Semi-OT: Putting trademark in API and Copylefting the codebase don't mix. The API itself can't be copyrighted, so implementers of that API are now allowed to use your Trademark lawl.
+
+I think I'll write a tool called "ForkAllOfD3faultsStuffUsingXAsNewTrademark" that is ABI/API compatible with all of the "d3fault" trademarked stuff (until the fork makes changes that aren't), but not identifying itself as "d3fault" anymore. On one hand I don't want to do their work for them, but on the other: doing a search for the word "d3fault" in the resulting output would be a good way to ensure that you didn't mix trademark in your API (although d3fault would still probably appear in copyright notices etc as the original author -- that's different).
