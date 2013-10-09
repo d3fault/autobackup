@@ -1,0 +1,7 @@
+The more things defined using "I'll know it when I see it" terminology, the less things are defined.
+
+I thought of this while repeating to myself the perfect programming paradigm: sensible defaults (APIs, GUI controls, etc etc). Also known as "most expected", or "path of least unexpectation" (or something).
+
+There is a significant, and growing, amount of such terminology in law. Vague, subjective ("average man"), etc. It's all bullshit.
+
+There should be a minimum amount of grounding in logic and clarity before a text is made law. Similar to how computer programs are turing complete.

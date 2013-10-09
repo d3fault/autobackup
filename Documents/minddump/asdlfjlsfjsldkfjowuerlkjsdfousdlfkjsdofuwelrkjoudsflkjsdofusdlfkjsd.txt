@@ -1,0 +1,1 @@
+I know I've said it before, but I like this minimalism: Life without emotion is just an infinite while(true) loop with an empty body.
