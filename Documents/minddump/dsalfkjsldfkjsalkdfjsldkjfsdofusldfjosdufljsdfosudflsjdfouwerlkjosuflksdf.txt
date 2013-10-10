@@ -1,0 +1,21 @@
+Software: High level management is more productive, profitable, and boring. Of course that's just MY opinion, but it is valid as such. I will do high level management because I'd be stupid not too and I've decided to allow myself to pillage the "free market"/capitalism since I'm going to "explode anyway" (btw: I _AM_ an explosion (big bang etc)).. which I guess is more accurately described as "collapse anyway".......... but I like to think of a skydiving metaphor to describe how I want to still code despite succumbing to high level management:
+
+A colonel on a plane doing the "go go go" shit to his soldiers as they jump out the plane to parachute to the ground. He's wearing the same uniform as them, despite being a colonel. Randomly in between two soldiers and without notifying them, he jumps out the open door and parachutes down and does a mission with his fellow soldiers (undercover, even though yea some of his soldiers know him etc). He does this not because it is necessary, but because he enjoys being "in the shit".
+
+The soldiers represent "units of work" that I'd be delegating, but the analogy fails because the people I'd be working with won't necessarily be people I dispatched units of work to before/after I decided to start working on unit of work myself. The people I'd be working with could have jumped off a different plane on a different day for all I know.
+
+I can very easily see myself forgetting that I like being "in the shit" and just macro managing for the rest of my life (see: Bill Gates). There is infinite macro managing to be done, just as there is infinite micro managing and coding to be done. For my code parachute drops I'll give myself periodically, I'll be doing all 3.
+
+Macro managing takes up all of (making this dream infeasible :-/?) your brainpower because your mind is scattered on numerous different projects. Coding takes up all of your brainpower because your mind is focused on tedious and strict syntax/etc.
+
+I'm not sure I'll be able to toggle high/low level modes like that on demand... but I surely want to try and I hope I don't "forget and get stuck in macro mode forever".
+
+
+IDEALLY, though perhaps not practically, I code low level that build upon each other to create the higher levels (instead of relying on a human's superior ability to "interpret/implement" a design/requirement/idea). That would be best because then I could "be in the shit" and be high level at the same time. It is true that that is the general direction that software is heading... but how fast is it getting there? Also semi-OT: I refuse to pay an unnecessary cost (vm,etc) to use a higher level.
+
+To be "in the shit" doesn't necessarily mean low level. For example, I don't code in binary/hex/assembly. It means always being able to "see the ground"... which is an "I'll know it when I see it" subjective definition. For me, I can see the ground (logically, not literally (see next paragraph)) all the way from "designEqualsImplementation" to the fucking binary. So I see all of it and am satisfied. Knowledge is power is bliss is sanity. Proprietary puts a solid floor between you and the ground and doesn't tell you what the ground is made out of or how it works or how to fix it. Being able to see the ground (not to be confused with floor just used) means you UNDERSTAND IT _ALL_ LOGICALLY. Impossible with proprietary.
+
+I don't know what binary is generated when I compile a C/C++ application... but instead it is backwards: I've learned to code in binary/hex and then I "put together the primitive binary pieces in my head" to make an assembly compiler... and then I "put together the primitive assembly pieces in my head" to make a C compiler. Obviously the polished/standard c/assembyly compilers in today's systems use shit tons of functionality that I don't (know|care about), but the basic principle understanding is (or was ;-P (you'd have to pay me a lot (had:you couldn't pay me) to touch binary again)) there.
+
+
+Proprietary is to religion (leap of faith, secret unattainable knowledge (only God/vendor knows)) what Open is to agnostic-atheism (let's start with nothing and go from there, but everything must check out logically)

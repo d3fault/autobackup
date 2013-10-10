@@ -1,0 +1,11 @@
+Imagine you're walking down a hallway that's known to be booby trapped by every person in existence.
+
+Walking down that hallway alone is equivalent to doing security by yourself.
+
+If you are an employer or have employees, you have a handful of people giving you tips on what precautions to take.
+
+If you're practicing public security (THE ONLY KIND, SINCE SECURITY IS BOOLEAN), every person in existence gives you their opinion and this is your only chance that every booby trap is predicted (nobody said security is easy).
+
+If you're dealing with any proprietary software, remove all sensory input (sight,sound(although I guess you can still hear your lol employees, but they can't "hear" the hallway either so who gives a fuck),touch,balance,etc). GLHF
+
+The binary blob for the video driver on my tiny linux box that I'll be keeping on my persons has me a bit worried....... but eh fuck it. A risk I'm willing to take. I can/should/probably-will upgrade to a 100% free box (or hell, I might even build(high-level 'build' for the hardware, low-level 'build' for the software)/fund that box myself :-P).
