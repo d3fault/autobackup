@@ -1,0 +1,5 @@
+TODOreq: The Ultra-Paranoid's Guide To Securing Something (Bitcoin, in this example)
+Joke about how step 1 is to make your own computer and software from scratch, etc...
+Should talk about offline wallets, offline private signing/sending of transactions, long passwords (encryption rounds for dictionary words), wrapping yourself in foil, not trusting your monitor/hub/mouse(mouse when using keepass's "generate password" functionality)/HDMI(fuck CEC), etc
+
+It is (I am) admittedly overly paranoid about security.... but it's better to be overly secure than slightly not secure enough (because the weakest link is always attacked first).
