@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386042012
+Documents/minddump/:1386042104
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386042012
+Documents/minddump/dreams/:1386042104
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -517,6 +517,7 @@ Documents/minddump/dfkjasdfjsodfuapsodfiuasdfjsdfspofusldfjksdofuweorusdlfkjsdfo
 Documents/minddump/dfkljdaslfkjsdofuljewrousdlfjksdofulwejroulfkjosduflkjewroulf.txt:1370581606
 Documents/minddump/dfksjdfksdajfluweoriusdlkfjsdofuljweroulk.txt:1353525510
 Documents/minddump/dflakjflsdkjfsadofiulwekjroufdljsdflksdjfouwerlkjsdfoulfksdjf.txt:1351478625
+Documents/minddump/dflakjsdflkjsdflkjsdflkjsdflkjsdflkjsdfljsflksjdflkjsdflkjsdflkjsdfouewlrjousdflk.txt:1381530119
 Documents/minddump/dflasjflksjdfouelrjousflkjsdflkjr.txt:1355796843
 Documents/minddump/dflaskjflksajfdosduflsdjfosduflkjsdfouasdlfkjasofiusalfjsodfulsakdfj.txt:1373885383
 Documents/minddump/dflaskjflksjdfoiulewjroufsdkjsdflkoiu.txt:1359945408
@@ -602,6 +603,7 @@ Documents/minddump/dslafjkasdlfkjasdofulkwejrousdlkfjosduflskdfjosdfulsdjfosudfl
 Documents/minddump/dslafjksdalkfjasdofulsdjfosaudflsajdfowuerlkjasdfoulkr.txt:1353409296
 Documents/minddump/dslafjowueroawiefsdljfasdfliuasoifualkjreaowu.txt:1330636082
 Documents/minddump/dslakjfosduflkjsdofudslkjfousdfouowuerlkjsdfousdflkjwerousdkfj.txt:1364509855
+Documents/minddump/dslfjalfjaslfkjsldfjsdlfkjsldfjslfjlsdfjksdofuwelrkjoudsfljsdfousdlfkjsdfou.txt:1381568284
 Documents/minddump/dslfjasdfouiwlkjeroujsdfousdflsdfouieruousdfjsdfouwer.txt:1370297594
 Documents/minddump/dslfjasdfuwoieruasldfjaosuuoioiryweDADaslfjsadofuwerlj.txt:1332452955
 Documents/minddump/dslfjasldkjfoisudljowurlkjasoufwlekuroiusaflkjasdoifulwekurousdflkj.txt:1370571747
@@ -1627,7 +1629,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386042012
+Pictures/:1386042104
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1827,7 +1829,7 @@ Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefront
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwidget.h:1351021805
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwithtwobackendsexampletest.cpp:1350801765
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwithtwobackendsexampletest.h:1350801765
-Projects/Ideas/:1380319247
+Projects/Ideas/:1381531198
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -2060,6 +2062,7 @@ Projects/Ideas/release.code.write.DOOOOEEEEEEET.txt:1328082591
 Projects/Ideas/remix.yourself.infinitely.asldfjksdaflksjflsakj.txt:1338793583
 Projects/Ideas/reprap.framer.crawler.robot.asldfjasdlfjsl.txt:1326662844
 Projects/Ideas/retirement.villa.asdlfjasdlfjasdofiusadfoiuasdfojawerlkasjefoij.txt:1328744590
+Projects/Ideas/retroactive.recursion.escaping.censorship.app.txt:1381531320
 Projects/Ideas/reuse.existing.tools.if.you.want.even.if.by.command.line.fuggit.but.api.is.preferred.asflsfkjsdlfkjs.txt:1338031620
 Projects/Ideas/rocker.tilter.like.a.scrollbar.but.more.like.middle.mouse.click.scrolling.but.no.middle.mouse.button.required.txt:1340110318
 Projects/Ideas/rpc.eventually.includes.serialization.to.paxos.dht.with.custom.business.layer.implementations.const.for.readonly.write.by.default.txt:1338796405
@@ -3092,7 +3095,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386042012
+Projects/libAvGraphicsItem2/design/:1386042104
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
