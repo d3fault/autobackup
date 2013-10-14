@@ -1,0 +1,21 @@
+Re:Paranoia
+There's some awesome logic I stumbled upon recently and didn't fully realize it until just now. The bit about the sliding window of security. You're either secure AHEAD OF TIME or secure TOO LATE (therefore, you get hacked/etc). Hitting the "sweet spot" is "nearly impossible".
+
+I'm always trying balancing and shit and bitching about how it's so fucking hard to do... but in the above statement lies the answer.
+
+Overly paranoid, but only just.
+
+You're either overlay paranoid or you're hacked.
+
+There _IS_ a 3rd option: the "right amount" of paranoia. But hitting it is nearly impossible, added to the fact that IT'S A SLIDING FUCKING WINDOW so your "just right" amount will be "not enough" very soon!
+
+So that's what I'll be in everything I do, not just password security etc: Admittedly overly paranoid, but only just.
+
+
+The "only just" part is for sanity. To give you a target for you to stop securing at so that you can BEGIN TO ENJOY THE LIFE WHICH YOU ARE SECURING. It's too easy for me or anyone to spend 100% of their efforts on security.
+
+
+I typed in my password for the first time with a foil (BUT SEMI-TRANSLUCENT :-/) blanket and a regular fleece blanket over that. Man I was burning up because I kept making typos n shit lmfao. Overly paranoid? YES
+
+
+That I'm going to be public with 99.999999999999999999999999% of my data helps a lot with the sanity/paranoia shit. I will compromise for bitcoins because I have to.
