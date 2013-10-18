@@ -1,0 +1,20 @@
+KeePassX > Tcplay
+
+They both use 256 bit AES, but KeePassX does not limit your password to 64 characters. If you use random characters and symbols, they are equal. If, however, you are using a series of dictionary words, KeePassX is superior because you can use a > 64 letter length password (all dictionary words to ease memorizing). True that 64 characters = 256 bits, and going over it is "waste", except when considering that you "lose" complexity by using dictionary words... so by going over 64 characters, you re-gain it. KeePassX allows you to regain the complexity lost by using dictionary words. It is still easier to memorize twice as many words as it is to memorize any moderately long series of characters/symbols.
+
+Given 8 characters, are there more combinations that will go in those 8 characters in:
+a) every character/symbol combination
+b) all the 8 letter words in the dictionary
+
+(a) is obviously the correct answer, and this is what I mean by "losing" complexity.
+
+
+I even read the KeePassX source code to make sure it wasn't truncating my password before sha256'ing it :-P.
+
+
+So if you want an uber secure setup: 100+ letter password comprised of dictionary words easy to memorize to unlock a KeePass database, then just add an entry in the KeePass database using all letters/numbers/characters and make it exactly 64 characters... for a truecrypt container.
+
+100 is probably overkill
+
+
+And also, it only matters if the attacker knows you're using a string of dictionary words password. If they don't, they waste just as much time brute forcing all characters/numbers/symbols.
