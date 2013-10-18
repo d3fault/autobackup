@@ -21,3 +21,4 @@ HEADERS  += easytreetotalsizecalculatorwidget.h \
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../GloballySharedClasses/easytreeparser.pri)
+include(../../../GloballySharedClasses/easytreehashitem.pri)

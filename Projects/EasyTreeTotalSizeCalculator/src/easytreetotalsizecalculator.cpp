@@ -30,8 +30,8 @@ void EasyTreeTotalSizeCalculator::calculateTotalSizeOfEasyTreeEntries(QIODevice 
         if(!currentItem->isDirectory())
         {
             calcualtedFilesSize += currentItem->fileSize(); //fuck yea dis is some crazy complex code!
-            delete currentItem; //inline cleanup
         }
+        delete currentItem; //inline cleanup
     }
     emit d(QString("Calculated Total Size of Easy Tree Entries in Bytes: ") + QString::number(calcualtedFilesSize));
     emit d(QString("Calculated Total Size of Easy Tree Entries in KiloBytes: ") + QString::number(calcualtedFilesSize/1024.0));
