@@ -10,6 +10,10 @@
 #include <QDir>
 #include <QIODevice>
 
+//Includes only when calculating hash
+#include <QCryptographicHash>
+#include <QFile>
+
 class EasyTree : public QObject
 {
     Q_OBJECT
@@ -27,6 +31,8 @@ private:
     QTextStream *m_TreeTextStream;
     QDir *m_Dir;
     QFileInfo m_CurrentFileInfo;
+    bool m_CalculateMd5Sums;
+    static const qint64 m_MaxReadSize;
     QList<QString> *m_DirNamesToIgnore;
     QList<QString> *m_FileNamesToIgnore;
     QList<QString> *m_FileNamesEndWithIgnoreList;
@@ -40,7 +46,7 @@ private:
 signals:
     //void treeTextGenerated(const QString &treeText); //it just writes to the passed in QIODevice instead
 public slots:
-    void generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList);
+    void generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, bool calculateMd5Sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList);
 };
 
 #endif // EASYTREE_H

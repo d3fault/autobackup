@@ -12,7 +12,7 @@ void EasyTreeGui::handleEasyTreeGuiBusinessInstantiated()
 {
     EasyTreeGuiBusiness *easyTreeGuiBusiness = m_EasyTreeGuiBusinessThreadHelper.getObjectPointerForConnectionsOnly();
 
-    connect(&m_EasyTreeGuiWidget, SIGNAL(generateEasyTreeFileRequested(QString,QString)), easyTreeGuiBusiness, SLOT(generateEasyTreeFile(QString,QString)));
+    connect(&m_EasyTreeGuiWidget, SIGNAL(generateEasyTreeFileRequested(QString,QString,bool)), easyTreeGuiBusiness, SLOT(generateEasyTreeFile(QString,QString,bool)));
     connect(easyTreeGuiBusiness, SIGNAL(doneGeneratingEasyTreeFile()), &m_EasyTreeGuiWidget, SLOT(handleEasyTreeGuiBusinessFinishedGeneratingEasyTreeFile()));
     connect(easyTreeGuiBusiness, SIGNAL(d(QString)), &m_EasyTreeGuiWidget, SLOT(handleD(QString)));
 

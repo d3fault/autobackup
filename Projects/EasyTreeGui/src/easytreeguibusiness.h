@@ -17,7 +17,7 @@ signals:
     void d(const QString &);
     void doneGeneratingEasyTreeFile();
 public slots:
-    void generateEasyTreeFile(const QString &dirToTree, const QString &treeOutputFilePath);
+    void generateEasyTreeFile(const QString &dirToTree, const QString &treeOutputFilePath, bool calculateMd5Sums);
 };
 
 #endif // EASYTREEGUIBUSINESS_H

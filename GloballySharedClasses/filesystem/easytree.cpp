@@ -11,6 +11,8 @@ Notes for parsing (reading):
 6) Not yet: I am working on EasyTreeHasher that adds another field for md5/sha1 (detecting which will be done via the length)... so the hypothetical parser could parse both by seeing that there's +1 "colon field" for each dir/file type (and then it would be imperitive that we identify directories by the trailing slash... since the "directory entry with hash" (+1) will now have the same amount of "colon fields" as the "file entry without a hash". HOWEVER it doesn't make any fucking sense to have a hash for a directory (does it? only thing i could think of is hashing the entry list details after they've been concatenated... but wouldn't this be redundant? pretty sure yes but redundant but not 100% sure) so nevermind lmfao. However I'm not even sure it's wise to make them share a parser (I just know it's possible)
 */
 
+const qint64 EasyTree::m_MaxReadSize = 4194304; //4mb (max) read buffer
+
 EasyTree::EasyTree(QObject *parent) :
     QObject(parent), m_Colon(":"), m_TreeTextStream(0), m_DirNamesToIgnore(0), m_FileNamesToIgnore(0), m_FileNamesEndWithIgnoreList(0)
 {
@@ -28,7 +30,6 @@ EasyTree::EasyTree(QObject *parent) :
     filters |= QDir::Files;
     filters |= QDir::NoSymLinks;
     filters |= QDir::NoDotAndDotDot;
-    filters |= QDir::Readable;
     filters |= QDir::Hidden;
     m_Dir->setFilter(filters);
 }
@@ -90,7 +91,34 @@ void EasyTree::addFileEntry()
     m_ModifiedDateTime = m_CurrentFileInfo.lastModified();
 
     //stream a colon, the file size, another colon, the creation date, another colon, the last modified date, and lastly a newline
-    *m_TreeTextStream << m_Colon << QString::number(m_CurrentFileInfo.size()) << m_Colon << QString::number(m_CreatedDateTime.toMSecsSinceEpoch()/1000) << m_Colon << QString::number(m_ModifiedDateTime.toMSecsSinceEpoch()/1000) << endl;
+    *m_TreeTextStream << m_Colon << QString::number(m_CurrentFileInfo.size()) << m_Colon << QString::number(m_CreatedDateTime.toMSecsSinceEpoch()/1000) << m_Colon << QString::number(m_ModifiedDateTime.toMSecsSinceEpoch()/1000);
+
+    if(m_CalculateMd5Sums)
+    {
+        //code to "hash a file" jacked from RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay -- I should probably put it in a shared library. It isn't as easy as doing [static] hash(file.readAll()) because you would run out of memory on large files. This design uses a [4mb] buffer
+        QCryptographicHash hasher(QCryptographicHash::Md5);
+
+        QFile sourceFile2Hash(m_CurrentFileInfo.canonicalFilePath());
+        if(sourceFile2Hash.open(QFile::ReadOnly))
+        {
+            qint64 bytesAvail = sourceFile2Hash.bytesAvailable();
+            qint64 toRead;
+            while(bytesAvail > 0)
+            {
+                toRead = qMin(m_MaxReadSize, bytesAvail);
+                QByteArray readChunkArray = sourceFile2Hash.read(toRead);
+                hasher.addData(readChunkArray);
+                bytesAvail = sourceFile2Hash.bytesAvailable();
+            }
+            *m_TreeTextStream << m_Colon << hasher.result().toHex();
+        }
+        else
+        {
+            qWarning("failed to open file for hashing"); //Eh I guess if we fail to open for reading, we just won't have a hash for that entry. Was tempted to use qFatal but then there'd be no cleanup etc :(. TODOreq: what's worse? inconsistent (psbly invalid) data, or segfaults/memory-leaks/etc. Also note that this particular example might not even cause anything that bad to happen if I used qFatal... but I mean IN GENERAL which is worse?
+        }
+    }
+
+    *m_TreeTextStream << endl;
 }
 bool EasyTree::weDontWantToSkipCurrentFileInfo()
 {
@@ -136,7 +164,7 @@ bool EasyTree::weDontWantToSkipCurrentDirInfo()
     }
     return true;
 }
-void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList)
+void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, bool calculateMd5Sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList)
 {
     m_DirWeAreTreeing = absoluteDirString;
     if(!m_DirWeAreTreeing.endsWith("/"))
@@ -160,6 +188,7 @@ void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioD
     }
 
     //captured to keep recursive function arguments to a minimum (stack grows explosion)
+    m_CalculateMd5Sums = calculateMd5Sums;
     m_DirNamesToIgnore = dirNamesToIgnore;
     m_FileNamesToIgnore = fileNamesToIgnore;
     m_FileNamesEndWithIgnoreList = fileNamesEndWithIgnoreList;

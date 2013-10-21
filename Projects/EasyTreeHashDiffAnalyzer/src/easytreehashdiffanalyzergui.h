@@ -2,6 +2,7 @@
 #define EASYTREEHASHDIFFANALYZERGUI_H
 
 #include <QObject>
+#include <QCoreApplication>
 
 #include "easytreehashdiffanalyzerwidget.h"
 #include "objectonthreadhelper.h"
@@ -17,6 +18,7 @@ private:
     ObjectOnThreadHelper<EasyTreeHashDiffAnalyzerBusiness> m_Business;
 private slots:
     void handleEasyTreeHashDiffAnalyzerBusinessInstantiated();
+    void handleAboutToQuit();
 };
 
 #endif // EASYTREEHASHDIFFANALYZERGUI_H

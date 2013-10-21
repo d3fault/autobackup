@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QPlainTextEdit>
 #include <QFileDialog>
+#include <QCheckBox>
 
 class EasyTreeGuiWidget : public QWidget
 {
@@ -25,11 +26,13 @@ private:
     QLineEdit *m_EasyTreeOutputFilePathLineEdit;
     QPushButton *m_EasyTreeOutputFilePathBrowseButton;
 
+    QCheckBox *m_CalculateHashesToo;
+
     QPushButton *m_GenerateEasyTreeFileButton;
 
     QPlainTextEdit *m_DebugOutput;
 signals:
-    void generateEasyTreeFileRequested(const QString &dirToTree, const QString &treeOutputFilePath);
+    void generateEasyTreeFileRequested(const QString &dirToTree, const QString &treeOutputFilePath, bool calculateMd5Sums);
 public slots:
     void handleD(const QString &msg);
     void chooseDirToTree();

@@ -3,7 +3,7 @@
 EasyTreeGuiBusiness::EasyTreeGuiBusiness(QObject *parent) :
     QObject(parent)
 { }
-void EasyTreeGuiBusiness::generateEasyTreeFile(const QString &dirToTree, const QString &treeOutputFilePath)
+void EasyTreeGuiBusiness::generateEasyTreeFile(const QString &dirToTree, const QString &treeOutputFilePath, bool calculateMd5Sums)
 {
     QFile easyTreeOutputFile(treeOutputFilePath);
     if(!easyTreeOutputFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
@@ -18,7 +18,7 @@ void EasyTreeGuiBusiness::generateEasyTreeFile(const QString &dirToTree, const Q
     QList<QString> *dirNamesEndsWithIgnoreList = new QList<QString>();
 
     //TODOoptional: make the GUI/etc utilize the file/folder full/endsWith filters (seen below as empty QStringLists)
-    m_EasyTree.generateTreeText(dirToTree, &easyTreeOutputFile, dirNamesToIgnore, fileNamesToIgnore, fileNamesEndWithIgnoreList, dirNamesEndsWithIgnoreList);
+    m_EasyTree.generateTreeText(dirToTree, &easyTreeOutputFile, calculateMd5Sums, dirNamesToIgnore, fileNamesToIgnore, fileNamesEndWithIgnoreList, dirNamesEndsWithIgnoreList);
 
     delete dirNamesToIgnore;
     delete fileNamesToIgnore;

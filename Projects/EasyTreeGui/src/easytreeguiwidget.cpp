@@ -27,6 +27,9 @@ EasyTreeGuiWidget::EasyTreeGuiWidget(QWidget *parent)
     easyTreeOutputFileHBoxLayout->addWidget(m_EasyTreeOutputFilePathBrowseButton, 0);
     m_Layout->addLayout(easyTreeOutputFileHBoxLayout);
 
+    m_CalculateHashesToo = new QCheckBox("Calculate MD5 Sums (Takes Much Longer)"); //TODOoptional: a checkbox for whether or not to calculate hashes, and two radios for md5/sha1
+    m_Layout->addWidget(m_CalculateHashesToo);
+
     m_GenerateEasyTreeFileButton = new QPushButton("Generate Tree File");
     m_Layout->addWidget(m_GenerateEasyTreeFileButton);
 
@@ -36,6 +39,8 @@ EasyTreeGuiWidget::EasyTreeGuiWidget(QWidget *parent)
     setLayout(m_Layout);
 
     handleD("Warning, placing the output file in the dir to tree will cause the output file to be tree'd... on next run. This particular usage of EasyTree is not set up to filter out that filename (though you can edit the source to do it pretty easily");
+    handleD("");
+    handleD("if you are calculating hashes of files, be sure to check stderr for read errors. they aren't sent to this debug window");
 
     connect(m_DirToGenerateEasyTreeForBrowseButton, SIGNAL(clicked()), this, SLOT(chooseDirToTree()));
     connect(m_EasyTreeOutputFilePathBrowseButton, SIGNAL(clicked()), this, SLOT(chooseTreeOutputFilePath()));
@@ -87,7 +92,7 @@ void EasyTreeGuiWidget::doGenerateEasyTreeFile()
         return;
     }
     handleD("gui is requesting that a tree file is generated");
-    emit generateEasyTreeFileRequested(m_DirToGenerateEasyTreeForLineEdit->text(), m_EasyTreeOutputFilePathLineEdit->text());
+    emit generateEasyTreeFileRequested(m_DirToGenerateEasyTreeForLineEdit->text(), m_EasyTreeOutputFilePathLineEdit->text(), m_CalculateHashesToo->isChecked());
 }
 void EasyTreeGuiWidget::handleEasyTreeGuiBusinessFinishedGeneratingEasyTreeFile()
 {
