@@ -1,0 +1,6 @@
+Virtualized OS within OS, shared functionality bridge (respiration, etc)
+
+
+We are a while true loop, physically. Our bodies and subconscience and all that firmware jazz: the host OS. Eventually, we virtualize another OS within it: our forelobe/logicOS. This is it's own while true loop..... and for some weird ass fucking reason it "turns off" once a day while we sleep. WTF?
+
+There are many aspects of our body which have shared functionality: we can use our LogicOS to shut off breathing... but we can also defer processing it to our subconscious.

@@ -1,0 +1,12 @@
+Stupid crypto export laws aside, the government is (most probably accidentally, as I'm not THAT much of a conspiracy theorist) forcing us to be insecure.
+
+1) Above average skilled people are forced to patent their ideas, otherwise minor (obvious to them, but non-obvious to average skilled people) improvements to the original idea can be patented. By patenting the original idea, you can make a copyleft-esq license grant (|| $10000000000000000000 license fee) giving royalty free usage so long as improvements (patented or otherwise) are also royalty free (fuck yea america -_-).
+
+2) Patents cost a "significant" amount of money.
+
+3) Free Software is not profitable, nor does it attempt to be. It has a much grander purpose: freedom of information. In order to pay for (2), you are forced into making proprietary software.
+
+4) Proprietary software is not and cannot be secure.
+
+
+This is a huge problem.
