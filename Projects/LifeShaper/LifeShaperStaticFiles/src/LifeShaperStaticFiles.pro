@@ -22,4 +22,5 @@ HEADERS  += lifeshaperstaticfileswidget.h \
     lifeshaperstaticfiles.h
 
 include(../../../../GloballySharedClasses/easytreeparser.pri)
+include(../../../../GloballySharedClasses/easytreehashitem.pri)
 include(../../../../GloballySharedClasses/objectonthreadhelper.pri)

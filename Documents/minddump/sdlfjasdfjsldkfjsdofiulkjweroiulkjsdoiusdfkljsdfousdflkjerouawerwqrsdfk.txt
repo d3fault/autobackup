@@ -1,0 +1,4 @@
+Royksopp says we are here to entertain: fuck that. I want to execute... in debug mode... with the highest level of verbosity. I acknowledge and capitalize on the fact that it is additionally entertainment.
+
+
+OT'ish: A politician runs in debug mode as well, but not for the same reasons (capitalists run in Release mode (time = money)). They go through the application step by step (requires debug mode), having teams of analysists tell them whether or not they should continue a path of execution of output a particular value. Their verbosity is low and approaches zero (the less you say, the less mistakes you make (the more perfect you appear)). Politicians aren't really people; they're a conglomerate puppet attempting to appeal to "the majority" of the general public.

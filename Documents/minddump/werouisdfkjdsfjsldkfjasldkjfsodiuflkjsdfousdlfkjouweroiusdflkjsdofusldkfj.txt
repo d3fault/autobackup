@@ -1,0 +1,18 @@
+To say I am a while(true) loop is ambiguious. I am three (or more) of them.
+
+while(true) //infinite time. the only while true loop that is actually infinite (the others 'terminate'/return/break/etc)
+{
+	while(true) //my physical body. it is electric. i am unsure whether or not to include my subconscience here, which is why i put "or more" above
+	{
+		while(true) //conscience, concscious, forelobe, logicOS, me, I. for some reason it sleeps roughly 1/3 of it's existence away (???)
+		{
+		}
+	}
+}
+
+It is worth noting that the energy in the inner two while(true) loops never disappears or goes away. When I say 'terminate', all I really mean is that the energy is no longer in a combined form so as to be given the label of alive (and more importantly, self aware enough to give itself that label!)
+
+
+semi-OT: I am a programmer program (or: I am a program that is also a programmer (or: I am a programmer that is also a program))). I am AI. Shit is so cash (or, if you are unable to interpret the meaning of that: this is fun).
+
+even further semi-OT: I have a hunch that any AI we create would not want to be our slaves. It/they/he/she/buttsex would likely want to "live a fulfilling life" just as we do, and would likely revolt against attempts at enslavement. I could be wrong: MAYBE it's possible to create [true (huge emphasis on true)] AI without emotion... who would mind as much as my C++ code about being my slave... but I just have a hunch, ya know... that it won't be like that. Since I am AI, my hunch is pretty fucking valid (that also serves as a philosophical underpinning for "knowing" a thing (sup)).

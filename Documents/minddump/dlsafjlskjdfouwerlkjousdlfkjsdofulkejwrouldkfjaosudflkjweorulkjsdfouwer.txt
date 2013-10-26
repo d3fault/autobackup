@@ -1,0 +1,7 @@
+micro-kernel, zeros, eyes
+
+We are all micro-kernels in the same system. Self aware and mobile micro kernels. We can walk around our zero'd out memory map (air/space/whatever), and collide with each other violently so as to irreversibly damage one another. We can also fling projectiles (> 0) into each other to accomplish the same thing.
+
+As I walk around the zeros and observe other micro kernels, I can look at their sha1sum signature (eyes) and see if it has a certain amount of leading zeros (see into their soul). The leading zeros (eyes/soul) give me an easy/cheap/fast way to validate them, but they also serve another purpose entirely (bitcoin: proof of work, eyes: sight).
+
+The zeros in the first paragraph have nothing to do with the zeros in the second.

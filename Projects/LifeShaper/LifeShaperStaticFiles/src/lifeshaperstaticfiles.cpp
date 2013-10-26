@@ -270,7 +270,7 @@ void LifeShaperStaticFiles::processCurrentEasyTreeHashLineRegularly()
         delete m_CurrentEasyTreeHashItem;
     }
 
-    m_CurrentEasyTreeHashItem = EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(m_CurrentLine, this);
+    m_CurrentEasyTreeHashItem = EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(m_CurrentLine, false, this); //TODOreq: had a segfault here because "this" was being passed in as 'true' (> 0) and yea... wtf? C++ static typing didn't save me :(. It was on devbox too fml! The TODOreq is to think of a solution to that. I added the second parameter (useLineOfText...) later after this code was written. I guess git submodules is one solution... but I'd like a better one (because what if I updated the git submodule?). I wonder if creating another method with the old (no boolean) parameters would allow the compiler to select the right one... or if it'd error out saying "ambiguious, idfk which to use". EITHER of those solutions would solve this problem... but it's still a weird mental note to have to make: "when adding (to old code) a boolean parameter in front of a QObject parent pointer, make another method with the old method signature (it can just call the regular one, supplying the default parameter etc)"
     emit nowProcessingEasyTreeHashItem(m_CurrentLine, m_CurrentEasyTreeHashItem->relativeFilePath(), m_CurrentEasyTreeHashItem->isDirectory(), m_CurrentEasyTreeHashItem->isDirectory() ? 0 : m_CurrentEasyTreeHashItem->fileSize(), m_CurrentEasyTreeHashItem->creationDateTime().toString(), m_CurrentEasyTreeHashItem->lastModifiedDateTime().toString());
 }
 void LifeShaperStaticFiles::processNextLineOrNotifyOfCompletion()
