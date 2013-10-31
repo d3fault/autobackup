@@ -1,0 +1,116 @@
+I know nothing
+^is known
+^^makes sentence false
+^^^makes sentence true
+--repeat toggling true to false to true to false infinitely
+
+//procedural pseudo-code, to be later transformed into compileable object oriented event driven code
+while(true)
+{
+	if(thingsKnown.size() > 0)
+	{
+		aThingIsKnown = true;
+	}
+	else
+	{
+		aThingIsKnown = false; //the thing known
+		thingsKnown.insert("nothing is known");
+	}
+
+	//old: hmm, where does aThingIsKnown get set to false? might require OO-ED design...
+	//hmm it doesn't have the infinite toggling effect like i wanted, it would get set to true once and that's it
+}
+
+
+so basically the entire paradox relies on the fact that the boolean must be either true or false, and in either case makes something "known"
+
+the existence of the boolean makes SOMETHING known
+
+so our own analysis of whether or not things are known, is proof that something is known (either "something is known" is known or "nothing is known" is known -- there is no in between, logically/mathematically)
+
+
+
+compileable attempt:
+
+
+#define THE_CLAIM "I know nothing"
+
+int main()
+{
+	QCoreApplication a;
+
+	Brain b;
+	//Q_UNUSED(b) //lol'd hard when writing this line, it just sounds funny when you read it
+	b.makeClaim(THE_CLAIM);
+
+	return a.exec();
+}
+
+class Brain
+{
+public:
+	void makeClaim(QString aClaim)
+	{
+		if(isTrue(aClaim)
+		{
+			m_ThingsKnown.append(aClaim);
+		
+			//new information makes us re-scan everything known to verify validity, because new information can contradict old information (such is the scientific process)
+			int thingsKnownLength = m_ThingsKnown.length();
+			for(int i = 0; i < thingsKnownLength; ++i)
+			{
+				if(!isTrue(m_ThingsKnown.at(i))
+				{
+					removeThingKnown(i);
+				}
+			}
+		}
+	}
+private: //protected ;-)?
+	QList<QString> m_ThingsKnown;
+
+	void removeThingKnown(int index)
+	{
+		m_ThingsKnown.removeAt(index);
+		
+		//special hack to make shit work :-P
+		if(m_ThingsKnown.size() < 1)
+		{
+			makeClaim(THE_CLAIM);
+		}
+	}
+	
+	//hacky as fuck, but serves our purpose!
+	bool isTrue(QString claim)
+	{
+		switch(claim)
+		{
+			case THE_CLAIM:
+			{
+				if(m_ThingsKnown.size() > 0)
+				{
+					return false;
+				}
+				else
+				{
+					return true;
+				}
+			}			
+			break;
+
+			//presumably other fact checking logic for infinite other claims could go here...
+
+			default:
+				return false; //tbh idk whether to return false or true for default, but false seems like the safer (non religious) option. AND ALSO: this specific app will not run into this chunk of code so it does not matter
+			break;
+		}
+		return false; //same as "default:" switch case
+	}
+};
+
+
+
+
+There, that should compile and I'm quite proud of it, but it doesn't have the object oriented and event driven nature I desire. I think (makeClaim("I think") :-P) this one would be infinitely recursive until the stack runs out of memory (a properly designed one could/will run forever).
+
+Basically I just need to refactor it to use signals/slots and probably forced queued connections, for it to be event driven. This is fun! Time to open Qt Creator :-)

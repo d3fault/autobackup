@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386042869
+Documents/minddump/:1386042967
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386042869
+Documents/minddump/dreams/:1386042967
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -604,6 +604,7 @@ Documents/minddump/dsflkjsdflkjsdflsdfouwerljsdoufdlkjsd.txt:1356168561
 Documents/minddump/dsflkjsdlfkjsdlfkjsdlfjsdlfkjsdlfkjsdlkfjouwelrkjsdofusdlfkjsdofu.txt:1381113317
 Documents/minddump/dsflkjsdlkfjsdaofiusldjfosurweouwedsfk.txt:1359511318
 Documents/minddump/dsflkjwaerousflkjawieryasfweoriusdkfj.txt:1342605985
+Documents/minddump/dsflksdjflkjsdfousdlfkjsoduflksjdfousdlfkjsdofusldkjfouwerlkjoudsflkjasdf.txt:1383121891
 Documents/minddump/dsflksdjflksjdoiuewrlkjfouwerlkj.txt:1355307470
 Documents/minddump/dsflksjdflkjsdoulkjweroulksajfosiduflkjweorulkjsdfousdlfkj.txt:1371906143
 Documents/minddump/dsflsdkjflskdajofwuierlkjsdafousdflkjweorul.txt:1353779490
@@ -615,6 +616,7 @@ Documents/minddump/dsfsdlfkjsouflwjkeourlkjsdfousdlfjosdfulkjgasdfou.txt:1363910
 Documents/minddump/dsfsdlkfjsldkjfoisuldkjfoasdiuflsdkjfoisduflkjsdofuwolkjsdfosdufl.txt:1370567434
 Documents/minddump/dsfsladkfjsldkjfouwerlkjousdflkjsdfoulkwejrousdlkfj.txt:1371977866
 Documents/minddump/dsfwerdslsdjfsuweroiusdljfdsl.txt:1355715217
+Documents/minddump/dskfjalskdjflksdjflksjdflkjsdflkjsdlfkjsdfouwelrjousdfkjsdfljsdfou.txt:1383162646
 Documents/minddump/dskljflkasjdflkjsdlkfjsdlkfjhgsdofiuwerlkjsdfouisdf.txt:1363114608
 Documents/minddump/dslafjkasdlfkjasdofulkwejrousdlkfjosduflskdfjosdfulsdjfosudflk.txt:1377210943
 Documents/minddump/dslafjksdalkfjasdofulsdjfosaudflsajdfowuerlkjasdfoulkr.txt:1353409296
@@ -957,6 +959,7 @@ Documents/minddump/ldfkjasdkfljfadgtwerfdsfgdsadfoiuewlkjfousdflkj.txt:135898003
 Documents/minddump/ldfksdflkjsdaklfjslkdaou.txt:1353788927
 Documents/minddump/ldjsfaosuflkjworaweuraosfusadflkjwoaerusldfkj.txt:1334816547
 Documents/minddump/ldkjafdaslfjsadofulwejroudflkjasdofuwjdlkrweuoi.txt:1353055523
+Documents/minddump/ldksjflksdjfoulerjoudslfjsdofuilkjweroiuldskfjasoduflkewr.txt:1383162997
 Documents/minddump/ldsafjasoduflawjrafkdhasfdourljsafweorusdflkj.txt:1345062505
 Documents/minddump/ldsfjlasdjflkasdjflksdjafouwerljsdofusldkfjoiweurlkjdsfoiusdf.txt:1375516054
 Documents/minddump/ldskfjsdlfkjsdflkjasdfsdlfjouwerlkjfosudflaksdjfwoyrlworeiuasldfkj.txt:1349796937
@@ -1072,10 +1075,12 @@ Documents/minddump/lskaflksdfjksdfoulekrjoufsdlkjsdfouewrlkjfdoiul.txt:135838015
 Documents/minddump/lskdafjlsdkfjsdoafusdalkfjsodfulksdfjousdflkjsdfousdfljsdofuljsdfou.txt:1377207554
 Documents/minddump/lskdjfksldjfoueroiuwerlkjfodsusdlfkjoiu.txt:1355650219
 Documents/minddump/lskdjflkjsdfouweiorousdfksdlfkjoiuwkerlkjsdfoiusdflk.txt:1364510243
+Documents/minddump/lskdjflksjdflskjdfouwelkjroiusldkjfosduflksajdfouwelkjrousdflkjsdfou.txt:1383122839
 Documents/minddump/lskdjflksjdfsdofulsdjfosduflkjsdfoulkjweroulkjsdfoiuwkeruoiulsfdjsdlkfjsdou.txt:1370671695
 Documents/minddump/lskfjasfopwieruslafkjsdfoiuwerkldsfjoiu.txt:1339487667
 Documents/minddump/lskfjslkfjskdljfoiuwerlkjsdfoukjlkwerj.txt:1354931147
 Documents/minddump/lskjdfkljslkfjsdfoudslkfjsdofuisdlfkjsdfouewrlkjsdf.txt:1359960295
+Documents/minddump/lskjfdlakjsdflksajdfosuaflkjsdofusdlfjouwerlkjsdfousflkjdsfklj.txt:1383121081
 Documents/minddump/lskjfdlksjdfosdufljkdfosufljasfduolkwjeroiusdfkjs.txt:1368536860
 Documents/minddump/lskjflkjsdfosduflkjsdfousdflkjsdofuilkjwerousf.txt:1370233583
 Documents/minddump/lskjflkjsfljksflkjsdfljksdfeorulsaf.txt:1359966918
@@ -1423,6 +1428,7 @@ Documents/minddump/sdlkfjsdlfjouwerljsadfklsdjfoul.txt:1355649486
 Documents/minddump/sdlkfjsdlfjsdlkjfoweuroeiu.txt:1355474510
 Documents/minddump/sdlkfjsdlkjflksdjflksdjfj.txt:1355730417
 Documents/minddump/sdlkfjslfjsldfjoweurljsfdousdlfjdsofusdlfjsdofiulsdfjsoduifsldkfj.txt:1381309721
+Documents/minddump/sdlkfjslkdjflksdjfouwelkjrousdflkjsdofusdlkfjsoduflskdjfouwer.txt:1383121675
 Documents/minddump/sdlkjfasdofiuasdofjasdlfkjasdofuapr.txt:1328223293
 Documents/minddump/sdlkjflksjfosudfkjweorulkjsfdoudfsljewroulksjdfousaldfjosduflkjweoru.txt:1368533844
 Documents/minddump/sdlkjfsldkjfosdufosdulskdjfosulkjdfosdufslkjouwerkljsdfousfdl.txt:1364511063
@@ -1509,6 +1515,7 @@ Documents/minddump/slfdkjaslkdfjadslfjsodfulsdakjfosduflkajsdfousdlfkjasdfl.txt:
 Documents/minddump/slfkjaslkfjaslfdjaslfdjksalfjksdofusldfjosduflsdjfousdflkjsflksdjf.txt:1373938250
 Documents/minddump/slfkjsadfousdlfjouwerlkjousdlfjousdfljouiwerljsf.txt:1370305833
 Documents/minddump/slfkjsalkfjlskjfsdofusadlfkjsodauflsdkjfouljourelskdfjlaskdfjasdlfk.txt:1374054252
+Documents/minddump/sljdkflksjdflkjsdfouljwerodsfasdfusldfjaljsdflkjsadfouewrlkdsf.txt:1383161980
 Documents/minddump/slkdfjslkdjfskdjfkjsdfkljsdfkljsdkfljuwiokljsfsdfkl.txt:1362494365
 Documents/minddump/slkdjflskdjflkjsdfosdfuljkwerjkdfsoiusdelkj.txt:1360823579
 Documents/minddump/slkdjflskjdfsdoifuwlerkjsdafousdlfkjweroui.txt:1358069286
@@ -1544,6 +1551,7 @@ Documents/minddump/the.best.insult.ever.rofl.sadlfkjsdlkfjouilkwejrousdfkjsdfoiu
 Documents/minddump/the.desire.to.gitsync.grows.correlated.to.number.of.unsyncd.docs.txt:1322065834
 Documents/minddump/the.dht.problem.simlified.aldjfasdlfjweoriualsfdjkaoriulkdsf.txt:1339759548
 Documents/minddump/the.immortality.introcellular.nanomachine.txt:1322605514
+Documents/minddump/the.last.sentence.sucks.asldfkjweorusldfjosadufsdfjouwerlkjdsofuasdfl.txt:1383121414
 Documents/minddump/the.meaning.of.life.adlsfjasdfuwaoerusdlfkjasd.txt:1331249924
 Documents/minddump/then.than.sldkfjsadlkjfoweuralkjfsdfjsdlkfssssdf.txt:1337110913
 Documents/minddump/there.is.a.tangent.in.here.that.i.intended.to.finish.but.you.can.figure.it.out.txt:1323589274
@@ -1575,6 +1583,7 @@ Documents/minddump/weroiuasfdlkjweroiuasdflkjwrasfdlkjasdflkasjfdoiuwrelkjsd.txt
 Documents/minddump/weroiusdfaksldjflksjdflkdjsflkjsdflksjdfouewlrkjoudslfkjsodafusldkfj.txt:1382547781
 Documents/minddump/werouisdfkjdsfjsldkfjasldkjfsodiuflkjsdfousdlfkjouweroiusdflkjsdofusldkfj.txt:1382774689
 Documents/minddump/werouowriujsdljsdalfjsaldkjfowuerlkjsdfoulkj.txt:1355469435
+Documents/minddump/weruoiufsddslfjasldkjfsodfulkjwerousldfjosduflkewrousdlfkj.txt:1383162107
 Documents/minddump/when.i.said.too.much.to.google.in.person.lol.txt:1323421476
 Documents/minddump/when.pi.is.compromised.you.need.to.reflash.arduino.paranoid.txt:1338898482
 Documents/minddump/where.i.am.and.what.i.am.doing.2011.12.12-12.38.am.txt:1323675512
@@ -1675,7 +1684,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386042869
+Pictures/:1386042967
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -3143,7 +3152,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386042869
+Projects/libAvGraphicsItem2/design/:1386042967
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673
@@ -3179,7 +3188,7 @@ Projects/libAvGraphicsItem3/src/frontend/videoplayerwidget.cpp:1327006070
 Projects/libAvGraphicsItem3/src/frontend/videoplayerwidget.h:1327005797
 Projects/libAvGraphicsItem3/src/libAvGraphicsItem3.pro:1327004311
 Projects/libAvGraphicsItem3/src/main.cpp:1327003410
-Solutions/:1371117445
+Solutions/:1383177147
 Solutions/Anonymous Bitcoin Computing/:1334997525
 Solutions/Anonymous Bitcoin Computing/design/:1360590321
 Solutions/Anonymous Bitcoin Computing/design/AppDb.will.push.all.updates.to.every.Wt.Front.End.this.may.need.to.change.later.txt:1334343874
@@ -3323,6 +3332,17 @@ Solutions/BlueBox/Bitcoin Ad Agency/:1344096033
 Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
+Solutions/NothingIsKnownParadox/:1383177218
+Solutions/NothingIsKnownParadox/design/:1383183503
+Solutions/NothingIsKnownParadox/design/derived.theory.sdafljsdourelkjoiusdflkjsadfoulkwejroudlskfjsdafou.txt:1383183503
+Solutions/NothingIsKnownParadox/design/initial.idea.sldfjsldafjsdflk.txt:1383177212
+Solutions/NothingIsKnownParadox/src/:1383183835
+Solutions/NothingIsKnownParadox/src/NothingIsKnownParadox.pro:1383177500
+Solutions/NothingIsKnownParadox/src/brain.cpp:1383183831
+Solutions/NothingIsKnownParadox/src/brain.h:1383183026
+Solutions/NothingIsKnownParadox/src/main.cpp:1383183831
+Solutions/NothingIsKnownParadox/src/nothingisknownparadox.cpp:1383180873
+Solutions/NothingIsKnownParadox/src/nothingisknownparadox.h:1383180866
 Solutions/d3faultPublicLicense/:1358082091
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/launchASEPbecauseRedAlert/:1380319654
@@ -3390,7 +3410,7 @@ autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
-autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1382646628
+autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1383127931
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
 autobackupScripts/linux/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975

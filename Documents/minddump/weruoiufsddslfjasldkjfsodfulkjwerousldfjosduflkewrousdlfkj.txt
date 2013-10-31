@@ -1,0 +1,5 @@
+Google's Contradictory Net Neutrality Stance
+
+Google claims to be in favor of net neutrality, but then for their Fiber service in KCMO, they say "you can run a gaming server but not a web server".
+
+Sure, their reasons are easy as fuck to understand: money. But then, that's the very argument of those against net neutrality.
