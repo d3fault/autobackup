@@ -1,0 +1,29 @@
+GottaHackEmAll.com
+
+was surprised as fuck it was open, so I bought it :-P
+
+I was really tempted to put the following up as the index, but I don't have a web host atm so lol.
+
+
+Hacker (n): a being who curiously and playfully studies and improves a system.
+
+while(true)
+{
+	foreach(Universe universe in Existence::instance()->universes())
+	{
+		foreach(System system in universe.systems())
+		{
+			system.hack();
+		}
+	}
+}
+
+
+
+I thought about making the method call "hack" be red and a hyperlink to [????]. Maybe perhaps my own launch page, idk. I could do a whole "themed launch" using that domain if I wanted/willed.
+
+
+Also, Bash should be the name/hacker/whatever associated with the domain. GET IT? HURRRR
+
+
+I, when thinking it up, only had "Universe universes in Universes" (not showing how Unvierses gets populated (and hell still doesn't (just shows who owns them))). I then while writing it had: Existence.universes() ..... but finally decided to make Existence a Singleton :-P...
