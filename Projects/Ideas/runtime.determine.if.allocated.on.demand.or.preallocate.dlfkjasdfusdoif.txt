@@ -1,0 +1,3 @@
+It would be real fucken neato if you could use either a compiler switch or even a runttime switch to determine whether or not memory is dynamically/lazy-allocated/on-demand vs. pre-allocated at application launch. The first would be for regular OS usage on desktops etc, and the second would be for RTOS and embedded systems with limited resources. pre-allocating makes it so the app will tell you right away whether or not it doesn't have enough memory to perform all of it's functions.
+
+This applies to visual widgets memory allocations, and also buffers used in backend/business stuff.
