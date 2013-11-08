@@ -1,0 +1,15 @@
+A web browser that doesn't render ANY html, and especially doesn't execute JavaScript. It can show pictures/video though of course.
+
+For a given domain/url (urls of same domain could be bundled, or instead just hot URLs, or no bulding, who cares), it looks up "parsing rules", which are hopefully on a distributed censor proof network (for obvious reasons). The browser then parses the HTML and displays it using like fucking QWidgets, ya know? Even if it parsed it and re-html'ized for use in QWebView, that would still be better.
+
+Fuck all the themes, fuck all the ads, fuck all the bullshit. CONTENT ONLY.
+
+
+Two "additional" ideas go alongside this:
+1) For my own site(s), I should publish via stylized RSS -- to make this "parsing content" much easier
+2) A tool/MODE where, if a domain/url hasn't been given "parsing rules" (or if rules are outdated (which they probably would be frequently as cat and mouse game (fuck yea proper crowd sourcing (kevin rose thinks it just means profiting off the crowd)))) yet, the user can use like WYSIWYG or click-dragging with fancy "what html element is under the mouse at this point" with "list detection" capabilities and shit and they could also/additionally MANUALLY write the parsing if needed/preferred.
+
+The execution of the parsing rules should not be javascript (but I guess could if neeeeeeeeded), but however the tool/MODE in (2) would certainly need to render HTML and (maybe) execute JavaScript (just until the rules are created/updated). Ideally during normal operations the web browser and displaying of content is entirely native. What the parsing rules are is up for debate: they could be JIT/cached C++ virtual functions (woot), or they could just be "basic string based C++ instructions" (binary encoded because xml/json waste bandwidth)... but if they are the latter then you don't have "entirely native". STILL, better to have a custom/minimal parsing format than to render html and execute javascript
+
+
+A lot of javascript heavy sites wouldn't work. Who cares..

@@ -35,7 +35,7 @@ and in the cases i do so many enters, i should do like \n.7 <-- indicates 7 new 
 also, make sure you make it knowable by teh reader (lol it's usually a parser) whenever you actually write the word "\n", like in this doc for example...
 
 
-since the idiots charge by page, i should never actually put newlines. and new docs just get a special splitter too rofl.
+since lulu charges by page, i should never actually put newlines. and new docs just get a special splitter too rofl.
 
 
 
@@ -45,9 +45,9 @@ and i still don't know what ima do with teh ones i want to keep private... if i 
 also, in teh beginning, a "how to read this book" guide :-P
 
 
-minimizing costs through lulu :-P
+minimizing costs through book lulu :-P
 
-dumbasses don't charge by ink/character (even 'character' could be minimized)
+they don't charge by ink/character (even 'character' could be minimized)
 o costs less than d
 
 

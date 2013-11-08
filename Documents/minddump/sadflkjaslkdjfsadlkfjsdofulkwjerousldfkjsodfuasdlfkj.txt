@@ -1,0 +1,5 @@
+-Functional
+ is an order of magnitude less complex than:
+--Functional most of the time (robust, doesn't crash on invalid input, etc)
+  is an order of magnitude less complex than:
+---Functional and secure

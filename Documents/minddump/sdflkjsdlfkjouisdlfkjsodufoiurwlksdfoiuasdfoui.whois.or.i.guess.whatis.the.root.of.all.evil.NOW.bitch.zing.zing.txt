@@ -1,0 +1,4 @@
+Hah!
+
+-Premature optimization is the root of all evil.
+-Not optimizing [soon] enough will cause death/etc from resource depletion.

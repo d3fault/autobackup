@@ -1,0 +1,8 @@
+When having a video conference with 4 (N really) people:
+
+a) A button press that adds you to a fifo queue for people to speak (you could just "respect" it, or it could be enforced in software via mute)
+
+b) Speak "your idea" right away because you might forget it by the time your turn comes up in the queue and basically you listen to others only relative to "if they were a response to something you or someone said" (so you can still listen in the right "order per se")
+
+
+I lean towards (b), but yea I mean if N people are conferencing 24/7/death then when the fuck would any of them ever listen to each other :-) <-- is still a problem (who cares :-P)
