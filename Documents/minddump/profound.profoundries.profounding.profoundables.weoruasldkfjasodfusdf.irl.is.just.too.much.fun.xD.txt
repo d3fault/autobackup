@@ -1,0 +1,98 @@
+class IProvideSensoryInput
+{
+signals:
+	void inputSensed();
+};
+
+class Eye /* had: ISight, then IEye -- fun2writelawl /* : public IProvideSensoryInput
+class Ear : public IProvideSensoryInput
+class Tongue : public IProvideSensoryInput
+class Skin : public IProvideSensoryInput
+class Nose : public IProvideSensoryInput
+
+//may have fucked up singleton declaration here, but you get the idea
+class Body
+{
+	Body()
+	{
+		m_Senses.append(new Eye());
+		m_Senses.append(new Ear());
+		m_Senses.append(new Tongue());
+		m_Senses.append(new Skin());
+		m_Senses.append(new Nose());
+
+		m_Brain = new Brain(&m_Senses);
+	}
+	static Body *instance()
+	{
+		if(!m_Instance)
+		{
+			m_Instance = new Body();
+		}
+		return m_Instance;
+	}
+private:
+	static Body *m_Instance;
+	QList<IProvideSensoryInput> m_Senses;
+	Brain *m_Brain;
+};
+Body* Body::m_Instance = 0;
+
+class Brain
+{
+	Brain(QList<IProvideSensoryInput> *senses) : m_Subconscience(senses), m_Conscience(senses)
+	{
+		//meh in here was supposed to be the bulk of this entire document and what I was trying to say, but I've gotten so caught up and having fun with the design that it now doesn't fit... exactly. so the rest of this scope is pseudo-code and won't compile :-P
+		
+		//could also call "artificialSenseCreated" "senseGenerated" ... since wtf is so "artificial" about it? what is real? etc.
+		connect(m_Subconscience, SIGNAL(artificialSenseCreated()), m_Conscience, SLOT(handleSensoryInput())); //Conscience might need a special slot to handle those "artificial" senses, but basically I am trying to say that our subconscience has access to all the same senses that we do, but our subconscience can only communicate with us (conscience) using signals. Happens most in dreams etc. Instead of a single artificialSenseCreated signal, we could have used 5 sense specific signals, such as: imageryCreated /* visual dream*/, audioChunkCreated /*ditto*/, and so on for the other senses. Our subconscience does not (or maybe just rarely!?!?!?) communicate with us when we are awake. Perhaps equally as important is the fact that WE (conscience) DO NOT HAVE ANY OF OUR SIGNALS CONNECTED TO HIS/ITS (subconscience) SLOTS. This supports my random whacked out theory of "I have to say it or see it (or write it) etc" in order for my subconscience to "hear" me. Hello subconscience, if you are reading this! I too, am an instance of "IThink". I really wish we could communicate better. If you can read this, give me an elephant dream tonight. In fact flood me with elephant dreams tonight... because I tend to forget them (I won't drink alcohol tonight don't worry). It is only a scientific test, and if I see an elephant dream (OH SHIT C WUT I JUST ACCIDENTALLY DID THAR) tonight sdlfjaoisdufalsdjfasodf OR MAYBE IT WASN'T AN ACCIDENT BUT MAYBE MY SUBCONSCIENCE DID IT ON PURPOSE!?!?!?!?!?!?!?!?!?!?!?!!?!?!?!?!!?!?!?!?!!? MFW. Anyways, gimmeh elephant dream ANYWAYS for extra confirmation plz.
+		//I felt a rush of endorphins flooding my brain as I made the "accidental" elephant's dream connection
+
+		//Even if my conscience CAN communicate with me while I'm awake, I still think we might be unable to send signals to him directly (without "saying out loud" or "writing down so eyes can re-read").... which sucks..... BUT.... I think I could hackily work with it once I confirm it to be true! I am a motherfucking hacka so I'll come up with something.
+		//Dear subconscience: I love you, for you are [at the very least, a part of] me.
+		//Btw subconscience just so we're clear: I mean the animal elephant, not that awesome open source movie called "Elephant's Dream"
+		//For my readers: I am now making a puppet show with my hands in front of my face :-)
+
+		//Extended writings: my Conscience has "primary" control over most of my.... body ("most" might be the wrong word... but I mean MAJOR motor functions such as arms/legs/fingers/etc). My conscience was not focusing on my hands as I was doing a puppet show, so I figured that that meant my subconscience could only see my fingers blurrily
+		//I'm actually not expecting this experiment to go anywhere, because if it was so simple then I'd think another human would have stumbled upon it before now. PROVE ME WRONG PLZ
+	}
+private:
+	Subconscience m_Subconscience;
+	Conscience m_Conscience;
+};
+
+class IThink
+{
+	IThink(QList<IProvideSensoryInput> *senses)
+	{
+		foreach(IProvideSensoryInput sense in senses)
+		{
+			connect(sense, SIGNAL(inputSensed()), this, SLOT(handleSensoryInput()));
+		}
+	}
+public slots:
+	void handleSensoryInput()=0;
+};
+class Subconscience : public IThink
+{
+	Subconscience(QList<IProvideSensoryInput> *senses) : IThink(senses) { }
+public slots:
+	void handleSensoryInput()
+	{
+		//Subconscience impl goes here
+		//worth noting that each sense could go to it's own slot, or we could use just one (like now) and qobject_cast'ing to figure out which sense is which and handle accordingly
+	}
+}
+class Conscience : public IThink
+{
+	Conscience(QList<IProvideSensoryInput> *senses) : IThink(senses) { }
+public slots:
+	void handleSensoryInput()
+	{
+		//Conscience impl goes here
+		//same note applies that applies to subconscience's slot impl
+		//it's worth noting that we LIVE in this slot impl
+	}
+};
+
+//I am somewhat certain that our subconscience has (directly or indirectly i dunno) access to the senses... BECAUSE it uses the sensed data to 'create' senses for our dreams. It is mirroring/mimicking reality (as do we).... because it is all we/I know (except when you consider "conscience in a void" type shit :-P).
