@@ -7,11 +7,12 @@ QString EasyTreeHashItem::m_TempStringToInsertForEscapedColons = "ASDF";
 EasyTreeHashItem::EasyTreeHashItem(QObject *parent)
     : QObject(parent), m_AbsoluteReplacementFilePath("")
 { }
-EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QString &lineOfText, bool lineOfTextSuppliesAbsoluteReplacementFilePath, QObject *parent)
+EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QString &lineOfText, bool lineOfTextSuppliesAbsoluteReplacementFilePath, bool lineHasCreationDate, QObject *parent)
 {
     //TODOrobust: Input sanitization. For example, splitAtColons.takeFirst() requires that > 0 entries exist
-
     EasyTreeHashItem *ret = new EasyTreeHashItem(parent);
+
+    ret->setHasCreationDateTime(lineHasCreationDate);
 
     bool usingTempStringForEscapedColons = false;
     QString lineOfTextModifiable = lineOfText;
@@ -67,17 +68,19 @@ EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QStr
         ++dynamicIndexForFilesAndDirectories;
     }
 
-    QByteArray creationDateTimeQint64ReadProperlyArray(splitAtColons.at(dynamicIndexForFilesAndDirectories).toLatin1()); //for directories creation date is index 1, for files it's 2
-    QBuffer creationDateTimeQint64ReadProperlyBuffer(&creationDateTimeQint64ReadProperlyArray);
-    creationDateTimeQint64ReadProperlyBuffer.open(QIODevice::ReadOnly | QIODevice::Text);
-    QTextStream creationDateTimeQint64ReadProperlyTextStream(&creationDateTimeQint64ReadProperlyBuffer);
-    qint64 creationDateTimeAsQint64;
-    creationDateTimeQint64ReadProperlyTextStream >> creationDateTimeAsQint64;
+    if(lineHasCreationDate)
+    {
+        QByteArray creationDateTimeQint64ReadProperlyArray(splitAtColons.at(dynamicIndexForFilesAndDirectories).toLatin1()); //for directories creation date is index 1, for files it's 2
+        QBuffer creationDateTimeQint64ReadProperlyBuffer(&creationDateTimeQint64ReadProperlyArray);
+        creationDateTimeQint64ReadProperlyBuffer.open(QIODevice::ReadOnly | QIODevice::Text);
+        QTextStream creationDateTimeQint64ReadProperlyTextStream(&creationDateTimeQint64ReadProperlyBuffer);
+        qint64 creationDateTimeAsQint64;
+        creationDateTimeQint64ReadProperlyTextStream >> creationDateTimeAsQint64;
 
-    ret->setCreationDateTime(QDateTime::fromMSecsSinceEpoch(creationDateTimeAsQint64*1000));
+        ret->setCreationDateTime(QDateTime::fromMSecsSinceEpoch(creationDateTimeAsQint64*1000));
 
-
-    ++dynamicIndexForFilesAndDirectories;
+        ++dynamicIndexForFilesAndDirectories;
+    }
 
     QByteArray lastModifiedDateTimeQint64ReadProperlyArray(splitAtColons.at(dynamicIndexForFilesAndDirectories).toLatin1());
     QBuffer lastModifiedDateTimeQint64ReadProperlyBuffer(&lastModifiedDateTimeQint64ReadProperlyArray);
@@ -100,6 +103,10 @@ EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QStr
     }
     return ret;
 }
+EasyTreeHashItem *EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(const QString &lineOfText, bool lineOfTextSuppliesAbsoluteReplacementFilePath, QObject *parent)
+{
+    return newEasyTreeHashItemFromLineOfText(lineOfText, lineOfTextSuppliesAbsoluteReplacementFilePath, true, parent);
+}
 QString EasyTreeHashItem::relativeFilePath()
 {
     return m_RelativeFilePath;
@@ -111,6 +118,10 @@ bool EasyTreeHashItem::isDirectory()
 qint64 EasyTreeHashItem::fileSize()
 {
     return m_FileSize;
+}
+bool EasyTreeHashItem::hasCreationDateTime()
+{
+    return m_HasCreationDateTime;
 }
 QDateTime EasyTreeHashItem::creationDateTime()
 {
@@ -163,6 +174,10 @@ void EasyTreeHashItem::setIsDirectory(bool isDirectory)
 void EasyTreeHashItem::setFileSize(qint64 fileSize)
 {
     m_FileSize = fileSize;
+}
+void EasyTreeHashItem::setHasCreationDateTime(bool hasCreationDateTime)
+{
+    m_HasCreationDateTime = hasCreationDateTime;
 }
 void EasyTreeHashItem::setCreationDateTime(const QDateTime &creationDateTime)
 {

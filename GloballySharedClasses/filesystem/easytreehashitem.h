@@ -14,10 +14,12 @@ class EasyTreeHashItem : public QObject
     Q_OBJECT
 public:
     EasyTreeHashItem(QObject *parent = 0);
-    static EasyTreeHashItem *newEasyTreeHashItemFromLineOfText(const QString &lineOfText, bool lineSuppliesReplacement = false, QObject *parent = 0); //works with files, directories, and with or without hashes -- and a mode switch bool to process replacement formatted entries (the replacement is the first part of the entry)
+    static EasyTreeHashItem *newEasyTreeHashItemFromLineOfText(const QString &lineOfText, bool lineOfTextSuppliesAbsoluteReplacementFilePath = false, QObject *parent = 0);
+    static EasyTreeHashItem *newEasyTreeHashItemFromLineOfText(const QString &lineOfText, bool lineOfTextSuppliesAbsoluteReplacementFilePath = false, bool lineHasCreationDate = true, QObject *parent = 0); //works with files, directories, and with or without hashes -- and a mode switch bool to process replacement formatted entries (the replacement is the first part of the entry)
     QString relativeFilePath();
     bool isDirectory();
     qint64 fileSize();
+    bool hasCreationDateTime(); //this is pretty worthless since we still have to pass in the bool to our parser :-P
     QDateTime creationDateTime();
     QDateTime lastModifiedDateTime();
     bool hasHash();
@@ -29,6 +31,7 @@ public:
     void setRelativeFilePath(const QString &relativeFilePath);
     void setIsDirectory(bool isDirectory);
     void setFileSize(qint64 fileSize);
+    void setHasCreationDateTime(bool hasCreationDateTime);
     void setCreationDateTime(const QDateTime &creationDateTime);
     void setLastModifiedDateTime(const QDateTime &lastModifiedDateTime);
     void setHasHash(bool hasHash);
@@ -39,6 +42,7 @@ private:
     QString m_RelativeFilePath;
     bool m_IsDirectory;
     qint64 m_FileSize;
+    bool m_HasCreationDateTime;
     QDateTime m_CreationDateTime;
     QDateTime m_LastModifiedDateTime;
     bool m_HasHash;
