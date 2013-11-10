@@ -1,0 +1,54 @@
+This surely isn't the first time I've thought of this project. I'm kinda glad I'm being forced to write it... because I like having my timestamps in order (if it wasn't obvious ;-P). This + heirarchy molester are two things I've been writing/procrastinating for a really long time (I'm still pissed I never worked out a solution that I liked for keeping creation timestamps... but eh modifications only are good enough anyways (wtf is this ctime bullshit? noobs)...).
+
+I actually quite enjoyed writing Heirarchy Molester and am "eh pumped" about this one too (this one has stupid weird hacky sideways complexity (special opt-in hacks), but isn't THAT complex overall lawl). What I mean is it's nice to just be writing simple/functional code again. Heirarchy Molester was simple as fuck and that's why I enjoyed it. Small and saw results from it. I freaking love coding :(.
+
+Inputs:
+1) List of filepaths to censor
+2) Git dir to censor (can be bare or regular, since we clone from it (see 4))
+3) Censored git dir (checkbox for bare or not (or whatever i decide to hard code when the time comes xD))
+4) Optional working dir (so we can use tmpfs/etc)
+
+TODOreq: the debug window should say "compare 'git log filepath' to 'git log --follow filepath' in the repo to be censored and make sure they have the same amount of relevant commits. if they don't there was a rename and this censorship machine doesn't handle renames" <- i already did this for my list of censored materials (like 5-6 docs :-P) and none were renamed so fuggit KISS/etc. we could, for example, programmatically verify that the follow/no-follow commit counts are the same...
+
+
+//WORKING DIR DOES NOT EVER CONTAIN ".git" folder
+
+
+Core Functionality Pseudo-Code:
+foreach(git log output commits)
+{
+	0) checkout teh filez //use --work-tree=$WORK_TREE and --git-dir=$GIT_DIR to checkout to working dir
+	
+	2) ensure all censored filepaths are either non-existent (not created yet), or remove them if they are there
+	
+	
+	4) git add/commit //use old commit datetime + old commit message, and --work-tree=$WORK_TREE and --git-dir=$GIT_DIR to add/commit from working dir
+}
+
+
+Special Opt-In (Checkbox) Hack #1 -- Molest/Regenerate(censored paths gone) Easy Tree File:
+foreach(git log output commits) //the same loop as above, but these hacks will be in a special bool hack scope :) -- basically i want the tool to function as a unroll-reroll censorship machine without all this fancy molestation and easy tree writing that is specific to me and will probably never be used again
+{
+	1) molest the heirachy using checked out easy tree file //this goes before (2) "ensure" above so that we don't have to 'skip' touching the non-existent censored files, re-creating them empty (just adds unnecessary complications -- but my impulse was to put it after "ensure")
+	
+	//we go out of hack scope to do (2) and then re-enter it for (3). HACK SCOPE. I like the sound of it.
+
+	3) remove old/outdated easy tree file, create new easy tree file for the checked out and molested heirarchy
+	4) touch new easy tree file to use the datetime from the commit
+}
+
+
+Special Opt-In (Checkbox) Hack #2 -- [dirstructure.txt (xml) becomes .dirstructure.txt.old.from.tree.command and ceases to change, including the fact that dirstructure.txt gets needlessly entirely rewritten entirely in some commits (ffffffuck)], [one commit in between dirstructure->quickDirty with no "timestamp file"], [.quickDirtyAutoBackupHalperDirStructure introduced, including the fact that it gets needlessly entirely rewritten in some commits (where was heirarchy molester when i needed it :-/?)]
+foreach(git log output commit) //ditto as Hack #1, but it's own hack scope
+{
+	my head hurts, this is too many hacks at once.... <- vs. i really want my minddump book to be in chronological order
+}
+
+
+RANDOM IDEA: if any two files have the same modification timestamp, then we PROBABLY encountered a case/commit where the timestamp file was needlessly rewritten. Because it's ridiculously unlikely that two files would have the same timestamp. Yea I quite like that because it's "strict as fuck" but lenient enough to not get false positives (I was thinking about using "if percent > X (75%, 90%, idfk) of the files change timestamps..." strategy).
+
+
+Eh I don't think I'm up for coding this tonight/now, but I think I can handle making heirarchy molester command line friendly (because this design depends on that) while I let this shit burn into my subconscience (TAKE THAT NO ELEPHANT)
+
+
+all this because i don't trust filter-branch/etc because i didn't write git and don't care to learn it's source code to a comfortable level

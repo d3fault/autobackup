@@ -7,15 +7,21 @@ LastModifiedDateHeirarchyMolester::LastModifiedDateHeirarchyMolester(QObject *pa
 }
 void LastModifiedDateHeirarchyMolester::molestLastModifiedDateHeirarchy(const QString &directoryHeirarchyCorrespingToEasyTreeFile, const QString &easyTreeFilePath, bool easyTreeLinesHaveCreationDate)
 {
-    if(!QFile::exists(directoryHeirarchyCorrespingToEasyTreeFile))
-    {
-        emit d("Directory to Molest does Not Exist");
-        return;
-    }
     QString directoryHeirarchyCorrespingToEasyTreeFileWithSlashAppended = directoryHeirarchyCorrespingToEasyTreeFile;
     if(!directoryHeirarchyCorrespingToEasyTreeFileWithSlashAppended.endsWith("/"))
     {
         directoryHeirarchyCorrespingToEasyTreeFileWithSlashAppended.append("/");
+    }
+    QFileInfo dirToMolestFileInfo(directoryHeirarchyCorrespingToEasyTreeFileWithSlashAppended);
+    if(!dirToMolestFileInfo.exists())
+    {
+        emit d("Directory to Molest does Not Exist");
+        return;
+    }
+    if(!dirToMolestFileInfo.isDir())
+    {
+        emit d("Directory to Molest is not a directory");
+        return;
     }
     QFile easyTreeFile(easyTreeFilePath); //TODOreq: doesn't belong here in this project, but I need to make a mental note to make sure that easy tree file doesn't "stat" itself
     if(!easyTreeFile.exists())

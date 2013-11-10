@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1386043664
+Documents/minddump/:1386043765
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1386043664
+Documents/minddump/dreams/:1386043765
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -949,6 +949,7 @@ Documents/minddump/lakjdfjasdflkjoeuwrsdaflhsdfhsdlkjsdkj.txt:1355210436
 Documents/minddump/lakjfasldfjasdlfjkasdoffsldkfwaoeurlksjfdsdflaskdfjwoeryklfhasdfouwelrkjsf.txt:1350341255
 Documents/minddump/laksjdflksdjafousdlfjoisduflkjouiwerlkjouilsjdfousdflkjouwer.txt:1370738200
 Documents/minddump/lasdfjsadofiuwerlkjasfoiywrasufdioawerlkjsoafiusdflkj.txt:1337283195
+Documents/minddump/lasdjflkasdjfousdfljsdufiosdiuflkwjeoruouodifsldfkjsdfouil.txt:1384063062
 Documents/minddump/lasdjkfdsfjsadfouwerlsjdfiawhrlksdjfoiuwerlk.txt:1344286047
 Documents/minddump/lasdjkflkasjdfosudfwerwreqrlkjweorulksdjfosdufljsdfousdflkjsdfousdlfkj.txt:1371780408
 Documents/minddump/lasdjkflkjsdfoiuwelrkjoduflkjsdfousdflkjsweoriulk.txt:1358887430
@@ -1670,8 +1671,8 @@ Documents/oldGitLogsFrom1tbDrive/working_slash_Projects_slash_Test_slash_streamD
 Documents/oldGitLogsFrom1tbDrive/working_slash_Projects_slash_guiWithTestBackend_Generator.gitlog.txt:1380049211
 Documents/oldGitLogsFrom1tbDrive/working_slash_Projects_slash_libavGraphicsObject.gitlog.txt:1380049302
 Documents/a.starting.point.this.is.the.only.thing.i.am.certain.of.txt:1356263099
-GloballySharedClasses/:1379408701
-GloballySharedClasses/filesystem/:1383990625
+GloballySharedClasses/:1384071714
+GloballySharedClasses/filesystem/:1384071697
 GloballySharedClasses/filesystem/easytree.cpp:1382370980
 GloballySharedClasses/filesystem/easytree.h:1382370223
 GloballySharedClasses/filesystem/easytreehasher.cpp:1379418062
@@ -1680,6 +1681,8 @@ GloballySharedClasses/filesystem/easytreehashitem.cpp:1383990625
 GloballySharedClasses/filesystem/easytreehashitem.h:1383990605
 GloballySharedClasses/filesystem/easytreeparser.cpp:1379255514
 GloballySharedClasses/filesystem/easytreeparser.h:1368380686
+GloballySharedClasses/filesystem/filemodificationdatechanger.cpp:1384044459
+GloballySharedClasses/filesystem/filemodificationdatechanger.h:1384044241
 GloballySharedClasses/network/:1370998417
 GloballySharedClasses/network/ssl/:1370686848
 GloballySharedClasses/network/ssl/testcerts/:1344899950
@@ -1722,6 +1725,7 @@ GloballySharedClasses/easytree.pri:1367396791
 GloballySharedClasses/easytreehasher.pri:1379408701
 GloballySharedClasses/easytreehashitem.pri:1379408666
 GloballySharedClasses/easytreeparser.pri:1379408685
+GloballySharedClasses/filemodificationdatechanger.pri:1384071781
 GloballySharedClasses/idebuggablestartablestoppablebackend.h:1342940658
 GloballySharedClasses/idebuggablestartablestoppablefrontend.cpp:1343123450
 GloballySharedClasses/idebuggablestartablestoppablefrontend.h:1343686227
@@ -1732,7 +1736,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386043664
+Pictures/:1386043765
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1766,7 +1770,7 @@ Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-K
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
-Projects/:1383990855
+Projects/:1384061112
 Projects/AdAgency/:1333471837
 Projects/AdAgency/design/:1333472910
 Projects/AdAgency/design/Add.Funds.Request.dia:1330206440
@@ -1938,6 +1942,9 @@ Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefront
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwidget.h:1351021805
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwithtwobackendsexampletest.cpp:1350801765
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwithtwobackendsexampletest.h:1350801765
+Projects/GitUnrollRerollCensorshipMachine/:1384061118
+Projects/GitUnrollRerollCensorshipMachine/design/:1384061125
+Projects/GitUnrollRerollCensorshipMachine/design/initial.idea.txt:1384067358
 Projects/Ideas/:1383861652
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
@@ -2226,18 +2233,24 @@ Projects/Ideas/yes.or.no.input.and.20.questions.game.software.mode.txt:132267943
 Projects/Ideas/you.get.timestamp.for.timeline.in.dht.when.paxos.completes.and.i.get.all.sorts.of.other.confirmations.one.invented.too.txt:1338636915
 Projects/Ideas/youtube.video.reposter.retarded.spam.idea.txt:1322357399
 Projects/Ideas/yum.fedora.liveusb.automation.but.kinda.ties.in.with.d3fault.ultimately.the.public.encryption.key.concept.txt:1338022568
-Projects/LastModifiedDateHeirarchyMolester/:1383989401
-Projects/LastModifiedDateHeirarchyMolester/src/:1384044537
-Projects/LastModifiedDateHeirarchyMolester/src/LastModifiedDateHeirarchyMolester.pro:1383987286
-Projects/LastModifiedDateHeirarchyMolester/src/filemodificationdatechanger.cpp:1384044459
-Projects/LastModifiedDateHeirarchyMolester/src/filemodificationdatechanger.h:1384044241
-Projects/LastModifiedDateHeirarchyMolester/src/lastmodifieddateheirarchymolester.cpp:1384043922
-Projects/LastModifiedDateHeirarchyMolester/src/lastmodifieddateheirarchymolester.h:1383988062
-Projects/LastModifiedDateHeirarchyMolester/src/lastmodifieddateheirarchymolestergui.cpp:1383985077
-Projects/LastModifiedDateHeirarchyMolester/src/lastmodifieddateheirarchymolestergui.h:1383984898
-Projects/LastModifiedDateHeirarchyMolester/src/lastmodifieddateheirarchymolesterwidget.cpp:1384043878
-Projects/LastModifiedDateHeirarchyMolester/src/lastmodifieddateheirarchymolesterwidget.h:1383990030
-Projects/LastModifiedDateHeirarchyMolester/src/main.cpp:1383984404
+Projects/LastModifiedDateHeirarchyMolester/:1384071519
+Projects/LastModifiedDateHeirarchyMolester/src/:1384077082
+Projects/LastModifiedDateHeirarchyMolester/src/cli/:1384077893
+Projects/LastModifiedDateHeirarchyMolester/src/cli/LastModifiedDateHeirarchyMolesterCli.pro:1384077161
+Projects/LastModifiedDateHeirarchyMolester/src/cli/lastmodifieddateheirarchymolestercli.cpp:1384077882
+Projects/LastModifiedDateHeirarchyMolester/src/cli/lastmodifieddateheirarchymolestercli.h:1384075462
+Projects/LastModifiedDateHeirarchyMolester/src/cli/main.cpp:1384077058
+Projects/LastModifiedDateHeirarchyMolester/src/gui/:1384077813
+Projects/LastModifiedDateHeirarchyMolester/src/gui/LastModifiedDateHeirarchyMolesterGui.pro:1384077152
+Projects/LastModifiedDateHeirarchyMolester/src/gui/lastmodifieddateheirarchymolestergui.cpp:1383985077
+Projects/LastModifiedDateHeirarchyMolester/src/gui/lastmodifieddateheirarchymolestergui.h:1383984898
+Projects/LastModifiedDateHeirarchyMolester/src/gui/lastmodifieddateheirarchymolesterwidget.cpp:1384043878
+Projects/LastModifiedDateHeirarchyMolester/src/gui/lastmodifieddateheirarchymolesterwidget.h:1383990030
+Projects/LastModifiedDateHeirarchyMolester/src/gui/main.cpp:1383984404
+Projects/LastModifiedDateHeirarchyMolester/src/lib/:1384076410
+Projects/LastModifiedDateHeirarchyMolester/src/lib/LastModifiedDateHeirarchyMolester.pri:1384076410
+Projects/LastModifiedDateHeirarchyMolester/src/lib/lastmodifieddateheirarchymolester.cpp:1384075995
+Projects/LastModifiedDateHeirarchyMolester/src/lib/lastmodifieddateheirarchymolester.h:1384075935
 Projects/LifeShaper/:1371559115
 Projects/LifeShaper/LifeShaperStaticFiles/:1371704155
 Projects/LifeShaper/LifeShaperStaticFiles/src/:1383902135
@@ -3221,7 +3234,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappen
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/layoutappendupdatesgui.h:1322120437
 Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:1322120080
 Projects/libAvGraphicsItem2/:1344095614
-Projects/libAvGraphicsItem2/design/:1386043664
+Projects/libAvGraphicsItem2/design/:1386043765
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
 Projects/libAvGraphicsItem2/src/:1326312962
 Projects/libAvGraphicsItem2/src/backend/:1324464673

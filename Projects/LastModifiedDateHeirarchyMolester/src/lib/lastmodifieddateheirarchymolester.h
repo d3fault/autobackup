@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 
 #include "easytreehashitem.h"
