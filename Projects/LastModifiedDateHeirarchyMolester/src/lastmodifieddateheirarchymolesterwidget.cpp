@@ -42,6 +42,8 @@ LastModifiedDateHeirarchyMolesterWidget::LastModifiedDateHeirarchyMolesterWidget
     setLayout(m_Layout);
 
     connect(m_DirectoryHeirarchyCorrespingToEasyTreeFileBrowseButton, SIGNAL(clicked()), this, SLOT(handleDirectoryHeirarchyCorrespingToEasyTreeFileBrowseButtonClicked()));
+    connect(m_EasyTreeFilePathBrowseButton, SIGNAL(clicked()), this, SLOT(handleEasyTreeFilePathBrowseButtonClicked()));
+    connect(m_MolestButton, SIGNAL(clicked()), this, SLOT(handleMolestButtonClicked()));
 }
 void LastModifiedDateHeirarchyMolesterWidget::handleD(const QString &msg)
 {
@@ -89,5 +91,5 @@ void LastModifiedDateHeirarchyMolesterWidget::handleMolestButtonClicked()
         handleD("Select an Easy Tree File to get modification dates from");
         return;
     }
-    emit lastModifiedDateHeirarchyMolestationRequested(m_DirectoryHeirarchyCorrespingToEasyTreeFileLabel->text(), m_EasyTreeFilePathLineEdit->text(), m_EasyTreeLinesHaveCreationDateCheckBox->isChecked());
+    emit lastModifiedDateHeirarchyMolestationRequested(m_DirectoryHeirarchyCorrespingToEasyTreeFileLineEdit->text(), m_EasyTreeFilePathLineEdit->text(), m_EasyTreeLinesHaveCreationDateCheckBox->isChecked());
 }

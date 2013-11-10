@@ -28,6 +28,7 @@ void LastModifiedDateHeirarchyMolester::molestLastModifiedDateHeirarchy(const QS
         emit d("Failed to open Easy Tree File for reading");
         return;
     }
+    emit d("Beginning Molestation...");
     QTextStream easyTreeFileStream(&easyTreeFile);
     QString currentLine;
     while(!easyTreeFileStream.atEnd())

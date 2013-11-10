@@ -2,6 +2,8 @@
 #define FILEMODIFICATIONDATECHANGER_H
 
 #include <QObject>
+#include <QFile>
+#include <QDir>
 #include <QDateTime>
 #include <QProcess>
 
