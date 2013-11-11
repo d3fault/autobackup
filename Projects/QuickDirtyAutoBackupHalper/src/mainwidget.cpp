@@ -148,7 +148,7 @@ void mainWidget::setupGui()
     m_FilenameIgnoreLineEdit = new QLineEdit();
     m_FilenamesEndsWithIgnoreLineEdit = new QLineEdit(".pro.user,~");
     m_DirnameIgnoreLineEdit = new QLineEdit(".git");
-    m_DirnameEndsWithIgnoreLineEdit = new QLineEdit("__Qt_SDK__Debug,__Qt_SDK__Release");
+    m_DirnameEndsWithIgnoreLineEdit = new QLineEdit("__Qt_SDK__Debug,__Qt_SDK__Release,_in_PATH__System__Debug,_in_PATH__System__Release");
     m_PushToGitIgnoreButton = new QPushButton("Push To .gitignore"); //because i don't want it to be rewritten every time, and detecting changes is too hard
     m_WorkingDirectoryLineEdit = new QLineEdit("/home/d3fault/autobackup");
     m_MountPointSubDirToBareGitRepoLineEdit = new QLineEdit("autobackup"); //TODOoptional: customizable/persist'able. we append this sub-dir to each mount point when doing git push. we might additionally want to be able to specify the "working dir" (the FULL dir, not just sub-dir)... and hell this could even transform into "profiles" (one working dir has many tc containers and a configured subdir specific to that one working dir). for now hard-coded and single 'profile' is fine
@@ -289,6 +289,8 @@ void mainWidget::handlePushToGitIgnoreButtonClicked()
     rePopulateNameFilterListFromGui();
     emit pushToGitIgnoreRequested(m_WorkingDirectoryLineEdit->text().trimmed(), m_FilenameIgnoreList, m_FilenameEndsWithIgnoreList, m_DirnameIgnoreList, m_DirnameEndsWithIgnoreList);
 }
+//In retrospect, it was stupid of me to probe the settings in the backend business thread... and in all honesty the backend was too monolithic and should have been more modular, with the front-end doing most of the stuff (or a middle CONTROLLER (hmm something to think about in my cli/gui/lib "split" ultra perfect design attempts). BUT who gives a fuck this was quick/dirty like the title says. The git interaction should have been it's own class, same with the truecrypt interaction.
+//^20 minutes after writing that: it WAS better to have the "business" probe the content, because IT is the "core logic" that should be utilizing hypothetical git/truecrypt helper-classes. It is the "controller" I was saying should be re-usable between cli/gui. In this specific app, reading a list of truecrypt volumes to mount is a core piece of the functionality. BUT THEN AGAIN if you were doing it in CLI mode then you'd probably have it "scripted" (the loading of truecrypt volumes would be in the command line calling the CLI (but actually not really.. if you were doing that, you wouldn't need this app at all! just call truecrypt/git directly xD) -- idk i'm lost and this is just a fucking hack anyways, but i think you COULD say that reading settings is a core part of functionality. you could make a cli to this app be "interactive" (add/remove/customize truecrypt shit), but also "auto"/non-interactive which just loads the shit from the settings... bah)
 void mainWidget::handleSettingsReadAndDevicesProbed(bool allMountedTrueOrAllDismountedFalse, bool theyAreMountedAsReadOnlyIfTheyAreMountedAtAll, QList<QPair<QString, QString> > *deviceAndPasswordPathsFromSettingsRegardlessOfMountStatus)
 {
     if(allMountedTrueOrAllDismountedFalse)

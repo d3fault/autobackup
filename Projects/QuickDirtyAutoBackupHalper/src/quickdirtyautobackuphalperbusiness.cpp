@@ -456,7 +456,7 @@ nothing to commit (working directory clean)
         m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded->append(*filenameIgnoreList); //cat on the passed in list
         m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded->append(dirStructureFileNameString); //tell tree to ignore the file it generates. TODOoptional: perhaps a delete after the commit would be handy so we don't have to deal with renaming problems? if i rename the dir structure file, the old one will continue to exist (and will NOT be ignored, so it will be added to the renamed dir structure file. big whoop)
 
-        m_EasyTree->generateTreeText(workingDirString, &dirStructureFile, dirnameIgnoreList, m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded, filenameEndsWithIgnoreList, dirnameEndsWithIgnoreList);
+        m_EasyTree->generateTreeText(workingDirString, &dirStructureFile, false, dirnameIgnoreList, m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded, filenameEndsWithIgnoreList, dirnameEndsWithIgnoreList);
 
         if(!dirStructureFile.flush())
         {

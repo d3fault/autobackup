@@ -18,7 +18,7 @@ LastModifiedDateHeirarchyMolesterCli::LastModifiedDateHeirarchyMolesterCli(QObje
 void LastModifiedDateHeirarchyMolesterCli::usage()
 {
     m_StdOutStream << "Usage: LastModifiedDateHeirarchyMolesterCli [OPTION] DIRECTORY EASYTREEFILE" << endl;
-    m_StdOutStream << "Molest (touch all the children in) DIRECTORY using timestamps obtained from EASYTREEFILE." << endl << endl;
+    m_StdOutStream << "Molest (touch all the children in) DIRECTORY using timestamps obtained from EASYTREEFILE." << endl << endl << "Options:" << endl;
     m_StdOutStream << "\t" << m_CreationDateArgFlag << "\t\tEasy Tree File contains 'Created' DateTime (obsolete, keeping for compatibility)" << endl;
     m_StdOutStream << "\t" << m_XmlFormatFromTreeCommandActuallyArgFlag << "\t\tEasy Tree File isn't easy tree file after all, but is instead XML output from the 'tree -DXs --timefmt %s' command" << endl;
 }

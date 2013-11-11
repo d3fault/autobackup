@@ -84,6 +84,15 @@ void LastModifiedDateHeirarchyMolester::molestLastModifiedDateHeirarchy(const QS
                     //cd into it, then touch the dir's last modified date (the one we just cd'd into)
                     if(currentNameAttribute != ".") //don't touch or cd this special case
                     {
+                        QString dirAbsolutePath = currentDir.absolutePath() + "/" + currentNameAttribute.toString();
+                        if(!QFile::exists(dirAbsolutePath)) //empty dirs not in git commits hack
+                        {
+                            if(!currentDir.mkdir(dirAbsolutePath))
+                            {
+                                emit d("failed to make a dir that was missed in git commit because it was empty (xml format tree file processing)");
+                                return;
+                            }
+                        }
                         if(!currentDir.cd(currentNameAttribute.toString()))
                         {
                             emit d("failed to cd into a directory, so stopping");

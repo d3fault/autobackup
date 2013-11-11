@@ -6,7 +6,7 @@ Inputs:
 1) List of filepaths to censor
 2) Git dir to censor (can be bare or regular, since we clone from it (see 4))
 3) Censored git dir (checkbox for bare or not (or whatever i decide to hard code when the time comes xD))
-4) Optional working dir (so we can use tmpfs/etc)
+4) Optional working dir (so we can use tmpfs/etc) <-- "git clone --bare" repo to censor over to working dir ONCE at beginning, and "get clone --bare" back to "censored git dir" ONCE at end. we want to stay in memory (tmpfs) for frequent-as-fuck clones/checkouts/easy-trees/adds/commits
 
 TODOreq: the debug window should say "compare 'git log filepath' to 'git log --follow filepath' in the repo to be censored and make sure they have the same amount of relevant commits. if they don't there was a rename and this censorship machine doesn't handle renames" <- i already did this for my list of censored materials (like 5-6 docs :-P) and none were renamed so fuggit KISS/etc. we could, for example, programmatically verify that the follow/no-follow commit counts are the same...
 
@@ -21,6 +21,8 @@ foreach(git log output commits)
 	
 	2) ensure all censored filepaths are either non-existent (not created yet), or remove them if they are there
 	
+	//OPTIONAL/CHEAP: remake .gitignore (should probably 'touch' it to FIRST (had:old -- but it won't be changing so meh, no need to make the timestamp change needlessly on every commit in the tree file) commit datetime as well!) to contain the usual stuff... ~, __Debug, etc. -- A lot of the old commits from the dirstructure.txt days have that shit... OR ACTUALLY you know what I think they were only showing up now in my testing BECAUSE dirstructure.txt didn't have a .gitignore equivalent and then I just recreated them while Molesting. That explains why they weren't being tracked when I typed in git status. Can confirm this by verifying that one of the files is size 0. STILL should do something with .gitignore early on (first commit, but of course re-creating for each commit since it will disappear after i run checkout from censored repo) and additionally make sure my easy tree file is using the same filters (which is already coded, just need to utilize)
+	//^^Unless I make modifications to Molester, each time I molest it will create a bunch of .pro.user and __Debug/ folders etc. This is okay so long as my [new] easy tree generator and .gitignore are filled out properly... BUT I want to make a mental note that at "the end" of the unroll/re-roll process, all those .pro.user and __Debug/ files will still be in the working dir (git status will show ALL of them (throughout the entire history) as untracked). The easiest way to get rid of them would be to just do a clone the new censored repo to a new dir lol (and a molestation is implied, but eh that's only if you plan on 'using' it right away yaknow?). THE UNDERLYING REASON is that when "checking out to a new commit", untracked files are not deleted (a smart design decision if you ask me... but it did throw me off at first xD)
 	
 	4) git add/commit //use old commit datetime + old commit message, and --work-tree=$WORK_TREE and --git-dir=$GIT_DIR to add/commit from working dir
 }
@@ -50,7 +52,8 @@ foreach(git log output commit) //ditto as Hack #1, but it's own hack scope
 
 
 RANDOM IDEA: if any two files have the same modification timestamp, then we PROBABLY encountered a case/commit where the timestamp file was needlessly rewritten. Because it's ridiculously unlikely that two files would have the same timestamp. Yea I quite like that because it's "strict as fuck" but lenient enough to not get false positives (I was thinking about using "if percent > X (75%, 90%, idfk) of the files change timestamps..." strategy).
-^damnit, ctrl+shift+s in Qt Creator would make lots of files have the same timestamp :(
+^damnit, ctrl+shift+s in Qt Creator would make lots of files have the same timestamp :(. I don't have a solution to this problem that I like :-/. Contemplating iterating through revisions and outputing "% changed in tree file" stats, and then maybe from that alone I can do manual hacking around the extracted-god-knowledge commits-where-tree-file-was-entirely-needlessly-rewritten. also, NOTE: when the tree file _IS_ entirely needlessly rewritten, there are probably (IIRC) files that are new/introduced and whose timestamps WOULD be correct. yet more hacking -_-
+^^Something as simple as "if > 20% of the timestamps changed, ignore the most frequently occuring timestamp and use "previous commit's" tree file timestamp for those that were needlessly changed (most frequently occuring)". ONLY potential downside to that is if two commits are "needlessly changed" in a row, but i don't think (famous last) that is ever the case
 
 Eh I don't think I'm up for coding this tonight/now, but I think I can handle making heirarchy molester command line friendly (because this design depends on that) while I let this shit burn into my subconscience (TAKE THAT NO ELEPHANT)
 ^day after: subconscience was trolling me even still. funny how a tiny brain fart can cause you to waste an enormous amount of time. why did i make it CLI friendly? libraries are just as easy to "chain" etc...
@@ -58,5 +61,7 @@ Eh I don't think I'm up for coding this tonight/now, but I think I can handle ma
 i like my dvd-r testbox setup even more because i'm working with my actual repo in testing and am not afraid of shit fucking up :)
 
 1: why the fuck is the file size in the dirstructure.txt 498 billion?!?!? 2: why the fuck do i store file sizes in my "tree" files (both formats) to begin with? git already has that shit (so i don't even care to solve 1). i really just need filepath/modificationDate ... and occassionally/optionally md5/sha1 ...
+
+mfw i was considering coding this before "lifeshaper" (or as a prereq to) but then decided it would take too long and i needed to launch asep xD (i could still use it...)
 
 all this because i don't trust filter-branch/etc because i didn't write git and don't care to learn it's source code to a comfortable level
