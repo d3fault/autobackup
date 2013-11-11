@@ -1,6 +1,7 @@
 #include "lastmodifieddateheirarchymolestercli.h"
 
 const QString LastModifiedDateHeirarchyMolesterCli::m_CreationDateArgFlag = "-c";
+const QString LastModifiedDateHeirarchyMolesterCli::m_XmlFormatFromTreeCommandActuallyArgFlag = "-xml";
 
 LastModifiedDateHeirarchyMolesterCli::LastModifiedDateHeirarchyMolesterCli(QObject *parent) :
     QObject(parent), m_Molester(0), m_StdInStream(stdin), m_StdOutStream(stdout)
@@ -19,6 +20,7 @@ void LastModifiedDateHeirarchyMolesterCli::usage()
     m_StdOutStream << "Usage: LastModifiedDateHeirarchyMolesterCli [OPTION] DIRECTORY EASYTREEFILE" << endl;
     m_StdOutStream << "Molest (touch all the children in) DIRECTORY using timestamps obtained from EASYTREEFILE." << endl << endl;
     m_StdOutStream << "\t" << m_CreationDateArgFlag << "\t\tEasy Tree File contains 'Created' DateTime (obsolete, keeping for compatibility)" << endl;
+    m_StdOutStream << "\t" << m_XmlFormatFromTreeCommandActuallyArgFlag << "\t\tEasy Tree File isn't easy tree file after all, but is instead XML output from the 'tree -DXs --timefmt %s' command" << endl;
 }
 void LastModifiedDateHeirarchyMolesterCli::quit()
 {
@@ -51,6 +53,12 @@ void LastModifiedDateHeirarchyMolesterCli::parseArgsAndThenMolestLastModifiedDat
         easyTreeFileHasCreationDateTime = true;
         args.removeOne(m_CreationDateArgFlag);
     }
+    bool xmlFormatFromTreeCommandActually = false;
+    if(args.contains(m_XmlFormatFromTreeCommandActuallyArgFlag, Qt::CaseSensitive))
+    {
+        xmlFormatFromTreeCommandActually = true;
+        args.removeOne(m_XmlFormatFromTreeCommandActuallyArgFlag);
+    }
     if(args.size() != 3)
     {
         usage();
@@ -58,7 +66,7 @@ void LastModifiedDateHeirarchyMolesterCli::parseArgsAndThenMolestLastModifiedDat
         return;
     }
 
-    m_Molester->molestLastModifiedDateHeirarchy(args.at(1), args.at(2), easyTreeFileHasCreationDateTime);
+    m_Molester->molestLastModifiedDateHeirarchy(args.at(1), args.at(2), easyTreeFileHasCreationDateTime, xmlFormatFromTreeCommandActually);
     quit();
     //well that was fun, now I [hope/think ;-P] know Qt/CLI as much as I do Qt/GUI. Was easy (and yea, I haven't even run/tested this code xD)
 }

@@ -20,6 +20,7 @@ private:
     void usage();
     void quit();
     static const QString m_CreationDateArgFlag;
+    static const QString m_XmlFormatFromTreeCommandActuallyArgFlag;
 private slots:
     void handleD(const QString &msg);
     void handleAboutToQuit();

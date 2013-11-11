@@ -42,13 +42,21 @@ Special Opt-In (Checkbox) Hack #2 -- [dirstructure.txt (xml) becomes .dirstructu
 foreach(git log output commit) //ditto as Hack #1, but it's own hack scope
 {
 	my head hurts, this is too many hacks at once.... <- vs. i really want my minddump book to be in chronological order
+
+	heirarchy molester needs to accept various types of inputs (already works with easy tree files, so half done), and depending where we are in the foreach loop (hackily/hardcodedly detect points of interest) we need to hackily feed it both the "filename" for the tree stat file and the "tree stat file type" (xml for dirstructure.txt)
+
+	also need to make sure all 3 filenames of tree stats are deleted before generating new one in new format. this can be easily accomplished by just doing exists(all3filenames) for every repo and ensuring deleted. as opposed to trying to integrate it with if it's before/after commit ids etc -- hacky but works fuggit
 }
 
 
 RANDOM IDEA: if any two files have the same modification timestamp, then we PROBABLY encountered a case/commit where the timestamp file was needlessly rewritten. Because it's ridiculously unlikely that two files would have the same timestamp. Yea I quite like that because it's "strict as fuck" but lenient enough to not get false positives (I was thinking about using "if percent > X (75%, 90%, idfk) of the files change timestamps..." strategy).
-
+^damnit, ctrl+shift+s in Qt Creator would make lots of files have the same timestamp :(
 
 Eh I don't think I'm up for coding this tonight/now, but I think I can handle making heirarchy molester command line friendly (because this design depends on that) while I let this shit burn into my subconscience (TAKE THAT NO ELEPHANT)
+^day after: subconscience was trolling me even still. funny how a tiny brain fart can cause you to waste an enormous amount of time. why did i make it CLI friendly? libraries are just as easy to "chain" etc...
 
+i like my dvd-r testbox setup even more because i'm working with my actual repo in testing and am not afraid of shit fucking up :)
+
+1: why the fuck is the file size in the dirstructure.txt 498 billion?!?!? 2: why the fuck do i store file sizes in my "tree" files (both formats) to begin with? git already has that shit (so i don't even care to solve 1). i really just need filepath/modificationDate ... and occassionally/optionally md5/sha1 ...
 
 all this because i don't trust filter-branch/etc because i didn't write git and don't care to learn it's source code to a comfortable level

@@ -5,6 +5,9 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
+#include <QXmlStreamReader>
+#include <QDir>
+#include <QDateTime>
 
 #include "easytreehashitem.h"
 #include "filemodificationdatechanger.h"
@@ -19,7 +22,7 @@ private:
 signals:
     void d(const QString &);
 public slots:
-    void molestLastModifiedDateHeirarchy(const QString &directoryHeirarchyCorrespingToEasyTreeFile, const QString &easyTreeFilePath, bool easyTreeLinesHaveCreationDate);
+    void molestLastModifiedDateHeirarchy(const QString &directoryHeirarchyCorrespingToEasyTreeFile, const QString &easyTreeFilePath, bool easyTreeLinesHaveCreationDate, bool xmlFormattedTreeCommandOutputActually = false);
 };
 
 #endif // LASTMODIFIEDDATEHEIRARCHYMOLESTER_H
