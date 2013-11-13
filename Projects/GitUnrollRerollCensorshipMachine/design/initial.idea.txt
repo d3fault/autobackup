@@ -40,7 +40,7 @@ foreach(git log output commits) //the same loop as above, but these hacks will b
 }
 
 
-Special Opt-In (Checkbox) Hack #2 -- [dirstructure.txt (xml) becomes .dirstructure.txt.old.from.tree.command and ceases to change, including the fact that dirstructure.txt gets needlessly entirely rewritten entirely in some commits (ffffffuck)], [one commit in between dirstructure->quickDirty with no "timestamp file"], [.quickDirtyAutoBackupHalperDirStructure introduced, including the fact that it gets needlessly entirely rewritten in some commits (where was heirarchy molester when i needed it :-/?)]
+Special Opt-In (Checkbox) Hack #2 -- [dirstructure.txt (xml) becomes .dirstructure.txt.old.from.tree.command and ceases to change. I thought it was needlessly rewritten like .quickDirty was a few times, but it isn't and i proved that in a simple test], [one commit in between dirstructure->quickDirty with no "timestamp file" (i should touch that checkout with latest dirstructure set, and any files not touched (new files in that commit) should be touched with the old/censored commit date)], [.quickDirtyAutoBackupHalperDirStructure introduced, including the fact that it gets needlessly entirely rewritten in some commits (where was heirarchy molester when i needed it :-/?)]
 foreach(git log output commit) //ditto as Hack #1, but it's own hack scope
 {
 	my head hurts, this is too many hacks at once.... <- vs. i really want my minddump book to be in chronological order
