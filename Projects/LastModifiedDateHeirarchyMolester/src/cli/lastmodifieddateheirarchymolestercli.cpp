@@ -4,7 +4,7 @@ const QString LastModifiedDateHeirarchyMolesterCli::m_CreationDateArgFlag = "-c"
 const QString LastModifiedDateHeirarchyMolesterCli::m_XmlFormatFromTreeCommandActuallyArgFlag = "-xml";
 
 LastModifiedDateHeirarchyMolesterCli::LastModifiedDateHeirarchyMolesterCli(QObject *parent) :
-    QObject(parent), m_Molester(0), m_StdInStream(stdin), m_StdOutStream(stdout)
+    QObject(parent), m_Molester(0), m_StdOutStream(stdout)
 {
     connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(handleAboutToQuit()));
     m_Molester = new LastModifiedDateHeirarchyMolester(this); //Since we aren't using a backend thread, parent'ing is a good habit (even though aboutToQuit will always get signaled before 'this' goes out of scope IN THIS APP)
