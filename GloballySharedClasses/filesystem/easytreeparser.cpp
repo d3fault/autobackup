@@ -16,7 +16,7 @@ QList<EasyTreeHashItem*> *EasyTreeParser::parseEasyTreeAndReturnAsNewList(QIODev
     while(!textStream.atEnd())
     {
         QString oneLine = textStream.readLine();
-        easyTreeHashList->append(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(oneLine));
+        easyTreeHashList->append(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(oneLine, false, true));
     }
     if(weOpened)
     {

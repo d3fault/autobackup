@@ -23,4 +23,5 @@ HEADERS += \
 
 include(../lib/gitunrollrerollcensorshipmachine.pri)
 include(../../../../GloballySharedClasses/easytreeparser.pri)
+include(../../../../GloballySharedClasses/easytreehashitem.pri)
 include(../../../../GloballySharedClasses/githelper.pri)

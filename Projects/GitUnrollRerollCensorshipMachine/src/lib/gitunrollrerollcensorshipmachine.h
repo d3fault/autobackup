@@ -4,8 +4,14 @@
 #include <QObject>
 #include <QFile>
 #include <QTextStream>
+#include <QDir>
+#include <QCryptographicHash>
+#include <QDateTime>
+#include <QStringList>
+#include <QList>
 
 #include "easytreeparser.h"
+#include "easytreehashitem.h"
 #include "githelper.h"
 
 class GitUnrollRerollCensorshipMachine : public QObject
@@ -15,10 +21,13 @@ public:
     explicit GitUnrollRerollCensorshipMachine(QObject *parent = 0);
 private:
     GitHelper m_GitHelper;
+    QString getUnusedFilename(QDir dirToGetUnusedFilenameIn);
+    quint8 m_UnusedFilanameNonce;
+    QString appendSlashIfNeeded(QString input);
 signals:
     void d(const QString &);
 public slots:
-    void unrollRerollGitRepoCensoringAtEachCommit(QString filePathToListOfFilepathsToCensor, QString sourceGitDirToCensor, QString destinationGitDirCensored, QString workingDir);
+    void unrollRerollGitRepoCensoringAtEachCommit(QString filePathToListOfFilepathsToCensor, QString absoluteSourceGitDirToCensor, QString absoluteDestinationGitDirCensored, QString absoluteWorkingDir);
 };
 
 #endif // GITUNROLLREROLLCENSORSHIPMACHINE_H
