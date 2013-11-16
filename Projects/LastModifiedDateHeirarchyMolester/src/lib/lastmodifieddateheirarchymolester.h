@@ -8,6 +8,8 @@
 #include <QXmlStreamReader>
 #include <QDir>
 #include <QDateTime>
+#include <QHash>
+#include <QHashIterator>
 
 #include "easytreehashitem.h"
 #include "filemodificationdatechanger.h"
@@ -17,8 +19,21 @@ class LastModifiedDateHeirarchyMolester : public QObject
     Q_OBJECT
 public:
     explicit LastModifiedDateHeirarchyMolester(QObject *parent = 0);
+    bool loadFromXml(const QString &directoryHeirarchyCorrespingToXmlTreeFile, const QString &absoluteFilePathToXmlFormattedTreeFile);
+    bool loadFromEasyTreeFile(const QString &directoryHeirarchyCorrespingToEasyTreeFile, const QString &absoluteFilePathToEasyTreeFile, bool easyTreeLinesHaveCreationDate);
+    bool molestUsingInternalTables();
+    bool loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp(const QString &absoluteDirToSearchForFilesIn, QDateTime dateTimeToGiveThem);
 private:
     FileModificationDateChanger m_FileModificationDateChanger;
+    QHash<QString,QDateTime> m_TimestampsByAbsoluteFilePathHash_Files;
+    QHash<QString,QDateTime> m_TimestampsByAbsoluteFilePathHash_Folders;
+    bool doSharedInitBetweenXmlAndEasyTree(const QString &directoryHeirarchyCorrespingToTimestampFile, const QString &timestampFilePath);
+
+    bool recursivelyCheckForMissedFilesAndFolders(const QFileInfoList fileInfoList);
+
+    QFile m_TimestampFile;
+    QString m_DirectoryHeirarchyCorrespingToTimestampFileWithSlashAppended;
+    QDateTime m_DateTimeToGiveMissedAndManuallyFoundFiles;
 signals:
     void d(const QString &);
 public slots:

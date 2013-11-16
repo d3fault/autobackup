@@ -1,5 +1,13 @@
 #include "gitunrollrerollcensorshipmachine.h"
 
+#define CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT 1
+
+#ifdef CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
+#include <QProcess>
+#include "filemodificationdatechanger.h"
+#include "lastmodifieddateheirarchymolester.h"
+#endif
+
 GitUnrollRerollCensorshipMachine::GitUnrollRerollCensorshipMachine(QObject *parent) :
     QObject(parent), m_UnusedFilanameNonce(0)
 {
@@ -147,11 +155,29 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
 
     //gather git log
     QList<GitCommitIdTimestampAndMessage*> *allCommitSha1sFromGitLogCommand = new QList<GitCommitIdTimestampAndMessage*>();
-    if(!m_GitHelper.gitLogReturningCommitIdsOnly(allCommitSha1sFromGitLogCommand, absoluteCensoredSourceDirsAssociatedDetachedGitFolder))
+    if(!m_GitHelper.gitLogReturningCommitIdsAuthorDateAndCommitMessage(allCommitSha1sFromGitLogCommand, absoluteCensoredSourceDirsAssociatedDetachedGitFolder))
     {
         emit d("failed to run git log in order to iterate the history of the censored repo");
         return;
     }
+
+#ifdef CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
+    QString gitIgnoreFileGeneratedAndHeldInPlaceFilePath = absoluteActualWorkingDir + ".gitignore";
+    QFile gitIgnoreFileGeneratedAndHeldInPlace(gitIgnoreFileGeneratedAndHeldInPlaceFilePath);
+    QStringList gitIgnoreLines;
+    gitIgnoreLines << "*.[ao]" << "*.pro.user" << "*~" << "*__Qt_SDK__Debug/" << "*__Qt_SDK__Release/" << "*_in_PATH__System__Debug/" << "*_in_PATH__System__Release/";
+    QTextStream gitIgnoreTextStream(&gitIgnoreFileGeneratedAndHeldInPlace);
+    FileModificationDateChanger fileModificationChanger;
+    bool firstTimeCreatingGitIgnore = true;
+    QDateTime gitIgnoreTimestamp;
+
+    //we escape the filename sent to find in case it has a space, and since we're using the string execute method
+    QString findChmodCommand = "/usr/bin/find \"" + absoluteActualWorkingDir + "\" + ( -type d -exec /bin/chmod 755 {} ; ) -o ( -type f -exec /bin/chmod 644 {} ; )"; //took me longer than expected to figure out why `chmod -R 644 dir/` wouldn't work xD (stupid coders)
+
+    LastModifiedDateHeirarchyMolester heirarchyMolester;
+    connect(&heirarchyMolester, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+#endif
+
     //iterate over the git log backwards, because we want to start from the beginning/oldest commit
     int censoredRepoCommitsCount = allCommitSha1sFromGitLogCommand->size(); //TODOreq: verify this commit count with our destination/censored commit count
     for(int i = censoredRepoCommitsCount-1; i > -1; --i) //TODOreq: verify not off by one error
@@ -169,6 +195,107 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
 
         emit d("have now checked out: " + currentCommitId);
 
+        //TODOreq: checkout doesn't work how I thought it did, it leaves changes on tracked files (such as deletions). I wonder if chmod'ing will make files "changed" and therefore miss "future revisions" by "not checking out [new revisions] because it thinks i changed them and don't want to" <-- solution would be to either not modify the checkout and modify a copy of the checkout, or clone over and over and over (those two are the same solution really, just different means). I actually think yes I would miss "revisions", but idfk. (GOOD DAMN CATCH SHIIIIIIIT computers are scary). A way to verify that we "got all changes" is to run easyTreeHash on the before/after results and compare (obviously censored files will show up :-P)
+#ifdef CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
+
+        //TODOreq: make sure no files I modify/create have parent directories that are relevant to the output timestamp file. I was thinking the output timestamp file itself would qualify, but we don't record the timestamp of ".", so as of right now I can't think of any cases. Also worth noting that deleting a file modifies the directory last modified date...
+
+        //CHMOD Everything because I don't give a fuck and don't want git to record it...
+
+        int findChmodReturnCode = QProcess::execute(findChmodCommand);
+        if(findChmodCommand != 0)
+        {
+            emit d("find chmod command didn't return 0: " + QString::number(findChmodReturnCode));
+            return;
+        }
+
+        //MOLEST STAGE 1/3 -- FILL TABLE
+
+        //TODOreq: we need to verify that all the files in the heirarchy were molested (maybe not all are in the list), otherwise it'll have a timestamp at the time of execution. If it wasn't molested, give it a sane timestamp (checkout-1, for example)
+
+        if(QFile::exists(absoluteActualWorkingDir + "dirstructure.txt")) //early days
+        {
+            if(QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
+            {
+                emit d("fucked state .quickDirtyAutoBackupHalperDirStructure exists and shouldn't");
+                return;
+            }
+
+            if(!heirarchyMolester.loadFromXml(absoluteActualWorkingDir, absoluteActualWorkingDir + "dirstructure.txt"))
+            {
+                emit d("failed to load dirstructure.txt for heirarchy molester");
+                return;
+            }
+        }
+        else if(QFile::exists(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command") && !QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure")) //intermediate where some timestamps are lost
+        {
+            //TODOreq
+        }
+        else if(QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure")) //now
+        {
+            if(!QFile::exists(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command") || QFile::exists(absoluteActualWorkingDir + "dirstructure.txt"))
+            {
+                emit d("fucked state. either .dirstructure.txt.old.from.tree.command doesn't exist or dirstructure.txt exists and shouldn't");
+                return;
+            }
+
+            if(!heirarchyMolester.loadFromEasyTreeFile(absoluteActualWorkingDir, absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
+            {
+                emit d("failed to load .quickDirtyAutoBackupHalperDirStructure for heirarchy molester");
+                return;
+            }
+        }
+        else
+        {
+            emit d("couldn't determine state, must have not accounted for something");
+            return;
+        }
+
+        //MOLEST STAGE 2/3 -- Add files not in list (now table) but in dir to the table
+        QDateTime timeStampForMissedFiles = QDateTime::fromString(commitIdTimestampAndMessage->commitDate, Qt::ISODate);
+        timeStampForMissedFiles = timeStampForMissedFiles.addSecs(-1);
+        if(!heirarchyMolester.loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp(absoluteActualWorkingDir, timeStampForMissedFiles)) //was tempted to put "ignore" lists in here, but that's for later... when re-creating timestamp file
+        {
+            emit d("failed to loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp");
+            return;
+        }
+
+        //TODO LEFT OFF: need to do occurance rate analyzing and grab "most recent" if occurance rate is fucked
+
+        //MOLEST STAGE 3/3 -- USE TABLE
+        if(!heirarchyMolester.molestUsingInternalTables())
+        {
+            emit d("failed to molest");
+            return;
+        }
+
+
+        //MAKE .gitgnore
+
+        //regardless of if it's already made (might have 'checked out' contents), 'TOUCH' it to the earliest date ever (if(firstTimeTouching { genTouchTimestamp })) and keep re-touching each checkout to that same timestamp, so git final git repo doesn't record it ever changing
+        if(!gitIgnoreFileGeneratedAndHeldInPlace.open(QIODevice::WriteOnly | QIODevice::Truncate)) //Not QIODevice::Text because idfk if git works with \r\n in gitignore (but shit this app isn't portable to windows anyways so wtf)
+        {
+            emit d("failed to open git ignore for writing");
+            return;
+        }
+        foreach(QString gitIgnoreLine, gitIgnoreLines)
+        {
+            gitIgnoreTextStream << gitIgnoreLine << endl;
+        }
+        gitIgnoreFileGeneratedAndHeldInPlace.close();
+        if(firstTimeCreatingGitIgnore)
+        {
+            gitIgnoreTimestamp = QDateTime::fromString(commitIdTimestampAndMessage->commitDate, Qt::ISODate);
+            gitIgnoreTimestamp = gitIgnoreTimestamp.addSecs(-1); //one second before the first commit, we created our .gitignore ... and never modified (had:touched) it again
+            firstTimeCreatingGitIgnore = false;
+        }
+        if(!fileModificationChanger.changeModificationDate(gitIgnoreFileGeneratedAndHeldInPlaceFilePath, gitIgnoreTimestamp))
+        {
+            emit d("failed to touch git ignore");
+            return;
+        }
+#endif // CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
+
         //DELETE / ENSURE-DELETED list of filepaths
 
         foreach(QString absoluteFilePathToCensor, absoluteFilePathsToCensor)
@@ -183,6 +310,17 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
                 emit d("---Deleted File: " + absoluteFilePathToCensor);
             }
         }
+
+#ifdef CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
+
+        //RE-CREATE TIMESTAMP FILE -- recursively iterate dir contents (do not use previous table from molest, as that has censored filepaths in it)
+
+        //delete old timestamp formats first
+        //new one shouldn't have creation date or size [or hash]
+        //should use "ignore" lists like QuickDirty does (perhaps with more (see gitIgnore))
+        //TODOreq
+
+#endif // CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
 
         //GIT ADD
 
@@ -205,7 +343,7 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
     //CLONE TEMP CENSORED DESTINATION TO USER SUPPLIED DESTINATION
 
 
-    //cleanup -- TODOreq: return;'ing anywhere above does not properly clean up! ffffff need me some scoped pointers
+    //cleanup -- TODOreq: return;'ing anywhere above does not properly clean up! ffffff need me some scoped pointers, and probably custom deleters to first iterate the lists
     int allCommitSha1sFromGitLogCommandCount = allCommitSha1sFromGitLogCommand->size();
     for(int i = 0; i < allCommitSha1sFromGitLogCommandCount; ++i)
     {
@@ -221,6 +359,4 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         delete item;
     }
     delete easyTreeHashItemListOfFilesToCensor;
-
-    //2.0 custom hacks
 }

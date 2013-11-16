@@ -1,0 +1,6 @@
+http/html
+I grew up with the word "http" in my browse and seeing "html" as "what sites are made out of" and it wasn't until today that I really stared at (mentally) the word HYPER. Lol what fucking stupid buzzword usage, you dolts.
+
+HYPER TEXT. Lol what? It's like "EXTREME TEXT". Lame. I can (should?) parody it in some of my own specs: ETTP, ETML. Meh diaf.
+
+Oh and also the protocol itself sucks too, primitive piece of shit (and html by itself is "eh" but when you throw javascript in: no).

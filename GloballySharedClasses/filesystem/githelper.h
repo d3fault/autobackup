@@ -21,7 +21,7 @@ public:
     void changeWorkingDirectory(QString newWorkingDirectory);
     bool gitClone(QString srcRepoAbsolutePath, QString destRepoAbsolutePath, QString optionalWorkTree);
     bool gitInit(QString semiOptionaldirToInit, QString optionalDetachedAssociatedGitFolderLocation);
-    bool gitLogReturningCommitIdsOnly(QList<GitCommitIdTimestampAndMessage*> *commitIdsStringListToFill, QString semiOptionalDirToRunGitLogIn);
+    bool gitLogReturningCommitIdsAuthorDateAndCommitMessage(QList<GitCommitIdTimestampAndMessage*> *commitIdsStringListToFill, QString semiOptionalDirToRunGitLogIn);
     bool gitCheckout(QString commitIdToCheckout, QString semiOptionalWorkTree, QString optionalDetachedAssociatedGitFolderLocation);
     bool gitAdd(QString pathToRunGitAddIn, QString optionalDetachedAssociatedGitFolderLocation);
     bool gitCommit(QString workTree, QString gitDir, QString commitMessage, QString commitDate, QString author);
