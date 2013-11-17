@@ -26,9 +26,9 @@ bool GitHelper::gitClone(QString srcRepoAbsolutePath, QString destRepoAbsolutePa
     QStringList gitCloneArguments;
     if(!optionalWorkTree.isEmpty())
     {
-        gitCloneArguments << QString("--work-tree=" + optionalWorkTree); //TODOreq: verify spaces in work-tree doesn't break -- affects git init too
+        gitCloneArguments << QString("--work-tree=" + optionalWorkTree);
     }
-    gitCloneArguments << "clone" << QString("file://" + srcRepoAbsolutePath) << destRepoAbsolutePath; //TODOreq: verify dest can work with absolute path. i've only ever done it with a single folder name, and it gets created in the cwd that way
+    gitCloneArguments << "clone" << QString("file://" + srcRepoAbsolutePath) << destRepoAbsolutePath;
     m_GitProcess.start(m_GitBinaryFilePath, gitCloneArguments);
     if(!m_GitProcess.waitForStarted())
     {
@@ -106,9 +106,6 @@ bool GitHelper::gitLogReturningCommitIdsAuthorDateAndCommitMessage(QList<GitComm
     if(!semiOptionalDirToRunGitLogIn.isEmpty())
     {
         changeWorkingDirectory(semiOptionalDirToRunGitLogIn);
-#if 0
-        gitLogArguments << "--git-dir=" << semiOptionalDirToRunGitLogIn; //TODOreq: I've not yet tested that this way of specifying a git-dir for use with git log even works, but it should. If it doesn't, I just need to change the working dir of the m_GitProcess
-#endif
     }
 
     gitLogArguments << "log";
@@ -204,7 +201,7 @@ bool GitHelper::gitCheckout(QString commitIdToCheckout, QString semiOptionalWork
     {
         gitCheckoutArgs << QString("--git-dir=" + optionalDetachedAssociatedGitFolderLocation);
     }
-    gitCheckoutArgs << "checkout" << commitIdToCheckout;
+    gitCheckoutArgs << "checkout" << "--force" << commitIdToCheckout;
 
     m_GitProcess.start(m_GitBinaryFilePath, gitCheckoutArgs);
     if(!m_GitProcess.waitForStarted())

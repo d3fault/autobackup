@@ -75,11 +75,15 @@ void EasyTree::addDirEntry()
     //also escape colons which are apparently legal in fucking filenames...
     *m_TreeTextStream << m_CurrentFileInfo.canonicalFilePath().remove(0, m_DirWeAreTreeingChopLength).replace(m_Colon, m_EscapedColon, Qt::CaseSensitive) << "/"; //dirs are identified by trailing slashes in my EasyTree, so add it. canonical path does not return a slash
 
-    m_CreatedDateTime = m_CurrentFileInfo.created();
-    m_ModifiedDateTime = m_CurrentFileInfo.lastModified();
+    if(m_UseObsoleteFormatWithSizeAndCreationDate)
+    {
+        m_CreatedDateTime = m_CurrentFileInfo.created();
+        *m_TreeTextStream << m_Colon << QString::number(m_CreatedDateTime.toMSecsSinceEpoch()/1000);
+    }
 
+    m_ModifiedDateTime = m_CurrentFileInfo.lastModified();
     //stream a colon, the file size, another colon, the creation date, another colon, the last modified date, and lastly a newline
-    *m_TreeTextStream << m_Colon << QString::number(m_CreatedDateTime.toMSecsSinceEpoch()/1000) << m_Colon << QString::number(m_ModifiedDateTime.toMSecsSinceEpoch()/1000) << endl;
+     *m_TreeTextStream << m_Colon << QString::number(m_ModifiedDateTime.toMSecsSinceEpoch()/1000) << endl;
 }
 void EasyTree::addFileEntry()
 {
@@ -87,11 +91,18 @@ void EasyTree::addFileEntry()
 
     //stream the path and make it relative to the dir we are treeing by chopping that portion out of the abolute
     *m_TreeTextStream << m_CurrentFileInfo.canonicalFilePath().remove(0, m_DirWeAreTreeingChopLength).replace(m_Colon, m_EscapedColon, Qt::CaseSensitive); //i pass absoluteDirs from each call, and that chop() is how i hackily convert them into relative paths :)
-    m_CreatedDateTime = m_CurrentFileInfo.created();
+
     m_ModifiedDateTime = m_CurrentFileInfo.lastModified();
 
     //stream a colon, the file size, another colon, the creation date, another colon, the last modified date, and lastly a newline
-    *m_TreeTextStream << m_Colon << QString::number(m_CurrentFileInfo.size()) << m_Colon << QString::number(m_CreatedDateTime.toMSecsSinceEpoch()/1000) << m_Colon << QString::number(m_ModifiedDateTime.toMSecsSinceEpoch()/1000);
+
+    if(m_UseObsoleteFormatWithSizeAndCreationDate)
+    {
+        m_CreatedDateTime = m_CurrentFileInfo.created();
+        *m_TreeTextStream << m_Colon << QString::number(m_CurrentFileInfo.size()) << m_Colon << QString::number(m_CreatedDateTime.toMSecsSinceEpoch()/1000);
+    }
+
+    *m_TreeTextStream << m_Colon << QString::number(m_ModifiedDateTime.toMSecsSinceEpoch()/1000);
 
     if(m_CalculateMd5Sums)
     {
@@ -164,8 +175,10 @@ bool EasyTree::weDontWantToSkipCurrentDirInfo()
     }
     return true;
 }
-void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, bool calculateMd5Sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList)
+void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, bool calculateMd5Sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList, bool useObsoleteFormatWithSizeAndCreationDate)
 {
+    m_UseObsoleteFormatWithSizeAndCreationDate = useObsoleteFormatWithSizeAndCreationDate;
+
     m_DirWeAreTreeing = absoluteDirString;
     if(!m_DirWeAreTreeing.endsWith("/"))
     {

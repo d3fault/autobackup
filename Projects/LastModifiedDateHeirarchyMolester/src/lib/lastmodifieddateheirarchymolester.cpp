@@ -1,7 +1,7 @@
 #include "lastmodifieddateheirarchymolester.h"
 
 LastModifiedDateHeirarchyMolester::LastModifiedDateHeirarchyMolester(QObject *parent) :
-    QObject(parent)
+    QObject(parent), m_FirstTimeDoingHackyOccuranceRateMerging(true)
 {
     connect(&m_FileModificationDateChanger, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
 }
@@ -150,13 +150,14 @@ bool LastModifiedDateHeirarchyMolester::loadFromEasyTreeFile(const QString &dire
     }
 
     m_TimestampFile.close();
+    return true;
 }
 bool LastModifiedDateHeirarchyMolester::molestUsingInternalTables()
 {
     emit d("Beginning Molestation...");
 
-    QHashIterator<QString, QDateTime> fileIterator(&m_TimestampsByAbsoluteFilePathHash_Files);
-    while (fileIterator.hasNext())
+    QHashIterator<QString, QDateTime> fileIterator(m_TimestampsByAbsoluteFilePathHash_Files);
+    while(fileIterator.hasNext())
     {
         fileIterator.next();
         if(!m_FileModificationDateChanger.changeModificationDate(fileIterator.key(), fileIterator.value()))
@@ -166,8 +167,8 @@ bool LastModifiedDateHeirarchyMolester::molestUsingInternalTables()
         }
     }
 
-    QHashIterator<QString, QDateTime> folderIterator(&m_TimestampsByAbsoluteFilePathHash_Folders);
-    while (folderIterator.hasNext())
+    QHashIterator<QString, QDateTime> folderIterator(m_TimestampsByAbsoluteFilePathHash_Folders);
+    while(folderIterator.hasNext())
     {
         folderIterator.next();
         if(!m_FileModificationDateChanger.changeModificationDate(folderIterator.key(), folderIterator.value()))
@@ -176,6 +177,14 @@ bool LastModifiedDateHeirarchyMolester::molestUsingInternalTables()
             return false;
         }
     }
+
+
+    //derp, i hope COW/implicit sharing makes this as easy as it appears :)
+    m_OldTimestampsByAbsoluteFilePathHash_Files = m_TimestampsByAbsoluteFilePathHash_Files;
+    m_OldTimestampsByAbsoluteFilePathHash_Folders = m_TimestampsByAbsoluteFilePathHash_Folders;
+    m_FirstTimeDoingHackyOccuranceRateMerging = false;
+
+    //random: i think that the implicit sharing'ness of Qt makes the 'old' tables take up virtually no memory when the "hacks" aren't used... so that's nice :)
 
     emit d("Finished Molesting");
     return true;
@@ -203,6 +212,126 @@ bool LastModifiedDateHeirarchyMolester::loadAnyMissedFilesByRecursivelyScanningD
     }
 
     return true;
+}
+void LastModifiedDateHeirarchyMolester::performHackyOccuranceRateMerging(quint32 occuranceRateThresholdToTriggerIgnoringOfTimestamp)
+{
+    if(m_FirstTimeDoingHackyOccuranceRateMerging)
+    {
+        //m_FirstTimeDoingHackyOccuranceRateMerging = false;
+        return; //do nothing since we don't have an 'old table' to pull from even if occurance rate is met/exceeded, but set m_FirstTimeDoingHackyOccuranceRateMerging to false in the hack where molest makes current table the old table... TODOreq
+    }
+
+    //TODOreq: for analysis ONLY, we want to combine the files/folders hashes again -- this might make shit complicated later, but idk atm
+    QHash<QString /*unixTimestamp*/,quint32 /*occuranceRate*/> timestampsOccurancesHash;
+
+    //FILES
+    QHashIterator<QString /*absoluteFilePath*/, QDateTime /*dateTime*/> fileIterator(m_TimestampsByAbsoluteFilePathHash_Files);
+    while(fileIterator.hasNext())
+    {
+        fileIterator.next();
+        QString unixTimestampString = QString::number(fileIterator.value().toMSecsSinceEpoch() / 1000);
+        if(timestampsOccurancesHash.contains(unixTimestampString))
+        {
+            quint32 currentOccuranceCount = timestampsOccurancesHash.value(unixTimestampString);
+            ++currentOccuranceCount;
+            timestampsOccurancesHash.insert(unixTimestampString, currentOccuranceCount);
+        }
+        else
+        {
+            timestampsOccurancesHash.insert(unixTimestampString, 1);
+        }
+    }
+    //FOLDERS
+    QHashIterator<QString /*absoluteFilePath*/, QDateTime /*dateTime*/> folderIterator(m_TimestampsByAbsoluteFilePathHash_Folders);
+    while(folderIterator.hasNext())
+    {
+        folderIterator.next();
+        QString unixTimestampString = QString::number(folderIterator.value().toMSecsSinceEpoch() / 1000);
+        if(timestampsOccurancesHash.contains(unixTimestampString))
+        {
+            quint32 currentOccuranceCount = timestampsOccurancesHash.value(unixTimestampString);
+            ++currentOccuranceCount;
+            timestampsOccurancesHash.insert(unixTimestampString, currentOccuranceCount);
+        }
+        else
+        {
+            timestampsOccurancesHash.insert(unixTimestampString, 1);
+        }
+    }
+
+    //in my throw away analysis program that i'm stealing code from, i sorted the hash by value.. but in this one, i don't need to... just need to remember the key for any value that meets/exceeds our threshold
+
+    QList<QDateTime> dateTimesThatMeetOrExceedThreshold;
+
+    //Files/Folders combined in timestampsOccurancesHash at this point
+    QHashIterator<QString /*unixTimestamp*/,quint32 /*occuranceRate*/> occurancesIterator(timestampsOccurancesHash);
+    while(occurancesIterator.hasNext())
+    {
+        occurancesIterator.next();
+        if(occurancesIterator.value() >= occuranceRateThresholdToTriggerIgnoringOfTimestamp)
+        {
+            //either save the key or 'pull from old table' now, idfk (who cares)
+            bool convertOk = false;
+            qint64 timestampAsQint64 = occurancesIterator.key().toLongLong(&convertOk);
+            if(!convertOk)
+            {
+                emit d("failed to convert timestamp to qint64: " + occurancesIterator.key());
+                return; //TODOreq: false?
+            }
+            QDateTime aDateTimeExceeding = QDateTime::fromMSecsSinceEpoch(timestampAsQint64 * 1000);
+            dateTimesThatMeetOrExceedThreshold.append(aDateTimeExceeding);
+        }
+    }
+
+    //now that we have all the datetimes we don't want to use, check to see if the corresponding filepaths for both files/folders (keys in internal tables) are in 'old tables' and if they are, use those instead (write them to new table (so they become old table and 'recursion' works)). if they AREN'T, use TODOreq idfk (there might not even be any of these cases but idk my head hurts)
+
+    int dateTimesThatMeetOrExceedThresholdSize = dateTimesThatMeetOrExceedThreshold.size();
+    for(int i = 0; i < dateTimesThatMeetOrExceedThresholdSize; ++i)
+    {
+        QDateTime currentDateTimeExceedingThreshold = dateTimesThatMeetOrExceedThreshold.at(i);
+
+        //files
+        QList<QString /*absoluteFilePath*/> filesKeysToTryToUseOldTableTimestamp = m_TimestampsByAbsoluteFilePathHash_Files.keys(currentDateTimeExceedingThreshold);
+        //folders
+        QList<QString /*absoluteFilePath*/> foldersKeysToTryToUseOldTableTimestamp = m_TimestampsByAbsoluteFilePathHash_Folders.keys(currentDateTimeExceedingThreshold);
+
+        //iterate old tables, and if the key is in the old table, use the value from the old table in the new table :)
+        //Files
+        int filesKeysToTryToUseOldTableTimestampSize = filesKeysToTryToUseOldTableTimestamp.size();
+        for(int j = 0; j < filesKeysToTryToUseOldTableTimestampSize; ++j)
+        {
+            QString currentFilePath = filesKeysToTryToUseOldTableTimestamp.at(j);
+            if(m_OldTimestampsByAbsoluteFilePathHash_Files.contains(currentFilePath))
+            {
+                QDateTime unFuckedDateTime = m_OldTimestampsByAbsoluteFilePathHash_Files.value(currentFilePath); //Was like years of suppression now satisfied in writing that variable name...
+                m_TimestampsByAbsoluteFilePathHash_Files.insert(currentFilePath, unFuckedDateTime);
+            }
+            else
+            {
+                emit d("fucked state detected XYZ, more hacking required"); //since I'm testing with live data anyways... :)
+                //If I do more hackery here, should copy/paste it to Folders below (ABC)
+                return;
+            }
+        }
+        //Folders
+        int foldersKeysToTryToUseOldTableTimestampSize = foldersKeysToTryToUseOldTableTimestamp.size();
+        for(int j = 0; j < foldersKeysToTryToUseOldTableTimestampSize; ++j)
+        {
+            QString currentFilePath = foldersKeysToTryToUseOldTableTimestamp.at(j);
+            if(m_OldTimestampsByAbsoluteFilePathHash_Folders.contains(currentFilePath))
+            {
+                QDateTime unFuckedDateTime = m_OldTimestampsByAbsoluteFilePathHash_Folders.value(currentFilePath);
+                m_TimestampsByAbsoluteFilePathHash_Folders.insert(currentFilePath, unFuckedDateTime);
+            }
+            else
+            {
+                emit d("fucked state detected ABC, more hacking required");
+                return;
+            }
+        }
+
+        //TODOreq: i think i need to do something with the timestamp if it isn't found in either file/folder hash, which would mean it's a..... new or renamed file. but maybe it doesn't matter idfk. so many corner cases xD
+    }
 }
 bool LastModifiedDateHeirarchyMolester::doSharedInitBetweenXmlAndEasyTree(const QString &directoryHeirarchyCorrespingToTimestampFile, const QString &timestampFilePath)
 {
@@ -258,7 +387,7 @@ bool LastModifiedDateHeirarchyMolester::recursivelyCheckForMissedFilesAndFolders
                 m_TimestampsByAbsoluteFilePathHash_Folders.insert(dirNameForComparing, m_DateTimeToGiveMissedAndManuallyFoundFiles);
             }
 
-            //even if it's in the hash, we still need to cd into it and make sure all it's children are too
+            //regardless of whether or not it's in the hash, we still need to cd into it and make sure all it's children are too
             QDir nextDir(dirNameForComparing);
             nextDir.setSorting(QDir::DirsFirst | QDir::Name);
             nextDir.setFilter(QDir::Dirs | QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot | QDir::Hidden);

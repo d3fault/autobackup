@@ -43,10 +43,12 @@ private:
     inline void addFileEntry();
     bool weDontWantToSkipCurrentFileInfo();
     bool weDontWantToSkipCurrentDirInfo();
+
+    bool m_UseObsoleteFormatWithSizeAndCreationDate; //stack explosion
 signals:
     //void treeTextGenerated(const QString &treeText); //it just writes to the passed in QIODevice instead
 public slots:
-    void generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, bool calculateMd5Sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList);
+    void generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, bool calculateMd5Sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList, bool useObsoleteFormatWithSizeAndCreationDate = true);
 };
 
 #endif // EASYTREE_H

@@ -6,6 +6,7 @@
 #include <QProcess>
 #include "filemodificationdatechanger.h"
 #include "lastmodifieddateheirarchymolester.h"
+#include "easytree.h"
 #endif
 
 GitUnrollRerollCensorshipMachine::GitUnrollRerollCensorshipMachine(QObject *parent) :
@@ -49,7 +50,7 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
 
       foreach(git commit from beginning)
       {
-        git --work-tree=/path/to/working/dir/ --git-dir=/path/to/dotGitFolderLooksBareButIsnt checkout <commit-id>
+        git --work-tree=/path/to/working/dir/ --git-dir=/path/to/dotGitFolderLooksBareButIsnt checkout --force <commit-id>
 
         delete/ensure-deleted every file to censor
 
@@ -176,6 +177,21 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
 
     LastModifiedDateHeirarchyMolester heirarchyMolester;
     connect(&heirarchyMolester, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
+
+    QList<QString> dirNamesToIgnore;
+    dirNamesToIgnore.append(".git");
+    QList<QString> fileNamesToIgnore;
+    //none
+    QList<QString> fileNamesEndWithIgnoreList;
+    fileNamesEndWithIgnoreList.append(".pro.user");
+    fileNamesEndWithIgnoreList.append("~");
+    fileNamesEndWithIgnoreList.append(".a");
+    fileNamesEndWithIgnoreList.append(".o");
+    QList<QString> dirNamesEndsWithIgnoreList;
+    dirNamesEndsWithIgnoreList.append("__Qt_SDK__Debug");
+    dirNamesEndsWithIgnoreList.append("__Qt_SDK__Release");
+    dirNamesEndsWithIgnoreList.append("_in_PATH__System__Debug");
+    dirNamesEndsWithIgnoreList.append("_in_PATH__System__Release");
 #endif
 
     //iterate over the git log backwards, because we want to start from the beginning/oldest commit
@@ -196,6 +212,7 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         emit d("have now checked out: " + currentCommitId);
 
         //TODOreq: checkout doesn't work how I thought it did, it leaves changes on tracked files (such as deletions). I wonder if chmod'ing will make files "changed" and therefore miss "future revisions" by "not checking out [new revisions] because it thinks i changed them and don't want to" <-- solution would be to either not modify the checkout and modify a copy of the checkout, or clone over and over and over (those two are the same solution really, just different means). I actually think yes I would miss "revisions", but idfk. (GOOD DAMN CATCH SHIIIIIIIT computers are scary). A way to verify that we "got all changes" is to run easyTreeHash on the before/after results and compare (obviously censored files will show up :-P)
+        //I think setting '--force' when doing git checkout solves the above...
 #ifdef CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
 
         //TODOreq: make sure no files I modify/create have parent directories that are relevant to the output timestamp file. I was thinking the output timestamp file itself would qualify, but we don't record the timestamp of ".", so as of right now I can't think of any cases. Also worth noting that deleting a file modifies the directory last modified date...
@@ -229,7 +246,25 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         }
         else if(QFile::exists(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command") && !QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure")) //intermediate where some timestamps are lost
         {
-            //TODOreq
+            emit d("boner");
+            //TODOreq -- I've got everything for before/after coded and ready for testing, but I can't for the life of me figure out what to do here xD. Probably something simple... but guh. I know this is a vital part for letting "after" use "before"'s timestamps
+            //maybe just touch EVERY timestamp to the same timestamp so my 'performHackyOccurance' shit takes over and uses the "old" table... and then "new"/renamed files will get picked up in 2/3 MOLEST and.... aww shit this won't work because performHackyOccurance[...] needs a 'current' table to be populated, but I have nothing to populate it with :-/.
+            //Maybe I just do a manual iteration/population (similar to 2/3) and give them all the same timestamp. Since I do that now/before performHackyOccurance, it means we'll have the effect of pulling from the old table. I _THINK_ we can even use the same method as 2/3, but it would mean that we have a redundant call to 2/3 just once (DGAF)
+#if 0
+            QDateTime timeStampForSpecialInBetweenFiles = QDateTime::fromString(commitIdTimestampAndMessage->commitDate, Qt::ISODate);
+            timeStampForSpecialInBetweenFiles = timeStampForSpecialInBetweenFiles.addSecs(-1);
+
+            //clear out the 'current' (which is the same as 'old') table, but keep the 'old' one for when performHackyOccuranceRateMerging is called
+
+            if(!heirarchyMolester.loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp(absoluteActualWorkingDir, timeStampForSpecialInBetweenFiles))
+            {
+                emit d("failed to loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp during our special in between case");
+                return;
+            }
+#endif
+            //Now I'm starting to think that if I do nothing it will work perfectly...
+
+            //TODOreq: if more than 100 files are ever added (basically only ever in THIS state) that don't get put into the timestamp file, then i think it might cause it to TRY to pull from 'old' table every time and never be able to. or maybe is able to and doesn't matter because it has the same values... wasting cpu cycles only (idfk). Maybe I should just test the son of a bitch and see what happens :-P
         }
         else if(QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure")) //now
         {
@@ -239,7 +274,7 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
                 return;
             }
 
-            if(!heirarchyMolester.loadFromEasyTreeFile(absoluteActualWorkingDir, absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
+            if(!heirarchyMolester.loadFromEasyTreeFile(absoluteActualWorkingDir, absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure", true))
             {
                 emit d("failed to load .quickDirtyAutoBackupHalperDirStructure for heirarchy molester");
                 return;
@@ -251,6 +286,9 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
             return;
         }
 
+        heirarchyMolester.performHackyOccuranceRateMerging(100); //TODOreq: heirarchy molester needs to still function "normally" with[out] these hacks...
+        //TODOreq: I'm prety sure that doing this merging 'before' stage 2/3 will solve the problem of the files added in stage 2 triggering the occurance rate threshold, but in the "old" table will be the files from stage 2/3 "last time/checkout". I don't think it will be an issue since we don't do occurance rate checking ON the old table (just pull from it), but I'm noting it so I double check later
+
         //MOLEST STAGE 2/3 -- Add files not in list (now table) but in dir to the table
         QDateTime timeStampForMissedFiles = QDateTime::fromString(commitIdTimestampAndMessage->commitDate, Qt::ISODate);
         timeStampForMissedFiles = timeStampForMissedFiles.addSecs(-1);
@@ -260,10 +298,11 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
             return;
         }
 
-        //TODO LEFT OFF: need to do occurance rate analyzing and grab "most recent" if occurance rate is fucked
+        //TODO LEFT OFF: need to do occurance rate analyzing and grab "most recent" if occurance rate is fucked.
+        //Files added in stage 2/3 might hit that occurance rate threshold! FFFFF. Also need to decide what to do with renames.
 
         //MOLEST STAGE 3/3 -- USE TABLE
-        if(!heirarchyMolester.molestUsingInternalTables())
+        if(!heirarchyMolester.molestUsingInternalTables()) //TODOreq: internal/merged table becomes "old" table for next run, at/when/after we call this
         {
             emit d("failed to molest");
             return;
@@ -315,10 +354,53 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
 
         //RE-CREATE TIMESTAMP FILE -- recursively iterate dir contents (do not use previous table from molest, as that has censored filepaths in it)
 
-        //delete old timestamp formats first
         //new one shouldn't have creation date or size [or hash]
         //should use "ignore" lists like QuickDirty does (perhaps with more (see gitIgnore))
-        //TODOreq
+        //Touch re-created timestamp file to commitTimestamp...
+
+        //delete old timestamp formats first
+        if(QFile::exists(absoluteActualWorkingDir + "dirstructure.txt"))
+        {
+            if(!QFile::remove(absoluteActualWorkingDir + "dirstructure.txt"))
+            {
+                emit d("failed to remove dirstructure.txt");
+                return;
+            }
+        }
+        if(QFile::exists(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command"))
+        {
+            if(!QFile::remove(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command"))
+            {
+                emit d("failed to remove .dirstructure.txt.old.from.tree.command");
+                return;
+            }
+        }
+        if(QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
+        {
+            if(!QFile::remove(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
+            {
+                emit d("failed to remove .quickDirtyAutoBackupHalperDirStructure");
+                return;
+            }
+        }
+
+        QFile newTimestampsFile(absoluteActualWorkingDir + ".lastModifiedTimestamps"); //woo, a new format xD (KILL ME (jk heirarchy molester exists so the problem that caused me to write THIS app is now dealt with (and molester was so easy to code facepalm.jpg :-/...)))
+        if(!newTimestampsFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            emit d("failed to open .lastModifiedTimestamps for writing");
+            return;
+        }
+
+        EasyTree easyTree;
+        easyTree.generateTreeText(absoluteActualWorkingDir, &newTimestampsFile, false, &dirNamesToIgnore, &fileNamesToIgnore, &fileNamesEndWithIgnoreList, &dirNamesEndsWithIgnoreList, false);
+
+
+        if(!newTimestampsFile.flush()) //flush is necessary or else the git add/commit might miss it...
+        {
+            emit d("failed to flush .lastModifiedTimestamps");
+            return;
+        }
+        newTimestampsFile.close();
 
 #endif // CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
 

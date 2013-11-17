@@ -49,6 +49,10 @@ failosophy
 
 3xplain.it (or hell maybe just explain.it is open but i doubt it) -- works, whether copyrighted (re:lolgic, see, here's a contradiction right here -- i generally say i should refuse to acknowledge existence of copyrighted shit) or copylefted, explained in an overly verbose manner. analogies/metaphors written plainly, scene by scene "what you should get from this" explainations, wikipedia/crowd-source style
 
+stpheiank[k] -- html title: "connect(&brain, SIGNAL(think(QByteArray)), &brain, SIGNAL(speak(QByteArray)));"
+tshpienak[k]
+
+
 //lihveleyeve
 
 

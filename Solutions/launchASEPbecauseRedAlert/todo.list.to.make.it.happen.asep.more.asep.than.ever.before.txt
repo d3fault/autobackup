@@ -2,5 +2,4 @@
 [] - Upload Data (Freenet Full Copy, Start Seeding Torrent)
 [] - Finish Bitcoin Key Gen and SVGs
 [] - Launch via Twitch.tv or something (get offline backup however/hackily (use offline machine being recorded by another offline machine AND by an online machine (probably multiple vga splitters). 3 machines, 2 offline. The one you type/broadcast on does not record (might also need code testing filming solution). Same setup for your face)) (user/d3fault/data CAN contain only: sha1/md5/magnet (freenet, bittorrent), decryption key/password to it all. Will eventually actually server the data)
-[] - Do launch-like activities for a certain period of time, grow your viewer count
-[] - Call judge and request online hearing because broadcasting Justice itself CANNOT be illegal. Possibly demand, as a citizen, that Justice is not hidden from sight.... depending on what you decide at the time and given the judge's response). Here's a free quote for that: "Justice needs to not be hidden from the public in order to remain free of corruption". Applies to Hearings but also Jail imo (though that, and possibly both of these, are a different fight altogether). The thing is that once I'm launched I don't want to ever go offline... so... wat do?!?
+[] - Do launch-like activities forever
