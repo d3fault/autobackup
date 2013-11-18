@@ -1,0 +1,5 @@
+predictive if(notLaunch)
+{
+	breakDownCryingInBedInFetalPosition();
+	becomeAnHero(AnHeroMethod::ShotgunToTheFace);
+}

@@ -9,6 +9,33 @@
 #include "easytree.h"
 #endif
 
+struct QListGitCommitIdTimestampAndMessageDeleter
+{
+    static inline void cleanup(QList<GitCommitIdTimestampAndMessage*> *pointer)
+    {
+        int listSize = pointer->size();
+        for(int i = 0; i < listSize; ++i)
+        {
+            GitCommitIdTimestampAndMessage *item = pointer->at(i);
+            delete item;
+        }
+        delete pointer;
+    }
+};
+struct QListEasyTreeHashItemDeleter
+{
+    static inline void cleanup(QList<EasyTreeHashItem*> *pointer)
+    {
+        int listSize = pointer->size();
+        for(int i = 0; i < listSize; ++i)
+        {
+            EasyTreeHashItem *item = pointer->at(i);
+            delete item;
+        }
+        delete pointer;
+    }
+};
+
 GitUnrollRerollCensorshipMachine::GitUnrollRerollCensorshipMachine(QObject *parent) :
     QObject(parent), m_UnusedFilanameNonce(0)
 {
@@ -97,7 +124,7 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         emit d("failed to open for reading: " + filePathToListOfFilepathsToCensor);
         return;
     }
-    QList<EasyTreeHashItem*> *easyTreeHashItemListOfFilesToCensor = EasyTreeParser::parseEasyTreeAndReturnAsNewList(&fileWithListOfFilePathsToCensor);
+    QScopedPointer<QList<EasyTreeHashItem*>, QListEasyTreeHashItemDeleter> easyTreeHashItemListOfFilesToCensor(EasyTreeParser::parseEasyTreeAndReturnAsNewList(&fileWithListOfFilePathsToCensor));
     QStringList absoluteFilePathsToCensor;
     int easyTreeHashItemListOfFilesToCensorSize = easyTreeHashItemListOfFilesToCensor->size();
     for(int i = 0; i < easyTreeHashItemListOfFilesToCensorSize; ++i)
@@ -155,25 +182,27 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
     //ITERATE GIT LOG HISTORY
 
     //gather git log
-    QList<GitCommitIdTimestampAndMessage*> *allCommitSha1sFromGitLogCommand = new QList<GitCommitIdTimestampAndMessage*>();
-    if(!m_GitHelper.gitLogReturningCommitIdsAuthorDateAndCommitMessage(allCommitSha1sFromGitLogCommand, absoluteCensoredSourceDirsAssociatedDetachedGitFolder))
+    QScopedPointer<QList<GitCommitIdTimestampAndMessage*>, QListGitCommitIdTimestampAndMessageDeleter> allCommitSha1sFromGitLogCommand(new QList<GitCommitIdTimestampAndMessage*>());
+    if(!m_GitHelper.gitLogReturningCommitIdsAuthorDateAndCommitMessage(allCommitSha1sFromGitLogCommand.data(), absoluteCensoredSourceDirsAssociatedDetachedGitFolder))
     {
         emit d("failed to run git log in order to iterate the history of the censored repo");
         return;
     }
 
 #ifdef CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
+    QDateTime executionDateTime = QDateTime::currentDateTime(); //TODOreq: in UTC method instead? man whoever invented timezones and daylight savings time should be shot
+
     QString gitIgnoreFileGeneratedAndHeldInPlaceFilePath = absoluteActualWorkingDir + ".gitignore";
     QFile gitIgnoreFileGeneratedAndHeldInPlace(gitIgnoreFileGeneratedAndHeldInPlaceFilePath);
     QStringList gitIgnoreLines;
-    gitIgnoreLines << "*.[ao]" << "*.pro.user" << "*~" << "*__Qt_SDK__Debug/" << "*__Qt_SDK__Release/" << "*_in_PATH__System__Debug/" << "*_in_PATH__System__Release/";
+    gitIgnoreLines << "*.[ao]" << "*.autosave" << "*.kate-swp" << "*.pro.user" << "*~" << "*__Qt_SDK__Debug/" << "*__Qt_SDK__Release/" << "*_in_PATH__System__Debug/" << "*_in_PATH__System__Release/";
     QTextStream gitIgnoreTextStream(&gitIgnoreFileGeneratedAndHeldInPlace);
     FileModificationDateChanger fileModificationChanger;
     bool firstTimeCreatingGitIgnore = true;
     QDateTime gitIgnoreTimestamp;
 
     //we escape the filename sent to find in case it has a space, and since we're using the string execute method
-    QString findChmodCommand = "/usr/bin/find \"" + absoluteActualWorkingDir + "\" + ( -type d -exec /bin/chmod 755 {} ; ) -o ( -type f -exec /bin/chmod 644 {} ; )"; //took me longer than expected to figure out why `chmod -R 644 dir/` wouldn't work xD (stupid coders)
+    QString findChmodCommand = "/usr/bin/find \"" + absoluteActualWorkingDir + "\"" + " ( -type d -exec /bin/chmod 755 {} ; ) -o ( -type f -exec /bin/chmod 644 {} ; )"; //took me longer than expected to figure out why `chmod -R 644 dir/` wouldn't work xD (stupid coders)
 
     LastModifiedDateHeirarchyMolester heirarchyMolester;
     connect(&heirarchyMolester, SIGNAL(d(QString)), this, SIGNAL(d(QString)));
@@ -181,25 +210,33 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
     QList<QString> dirNamesToIgnore;
     dirNamesToIgnore.append(".git");
     QList<QString> fileNamesToIgnore;
-    //none
+    fileNamesToIgnore.append(".lastModifiedTimestamps"); //hack, ignore own output xD
     QList<QString> fileNamesEndWithIgnoreList;
     fileNamesEndWithIgnoreList.append(".pro.user");
     fileNamesEndWithIgnoreList.append("~");
     fileNamesEndWithIgnoreList.append(".a");
     fileNamesEndWithIgnoreList.append(".o");
+    fileNamesEndWithIgnoreList.append(".autosave");
+    fileNamesEndWithIgnoreList.append(".kate-swp");
     QList<QString> dirNamesEndsWithIgnoreList;
     dirNamesEndsWithIgnoreList.append("__Qt_SDK__Debug");
     dirNamesEndsWithIgnoreList.append("__Qt_SDK__Release");
     dirNamesEndsWithIgnoreList.append("_in_PATH__System__Debug");
     dirNamesEndsWithIgnoreList.append("_in_PATH__System__Release");
+
+    bool skipTheRestOfCustomHacksThisIteration = false;
 #endif
 
     //iterate over the git log backwards, because we want to start from the beginning/oldest commit
     int censoredRepoCommitsCount = allCommitSha1sFromGitLogCommand->size(); //TODOreq: verify this commit count with our destination/censored commit count
     for(int i = censoredRepoCommitsCount-1; i > -1; --i) //TODOreq: verify not off by one error
     {
+        emit d("commits left: " + QString::number(i)); //this might be off by one error, but idgaf
+
         GitCommitIdTimestampAndMessage *commitIdTimestampAndMessage = allCommitSha1sFromGitLogCommand->at(i);
         QString currentCommitId = commitIdTimestampAndMessage->commitId;
+
+        //I still wonder if a "rm -rfv ./*" (err, able to get hidden files tho) right here before the force checkout would make the end result cleaner
 
         //CHECKOUT
 
@@ -220,7 +257,7 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         //CHMOD Everything because I don't give a fuck and don't want git to record it...
 
         int findChmodReturnCode = QProcess::execute(findChmodCommand);
-        if(findChmodCommand != 0)
+        if(findChmodReturnCode != 0)
         {
             emit d("find chmod command didn't return 0: " + QString::number(findChmodReturnCode));
             return;
@@ -229,6 +266,8 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         //MOLEST STAGE 1/3 -- FILL TABLE
 
         //TODOreq: we need to verify that all the files in the heirarchy were molested (maybe not all are in the list), otherwise it'll have a timestamp at the time of execution. If it wasn't molested, give it a sane timestamp (checkout-1, for example)
+
+        skipTheRestOfCustomHacksThisIteration = false;
 
         if(QFile::exists(absoluteActualWorkingDir + "dirstructure.txt")) //early days
         {
@@ -242,6 +281,14 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
             {
                 emit d("failed to load dirstructure.txt for heirarchy molester");
                 return;
+            }
+
+            //bah, back in my old dirstructure.txt days i'd sometimes manually commit just so i could write a commit message... but doing so didn't update the timestamp file (hence QuickDirty)... so now my "last check before molest" is seeing deleted/renamed-from files in it's "table" because of that fact. how to deal with :-/
+            if(!commitIdTimestampAndMessage->commitMessage.startsWith("Auto-Commit @"))
+            {
+                //MUAHAHAHAHAHAHAHA h4x0r4life
+                //check internal tables, and for entries not existing, just drop them instead of erroring out :)
+                heirarchyMolester.dropNonExistingEntries();
             }
         }
         else if(QFile::exists(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command") && !QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure")) //intermediate where some timestamps are lost
@@ -265,6 +312,19 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
             //Now I'm starting to think that if I do nothing it will work perfectly...
 
             //TODOreq: if more than 100 files are ever added (basically only ever in THIS state) that don't get put into the timestamp file, then i think it might cause it to TRY to pull from 'old' table every time and never be able to. or maybe is able to and doesn't matter because it has the same values... wasting cpu cycles only (idfk). Maybe I should just test the son of a bitch and see what happens :-P
+
+
+            //This is a guess at a hack that may or may not work (my head hurts + lazy):
+            if(!heirarchyMolester.loadFromXml(absoluteActualWorkingDir, absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command"))
+            {
+                emit d("failed to load .dirstructure.txt.old.from.tree.command for heirarchy molester");
+                return;
+            }
+
+            if(!commitIdTimestampAndMessage->commitMessage.startsWith("Auto-Commit @"))
+            {
+                heirarchyMolester.dropNonExistingEntries();
+            }
         }
         else if(QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure")) //now
         {
@@ -280,35 +340,74 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
                 return;
             }
         }
-        else
+        else // ancient, no timestamp file
         {
-            emit d("couldn't determine state, must have not accounted for something");
-            return;
+            //mfw there's 6 months of commits with no dir structure file i had forgotten existed, guess i gotta just use the commit date... I don't think I have it in me tonight...
+            //TODO LEFT OFF
+
+            //TODOreq: I tried, since I had my testbox already running, putting a .loadAnyMissedFiles[..] in here using commit-1 as the date, and I think I found a bug that my "table" shit doesn't handle deleted directories. BUT maybe that's just because I threw that hack in here for testing??? 'clear'ing the current tables before running .loadAny seems to have gotten past that bug codewise, but I'm not sure if the logic checks out. Also definitely seeing a lot of "fucked state XYZ" things (shit's still running). Those XYZ errors might be because I cleared/loaded hackily _HERE_ (but only on test machine). It's funny watching it go... each commit takes longer and longer xD
+
+            //TODOreq: It's _VERY_ likely that these ancient commits might go over the threshold multiple times. If I have any commits with > 100 files, those will all have the same checked out time. Should I dynamically raise the threshold for these then? More importantly, does it even matter? All these intersecting paths of logic are hurting my brain, I'm not far from just releasing the book without [all] timestamps xD. Knowing they're in 'special' would be good enough for me :-P
+
+            //WHY THE FUCK am I stumped on what to do here? Is it because I don't have an easy way (or dunno how lol) to see if a file changed with a commit so it should take on the commitDate-1 of the new commit (instead of always retaining the commitDate-1 for the first time it was seen)? This is starting to piss me off and make me feel like I'll never launch. Makes me want to say fuck this whole app and go with no timestamps. ALL THIS CODE and I get stumped on something so stupid/simple.. xD. I've been staring at the screen thinking for like 20 minutes now... wtf. I'd be happy with a "good enough" simple solution, but I can't think of one..
+
+            //Here's an easy solution: give them all commitDate-1 for the very last commit before dirstructure.txt was introduced. WHO GIVES A FUCK. I think that would amount to a "continue;" here except for that last one. Or hell maybe just even the first time dirstructure.txt gets them is good enough imo fuck it (IN FACT, IT MIGHT CONTAIN SEMI-ACTUAL (OR ACTUAL) VALUES!?!?)). Wtfz
+            //Err actually it wouldn't be a continue, because then we'd never add/commit xD
+
+            if(!QFile::exists(absoluteActualWorkingDir + "dirstructure.txt") && !QFile::exists(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command") && !QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
+            {
+                skipTheRestOfCustomHacksThisIteration = true;
+            }
+            else
+            {
+                emit d("couldn't determine state, must have not accounted for something");
+                return;
+            }
         }
 
-        heirarchyMolester.performHackyOccuranceRateMerging(100); //TODOreq: heirarchy molester needs to still function "normally" with[out] these hacks...
-        //TODOreq: I'm prety sure that doing this merging 'before' stage 2/3 will solve the problem of the files added in stage 2 triggering the occurance rate threshold, but in the "old" table will be the files from stage 2/3 "last time/checkout". I don't think it will be an issue since we don't do occurance rate checking ON the old table (just pull from it), but I'm noting it so I double check later
-
-        //MOLEST STAGE 2/3 -- Add files not in list (now table) but in dir to the table
-        QDateTime timeStampForMissedFiles = QDateTime::fromString(commitIdTimestampAndMessage->commitDate, Qt::ISODate);
-        timeStampForMissedFiles = timeStampForMissedFiles.addSecs(-1);
-        if(!heirarchyMolester.loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp(absoluteActualWorkingDir, timeStampForMissedFiles)) //was tempted to put "ignore" lists in here, but that's for later... when re-creating timestamp file
+        if(!skipTheRestOfCustomHacksThisIteration)
         {
-            emit d("failed to loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp");
-            return;
+            heirarchyMolester.performHackyOccuranceRateMerging(100); //TODOreq: heirarchy molester needs to still function "normally" with[out] these hacks...
+            //TODOreq: I'm prety sure that doing this merging 'before' stage 2/3 will solve the problem of the files added in stage 2 triggering the occurance rate threshold, but in the "old" table will be the files from stage 2/3 "last time/checkout". I don't think it will be an issue since we don't do occurance rate checking ON the old table (just pull from it), but I'm noting it so I double check later
+
+            //TODOreq: either here or before perform[...] (unsure tbh, might not matter), I need to do a QFile::exists on every entry in the tables and remove non-existent ones. This is to account for deletes/renames between commits
+            //A way to test this is to make sure there are no files of size 0 (touch would create them (but luckily errors out if the dir the file attempting to touch doesn't exist))
+            //^^^^^^^I think this was only because I was doing "loadAnyMissed" on the "ancient" (no timestamp) shit. The proper loads from timestamp files WILL handle deletes/renames...
+
+
+            //MOLEST STAGE 2/3 -- Add files not in list (now table) but in dir to the table
+            QDateTime timeStampForMissedFiles = QDateTime::fromString(commitIdTimestampAndMessage->commitDate, Qt::ISODate);
+            timeStampForMissedFiles = timeStampForMissedFiles.addSecs(-1);
+            if(!heirarchyMolester.loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp(absoluteActualWorkingDir, timeStampForMissedFiles)) //was tempted to put "ignore" lists in here, but that's for later... when re-creating timestamp file
+            {
+                emit d("failed to loadAnyMissedFilesByRecursivelyScanningDirectoriesAndGiveThemThisTimestamp");
+                return;
+            }
+
+            //Files added in stage 2/3 might hit that occurance rate threshold! FFFFF. Also need to decide what to do with renames.
+
+
+
+            heirarchyMolester.removeFilePathsFromTablesThatTimestampFileGotButGitIgnored(fileNamesEndWithIgnoreList, dirNamesEndsWithIgnoreList);
+
+            //TODOreq: as a very last step before molest, I can check the internal tables don't have a timestamp >= execution date (meaning I missed them) -- but meh isn't this already accounted for in loadAny?
+            if(!heirarchyMolester.allFilePathsInCurrentTableExistAndDontHaveDateTimeGreaterThanOrEqualTo(executionDateTime))
+            {
+                emit d("a file path about to be molested didn't exist, or had a datetime greater than our execution time");
+                return;
+            }
+
+
+            //MOLEST STAGE 3/3 -- USE TABLE
+            if(!heirarchyMolester.molestUsingInternalTables()) //TODOreq: internal/merged table becomes "old" table for next run, at/when/after we call this
+            {
+                emit d("failed to molest");
+                return;
+            }
         }
 
-        //TODO LEFT OFF: need to do occurance rate analyzing and grab "most recent" if occurance rate is fucked.
-        //Files added in stage 2/3 might hit that occurance rate threshold! FFFFF. Also need to decide what to do with renames.
 
-        //MOLEST STAGE 3/3 -- USE TABLE
-        if(!heirarchyMolester.molestUsingInternalTables()) //TODOreq: internal/merged table becomes "old" table for next run, at/when/after we call this
-        {
-            emit d("failed to molest");
-            return;
-        }
-
-
+        //even when skipTheRestOfCustomHacksThisIteration is true, we still want to do the .gitignore hack :)
         //MAKE .gitgnore
 
         //regardless of if it's already made (might have 'checked out' contents), 'TOUCH' it to the earliest date ever (if(firstTimeTouching { genTouchTimestamp })) and keep re-touching each checkout to that same timestamp, so git final git repo doesn't record it ever changing
@@ -320,6 +419,11 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         foreach(QString gitIgnoreLine, gitIgnoreLines)
         {
             gitIgnoreTextStream << gitIgnoreLine << endl;
+        }
+        if(!gitIgnoreFileGeneratedAndHeldInPlace.flush())
+        {
+            emit d("failed to flush gitIgnoreFileGeneratedAndHeldInPlace");
+            return;
         }
         gitIgnoreFileGeneratedAndHeldInPlace.close();
         if(firstTimeCreatingGitIgnore)
@@ -352,55 +456,58 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
 
 #ifdef CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
 
-        //RE-CREATE TIMESTAMP FILE -- recursively iterate dir contents (do not use previous table from molest, as that has censored filepaths in it)
-
-        //new one shouldn't have creation date or size [or hash]
-        //should use "ignore" lists like QuickDirty does (perhaps with more (see gitIgnore))
-        //Touch re-created timestamp file to commitTimestamp...
-
-        //delete old timestamp formats first
-        if(QFile::exists(absoluteActualWorkingDir + "dirstructure.txt"))
+        if(!skipTheRestOfCustomHacksThisIteration)
         {
-            if(!QFile::remove(absoluteActualWorkingDir + "dirstructure.txt"))
+            //RE-CREATE TIMESTAMP FILE -- recursively iterate dir contents (do not use previous table from molest, as that has censored filepaths in it)
+
+            //new one shouldn't have creation date or size [or hash]
+            //should use "ignore" lists like QuickDirty does (perhaps with more (see gitIgnore))
+            //Touch re-created timestamp file to commitTimestamp...
+
+            //delete old timestamp formats first
+            if(QFile::exists(absoluteActualWorkingDir + "dirstructure.txt"))
             {
-                emit d("failed to remove dirstructure.txt");
+                if(!QFile::remove(absoluteActualWorkingDir + "dirstructure.txt"))
+                {
+                    emit d("failed to remove dirstructure.txt");
+                    return;
+                }
+            }
+            if(QFile::exists(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command"))
+            {
+                if(!QFile::remove(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command"))
+                {
+                    emit d("failed to remove .dirstructure.txt.old.from.tree.command");
+                    return;
+                }
+            }
+            if(QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
+            {
+                if(!QFile::remove(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
+                {
+                    emit d("failed to remove .quickDirtyAutoBackupHalperDirStructure");
+                    return;
+                }
+            }
+
+            QFile newTimestampsFile(absoluteActualWorkingDir + ".lastModifiedTimestamps"); //woo, a new format xD (KILL ME (jk heirarchy molester exists so the problem that caused me to write THIS app is now dealt with (and molester was so easy to code facepalm.jpg :-/...)))
+            if(!newTimestampsFile.open(QIODevice::WriteOnly | QIODevice::Text))
+            {
+                emit d("failed to open .lastModifiedTimestamps for writing");
                 return;
             }
-        }
-        if(QFile::exists(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command"))
-        {
-            if(!QFile::remove(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command"))
+
+            EasyTree easyTree;
+            easyTree.generateTreeText(absoluteActualWorkingDir, &newTimestampsFile, false, &dirNamesToIgnore, &fileNamesToIgnore, &fileNamesEndWithIgnoreList, &dirNamesEndsWithIgnoreList, false);
+
+
+            if(!newTimestampsFile.flush()) //flush is necessary or else the git add/commit might miss it...
             {
-                emit d("failed to remove .dirstructure.txt.old.from.tree.command");
+                emit d("failed to flush .lastModifiedTimestamps");
                 return;
             }
+            newTimestampsFile.close();
         }
-        if(QFile::exists(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
-        {
-            if(!QFile::remove(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure"))
-            {
-                emit d("failed to remove .quickDirtyAutoBackupHalperDirStructure");
-                return;
-            }
-        }
-
-        QFile newTimestampsFile(absoluteActualWorkingDir + ".lastModifiedTimestamps"); //woo, a new format xD (KILL ME (jk heirarchy molester exists so the problem that caused me to write THIS app is now dealt with (and molester was so easy to code facepalm.jpg :-/...)))
-        if(!newTimestampsFile.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            emit d("failed to open .lastModifiedTimestamps for writing");
-            return;
-        }
-
-        EasyTree easyTree;
-        easyTree.generateTreeText(absoluteActualWorkingDir, &newTimestampsFile, false, &dirNamesToIgnore, &fileNamesToIgnore, &fileNamesEndWithIgnoreList, &dirNamesEndsWithIgnoreList, false);
-
-
-        if(!newTimestampsFile.flush()) //flush is necessary or else the git add/commit might miss it...
-        {
-            emit d("failed to flush .lastModifiedTimestamps");
-            return;
-        }
-        newTimestampsFile.close();
 
 #endif // CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
 
@@ -422,23 +529,5 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
 
     emit d("done iterating git commits");
 
-    //CLONE TEMP CENSORED DESTINATION TO USER SUPPLIED DESTINATION
-
-
-    //cleanup -- TODOreq: return;'ing anywhere above does not properly clean up! ffffff need me some scoped pointers, and probably custom deleters to first iterate the lists
-    int allCommitSha1sFromGitLogCommandCount = allCommitSha1sFromGitLogCommand->size();
-    for(int i = 0; i < allCommitSha1sFromGitLogCommandCount; ++i)
-    {
-        GitCommitIdTimestampAndMessage *idTimestampAndMessage = allCommitSha1sFromGitLogCommand->at(i);
-        delete idTimestampAndMessage;
-    }
-    delete allCommitSha1sFromGitLogCommand;
-
-    int easyTreeHashItemListOfFilesToCensorCount = easyTreeHashItemListOfFilesToCensor->size();
-    for(int i = 0; i < easyTreeHashItemListOfFilesToCensorCount; ++i)
-    {
-        EasyTreeHashItem *item = easyTreeHashItemListOfFilesToCensor->at(i);
-        delete item;
-    }
-    delete easyTreeHashItemListOfFilesToCensor;
+    //TODOreq: CLONE TEMP CENSORED DESTINATION TO USER SUPPLIED DESTINATION -- especially since IIRC there will be some files in there we want to not give a fuck about
 }

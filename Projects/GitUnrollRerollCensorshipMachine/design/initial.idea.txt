@@ -37,7 +37,7 @@ foreach(git log output commits) //the same loop as above, but these hacks will b
 	//we go out of hack scope to do (2) and then re-enter it for (3). HACK SCOPE. I like the sound of it.
 
 	3) remove old/outdated easy tree file, create new easy tree file for the checked out and molested heirarchy
-	4) touch new easy tree file to use the datetime from the commit
+	4) NO (it won't record it's own timestamp, and neither will git): touch new easy tree file to use the datetime from the commit.
 }
 
 

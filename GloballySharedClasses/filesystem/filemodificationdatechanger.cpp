@@ -8,6 +8,7 @@ FileModificationDateChanger::FileModificationDateChanger(QObject *parent) :
 }
 bool FileModificationDateChanger::changeModificationDate(const QString &absolutePathOfFileToTouch, QDateTime newDateTime)
 {
+#if 0 //this hack is still here, but i've moved it to heirarchy molester's 'load' functions (both of them)
     if(absolutePathOfFileToTouch.endsWith("/")) //re-create dirs that weren't committed to git because no files inside. I get the sneaking suspicion that this hack is going to bite me in the future somehow. Hello future pissed off self
     {
         if(!QFile::exists(absolutePathOfFileToTouch))
@@ -20,6 +21,7 @@ bool FileModificationDateChanger::changeModificationDate(const QString &absolute
             }
         }
     }
+#endif
 
     QStringList touchArguments;
     touchArguments << "-m" << QString("--date=@" + QString::number(newDateTime.toMSecsSinceEpoch()/1000)) << absolutePathOfFileToTouch;

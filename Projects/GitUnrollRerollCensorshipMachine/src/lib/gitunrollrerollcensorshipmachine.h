@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QStringList>
 #include <QList>
+#include <QScopedPointer>
 
 #include "easytreeparser.h"
 #include "easytreehashitem.h"

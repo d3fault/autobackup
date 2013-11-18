@@ -6,6 +6,8 @@
 /*
   TODO LEFT OFF
 fill out committer name (?????)
+timestamp file records itself, shouldn't (worst case scenario, at least touch it to a sane time instead of 'execution time' like currently). i think my 'filenamesignorelist' should do actually
+//.kate-swp,.autosave --tempted to say keep .autosaves, but idfk
 */
 
 const QString GitHelper::m_GitBinaryFilePath = "/usr/bin/git";
@@ -215,12 +217,12 @@ bool GitHelper::gitCheckout(QString commitIdToCheckout, QString semiOptionalWork
         return false;
     }
     QString gitCheckoutResultString = m_GitProcess.readAll();
-    //TODOreq: we could probably do basic 'contains' verification here
-    emit d(gitCheckoutResultString);
+    //TODOreq: we could probably do basic 'contains' verification here    
     int exitCode = m_GitProcess.exitCode();
     if(exitCode != 0)
     {
         emit d("git checkout exit code was not zero");
+        emit d(gitCheckoutResultString);
         return false;
     }   
     if(gitCheckoutResultString.trimmed().isEmpty())
@@ -291,8 +293,7 @@ bool GitHelper::gitCommit(QString workTree, QString gitDir, QString commitMessag
     }
     int exitCode = m_GitProcess.exitCode();
     QString gitCommitResultString = m_GitProcess.readAll();
-    //TODOreq: we could probably do basic 'contains' verification here
-    emit d(gitCommitResultString);
+    //TODOreq: we could probably do basic 'contains' verification here    
     if(exitCode != 0)
     {
         if(gitCommitResultString.contains("nothing to commit (working directory clean)"))
@@ -301,6 +302,7 @@ bool GitHelper::gitCommit(QString workTree, QString gitDir, QString commitMessag
             return true;
         }
         emit d("git commit exit code was not zero");
+        emit d(gitCommitResultString);
         return false;
     }
     if(gitCommitResultString.trimmed().isEmpty())

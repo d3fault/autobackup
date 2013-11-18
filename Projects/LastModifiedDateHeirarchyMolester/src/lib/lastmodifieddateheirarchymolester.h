@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <QHash>
 #include <QHashIterator>
+#include <QMutableHashIterator>
 
 #include "easytreehashitem.h"
 #include "filemodificationdatechanger.h"
@@ -26,6 +27,9 @@ public:
 
     //HACK:
     void performHackyOccuranceRateMerging(quint32 occuranceRateThresholdToTriggerIgnoringOfTimestamp);
+    void dropNonExistingEntries();
+    void removeFilePathsFromTablesThatTimestampFileGotButGitIgnored(QList<QString> filenamesEndsWithIgnoreList, QList<QString> dirNamesEndsWithIgnoreList);
+    bool allFilePathsInCurrentTableExistAndDontHaveDateTimeGreaterThanOrEqualTo(QDateTime dateTimeToCheckAgainst);
     //</hack>
 private:
     FileModificationDateChanger m_FileModificationDateChanger;

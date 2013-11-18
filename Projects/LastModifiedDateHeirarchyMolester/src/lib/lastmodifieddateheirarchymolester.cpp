@@ -117,6 +117,7 @@ bool LastModifiedDateHeirarchyMolester::loadFromXml(const QString &directoryHeir
 }
 bool LastModifiedDateHeirarchyMolester::loadFromEasyTreeFile(const QString &directoryHeirarchyCorrespingToEasyTreeFile, const QString &absoluteFilePathToEasyTreeFile, bool easyTreeLinesHaveCreationDate)
 {
+    emit d("Beginning trying to read Easy Tree timestamp file");
     doSharedInitBetweenXmlAndEasyTree(directoryHeirarchyCorrespingToEasyTreeFile, absoluteFilePathToEasyTreeFile);
 
     QTextStream easyTreeFileStream(&m_TimestampFile);
@@ -131,7 +132,17 @@ bool LastModifiedDateHeirarchyMolester::loadFromEasyTreeFile(const QString &dire
             //if age >= 18, touch them softly
             if(easyTreeItem->isDirectory())
             {
-                m_TimestampsByAbsoluteFilePathHash_Folders.insert(m_DirectoryHeirarchyCorrespingToTimestampFileWithSlashAppended + easyTreeItem->relativeFilePath(), easyTreeItem->lastModifiedDateTime());
+                QString dirPath = m_DirectoryHeirarchyCorrespingToTimestampFileWithSlashAppended + easyTreeItem->relativeFilePath();
+                if(!QFile::exists(dirPath))
+                {
+                    QDir dir(dirPath);
+                    if(!dir.mkpath(dirPath))
+                    {
+                        emit d("while trying to make a dir in easy tree file (that was empty so git missed it), we failed");
+                        return false;
+                    }
+                }
+                m_TimestampsByAbsoluteFilePathHash_Folders.insert(dirPath, easyTreeItem->lastModifiedDateTime());
             }
             else
             {
@@ -150,6 +161,7 @@ bool LastModifiedDateHeirarchyMolester::loadFromEasyTreeFile(const QString &dire
     }
 
     m_TimestampFile.close();
+    emit d("Finished reading Easy Tree timestamp file");
     return true;
 }
 bool LastModifiedDateHeirarchyMolester::molestUsingInternalTables()
@@ -306,12 +318,14 @@ void LastModifiedDateHeirarchyMolester::performHackyOccuranceRateMerging(quint32
                 QDateTime unFuckedDateTime = m_OldTimestampsByAbsoluteFilePathHash_Files.value(currentFilePath); //Was like years of suppression now satisfied in writing that variable name...
                 m_TimestampsByAbsoluteFilePathHash_Files.insert(currentFilePath, unFuckedDateTime);
             }
+#if 0 // else it might be in folders (else folders might be in files) -- so this tells us nothing and should never happen anyways (I'm on crack)
             else
             {
                 emit d("fucked state detected XYZ, more hacking required"); //since I'm testing with live data anyways... :)
                 //If I do more hackery here, should copy/paste it to Folders below (ABC)
                 return;
             }
+#endif
         }
         //Folders
         int foldersKeysToTryToUseOldTableTimestampSize = foldersKeysToTryToUseOldTableTimestamp.size();
@@ -323,15 +337,145 @@ void LastModifiedDateHeirarchyMolester::performHackyOccuranceRateMerging(quint32
                 QDateTime unFuckedDateTime = m_OldTimestampsByAbsoluteFilePathHash_Folders.value(currentFilePath);
                 m_TimestampsByAbsoluteFilePathHash_Folders.insert(currentFilePath, unFuckedDateTime);
             }
+#if 0
             else
             {
                 emit d("fucked state detected ABC, more hacking required");
                 return;
             }
+#endif
         }
 
         //TODOreq: i think i need to do something with the timestamp if it isn't found in either file/folder hash, which would mean it's a..... new or renamed file. but maybe it doesn't matter idfk. so many corner cases xD
     }
+}
+void LastModifiedDateHeirarchyMolester::dropNonExistingEntries()
+{
+    QMutableHashIterator<QString,QDateTime> filesIterator(m_TimestampsByAbsoluteFilePathHash_Files);
+    while(filesIterator.hasNext())
+    {
+        filesIterator.next();
+        if(!QFile::exists(filesIterator.key()))
+        {
+            filesIterator.remove();
+        }
+    }
+
+    QMutableHashIterator<QString,QDateTime> foldersIterator(m_TimestampsByAbsoluteFilePathHash_Folders);
+    while(foldersIterator.hasNext())
+    {
+        foldersIterator.next();
+        if(!QFile::exists(foldersIterator.key()))
+        {
+            foldersIterator.remove();
+        }
+    }
+}
+void LastModifiedDateHeirarchyMolester::removeFilePathsFromTablesThatTimestampFileGotButGitIgnored(QList<QString> filenamesEndsWithIgnoreList, QList<QString> dirNamesEndsWithIgnoreList)
+{
+    //dir names ignore list checks both file table and folder table
+    //file names ignore list checks only file table
+
+    int filenamesEndsWithIgnoreListCount = filenamesEndsWithIgnoreList.size();
+    int dirNamesEndsWithIgnoreListCount = dirNamesEndsWithIgnoreList.size();
+
+    QMutableHashIterator<QString,QDateTime> filesIterator(m_TimestampsByAbsoluteFilePathHash_Files);
+    while(filesIterator.hasNext())
+    {
+        filesIterator.next();
+        QString currentFilePath = filesIterator.key();
+
+        bool foundOneSoRemoveAndContinue = false;
+
+        for(int i = 0; i < filenamesEndsWithIgnoreListCount; ++i)
+        {
+            if(currentFilePath.endsWith(filenamesEndsWithIgnoreList.at(i)))
+            {
+                foundOneSoRemoveAndContinue = true;
+                break;
+            }
+        }
+
+        if(foundOneSoRemoveAndContinue)
+        {
+            //whether or not it meets the dir ignore list TOO is irrelevant, since we are removing it from the table
+            filesIterator.remove();
+            continue; //if we did this in the for loop, it wouldn't work, hence flagging is needed
+        }
+
+        for(int i = 0; i < dirNamesEndsWithIgnoreListCount; ++i)
+        {
+            if(currentFilePath.contains(dirNamesEndsWithIgnoreList.at(i) + "/"))
+            {
+                foundOneSoRemoveAndContinue = true;
+            }
+        }
+        if(foundOneSoRemoveAndContinue)
+        {
+            filesIterator.remove();
+            continue;
+        }
+    }
+
+    QMutableHashIterator<QString,QDateTime> foldersIterator(m_TimestampsByAbsoluteFilePathHash_Folders);
+    while(foldersIterator.hasNext())
+    {
+        foldersIterator.next();
+
+        QString currentFilePath = foldersIterator.key();
+
+        bool foundOneSoRemoveAndContinue = false;
+
+        for(int i = 0; i < dirNamesEndsWithIgnoreListCount; ++i)
+        {
+            if(currentFilePath.contains(dirNamesEndsWithIgnoreList.at(i) + "/"))
+            {
+                foundOneSoRemoveAndContinue = true;
+                break;
+            }
+        }
+        if(foundOneSoRemoveAndContinue)
+        {
+            foldersIterator.remove();
+            continue;
+        }
+    }
+}
+//when in doubt, add ultra strict verification tests to the "n-1"th step of your process :) -- not that that should be done in production/time-constrained apps (but this isn't)
+bool LastModifiedDateHeirarchyMolester::allFilePathsInCurrentTableExistAndDontHaveDateTimeGreaterThanOrEqualTo(QDateTime dateTimeToCheckAgainst)
+{
+    QHashIterator<QString,QDateTime> filesIterator(m_TimestampsByAbsoluteFilePathHash_Files);
+    while(filesIterator.hasNext())
+    {
+        filesIterator.next();
+        if(!QFile::exists(filesIterator.key()))
+        {
+            emit d ("in last stage verification, " + filesIterator.key() + " did not exist");
+            return false;
+        }
+        if(filesIterator.value() >= dateTimeToCheckAgainst)
+        {
+            emit d("in last stage verification, " + filesIterator.key() + " had dateTime (" + filesIterator.value().toString() + ") >= execution start time: " + dateTimeToCheckAgainst.toString());
+            return false;
+        }
+    }
+
+    QHashIterator<QString,QDateTime> foldersIterator(m_TimestampsByAbsoluteFilePathHash_Folders);
+    while(foldersIterator.hasNext())
+    {
+        foldersIterator.next();
+        if(!QFile::exists(foldersIterator.key()))
+        {
+            emit d ("in last stage verification, " + foldersIterator.key() + " did not exist");
+            return false;
+        }
+        if(foldersIterator.value() >= dateTimeToCheckAgainst)
+        {
+            emit d("in last stage verification, " + foldersIterator.key() + " had dateTime (" + foldersIterator.value().toString() + ") >= execution start time: " + dateTimeToCheckAgainst.toString());
+            return false;
+        }
+    }
+    return true;
 }
 bool LastModifiedDateHeirarchyMolester::doSharedInitBetweenXmlAndEasyTree(const QString &directoryHeirarchyCorrespingToTimestampFile, const QString &timestampFilePath)
 {
