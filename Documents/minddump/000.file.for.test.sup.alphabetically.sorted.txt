@@ -1,0 +1,1 @@
+This file signifies the last file/commit before running censorship machine. I will look for this file in it's output as a verification that it worked (mainly just an off by one error I still haven't tested).
