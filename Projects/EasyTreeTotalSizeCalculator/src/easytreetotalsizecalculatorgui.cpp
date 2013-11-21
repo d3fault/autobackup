@@ -10,7 +10,7 @@ EasyTreeTotalSizeCalculatorGui::EasyTreeTotalSizeCalculatorGui(QObject *parent) 
 void EasyTreeTotalSizeCalculatorGui::handleEasyTreeTotalSizeCalculatorBusinessInstantiated()
 {
     EasyTreeTotalSizeCalculator *business = m_BusinessThread.getObjectPointerForConnectionsOnly();
-    connect(&m_Gui, SIGNAL(calculateTotalSizeOfEasyTreeEntriesRequested(QString)), business, SLOT(calculateTotalSizeOfEasyTreeEntries(QString)));
+    connect(&m_Gui, SIGNAL(calculateTotalSizeOfEasyTreeEntriesRequested(QString,bool)), business, SLOT(calculateTotalSizeOfEasyTreeEntries(QString,bool)));
     connect(business, SIGNAL(d(QString)), &m_Gui, SLOT(handleD(QString)));
 
     m_Gui.show();

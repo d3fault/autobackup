@@ -30,6 +30,7 @@ public:
     void dropNonExistingEntries();
     void removeFilePathsFromTablesThatTimestampFileGotButGitIgnored(QList<QString> filenamesEndsWithIgnoreList, QList<QString> dirNamesEndsWithIgnoreList);
     bool allFilePathsInCurrentTableExistAndDontHaveDateTimeGreaterThanOrEqualTo(QDateTime dateTimeToCheckAgainst);
+    void removeTimestampFilesFromTablesIfTheySomehowGotInThereWtf(QList<QString> absoluteFilePathsToTimestampFilesToRemove);
     //</hack>
 private:
     FileModificationDateChanger m_FileModificationDateChanger;

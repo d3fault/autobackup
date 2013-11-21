@@ -1,0 +1,5 @@
+The good thing about the fact that I'm _ONLY_ securing bitcoins and not "data" is that it's trivial to change over to a "new password". Data, if "distributed" (very stupid to keep the only copy on you), can always be decrypted by "old passwords" (prediction goes here ;-P). Bitcoins, when a password is compromised or near-compromised, can simply be sent to new addresses in a matter of seconds/minutes... and the old passwords become worthless.
+
+In that sense, one could (I COULD/AM, though not "entirely") argue that it's impossible to secure any data whatsoever... and that only money such as bitcoin have the possibility of being securable.
+
+It is especially true on the longer term: computer speeds improving and the "sliding window of crackability [on 'average' desktop pc]" means that all data eventually gets decrypted. BUT with bitcoin, you simply send your funds to new more secure formats as they come out (of course if you don't, you have the same problem as data).

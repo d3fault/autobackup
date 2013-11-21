@@ -10,6 +10,7 @@ EasyTreeTotalSizeCalculatorWidget::EasyTreeTotalSizeCalculatorWidget(QWidget *pa
     m_FilepathOfEasyTreeFileLabel = new QLabel("Easy Tree Filepath:");
     m_FilepathOfEasyTreeFileLineEdit = new QLineEdit();
     m_FilepathOfEasyTreeFileBrowseButton = new QPushButton("Browse");
+    m_EasyTreeIsReplacementFormatted = new QCheckBox("Easy Tree File Is 'Replacements' Formatted");
     m_CalculateTotalSizeOfEasyTreeEntriesButton = new QPushButton("Calculate Total Size");
     m_Debug = new QPlainTextEdit();
 
@@ -53,5 +54,5 @@ void EasyTreeTotalSizeCalculatorWidget::handleCalculateTotalSizeOfEasyTreeEntrie
         handleD("Please Select An Easy Tree File");
         return;
     }
-    emit calculateTotalSizeOfEasyTreeEntriesRequested(m_FilepathOfEasyTreeFileLineEdit->text());
+    emit calculateTotalSizeOfEasyTreeEntriesRequested(m_FilepathOfEasyTreeFileLineEdit->text(), m_EasyTreeIsReplacementFormatted->isChecked());
 }

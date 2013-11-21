@@ -100,9 +100,9 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         emit d("folder does not exist: " + absoluteSourceGitDirToCensor);
         return;
     }
-    if(!QFile::exists(absoluteDestinationGitDirCensored))
+    if(QFile::exists(absoluteDestinationGitDirCensored))
     {
-        emit d("folder does not exist: " + absoluteDestinationGitDirCensored);
+        emit d("folder must not exist: " + absoluteDestinationGitDirCensored);
         return;
     }
     if(!QFile::exists(absoluteWorkingDir))
@@ -165,7 +165,8 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
     QString tempCensoredDestinationAssociatedDetachedGitDir = getUnusedFilename(topWorkingDir);
     QString absoluteTempCensoredDestinationAssociatedDetachedGitDir = appendSlashIfNeeded(absoluteWorkingDir + tempCensoredDestinationAssociatedDetachedGitDir);
 
-    emit d("here is where the result is for now because i'm a lazy cunt" + absoluteTempCensoredDestinationAssociatedDetachedGitDir);
+    emit d("here is where the (bare-ish) result repo is for now because i'm a lazy cunt: " + absoluteTempCensoredDestinationAssociatedDetachedGitDir);
+    emit d("here is where the absolute actual working dir is for now because i'm a lazy chubaccabra: " + absoluteActualWorkingDir);
 
     if(!topWorkingDir.mkdir(tempCensoredDestinationAssociatedDetachedGitDir))
     {
@@ -225,7 +226,15 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
     dirNamesEndsWithIgnoreList.append("_in_PATH__System__Release");
 
     bool skipTheRestOfCustomHacksThisIteration = false;
+
+    QList<QString> timestampFilesAbsolutePathsListForRemovingFromHeirchyMolesterInternalTables;
+    timestampFilesAbsolutePathsListForRemovingFromHeirchyMolesterInternalTables.append(absoluteActualWorkingDir + "dirstructure.txt");
+    timestampFilesAbsolutePathsListForRemovingFromHeirchyMolesterInternalTables.append(absoluteActualWorkingDir + ".quickDirtyAutoBackupHalperDirStructure");
+    timestampFilesAbsolutePathsListForRemovingFromHeirchyMolesterInternalTables.append(absoluteActualWorkingDir + ".dirstructure.txt.old.from.tree.command");
+    timestampFilesAbsolutePathsListForRemovingFromHeirchyMolesterInternalTables.append(absoluteActualWorkingDir + ".lastModifiedTimestamps");
 #endif
+
+    QDir dirToReMakeOverAndOverBecauseWeRmItOverAndOver(absoluteActualWorkingDir); //why isn't mkpath static guh
 
     //iterate over the git log backwards, because we want to start from the beginning/oldest commit
     int censoredRepoCommitsCount = allCommitSha1sFromGitLogCommand->size(); //TODOreq: verify this commit count with our destination/censored commit count
@@ -237,6 +246,17 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
         QString currentCommitId = commitIdTimestampAndMessage->commitId;
 
         //I still wonder if a "rm -rfv ./*" (err, able to get hidden files tho) right here before the force checkout would make the end result cleaner
+        int rmRet = QProcess::execute("/bin/rm -rf \"" + absoluteActualWorkingDir + "\"");
+        if(rmRet != 0)
+        {
+            emit d("rm did not return 0: " + QString::number(rmRet));
+            return;
+        }
+
+        if(!dirToReMakeOverAndOverBecauseWeRmItOverAndOver.mkpath(absoluteActualWorkingDir))
+        {
+            emit d("failed to re-make absolute actual working dir");
+        }
 
         //CHECKOUT
 
@@ -387,6 +407,7 @@ void GitUnrollRerollCensorshipMachine::unrollRerollGitRepoCensoringAtEachCommit(
             //Files added in stage 2/3 might hit that occurance rate threshold! FFFFF. Also need to decide what to do with renames.
 
 
+            heirarchyMolester.removeTimestampFilesFromTablesIfTheySomehowGotInThereWtf(timestampFilesAbsolutePathsListForRemovingFromHeirchyMolesterInternalTables);
 
             heirarchyMolester.removeFilePathsFromTablesThatTimestampFileGotButGitIgnored(fileNamesEndWithIgnoreList, dirNamesEndsWithIgnoreList);
 

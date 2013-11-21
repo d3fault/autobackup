@@ -17,8 +17,8 @@ public:
 signals:
     void d(const QString &);
 public slots:
-    void calculateTotalSizeOfEasyTreeEntries(const QString &filepathOfEasyTreeFile);
-    void calculateTotalSizeOfEasyTreeEntries(QIODevice *ioDeviceOfEasyTreeFile);
+    void calculateTotalSizeOfEasyTreeEntries(const QString &filepathOfEasyTreeFile, bool easyTreeFileIsReplacementsFormatted = false);
+    void calculateTotalSizeOfEasyTreeEntries(QIODevice *ioDeviceOfEasyTreeFile, bool easyTreeFileIsReplacementsFormatted = false);
 };
 
 #endif // EASYTREETOTALSIZECALCULATOR_H

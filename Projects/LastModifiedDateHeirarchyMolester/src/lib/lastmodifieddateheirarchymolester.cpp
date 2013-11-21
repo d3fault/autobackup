@@ -166,7 +166,7 @@ bool LastModifiedDateHeirarchyMolester::loadFromEasyTreeFile(const QString &dire
 }
 bool LastModifiedDateHeirarchyMolester::molestUsingInternalTables()
 {
-    emit d("Beginning Molestation...");
+    emit d("Beginning Molestation using table size: " + QString::number(m_TimestampsByAbsoluteFilePathHash_Files.size()));
 
     QHashIterator<QString, QDateTime> fileIterator(m_TimestampsByAbsoluteFilePathHash_Files);
     while(fileIterator.hasNext())
@@ -476,6 +476,13 @@ bool LastModifiedDateHeirarchyMolester::allFilePathsInCurrentTableExistAndDontHa
         }
     }
     return true;
+}
+void LastModifiedDateHeirarchyMolester::removeTimestampFilesFromTablesIfTheySomehowGotInThereWtf(QList<QString> absoluteFilePathsToTimestampFilesToRemove)
+{
+    foreach(QString timestampFilePath, absoluteFilePathsToTimestampFilesToRemove)
+    {
+        m_TimestampsByAbsoluteFilePathHash_Files.remove(timestampFilePath); //don't care if it doesn't find the key
+    }
 }
 bool LastModifiedDateHeirarchyMolester::doSharedInitBetweenXmlAndEasyTree(const QString &directoryHeirarchyCorrespingToTimestampFile, const QString &timestampFilePath)
 {

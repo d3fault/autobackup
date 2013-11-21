@@ -3,7 +3,7 @@
 #include "easytreehashitem.h"
 
 //Returns a list of easy tree hash items. The caller takes ownership of the list returned and also each individual EasyTreeItem therein.
-QList<EasyTreeHashItem*> *EasyTreeParser::parseEasyTreeAndReturnAsNewList(QIODevice *easyTree)
+QList<EasyTreeHashItem*> *EasyTreeParser::parseEasyTreeAndReturnAsNewList(QIODevice *easyTree, bool easyTreeFileIsReplacementsFormatted)
 {
     bool weOpened = false; //backwards compatibility as I realize during a later project utilizing this library that this is not a good place to do opening/closing
     if(!easyTree->isOpen())
@@ -16,7 +16,7 @@ QList<EasyTreeHashItem*> *EasyTreeParser::parseEasyTreeAndReturnAsNewList(QIODev
     while(!textStream.atEnd())
     {
         QString oneLine = textStream.readLine();
-        easyTreeHashList->append(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(oneLine, false, true));
+        easyTreeHashList->append(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(oneLine, easyTreeFileIsReplacementsFormatted, true, 0));
     }
     if(weOpened)
     {

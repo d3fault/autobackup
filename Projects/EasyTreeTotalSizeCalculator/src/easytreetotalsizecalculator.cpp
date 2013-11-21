@@ -4,7 +4,7 @@ EasyTreeTotalSizeCalculator::EasyTreeTotalSizeCalculator(QObject *parent) :
     QObject(parent)
 {
 }
-void EasyTreeTotalSizeCalculator::calculateTotalSizeOfEasyTreeEntries(const QString &filepathOfEasyTreeFile)
+void EasyTreeTotalSizeCalculator::calculateTotalSizeOfEasyTreeEntries(const QString &filepathOfEasyTreeFile, bool easyTreeFileIsReplacementsFormatted)
 {
     if(!QFile::exists(filepathOfEasyTreeFile))
     {
@@ -14,12 +14,12 @@ void EasyTreeTotalSizeCalculator::calculateTotalSizeOfEasyTreeEntries(const QStr
 
     QFile easyTreeFile(filepathOfEasyTreeFile);
     easyTreeFile.open(QIODevice::ReadOnly | QIODevice::Text);
-    calculateTotalSizeOfEasyTreeEntries(&easyTreeFile);
+    calculateTotalSizeOfEasyTreeEntries(&easyTreeFile, easyTreeFileIsReplacementsFormatted);
     easyTreeFile.close();
 }
-void EasyTreeTotalSizeCalculator::calculateTotalSizeOfEasyTreeEntries(QIODevice *ioDeviceOfEasyTreeFile)
+void EasyTreeTotalSizeCalculator::calculateTotalSizeOfEasyTreeEntries(QIODevice *ioDeviceOfEasyTreeFile, bool easyTreeFileIsReplacementsFormatted)
 {
-    QList<EasyTreeHashItem*> *easyTreeHashList = EasyTreeParser::parseEasyTreeAndReturnAsNewList(ioDeviceOfEasyTreeFile);
+    QList<EasyTreeHashItem*> *easyTreeHashList = EasyTreeParser::parseEasyTreeAndReturnAsNewList(ioDeviceOfEasyTreeFile, easyTreeFileIsReplacementsFormatted);
 
     qint64 calcualtedFilesSize = 0.0;
     EasyTreeHashItem *currentItem;

@@ -1,0 +1,24 @@
+EasyTreeGui -- for generating easy tree hashes of censor input/output
+EasyTreeHashDiffAnalyzer -- for comparing tree hashes of censor input/output
+EasyTreeTotalSizeCalculator -- for determine truecrypt container sizes
+GitUnrollRerollCensorshipMachine -- dur
+LastModifiedDateHeirarchyMolester -- dep + re-test
+CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles -- re-test, used for lifeShapedOutput -> firstDevice
+RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay -- re-test, used for device->device copies
+Global - dep (cause of re-testing guh)
+
+if I was using git submodules :-/, i wouldn't have to re-test those apps...
+
+Heirarchy Molester needs to be updated to take new easy tree format (trivial)
+
+1) Get Censor machine running (test at end)
+2) Start copying system to 128gb, will take a while. Ensure 128gb boots
+2) Do one last "static backup", even though it'll be shredded later, will still buy me sanity
+3) Figure out sizes for truecrypt containers
+5) Create containers of appropriate size
+6) CopyAndMerge archive,750x to containers, "git clone --bare" for autobackup repo (git fsck to check results)
+7) Recursively copy + hash simultaneously to all externals, after last one compare easy tree hash with the CopyAndMerge input hash ('replacements' will be difference). Also verify randomly selected files by viewing them (inb4 the great data loss of 2013)
+8) Touch self softly
+
+
+Archive/750x copies are straightforward, autobackup gets censored repo to MyBrain, uncensored to special, manually copy 1 or 2 copyright iffy's from autobackup if you feel like it :)
