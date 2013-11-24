@@ -89,7 +89,7 @@ void CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevant
         QString currentLine = regularEasyTreeFileTextStream.readLine();
         if(!currentLine.trimmed().isEmpty())
         {
-            QScopedPointer<EasyTreeHashItem> parsedSourceEasyTreeHashItem(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(currentLine));
+            QScopedPointer<EasyTreeHashItem> parsedSourceEasyTreeHashItem(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(currentLine, false, true, 0));
 
             //First check source actually exists
             QFileInfo sourceFileInfo(sourceBaseDirWithTrailingSlash + parsedSourceEasyTreeHashItem->relativeFilePath());
@@ -171,7 +171,7 @@ void CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevant
         QString currentLine = replacementFormattedEasyTreeFileTextStream.readLine();
         if(!currentLine.trimmed().isEmpty())
         {
-            QScopedPointer<EasyTreeHashItem> parsedSourceReplacementEasyTreeHashItem(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(currentLine, true));
+            QScopedPointer<EasyTreeHashItem> parsedSourceReplacementEasyTreeHashItem(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(currentLine, true, true, 0));
 
             //not a directory
             if(parsedSourceReplacementEasyTreeHashItem->isDirectory())

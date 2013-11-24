@@ -20,6 +20,8 @@ EasyTreeTotalSizeCalculatorWidget::EasyTreeTotalSizeCalculatorWidget(QWidget *pa
     filePathRow->addWidget(m_FilepathOfEasyTreeFileBrowseButton);
     m_Layout->addLayout(filePathRow);
 
+    m_Layout->addWidget(m_EasyTreeIsReplacementFormatted);
+
     m_Layout->addWidget(m_CalculateTotalSizeOfEasyTreeEntriesButton);
 
     m_Layout->addWidget(m_Debug);

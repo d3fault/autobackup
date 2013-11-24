@@ -1,0 +1,4 @@
+Another nail in the "patents are illegal" coffin (not that it matters), which derives from an argument I made previously:
+I said before that it would probably take a human his whole life or whatever to consume "the state of the art" before he could claim that his invention is non-obvious to it... but I was considered only a static environment. This argument accounts for the dynamic-ness of the environment.
+
+The rate at which the state of the art increases is several orders of magnitude greater than the rate at which a single human can consume the state of the art.
