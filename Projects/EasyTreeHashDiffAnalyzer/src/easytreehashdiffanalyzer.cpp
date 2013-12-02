@@ -20,8 +20,8 @@ EasyTreeHashDiffAnalyzer::EasyTreeHashDiffAnalyzer(QObject *parent) :
 }
 void EasyTreeHashDiffAnalyzer::analyzeEasyTreeHashesAndReportDifferences(QIODevice *easyTreeHash1, QIODevice *easyTreeHash2)
 {
-    QList<EasyTreeHashItem*> *easyTreeHashList1 = EasyTreeParser::parseEasyTreeAndReturnAsNewList(easyTreeHash1);
-    QList<EasyTreeHashItem*> *easyTreeHashList2 = EasyTreeParser::parseEasyTreeAndReturnAsNewList(easyTreeHash2);
+    QList<EasyTreeHashItem*> *easyTreeHashList1 = EasyTreeParser::parseEasyTreeAndReturnAsNewList(easyTreeHash1, false);
+    QList<EasyTreeHashItem*> *easyTreeHashList2 = EasyTreeParser::parseEasyTreeAndReturnAsNewList(easyTreeHash2, false);
 
     //check for files that exist in 1 but not 2 -- and as an optimization remove ones whose filesize and hash matches (saves iterations later)
     int easyTreeHashList1Length = easyTreeHashList1->length();
