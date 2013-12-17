@@ -1,0 +1,16 @@
+pfic -- duration/size
+~/toSync (dir.pull.sync (crypt))
+Concurrent Lossy Directory Copier
+
+find -type f blah EXEC "rmdir" (let it fail) ... just for the dist = remove empty dirs
+.special.7z
+.private.kdb
+?? /data/autobackupLatest.7z <- currently not "in" container (7z can merge folder?)
+readme.txt = banner "butts"
+mybrain.nfo = "greets"
+donate.txt
+copying.txt
+dpl | lgpl3 | gpl3 | agpl(4now) | dpnl(4now)
+^script to header everything relevant (txt,h,cpp,etc) "all right reserved -> see copying/lgpl/tev" -- there are some exceptions (bsd imported). research best way to do a distribution...
+
+test: 7za x (then md5sum .special), then 7za t another, then md5sum another

@@ -1,0 +1,40 @@
+Binaries in git suck by default, but if you modify .gitattributes (have a binary-only repo, or add binary extensions to .gitattributes (i prefer a catch all approach (echo "* -delta -diff -text" > .gitattributes) and two separate repos)) to never do delta compression in addition to the following, you can use git AS FAST AS 'regular copying' while still having versioning and simple (well, complicated but scriptable!) "git push"-ing to initiate the backups. For my own needs right now I want the following:
+
+1x "file view" (no .git dir, BUT STILL USING GIT :-P)
+2x "bare repos" (they are both BASICALLY bare, but one of them is secretly associated with the file view above ;-P)
+
+/files, /backup1, backup2 <-- for simplicity (and backup1 will be our secretly associated "bare" repo)
+
+----CREATING FIRST TIME ONLY
+cd into /files and do:
+git --work-tree=/files --git-dir=/backup1 init
+
+
+----MADE CHANGES, TIME TO COMMIT
+cd into /files and do:
+git --work-tree=/files --git-dir=/backup1 add -v .
+git --work-tree=/files --git-dir=/backup1 commit -am "Commit Message"
+
+
+----THE 'N' NUMBER OF BACKUPS (creating, sync'ing)
+to make a new backup:
+git clone --bare file:///backup1 /backup2
+to synchronize the backups, cd into /backup1 and do:
+git push /backup2 master
+
+
+----RESTORING FROM BACKUP LATER
+backup1, backup2, etc all still exist, but you lose your /files folder from doing an OS-reinstall or whatever (hdd crash?):
+git archive --remote=file:///backup1 master | tar -x -C /files
+
+^then of course you use it just like the "MADE CHANGES, TIME TO COMMIT" section
+
+
+
+You can even have "/files" be some random external flash drive, and this design only copies from it ONCE (directly into git 'bare'(ish)!). Deleting the files on the external flash drive would make them hidden in your git history though (but still retrievable :-P)
+
+
+woot this is even better than "git clone --depth=1" <3
+
+
+probably the best part imo is that you get to just type "git fsck" and it verifies everything for you...

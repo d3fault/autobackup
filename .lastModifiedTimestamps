@@ -1,4 +1,4 @@
-Documents/:1380047349
+Documents/:1387288160
 Documents/Qt/:1363796688
 Documents/Qt/interoperable-diagrams/:1341534418
 Documents/Qt/interoperable-diagrams/current.noninteroperable.design.png:1341534383
@@ -1745,6 +1745,7 @@ Documents/oldGitLogsFrom1tbDrive/working_slash_Projects_slash_Test_slash_streamD
 Documents/oldGitLogsFrom1tbDrive/working_slash_Projects_slash_guiWithTestBackend_Generator.gitlog.txt:1380049211
 Documents/oldGitLogsFrom1tbDrive/working_slash_Projects_slash_libavGraphicsObject.gitlog.txt:1380049302
 Documents/a.starting.point.this.is.the.only.thing.i.am.certain.of.txt:1356263099
+Documents/bookmarks_2013-12-11.html:1386815178
 GloballySharedClasses/:1387282339
 GloballySharedClasses/filesystem/:1387286619
 GloballySharedClasses/filesystem/easytree.cpp:1387286577
@@ -3575,7 +3576,7 @@ Solutions/NothingIsKnownParadox/src/nothingisknownparadox.cpp:1383180873
 Solutions/NothingIsKnownParadox/src/nothingisknownparadox.h:1383180866
 Solutions/d3faultPublicLicense/:1358082091
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
-Solutions/launchASEPbecauseRedAlert/:1383867781
+Solutions/launchASEPbecauseRedAlert/:1387288053
 Solutions/launchASEPbecauseRedAlert/an.note.saldfkjsdlakfjoweurljoufssdlkf.txt:1371120857
 Solutions/launchASEPbecauseRedAlert/clickableSvgQuoteChristmasTreeUnquote.svg:1371121165
 Solutions/launchASEPbecauseRedAlert/index.2.html:1371128097
@@ -3591,6 +3592,7 @@ Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if
 Solutions/launchASEPbecauseRedAlert/pursuingHappiness.svg:1371126578
 Solutions/launchASEPbecauseRedAlert/restricted.access.cookie.check.idea.thingo.asdflksadflkjsadf.txt:1384667228
 Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1384667309
+Solutions/launchASEPbecauseRedAlert/todo.lol.asdflkjsdfousdfweroiu.txt:1387173891
 VariousTreeingsDuringHugeArchivePurge/:1367600874
 VariousTreeingsDuringHugeArchivePurge/Black1tbCalvaryAndroidAppsEasyTree.txt:1367599569
 VariousTreeingsDuringHugeArchivePurge/Black1tbCalvaryApplicationsEasyTree.txt:1367599638
@@ -3627,7 +3629,7 @@ VariousTreeingsDuringHugeArchivePurge/Silver1tbCalvaryeBooksEasyTree.txt:1367596
 VariousTreeingsDuringHugeArchivePurge/externals.which.is.which.txt:1367597729
 VariousTreeingsDuringHugeArchivePurge/k3.wpl:1264978231
 autobackupScripts/:1349691249
-autobackupScripts/linux/:1384769803
+autobackupScripts/linux/:1387288120
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -3643,6 +3645,7 @@ autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:13504981
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
 autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1383127931
+autobackupScripts/linux/base64theMd5SumOfAFileProperly.sh:1385203690
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
 autobackupScripts/linux/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
@@ -3651,6 +3654,7 @@ autobackupScripts/linux/droid.backup.and.delete.only.because.flash.medium.sh.bak
 autobackupScripts/linux/droid.backup.pictures.required.and.optionally.conversation.backup.and.camtimer.pics.and.csipsimple.recordings.and.delete.all.after.too.sh:1370744088
 autobackupScripts/linux/droid.conversationBackup.pull.zip.and.shred.sh.bak:1358469443
 autobackupScripts/linux/enable.vga.only.monitor.if.connected.sh:1350618566
+autobackupScripts/linux/git.binaries.hackery.woot.txt:1387269336
 autobackupScripts/linux/installAllRpmsInThisDir.sh:1324208617
 autobackupScripts/linux/laptop.screen.only.sh:1350618576
 autobackupScripts/linux/mount.2x.750gb.drives.sh:1350716644
@@ -3659,6 +3663,7 @@ autobackupScripts/linux/polaroid.backup.and.shred.sh:1370739530
 autobackupScripts/linux/polaroid.backup.and.shred.sh.bak:1351234310
 autobackupScripts/linux/qtCreatorCustomStyle.xml:1350795688
 autobackupScripts/linux/sony.ic.recorder.backup.and.delete.sh:1370738506
+autobackupScripts/linux/soxRecPipedToOpusEncodeCommand.txt:1376137084
 autobackupScripts/linux/steps.to.staticBackup.txt:1349809723
 autobackupScripts/linux/sync.toSync.and.shred.sh:1370736718
 autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1350716632

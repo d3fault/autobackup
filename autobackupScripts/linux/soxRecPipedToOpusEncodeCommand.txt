@@ -1,0 +1,1 @@
+rec -t raw -b 16 -c 1 -r 48000 --endian little - | opusenc --speech --raw --raw-bits 16 --raw-rate 48000 --raw-chan 1 --raw-endianness 0 - opusEncoded.opus
