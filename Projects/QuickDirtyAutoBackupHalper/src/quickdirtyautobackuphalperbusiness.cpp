@@ -58,6 +58,9 @@ void QuickDirtyAutoBackupHalperBusiness::scanForMountedRelevantContainers(QList<
     }
     m_ListOfMountedContainers->clear();
 
+    if(listOfRelevantContainers->size() == 0)
+        return;
+
     QStringList listCommandArgs(m_TypicalTruecryptArgs);
     listCommandArgs << "-l";
     m_Process->start(m_PathToTruecryptBinary, listCommandArgs);
@@ -456,7 +459,7 @@ nothing to commit (working directory clean)
         m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded->append(*filenameIgnoreList); //cat on the passed in list
         m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded->append(dirStructureFileNameString); //tell tree to ignore the file it generates. TODOoptional: perhaps a delete after the commit would be handy so we don't have to deal with renaming problems? if i rename the dir structure file, the old one will continue to exist (and will NOT be ignored, so it will be added to the renamed dir structure file. big whoop)
 
-        m_EasyTree->generateTreeText(workingDirString, &dirStructureFile, false, dirnameIgnoreList, m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded, filenameEndsWithIgnoreList, dirnameEndsWithIgnoreList);
+        m_EasyTree->generateTreeText(workingDirString, &dirStructureFile, EasyTree::DontCalculateMd5Sums, dirnameIgnoreList, m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded, filenameEndsWithIgnoreList, dirnameEndsWithIgnoreList, EasyTree::SimplifiedLastModifiedTimestamps);
 
         if(!dirStructureFile.flush())
         {
@@ -1031,19 +1034,15 @@ void QuickDirtyAutoBackupHalperBusiness::commit(const QString &commitMsg, QList<
             emit brokenStateDetected();
             return;
         }
-        if(m_ListOfMountedContainers->size() < 1)
+        if(m_ListOfMountedContainers->size() > 0) //can commit to zero containers, noob
         {
-            //yes, i should never get here... but it's better than potentially allowing the upcoming read-only check from accessing out of bounds!!!
-            emit d("can't commit to zero containers wtf how am i even here");
-            emit brokenStateDetected();
-            return;
-        }
-        if(m_ListOfMountedContainers->at(0)->TcMountedAsReadOnly)
-        {
-            //mismatch case already handled, but we still need to make sure the end result is ok
-            emit d("can't commit when read-only. we should never get here ideally");
-            emit brokenStateDetected();
-            return;
+            if(m_ListOfMountedContainers->at(0)->TcMountedAsReadOnly)
+            {
+                //mismatch case already handled, but we still need to make sure the end result is ok
+                emit d("can't commit when read-only. we should never get here ideally");
+                emit brokenStateDetected();
+                return;
+            }
         }
         m_FileInfo.setFile(workingDirString);
         if(!m_FileInfo.exists())
@@ -1054,7 +1053,7 @@ void QuickDirtyAutoBackupHalperBusiness::commit(const QString &commitMsg, QList<
         }
         if(!m_FileInfo.isDir())
         {
-            emit d("working dir is a file. must be a dir...");
+            emit d("working dir not a dir");
             //fixable
             return;
         }

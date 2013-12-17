@@ -18,6 +18,8 @@ class EasyTree : public QObject
 {
     Q_OBJECT
 public:
+    enum CalculateMd5Enum { DoCalculateMd5sums, DontCalculateMd5Sums}; //death to boolean method parameters (it isn't just about readability)!
+    enum LastModifiedTimestampsFormat { SimplifiedLastModifiedTimestamps, ObsoleteEasyTreeTimestampsWithSizeAndCreationDate };
     explicit EasyTree(QObject *parent = 0);
     ~EasyTree();
 private:
@@ -31,7 +33,7 @@ private:
     QTextStream *m_TreeTextStream;
     QDir *m_Dir;
     QFileInfo m_CurrentFileInfo;
-    bool m_CalculateMd5Sums;
+    CalculateMd5Enum m_CalculateMd5Sums;
     static const qint64 m_MaxReadSize;
     QList<QString> *m_DirNamesToIgnore;
     QList<QString> *m_FileNamesToIgnore;
@@ -44,11 +46,11 @@ private:
     bool weDontWantToSkipCurrentFileInfo();
     bool weDontWantToSkipCurrentDirInfo();
 
-    bool m_UseObsoleteFormatWithSizeAndCreationDate; //stack explosion
+    LastModifiedTimestampsFormat m_LastModifiedTimestampsFormat;
 signals:
     //void treeTextGenerated(const QString &treeText); //it just writes to the passed in QIODevice instead
 public slots:
-    void generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, bool calculateMd5Sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList, bool useObsoleteFormatWithSizeAndCreationDate = true);
+    void generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, CalculateMd5Enum calculateMd5sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList, LastModifiedTimestampsFormat lastModifiedTimestampsFormat);
 };
 
 #endif // EASYTREE_H

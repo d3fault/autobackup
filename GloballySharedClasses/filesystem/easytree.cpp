@@ -75,7 +75,7 @@ void EasyTree::addDirEntry()
     //also escape colons which are apparently legal in fucking filenames...
     *m_TreeTextStream << m_CurrentFileInfo.canonicalFilePath().remove(0, m_DirWeAreTreeingChopLength).replace(m_Colon, m_EscapedColon, Qt::CaseSensitive) << "/"; //dirs are identified by trailing slashes in my EasyTree, so add it. canonical path does not return a slash
 
-    if(m_UseObsoleteFormatWithSizeAndCreationDate)
+    if(m_LastModifiedTimestampsFormat == EasyTree::ObsoleteEasyTreeTimestampsWithSizeAndCreationDate)
     {
         m_CreatedDateTime = m_CurrentFileInfo.created();
         *m_TreeTextStream << m_Colon << QString::number(m_CreatedDateTime.toMSecsSinceEpoch()/1000);
@@ -96,7 +96,7 @@ void EasyTree::addFileEntry()
 
     //stream a colon, the file size, another colon, the creation date, another colon, the last modified date, and lastly a newline
 
-    if(m_UseObsoleteFormatWithSizeAndCreationDate)
+    if(m_LastModifiedTimestampsFormat == EasyTree::ObsoleteEasyTreeTimestampsWithSizeAndCreationDate)
     {
         m_CreatedDateTime = m_CurrentFileInfo.created();
         *m_TreeTextStream << m_Colon << QString::number(m_CurrentFileInfo.size()) << m_Colon << QString::number(m_CreatedDateTime.toMSecsSinceEpoch()/1000);
@@ -104,7 +104,7 @@ void EasyTree::addFileEntry()
 
     *m_TreeTextStream << m_Colon << QString::number(m_ModifiedDateTime.toMSecsSinceEpoch()/1000);
 
-    if(m_CalculateMd5Sums)
+    if(m_CalculateMd5Sums == EasyTree::DoCalculateMd5sums)
     {
         //code to "hash a file" jacked from RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay -- I should probably put it in a shared library. It isn't as easy as doing [static] hash(file.readAll()) because you would run out of memory on large files. This design uses a [4mb] buffer
         QCryptographicHash hasher(QCryptographicHash::Md5);
@@ -175,9 +175,9 @@ bool EasyTree::weDontWantToSkipCurrentDirInfo()
     }
     return true;
 }
-void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, bool calculateMd5Sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList, bool useObsoleteFormatWithSizeAndCreationDate)
+void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioDeviceToWriteTo, CalculateMd5Enum calculateMd5sums, QList<QString> *dirNamesToIgnore, QList<QString> *fileNamesToIgnore, QList<QString> *fileNamesEndWithIgnoreList, QList<QString> *dirNamesEndsWithIgnoreList, LastModifiedTimestampsFormat lastModifiedTimestampsFormat)
 {
-    m_UseObsoleteFormatWithSizeAndCreationDate = useObsoleteFormatWithSizeAndCreationDate;
+    m_LastModifiedTimestampsFormat = lastModifiedTimestampsFormat;
 
     m_DirWeAreTreeing = absoluteDirString;
     if(!m_DirWeAreTreeing.endsWith("/"))
@@ -201,7 +201,7 @@ void EasyTree::generateTreeText(const QString &absoluteDirString, QIODevice *ioD
     }
 
     //captured to keep recursive function arguments to a minimum (stack grows explosion)
-    m_CalculateMd5Sums = calculateMd5Sums;
+    m_CalculateMd5Sums = calculateMd5sums;
     m_DirNamesToIgnore = dirNamesToIgnore;
     m_FileNamesToIgnore = fileNamesToIgnore;
     m_FileNamesEndWithIgnoreList = fileNamesEndWithIgnoreList;

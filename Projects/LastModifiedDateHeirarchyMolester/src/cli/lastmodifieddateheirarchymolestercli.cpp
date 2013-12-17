@@ -35,6 +35,8 @@ void LastModifiedDateHeirarchyMolesterCli::handleAboutToQuit()
     if(m_Molester)
     {
         delete m_Molester;
+fail, need to use a backend thread here and wait on it (or something else, but backend thread is easiest (also costly/wasteful?)), how do we know m_Molester is not in the middle of something??
+
         m_Molester = 0;
     }
 }

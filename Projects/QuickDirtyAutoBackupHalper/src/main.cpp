@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QThread>
 
 #include "quickdirtyautobackuphalper.h"
@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain("QuickDirtyAutoBackupHalperOrganization.com");
     QCoreApplication::setApplicationName("QuickDirtyAutoBackupHalper");
 
-#ifndef Q_OS_WIN32 //does this include 64 bit?
+#ifndef Q_OS_WIN32
     QuickDirtyAutoBackupHalper business;
     business.start();
 

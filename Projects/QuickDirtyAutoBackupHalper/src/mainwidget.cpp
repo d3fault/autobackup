@@ -148,18 +148,18 @@ void mainWidget::setupGui()
     m_FilenameIgnoreLineEdit = new QLineEdit();
     m_FilenamesEndsWithIgnoreLineEdit = new QLineEdit(".pro.user,~");
     m_DirnameIgnoreLineEdit = new QLineEdit(".git");
-    m_DirnameEndsWithIgnoreLineEdit = new QLineEdit("__Qt_SDK__Debug,__Qt_SDK__Release,_in_PATH__System__Debug,_in_PATH__System__Release");
+    m_DirnameEndsWithIgnoreLineEdit = new QLineEdit("_Qt_5_2_0_GCC_32bit-Release,_Qt_5_2_0_GCC_32bit-Debug");
     m_PushToGitIgnoreButton = new QPushButton("Push To .gitignore"); //because i don't want it to be rewritten every time, and detecting changes is too hard
     m_WorkingDirectoryLineEdit = new QLineEdit("/home/d3fault/autobackup");
     m_MountPointSubDirToBareGitRepoLineEdit = new QLineEdit("autobackup"); //TODOoptional: customizable/persist'able. we append this sub-dir to each mount point when doing git push. we might additionally want to be able to specify the "working dir" (the FULL dir, not just sub-dir)... and hell this could even transform into "profiles" (one working dir has many tc containers and a configured subdir specific to that one working dir). for now hard-coded and single 'profile' is fine
-    m_DirStructureFileNameLineEdit = new QLineEdit(".quickDirtyAutoBackupHalperDirStructure");
+    m_DirStructureFileNameLineEdit = new QLineEdit(".lastModifiedTimestamps");
     m_RowsPlaceholderWidget = new QWidget();
     m_RowsLayout = new QVBoxLayout();
     m_AddTcRowButton = new QPushButton("Add Row");
     m_PersistTcRowsButton = new QPushButton("Save Rows");
     m_MountTcRowsButton = new QPushButton("Mount");
     m_DismountTcRowsButton = new QPushButton("Dismount");
-    m_CommitMessageLineEdit = new QLineEdit(QString("QuickDirtyAutoBackupHalper Commit @") + m_DateTimeSpecialString);
+    m_CommitMessageLineEdit = new QLineEdit(QString("QuickDirtyAutoBackupHalper2 Commit @") + m_DateTimeSpecialString);
 
     m_PushEvenWhenNothingToCommitCheckbox = new QCheckBox("git push even when nothing to commit");
     m_PushEvenWhenNothingToCommitCheckbox->setChecked(true);
@@ -374,12 +374,6 @@ void mainWidget::handleCommitButtonClicked()
     {
         return;
     }
-
-    if(m_DeviceAndPasswordPathsToBePopulatedJustBeforeMountRequestedOrPersistRequestedOrCommit->size() < 1)
-    {
-        handleD("select some tc containers and pw files before trying to commit");
-        return;
-    }
     QString commitMessage(m_CommitMessageLineEdit->text());
     if(commitMessage.trimmed().isEmpty())
     {
@@ -406,7 +400,7 @@ void mainWidget::handleCommitButtonClicked()
 
     if(commitMessage.contains(m_DateTimeSpecialString))
     {
-        commitMessage.replace(m_DateTimeSpecialString, QDateTime::currentDateTime().toString());
+        commitMessage.replace(m_DateTimeSpecialString, QDateTime::currentDateTime().toString()); //TODOreq: would be better if I did this one line before calling commitProcess.start()... because I noticed (and lol'd) that there's a few seconds (and growing) difference between the special string in commit message and the git-specific one (but who gives a shit). On the other hand, it makes for a funnily interesting statistic (and when I upgrade computers, it should shrink/regrow etc :-P) (TODOreq: graph this before death)
     }
 
     emit commitRequested(commitMessage, m_DeviceAndPasswordPathsToBePopulatedJustBeforeMountRequestedOrPersistRequestedOrCommit, workingDirString, mountedSubDirToBareRepoString, dirStructureFileNameString, m_FilenameIgnoreList, m_FilenameEndsWithIgnoreList, m_DirnameIgnoreList, m_DirnameEndsWithIgnoreList, m_PushEvenWhenNothingToCommitCheckbox->isChecked()); //an emit instead of invokeMethod because of the existene of "connectToBusiness". it's just proper'er (one less error message potentially)

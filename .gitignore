@@ -1,9 +1,5 @@
 *.[ao]
-*.autosave
-*.kate-swp
 *.pro.user
 *~
-*__Qt_SDK__Debug/
-*__Qt_SDK__Release/
-*_in_PATH__System__Debug/
-*_in_PATH__System__Release/
+build-*-Debug/
+build-*-Release/
