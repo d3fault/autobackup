@@ -23,3 +23,5 @@ HEADERS  += simplifiedheirarchymolesterwidget.h \
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../GloballySharedClasses/filemodificationdatechanger.pri)
+include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)
+include(../../../GloballySharedClasses/simplifiedlastmodifiedtimestamp.pri)

@@ -1,0 +1,8 @@
+foreach(Group group in Universe.Planets["earth"].Internets["the"].Scenes["warez"].Groups)
+{
+	greetz(group);
+}
+foreach(Business business in Universe.Planets["earth"].Businesses.where["proprietary"==true])
+{
+	diaf(business);
+}

@@ -22,4 +22,4 @@ HEADERS  += concurrentlossydirectorycopierwidget.h \
     copyoperation.h \
     concurrentlossydirectorycopiergui.h
 
-include(/home/d3fault/autobackupRO/GloballySharedClasses/objectonthreadhelper.pri)
+include(/home/d3fault/autobackup/GloballySharedClasses/objectonthreadhelper.pri)

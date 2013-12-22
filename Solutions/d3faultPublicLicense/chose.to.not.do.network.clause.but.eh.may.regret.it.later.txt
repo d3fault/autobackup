@@ -1,0 +1,10 @@
+While finalizing DPL today I put a lot of thought into whether or not to do anything with section 13 regarding network interaction. I concluded that an "LGPL/AGPL" abomination would in fact be legally valid, BUT that there's a glaring loophole in that combination that is absent in the typical GPL/AGPL combo: [pure] virtual methods in "the program" (covered work) can be [re-]implemented in "the application" (what links to "the library"), and doing so would effectively sidestep the network clause altogether (since the network clause only applies to "the program" and not "an application that uses the library").
+
+I tried to think of the future and how we'd be using computers years from now, and thought of a scenario where a DPL (whether or not it has a network clause) work could be taken by the "HURR BAD GUYS HUGE SYSTEM BIG BROTHER BIG CORPORATIONS WHATEVER" and then upgraded to provide select/specific SaaS. The protocol in which the DPL'd work uses could be "dumb client"/"smart server" so that a client upgrade is not necessary when the server provides new functionality. Under such scenario could "the man" use the above described loophole to effectively (though not in the legal sense) derive and not share (proprietarize).
+
+I asked myself if SaaS is even that important. They won't be doing "magic" or breaking the laws of physics on their smart server, so very likely anything they're doing is replicable/worthless (it would just be a delay before a public/libre implementation of the same functionality).
+
+Further, I concluded that to "refuse interaction with those who do not share their source via network interaction" should not be infused in legal text, but instead be a programmatic feature of the network protocol itself. Dumb Client: Oh, you offer SaaS X123? Cool. Oh, you don't offer source for X123? Fuck off then [and do not acknowledge their existence]. (Or the user can configure it differently if they choose (but we all know how it'd be configured by default in packages distributed by d3fault)).
+
+
+Still I worry that many years from now I'll regret not using plain vanilla AGPLv3...
