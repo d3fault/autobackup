@@ -1,12 +1,12 @@
                     D3FAULT PUBLIC LICENSE
-                       Version 1, 6 January 2014
+                       Version 3, 6 January 2014
 
 	Copyright (C) 2014 Steven Curtis Wieler II <http://d3fault.net/>
 	Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
 
                             Preamble
 
-	In a perfect world, all information would be in the public domain. In this world, the existence of copyright law means that the public domain is not a suitable place to release information. Information released into public domain can be taken, modified, and subsequently re-released as copyrighted material -- the ability to freely share and modify it now gone. When I say free, it's better to think of "Freedom of Information" rather than free as in zero cost. This license is created with the sole intention of furthering Freedom of Information. It achieves that goal by using copyleft, a clever exploitation (hack) of copyright law, to mimic the perfect world scenario where all information is (and remains) in the public domain. Copyleft places restrictions on the information it covers, ensuring that the information remains freely available and modifiable to every recipient. A Copyleft'd work may be used for any purpose so long as the original work, and it's derivatives, remain free.
+	All information should be in the public domain. Restricting the flow of information is both evil and stupid. Copyright law does just that, and additiononally makes the public domain an unsuitable place to release information. Information released into the public domain today can be taken, modified, and subsequently re-released as copyrighted material -- the ability to freely share and modify it now gone. When we say free, it's better to think of "Freedom of Information" rather than free as in zero cost. This license is created with the sole intention of furthering freedom of information. It uses copyleft, a clever exploitation (hack) of existing copyright law, to emulate the scenario where all information is in, and remains in, the public domain. Copyleft licenses place certain conditions on the works they cover, ensuring that they remain both modifiable and shareable to every recipient. A copylefted work may be used for any purpose so long as the original work, and all of its derivatives, remain free.
 
 	The precise terms and conditions for copying, distribution and modification follow.
 
@@ -14,7 +14,7 @@
 
  	0. Definitions.
 
-		"This License" refers to version 1 of the D3fault Public License.
+		"This License" refers to version 3 of the d3fault public license.
 
 		"Copyright" also means copyright-like laws that apply to other kinds of works, such as semiconductor masks.
 
@@ -35,10 +35,6 @@ distribution (with or without modification), making available to the public, and
 
 		A "Combined Work" is a work produced by combining or linking an Application with the Library. The particular version of the Library with which the Combined Work was made is also called the "Linked Version".
 
-		The "Minimal Corresponding Source" for a Combined Work means the Corresponding Source for the Combined Work, excluding any source code for portions of the Combined Work that, considered in isolation, are based on the Application, and not on the Linked Version.
-
-		The "Corresponding Application Code" for a Combined Work means the object code and/or source code for the Application, including any data and utility programs needed for reproducing the Combined Work from the Application, but excluding the System Libraries of the Combined Work.
-
 		An interactive user interface displays "Appropriate Legal Notices" to the extent that it includes a convenient and prominently visible feature that (1) displays an appropriate copyright notice, and (2) tells the user that there is no warranty for the work (except to the extent that warranties are provided), that licensees may convey the work under this License, and how to view a copy of this License. If the interface presents a list of user commands or options, such as a menu, a prominent item in the list meets this criterion.
 
 	1. Source Code.
@@ -54,6 +50,10 @@ distribution (with or without modification), making available to the public, and
 		The Corresponding Source need not include anything that users can regenerate automatically from other parts of the Corresponding Source.
 
 		The Corresponding Source for a work in source code form is that same work.
+
+		The "Minimal Corresponding Source" for a Combined Work means the Corresponding Source for the Combined Work, excluding any source code for portions of the Combined Work that, considered in isolation, are based on the Application, and not on the Linked Version.
+
+		The "Corresponding Application Code" for a Combined Work means the object code and/or source code for the Application, including any data and utility programs needed for reproducing the Combined Work from the Application, but excluding the System Libraries of the Combined Work.
 
 	2. Basic Permissions.
 
@@ -229,11 +229,11 @@ distribution (with or without modification), making available to the public, and
 
 	18. Revised Versions of this License.
 
-		Steven Curtis Wieler II may publish revised and/or new versions of the D3fault Public License from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
+		Steven Curtis Wieler II may publish revised and/or new versions of the d3fault public license from time to time. Such new versions will be similar in spirit to the present version, but may differ in detail to address new problems or concerns.
 
-		Each version is given a distinguishing version number. If the Program specifies that a certain numbered version of the D3fault Public License "or any later version" applies to it, you have the option of following the terms and conditions either of that numbered version or of any later version published by Steven Curtis Wieler II. If the Library as you received it specifies that a certain numbered version of the D3fault Public License "or any later version" applies to it, you have the option of following the terms and conditions either of that published version or of any later version published by Steven Curtis Wieler II. If the Program does not specify a version number of the D3fault Public License, you may choose any version ever published by the Steven Curtis Wieler II. If the Library as you received it does not specify a version number of the D3fault Public License, you may choose any version of the D3fault Public License ever published by Steven Curtis Wieler II.
+		Each version is given a distinguishing version number. If the Program specifies that a certain numbered version of the d3fault public license "or any later version" applies to it, you have the option of following the terms and conditions either of that numbered version or of any later version published by Steven Curtis Wieler II. If the Library as you received it specifies that a certain numbered version of the d3fault public license "or any later version" applies to it, you have the option of following the terms and conditions either of that published version or of any later version published by Steven Curtis Wieler II. If the Program does not specify a version number of the d3fault public license, you may choose any version ever published by the Steven Curtis Wieler II. If the Library as you received it does not specify a version number of the d3fault public license, you may choose any version of the d3fault public license ever published by Steven Curtis Wieler II.
 
-		If the Program specifies that a proxy can decide which future versions of the D3fault Public License can be used, that proxy's public statement of acceptance of a version permanently authorizes you to choose that version for the Program. If the Library as you received it specifies that a proxy can decide whether future versions of the D3fault Public License shall apply, that proxy's public statement of acceptance of any version is permanent authorization for you to choose that version for the Library.
+		If the Program specifies that a proxy can decide which future versions of the d3fault public license can be used, that proxy's public statement of acceptance of a version permanently authorizes you to choose that version for the Program. If the Library as you received it specifies that a proxy can decide whether future versions of the d3fault public license shall apply, that proxy's public statement of acceptance of any version is permanent authorization for you to choose that version for the Library.
 
 		Later license versions may give you additional or different permissions. However, no additional obligations are imposed on any author or copyright holder as a result of your choosing to follow a later version.
 
@@ -245,7 +245,7 @@ distribution (with or without modification), making available to the public, and
 
 		IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
-	22. Interpretation of Sections 19 and 20.
+	21. Interpretation of Sections 19 and 20.
 
 		If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.
 
@@ -260,11 +260,11 @@ distribution (with or without modification), making available to the public, and
 			<one line to give the program's name and a brief idea of what it does.>
 			Copyright (C) <year>  <name of author>
 
-			This program is free software: you can redistribute it and/or modify it under the terms of the D3fault Public License as published by Steven Curtis Wieler II, either version 1 of the License, or (at your option) any later version.
+			This program is free software: you can redistribute it and/or modify it under the terms of the d3fault public license as published by Steven Curtis Wieler II, either version 3 of the License, or (at your option) any later version.
 
-			This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the D3fault Public License for more details.
+			This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the d3fault public license for more details.
 
-			You should have received a copy of the D3fault Public License along with this program. If not, see <http://d3fault.net/licenses/>.
+			You should have received a copy of the d3fault public license along with this program. If not, see <http://d3fault.net/licenses/>.
 
 		Also add information on how to contact you by electronic and paper mail.
 
@@ -275,6 +275,6 @@ distribution (with or without modification), making available to the public, and
 			This is free software, and you are welcome to redistribute it
 			under certain conditions; type `show c' for details.
 
-		The hypothetical commands `show w' and `show c' should show the appropriate parts of the D3fault Public License. Of course, your program's commands might be different; for a GUI interface, you would use an "about box".
+		The hypothetical commands `show w' and `show c' should show the appropriate parts of the d3fault public license. Of course, your program's commands might be different; for a GUI interface, you would use an "about box".
 
-		You should also get your employer (if you work as a programmer) or school, if any, to sign a "copyright disclaimer" for the program, if necessary. For more information on this, and how to apply and follow the D3fault Public License, see <http://d3fault.net/licenses/>.
+		You should also get your employer (if you work as a programmer) or school, if any, to sign a "copyright disclaimer" for the program, if necessary. For more information on this, and how to apply and follow the d3fault public license, see <http://d3fault.net/licenses/>.

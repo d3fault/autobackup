@@ -1,0 +1,29 @@
+This file is part of the d3fault launch distribution
+Copyright (C) 2014 Steven Curtis Wieler II
+
+This program is free software: you can redistribute it and/or modify it under the terms of the d3fault public license as published by Steven Curtis Wieler II, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the d3fault public license for more details.
+
+You should have received a copy of the d3fault public license along with this program. If not, see <http://d3fault.net/licenses/>.
+
+Additional terms under section 7 of version 3 of the d3fault public license
+----------
+Trademarks
+----------
+Except as expressly provided herein, no trademark rights are granted in any trademarks of d3fault. Licensees are granted a limited, non-exclusive right to use the mark d3fault and the d3fault logos in connection with unmodified copies of the program and the copyright notices required by section 5d of version 3 of the d3fault public license. A modified copy of the program may use the phrase: "Derived from d3fault".
+-----------------
+Modified Versions
+-----------------
+You may not misrepresent the origins of this program; modified versions of the program must be marked as such and not identified as the original program.
+-----------------------------
+Preservation of Legal Notices
+-----------------------------
+Any propagation or conveyance of this program must include this copyright notice and these terms.
+---------------
+Indemnification
+---------------
+If you convey this program (or any modifications of it) and assume contractual liability for the program to recipients of it, you agree to indemnify any copyright holder, or any other party who modifies and/or conveys the program as permitted by the d3fault public license, for any liability that those contractual assumptions impose on any copyright holder, or any other party who modifies and/or conveys the program as permitted by the d3fault public license.
+
+The complete text of the d3fault public license can be found in 'license.dpl.txt' in the root directory of this distribution.
+

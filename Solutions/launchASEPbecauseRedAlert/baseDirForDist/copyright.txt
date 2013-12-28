@@ -1,32 +1,34 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Source: http://d3fault.net
 
-Files: data/*
+Files: *
 Copyright: 2014 Steven Curtis Wieler II
-License: DPL-1+
+Comment: DPL-3 is the LGPL-3 with the fallback to GPL-3 removed
+License: DPL-3+
    This program is free software: you can redistribute it and/or modify
-   it under the terms of the D3fault Public License as published by
-   Steven Curtis Wieler II, either version 1 of the License, or
+   it under the terms of the d3fault public license as published by
+   Steven Curtis Wieler II, either version 3 of the License, or
    (at your option) any later version.
    .
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-   D3fault Public License for more details.
+   d3fault public license for more details.
    .
-   You should have received a copy of the D3fault Public License
+   You should have received a copy of the d3fault public license
    along with this program. If not, see <http://d3fault.net/licenses/>.
    .
-   Additional terms under section 7 of version 1 of the D3fault Public License
+   Additional terms under section 7 of version 3 of the d3fault public license
    ----------
    Trademarks
    ----------
    Except as expressly provided herein, no trademark rights are granted
-   in any trademarks of D3fault. Licensees are granted a limited,
-   non-exclusive right to use the mark D3fault and the D3fault logos in
+   in any trademarks of d3fault. Licensees are granted a limited,
+   non-exclusive right to use the mark d3fault and the d3fault logos in
    connection with unmodified copies of the program and the copyright
-   notices required by section 5d of version 1 of the D3fault Public
-   License.
+   notices required by section 5d of version 3 of the d3fault public
+   license. A modified copy of the program may use the phrase: "Derived
+   from d3fault".
    -----------------
    Modified Versions
    -----------------
@@ -43,15 +45,19 @@ License: DPL-1+
    ---------------
    If you convey this program (or any modifications of it) and assume
    contractual liability for the program to recipients of it, you
-   agree to indemnify Steven Curtis Wieler II for any liability that
-   those contractual assumptions impose on Steven Curtis Wieler II.
+   agree to indemnify any copyright holder, or any other party who
+   modifies and/or conveys the program as permitted by the d3fault
+   public license, for any liability that those contractual
+   assumptions impose on any copyright holder, or any other party who
+   modifies and/or conveys the program as permitted by the d3fault
+   public license.
    .
-   The complete text of the D3fault Public License
+   The complete text of the d3fault public license
    can be found in 'license.dpl.txt'.
 
 Files: */*.h
 Copyright: 2014 Steven Curtis Wieler II
-Comment: Section 14 of the D3fault Public License allows comments
+Comment: Section 14 of the d3fault public license allows comments
    in header files to be incorporated in an Application's object code.
    Considering I tend to write ideas and pseudo-code in comments right
    when I think them up (whether or not they are even related), I
@@ -59,12 +65,17 @@ Comment: Section 14 of the D3fault Public License allows comments
    used in a proprietary application. This might just be me being
    overly paranoid, but I'd rather be on the safe side. You can use
    the actual parts (non-comment source code) of the header files
-   under section 14 of the D3fault Public License knowing in good
+   under section 14 of the d3fault public license knowing in good
    faith (whatever that means) I won't bring a copyright claim against
    you. At a later date and after moving all such comments to their
    corresponding source files, I will re-release the header files
-   under the D3fault Public License. All that being said, API
+   under the d3fault public license. All that being said, API
    (which is essentially what a header is) isn't copyrightable anyways
    (see: Oracle v. Google), so you're allowed to regenerate headers
    without even requiring permission.
 License: Proprietary or non-free
+
+Files: */license.dpl.txt
+Copyright: 2014 Steven Curtis Wieler II
+License: Everyone is permitted to copy and distribute verbatim copies
+   of this license document, but changing it is not allowed.

@@ -1,0 +1,14 @@
+Created to insert autobackup/Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt , in various formats, in the beginning of files of certain types:
+
+c/cxx/cpp/cs/java = c style comments
+pro/asm/s = hash comments
+php/phps = <?php /* comments */ ?>
+txt = no comments
+
+The application also has a compile time hack to insert the text after the first line to account for the following types:
+svg = xml comments
+sh = hash comments
+
+
+And I'm making note that I used it to put my temporary "All Rights Reserved" crap in header files:
+h/hpp = proprietary + c style comments
