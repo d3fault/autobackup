@@ -1,0 +1,5 @@
+//example usage: insult("your hair is ugly"), actually calls (once overriden): myCompliment("your entire body, except your hair, is gorgeous");
+virtual void insult(IRemark remark)
+{
+	myCompliment(!remark);
+}

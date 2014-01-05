@@ -11,6 +11,7 @@ WApplication *createApplication(const WEnvironment& env, WServer &server)
 }
 int main(int argc, char *argv[])
 {
+	BROKEN, USE QtBroadcastServerWtClient instead
     QCoreApplication a(argc, argv);
 
     WServer server(argv[0]);

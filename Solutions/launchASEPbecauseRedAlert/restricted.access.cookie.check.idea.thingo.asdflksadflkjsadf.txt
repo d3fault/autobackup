@@ -2,6 +2,7 @@ Page 1: 18+ verification
 Page 2: US Citizen verification (so I am protected by freedom of speech, until I consult a lawyer and lift this safely)
 Page 3: Obscenity acknowledgement and claim to not be the "average person" (use law's wording) and that they can handle obscenities
 Page 4: Satire of EULAs etc (excited to write this :-P)
-Page 5: Do Not Click This Link (maybe with hovertext: "Unless You Are Adrian Lamo". cookie key name is something like: breakingComputerFraudAct=1 (look up what the actual law is called)), or just "isD3fault=1" (or isSteven)
+Page 5: This is a protected computer. Do not click this link unless you are authorized to access this protected computer (cookie: claimsToBeAuthorized=1)
+^I'm only doing Page 5, since it makes the rest moot
 
 Final/Main Page: Verifies cookies set for above 5 pages, then displays vidya stream and that's about it...
