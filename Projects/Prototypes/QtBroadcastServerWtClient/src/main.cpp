@@ -33,6 +33,7 @@ int main(int argc, char **argv)
 
     return ret;
     return app.exec(); //<-- this is the line that i think needs to be called and won't be without the qtwithwt interop library :(. we'll never enter the Qt event loop :(. but MAYBE since i'm putting the singleton on it's own thread and starting it all from within this main function... just MAYBE it will work. no idea hence keep coding bitch
+    //EDIT: ^ the reason it works without needing to get to app.exec is because by putting it on it's own thread (moveToThread), it has it's own event loop. The app.exec() loop is pretty much (maybe completely, though I'm not certain enough to make that claim) empty/irrelevant in this sample. Hmm, do both the Wt and Qt event loops receive SIGINT/SIGTERM/etc? no fucking clue...
 
 
     //HMMMM maybe after we do a server.start(); we can then do an app.exec(); and then after that we can do a server.waitForShutdown(); (we'd need to exit via Qt::exit() or whatever it's called in order to get exec to return)

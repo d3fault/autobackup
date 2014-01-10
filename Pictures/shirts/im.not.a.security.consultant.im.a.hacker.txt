@@ -1,0 +1,7 @@
+Shirt:
+I'm Not A Security Consultant
+I'm A Hacker
+
+Shirt Optionally has these one/two lines below above two (or they could be another/individual shirt(s)):
+Hacking Is Not A Crime
+Hacking Is Orgasmic Comprehension

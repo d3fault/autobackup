@@ -73,6 +73,7 @@ void QtBroadcastServerNumberWatcher::handleRandomNumberGenerated(int num)
 {
     QHashIterator<QtBroadcastServerNumberWatcher::QtBroadcastServerClient*, UsersAndTheirNumbersBeingWatched*> it(*m_UsersAndTheirNumbersBeingWatched);
     UsersAndTheirNumbersBeingWatched *userPtr;
+    //it would be an optimization to keep sychronized a map that uses ALL "numbers being watched" as a key and the associated "users watching that key (their key into m_UsersAndTheirNumbersBeingWatched)" as a value (QList)... but for this simple ass example who gives a shit...
     while(it.hasNext())
     {
         it.next();
