@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <Wt/WApplication>
 #include <boost/thread.hpp>
-#include <boost/scope_exit.hpp>
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,6 +19,7 @@ using namespace Wt;
 boost::condition_variable couchbaseIsConnectedWaitCondition;
 boost::mutex couchbaseIsConnectedMutex;
 bool couchbaseDoneInitializing = false; //whether connection is successful or not, it is done trying
+//^I recall a lecture by Thiago on the qt mailing lists after I told someone that declaring a bool volatile makes it suitable as a cross-thread flag (I think there was still a mutex protecting it, unsure)... and after assloads of low level speak the gist I got from it was "no volatile sucks you should always use atomics etc". The couchbaseDoneInitializing bool isn't even declared volatile and is still used across threads as flagging. So WTF? On one hand it says in the Boost docs to do it that way (and indeed it works (but "it working" is actually a very shit argument in the realm of [proper] programming)) and Boost is a very credible source. On the other, Thiago's a fucking genius too and knows his shit. So I either misunderstood Thiago's lecture or Boost is doing it wrong :-/. tl;dr: dgaf for now (it's only used during startup so... fuck it...)
 bool couchbaseIsConnected = false;
 bool couchbaseThreadExittedCleanly = false;
 
@@ -107,7 +107,7 @@ static void couchbaseStoreCallback(lcb_t instance, const void *cookie, lcb_stora
     }
     fprintf(stdout, "Key has been stored");
 }
-void couchbaseThreadEntryPoint()
+static void couchbaseThreadEntryPoint()
 {
     //libevent
     struct event_base *eventBase = event_base_new();
@@ -117,7 +117,13 @@ void couchbaseThreadEntryPoint()
         COUCHBASE_FAILED_INIT_MACRO
         return;
     }
-    evthread_use_pthreads(); //or evthread_use_windows_threads
+    if(evthread_use_pthreads() < 0) //or evthread_use_windows_threads
+    {
+        fprintf(stderr, "Error: Failed to evthread_use_pthreads");
+        event_base_free(eventBase);
+        COUCHBASE_FAILED_INIT_MACRO
+        return;
+    }
     if(evthread_make_base_notifiable(eventBase) < 0)
     {
         fprintf(stderr, "Error: Failed to make event base notifiable\n");
@@ -149,6 +155,7 @@ void couchbaseThreadEntryPoint()
     if((error = lcb_create(&couchbaseInstance, &copts)) != LCB_SUCCESS)
     {
         fprintf(stderr, "Failed to create a libcouchbase instance: %s\n", lcb_strerror(NULL, error));
+        lcb_destroy_io_ops(couchbaseIoOps);
         event_base_free(eventBase);
         COUCHBASE_FAILED_INIT_MACRO
         return;
@@ -162,6 +169,7 @@ void couchbaseThreadEntryPoint()
     {
         fprintf(stderr, "Failed to connect libcouchbase instance: %s\n", lcb_strerror(NULL, error));
         lcb_destroy(couchbaseInstance);
+        lcb_destroy_io_ops(couchbaseIoOps);
         event_base_free(eventBase);
         COUCHBASE_FAILED_INIT_MACRO
         return;
@@ -175,9 +183,17 @@ void couchbaseThreadEntryPoint()
 
     //cleanup
     lcb_destroy(couchbaseInstance);
-    event_free(triggerCouchbaseThreadStopEvent);
-    event_free(setValueByKeyEvent);
-    event_base_free(eventBase);
+    if(lcb_destroy_io_ops(couchbaseIoOps) != LCB_SUCCESS)
+    {
+        fprintf(stderr, "Error: Failed to lcb_destroy_io_ops\n");
+        return;
+    }
+
+    //First it took me multiple hours to get rid of a valgrind error solved via lcb_destroy_io_ops (couchbase C sdk examples suck), then it took me a few more to realize that lcb_destroy_io_ops is freeing the events and base too, so I was double free'ing. Doh! Finally got valgrind to not give any reports zomgfuckwyreah
+    //event_free(triggerCouchbaseThreadStopEvent);
+    //event_free(setValueByKeyEvent);
+    //event_base_free(eventBase);
+
     couchbaseThreadExittedCleanly = true;
 }
 WApplication *handleNewWtConnection(const WEnvironment& env)

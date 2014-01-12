@@ -28,6 +28,7 @@ void WtNumberWatchingWidget::addNumberToWatch()
 }
 void WtNumberWatchingWidget::watchedNumberSeenUpdateGuiCallback(int number)
 {
+    //TODOreq: pretty sure we are a WApplication and in proper context so why would we check that we exist lol? Old prototype is old? app->triggerUpdate() can just be triggerUpdat()...
     WApplication *app = WApplication::instance();
     if(app)
     {

@@ -1,0 +1,5 @@
+I want to make note that if the client doesn't support javascript, the WApplication/WWidget should do a "blocking" get all the way to the db [if needed]. If the client does support javascript, the traditional "updatesEnabled" and "post" method is used... in a form encapsulated by the idea of "getAndSubscribeForUpdates(view)" (view not to be confused with couchbase view.. but instead like a "web page view" (series of keys and shit))
+
+getAndSubscribed can/should cache (two users on same wt server do a getAndSubscribe, they both share the 'subscription' (and result/updates)), but it's ok if the first impl doesn't...
+
+so the javascript-less should also use the same "cache" (but not subscribe himself for updates)

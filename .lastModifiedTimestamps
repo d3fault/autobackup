@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1388990461
+Documents/minddump/:1389502853
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -670,6 +670,7 @@ Documents/minddump/dslfjsadofusadlfkjwerousafdlk.git.tasdlfjaso.txt:1333874389
 Documents/minddump/dslfjsdlfjlsdflksdflkjsdlkfj.txt:1355828113
 Documents/minddump/dslfkjasldkfjasdofusldrtdfgsffjsodufsldkfjosduflkjouwerlkjsdf.txt:1384341053
 Documents/minddump/dslfkjasldkfjsadofiuwalekrjosdfusdlakfjoweurlk.txt:1351480537
+Documents/minddump/dslfkjasldkjfsoduflsdfjosudflksjdfousdflkjsdfousdf.txt:1389502604
 Documents/minddump/dslfkjdslfjsldakjfosduflsjdfouasdflkjsdfuoiuwerkjalsdkf.txt:1383069170
 Documents/minddump/dslfkjsdflkjsdfkjsldkjflskjflskduweroiusdflkjsdfoewrweriu.txt:1382175301
 Documents/minddump/dslfkjsdlkfjsdlkjflskdjoiurwlj.txt:1355827452
@@ -1543,6 +1544,7 @@ Documents/minddump/sdlkjflkjsdfosduflkjsdofulwejrouasldkfjosudflkjousdflksdfoiu.
 Documents/minddump/sdlkjflksjfosudfkjweorulkjsfdoudfsljewroulksjdfousaldfjosduflkjweoru.txt:1368533844
 Documents/minddump/sdlkjfsldkjfosdufosdulskdjfosulkjdfosdufslkjouwerkljsdfousfdl.txt:1364511063
 Documents/minddump/sdlkjfwoeriusadflkjasfdjlksadhsfdkl.txt:1338993015
+Documents/minddump/sdofusldfkjsldkjfskljdfsoduflsjfdosduflskjdfodusflk.txt:1389491431
 Documents/minddump/sdroiualfjlsdfjsdoiuwerljsdaf.txt:1355467880
 Documents/minddump/secure.and.secret.are.boolean.attributes.there.is.no.semi.txt:1324814637
 Documents/minddump/secure.input.only.blob.server.keeping.up.ensuring.via.low.high.wires.txt:1349075164
@@ -1598,6 +1600,7 @@ Documents/minddump/sldfjsdlafjsdalkfjoiuwerlkjsdfousdflk.txt:1356355477
 Documents/minddump/sldfkjasdofuwlrkjsafdihsdfkajoruwerlksjdfourl.txt:1345058845
 Documents/minddump/sldfkjasljfsalkjdflskdjflksdjflskjdflskdjfouwelrkjosufdlksjdfosuidfl.txt:1381338846
 Documents/minddump/sldfkjlsdkfjsldkjfouwerljksodfulsdfjoufsdlkjweorulsjfd.txt:1381327973
+Documents/minddump/sldfkjsadlfkjsdlkfjsdofusdlfjsdofu.txt:1389502853
 Documents/minddump/sldfkjsdlkfjdslfsdfoiufkjjlkafsjoiuwerkjlouisfhfdoiusdfkjwreousdflk.txt:1368517274
 Documents/minddump/sldfkjsdlkfjoiuwerlkjsdfousdlkjreoul.txt:1355649672
 Documents/minddump/sldfkjsdlkjfsoduflkwejrofiusdflkjdsofulkjweroudfslkj.txt:1371781736
@@ -2492,11 +2495,13 @@ Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/mainwid
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.cpp:1340400146
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.h:1340399397
 Projects/Prototypes/Couchbase/:1389319403
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/:1389456603
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1389460999
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/:1389498494
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/:1389498532
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/javascriptless.connections.do.blocking.get.javascript.is.async.both.share.a.cache.ideally.txt:1389498532
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1389508304
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/WtCouchbaseKeySetAndGetTest.pro:1389460810
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:1389460722
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389456557
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:1389501924
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389499614
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389456327
 Projects/Prototypes/GenericAcker/:1350049497
 Projects/Prototypes/GenericAcker/design/:1350050661
@@ -2636,14 +2641,14 @@ Projects/Prototypes/QSslTest1/src/shared/protocol.h:1329942208
 Projects/Prototypes/QtBroadcastServerWtClient/:1389318432
 Projects/Prototypes/QtBroadcastServerWtClient/design/:1333011399
 Projects/Prototypes/QtBroadcastServerWtClient/design/initial.design.txt:1333011399
-Projects/Prototypes/QtBroadcastServerWtClient/src/:1389456810
+Projects/Prototypes/QtBroadcastServerWtClient/src/:1389502021
 Projects/Prototypes/QtBroadcastServerWtClient/src/QtBroadcastServerWtClient.pro:1389318415
 Projects/Prototypes/QtBroadcastServerWtClient/src/main.cpp:1389319930
 Projects/Prototypes/QtBroadcastServerWtClient/src/myrandomnumbergenerator.cpp:1333037257
 Projects/Prototypes/QtBroadcastServerWtClient/src/myrandomnumbergenerator.h:1333020537
 Projects/Prototypes/QtBroadcastServerWtClient/src/qtbroadcastservernumberwatcher.cpp:1389318943
 Projects/Prototypes/QtBroadcastServerWtClient/src/qtbroadcastservernumberwatcher.h:1333037578
-Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.cpp:1333040702
+Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.cpp:1389499082
 Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.h:1333040708
 Projects/Prototypes/RemoteBankManagementTest/:1330551098
 Projects/Prototypes/RemoteBankManagementTest/src/:1331378216
