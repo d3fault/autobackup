@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <Wt/WApplication>
+#include <Wt/WServer>
 #include <boost/thread.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 
@@ -13,15 +14,14 @@ extern "C" {
 } // extern "C"
 #endif
 
+#include "setvaluebykeyrequestfromwt.h"
 #include "wtkeysetandgetwidget.h"
 
 using namespace Wt;
 using namespace boost::interprocess;
 
-#define WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_KEYS "WtCouchbaseKeySetAndGetTestMessageQueueKeys"
-#define WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_VALUES "WtCouchbaseKeySetAndGetTestMessageQueueValues"
-#define SET_VALUE_BY_KEY_MAX_KEY_SIZE_FOR_MESSAGE_QUEUE 250
-#define SET_VALUE_BY_KEY_MAX_VALUE_SIZE_FOR_MESSAGE_QUEUE 102150
+#define SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME "WtCouchbaseKeySetAndGetTestMessageQueueKeys"
+#define SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE 102400
 
 boost::condition_variable couchbaseIsConnectedWaitCondition;
 boost::mutex couchbaseIsConnectedMutex;
@@ -30,11 +30,9 @@ bool couchbaseDoneInitializing = false; //whether connection is successful or no
 bool couchbaseIsConnected = false;
 bool couchbaseThreadExittedCleanly = false;
 
-//core cross-thread (Wt -> Couchbase, for now) events
-message_queue *setValueByKeyMessageQueue_VALUES;
-message_queue *setValueByKeyMessageQueue_KEYS;
-void *currentKeyMessageQueueBuffer;
-void *currentValueMessageQueueBuffer;
+//core cross-thread (Wt -> Couchbase) events. Wt <- Couchbase uses WServer::post
+message_queue *setValueByKeyRequestFromWtMessageQueue;
+void *setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer;
 struct event *setValueByKeyEvent;
 struct event *triggerCouchbaseThreadStopEvent;
 
@@ -71,24 +69,31 @@ static void couchbaseConfigurationCallback(lcb_t instance, lcb_configuration_t c
             couchbaseDoneInitializing = true;
             couchbaseIsConnected = true;
 
-            message_queue::remove(WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_KEYS);
-            message_queue::remove(WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_VALUES);
+            message_queue::remove(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME);
             //TODOreq: setValueByKeyMessageQueue and currentValueByKeyMessageBuffer need to be delete'd/free'd at various error cases
-            setValueByKeyMessageQueue_KEYS = new message_queue(create_only, WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_KEYS, 20000, SET_VALUE_BY_KEY_MAX_KEY_SIZE_FOR_MESSAGE_QUEUE);
-            setValueByKeyMessageQueue_VALUES = new message_queue(create_only, WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_VALUES, 20000, SET_VALUE_BY_KEY_MAX_VALUE_SIZE_FOR_MESSAGE_QUEUE); //2gb ram max, 20k messages @ 100kb each... i wish these was dynamic'er. IF ONLY THERE WAS A GENERATION UTILITY THAT ALLOWED YOU TO SPECIFY VARIOUS MESSAGE TYPES AHEAD OF TIME SO THAT THEY WOULD TAKE UP EXACTLY THE BYTES NEEDED (ok ok, QString dynamically allocates fuggit) AND YOU COULD THEN USE THOSE TO CALL PROCEDURES REMOTELY/INTER-PROCESS'dly
-            currentKeyMessageQueueBuffer = malloc(SET_VALUE_BY_KEY_MAX_KEY_SIZE_FOR_MESSAGE_QUEUE);
-            currentValueMessageQueueBuffer = malloc(SET_VALUE_BY_KEY_MAX_VALUE_SIZE_FOR_MESSAGE_QUEUE);
+            setValueByKeyRequestFromWtMessageQueue = new message_queue(create_only, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME, 20000, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE); //2gb ram max, 20k messages @ 100kb each... i wish these was dynamic'er. IF ONLY THERE WAS A GENERATION UTILITY THAT ALLOWED YOU TO SPECIFY VARIOUS MESSAGE TYPES AHEAD OF TIME SO THAT THEY WOULD TAKE UP EXACTLY THE BYTES NEEDED (ok ok, QString dynamically allocates fuggit) AND YOU COULD THEN USE THOSE TO CALL PROCEDURES REMOTELY/INTER-PROCESS'dly
+            setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer = malloc(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE);
         }
         couchbaseIsConnectedWaitCondition.notify_one();
     }
 }
-static void setValueByKeyCallback(evutil_socket_t wat, short events, void *userData)
+static void setValueByKeyRequestFromWtEventSlot(evutil_socket_t wat, short events, void *userData)
 {
+    //TODOoptimization: i could read all of the messages off of the queue here (and combine them all into one couchbase command (unless i can't give each command it's own cookie, but i think i can)) and then just ignore when it's empty [because i read them 'earlier' than usual]. Ideally it would be good to not "event_active" when I'm able to do that optimization, but eh I don't know the internals of libevent on how to cancel events about to happen lol fuck it
+    //^^^NVM FUCK IT, ONE COOKIE PER "lcb_store" xD (unless i made the cookie itself able to do "multiples" (possible but worth it?))
+
     unsigned int priority;
-    message_queue::size_type receivedKeyMessageSize;
-    setValueByKeyMessageQueue_KEYS->receive(currentKeyMessageQueueBuffer, (message_queue::size_type)SET_VALUE_BY_KEY_MAX_KEY_SIZE_FOR_MESSAGE_QUEUE, receivedKeyMessageSize, priority);
-    message_queue::size_type receivedValueMessageSize;
-    setValueByKeyMessageQueue_VALUES->receive(currentValueMessageQueueBuffer, SET_VALUE_BY_KEY_MAX_VALUE_SIZE_FOR_MESSAGE_QUEUE, receivedValueMessageSize, priority);
+    message_queue::size_type actualMessageSize;
+    setValueByKeyRequestFromWtMessageQueue->receive(setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer, (message_queue::size_type)SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE, actualMessageSize, priority);
+
+    //TODOreq: 'delete' for various error exits (we're using it as cookie :-P). Already deleting at proper normal use place
+    SetValueByKeyRequestFromWt *setValueByKeyRequestFromWt = new SetValueByKeyRequestFromWt();
+
+    {
+        std::istringstream setValueByKeyRequestFromWtSerialized((const char*)setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer);
+        boost::archive::text_iarchive deSerializer(setValueByKeyRequestFromWtSerialized);
+        deSerializer >> *setValueByKeyRequestFromWt;
+    }
 
     fprintf(stdout, "Trying to set a key...\n");
     fprintf(stdout, "Value of 'events' during setValueByKeyCallback: %04x\n", events);
@@ -97,12 +102,12 @@ static void setValueByKeyCallback(evutil_socket_t wat, short events, void *userD
     const lcb_store_cmd_t *cmds[1];
     cmds[0] = &cmd;
     memset(&cmd, 0, sizeof(cmd));
-    cmd.v.v0.key = currentKeyMessageQueueBuffer;
-    cmd.v.v0.nkey = receivedKeyMessageSize;
-    cmd.v.v0.bytes = currentValueMessageQueueBuffer;
-    cmd.v.v0.nbytes = receivedValueMessageSize;
-    cmd.v.v0.operation = LCB_SET;
-    lcb_error_t err = lcb_store(*couchbaseInstance, NULL, 1, cmds);
+    cmd.v.v0.key = setValueByKeyRequestFromWt->CouchbaseSetKey.c_str(); //TODOoptimization: maybe serialize into c_str to minimize conversions? idk if boost.serialization can do it, but meh i'd guess yes it can
+    cmd.v.v0.nkey = strlen(setValueByKeyRequestFromWt->CouchbaseSetKey.c_str());
+    cmd.v.v0.bytes = setValueByKeyRequestFromWt->CouchbaseSetValue.c_str();
+    cmd.v.v0.nbytes = strlen(setValueByKeyRequestFromWt->CouchbaseSetValue.c_str());
+    cmd.v.v0.operation = LCB_ADD;
+    lcb_error_t err = lcb_store(*couchbaseInstance, setValueByKeyRequestFromWt, 1, cmds);
     if(err != LCB_SUCCESS)
     {
         fprintf(stderr, "Failed to set up store request: %s\n", lcb_strerror(*couchbaseInstance, err));
@@ -130,7 +135,42 @@ static void couchbaseStoreCallback(lcb_t instance, const void *cookie, lcb_stora
         //exit(EXIT_FAILURE);
         return;
     }
-    fprintf(stdout, "Key has been stored\n");
+    fprintf(stdout, "Key has been stored on master, now calling lcb_durability_poll\n");
+    lcb_durability_opts_t lcbDurabilityOptions = { 0 };
+    lcbDurabilityOptions.v.v0.replicate_to = 2;
+    lcbDurabilityOptions.v.v0.timeout = 3000000; //3 second timeout is PLENTY, and/but we should probably change this in the place it gets its default if we leave it to zero [just as a TODOoptimization to lessen memory writing]
+    lcb_durability_cmd_t lcbDurabilityCommand = { 0 };
+    lcbDurabilityCommand.v.v0.key = resp->v.v0.key;
+    lcbDurabilityCommand.v.v0.nkey = resp->v.v0.nkey;
+    //in my testing, setting lcb->cas to resp->cas didn't work as expected... BUT i don't think it matters at all for "LCB_ADD" operations...
+    lcb_durability_cmd_t *lcbDurabilityCommandList[1];
+    lcbDurabilityCommandList[0] = &lcbDurabilityCommand;
+    error = lcb_durability_poll(instance, cookie, &lcbDurabilityOptions, 1, lcbDurabilityCommandList);
+    if(error != LCB_SUCCESS)
+    {
+        fprintf(stderr, "Failed to schedule lcb_durability_poll: %s\n", lcb_strerror(instance, error));
+        //TODOreq: proper error handling bah
+    }
+}
+static void couchbaseDurabilityCallback(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
+{
+    if(error != LCB_SUCCESS)
+    {
+        fprintf(stderr, "Error: Generic lcb_durability_poll callback failure: %s\n", lcb_strerror(instance, error));
+        //TODOreq: handle errors
+        return;
+    }
+    if(resp->v.v0.err != LCB_SUCCESS)
+    {
+        fprintf(stderr, "Error: Specific lcb_durability_poll callback failure: %s\n", lcb_strerror(instance, resp->v.v0.err));
+        //TODOreq: handle errors
+        return;
+    }
+    printf("lcb_durability_callback success\n");
+    //tempted to "check" npersisted >= 2 etc, but eh fuck it trust couchbase
+    SetValueByKeyRequestFromWt *setValueByKeyRequestFromWt = (SetValueByKeyRequestFromWt*)cookie;
+    Wt::WServer::instance()->post(setValueByKeyRequestFromWt->WtSessionId, boost::bind(setValueByKeyRequestFromWt->WtPostCallback, setValueByKeyRequestFromWt->CouchbaseSetKey, setValueByKeyRequestFromWt->CouchbaseSetValue));
+    delete setValueByKeyRequestFromWt;
 }
 static void couchbaseThreadEntryPoint()
 {
@@ -190,6 +230,7 @@ static void couchbaseThreadEntryPoint()
     lcb_set_configuration_callback(couchbaseInstance, couchbaseConfigurationCallback);
     //lcb_set_get_callback(instance, couchbaseGetCallback);
     lcb_set_store_callback(couchbaseInstance, couchbaseStoreCallback);
+    lcb_set_durability_callback(couchbaseInstance, couchbaseDurabilityCallback);
     if((error = lcb_connect(couchbaseInstance)) != LCB_SUCCESS)
     {
         fprintf(stderr, "Failed to connect libcouchbase instance: %s\n", lcb_strerror(NULL, error));
@@ -201,19 +242,16 @@ static void couchbaseThreadEntryPoint()
     }
 
     lcb_set_cookie(couchbaseInstance, eventBase);
-    setValueByKeyEvent = event_new(eventBase, -1, EV_READ, setValueByKeyCallback, &couchbaseInstance);
+    setValueByKeyEvent = event_new(eventBase, -1, EV_READ, setValueByKeyRequestFromWtEventSlot, &couchbaseInstance);
     triggerCouchbaseThreadStopEvent = event_new(eventBase, -1, EV_READ, triggerCouchbaseThreadStopCallback, eventBase);
 
     event_base_loop(eventBase, 0); //wait until event_base_loopbreak is called, processing all events of course
 
     //cleanup
     //TODOreq: we could try to receive any left over messages in queue here, or just disregard them and quit...
-    free(currentKeyMessageQueueBuffer);
-    free(currentValueMessageQueueBuffer);
-    message_queue::remove(WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_KEYS);
-    message_queue::remove(WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_VALUES);
-    delete setValueByKeyMessageQueue_KEYS;
-    delete setValueByKeyMessageQueue_VALUES;
+    free(setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer);
+    message_queue::remove(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME);
+    delete setValueByKeyRequestFromWtMessageQueue;
     lcb_destroy(couchbaseInstance);
     if(lcb_destroy_io_ops(couchbaseIoOps) != LCB_SUCCESS)
     {
@@ -246,13 +284,13 @@ int main(int argc, char **argv)
         return 1;
 
     //If we get here, we know the global setValueByKeyEvent has been created, so grab events/event-pointers from couchbase thread (it is idle [since we haven't done anything yet] so this SHOULD be safe) and store them somewhere that wt can see them
-    WtKeySetAndGetWidget::newAndOpenSetValueByKeyMessageQueues(WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_KEYS, WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_VALUES);
-    WtKeySetAndGetWidget::m_SetValueByKeyEvent = setValueByKeyEvent; //dirty hack? fuggit, i'll just be happy if this works...
+    WtKeySetAndGetWidget::newAndOpenSetValueByKeyMessageQueue(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME /*, WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_VALUES*/);
+    WtKeySetAndGetWidget::m_SetValueByKeyRequestFromWtEvent = setValueByKeyEvent; //dirty hack? fuggit, i'll just be happy if this works...
 
     fprintf(stdout, "Now Starting Wt...\n");
     int ret = WRun(argc, argv, &handleNewWtConnection);
 
-    WtKeySetAndGetWidget::deleteSetValueByKeyMessageQueues();
+    WtKeySetAndGetWidget::deleteSetValueByKeyMessageQueue();
 
     //tell the couchbase thread to stop
     //event_base_loopbreak(eventBase);

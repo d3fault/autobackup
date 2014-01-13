@@ -1,0 +1,2 @@
+add this line right below the "root all:all:all:all:all" bullshit
+d3fault d3faultDebianHostname = NOPASSWD: /usr/bin/truecrypt,/bin/mount,/bin/umount

@@ -1,0 +1,20 @@
+because I don't give a shit and it's good enough:
+
+store callback triggers:
+libevent 100ms timeout for "observe"
+-unless the 100ms timeout is already 'active' [by some other store], in which case we just add to queue that the libevent timeout uses to initiate observe
+
+observe callback schedules next libevent 100ms timeout for "observe" [if stores have since queued themselves for it OR if the keys we are trying to observe have not replicated]
+
+
+
+
+I don't need ridiculously high (err, low*) latency. 100ms is plenty fucking fast for a human and for the replication process to hopefully have completed
+
+
+bool observeTimeoutActive; //store callback adds key just stored to observe queue no matter what. if this bool is false, initiate 100ms timeout using libevent and set bool to true
+
+
+
+
+disregard that. mfw "lcb_durability". sometimes documentation is almost more important than code

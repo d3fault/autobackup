@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1389502853
+Documents/minddump/:1389597232
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -835,6 +835,7 @@ Documents/minddump/fsadflkjsdfoisudflkjsdofulsdkjfoulwkerjousldfjosdufljwoeurlsf
 Documents/minddump/fsadflksjdflksdjfoiusdlfkjwoeurlkjasodfualsdfsudoifosadfil.txt:1383340794
 Documents/minddump/fsadlfjsdlkjfsdouewlrjsdofuasldfkjoewrulk.txt:1358370066
 Documents/minddump/fsadlfkjasdofiuawlekrjaosfdisaldkfjasdklfhasdlfweuorlkasjf.txt:1348975635
+Documents/minddump/fsadlfkjaslkdfjsadouflsdkjfosdufljsdfousdlfkjsdofusldfjksodfu.txt:1389597232
 Documents/minddump/fsadlkfjsdlkfjsldkjflskjdflksdjfsdfouiwerlkjfou.txt:1358142411
 Documents/minddump/fsafdljasdlfkjsdfjljsdflkjsdfosdfulsdjfouwlekroiuasldkfjoasfudldsfjosudflk.txt:1373880492
 Documents/minddump/fsaldfkjsdkfjoulwjeroufdlkjsdfoulerkj.txt:1356080079
@@ -2496,13 +2497,15 @@ Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdri
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.h:1340399397
 Projects/Prototypes/Couchbase/:1389319403
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/:1389498494
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/:1389498532
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/:1389598788
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/javascriptless.connections.do.blocking.get.javascript.is.async.both.share.a.cache.ideally.txt:1389498532
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1389524238
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/WtCouchbaseKeySetAndGetTest.pro:1389460810
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:1389525918
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389524065
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389523737
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/observe.100ms.timeout.only.when.something.to.observe.of.course.txt:1389608097
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1389631851
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/WtCouchbaseKeySetAndGetTest.pro:1389631663
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:1389630200
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/setvaluebykeyrequestfromwt.h:1389628541
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389631400
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389631377
 Projects/Prototypes/GenericAcker/:1350049497
 Projects/Prototypes/GenericAcker/design/:1350050661
 Projects/Prototypes/GenericAcker/design/initial.design.simple.sendMessage.got.lost.towards.the.end.not.sure.this.is.what.i.want.dia:1350049517
@@ -2641,7 +2644,7 @@ Projects/Prototypes/QSslTest1/src/shared/protocol.h:1329942208
 Projects/Prototypes/QtBroadcastServerWtClient/:1389318432
 Projects/Prototypes/QtBroadcastServerWtClient/design/:1333011399
 Projects/Prototypes/QtBroadcastServerWtClient/design/initial.design.txt:1333011399
-Projects/Prototypes/QtBroadcastServerWtClient/src/:1389524226
+Projects/Prototypes/QtBroadcastServerWtClient/src/:1389631327
 Projects/Prototypes/QtBroadcastServerWtClient/src/QtBroadcastServerWtClient.pro:1389318415
 Projects/Prototypes/QtBroadcastServerWtClient/src/main.cpp:1389319930
 Projects/Prototypes/QtBroadcastServerWtClient/src/myrandomnumbergenerator.cpp:1333037257
@@ -3687,7 +3690,7 @@ VariousTreeingsDuringHugeArchivePurge/Silver1tbCalvaryeBooksEasyTree.txt:1367596
 VariousTreeingsDuringHugeArchivePurge/externals.which.is.which.txt:1367597729
 VariousTreeingsDuringHugeArchivePurge/k3.wpl:1264978231
 autobackupScripts/:1349691249
-autobackupScripts/linux/:1387288120
+autobackupScripts/linux/:1389528139
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -3723,8 +3726,10 @@ autobackupScripts/linux/qtCreatorCustomStyle.xml:1350795688
 autobackupScripts/linux/sony.ic.recorder.backup.and.delete.sh:1370738506
 autobackupScripts/linux/soxRecPipedToOpusEncodeCommand.txt:1376137084
 autobackupScripts/linux/steps.to.staticBackup.txt:1349809723
+autobackupScripts/linux/sudoer.config.fresh.os.install.truecrypt.and.general.mounting.txt:1389527463
 autobackupScripts/linux/sync.toSync.and.shred.sh:1370736718
 autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1350716632
+autobackupScripts/linux/virtualbox.networking.how.do.these.blogs.say.so.little.in.so.much.txt:1389528171
 autobackupScripts/linux/yumDownloadOnly.sh:1350716657
 autobackupScripts/linux/zoom.backup.and.shred.sh:1351237228
 autobackupScripts/win/:1383901959

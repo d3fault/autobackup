@@ -1,0 +1,21 @@
+To enable networking on VirtualBox to/from host/guest and to/from guest/guest etc,
+1) With all guests shut down go to File->Preferences->Network, keep clicking "Add Host" button for each guest vm. Leave its settings as default
+2) Go to specific guest vm settings -> Network -> Adapter 2, change "Attached To" to "Host-only Adapter" and then select respective vboxnetX cards. Leave its settings as default
+3) Launch the OS and assuming it's debian-based, edit /etc/network/interfaces. Add below "eth0" entry (or just end of file):
+
+auto eth1
+iface eth1 inet static
+	address 192.168.56.10
+	netmask 255.255.255.0
+
+
+Additional guests (vboxnet1, etc) would use 192.168.57.10, then 58.10, etc. I have no idea why in the vm settings for vbox0 it shows IP 56.1 and not 56.10, but eh fuck it works don't fix it.
+
+
+
+then of course:
+
+ifup eth1
+
+
+...or just reboot
