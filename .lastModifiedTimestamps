@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1389597232
+Documents/minddump/:1389696362
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1376,6 +1376,7 @@ Documents/minddump/sdflkjasdfkljsdofulwerkjoulskdfjousdfjweorulkjdfousdfl.txt:13
 Documents/minddump/sdflkjasdflkjsadfousdlfjsdofusdlkfjsodufsldfu.txt:1388692171
 Documents/minddump/sdflkjasdklfjasdofusldkfjoertesudflksdjfousdflkjs.txt:1384667123
 Documents/minddump/sdflkjasdklfjowerweruwerlkjouisdfkljdsofuwlekjroudsflkjsadofuwerkj.txt:1371881386
+Documents/minddump/sdflkjasdlkfjsdofulsdjfosduflsjdfousdfljsdfousdflkj.txt:1389696362
 Documents/minddump/sdflkjasfldjasdfjsdfoulsdfjosudflkjsdfousdflkjsdfousldkfjsodfuk.txt:1373440849
 Documents/minddump/sdflkjasldfkjalsfkdjasldfkjsadofusldkjfousdflkjsdfousldfkjsdfoulsfdk.txt:1379632312
 Documents/minddump/sdflkjaslkdfjsdaofiuljweourlkjsofuljfdsosdufljdsfuouwer.txt:1370289863
@@ -2500,12 +2501,12 @@ Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/:1389498494
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/:1389598788
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/javascriptless.connections.do.blocking.get.javascript.is.async.both.share.a.cache.ideally.txt:1389498532
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/observe.100ms.timeout.only.when.something.to.observe.of.course.txt:1389608097
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1389693190
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1389707078
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/WtCouchbaseKeySetAndGetTest.pro:1389631663
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:1389682956
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/setvaluebykeyrequestfromwt.h:1389688198
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389693190
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389638397
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:1389707038
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/setvaluebykeyrequestfromwt.h:1389706532
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389706992
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389701949
 Projects/Prototypes/GenericAcker/:1350049497
 Projects/Prototypes/GenericAcker/design/:1350050661
 Projects/Prototypes/GenericAcker/design/initial.design.simple.sendMessage.got.lost.towards.the.end.not.sure.this.is.what.i.want.dia:1350049517
@@ -2644,7 +2645,7 @@ Projects/Prototypes/QSslTest1/src/shared/protocol.h:1329942208
 Projects/Prototypes/QtBroadcastServerWtClient/:1389318432
 Projects/Prototypes/QtBroadcastServerWtClient/design/:1333011399
 Projects/Prototypes/QtBroadcastServerWtClient/design/initial.design.txt:1333011399
-Projects/Prototypes/QtBroadcastServerWtClient/src/:1389631327
+Projects/Prototypes/QtBroadcastServerWtClient/src/:1389702623
 Projects/Prototypes/QtBroadcastServerWtClient/src/QtBroadcastServerWtClient.pro:1389318415
 Projects/Prototypes/QtBroadcastServerWtClient/src/main.cpp:1389319930
 Projects/Prototypes/QtBroadcastServerWtClient/src/myrandomnumbergenerator.cpp:1333037257
@@ -2988,7 +2989,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.cp
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.h:1348569501
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:1348566704
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
-Projects/QuickDirtyAutoBackupHalper/src/:1389460885
+Projects/QuickDirtyAutoBackupHalper/src/:1389693300
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1387287042
 Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1387287148
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.cpp:1387670588

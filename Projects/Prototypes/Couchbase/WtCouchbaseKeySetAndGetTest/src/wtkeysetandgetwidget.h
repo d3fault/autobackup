@@ -8,6 +8,7 @@
 #include <Wt/WText>
 #include <Wt/WBreak>
 
+#include <boost/function.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 
 using namespace Wt;
@@ -29,12 +30,14 @@ public:
     static void newAndOpenSetValueByKeyMessageQueue(const char *keyMessageQueueName);
     static void deleteSetValueByKeyMessageQueue();
     static event *m_SetValueByKeyRequestFromWtEvent; //hack? I can't think of any other way to do this yet but I think once I see it working I'll figure out the "proper" design for all this...
+
+    void valueSetByKeyCallback(std::string key, std::string value);
+    //^should probably friend class in a final impl to keep it private...
 private:
     WLineEdit *m_KeyLineEdit;
     WLineEdit *m_ValueLineEdit;
     WContainerWidget *m_Canvas;
-    void setValueByKey();
-    void valueSetByKeyCallback(std::string key, std::string value);
+    void setValueByKey();    
 
     virtual void finalize();
 };

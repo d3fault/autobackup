@@ -3,6 +3,7 @@
 #include <Wt/WServer>
 #include <boost/thread.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
+#include <boost/function.hpp>
 
 #ifdef __cplusplus
 extern "C" {
@@ -169,7 +170,15 @@ static void couchbaseDurabilityCallback(lcb_t instance, const void *cookie, lcb_
     printf("lcb_durability_callback success\n");
     //tempted to "check" npersisted >= 2 etc, but eh fuck it trust couchbase
     SetValueByKeyRequestFromWt *setValueByKeyRequestFromWt = (SetValueByKeyRequestFromWt*)cookie;
-    Wt::WServer::instance()->post(setValueByKeyRequestFromWt->WtSessionId, boost::bind(setValueByKeyRequestFromWt->WtPostCallback, setValueByKeyRequestFromWt->CouchbaseSetKey, setValueByKeyRequestFromWt->CouchbaseSetValue));
+    //we could have gotten the key (and maybe value, idk) from the resp instead
+
+    WApplication *pointerToWApplicationAndThePointerItselfIsAllocatedOnStackMethinks; //or am i wrong and just getting lucky?
+    //now tell it to point to the address that we serialized as a string xD
+    memcpy(&pointerToWApplicationAndThePointerItselfIsAllocatedOnStackMethinks, setValueByKeyRequestFromWt->AddressToWApplication, setValueByKeyRequestFromWt->LengthOfAddressToWApplication-1); //so why was the -1 there to begin with? maybe for boost's "make binary object" shit??
+    WtKeySetAndGetWidget *hackyRef = static_cast<WtKeySetAndGetWidget*>(pointerToWApplicationAndThePointerItselfIsAllocatedOnStackMethinks);
+
+    Wt::WServer::instance()->post(setValueByKeyRequestFromWt->WtSessionId, boost::bind(boost::bind(&WtKeySetAndGetWidget::valueSetByKeyCallback, hackyRef, _1, _2), setValueByKeyRequestFromWt->CouchbaseSetKey, setValueByKeyRequestFromWt->CouchbaseSetValue));
+
     delete setValueByKeyRequestFromWt;
 }
 static void couchbaseThreadEntryPoint()
