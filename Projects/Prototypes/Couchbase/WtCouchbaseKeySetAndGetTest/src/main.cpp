@@ -33,7 +33,7 @@ bool couchbaseThreadExittedCleanly = false;
 
 //core cross-thread (Wt -> Couchbase) events. Wt <- Couchbase uses WServer::post
 message_queue *setValueByKeyRequestFromWtMessageQueue;
-void *setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer;
+char *setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer;
 struct event *setValueByKeyEvent;
 struct event *triggerCouchbaseThreadStopEvent;
 
@@ -62,6 +62,7 @@ static void couchbaseErrorCallback(lcb_t instance, lcb_error_t error, const char
 }
 static void couchbaseConfigurationCallback(lcb_t instance, lcb_configuration_t config)
 {
+    (void)instance;
     if(config == LCB_CONFIGURATION_NEW)
     {
         //tell main thread that we're now ready to receive events
@@ -73,13 +74,15 @@ static void couchbaseConfigurationCallback(lcb_t instance, lcb_configuration_t c
             message_queue::remove(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME);
             //TODOreq: setValueByKeyMessageQueue and currentValueByKeyMessageBuffer need to be delete'd/free'd at various error cases
             setValueByKeyRequestFromWtMessageQueue = new message_queue(create_only, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME, 20000, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE); //2gb ram max, 20k messages @ 100kb each... i wish these was dynamic'er. IF ONLY THERE WAS A GENERATION UTILITY THAT ALLOWED YOU TO SPECIFY VARIOUS MESSAGE TYPES AHEAD OF TIME SO THAT THEY WOULD TAKE UP EXACTLY THE BYTES NEEDED (ok ok, QString dynamically allocates fuggit) AND YOU COULD THEN USE THOSE TO CALL PROCEDURES REMOTELY/INTER-PROCESS'dly
-            setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer = malloc(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE);
+            setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer = (char*)malloc(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE);
         }
         couchbaseIsConnectedWaitCondition.notify_one();
     }
 }
-static void setValueByKeyRequestFromWtEventSlot(evutil_socket_t wat, short events, void *userData)
+static void setValueByKeyRequestFromWtEventSlot(evutil_socket_t unusedSocket, short events, void *userData)
 {
+    (void)unusedSocket;
+    (void)events; //oh that's not an int! still could have used it xD... still can.... lockfree::queue doesn't sound portable and there was even a statement saying it completely fails at some point. but eh i bet for the most part it's fine. STILL, i wouldn't be surprised if libevent is faster. Hell tbh I haven't a clue which is faster... maybe they both use atomics? I'd need to time them and anything else before that is just blind guessing gg. But also if they are both atomics/equal, then libevent has the advantage of it "already needs to be triggered". Still I'm pretty damn sure this is C10k winrar already so fuck it premature optmization is bleh
     //TODOoptimization: i could read all of the messages off of the queue here (and combine them all into one couchbase command (unless i can't give each command it's own cookie, but i think i can)) and then just ignore when it's empty [because i read them 'earlier' than usual]. Ideally it would be good to not "event_active" when I'm able to do that optimization, but eh I don't know the internals of libevent on how to cancel events about to happen lol fuck it
     //^^^NVM FUCK IT, ONE COOKIE PER "lcb_store" xD (unless i made the cookie itself able to do "multiples" (possible but worth it?))
 
@@ -97,7 +100,6 @@ static void setValueByKeyRequestFromWtEventSlot(evutil_socket_t wat, short event
     }
 
     fprintf(stdout, "Trying to set a key...\n");
-    fprintf(stdout, "Value of 'events' during setValueByKeyCallback: %04x\n", events);
     lcb_t *couchbaseInstance = (lcb_t*)userData;
     lcb_store_cmd_t cmd;
     const lcb_store_cmd_t *cmds[1];
@@ -119,8 +121,10 @@ static void setValueByKeyRequestFromWtEventSlot(evutil_socket_t wat, short event
     }
     fprintf(stdout, "It appears we've' sent a key set request\n");
 }
-static void triggerCouchbaseThreadStopCallback(evutil_socket_t wat, short events, void *userData)
+static void triggerCouchbaseThreadStopCallback(evutil_socket_t unusedSocket, short events, void *userData)
 {
+    (void)unusedSocket;
+    (void)events;
     event_base_loopbreak((struct event_base *)userData);
 }
 static void couchbaseStoreCallback(lcb_t instance, const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp)
@@ -137,10 +141,12 @@ static void couchbaseStoreCallback(lcb_t instance, const void *cookie, lcb_stora
         return;
     }
     fprintf(stdout, "Key has been stored on master, now calling lcb_durability_poll\n");
-    lcb_durability_opts_t lcbDurabilityOptions = { 0 };
+    lcb_durability_opts_t lcbDurabilityOptions;
+    memset(&lcbDurabilityOptions, 0, sizeof(lcb_durability_opts_t));
     lcbDurabilityOptions.v.v0.replicate_to = 2;
     lcbDurabilityOptions.v.v0.timeout = 3000000; //3 second timeout is PLENTY, and/but we should probably change this in the place it gets its default if we leave it to zero [just as a TODOoptimization to lessen memory writing]
-    lcb_durability_cmd_t lcbDurabilityCommand = { 0 };
+    lcb_durability_cmd_t lcbDurabilityCommand;
+    memset(&lcbDurabilityCommand, 0, sizeof(lcb_durability_cmd_t));
     lcbDurabilityCommand.v.v0.key = resp->v.v0.key;
     lcbDurabilityCommand.v.v0.nkey = resp->v.v0.nkey;
     //in my testing, setting lcb->cas to resp->cas didn't work as expected... BUT i don't think it matters at all for "LCB_ADD" operations...
@@ -172,12 +178,7 @@ static void couchbaseDurabilityCallback(lcb_t instance, const void *cookie, lcb_
     SetValueByKeyRequestFromWt *setValueByKeyRequestFromWt = (SetValueByKeyRequestFromWt*)cookie;
     //we could have gotten the key (and maybe value, idk) from the resp instead
 
-    WApplication *pointerToWApplicationAndThePointerItselfIsAllocatedOnStackMethinks; //or am i wrong and just getting lucky?
-    //now tell it to point to the address that we serialized as a string xD
-    memcpy(&pointerToWApplicationAndThePointerItselfIsAllocatedOnStackMethinks, setValueByKeyRequestFromWt->AddressToWApplication, setValueByKeyRequestFromWt->LengthOfAddressToWApplication-1); //so why was the -1 there to begin with? maybe for boost's "make binary object" shit??
-    WtKeySetAndGetWidget *hackyRef = static_cast<WtKeySetAndGetWidget*>(pointerToWApplicationAndThePointerItselfIsAllocatedOnStackMethinks);
-
-    Wt::WServer::instance()->post(setValueByKeyRequestFromWt->WtSessionId, boost::bind(boost::bind(&WtKeySetAndGetWidget::valueSetByKeyCallback, hackyRef, _1, _2), setValueByKeyRequestFromWt->CouchbaseSetKey, setValueByKeyRequestFromWt->CouchbaseSetValue));
+    Wt::WServer::instance()->post(setValueByKeyRequestFromWt->WtSessionId, boost::bind(boost::bind(&WtKeySetAndGetWidget::valueSetByKeyCallback, setValueByKeyRequestFromWt->WtKeySetAndGetWidgetPointerForCallback, _1, _2), setValueByKeyRequestFromWt->CouchbaseSetKey, setValueByKeyRequestFromWt->CouchbaseSetValue));
 
     delete setValueByKeyRequestFromWt;
 }

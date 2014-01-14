@@ -2,6 +2,7 @@
 #define WTKEYSETANDGETWIDGET_H
 
 #include <Wt/WApplication>
+#include <Wt/WEnvironment>
 #include <Wt/WContainerWidget>
 #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
