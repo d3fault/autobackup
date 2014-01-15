@@ -1,5 +1,7 @@
 TARGET = WtCouchbaseKeySetAndGetTest
 
+#QMAKE_CXXFLAGS += -save-temps
+
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle

@@ -1,6 +1,9 @@
 #include <stdio.h>
+
 #include <Wt/WApplication>
 #include <Wt/WServer>
+
+#include <boost/preprocessor/repeat.hpp>
 #include <boost/thread.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/function.hpp>
@@ -21,7 +24,8 @@ extern "C" {
 using namespace Wt;
 using namespace boost::interprocess;
 
-#define SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME "WtCouchbaseKeySetAndGetTestMessageQueueKeys"
+#define NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS 10 //if change here, change in WtKeySetAndGetWidget header as well
+#define SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_BASE_NAME WtCouchbaseKeySetAndGetTestMessageQueueKeys
 #define SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE 102400
 
 boost::condition_variable couchbaseIsConnectedWaitCondition;
@@ -32,9 +36,9 @@ bool couchbaseIsConnected = false;
 bool couchbaseThreadExittedCleanly = false;
 
 //core cross-thread (Wt -> Couchbase) events. Wt <- Couchbase uses WServer::post
-message_queue *setValueByKeyRequestFromWtMessageQueue;
-void *setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer = NULL;
-struct event *setValueByKeyEvent;
+message_queue *setValueByKeyRequestFromWtMessageQueues[NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS];
+void *setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffers[NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS];
+struct event *setValueByKeyMessageQueueEvents[NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS];
 struct event *triggerCouchbaseThreadStopEvent;
 
 #define COUCHBASE_FAILED_INIT_MACRO \
@@ -44,9 +48,64 @@ struct event *triggerCouchbaseThreadStopEvent;
 } \
 couchbaseIsConnectedWaitCondition.notify_one();
 
+//original version with comments down below
+#define setValueByKeyRequestFromWtEventSlotMacro(z, n, text) \
+static void setValueByKeyRequestFromWtEventSlot##n(evutil_socket_t unusedSocket, short events, void *userData) \
+{ \
+    (void)unusedSocket; \
+    (void)events; \
+    unsigned int priority; \
+    message_queue::size_type actualMessageSize; \
+    setValueByKeyRequestFromWtMessageQueues[n]->receive(setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffers[n],(message_queue::size_type)SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE, actualMessageSize, priority); \
+    \
+    SetValueByKeyRequestFromWt *setValueByKeyRequestFromWt = new SetValueByKeyRequestFromWt(); \
+    { \
+        std::istringstream setValueByKeyRequestFromWtSerialized((const char*)setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffers[n]); \
+        boost::archive::text_iarchive deSerializer(setValueByKeyRequestFromWtSerialized); \
+        deSerializer >> *setValueByKeyRequestFromWt; \
+    } \
+    fprintf(stdout, "Trying to set a key...\n"); \
+    lcb_t *couchbaseInstance = (lcb_t*)userData; \
+    lcb_store_cmd_t cmd; \
+    const lcb_store_cmd_t *cmds[1]; \
+    cmds[0] = &cmd; \
+    memset(&cmd, 0, sizeof(cmd)); \
+    cmd.v.v0.key = setValueByKeyRequestFromWt->CouchbaseSetKey.c_str(); \
+    cmd.v.v0.nkey = strlen(setValueByKeyRequestFromWt->CouchbaseSetKey.c_str()); \
+    cmd.v.v0.bytes = setValueByKeyRequestFromWt->CouchbaseSetValue.c_str(); \
+    cmd.v.v0.nbytes = strlen(setValueByKeyRequestFromWt->CouchbaseSetValue.c_str()); \
+    cmd.v.v0.operation = LCB_ADD; \
+    lcb_error_t err = lcb_store(*couchbaseInstance, setValueByKeyRequestFromWt, 1, cmds); \
+    if(err != LCB_SUCCESS) \
+    { \
+    fprintf(stderr, "Failed to set up store request: %s\n", lcb_strerror(*couchbaseInstance, err)); \
+    return; \
+    } \
+    fprintf(stdout, "It appears we've' sent a key set request\n"); \
+}
+
+BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, setValueByKeyRequestFromWtEventSlotMacro, ~)
+
+#define NEW_AND_OPEN_MESSAGE_QUEUE_CALLER_MACRO(z, n, text) WtKeySetAndGetWidget::newAndOpenSetValueByKeyMessageQueue(n, "SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_BASE_NAME" \
+#n);
+#define REMOVE_ALL_MESSAGE_QUEUES_MACRO(z, n, text) message_queue::remove("SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_BASE_NAME" \
+#n);
+#define CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) setValueByKeyRequestFromWtMessageQueues[n] = new message_queue(create_only, "SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_BASE_NAME" \
+#n, 20000, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE);
+//TODOreq, pick new message queue sizes now that we're using "10" of (perhaps factor in the "10" when calculating a size (dynamically, that is))
+//2gb ram max, 20k messages @ 100kb each... i wish these was dynamic'er. IF ONLY THERE WAS A GENERATION UTILITY THAT ALLOWED YOU TO SPECIFY VARIOUS MESSAGE TYPES AHEAD OF TIME SO THAT THEY WOULD TAKE UP EXACTLY THE BYTES NEEDED (ok ok, QString dynamically allocates fuggit) AND YOU COULD THEN USE THOSE TO CALL PROCEDURES REMOTELY/INTER-PROCESS'dly
+#define DELETE_ALL_NEWD_MESSAGE_QUEUES_MACRO(z, n, text) delete setValueByKeyRequestFromWtMessageQueues[n];
+
+#define MALLOC_SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_CURRENT_MESSAGE_BUFFERS(z, n, text) setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffers[n] = malloc(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE);
+
+#define EVENT_NEW_MACRO_USING_MACRO_CREATED_EVENT_CALLBACKS_WOOT(z, n, text) setValueByKeyMessageQueueEvents[n] = event_new(eventBase, -1, EV_READ, setValueByKeyRequestFromWtEventSlot##n, &couchbaseInstance);
+
+#define FREE_SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_CURRENT_MESSAGE_BUFFERS(z, n, text) free(setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffers[n]);
+
+#define TELL_WT_KEY_SET_AND_GET_WIDGET_TO_DELETE_MESSAGE_QUEUES_MACRO(z, n, text) WtKeySetAndGetWidget::deleteSetValueByKeyMessageQueue(n);
+
 
 //TODOreq: come to think of it, I think my fprintf calls from various threads are unsafe (maybe not?)... but fuck it anyways this is just testing n shit...
-
 
 static void couchbaseErrorCallback(lcb_t instance, lcb_error_t error, const char *errinfo)
 {
@@ -71,14 +130,21 @@ static void couchbaseConfigurationCallback(lcb_t instance, lcb_configuration_t c
             couchbaseDoneInitializing = true;
             couchbaseIsConnected = true;
 
-            message_queue::remove(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME);
+            //clean-up previous crashed exits
+            BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, REMOVE_ALL_MESSAGE_QUEUES_MACRO, ~)
+
             //TODOreq: setValueByKeyMessageQueue and currentValueByKeyMessageBuffer need to be delete'd/free'd at various error cases
-            setValueByKeyRequestFromWtMessageQueue = new message_queue(create_only, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME, 20000, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE); //2gb ram max, 20k messages @ 100kb each... i wish these was dynamic'er. IF ONLY THERE WAS A GENERATION UTILITY THAT ALLOWED YOU TO SPECIFY VARIOUS MESSAGE TYPES AHEAD OF TIME SO THAT THEY WOULD TAKE UP EXACTLY THE BYTES NEEDED (ok ok, QString dynamically allocates fuggit) AND YOU COULD THEN USE THOSE TO CALL PROCEDURES REMOTELY/INTER-PROCESS'dly
-            setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer = malloc(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE);
+
+            BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, CREATE_MY_MESSAGE_QUEUES_MACRO, ~)
+
+            BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, MALLOC_SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_CURRENT_MESSAGE_BUFFERS, ~)
         }
         couchbaseIsConnectedWaitCondition.notify_one();
     }
 }
+
+//orig, now macro'fied and de-commented above
+#if 0
 static void setValueByKeyRequestFromWtEventSlot(evutil_socket_t unusedSocket, short events, void *userData)
 {
     (void)unusedSocket;
@@ -88,13 +154,13 @@ static void setValueByKeyRequestFromWtEventSlot(evutil_socket_t unusedSocket, sh
 
     unsigned int priority;
     message_queue::size_type actualMessageSize;
-    setValueByKeyRequestFromWtMessageQueue->receive(setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer, (message_queue::size_type)SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE, actualMessageSize, priority);
+    setValueByKeyRequestFromWtMessageQueue->receive(setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffers, (message_queue::size_type)SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE, actualMessageSize, priority);
 
     //TODOreq: 'delete' for various error exits (we're using it as cookie :-P). Already deleting at proper normal use place
     SetValueByKeyRequestFromWt *setValueByKeyRequestFromWt = new SetValueByKeyRequestFromWt();
 
     {
-        std::istringstream setValueByKeyRequestFromWtSerialized((const char*)setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer);
+        std::istringstream setValueByKeyRequestFromWtSerialized((const char*)setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffers);
         boost::archive::text_iarchive deSerializer(setValueByKeyRequestFromWtSerialized);
         deSerializer >> *setValueByKeyRequestFromWt;
     }
@@ -121,6 +187,7 @@ static void setValueByKeyRequestFromWtEventSlot(evutil_socket_t unusedSocket, sh
     }
     fprintf(stdout, "It appears we've' sent a key set request\n");
 }
+#endif
 static void triggerCouchbaseThreadStopCallback(evutil_socket_t unusedSocket, short events, void *userData)
 {
     (void)unusedSocket;
@@ -252,16 +319,18 @@ static void couchbaseThreadEntryPoint()
     }
 
     lcb_set_cookie(couchbaseInstance, eventBase);
-    setValueByKeyEvent = event_new(eventBase, -1, EV_READ, setValueByKeyRequestFromWtEventSlot, &couchbaseInstance);
+
+    BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, EVENT_NEW_MACRO_USING_MACRO_CREATED_EVENT_CALLBACKS_WOOT, ~)
+
     triggerCouchbaseThreadStopEvent = event_new(eventBase, -1, EV_READ, triggerCouchbaseThreadStopCallback, eventBase);
 
     event_base_loop(eventBase, 0); //wait until event_base_loopbreak is called, processing all events of course
 
     //cleanup
     //TODOreq: we could try to receive any left over messages in queue here, or just disregard them and quit...
-    free(setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer);
-    message_queue::remove(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME);
-    delete setValueByKeyRequestFromWtMessageQueue;
+    BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, FREE_SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_CURRENT_MESSAGE_BUFFERS, ~)
+    BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, REMOVE_ALL_MESSAGE_QUEUES_MACRO, ~)
+    BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, DELETE_ALL_NEWD_MESSAGE_QUEUES_MACRO, ~)
     lcb_destroy(couchbaseInstance);
     if(lcb_destroy_io_ops(couchbaseIoOps) != LCB_SUCCESS)
     {
@@ -294,13 +363,17 @@ int main(int argc, char **argv)
         return 1;
 
     //If we get here, we know the global setValueByKeyEvent has been created, so grab events/event-pointers from couchbase thread (it is idle [since we haven't done anything yet] so this SHOULD be safe) and store them somewhere that wt can see them
-    WtKeySetAndGetWidget::newAndOpenSetValueByKeyMessageQueue(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME /*, WT_COUCHBASE_KEY_SET_AND_GET_TEST_MESSAGE_QUEUE_VALUES*/);
-    WtKeySetAndGetWidget::m_SetValueByKeyRequestFromWtEvent = setValueByKeyEvent; //dirty hack? fuggit, i'll just be happy if this works...
+    BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, NEW_AND_OPEN_MESSAGE_QUEUE_CALLER_MACRO, ~)
+
+    for(int i = 0; i < NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS; ++i)
+    {
+        WtKeySetAndGetWidget::m_SetValueByKeyRequestFromWtEvent[i] = setValueByKeyMessageQueueEvents[i];
+    }
 
     fprintf(stdout, "Now Starting Wt...\n");
     int ret = WRun(argc, argv, &handleNewWtConnection);
 
-    WtKeySetAndGetWidget::deleteSetValueByKeyMessageQueue();
+    BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, TELL_WT_KEY_SET_AND_GET_WIDGET_TO_DELETE_MESSAGE_QUEUES_MACRO, ~)
 
     //tell the couchbase thread to stop
     //event_base_loopbreak(eventBase);

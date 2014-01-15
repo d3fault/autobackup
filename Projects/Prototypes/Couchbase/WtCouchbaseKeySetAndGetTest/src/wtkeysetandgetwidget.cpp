@@ -2,11 +2,13 @@
 
 #include "setvaluebykeyrequestfromwt.h"
 
-message_queue *WtKeySetAndGetWidget::m_SetValueByKeyRequestFromWtMessageQueue = NULL;
-event *WtKeySetAndGetWidget::m_SetValueByKeyRequestFromWtEvent = NULL;
+message_queue *WtKeySetAndGetWidget::m_SetValueByKeyRequestFromWtMessageQueues[NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS];
+event *WtKeySetAndGetWidget::m_SetValueByKeyRequestFromWtEvent[NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS];
+// ^TODOreq: how to set them to NULL at array initialization time, especially considering they're dynamically sized? aww well fuck it it's just a valgrind error :). I'm pretty sure I'm using them in an OK manner regardless
+boost::mutex WtKeySetAndGetWidget::m_MutexArray[NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS];
 
 WtKeySetAndGetWidget::WtKeySetAndGetWidget(const WEnvironment& env)
-    : WApplication(env)
+    : WApplication(env), m_ZeroThroughNineDistribution(0, NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS - 1) //dynamically setting it to be wtThreadPool.maxThreads() would be ideal
 {
     m_Canvas = new WContainerWidget();
     new WText("Enter A Key/Value To Add: ", m_Canvas);
@@ -19,6 +21,9 @@ WtKeySetAndGetWidget::WtKeySetAndGetWidget(const WEnvironment& env)
     m_Canvas->addWidget(new WBreak());
     root()->addWidget(m_Canvas);
 
+    //only seed once per WApplication instance
+    m_RandomNumberGenerator.seed((int)rawUniqueId());
+
     if(environment().ajax())
     {
         this->enableUpdates(true);
@@ -27,13 +32,13 @@ WtKeySetAndGetWidget::WtKeySetAndGetWidget(const WEnvironment& env)
     //TODOreq: doesn't belong here, but after logging in (since i'm not using Wt's auth shit), I should call this apparently (it's doc says to)...
     //this->changeSessionId();
 }
-void WtKeySetAndGetWidget::newAndOpenSetValueByKeyMessageQueue(const char *keyMessageQueueName)
+void WtKeySetAndGetWidget::newAndOpenSetValueByKeyMessageQueue(int arrayIndex, const char *messageQueueName)
 {
-    m_SetValueByKeyRequestFromWtMessageQueue = new message_queue(open_only, keyMessageQueueName);
+    m_SetValueByKeyRequestFromWtMessageQueues[arrayIndex] = new message_queue(open_only, messageQueueName);
 }
-void WtKeySetAndGetWidget::deleteSetValueByKeyMessageQueue()
+void WtKeySetAndGetWidget::deleteSetValueByKeyMessageQueue(int arrayIndex)
 {
-    delete m_SetValueByKeyRequestFromWtMessageQueue;
+    delete m_SetValueByKeyRequestFromWtMessageQueues[arrayIndex];
 }
 void WtKeySetAndGetWidget::setValueByKey()
 {
@@ -56,9 +61,34 @@ void WtKeySetAndGetWidget::setValueByKey()
 
     //TODOreq: ensure serialized buffer not over maximum message size
 
-    m_SetValueByKeyRequestFromWtMessageQueue->send(setValueByKeyRequestFromWtSerializedString.c_str(), setValueByKeyRequestFromWtSerializedString.length(), 0); //omg it rhymes <3
+    //what if generating a random number takes longer than locking a mutex.......... nahhhhhhh (especially since a single mutex doesn't scale horizontally anyways, so even if it's true with lower numbers...)..........
+    unsigned char randomNumInZeroThroughNine = m_ZeroThroughNineDistribution(m_RandomNumberGenerator); //change char to short or whatever if you have more than 256 threads
+    unsigned char lockedMutexIndex = randomNumInZeroThroughNine;
+    unsigned char veryLastMutexIndexToBlockLock = (randomNumInZeroThroughNine == 0 ? (NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS-1) : (randomNumInZeroThroughNine-1));
+    while(true)
+    {
+        if(lockedMutexIndex == veryLastMutexIndexToBlockLock)
+        {
+            m_MutexArray[lockedMutexIndex].lock();
+            break;
+        }
+        if(m_MutexArray[lockedMutexIndex].try_lock())
+        {
+            break;
+        }
+        ++lockedMutexIndex;
+
+        //loop around
+        if(lockedMutexIndex == NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS)
+        {
+            lockedMutexIndex = 0;
+        }
+    }
+
+    m_SetValueByKeyRequestFromWtMessageQueues[lockedMutexIndex]->send(setValueByKeyRequestFromWtSerializedString.c_str(), setValueByKeyRequestFromWtSerializedString.length(), 0); //omg it rhymes <3
     //i pronounce queue "kwee/qwee" <3. fuck your cue shit
-    event_active(m_SetValueByKeyRequestFromWtEvent, EV_READ|EV_WRITE, 0); //might be able to take EV_WRITE out of that flag, but idfk i don't even get what they're  for so yea leaving for now. Might be the opposite, maybe I can take out EV_READ (since the callback is waiting for read and i would be writing here? idfk)
+    event_active(m_SetValueByKeyRequestFromWtEvent[lockedMutexIndex], EV_READ|EV_WRITE, 0); //might be able to take EV_WRITE out of that flag, but idfk i don't even get what they're  for so yea leaving for now. Might be the opposite, maybe I can take out EV_READ (since the callback is waiting for read and i would be writing here? idfk)
+    m_MutexArray[lockedMutexIndex].unlock();
 
     //OT'ish ramblings: to say "javascript-less" clients should synchronously use lcb is one thing, and indeed i could add a boost wait condition here and hacky logic to the approapriate lcb callbacks and a bool saying javascriptless and the wait condition itself (to wake) inside SetValueByKeyRequestFromWt that's passed around.... BUT really isn't that pretty fucking stupid to block here? I'm pretty sure asio (what Wt uses) is not multi-threaded but in fact asynchronous! Meaning if I block here then no other WApplications can be served. So bleh I'd never thought I'd mutter these words: javascript is more efficient. javascript is only more efficient because it allows you to continue with other requests while a separate thread interacts with the db. If there was a way in Wt to say "done for now but don't even start responding so we can respond later, because they're dolts (or d3faults) and don't have javascript enabled", then the statement about javascript being more efficient would be false. So I'm inclined to say it's Wt's fault... but maybe it isn't and I'm just dumb. Hey come to think of it I can say that "or" after any statement at all.... or maybe I can't and I'm just dumb.
     //^^perhaps WApplication::deferRendering and resumeRendering is what I want for javascript-less async? I'm pretty sure this just disables the GUI [using javascript no less] and doesn't "hold off on responding in general" like I want. Should be easy to test. basically subtitute enableUpdates with deferRendering, and triggerUpdates with resumeRendering... depending on "bool ajax()". note that resumeRendering would go before the m_Canvas->addWidget calls in the callback, not after them like triggerUpdate
@@ -114,8 +144,4 @@ void WtKeySetAndGetWidget::valueSetByKeyCallback(std::string key, std::string va
     {
         triggerUpdate();
     }
-}
-void WtKeySetAndGetWidget::finalize()
-{
-    WApplication::finalize();
 }
