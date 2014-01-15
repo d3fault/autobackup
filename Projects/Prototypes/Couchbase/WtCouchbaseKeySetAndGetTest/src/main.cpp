@@ -33,7 +33,7 @@ bool couchbaseThreadExittedCleanly = false;
 
 //core cross-thread (Wt -> Couchbase) events. Wt <- Couchbase uses WServer::post
 message_queue *setValueByKeyRequestFromWtMessageQueue;
-char *setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer;
+void *setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer = NULL;
 struct event *setValueByKeyEvent;
 struct event *triggerCouchbaseThreadStopEvent;
 
@@ -74,7 +74,7 @@ static void couchbaseConfigurationCallback(lcb_t instance, lcb_configuration_t c
             message_queue::remove(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME);
             //TODOreq: setValueByKeyMessageQueue and currentValueByKeyMessageBuffer need to be delete'd/free'd at various error cases
             setValueByKeyRequestFromWtMessageQueue = new message_queue(create_only, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_NAME, 20000, SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE); //2gb ram max, 20k messages @ 100kb each... i wish these was dynamic'er. IF ONLY THERE WAS A GENERATION UTILITY THAT ALLOWED YOU TO SPECIFY VARIOUS MESSAGE TYPES AHEAD OF TIME SO THAT THEY WOULD TAKE UP EXACTLY THE BYTES NEEDED (ok ok, QString dynamically allocates fuggit) AND YOU COULD THEN USE THOSE TO CALL PROCEDURES REMOTELY/INTER-PROCESS'dly
-            setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer = (char*)malloc(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE);
+            setValueByKeyRequestFromWtMessageQueueCurrentMessageBuffer = malloc(SET_VALUE_BY_KEY_REQUEST_FROM_WT_MESSAGE_QUEUE_MAX_MESSAGE_SIZE);
         }
         couchbaseIsConnectedWaitCondition.notify_one();
     }

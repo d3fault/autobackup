@@ -65,6 +65,7 @@ void WtKeySetAndGetWidget::setValueByKey()
     //^^woot defer/resume does just that! javascript-less solved! fucken love Wt!
     if(!environment().ajax())
     {
+        //should maybe use this even when ajax is enabled to keep them from going to another page before we can respond... but really nothing can stop them from closing the browser etc anyways. maybe all my "updates" could be in a small console in the corner that is on every page? so if they do browse away after an "Add" (before we can WServer::post the response), they still see the result of an action initiated on a previous page. In that case, then no we shouldn't enable deferRendering for ajax clients :)
         deferRendering();
     }
 

@@ -19,6 +19,7 @@ public:
     { }
     //load constructor
     SetValueByKeyRequestFromWt()
+        : WtKeySetAndGetWidgetPointerForCallback(NULL)
     { }
 
     std::string WtSessionId;
