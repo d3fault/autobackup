@@ -1,0 +1,6 @@
+Meh at least I admit my contradictions:
+a) Any form of security (such as encryption) can only ever buy you TIME, since everything can be brute forced
+b) Security through obscurity is not security at all. All it does is SLOW YOUR ATTACKER DOWN
+
+
+So err ehh uhmm doesn't that mean security through obscurity _IS_ security then O_o? I think that it's not a black and white picture. Security through obscurity may slow down your attacker, but then it's a matter of how intelligent he is in deciphering your obscurities. Real security (encryption/etc) buys a SET (or relatively set) amount of time. It doesn't matter how smart your attacker is, he must throw raw resources at your security in order to break it. Still a funny contradiction though...

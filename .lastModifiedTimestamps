@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1389766123
+Documents/minddump/:1390026261
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1389041042
+Documents/minddump/dreams/:1390025959
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -50,6 +50,7 @@ Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/break.in.hey.grunt.sdfkjdsfljsdfljdsfsdfj.txt:1377626128
 Documents/minddump/dreams/camera.teeworlds.sailboat.mario.asdlfjsdlfjoukjl.txt:1380930039
 Documents/minddump/dreams/deep.petite.penetration.and.chase.and.neck.slitting.adlkfjsdlkjf.txt:1354516724
+Documents/minddump/dreams/desert.plain.adsfsodfusdlfjsdofuldjsfsoiuafdsfjksadflkj.txt:1390025959
 Documents/minddump/dreams/destroy.relative.time.and.relative.space.in.pursuit.of.love.is.entirely.justified.txt:1357414333
 Documents/minddump/dreams/dflaskjflsakdjfosuadfljsdofualsfjsaoduflsadfousdfljksdfoui.txt:1383858640
 Documents/minddump/dreams/dflkajslfkjsdlfjsfdousdjfosfujksjdfljosdfulksjdfouflskjdfsdofulkr.txt:1378150662
@@ -662,6 +663,7 @@ Documents/minddump/dslafjowueroawiefsdljfasdfliuasoifualkjreaowu.txt:1330636082
 Documents/minddump/dslafkjdkjfsdkjflsdkjflksdjfowuerljsodfulsdfjsoduflsjdfouwerlkjsdfoiul.txt:1382077662
 Documents/minddump/dslafkjsaldkjfsldkjflksdjfowuerljosduflsjdfuewr.txt:1382214014
 Documents/minddump/dslakjfosduflkjsdofudslkjfousdfouowuerlkjsdfousdflkjwerousdkfj.txt:1364509855
+Documents/minddump/dslfajkdsfjasdfsaoudfasldfjosduflksdjfoiusadlfkjsodfualsdjf.txt:1390026307
 Documents/minddump/dslfjalfjaslfkjsldfjsdlfkjsldfjslfjlsdfjksdofuwelrkjoudsfljsdfousdlfkjsdfou.txt:1381568284
 Documents/minddump/dslfjasdfouiwlkjeroujsdfousdflsdfouieruousdfjsdfouwer.txt:1370297594
 Documents/minddump/dslfjasdfuwoieruasldfjaosuuoioiryweDADaslfjsadofuwerlj.txt:1332452955
@@ -1451,6 +1453,7 @@ Documents/minddump/sdflskdjflkjsdfdsouflksjdfousdflkjsdfousfd.txt:1359763844
 Documents/minddump/sdflskdjflksdjflksdfoiuwelrjousdlkfjosduflsdkjfouwerlkjousdflkjsdoful.txt:1382988536
 Documents/minddump/sdflskdjflskdjflkjsdfouwlekjroiusdflkjsdfoiu.txt:1363563728
 Documents/minddump/sdflskdjfslkjdfsoduflksdjfousdfjsdaofuasdflkjsaoduflksdfjousldkfjlsdfk.txt:1379232277
+Documents/minddump/sdflskjdflkjasdfosudfljsdfousdfljdfousfdlskjdfousdflkjsdf.txt:1389981460
 Documents/minddump/sdflskjdflkjsdfousldkjfoiusdfiuiouwerkjlkfj.txt:1365287712
 Documents/minddump/sdflskjdflsdkjfoiulwjerouljkdsfoaudsflkjsdafoiuelwrkjfd.txt:1370567967
 Documents/minddump/sdflskjdfouwrlkjasfdoiuwerlkjsdf.txt:1340023036
@@ -1913,7 +1916,7 @@ Projects/AdCaptcha/design/:1329932208
 Projects/AdCaptcha/design/depreciating.values.starting.at.twice.the.previous.slots.amount.not.DOUBLING.PER.DAY.as.i.like.to.see.it.THERE.IS.ALGORITHM.STUFF.IN.HERE.txt:1329932185
 Projects/AdCaptcha/design/security.concerns.will.always.eat.away.at.my.brain.who.cares.if.your.customer.funds.get.jacked.i.mean.obviously.they.do.but.cover.your.own.ass.FIRST.txt:1329917474
 Projects/AdCaptcha/design/usable.on.tor.hidden.sites.because.they.do.not.REPORT.BACK.like.most.bullshit.ads.txt:1329932208
-Projects/AdCaptcha/src/:1389456813
+Projects/AdCaptcha/src/:1389987064
 Projects/AdCaptcha/src/embed/:1328901342
 Projects/AdCaptcha/src/embed/adcaptchaembed.cpp:1328862416
 Projects/AdCaptcha/src/embed/adcaptchaembed.h:1328901342
@@ -2499,8 +2502,9 @@ Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdri
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.h:1340399397
 Projects/Prototypes/Couchbase/:1389319403
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/:1389498494
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/:1389598788
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/:1389940657
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/javascriptless.connections.do.blocking.get.javascript.is.async.both.share.a.cache.ideally.txt:1389498532
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/lockfree.queue.is.in.openbsd.current.lawl.and.some.other.simple.optimizations.txt:1389940657
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/observe.100ms.timeout.only.when.something.to.observe.of.course.txt:1389608097
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1389780165
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/WtCouchbaseKeySetAndGetTest.pro:1389779646
@@ -3508,7 +3512,7 @@ Solutions/Anonymous Bitcoin Computing/design/squirb.alias.basically.just.skin.sw
 Solutions/Anonymous Bitcoin Computing/design/the.beauty.of.it.all.is.in.the.get.if.in.cache.and.register.me.for.updates.to.values.call.thingy.or.something.txt:1350412515
 Solutions/Anonymous Bitcoin Computing/design/use.paxos.you.moron.it.isnt.that.tough.of.a.decision.its.still.pretty.scalable.txt:1338547630
 Solutions/Anonymous Bitcoin Computing/design/was.considering.writing.my.own.distributed.db.but.meh.wrapping.couchbase.with.observe.is.sooooo.much.easier.and.i.am.lazy.so.changed.my.mind.back.while.writing.this.hahah.txt:1360590321
-Solutions/Anonymous Bitcoin Computing/src/:1344095952
+Solutions/Anonymous Bitcoin Computing/src/:1389982101
 Solutions/Anonymous Bitcoin Computing/src/AppDb/:1337825795
 Solutions/Anonymous Bitcoin Computing/src/AppDb/Actions/:1336172121
 Solutions/Anonymous Bitcoin Computing/src/AppDb/Actions/createbankaccountaction.cpp:1336172121
@@ -3574,7 +3578,7 @@ Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/IBankServer.xml:13429308
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/bankservermessagedispenser.h:1340850629
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/ibankserver.h:1340839558
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/rpcbankservernetworkmessage.h:1339492978
-Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/:1334997579
+Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/:1389987048
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/:1334827029
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/advertising/:1333733713
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/advertising/abcadvertisingbuyadspace.cpp:1333733695
@@ -3593,7 +3597,7 @@ Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/abchome.h:1333732942
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/abcindex.cpp:1333733791
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/abcindex.h:1333733680
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/AnonymousBitcoinComputing.pro:1334826098
-Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/anonymousbitcoincomputing.cpp:1334828246
+Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/anonymousbitcoincomputing.cpp:1389982126
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/anonymousbitcoincomputing.h:1334828850
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/appdbhelper.cpp:1334829059
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/appdbhelper.h:1334827962
