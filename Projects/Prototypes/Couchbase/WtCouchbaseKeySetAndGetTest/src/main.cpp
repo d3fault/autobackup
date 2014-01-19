@@ -372,6 +372,7 @@ int main(int argc, char **argv)
 
     fprintf(stdout, "Now Starting Wt...\n");
     int ret = WRun(argc, argv, &handleNewWtConnection);
+    //^^TODOreq: starting to think it makes sense to send an event to couchbase thread before calling WServer::waitForShutdown/stop (can't use WRun), in order to make/let couchbase thread "finish" it's current batch [of wt callbacks] so we exit cleanly. We'd still need some kind of flagging to not start any MORE (since Wt would still be running), but I think how I have it designed right now that couchbase events would just be processed/IGNORED if they were still on couchbase thread when we did ctrl+c to make WRun return. At the very least, we could be waiting for a lcb callback from some store/get command when we get our triggerCouchbaseThreadStopEvent below :-/
 
     BOOST_PP_REPEAT(NUMBER_OF_MUTEXES_AND_MESSAGE_QUEUES_SHOULD_BE_ROUGHLY_EQUAL_TO_WTS_THREAD_POOL_MAX_THREADS, TELL_WT_KEY_SET_AND_GET_WIDGET_TO_DELETE_MESSAGE_QUEUES_MACRO, ~)
 

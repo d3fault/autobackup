@@ -1,0 +1,11 @@
+Deploying Wt in "/" (the default) without clean URLs adding ?_= bullshit
+1) copy /usr/share/Wt/resources/ to the directory that "wtAppHere" is located in
+2) ./wtAppHere --docroot ".;./resources/" --http-address 0.0.0.0 --http-port 7777
+
+the semicolon resources is the hack to get rid of the ?_= bullshit. idfk why, but it works so fuck it :). it also must be in quotes otherwise the shell will interpret the semicolon...
+
+
+^^^The only downside to that hack, which might have been fixed in a version of Wt more recent than 3.2.1-2, is that you're now creating a Wt session for every (two, by default) thing that gets linked to in the "resources" folder (some css bullshit). Without the ";resources", it still tries to fetch those two resources but it 404s. With the hack, you create 2x brand fucking new Wt sessions every time you click a link (and perhaps change the internal path programmatically, but maybe not). Waste of resources.
+
+
+^^^^^^^^OK I'm still looking for a way to disable those two .css files because fuck them anyways, but the best solution (not creating FULL sessions) is to copy /usr/share/Wt/resources/ to your application's dir, and then to do --docroot ".;./resources/". I'm going to change the first line... you can guess what it said before (.;resources)
