@@ -196,9 +196,7 @@ static void triggerCouchbaseThreadStopCallback(evutil_socket_t unusedSocket, sho
 }
 static void couchbaseStoreCallback(lcb_t instance, const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp)
 {
-    (void)cookie;
     (void)operation;
-    (void)resp;
     if(error != LCB_SUCCESS)
     {
         fprintf(stderr, "Failed to store key: %s\n", lcb_strerror(instance, error));

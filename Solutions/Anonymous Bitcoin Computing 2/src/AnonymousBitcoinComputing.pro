@@ -6,14 +6,24 @@ CONFIG -= qt
 
 #QMAKE_CXXFLAGS += -save-temps
 
-#CORE TUNABLES (message queue count, message queue max messages, message queue max message size)
-DEFINES +=  NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES=25 \
-            WT_TO_COUCHBASE_ADD_MAX_MESSAGES_IN_QUEUE=200 \
-            WT_TO_COUCHBASE_ADD_MAX_MESSAGE_SIZE=102400 \
-            NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES=125 \
-            WT_TO_COUCHBASE_GET_MAX_MESSAGES_IN_QUEUE=1000 \
-            WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE=102400 \
+# TESTING VARIABLES (valgrind is slooooooow)
+DEFINES +=  NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES=3 \
+            WT_TO_COUCHBASE_ADD_MAX_MESSAGES_IN_QUEUE=3 \
+            WT_TO_COUCHBASE_ADD_MAX_MESSAGE_SIZE=2400 \
+            NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES=3 \
+            WT_TO_COUCHBASE_GET_MAX_MESSAGES_IN_QUEUE=3 \
+            WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE=2400 \
             WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" #kill me
+
+# DEPLOY VARIABLES
+#CORE TUNABLES (message queue count, message queue max messages, message queue max message size)
+#DEFINES +=  NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES=25 \
+#            WT_TO_COUCHBASE_ADD_MAX_MESSAGES_IN_QUEUE=200 \
+#            WT_TO_COUCHBASE_ADD_MAX_MESSAGE_SIZE=102400 \
+#            NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES=125 \
+#            WT_TO_COUCHBASE_GET_MAX_MESSAGES_IN_QUEUE=1000 \
+#            WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE=102400 \
+#            WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" #kill me
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -26,4 +36,5 @@ HEADERS += \
     anonymousbitcoincomputing.h \
     frontend/anonymousbitcoincomputingwtgui.h \
     backend/anonymousbitcoincomputingcouchbasedb.h \
-    GetCouchbaseDocumentByKeyRequest.h
+    getcouchbasedocumentbykeyrequest.h \
+    addcouchbasedocumentbykeyrequest.h

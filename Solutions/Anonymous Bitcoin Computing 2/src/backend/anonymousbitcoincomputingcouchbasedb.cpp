@@ -1,6 +1,7 @@
 #include "anonymousbitcoincomputingcouchbasedb.h"
 
-#include "../GetCouchbaseDocumentByKeyRequest.h"
+#include "../addcouchbasedocumentbykeyrequest.h"
+#include "../getcouchbasedocumentbykeyrequest.h"
 
 using namespace std;
 
@@ -276,9 +277,32 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallbackStatic(lcb_t instance, c
 }
 void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp)
 {
+    (void)operation; //TODOoptional: i was thinking of using a flag in my "from wt reqeust object (cookie here)" and to NOT do durability when it's a simple "STORE" (because STOREs _TEND_ to be not as important as "ADD" (though that certainly isn't ALWAYS true~)). the purpose of this comment is to point out that we can see if it's a STORE/ADD right here in the 'operation' variable :-P
+    if(error != LCB_SUCCESS)
+    {
+        cerr << "Failed to store key: " << lcb_strerror(m_Couchbase, error) << endl;
+        //TODOreq: handle failed store (including decrementing 'pendingAddCount' if appropriate). we should err ehh uhm...
+        return;
+    }
+    lcb_durability_opts_t lcbDurabilityOptions;
+    memset(&lcbDurabilityOptions, 0, sizeof(lcb_durability_opts_t));
+    lcbDurabilityOptions.v.v0.replicate_to = 2;
+    lcbDurabilityOptions.v.v0.timeout = 5000000; //5 second timeout is PLENTY, and/but we should probably change this in the place it gets its default if we leave it to zero [just as a TODOoptimization to lessen memory writing]
+    lcb_durability_cmd_t lcbDurabilityCommand;
+    memset(&lcbDurabilityCommand, 0, sizeof(lcb_durability_cmd_t));
+    lcbDurabilityCommand.v.v0.key = resp->v.v0.key;
+    lcbDurabilityCommand.v.v0.nkey = resp->v.v0.nkey;
+    //in my testing, setting lcb->cas to resp->cas didn't work as expected... BUT i don't think it matters at all for "LCB_ADD" operations...
+    lcb_durability_cmd_t *lcbDurabilityCommandList[1];
+    lcbDurabilityCommandList[0] = &lcbDurabilityCommand;
+    error = lcb_durability_poll(m_Couchbase, cookie, &lcbDurabilityOptions, 1, lcbDurabilityCommandList);
+    if(error != LCB_SUCCESS)
+    {
+        fprintf(stderr, "Failed to schedule lcb_durability_poll: %s\n", lcb_strerror(m_Couchbase, error));
+        //TODOreq: proper error handling bah
+    }
 
-
-    //if not durability needed for this particular one, --m_PendingAddCount just like getCallback/etc
+    //TODOreq: if durability isn't needed for this particular store, --m_PendingAddCount just like getCallback/etc
 }
 void AnonymousBitcoinComputingCouchbaseDB::getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp)
 {
@@ -310,8 +334,22 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic(lcb_t instan
 }
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
-    //blah
+    if(error != LCB_SUCCESS)
+    {
+        cerr << "Error: Generic lcb_durability_poll callback failure: " << lcb_strerror(m_Couchbase, error) << endl;
+        //TODOreq: handle errors
+        return;
+    }
+    if(resp->v.v0.err != LCB_SUCCESS)
+    {
+        cerr << "Error: Specific lcb_durability_poll callback failure: " << lcb_strerror(m_Couchbase, resp->v.v0.err) << endl;
+        //TODOreq: handle errors
+        return;
+    }
 
+    AddCouchbaseDocumentByKeyRequest *request = (AddCouchbaseDocumentByKeyRequest*)cookie;
+    AddCouchbaseDocumentByKeyRequest::respond(request);
+    delete request;
 
     --m_PendingAddCount;
     if(m_NoMoreAllowedMuahahaha && m_PendingAddCount == 0 && m_PendingGetCount == 0)
@@ -362,7 +400,35 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd()
     }
     ++m_PendingAddCount; //TODOreq: overflow? meh not worried about it for now
 
-    //message in buffer, now deSerialize
+    //TODOreq: delete at appropriate places (error, success)
+    AddCouchbaseDocumentByKeyRequest *addCouchbaseDocumentByKeyRequestFromWt = new AddCouchbaseDocumentByKeyRequest();
+
+    {
+        std::istringstream addCouchbaseDocumentByKeyRequestFromWtSerialized((const char*)m_AddMessageQueuesCurrentMessageBuffer);
+        boost::archive::text_iarchive deSerializer(addCouchbaseDocumentByKeyRequestFromWtSerialized);
+        deSerializer >> *addCouchbaseDocumentByKeyRequestFromWt;
+    }
+
+    lcb_store_cmd_t cmd;
+    const lcb_store_cmd_t *cmds[1];
+    cmds[0] = &cmd;
+    memset(&cmd, 0, sizeof(cmd));
+
+    const char *keyInput = addCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.c_str();
+    const char *documentInput = addCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.c_str();
+
+    cmd.v.v0.key = keyInput;
+    cmd.v.v0.nkey = addCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.length();
+    cmd.v.v0.bytes = documentInput;
+    cmd.v.v0.nbytes = addCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.length();
+    cmd.v.v0.operation = LCB_ADD;
+    lcb_error_t err = lcb_store(m_Couchbase, addCouchbaseDocumentByKeyRequestFromWt, 1, cmds);
+    if(err != LCB_SUCCESS)
+    {
+        cerr << "Failed to set up store request: " << lcb_strerror(m_Couchbase, err) << endl;
+        //TODOreq: handle failed store request
+        return;
+    }
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 {

@@ -1,5 +1,5 @@
-#ifndef GETCOUCHBASEDOCUMENTBYKEYREQUEST_H
-#define GETCOUCHBASEDOCUMENTBYKEYREQUEST_H
+#ifndef ADDCOUCHBASEDOCUMENTBYKEYREQUEST_H
+#define ADDCOUCHBASEDOCUMENTBYKEYREQUEST_H
 
 #include "Wt/WServer"
 using namespace Wt;
@@ -12,27 +12,27 @@ using namespace Wt;
 #include <boost/serialization/binary_object.hpp>
 #include <boost/serialization/split_member.hpp>
 
-class GetCouchbaseDocumentByKeyRequest
+class AddCouchbaseDocumentByKeyRequest
 {
 public:
     //save constructor
-    GetCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseGetKeyInput)
-        : WtSessionId(wtSessionId), AnonymousBitcoinComputingWtGUIPointerForCallback(pointerToAnonymousBitcoinComputingWtGUI), CouchbaseGetKeyInput(couchbaseGetKeyInput) //, CouchbaseGetValueOutput(couchbaseGetValueOutput)
+    AddCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseAddKeyInput, std::string couchbaseAddDocumentInput)
+        : WtSessionId(wtSessionId), AnonymousBitcoinComputingWtGUIPointerForCallback(pointerToAnonymousBitcoinComputingWtGUI), CouchbaseAddKeyInput(CouchbaseAddKeyInput), CouchbaseAddDocumentInput(couchbaseAddDocumentInput)
     { }
     //load constructor
-    GetCouchbaseDocumentByKeyRequest()
+    AddCouchbaseDocumentByKeyRequest()
         : AnonymousBitcoinComputingWtGUIPointerForCallback(NULL)
     { }
 
     std::string WtSessionId;
     AnonymousBitcoinComputingWtGUI *AnonymousBitcoinComputingWtGUIPointerForCallback;
     static const unsigned char LengthOfAddressToAnonymousBitcoinComputingWtGUI = sizeof(AnonymousBitcoinComputingWtGUI*) + 1;
-    std::string CouchbaseGetKeyInput;
-    //std::string CouchbaseGetValueOutput;
+    std::string CouchbaseAddKeyInput;
+    std::string CouchbaseAddDocumentInput;
 
-    static inline void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes)
+    static inline void respond(AddCouchbaseDocumentByKeyRequest *originalRequest)
     {
-         Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2), originalRequest->CouchbaseGetKeyInput, std::string((const char*)couchbaseDocument, couchbaseDocumentSizeBytes)));
+         Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1), originalRequest->CouchbaseAddKeyInput));
     }
 private:
     friend class boost::serialization::access;
@@ -47,8 +47,8 @@ private:
         AddressToAnonymousBitcoinComputingWtGUIAsString[LengthOfAddressToAnonymousBitcoinComputingWtGUI-1] = '\0';
         ar & boost::serialization::make_binary_object(&AddressToAnonymousBitcoinComputingWtGUIAsString, LengthOfAddressToAnonymousBitcoinComputingWtGUI);
 
-        ar & CouchbaseGetKeyInput;
-        //ar & CouchbaseSetValue;
+        ar & CouchbaseAddKeyInput;
+        ar & CouchbaseAddDocumentInput;
     }
     template<class Archive>
     void load(Archive &ar, const unsigned int version)
@@ -60,11 +60,10 @@ private:
         ar & boost::serialization::make_binary_object(&AddressToAnonymousBitcoinComputingWtGUIAsString, LengthOfAddressToAnonymousBitcoinComputingWtGUI);
         memcpy(&AnonymousBitcoinComputingWtGUIPointerForCallback, &AddressToAnonymousBitcoinComputingWtGUIAsString, LengthOfAddressToAnonymousBitcoinComputingWtGUI-1);
 
-        ar & CouchbaseGetKeyInput;
-        //ar & CouchbaseSetValue;
+        ar & CouchbaseAddKeyInput;
+        ar & CouchbaseAddDocumentInput;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
-#endif // GETCOUCHBASEDOCUMENTBYKEYREQUEST_H
-
+#endif // ADDCOUCHBASEDOCUMENTBYKEYREQUEST_H
