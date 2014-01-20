@@ -202,6 +202,9 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, REMOVE_ALL_MESSAGE_QUEUES_MACRO, Add)
     BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, REMOVE_ALL_MESSAGE_QUEUES_MACRO, Get)
 
+    //wtf? valgrind complains if i don't have these event_free's here... but why come it don't complain about all the cross thread ones not being freed (and i thought "all" (including below two) were being free'd at lcb_destroy_io_ops wtf wtf?). Maybe valgrind just isn't catching them because it's all happening at scope exit in struct destructor (lol wut) (in which case it's a valgrind bug i'd say)
+    event_free(m_FinalCleanUpAndJoinEvent);
+    event_free(m_BeginStoppingCouchbaseCleanlyEvent);
     lcb_destroy(m_Couchbase);
 #if 0 //TODOoptional: done by scoped structs, however we lose the eror message from lcb_destroy_io_ops. hackily capture in struct destructor and just put the struct inside an anon scope "{ }" if you want to capture that error. fuck it for now
     if(lcb_destroy_io_ops(couchbaseIoOps) != LCB_SUCCESS)
@@ -353,7 +356,7 @@ void AnonymousBitcoinComputingCouchbaseDB::notifyMainThreadWeAreFinishedWithAllP
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd()
 {
-    if(!m_NoMoreAllowedMuahahaha)
+    if(m_NoMoreAllowedMuahahaha)
     {
         return;
     }
@@ -363,7 +366,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd()
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 {
-    if(!m_NoMoreAllowedMuahahaha)
+    if(m_NoMoreAllowedMuahahaha) //damn double negatives xD
     {
         return;
         //TODOreq: post() a response at least, BUT really that doesn't matter too much because i mean the server's about to go down regardless... (unless i'm taking db down ONLY and wt is staying up (lol wut?))

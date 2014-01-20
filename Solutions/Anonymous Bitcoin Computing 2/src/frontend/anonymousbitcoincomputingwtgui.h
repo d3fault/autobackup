@@ -94,8 +94,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     taus88 m_RandomNumberGenerator;
     uniform_int_distribution<> m_AddMessageQueuesRandomIntDistribution;
     uniform_int_distribution<> m_GetMessageQueuesRandomIntDistribution;
-    unsigned short m_CurrentAddMessageQueueIndex;
-    unsigned short m_CurrentGetMessageQueueIndex;
+    int m_CurrentAddMessageQueueIndex;
+    int m_CurrentGetMessageQueueIndex;
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
 

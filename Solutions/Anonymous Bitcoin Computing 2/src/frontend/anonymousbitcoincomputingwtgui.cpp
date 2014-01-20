@@ -10,7 +10,7 @@
 //hardcoded internal paths, would be dynamic ideally
 #define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE \
                                         "/d3fault"
-#define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE \
+#define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT \
                                             "/0"
 
 #define ABC_ANCHOR_TEXTS_PATH_HOME "Home"
@@ -38,7 +38,9 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingWidget()
         m_AdvertisingWidget = new WContainerWidget(m_MainStack);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingWidget);
         new WBreak(m_AdvertisingWidget);
+        new WBreak(m_AdvertisingWidget);
         new WText("You Are Here: " + WString(ABC_ANCHOR_TEXTS_PATH_ADS), m_AdvertisingWidget);
+        new WBreak(m_AdvertisingWidget);
         new WBreak(m_AdvertisingWidget);
         new WBreak(m_AdvertisingWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingWidget);
@@ -51,9 +53,12 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceWidget()
     {
         m_AdvertisingBuyAdSpaceWidget = new WContainerWidget(m_MainStack);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingBuyAdSpaceWidget);
+        new WBreak(m_AdvertisingBuyAdSpaceWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS, m_AdvertisingBuyAdSpaceWidget);
         new WBreak(m_AdvertisingBuyAdSpaceWidget);
+        new WBreak(m_AdvertisingBuyAdSpaceWidget);
         new WText("You Are Here: " + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE), m_AdvertisingBuyAdSpaceWidget);
+        new WBreak(m_AdvertisingBuyAdSpaceWidget);
         new WBreak(m_AdvertisingBuyAdSpaceWidget);
         new WBreak(m_AdvertisingBuyAdSpaceWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT, m_AdvertisingBuyAdSpaceWidget);
@@ -66,10 +71,14 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
     {
         m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(m_MainStack);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingBuyAdSpaceD3faultWidget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS, m_AdvertisingBuyAdSpaceD3faultWidget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingBuyAdSpaceD3faultWidget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WText("You Are Here: " + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT), m_AdvertisingBuyAdSpaceD3faultWidget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultWidget);
@@ -82,11 +91,16 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultCampaign0Wi
     {
         m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new WContainerWidget(m_MainStack);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("You Are Here: " + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
@@ -120,8 +134,8 @@ void AnonymousBitcoinComputingWtGUI::beginGetCouchbaseDocumentByKey(const std::s
     {
         m_CurrentGetMessageQueueIndex = 0;
     }
-    unsigned short lockedMutexIndex = m_CurrentGetMessageQueueIndex;
-    unsigned short veryLastMutexIndexToBlockLock = (m_CurrentGetMessageQueueIndex == 0 ? (NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES-1) : (m_CurrentGetMessageQueueIndex-1));
+    int lockedMutexIndex = m_CurrentGetMessageQueueIndex;
+    int veryLastMutexIndexToBlockLock = (m_CurrentGetMessageQueueIndex == 0 ? (NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES-1) : (m_CurrentGetMessageQueueIndex-1));
     while(true)
     {
         if(lockedMutexIndex == veryLastMutexIndexToBlockLock)
@@ -193,13 +207,22 @@ void AnonymousBitcoinComputingWtGUI::handleLoggedIn()
     changeSessionId();
 }
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
-    : WApplication(myEnv), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1)
+    : WApplication(myEnv), m_MainStack(new WStackedWidget(root())), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1)
 {
+    m_RandomNumberGenerator.seed((int)rawUniqueId());
+    m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator);
+    m_CurrentGetMessageQueueIndex = m_GetMessageQueuesRandomIntDistribution(m_RandomNumberGenerator);
+
     setTitle("Anonymous Bitcoin Computing");
     WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
     m_MainStack->setTransitionAnimation(slideInFromBottom, true);
 
     internalPathChanged().connect(this, &AnonymousBitcoinComputingWtGUI::handleInternalPathChanged);
+
+    if(myEnv.ajax())
+    {
+        enableUpdates(true);
+    }
 
     //hack to handle clean urls, idk why wt doesn't do this for us...
     const std::string &cleanUrlInternalPath = internalPath();
@@ -210,15 +233,6 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
     else
     {
         showHomeWidget();
-    }
-
-    m_RandomNumberGenerator.seed((int)rawUniqueId());
-    m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator);
-    m_CurrentGetMessageQueueIndex = m_GetMessageQueuesRandomIntDistribution(m_RandomNumberGenerator);
-
-    if(myEnv.ajax())
-    {
-        enableUpdates(true);
     }
 }
 void AnonymousBitcoinComputingWtGUI::newAndOpenAllWtMessageQueues()

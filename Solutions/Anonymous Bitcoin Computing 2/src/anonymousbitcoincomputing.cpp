@@ -8,6 +8,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     //start couchbase and wait for it to finish connecting/initializing
     struct AnonymousBitcoinComputingCouchbaseDBScopedDeleter
     {
+        //TODOreq: the AnonymousBitcoinComputingCouchbaseDB object should be both instantiated and destructed ON the couchbase thread. However I'm not experiencing any bugs here so fuck it for now
         AnonymousBitcoinComputingCouchbaseDB *CouchbaseDb;
         AnonymousBitcoinComputingCouchbaseDBScopedDeleter()
             : CouchbaseDb(new AnonymousBitcoinComputingCouchbaseDB())
@@ -59,6 +60,10 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     if(wtServer.start())
     {
         ret = wtServer.waitForShutdown();
+        if(ret == 2 || ret == 3 || ret == 15) //SIGINT, SIGQUIT, SIGTERM, respectively (TODOportability: are these the same on windows?). Any other signal we return verbatim
+        {
+            ret = 0;
+        }
     }
     else
     {
@@ -97,13 +102,17 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
         cout << "Couchbase thread did not exit cleanly" << endl;
         if(ret == 0)
         {
-            return 1;
+            return 2;
         }
         return ret;
     }
     if(ret == 0)
     {
         cout << "Now Exitting Cleanly" << endl;
+    }
+    else
+    {
+        cout << "NOT exitting cleanly, return code: " << ret << endl;
     }
     return ret;
     //cleanup is done in the scoped structs
