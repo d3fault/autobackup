@@ -1,0 +1,91 @@
+If the timestamp for when the "last slot filler" _STARTED_ (not when it was purchased) is >= 24 hours from the current time, we don't have to do any math and just use the minPrice.
+
+I'm starting to think I don't need the "purchase date" for anything, except maybe statistic / informational / record keeping type shit...
+
+So the "timestamp" in my already completed json can/should become the timestamp for when the slot STARTS (or I add another field, fuck it).
+
+
+If, when making a slot filler purchase, the timestamp for when the "last slot filler" _STARTED_ is < 24 hours from the current time, then the start time for the slot filler being purchased becomes exactly 24 hours after when the last slot filler started.
+
+The price doubles right when the purchase is made (DOES THIS IMPLY WE DO IN FACT NEED TO FACTOR IN THE PURCHASE TIME!?!?) and decays at a rate that makes it equal to minPrice at when the 'slot filler just purchased' _start_ time + 24 hours
+
+I'm having trouble wrapping my head around a bit of math that I think might be erroneous/etc. Do I need to record the purchase time?
+
+All in one day (day 0 for example):
+slotFiller0 purchased for .001 at T+900
+slotFiller1 purchased for .002
+
+no wait the chances of it being purchased at the same exact time (in order to be .002) is ridiculously low, so we need to apply the math re-learned in the last doc.
+
+
+slotFiller0's start and purchase times are the same, T+900. Before that there was just nothing going on in the db/etc and we were displaying empty/'buy this ad space' shit.
+
+
+WRONG: slotFiller1price = f(x) = (((900+24h) - 900) / (minPrice - (slotFiller0price*2))) * (x) + B
+
+shit how fo dynamically calculate B? another case of 'know it's possibru'. I suck at teh algebras. Not even sure the above is right xD.
+
+RIGHT:
+b = y-(m*x), where m = ((y2-y1)/(x2-x1)). You can use either of the y/x combos (so long as it's consistent).
+
+
+c++ mode engage (fuck your one liners mathematicians!)
+
+double launchTimestamp = 1390318730;
+JimboKnives purchases slotFiller0 at 1390319630 (15 minutes later) for 0.001
+slotFiller0's _START_ timestamp is now 1390319630
+
+double minprice = 0.001;
+double slotfiller0starttime = 1390319630;
+double slotfiller0price = 0.001;
+double m = ((minprice-(slotfiller0price*2))/((slotfiller0starttime+(24*3600))-slotfiller0starttime)); //written so that '24 hours' can be swapped out. slotFiller0 obviously replace with 'last slot filler purchased'
+
+double b = minprice-(m*(slotfiller0starttime+(24*3600)));
+
+//so now we have all the variables needed for our 'formula' and can calculate the current price at any given moment
+
+BimbosDildos purchases slotFiller1 at 1390321430 (45 minutes after launch, 30 minutes after JimboKnives' purchase) for 
+
+double purchasePriceForBimbosDildos = (m*1390321430)+b = .00197916; //666666666666666666666666666666666666632200 -- hmm which way to round?
+
+//so now we need to recalculate m and b i think... and this is exactly where i'm getting confused. do i do... what do i do? bah let's just throw use cases at it until it works.
+
+BobsBlunts purchases slotFiller2 at 1390343930 (7 hours after launch, 6 hours 15 minutes after BimbosDildos' purchase) for
+
+it is important to note that slotFiller1's start time is set to 1390406030 (24h+slotfiller0starttime). To reiterate, if slotfiller0starttime (or last slot filler really) is >= 24 hours older than current time, then slotFiller1's start time is set to the current/purchase time (and at the min price obviously)
+
+So now what the fuck is my y2,y1,x2,x1???? I suppose that's what Im' getting caught up on. I feel as though I have two options as to what I assign them to... and one of them is wrong/erroneous!
+
+I know my x2 is 1390492430 (24h+slotfiller1starttime) and my y2 is 0.001 (minprice).
+I AM PRETTY SURE I NEED TO USE slotfiller1starttime as x1 and not slotfiller1's "purchase time". I think those were my two options and using 'purchase time' would have given me fucked results. Could be the opposite though ROFL.
+
+double slotfiller1starttime=1390406030;
+double slotfiller1price=.001979166666666666666666666666666666666666666322;
+
+WRONG: m=(minprice-slotfiller1price)/((slotfiller1starttime+(24*60*60))-slotfiller1starttime)
+
+WRONG: SO: BobsBlunts purchases slotFiller2 at 1390343930 for .00268294; //270833333333333333333333333333333333221500
+
+Considering it was at .004 when slotFiller2 became available for purchase, that number looks right when I eyeball it. OR NO when the fuck is it .004? Wait yes that's right. Wait no it's not. Wait yes it is. Wait no it isn't. Wait yes it isn't. Wait no it is. FFFFFFFFFFFFFFF. I have a hunch that I've done the maths right, but I'm not certain of it and that pisses me off. Ahh I forgot a *2 in the m= formula xD xD
+
+WRONG(uses start timestamp instead of purchase timestamp):
+m=(minprice-(slotfiller1price*2))/((slotfiller1starttime+(24*60*60))-slotfiller1starttime)
+SO: BobsBlunts purchases slotFiller2 at 1390343930 for .00608463; //541666666666666666666666666666666666531000
+
+
+Ahah! That's just the thing (error) I was looking for. How the fuck are we at .006? It's because we went "backwards" in time. We are before the start date of slotfiller1starttime, so it is more than 2x the purchase price. I _DO_ want to factor in the purchase timestamp then. In fact I want to depend on it. It's just that I use the "start timestamp" to get my ending time (it's +24h). I use the purchase timestamp for the x1, and the START timestamp (+24h to give me end timestamp) for the x2. So while yes as I wrote above it's "important to note"... it's not important for the reason I was thinking. Man I'm so totally going to prototype this raw maths in a standalone C++ app.
+
+
+BobsBlunts purchase price MUST fall between (purchasePriceForBimbosDildos*2) aka (.00395833333333333) and 0.001 -- note that it's ALMOST .004, since the first purchases were made so close to launch they were 'nearly' exactly double. In order to do that, we have to use the purchase timestamp (NOT the start timestamp) as the x1 when calculating m and b.
+
+So now to try to get the right answer...
+
+slotfiller1purchasetime=1390321430
+m=(minprice-(slotfiller1price*2))/((slotfiller1starttime+(24*60*60))-slotfiller1purchasetime)
+
+
+SOOOOO (YES):
+BobsBlunts purchases slotFiller2 at 1390343930 for 0.00356907; //894736842105263157894736842105263157836900
+
+
+...now onto the prototype before i forget all this shit (again)...

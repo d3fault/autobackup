@@ -1,0 +1,131 @@
+d3fault is selling adspace, and this is his "0th" ad selling campaign. It is confusing at first, but the below key/doc is accessible at: abc.com/ads/buy-ad-space/d3fault/0 . The user is buying the ad space being sold, so that's what they type-in/see
+
+//AD SPACE BEING SOLD CAMPAIGN
+adsSpaceBeingSoldD3fault0 
+{
+  "minPrice": "0.001",
+  "slotFillerLengthHours": "24",
+  "lastTenSlotFillerPurchases": [
+    {
+      "slotFillerKey": "adSpaceBeingSoldD3fault0Filler1",
+      "purchaseTimestamp": "1970",
+      "startTimestamp" : "1973"
+      "purchasePrice": "0.002"
+    },
+    {
+      "slotFillerKey": "adSpaceBeingSoldD3fault0Filler0",
+      "purchaseTimestamp": "1969",
+      "startTimestamp" : "1972"
+      "purchasePrice": "0.001"
+    }
+  ]
+}
+
+lastTenSlotFillerPurchases contains the MINIMUM information to calculate the current price (we only need the most recent actually), and the time at which the price will be back at minPrice.
+
+The full json document for adSpaceBeingSoldD3fault0Filler1 follows:
+
+/A SLOT FILLER PURCHASE OF AN AD SPACE BEING SOLD
+adSpaceBeingSoldD3fault0Filler1 //these are the keys/docs that are CAS-raced to (LCB_ADD)
+{
+  "purchaseTimestamp": "1970",
+  "purchasePrice": "0.002",
+  "slotFilledWith": "adSpaceBoughtJimboKnives0"	
+}
+
+adSpaceBoughtJimboKnives0 must be set up already by user JimboKnives. Once set up, it cannot be changed (they can/have-to make new ones)
+
+The full json document for adSpaceBoughtJimboKnives0 follows:
+
+//A SLOT FILLER WHICH IS USED TO PURCHASE AD SPACE
+adSpaceBoughtJimboKnives0
+{
+  "username" : "JimboKnives",
+  "hoverText": "You Know You Wanna Click!",
+  "url": "http://buy-my-widget.com",
+  "base64encodedImageData": "sdlfkjsdofuljkeworu"
+}
+
+^the reason the doc has "username" so we can get to the 'profile' view below (can't parse up to that zero)
+
+adSpaceBoughtJimboKnives should then list all of JimboKnives' ad campaigns (regardless of whether or not they have been used)
+
+The full json document for adSpaceBoughtJimboKnives follows:
+
+//A 'PROFILE' VIEW FOR A USER WHO BUYS AD SPACE (and their associated slot fillers)
+adSpaceBoughtJimboKnives
+{
+  "adsCount": "2",
+  "lastTenAds": [
+    {
+      "nickname": "Unused For Now",
+      "adKey": "adSpaceBoughtJimboKnives1"
+    },
+    {
+      "nickname": "Widgets For Sale Ad Campaign",
+      "adKey": "adSpaceBoughtJimboKnives0"
+    }
+  ]
+}
+
+^if adsCount is > 10, they get linked to a "view" which shows all of them (it's assumed that the ads would show up in the view before 10 can be made). JimboKnives sees the nickname (which I suppose must be unique then) when selecting it as a slot filler for adSpaceBeingSoldD3fault0Filler1. When JimboKnives is logged in and clicks "buy" on abc.com/ads/buy-ad-space/d3fault/0 , we then load an expensive doc containing all of his ads: adSpaceBoughtAllJimboKnives
+
+The full json document for adSpaceBoughtAllJimboKnives follows:
+
+//ALL OF A USER'S POTENTIAL ADS FOR USE IN BUYING AD SPACE (only JimboKnives can get this doc when clicking "buy" on abc.com/ads/buy-ad-space/d3fault/0. Also perhaps if he is logged in and goes to "ALL". Non logged in users go to view, JimboKnives gets the expensive doc)
+adSpaceBoughtAllJimboKnives
+{
+  "allAds": [
+    {
+      "nickname": "Unused For Now",
+      "adKey": "adSpaceBoughtJimboKnives1"
+    },
+    {
+      "nickname": "Widgets For Sale Ad Campaign",
+      "adKey": "adSpaceBoughtJimboKnives0"
+    }
+  ]
+}
+
+^basically same as profile view, but the doc could get pretty big (TODOreq: ensure not > 20mb (lolol)) -- TODOoptimization: page'ination (guh)
+
+//CRITICAL SESSION/ACCOUNT DATA FOR JimboKnives -- has ability to buy slot fillers
+userJimboKnives
+{
+  "passwordHash": "MRGFtZyvcZU/2HdEW1H57bVtwfrPfw==",
+  "passwordSalt": "1964Y1AFICvu1XiQE9w0xsPhDE8=",
+  "balance": "0.098"
+}
+
+##
+So before we allow JimboKnives to LCB_ADD adSpaceBeingSoldD3fault0Filler1, we first have to make sure he has enough funds. We also have to make sure he doesn't try to buy two things simultaneously (and doesn't have enough funds for both), so we have to 'lock' his userJimboKnives document by doing a CAS swap (if he tries to do two buys simultaneously, the second one will fail) and putting it into the following state while it is 'locked'
+
+//CRITICAL SESSION/ACCOUNT DATA FOR JimboKnives -- buy abilities CAS-swap 'LOCKED' until transaction succeeds or fails (TODOreq: rollback/machine-failures)
+userJimboKnives
+{
+  "passwordHash": "MRGFtZyvcZU/2HdEW1H57bVtwfrPfw==",
+  "passwordSalt": "1964Y1AFICvu1XiQE9w0xsPhDE8=",
+  "balance": "0.098",
+  "whatToAttemptToBuy": "adSpaceBeingSoldD3fault0Filler1",
+  "howMuchToAttemptToBuyItFor" : "0.002",
+  "whatToAttemptToBuyItWith" : "adSpaceBoughtJimboKnives0"
+}
+
+^howMuchToAttemptToBuyItFor must be >= balance otherwise we don't even do the CAS-swap lock (and definitely not the LCB_ADD of adSpaceBeingSoldD3fault0Filler1 of course)
+
+##
+if any of those 3 fields (what, how, what) are seen, we know the account is locked. On login, we can also check whether or not adSpaceBeingSoldD3fault0Filler1 is-taken/exists. If it isn't taken, we can 'recover' from a crashed server and proceed with it. If it's taken by someone else, we unlock JimboKnives account without deducting howMuchToAttemptToBuyItFor from his balance. If on login we see adSpaceBeingSoldD3fault0Filler1 is taken by JimboKnives, then we've recovered from a crash-just-after-LCB_ADD, and we know that howMuchToAttemptToBuyItFor needs to still be deducted from his balance.
+##
+Then (whether 'recovering' or functioning as normal at this point), we CAS-swap 'UNLOCK' the account, deducting howMuchToAttemptToBuyItFor from the balance as we do. If the CAS-swap fails, we pull the key again and expect to see the "what, how, what" gone... which means we thought we recovered from a fail, but actually another machine is still driving the transaction (maybe it's http front end just went down). 
+
+NOPE: 
+{
+
+If the CAS-swap fails and the "what,how,what" is still there, the entire system is fucked and we should emit an error and possibly shut everything down because wtf it should not (ALTHOUGH, maybe 'another' machine has finished the transaction and *gasp* started another one!?!?!? My brain just exploded)
+
+}
+
+##
+If the CAS-swap fails and the "what,how,what" is still there and the "whatToAttemptToBuy" is still the same it was before we attempted to CAS-swap-unlock it (adSpaceBeingSoldD3fault0Filler1), THEN shit is fucked and the entire system is fucked etc (like 'NOPE').
+##
+If however the CAS-swap fails and the "what,how,what" is still there and the whatToAttemptToBuy is DIFFERENT, we know that they're logged in else where and that that instance has already done the CAS-swap we are attempting to do (and it has ADDITIONALLY started another 'attempt to buy [something else]')

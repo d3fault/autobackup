@@ -1,0 +1,124 @@
+at 1390311322 JimboKnives purchases a slot filler for 0.002 btc,
+instantaneously the price doubles and becomes 0.004 btc,
+and that price linearly decreases until it is back at minPrice (0.001) 24 hours after the last purchased slot filler STARTS (not when the purchase takes place fffffff) 1390311322
+
+Damn I can't remember how to math, but I am 100000000% sure that the math can be done. I know I've done that shit in high school xD. What is it called again? Linear estimation? Nah not estimation, this is calculation. I know it's easy but it escapes me still.. been too long :). Something about two points on a line.... man oh man I feel stupid right now (mathematicians are lolling (yo!))
+
+let's start with what we know:
+
+1390311322						
+0.002
+
+JimboKnives buys a slot filler at 1390311322 for 0.002
+
+
+1390311322							1390397722
+			-----time (24 hours)---->
+0.004								0.001
+
+
+
+Now how do I do this shit again? Cross multiply or... err... ehh..... fffffffff....
+Worst case scenario I ask my dad (or wikipedia that shit (but what to search for?)).
+Nah I think if I stare at it long enough it'll come back to me.
+
+Fuck it ima try multiplying both sides together and see if the result looks sexy.
+483271423744902121000000, lot of good that did me :-/. Now making it upside down :)...
+.00000000000000000000000206923056250860867713527997
+
+THAT MIGHT BE THE "rate to decrease per second"! Holy shit I didn't think it'd be so small (scale=5 in bc gave me "0" xD), THEN AGAIN we are using tiny ass numbers here. Does a "double" on a pc in C++ even handle this much precision? Aww well even if it doesn't, I know there are math libs that do.
+
+So now the obvious 'test' is to multiply that tiny ass decimal number back by numberOfSecondsIn24Hours and it should give me.... errr, the difference between .004 and .001 ?? *tries*
+NOPE. back to the drawing board...
+...and to top it off I just edited the above correcting that it's 24 hours after slot filler "STARTS", not when it is "PURCHASED". guh nitty gritty maths. I only know it can be done. I still need this general formula figured out though I'm pretty sure....
+
+001/.004= .25
+so over the course of 24 hours (86400 seconds), I want to multiply .004 by a total of (after 24 hours) .25
+which means...
+f(0) 		= .004
+f(86400)	= .001
+
+OH FUCK YEA I HAVE AN APP FOR THIS ON MY GRAPHING CALCULATOR (<---- the 'problem' ;-P (or solution depending how you look at it)) METHINSK!!FKJDSFLKSDJF. things dusty xD (not rly though).... AND batteries dead. fuck.
+
+To lazy to go get batteries, I'll just stare at it a little longer. Do I set both halves equal to each other? wat?
+
+mb betterer:
+f(1390311322)	= .004
+f(1390397722)	= .001
+
+MAN I KNOW THIS IS EASY!!!! guh.
+what times 1390311322 equals .004? a = .004/1390311322 (ugly decimal result)
+what times 1390397722 equals .001? b = .001/1390397722 (ugly decimal result)
+
+OH YEA THERE WAS X1,X2,Y1,Y2 shit involved!!! muahahaha now what the fuck was the formula??? i had x1,x2 for a,b above, but i'm not certain they are the X1,X2 that I just remembered I needed...
+
+NOPE:
+(X1 + X2)
+/
+(Y1 + Y2)
+
+Ys go on top
+NOPE:
+(Y1 + Y2)
+/
+(X1 + X2)
+
+^^gives you the "m" in y=mx+b
+^^^then you fill in originals and solve for b
+
+GIVES ME!?!?!? IDFK BUT IMA FIND OUT!!!!!
+now what the fuck is the x?
+OH RIGHT I ALREADY HAVE IT WRITTEN after 'mb betterer'. downhill from here methinks...
+
+556141808800
+
+what the fuck good does that do me?!?!?!?
+maybe the Ys go on top?
+
+.000000000001798102541791855300629575684582122717043243449817
+
+blamo, that looks better, and it's not as small as the one I came up with earlier...
+
+that gives me the "m", but how do i get the "b" again?
+f(x) = m(x)+b
+
+OH SHIT I REMEMBER NOW, PLUG IN ROFL GOD I LOVE MATHS
+.004 = .000000000001798102541791855300629575684582122717043243449817(1390311322) + b
+.004 = .002499922321970194591851012802330426052298623731882913928074 + b
+(damn can't remember algebra. so i subtract it or something?)
+.001500077678029805408148987197669573947701376268117086071926 = b
+
+now to test!
+
+f(x) = .000000000001798102541791855300629575684582122717043243449817(x) + .001500077678029805408148987197669573947701376268117086071926
+f(1390311322) = .004 (ZOMFG I DID IT METHINKS (one more test))
+f(1390397722) = .004 again?????????? WTF fail
+
+
+OH WAIT IT'S ALL COMING BACK TO ME. I WAS CLOSE:
+
+###############YES##########
+(Y2-Y1)
+/
+(X2-X1)
+
+M = -.000000034722222222222222222222222222222222222222222222222222
+
+negative number, perfect i think!
+.004 = -.000000034722222222222222222222222222222222222222222222222222(1390311322) + B
+.004 = -48.274698680555555555555555555555555555555555555555555246597484 + B
+now do i add it? subtracting a negative is adding? wat?
+48.278698680555555555555555555555555555555555555555555246597484 = B
+
+and now ima do .001 filled in just to make sure i'm not retarded [again]...
+.001 = -.000000034722222222222222222222222222222222222222222222222222(1390397722) + B
+48.278698680555555555555555555555555555555555555555555246578284 = B
+
+THE NUMBERS ARE THE SAME I AM SEX!!!!!!!
+f(x) = -.000000034722222222222222222222222222222222222222222222222222(x) + 48.278698680555555555555555555555555555555555555555555246578284
+Testing:
+f(1390311322) = .003999999999999999999999999999999999999999999999999999980800
+f(1390397722) = .001
+
+FUCK YEA I AM THE MATHEMATICIAN OF ALL MATHEMATICIANS. BOW BEFORE ME as i do basic ass high school math
+I hope all you real mathematicians got a kick out of this doc, I know I sure did. Be jealous, however, of my ability to implant it in a motherfucking C++ program (unless you're both a mathematician and a coder, in which case you probably aren't at all). Now I just need to trace my steps and figure out what the fuck I just did. Like I mean I need to keep everything as variables and not use giant ass decimal place numbers etc xD. Seriously even though I know I did figure out the math I wanted to, my brain isn't grasping what the fuck to even do with it [yet].

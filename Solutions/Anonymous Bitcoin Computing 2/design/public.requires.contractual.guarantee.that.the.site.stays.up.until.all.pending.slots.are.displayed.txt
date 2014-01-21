@@ -1,0 +1,6 @@
+It seems to me that if I were to make ad doubles public (users can sell ad space), I _NEED_ some way of enforcing that the user displays ads in slot fillers sold! If the site was hosted remotely on their own server, they could take their site down at any time etc. This works fine for the traditional PPC ad model... the site goes away and comes back whenever and there's no "uptime promise" that is so obviously needed for ad doubles type shit.
+
+SO BASICALLY if I were to make it public, I'd need to either make them contractually promise (READ: SHITTY PROMISE THAT CAN EASILY BE BROKEN) not to take their site down, or I'd need to host the sites themselves and FORCE the inability to delete (they could still flood it with empty messages/scrambled-random/white-noise however...). Sort of how I'm not allowing a slot filler (that is used to buy ad space) to change once the buyer sets it up.
+
+
+i guess there's always the refund option... but meh...

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1390237469
+Documents/minddump/:1390332268
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -513,6 +513,7 @@ Documents/minddump/cant.beat.em.join.em.saljdfosdfusldfjouweljorulskjdfosudfls.t
 Documents/minddump/care.about.not.caring.asdflakweroausdfklj.txt:1343492054
 Documents/minddump/censoring.certain.names.will.allow.me.to.launch.fuck.yea.aldkfjasdlfkjweroiu.txt:1341528952
 Documents/minddump/censorsteps.sfsofiusdflkjsdfou.txt:1384968995
+Documents/minddump/chiptunes.list.of.songs.ill.miss.but.fuck.it.txt:1390332268
 Documents/minddump/choose.the.right.tools.but.first.you.must.know.of.their.existence.txt:1388233212
 Documents/minddump/cjlckzxlcjzxlkjclzkxjcudoasdoiusad.txt:1355827044
 Documents/minddump/clear.concise.and.working.but.still.a.piece.of.shit.qml.aslfkjsadflksaj.txt:1339321953
@@ -1654,6 +1655,7 @@ Documents/minddump/slkdjflskjdfsdoifuwlerkjsdafousdlfkjweroui.txt:1358069286
 Documents/minddump/slkfdjsdlkjfsdwerreouflkjweorulkjsdfoulkjelkjfsdlksfdjklsfd.txt:1364944514
 Documents/minddump/slkfjsalkjfdlsdaffskdwerwerasfsdfjfsdofusdlkfjsdlfkj.txt:1360772334
 Documents/minddump/slkfjsdlkjfsdlkjfoiwuerlkjafdousdlfkjwoeiurlkjfoiu.txt:1357937791
+Documents/minddump/slkjfdlskajdfosudflsajfosuaflsjdfousfljsofusfdoulsjdfousdflk.txt:1390303637
 Documents/minddump/so.fucking.high.txt:1344456089
 Documents/minddump/so.fucking.pumped.i.can.feel.adrenaline.rushing.around.etc.nothing.to.do.with.doc.but.just.my.mood.today.wooo.txt:1350504798
 Documents/minddump/so.i.guess.i.either.need.to.shred.except.thats.still.being.shamed.by.it.or.just.TOUGH.IT.OUT.pussy.txt:1345053664
@@ -2463,7 +2465,18 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1389169346
+Projects/Prototypes/:1390325478
+Projects/Prototypes/AdDoublesRawMathLaunchSim/:1390331620
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1390335898
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/addoublesrawmathlaunchsim.cpp:1390332764
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/addoublesrawmathlaunchsim.h:1390332764
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/addoublesrawmathlaunchsimgui.cpp:1390333672
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/addoublesrawmathlaunchsimgui.h:1390329459
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/addoublesrawmathlaunchsimwidget.cpp:1390333672
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/addoublesrawmathlaunchsimwidget.h:1390333247
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/main.cpp:1390329459
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/slotfillerpod.h:1390326621
 Projects/Prototypes/AudioVideoBuffers/:1344095659
 Projects/Prototypes/AudioVideoBuffers/design/:1327617616
 Projects/Prototypes/AudioVideoBuffers/design/AudioVideoBuffersOverviewDetailed.dia:1327575511
@@ -3625,8 +3638,13 @@ Solutions/Anonymous Bitcoin Computing/src/shared/WtFrontEndAndAppDbProtocol.h:13
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
 Solutions/Anonymous Bitcoin Computing 2/:1390077036
-Solutions/Anonymous Bitcoin Computing 2/design/:1390077051
+Solutions/Anonymous Bitcoin Computing 2/design/:1390325417
+Solutions/Anonymous Bitcoin Computing 2/design/core.json.doc.design.for.use.case.user.jimboknives.an.buying.ad.slot.filler.txt:1390335493
+Solutions/Anonymous Bitcoin Computing 2/design/core.math.for.ad.doubles.0.worthless.read.but.lololololololol.txt:1390315030
+Solutions/Anonymous Bitcoin Computing 2/design/core.math.for.ad.doubles.1.formulas.and.eventual.success.woot.txt:1390325417
+Solutions/Anonymous Bitcoin Computing 2/design/login.throttling.pointless.if.db.is.public.lewl.txt:1390304771
 Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:1390077121
+Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/src/:1390242928
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1390240968
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1390240968
