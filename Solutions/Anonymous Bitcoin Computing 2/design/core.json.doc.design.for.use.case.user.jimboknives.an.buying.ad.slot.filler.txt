@@ -1,27 +1,66 @@
 d3fault is selling adspace, and this is his "0th" ad selling campaign. It is confusing at first, but the below key/doc is accessible at: abc.com/ads/buy-ad-space/d3fault/0 . The user is buying the ad space being sold, so that's what they type-in/see
 
-//AD SPACE BEING SOLD CAMPAIGN
-adsSpaceBeingSoldD3fault0 
+//AD SPACE BEING SOLD CAMPAIGN -- regular up and running full doc (alternates/variations below)
+adsSpaceBeingSoldD3fault0
 {
   "minPrice": "0.001",
   "slotFillerLengthHours": "24",
-  "lastTenSlotFillerPurchases": [
-    {
-      "slotFillerKey": "adSpaceBeingSoldD3fault0Filler1",
-      "purchaseTimestamp": "1970",
-      "startTimestamp" : "1973"
-      "purchasePrice": "0.002"
-    },
-    {
-      "slotFillerKey": "adSpaceBeingSoldD3fault0Filler0",
-      "purchaseTimestamp": "1969",
-      "startTimestamp" : "1972"
-      "purchasePrice": "0.001"
-    }
-  ]
+  "lastSlotFillerPurchase": {
+    "slotFillerKey": "adSpaceBeingSoldD3fault0Filler4",
+    "purchaseTimestamp": "1972",
+    "startTimestamp": "1975",
+    "purchasePrice": "0.005872"
+  },
+  "nextSlotFillerOnDisplay": {
+    "slotFillerKey": "adSpaceBeingSoldD3fault0Filler2",
+    "purchaseTimestamp": "1971",
+    "startTimestamp": "1972",
+    "purchasePrice": "0.001"
+  },
+  "currentSlotFillerOnDisplay": {
+    "slotFillerKey": "adSpaceBeingSoldD3fault0Filler1",
+    "purchaseTimestamp": "1970",
+    "startTimestamp": "1971",
+    "purchasePrice": "0.0017"
+  }
 }
 
-lastTenSlotFillerPurchases contains the MINIMUM information to calculate the current price (we only need the most recent actually), and the time at which the price will be back at minPrice.
+All that is needed to calculate the current rate/dropping-rate is minPrice, slotFillerLengthHours, and lastSlotFillerPurchase.
+
+'current' is used to know which to display, and 'next' is used when the time comes so there won't be any contesting CAS-swap'ing the adsSpaceBeingSoldD3fault0 document -- should there be a lot of purchases. This gives the swapping machine (who TODOreq, a cron job? ideallly any couchbase-client/wt-node would do this, and if the CAS-swap fails check to see that what we intended to do was in fact done by another neighbor node (there is also the RARE MAYBE IMPOSSIBLE 'two increments before we CAS-replace')) 24 hours to simply make 'next' -> 'current', and of course to fill in the next 'next' if one exists. Users of said document have to calculate for themselves whether to use current or next, depending on the current time.
+
+The initial/minimum state of adsSpaceBeingSoldD3fault0 is that only minPrice and slotFillerLengthHours fields exist. There is also an 'early' state where only lastSlotFillerPurchase and currentSlotFillerOnDisplay exist (they would be identical): just after the first purchase, before the second.
+
+The full json document for adsSpaceBeingSoldD3fault0 before any purchases at all follows:
+
+adsSpaceBeingSoldD3fault0
+{
+  "minPrice": "0.001",
+  "slotFillerLengthHours": "24"
+}
+
+The full json document for adsSpaceBeingSoldD3fault0 when no more 'next's have been purchased (the currentDisplayed becomes the lastPurchased):
+The full json document for adsSpaceBeingSoldD3fault0 after exactly 1 purchase follows:
+
+adsSpaceBeingSoldD3fault0
+{
+  "minPrice": "0.001",
+  "slotFillerLengthHours": "24",
+  "lastSlotFillerPurchase":
+  {
+      "slotFillerKey": "adSpaceBeingSoldD3fault0Filler0",
+      "purchaseTimestamp": "1969",
+      "startTimestamp" : "1969"
+      "purchasePrice": "0.001"
+  },
+  "currentSlotFillerOnDisplay" :
+  {
+      "slotFillerKey": "adSpaceBeingSoldD3fault0Filler0",
+      "purchaseTimestamp": "1969",
+      "startTimestamp" : "1969"
+      "purchasePrice": "0.001"
+  }
+}
 
 The full json document for adSpaceBeingSoldD3fault0Filler1 follows:
 

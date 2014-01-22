@@ -157,7 +157,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
     void showAdvertisingBuyAdSpaceD3faultWidget();
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
-    void showAdvertisingBuyAdSpaceD3faultCampaign0Widget();
+    void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
+    void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &couchbaseDocument);
 
     void beginGetCouchbaseDocumentByKey(const std::string &keyToCouchbaseDocument);
     void beginAddCouchbaseDocumentByKey(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);

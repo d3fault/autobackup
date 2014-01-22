@@ -83,8 +83,8 @@ string AnonymousBitcoinComputingWtGUI::toBase64(const string &inputString)
 void AnonymousBitcoinComputingWtGUI::buildGui()
 {
     setTitle("Anonymous Bitcoin Computing");
-    WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
-    m_MainStack->setTransitionAnimation(slideInFromBottom, true);
+    //WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
+    //m_MainStack->setTransitionAnimation(slideInFromBottom, true);
 
     //Login Widget
     new WText("Username:", m_LoginWidget);
@@ -237,7 +237,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultWidget);
 }
-void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultCampaign0Widget()
+void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget()
 {
     if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget)
     {
@@ -258,10 +258,80 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultCampaign0Wi
 
         //still dunno if i should block or do it async? instincts tell me async, but "SUB MILLISECOND LATENCY" tells me async might actually be wasteful/slower??? The obvious answer is "benchmark it xD" (FUCK FUCK FUCK FUCK FUCK THAT, async it is (because even if slower, it still allows us to scale bettarer))
         //^To clarify, I have 3 options: wait on a wait condition right here that is notified by couchbase thread and we serve up result viola, deferRendering/resumeRendering, or enableUpdates/TriggerUpdates. The last one requires ajax. Both the last 2 are async (despite defer "blocking" (read:disabling) the GUI)
-        beginGetCouchbaseDocumentByKey("adsBuyAdSpaceD3fault0");
+        beginGetCouchbaseDocumentByKey("adsSpaceBeingSoldD3fault0");
         m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+}
+void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument)
+{
+    //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
+
+    if(environment().ajax())
+    {
+        ptree pt;
+        std::istringstream is(couchbaseDocument);
+        read_json(is, pt);
+
+        std::string minPrice = pt.get<std::string>("minPrice");
+        std::string slotFillerLengthHours = pt.get<std::string>("slotFillerLengthHours");
+        boost::optional<ptree&> lastSlotFillerPurchase = pt.get_child_optional("lastSlotFillerPurchase");
+        boost::optional<ptree&> currentSlotFillerOnDisplay = pt.get_child_optional("currentSlotFillerOnDisplay");
+        boost::optional<ptree&> nextSlotFillerOnDisplay = pt.get_child_optional("nextSlotFillerOnDisplay");
+
+        if(!lastSlotFillerPurchase.is_initialized())
+        {
+            //no purchases yet, mostly empty json doc
+        }
+        else
+        {
+            if(!nextSlotFillerOnDisplay.is_initialized())
+            {
+                //partial json doc: no 'next' purchase [yet] -- no big deal, but still must be accounted for (happens after very first purchase, and also when the 2nd to last slot on display expires)
+
+                std::string lastSlotFillerPurchasedPurchaseTimestamp = lastSlotFillerPurchase.get().get<std::string>("purchaseTimestamp");
+                std::string lastSlotFillerPurchasedStartTimestamp = lastSlotFillerPurchase.get().get<std::string>("startTimestamp");
+                std::string lastSlotFillerPurchasedPurchasePrice = lastSlotFillerPurchase.get().get<std::string>("purchasePrice");
+
+                new WText("Price: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+                WText *placeholderElement = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+                placeholderElement->doJavaScript
+                        (
+                            "var lastSlotFillerPurchasedExpireDateTime = new Date((" + lastSlotFillerPurchasedStartTimestamp + "*1000)+((" + slotFillerLengthHours + "*3600)*1000));" +
+                            "var currentDateTime = new Date();" +
+                            "var currentDateTimeMSecs = currentDateTime.getTime();"
+                            "var lastSlotFillerPurchasedExpireDateTimeMSecs = lastSlotFillerPurchasedExpireDateTime.getTime();"
+                            "if(currentDateTimeMSecs >= lastSlotFillerPurchasedExpireDateTimeMSecs)" +
+                            "{" +
+                                placeholderElement->jsRef() + ".innerHTML = \"" + minPrice + "\";" +
+                            "}" +
+                            "else" +
+                            "{" +
+                                "var m = ((" + minPrice + "-(" + lastSlotFillerPurchasedPurchasePrice + "*2))/((lastSlotFillerPurchasedExpireDateTimeMSecs/1000)-" + lastSlotFillerPurchasedPurchaseTimestamp + "));" +
+                                "var b = (" + minPrice + " - (m * (lastSlotFillerPurchasedExpireDateTimeMSecs/1000)));" +
+                                "var currentPrice = (m*(currentDateTimeMSecs/1000))+b;" +
+                                placeholderElement->jsRef() + ".innerHTML = \"currentPrice\";" +
+                            "}"
+                        );
+            }
+            else
+            {
+                //traditonal full json doc ('next' already purchased)
+            }
+        }
+
+        //new WText(couchbaseDocument, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        WText *placeHolder = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        placeHolder->doJavaScript("var butts = 99999999999; setInterval(function(){ " + placeHolder->jsRef() + ".innerHTML = --butts; },100);");
+        //JSlot *blahJs = new JSlot("function(obj, event) { var bitch = 9999999999.0000000; setInterval(function(){}, 100}); }", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        placeHolder->doJavaScript("butts = 7777777777777;");
+        //blahJs->exec();
+    }
+    else
+    {
+        new WText("enable javascript nob", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        //TODOreq: "current price is XXX and it will be back at YYYYY at ZZZZZZZ (should nobody buy any further slots). Click here to refresh this information to see if it's still valid, as someone may have purchased a slot since you loaded this page (enable javascript if you want to see it count down automatically)"
+    }
 }
 void AnonymousBitcoinComputingWtGUI::beginGetCouchbaseDocumentByKey(const std::string &keyToCouchbaseDocument)
 {
@@ -335,7 +405,7 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     {
     case HACKEDIND3FAULTCAMPAIGN0GET:
         {
-            new WText(WString(couchbaseDocument), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument);
         }
         break;
         case LOGINATTEMPTGET:
@@ -420,7 +490,7 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
             {
                 if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0))
                 {
-                    showAdvertisingBuyAdSpaceD3faultCampaign0Widget();
+                    beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
                     return;
                 }
                 showAdvertisingBuyAdSpaceD3faultWidget();
