@@ -15,6 +15,7 @@
 #include <Wt/WAnchor>
 #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
+#include <Wt/WComboBox>
 
 //TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
 #include <boost/interprocess/ipc/message_queue.hpp>
@@ -25,6 +26,7 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>
 #include <boost/uuid/sha1.hpp>
 #include <boost/archive/iterators/base64_from_binary.hpp>
 #include <boost/archive/iterators/binary_from_base64.hpp>
@@ -159,9 +161,13 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
     void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &couchbaseDocument);
+    void buySlotStep1d3faultCampaign0ButtonClicked();
+    void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc);
+    void buySlotStep2d3faultCampaign0ButtonClicked();
+    WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
 
-    void beginGetCouchbaseDocumentByKey(const std::string &keyToCouchbaseDocument);
-    void beginAddCouchbaseDocumentByKey(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
+    void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
+    void addCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
     void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
     void addCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument);
 
@@ -179,7 +185,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     int m_CurrentGetMessageQueueIndex;
 
     enum WhatTheAddWasForEnum { INITIALINVALIDNULLADD, REGISTERATTEMPTADD };
-    enum WhatTheGetWasForEnum { INITIALINVALIDNULLGET, HACKEDIND3FAULTCAMPAIGN0GET, LOGINATTEMPTGET };
+    enum WhatTheGetWasForEnum { INITIALINVALIDNULLGET, LOGINATTEMPTGET, HACKEDIND3FAULTCAMPAIGN0GET, HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET };
 
     WhatTheAddWasForEnum m_WhatTheAddWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;

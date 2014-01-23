@@ -1,0 +1,14 @@
+"Buy" (front-end) / "Sell" (back-end)
+	ad space being sold
+		campaigns, a user's various sites/etc he is selling ads on/for
+			slots, a campaign's unlimited 24 hour periods
+				slots are filled with slot filler, a single slot (24 hour period) bought by a buyer, who set it up before buying/filling 
+
+aka: adSpaceSlotsd3fault0slot2 { "filledWith" : "adSpaceBuyingJimboKnivesSlotFiller0" }
+
+
+"Set Up What To Buy WITH"
+	ad space buying
+		slot fillers
+
+aka: adSpaceSlotFillersJimboKnives0 { username,url,hover,b64image }

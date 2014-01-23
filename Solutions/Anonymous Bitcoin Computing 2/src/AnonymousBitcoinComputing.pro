@@ -1,4 +1,5 @@
 #This time KISS. I want the last two years of my 20s back :-/... holy shit I am stupid...
+TARGET = AnonymousBitcoinComputing
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
@@ -13,6 +14,8 @@ DEFINES +=  NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES=3 \
             NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES=3 \
             WT_TO_COUCHBASE_GET_MAX_MESSAGES_IN_QUEUE=3 \
             WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE=2400 \
+            COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
+            COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT=1 \ #just to give durability_poll something to do on my 1-cluster test environment
             WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" #kill me
 
 # DEPLOY VARIABLES
@@ -23,6 +26,7 @@ DEFINES +=  NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES=3 \
 #            NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES=125 \
 #            WT_TO_COUCHBASE_GET_MAX_MESSAGES_IN_QUEUE=1000 \
 #            WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE=102400 \
+#            COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=2 \
 #            WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" #kill me
 
 SOURCES += main.cpp \

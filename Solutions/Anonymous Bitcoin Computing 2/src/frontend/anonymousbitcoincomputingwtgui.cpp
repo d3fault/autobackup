@@ -22,10 +22,13 @@
 #define ABC_ANCHOR_TEXTS_PATH_ADS "Advertising"
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE "Buy Ad Space"
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT "d3fault"
-#define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 "Campaign 0"
+#define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 "d3fault's Ad Campaign #0"
+
+//TODOreq: "Forgot Your Password?" --> "Tough shit, I hope you learned your lesson"
+//TODOreq: timezones fuck shit up? if so, we can send them the 'current timestamp' to use (but then there'd be a bit of latency delay)... or mb we can find out proper solution in js (toTime() gives us msecs since epoch... in greenwhich right? not local? maybe this isn't a problem)
 
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
-    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
+    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_AllSlotFillersComboBox(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
 {
     m_RandomNumberGenerator.seed((int)rawUniqueId());
     m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator);
@@ -57,7 +60,7 @@ std::string AnonymousBitcoinComputingWtGUI::sha1string(const string &inputString
     const void *inputStringBuffer = (const void*)inputString.c_str();
 
     boost::uuids::detail::sha1 sha1er;
-    sha1er.process_bytes(inputStringBuffer, inputString.length()); //password
+    sha1er.process_bytes(inputStringBuffer, inputString.length());
 
     unsigned int outputHashUintArray[5];
     sha1er.get_digest(outputHashUintArray);
@@ -101,7 +104,7 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget); //might not be necessary, since it's the only one added at this point (comment is not worth...)
     m_HeaderHlayout->addWidget(m_LoginLogoutStackWidget, 0, Wt::AlignTop | Wt::AlignRight);
     m_MainVLayout->addLayout(m_HeaderHlayout, 0, Wt::AlignTop | Wt::AlignRight);
-    m_MainVLayout->addWidget(m_MainStack, 0, Wt::AlignTop | Wt::AlignLeft);
+    m_MainVLayout->addWidget(m_MainStack, 1, Wt::AlignTop | Wt::AlignCenter);
 }
 void AnonymousBitcoinComputingWtGUI::showHomeWidget()
 {
@@ -239,6 +242,8 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
 }
 void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget()
 {
+    //TODOreqoptimization: this is going to be my most expensive document (the home link might be too, but it doesn't hit the db). I need SOME sort of caching solution [in order to make this horizontally scalable (so in other words, it isn't an absolute must pre-launch task], even if it's hacked-in/hardcoded who cares. getAndSubscribe comes to mind (but sounds complicated). a fucking mutex locked when new'ing the WContainerWidget below would be easy and would scale horizontally. Hell it MIGHT even be faster than a db hit (and there's always a 'randomly selected mutex in array of mutexes' hack xD)
+
     if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget)
     {
         m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new WContainerWidget(m_MainStack);
@@ -258,7 +263,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 
         //still dunno if i should block or do it async? instincts tell me async, but "SUB MILLISECOND LATENCY" tells me async might actually be wasteful/slower??? The obvious answer is "benchmark it xD" (FUCK FUCK FUCK FUCK FUCK THAT, async it is (because even if slower, it still allows us to scale bettarer))
         //^To clarify, I have 3 options: wait on a wait condition right here that is notified by couchbase thread and we serve up result viola, deferRendering/resumeRendering, or enableUpdates/TriggerUpdates. The last one requires ajax. Both the last 2 are async (despite defer "blocking" (read:disabling) the GUI)
-        beginGetCouchbaseDocumentByKey("adsSpaceBeingSoldD3fault0");
+        getCouchbaseDocumentByKeyBegin("adSpaceSlotsd3fault0");
         m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -266,6 +271,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument)
 {
     //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
+    //TODOreq: decided not to be a dick. "buy at current" sends the currentSlotIdForSale and the 'priceUserSawWhenTheyClicked', BUT we use our own internal and calculated-on-the-spot 'current price' and go ahead with the buy using that. We only use currentSlotIdForSale and 'priceUserSawWhenTheyClicked' to make sure they're getting the right slot [and not paying too much]. The two checks are redundant of one another, but that's ok
 
     if(environment().ajax())
     {
@@ -274,44 +280,51 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         read_json(is, pt);
 
         std::string minPrice = pt.get<std::string>("minPrice");
-        std::string slotFillerLengthHours = pt.get<std::string>("slotFillerLengthHours");
-        boost::optional<ptree&> lastSlotFillerPurchase = pt.get_child_optional("lastSlotFillerPurchase");
-        boost::optional<ptree&> currentSlotFillerOnDisplay = pt.get_child_optional("currentSlotFillerOnDisplay");
-        boost::optional<ptree&> nextSlotFillerOnDisplay = pt.get_child_optional("nextSlotFillerOnDisplay");
+        std::string slotLengthHours = pt.get<std::string>("slotLengthHours");
+        boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional("lastSlotFilledAkaPurchased");
+        boost::optional<ptree&> currentSlotOnDisplay = pt.get_child_optional("currentSlotOnDisplay");
+        boost::optional<ptree&> nextSlotOnDisplay = pt.get_child_optional("nextSlotOnDisplay");
 
-        if(!lastSlotFillerPurchase.is_initialized())
+        if(!lastSlotFilledAkaPurchased.is_initialized())
         {
             //no purchases yet, mostly empty json doc
         }
         else
         {
-            if(!nextSlotFillerOnDisplay.is_initialized())
+            if(!nextSlotOnDisplay.is_initialized())
             {
                 //partial json doc: no 'next' purchase [yet] -- no big deal, but still must be accounted for (happens after very first purchase, and also when the 2nd to last slot on display expires)
 
-                std::string lastSlotFillerPurchasedPurchaseTimestamp = lastSlotFillerPurchase.get().get<std::string>("purchaseTimestamp");
-                std::string lastSlotFillerPurchasedStartTimestamp = lastSlotFillerPurchase.get().get<std::string>("startTimestamp");
-                std::string lastSlotFillerPurchasedPurchasePrice = lastSlotFillerPurchase.get().get<std::string>("purchasePrice");
+                std::string lastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("purchaseTimestamp");
+                std::string lastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
+                std::string lastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
 
-                new WText("Price: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+                new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
                 WText *placeholderElement = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
                 placeholderElement->doJavaScript
                         (
-                            "var lastSlotFillerPurchasedExpireDateTime = new Date((" + lastSlotFillerPurchasedStartTimestamp + "*1000)+((" + slotFillerLengthHours + "*3600)*1000));" +
-                            "var currentDateTime = new Date();" +
-                            "var currentDateTimeMSecs = currentDateTime.getTime();"
-                            "var lastSlotFillerPurchasedExpireDateTimeMSecs = lastSlotFillerPurchasedExpireDateTime.getTime();"
-                            "if(currentDateTimeMSecs >= lastSlotFillerPurchasedExpireDateTimeMSecs)" +
-                            "{" +
-                                placeholderElement->jsRef() + ".innerHTML = \"" + minPrice + "\";" +
-                            "}" +
-                            "else" +
-                            "{" +
-                                "var m = ((" + minPrice + "-(" + lastSlotFillerPurchasedPurchasePrice + "*2))/((lastSlotFillerPurchasedExpireDateTimeMSecs/1000)-" + lastSlotFillerPurchasedPurchaseTimestamp + "));" +
-                                "var b = (" + minPrice + " - (m * (lastSlotFillerPurchasedExpireDateTimeMSecs/1000)));" +
-                                "var currentPrice = (m*(currentDateTimeMSecs/1000))+b;" +
-                                placeholderElement->jsRef() + ".innerHTML = \"currentPrice\";" +
-                            "}"
+                            "var lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + lastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + slotLengthHours + "*3600)*1000));" +
+                            "var lastSlotFilledAkaPurchasedPurchasePrice = " + lastSlotFilledAkaPurchasedPurchasePrice + ";" + //made a var here so it can be updated later (on buy event) without stopping/restarting timer
+                            "var lastSlotFilledAkaPurchasedPurchaseTimestamp = " + lastSlotFilledAkaPurchasedPurchaseTimestamp + ";" + //ditto as above
+                            "var lastSlotFilledAkaPurchasedExpireDateTimeMSecs = lastSlotFilledAkaPurchasedExpireDateTime.getTime();" + //ditto as above two
+                            "var m = ((" + minPrice + "-(lastSlotFilledAkaPurchasedPurchasePrice*2))/((lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)-lastSlotFilledAkaPurchasedPurchaseTimestamp));" +
+                            "var b = (" + minPrice + " - (m * (lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)));" +
+                            "var tehIntervalz = setInterval(" +
+                                "function()" +
+                                "{" +
+                                    "var currentDateTimeMSecs = new Date().getTime();" +
+                                    "if(currentDateTimeMSecs >= lastSlotFilledAkaPurchasedExpireDateTimeMSecs)" +
+                                    "{" +
+                                        "var minPrice = " + minPrice + ";" +
+                                        placeholderElement->jsRef() + ".innerHTML = minPrice.toFixed(8);" + //TODOreq: stop interval (start it again on buy event)
+                                        "clearInterval(tehIntervalz);" +
+                                    "}" +
+                                    "else" +
+                                    "{" +
+                                        "var currentPrice = ((m*(currentDateTimeMSecs/1000))+b);" +  //y = mx+b
+                                        placeholderElement->jsRef() + ".innerHTML = currentPrice.toFixed(8);" +
+                                    "}" +
+                                "},100);" //INTERVAL AT 100ms
                         );
             }
             else
@@ -319,21 +332,74 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
                 //traditonal full json doc ('next' already purchased)
             }
         }
-
-        //new WText(couchbaseDocument, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        WText *placeHolder = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        placeHolder->doJavaScript("var butts = 99999999999; setInterval(function(){ " + placeHolder->jsRef() + ".innerHTML = --butts; },100);");
-        //JSlot *blahJs = new JSlot("function(obj, event) { var bitch = 9999999999.0000000; setInterval(function(){}, 100}); }", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        placeHolder->doJavaScript("butts = 7777777777777;");
-        //blahJs->exec();
     }
     else
     {
         new WText("enable javascript nob", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         //TODOreq: "current price is XXX and it will be back at YYYYY at ZZZZZZZ (should nobody buy any further slots). Click here to refresh this information to see if it's still valid, as someone may have purchased a slot since you loaded this page (enable javascript if you want to see it count down automatically)"
     }
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    WPushButton *buySlotFillerStep1Button = new WPushButton("Buy At This Price (Step 1/2)", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    buySlotFillerStep1Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked);
 }
-void AnonymousBitcoinComputingWtGUI::beginGetCouchbaseDocumentByKey(const std::string &keyToCouchbaseDocument)
+void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
+{
+    if(!m_LoggedIn)
+    {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Log In First", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        return;
+    }
+    getCouchbaseDocumentByKeyBegin("adSpaceAllSlotFillers" + m_Username.toUTF8()); //TODOreq: obviously we'd have sanitized the username by here...
+    m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET;
+}
+void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const std::string &allSlotFillersJsonDoc)
+{
+    if(!m_AllSlotFillersComboBox)
+    {
+        //TODOreq: give error if no slotFillers have been set up, and instruct them to do so (with link to page to do it)
+
+        ptree pt;
+        std::istringstream is(allSlotFillersJsonDoc);
+        read_json(is, pt);
+
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Select which advertisement you want to use (you cannot change this later):", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_AllSlotFillersComboBox = new WComboBox(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        BOOST_FOREACH(const ptree::value_type &child, pt.get_child("allSlotFillers"))
+        {
+            const std::string &slotFillerNickname = child.second.get<std::string>("nickname");
+            const std::string &slotFillerIndex = child.second.get<std::string>("slotFillerIndex");
+            m_AllSlotFillersComboBox->insertItem(atoi(slotFillerIndex.c_str()), slotFillerNickname); //TODOreq: Wt probably/should already do[es] this, but the nicknames definitely need to be sanitized (when they're created)
+        }
+
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("ARE YOU SURE? THERE'S NO TURNING BACK AFTER THIS", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        WPushButton *buySlotFillerStep2Button = new WPushButton("Buy At This Price (Step 2/2)", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        buySlotFillerStep2Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked);
+    }
+}
+void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
+{
+    //DO ACTUAL BUY (associate slot with slot filler, aka fill the slot)
+
+   //TODOreq: this doesn't belong here, but the combo box probably depends on the user to send in the slotfiller index, so we need to sanitize that input
+
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("You're attempting to buy slot with filler: " + m_AllSlotFillersComboBox->currentText(), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    //TODOreq: calculate current price etc
+
+    //TODOreq: failed to lock your account for the purchase (???), failed to buy/fill the slot (insufficient funds, or someone beat us to it)
+}
+void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
     deferRendering();
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument);
@@ -391,7 +457,7 @@ void AnonymousBitcoinComputingWtGUI::beginGetCouchbaseDocumentByKey(const std::s
     event_active(m_GetEventCallbacksForWt[lockedMutexIndex], EV_READ|EV_WRITE, 0);
     m_GetMutexArray[lockedMutexIndex].unlock();
 #endif
-void AnonymousBitcoinComputingWtGUI::beginAddCouchbaseDocumentByKey(const string &keyToCouchbaseDocument, const string &couchbaseDocument)
+void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument)
 {
     deferRendering();
     AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument);
@@ -408,9 +474,14 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
             finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument);
         }
         break;
-        case LOGINATTEMPTGET:
+    case LOGINATTEMPTGET:
         {
             loginIfInputHashedEqualsDbInfo(couchbaseDocument);
+        }
+        break;
+    case HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET:
+        {
+            buySlotPopulateStep2d3faultCampaign0(couchbaseDocument);
         }
         break;
     case INITIALINVALIDNULLGET:
@@ -435,6 +506,9 @@ void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyFinished(const str
 
         WContainerWidget *registerSuccessfulWidget = new WContainerWidget(m_MainStack);
         new WText("Welcome to Anonymous Bitcoin Computing, " + m_RegisterUsername->text() + ". You can now log in.", registerSuccessfulWidget);
+
+        new WBreak(registerSuccessfulWidget);
+        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, registerSuccessfulWidget);
 
         //in case they browse back to it. TODOreq: probably should do this in other places as well
         m_RegisterUsername->setText("");
@@ -535,7 +609,7 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     write_json(jsonDocBuffer, jsonDoc, false);
     std::string jsonString = jsonDocBuffer.str();
 
-    beginAddCouchbaseDocumentByKey("user" + username, jsonString);
+    addCouchbaseDocumentByKeyBegin("user" + username, jsonString);
     m_WhatTheAddWasFor = REGISTERATTEMPTADD;
 }
 void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
@@ -544,7 +618,7 @@ void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
 
     //TODOreq: it might make sense to clear the line edit's in the login widget, and to save the login credentials as member variables, and to also clear the password member variable (memset) to zero after it has been compared with the db hash (or even just after it has been hashed (so just make the hash a member xD))
     std::string username = m_LoginUsernameLineEdit->text().toUTF8();
-    beginGetCouchbaseDocumentByKey("user" + username);
+    getCouchbaseDocumentByKeyBegin("user" + username);
     m_WhatTheGetWasFor = LOGINATTEMPTGET;
 }
 void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson)

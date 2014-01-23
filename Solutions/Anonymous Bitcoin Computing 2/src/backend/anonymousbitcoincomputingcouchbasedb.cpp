@@ -216,7 +216,6 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
 #endif
     //TODOoptional: lcb_destroy_io_ops "frees" all the events, but doesn't set them back to NULL! actually it might what the fuck do i know...
 
-    //TODOreq: probably some notify_one() call here, but we should probably still use flagging. I could be entirely wrong on teh notify_one part.. idk
     m_ThreadExittedCleanly = true;
 }
 void AnonymousBitcoinComputingCouchbaseDB::errorCallbackStatic(lcb_t instance, lcb_error_t error, const char *errinfo)
@@ -270,7 +269,6 @@ void AnonymousBitcoinComputingCouchbaseDB::configurationCallback(lcb_configurati
         m_IsConnectedWaitCondition.notify_one();
     }
 }
-
 void AnonymousBitcoinComputingCouchbaseDB::storeCallbackStatic(lcb_t instance, const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp)
 {
     ((AnonymousBitcoinComputingCouchbaseDB*)(lcb_get_cookie(instance)))->storeCallback(cookie, operation, error, resp);
@@ -286,7 +284,10 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     }
     lcb_durability_opts_t lcbDurabilityOptions;
     memset(&lcbDurabilityOptions, 0, sizeof(lcb_durability_opts_t));
-    lcbDurabilityOptions.v.v0.replicate_to = 2;
+#ifdef COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT
+    lcbDurabilityOptions.v.v0.persist_to = COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT;
+#endif
+    lcbDurabilityOptions.v.v0.replicate_to = COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT;
     lcbDurabilityOptions.v.v0.timeout = 5000000; //5 second timeout is PLENTY, and/but we should probably change this in the place it gets its default if we leave it to zero [just as a TODOoptimization to lessen memory writing]
     lcb_durability_cmd_t lcbDurabilityCommand;
     memset(&lcbDurabilityCommand, 0, sizeof(lcb_durability_cmd_t));
@@ -322,6 +323,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
     GetCouchbaseDocumentByKeyRequest::respond(request, resp->v.v0.bytes, resp->v.v0.nbytes);
     delete request;
 
+    //TODOreq: error cases need to account for these pending add/get counts
     --m_PendingGetCount;
     if(m_NoMoreAllowedMuahahaha && m_PendingGetCount == 0 && m_PendingAddCount == 0)
     {
