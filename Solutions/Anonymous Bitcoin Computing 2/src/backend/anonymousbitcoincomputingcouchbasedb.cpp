@@ -320,6 +320,8 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         //TODOreq: you know the drill~
     }
 
+    //TODOreq: who takes ownership of resp and is responsible for deleting it? me or couchbase? when does that occur (since I'm now looking into 'hold onto it because Wt might CAS-swap it')? This memory consideration also applies to all the rest of my couchbase callbacks I'd imagine (but valgrind hasn't complained about them... so idfk. I think since I'm not deleting them, it's safe to assume(xD) that they're only valid during the duration of this callback)
+    lcb_cas_t
     GetCouchbaseDocumentByKeyRequest::respond(request, resp->v.v0.bytes, resp->v.v0.nbytes);
     delete request;
 

@@ -1,6 +1,9 @@
 #ifndef ANONYMOUSBITCOINCOMPUTINGWTGUI_H
 #define ANONYMOUSBITCOINCOMPUTINGWTGUI_H
 
+#include <string>
+#include <time.h>
+
 #include <event2/event.h>
 
 #include <Wt/WEnvironment>
@@ -16,6 +19,9 @@
 #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
 #include <Wt/WComboBox>
+#include <Wt/Utils>
+#include <Wt/WDateTime> //TODOreq: take out time.h above and deps
+//#include <Wt/Chart/WCartesianChart>
 
 //TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
 #include <boost/interprocess/ipc/message_queue.hpp>
@@ -27,16 +33,12 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
-#include <boost/uuid/sha1.hpp>
-#include <boost/archive/iterators/base64_from_binary.hpp>
-#include <boost/archive/iterators/binary_from_base64.hpp>
-#include <boost/archive/iterators/transform_width.hpp>
 
 using namespace Wt;
+using namespace Wt::Utils;
 using namespace boost::interprocess;
 using namespace boost::random;
 using namespace boost::property_tree;
-using namespace boost::archive::iterators;
 using namespace std;
 
 /////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
@@ -119,9 +121,6 @@ m_##NormalOperationText##MutexArray[lockedMutexIndex].unlock();
 
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
-typedef transform_width< binary_from_base64<string::const_iterator>, 8, 6 > Base64ToBinaryBoostTypedef;
-typedef base64_from_binary<transform_width<string::const_iterator, 6, 8 > > BinaryToBase64BoostTypedef;
-
 class AnonymousBitcoinComputingWtGUI : public WApplication
 {
     friend class AddCouchbaseDocumentByKeyRequest;
@@ -160,6 +159,11 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void showAdvertisingBuyAdSpaceD3faultWidget();
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
+    std::string m_HackedInD3faultCampaign0_MinPrice;
+    std::string m_HackedInD3faultCampaign0_SlotLengthHours;
+    std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp;
+    std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp;
+    std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice;
     void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &couchbaseDocument);
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc);
@@ -194,9 +198,6 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WString m_Username; //only valid if logged in
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
-
-    static string sha1string(const std::string &inputString);
-    static std::string toBase64(const std::string &inputString);
 
     static void newAndOpenAllWtMessageQueues();
     static void deleteAllWtMessageQueues();

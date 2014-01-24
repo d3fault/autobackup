@@ -27,11 +27,13 @@
 //TODOreq: "Forgot Your Password?" --> "Tough shit, I hope you learned your lesson"
 //TODOreq: timezones fuck shit up? if so, we can send them the 'current timestamp' to use (but then there'd be a bit of latency delay)... or mb we can find out proper solution in js (toTime() gives us msecs since epoch... in greenwhich right? not local? maybe this isn't a problem)
 
+//TODOoptimization: lots of stuff needs to be moved into it's own object instead of just being a member in this class. it will reduce the memory-per-connection by...  maybe-a-significant... amount. for example the HackedInD3faultCampaign0 shit should be on it's own widget, but ON TOP OF THAT each "step" in the HackedInD3faultCampaign0 thing (buy step 1, buy step 2) can/should be it's own object (member of of HackedInD3faultCampaign0 object). We just have too many unused and unneeded-most-of-the-time member variables in this monster class... but KISS so ima continue for now, despite cringing at how ugly/hacky it's becoming :)
+
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_AllSlotFillersComboBox(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
 {
     m_RandomNumberGenerator.seed((int)rawUniqueId());
-    m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator);
+    m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator); //TODOoptimization: these don't need to be members if i just use them once in constructor
     m_CurrentGetMessageQueueIndex = m_GetMessageQueuesRandomIntDistribution(m_RandomNumberGenerator);
 
     buildGui(); //everything that is NOT dependent on the internal path
@@ -53,35 +55,6 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
     }
     handleInternalPathChanged(cleanUrlInternalPath);
     //if adding more code here, take "return;" out of isHomePath and put handleInternalPathChanged into an "else" (the optimization isn't even worth this comment)
-}
-//outputSha1 must be char output[20] (passed in by reference) or else we'll go out of bounds :)
-std::string AnonymousBitcoinComputingWtGUI::sha1string(const string &inputString)
-{
-    const void *inputStringBuffer = (const void*)inputString.c_str();
-
-    boost::uuids::detail::sha1 sha1er;
-    sha1er.process_bytes(inputStringBuffer, inputString.length());
-
-    unsigned int outputHashUintArray[5];
-    sha1er.get_digest(outputHashUintArray);
-
-    char outputHashCharArray[20];
-    for(int i = 0; i < 5; ++i)
-    {
-        const char *tmp = reinterpret_cast<char*>(outputHashUintArray);
-        outputHashCharArray[i*4] = tmp[i*4+3];
-        outputHashCharArray[i*4+1] = tmp[i*4+2];
-        outputHashCharArray[i*4+2] = tmp[i*4+1];
-        outputHashCharArray[i*4+3] = tmp[i*4];
-    }
-    return std::string(outputHashCharArray);
-}
-string AnonymousBitcoinComputingWtGUI::toBase64(const string &inputString)
-{
-    unsigned int base64PadCharCount = (3-inputString.length()%3)%3;
-    std::string ret(BinaryToBase64BoostTypedef(inputString.begin()), BinaryToBase64BoostTypedef(inputString.end())); //wtf is this doing? why do i pass in the beginning and end into the b64 function being called twice??? It makes sense, yea, if you suck at designing APIs. TODOreq: OH SHIT DOESN'T THAT MEAN THAT IT USES INTERNAL STRUCTURE/STATE AND IS THEREFORE NOT THREAD SAFE FFFFFFFFFFFFFFFFFFFF oh well just mutex is needed so fuck it (woo hoo scalable as fuck distributed database.... except stupid ass fucking code requiring mutexes making it [almost] irrelevant (extreme exaggeration and not really true, but still)
-    ret.append(base64PadCharCount, '=');
-    return ret; //the thing i hate about C++ is wondering whether or not returning a value works, is wastefully 'copying', returns a reference to a now dead copy, so on and so forth. pointers solve this, but then i feel like i'm needlessly deref'ing all the damn time. also qt's implicit sharing mechanism backfires if you ever try to modify the value being implicitly shared (and you DON'T want a copy to be made)
 }
 void AnonymousBitcoinComputingWtGUI::buildGui()
 {
@@ -279,8 +252,8 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         std::istringstream is(couchbaseDocument);
         read_json(is, pt);
 
-        std::string minPrice = pt.get<std::string>("minPrice");
-        std::string slotLengthHours = pt.get<std::string>("slotLengthHours");
+        m_HackedInD3faultCampaign0_MinPrice = pt.get<std::string>("minPrice");
+        m_HackedInD3faultCampaign0_SlotLengthHours = pt.get<std::string>("slotLengthHours");
         boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional("lastSlotFilledAkaPurchased");
         boost::optional<ptree&> currentSlotOnDisplay = pt.get_child_optional("currentSlotOnDisplay");
         boost::optional<ptree&> nextSlotOnDisplay = pt.get_child_optional("nextSlotOnDisplay");
@@ -295,27 +268,38 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             {
                 //partial json doc: no 'next' purchase [yet] -- no big deal, but still must be accounted for (happens after very first purchase, and also when the 2nd to last slot on display expires)
 
-                std::string lastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("purchaseTimestamp");
-                std::string lastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
-                std::string lastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
+                m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("purchaseTimestamp");
+                m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
+                m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
+
+#ifdef LOL_I_HAVE_PLENTY_OF_TIME_TO_KILL_AND_AM_BORED_AND_DONT_WANT_TO_LAUNCH_ASEP //Wt's chart seemed good enough for visualization, but didn't appear at a glance to be very javascript-interaction-friendly. Hoving your mouse over the line and seeing 'price at that time' would be nifty, as would the "dot"/ball aka "now" slowly going down to minprice. A 3rd party javascript lib might be better/easier, but then it's a matter of making it play nice with Wt (i'd just put the entire lib in "doJavascript" i'd imagine xD?) and then remembering I have bigger problems than this
+                //TODOreq: populate model for chart first
+                WCartesianChart *priceChart = new WCartesianChart(ScatterPlot, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+                priceChart->setModel();
+                priceChart->setXSeriesColumn(0);
+                priceChart->axis(XAxis).setScale(DateTimeScale);
+                priceChart->axis(YAxis).setScale(LinearScale);
+                //TODOreq: x range = (last purchase datetime -> last purchase expire datetime)
+                //TODOreq: PointSeries/CircleMarker for 'now', LineSeries/NoMarker for everything else
+#endif
 
                 new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
                 WText *placeholderElement = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
                 placeholderElement->doJavaScript
                         (
-                            "var lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + lastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + slotLengthHours + "*3600)*1000));" +
-                            "var lastSlotFilledAkaPurchasedPurchasePrice = " + lastSlotFilledAkaPurchasedPurchasePrice + ";" + //made a var here so it can be updated later (on buy event) without stopping/restarting timer
-                            "var lastSlotFilledAkaPurchasedPurchaseTimestamp = " + lastSlotFilledAkaPurchasedPurchaseTimestamp + ";" + //ditto as above
+                            "var lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + m_HackedInD3faultCampaign0_SlotLengthHours + "*3600)*1000));" +
+                            "var lastSlotFilledAkaPurchasedPurchasePrice = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice + ";" + //made a var here so it can be updated later (on buy event) without stopping/restarting timer
+                            "var lastSlotFilledAkaPurchasedPurchaseTimestamp = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp + ";" + //ditto as above
                             "var lastSlotFilledAkaPurchasedExpireDateTimeMSecs = lastSlotFilledAkaPurchasedExpireDateTime.getTime();" + //ditto as above two
-                            "var m = ((" + minPrice + "-(lastSlotFilledAkaPurchasedPurchasePrice*2))/((lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)-lastSlotFilledAkaPurchasedPurchaseTimestamp));" +
-                            "var b = (" + minPrice + " - (m * (lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)));" +
+                            "var m = ((" + m_HackedInD3faultCampaign0_MinPrice + "-(lastSlotFilledAkaPurchasedPurchasePrice*2))/((lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)-lastSlotFilledAkaPurchasedPurchaseTimestamp));" +
+                            "var b = (" + m_HackedInD3faultCampaign0_MinPrice + " - (m * (lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)));" +
                             "var tehIntervalz = setInterval(" +
                                 "function()" +
                                 "{" +
                                     "var currentDateTimeMSecs = new Date().getTime();" +
                                     "if(currentDateTimeMSecs >= lastSlotFilledAkaPurchasedExpireDateTimeMSecs)" +
                                     "{" +
-                                        "var minPrice = " + minPrice + ";" +
+                                        "var minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";" +
                                         placeholderElement->jsRef() + ".innerHTML = minPrice.toFixed(8);" + //TODOreq: stop interval (start it again on buy event)
                                         "clearInterval(tehIntervalz);" +
                                     "}" +
@@ -374,7 +358,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         {
             const std::string &slotFillerNickname = child.second.get<std::string>("nickname");
             const std::string &slotFillerIndex = child.second.get<std::string>("slotFillerIndex");
-            m_AllSlotFillersComboBox->insertItem(atoi(slotFillerIndex.c_str()), slotFillerNickname); //TODOreq: Wt probably/should already do[es] this, but the nicknames definitely need to be sanitized (when they're created)
+            m_AllSlotFillersComboBox->insertItem(atoi(slotFillerIndex.c_str()), slotFillerNickname); //TODOreq: Wt probably/should already do[es] this, but the nicknames definitely need to be sanitized (when they're created). TODOreq: make sure atoi is working how i think it should
         }
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -389,15 +373,65 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 {
     //DO ACTUAL BUY (associate slot with slot filler, aka fill the slot)
 
-   //TODOreq: this doesn't belong here, but the combo box probably depends on the user to send in the slotfiller index, so we need to sanitize that input
+   //TODOreq: this doesn't belong here, but the combo box probably depends on the user to send in the slotfiller index, so we need to sanitize that input (also applies to nickname if it is used (i don't currently plan to))
 
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
     new WText("You're attempting to buy slot with filler: " + m_AllSlotFillersComboBox->currentText(), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    //TODOreq: calculate current price etc
 
-    //TODOreq: failed to lock your account for the purchase (???), failed to buy/fill the slot (insufficient funds, or someone beat us to it)
+    //TODOreq: somehow we need the 'currentprice' (what they see) from the javascript/timer shit. might need a JSignal in that case...
+
+    //TODOreq: calculate INTERNAL current price, make sure it's lower than the currentPrice they submitted/saw (JSignal prolly), then go ahead with buy. The accuracy of this is going to be stupid hard to attain. Since the javascript uses the end-user's system time... and 'sending the time' to them will have latency issues, there is no proper solution (sending the time has the benefit of not depending on the user's system time to be correct (we wouldn't want to give them the false impression that they're getting a low as fuck price (and this is the reason they should send in the price THEY SEE)))
+    //TODOreq: change to 'sending them the time' [for use in js], because it not only solves the timezones/incorrect-system-time problem, but it also has the added benefit of GUARANTEEING that the price they see will be above the internal price (because of latency)... so much so that we don't need them to send it in anymore. the slot index would be enough. Also worth noting that the js should use an accurate timer to calculate the 'current time' (from the time we sent them and they saved). I doubt setInterval is a high precision timer. I was originally thinking they could delta the time we sent them against their system time, but then there'd be the problem of if they changed their system time while running then it'd fuck shit up (not a big deal though since it's a rare case. still if js has a high precision timer object ("time elapsed since x"), use that).
+    //^that guarantee depends on all wt nodes being time sync'd like fuck, but that goes without saying
+
+    //TODOreq: handle cases where no puchases yet (use min), no next, no balls, current expired (use min),etc
+
+
+    //calculate internal price
+    //y2
+    double minPriceDouble = strtod(m_HackedInD3faultCampaign0_MinPrice.c_str(), 0);
+    //y1
+    double lastSlotFilledAkaPurchasedPurchasePrice_Doubled = (strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice.c_str(), 0)*2.0);
+    //x2
+    double lastSlotFilledAkaPurchasedExpireDateTime = (strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp.c_str(), 0)+((double)(strtod(m_HackedInD3faultCampaign0_SlotLengthHours.c_str(),0)*(3600.0))));
+    //x1
+    double lastSlotFilledAkaPurchasedPurchaseDateTime = strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp.c_str(), 0);
+    //m = (y2-y1)/(x2-x1);
+    double m = (minPriceDouble-lastSlotFilledAkaPurchasedPurchasePrice_Doubled)/(lastSlotFilledAkaPurchasedExpireDateTime-lastSlotFilledAkaPurchasedPurchaseDateTime);
+    //b = y-(m*x)
+    double b = (minPriceDouble - (m * lastSlotFilledAkaPurchasedExpireDateTime));
+
+    WDateTime currentDateTime = WDateTime::currentDateTime();
+    double currentPrice = (m*((double)currentDateTime.toTime_t()))+b;
+
+    //TODOreq: check current not expired (use min)
+
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
+    //currentPriceStream
+    //why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++
+    currentPriceStream << setprecision(6) << currentPrice; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
+    std::string currentPriceString = currentPriceStream.str();
+    new WText("Internal Price (should match above): " + currentPriceString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+    std::ostringstream blah;
+    blah << m_AllSlotFillersComboBox->currentIndex();
+    std::string slotIndexString = blah.str();
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("Index: " + slotIndexString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+
+    //TODOreq: sanitize slot index (user could have forged), verify it in fact exists (was thinking i should try to pull the doc, BUT we already have the "allSlotFillers" doc and can just verify that it's in that instead (so we would be depending on earlier sanity checks when setting up the slotFiller instead)
+
+
+    //TODOreq: make a query for the user's "account", to both cas-lock it and to see that the balance is high enough. hmm i don't need the cas value presented to me in Wt land, but i do need it to be held on to for continuing with the cas swap shit after i make sure balance is high enough (i suppose i can just pass the currentPrice to the backend and have him verify balance > currentPrice (but up till now, my backend has been app agnostic and therefore portable. i suppose i need an app-specific backend? perhaps isA agnostic db type? so much flexibility it hurts. KISS). really though, cas-swap(lock) is NOT abc-specific, so implementing that in my backend is good. maybe a generic "getCouchbaseDocumentByKeyAndHangOntoItBecauseIMightCasSwapIt" (TODOreq: account for when i DON'T cas-swap it (in this example, if the balance is too low, or if it's already 'locked')). Hmm the CAS value is just a uint64_t, so maybe it won't be so troublesome to bring it to wt side and then send it back to couchbase [in a new 'store' request])
+
+
+
+    //TODOreq: failed to lock your account for the purchase (???), failed to buy/fill the slot (insufficient funds, or someone beat us to it (unlock in both cases))
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
@@ -592,13 +626,18 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     std::string passwordPlainText = m_RegisterPassword->text().toUTF8();
 
     //make salt
-    std::string salt = sha1string(username + uniqueId() + "saltplx");
+    time_t timeNow = time(0);
+    struct tm timeStruct;
+    char timeBuf[80];
+    timeStruct = *localtime(&timeNow);
+    strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d.%X", &timeStruct);
+    std::string salt = sha1(username + uniqueId() + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + timeBuf);
     //base64 salt for storage in json/couchbase
-    std::string base64Salt = toBase64(salt);
+    std::string base64Salt = base64Encode(salt);
     //hash password using base64'd salt
-    std::string passwordSaltHashed = sha1string(passwordPlainText + base64Salt);
+    std::string passwordSaltHashed = sha1(passwordPlainText + base64Salt);
     //base64 hash for storage in json/couchbase
-    std::string base64PasswordSaltHashed = toBase64(passwordSaltHashed);
+    std::string base64PasswordSaltHashed = base64Encode(passwordSaltHashed);
     //json'ify
     ptree jsonDoc;
     jsonDoc.put("passwordHash", base64PasswordSaltHashed);
@@ -631,10 +670,10 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
     std::string passwordSaltInBase64FromDb = pt.get<std::string>("passwordSalt");
 
     std::string passwordFromUserInput = m_LoginPasswordLineEdit->text().toUTF8();
-    std::string passwordHashFromUserInput = sha1string(passwordFromUserInput + passwordSaltInBase64FromDb);
+    std::string passwordHashFromUserInput = sha1(passwordFromUserInput + passwordSaltInBase64FromDb);
 
-    //hmm i COULD implement fromBase64, but why not just toBase64 the user input instead? saves me a tiny bit of effort [for now :-P]
-    std::string passwordHashBase64FromUserInput = toBase64(passwordHashFromUserInput);
+    //hmm i COULD use base64decode but it doesn't matter which of the two converts to the other's format
+    std::string passwordHashBase64FromUserInput = base64Encode(passwordHashFromUserInput);
 
     if(passwordHashBase64FromUserInput == passwordHasBase64hFromDb)
     {
