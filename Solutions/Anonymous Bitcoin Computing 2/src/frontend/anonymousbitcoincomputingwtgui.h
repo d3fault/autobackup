@@ -161,6 +161,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
     std::string m_HackedInD3faultCampaign0_MinPrice;
     std::string m_HackedInD3faultCampaign0_SlotLengthHours;
+    std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice;
@@ -169,11 +170,18 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc);
     void buySlotStep2d3faultCampaign0ButtonClicked();
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
+    std::string m_SlotFillerToUseInBuy;
+    void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas);
+    void nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd();
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
+    void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
     void addCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
+    void setCouchbaseDocumentByKeyWithCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas);
     void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
+    void getCouchbaseDocumentByKeySavingCasFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas);
     void addCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument);
+    void setCouchbaseDocumentByKeyWithCasFinished(const std::string &keyToCouchbaseDocument);
 
     bool isHomePath(const std::string &pathToCheck);
     void handleInternalPathChanged(const std::string &newInternalPath);
@@ -188,11 +196,33 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     int m_CurrentAddMessageQueueIndex;
     int m_CurrentGetMessageQueueIndex;
 
-    enum WhatTheAddWasForEnum { INITIALINVALIDNULLADD, REGISTERATTEMPTADD };
-    enum WhatTheGetWasForEnum { INITIALINVALIDNULLGET, LOGINATTEMPTGET, HACKEDIND3FAULTCAMPAIGN0GET, HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET };
+    enum WhatTheAddWasForEnum
+    {
+        INITIALINVALIDNULLADD,
+        REGISTERATTEMPTADD
+    };
+    enum WhatTheSetWithCasWasForEnum
+    {
+        INITIALINVALIDNULLSETWITHCAS,
+        HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCAS
+    };
+    enum WhatTheGetWasForEnum
+    {
+        INITIALINVALIDNULLGET,
+        LOGINATTEMPTGET,
+        HACKEDIND3FAULTCAMPAIGN0GET,
+        HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET
+    };
+    enum WhatTheGetSavingCasWasForEnum
+    {
+        INITIALINVALIDNULLGETSAVINGCAS,
+        HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
+    };
 
     WhatTheAddWasForEnum m_WhatTheAddWasFor;
+    WhatTheSetWithCasWasForEnum m_WhatTheSetWithCasWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
+    WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
 
     bool m_LoggedIn;
     WString m_Username; //only valid if logged in

@@ -15,7 +15,7 @@ DEFINES +=  NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES=3 \
             WT_TO_COUCHBASE_GET_MAX_MESSAGES_IN_QUEUE=3 \
             WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE=2400 \
             COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
-            COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT=1 \ #just to give durability_poll something to do on my 1-cluster test environment
+            COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT=1 \ #just to give durability_poll something to do on my 1-node cluster test environment
             WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" #kill me
 
 # DEPLOY VARIABLES

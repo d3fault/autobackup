@@ -278,8 +278,22 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     (void)operation; //TODOoptional: i was thinking of using a flag in my "from wt reqeust object (cookie here)" and to NOT do durability when it's a simple "STORE" (because STOREs _TEND_ to be not as important as "ADD" (though that certainly isn't ALWAYS true~)). the purpose of this comment is to point out that we can see if it's a STORE/ADD right here in the 'operation' variable :-P
     if(error != LCB_SUCCESS)
     {
-        cerr << "Failed to store key: " << lcb_strerror(m_Couchbase, error) << endl;
-        //TODOreq: handle failed store (including decrementing 'pendingAddCount' if appropriate). we should err ehh uhm...
+        if(error != LCB_KEY_EEXISTS)
+        {
+            cerr << "Failed to store key: " << lcb_strerror(m_Couchbase, error) << endl;
+            //TODOreq: handle failed store (including decrementing 'pendingAddCount' if appropriate). we should err ehh uhm...
+            return;
+        }
+
+        //if LCB_ADD'ing, the key already exists. If LCB_SET, then your cas (which is implied otherwise we can't get this error) didn't match when setting (someone modified since you did the get)
+
+        //TODOreq: error handling, except this is a VERY common error (for both add and set) so high as fuck priority. still KISS and doing all "success" cases first...
+        //example LCB_ADD fails: 1) buy ad slot [with filler] -- the core operation of abc. 2) username already exists
+        //example LCB_SET fails: lock-account-before-buying-ad-slot[with-filler]-just-after-verifying-users-balance-is-high-enough
+
+        cerr << "lcb_key_exists handling not implemented yet: " << lcb_strerror(m_Couchbase, error) << endl;
+
+        //we'll probably want to 'return;' here, doesn't make sense to do the durability stuff...
         return;
     }
     lcb_durability_opts_t lcbDurabilityOptions;
@@ -293,7 +307,15 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     memset(&lcbDurabilityCommand, 0, sizeof(lcb_durability_cmd_t));
     lcbDurabilityCommand.v.v0.key = resp->v.v0.key;
     lcbDurabilityCommand.v.v0.nkey = resp->v.v0.nkey;
-    //in my testing, setting lcb->cas to resp->cas didn't work as expected... BUT i don't think it matters at all for "LCB_ADD" operations...
+
+    //in my testing with LCB_ADD, setting lcb->cas to resp->cas didn't work (had: "as expected", but wtf DID i expect?? i guess just a tiny bit of extra verification)... BUT i don't think it matters at all for "LCB_ADD" operations. TODOreq: verify that the cas shit IS working for LCB_SET.. by for example manually locking an account in the couchbase admin area, then running the app and... err wait no... that's the regular cas not durability cas. i guess just run the normal operation twice? does lcb durability not play nice with cas? that's the feeling i'm getting (it sees the key already there and then thinks "replication" is done, even though the cas is old? i haven't a clue and that would suck if true... :-/... I guess the TODOreq is saying that I need to devise some kind of test for this...
+
+    if(static_cast<const AddCouchbaseDocumentByKeyRequest*>(cookie)->HasCAS) //TODOoptimization i am dumb i think the reason my static_casting didn't work earlier was because i didn't use const keyword. change the ugly casts to these kinds in other occurances
+    {
+        //LCB_SET implied
+        lcbDurabilityCommand.v.v0.cas = resp->v.v0.cas; //TODOreq this is the cas of the new doc? relevant? i think yes...
+    }
+
     lcb_durability_cmd_t *lcbDurabilityCommandList[1];
     lcbDurabilityCommandList[0] = &lcbDurabilityCommand;
     error = lcb_durability_poll(m_Couchbase, cookie, &lcbDurabilityOptions, 1, lcbDurabilityCommandList);
@@ -321,8 +343,14 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
     }
 
     //TODOreq: who takes ownership of resp and is responsible for deleting it? me or couchbase? when does that occur (since I'm now looking into 'hold onto it because Wt might CAS-swap it')? This memory consideration also applies to all the rest of my couchbase callbacks I'd imagine (but valgrind hasn't complained about them... so idfk. I think since I'm not deleting them, it's safe to assume(xD) that they're only valid during the duration of this callback)
-    lcb_cas_t
-    GetCouchbaseDocumentByKeyRequest::respond(request, resp->v.v0.bytes, resp->v.v0.nbytes);
+    if(request->SaveCAS) //TODOoptimization: __unlikely or whatever i can find it boost
+    {
+        GetCouchbaseDocumentByKeyRequest::respondWithCAS(request, resp->v.v0.bytes, resp->v.v0.nbytes, resp->v.v0.cas);
+    }
+    else
+    {
+        GetCouchbaseDocumentByKeyRequest::respond(request, resp->v.v0.bytes, resp->v.v0.nbytes);
+    }
     delete request;
 
     //TODOreq: error cases need to account for these pending add/get counts
@@ -396,7 +424,7 @@ void AnonymousBitcoinComputingCouchbaseDB::notifyMainThreadWeAreFinishedWithAllP
     }
     m_IsFinishedWithAllPendingRequestsWaitCondition.notify_one();
 }
-void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd()
+void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd() //TODOoptional: change all these "Add" occurances to "Store", now that we LCB_SET too
 {
     if(m_NoMoreAllowedMuahahaha)
     {
@@ -405,12 +433,12 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd()
     ++m_PendingAddCount; //TODOreq: overflow? meh not worried about it for now
 
     //TODOreq: delete at appropriate places (error, success)
-    AddCouchbaseDocumentByKeyRequest *addCouchbaseDocumentByKeyRequestFromWt = new AddCouchbaseDocumentByKeyRequest();
+    AddCouchbaseDocumentByKeyRequest *storeCouchbaseDocumentByKeyRequestFromWt = new AddCouchbaseDocumentByKeyRequest();
 
     {
         std::istringstream addCouchbaseDocumentByKeyRequestFromWtSerialized((const char*)m_AddMessageQueuesCurrentMessageBuffer);
         boost::archive::text_iarchive deSerializer(addCouchbaseDocumentByKeyRequestFromWtSerialized);
-        deSerializer >> *addCouchbaseDocumentByKeyRequestFromWt;
+        deSerializer >> *storeCouchbaseDocumentByKeyRequestFromWt;
     }
 
     lcb_store_cmd_t cmd;
@@ -418,15 +446,26 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd()
     cmds[0] = &cmd;
     memset(&cmd, 0, sizeof(cmd));
 
-    const char *keyInput = addCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.c_str();
-    const char *documentInput = addCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.c_str();
+    const char *keyInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.c_str();
+    const char *documentInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.c_str();
 
     cmd.v.v0.key = keyInput;
-    cmd.v.v0.nkey = addCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.length();
+    cmd.v.v0.nkey = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.length();
     cmd.v.v0.bytes = documentInput;
-    cmd.v.v0.nbytes = addCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.length();
-    cmd.v.v0.operation = LCB_ADD;
-    lcb_error_t err = lcb_store(m_Couchbase, addCouchbaseDocumentByKeyRequestFromWt, 1, cmds);
+    cmd.v.v0.nbytes = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.length();
+    if(storeCouchbaseDocumentByKeyRequestFromWt->LcbModeIsAdd)
+    {
+        cmd.v.v0.operation = LCB_ADD;
+    }
+    else
+    {
+        cmd.v.v0.operation = LCB_SET;
+        if(storeCouchbaseDocumentByKeyRequestFromWt->HasCAS)
+        {
+            cmd.v.v0.cas = storeCouchbaseDocumentByKeyRequestFromWt->CAS;
+        }
+    }
+    lcb_error_t err = lcb_store(m_Couchbase, storeCouchbaseDocumentByKeyRequestFromWt, 1, cmds);
     if(err != LCB_SUCCESS)
     {
         cerr << "Failed to set up store request: " << lcb_strerror(m_Couchbase, err) << endl;

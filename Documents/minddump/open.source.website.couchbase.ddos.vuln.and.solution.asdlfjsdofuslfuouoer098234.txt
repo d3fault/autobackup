@@ -1,0 +1,7 @@
+DDOS for a website whose source code is public targetting the couchbase db. You can pre-generate things (registrations,logins,comments,posts,whatever) and since you have access to the source code you can see what the "shard key" would look like (probably take some digging into couchbase as well, no biggy) and be able to determine which server it would go on (to be precise you'd need to know the server count, but i'd imagine the sharding algorithm would allow you to make excellent guesses). You generate data and know before even submitting it that it's going to be stored on "just one" couchbase node. Get a whole bunch of people to do it targetting the same couchbase node and you can DDOS it. Having a load balancer that spreads out the http front ends does not solve this.
+
+Solution: random shared secret amongst the deployment binaries, perhaps generated automatically and at compile time (or libcouchbase or somewhere), appended/prepended to the keys to make sharding not be able to be gamed.
+
+
+
+I guess it's worth mentioning that this is not specific to couchbase, just that that's the ddb i'm working with right now (and I wruv it)

@@ -6,19 +6,19 @@ adSpaceSlotsd3fault0
   "minPrice": "0.001",
   "slotLengthHours": "24",
   "lastSlotFilledAkaPurchased": {
-    "slotKey": "adSpaceSlotsd3fault0Slot4",
+    "slotIndex": "4",
     "purchaseTimestamp": "1972",
     "startTimestamp": "1975",
     "purchasePrice": "0.005872"
   },
   "nextSlotOnDisplay": {
-    "slotKey": "adSpaceSlotsd3fault0Slot2",
+    "slotIndex": "2",
     "purchaseTimestamp": "1971",
     "startTimestamp": "1972",
     "purchasePrice": "0.001"
   },
   "currentSlotOnDisplay": {
-    "slotKey": "adSpaceSlotsd3fault0Slot1",
+    "slotIndex": "1",
     "purchaseTimestamp": "1970",
     "startTimestamp": "1971",
     "purchasePrice": "0.0017"
@@ -46,19 +46,17 @@ adSpaceSlotsd3fault0
 {
   "minPrice": "0.001",
   "slotLengthHours": "24",
-  "lastSlotFilledAkaPurchased":
-  {
-      "slotKey": "adSpaceSlotsd3fault0Slot0",
-      "purchaseTimestamp": "1969",
-      "startTimestamp" : "1969",
-      "purchasePrice": "0.001"
+  "lastSlotFilledAkaPurchased": {
+    "slotIndex": "0",
+    "purchaseTimestamp": "1390499995",
+    "startTimestamp": "1390499995",
+    "purchasePrice": "0.001"
   },
-  "currentSlotOnDisplay" :
-  {
-      "slotKey": "adSpaceSlotsd3fault0Slot0",
-      "purchaseTimestamp": "1969",
-      "startTimestamp" : "1969",
-      "purchasePrice": "0.001"
+  "currentSlotOnDisplay": {
+    "slotIndex": "0",
+    "purchaseTimestamp": "1390499995",
+    "startTimestamp": "1390499995",
+    "purchasePrice": "0.001"
   }
 }
 

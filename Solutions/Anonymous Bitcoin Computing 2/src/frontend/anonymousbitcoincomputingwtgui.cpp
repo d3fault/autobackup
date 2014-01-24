@@ -29,6 +29,8 @@
 
 //TODOoptimization: lots of stuff needs to be moved into it's own object instead of just being a member in this class. it will reduce the memory-per-connection by...  maybe-a-significant... amount. for example the HackedInD3faultCampaign0 shit should be on it's own widget, but ON TOP OF THAT each "step" in the HackedInD3faultCampaign0 thing (buy step 1, buy step 2) can/should be it's own object (member of of HackedInD3faultCampaign0 object). We just have too many unused and unneeded-most-of-the-time member variables in this monster class... but KISS so ima continue for now, despite cringing at how ugly/hacky it's becoming :)
 
+//TODOreq: can't remember if i wrote this anywhere or only thought of it, but i need to add underscores between certain things in my couchbase docs. for example a user named JimboKnives0 would have a conflict with a user named JimboKnives. adSpaceSlotFillersJimboKnives0 would now point to a specific ad slot filler, _AND_ the "profile view" (last 10 slot fillers set up) for JimboKnives0 -- hence, conflict. Could maybe solve this another way by perhaps always having the username be the very last part of the key???
+
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_AllSlotFillersComboBox(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
 {
@@ -268,6 +270,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             {
                 //partial json doc: no 'next' purchase [yet] -- no big deal, but still must be accounted for (happens after very first purchase, and also when the 2nd to last slot on display expires)
 
+                m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>("slotIndex");
                 m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("purchaseTimestamp");
                 m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
                 m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
@@ -371,6 +374,8 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 }
 void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 {
+    //TODOreqopt: idk if required or optional or optimization, but it makes sense that we consolidate the defer/resume renderings here. The result of that button clicked (the signal that brought us here) makes us do TWO couchbase round trips: the first one to verify balance and lock account, the second to do the actual slot-filling/buying. It makes sense to only defer rendering once HERE, and to resume rendering only once LATER (error, or slot filled, etc). It might not matter at all.
+
     //DO ACTUAL BUY (associate slot with slot filler, aka fill the slot)
 
    //TODOreq: this doesn't belong here, but the combo box probably depends on the user to send in the slotfiller index, so we need to sanitize that input (also applies to nickname if it is used (i don't currently plan to))
@@ -388,58 +393,121 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     //TODOreq: handle cases where no puchases yet (use min), no next, no balls, current expired (use min),etc
 
-
-    //calculate internal price
-    //y2
-    double minPriceDouble = strtod(m_HackedInD3faultCampaign0_MinPrice.c_str(), 0);
-    //y1
-    double lastSlotFilledAkaPurchasedPurchasePrice_Doubled = (strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice.c_str(), 0)*2.0);
-    //x2
-    double lastSlotFilledAkaPurchasedExpireDateTime = (strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp.c_str(), 0)+((double)(strtod(m_HackedInD3faultCampaign0_SlotLengthHours.c_str(),0)*(3600.0))));
-    //x1
-    double lastSlotFilledAkaPurchasedPurchaseDateTime = strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp.c_str(), 0);
-    //m = (y2-y1)/(x2-x1);
-    double m = (minPriceDouble-lastSlotFilledAkaPurchasedPurchasePrice_Doubled)/(lastSlotFilledAkaPurchasedExpireDateTime-lastSlotFilledAkaPurchasedPurchaseDateTime);
-    //b = y-(m*x)
-    double b = (minPriceDouble - (m * lastSlotFilledAkaPurchasedExpireDateTime));
-
-    WDateTime currentDateTime = WDateTime::currentDateTime();
-    double currentPrice = (m*((double)currentDateTime.toTime_t()))+b;
-
-    //TODOreq: check current not expired (use min)
-
-    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
-    //currentPriceStream
-    //why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++
-    currentPriceStream << setprecision(6) << currentPrice; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
-    std::string currentPriceString = currentPriceStream.str();
-    new WText("Internal Price (should match above): " + currentPriceString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-
-    std::ostringstream blah;
-    blah << m_AllSlotFillersComboBox->currentIndex();
-    std::string slotIndexString = blah.str();
-    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WText("Index: " + slotIndexString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-
+    //had calculate current price here, but moved it to a few sub-milliseconds later
 
     //TODOreq: sanitize slot index (user could have forged), verify it in fact exists (was thinking i should try to pull the doc, BUT we already have the "allSlotFillers" doc and can just verify that it's in that instead (so we would be depending on earlier sanity checks when setting up the slotFiller instead)
 
+    std::ostringstream slotIndexStream;
+    slotIndexStream << m_AllSlotFillersComboBox->currentIndex();
+    m_SlotFillerToUseInBuy = "adSpaceSlotFillers" + m_Username.toUTF8() + slotIndexStream.str();
 
     //TODOreq: make a query for the user's "account", to both cas-lock it and to see that the balance is high enough. hmm i don't need the cas value presented to me in Wt land, but i do need it to be held on to for continuing with the cas swap shit after i make sure balance is high enough (i suppose i can just pass the currentPrice to the backend and have him verify balance > currentPrice (but up till now, my backend has been app agnostic and therefore portable. i suppose i need an app-specific backend? perhaps isA agnostic db type? so much flexibility it hurts. KISS). really though, cas-swap(lock) is NOT abc-specific, so implementing that in my backend is good. maybe a generic "getCouchbaseDocumentByKeyAndHangOntoItBecauseIMightCasSwapIt" (TODOreq: account for when i DON'T cas-swap it (in this example, if the balance is too low, or if it's already 'locked')). Hmm the CAS value is just a uint64_t, so maybe it won't be so troublesome to bring it to wt side and then send it back to couchbase [in a new 'store' request])
+    getCouchbaseDocumentByKeySavingCasBegin("user" + m_Username.toUTF8());
+    m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET;
 
-
+    //TODOreq: the above get shouldn't fail since they need to already be logged in to get this far, but what the fuck do i know? it probably CAN (db overload etc), so i need to account for that
+    //^everything can DEFINITELY fail, it is only success that can ever at most PROBABLY happen
 
     //TODOreq: failed to lock your account for the purchase (???), failed to buy/fill the slot (insufficient funds, or someone beat us to it (unlock in both cases))
+}
+void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas)
+{
+    ptree pt;
+    std::istringstream is(userAccountJsonDoc);
+    read_json(is, pt);
+
+    std::string ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
+    if(ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase == "n")
+    {
+        //not already locked
+        std::string userBalanceString = pt.get<std::string>("balance");
+        double userBalance = strtod(userBalanceString.c_str(), 0);
+
+        //TO DOnereq: we should probably calculate balance HERE/now instead of in buySlotStep2d3faultCampaign0ButtonClicked (where it isn't even needed). Those extra [SUB ;-P]-milliseconds will get me millions and millions of satoshis over time muahhahaha superman 3
+
+        //calculate internal price
+        //y2
+        double minPriceDouble = strtod(m_HackedInD3faultCampaign0_MinPrice.c_str(), 0);
+        //y1
+        double lastSlotFilledAkaPurchasedPurchasePrice_Doubled = (strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice.c_str(), 0)*2.0);
+        //x2
+        double lastSlotFilledAkaPurchasedExpireDateTime = (strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp.c_str(), 0)+((double)(strtod(m_HackedInD3faultCampaign0_SlotLengthHours.c_str(),0)*(3600.0))));
+        //x1
+        double lastSlotFilledAkaPurchasedPurchaseDateTime = strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp.c_str(), 0);
+        //m = (y2-y1)/(x2-x1);
+        double m = (minPriceDouble-lastSlotFilledAkaPurchasedPurchasePrice_Doubled)/(lastSlotFilledAkaPurchasedExpireDateTime-lastSlotFilledAkaPurchasedPurchaseDateTime);
+        //b = y-(m*x)
+        double b = (minPriceDouble - (m * lastSlotFilledAkaPurchasedExpireDateTime));
+
+        WDateTime currentDateTime = WDateTime::currentDateTime();
+        double currentPrice = (m*((double)currentDateTime.toTime_t()))+b;
+
+        //TODOreq: check current not expired or no purchases etc (use min)
+
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
+        //TODOreq: why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++. BUT SERIOUSLY THOUGH I need to make sure that this doesn't fuck up shit and money get leaked/lost/whatever. Maybe rounding errors in this method of converting double -> string, and since I'm using it as the actual value in the json doc, I need it to be accurate. The very fact that I have to use 6 instead of 8 just makes me wonder...
+        //TODOreq: ^ok wtf now i got 7 decimal places, so maybe it's dependent on the value........... maybe i should just store/utilize as many decimal places as possible (maybe trimming to 8 _ONLY_ when the user sees the value).... and then force the bitcoin client to do the rounding shizzle :-P
+        currentPriceStream << setprecision(6) << currentPrice; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
+        std::string currentPriceString = currentPriceStream.str();
+        new WText("Internal Price Calculated At (should match above): " + currentPriceString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+
+        if(userBalance >= currentPrice) //idk why but this makes me cringe. suspicion of rounding errors and/or other hackability...
+        {
+            //proceed with trying to lock account
+
+            //make 'account locked' json doc [by just appending to the one we already have]
+            int oldSlotIndex = atoi(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex.c_str()); //TODOoptimization: and what happens after 4294967296 days (which is 11767033 years (ok nvm (but still, if I make it public then people could change the slot length to one hour etc)))!?!?
+            ++oldSlotIndex; //now new slot index :)
+            std::ostringstream slotIndexIntToStringBuffer;
+            slotIndexIntToStringBuffer << oldSlotIndex;
+            pt.put("slotToAttemptToFillAkaPurchase", "adSpaceSlotsd3fault0Slot" + slotIndexIntToStringBuffer.str());
+            //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
+            //TODOreq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
+            pt.put("priceToAttemptToBuyItFor", currentPriceString);
+            pt.put("slotToAttemptToFillAkaPurchaseItWith", m_SlotFillerToUseInBuy);
+            std::ostringstream jsonDocBuffer;
+            write_json(jsonDocBuffer, pt, false);
+            std::string accountLockedForBuyJsonDoc = jsonDocBuffer.str();
+
+            setCouchbaseDocumentByKeyWithCasBegin("user" + m_Username.toUTF8(), accountLockedForBuyJsonDoc, cas);
+            m_WhatTheSetWithCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCAS;
+        }
+        else
+        {
+            //TODOreq: give insufficient funds message, instruct them to go to page to add funds (TODOreq: doesn't belong here but i probalby shouldn't let them do ANY purchase activity when they have 'pending'/unconfirmed (bitcoin) funds. It just complicates the logic too much and I'm probably going to use account locking for that too)
+        }
+    }
+    else
+    {
+        //TODOreq: account already locked so error out of this buy. they're logged in elsewhere and trying to buy two things at once? etc. It jumps at me that it might be a place to do 'recovery' code, but I think for now I'm only going to do that during 'login' (TODOreq: maybe doing recovery at login isn't such a good idea (at least, the PROCEED WITH BUY kind isn't a good idea (rollback is DEFINITELY good idea (once we verify that they didn't get it(OMG RACE CONDITION HACKABLE TODOreq: they are on two machines they log in on a different one just after clicking "buy" and get lucky so that their account IS locked, but the separate-login-machine checks to see if they got the slot. When it sees they didn't, it rolls back their account. Meanwhile the original machine they clicked "buy" on is still trying to buy the slot (by LCB_ADD'ing the slot). The hack depends on the machine they press "buy" on being slower (more load, etc) than the alternate one they log in to (AND NOTE, BY MACHINE I MEAN WT SERVER, not end user machine). So wtf rolling back is dangerous? Wat do. It would also depend on the buying machine crashing immediately after the slot is purchased, because otherwise it would be all like 'hey wtf who unlocked that account motherfucker, I was still working on it' and at least error out TODOreq))))
+        //^very real race condition vuln aside, what i was getting at originally is that maybe it's not a good idea to do "recover->proceed-with-buy" because who the fuck knows how much later they'd log in... and like maybe currentPrice would be waaaaay less than when they originally locked/tried-and-failed. It makes sense to at least ask them: "do you want to try this buy again" and then to also recalculate the price (which means re-locking the account (which probably has security considerations to boot)) on login
+    }
+}
+void AnonymousBitcoinComputingWtGUI::nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd()
+{
+    //TODOreq: unlock user account after successful add
+    //TODOreq: handle beat to punch error case
+
+    //do the LCB_ADD for the slot!
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("The account is now locked, ready to proceed with buy", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
     deferRendering();
-    GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument);
+    GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::DiscardCASMode);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get, GET)
 }
-
+void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasBegin(const string &keyToCouchbaseDocument)
+{
+    deferRendering();
+    GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
+    SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get, GET)
+}
 //original code with comments
 //S3RIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE
 #if 0
@@ -494,7 +562,13 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::s
 void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument)
 {
     deferRendering();
-    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument);
+    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, AddCouchbaseDocumentByKeyRequest::AddMode);
+    SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Add, ADD)
+}
+void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas)
+{
+    deferRendering();
+    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Add, ADD)
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument)
@@ -521,6 +595,26 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     case INITIALINVALIDNULLGET:
     default:
         cerr << "got a couchbase 'get' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl;
+        break;
+    }
+    //if(environment().ajax())
+    //{
+    //    triggerUpdate(); //this and enableUpdates are probably not needed if i'm always defer/resuming
+    //}
+}
+void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas)
+{
+    resumeRendering();
+    switch(m_WhatTheGetSavingCasWasFor)
+    {
+    case HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET:
+        {
+            verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(couchbaseDocument, cas);
+        }
+        break;
+    case INITIALINVALIDNULLGETSAVINGCAS:
+    default:
+        cerr << "got a couchbase 'get' (saving cas) response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl << "unexpected cas: " << cas << endl;
         break;
     }
     //if(environment().ajax())
@@ -568,6 +662,26 @@ void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyFinished(const str
     case INITIALINVALIDNULLADD:
     default:
         cerr << "got a couchbase 'add' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
+        break;
+    }
+    //if(environment().ajax())
+    //{
+    //    triggerUpdate();
+    //}
+}
+void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithCasFinished(const string &keyToCouchbaseDocument)
+{
+    resumeRendering();
+    switch(m_WhatTheSetWithCasWasFor)
+    {
+    case HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCAS:
+    {
+        nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd();
+    }
+        break;
+    case INITIALINVALIDNULLSETWITHCAS:
+    default:
+        cerr << "got a couchbase 'set' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
         break;
     }
     //if(environment().ajax())
