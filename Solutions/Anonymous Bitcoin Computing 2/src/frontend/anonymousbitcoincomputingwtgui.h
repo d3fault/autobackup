@@ -2,7 +2,6 @@
 #define ANONYMOUSBITCOINCOMPUTINGWTGUI_H
 
 #include <string>
-#include <time.h>
 
 #include <event2/event.h>
 
@@ -174,17 +173,19 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas);
     std::string m_CurrentPriceToUseForBuyingString;
     std::string m_AdSlotAboutToBeFilledIfLockIsSuccessful;
-    void nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(/*u_int64_t casFromLockSoWeCanSafelyUnlockLater*/);
+    void nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater);
+    u_int64_t m_CasFromUserAccountLockSoWeCanSafelyUnlockLater;
     void successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount();
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
     void addCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
-    void setCouchbaseDocumentByKeyWithCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas);
+    void setCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, AddCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
     void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas);
     void addCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument);
-    void setCouchbaseDocumentByKeyWithCasFinished(const std::string &keyToCouchbaseDocument);
+    void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument);
+    void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas);
 
     bool isHomePath(const std::string &pathToCheck);
     void handleInternalPathChanged(const std::string &newInternalPath);
@@ -205,10 +206,17 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         REGISTERATTEMPTADD,
         BUYAKAFILLSLOTWITHSLOTFILLERADD
     };
-    enum WhatTheSetWithCasWasForEnum
+    enum WhatTheSetWithInputCasWasForEnum
     {
         INITIALINVALIDNULLSETWITHCAS,
-        HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCAS
+        //now there aren't any ops i'm using that set with an input cas without using it again later (saving the cas), but there probably will be in the future...
+        //SEE!
+        HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS
+    };
+    enum WhatTheSetWithInputCasSavingOutputCasWasForEnum
+    {
+        INITIALINVALIDNULLSETWITHCASSAVINGCAS,
+        HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS
     };
     enum WhatTheGetWasForEnum
     {
@@ -224,7 +232,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     };
 
     WhatTheAddWasForEnum m_WhatTheAddWasFor;
-    WhatTheSetWithCasWasForEnum m_WhatTheSetWithCasWasFor;
+    WhatTheSetWithInputCasWasForEnum m_WhatTheSetWithInputCasWasFor;
+    WhatTheSetWithInputCasSavingOutputCasWasForEnum m_WhatTheSetWithInputCasSavingOutputCasWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
     WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
 

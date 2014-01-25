@@ -33,6 +33,10 @@
 
 //TODOoptimization: walking the internal path via "next sub path" (including sanitization at each step) is a good way to organize the website and additionally fill in json key pieces. example: /ads/buy-ad-space/d3fault/0 could be organized in Wt as: class Ads { class BuyAdSpace { m_SellerUsername = d3fault; m_SellerCampaign = 0; } }.... and organized in json as ads_buy_d3fault_0.  sanitization errors would be simple 404s, and it goes without saying that neither can/should include underscores or slashes
 
+//TODOreq: vulnerable to session fixation attacks xD... but my login shit doesn't work when i changeSessionId xD. ok wtf now changeSessionId _does_ work [and solves it]... fuck it. Nvm, even when using changeSessionId I can still 'jump into' the session by copy/pasting the url (not current, but any of the links (or current after i've clicked any of the links (so that the change session id has taken effect))) into a new tab... but maybe this is fine since the session is still not known to an adversary who may have given a victim their own. HOWEVER it is still vulnerable to copy/pasting of of the URLs to irc/forums/wherever.... i think (not sure (i saw wt has user agent identification protection, but bah easily forged anyways)). i only think and am not sure because i wonder if that's the intended functionality? Perhaps my IP is doing the protection at this point and I'd only be vulnerable to others on my LAN? Fucking http/www is a piece of shit. Cookies aren't secure, get/post isn't secure... WHAT THE FUCK _IS_ secure!?!?!? "Yea just don't run an http server and you're set"
+//TODOreq: so long as Wt detects/thwarts two IPs (with matching user agents) trying to use the same session id, I think I'm happy enough with that... but gah still an office building network admin could snoop http[s?] requests and then login as any of his (O WAIT HE COULD KEYLOGGER THEM ANYWAYS LOLOL)
+//NOPE: Maybe I need to set a cookie and then depend on the combination of the session id and the cookie [which needs it's own id of course (they can't match and the cookie can't be derived from session id (else attacker could derive same cookie))]
+
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_AllSlotFillersComboBox(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
 {
@@ -442,8 +446,7 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         //b = y-(m*x)
         double b = (minPriceDouble - (m * lastSlotFilledAkaPurchasedExpireDateTime));
 
-        WDateTime currentDateTime = WDateTime::currentDateTime();
-        double currentPrice = (m*((double)currentDateTime.toTime_t()))+b;
+        double currentPrice = (m*((double)WDateTime::currentDateTime().toTime_t()))+b;
 
         //TODOreq: check current not expired or no purchases etc (use min)
 
@@ -476,8 +479,8 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             write_json(jsonDocBuffer, pt, false);
             std::string accountLockedForBuyJsonDoc = jsonDocBuffer.str();
 
-            setCouchbaseDocumentByKeyWithCasBegin("user" + m_Username.toUTF8(), accountLockedForBuyJsonDoc, cas);
-            m_WhatTheSetWithCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCAS;
+            setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_Username.toUTF8(), accountLockedForBuyJsonDoc, cas, AddCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+            m_WhatTheSetWithInputCasSavingOutputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS;
         }
         else
         {
@@ -490,8 +493,9 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         //^very real race condition vuln aside, what i was getting at originally is that maybe it's not a good idea to do "recover->proceed-with-buy" because who the fuck knows how much later they'd log in... and like maybe currentPrice would be waaaaay less than when they originally locked/tried-and-failed. It makes sense to at least ask them: "do you want to try this buy again" and then to also recalculate the price (which means re-locking the account (which probably has security considerations to boot)) on login
     }
 }
-void AnonymousBitcoinComputingWtGUI::nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(/*u_int64_t casFromLockSoWeCanSafelyUnlockLater*/)
+void AnonymousBitcoinComputingWtGUI::nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater)
 {
+    m_CasFromUserAccountLockSoWeCanSafelyUnlockLater = casFromLockSoWeCanSafelyUnlockLater;
     //TODOreq: unlock user account after successful add
     //TODOreq: handle beat to punch error case (unlock without deducting)
     //TODOreq: handle lock failed error case
@@ -517,11 +521,18 @@ void AnonymousBitcoinComputingWtGUI::successfulSlotFillAkaPurchaseAddIsFinishedS
 
     //TODOreq: user account unlock -- i worry that the user would be able to fuck with the state from the time they hit buy2 -> now (and keeping the rendering deferred until now might be the solution)... like i can't quite put my finger on it, but something to do with "when we repopulate the json doc for unlocking the account, they've modified something so that now something unintentional happens" (a big one being balance not being deducted properly, but it could be something else subtler)
 
-    //need cas from the lock operation in order to unlock, so more hacking to do lawlawl. On that note, I'm done for now...
+
+    setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_Username.toUTF8(), jsonDocWithBalanceDeducted, m_CasFromUserAccountLockSoWeCanSafelyUnlockLater);
+    m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure, should never happen
+
+    //TO DOnereq(set without cas): should we have done a multi-get to update the campaign doc also? i actually think not since we don't have the cas for that doc (but we could have gotten it~). more importantly i don't know whether or not i need the cas for it when i do the swap. seems safer no doubt.. but really would there be any contesting?? maybe only subsequent buys milliseconds later (probably in error, but maybe the campaign is just liek popular ya know ;-P)... so yea TODOreq do a cas-swap of the campaign doc, makes sure we're only n+1 the last purchased.... and i think maybe do an exponential backoff trying... because it's the same code that runs for when subsequent ones are purchased seconds later? or no... maybe we just do a set without cas because we know that all attempts to buy will fail until that set is complete (because they try to buy n+1 (which is what we just bought (so it will fail safely as beat-to-thepunch)), not n+2 (until the set we're about to do, is done))
+    //TODOreq:^^Does the order of user-account-unlock and setting-the-campaign-doc-with-new-last-purchase matter? can we do them asynchronously (AKA HERE IS WHERE WE'D START 'UPDATING'/LCB_SET'ing CAMPAIGN), or do we need to do one before the other and then wait for whichever goes first to complete?
 
 
     //TODOreq: need to update the adSpaceSlotsd3fault0 to make the filler that just succeded the most recent purchased
-    //TODOreq: we can dispatch the buy event to our neighbor wt nodes so they can post the buy event to their end users etc (how da fuq? rpc? guh). we don't need to wait for the user account to be unlocked before we do it (but really, i should prioritize the user account unlock so eh yea still doing it first)
+    //TODOreq: dispatch the buy event to our neighbor wt nodes so they can post the buy event to their end users etc (how da fuq? rpc? get-and-subscribe polling model? guh). polling is easiest and really having N[ode-count] hits ever i[N]terval [m]seconds is still not that expensive (get and subscribe also acts as caching layer so that we don't get 10-freaking-thousand hits per second to that same document)
+    //TODOreq: definitely doesn't belong here, but a get-and-subscribe / polling method could do a "poll" for the current value and when the poll finishes, the last end-user could have disconnected in that time and we MIGHT think it would be an error but we'd be wrong. in that case we'd just discard/disregard that last polled value (and of course, not do any more polling until at least one end-user connected)
+    //TODOreq: ^it goes without saying that 'buy' events do not use the cached value. (NVM:) Hell, even hitting 'buy step 1' should maybe even do a proper get for the actual value (or just nudge cache to do it for him).... BUT then it becomes a DDOS point. since I'm thinking the polling intervals will be like 100-500ms, doing a non-cached get like that on "buy step 1" is probably not necessary (/NVM). But we definitely absolutely need to do it for buy step 2 (duh), and that is NOT a DDOS point because noobs would be giving ya monay each time so i mean yea ddos all ya fuggan want nobs <3
 
     resumeRendering(); //do i need to call this before adding any widget? or does it not even matter while we have the update lock? in my get/add thingies i'm deferring as late as possible and resuming as soon as possible, but in this 'second level deferring' i am doing it opposite. probably doesn't matter
 }
@@ -594,10 +605,10 @@ void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyBegin(const string
     AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, AddCouchbaseDocumentByKeyRequest::AddMode);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Add, ADD)
 }
-void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas)
+void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, AddCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum = AddCouchbaseDocumentByKeyRequest::DiscardOuputCasMode)
 {
     deferRendering();
-    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, AddCouchbaseDocumentByKeyRequest::StoreModeWithCas, cas);
+    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, AddCouchbaseDocumentByKeyRequest::StoreWithCasMode, cas, whatToDoWithOutputCasEnum);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Add, ADD)
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument)
@@ -703,19 +714,39 @@ void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyFinished(const str
     //    triggerUpdate();
     //}
 }
-void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithCasFinished(const string &keyToCouchbaseDocument)
+void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinished(const string &keyToCouchbaseDocument)
 {
     resumeRendering();
-    switch(m_WhatTheSetWithCasWasFor)
+    switch(m_WhatTheSetWithInputCasWasFor)
     {
-    case HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCAS:
+    case HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS:
     {
-        nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd();
+            doneUnlockingUserAccountSoNowErrEhhUhmmm();
     }
         break;
     case INITIALINVALIDNULLSETWITHCAS:
     default:
-        cerr << "got a couchbase 'set' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
+        cerr << "got a couchbase 'set' with input cas response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
+        break;
+    }
+    //if(environment().ajax())
+    //{
+    //    triggerUpdate();
+    //}
+}
+void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const string &keyToCouchbaseDocument, u_int64_t outputCas)
+{
+    resumeRendering();
+    switch(m_WhatTheSetWithInputCasSavingOutputCasWasFor)
+    {
+    case HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS:
+    {
+        nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(outputCas);
+    }
+        break;
+    case INITIALINVALIDNULLSETWITHCASSAVINGCAS:
+    default:
+        cerr << "got a couchbase 'set' with input cas saving output cas response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
         break;
     }
     //if(environment().ajax())
@@ -774,12 +805,7 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     std::string passwordPlainText = m_RegisterPassword->text().toUTF8();
 
     //make salt
-    time_t timeNow = time(0);
-    struct tm timeStruct;
-    char timeBuf[80];
-    timeStruct = *localtime(&timeNow);
-    strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d.%X", &timeStruct);
-    std::string salt = sha1(username + uniqueId() + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + timeBuf);
+    std::string salt = sha1(username + uniqueId() + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + WDateTime::currentDateTime().toString().toUTF8());
     //base64 salt for storage in json/couchbase
     std::string base64Salt = base64Encode(salt);
     //hash password using base64'd salt
@@ -798,6 +824,7 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
 
     addCouchbaseDocumentByKeyBegin("user" + username, jsonString);
     m_WhatTheAddWasFor = REGISTERATTEMPTADD;
+    //TODOreq: username already exists, invalid characters in username errors
 }
 void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
 {
@@ -826,6 +853,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
     if(passwordHashBase64FromUserInput == passwordHasBase64hFromDb)
     {
         //login
+        changeSessionId();
         m_LoggedIn = true;
         m_Username = m_LoginUsernameLineEdit->text();
 
@@ -839,7 +867,6 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
             logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
         }
         m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
-        //changeSessionId();
     }
     else
     {

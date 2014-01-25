@@ -310,10 +310,15 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
 
     //in my testing with LCB_ADD, setting lcb->cas to resp->cas didn't work (had: "as expected", but wtf DID i expect?? i guess just a tiny bit of extra verification)... BUT i don't think it matters at all for "LCB_ADD" operations. TODOreq: verify that the cas shit IS working for LCB_SET.. by for example manually locking an account in the couchbase admin area, then running the app and... err wait no... that's the regular cas not durability cas. i guess just run the normal operation twice? does lcb durability not play nice with cas? that's the feeling i'm getting (it sees the key already there and then thinks "replication" is done, even though the cas is old? i haven't a clue and that would suck if true... :-/... I guess the TODOreq is saying that I need to devise some kind of test for this...
 
-    if(static_cast<const AddCouchbaseDocumentByKeyRequest*>(cookie)->HasCAS) //TODOoptimization i am dumb i think the reason my static_casting didn't work earlier was because i didn't use const keyword. change the ugly casts to these kinds in other occurances
+    const AddCouchbaseDocumentByKeyRequest* originalRequest = static_cast<const AddCouchbaseDocumentByKeyRequest*>(cookie);
+    if(originalRequest->HasCasInput) //TODOoptimization i am dumb i think the reason my static_casting didn't work earlier was because i didn't use const keyword. change the ugly casts to these kinds in other occurances
     {
         //LCB_SET implied
         lcbDurabilityCommand.v.v0.cas = resp->v.v0.cas; //TODOreq this is the cas of the new doc? relevant? i think yes...
+    }
+    if(originalRequest->SaveCasOutput)
+    {
+        originalRequest->CasInput = resp->v.v0.cas; //HACK: storing this here might give me pain later, but eh basically i need to store it somewhere because i don't have access to it in the durability callback.... and eh i'm PRETTY sure i'm done with the casInput at this point... so i think it's safe to use this field for just a little
     }
 
     lcb_durability_cmd_t *lcbDurabilityCommandList[1];
@@ -380,7 +385,14 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
     }
 
     AddCouchbaseDocumentByKeyRequest *request = (AddCouchbaseDocumentByKeyRequest*)cookie;
-    AddCouchbaseDocumentByKeyRequest::respond(request);
+    if(request->SaveCasOutput)
+    {
+        AddCouchbaseDocumentByKeyRequest::respondWithCas(request, request->CasInput); //it's a HACK that you can see in storeCallback, my using of the casInput field to hold onto (until we get to here, the durability callback) what is actually the cas OUTPUT. since you see this request is about to be deleted in a few lines (and we don't use the serializer to get back to Wt, we use a .Post, this appears safe
+    }
+    else
+    {
+        AddCouchbaseDocumentByKeyRequest::respond(request);
+    }
     delete request;
 
     --m_PendingAddCount;
@@ -453,16 +465,16 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd() //TODOoptional: c
     cmd.v.v0.nkey = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.length();
     cmd.v.v0.bytes = documentInput;
     cmd.v.v0.nbytes = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.length();
-    if(storeCouchbaseDocumentByKeyRequestFromWt->LcbModeIsAdd)
+    if(storeCouchbaseDocumentByKeyRequestFromWt->LcbStoreModeIsAdd)
     {
         cmd.v.v0.operation = LCB_ADD;
     }
     else
     {
         cmd.v.v0.operation = LCB_SET;
-        if(storeCouchbaseDocumentByKeyRequestFromWt->HasCAS)
+        if(storeCouchbaseDocumentByKeyRequestFromWt->HasCasInput)
         {
-            cmd.v.v0.cas = storeCouchbaseDocumentByKeyRequestFromWt->CAS;
+            cmd.v.v0.cas = storeCouchbaseDocumentByKeyRequestFromWt->CasInput;
         }
     }
     lcb_error_t err = lcb_store(m_Couchbase, storeCouchbaseDocumentByKeyRequestFromWt, 1, cmds);

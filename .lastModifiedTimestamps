@@ -1862,7 +1862,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
-Pictures/:1386045282
+Pictures/:1390662501
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -1893,6 +1893,7 @@ Pictures/failed.attempt.at.solving.or.understanding.gfs.and.how.to.use.it.as.a.k
 Pictures/force.your.will.here.is.the.programming.design.even.though.this.is.a.construct.of.the.mind.svg:1363911100
 Pictures/i.am.building.a.giant.metaphorical.toggle.switch.asdfoiuwerlkjfdousdfj.svg:1364940499
 Pictures/kaylee.heidi.programming.etc.aldjfalsdjfals.svg:1352187513
+Pictures/launch.not.launch.comparison.saldfjsdlfkjowuerlkjsdf.svg:1390662501
 Pictures/lol.metaphor.then.and.now.rpc.generator.is.a.tractor.and.a.tangent.that.bores.me.to.death.and.is.time.consuming.BUT.will.save.time.too.svg:1364417816
 Pictures/perfect.desktop.2011.10.31.png:1320069650
 Pictures/proprietary.gpl.lgpl.thinking.out.loud.trying.to.pinpoint.fair.use.mb.which.is.impossibru.svg:1355706959
@@ -3658,15 +3659,15 @@ Solutions/Anonymous Bitcoin Computing 2/design/core.math.for.ad.doubles.1.formul
 Solutions/Anonymous Bitcoin Computing 2/design/login.throttling.pointless.if.db.is.public.lewl.txt:1390304771
 Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:1390077121
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
-Solutions/Anonymous Bitcoin Computing 2/src/:1390648688
-Solutions/Anonymous Bitcoin Computing 2/src/backend/:1390599228
-Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1390599228
+Solutions/Anonymous Bitcoin Computing 2/src/:1390662599
+Solutions/Anonymous Bitcoin Computing 2/src/backend/:1390652061
+Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1390652061
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1390094044
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1390645798
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1390645798
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1390606361
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1390662599
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1390662599
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1390654609
 Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1390648688
-Solutions/Anonymous Bitcoin Computing 2/src/addcouchbasedocumentbykeyrequest.h:1390648126
+Solutions/Anonymous Bitcoin Computing 2/src/addcouchbasedocumentbykeyrequest.h:1390651422
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1390223990
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1390085840
 Solutions/Anonymous Bitcoin Computing 2/src/getcouchbasedocumentbykeyrequest.h:1390590173
