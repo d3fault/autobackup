@@ -1,0 +1,2 @@
+re: something i wrote yesterday
+fail is definitely guaranteed, then so is success because fail fails in unpredictable ways always (err, not always always but always has the potential to). a failure that is accidentally success is guaranteed because a failure is guaranteed (hence life is guaranteed)

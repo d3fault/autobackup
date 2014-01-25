@@ -26,7 +26,7 @@ public:
         : WtSessionId(wtSessionId), AnonymousBitcoinComputingWtGUIPointerForCallback(pointerToAnonymousBitcoinComputingWtGUI), CouchbaseAddKeyInput(CouchbaseAddKeyInput), CouchbaseAddDocumentInput(couchbaseAddDocumentInput), LcbModeIsAdd(lcbStoreMode == AddMode ? true : false), HasCAS(lcbStoreMode == StoreModeWithCas ? true : false)
     { }
     //save constructor
-    AddCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseAddKeyInput, std::string couchbaseAddDocumentInput, u_int64_t cas)
+    AddCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseAddKeyInput, std::string couchbaseAddDocumentInput, LcbStoreMode lcbStoreMode, u_int64_t cas)
         : WtSessionId(wtSessionId), AnonymousBitcoinComputingWtGUIPointerForCallback(pointerToAnonymousBitcoinComputingWtGUI), CouchbaseAddKeyInput(CouchbaseAddKeyInput), CouchbaseAddDocumentInput(couchbaseAddDocumentInput), LcbModeIsAdd(false), HasCAS(true), CAS(cas)
     { }
     //load constructor
@@ -45,7 +45,7 @@ public:
 
     static inline void respond(AddCouchbaseDocumentByKeyRequest *originalRequest)
     {
-        if(!originalRequest->AddMode)
+        if(!originalRequest->LcbModeIsAdd)
         {
             Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithCasFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1), originalRequest->CouchbaseAddKeyInput));
             return;

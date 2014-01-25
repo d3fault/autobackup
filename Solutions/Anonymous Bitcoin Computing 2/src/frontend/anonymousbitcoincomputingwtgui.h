@@ -172,7 +172,10 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas);
-    void nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd();
+    std::string m_CurrentPriceToUseForBuyingString;
+    std::string m_AdSlotAboutToBeFilledIfLockIsSuccessful;
+    void nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(/*u_int64_t casFromLockSoWeCanSafelyUnlockLater*/);
+    void successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount();
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
@@ -199,7 +202,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     enum WhatTheAddWasForEnum
     {
         INITIALINVALIDNULLADD,
-        REGISTERATTEMPTADD
+        REGISTERATTEMPTADD,
+        BUYAKAFILLSLOTWITHSLOTFILLERADD
     };
     enum WhatTheSetWithCasWasForEnum
     {

@@ -31,6 +31,8 @@
 
 //TODOreq: can't remember if i wrote this anywhere or only thought of it, but i need to add underscores between certain things in my couchbase docs. for example a user named JimboKnives0 would have a conflict with a user named JimboKnives. adSpaceSlotFillersJimboKnives0 would now point to a specific ad slot filler, _AND_ the "profile view" (last 10 slot fillers set up) for JimboKnives0 -- hence, conflict. Could maybe solve this another way by perhaps always having the username be the very last part of the key???
 
+//TODOoptimization: walking the internal path via "next sub path" (including sanitization at each step) is a good way to organize the website and additionally fill in json key pieces. example: /ads/buy-ad-space/d3fault/0 could be organized in Wt as: class Ads { class BuyAdSpace { m_SellerUsername = d3fault; m_SellerCampaign = 0; } }.... and organized in json as ads_buy_d3fault_0.  sanitization errors would be simple 404s, and it goes without saying that neither can/should include underscores or slashes
+
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_AllSlotFillersComboBox(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
 {
@@ -374,7 +376,8 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 }
 void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 {
-    //TODOreqopt: idk if required or optional or optimization, but it makes sense that we consolidate the defer/resume renderings here. The result of that button clicked (the signal that brought us here) makes us do TWO couchbase round trips: the first one to verify balance and lock account, the second to do the actual slot-filling/buying. It makes sense to only defer rendering once HERE, and to resume rendering only once LATER (error, or slot filled, etc). It might not matter at all.
+    deferRendering(); //haha it hit me while laying in bed that you can call this multiple times. never thought i'd use that feature but blamo here i am using it and loving Wt :). TODOreq: make sure the 'second' deferRendering is called in all error cases from here
+    //TO DOnereqopt: idk if required or optional or optimization, but it makes sense that we consolidate the defer/resume renderings here. The result of that button clicked (the signal that brought us here) makes us do TWO couchbase round trips: the first one to verify balance and lock account, the second to do the actual slot-filling/buying. It makes sense to only defer rendering once HERE, and to resume rendering only once LATER (error, or slot filled, etc). It might not matter at all.
 
     //DO ACTUAL BUY (associate slot with slot filler, aka fill the slot)
 
@@ -449,9 +452,9 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
         //TODOreq: why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++. BUT SERIOUSLY THOUGH I need to make sure that this doesn't fuck up shit and money get leaked/lost/whatever. Maybe rounding errors in this method of converting double -> string, and since I'm using it as the actual value in the json doc, I need it to be accurate. The very fact that I have to use 6 instead of 8 just makes me wonder...
         //TODOreq: ^ok wtf now i got 7 decimal places, so maybe it's dependent on the value........... maybe i should just store/utilize as many decimal places as possible (maybe trimming to 8 _ONLY_ when the user sees the value).... and then force the bitcoin client to do the rounding shizzle :-P
-        currentPriceStream << setprecision(6) << currentPrice; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
-        std::string currentPriceString = currentPriceStream.str();
-        new WText("Internal Price Calculated At (should match above): " + currentPriceString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        currentPriceStream /*<< setprecision(6)*/ << currentPrice; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
+        m_CurrentPriceToUseForBuyingString = currentPriceStream.str();
+        new WText("Internal Price Calculated At (should match above): " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
 
         if(userBalance >= currentPrice) //idk why but this makes me cringe. suspicion of rounding errors and/or other hackability...
@@ -463,10 +466,11 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             ++oldSlotIndex; //now new slot index :)
             std::ostringstream slotIndexIntToStringBuffer;
             slotIndexIntToStringBuffer << oldSlotIndex;
-            pt.put("slotToAttemptToFillAkaPurchase", "adSpaceSlotsd3fault0Slot" + slotIndexIntToStringBuffer.str());
+            m_AdSlotAboutToBeFilledIfLockIsSuccessful = "adSpaceSlotsd3fault0Slot" + slotIndexIntToStringBuffer.str();
+            pt.put("slotToAttemptToFillAkaPurchase", m_AdSlotAboutToBeFilledIfLockIsSuccessful);
             //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
             //TODOreq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
-            pt.put("priceToAttemptToBuyItFor", currentPriceString);
+            pt.put("priceToAttemptToBuyItFor", m_CurrentPriceToUseForBuyingString);
             pt.put("slotToAttemptToFillAkaPurchaseItWith", m_SlotFillerToUseInBuy);
             std::ostringstream jsonDocBuffer;
             write_json(jsonDocBuffer, pt, false);
@@ -486,15 +490,40 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         //^very real race condition vuln aside, what i was getting at originally is that maybe it's not a good idea to do "recover->proceed-with-buy" because who the fuck knows how much later they'd log in... and like maybe currentPrice would be waaaaay less than when they originally locked/tried-and-failed. It makes sense to at least ask them: "do you want to try this buy again" and then to also recalculate the price (which means re-locking the account (which probably has security considerations to boot)) on login
     }
 }
-void AnonymousBitcoinComputingWtGUI::nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd()
+void AnonymousBitcoinComputingWtGUI::nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(/*u_int64_t casFromLockSoWeCanSafelyUnlockLater*/)
 {
     //TODOreq: unlock user account after successful add
-    //TODOreq: handle beat to punch error case
+    //TODOreq: handle beat to punch error case (unlock without deducting)
+    //TODOreq: handle lock failed error case
 
     //do the LCB_ADD for the slot!
+    ptree pt;
+    std::ostringstream timestampStream;
+    timestampStream << WDateTime::currentDateTime().toTime_t();
+    pt.put("purchaseTimestamp", timestampStream.str());
+    pt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
+    pt.put("slotFilledWith", m_SlotFillerToUseInBuy);
+    std::ostringstream jsonDocBuffer;
+    write_json(jsonDocBuffer, pt, false);
+    addCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful, jsonDocBuffer.str());
+    m_WhatTheAddWasFor = BUYAKAFILLSLOTWITHSLOTFILLERADD;
+}
+void AnonymousBitcoinComputingWtGUI::successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount()
+{
+    //TODOreq: error cases, such as getting beat to the punch
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WText("The account is now locked, ready to proceed with buy", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("Gratz brah, you bought a slot for BTC: " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+    //TODOreq: user account unlock -- i worry that the user would be able to fuck with the state from the time they hit buy2 -> now (and keeping the rendering deferred until now might be the solution)... like i can't quite put my finger on it, but something to do with "when we repopulate the json doc for unlocking the account, they've modified something so that now something unintentional happens" (a big one being balance not being deducted properly, but it could be something else subtler)
+
+    //need cas from the lock operation in order to unlock, so more hacking to do lawlawl. On that note, I'm done for now...
+
+
+    //TODOreq: need to update the adSpaceSlotsd3fault0 to make the filler that just succeded the most recent purchased
+    //TODOreq: we can dispatch the buy event to our neighbor wt nodes so they can post the buy event to their end users etc (how da fuq? rpc? guh). we don't need to wait for the user account to be unlocked before we do it (but really, i should prioritize the user account unlock so eh yea still doing it first)
+
+    resumeRendering(); //do i need to call this before adding any widget? or does it not even matter while we have the update lock? in my get/add thingies i'm deferring as late as possible and resuming as soon as possible, but in this 'second level deferring' i am doing it opposite. probably doesn't matter
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
@@ -568,7 +597,7 @@ void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyBegin(const string
 void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas)
 {
     deferRendering();
-    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas);
+    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, AddCouchbaseDocumentByKeyRequest::StoreModeWithCas, cas);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Add, ADD)
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument)
@@ -657,6 +686,11 @@ void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyFinished(const str
         }
         m_MainStack(m_RegisterSuccessfulWidget);
 #endif
+    }
+        break;
+    case BUYAKAFILLSLOTWITHSLOTFILLERADD:
+    {
+        successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount();
     }
         break;
     case INITIALINVALIDNULLADD:
