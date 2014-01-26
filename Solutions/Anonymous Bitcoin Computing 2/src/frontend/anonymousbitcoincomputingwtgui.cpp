@@ -1,8 +1,5 @@
 #include "anonymousbitcoincomputingwtgui.h"
 
-#include "../addcouchbasedocumentbykeyrequest.h"
-#include "../getcouchbasedocumentbykeyrequest.h"
-
 //internal paths
 
 #define ABC_INTERNAL_PATH_REGISTER "/register"
@@ -251,6 +248,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 }
 void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument)
 {
+    m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = couchbaseDocument;
     //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
     //TODOreq: decided not to be a dick. "buy at current" sends the currentSlotIdForSale and the 'priceUserSawWhenTheyClicked', BUT we use our own internal and calculated-on-the-spot 'current price' and go ahead with the buy using that. We only use currentSlotIdForSale and 'priceUserSawWhenTheyClicked' to make sure they're getting the right slot [and not paying too much]. The two checks are redundant of one another, but that's ok
 
@@ -419,6 +417,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 }
 void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas)
 {
+    m_UserAccountLockedDuringBuyJson = userAccountJsonDoc; //our starting point for when we debit the user account during unlock (after the slot fill later on)
     ptree pt;
     std::istringstream is(userAccountJsonDoc);
     read_json(is, pt);
@@ -446,7 +445,11 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         //b = y-(m*x)
         double b = (minPriceDouble - (m * lastSlotFilledAkaPurchasedExpireDateTime));
 
-        double currentPrice = (m*((double)WDateTime::currentDateTime().toTime_t()))+b;
+        m_CurrentPriceToUseForBuying = (m*((double)WDateTime::currentDateTime().toTime_t()))+b;
+
+        std::ostringstream lastSlotFilledAkaPurchasedExpireDateTimeBuffer;
+        lastSlotFilledAkaPurchasedExpireDateTimeBuffer << lastSlotFilledAkaPurchasedExpireDateTime;
+        m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = lastSlotFilledAkaPurchasedExpireDateTimeBuffer.str();
 
         //TODOreq: check current not expired or no purchases etc (use min)
 
@@ -455,12 +458,12 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
         //TODOreq: why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++. BUT SERIOUSLY THOUGH I need to make sure that this doesn't fuck up shit and money get leaked/lost/whatever. Maybe rounding errors in this method of converting double -> string, and since I'm using it as the actual value in the json doc, I need it to be accurate. The very fact that I have to use 6 instead of 8 just makes me wonder...
         //TODOreq: ^ok wtf now i got 7 decimal places, so maybe it's dependent on the value........... maybe i should just store/utilize as many decimal places as possible (maybe trimming to 8 _ONLY_ when the user sees the value).... and then force the bitcoin client to do the rounding shizzle :-P
-        currentPriceStream /*<< setprecision(6)*/ << currentPrice; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
+        currentPriceStream /*<< setprecision(6)*/ << m_CurrentPriceToUseForBuying; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
         m_CurrentPriceToUseForBuyingString = currentPriceStream.str();
         new WText("Internal Price Calculated At (should match above): " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
 
-        if(userBalance >= currentPrice) //idk why but this makes me cringe. suspicion of rounding errors and/or other hackability...
+        if(userBalance >= m_CurrentPriceToUseForBuying) //idk why but this makes me cringe. suspicion of rounding errors and/or other hackability...
         {
             //proceed with trying to lock account
 
@@ -469,7 +472,8 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             ++oldSlotIndex; //now new slot index :)
             std::ostringstream slotIndexIntToStringBuffer;
             slotIndexIntToStringBuffer << oldSlotIndex;
-            m_AdSlotAboutToBeFilledIfLockIsSuccessful = "adSpaceSlotsd3fault0Slot" + slotIndexIntToStringBuffer.str();
+            m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase = slotIndexIntToStringBuffer.str();
+            m_AdSlotAboutToBeFilledIfLockIsSuccessful = "adSpaceSlotsd3fault0Slot" + m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase;
             pt.put("slotToAttemptToFillAkaPurchase", m_AdSlotAboutToBeFilledIfLockIsSuccessful);
             //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
             //TODOreq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
@@ -504,12 +508,13 @@ void AnonymousBitcoinComputingWtGUI::nowThatTheUserAccountIsLockedDoTheActualSlo
     ptree pt;
     std::ostringstream timestampStream;
     timestampStream << WDateTime::currentDateTime().toTime_t();
-    pt.put("purchaseTimestamp", timestampStream.str());
+    m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = timestampStream.str();
+    pt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
     pt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
     pt.put("slotFilledWith", m_SlotFillerToUseInBuy);
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, pt, false);
-    addCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful, jsonDocBuffer.str());
+    storeCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful, jsonDocBuffer.str());
     m_WhatTheAddWasFor = BUYAKAFILLSLOTWITHSLOTFILLERADD;
 }
 void AnonymousBitcoinComputingWtGUI::successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount()
@@ -521,9 +526,23 @@ void AnonymousBitcoinComputingWtGUI::successfulSlotFillAkaPurchaseAddIsFinishedS
 
     //TODOreq: user account unlock -- i worry that the user would be able to fuck with the state from the time they hit buy2 -> now (and keeping the rendering deferred until now might be the solution)... like i can't quite put my finger on it, but something to do with "when we repopulate the json doc for unlocking the account, they've modified something so that now something unintentional happens" (a big one being balance not being deducted properly, but it could be something else subtler)
 
+    //user account debiting + unlock
+    //first parse the json doc that we saved before doing the lock
+    ptree pt;
+    std::istringstream is(m_UserAccountLockedDuringBuyJson);
+    read_json(is, pt);
+    //now do the debit of the balance and put it back in the json doc
+    double balancePrePurchase = strtod(pt.get<std::string>("balance").c_str(), 0);
+    balancePrePurchase -= m_CurrentPriceToUseForBuying; //TODOreq: again, just scurred of rounding errors etc. I think as long as I  use 'more precision than needed' (as much as a double provides), I should be ok...
+    std::ostringstream balancePostPurchaseBuffer;
+    balancePostPurchaseBuffer << balancePrePurchase;
+    pt.put("balance", balancePostPurchaseBuffer.str());
+    //now convert the json doc back to string for couchbase
+    std::ostringstream jsonDocWithBalanceDeducted;
+    write_json(jsonDocWithBalanceDeducted, pt, false);
 
-    setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_Username.toUTF8(), jsonDocWithBalanceDeducted, m_CasFromUserAccountLockSoWeCanSafelyUnlockLater);
-    m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure, should never happen
+    setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_Username.toUTF8(), jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater);
+    m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure, should never happen but can
 
     //TO DOnereq(set without cas): should we have done a multi-get to update the campaign doc also? i actually think not since we don't have the cas for that doc (but we could have gotten it~). more importantly i don't know whether or not i need the cas for it when i do the swap. seems safer no doubt.. but really would there be any contesting?? maybe only subsequent buys milliseconds later (probably in error, but maybe the campaign is just liek popular ya know ;-P)... so yea TODOreq do a cas-swap of the campaign doc, makes sure we're only n+1 the last purchased.... and i think maybe do an exponential backoff trying... because it's the same code that runs for when subsequent ones are purchased seconds later? or no... maybe we just do a set without cas because we know that all attempts to buy will fail until that set is complete (because they try to buy n+1 (which is what we just bought (so it will fail safely as beat-to-thepunch)), not n+2 (until the set we're about to do, is done))
     //TODOreq:^^Does the order of user-account-unlock and setting-the-campaign-doc-with-new-last-purchase matter? can we do them asynchronously (AKA HERE IS WHERE WE'D START 'UPDATING'/LCB_SET'ing CAMPAIGN), or do we need to do one before the other and then wait for whichever goes first to complete?
@@ -534,7 +553,53 @@ void AnonymousBitcoinComputingWtGUI::successfulSlotFillAkaPurchaseAddIsFinishedS
     //TODOreq: definitely doesn't belong here, but a get-and-subscribe / polling method could do a "poll" for the current value and when the poll finishes, the last end-user could have disconnected in that time and we MIGHT think it would be an error but we'd be wrong. in that case we'd just discard/disregard that last polled value (and of course, not do any more polling until at least one end-user connected)
     //TODOreq: ^it goes without saying that 'buy' events do not use the cached value. (NVM:) Hell, even hitting 'buy step 1' should maybe even do a proper get for the actual value (or just nudge cache to do it for him).... BUT then it becomes a DDOS point. since I'm thinking the polling intervals will be like 100-500ms, doing a non-cached get like that on "buy step 1" is probably not necessary (/NVM). But we definitely absolutely need to do it for buy step 2 (duh), and that is NOT a DDOS point because noobs would be giving ya monay each time so i mean yea ddos all ya fuggan want nobs <3
 
-    resumeRendering(); //do i need to call this before adding any widget? or does it not even matter while we have the update lock? in my get/add thingies i'm deferring as late as possible and resuming as soon as possible, but in this 'second level deferring' i am doing it opposite. probably doesn't matter
+    //TODOreq: even though it seemed like a small optimization to do both the user-account-unlock and updating of campaign doc with a new 'last purchased' slot, that pattern of programming will lead to disaster so i shouldn't do it just in principle. Yes with this one case it wouldn't have led to disaster, but actually it MIGHT have given extreme circumstances. it opens up a race condition: say the 'user account unlock' happens really fast and the 'update campaign doc' happens to take a while. if we gave control back to the user after the 'user account unlock' was finished, they could do some action that would then conflict with the m_WhatThe[blahblahblah]WasFor related to the 'update campaign doc' store. As in, when the 'update campaign doc' finishes and gets posted back to the WApplication, the user's actions could have started something else and then we wouldn't have handled the finishing of the 'update campaign doc' properly (which would mean that we never notify our neighbors of buy event? actually not a problem if we do 'get-and-subscribe-polling' like i think i'm going to do (BUT LIKE I SAID THIS ONE GETS LUCKY, BUT AN OVERALL PATTERN TO AVOID)). So I'm going to do the successive sets synchronously, despite seeing a clear opportunity for optimization
+}
+void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocSettingOurPurchaseAsLastPurchase()
+{
+    //TODOreq: need a recovery path that both SAFELY (see vuln above) debits user account and also updates campaign doc.
+
+    //we already have the campaign doc because we were looking at it when we hit buy step 1!
+    ptree pt;
+    std::istringstream is(m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase);
+    read_json(is, pt);
+
+    //boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional("lastSlotFilledAkaPurchased");
+    //boost::optional<ptree&> currentSlotOnDisplay = pt.get_child_optional("currentSlotOnDisplay");
+    //boost::optional<ptree&> nextSlotOnDisplay = pt.get_child_optional("nextSlotOnDisplay");
+#if 0
+    if(lastSlotFilledAkaPurchased.is_initialized())
+    {
+
+    }
+    else
+    {
+        //first purchase, so basically the same thing but we don't modify the existing...
+    }
+#endif
+    ptree lastPurchasedPt;
+    lastPurchasedPt.put("slotIndex", m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase);
+    lastPurchasedPt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
+    lastPurchasedPt.put("startTimestamp", m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds);
+    lastPurchasedPt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
+
+    pt.put_child("lastSlotFilledAkaPurchased", lastPurchasedPt);
+
+    //TODOreq: we also need to MAYBE update 'current' and/or 'next', depending on if it's appropriate. the only one we DEFINITELY update is 'last purchased'. if current is expired and there is a next -- holy race condition batman TODOreq (maybe solution is to not list "next" in the doc... and shit i'm actually starting to think maybe i shouldn't even list current. maybe whether or not there is a current is detected on the fly and when needed... by seeing if the (slotIndex-of-the-just-expired-current)+1 exists.. and if it doesn't then shit we don't have a current :-P... yea actually i'm liking that more and more :). simplifies managing the campaign doc too, only two states: no purchase and last purchase (whether it's expired is not that relevant to us, except maybe later when doing a buy announce event (but... polling...?). STILL, I do feel as though I need to keep track of 'current' SOMEWHERE. My thoughts are drifting and although it does make sense to do the 'get n+1' and that's our next if it exists method, who and when exactly would that be done? If it's the "client" of abc (so like the page where i'm fucking dancing naked coding tripping balls on video), who initiates the "ok expired now gimmeh next" and then abc does the n+1 shit,... err i guess what i mean is who has the final say of what n is to begin with? should for example the client die and come back and forget n, how would it figure out it's state again? I GUESS we could just keep doing n+1 or n-1 until we found it, and hell we could even use hella accurate jumping to the middle of all of our slots based on SlotLength, slot0 start time (polled), and the current date time. Would be accurate as fuck list jump with maybe an extra get to correct off by one. SO maybe the abc client does keep track of "n" and then gives it to abc as a parameter a la "hint". Client(dance-vid-page): abc.getNextSlot(n_justExpired /*or n+1, but it doesn't matter who does the incrementing*/), and if it's 0 (state lost somehow) then abc does the list jump mechanism to find it asap. but guh, i haven't worked out any of the details of the abc client (dance-vid-page), so idfk what it's state or code or ANYTHING even looks like on that side of things...
+    //^regardless of what i choose, the fact that we can figure out the current slot by doing math with near 100% accuracy (3 gets tops i'd estimate (first for slot 0, second for our guess based on math (so yea 4 gets if you include campaign doc get), third as potential recovery from mistake in math (timezones? idfk...) -- assumes slotLengthHours never changes of course...
+    //^^i think i'll cross that bridge when i get there (buy event and 'gimmeh ad plx client request'). dats how da hackas doeet (that being said, i should now consider current and next to NOT be in the campaign json doc (will re-add later if determined i should))
+
+    //if current is expired and there is no next, we fill our latest purchase in as the current
+    //if
+
+    std::ostringstream updatedCampaignJsonDocBuffer;
+    write_json(updatedCampaignJsonDocBuffer, pt, false);
+
+    //you might think this should use CAS input, but the only way (orly? TODOreq race condition 'recovery process' (lol i'm starting to think a journal is the answer to all this nonsense, but meh now[/then] i['d] have two problems)) it could get updated is if there was another purchase... but future purchases DEPEND on this being set first... so...
+    storeCouchbaseDocumentByKeyBegin("adSpaceSlotsd3fault0", updatedCampaignJsonDocBuffer, AddCouchbaseDocumentByKeyRequest::StoreNoCasMode);
+    m_WhatTheSetWasFor = ;
+
+    resumeRendering(); //TODOreq: move this to be after the very last thing we do (confirm that campaign doc is updated)
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
@@ -599,10 +664,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasBegin(con
     event_active(m_GetEventCallbacksForWt[lockedMutexIndex], EV_READ|EV_WRITE, 0);
     m_GetMutexArray[lockedMutexIndex].unlock();
 #endif
-void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument)
+//despite one of the parameters mentioning CAS input, you shouldn't use this method if you want to use CAS input. You probably want one of the set* variants
+void AnonymousBitcoinComputingWtGUI::storeCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, AddCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = AddCouchbaseDocumentByKeyRequest::AddMode)
 {
     deferRendering();
-    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, AddCouchbaseDocumentByKeyRequest::AddMode);
+    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Add, ADD)
 }
 void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, AddCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum = AddCouchbaseDocumentByKeyRequest::DiscardOuputCasMode)
@@ -721,7 +787,7 @@ void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinish
     {
     case HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS:
     {
-            doneUnlockingUserAccountSoNowErrEhhUhmmm();
+            doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocSettingOurPurchaseAsLastPurchase();
     }
         break;
     case INITIALINVALIDNULLSETWITHCAS:
@@ -822,7 +888,7 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     write_json(jsonDocBuffer, jsonDoc, false);
     std::string jsonString = jsonDocBuffer.str();
 
-    addCouchbaseDocumentByKeyBegin("user" + username, jsonString);
+    storeCouchbaseDocumentByKeyBegin("user" + username, jsonString);
     m_WhatTheAddWasFor = REGISTERATTEMPTADD;
     //TODOreq: username already exists, invalid characters in username errors
 }

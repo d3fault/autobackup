@@ -33,6 +33,9 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 
+#include "../addcouchbasedocumentbykeyrequest.h"
+#include "../getcouchbasedocumentbykeyrequest.h"
+
 using namespace Wt;
 using namespace Wt::Utils;
 using namespace boost::interprocess;
@@ -158,6 +161,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void showAdvertisingBuyAdSpaceD3faultWidget();
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
+    std::string m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase;
     std::string m_HackedInD3faultCampaign0_MinPrice;
     std::string m_HackedInD3faultCampaign0_SlotLengthHours;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
@@ -171,15 +175,21 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas);
+    double m_CurrentPriceToUseForBuying;
+    std::string m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds;
     std::string m_CurrentPriceToUseForBuyingString;
+    std::string m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase;
     std::string m_AdSlotAboutToBeFilledIfLockIsSuccessful;
     void nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater);
     u_int64_t m_CasFromUserAccountLockSoWeCanSafelyUnlockLater;
+    std::string m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase;
+    std::string m_UserAccountLockedDuringBuyJson;
     void successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount();
+    void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocSettingOurPurchaseAsLastPurchase();
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
-    void addCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
+    void storeCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, AddCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = AddCouchbaseDocumentByKeyRequest::AddMode);
     void setCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, AddCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
     void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas);
