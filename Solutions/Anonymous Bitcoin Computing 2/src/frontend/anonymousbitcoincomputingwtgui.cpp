@@ -242,14 +242,17 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 
         //still dunno if i should block or do it async? instincts tell me async, but "SUB MILLISECOND LATENCY" tells me async might actually be wasteful/slower??? The obvious answer is "benchmark it xD" (FUCK FUCK FUCK FUCK FUCK THAT, async it is (because even if slower, it still allows us to scale bettarer))
         //^To clarify, I have 3 options: wait on a wait condition right here that is notified by couchbase thread and we serve up result viola, deferRendering/resumeRendering, or enableUpdates/TriggerUpdates. The last one requires ajax. Both the last 2 are async (despite defer "blocking" (read:disabling) the GUI)
-        getCouchbaseDocumentByKeyBegin("adSpaceSlotsd3fault0");
-        m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
+        getCouchbaseDocumentByKeySavingCasBegin("adSpaceSlotsd3fault0");
+        m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 }
-void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument)
+void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
 {
     m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = couchbaseDocument;
+    m_HackedInD3faultCampaign0CasForSafelyUpdatingLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
+    //TODOreq: the above two also need to be updated whenever the 'get-and-subscribe' thingy results in an update (that being said, i'm now quite certain that current/next need to go on their own doc. not 100% sure of it, but it's definitely the playing-it-safe way)
+
     //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
     //TODOreq: decided not to be a dick. "buy at current" sends the currentSlotIdForSale and the 'priceUserSawWhenTheyClicked', BUT we use our own internal and calculated-on-the-spot 'current price' and go ahead with the buy using that. We only use currentSlotIdForSale and 'priceUserSawWhenTheyClicked' to make sure they're getting the right slot [and not paying too much]. The two checks are redundant of one another, but that's ok
 
@@ -343,7 +346,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
         new WText("Log In First", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         return;
     }
-    getCouchbaseDocumentByKeyBegin("adSpaceAllSlotFillers" + m_Username.toUTF8()); //TODOreq: obviously we'd have sanitized the username by here...
+    getCouchbaseDocumentByKeyBegin("adSpaceAllSlotFillers" + m_BuyerUsername.toUTF8()); //TODOreq: obviously we'd have sanitized the username by here...
     m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET;
 }
 void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const std::string &allSlotFillersJsonDoc)
@@ -382,7 +385,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
     deferRendering(); //haha it hit me while laying in bed that you can call this multiple times. never thought i'd use that feature but blamo here i am using it and loving Wt :). TODOreq: make sure the 'second' deferRendering is called in all error cases from here
     //TO DOnereqopt: idk if required or optional or optimization, but it makes sense that we consolidate the defer/resume renderings here. The result of that button clicked (the signal that brought us here) makes us do TWO couchbase round trips: the first one to verify balance and lock account, the second to do the actual slot-filling/buying. It makes sense to only defer rendering once HERE, and to resume rendering only once LATER (error, or slot filled, etc). It might not matter at all.
 
-    //DO ACTUAL BUY (associate slot with slot filler, aka fill the slot)
+    //DO ACTUAL BUY (check balance + lock user account, then associate slot with slot filler, aka fill the slot)
 
    //TODOreq: this doesn't belong here, but the combo box probably depends on the user to send in the slotfiller index, so we need to sanitize that input (also applies to nickname if it is used (i don't currently plan to))
 
@@ -405,10 +408,10 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     std::ostringstream slotIndexStream;
     slotIndexStream << m_AllSlotFillersComboBox->currentIndex();
-    m_SlotFillerToUseInBuy = "adSpaceSlotFillers" + m_Username.toUTF8() + slotIndexStream.str();
+    m_SlotFillerToUseInBuy = "adSpaceSlotFillers" + m_BuyerUsername.toUTF8() + slotIndexStream.str();
 
     //TODOreq: make a query for the user's "account", to both cas-lock it and to see that the balance is high enough. hmm i don't need the cas value presented to me in Wt land, but i do need it to be held on to for continuing with the cas swap shit after i make sure balance is high enough (i suppose i can just pass the currentPrice to the backend and have him verify balance > currentPrice (but up till now, my backend has been app agnostic and therefore portable. i suppose i need an app-specific backend? perhaps isA agnostic db type? so much flexibility it hurts. KISS). really though, cas-swap(lock) is NOT abc-specific, so implementing that in my backend is good. maybe a generic "getCouchbaseDocumentByKeyAndHangOntoItBecauseIMightCasSwapIt" (TODOreq: account for when i DON'T cas-swap it (in this example, if the balance is too low, or if it's already 'locked')). Hmm the CAS value is just a uint64_t, so maybe it won't be so troublesome to bring it to wt side and then send it back to couchbase [in a new 'store' request])
-    getCouchbaseDocumentByKeySavingCasBegin("user" + m_Username.toUTF8());
+    getCouchbaseDocumentByKeySavingCasBegin("user" + m_BuyerUsername.toUTF8());
     m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET;
 
     //TODOreq: the above get shouldn't fail since they need to already be logged in to get this far, but what the fuck do i know? it probably CAN (db overload etc), so i need to account for that
@@ -484,7 +487,7 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             write_json(jsonDocBuffer, pt, false);
             std::string accountLockedForBuyJsonDoc = jsonDocBuffer.str();
 
-            setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_Username.toUTF8(), accountLockedForBuyJsonDoc, cas, AddCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+            setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_BuyerUsername.toUTF8(), accountLockedForBuyJsonDoc, cas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
             m_WhatTheSetWithInputCasSavingOutputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS;
         }
         else
@@ -515,16 +518,26 @@ void AnonymousBitcoinComputingWtGUI::nowThatTheUserAccountIsLockedDoTheActualSlo
     pt.put("slotFilledWith", m_SlotFillerToUseInBuy);
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, pt, false);
-    storeCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful, jsonDocBuffer.str());
-    m_WhatTheAddWasFor = BUYAKAFILLSLOTWITHSLOTFILLERADD;
+    storeWithoutInputCasCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful, jsonDocBuffer.str());
+    m_WhatTheStoreWIthoutInputCasWasFor = BUYAKAFILLSLOTWITHSLOTFILLERSTOREWITHOUTINPUTCAS;
 }
 void AnonymousBitcoinComputingWtGUI::successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount()
 {
     //TODOreq: error cases, such as getting beat to the punch
-    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WText("Gratz brah, you bought a slot for BTC: " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
+    //create transaction doc using lcb_add accepting fail -- i can probably re-use this code later (merge into functions), for now KISS
+    ptree pt;
+    pt.put("buyer", m_BuyerUsername);
+    pt.put("seller", "d3fault");
+    pt.put("amount", m_CurrentPriceToUseForBuyingString);
+    std::ostringstream transactionBuffer;
+    write_json(transactionBuffer, pt, false);
+    storeWithoutInputCasCouchbaseDocumentByKeyBegin(string("txd3fault0") + string("slot") + m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase, transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+    m_WhatTheStoreWIthoutInputCasWasFor = CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS; //TODOreq: it goes without saying that 'recovery possy' needs it's own set of these, so as not to conflict
+    //TODOreq: i need a way of telling the backend that certain adds (like this one) are okay to fail. But really I already need a whole slew of error case handling to be coded into the backend, I guess I'll just do it later? So basically for adds where fails are not ok, we need to have two code paths... but for this one where the add failing is ok, we just pick up with one code path. I think the easiest way of doing this is to return a bool telling whether or not the add succeeded, and to just ignore it if it doesn't matter. But since there's many many ways of failing, maybe I should be passing around the LCB_ERROR itself? So far I've tried to keep front end and back end separate, so idk maybe "bool opTypeFail and bool dbTypeFail", where the first one is relating to cas/add fails and the second is like "500 internal server error" (of course, the backend would have retried backing off exponentially etc before resorting to that)
+}
+void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting()
+{
     //TODOreq: user account unlock -- i worry that the user would be able to fuck with the state from the time they hit buy2 -> now (and keeping the rendering deferred until now might be the solution)... like i can't quite put my finger on it, but something to do with "when we repopulate the json doc for unlocking the account, they've modified something so that now something unintentional happens" (a big one being balance not being deducted properly, but it could be something else subtler)
 
     //user account debiting + unlock
@@ -542,8 +555,8 @@ void AnonymousBitcoinComputingWtGUI::successfulSlotFillAkaPurchaseAddIsFinishedS
     std::ostringstream jsonDocWithBalanceDeducted;
     write_json(jsonDocWithBalanceDeducted, pt, false);
 
-    setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_Username.toUTF8(), jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater);
-    m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure, should never happen but can
+    setCouchbaseDocumentByKeyWithInputCasBegin(string("user") + m_BuyerUsername.toUTF8(), jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure. can happen and sometimes will, but mostly won't. handle it by doing nothing but continuing the process
 
     //TO DOnereq(set without cas): should we have done a multi-get to update the campaign doc also? i actually think not since we don't have the cas for that doc (but we could have gotten it~). more importantly i don't know whether or not i need the cas for it when i do the swap. seems safer no doubt.. but really would there be any contesting?? maybe only subsequent buys milliseconds later (probably in error, but maybe the campaign is just liek popular ya know ;-P)... so yea TODOreq do a cas-swap of the campaign doc, makes sure we're only n+1 the last purchased.... and i think maybe do an exponential backoff trying... because it's the same code that runs for when subsequent ones are purchased seconds later? or no... maybe we just do a set without cas because we know that all attempts to buy will fail until that set is complete (because they try to buy n+1 (which is what we just bought (so it will fail safely as beat-to-thepunch)), not n+2 (until the set we're about to do, is done))
     //TODOreq:^^Does the order of user-account-unlock and setting-the-campaign-doc-with-new-last-purchase matter? can we do them asynchronously (AKA HERE IS WHERE WE'D START 'UPDATING'/LCB_SET'ing CAMPAIGN), or do we need to do one before the other and then wait for whichever goes first to complete?
@@ -556,9 +569,9 @@ void AnonymousBitcoinComputingWtGUI::successfulSlotFillAkaPurchaseAddIsFinishedS
 
     //TODOreq: even though it seemed like a small optimization to do both the user-account-unlock and updating of campaign doc with a new 'last purchased' slot, that pattern of programming will lead to disaster so i shouldn't do it just in principle. Yes with this one case it wouldn't have led to disaster, but actually it MIGHT have given extreme circumstances. it opens up a race condition: say the 'user account unlock' happens really fast and the 'update campaign doc' happens to take a while. if we gave control back to the user after the 'user account unlock' was finished, they could do some action that would then conflict with the m_WhatThe[blahblahblah]WasFor related to the 'update campaign doc' store. As in, when the 'update campaign doc' finishes and gets posted back to the WApplication, the user's actions could have started something else and then we wouldn't have handled the finishing of the 'update campaign doc' properly (which would mean that we never notify our neighbors of buy event? actually not a problem if we do 'get-and-subscribe-polling' like i think i'm going to do (BUT LIKE I SAID THIS ONE GETS LUCKY, BUT AN OVERALL PATTERN TO AVOID)). So I'm going to do the successive sets synchronously, despite seeing a clear opportunity for optimization
 }
-void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocSettingOurPurchaseAsLastPurchase()
+void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase()
 {
-    //TODOreq: need a recovery path that both SAFELY (see vuln above) debits user account and also updates campaign doc.
+    //TODOreq (DONE I THINK, transaction doc solves this): need a recovery path that both SAFELY (see vuln above) debits user account and also updates campaign doc.
 
     //we already have the campaign doc because we were looking at it when we hit buy step 1!
     ptree pt;
@@ -568,6 +581,9 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     //boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional("lastSlotFilledAkaPurchased");
     //boost::optional<ptree&> currentSlotOnDisplay = pt.get_child_optional("currentSlotOnDisplay");
     //boost::optional<ptree&> nextSlotOnDisplay = pt.get_child_optional("nextSlotOnDisplay");
+
+    //TODOreq: ^starting to think the current/next slot shit can/SHOULD go on it's own document (that, as we mentioned somewhere, can be re-figuredout/generated somewhat easily). getting the doc should maybe check expiration, existence of 'next', etc... but idk i'll design that shit later. BUT TODOreq I think it's worth noting that actually having current/next on the same doc as the 'lastPurchased' might give weird conflicting errors against the "rand() % 10" recovery possy. for example, they're supposed to not care when a campaign doc update fails because of cas failure. they are supposed to not care because then that means one of the other recovery possy (or probable driver) must have done it. HOWEVER, by putting current/next on there, an 'expiration' event would now trigger the cas failure and the campaign doc might not get updated. BUT now that I've written all that out, I think all that would mean is that the recovery process would run AGAIN (this time using the current/next'd doc as the orig) and succeed...... but it's definitely worth writing and considering and analyzing and ensuring whatever i come up with is ok
+
 #if 0
     if(lastSlotFilledAkaPurchased.is_initialized())
     {
@@ -596,11 +612,20 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     std::ostringstream updatedCampaignJsonDocBuffer;
     write_json(updatedCampaignJsonDocBuffer, pt, false);
 
-    //you might think this should use CAS input, but the only way (orly? TODOreq race condition 'recovery process' (lol i'm starting to think a journal is the answer to all this nonsense, but meh now[/then] i['d] have two problems)) it could get updated is if there was another purchase... but future purchases DEPEND on this being set first... so...
-    storeCouchbaseDocumentByKeyBegin("adSpaceSlotsd3fault0", updatedCampaignJsonDocBuffer, AddCouchbaseDocumentByKeyRequest::StoreNoCasMode);
-    m_WhatTheSetWasFor = ;
+    //CAS-swap-accepting-fail
+    setCouchbaseDocumentByKeyWithInputCasBegin(string("adSpaceSlotsd3fault0"), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS;
+}
+void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase()
+{
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("Gratz brah, you bought a slot for BTC: " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
-    resumeRendering(); //TODOreq: move this to be after the very last thing we do (confirm that campaign doc is updated)
+    resumeRendering(); //TODOreq: metric fuck tons of error cases where we still want to resume rendering :)
+
+
+    //TODOoptimization: getting here means were the driver (unless i merge this function, but yea) so we can now ahead-of-time-a-la-event-driven update the 'get and subscribe' people... but we don't really need to...
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
@@ -666,16 +691,16 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasBegin(con
     m_GetMutexArray[lockedMutexIndex].unlock();
 #endif
 //despite one of the parameters mentioning CAS input, you shouldn't use this method if you want to use CAS input. You probably want one of the set* variants
-void AnonymousBitcoinComputingWtGUI::storeCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, AddCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = AddCouchbaseDocumentByKeyRequest::AddMode)
+void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode)
 {
     deferRendering();
-    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
+    StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Add, ADD)
 }
-void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, AddCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum = AddCouchbaseDocumentByKeyRequest::DiscardOuputCasMode)
+void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum)
 {
     deferRendering();
-    AddCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, AddCouchbaseDocumentByKeyRequest::StoreWithCasMode, cas, whatToDoWithOutputCasEnum);
+    StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas, whatToDoWithOutputCasEnum);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Add, ADD)
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument)
@@ -684,11 +709,6 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     //this hack STILL makes me giggle like a little school girl, tee hee
     switch(m_WhatTheGetWasFor)
     {
-    case HACKEDIND3FAULTCAMPAIGN0GET:
-        {
-            finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument);
-        }
-        break;
     case LOGINATTEMPTGET:
         {
             loginIfInputHashedEqualsDbInfo(couchbaseDocument);
@@ -714,6 +734,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
     resumeRendering();
     switch(m_WhatTheGetSavingCasWasFor)
     {
+    case HACKEDIND3FAULTCAMPAIGN0GET:
+        {
+            finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas);
+        }
+        break;
     case HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET:
         {
             verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(couchbaseDocument, cas);
@@ -729,13 +754,13 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
     //    triggerUpdate(); //this and enableUpdates are probably not needed if i'm always defer/resuming
     //}
 }
-void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyFinished(const string &keyToCouchbaseDocument)
+void AnonymousBitcoinComputingWtGUI::storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const string &keyToCouchbaseDocument)
 {
     //no need to pass in the value, and we probably don't even need the key here... but might in the future. i do know that if i do the enableUpdates/triggerUpdate async design that i would probably very much need the key at least here. imagine they dispatch two "add" requests before the first one can return. but meh that's a pretty big design overhaul as it is so not worrying about it right now (if only there was a generator that could...)
     resumeRendering();
-    switch(m_WhatTheAddWasFor)
+    switch(m_WhatTheStoreWIthoutInputCasWasFor)
     {
-    case REGISTERATTEMPTADD:
+    case REGISTERATTEMPTSTOREWITHOUTINPUTCAS:
     {
         //TODOreq: error cases (user already exists, time outs, etc...)
 
@@ -766,14 +791,19 @@ void AnonymousBitcoinComputingWtGUI::addCouchbaseDocumentByKeyFinished(const str
 #endif
     }
         break;
-    case BUYAKAFILLSLOTWITHSLOTFILLERADD:
+    case BUYAKAFILLSLOTWITHSLOTFILLERSTOREWITHOUTINPUTCAS:
     {
         successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount();
     }
         break;
-    case INITIALINVALIDNULLADD:
+    case CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS:
+    {
+        transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting();
+    }
+        break;
+    case INITIALINVALIDNULLSTOREWITHOUTINPUTCAS:
     default:
-        cerr << "got a couchbase 'add' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
+        cerr << "got a couchbase 'store without input cas' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
         break;
     }
     //if(environment().ajax())
@@ -788,7 +818,12 @@ void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinish
     {
     case HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS:
     {
-            doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocSettingOurPurchaseAsLastPurchase();
+        doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase();
+    }
+        break;
+    case HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS:
+    {
+        doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase();
     }
         break;
     case INITIALINVALIDNULLSETWITHCAS:
@@ -889,8 +924,8 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     write_json(jsonDocBuffer, jsonDoc, false);
     std::string jsonString = jsonDocBuffer.str();
 
-    storeCouchbaseDocumentByKeyBegin("user" + username, jsonString);
-    m_WhatTheAddWasFor = REGISTERATTEMPTADD;
+    storeWithoutInputCasCouchbaseDocumentByKeyBegin("user" + username, jsonString);
+    m_WhatTheStoreWIthoutInputCasWasFor = REGISTERATTEMPTSTOREWITHOUTINPUTCAS;
     //TODOreq: username already exists, invalid characters in username errors
 }
 void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
@@ -922,14 +957,14 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         //login
         changeSessionId();
         m_LoggedIn = true;
-        m_Username = m_LoginUsernameLineEdit->text();
+        m_BuyerUsername = m_LoginUsernameLineEdit->text();
 
         //TODOreq: logout -> login as different user will show old username in logout widget guh (same probablem with register successful widget)...
         if(!m_LogoutWidget)
         {
             m_LogoutWidget = new WContainerWidget(m_LoginLogoutStackWidget);
             new WText("Hello, ", m_LogoutWidget);
-            new WText(m_Username, m_LogoutWidget);
+            new WText(m_BuyerUsername, m_LogoutWidget);
             WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
             logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
         }

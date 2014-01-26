@@ -32,7 +32,9 @@ DEFINES +=  NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES=3 \
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
     frontend/anonymousbitcoincomputingwtgui.cpp \
-    backend/anonymousbitcoincomputingcouchbasedb.cpp
+    backend/anonymousbitcoincomputingcouchbasedb.cpp \
+    frontend2backendRequests/getcouchbasedocumentbykeyrequest.cpp \
+    frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp
 
 LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals-mt -lboost_system-mt -lboost_thread-mt -lboost_serialization
 
@@ -40,5 +42,5 @@ HEADERS += \
     anonymousbitcoincomputing.h \
     frontend/anonymousbitcoincomputingwtgui.h \
     backend/anonymousbitcoincomputingcouchbasedb.h \
-    getcouchbasedocumentbykeyrequest.h \
-    addcouchbasedocumentbykeyrequest.h
+    frontend2backendRequests/getcouchbasedocumentbykeyrequest.h \
+    frontend2backendRequests/storecouchbasedocumentbykeyrequest.h

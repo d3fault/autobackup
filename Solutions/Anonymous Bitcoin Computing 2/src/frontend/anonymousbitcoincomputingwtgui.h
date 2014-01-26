@@ -33,8 +33,8 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 
-#include "../addcouchbasedocumentbykeyrequest.h"
-#include "../getcouchbasedocumentbykeyrequest.h"
+#include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
+#include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
 
 using namespace Wt;
 using namespace Wt::Utils;
@@ -125,7 +125,7 @@ m_##NormalOperationText##MutexArray[lockedMutexIndex].unlock();
 
 class AnonymousBitcoinComputingWtGUI : public WApplication
 {
-    friend class AddCouchbaseDocumentByKeyRequest;
+    friend class StoreCouchbaseDocumentByKeyRequest;
     friend class GetCouchbaseDocumentByKeyRequest;
 
     void buildGui();
@@ -162,13 +162,14 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
     std::string m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase;
+    u_int64_t m_HackedInD3faultCampaign0CasForSafelyUpdatingLaterAfterSuccessfulPurchase;
     std::string m_HackedInD3faultCampaign0_MinPrice;
     std::string m_HackedInD3faultCampaign0_SlotLengthHours;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice;
-    void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &couchbaseDocument);
+    void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &couchbaseDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase);
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc);
     void buySlotStep2d3faultCampaign0ButtonClicked();
@@ -185,17 +186,16 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase;
     std::string m_UserAccountLockedDuringBuyJson;
     void successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount();
-    void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocSettingOurPurchaseAsLastPurchase();
+    void transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting();
+    void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase();
+    void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase();
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
-    void storeCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, AddCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = AddCouchbaseDocumentByKeyRequest::AddMode);
-    void setCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, AddCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
+    void storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
+    void setCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
     void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas);
-    void addCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument);
-    void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument);
-    void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas);
 
     bool isHomePath(const std::string &pathToCheck);
     void handleInternalPathChanged(const std::string &newInternalPath);
@@ -210,18 +210,20 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     int m_CurrentAddMessageQueueIndex;
     int m_CurrentGetMessageQueueIndex;
 
-    enum WhatTheAddWasForEnum
+    enum WhatTheStoreWithoutInputCasWasForEnum
     {
-        INITIALINVALIDNULLADD,
-        REGISTERATTEMPTADD,
-        BUYAKAFILLSLOTWITHSLOTFILLERADD
+        INITIALINVALIDNULLSTOREWITHOUTINPUTCAS,
+        REGISTERATTEMPTSTOREWITHOUTINPUTCAS,
+        BUYAKAFILLSLOTWITHSLOTFILLERSTOREWITHOUTINPUTCAS,
+        CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS
     };
     enum WhatTheSetWithInputCasWasForEnum
     {
         INITIALINVALIDNULLSETWITHCAS,
         //now there aren't any ops i'm using that set with an input cas without using it again later (saving the cas), but there probably will be in the future...
         //SEE!
-        HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS
+        HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS,
+        HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS
     };
     enum WhatTheSetWithInputCasSavingOutputCasWasForEnum
     {
@@ -232,28 +234,33 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     {
         INITIALINVALIDNULLGET,
         LOGINATTEMPTGET,
-        HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET
     };
     enum WhatTheGetSavingCasWasForEnum
     {
         INITIALINVALIDNULLGETSAVINGCAS,
+        HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
     };
 
-    WhatTheAddWasForEnum m_WhatTheAddWasFor;
+    WhatTheStoreWithoutInputCasWasForEnum m_WhatTheStoreWIthoutInputCasWasFor;
     WhatTheSetWithInputCasWasForEnum m_WhatTheSetWithInputCasWasFor;
     WhatTheSetWithInputCasSavingOutputCasWasForEnum m_WhatTheSetWithInputCasSavingOutputCasWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
     WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
 
     bool m_LoggedIn;
-    WString m_Username; //only valid if logged in
+    WString m_BuyerUsername; //only valid if logged in
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
 
     static void newAndOpenAllWtMessageQueues();
     static void deleteAllWtMessageQueues();
+
+    //had these private + friend class'd and it worked a little ago, but now it's bitching. try to move them back to private if you want
+    void storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument);
+    void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument);
+    void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas);
 
 #if 0 //turns out arrays are easier than macros on this side of things
     //static message_queue *m_AddWtMessageQueue0;

@@ -1,7 +1,7 @@
 #include "anonymousbitcoincomputingcouchbasedb.h"
 
-#include "../addcouchbasedocumentbykeyrequest.h"
-#include "../getcouchbasedocumentbykeyrequest.h"
+#include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
+#include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
 
 using namespace std;
 
@@ -310,7 +310,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
 
     //in my testing with LCB_ADD, setting lcb->cas to resp->cas didn't work (had: "as expected", but wtf DID i expect?? i guess just a tiny bit of extra verification)... BUT i don't think it matters at all for "LCB_ADD" operations. TODOreq: verify that the cas shit IS working for LCB_SET.. by for example manually locking an account in the couchbase admin area, then running the app and... err wait no... that's the regular cas not durability cas. i guess just run the normal operation twice? does lcb durability not play nice with cas? that's the feeling i'm getting (it sees the key already there and then thinks "replication" is done, even though the cas is old? i haven't a clue and that would suck if true... :-/... I guess the TODOreq is saying that I need to devise some kind of test for this...
 
-    const AddCouchbaseDocumentByKeyRequest* originalRequest = static_cast<const AddCouchbaseDocumentByKeyRequest*>(cookie);
+    StoreCouchbaseDocumentByKeyRequest* originalRequest = const_cast<StoreCouchbaseDocumentByKeyRequest*>(static_cast<const StoreCouchbaseDocumentByKeyRequest*>(cookie));
     if(originalRequest->HasCasInput) //TODOoptimization i am dumb i think the reason my static_casting didn't work earlier was because i didn't use const keyword. change the ugly casts to these kinds in other occurances
     {
         //LCB_SET implied
@@ -384,14 +384,14 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
         return;
     }
 
-    AddCouchbaseDocumentByKeyRequest *request = (AddCouchbaseDocumentByKeyRequest*)cookie;
+    StoreCouchbaseDocumentByKeyRequest *request = (StoreCouchbaseDocumentByKeyRequest*)cookie;
     if(request->SaveCasOutput)
     {
-        AddCouchbaseDocumentByKeyRequest::respondWithCas(request, request->CasInput); //it's a HACK that you can see in storeCallback, my using of the casInput field to hold onto (until we get to here, the durability callback) what is actually the cas OUTPUT. since you see this request is about to be deleted in a few lines (and we don't use the serializer to get back to Wt, we use a .Post, this appears safe
+        StoreCouchbaseDocumentByKeyRequest::respondWithCas(request, request->CasInput); //it's a HACK that you can see in storeCallback, my using of the casInput field to hold onto (until we get to here, the durability callback) what is actually the cas OUTPUT. since you see this request is about to be deleted in a few lines (and we don't use the serializer to get back to Wt, we use a .Post, this appears safe
     }
     else
     {
-        AddCouchbaseDocumentByKeyRequest::respond(request);
+        StoreCouchbaseDocumentByKeyRequest::respond(request);
     }
     delete request;
 
@@ -445,7 +445,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd() //TODOoptional: c
     ++m_PendingAddCount; //TODOreq: overflow? meh not worried about it for now
 
     //TODOreq: delete at appropriate places (error, success)
-    AddCouchbaseDocumentByKeyRequest *storeCouchbaseDocumentByKeyRequestFromWt = new AddCouchbaseDocumentByKeyRequest();
+    StoreCouchbaseDocumentByKeyRequest *storeCouchbaseDocumentByKeyRequestFromWt = new StoreCouchbaseDocumentByKeyRequest();
 
     {
         std::istringstream addCouchbaseDocumentByKeyRequestFromWtSerialized((const char*)m_AddMessageQueuesCurrentMessageBuffer);
