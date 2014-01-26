@@ -1,0 +1,23 @@
+user-account-lock-strict-cas-swap -> slotFillAkaPurchase-add -> transaction-doc-add-accepting-fail -> user-account-debit-unlock-cas-swap-accepting-fail -> campaign-doc-update-cas-swap-accepting-fail
+
+10x node cluster
+
+"Driving / "Probably Successful In The Whole Shebang" / "Actual Buying" -- Node (any one of the 10)
+1) if balance is sufficient, locks user account using strict CAS-swap-lock (fail NOT tolerated, indicates account usage on other tabs/logins etc)
+2) does slot fill
+3) Right after successful slot fill, does exactly what "rand() % 10" possy does (and probably successfully, but not necessarily (however, above two steps must be done in a row and without failure (failure after (1) is noticed on login and then waits for transaction doc to appear before deciding what to do (if anything. see perfect design doc))))
+
+
+"rand() % 10" Recovery Possy -- Nodes (all 10 can be it at the same time, but we aim for 1 every second on average)
+1) check to see if campaignDoc.lastPurchasedSlot[n+1] exists, which is a flag that campaignDoc might be out of sync and needs recovering
+2) wait 100ms to give "Driving" (above) node chance to bring campaignDoc up to date on his own (this is very likely race condition)
+3) if after 100ms the campaign doc still isn't up to date (fresh get, skipping caches of course), we check to see if the transaction exists
+	3a) if transaction exists, we check to see if user-account is still locked and pointing to the slot/transaction of interest
+		3a.i) If it isn't locked pointing to our slot/transaction of interest (it can be either unlocked or locked and pointing somewhere else), we CAS-swap-accepting-fail the campaign doc to reflect the slot/transaction
+		3a.ii) If it is locked pointing to our slot/transaction, we CAS-swap-accepting-fail 'unlock+debitting' the user-account, then CAS-swap-accepting-fail the campaign doc to reflect the slot/transaction just like (3a.i)
+	3b) if the transaction doc doesn't exist, we check to make sure the user-account is locked and pointing at the slot of interest
+		3b.i) If it isn't locked pointing at the slot of interest, it isn't necessarily an error case. We then re-check for the existence of the transaction doc (that didn't exist for us to even get to this code path). It _NEEDS_ to exist at this point, otherwise we have experienced total system failure (must never happen). If, like we expect, the transaction doc exists this time around, we can then continue as normal, cas-swap-accepting-fail updating of the campaign doc
+		3b.ii) If it is locked pointing at the slot of interest, add-accepting-fail the transaction document itself, then cas-swap-accepting-fail 'unlock+debit' the user-account, then cas-swap-accepting-fail the campaign doc
+
+
+When I say "accepting fail" above, it is a specific type of failure I am talking about (NOT db failure/timouts/etc). For add, the fail is that we were beat to the punch and someone else already added. For CAS-Swap, the fail is that the "set with cas" did not succeed because the cas didn't match (someone changed it since). Very common sense to me as I'm writing it now, but worth noting in case I forget and also perhaps as explaination to future viewers (sup nobs).

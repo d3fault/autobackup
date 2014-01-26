@@ -168,3 +168,16 @@ If the CAS-swap fails and the "slotTo,priceTo,slotTo" is still there, the entire
 If the CAS-swap fails and the "slotTo,priceTo,slotTo" is still there and the "slotToAttemptToFillAkaPurchase" is still the same it was before we attempted to CAS-swap-unlock it (adSpaceSlotsd3fault0Slot1), THEN shit is fucked and the entire system is fucked etc (like 'NOPE').
 ##
 If however the CAS-swap fails and the "slotTo,priceTo,slotTo" is still there and the slotToAttemptToFillAkaPurchase is DIFFERENT, we know that they're logged in elsewhere and that that instance has already done the CAS-swap we are attempting to do (and it has ADDITIONALLY started another 'attempt to buy [something else]')
+
+
+Transaction documents have something to do with atomocity of user-account-unlocking that I can't exactly put into words right now, but I trust my earlier fucking spaced out version of myself last night with saying that they fix dat one race condition I wrote about or something. It also seems to make shit more organized so fuck it. The transaction document for a given slot fill must be made before the user-account is unlocked. The transaction document is found using the slot being filled's name. Transaction documents are made by either the main driver, or the recovery possy. It doesn't matter who makes it, so the LCB_ADD failing is accepted.
+
+Txd3fault0slot1 // corresponding to adSpaceSlotsd3fault0Slot1 of course
+{
+	"buyer" : "JimboKnives",
+	"seller" : "d3fault",
+	"amount" : "0.002"
+	//timestamp? probably no, KISS
+}
+
+//user "d3fault" is hardcoded and doesn't even need to exist (but should be there for future proofing) -- we'll have a semi-hardcoded routine that then dumps this "user"'s balance into offline bitcoin wallet. In our first version, we can poll a couchbase-view that just gets all the transactions and dumps that amount into offline bitcoin keys.
