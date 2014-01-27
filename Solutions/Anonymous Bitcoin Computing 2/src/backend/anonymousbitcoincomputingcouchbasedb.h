@@ -121,6 +121,14 @@ m_GetWtMessageQueue##n = new message_queue(create_only, WT_COUCHBASE_MESSAGE_QUE
 delete m_##text##WtMessageQueue##n; \
 m_##text##WtMessageQueue##n = NULL;
 
+#define END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(GetOrAdd) \
+delete originalRequest; \
+--m_Pending##GetOrAdd##Count; \
+if(m_NoMoreAllowedMuahahaha && m_PendingAddCount == 0 && m_PendingGetCount == 0) \
+{ \
+    notifyMainThreadWeAreFinishedWithAllPendingRequests(); \
+} \
+
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
 class AnonymousBitcoinComputingCouchbaseDB

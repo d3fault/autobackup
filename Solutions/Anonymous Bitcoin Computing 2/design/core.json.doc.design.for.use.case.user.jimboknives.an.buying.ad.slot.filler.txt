@@ -10,18 +10,6 @@ adSpaceSlotsd3fault0
     "purchaseTimestamp": "1972",
     "startTimestamp": "1975",
     "purchasePrice": "0.005872"
-  },
-  "nextSlotOnDisplay": {
-    "slotIndex": "2",
-    "purchaseTimestamp": "1971",
-    "startTimestamp": "1972",
-    "purchasePrice": "0.001"
-  },
-  "currentSlotOnDisplay": {
-    "slotIndex": "1",
-    "purchaseTimestamp": "1970",
-    "startTimestamp": "1971",
-    "purchasePrice": "0.0017"
   }
 }
 
@@ -181,3 +169,10 @@ Txd3fault0slot1 // corresponding to adSpaceSlotsd3fault0Slot1 of course
 }
 
 //user "d3fault" is hardcoded and doesn't even need to exist (but should be there for future proofing) -- we'll have a semi-hardcoded routine that then dumps this "user"'s balance into offline bitcoin wallet. In our first version, we can poll a couchbase-view that just gets all the transactions and dumps that amount into offline bitcoin keys. Actually fuck that shit, we should move them into offline bitcoin keys as soon as they become 'bitcoin-confirmed' (for safety, even though we still use the couchbase-view just described to determine how much of it is mine/spendable (although really kind of a gray area since I am not planning on coding refunds yet, I could likely spend all of it xD (but I won't) so long as the users' balance reflected how much they put in ya know?)).
+
+adSpaceSlotsd3fault0currentSlotCache
+{
+	currentSlotIndex: "3"
+}
+
+//SlotCache is just a shortcut/symbolic-link esq type doc. If it doesn't exist we can jump using math to what is about the right spot, or just walk the slots until we find one not existing. I may put the "slotFiller" in this cache as well, and possibly even "expiration" date... but for now KISS and just declaring it here to get it out of the campaign doc

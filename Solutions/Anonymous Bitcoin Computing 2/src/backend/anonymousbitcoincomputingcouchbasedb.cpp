@@ -220,7 +220,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
 }
 void AnonymousBitcoinComputingCouchbaseDB::errorCallbackStatic(lcb_t instance, lcb_error_t error, const char *errinfo)
 {
-    ((AnonymousBitcoinComputingCouchbaseDB*)(lcb_get_cookie(instance)))->errorCallback(error, errinfo);
+    const_cast<AnonymousBitcoinComputingCouchbaseDB*>(static_cast<const AnonymousBitcoinComputingCouchbaseDB*>(lcb_get_cookie(instance)))->errorCallback(error, errinfo);
 }
 void AnonymousBitcoinComputingCouchbaseDB::errorCallback(lcb_error_t error, const char *errinfo)
 {
@@ -235,7 +235,7 @@ void AnonymousBitcoinComputingCouchbaseDB::errorCallback(lcb_error_t error, cons
 }
 void AnonymousBitcoinComputingCouchbaseDB::configurationCallbackStatic(lcb_t instance, lcb_configuration_t config)
 {
-    ((AnonymousBitcoinComputingCouchbaseDB*)(lcb_get_cookie(instance)))->configurationCallback(config);
+    const_cast<AnonymousBitcoinComputingCouchbaseDB*>(static_cast<const AnonymousBitcoinComputingCouchbaseDB*>(lcb_get_cookie(instance)))->configurationCallback(config);
 }
 void AnonymousBitcoinComputingCouchbaseDB::configurationCallback(lcb_configuration_t config)
 {
@@ -271,16 +271,28 @@ void AnonymousBitcoinComputingCouchbaseDB::configurationCallback(lcb_configurati
 }
 void AnonymousBitcoinComputingCouchbaseDB::storeCallbackStatic(lcb_t instance, const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp)
 {
-    ((AnonymousBitcoinComputingCouchbaseDB*)(lcb_get_cookie(instance)))->storeCallback(cookie, operation, error, resp);
+    const_cast<AnonymousBitcoinComputingCouchbaseDB*>(static_cast<const AnonymousBitcoinComputingCouchbaseDB*>(lcb_get_cookie(instance)))->storeCallback(cookie, operation, error, resp);
 }
 void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp)
 {
     (void)operation; //TODOoptional: i was thinking of using a flag in my "from wt reqeust object (cookie here)" and to NOT do durability when it's a simple "STORE" (because STOREs _TEND_ to be not as important as "ADD" (though that certainly isn't ALWAYS true~)). the purpose of this comment is to point out that we can see if it's a STORE/ADD right here in the 'operation' variable :-P
+
+    StoreCouchbaseDocumentByKeyRequest *originalRequest = const_cast<StoreCouchbaseDocumentByKeyRequest*>(static_cast<const StoreCouchbaseDocumentByKeyRequest*>(cookie));
+
     if(error != LCB_SUCCESS)
     {
         if(error != LCB_KEY_EEXISTS)
         {
             cerr << "Failed to store key: " << lcb_strerror(m_Couchbase, error) << endl;
+            if(originalRequest->SaveCasOutput)
+            {
+                StoreCouchbaseDocumentByKeyRequest::respondWithCas(originalRequest, resp->v.v0.cas, false, true);
+            }
+            else
+            {
+                StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, false, true);
+            }
+            END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
             //TODOreq: handle failed store (including decrementing 'pendingAddCount' if appropriate). we should err ehh uhm...
             return;
         }
@@ -291,11 +303,19 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
         //example LCB_ADD fails: 1) buy ad slot [with filler] -- the core operation of abc. 2) username already exists
         //example LCB_SET fails: lock-account-before-buying-ad-slot[with-filler]-just-after-verifying-users-balance-is-high-enough
 
-        cerr << "lcb_key_exists handling not implemented yet: " << lcb_strerror(m_Couchbase, error) << endl;
-
-        //we'll probably want to 'return;' here, doesn't make sense to do the durability stuff...
+        //LCB_KEY_EEXISTS
+        if(originalRequest->SaveCasOutput)
+        {
+            StoreCouchbaseDocumentByKeyRequest::respondWithCas(originalRequest, resp->v.v0.cas, false, false);
+        }
+        else
+        {
+            StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, false, false);
+        }
+        END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
         return;
     }
+
     lcb_durability_opts_t lcbDurabilityOptions;
     memset(&lcbDurabilityOptions, 0, sizeof(lcb_durability_opts_t));
 #ifdef COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT
@@ -310,7 +330,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
 
     //in my testing with LCB_ADD, setting lcb->cas to resp->cas didn't work (had: "as expected", but wtf DID i expect?? i guess just a tiny bit of extra verification)... BUT i don't think it matters at all for "LCB_ADD" operations. TODOreq: verify that the cas shit IS working for LCB_SET.. by for example manually locking an account in the couchbase admin area, then running the app and... err wait no... that's the regular cas not durability cas. i guess just run the normal operation twice? does lcb durability not play nice with cas? that's the feeling i'm getting (it sees the key already there and then thinks "replication" is done, even though the cas is old? i haven't a clue and that would suck if true... :-/... I guess the TODOreq is saying that I need to devise some kind of test for this...
 
-    StoreCouchbaseDocumentByKeyRequest* originalRequest = const_cast<StoreCouchbaseDocumentByKeyRequest*>(static_cast<const StoreCouchbaseDocumentByKeyRequest*>(cookie));
+
     if(originalRequest->HasCasInput) //TODOoptimization i am dumb i think the reason my static_casting didn't work earlier was because i didn't use const keyword. change the ugly casts to these kinds in other occurances
     {
         //LCB_SET implied
@@ -318,7 +338,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     }
     if(originalRequest->SaveCasOutput)
     {
-        originalRequest->CasInput = resp->v.v0.cas; //HACK: storing this here might give me pain later, but eh basically i need to store it somewhere because i don't have access to it in the durability callback.... and eh i'm PRETTY sure i'm done with the casInput at this point... so i think it's safe to use this field for just a little
+        originalRequest->CasInput = resp->v.v0.cas; //HACK (1st): storing this here might give me pain later, but eh basically i need to store it somewhere because i don't have access to it in the durability callback.... and eh i'm PRETTY sure i'm done with the casInput at this point... so i think it's safe to use this field for just a little
     }
 
     lcb_durability_cmd_t *lcbDurabilityCommandList[1];
@@ -339,31 +359,50 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallbackStatic(lcb_t instance, con
 }
 void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp)
 {
-    GetCouchbaseDocumentByKeyRequest *request = (GetCouchbaseDocumentByKeyRequest*)cookie;
+    GetCouchbaseDocumentByKeyRequest *originalRequest = const_cast<GetCouchbaseDocumentByKeyRequest*>(static_cast<const GetCouchbaseDocumentByKeyRequest*>(cookie));
 
     if(error != LCB_SUCCESS)
     {
-        cerr << "Error couchbase getCallback:" << lcb_strerror(m_Couchbase, error) << endl;
-        //TODOreq: you know the drill~
+        if(error != LCB_KEY_ENOENT)
+        {
+            cerr << "Error couchbase getCallback:" << lcb_strerror(m_Couchbase, error) << endl;
+            if(originalRequest->SaveCAS)
+            {
+                GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, 0, 0, 0, false, true);
+            }
+            else
+            {
+                GetCouchbaseDocumentByKeyRequest::respond(originalRequest, 0, 0, false, true);
+            }
+            //TODOreq: you know the drill~
+            END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
+            return;
+        }
+
+        //LCB_KEY_ENOENT (key does not exist)
+        if(originalRequest->SaveCAS)
+        {
+            GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, 0, 0, 0, false, false);
+        }
+        else
+        {
+            GetCouchbaseDocumentByKeyRequest::respond(originalRequest, 0, 0, false, false);
+        }
+        END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
+        return;
     }
 
     //TODOreq: who takes ownership of resp and is responsible for deleting it? me or couchbase? when does that occur (since I'm now looking into 'hold onto it because Wt might CAS-swap it')? This memory consideration also applies to all the rest of my couchbase callbacks I'd imagine (but valgrind hasn't complained about them... so idfk. I think since I'm not deleting them, it's safe to assume(xD) that they're only valid during the duration of this callback)
-    if(request->SaveCAS) //TODOoptimization: __unlikely or whatever i can find it boost
+    if(originalRequest->SaveCAS) //TODOoptimization: __unlikely or whatever i can find it boost
     {
-        GetCouchbaseDocumentByKeyRequest::respondWithCAS(request, resp->v.v0.bytes, resp->v.v0.nbytes, resp->v.v0.cas);
+        GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, resp->v.v0.bytes, resp->v.v0.nbytes, resp->v.v0.cas, true, false);
     }
     else
     {
-        GetCouchbaseDocumentByKeyRequest::respond(request, resp->v.v0.bytes, resp->v.v0.nbytes);
+        GetCouchbaseDocumentByKeyRequest::respond(originalRequest, resp->v.v0.bytes, resp->v.v0.nbytes, true, false);
     }
-    delete request;
 
-    //TODOreq: error cases need to account for these pending add/get counts
-    --m_PendingGetCount;
-    if(m_NoMoreAllowedMuahahaha && m_PendingGetCount == 0 && m_PendingAddCount == 0)
-    {
-        notifyMainThreadWeAreFinishedWithAllPendingRequests();
-    }
+    END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
 }
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
@@ -371,35 +410,52 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic(lcb_t instan
 }
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
+    StoreCouchbaseDocumentByKeyRequest *originalRequest = const_cast<StoreCouchbaseDocumentByKeyRequest*>(static_cast<const StoreCouchbaseDocumentByKeyRequest*>(cookie));
     if(error != LCB_SUCCESS)
     {
         cerr << "Error: Generic lcb_durability_poll callback failure: " << lcb_strerror(m_Couchbase, error) << endl;
         //TODOreq: handle errors
+        if(originalRequest->SaveCasOutput)
+        {
+            StoreCouchbaseDocumentByKeyRequest::respondWithCas(originalRequest, originalRequest->CasInput, true, true); //another use of that cas hack (3rd)
+        }
+        else
+        {
+            StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, true, true);
+        }
+        //TODOreq: if we make it to durability, the lcb op has succeeded?
+
+        END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
         return;
     }
     if(resp->v.v0.err != LCB_SUCCESS)
     {
         cerr << "Error: Specific lcb_durability_poll callback failure: " << lcb_strerror(m_Couchbase, resp->v.v0.err) << endl;
+        if(originalRequest->SaveCasOutput)
+        {
+            StoreCouchbaseDocumentByKeyRequest::respondWithCas(originalRequest, originalRequest->CasInput, true, true); //another use of that cas hack (4th)
+        }
+        else
+        {
+            StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, true, true);
+        }
+        //TODOreq: if we make it to durability, the lcb op has succeeded?
+
         //TODOreq: handle errors
+        END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
         return;
     }
 
-    StoreCouchbaseDocumentByKeyRequest *request = (StoreCouchbaseDocumentByKeyRequest*)cookie;
-    if(request->SaveCasOutput)
+    if(originalRequest->SaveCasOutput)
     {
-        StoreCouchbaseDocumentByKeyRequest::respondWithCas(request, request->CasInput); //it's a HACK that you can see in storeCallback, my using of the casInput field to hold onto (until we get to here, the durability callback) what is actually the cas OUTPUT. since you see this request is about to be deleted in a few lines (and we don't use the serializer to get back to Wt, we use a .Post, this appears safe
+        StoreCouchbaseDocumentByKeyRequest::respondWithCas(originalRequest, originalRequest->CasInput, true, false); //it's a HACK (2nd) that you can see in storeCallback, my using of the casInput field to hold onto (until we get to here, the durability callback) what is actually the cas OUTPUT. since you see this request is about to be deleted in a few lines (and we don't use the serializer to get back to Wt, we use a .Post, this appears safe
     }
     else
     {
-        StoreCouchbaseDocumentByKeyRequest::respond(request);
+        StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, true, false);
     }
-    delete request;
 
-    --m_PendingAddCount;
-    if(m_NoMoreAllowedMuahahaha && m_PendingAddCount == 0 && m_PendingGetCount == 0)
-    {
-        notifyMainThreadWeAreFinishedWithAllPendingRequests();
-    }
+    END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
 }
 void AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData)
 {
@@ -413,7 +469,7 @@ void AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlo
     //TODOreq: set up a bool flag in the ADD/GET event slots to refuse to start more. Finish the ones we're already working on (where get list? or maybe i just keep a count of each (cheaper)?), then perhaps do a notify_one() back to main thread or some such...
     //TODOoptimization: don't implement this yet, but it would be good to have a timeout for the above (if the count doesn't become zero on time etc)
 
-    //maybe we got lucky
+    //maybe we got lucky, or maybe there is no activity on the server
     if(m_PendingAddCount == 0 && m_PendingGetCount == 0)
     {
         notifyMainThreadWeAreFinishedWithAllPendingRequests();

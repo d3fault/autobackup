@@ -18,16 +18,16 @@ StoreCouchbaseDocumentByKeyRequest::StoreCouchbaseDocumentByKeyRequest()
     : AnonymousBitcoinComputingWtGUIPointerForCallback(NULL), LcbStoreModeIsAdd(true), HasCasInput(false), SaveCasOutput(false)
 { }
 
-void StoreCouchbaseDocumentByKeyRequest::respond(StoreCouchbaseDocumentByKeyRequest *originalRequest)
+void StoreCouchbaseDocumentByKeyRequest::respond(StoreCouchbaseDocumentByKeyRequest *originalRequest, bool lcbOpSuccess, bool dbError)
 {
     if(!originalRequest->LcbStoreModeIsAdd)
     {
-        Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1), originalRequest->CouchbaseAddKeyInput));
+        Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2, _3), originalRequest->CouchbaseAddKeyInput, lcbOpSuccess, dbError));
         return;
     }
-    Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::storeWIthoutInputCasCouchbaseDocumentByKeyFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1), originalRequest->CouchbaseAddKeyInput));
+    Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::storeWIthoutInputCasCouchbaseDocumentByKeyFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2, _3), originalRequest->CouchbaseAddKeyInput, lcbOpSuccess, dbError));
 }
-void StoreCouchbaseDocumentByKeyRequest::respondWithCas(StoreCouchbaseDocumentByKeyRequest *originalRequest, u_int64_t casOutput)
+void StoreCouchbaseDocumentByKeyRequest::respondWithCas(StoreCouchbaseDocumentByKeyRequest *originalRequest, u_int64_t casOutput, bool lcbOpSuccess, bool dbError)
 {
-    Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2), originalRequest->CouchbaseAddKeyInput, casOutput));
+    Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2, _3, _4), originalRequest->CouchbaseAddKeyInput, casOutput, lcbOpSuccess, dbError));
 }

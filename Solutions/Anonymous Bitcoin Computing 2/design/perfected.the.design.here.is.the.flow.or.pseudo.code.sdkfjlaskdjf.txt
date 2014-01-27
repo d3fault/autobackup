@@ -4,8 +4,9 @@ user-account-lock-strict-cas-swap -> slotFillAkaPurchase-add -> transaction-doc-
 
 "Driving / "Probably Successful In The Whole Shebang" / "Actual Buying" -- Node (any one of the 10)
 1) if balance is sufficient, locks user account using strict CAS-swap-lock (fail NOT tolerated, indicates account usage on other tabs/logins etc)
-2) does slot fill
-3) Right after successful slot fill, does exactly what "rand() % 10" possy does (and probably successfully, but not necessarily (however, above two steps must be done in a row and without failure (failure after (1) is noticed on login and then waits for transaction doc to appear before deciding what to do (if anything. see perfect design doc))))
+2) do slot fill / purchase (fail indicates beat to punch. cas-swap-unlock user-account without debitting (fail tolerated, indicates race condition of simultaneous 'login' that then clears lockage))
+##NOPE##3) Right after successful slot fill, does exactly what "rand() % 10" possy does (and probably successfully, but not necessarily (however, above two steps must be done in a row and without failure (failure after (1) is noticed on login and then waits for transaction doc to appear before deciding what to do (if anything. see perfect design doc))))
+3) What the driver does is similar to what the recovery possy does, but there is less checking going on. For example, when we get word that our transaction LCB_ADD is "finished", we assume the transaction doc is created and we already know that the user account is locked and pointing at the slot just purchased (since we did both of those prior to getting here!). So basically we just do transaction -> unlock-debitting -> campaign-update ....... all of course "safely" but accepting "fail"...... not as many error checks and code paths etc (recovery possy does those)
 
 
 "rand() % 10" Recovery Possy -- Nodes (all 10 can be it at the same time, but we aim for 1 every second on average)
@@ -13,7 +14,7 @@ user-account-lock-strict-cas-swap -> slotFillAkaPurchase-add -> transaction-doc-
 2) wait 100ms to give "Driving" (above) node chance to bring campaignDoc up to date on his own (this is very likely race condition)
 3) if after 100ms the campaign doc still isn't up to date (fresh get, skipping caches of course), we check to see if the transaction exists
 	3a) if transaction exists, we check to see if user-account is still locked and pointing to the slot/transaction of interest
-		3a.i) If it isn't locked pointing to our slot/transaction of interest (it can be either unlocked or locked and pointing somewhere else), we CAS-swap-accepting-fail the campaign doc to reflect the slot/transaction
+		3a.i) If it isn't locked pointing to our slot/transaction of interest (it can be either unlocked or locked and pointing somewhere else), we just CAS-swap-accepting-fail the campaign doc to reflect the slot/transaction
 		3a.ii) If it is locked pointing to our slot/transaction, we CAS-swap-accepting-fail 'unlock+debitting' the user-account, then CAS-swap-accepting-fail the campaign doc to reflect the slot/transaction just like (3a.i)
 	3b) if the transaction doc doesn't exist, we check to make sure the user-account is locked and pointing at the slot of interest
 		3b.i) If it isn't locked pointing at the slot of interest, it isn't necessarily an error case. We then re-check for the existence of the transaction doc (that didn't exist for us to even get to this code path). It _NEEDS_ to exist at this point, otherwise we have experienced total system failure (must never happen). If, like we expect, the transaction doc exists this time around, we can then continue as normal, cas-swap-accepting-fail updating of the campaign doc

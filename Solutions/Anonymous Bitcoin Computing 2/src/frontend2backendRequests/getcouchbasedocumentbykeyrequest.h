@@ -30,8 +30,8 @@ public:
     std::string CouchbaseGetKeyInput;
     bool SaveCAS;
 
-    static void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes);
-    static void respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes, u_int64_t cas);
+    static void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes, bool lcbOpSuccess, bool dbError);
+    static void respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 private:
     friend class boost::serialization::access;
     template<class Archive>

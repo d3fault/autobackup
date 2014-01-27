@@ -42,8 +42,8 @@ public:
     u_int64_t CasInput;
     bool SaveCasOutput;
 
-    static void respond(StoreCouchbaseDocumentByKeyRequest *originalRequest);
-    static void respondWithCas(StoreCouchbaseDocumentByKeyRequest *originalRequest, u_int64_t casOutput);
+    static void respond(StoreCouchbaseDocumentByKeyRequest *originalRequest, bool lcbOpSuccess, bool dbError);
+    static void respondWithCas(StoreCouchbaseDocumentByKeyRequest *originalRequest, u_int64_t casOutput, bool lcbOpSuccess, bool dbError);
 private:
     friend class boost::serialization::access;
     template<class Archive>

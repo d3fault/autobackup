@@ -155,6 +155,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WLineEdit *m_RegisterUsername;
     WLineEdit *m_RegisterPassword;
     void showRegisterWidget();
+    void registerAttemptFinished(bool lcbOpSuccess, bool dbError);
     //WContainerWidget *m_RegisterSuccessfulWidget;
 
     //hardcoded
@@ -170,39 +171,40 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice;
+    double calculateCurrentPrice(double minPrice_y2, double lastSlotFilledAkaPurchasedPurchasePriceDoubled_y1, double lastSlotFilledAkaPurchasedExpireDateTime_x2, double lastSlotFilledAkaPurchasedPurchaseDateTime_x1);
     void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &couchbaseDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase);
     void buySlotStep1d3faultCampaign0ButtonClicked();
-    void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc);
+    void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError);
     void buySlotStep2d3faultCampaign0ButtonClicked();
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
-    void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas);
+    void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
     double m_CurrentPriceToUseForBuying;
     std::string m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds;
     std::string m_CurrentPriceToUseForBuyingString;
     std::string m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase;
     std::string m_AdSlotAboutToBeFilledIfLockIsSuccessful;
-    void nowThatTheUserAccountIsLockedDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater);
+    void userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError);
     u_int64_t m_CasFromUserAccountLockSoWeCanSafelyUnlockLater;
     std::string m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase;
     std::string m_UserAccountLockedDuringBuyJson;
-    void successfulSlotFillAkaPurchaseAddIsFinishedSoNowDoUnlockUserAccountWhileSubtractingAmount();
-    void transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting();
-    void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase();
-    void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase();
+    void slotFillAkaPurchaseAddAttemptFinished(bool lcbOpSuccess, bool dbError);
+    void transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(bool dbError);
+    void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError);
+    void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError);
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
     void storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
     void setCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
-    void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument);
-    void getCouchbaseDocumentByKeySavingCasFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas);
+    void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void getCouchbaseDocumentByKeySavingCasFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 
     bool isHomePath(const std::string &pathToCheck);
     void handleInternalPathChanged(const std::string &newInternalPath);
     void handleRegisterButtonClicked();
     void handleLoginButtonClicked();
-    void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson);
+    void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, bool lcbOpSuccess, bool dbError);
     void handleLogoutButtonClicked();
 
     taus88 m_RandomNumberGenerator;
@@ -259,9 +261,9 @@ public:
     static void deleteAllWtMessageQueues();
 
     //had these private + friend class'd and it worked a little ago, but now it's bitching. try to move them back to private if you want
-    void storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument);
-    void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument);
-    void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas);
+    void storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas, bool lcbOpSuccess, bool dbError);
 
 #if 0 //turns out arrays are easier than macros on this side of things
     //static message_queue *m_AddWtMessageQueue0;
