@@ -253,7 +253,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     m_HackedInD3faultCampaign0CasForSafelyUpdatingLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
     //TODOreq: the above two also need to be updated whenever the 'get-and-subscribe' thingy results in an update (that being said, i'm now quite certain that current/next need to go on their own doc. not 100% sure of it, but it's definitely the playing-it-safe way)
 
-    //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
+    //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ int64s as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
     //TODOreq: decided not to be a dick. "buy at current" sends the currentSlotIdForSale and the 'priceUserSawWhenTheyClicked', BUT we use our own internal and calculated-on-the-spot 'current price' and go ahead with the buy using that. We only use currentSlotIdForSale and 'priceUserSawWhenTheyClicked' to make sure they're getting the right slot [and not paying too much]. The two checks are redundant of one another, but that's ok
 
     if(environment().ajax())
@@ -296,7 +296,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
 
                 new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
                 WText *placeholderElement = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-                placeholderElement->doJavaScript
+                placeholderElement->doJavaScript //TODOreq: take out redundant math (low priority since eh it fukken worx)
                         (
                             "var lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + m_HackedInD3faultCampaign0_SlotLengthHours + "*3600)*1000));" +
                             "var lastSlotFilledAkaPurchasedPurchasePrice = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice + ";" + //made a var here so it can be updated later (on buy event) without stopping/restarting timer
@@ -369,7 +369,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         {
             const std::string &slotFillerNickname = child.second.get<std::string>("nickname");
             const std::string &slotFillerIndex = child.second.get<std::string>("slotFillerIndex");
-            m_AllSlotFillersComboBox->insertItem(atoi(slotFillerIndex.c_str()), slotFillerNickname); //TODOreq: Wt probably/should already do[es] this, but the nicknames definitely need to be sanitized (when they're created). TODOreq: make sure atoi is working how i think it should
+            m_AllSlotFillersComboBox->insertItem(boost::lexical_cast<int>(slotFillerIndex), slotFillerNickname); //TODOreq: Wt probably/should already do[es] this, but the nicknames definitely need to be sanitized (when they're created)
         }
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -406,9 +406,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     //TODOreq: sanitize slot index (user could have forged), verify it in fact exists (was thinking i should try to pull the doc, BUT we already have the "allSlotFillers" doc and can just verify that it's in that instead (so we would be depending on earlier sanity checks when setting up the slotFiller instead)
 
-    std::ostringstream slotIndexStream;
-    slotIndexStream << m_AllSlotFillersComboBox->currentIndex();
-    m_SlotFillerToUseInBuy = "adSpaceSlotFillers" + m_BuyerUsername.toUTF8() + slotIndexStream.str();
+    m_SlotFillerToUseInBuy = "adSpaceSlotFillers" + m_BuyerUsername.toUTF8() + boost::lexical_cast<std::string>(m_AllSlotFillersComboBox->currentIndex());
 
     //TODOreq: make a query for the user's "account", to both cas-lock it and to see that the balance is high enough. hmm i don't need the cas value presented to me in Wt land, but i do need it to be held on to for continuing with the cas swap shit after i make sure balance is high enough (i suppose i can just pass the currentPrice to the backend and have him verify balance > currentPrice (but up till now, my backend has been app agnostic and therefore portable. i suppose i need an app-specific backend? perhaps isA agnostic db type? so much flexibility it hurts. KISS). really though, cas-swap(lock) is NOT abc-specific, so implementing that in my backend is good. maybe a generic "getCouchbaseDocumentByKeyAndHangOntoItBecauseIMightCasSwapIt" (TODOreq: account for when i DON'T cas-swap it (in this example, if the balance is too low, or if it's already 'locked')). Hmm the CAS value is just a uint64_t, so maybe it won't be so troublesome to bring it to wt side and then send it back to couchbase [in a new 'store' request])
     getCouchbaseDocumentByKeySavingCasBegin("user" + m_BuyerUsername.toUTF8());
@@ -431,39 +429,39 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     {
         //not already locked
         std::string userBalanceString = pt.get<std::string>("balance");
-        double userBalance = strtod(userBalanceString.c_str(), 0);
+        double userBalance = boost::lexical_cast<double>(userBalanceString);
 
         //TO DOnereq: we should probably calculate balance HERE/now instead of in buySlotStep2d3faultCampaign0ButtonClicked (where it isn't even needed). Those extra [SUB ;-P]-milliseconds will get me millions and millions of satoshis over time muahhahaha superman 3
 
         //calculate internal price
         //y2
-        double minPriceDouble = strtod(m_HackedInD3faultCampaign0_MinPrice.c_str(), 0);
+        double minPriceInt64 = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
         //y1
-        double lastSlotFilledAkaPurchasedPurchasePrice_Doubled = (strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice.c_str(), 0)*2.0);
+        double lastSlotFilledAkaPurchasedPurchasePrice_Doubled = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0);
         //x2
-        double lastSlotFilledAkaPurchasedExpireDateTime = (strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp.c_str(), 0)+((double)(strtod(m_HackedInD3faultCampaign0_SlotLengthHours.c_str(),0)*(3600.0))));
+        double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
         //x1
-        double lastSlotFilledAkaPurchasedPurchaseDateTime = strtod(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp.c_str(), 0);
+        double lastSlotFilledAkaPurchasedPurchaseDateTime = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp);
         //m = (y2-y1)/(x2-x1);
-        double m = (minPriceDouble-lastSlotFilledAkaPurchasedPurchasePrice_Doubled)/(lastSlotFilledAkaPurchasedExpireDateTime-lastSlotFilledAkaPurchasedPurchaseDateTime);
+        double m = (minPriceInt64-lastSlotFilledAkaPurchasedPurchasePrice_Doubled)/(lastSlotFilledAkaPurchasedExpireDateTime-lastSlotFilledAkaPurchasedPurchaseDateTime);
         //b = y-(m*x)
-        double b = (minPriceDouble - (m * lastSlotFilledAkaPurchasedExpireDateTime));
+        double b = (minPriceInt64 - (m * lastSlotFilledAkaPurchasedExpireDateTime));
 
         m_CurrentPriceToUseForBuying = (m*((double)WDateTime::currentDateTime().toTime_t()))+b;
 
-        std::ostringstream lastSlotFilledAkaPurchasedExpireDateTimeBuffer;
-        lastSlotFilledAkaPurchasedExpireDateTimeBuffer << lastSlotFilledAkaPurchasedExpireDateTime;
-        m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = lastSlotFilledAkaPurchasedExpireDateTimeBuffer.str();
+        m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = boost::lexical_cast<std::string>(lastSlotFilledAkaPurchasedExpireDateTime);
 
         //TODOreq: check current not expired or no purchases etc (use min)
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
+        //std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
         //TODOreq: why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++. BUT SERIOUSLY THOUGH I need to make sure that this doesn't fuck up shit and money get leaked/lost/whatever. Maybe rounding errors in this method of converting double -> string, and since I'm using it as the actual value in the json doc, I need it to be accurate. The very fact that I have to use 6 instead of 8 just makes me wonder...
         //TODOreq: ^ok wtf now i got 7 decimal places, so maybe it's dependent on the value........... maybe i should just store/utilize as many decimal places as possible (maybe trimming to 8 _ONLY_ when the user sees the value).... and then force the bitcoin client to do the rounding shizzle :-P
-        currentPriceStream /*<< setprecision(6)*/ << m_CurrentPriceToUseForBuying; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
-        m_CurrentPriceToUseForBuyingString = currentPriceStream.str();
+        //currentPriceStream /*<< setprecision(6)*/ << m_CurrentPriceToUseForBuying; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
+        //m_CurrentPriceToUseForBuyingString = currentPriceStream.str();
+        m_CurrentPriceToUseForBuyingString = boost::lexical_cast<std::string>(m_CurrentPriceToUseForBuying); //or snprintf? I'm thinking lexical_cast will keep as many decimal places as it can (but is that what i want, or do i want to mimic bitcoin rounding?), so...
+
         new WText("Internal Price Calculated At (should match above): " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
 
@@ -472,11 +470,11 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             //proceed with trying to lock account
 
             //make 'account locked' json doc [by just appending to the one we already have]
-            int oldSlotIndex = atoi(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex.c_str()); //TODOoptimization: and what happens after 4294967296 days (which is 11767033 years (ok nvm (but still, if I make it public then people could change the slot length to one hour etc)))!?!?
+            int oldSlotIndex = boost::lexical_cast<int>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex); //TODOoptimization: and what happens after 4294967296 days (which is 11767033 years (ok nvm (but still, if I make it public then people could change the slot length to one hour etc)))!?!?
             ++oldSlotIndex; //now new slot index :)
-            std::ostringstream slotIndexIntToStringBuffer;
-            slotIndexIntToStringBuffer << oldSlotIndex;
-            m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase = slotIndexIntToStringBuffer.str();
+            //std::ostringstream slotIndexIntToStringBuffer;
+            //slotIndexIntToStringBuffer << oldSlotIndex;
+            m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase = boost::lexical_cast<std::string>(oldSlotIndex); //slotIndexIntToStringBuffer.str();
             m_AdSlotAboutToBeFilledIfLockIsSuccessful = "adSpaceSlotsd3fault0Slot" + m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase;
             pt.put("slotToAttemptToFillAkaPurchase", m_AdSlotAboutToBeFilledIfLockIsSuccessful);
             //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
@@ -510,9 +508,7 @@ void AnonymousBitcoinComputingWtGUI::nowThatTheUserAccountIsLockedDoTheActualSlo
 
     //do the LCB_ADD for the slot!
     ptree pt;
-    std::ostringstream timestampStream;
-    timestampStream << WDateTime::currentDateTime().toTime_t();
-    m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = timestampStream.str();
+    m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = boost::lexical_cast<std::string>(WDateTime::currentDateTime().toTime_t());
     pt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
     pt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
     pt.put("slotFilledWith", m_SlotFillerToUseInBuy);
@@ -546,11 +542,9 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     std::istringstream is(m_UserAccountLockedDuringBuyJson);
     read_json(is, pt);
     //now do the debit of the balance and put it back in the json doc
-    double balancePrePurchase = strtod(pt.get<std::string>("balance").c_str(), 0);
-    balancePrePurchase -= m_CurrentPriceToUseForBuying; //TODOreq: again, just scurred of rounding errors etc. I think as long as I  use 'more precision than needed' (as much as a double provides), I should be ok...
-    std::ostringstream balancePostPurchaseBuffer;
-    balancePostPurchaseBuffer << balancePrePurchase;
-    pt.put("balance", balancePostPurchaseBuffer.str());
+    double balancePrePurchase = boost::lexical_cast<double>(pt.get<std::string>("balance"));
+    balancePrePurchase -= m_CurrentPriceToUseForBuying; //TODOreq: again, just scurred of rounding errors etc. I think as long as I  use 'more precision than needed' (as much as an int64 provides), I should be ok...
+    pt.put("balance", boost::lexical_cast<std::string>(balancePrePurchase));
     //now convert the json doc back to string for couchbase
     std::ostringstream jsonDocWithBalanceDeducted;
     write_json(jsonDocWithBalanceDeducted, pt, false);
@@ -597,7 +591,7 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     ptree lastPurchasedPt;
     lastPurchasedPt.put("slotIndex", m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase);
     lastPurchasedPt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
-    lastPurchasedPt.put("startTimestamp", m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds);
+    lastPurchasedPt.put("startTimestamp", m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds); //TODOreq: this shit has e+blah stuff in it
     lastPurchasedPt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
 
     pt.put_child("lastSlotFilledAkaPurchased", lastPurchasedPt);
