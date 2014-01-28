@@ -12,6 +12,7 @@
 #include <Wt/WContainerWidget>
 #include <Wt/WHBoxLayout>
 #include <Wt/WVBoxLayout>
+#include <Wt/WGridLayout>
 #include <Wt/WText>
 #include <Wt/WBreak>
 #include <Wt/WAnchor>
@@ -152,8 +153,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void showAdvertisingBuyAdSpaceWidget();
 
     WContainerWidget *m_RegisterWidget;
-    WLineEdit *m_RegisterUsername;
-    WLineEdit *m_RegisterPassword;
+    WLineEdit *m_RegisterUsernameLineEdit;
+    WLineEdit *m_RegisterPasswordLineEdit;
     void showRegisterWidget();
     void registerAttemptFinished(bool lcbOpSuccess, bool dbError);
     //WContainerWidget *m_RegisterSuccessfulWidget;
@@ -167,11 +168,12 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     u_int64_t m_HackedInD3faultCampaign0CasForSafelyUpdatingLaterAfterSuccessfulPurchase;
     std::string m_HackedInD3faultCampaign0_MinPrice;
     std::string m_HackedInD3faultCampaign0_SlotLengthHours;
+    bool m_HackedInD3faultCampaign0_NoPreviousSlotPurchases;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice;
-    double calculateCurrentPrice(double minPrice_y2, double lastSlotFilledAkaPurchasedPurchasePriceDoubled_y1, double lastSlotFilledAkaPurchasedExpireDateTime_x2, double lastSlotFilledAkaPurchasedPurchaseDateTime_x1);
+    double calculateCurrentPrice(double currentTime_x, double minPrice_y2, double lastSlotFilledAkaPurchasedPurchasePriceDoubled_y1, double lastSlotFilledAkaPurchasedExpireDateTime_x2, double lastSlotFilledAkaPurchasedPurchaseDateTime_x1);
     void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &couchbaseDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase);
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError);
@@ -179,12 +181,14 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+    bool m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired;
     double m_CurrentPriceToUseForBuying;
     std::string m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds;
     std::string m_CurrentPriceToUseForBuyingString;
-    std::string m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase;
+    std::string m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase;
     std::string m_AdSlotAboutToBeFilledIfLockIsSuccessful;
     void userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError);
+    std::string m_StartTimestampUsedInNewPurchase;
     u_int64_t m_CasFromUserAccountLockSoWeCanSafelyUnlockLater;
     std::string m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase;
     std::string m_UserAccountLockedDuringBuyJson;

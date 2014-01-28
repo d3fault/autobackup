@@ -15,9 +15,7 @@ adSpaceSlotsd3fault0
 
 All that is needed to calculate the current price && dropping-rate is minPrice, slotLengthHours, lastSlotFilledAkaPurchased, and of course the current time.
 
-'current' is used to know which to display, and 'next' is used when the time comes so there won't be any contesting CAS-swap'ing the adSpaceSlotsd3fault0 document -- should there be a lot of purchases. This gives the swapping machine (who TODOreq, a cron job? ideallly any couchbase-client/wt-node would do this, and if the CAS-swap fails check to see that what we intended to do was in fact done by another neighbor node (there is also the RARE MAYBE IMPOSSIBLE 'two increments before we CAS-replace')) 24 hours to simply make 'next' -> 'current', and of course to fill in the next 'next' if one exists. Users of said document have to calculate for themselves whether to use current or next, depending on the current time.
-
-The initial/minimum state of adSpaceSlotsd3fault0 is that only minPrice and slotLengthHours fields exist. There is also an 'early' state where only lastSlotFilledAkaPurchased and currentSlotOnDisplay exist (they would be identical): just after the first purchase, before the second.
+The initial/minimum state of adSpaceSlotsd3fault0 is that only minPrice and slotLengthHours fields exist.
 
 The full json document for adSpaceSlotsd3fault0 before any purchases at all follows:
 
@@ -27,33 +25,13 @@ adSpaceSlotsd3fault0
   "slotLengthHours": "24"
 }
 
-The full json document for adSpaceSlotsd3fault0 when no more 'next's have been purchased (the currentDisplayed becomes the lastPurchased):
-The full json document for adSpaceSlotsd3fault0 after exactly 1 purchase follows:
-
-adSpaceSlotsd3fault0
-{
-  "minPrice": "0.001",
-  "slotLengthHours": "24",
-  "lastSlotFilledAkaPurchased": {
-    "slotIndex": "0",
-    "purchaseTimestamp": "1390499995",
-    "startTimestamp": "1390499995",
-    "purchasePrice": "0.001"
-  },
-  "currentSlotOnDisplay": {
-    "slotIndex": "0",
-    "purchaseTimestamp": "1390499995",
-    "startTimestamp": "1390499995",
-    "purchasePrice": "0.001"
-  }
-}
-
 The full json document for adSpaceSlotsd3fault0Slot1 follows:
 
 /A SLOT PURCHASE OF AN AD SPACE BEING SOLD
 adSpaceSlotsd3fault0Slot1 //these are the keys/docs that are CAS-raced to (LCB_ADD)
 {
   "purchaseTimestamp": "1970",
+  "startTimestamp" : "1971",
   "purchasePrice": "0.002",
   "slotFilledWith": "adSpaceSlotFillersJimboKnives0"	
 }

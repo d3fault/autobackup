@@ -36,7 +36,7 @@
 //NOPE: Maybe I need to set a cookie and then depend on the combination of the session id and the cookie [which needs it's own id of course (they can't match and the cookie can't be derived from session id (else attacker could derive same cookie))]
 
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
-    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_AllSlotFillersComboBox(0), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
+    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_HackedInD3faultCampaign0_NoPreviousSlotPurchases(true), m_AllSlotFillersComboBox(0), m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
 {
     m_RandomNumberGenerator.seed((int)rawUniqueId());
     m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator); //TODOoptimization: these don't need to be members if i just use them once in constructor
@@ -136,71 +136,52 @@ void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
     if(!m_RegisterWidget)
     {
         m_RegisterWidget = new WContainerWidget(m_MainStack);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
+        WGridLayout *registerGridLayout = new WGridLayout(m_RegisterWidget);
+        int rowIndex = -1;
 
-        new WText("Username:", m_RegisterWidget);
-        m_RegisterUsername = new WLineEdit(m_RegisterWidget);
-        m_RegisterUsername->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked); //was tempted to not put this here because if they press enter in username then they probably aren't done, BUT that 'implicit form submission' bullshit would submit it anyways. might as well make sure it's pointing at the right form...
+        registerGridLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME), ++rowIndex, 0, 1, 2);
 
-        new WBreak(m_RegisterWidget);
-        new WText("Password:", m_RegisterWidget);
-        m_RegisterPassword = new WLineEdit(m_RegisterWidget);
-        m_RegisterPassword->setEchoMode(WLineEdit::Password);
-        m_RegisterPassword->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
+        registerGridLayout->addWidget(new WText("Username:"), ++rowIndex, 0);
+        m_RegisterUsernameLineEdit = new WLineEdit();
+        registerGridLayout->addWidget(m_RegisterUsernameLineEdit, rowIndex, 1);
+        m_RegisterUsernameLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked); //was tempted to not put this here because if they press enter in username then they probably aren't done, BUT that 'implicit form submission' bullshit would submit it anyways. might as well make sure it's pointing at the right form...
 
-        new WBreak(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
+        registerGridLayout->addWidget(new WText("Password:"), ++rowIndex, 0);
+        m_RegisterPasswordLineEdit = new WLineEdit();
+        registerGridLayout->addWidget(m_RegisterPasswordLineEdit, rowIndex, 1);
+        m_RegisterPasswordLineEdit->setEchoMode(WLineEdit::Password);
+        m_RegisterPasswordLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
 
-        WPushButton *registerButton = new WPushButton("Register", m_RegisterWidget);
+        WPushButton *registerButton = new WPushButton("Register");
+        registerGridLayout->addWidget(registerButton, ++rowIndex, 1);
         registerButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
 
-        new WBreak(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-
-        new WText("Optional:", m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Sexual Preference:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Social Security Number:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Religion:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Political Beliefs:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Time of day your wife is home alone:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Where you keep your gun:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Your wife's cycle:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Your mum's cycle:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Credit Card #:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        new WText("Credit Card Pin #:", m_RegisterWidget);
-        new WLineEdit(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
-        //new WText("The most embarrassing thing you've put up your anus in order to climax:", m_RegisterWidget); //coulda sworn i commented this out a few commits ago (too wide (my anus, that is)). guh maybe i accidentally did edits in my vm/test-os....... ffffffffffff. oh well stability seems fine...
-        //new WLineEdit(m_RegisterWidget);
-
-        new WBreak(m_RegisterWidget);
-        new WBreak(m_RegisterWidget);
+        registerGridLayout->addWidget(new WText("Optional:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WText("Sexual Preference:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Social Security Number:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Religion:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Political Beliefs:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Time of day your wife is home alone:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Where you keep your gun:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Your wife's cycle:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Your mum's cycle:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Credit Card #:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Credit Card Pin #:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
 
         //;-) and then secretly ;-) on the deployed/binary version ;-) i actually save these values ;-) and then sell them to hollywood ;-) to make movies off of them ;-) and then use the funds from that to take over the world ;-) and solve us of our corporate cancers (of which hollywood is an item) ;-) muaahahahahhahaha
 
-        WPushButton *registerButton2 = new WPushButton("Register", m_RegisterWidget);
+        WPushButton *registerButton2 = new WPushButton("Register");
+        registerGridLayout->addWidget(registerButton2, ++rowIndex, 1);
         registerButton2->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
     }
     m_MainStack->setCurrentWidget(m_RegisterWidget);
@@ -221,14 +202,14 @@ void AnonymousBitcoinComputingWtGUI::registerAttemptFinished(bool lcbOpSuccess, 
     //if we get here, the registration doc add was successful
 
     WContainerWidget *registerSuccessfulWidget = new WContainerWidget(m_MainStack);
-    new WText("Welcome to Anonymous Bitcoin Computing, " + m_RegisterUsername->text() + ". You can now log in.", registerSuccessfulWidget);
+    new WText("Welcome to Anonymous Bitcoin Computing, " + m_RegisterUsernameLineEdit->text() + ". You can now log in.", registerSuccessfulWidget);
 
     new WBreak(registerSuccessfulWidget);
     new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, registerSuccessfulWidget);
 
     //in case they browse back to it. TODOreq: probably should do this in other places as well
-    m_RegisterUsername->setText("");
-    m_RegisterPassword->setText("");
+    m_RegisterUsernameLineEdit->setText("");
+    m_RegisterPasswordLineEdit->setText("");
 
     m_MainStack->setCurrentWidget(registerSuccessfulWidget);
 
@@ -294,14 +275,14 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 }
-double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double minPrice_y2, double lastSlotFilledAkaPurchasedPurchasePriceDoubled_y1, double lastSlotFilledAkaPurchasedExpireDateTime_x2, double lastSlotFilledAkaPurchasedPurchaseDateTime_x1)
+double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double currentTime_x, double minPrice_y2, double lastSlotFilledAkaPurchasedPurchasePriceDoubled_y1, double lastSlotFilledAkaPurchasedExpireDateTime_x2, double lastSlotFilledAkaPurchasedPurchaseDateTime_x1)
 {
     //m = (y2-y1)/(x2-x1);
     double m = (minPrice_y2-lastSlotFilledAkaPurchasedPurchasePriceDoubled_y1)/(lastSlotFilledAkaPurchasedExpireDateTime_x2-lastSlotFilledAkaPurchasedPurchaseDateTime_x1);
     //b = y-(m*x)
     double b = (minPrice_y2 - (m * lastSlotFilledAkaPurchasedExpireDateTime_x2));
     //y = m(x)+b
-    return ((m*((double)WDateTime::currentDateTime().toTime_t()))+b);
+    return ((m*currentTime_x)+b);
 }
 void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
 {
@@ -319,6 +300,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     m_HackedInD3faultCampaign0_MinPrice = pt.get<std::string>("minPrice");
     m_HackedInD3faultCampaign0_SlotLengthHours = pt.get<std::string>("slotLengthHours");
     boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional("lastSlotFilledAkaPurchased");
+    m_HackedInD3faultCampaign0_NoPreviousSlotPurchases = !lastSlotFilledAkaPurchased.is_initialized();
 
     new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
     WText *placeholderForPrice = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -338,7 +320,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
 
     if(environment().ajax())
     {        
-        if(!lastSlotFilledAkaPurchased.is_initialized())
+        if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
         {
             //TODOreq: account for 'no last purchase' in js (easy, just use min)
             //TODOreq: no purchases yet, use static min price (but still be able to transform to javascript countdown on buy event)
@@ -381,7 +363,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     }
     else
     {
-        if(!lastSlotFilledAkaPurchased.is_initialized())
+        if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases) //TODOreq: not related to js/here/etc, but when a "buy event" is received and we're on, say, step 1 of 2 clicked, we would then possibly toggle the value of NoPreviousSlotPurchases and need to make sure that... err... something...
         {
             placeholderForPrice->setText(m_HackedInD3faultCampaign0_MinPrice);
         }
@@ -393,14 +375,29 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
             m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
 
-            //TODOreq: check expired, otherwise we'd get numbers below our min
 
-            double currentPrice = calculateCurrentPrice(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
+            //check expired
+            double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
+            double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
+            if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
+            {
+                //expired, so use min price
+                m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
+            }
+            else
+            {
+                //not expired, so calculate. despite determining it's not expired here, we are not going to set "m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;", because it may have expired by the time they hit buy step 2. We have to check when/after they click buy step 2. Could be minutes/hours/days after the page has been rendered (this code)
 
-            placeholderForPrice->setText(boost::lexical_cast<std::string>(currentPrice)); //TODOreq: 8 decimal places
-            //TODOoptional: if viewing campaign/countdown with js on and you then disallow js, the price is empty/blank (not even zero). weirdly though, coming directly to the page (no session) with javascript already disabled works fine. I think it has something to do with noscript not re-fetching the source during the "reload"... because on the noscript-reload tab i see "Scripts currently forbidden" (with options to allow them), and on "navigated directly to campaign with js already off" tab I don't see that message (no js was served). I don't even think I CAN fix this problem heh :-P... but it might be a Wt bug... not gracefully degrading when session becomes js-less?
+                //TODOreq: javascript-less UI should update price after buy step 1 is clicked
+                //TODOreq: maybe a 60 second timer to refresh js-less page
 
-            //TODOreq: "current price is XXX and it will be back at YYYYY at ZZZZZZZ (should nobody buy any further slots). Click here to refresh this information to see if it's still valid, as someone may have purchased a slot since you loaded this page (enable javascript if you want to see it count down automatically)"
+                double currentPrice = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
+
+                placeholderForPrice->setText(boost::lexical_cast<std::string>(currentPrice)); //TODOreq: 8 decimal places, since it's presented to user
+                //TODOoptional: if viewing campaign/countdown with js on and you then disallow js, the price is empty/blank (not even zero). weirdly though, coming directly to the page (no session) with javascript already disabled works fine. I think it has something to do with noscript not re-fetching the source during the "reload"... because on the noscript-reload tab i see "Scripts currently forbidden" (with options to allow them), and on "navigated directly to campaign with js already off" tab I don't see that message (no js was served). I don't even think I CAN fix this problem heh :-P... but it might be a Wt bug... not gracefully degrading when session becomes js-less?
+
+                //TODOreq: "current price is XXX and it will be back at YYYYY at ZZZZZZZ (should nobody buy any further slots). Click here to refresh this information to see if it's still valid, as someone may have purchased a slot since you loaded this page (enable javascript if you want to see it count down automatically)"
+            }
         }
     }
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -410,6 +407,9 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
 }
 void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
 {
+    //TODOreq: anything between step 1 being clicked and the slot being successfully purchased/filled needs to be able to roll back to a pre-step-1-clicked state: buy events, insufficient funds, user-account-lock fails, etc (there are probably more)
+    //TODOreq: semi-related to ^. since the user is already logged in (actually that's checked a few lines down from here), we can do ANOTHER ahead-of-time sufficient funds check (DO NOT DEPEND ON IT THOUGH) right when the user clicks buy step 1
+
     if(!m_LoggedIn)
     {
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -438,8 +438,6 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
     if(!m_AllSlotFillersComboBox)
     {
-        //TODOreq: give error if no slotFillers have been set up, and instruct them to do so (with link to page to do it)
-
         ptree pt;
         std::istringstream is(allSlotFillersJsonDoc);
         read_json(is, pt);
@@ -531,12 +529,40 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
 
         //TO DOnereq: we should probably calculate balance HERE/now instead of in buySlotStep2d3faultCampaign0ButtonClicked (where it isn't even needed). Those extra [SUB ;-P]-milliseconds will get me millions and millions of satoshis over time muahhahaha superman 3
 
-        double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
+        double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
 
-        //calculate internal price
-        m_CurrentPriceToUseForBuying = calculateCurrentPrice(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), lastSlotFilledAkaPurchasedExpireDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
+        if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
+        {
+            //no last purchase, so use min price
+            m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
+            m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = true; //not necessary to set here, but to be on the safe side..
+        }
+        else
+        {
+            //there is a last purchase
 
-        m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = boost::lexical_cast<std::string>(lastSlotFilledAkaPurchasedExpireDateTime);
+            //check to see if last purchase is expired
+            double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
+            if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
+            {
+                //expired, so use min price
+                m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
+                m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = true;
+            }
+            else
+            {
+                //not expired, so calculate
+
+                //calculate internal price
+                m_CurrentPriceToUseForBuying = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), lastSlotFilledAkaPurchasedExpireDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
+
+                //TODOreq: when we use this variable later, we first check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases. If true, we then use the PURCHASE time as the start time. That is also true for when the last purchase is already expired (check both and in mentioned order). We also need to make sure we always check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases before checking if last purchase is expired, because there isn't a last purchase so we'd get undefined results
+                m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = boost::lexical_cast<std::string>(lastSlotFilledAkaPurchasedExpireDateTime);
+
+                m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;
+            }
+        }
+
 
         //TODOreq: check current not expired or no purchases etc (use min)
 
@@ -548,21 +574,21 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         //currentPriceStream /*<< setprecision(6)*/ << m_CurrentPriceToUseForBuying; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
         //m_CurrentPriceToUseForBuyingString = currentPriceStream.str();
         m_CurrentPriceToUseForBuyingString = boost::lexical_cast<std::string>(m_CurrentPriceToUseForBuying); //or snprintf? I'm thinking lexical_cast will keep as many decimal places as it can (but is that what i want, or do i want to mimic bitcoin rounding?), so...
-
-        new WText("Internal Price Calculated At (should match above): " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-
+        m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = boost::lexical_cast<std::string>(currentDateTime); //TODOreq: just fixed this, but need to make sure other code paths (???) also do the same: i was doing 'currentDateTime' twice and in between couchbase requests... but i need to make sure that the timestamp used to calculate the price is the same one stored alongside it in the json doc as 'purchase time' (and possibly start time, depending if last is expired). just fixed it now i'm pretty sure. since i was calculating it twice and the second time was later after a couchbase request, the timestamp would have been off by [sub]-milliseconds... and we've all seen superman 3 (actually i'm not sure that i have (probably have when i was young as shit, but don't remember it (hmmmm time for a rewatch)), but i've definitely seen office space (oh yea i want to rewatch that also!))
 
         if(userBalance >= m_CurrentPriceToUseForBuying) //idk why but this makes me cringe. suspicion of rounding errors and/or other hackability...
         {
             //proceed with trying to lock account
 
             //make 'account locked' json doc [by just appending to the one we already have]
-            int oldSlotIndex = boost::lexical_cast<int>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex); //TODOoptimization: and what happens after 4294967296 days (which is 11767033 years (ok nvm (but still, if I make it public then people could change the slot length to one hour etc)))!?!?
-            ++oldSlotIndex; //now new slot index :)
-            //std::ostringstream slotIndexIntToStringBuffer;
-            //slotIndexIntToStringBuffer << oldSlotIndex;
-            m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase = boost::lexical_cast<std::string>(oldSlotIndex); //slotIndexIntToStringBuffer.str();
-            m_AdSlotAboutToBeFilledIfLockIsSuccessful = "adSpaceSlotsd3fault0Slot" + m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase;
+
+            int slotIndexToAttemptToBuy = 0;
+            if(!m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
+            {
+                slotIndexToAttemptToBuy = (boost::lexical_cast<int>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex) + 1);
+            }
+            m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase = boost::lexical_cast<std::string>(slotIndexToAttemptToBuy);
+            m_AdSlotAboutToBeFilledIfLockIsSuccessful = "adSpaceSlotsd3fault0Slot" + m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase;
             pt.put("slotToAttemptToFillAkaPurchase", m_AdSlotAboutToBeFilledIfLockIsSuccessful);
             //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
             //TODOreq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
@@ -604,12 +630,22 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
     m_CasFromUserAccountLockSoWeCanSafelyUnlockLater = casFromLockSoWeCanSafelyUnlockLater;
     //TODOreq: unlock user account after successful add
     //TODOreq: handle beat to punch error case (unlock without deducting)
-    //TODOreq: handle lock failed error case
 
     //do the LCB_ADD for the slot!
     ptree pt;
-    m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = boost::lexical_cast<std::string>(WDateTime::currentDateTime().toTime_t());
-    pt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase); //TODOreq: not sure if purchase timestamp or purchase price are needed in this doc, starting to think startTimestamp needs to be added
+    pt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase); //TODOreq: not sure if purchase timestamp or purchase price are needed in this doc, starting to think startTimestamp needs to be added. NO PURCHASE TIME _IS_ NEEDED BECAUSE RECOVERY POSSY WOULD USE IT TO UPDATE CAMPAIGN DOC! probably also purchase price for same reason... and still unsure about, but heavily leaning towards, yes on the start time
+    //TODOreq: probably need to put start time in doc, and need to make sure to use purchase timestamp if last purchase is expired
+    m_StartTimestampUsedInNewPurchase = m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase; //start timestamp is purchase timestamp if there is no last purchase, or if the last purchase is already expired
+    if(!m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
+    {
+        //there is a last purchase, so we base our start time off of that if it isn't expired
+        if(!m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired)
+        {
+            //last isn't expired, so we put the start of this new one to be when that one expires
+            m_StartTimestampUsedInNewPurchase = m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds;
+        }
+    }
+    pt.put("startTimestamp", m_StartTimestampUsedInNewPurchase);
     pt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
     pt.put("slotFilledWith", m_SlotFillerToUseInBuy);
     std::ostringstream jsonDocBuffer;
@@ -639,11 +675,11 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     //create transaction doc using lcb_add accepting fail -- i can probably re-use this code later (merge into functions), for now KISS
     ptree pt;
     pt.put("buyer", m_BuyerUsername);
-    pt.put("seller", "d3fault");
+    pt.put("seller", "d3fault"); //TODOreq: implied/deducable from key name...
     pt.put("amount", m_CurrentPriceToUseForBuyingString);
     std::ostringstream transactionBuffer;
     write_json(transactionBuffer, pt, false);
-    storeWithoutInputCasCouchbaseDocumentByKeyBegin(string("txd3fault0") + string("slot") + m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase, transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+    storeWithoutInputCasCouchbaseDocumentByKeyBegin(string("txd3fault0") + string("slot") + m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase, transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
     m_WhatTheStoreWIthoutInputCasWasFor = CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS; //TODOreq: it goes without saying that 'recovery possy' needs it's own set of these, so as not to conflict
     //TODOreq: i need a way of telling the backend that certain adds (like this one) are okay to fail. But really I already need a whole slew of error case handling to be coded into the backend, I guess I'll just do it later? So basically for adds where fails are not ok, we need to have two code paths... but for this one where the add failing is ok, we just pick up with one code path. I think the easiest way of doing this is to return a bool telling whether or not the add succeeded, and to just ignore it if it doesn't matter. But since there's many many ways of failing, maybe I should be passing around the LCB_ERROR itself? So far I've tried to keep front end and back end separate, so idk maybe "bool opTypeFail and bool dbTypeFail", where the first one is relating to cas/add fails and the second is like "500 internal server error" (of course, the backend would have retried backing off exponentially etc before resorting to that)
 }
@@ -726,9 +762,9 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     }
 #endif
     ptree lastPurchasedPt;
-    lastPurchasedPt.put("slotIndex", m_AdSlotIndexToUseInPurchaseAndInUpdateCampaignDocAfterPurchase);
+    lastPurchasedPt.put("slotIndex", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
     lastPurchasedPt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
-    lastPurchasedPt.put("startTimestamp", m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds); //TODOreq: this shit has e+blah stuff in it
+    lastPurchasedPt.put("startTimestamp", m_StartTimestampUsedInNewPurchase);
     lastPurchasedPt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
 
     pt.put_child("lastSlotFilledAkaPurchased", lastPurchasedPt);
@@ -1025,8 +1061,8 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     //TODOreq: sanitize username at least (my json encoder doesn't like periods, for starters). since password is being b64 encoded we can probably skip sanitization (famous last words?)
     //TODOreq: do i need to base64 the passwordHash if i want to store it as json? methinks yes, because the raw byte array might contain a quote or a colon etc...
 
-    std::string username = m_RegisterUsername->text().toUTF8();
-    std::string passwordPlainText = m_RegisterPassword->text().toUTF8();
+    std::string username = m_RegisterUsernameLineEdit->text().toUTF8();
+    std::string passwordPlainText = m_RegisterPasswordLineEdit->text().toUTF8();
 
     //make salt
     std::string salt = sha1(username + uniqueId() + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + WDateTime::currentDateTime().toString().toUTF8());
