@@ -158,6 +158,9 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     }CouchbaseInstanceScopedDeleterOnlyInstance;
 #endif
 
+    //lol configuration callback was using the cookie and yet i wasn't setting it until after lcb_connect (which is async (is why it worked)). plugging dat race condition [that never once happened]
+    lcb_set_cookie(m_Couchbase, this);
+
     //couchbase callbacks
     lcb_set_error_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::errorCallbackStatic);
     lcb_set_configuration_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::configurationCallbackStatic);
@@ -166,13 +169,11 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     lcb_set_durability_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic);
     if((error = lcb_connect(m_Couchbase)) != LCB_SUCCESS)
     {
-        cerr << "Failed to connect libcouchbase instance: " << lcb_strerror(m_Couchbase, error) << endl;
+        cerr << "Failed to start connecting libcouchbase instance: " << lcb_strerror(m_Couchbase, error) << endl;
         TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
         lcb_destroy(m_Couchbase);
         return;
     }
-
-    lcb_set_cookie(m_Couchbase, this);
 
     BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO, Add)
     BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO, Get)
@@ -355,7 +356,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
 void AnonymousBitcoinComputingCouchbaseDB::getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp)
 {
     //TODOoptional: boost::bind might do this recontextualizing for me (hell it might even just be a macro doing the same thing!), but idk and usually only use boost::bind when i'm told to. I find it hilarious that Qt allows you to pass a pointer across a thread, and boost allows you to point to a specific class instance's method... but both say that the other's is "wrong"... and yet they are both C++ frameworks/libraries that provide a lot of the same functionality. I'll tell you one thing: although I'm glad I can still swim in boost land, I much prefer Qt. Much neater and stuff (hard to explain unless you are coder too in which case you already know so what the fuck who am I typing this to?)
-    ((AnonymousBitcoinComputingCouchbaseDB*)(lcb_get_cookie(instance)))->getCallback(cookie, error, resp);
+    const_cast<AnonymousBitcoinComputingCouchbaseDB*>(static_cast<const AnonymousBitcoinComputingCouchbaseDB*>(lcb_get_cookie(instance)))->getCallback(cookie, error, resp);
 }
 void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp)
 {
@@ -365,6 +366,9 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
     {
         if(error != LCB_KEY_ENOENT)
         {
+            //TODOreq: exponential backoff when error qualifies
+            //TODOreq: lcb_get_replica when error qualifies
+
             cerr << "Error couchbase getCallback:" << lcb_strerror(m_Couchbase, error) << endl;
             if(originalRequest->SaveCAS)
             {
@@ -483,6 +487,7 @@ void AnonymousBitcoinComputingCouchbaseDB::finalCleanupAndJoin(int unusedSocket,
     (void)unusedSocket;
     (void)events;
     event_base_loopbreak((event_base*)userData);
+    //^^lcb_breakout instead?
 }
 void AnonymousBitcoinComputingCouchbaseDB::notifyMainThreadWeAreFinishedWithAllPendingRequests()
 {

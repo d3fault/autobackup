@@ -10,6 +10,7 @@ user-account-lock-strict-cas-swap -> slotFillAkaPurchase-add -> transaction-doc-
 
 
 "rand() % 10" Recovery Possy -- Nodes (all 10 can be it at the same time, but we aim for 1 every second on average)
+0) get the campaign doc
 1) check to see if campaignDoc.lastPurchasedSlot[n+1] exists, which is a flag that campaignDoc might be out of sync and needs recovering
 2) wait 100ms to give "Driving" (above) node chance to bring campaignDoc up to date on his own (this is very likely race condition)
 3) if after 100ms the campaign doc still isn't up to date (fresh get, skipping caches of course), we check to see if the transaction exists
@@ -17,7 +18,7 @@ user-account-lock-strict-cas-swap -> slotFillAkaPurchase-add -> transaction-doc-
 		3a.i) If it isn't locked pointing to our slot/transaction of interest (it can be either unlocked or locked and pointing somewhere else), we just CAS-swap-accepting-fail the campaign doc to reflect the slot/transaction
 		3a.ii) If it is locked pointing to our slot/transaction, we CAS-swap-accepting-fail 'unlock+debitting' the user-account, then CAS-swap-accepting-fail the campaign doc to reflect the slot/transaction just like (3a.i)
 	3b) if the transaction doc doesn't exist, we check to make sure the user-account is locked and pointing at the slot of interest
-		3b.i) If it isn't locked pointing at the slot of interest, it isn't necessarily an error case. We then re-check for the existence of the transaction doc (that didn't exist for us to even get to this code path). It _NEEDS_ to exist at this point, otherwise we have experienced total system failure (must never happen). If, like we expect, the transaction doc exists this time around, we can then continue as normal, cas-swap-accepting-fail updating of the campaign doc
+		3b.i) If it isn't locked pointing at the slot of interest, it isn't necessarily an error case. We then re-check for the existence of the transaction doc (that didn't exist for us to even get to this code path). It _NEEDS_ to exist at this point, otherwise we have experienced total system failure (must never happen). If, like we expect, the transaction doc exists this time around, we have proof that either the driver or a neighbor recoverer is active, so we can just stop recovering knowing they have it (they can fail and another recovery instance would be in (3a) and not (3b)) -- we could optionally continue with recovery by cas-swap-accepting-fail updating campaign doc, but KISS
 		3b.ii) If it is locked pointing at the slot of interest, add-accepting-fail the transaction document itself, then cas-swap-accepting-fail 'unlock+debit' the user-account, then cas-swap-accepting-fail the campaign doc
 
 

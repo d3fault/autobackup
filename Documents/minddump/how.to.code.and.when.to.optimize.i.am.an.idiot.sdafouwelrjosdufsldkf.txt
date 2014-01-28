@@ -1,0 +1,5 @@
+1) Make it work
+2) Make it work for all possible inputs you can think of (whitelists (default:deny) are your friend)
+3) Fix the bugs
+4) Run valgrind memory analyzer and fix the memory leaks
+5) Run valgrind function profiler and optimize based on that

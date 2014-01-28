@@ -1,0 +1,6 @@
+re: "how.to.code.and.when.to.optimize"
+A good design is the only optimization you should need (so you stop after memory analyzer step) (IRONICALLY, design becomes before 'make it work' xD). You need to understand various bottlenecks and how to account for them in your design from the start. Beginner programmers frequently do expensive routines because they don't know any better.
+
+For example in my Abc2 implementation, a beginner/amateur would have done a blocking call to couchbase for each get/store, and their application wouldn't have scaled for shit. "but you said to make it work first hurr" -- well shit, contradicting myself one doc later :-P.
+
+It boils down to this: if you aren't obsessive about(over?) and enjoy programming, don't.

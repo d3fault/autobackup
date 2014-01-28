@@ -49,7 +49,7 @@ adSpaceSlotFillersJimboKnives0
   "base64encodedImageData": "sdlfkjsdofuljkeworu"
 }
 
-the reason the doc has "username" so we can get to the 'profile' view below (can't parse up to that zero)
+the reason the doc has "username" so we can get to the 'profile' view below (can't parse up to that zero). it is also used in recovery mode when the transaction doc does not exist (need the username to begin doing user account recovery steps)
 
 adSpaceSlotFillersJimboKnives should then list all of JimboKnives' ad campaigns (regardless of whether or not they have been used)
 
@@ -61,13 +61,13 @@ adSpaceSlotFillersJimboKnives
   "adsCount": "2",
   "lastTenAds": [
     {
-      "nickname": "Unused For Now",
-      "adKey": "adSpaceSlotFillersJimboKnives1"
+      "nickname": "Widgets For Sale Ad Campaign",
+      "slotFillerIndex": "0"
     },
     {
-      "nickname": "Widgets For Sale Ad Campaign",
-      "adKey": "adSpaceSlotFillersJimboKnives0"
-    }
+      "nickname": "Unused For Now",
+      "slotFillerIndex": "1"
+    }    
   ]
 }
 
@@ -110,7 +110,6 @@ userJimboKnives
   "passwordSalt": "1964Y1AFICvu1XiQE9w0xsPhDE8=",
   "balance": "0.098",
   "slotToAttemptToFillAkaPurchase": "adSpaceSlotsd3fault0Slot1",
-  "priceToAttemptToBuyItFor" : "0.002",
   "slotToAttemptToFillAkaPurchaseItWith" : "adSpaceSlotFillersJimboKnives0"
 }
 
@@ -138,7 +137,7 @@ If however the CAS-swap fails and the "slotTo,priceTo,slotTo" is still there and
 
 Transaction documents have something to do with atomocity of user-account-unlocking that I can't exactly put into words right now, but I trust my earlier fucking spaced out version of myself last night with saying that they fix dat one race condition I wrote about or something. It also seems to make shit more organized so fuck it. The transaction document for a given slot fill must be made before the user-account is unlocked. The transaction document is found using the slot being filled's name. Transaction documents are made by either the main driver, or the recovery possy. It doesn't matter who makes it, so the LCB_ADD failing is accepted.
 
-Txd3fault0slot1 // corresponding to adSpaceSlotsd3fault0Slot1 of course
+txd3fault0Slot1 // corresponding to adSpaceSlotsd3fault0Slot1 of course
 {
 	"buyer" : "JimboKnives",
 	"seller" : "d3fault",

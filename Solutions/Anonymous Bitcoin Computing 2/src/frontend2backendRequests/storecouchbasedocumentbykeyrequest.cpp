@@ -3,7 +3,7 @@
 #include "Wt/WServer"
 using namespace Wt;
 
-#include "frontend/anonymousbitcoincomputingwtgui.h"
+#include "../frontend/anonymousbitcoincomputingwtgui.h"
 
 //save constructor no cas overload
 StoreCouchbaseDocumentByKeyRequest::StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseAddKeyInput, std::string couchbaseAddDocumentInput, LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum lcbStoreMode, WhatToDoWithOutputCasEnum whatToDoWithOutputCas)
