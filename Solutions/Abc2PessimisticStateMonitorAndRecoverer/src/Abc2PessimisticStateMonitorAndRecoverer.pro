@@ -1,3 +1,5 @@
+#debugging this app on Debian Wheezy x86_64 requires: LD_PRELOAD=/lib/x86_64-linux-gnu/libpthread.so.0
+
 TARGET = Abc2PessimisticStateMonitorAndRecoverer
 TEMPLATE = app
 CONFIG += console
@@ -10,4 +12,4 @@ SOURCES += main.cpp \
 HEADERS += \
     abc2pessimisticstatemonitorandrecoverer.h
 
-LIBS += -lcouchbase
+LIBS += -lcouchbase -lboost_random

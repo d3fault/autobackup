@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1390926894
+Documents/minddump/:1391007325
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1390921431
+Documents/minddump/dreams/:1391009626
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -65,6 +65,7 @@ Documents/minddump/dreams/dsalkfjsdlfkjsdlkfjsdouflkjsdoufsdkfjouljkeroudskfjsdo
 Documents/minddump/dreams/dsfadsfjsdfljdsflkjdlskfjsdlfkjoweurljsofuaslkfjsdofusldkfj.txt:1379128082
 Documents/minddump/dreams/dsfljsldfjsldjflsdjflskjdflkjsdflkjsdlfkjsldkjfkljwelkrjosdufjweroulkjsdfljlksdjlkdjflkjsdflksf.txt:1380539761
 Documents/minddump/dreams/dslfkjasdlfkjasdofusadlfjsdofusdaljfsoadufsldkfjou.txt:1388950253
+Documents/minddump/dreams/dslfkjlksdjfskdjfksjldflksdjfoudsfljweoursjdfousdfkjslfouer.txt:1391010154
 Documents/minddump/dreams/ewroiusfdflksjdflksjdfouwelrkjousldkfjosudflkjsdfou.txt:1384928265
 Documents/minddump/dreams/eye.socket.void.3d.glasses.etc.txt:1354515660
 Documents/minddump/dreams/falkdsjflkjasdfjsfosldfjsodufslkdjfsodiufkljowiuer.txt:1384659022
@@ -1086,6 +1087,7 @@ Documents/minddump/lkdsjfljasdfkjasdfusdofiusadlfkjsaodfusladkfjou.txt:138505321
 Documents/minddump/lkdsjflkjsdflkjsdfouslfkjoisudflkjodfsuaslfdjsodful.txt:1384579278
 Documents/minddump/lkdsjfofiualwrkjaosdfuiawlekrjaworiuweorilkjsdfoiul.txt:1340579117
 Documents/minddump/lkfajasofuaworuawerjsdfaofuasodfupawruqworiuj234082421lewkrjklfshdfj.txt:1327634418
+Documents/minddump/lkfajsdflkjsadfkjsdfousdlofsudfouwefjsdofusdlfkjsadofu.txt:1391007325
 Documents/minddump/lkfalsdkfjasdlfkjasdlfjsadofuwralfdjasdlfghasdlfkjsdfouwrelkjsdfousdflkjsdfsdlkjsadf.txt:1351847849
 Documents/minddump/lkfjlaksjfasldourlksjfoiuewlkjsdfouirle.txt:1354869420
 Documents/minddump/lkfjlsdkjfskladjfsadofiusdlkfjsdfouwerlkjsdf.txt:1354783494
@@ -3534,10 +3536,10 @@ Solutions/:1390929767
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/:1390951629
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/:1390931989
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/initial.idea.txt:1390932309
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1390952579
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/Abc2PessimisticStateMonitorAndRecoverer.pro:1390952488
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1390952579
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.h:1390952248
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1391015444
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/Abc2PessimisticStateMonitorAndRecoverer.pro:1391015267
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1391014938
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.h:1391012757
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/main.cpp:1390952248
 Solutions/Anonymous Bitcoin Computing/:1334997525
 Solutions/Anonymous Bitcoin Computing/design/:1360590321
@@ -3687,7 +3689,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.here.is.the.
 Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.slot.n.plus.one.existence.testing.drives.the.entire.app.with.1sec.max.latency.BUT.probable.code.aka.failable.code.drives.it.at.max.speed.but.there.is.100ms.get.and.subscribe.polling.txt:1390759647
 Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:1390077121
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
-Solutions/Anonymous Bitcoin Computing 2/src/:1390921483
+Solutions/Anonymous Bitcoin Computing 2/src/:1390952803
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1390933050
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1390933050
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1390792718

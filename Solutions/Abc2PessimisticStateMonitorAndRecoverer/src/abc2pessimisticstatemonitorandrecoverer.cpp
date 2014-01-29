@@ -5,9 +5,13 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/random/random_device.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
 using namespace std;
 using namespace boost::property_tree;
+
+//TODOoptimization: starting to think that any time an "acceptable-fail" is seen, we can stop doing the recovery process because we have proof someone else is doing it. Will mainly just lessen network congestion, but probably not even by a significant amount. Too lazy to do that easy optimization for now (especially since I haven't even tested that this shit works yet!)
 
 //monitor-er? ^^ the things that keep me up at night...
 Abc2PessimisticStateMonitorAndRecoverer::Abc2PessimisticStateMonitorAndRecoverer()
@@ -56,15 +60,16 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
 
     //connected
 
-    srand(time(NULL));
+    boost::random::random_device randomNumberGenerator;
+    boost::random::uniform_int_distribution<> randomNumberRange(0, 9);
     while(true)
     {
         //TODOreq: portable way to break out of this, SIGTERM etc
         sleep(1); //fancy boost timer libs? libevent timers? nahh
 
-        if(rand() % 10 == 0)
+        if(randomNumberRange(randomNumberGenerator) == 0)
         {
-            //selected ourself to do monitor (recovery probably not necessary)
+            //selected ourself to do audit (recovery probably not necessary)
 
             //0 - get campaign doc (note these numbers do NOT match the 'perfected.the.design.here.is.the.flow.aka.pseudocode.txt')
             std::string campaignDocKey = "adSpaceSlotsd3fault0";
@@ -164,7 +169,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         //might be some other db error
                         if(m_LastOpStatus != LCB_SUCCESS)
                         {
-                            cerr << "Got an error other than LCB_KEY_ENOENT (not exist) while checking for the existence of the transaction that might exist (txd3fault0Slot" + slotIndexForSlotThatShouldntExistButMightString + "): " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl;
+                            cerr << "Got an error other than LCB_KEY_ENOENT (not exist) while checking for the existence of the transaction that might exist (" + transactionDocKey + "): " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl;
                             lcb_destroy(m_Couchbase);
                             return 1;
                         }
