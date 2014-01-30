@@ -1,0 +1,1 @@
+Expert conspiracy theorist here. Microsoft pushes .Net not because they think it's a superior framework, but because they're proprietary cocksuckers who want to steal your code (.net disassembles into basically readable source code with variable names and everything (you have to opt-in to jumbling))

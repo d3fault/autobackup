@@ -5,6 +5,8 @@
 
 using namespace std;
 
+const struct timeval AnonymousBitcoinComputingCouchbaseDB::m_OneHundredMilliseconds = {0,100000};
+
 AnonymousBitcoinComputingCouchbaseDB::AnonymousBitcoinComputingCouchbaseDB()
     : m_Thread(boost::bind(&AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint, this)), m_IsDoneInitializing(false), m_IsConnected(false), m_ThreadExittedCleanly(false), m_IsInEventLoop(false), m_NoMoreAllowedMuahahaha(false), m_PendingAddCount(0), m_PendingGetCount(0), m_IsFinishedWithAllPendingRequests(false)
     //, m_AddWtMessageQueue0(NULL)
@@ -178,6 +180,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO, Add)
     BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO, Get)
 
+    m_GetAndSubscribePollingTimeout = evtimer_new(LibEventBaseScopedDeleterInstance.LibEventBase, &AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic, this);
     m_BeginStoppingCouchbaseCleanlyEvent = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, &AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic, this);
     m_FinalCleanUpAndJoinEvent = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, &AnonymousBitcoinComputingCouchbaseDB::finalCleanupAndJoin, LibEventBaseScopedDeleterInstance.LibEventBase);
 
@@ -372,7 +375,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             cerr << "Error couchbase getCallback:" << lcb_strerror(m_Couchbase, error) << endl;
             if(originalRequest->SaveCAS)
             {
-                GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, 0, 0, 0, false, true);
+                GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, "", 0, false, true);
             }
             else
             {
@@ -386,7 +389,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         //LCB_KEY_ENOENT (key does not exist)
         if(originalRequest->SaveCAS)
         {
-            GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, 0, 0, 0, false, false);
+            GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, "", 0, false, false);
         }
         else
         {
@@ -396,10 +399,74 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         return;
     }
 
+    if(originalRequest->GetAndSubscribe)
+    {
+        //TODOreq: handle case where key doesn't exist (but since we're manually setting up get and subscribe shit for now (including recompilations), that is ridiculously unlikely)
+
+        //TODOoptimization: still iffy on if this get and subscribe stuff needs to be on it's own thread, so as not to congest traditional gets/adds when there is an update
+
+        //TODOreq: when unsubscribing, we check oldsubscribers first but we should also check newsubscribers if it isn't found
+
+        //TODOreq: the last person to unsubscribe himself should also remove the cache item from m_GetAndSubscribeCacheHash and delete the cache item (see the catch code path's comments (this is an other time we need to "???" <-, but is it the only?)
+
+        GetAndSubscribeCacheItem *cacheItem;
+        try //TODOreq: this try might not be necessary, depending what we end up doing for unsubscribe code
+        {
+            cacheItem = m_GetAndSubscribeCacheHash.at(originalRequest->CouchbaseGetKeyInput);
+
+            //exception thrown if not found
+
+            cacheItem->CurrentlyFetchingPossiblyNew = false; //TODOreq: set this back to true after the timer times out (just before get dispatch)
+            std::string possiblyNewValueDependingOnCas = std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes);
+            lcb_cas_t casToTellUsIfTheDocChangedOrNot = resp->v.v0.cas;
+
+            //new subscribers want what we just got no matter what
+            BOOST_FOREACH(SubscribersType::value_type &v, cacheItem->NewSubscribers)
+            {
+                GetCouchbaseDocumentByKeyRequest::respondWithCAS(static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second), possiblyNewValueDependingOnCas, casToTellUsIfTheDocChangedOrNot, true, false);
+            }
+
+            //old subscribers only notified if the cas has changed
+            if(cacheItem->DocumentCAS != casToTellUsIfTheDocChangedOrNot) //did it change?
+            {
+                //it changed (or is new (cas is 0 initially), so store it and notify old subscribers (if any)
+                cacheItem->Document = possiblyNewValueDependingOnCas;
+                cacheItem->DocumentCAS = casToTellUsIfTheDocChangedOrNot;
+
+                BOOST_FOREACH(SubscribersType::value_type &v, cacheItem->Subscribers)
+                {
+                    GetCouchbaseDocumentByKeyRequest::respondWithCAS(static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second), possiblyNewValueDependingOnCas, casToTellUsIfTheDocChangedOrNot, true, false);
+                }
+            }
+
+            //new subscribers become old subscribers no matter what
+            BOOST_FOREACH(SubscribersType::value_type &v, cacheItem->NewSubscribers)
+            {
+                cacheItem->Subscribers[v.first] = v.second;
+            }
+            cacheItem->NewSubscribers.clear();
+
+
+            //TODOreq: now set up timer? i don't think we want to set up the timer when the key isn't in cache (all unsubscribed)
+            event_add(m_GetAndSubscribePollingTimeout, &m_OneHundredMilliseconds);
+        }
+        catch(std::out_of_range &keyNotInCacheException)
+        {
+            //TODOreq
+            //this is a race conditon where the last subscriber has unsubscribed but we still had a get dispatched (HOLY SHIT WE COULD SEGFAULT IF THE POINTER TO GetCouchbaseDocumentByKeyRequest WAS DELETED DURING UNSUBSCRIBE TODOreq). i think all it means is that we don't want to do the 100ms timer again...
+            //we should probably also remove the cacheItem from the list and delete the pointer, SO THAT the cache 'misses' when someone new subscribes and then they do a full get and the timer shits starts back up
+            //^^that's probably not the only time we need to [??? to what ???]
+        }
+
+        //TODOreq: ?? this return belong here? maybe this is where we'd decrement pending get count? or maybe only on unsubscribe? idfk yet
+        --m_PendingGetCount; //TODOreq: rare ish case where this is last pending and we're supposed to be stopping, but don't because we didn't call the macro like the normal gets
+        return;
+    }
+
     //TODOreq: who takes ownership of resp and is responsible for deleting it? me or couchbase? when does that occur (since I'm now looking into 'hold onto it because Wt might CAS-swap it')? This memory consideration also applies to all the rest of my couchbase callbacks I'd imagine (but valgrind hasn't complained about them... so idfk. I think since I'm not deleting them, it's safe to assume(xD) that they're only valid during the duration of this callback)
     if(originalRequest->SaveCAS) //TODOoptimization: __unlikely or whatever i can find it boost
     {
-        GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, resp->v.v0.bytes, resp->v.v0.nbytes, resp->v.v0.cas, true, false);
+        GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes), resp->v.v0.cas, true, false);
     }
     else
     {
@@ -460,6 +527,38 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
     }
 
     END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
+}
+void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic(int unusedSocket, short events, void *userData)
+{
+    (void)unusedSocket;
+    (void)events;
+    static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->getAndSubscribePollingTimeoutEventSlot();
+}
+void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlot()
+{
+    BOOST_FOREACH(GetAndSubscribeCacheHashType::value_type &v, m_GetAndSubscribeCacheHash)
+    {
+        GetAndSubscribeCacheItem *cacheItem = v.second;
+
+        //get the first subscriber found. proper design would make me less paranoid about this, but i'm not even sure we can guarantee that there are any subscribers. so we should play it safe and if there aren't any subscribers found, we don't do the timeout or even. hell, we could (should?) then delete the cache item and remove it from m_GetAndSubscribeCacheHash (is BOOST_FOREACH mutable??)
+
+        GetCouchbaseDocumentByKeyRequest *getCouchbaseDocumentByKeyRequestFromWt = NULL; //had it called 'aRequestToHackilyUseLoL' but eh MACRO
+        if(!cacheItem->Subscribers.empty())
+        {
+            getCouchbaseDocumentByKeyRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->Subscribers.begin()->second);
+        }
+        else if(!cacheItem->NewSubscribers.empty())
+        {
+            getCouchbaseDocumentByKeyRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->NewSubscribers.begin()->second);
+        }
+
+        if(getCouchbaseDocumentByKeyRequestFromWt != NULL)
+        {
+            cacheItem->CurrentlyFetchingPossiblyNew = true;
+            DO_SCHEDULE_COUCHBASE_GET()
+        }
+        //else, TODOreq should we delete cache item since no subscribers or should someone else (the unsubscribe code?)
+    }
 }
 void AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData)
 {
@@ -553,7 +652,6 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         return;
         //TODOreq: post() a response at least, BUT really that doesn't matter too much because i mean the server's about to go down regardless... (unless i'm taking db down ONLY and wt is staying up (lol wut?))
     }
-    ++m_PendingGetCount; //TODOreq: overflow? meh not worried about it for now
 
     //TODOreq: 'delete' for various error exits (we're using it as cookie :-P), including proper/normal place
     GetCouchbaseDocumentByKeyRequest *getCouchbaseDocumentByKeyRequestFromWt = new GetCouchbaseDocumentByKeyRequest();
@@ -564,21 +662,68 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         deSerializer >> *getCouchbaseDocumentByKeyRequestFromWt;
     }
 
-    lcb_get_cmd_t cmd;
-    const lcb_get_cmd_t *cmds[1];
-    cmds[0] = &cmd;
-
-    const char *keyInput = getCouchbaseDocumentByKeyRequestFromWt->CouchbaseGetKeyInput.c_str();
-
-    memset(&cmd, 0, sizeof(cmd));
-    cmd.v.v0.key = keyInput;
-    cmd.v.v0.nkey = strlen(keyInput);
-    lcb_error_t error = lcb_get(m_Couchbase, getCouchbaseDocumentByKeyRequestFromWt, 1, cmds);
-    if(error  != LCB_SUCCESS)
+    if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe)
     {
-        cerr << "Failed to setup get request: " << lcb_strerror(m_Couchbase, error) << endl;
-        //TODOreq: proper error handling
+        //thought about just querying the key [against a list] to see if it's 'get and subscribe' mode, but using a bool like this makes it scale betterer in the futuerer
+
+        GetAndSubscribeCacheItem *keyValueCacheItem;
+        try
+        {
+            //TODOreq: if we've just scheduled our 100ms poll to couchbase and are expecting a fresh value soon, we should just add ourself to the subscribers list. we could respond with the probably-about-to-be-made-stale one, but we shouldn't
+            //TODOreq: if the 100ms poll doesn't return a 'new' doc (based on cas), there's still going to be a list (sometimes of size zero) of subscribers who are interested in being given _A_ result. The directly above TODOreq mentions a kind that would be interested, and there is also the "many successive get-and-subscribes" in a row really fast, where all but the first simply added themselves to said list (that actually implies that there was no cache hit, but eh just like above TODOreq above says: if one is scheduled, we wait for it!)
+            //^^So I'm thinking something like m_ListOfSubscribersWhoOnlyWant_NEW_Updates and m_ListOfSubscribersWhoDontHaveShitYet. Upon the 100ms poll getting a value (any value), it gives it's result to m_ListOfSubscribersWhoDontHaveShitYet, then checks to see if the cas has changed and then if it has gives it's result to m_ListOfSubscribersWhoOnlyWant_NEW_Updates. Then it adds-while-clearing m_ListOfSubscribersWhoDontHaveShitYet _into_ m_ListOfSubscribersWhoOnlyWant_NEW_Updates
+            //^^^The point is, if some bool 'm_PollIsActive' (for that particular key), then we don't want to do the 'respondWithCAS' a few lines down
+
+            //TODOreq: for the actual poll / cache miss, I need to use ONE OF the GetCouchbaseDocumentByKeyRequests (subscribers) to do the get itself using existing infrastructure. It will be easy to "pull back out" (as being GetAndSubscribe 'mode') because of the same bool I used to get to here. BUT doing so is a bit hacky and does lead to a tiny race condition that when happened would make the 100ms now 200ms (or possibly longer, but it gets rarer and rarer). If the end-user for the corresponding GetCouchbaseDocumentByKeyRequest should UNSUBSCRIBE (navigate away, disconnect) while the 'get poll' is taking place, we might not see him in the list anymore and might... idk... disregard the result? Hard to wrap my head around but now that I've typed this shit, I'll double check that I accounted for it later. Might not matter at all depending how I code it (lookup by KEY = doesn't matter)
+
+            //I have written previously that the polling will be lazy. I said it should do a get if 'lastGet' happened >= 100ms ago. I have changed my mind BECAUSE: you could have shit tons of 'subscribers' sitting waiting for their "Post" updates only... and very little of them doing "first page load 'get'ing" (and only the first page load get'ing would go through the code path to see if >= 100ms has elapsed). Since the primary way of pushing updates is to them (masses) via Post without them requiring to do a 'get' (hence the name 'SUBSCRIBE'), I'm going to use an actual timer for polling and not lazy/event-driven polling like I said earlier.
+
+            //try to get
+            keyValueCacheItem = m_GetAndSubscribeCacheHash.at(getCouchbaseDocumentByKeyRequestFromWt->CouchbaseGetKeyInput);
+
+            //CACHE HIT if we get this far and the exception isn't thrown
+            //TO DOnereq: the 2nd user to subscribe might get to this code path before the very first 'get' has populated document/cas... so... wtf?
+            if(!keyValueCacheItem->CurrentlyFetchingPossiblyNew)
+            {
+                GetCouchbaseDocumentByKeyRequest::respondWithCAS(getCouchbaseDocumentByKeyRequestFromWt, keyValueCacheItem->Document, keyValueCacheItem->DocumentCAS, true, false);
+                keyValueCacheItem->Subscribers[getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback] = getCouchbaseDocumentByKeyRequestFromWt;
+            }
+            else
+            {
+                //we'll wait for the one that's about to come (especially since there might not even be ONE yet)
+                keyValueCacheItem->NewSubscribers[getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback] = getCouchbaseDocumentByKeyRequestFromWt;
+            }
+
+            //--m_PendingGetCount; //TODOreq: ???
+
+            //whether or not we're already subscribed, looking up takes just as long as inserting [again possibly], so we just insert. In fact inserting is faster if the key already exists, because then there's just one lookup
+
+
+            return; //we return because the key was in the cache (even if the doc isn't). we added ourself to the subscribers list, and the timer is already active so we'll get all future updates :)
+        }
+        catch(std::out_of_range &keyNotInCacheException)
+        {
+            //CACHE MISS
+
+            //add ourself and if get isn't already scheduled (we're the first), schedule it. If we get here then we might be the first, but we might also be very close after the first so that the very first get (which is already schedule by the first) hasn't finished yet. Once the first POLL is completed, we should never get here
+            //^^NOPE, that is subscriber cache, this miss is for just the key itself (first miss creates it)
+
+            //create cache item, even though we have nothing to put in it yet. TODOreq: we need to make sure that we wait for the first get to finish before we ever give someone the "Document" from the cache item (BECAUSE IT IS EMPTY)
+            GetAndSubscribeCacheItem *newKeyValueCacheItem = new GetAndSubscribeCacheItem();
+
+            //if we get here, we definitely need to do the first 'get' (when it returns, it sets up the 100ms poller (TODOreq: unless all users have unsubscribed by then xD))
+
+            m_GetAndSubscribeCacheHash[getCouchbaseDocumentByKeyRequestFromWt->CouchbaseGetKeyInput] = newKeyValueCacheItem;
+            keyValueCacheItem = newKeyValueCacheItem;
+            keyValueCacheItem->NewSubscribers[getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback] = getCouchbaseDocumentByKeyRequestFromWt;
+
+            //we don't return, because we want to actually do the get!
+        }
+        //TODOreq: we need to 'return' at various places so as not to continue getting. we also need to NOT return at a certain code path too
     }
+
+    //TODOreq: proper error handling inside this macro there is a if("error  != LCB_SUCCESS") section (how da fuq do you put comments in macros?!!?)
+    DO_SCHEDULE_COUCHBASE_GET()
 }
 //struct event *AnonymousBitcoinComputingCouchbaseDB::getAddEventCallbackForWt0()
 //{

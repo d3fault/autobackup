@@ -19,8 +19,13 @@ public:
         SaveCASMode,
         DiscardCASMode
     };
+    enum GetAndSubscribeEnum
+    {
+        GetAndSubscribeMode,
+        JustGetDontSubscribeMode
+    };
     //save constructor
-    GetCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseGetKeyInput, CasMode casMode = DiscardCASMode);
+    GetCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseGetKeyInput, CasMode casMode = DiscardCASMode, GetAndSubscribeEnum subscribeMode = JustGetDontSubscribeMode);
     //load constructor
     GetCouchbaseDocumentByKeyRequest();
 
@@ -29,9 +34,10 @@ public:
     static const unsigned char LengthOfAddressToAnonymousBitcoinComputingWtGUI = sizeof(AnonymousBitcoinComputingWtGUI*) + 1;
     std::string CouchbaseGetKeyInput;
     bool SaveCAS;
+    bool GetAndSubscribe;
 
     static void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes, bool lcbOpSuccess, bool dbError);
-    static void respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+    static void respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest,  std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 private:
     friend class boost::serialization::access;
     template<class Archive>
@@ -47,6 +53,7 @@ private:
 
         ar & CouchbaseGetKeyInput;
         ar & SaveCAS;
+        ar & GetAndSubscribe;
     }
     template<class Archive>
     void load(Archive &ar, const unsigned int version)
@@ -60,6 +67,7 @@ private:
 
         ar & CouchbaseGetKeyInput;
         ar & SaveCAS;
+        ar & GetAndSubscribe;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };

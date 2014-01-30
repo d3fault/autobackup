@@ -287,7 +287,7 @@ double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double currentTime_
 void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
 {
     m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = couchbaseDocument;
-    m_HackedInD3faultCampaign0CasForSafelyUpdatingLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
+    m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
     //TODOreq: the above two also need to be updated whenever the 'get-and-subscribe' thingy results in an update (that being said, i'm now quite certain that current/next need to go on their own doc. not 100% sure of it, but it's definitely the playing-it-safe way)
 
     //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
@@ -779,7 +779,7 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     write_json(updatedCampaignJsonDocBuffer, pt, false);
 
     //CAS-swap-accepting-fail
-    setCouchbaseDocumentByKeyWithInputCasBegin(string("adSpaceSlotsd3fault0"), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    setCouchbaseDocumentByKeyWithInputCasBegin(string("adSpaceSlotsd3fault0"), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS;
 }
 void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError)

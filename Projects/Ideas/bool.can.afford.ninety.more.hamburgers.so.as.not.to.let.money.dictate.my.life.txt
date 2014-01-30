@@ -1,0 +1,4 @@
+not sure if written yet or only thought:
+bool m_CanAfford90MoreHamburgers; //1 months worth of 3 meals a day
+
+^^is the ONLY indication I see (nobs can troll me of course) relating to how much money I have. If it ever goes false (an LED turns off or whatever (well first I test the LED and code ;-P)), I change things up to make money and not starve to death (perhaps I sell my sex).

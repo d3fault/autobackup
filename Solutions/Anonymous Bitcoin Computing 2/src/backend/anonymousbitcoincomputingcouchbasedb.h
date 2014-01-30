@@ -9,8 +9,14 @@
 #include <boost/thread.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/function.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/foreach.hpp>
+
+#include "getandsubscribecacheitem.h"
 
 using namespace boost::interprocess;
+
+typedef boost::unordered_map<std::string /*key*/, GetAndSubscribeCacheItem* /*doc,cas,listOfSubscribers*/> GetAndSubscribeCacheHashType;
 
 /////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
 
@@ -129,6 +135,21 @@ if(m_NoMoreAllowedMuahahaha && m_PendingAddCount == 0 && m_PendingGetCount == 0)
     notifyMainThreadWeAreFinishedWithAllPendingRequests(); \
 } \
 
+#define DO_SCHEDULE_COUCHBASE_GET() \
+lcb_get_cmd_t cmd; \
+const lcb_get_cmd_t *cmds[1]; \
+cmds[0] = &cmd; \
+const char *keyInput = getCouchbaseDocumentByKeyRequestFromWt->CouchbaseGetKeyInput.c_str(); \
+memset(&cmd, 0, sizeof(cmd)); \
+cmd.v.v0.key = keyInput; \
+cmd.v.v0.nkey = strlen(keyInput); \
+lcb_error_t error = lcb_get(m_Couchbase, getCouchbaseDocumentByKeyRequestFromWt, 1, cmds); \
+if(error  != LCB_SUCCESS) \
+{ \
+    cerr << "Failed to setup get request: " << lcb_strerror(m_Couchbase, error) << endl; \
+} \
+++m_PendingGetCount; //TODOreq: overflow? meh not worried about it for now
+
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
 class AnonymousBitcoinComputingCouchbaseDB
@@ -164,8 +185,12 @@ private:
     bool m_IsInEventLoop;
     bool m_NoMoreAllowedMuahahaha;
     unsigned int m_PendingAddCount;
-    unsigned int m_PendingGetCount;
+    unsigned int m_PendingGetCount; //subscribers do NOT increment the pending count (well, one of them does when it's being used hackily in the polling mechanism). pending count ONLY reflects dispatched-to-couchbase 'gets' that have not returned yet. most subscribers do not do that, hence no incremement. when we 'clean up', we simply forget all the subscribers.
     bool m_IsFinishedWithAllPendingRequests;
+
+    GetAndSubscribeCacheHashType m_GetAndSubscribeCacheHash;
+    static const struct timeval m_OneHundredMilliseconds;
+    struct event *m_GetAndSubscribePollingTimeout; //all keys share a timeout for now (and possibly forever), KISS
 
     void threadEntryPoint();
 
@@ -183,6 +208,9 @@ private:
 
     static void durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp);
     void durabilityCallback(const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp);
+
+    static void getAndSubscribePollingTimeoutEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData);
+    void getAndSubscribePollingTimeoutEventSlot();
 
     static void beginStoppingCouchbaseCleanlyEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData);
     void beginStoppingCouchbaseCleanlyEventSlot();

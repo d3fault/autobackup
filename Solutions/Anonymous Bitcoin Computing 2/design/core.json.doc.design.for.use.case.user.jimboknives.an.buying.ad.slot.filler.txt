@@ -135,6 +135,9 @@ If the CAS-swap fails and the "slotTo,priceTo,slotTo" is still there and the "sl
 If however the CAS-swap fails and the "slotTo,priceTo,slotTo" is still there and the slotToAttemptToFillAkaPurchase is DIFFERENT, we know that they're logged in elsewhere and that that instance has already done the CAS-swap we are attempting to do (and it has ADDITIONALLY started another 'attempt to buy [something else]')
 
 
+TODOreq: I think I want/need to split up the user's balance from the rest of their shit (pw/salt), BECAUSE: if they tried to do "change password" right the fuck after pressing buy step 2 (automated to increase chances of doing the race condition), they could change the CAS of the user account and then their account would... err... well it would still be in locked mode so we could probably recover from it just fine, BUT for KISS etc i think i should separate balance into it's own thing. I should have a simple "locked" : true/false thing with the balance doc and i should MAYBE lock it during 'get add funds key' -> pending payment (btcn) -> then unlock it on confirmed payment (btcn)... but unsure about that for now...
+
+
 Transaction documents have something to do with atomocity of user-account-unlocking that I can't exactly put into words right now, but I trust my earlier fucking spaced out version of myself last night with saying that they fix dat one race condition I wrote about or something. It also seems to make shit more organized so fuck it. The transaction document for a given slot fill must be made before the user-account is unlocked. The transaction document is found using the slot being filled's name. Transaction documents are made by either the main driver, or the recovery possy. It doesn't matter who makes it, so the LCB_ADD failing is accepted.
 
 txd3fault0Slot1 // corresponding to adSpaceSlotsd3fault0Slot1 of course
