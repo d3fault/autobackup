@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1391009626
+Documents/minddump/dreams/:1391095454
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -98,6 +98,7 @@ Documents/minddump/dreams/lkdfjlaskjdflaksdjfaosdfulasdkjfosaduflkajsdofuaslkdfj
 Documents/minddump/dreams/lkfjslkjdfalskdjflskdjflskdjfosduflksdjfousdflkjsdfousldkfjosdfulksdjfsdf.txt:1379689934
 Documents/minddump/dreams/lkjaslkfjaskdlfjsdfuouwelrkjosduflksjdfouiwelrjkoiusfdljfoiusadlkfj.txt:1379397196
 Documents/minddump/dreams/lksjdflkasdfouwelkrjoiudsflkjsdoiufkljwouerlkjoudsflkjsoduif.txt:1383331274
+Documents/minddump/dreams/lsdkajflsdkjfoduwerljsdowererufalsdjfosuflsdfoiuew.txt:1391095454
 Documents/minddump/dreams/lsdkfjlsdkjfouslkjreworuljfsoduflsdjfouwerl.txt:1366067544
 Documents/minddump/dreams/lskdfjlaksjfdlsdkjfosudflsjkdfouslfdjsdfououer.txt:1384047142
 Documents/minddump/dreams/lskdjflksjdflksjdfouflkjsdofusdlfjsoduflkjweroiujsdf.txt:1377721281
@@ -3689,13 +3690,13 @@ Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.here.is.the.
 Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.slot.n.plus.one.existence.testing.drives.the.entire.app.with.1sec.max.latency.BUT.probable.code.aka.failable.code.drives.it.at.max.speed.but.there.is.100ms.get.and.subscribe.polling.txt:1390759647
 Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:1390077121
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
-Solutions/Anonymous Bitcoin Computing 2/src/:1390952803
+Solutions/Anonymous Bitcoin Computing 2/src/:1391098844
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1390933050
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1390933050
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1390792718
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1390952445
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1391018687
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1390952445
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1390922386
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1391018687
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1390952445
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/getcouchbasedocumentbykeyrequest.cpp:1390952445
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/getcouchbasedocumentbykeyrequest.h:1390787440
