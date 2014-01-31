@@ -163,6 +163,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
     void showAdvertisingBuyAdSpaceD3faultWidget();
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
+    bool m_FirstPopulate;
+    WText *m_CurrentPriceLabel;
+    WPushButton *m_BuySlotFillerStep1Button;
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
     std::string m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase;
     u_int64_t m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase;
@@ -199,10 +202,12 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
+    void getAndSubscribeCouchbaseDocumentByKeySavingCas(const std::string &keyToCouchbaseDocument);
     void storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
     void setCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
     void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
     void getCouchbaseDocumentByKeySavingCasFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+    void getAndSubscribeCouchbaseDocumentByKeySavingCas_UPDATE(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 
     bool isHomePath(const std::string &pathToCheck);
     void handleInternalPathChanged(const std::string &newInternalPath);
@@ -249,12 +254,18 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
     };
+    enum WhatTheGetAndSubscribeSavingCasWasForEnum
+    {
+        INITIALINVALIDNULLGETANDSUBSCRIBESAVINGCAS,
+        HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS
+    };
 
     WhatTheStoreWithoutInputCasWasForEnum m_WhatTheStoreWIthoutInputCasWasFor;
     WhatTheSetWithInputCasWasForEnum m_WhatTheSetWithInputCasWasFor;
     WhatTheSetWithInputCasSavingOutputCasWasForEnum m_WhatTheSetWithInputCasSavingOutputCasWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
     WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
+    WhatTheGetAndSubscribeSavingCasWasForEnum m_WhatTheGetAndSubscribeSavingCasWasFor;
 
     bool m_LoggedIn;
     WString m_BuyerUsername; //only valid if logged in

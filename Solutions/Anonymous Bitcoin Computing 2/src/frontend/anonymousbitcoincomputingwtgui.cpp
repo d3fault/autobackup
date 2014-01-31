@@ -36,7 +36,7 @@
 //NOPE: Maybe I need to set a cookie and then depend on the combination of the session id and the cookie [which needs it's own id of course (they can't match and the cookie can't be derived from session id (else attacker could derive same cookie))]
 
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
-    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_HackedInD3faultCampaign0_NoPreviousSlotPurchases(true), m_AllSlotFillersComboBox(0), m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
+    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_FirstPopulate(false), m_CurrentPriceLabel(0), m_BuySlotFillerStep1Button(0), m_HackedInD3faultCampaign0_NoPreviousSlotPurchases(true), m_AllSlotFillersComboBox(0), m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
 {
     m_RandomNumberGenerator.seed((int)rawUniqueId());
     m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator); //TODOoptimization: these don't need to be members if i just use them once in constructor
@@ -46,11 +46,7 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
 
     internalPathChanged().connect(this, &AnonymousBitcoinComputingWtGUI::handleInternalPathChanged);
 
-    //might use enableUpdates/triggerUpdates for "post"/"add"/"store" shit, since durability tests can take a while.... but meh fuck it for now..
-    //if(myEnv.ajax())
-    //{
-    //    enableUpdates(true);
-    //}
+
 
     //hack to handle clean urls when [clean] url is typed in directly (no session). idk why wt doesn't do this for us...
     const std::string &cleanUrlInternalPath = internalPath();
@@ -276,8 +272,61 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 
         //still dunno if i should block or do it async? instincts tell me async, but "SUB MILLISECOND LATENCY" tells me async might actually be wasteful/slower??? The obvious answer is "benchmark it xD" (FUCK FUCK FUCK FUCK FUCK THAT, async it is (because even if slower, it still allows us to scale bettarer))
         //^To clarify, I have 3 options: wait on a wait condition right here that is notified by couchbase thread and we serve up result viola, deferRendering/resumeRendering, or enableUpdates/TriggerUpdates. The last one requires ajax. Both the last 2 are async (despite defer "blocking" (read:disabling) the GUI)
-        getCouchbaseDocumentByKeySavingCasBegin("adSpaceSlotsd3fault0");
-        m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
+
+
+        new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_CurrentPriceLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+
+        if(!environment().ajax())
+        {
+            //TODOreq: get, don't subscribe (but still use subsciption cache!)
+
+            getCouchbaseDocumentByKeySavingCasBegin("adSpaceSlotsd3fault0");
+            m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
+        }
+        else
+        {
+            enableUpdates(true); //TODOreq: putting here doesn't future proof us for other get-and-subscribe, but no need to put it in constructor because most other pages don't use it
+            //TODOoptional: maybe enableUpdates(false) if/when they navigate away, which would mean i set back to true in the 're-subscribe' below (for when this widget is already created)
+
+            m_FirstPopulate = true; //so we know to call resumeRendering on first populate/update, but not populates/updates thereafter
+            deferRendering();
+
+            getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0");
+            m_WhatTheGetAndSubscribeSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
+
+            //placeholder/initialization javascript, not populated or active yet
+            m_CurrentPriceLabel->doJavaScript
+            (
+                "var minPrice = 0;"
+                "var lastSlotFilledAkaPurchasedExpireDateTime = new Date();"
+                "var lastSlotFilledAkaPurchasedPurchasePrice = 0;"
+                "var lastSlotFilledAkaPurchasedPurchaseTimestamp = 0;"
+                "var lastSlotFilledAkaPurchasedExpireDateTimeMSecs = lastSlotFilledAkaPurchasedExpireDateTime.getTime();"
+                "var m = 0;"
+                "var b = 0;"
+                "var tehIntervalz;"
+                "function updatePriceTimeoutFunction()"
+                "{"
+                    "var currentDateTimeMSecs = new Date().getTime();"
+                    "if(currentDateTimeMSecs >= lastSlotFilledAkaPurchasedExpireDateTimeMSecs)"
+                    "{" +
+                        m_CurrentPriceLabel->jsRef() + ".innerHTML = minPrice.toFixed(8);" //TODOreq: rounding?
+                        "clearInterval(tehIntervalz);" //TODOreq: start it again on buy event
+                    "}"
+                    "else"
+                    "{"
+                        "var currentPrice = ((m*(currentDateTimeMSecs/1000))+b);" + //y = mx+b
+                        m_CurrentPriceLabel->jsRef() + ".innerHTML = currentPrice.toFixed(8);"
+                    "}"
+                "}"
+            );
+        }
+    }
+    else
+    {
+        //TODOreq: re-subscribe (it will still be populated, but the data would be stale (maybe i shouldn't ever show such stale info (could be really really old))
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 }
@@ -296,6 +345,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     //This is ALSO (but not always (first get)) what I have referred to as a "buy event", so if they have clicked "buy step 1" we need to roll back the GUI so they have to click buy step 1 again (various GUI object organizational changes to support this)
     //Goes without saying that the new 'slot index' that they will try to buy (which is locked in after clicking buy step 1) should be set in this method
     //I'm thinking it might be easiest to do all the "new" ing in the beginShowing() method and then to merely modify/populate those objects/variables via setText in this one
+    //TODOreq: unsubscribing + resubscribing would make the resubscriber a NewSubscriber, and he'd get an update even if it's the same value (this probably won't matter (and isn't even worth coding for))
 
     m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = couchbaseDocument;
     m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
@@ -314,9 +364,8 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional("lastSlotFilledAkaPurchased");
     m_HackedInD3faultCampaign0_NoPreviousSlotPurchases = !lastSlotFilledAkaPurchased.is_initialized();
 
-    new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    WText *placeholderForPrice = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
+    //TODOoptional: would be nifty to have over to the right side of the graph, the last 10 purchases (with last at the bottom and momentarily highlighted on a buy event)
 
 #ifdef LOL_I_HAVE_PLENTY_OF_TIME_TO_KILL_AND_AM_BORED_AND_DONT_WANT_TO_LAUNCH_ASEP //Wt's chart seemed good enough for visualization, but didn't appear at a glance to be very javascript-interaction-friendly. Hoving your mouse over the line and seeing 'price at that time' would be nifty, as would the "dot"/ball aka "now" slowly going down to minprice. A 3rd party javascript lib might be better/easier, but then it's a matter of making it play nice with Wt (i'd just put the entire lib in "doJavascript" i'd imagine xD?) and then remembering I have bigger problems than this
         //TODOreq: populate model for chart first
@@ -335,7 +384,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
         {
             //TODOreq: no purchases yet, use static min price (but still be able to transform to javascript countdown on buy event)
-            placeholderForPrice->setText(m_HackedInD3faultCampaign0_MinPrice);
+            m_CurrentPriceLabel->setText(m_HackedInD3faultCampaign0_MinPrice);
         }
         else
         {
@@ -345,7 +394,9 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
             m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
 
-            placeholderForPrice->doJavaScript //TODOreq: take out redundant math (low priority since eh it fukken worx)
+#if 0
+            //TODOreq: this js would be sent again on every buy update (and thus conflict with itself). I need to send it once and then start/restart it on the populate/updates (respectively). That means I need to refactor the js itself, and probably put the first doJavascript call up in 'begin'
+            m_CurrentPriceLabel->doJavaScript //TODOreq: take out redundant math (low priority since eh it fukken worx)
             (
                 "var lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + m_HackedInD3faultCampaign0_SlotLengthHours + "*3600)*1000));" +
                 "var lastSlotFilledAkaPurchasedPurchasePrice = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice + ";" + //made a var here so it can be updated later (on buy event) without stopping/restarting timer
@@ -360,23 +411,49 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
                         "if(currentDateTimeMSecs >= lastSlotFilledAkaPurchasedExpireDateTimeMSecs)" +
                         "{" +
                             "var minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";" +
-                            placeholderForPrice->jsRef() + ".innerHTML = minPrice.toFixed(8);" + //TODOreq: rounding?
+                            m_CurrentPriceLabel->jsRef() + ".innerHTML = minPrice.toFixed(8);" + //TODOreq: rounding?
                             "clearInterval(tehIntervalz);" + //TODOreq: start it again on buy event
                         "}" +
                         "else" +
                         "{" +
                             "var currentPrice = ((m*(currentDateTimeMSecs/1000))+b);" +  //y = mx+b
-                            placeholderForPrice->jsRef() + ".innerHTML = currentPrice.toFixed(8);" +
+                            m_CurrentPriceLabel->jsRef() + ".innerHTML = currentPrice.toFixed(8);" +
                         "}" +
                     "},100);" //INTERVAL AT 100ms
             );
+#endif
+
+            //timer either already running or (if first populate) about to start running, so give these variables real values
+            m_CurrentPriceLabel->doJavaScript
+            (
+                "lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + m_HackedInD3faultCampaign0_SlotLengthHours + "*3600)*1000));"
+                "lastSlotFilledAkaPurchasedPurchasePrice = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice + ";"
+                "lastSlotFilledAkaPurchasedPurchaseTimestamp = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp + ";"
+                "lastSlotFilledAkaPurchasedExpireDateTimeMSecs = lastSlotFilledAkaPurchasedExpireDateTime.getTime();"
+                "m = ((" + m_HackedInD3faultCampaign0_MinPrice + "-(lastSlotFilledAkaPurchasedPurchasePrice*2))/((lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)-lastSlotFilledAkaPurchasedPurchaseTimestamp));"
+                "b = (" + m_HackedInD3faultCampaign0_MinPrice + " - (m * (lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)));"
+            );
         }
+
+        //TODOreq: it turns itself off after first timeout if using min price (right?).. but we need this here so we can activate later on buy event
+        //TODOreq: navigating away should turn off the timer, coming back turns it back on
+        if(m_FirstPopulate)
+        {
+            m_FirstPopulate = false;
+            resumeRendering();
+            m_CurrentPriceLabel->doJavaScript
+            (
+                "minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";"
+                "tehIntervalz = setInterval(updatePriceTimeoutFunction, 100);"  //100ms interval
+            );
+        }
+        triggerUpdate();
     }
     else
     {
         if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases) //TODOreq: not related to js/here/etc, but when a "buy event" is received and we're on, say, step 1 of 2 clicked, we would then possibly toggle the value of NoPreviousSlotPurchases and need to make sure that... err... something...
         {
-            placeholderForPrice->setText(m_HackedInD3faultCampaign0_MinPrice);
+            m_CurrentPriceLabel->setText(m_HackedInD3faultCampaign0_MinPrice);
         }
         else
         {
@@ -404,17 +481,21 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
 
                 double currentPrice = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
 
-                placeholderForPrice->setText(boost::lexical_cast<std::string>(currentPrice)); //TODOreq: 8 decimal places, since it's presented to user
+                m_CurrentPriceLabel->setText(boost::lexical_cast<std::string>(currentPrice)); //TODOreq: 8 decimal places, since it's presented to user
                 //TODOoptional: if viewing campaign/countdown with js on and you then disallow js, the price is empty/blank (not even zero). weirdly though, coming directly to the page (no session) with javascript already disabled works fine. I think it has something to do with noscript not re-fetching the source during the "reload"... because on the noscript-reload tab i see "Scripts currently forbidden" (with options to allow them), and on "navigated directly to campaign with js already off" tab I don't see that message (no js was served). I don't even think I CAN fix this problem heh :-P... but it might be a Wt bug... not gracefully degrading when session becomes js-less?
 
                 //TODOreq: "current price is XXX and it will be back at YYYYY at ZZZZZZZ (should nobody buy any further slots). Click here to refresh this information to see if it's still valid, as someone may have purchased a slot since you loaded this page (enable javascript if you want to see it count down automatically)"
             }
         }
     }
-    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    WPushButton *buySlotFillerStep1Button = new WPushButton("Buy At This Price (Step 1 of 2)", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    buySlotFillerStep1Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked);
+    if(!m_BuySlotFillerStep1Button)
+    {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_BuySlotFillerStep1Button = new WPushButton("Buy At This Price (Step 1 of 2)", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_BuySlotFillerStep1Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked);
+    }
+    //TODOreq: get and subscribe testing so far will not include rolling back of anything after step 1 of 2 clicked, so i gotta do the rest of that process later
 }
 void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
 {
@@ -828,6 +909,12 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasBegin(con
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get, GET)
 }
+void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas(const string &keyToCouchbaseDocument)
+{
+    GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
+    couchbaseRequest.GetAndSubscribe = true;
+    SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get, GET)
+}
 //original code with comments
 //S3RIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE
 #if 0
@@ -944,6 +1031,21 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
     //{
     //    triggerUpdate(); //this and enableUpdates are probably not needed if i'm always defer/resuming
     //}
+}
+void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas_UPDATE(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError)
+{
+    switch(m_WhatTheGetAndSubscribeSavingCasWasFor)
+    {
+    case HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS:
+    {
+        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas); //TODOreq: calling this from two places now, need to.. err.. fix that
+    }
+        break;
+    case INITIALINVALIDNULLGETANDSUBSCRIBESAVINGCAS:
+    default:
+        cerr << "got a couchbase 'get and subscribe' (saving cas) response/update/populate we weren't expecting: " << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl << "unexpected cas: " << cas << endl; //TODOreq: changing subscriptions might make an old subscription go to the wrong subscription callback!!! i doubt it'd ever get to this invalid one, but still worth noting..
+        break;
+    }
 }
 void AnonymousBitcoinComputingWtGUI::storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
@@ -1068,7 +1170,6 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
         return;
     }
     //TODOreq: 404
-    internalPath()
 }
 void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
 {
