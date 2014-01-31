@@ -260,6 +260,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WString m_BuyerUsername; //only valid if logged in
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
+    virtual void finalize();
 
     static void newAndOpenAllWtMessageQueues();
     static void deleteAllWtMessageQueues();

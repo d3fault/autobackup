@@ -62,6 +62,12 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
     handleInternalPathChanged(cleanUrlInternalPath);
     //if adding more code here, take "return;" out of isHomePath and put handleInternalPathChanged into an "else" (the optimization isn't even worth this comment)
 }
+void AnonymousBitcoinComputingWtGUI::finalize()
+{
+    //TODOreq: unsubscribe [if subscribed]
+
+    WApplication::finalize();
+}
 void AnonymousBitcoinComputingWtGUI::buildGui()
 {
     setTitle("Anonymous Bitcoin Computing");
@@ -251,7 +257,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 {
     //TODOreqoptimization: this is going to be my most expensive document (the home link might be too, but it doesn't hit the db). I need SOME sort of caching solution [in order to make this horizontally scalable (so in other words, it isn't an absolute must pre-launch task], even if it's hacked-in/hardcoded who cares. getAndSubscribe comes to mind (but sounds complicated). a fucking mutex locked when new'ing the WContainerWidget below would be easy and would scale horizontally. Hell it MIGHT even be faster than a db hit (and there's always a 'randomly selected mutex in array of mutexes' hack xD)
 
-    if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget)
+    if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget) //TODOreq: this object, once created, should never be deleted until the WApplication is deleted. The reason is that get and subscribe updates might be sent to it (even if the user has navigated away, there is a race condition where they did not 'unsubscribe' yet so they'd still get the update (Wt handles this just fine. you can setText on something not being shown without crashing (but if I were to delete it, THEN we'd be fucked)))
     {
         m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new WContainerWidget(m_MainStack);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -286,12 +292,18 @@ double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double currentTime_
 }
 void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
 {
+    //TODOreq: this is where get and subscribe can push shit to on a continuous basis, so i need to change the defer/ResumeRendering logic a bit (enableUpdates + triggerUpdates whe js is enabled, otherwise get and subscribe doesn't even work...). Worth mentioning again that javascript-less need a special bool to get and NOT subscribe (even if it's a hard get!!!) (so shit, now the defer/Resume rendering logic is even more complicated because no-js relies on it!).
+    //This is ALSO (but not always (first get)) what I have referred to as a "buy event", so if they have clicked "buy step 1" we need to roll back the GUI so they have to click buy step 1 again (various GUI object organizational changes to support this)
+    //Goes without saying that the new 'slot index' that they will try to buy (which is locked in after clicking buy step 1) should be set in this method
+    //I'm thinking it might be easiest to do all the "new" ing in the beginShowing() method and then to merely modify/populate those objects/variables via setText in this one
+
     m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = couchbaseDocument;
     m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
     //TODOreq: the above two also need to be updated whenever the 'get-and-subscribe' thingy results in an update (that being said, i'm now quite certain that current/next need to go on their own doc. not 100% sure of it, but it's definitely the playing-it-safe way)
 
     //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
     //TODOreq: decided not to be a dick. "buy at current" sends the currentSlotIdForSale and the 'priceUserSawWhenTheyClicked', BUT we use our own internal and calculated-on-the-spot 'current price' and go ahead with the buy using that. We only use currentSlotIdForSale and 'priceUserSawWhenTheyClicked' to make sure they're getting the right slot [and not paying too much]. The two checks are redundant of one another, but that's ok
+    //TODOreq: if we do the new-ing in 'begin' a populating in 'finish' (here), we need to deferRendering to make things such as 'buy step 1' not clickable until the first 'finish' (which is more appropriately 'update'/populate now)... but we shouldn't do resumeRendering every time, because buy events don't need to do it. I guess we could force it to be invisible until 'finish', but I'm not certain that makes it unclickable (so a hacker could segfault me still). I'm 50/50 on this, I think Wt might make invisible objects 'unclickable' in that sense. setDisabled should do the same, but again unsure if that makes the inner js -> c++ slot mechanism not usable/hackable(hackable-because-segfault)
 
     ptree pt;
     std::istringstream is(couchbaseDocument);
@@ -322,7 +334,6 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     {        
         if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
         {
-            //TODOreq: account for 'no last purchase' in js (easy, just use min)
             //TODOreq: no purchases yet, use static min price (but still be able to transform to javascript countdown on buy event)
             placeholderForPrice->setText(m_HackedInD3faultCampaign0_MinPrice);
         }
@@ -459,7 +470,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("ARE YOU SURE? THERE'S NO TURNING BACK AFTER THIS", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        WPushButton *buySlotFillerStep2Button = new WPushButton("Buy At This Price (Step 2 of 2)", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        WPushButton *buySlotFillerStep2Button = new WPushButton("Buy At This Price (Step 2 of 2)", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: this button could have the js-price-falling thing on it, so they look right at the price when they click it (and buy event 'right before' they click buy step 1 is more likely to be seen/noticed!)
         buySlotFillerStep2Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked);
     }
 }
@@ -1023,7 +1034,10 @@ bool AnonymousBitcoinComputingWtGUI::isHomePath(const std::string &pathToCheck)
 }
 void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string &newInternalPath)
 {
-    if(isHomePath(newInternalPath)) //why do we have this both here and in the constructor? because setInternalPath() does not go to/through the constructor, so showHome() would never be called if they click a link etc that does setInternalPath("/home"). They'd only be able to get there by navigating directly to the site/home without a session (which is the common case but yea~)
+    //TODOreq: check campaign 0 key first, as it will be our hottest key
+    //TODOreq: subscribe [if not subscribed], unsubscribe [if subscribed]
+
+    if(isHomePath(newInternalPath)) //why do we have this both here and in the constructor? because setInternalPath() does not go to/through the constructor, so showHome() would never be called if they click a link etc that does setInternalPath("/home"). They'd only be able to get there by navigating directly to the site/home without a session (which is a common case but yea~)
     {
         showHomeWidget();
         return;
@@ -1054,6 +1068,7 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
         return;
     }
     //TODOreq: 404
+    internalPath()
 }
 void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
 {
