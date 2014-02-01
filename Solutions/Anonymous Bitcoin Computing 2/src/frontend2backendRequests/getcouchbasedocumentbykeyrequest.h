@@ -21,8 +21,13 @@ public:
     };
     enum GetAndSubscribeEnum
     {
+        JustGetDontSubscribeMode,
         GetAndSubscribeMode,
-        JustGetDontSubscribeMode
+
+        //in both of these modes, the backend does not respond and the frontend always assumes it works (TODOoptimization: expect response in frontend using timeout or some such. blah probably a dumb idea because if the backend doesn't do it, shit is ALREADY fucked)
+        GetAndSubscribeChangeSessionIdMode,
+        GetAndSubscribeUnsubscribeMode
+        //TODOreq: maybe this is where the js special 'get-FROM-subscription-but-dont-subscribe-unless-there-isnt-one-in-which-case-do-a-full-get-fuck-it-if-its-costly-ish' (tm)
     };
     //save constructor
     GetCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseGetKeyInput, CasMode casMode = DiscardCASMode, GetAndSubscribeEnum subscribeMode = JustGetDontSubscribeMode);
@@ -34,7 +39,7 @@ public:
     static const unsigned char LengthOfAddressToAnonymousBitcoinComputingWtGUI = sizeof(AnonymousBitcoinComputingWtGUI*) + 1;
     std::string CouchbaseGetKeyInput;
     bool SaveCAS;
-    bool GetAndSubscribe;
+    unsigned char GetAndSubscribe;
 
     static void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes, bool lcbOpSuccess, bool dbError);
     static void respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest,  std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);

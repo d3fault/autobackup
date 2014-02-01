@@ -36,7 +36,7 @@
 //NOPE: Maybe I need to set a cookie and then depend on the combination of the session id and the cookie [which needs it's own id of course (they can't match and the cookie can't be derived from session id (else attacker could derive same cookie))]
 
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
-    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_FirstPopulate(false), m_CurrentPriceLabel(0), m_BuySlotFillerStep1Button(0), m_HackedInD3faultCampaign0_NoPreviousSlotPurchases(true), m_AllSlotFillersComboBox(0), m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_LoggedIn(false)
+    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_FirstPopulate(false), m_CurrentPriceLabel(0), m_BuySlotFillerStep1Button(0), m_HackedInD3faultCampaign0_NoPreviousSlotPurchases(true), m_AllSlotFillersComboBox(0), m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_CurrentlySubscribedTo(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING), m_LoggedIn(false)
 {
     m_RandomNumberGenerator.seed((int)rawUniqueId());
     m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator); //TODOoptimization: these don't need to be members if i just use them once in constructor
@@ -61,7 +61,12 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
 void AnonymousBitcoinComputingWtGUI::finalize()
 {
     //TODOreq: unsubscribe [if subscribed]
-
+    if(m_CurrentlySubscribedTo != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
+    {
+        //we're subscribed to something, so unsubscribe
+        getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
+        //no need to reset m_CurrentlySubscribedTo to because 'this' is about to be deleted...
+    }
     WApplication::finalize();
 }
 void AnonymousBitcoinComputingWtGUI::buildGui()
@@ -273,10 +278,9 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         //still dunno if i should block or do it async? instincts tell me async, but "SUB MILLISECOND LATENCY" tells me async might actually be wasteful/slower??? The obvious answer is "benchmark it xD" (FUCK FUCK FUCK FUCK FUCK THAT, async it is (because even if slower, it still allows us to scale bettarer))
         //^To clarify, I have 3 options: wait on a wait condition right here that is notified by couchbase thread and we serve up result viola, deferRendering/resumeRendering, or enableUpdates/TriggerUpdates. The last one requires ajax. Both the last 2 are async (despite defer "blocking" (read:disabling) the GUI)
 
-
         new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-
+        m_CurrentPriceDomPath = m_CurrentPriceLabel->jsRef();
 
         if(!environment().ajax())
         {
@@ -293,11 +297,12 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
             m_FirstPopulate = true; //so we know to call resumeRendering on first populate/update, but not populates/updates thereafter
             deferRendering();
 
-            getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0");
-            m_WhatTheGetAndSubscribeSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
+            getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
+            m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
 
-            //placeholder/initialization javascript, not populated or active yet
-            m_CurrentPriceDomPath = m_CurrentPriceLabel->jsRef();
+            //TODOoptimization: shorten js variable names (LOL JS). use defines to retain sanity
+
+            //placeholder/initialization javascript, not populated or active yet            
             m_CurrentPriceLabel->doJavaScript
             (
                 m_CurrentPriceDomPath + ".z0bj = new Object();" +
@@ -913,10 +918,9 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasBegin(con
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get, GET)
 }
-void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas(const string &keyToCouchbaseDocument)
+void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas(const string &keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeEnum subscribeMode)
 {
-    GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
-    couchbaseRequest.GetAndSubscribe = true;
+    GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode, subscribeMode);
     SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get, GET)
 }
 //original code with comments
@@ -1038,16 +1042,16 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
 }
 void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas_UPDATE(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError)
 {
-    switch(m_WhatTheGetAndSubscribeSavingCasWasFor)
+    switch(m_CurrentlySubscribedTo)
     {
     case HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS:
     {
         finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas); //TODOreq: calling this from two places now, need to.. err.. fix that
     }
         break;
-    case INITIALINVALIDNULLGETANDSUBSCRIBESAVINGCAS:
+    case INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING:
     default:
-        cerr << "got a couchbase 'get and subscribe' (saving cas) response/update/populate we weren't expecting: " << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl << "unexpected cas: " << cas << endl; //TODOreq: changing subscriptions might make an old subscription go to the wrong subscription callback!!! i doubt it'd ever get to this invalid one, but still worth noting..
+        cerr << "got a couchbase 'get and subscribe' (saving cas) response/update/populate we weren't expecting: " << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl << "unexpected cas: " << cas << endl; //TODOreq: changing subscriptions might make an old subscription go to the wrong subscription callback!!! there is also a race condition where an unsubscribe request is sent but not processed by backend, who gives Posts it and we get to this code path. should just do nothing imo. the race condition about CHANGING subscriptions is much worse/harder-to-fix
         break;
     }
 }
@@ -1140,40 +1144,61 @@ bool AnonymousBitcoinComputingWtGUI::isHomePath(const std::string &pathToCheck)
 }
 void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string &newInternalPath)
 {
-    //TODOreq: check campaign 0 key first, as it will be our hottest key
-    //TODOreq: subscribe [if not subscribed], unsubscribe [if subscribed]
+    if(!internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0)) //we would check ALL eligible subscriptions before going into this if block (future proof)
+    {
+        //now in 'non-subscribeable' area
 
-    if(isHomePath(newInternalPath)) //why do we have this both here and in the constructor? because setInternalPath() does not go to/through the constructor, so showHome() would never be called if they click a link etc that does setInternalPath("/home"). They'd only be able to get there by navigating directly to the site/home without a session (which is a common case but yea~)
-    {
-        showHomeWidget();
-        return;
-    }
-    if(internalPathMatches(ABC_INTERNAL_PATH_ADS))
-    {
-        if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE))
+        if(m_CurrentlySubscribedTo != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
         {
-            if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT))
-            {
-                if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0))
-                {
-                    beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
-                    return;
-                }
-                showAdvertisingBuyAdSpaceD3faultWidget();
-                return;
-            }
-            showAdvertisingBuyAdSpaceWidget();
+            //we need to unsubscribe from whatever we're subscribed to
+
+            //looks like i need some auxillary message queues for communicating with backend... fffff /lazy
+            //also applies to changing sessionId, guh. 'get' and 'store' just don't cut-it/qualify (though i could PROBABLY hack them in xD). I'm mainly hesitant because it is MACRO HELL dealing with that shiz (i was tempted to do it for 'cas' vs. 'no-cas' etc, but ultimately said fuck it and just hacked onto the regular (but in hindsight, it wouldn't have worked [easily] because i only have 1x couchbase get/store callback!). I smell a refactor commit, which scares me because they often are the last times i touch codebases
+
+            //TODOreq: doesn't belong here, but when the backend finishes changing the session id, we should then send that changed session id whatever value is now 'current'. the reason being that we may have sent a 'buy event' to the outdated sessionId and he may never have gotten it. he would then have an outdated value until the NEXT buy event, which could be a very long time
+
+            //TODOreq: unsubscribe can/should be async. should continue on showing widget below...
+
+            getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: to be future proof for use with other subscriptions i'd have to call a method passing in m_CurrentlySubscribedTo in order to get the key to pass in here (easy but lazy)
+
+            //we don't expect a response from the backend, so this is our frontend's flag that we are now unsubscribed
+            m_CurrentlySubscribedTo = INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING;
+        }
+
+        if(isHomePath(newInternalPath)) //why do we have this both here and in the constructor? because setInternalPath() does not go to/through the constructor, so showHome() would never be called if they click a link etc that does setInternalPath("/home"). They'd only be able to get there by navigating directly to the site/home without a session (which is a common case but yea~)
+        {
+            showHomeWidget();
             return;
         }
-        showAdvertisingWidget();
-        return;
+        if(internalPathMatches(ABC_INTERNAL_PATH_ADS))
+        {
+            if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE))
+            {
+                if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT))
+                {
+                    showAdvertisingBuyAdSpaceD3faultWidget();
+                    return;
+                }
+                showAdvertisingBuyAdSpaceWidget();
+                return;
+            }
+            showAdvertisingWidget();
+            return;
+        }
+        if(newInternalPath == ABC_INTERNAL_PATH_REGISTER)
+        {
+            showRegisterWidget();
+            return;
+        }
+
+        //TODOreq: 404
     }
-    if(newInternalPath == ABC_INTERNAL_PATH_REGISTER)
-    {
-        showRegisterWidget();
-        return;
-    }
-    //TODOreq: 404
+
+    //TODOreq: to be future proof for other subscriptions, we need to do an 'unsubscribe' -> subscribe-to-different code path, and maybe they can/should share the ride to the backend ;-P. low priority for now since only one subscription. but really they don't need to share a ride since unsubscribe doesn't respond. we just async send unsubscribe and then do the new subscribe, ez
+
+    beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
+
+    //TODOreq: subscribe [if not subscribed], unsubscribe [if subscribed]
 }
 void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
 {
@@ -1253,6 +1278,13 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         //TODOreq: if the user logs in and the account is locked, even before we offer them fancy "did you want this?" functionality.. we should still allow them to buy the slot they were trying to buy when the account got to this fucked state (clearly they are interested). i can either let a locked account slide by (sounds dangerous, but actually i can't think of any reasons why it would fuck shit up (just a teensy hunch is all)) if it's pointing to the slot you're trying to purchase, or i can implement the "fancy" recovery functionality presented on login...
 
         changeSessionId();
+
+        if(m_CurrentlySubscribedTo != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
+        {
+            //we're subscribed to something, so need to notify backend that we changed session id
+            getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeChangeSessionIdMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
+        }
+
         m_LoggedIn = true;
         m_BuyerUsername = m_LoginUsernameLineEdit->text();
 

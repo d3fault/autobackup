@@ -203,7 +203,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
-    void getAndSubscribeCouchbaseDocumentByKeySavingCas(const std::string &keyToCouchbaseDocument);
+    void getAndSubscribeCouchbaseDocumentByKeySavingCas(const std::string &keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeEnum subscribeMode = GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
     void storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
     void setCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
     void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
@@ -257,16 +257,17 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     };
     enum WhatTheGetAndSubscribeSavingCasWasForEnum
     {
-        INITIALINVALIDNULLGETANDSUBSCRIBESAVINGCAS,
+        INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING,
         HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS
     };
 
+    //TODOreq: set thees all to [semi-]null in constructor
     WhatTheStoreWithoutInputCasWasForEnum m_WhatTheStoreWIthoutInputCasWasFor;
     WhatTheSetWithInputCasWasForEnum m_WhatTheSetWithInputCasWasFor;
     WhatTheSetWithInputCasSavingOutputCasWasForEnum m_WhatTheSetWithInputCasSavingOutputCasWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
     WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
-    WhatTheGetAndSubscribeSavingCasWasForEnum m_WhatTheGetAndSubscribeSavingCasWasFor;
+    WhatTheGetAndSubscribeSavingCasWasForEnum m_CurrentlySubscribedTo; //hack insted of 'bool m_CurrentlySubscribed' (which isn't future proof anyways)
 
     bool m_LoggedIn;
     WString m_BuyerUsername; //only valid if logged in

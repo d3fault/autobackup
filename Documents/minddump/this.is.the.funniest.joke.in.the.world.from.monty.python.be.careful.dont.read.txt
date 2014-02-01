@@ -1,0 +1,6 @@
+"You can put your cleanup code in the struct destructor"
+
+struct destructor
+{
+	~destructor() { }
+};

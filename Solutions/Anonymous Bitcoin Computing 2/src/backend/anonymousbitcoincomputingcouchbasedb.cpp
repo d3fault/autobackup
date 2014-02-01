@@ -662,7 +662,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         deSerializer >> *getCouchbaseDocumentByKeyRequestFromWt;
     }
 
-    if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe)
+    if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe != 0)
     {
         //thought about just querying the key [against a list] to see if it's 'get and subscribe' mode, but using a bool like this makes it scale betterer in the futuerer
 
@@ -676,12 +676,87 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 
             //TODOreq: for the actual poll / cache miss, I need to use ONE OF the GetCouchbaseDocumentByKeyRequests (subscribers) to do the get itself using existing infrastructure. It will be easy to "pull back out" (as being GetAndSubscribe 'mode') because of the same bool I used to get to here. BUT doing so is a bit hacky and does lead to a tiny race condition that when happened would make the 100ms now 200ms (or possibly longer, but it gets rarer and rarer). If the end-user for the corresponding GetCouchbaseDocumentByKeyRequest should UNSUBSCRIBE (navigate away, disconnect) while the 'get poll' is taking place, we might not see him in the list anymore and might... idk... disregard the result? Hard to wrap my head around but now that I've typed this shit, I'll double check that I accounted for it later. Might not matter at all depending how I code it (lookup by KEY = doesn't matter)
 
+            //TODOreq: the 'requests' that became subscriptions need to be deleted on app shutdown or else it's a memory leak. not talking about it's 'existence in hash'. THAT we can simply forget about
+
             //I have written previously that the polling will be lazy. I said it should do a get if 'lastGet' happened >= 100ms ago. I have changed my mind BECAUSE: you could have shit tons of 'subscribers' sitting waiting for their "Post" updates only... and very little of them doing "first page load 'get'ing" (and only the first page load get'ing would go through the code path to see if >= 100ms has elapsed). Since the primary way of pushing updates is to them (masses) via Post without them requiring to do a 'get' (hence the name 'SUBSCRIBE'), I'm going to use an actual timer for polling and not lazy/event-driven polling like I said earlier.
 
             //try to get
             keyValueCacheItem = m_GetAndSubscribeCacheHash.at(getCouchbaseDocumentByKeyRequestFromWt->CouchbaseGetKeyInput);
 
             //CACHE HIT if we get this far and the exception isn't thrown
+            //first handle our two special cases
+            if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe == 2) //change session id
+            {
+                GetCouchbaseDocumentByKeyRequest *existingSubscription;
+                try
+                {
+                    existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(keyValueCacheItem->NewSubscribers.at(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+
+                    //is in new subscription
+                    //delete the old session id's request, but we're about to 'insert' so no need to erase from hash
+                    delete existingSubscription;
+                }
+                catch(std::out_of_range &notInNewSubscribersException)
+                {
+                    try
+                    {
+                        existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(keyValueCacheItem->Subscribers.at(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+
+                        //is in old subscribers
+                        keyValueCacheItem->Subscribers.erase(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //TODOoptimization: we could use 'find' instead of 'at' and already have the iterator, which makes for faster erasing here (fuckit)
+                        delete existingSubscription;
+                    }
+                    catch(std::out_of_range &notInOldSubscribersException)
+                    {
+                        //TODOreq:
+                        cerr << "i'm not sure what it means if we get a change session id request for a wapplication that isn't subscribed... so for now give an error and just return doing nothing" << endl;
+                        delete getCouchbaseDocumentByKeyRequestFromWt;
+                        return;
+                    }
+                }
+
+                //if we get here then the old request was 'delete'd (and if it was in old subscribers hash, it was removed from it), so now we just add to new subscribers (which would overwrite the old one if it was even there)
+                keyValueCacheItem->NewSubscribers[getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback] = getCouchbaseDocumentByKeyRequestFromWt;
+
+                //don't continue doing get [and/or subscribe]
+                return;
+
+                //we put ourself in NewSubscribers because we definitely want the next poll. we also don't even know if the old session id is in new subscribers or old subscribers list, but putting it into new will get it put into old soon anyways. there is a race condition not even worth fixing where the value changes right around 'now' and the old session id gets posted to before we've made this new subscriber (added few lines up) gets put (read:overwritten) into the old subscribers. Wt handles this safely i'm pretty sure and it's quite rare that i don't give a shit
+                //^^^^DISREGARD, since memory leak if i don't hunt down and delete the 'old session id' getCouchbaseDocumentByKeyRequestFromWt
+            }
+            else if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe == 3) //unsubscribe
+            {
+                GetCouchbaseDocumentByKeyRequest *existingSubscription;
+                try
+                {
+                    existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(keyValueCacheItem->NewSubscribers.at(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+
+                    //is in new subscribers
+                    keyValueCacheItem->NewSubscribers.erase(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //see TODOoptimization in change session id about using a find iterator instead
+                    delete existingSubscription;
+                }
+                catch(std::out_of_range &notInNewSubscribersException)
+                {
+                    try
+                    {
+                        existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(keyValueCacheItem->Subscribers.at(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+
+                        //is in old subscribers
+                        keyValueCacheItem->Subscribers.erase(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //see TODOoptimization in change session id about using a find iterator instead
+                        delete existingSubscription;
+                    }
+                    catch(std::out_of_range &notInOldSubscribersException)
+                    {
+                        //double  unsubscribe is quite likely so we don't care when it happens
+                        delete getCouchbaseDocumentByKeyRequestFromWt;
+                    }
+                }
+                //don't continue doing get [and/or subscribe]
+                return;
+            }
+
+            //traditional get and subscribe
+
             //TO DOnereq: the 2nd user to subscribe might get to this code path before the very first 'get' has populated document/cas... so... wtf?
             if(!keyValueCacheItem->CurrentlyFetchingPossiblyNew)
             {
@@ -704,6 +779,19 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         catch(std::out_of_range &keyNotInCacheException)
         {
             //CACHE MISS
+
+            if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe == 2) //for these two specials: if there is no cache hit, we don't do jack shit (hey it rhymes)
+            {
+                //change sessionId
+                delete getCouchbaseDocumentByKeyRequestFromWt; //TODOreq: when there is a cache hit we still probably want to delete these (since no responding)
+                return;
+            }
+            else if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe == 3)
+            {
+                //unsubscribe
+                delete getCouchbaseDocumentByKeyRequestFromWt;
+                return;
+            }
 
             //add ourself and if get isn't already scheduled (we're the first), schedule it. If we get here then we might be the first, but we might also be very close after the first so that the very first get (which is already schedule by the first) hasn't finished yet. Once the first POLL is completed, we should never get here
             //^^NOPE, that is subscriber cache, this miss is for just the key itself (first miss creates it)
