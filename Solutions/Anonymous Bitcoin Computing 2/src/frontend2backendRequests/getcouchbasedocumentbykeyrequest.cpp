@@ -28,4 +28,5 @@ void GetCouchbaseDocumentByKeyRequest::respondWithCAS(GetCouchbaseDocumentByKeyR
 
     //get and subscribe populate/update
     Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas_UPDATE, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2, _3, _4, _5), originalRequest->CouchbaseGetKeyInput, couchbaseDocument, cas, lcbOpSuccess, dbError));
+    //TODOreq: maybe the fallback function passed to "Post" is our quickest way to determine a disconnect (unsubscribe), but really it might take just as long as the tradition disconnect (wapplication destroy), I am unsure. still makes sense to plug both points and to make sure that the backend can handle an unsubscribe request for a wapplication that isn't subscribed (race condition between the two)
 }

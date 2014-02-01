@@ -297,28 +297,30 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
             m_WhatTheGetAndSubscribeSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
 
             //placeholder/initialization javascript, not populated or active yet
+            m_CurrentPriceDomPath = m_CurrentPriceLabel->jsRef();
             m_CurrentPriceLabel->doJavaScript
             (
-                "var minPrice = 0;"
-                "var lastSlotFilledAkaPurchasedExpireDateTime = new Date();"
-                "var lastSlotFilledAkaPurchasedPurchasePrice = 0;"
-                "var lastSlotFilledAkaPurchasedPurchaseTimestamp = 0;"
-                "var lastSlotFilledAkaPurchasedExpireDateTimeMSecs = lastSlotFilledAkaPurchasedExpireDateTime.getTime();"
-                "var m = 0;"
-                "var b = 0;"
-                "var tehIntervalz;"
+                m_CurrentPriceDomPath + ".z0bj = new Object();" +
+                m_CurrentPriceDomPath + ".z0bj.minPrice = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTime = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchasePrice = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchaseTimestamp = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.m = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.b = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.tehIntervalz = 0;"
                 "function updatePriceTimeoutFunction()"
                 "{"
                     "var currentDateTimeMSecs = new Date().getTime();"
-                    "if(currentDateTimeMSecs >= lastSlotFilledAkaPurchasedExpireDateTimeMSecs)"
+                    "if(currentDateTimeMSecs >= " + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs)"
                     "{" +
-                        m_CurrentPriceLabel->jsRef() + ".innerHTML = minPrice.toFixed(8);" //TODOreq: rounding?
-                        "clearInterval(tehIntervalz);" //TODOreq: start it again on buy event
+                        m_CurrentPriceDomPath + ".innerHTML = " + m_CurrentPriceDomPath + ".z0bj.minPrice.toFixed(8);" //TODOreq: rounding?
+                        "clearInterval(" + m_CurrentPriceDomPath + ".z0bj.tehIntervalz);" //TODOreq: start it again on buy event
                     "}"
                     "else"
                     "{"
-                        "var currentPrice = ((m*(currentDateTimeMSecs/1000))+b);" + //y = mx+b
-                        m_CurrentPriceLabel->jsRef() + ".innerHTML = currentPrice.toFixed(8);"
+                        "var currentPrice = ((" + m_CurrentPriceDomPath + ".z0bj.m*(currentDateTimeMSecs/1000))+" + m_CurrentPriceDomPath + ".z0bj.b);" + //y = mx+b
+                        m_CurrentPriceDomPath + ".innerHTML = currentPrice.toFixed(8);"
                     "}"
                 "}"
             );
@@ -346,6 +348,8 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     //Goes without saying that the new 'slot index' that they will try to buy (which is locked in after clicking buy step 1) should be set in this method
     //I'm thinking it might be easiest to do all the "new" ing in the beginShowing() method and then to merely modify/populate those objects/variables via setText in this one
     //TODOreq: unsubscribing + resubscribing would make the resubscriber a NewSubscriber, and he'd get an update even if it's the same value (this probably won't matter (and isn't even worth coding for))
+
+    //TODOreq: session-id change on login, unsubscribe
 
     m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = couchbaseDocument;
     m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
@@ -426,12 +430,12 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             //timer either already running or (if first populate) about to start running, so give these variables real values
             m_CurrentPriceLabel->doJavaScript
             (
-                "lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + m_HackedInD3faultCampaign0_SlotLengthHours + "*3600)*1000));"
-                "lastSlotFilledAkaPurchasedPurchasePrice = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice + ";"
-                "lastSlotFilledAkaPurchasedPurchaseTimestamp = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp + ";"
-                "lastSlotFilledAkaPurchasedExpireDateTimeMSecs = lastSlotFilledAkaPurchasedExpireDateTime.getTime();"
-                "m = ((" + m_HackedInD3faultCampaign0_MinPrice + "-(lastSlotFilledAkaPurchasedPurchasePrice*2))/((lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)-lastSlotFilledAkaPurchasedPurchaseTimestamp));"
-                "b = (" + m_HackedInD3faultCampaign0_MinPrice + " - (m * (lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)));"
+                m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + m_HackedInD3faultCampaign0_SlotLengthHours + "*3600)*1000));" +
+                m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchasePrice = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice + ";" +
+                m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchaseTimestamp = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp + ";" +
+                m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs = " + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTime.getTime();" +
+                m_CurrentPriceDomPath + ".z0bj.m = ((" + m_HackedInD3faultCampaign0_MinPrice + "-(" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchasePrice*2))/((" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)-" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchaseTimestamp));" +
+                m_CurrentPriceDomPath + ".z0bj.b = (" + m_HackedInD3faultCampaign0_MinPrice + " - (" + m_CurrentPriceDomPath + ".z0bj.m * (" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)));"
             );
         }
 
@@ -443,8 +447,8 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             resumeRendering();
             m_CurrentPriceLabel->doJavaScript
             (
-                "minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";"
-                "tehIntervalz = setInterval(updatePriceTimeoutFunction, 100);"  //100ms interval
+                m_CurrentPriceDomPath + ".z0bj.minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";" +
+                m_CurrentPriceDomPath + ".z0bj.tehIntervalz = setInterval(updatePriceTimeoutFunction, 100);"  //100ms interval
             );
         }
         triggerUpdate();

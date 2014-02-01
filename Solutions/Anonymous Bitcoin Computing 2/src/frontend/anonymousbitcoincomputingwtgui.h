@@ -165,6 +165,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     bool m_FirstPopulate;
     WText *m_CurrentPriceLabel;
+    std::string m_CurrentPriceDomPath;
     WPushButton *m_BuySlotFillerStep1Button;
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
     std::string m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase;
