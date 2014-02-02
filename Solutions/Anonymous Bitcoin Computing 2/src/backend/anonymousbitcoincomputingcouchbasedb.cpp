@@ -189,6 +189,26 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     event_base_loop(LibEventBaseScopedDeleterInstance.LibEventBase, 0); //wait until event_base_loopbreak is called, processing all events of course
 
     //cleanup
+    //delete our 'held onto' gets which are effectively used as subscriptions
+    BOOST_FOREACH(GetAndSubscribeCacheHashType::value_type &v, m_GetAndSubscribeCacheHash)
+    {
+        //First delete all subscribers of cache item
+        //Wt itself deletes s.first (WApplication pointer)
+        BOOST_FOREACH(SubscribersType::value_type &s, v.second->NewSubscribers)
+        {
+            GetCouchbaseDocumentByKeyRequest *subscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(s.second);
+            delete subscription;
+        }
+        BOOST_FOREACH(SubscribersType::value_type &s, v.second->Subscribers)
+        {
+            GetCouchbaseDocumentByKeyRequest *subscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(s.second);
+            delete subscription;
+        }
+
+        //Then delete cache item itself
+        GetAndSubscribeCacheItem *cacheItem = v.second;
+        delete cacheItem;
+    }
     //TODOreq: we could try to receive any left over messages in queue here (in order to tell them that they were too late), or just disregard them and quit...
     if(m_IsConnected) //if m_IsConnected isn't true, then we never got our couchbase configuration so we never allocated certain buffers and so we don't need to release them either
     {
@@ -207,7 +227,8 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, REMOVE_ALL_MESSAGE_QUEUES_MACRO, Add)
     BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, REMOVE_ALL_MESSAGE_QUEUES_MACRO, Get)
 
-    //wtf? valgrind complains if i don't have these event_free's here... but why come it don't complain about all the cross thread ones not being freed (and i thought "all" (including below two) were being free'd at lcb_destroy_io_ops wtf wtf?). Maybe valgrind just isn't catching them because it's all happening at scope exit in struct destructor (lol wut) (in which case it's a valgrind bug i'd say)
+    //wtf? valgrind complains if i don't have these event_free's here... but why come (why cum? because it is an option and with infinite time all possible options are eventually.. err... done (performed? executed? chosen? entered?)) it don't complain about all the cross thread ones not being freed (and i thought "all" (including below two) were being free'd at lcb_destroy_io_ops wtf wtf?). Maybe valgrind just isn't catching them because it's all happening at scope exit in struct destructor (lol wut) (in which case it's a valgrind bug i'd say)
+    event_free(m_GetAndSubscribePollingTimeout);
     event_free(m_FinalCleanUpAndJoinEvent);
     event_free(m_BeginStoppingCouchbaseCleanlyEvent);
     lcb_destroy(m_Couchbase);
@@ -536,11 +557,12 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
 }
 void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlot()
 {
+    std::list<std::string> listOfKeysWithNoSubscribers;
     BOOST_FOREACH(GetAndSubscribeCacheHashType::value_type &v, m_GetAndSubscribeCacheHash)
     {
         GetAndSubscribeCacheItem *cacheItem = v.second;
 
-        //get the first subscriber found. proper design would make me less paranoid about this, but i'm not even sure we can guarantee that there are any subscribers. so we should play it safe and if there aren't any subscribers found, we don't do the timeout or even. hell, we could (should?) then delete the cache item and remove it from m_GetAndSubscribeCacheHash (is BOOST_FOREACH mutable??)
+        //get the first subscriber found. if there aren't any subscribers found, we don't do the get and then remove it from m_GetAndSubscribeCacheHash and delete the cache item
 
         GetCouchbaseDocumentByKeyRequest *getCouchbaseDocumentByKeyRequestFromWt = NULL; //had it called 'aRequestToHackilyUseLoL' but eh MACRO
         if(!cacheItem->Subscribers.empty())
@@ -556,8 +578,19 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
         {
             cacheItem->CurrentlyFetchingPossiblyNew = true;
             DO_SCHEDULE_COUCHBASE_GET()
+            //TODOreq: as i have it coded now, if i did two subscribables, they would each event_add the same timer using their own "100ms" thingy. not sure if they'd overwrite each other or what, but yea i need to fix that before ever doing multiple subscribables
         }
-        //else, TODOreq should we delete cache item since no subscribers or should someone else (the unsubscribe code?)
+        else
+        {
+            //TODOreq: else, add it to a list to be deleted once we stop iterating them (mutable?) should we delete cache item since no subscribers. the unsubscribe code could have done it, but it's better to do it here because then subscribers can be add-removed-add-removed and so on changing between "0 and 1" rapidly without us having to delete/new over and over with each one. here we give 100ms leeway in which it can be empty for (at a maximum (could only be 1ms, we dunno/care (as in, don't care)). TODOreq: when a subscriber is added, the cacheItem needs to either be deleted or the timer needs to be running. if the cache item is deleted, we re-start the timer. this isn't future proof, my design here with the timer is only for one cacheItem (/lazy)
+            listOfKeysWithNoSubscribers.push_back(v.first);
+        }
+    }
+    BOOST_FOREACH(std::string &keyWithNoSubscribersToDelete, listOfKeysWithNoSubscribers)
+    {
+        GetAndSubscribeCacheItem *cacheItemWithNoSubscribersToDelete = m_GetAndSubscribeCacheHash.at(keyWithNoSubscribersToDelete);
+        m_GetAndSubscribeCacheHash.erase(keyWithNoSubscribersToDelete); //TODOoptimziation: find(), use iterator to erase() -- same as unsubscribe/change-sessionId code
+        delete cacheItemWithNoSubscribersToDelete;
     }
 }
 void AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData)

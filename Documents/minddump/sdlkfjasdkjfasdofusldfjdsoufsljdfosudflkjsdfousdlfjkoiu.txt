@@ -1,0 +1,7 @@
+Cowardice and Bravery is determined solely by the successes of each.
+A coward is brave if death was guaranteed.
+A brave is coward if death wasn't guaranteed.
+A coward isn't brave if death wasn't guaranteed.
+A brave isn't coward if death was guaranteed.
+
+Hence, all bullshit (can't predict future).
