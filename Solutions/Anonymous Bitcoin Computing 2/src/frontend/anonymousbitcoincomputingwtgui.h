@@ -185,6 +185,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+    void continueRecoveringLockedAccountAtLoginAttempt(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError);
     bool m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired;
     double m_CurrentPriceToUseForBuying;
     std::string m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds;
@@ -200,6 +201,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(bool dbError);
     void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError);
     void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError);
+    void doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(bool lcbOpSuccess, bool dbError);
 
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
@@ -214,7 +216,10 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void handleInternalPathChanged(const std::string &newInternalPath);
     void handleRegisterButtonClicked();
     void handleLoginButtonClicked();
-    void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, bool lcbOpSuccess, bool dbError);
+    std::string m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack;
+    void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, u_int64_t casOnlyUsedWhenDoingRecoveryAtLogin, bool lcbOpSuccess, bool dbError);
+    std::string m_UserAccountLockedJsonToMaybeUseInAccountRecovery;
+    u_int64_t m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay;
     void handleLogoutButtonClicked();
 
     taus88 m_RandomNumberGenerator;
@@ -236,7 +241,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         //now there aren't any ops i'm using that set with an input cas without using it again later (saving the cas), but there probably will be in the future...
         //SEE!
         HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS,
-        HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS
+        HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS,
+        LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT
     };
     enum WhatTheSetWithInputCasSavingOutputCasWasForEnum
     {
@@ -246,11 +252,12 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     enum WhatTheGetWasForEnum
     {
         INITIALINVALIDNULLGET,
-        LOGINATTEMPTGET,
-        HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET
+        HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET,
+        ONLOGINACCOUNTLOCKEDRECOVERYDOESSLOTEXISTCHECK
     };
     enum WhatTheGetSavingCasWasForEnum
     {
+        LOGINATTEMPTGET,
         INITIALINVALIDNULLGETSAVINGCAS,
         HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
@@ -270,7 +277,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WhatTheGetAndSubscribeSavingCasWasForEnum m_CurrentlySubscribedTo; //hack insted of 'bool m_CurrentlySubscribed' (which isn't future proof anyways)
 
     bool m_LoggedIn;
-    WString m_BuyerUsername; //only valid if logged in
+    std::string m_CurrentlyLoggedInUsername; //only valid if logged in
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
     virtual void finalize();

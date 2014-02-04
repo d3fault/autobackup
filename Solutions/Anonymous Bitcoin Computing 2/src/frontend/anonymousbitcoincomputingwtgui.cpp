@@ -520,7 +520,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
         new WText("Log In First", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         return;
     }
-    getCouchbaseDocumentByKeyBegin("adSpaceAllSlotFillers" + m_BuyerUsername.toUTF8()); //TODOreq: obviously we'd have sanitized the username by here...
+    getCouchbaseDocumentByKeyBegin("adSpaceAllSlotFillers" + m_CurrentlyLoggedInUsername); //TODOreq: obviously we'd have sanitized the username by here...
     m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET;
 }
 void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const std::string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError)
@@ -593,10 +593,10 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     //TODOreq: sanitize slot index (user could have forged), verify it in fact exists (was thinking i should try to pull the doc, BUT we already have the "allSlotFillers" doc and can just verify that it's in that instead (so we would be depending on earlier sanity checks when setting up the slotFiller instead)
 
-    m_SlotFillerToUseInBuy = "adSpaceSlotFillers" + m_BuyerUsername.toUTF8() + boost::lexical_cast<std::string>(m_AllSlotFillersComboBox->currentIndex());
+    m_SlotFillerToUseInBuy = "adSpaceSlotFillers" + m_CurrentlyLoggedInUsername + boost::lexical_cast<std::string>(m_AllSlotFillersComboBox->currentIndex());
 
     //TODOreq: make a query for the user's "account", to both cas-lock it and to see that the balance is high enough. hmm i don't need the cas value presented to me in Wt land, but i do need it to be held on to for continuing with the cas swap shit after i make sure balance is high enough (i suppose i can just pass the currentPrice to the backend and have him verify balance > currentPrice (but up till now, my backend has been app agnostic and therefore portable. i suppose i need an app-specific backend? perhaps isA agnostic db type? so much flexibility it hurts. KISS). really though, cas-swap(lock) is NOT abc-specific, so implementing that in my backend is good. maybe a generic "getCouchbaseDocumentByKeyAndHangOntoItBecauseIMightCasSwapIt" (TODOreq: account for when i DON'T cas-swap it (in this example, if the balance is too low, or if it's already 'locked')). Hmm the CAS value is just a uint64_t, so maybe it won't be so troublesome to bring it to wt side and then send it back to couchbase [in a new 'store' request])
-    getCouchbaseDocumentByKeySavingCasBegin("user" + m_BuyerUsername.toUTF8());
+    getCouchbaseDocumentByKeySavingCasBegin("user" + m_CurrentlyLoggedInUsername);
     m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET;
 
     //TODOreq: the above get shouldn't fail since they need to already be logged in to get this far, but what the fuck do i know? it probably CAN (db overload etc), so i need to account for that
@@ -701,7 +701,7 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             write_json(jsonDocBuffer, pt, false);
             std::string accountLockedForBuyJsonDoc = jsonDocBuffer.str();
 
-            setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_BuyerUsername.toUTF8(), accountLockedForBuyJsonDoc, cas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+            setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, accountLockedForBuyJsonDoc, cas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
             m_WhatTheSetWithInputCasSavingOutputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS;
         }
         else
@@ -715,10 +715,65 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     }
     else
     {
-        //we probably want to allow them to continue with the buy even if the account is locked, so long as it's locked "to" the same one they're trying to buy now (buy failure recovery)
+        //we probably want to allow them to continue with the buy even if the account is locked, so long as it's locked "to" the same one they're trying to buy now (buy failure recovery) -- TODOreq: this should go either in login recovery or here, but not both (since getting _here_ requires being logged in (ALTHOUGH ACTUALLY NVM, IT IS POSSIBLE TO GET HERE IF THE DB/node FAILS WHILE THEY ARE LOGGED IN LOOKING AT BUY PAGE FFFFFF))
         //Semi-outdated:
         //TODOreq: account already locked so error out of this buy. they're logged in elsewhere and trying to buy two things at once? etc. It jumps at me that it might be a place to do 'recovery' code, but I think for now I'm only going to do that during 'login' (TODOreq: maybe doing recovery at login isn't such a good idea (at least, the PROCEED WITH BUY kind isn't a good idea (rollback is DEFINITELY good idea (once we verify that they didn't get it(OMG RACE CONDITION HACKABLE TODOreq: they are on two machines they log in on a different one just after clicking "buy" and get lucky so that their account IS locked, but the separate-login-machine checks to see if they got the slot. When it sees they didn't, it rolls back their account. Meanwhile the original machine they clicked "buy" on is still trying to buy the slot (by LCB_ADD'ing the slot). The hack depends on the machine they press "buy" on being slower (more load, etc) than the alternate one they log in to (AND NOTE, BY MACHINE I MEAN WT SERVER, not end user machine). So wtf rolling back is dangerous? Wat do. It would also depend on the buying machine crashing immediately after the slot is purchased, because otherwise it would be all like 'hey wtf who unlocked that account motherfucker, I was still working on it' and at least error out TODOreq))))
         //^very real race condition vuln aside, what i was getting at originally is that maybe it's not a good idea to do "recover->proceed-with-buy" because who the fuck knows how much later they'd log in... and like maybe currentPrice would be waaaaay less than when they originally locked/tried-and-failed. It makes sense to at least ask them: "do you want to try this buy again" and then to also recalculate the price (which means re-locking the account (which probably has security considerations to boot)) on login
+    }
+}
+void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttempt(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        new WBreak(m_LoginWidget);
+        new WText("500 Internal Server Error, try again later", m_LoginWidget);
+        resumeRendering();
+        return;
+    }
+
+    if(!lcbOpSuccess)
+    {
+        //slot not purchased/filled
+        new WText("Semi-FAIL, wait until someone buys that slot and then login again", m_LoginWidget);
+        resumeRendering();
+        return;
+        //TODOreq: allow them to buy it, because clearly they've expressed interest
+        //TODOoptimization: think of a way to allow them to roll back.... though be careful because this is dangerous
+    }
+    else
+    {
+        //slot purchased/filled, now check if it was us
+
+        ptree pt;
+        std::istringstream is(maybeExistentSlot);
+        read_json(is, pt);
+
+        std::string slotFilledWith = pt.get<std::string>("slotFilledWith");
+        if(slotFilledWith == m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack)
+        {
+            //we got it, so do NOTHING because recovery process will handle it :-)
+            new WText("Try logging in again in like 1 minute (don't ask why)", m_LoginWidget); //fuck teh police~
+            resumeRendering();
+        }
+        else
+        {
+            //we didn't get it, so it is now safe to roll-back/unlock the user account without debitting
+
+            ptree pt2;
+            std::istringstream is2(m_UserAccountLockedJsonToMaybeUseInAccountRecovery);
+            read_json(is2, pt2);
+
+            ptree pt3; //lol there's gotta be a way to just remove them.... fuckit
+            pt3.put("passwordHash", pt2.get<std::string>("passwordHash"));
+            pt3.put("passwordSalt", pt2.get<std::string>("passwordSalt"));
+            pt3.put("balance", pt2.get<std::string>("balance"));
+            std::ostringstream userAccountUnlockedJsonBuffer;
+            write_json(userAccountUnlockedJsonBuffer, pt3, false);
+
+            //cas-swap-unlock(no-debit)-accepting-fail (neighbor logins could have recovered)
+            setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, userAccountUnlockedJsonBuffer.str(), m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            m_WhatTheSetWithInputCasWasFor = LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT;
+        }
     }
 }
 void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError)
@@ -783,7 +838,7 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
 
     //create transaction doc using lcb_add accepting fail -- i can probably re-use this code later (merge into functions), for now KISS
     ptree pt;
-    pt.put("buyer", m_BuyerUsername);
+    pt.put("buyer", m_CurrentlyLoggedInUsername);
     pt.put("seller", "d3fault"); //TODOreq: implied/deducable from key name...
     pt.put("amount", m_CurrentPriceToUseForBuyingString);
     std::ostringstream transactionBuffer;
@@ -823,7 +878,7 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     std::ostringstream jsonDocWithBalanceDeducted;
     write_json(jsonDocWithBalanceDeducted, pt, false);
 
-    setCouchbaseDocumentByKeyWithInputCasBegin(string("user") + m_BuyerUsername.toUTF8(), jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    setCouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure. can happen and sometimes will, but mostly won't. handle it by doing nothing but continuing the process
 
     //TO DOnereq(set without cas): should we have done a multi-get to update the campaign doc also? i actually think not since we don't have the cas for that doc (but we could have gotten it~). more importantly i don't know whether or not i need the cas for it when i do the swap. seems safer no doubt.. but really would there be any contesting?? maybe only subsequent buys milliseconds later (probably in error, but maybe the campaign is just liek popular ya know ;-P)... so yea TODOreq do a cas-swap of the campaign doc, makes sure we're only n+1 the last purchased.... and i think maybe do an exponential backoff trying... because it's the same code that runs for when subsequent ones are purchased seconds later? or no... maybe we just do a set without cas because we know that all attempts to buy will fail until that set is complete (because they try to buy n+1 (which is what we just bought (so it will fail safely as beat-to-thepunch)), not n+2 (until the set we're about to do, is done))
@@ -915,6 +970,36 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
 
     //TODOoptimization: getting here means were the driver (unless i merge this function, but yea) so we can now ahead-of-time-a-la-event-driven update the 'get and subscribe' people (at least the ones on this wt node)... but we don't really NEED to...
 }
+void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        new WBreak(m_LoginWidget);
+        new WText("500 Internal Server Error, try again in a few minutes", m_LoginWidget);
+        resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        new WBreak(m_LoginWidget);
+        new WText("Uhh, try logging in again, I'm not sure what just happened...", m_LoginWidget); //seriously, can't wrap my head around this right now... xD (neighbor login beat them to the recovery.... but what should i _DO_??? it is perhaps NOTHING, but i can't guarantee that the user-account isn't now locked towards something else (and still in failed state (or something confusing fuck it))
+        resumeRendering();
+        return;
+    }
+
+    //account locked recovery complete, make it look like a regular old login. COPY/PASTE JOB FROM REGULAR LOGIN CODE PATH
+    if(!m_LogoutWidget)
+    {
+        m_LogoutWidget = new WContainerWidget(m_LoginLogoutStackWidget);
+        new WText("Hello, ", m_LogoutWidget);
+        new WText(m_CurrentlyLoggedInUsername, m_LogoutWidget);
+        WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
+        logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
+    }
+    m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
+    m_LoggedIn = true;
+    resumeRendering();
+}
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
     deferRendering();
@@ -1002,15 +1087,15 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     //this hack STILL makes me giggle like a little school girl, tee hee
     switch(m_WhatTheGetWasFor)
     {
-    case LOGINATTEMPTGET:
-        {
-            loginIfInputHashedEqualsDbInfo(couchbaseDocument, lcbOpSuccess, dbError);
-        }
-        break;
     case HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET:
         {
             buySlotPopulateStep2d3faultCampaign0(couchbaseDocument, lcbOpSuccess, dbError);
         }
+        break;
+    case ONLOGINACCOUNTLOCKEDRECOVERYDOESSLOTEXISTCHECK:
+    {
+        continueRecoveringLockedAccountAtLoginAttempt(couchbaseDocument, lcbOpSuccess, dbError);
+    }
         break;
     case INITIALINVALIDNULLGET:
     default:
@@ -1028,6 +1113,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
     resumeRendering();
     switch(m_WhatTheGetSavingCasWasFor)
     {
+    case LOGINATTEMPTGET:
+        {
+            loginIfInputHashedEqualsDbInfo(couchbaseDocument, cas, lcbOpSuccess, dbError);
+        }
+        break;
     case HACKEDIND3FAULTCAMPAIGN0GET:
         {
             finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas); //TODOreq: tempted to pass lcbOpsSuccess and dbError into here, but this is ultimately going to change when i implement get-and-subscribe-via-polling so i'm not sure they still apply (not sure they don't apply also!)
@@ -1109,6 +1199,11 @@ void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinish
     case HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS:
     {
         doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(dbError);
+    }
+        break;
+    case LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT:
+    {
+        doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(lcbOpSuccess, dbError);
     }
         break;
     case INITIALINVALIDNULLSETWITHCAS:
@@ -1245,10 +1340,11 @@ void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
 
     //TODOreq: it might make sense to clear the line edit's in the login widget, and to save the login credentials as member variables, and to also clear the password member variable (memset) to zero after it has been compared with the db hash (or even just after it has been hashed (so just make the hash a member xD))
     std::string username = m_LoginUsernameLineEdit->text().toUTF8();
-    getCouchbaseDocumentByKeyBegin("user" + username);
-    m_WhatTheGetWasFor = LOGINATTEMPTGET;
+    deferRendering(); //2-layered defer/resume because we want to stay deferred until possible login recovery completes
+    getCouchbaseDocumentByKeySavingCasBegin("user" + username);
+    m_WhatTheGetSavingCasWasFor = LOGINATTEMPTGET;
 }
-void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, u_int64_t casOnlyUsedWhenDoingRecoveryAtLogin, bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
@@ -1257,9 +1353,13 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
     }
     if(!lcbOpSuccess)
     {
+        //if you change the code here in this block, change it in the login recovery code path as well (copy paste job)
+
         //TODOreq: find better place to put this message than login widget, or make it 'only appear once' instead of multiple times as currently
         new WBreak(m_LoginWidget);
         new WText("The username or password you provided is incorrect", m_LoginWidget); //TODOreq: this one here is username failure, but the password fail message should say the same exact message (although the security gained from that is neutralized by the fact that the db will be public xD)
+        m_LoginPasswordLineEdit->setText("");
+        resumeRendering();
         return;
     }
 
@@ -1269,7 +1369,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
     std::istringstream is(userProfileCouchbaseDocAsJson);
     read_json(is, pt);
 
-    std::string passwordHasBase64hFromDb = pt.get<std::string>("passwordHash");
+    std::string passwordHashInBase64FromDb = pt.get<std::string>("passwordHash");
     std::string passwordSaltInBase64FromDb = pt.get<std::string>("passwordSalt");
 
     std::string passwordFromUserInput = m_LoginPasswordLineEdit->text().toUTF8();
@@ -1278,7 +1378,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
     //hmm i COULD use base64decode but it doesn't matter which of the two converts to the other's format
     std::string passwordHashBase64FromUserInput = base64Encode(passwordHashFromUserInput);
 
-    if(passwordHashBase64FromUserInput == passwordHasBase64hFromDb)
+    if(passwordHashBase64FromUserInput == passwordHashInBase64FromDb)
     {
         //login
         //TODOreq: account locked recovery
@@ -1294,28 +1394,53 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
             getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeChangeSessionIdMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
         }
 
-        m_LoggedIn = true;
-        m_BuyerUsername = m_LoginUsernameLineEdit->text();
+        m_CurrentlyLoggedInUsername = m_LoginUsernameLineEdit->text().toUTF8(); //TODOreq: do we need to keep rendering deferred until we capture this (or perhaps capture it earlier (when it's used to LCB_GET)?)? Maybe they could 'change usernames' at precise moment to give them access to account that isn't theirs. idk [wt] tbh, but sounds plausible. should be captured as m_UsernameToAttemptToLoginAs (because this one is reserved for post-login), and then use simple assignment HERE
 
-        //TODOreq: logout -> login as different user will show old username in logout widget guh (same probablem with register successful widget)...
-        if(!m_LogoutWidget)
+        //TODOreq: do this on key not found fail (and all other relevant errors) also (if only there was a generator that let you see if there was any kind of error and then let you drill down).
+        m_LoginUsernameLineEdit->setText("");
+        m_LoginPasswordLineEdit->setText("");
+
+        std::string slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
+        if(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST == "n")
         {
-            m_LogoutWidget = new WContainerWidget(m_LoginLogoutStackWidget);
-            new WText("Hello, ", m_LogoutWidget);
-            new WText(m_BuyerUsername, m_LogoutWidget);
-            WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
-            logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
+            //TODOreq: logout -> login as different user will show old username in logout widget guh (same probablem with register successful widget)...
+            if(!m_LogoutWidget)
+            {
+                m_LogoutWidget = new WContainerWidget(m_LoginLogoutStackWidget);
+                new WText("Hello, ", m_LogoutWidget);
+                new WText(m_CurrentlyLoggedInUsername, m_LogoutWidget);
+                WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
+                logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
+            }
+            m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
+            m_LoggedIn = true; //TODOreq: set to true and resume rendering after login->recovery finishes successfully
+            resumeRendering();
         }
-        m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
+        else
+        {
+            //account locked, so do recovery steps
+
+            //in the following, slotToAttemptToFillAkaPurchase == the slot itself, we've already determined that the FIELD in UserAccount exists...
+
+            //if slotToAttemptToFillAkaPurchase exists and we got it, do nothing
+            //if slotToAttemptToFillAkaPurchase exists and we didn't get it, unlock [without debitting]
+            //NOPE FOR NOW /lazy: if slotToAttemptToFillAkaPurchase doesn't exist, offer user to get it (just redirect to page? but that would require login guh)
+            m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack = pt.get<std::string>("slotToAttemptToFillAkaPurchaseItWith"); //need this after the GET for comparing
+            getCouchbaseDocumentByKeyBegin(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST);
+            m_WhatTheGetWasFor = ONLOGINACCOUNTLOCKEDRECOVERYDOESSLOTEXISTCHECK;
+            m_UserAccountLockedJsonToMaybeUseInAccountRecovery = userProfileCouchbaseDocAsJson;
+            m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay = casOnlyUsedWhenDoingRecoveryAtLogin;
+        }
     }
     else
     {
         //login fail. TODOreq: also do this login fail if the requested key isn't found (user doesn't exist)
+        new WBreak(m_LoginWidget);
+        new WText("The username or password you provided is incorrect", m_LoginWidget); //TODOreq: this one here is username failure, but the password fail message should say the same exact message (although the security gained from that is neutralized by the fact that the db will be public xD)
+        m_LoginPasswordLineEdit->setText("");
+        resumeRendering();
+        return;
     }
-
-    //TODOreq: do this on key not found fail (and all other relevant errors) also (if only there was a generator that let you see if there was any kind of error and then let you drill down)
-    m_LoginUsernameLineEdit->setText("");
-    m_LoginPasswordLineEdit->setText("");
 }
 void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
 {
@@ -1323,6 +1448,7 @@ void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
         return;
 
     m_LoggedIn = false;
+    m_CurrentlyLoggedInUsername = "";
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget);
 }
 void AnonymousBitcoinComputingWtGUI::newAndOpenAllWtMessageQueues()
