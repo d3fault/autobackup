@@ -21,6 +21,7 @@
 #include <Wt/WComboBox>
 #include <Wt/Utils>
 #include <Wt/WDateTime> //TODOreq: take out time.h above and deps
+#include <Wt/WFileUpload>
 //#include <Wt/Chart/WCartesianChart>
 
 //TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
@@ -132,6 +133,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     void buildGui();
     WHBoxLayout *m_HeaderHlayout;
+    WHBoxLayout *m_BodyHLayout;
+    WVBoxLayout *m_LinksVLayout;
     WVBoxLayout *m_MainVLayout;
 
     WStackedWidget *m_LoginLogoutStackWidget; //2 widgets in the stack ("login" and "logout". login widget has link to register)
@@ -139,6 +142,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WLineEdit *m_LoginUsernameLineEdit;
     WLineEdit *m_LoginPasswordLineEdit;
     WContainerWidget *m_LogoutWidget;
+    WAnchor *m_LinkToAccount;
 
     WStackedWidget *m_MainStack;
 
@@ -151,6 +155,16 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     WContainerWidget *m_AdvertisingBuyAdSpaceWidget;
     void showAdvertisingBuyAdSpaceWidget();
+
+    void showAccountWidget();
+    WContainerWidget *m_AccountWidget;
+    WContainerWidget *m_AuthenticationRequiredWidget;
+    WLineEdit *m_UploadNewSlotFiller_NICKNAME;
+    WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
+    WLineEdit *m_UploadNewSlotFiller_URL;
+    WFileUpload *m_AdImageUploader;
+    void handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished();
+    void handleAdImageUploadFailedFileTooLarge();
 
     WContainerWidget *m_RegisterWidget;
     WLineEdit *m_RegisterUsernameLineEdit;
@@ -220,6 +234,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, u_int64_t casOnlyUsedWhenDoingRecoveryAtLogin, bool lcbOpSuccess, bool dbError);
     std::string m_UserAccountLockedJsonToMaybeUseInAccountRecovery;
     u_int64_t m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay;
+    void doLoginTasks();
     void handleLogoutButtonClicked();
 
     taus88 m_RandomNumberGenerator;

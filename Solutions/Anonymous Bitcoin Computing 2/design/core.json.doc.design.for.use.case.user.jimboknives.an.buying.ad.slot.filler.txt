@@ -44,12 +44,13 @@ The full json document for adSpaceSlotFillersJimboKnives0 follows:
 adSpaceSlotFillersJimboKnives0
 {
   "username" : "JimboKnives",
-  "hoverText": "You Know You Wanna Click!",
-  "url": "http://buy-my-widget.com",
-  "base64encodedImageData": "sdlfkjsdofuljkeworu"
+  "nickname" : "Fucken Knives n Shit",
+  "hoverText": "You Know You Wanna Shank Someone!",
+  "url": "http://buy-my-kniveries.com",
+  "adImageB64": "sdlfkjvirus.binsdofuljkeworu"
 }
 
-the reason the doc has "username" so we can get to the 'profile' view below (can't parse up to that zero). it is also used in recovery mode when the transaction doc does not exist (need the username to begin doing user account recovery steps)
+the reason the doc has "username" so we can get to the 'profile' view below (can't parse up to that zero). it is also used in recovery possy mode when the transaction doc does not exist (need the username to begin doing user account recovery steps)
 
 adSpaceSlotFillersJimboKnives should then list all of JimboKnives' ad campaigns (regardless of whether or not they have been used)
 

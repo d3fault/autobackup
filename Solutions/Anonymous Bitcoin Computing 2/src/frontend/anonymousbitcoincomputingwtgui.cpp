@@ -5,6 +5,9 @@
 #define ABC_INTERNAL_PATH_REGISTER "/register"
 #define ABC_ANCHOR_TEXTS_REGISTER "Register"
 
+#define ABC_INTERNAL_PATH_ACCOUNT "/account"
+#define ABC_ANCHOR_TEXTS_ACCOUNT "Account"
+
 #define ABC_INTERNAL_PATH_HOME "/home" //if home has any "sub" paths, then our hack to handle clean urls logic will break (should use internalPathMatches instead)
 #define ABC_INTERNAL_PATH_ADS "/advertising"
 #define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE ABC_INTERNAL_PATH_ADS \
@@ -36,7 +39,37 @@
 //NOPE: Maybe I need to set a cookie and then depend on the combination of the session id and the cookie [which needs it's own id of course (they can't match and the cookie can't be derived from session id (else attacker could derive same cookie))]
 
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
-    : WApplication(myEnv), m_HeaderHlayout(new WHBoxLayout()), m_MainVLayout(new WVBoxLayout(root())), m_LoginLogoutStackWidget(new WStackedWidget()), m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)), m_LoginUsernameLineEdit(0), m_LoginPasswordLineEdit(0), m_LogoutWidget(0), m_MainStack(new WStackedWidget()), m_HomeWidget(0), m_AdvertisingWidget(0), m_AdvertisingBuyAdSpaceWidget(0), m_RegisterWidget(0), /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0), m_FirstPopulate(false), m_CurrentPriceLabel(0), m_BuySlotFillerStep1Button(0), m_HackedInD3faultCampaign0_NoPreviousSlotPurchases(true), m_AllSlotFillersComboBox(0), m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true), m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1), m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1), m_WhatTheGetWasFor(INITIALINVALIDNULLGET), m_CurrentlySubscribedTo(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING), m_LoggedIn(false)
+    : WApplication(myEnv),
+      m_HeaderHlayout(new WHBoxLayout()),
+      m_BodyHLayout(new WHBoxLayout()),
+      m_LinksVLayout(new WVBoxLayout()),
+      m_MainVLayout(new WVBoxLayout(root())),
+      m_LoginLogoutStackWidget(new WStackedWidget()),
+      m_LoginWidget(new WContainerWidget(m_LoginLogoutStackWidget)),
+      m_LoginUsernameLineEdit(0),
+      m_LoginPasswordLineEdit(0),
+      m_LogoutWidget(0),
+      m_LinkToAccount(0),
+      m_MainStack(new WStackedWidget()),
+      m_HomeWidget(0),
+      m_AdvertisingWidget(0),
+      m_AdvertisingBuyAdSpaceWidget(0),
+      m_AccountWidget(0),
+      m_AuthenticationRequiredWidget(0),
+      m_RegisterWidget(0),
+      /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0),
+      m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0),
+      m_FirstPopulate(false),
+      m_CurrentPriceLabel(0),
+      m_BuySlotFillerStep1Button(0),
+      m_HackedInD3faultCampaign0_NoPreviousSlotPurchases(true),
+      m_AllSlotFillersComboBox(0),
+      m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true),
+      m_AddMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES - 1),
+      m_GetMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES - 1),
+      m_WhatTheGetWasFor(INITIALINVALIDNULLGET),
+      m_CurrentlySubscribedTo(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING),
+      m_LoggedIn(false)
 {
     m_RandomNumberGenerator.seed((int)rawUniqueId());
     m_CurrentAddMessageQueueIndex = m_AddMessageQueuesRandomIntDistribution(m_RandomNumberGenerator); //TODOoptimization: these don't need to be members if i just use them once in constructor
@@ -88,19 +121,37 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     new WBreak(m_LoginWidget);
     new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_REGISTER), ABC_ANCHOR_TEXTS_REGISTER, m_LoginWidget);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget); //might not be necessary, since it's the only one added at this point (comment is not worth...)
+
+    m_HeaderHlayout->addWidget(new WText("<h2>Anonymous Bitcoin Computing</h2>"), 1, Wt::AlignTop | Wt::AlignCenter);
     m_HeaderHlayout->addWidget(m_LoginLogoutStackWidget, 0, Wt::AlignTop | Wt::AlignRight);
+
     m_MainVLayout->addLayout(m_HeaderHlayout, 0, Wt::AlignTop | Wt::AlignRight);
-    m_MainVLayout->addWidget(m_MainStack, 1, Wt::AlignTop | Wt::AlignLeft);
+
+    //LINKS -- TODOoptional: disable clickability of current location
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME));
+    m_LinksVLayout->addWidget(new WBreak());
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS));
+    m_LinksVLayout->addWidget(new WBreak());
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE));
+    m_LinksVLayout->addWidget(new WBreak());
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT));
+    m_LinksVLayout->addWidget(new WBreak());
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0));
+    m_LinksVLayout->addWidget(new WBreak());
+    m_LinksVLayout->addWidget(new WBreak()); //second wbreak to give one line gap between regular links and user account link (which isn't created until login
+
+    m_BodyHLayout->addLayout(m_LinksVLayout, 0, Wt::AlignTop | Wt::AlignLeft);
+    m_BodyHLayout->addWidget(m_MainStack, 1, Wt::AlignTop | Wt::AlignLeft);
+
+    m_MainVLayout->addLayout(m_BodyHLayout, 1, Wt::AlignTop | Wt::AlignLeft);
 }
 void AnonymousBitcoinComputingWtGUI::showHomeWidget()
 {
     if(!m_HomeWidget)
     {
         m_HomeWidget = new WContainerWidget(m_MainStack);
-        new WText("Welcome To Anonymous Bitcoin Computing", m_HomeWidget);
-        new WBreak(m_HomeWidget);
-        new WBreak(m_HomeWidget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS, m_HomeWidget);
+        new WText("Mostly empty site for now, you probably want this: ", m_HomeWidget);
+        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_HomeWidget);
     }
     m_MainStack->setCurrentWidget(m_HomeWidget);
 }
@@ -109,14 +160,9 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingWidget()
     if(!m_AdvertisingWidget)
     {
         m_AdvertisingWidget = new WContainerWidget(m_MainStack);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingWidget);
+        new WText("Sub-categories:" + WString(ABC_ANCHOR_TEXTS_PATH_ADS), m_AdvertisingWidget);
         new WBreak(m_AdvertisingWidget);
-        new WBreak(m_AdvertisingWidget);
-        new WText("You Are Here: " + WString(ABC_ANCHOR_TEXTS_PATH_ADS), m_AdvertisingWidget);
-        new WBreak(m_AdvertisingWidget);
-        new WBreak(m_AdvertisingWidget);
-        new WBreak(m_AdvertisingWidget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingWidget);
+        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingWidget);
     }
     m_MainStack->setCurrentWidget(m_AdvertisingWidget);
 }
@@ -125,18 +171,117 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceWidget()
     if(!m_AdvertisingBuyAdSpaceWidget)
     {
         m_AdvertisingBuyAdSpaceWidget = new WContainerWidget(m_MainStack);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingBuyAdSpaceWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceWidget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS, m_AdvertisingBuyAdSpaceWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceWidget);
-        new WText("You Are Here: " + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE), m_AdvertisingBuyAdSpaceWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceWidget);
+        new WText("Users with ad space for sale:" + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE), m_AdvertisingBuyAdSpaceWidget);
         new WBreak(m_AdvertisingBuyAdSpaceWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT, m_AdvertisingBuyAdSpaceWidget);
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceWidget);
+}
+void AnonymousBitcoinComputingWtGUI::showAccountWidget()
+{
+    if(!m_LoggedIn)
+    {
+        if(m_AccountWidget)
+        {
+            delete m_AccountWidget; //TODOreq: also delete/0 on logout
+            m_AccountWidget = 0;
+        }
+        if(!m_AuthenticationRequiredWidget)
+        {
+            m_AuthenticationRequiredWidget = new WContainerWidget(m_MainStack);
+            new WText("You need to be logged in to view this page", m_AuthenticationRequiredWidget);
+        }
+        m_MainStack->setCurrentWidget(m_AuthenticationRequiredWidget);
+        return;
+    }
+
+    //logged in
+    if(!m_AccountWidget)
+    {
+        m_AccountWidget = new WContainerWidget(m_MainStack);
+        new WText("== UPLOAD NEW ADVERTISEMENT (FOR USE IN BUYING AD SPACE) ==", m_AccountWidget);
+        new WBreak(m_AccountWidget);
+        WGridLayout *uploadNewSlotFillerGridLayout = new WGridLayout(m_AccountWidget);
+
+        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 1) Nickname (unseen by others):"), 0, 0);
+        m_UploadNewSlotFiller_NICKNAME = new WLineEdit();
+        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_NICKNAME, 0, 1);
+
+        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 2) Mouse Hover Text:"), 1, 0);
+        m_UploadNewSlotFiller_HOVERTEXT = new WLineEdit();
+        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_HOVERTEXT, 1, 1);
+
+        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 3) URL:"), 2, 0);
+        m_UploadNewSlotFiller_URL = new WLineEdit();
+        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_URL, 2, 1);
+
+        //TODOreq: sanitize above line edits
+
+        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image:"), 3, 0);
+
+        m_AdImageUploader = new WFileUpload(); //TODOreq: how the fuck what the fuck sanitize the image itself. If this proves to be a bitch, change to text-ads mode xD. actually given a few more minutes of thought, i don't think i need to do jack diddley shit for the image. since i'm not 'rendering' it anywhere in the server code, my own code needn't worry about a vuln being inside the image. i believe that it's the browser's responsibility to safeguard the user when rendering an image. all i do is serve up a chunk of bits.
+        //TODOreq: i can probably specify the temporary location of the uploaded file, and obviously i would want to use a tmpfs. would be even better if i could just upload into memory...
+        m_AdImageUploader->setFileTextSize(40); //TODOreq: wtf is this, filename size or file size? i'll probably disregard filename when putting into b64/json... so if it's filename set it to like 256 or some sane max idfk
+        m_AdImageUploader->uploaded().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished); //TODOreq: doc says i should delete the WFileUpload after an upload
+        m_AdImageUploader->fileTooLarge().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge); //TODOreq: add to list of deploy steps to set this appropriately in the wt_config.xml
+
+        uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploader, 3, 1);
+        WPushButton *adImageUploadButton = new WPushButton("Submit");
+        adImageUploadButton->clicked().connect(m_AdImageUploader, &WFileUpload::upload);
+        adImageUploadButton->clicked().connect(adImageUploadButton, &WPushButton::disable);
+        adImageUploadButton->clicked().connect(this, &WApplication::deferRendering); //TODOreq: resume after upload (and getting line edit texts) obviously
+        uploadNewSlotFillerGridLayout->addWidget(adImageUploadButton, 4, 1);
+        //TODOoptional: progress bar would be nice (and not too hard), but eh these images aren't going to take long to upload so fuck it
+
+        uploadNewSlotFillerGridLayout->addWidget(new WText("WARNING: Ads can't be deleted or modified after uploading"), 5, 0, 1, 2);
+
+        //TODOreq: a place for them to view their uploaded ads (so they can verify their images uploaded ok and get a preview of how it will look (we might shrink it, for example (TODOreq: determine width/height, tell them what it is on this upload page) stuff)
+
+        //TODOreq: after the upload, set them up to do another upload (and perhaps show the previous upload right here/now)
+
+
+
+
+        new WBreak(m_AccountWidget);
+        new WBreak(m_AccountWidget);
+        new WBreak(m_AccountWidget);
+        new WText("== ADD FUNDS VIA BITCOIN ==", m_AccountWidget);
+        new WBreak(m_AccountWidget);
+        //TODOreq: dur
+    }
+    m_MainStack->setCurrentWidget(m_AccountWidget);
+}
+void AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished()
+{
+#if 0
+    adSpaceSlotFillersJimboKnives0
+    {
+      "username" : "JimboKnives",
+      "hoverText": "You Know You Wanna Click!",
+      "url": "http://buy-my-widget.com",
+      "base64encodedImageData": "sdlfkjsdofuljkeworu"
+    }
+#endif
+    ptree pt;
+    pt.put("username", m_CurrentlyLoggedInUsername);
+    pt.put("nickname", m_UploadNewSlotFiller_NICKNAME->text().toUTF8());
+    pt.put("hoverText", m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8());
+    pt.put("url", m_UploadNewSlotFiller_URL->text().toUTF8());
+
+    std::string temporaryFilename = m_AdImageUploader->spoolFileName();
+    m_AdImageUploader->stealSpooledFile(); //TODOreq: if i re-use this WFileUpload object, will the 2nd+ file upload be already stolen? Will it use a new spoolFileName? Easiest way around this is to just make a new WFileUpload object for new uploads
+
+    //unsure if i should do the expensive read/b64encode here or in the db backend (passing only filename). i want an async api obviously, but laziness/KISS might dictate otherwise
+
+    pt.put("adImageB64", "a");
+
+
+    //TODOreq:
+    resumeRendering();
+}
+void AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge()
+{
+    //TODOreq, error message in appropriate location
 }
 void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
 {
@@ -239,16 +384,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
     if(!m_AdvertisingBuyAdSpaceD3faultWidget)
     {
         m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(m_MainStack);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS, m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WText("You Are Here: " + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT), m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
+        new WText("d3fault's ad campaigns:" + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT), m_AdvertisingBuyAdSpaceD3faultWidget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultWidget);
     }
@@ -261,18 +397,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
     if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget) //TODOreq: this object, once created, should never be deleted until the WApplication is deleted. The reason is that get and subscribe updates might be sent to it (even if the user has navigated away, there is a race condition where they did not 'unsubscribe' yet so they'd still get the update (Wt handles this just fine. you can setText on something not being shown without crashing (but if I were to delete it, THEN we'd be fucked)))
     {
         m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new WContainerWidget(m_MainStack);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("You Are Here: " + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 ":", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         //still dunno if i should block or do it async? instincts tell me async, but "SUB MILLISECOND LATENCY" tells me async might actually be wasteful/slower??? The obvious answer is "benchmark it xD" (FUCK FUCK FUCK FUCK FUCK THAT, async it is (because even if slower, it still allows us to scale bettarer))
@@ -829,7 +954,7 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
         //getting beat to the punch
         new WText("Sorry, someone else bought the slot just moments before you...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
-        //TODOreq: account unlock without debitting
+        //TODOreq: account unlock without debitting, cas-swap-accepting-fail (just like login account locked recovery, which is already coded)
 
         return;
     }
@@ -987,18 +1112,8 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountLockedRecoveryUnlo
         return;
     }
 
-    //account locked recovery complete, make it look like a regular old login. COPY/PASTE JOB FROM REGULAR LOGIN CODE PATH
-    if(!m_LogoutWidget)
-    {
-        m_LogoutWidget = new WContainerWidget(m_LoginLogoutStackWidget);
-        new WText("Hello, ", m_LogoutWidget);
-        new WText(m_CurrentlyLoggedInUsername, m_LogoutWidget);
-        WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
-        logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
-    }
-    m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
-    m_LoggedIn = true;
-    resumeRendering();
+    //account locked recovery complete, make it look like a regular old login
+    doLoginTasks();
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
@@ -1289,6 +1404,11 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
             showAdvertisingWidget();
             return;
         }
+        if(newInternalPath == ABC_INTERNAL_PATH_ACCOUNT)
+        {
+            showAccountWidget();
+            return;
+        }
         if(newInternalPath == ABC_INTERNAL_PATH_REGISTER)
         {
             showRegisterWidget();
@@ -1403,18 +1523,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         std::string slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
         if(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST == "n")
         {
-            //TODOreq: logout -> login as different user will show old username in logout widget guh (same probablem with register successful widget)...
-            if(!m_LogoutWidget)
-            {
-                m_LogoutWidget = new WContainerWidget(m_LoginLogoutStackWidget);
-                new WText("Hello, ", m_LogoutWidget);
-                new WText(m_CurrentlyLoggedInUsername, m_LogoutWidget);
-                WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
-                logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
-            }
-            m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
-            m_LoggedIn = true; //TODOreq: set to true and resume rendering after login->recovery finishes successfully
-            resumeRendering();
+            doLoginTasks();
         }
         else
         {
@@ -1442,11 +1551,38 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         return;
     }
 }
+void AnonymousBitcoinComputingWtGUI::doLoginTasks()
+{
+    //TODOreq: logout -> login as different user will show old username in logout widget guh (same probablem with register successful widget)...
+    if(m_LogoutWidget)
+    {
+        delete m_LogoutWidget;
+    }
+    m_LogoutWidget = new WContainerWidget(m_LoginLogoutStackWidget);
+    new WText("Hello, " + m_CurrentlyLoggedInUsername, m_LogoutWidget);
+    WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
+    logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
+    m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
+
+    //TODOreq: enable "user profile" link (which is where they both set up slot fillers and add funds)
+    if(m_LinkToAccount)
+    {
+        m_LinksVLayout->removeWidget(m_LinkToAccount);
+        delete m_LinkToAccount;
+    }
+    m_LinkToAccount = new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT);
+    m_LinksVLayout->addWidget(m_LinkToAccount);
+
+    m_LoggedIn = true;
+    resumeRendering();
+}
 void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
 {
     if(!m_LoggedIn)
         return;
 
+    delete m_LinkToAccount;
+    m_LinkToAccount = 0; //TODOreq: make sure they can't still get there for a logged out session by typing it into the browser (js-mode OFF (so i keep the session)), like delete the account page contents itself on logout or something idfk
     m_LoggedIn = false;
     m_CurrentlyLoggedInUsername = "";
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget);
