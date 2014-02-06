@@ -20,22 +20,67 @@ typedef boost::unordered_map<std::string /*key*/, GetAndSubscribeCacheItem* /*do
 
 /////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
 
-#define COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO(z, n, text) \
+#define ABC_COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO(z, n, text) \
 struct event *m_##text##EventCallbackForWt##n;
 
-#define COUCHBASE_LIBEVENTS_MEMBER_DEFINITIONS_MACRO(z, n, text) \
-, m_##text##EventCallbackForWt##n(NULL)
+#define ABC_COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO(z, n, text) \
+message_queue *m_##text##WtMessageQueue##n;
 
-#define COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO(z, n, text) \
-static void eventSlotForWt##text##n##Static(evutil_socket_t unusedSocket, short events, void *userData);
+#define ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO(text) \
+void *m_##text##MessageQueuesCurrentMessageBuffer; //TODOoptimization: really only need one message buffer queue on backend, but it needs to be the size of the largest type of message (store,storeLarge,get <- most likely storeLarge's size in those 3 xD)
 
-#define COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO(z, n, text) \
+#define ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO(z, n, text) \
+struct event *get##text##EventCallbackForWt##n();
+
+#define ABC_COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO(z, n, text) \
 void eventSlotForWt##text##n();
 
-#define HACK_WT_TO_COUCHBASE_MAX_MESSAGE_SIZE_Add WT_TO_COUCHBASE_ADD_MAX_MESSAGE_SIZE
-#define HACK_WT_TO_COUCHBASE_MAX_MESSAGE_SIZE_Get WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE
+#define ABC_COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO(z, n, text) \
+static void eventSlotForWt##text##n##Static(evutil_socket_t unusedSocket, short events, void *userData);
 
-#define COUCHBASE_LIBEVENTS_SLOT_STATIC_METHOD_DEFINITIONS_MACRO(z, n, text) \
+#define ABC_COUCHBASE_LIBEVENTS_SINGULAR_SLOT_METHOD_DECLARATIONS_MACRO(text) \
+void eventSlotForWt##text();
+
+#define ABC_COUCHBASE_LIBEVENTS_MEMBER_DEFINITIONS_MACRO(z, n, text) \
+, m_##text##EventCallbackForWt##n(NULL)
+
+#define ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DEFINITION_MACRO(text) \
+, m_##text##MessageQueuesCurrentMessageBuffer(NULL)
+
+#define ABC_COUCHBASE_MESSAGE_QUEUE_NULL_INITIALIZATION_MACRO(z, n, text) \
+, m_##text##WtMessageQueue##n(NULL)
+
+#define ABC_SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO(z, n, text) \
+m_##text##EventCallbackForWt##n = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, eventSlotForWt##text##n##Static, this);
+
+#define ABC_FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(text) \
+free(m_##text##MessageQueuesCurrentMessageBuffer); \
+m_##text##MessageQueuesCurrentMessageBuffer = NULL;
+
+#define ABC_REMOVE_ALL_MESSAGE_QUEUES_MACRO(z, n, text) \
+message_queue::remove(WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
+#text \
+#n);
+
+#define ABC_CLOSE_AND_DELETE_ALL_NEWD_COUCHBASE_MESSAGE_QUEUES_MACRO(z, n, text) \
+delete m_##text##WtMessageQueue##n; \
+m_##text##WtMessageQueue##n = NULL;
+
+#define ABC_MALLOC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(text) \
+m_##text##MessageQueuesCurrentMessageBuffer = malloc(SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
+
+#define ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) \
+m_##text##WtMessageQueue##n = new message_queue(create_only, WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
+#text \
+#n, MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_##text, SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
+
+#define ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DEFINITIONS_MACRO(z, n, text) \
+struct event *AnonymousBitcoinComputingCouchbaseDB::get##text##EventCallbackForWt##n() \
+{ \
+    return m_##text##EventCallbackForWt##n; \
+}
+
+#define ABC_COUCHBASE_LIBEVENTS_SLOT_STATIC_METHOD_DEFINITIONS_MACRO(z, n, text) \
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n##Static(evutil_socket_t unusedSocket, short events, void *userData) \
 { \
     (void)unusedSocket; \
@@ -43,99 +88,31 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n##Static(evuti
     static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->eventSlotForWt##text##n(); \
 }
 
-#define COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO(z, n, text) \
+#define ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO(z, n, text) \
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n() \
 { \
     unsigned int priority; \
     message_queue::size_type actualMessageSize; \
-    m_##text##WtMessageQueue##n->receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)HACK_WT_TO_COUCHBASE_MAX_MESSAGE_SIZE_##text, actualMessageSize, priority); \
+    m_##text##WtMessageQueue##n->receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority); \
     eventSlotForWt##text(); \
 }
 
-#define COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO(z, n, text) \
-struct event *get##text##EventCallbackForWt##n();
-
-#define COUCHBASE_LIBEVENTS_GETTER_MEMBER_DEFINITIONS_MACRO(z, n, text) \
-struct event *AnonymousBitcoinComputingCouchbaseDB::get##text##EventCallbackForWt##n() \
-{ \
-    return m_##text##EventCallbackForWt##n; \
-}
-
-#define COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO(z, n, text) \
-message_queue *m_##text##WtMessageQueue##n;
-
-#define COUCHBASE_MESSAGE_QUEUE_DEFINITIONS_MACRO(z, n, text) \
-, m_##text##WtMessageQueue##n(NULL)
-
-#if 0 //only need one buffer, not a buffer per queue
-#define COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATIONS_MACRO(z, n, text) \
-void *m_##text##MessageQueue##n##CurrentMessageBuffer;
-//TODOreq: = NULL;
-#endif
-#define COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO(text) \
-void *m_##text##MessageQueuesCurrentMessageBuffer;
-
-#define COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DEFINITION_MACRO(text) \
-, m_##text##MessageQueuesCurrentMessageBuffer(NULL)
-
-#if 0 //only need one buffer, not a buffer per queue
-#define MALLOC_COUCHBASE_ADD_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFERS_MACRO(z, n, text) \
-m_AddMessageQueue##n##CurrentMessageBuffer = malloc(WT_TO_COUCHBASE_ADD_MAX_MESSAGE_SIZE);
-#define MALLOC_COUCHBASE_GET_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFERS_MACRO(z, n, text) \
-m_GetMessageQueue##n##CurrentMessageBuffer = malloc(WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE);
-#endif
-#define MALLOC_COUCHBASE_ADD_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO() \
-m_AddMessageQueuesCurrentMessageBuffer = malloc(WT_TO_COUCHBASE_ADD_MAX_MESSAGE_SIZE);
-#define MALLOC_COUCHBASE_GET_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO() \
-m_GetMessageQueuesCurrentMessageBuffer = malloc(WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE);
-
-#if 0 //only need one buffer, not a buffer per queue
-#define FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFERS_MACRO(z, n, text) \
-free(m_##text##MessageQueue##n##CurrentMessageBuffer); \
-m_##text##MessageQueue##n##CurrentMessageBuffer = NULL;
-#endif
-#define FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(text) \
-free(m_##text##MessageQueuesCurrentMessageBuffer); \
-m_##text##MessageQueuesCurrentMessageBuffer = NULL;
-
-#define SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO(z, n, text) \
-m_##text##EventCallbackForWt##n = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, eventSlotForWt##text##n##Static, this);
-
-#define TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO \
+#define ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO \
 { \
     boost::lock_guard<boost::mutex> couchbaseConnectingLock(m_IsConnectedMutex); \
     m_IsDoneInitializing = true; \
 } \
 m_IsConnectedWaitCondition.notify_one();
 
-#define REMOVE_ALL_MESSAGE_QUEUES_MACRO(z, n, text) \
-message_queue::remove(WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
-#text \
-#n);
-
-#define NEW_AND_CREATE_MY_ADD_MESSAGE_QUEUES_MACRO(z, n, text) \
-m_AddWtMessageQueue##n = new message_queue(create_only, WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
-"Add" \
-#n, WT_TO_COUCHBASE_ADD_MAX_MESSAGES_IN_QUEUE, WT_TO_COUCHBASE_ADD_MAX_MESSAGE_SIZE);
-
-#define NEW_AND_CREATE_MY_GET_MESSAGE_QUEUES_MACRO(z, n, text) \
-m_GetWtMessageQueue##n = new message_queue(create_only, WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
-"Get" \
-#n, WT_TO_COUCHBASE_GET_MAX_MESSAGES_IN_QUEUE, WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE);
-
-#define CLOSE_AND_DELETE_ALL_NEWD_COUCHBASE_MESSAGE_QUEUES_MACRO(z, n, text) \
-delete m_##text##WtMessageQueue##n; \
-m_##text##WtMessageQueue##n = NULL;
-
-#define END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(GetOrAdd) \
+#define ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(GetOrStore) \
 delete originalRequest; \
---m_Pending##GetOrAdd##Count; \
-if(m_NoMoreAllowedMuahahaha && m_PendingAddCount == 0 && m_PendingGetCount == 0) \
+--m_Pending##GetOrStore##Count; \
+if(m_NoMoreAllowedMuahahaha && m_PendingStoreCount == 0 && m_PendingGetCount == 0) \
 { \
     notifyMainThreadWeAreFinishedWithAllPendingRequests(); \
 } \
 
-#define DO_SCHEDULE_COUCHBASE_GET() \
+#define ABC_DO_SCHEDULE_COUCHBASE_GET() \
 lcb_get_cmd_t cmd; \
 const lcb_get_cmd_t *cmds[1]; \
 cmds[0] = &cmd; \
@@ -149,6 +126,15 @@ if(error  != LCB_SUCCESS) \
     cerr << "Failed to setup get request: " << lcb_strerror(m_Couchbase, error) << endl; \
 } \
 ++m_PendingGetCount; //TODOreq: overflow? meh not worried about it for now
+
+//You know you're a god when you can use a BOOST_PP_REPEAT within a call to BOOST_PP_REPEAT
+#ifndef ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO
+#define ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO(z, n, text) \
+BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET##n, text, ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET##n)
+#define ABC_sofdsufoMACRO_SUBSTITUTION_HACK_FUCK_EVERYTHINGisau(a,b) a(b)
+#define ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO(z, n, text) \
+ABC_sofdsufoMACRO_SUBSTITUTION_HACK_FUCK_EVERYTHINGisau(text,ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET##n)
+#endif
 
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
@@ -169,9 +155,8 @@ public:
     void waitForJoin();
     bool threadExittedCleanly();
 
-    //struct event *getAddEventCallbackForWt0();
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO, Get)
+    //struct event *getStoreEventCallbackForWt0();
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO)
 private:
     boost::thread m_Thread;
     lcb_t m_Couchbase;
@@ -184,7 +169,7 @@ private:
     bool m_ThreadExittedCleanly;
     bool m_IsInEventLoop;
     bool m_NoMoreAllowedMuahahaha;
-    unsigned int m_PendingAddCount;
+    unsigned int m_PendingStoreCount;
     unsigned int m_PendingGetCount; //subscribers do NOT increment the pending count (well, one of them does when it's being used hackily in the polling mechanism). pending count ONLY reflects dispatched-to-couchbase 'gets' that have not returned yet. most subscribers do not do that, hence no incremement. when we 'clean up', we simply forget all the subscribers.
     bool m_IsFinishedWithAllPendingRequests;
 
@@ -224,33 +209,24 @@ private:
     struct event *m_FinalCleanUpAndJoinEvent;
     //TODOreq: = NULL;
 
-    //message_queue *m_AddWtMessageQueue0 = NULL;
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO, Get)
+    //message_queue *m_StoreWtMessageQueue0 = NULL;
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO)
 
-    //void *m_AddMessageQueue0CurrentMessageBuffer = NULL;
-#if 0 //only need one buffer, not a buffer per queue (one altogether would work, except that they are different sizes)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATIONS_MACRO, Get)
-#endif
-    COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO(Add)
-    COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO(Get)
+    //void *m_StoreMessageQueue0CurrentMessageBuffer;
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO)
 
-    //struct event *m_AddEventCallbackForWt0 = NULL;
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO, Get)
+    //struct event *m_StoreEventCallbackForWt0 = NULL;
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO)
 
-    //static void eventSlotForWtAdd0Static(evutil_socket_t unusedSocket, short events, void *userData);
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO, Get)
+    //static void eventSlotForWtStore0Static(evutil_socket_t unusedSocket, short events, void *userData);
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO)
 
-    //void eventSlotForWtAdd0();
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO, Get)
+    //void eventSlotForWtStore0();
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO)
 
     //the static methods catch parameters (evutil_socket_t unusedSocket, short events), but we don't use them currently
-    void eventSlotForWtAdd();
-    void eventSlotForWtGet();
+    //void eventSlotForWtStore();
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_COUCHBASE_LIBEVENTS_SINGULAR_SLOT_METHOD_DECLARATIONS_MACRO)
 };
 
 #endif // ANONYMOUSBITCOINCOMPUTINGCOUCHBASEDB_H

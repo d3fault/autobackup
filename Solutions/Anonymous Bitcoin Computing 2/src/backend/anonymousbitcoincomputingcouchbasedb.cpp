@@ -8,16 +8,13 @@ using namespace std;
 const struct timeval AnonymousBitcoinComputingCouchbaseDB::m_OneHundredMilliseconds = {0,100000};
 
 AnonymousBitcoinComputingCouchbaseDB::AnonymousBitcoinComputingCouchbaseDB()
-    : m_Thread(boost::bind(&AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint, this)), m_IsDoneInitializing(false), m_IsConnected(false), m_ThreadExittedCleanly(false), m_IsInEventLoop(false), m_NoMoreAllowedMuahahaha(false), m_PendingAddCount(0), m_PendingGetCount(0), m_IsFinishedWithAllPendingRequests(false)
-    //, m_AddWtMessageQueue0(NULL)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_MESSAGE_QUEUE_DEFINITIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_MESSAGE_QUEUE_DEFINITIONS_MACRO, Get)
-    //, m_AddMessageQueuesCurrentMessageBuffer(NULL);
-    COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DEFINITION_MACRO(Add)
-    COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DEFINITION_MACRO(Get)
-    //, m_AddEventCallbackForWt0(NULL)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_MEMBER_DEFINITIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_MEMBER_DEFINITIONS_MACRO, Get)
+    : m_Thread(boost::bind(&AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint, this)), m_IsDoneInitializing(false), m_IsConnected(false), m_ThreadExittedCleanly(false), m_IsInEventLoop(false), m_NoMoreAllowedMuahahaha(false), m_PendingStoreCount(0), m_PendingGetCount(0), m_IsFinishedWithAllPendingRequests(false)
+    //, m_StoreWtMessageQueue0(NULL)
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_MESSAGE_QUEUE_NULL_INITIALIZATION_MACRO)
+    //, m_StoreMessageQueuesCurrentMessageBuffer(NULL);
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DEFINITION_MACRO)
+    //, m_StoreEventCallbackForWt0(NULL)
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_MEMBER_DEFINITIONS_MACRO)
 {
     //constructor body, in case you're confused...
 }
@@ -97,20 +94,20 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     if(!LibEventBaseScopedDeleterInstance.LibEventBaseInitializeSuccess)
     {
         cerr << "Error: Libevent failed to initialize" << endl;
-        TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
+        ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
         return;
     }
 
     if(evthread_use_pthreads() < 0) //or evthread_use_windows_threads
     {
         cerr << "Error: Failed to evthread_use_pthreads" << endl;
-        TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
+        ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
         return;
     }
     if(evthread_make_base_notifiable(LibEventBaseScopedDeleterInstance.LibEventBase) < 0)
     {
         cerr << "Error: Failed to make event base notifiable" << endl;
-        TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
+        ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
         return;
     }
     struct lcb_create_io_ops_st couchbaseCreateIoOps;
@@ -135,7 +132,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     {
         CouchbaseIoOpsScopedDeleterInstance.DontDestroyBecauseCreateFailed = true;
         cerr << "Error: Failed to create an IOOPS structure for libevent: " << lcb_strerror(NULL, error) << endl;
-        TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
+        ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
         return;
     }
 
@@ -147,7 +144,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     if((error = lcb_create(&m_Couchbase, &copts)) != LCB_SUCCESS)
     {
         cerr << "Failed to create a libcouchbase instance: " << lcb_strerror(NULL, error) << endl;
-        TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
+        ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
         return;
     }
 #if 0
@@ -172,13 +169,13 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     if((error = lcb_connect(m_Couchbase)) != LCB_SUCCESS)
     {
         cerr << "Failed to start connecting libcouchbase instance: " << lcb_strerror(m_Couchbase, error) << endl;
-        TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
+        ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
         lcb_destroy(m_Couchbase);
         return;
     }
 
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO, Get)
+    //m_StoreEventCallbackForWt0 = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, eventSlotForWtStore0Static, this);
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO)
 
     m_GetAndSubscribePollingTimeout = evtimer_new(LibEventBaseScopedDeleterInstance.LibEventBase, &AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic, this);
     m_BeginStoppingCouchbaseCleanlyEvent = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, &AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic, this);
@@ -212,20 +209,15 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     //TODOreq: we could try to receive any left over messages in queue here (in order to tell them that they were too late), or just disregard them and quit...
     if(m_IsConnected) //if m_IsConnected isn't true, then we never got our couchbase configuration so we never allocated certain buffers and so we don't need to release them either
     {
-#if 0 //only need one buffer, not a buffer per queue
-        //free(m_AddMessageQueue0CurrentMessageBuffer); m_AddMessageQueue0CurrentMessageBuffer = NULL;
-        BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFERS_MACRO, Add)
-        BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFERS_MACRO, Get)
-#endif
-        FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(Add)
-        FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(Get)
+        //free(m_StoreMessageQueuesCurrentMessageBuffer); m_StoreMessageQueuesCurrentMessageBuffer = NULL;
+        BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO)
 
-        //delete m_AddWtMessageQueue0; m_AddWtMessageQueue0 = NULL;
-        BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, CLOSE_AND_DELETE_ALL_NEWD_COUCHBASE_MESSAGE_QUEUES_MACRO, Add)
-        BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, CLOSE_AND_DELETE_ALL_NEWD_COUCHBASE_MESSAGE_QUEUES_MACRO, Get)
+        //delete m_StoreWtMessageQueue0; m_StoreWtMessageQueue0 = NULL;
+        BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_CLOSE_AND_DELETE_ALL_NEWD_COUCHBASE_MESSAGE_QUEUES_MACRO)
     }
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, REMOVE_ALL_MESSAGE_QUEUES_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, REMOVE_ALL_MESSAGE_QUEUES_MACRO, Get)
+
+    //message_queue::remove(WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME + "Store0");
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_REMOVE_ALL_MESSAGE_QUEUES_MACRO)
 
     //wtf? valgrind complains if i don't have these event_free's here... but why come (why cum? because it is an option and with infinite time all possible options are eventually.. err... done (performed? executed? chosen? entered?)) it don't complain about all the cross thread ones not being freed (and i thought "all" (including below two) were being free'd at lcb_destroy_io_ops wtf wtf?). Maybe valgrind just isn't catching them because it's all happening at scope exit in struct destructor (lol wut) (in which case it's a valgrind bug i'd say)
     event_free(m_GetAndSubscribePollingTimeout);
@@ -253,7 +245,7 @@ void AnonymousBitcoinComputingCouchbaseDB::errorCallback(lcb_error_t error, cons
 
     if(!m_IsConnected)
     {
-        TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
+        ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
     }
 
     //TODOreq: mucho handlo por que donde ti amo grande gordo gato buneo
@@ -272,24 +264,16 @@ void AnonymousBitcoinComputingCouchbaseDB::configurationCallback(lcb_configurati
             m_IsDoneInitializing = true;
             m_IsConnected = true;
 
-            //clean-up previous crashed exits via message_queue::remove
-            BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, REMOVE_ALL_MESSAGE_QUEUES_MACRO, Add)
-            BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, REMOVE_ALL_MESSAGE_QUEUES_MACRO, Get)
+            //clean-up previous crashed exits via message_queue::remove(WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME + "Store0");
+            BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_REMOVE_ALL_MESSAGE_QUEUES_MACRO)
 
             //TODOreq: message queues and current message buffers need to be delete'd/free'd at various error cases
 
-            //m_AddWtMessageQueue0 = new message_queue(create_only, "BlahBaseNameAdd0", 200x, 100kb);
-            BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, NEW_AND_CREATE_MY_ADD_MESSAGE_QUEUES_MACRO, ~)
-            BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, NEW_AND_CREATE_MY_GET_MESSAGE_QUEUES_MACRO, ~)
+            //m_StoreWtMessageQueue0 = new message_queue(create_only, "BlahBaseNameStore0", 200x, 100kb);
+            BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO)
 
-#if 0 //only need one buffer, not a buffer per queue
-            //m_AddMessageQueue0CurrentMessageBuffer = malloc(100kb);
-            BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, MALLOC_COUCHBASE_ADD_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFERS_MACRO, ~)
-            BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, MALLOC_COUCHBASE_GET_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFERS_MACRO, ~)
-#endif
-            MALLOC_COUCHBASE_ADD_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO()
-            MALLOC_COUCHBASE_GET_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO()
-
+            //m_StoreMessageQueuesCurrentMessageBuffer = malloc(SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_Store);
+            BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_MALLOC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO)
         }
         m_IsConnectedWaitCondition.notify_one();
     }
@@ -317,8 +301,8 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
             {
                 StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, false, true);
             }
-            END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
-            //TODOreq: handle failed store (including decrementing 'pendingAddCount' if appropriate). we should err ehh uhm...
+            ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Store)
+            //TODOreq: handle failed store (including decrementing 'pendingStoreCount' if appropriate). we should err ehh uhm...
             return;
         }
 
@@ -337,16 +321,16 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
         {
             StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, false, false);
         }
-        END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
+        ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Store)
         return;
     }
 
     lcb_durability_opts_t lcbDurabilityOptions;
     memset(&lcbDurabilityOptions, 0, sizeof(lcb_durability_opts_t));
-#ifdef COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT
-    lcbDurabilityOptions.v.v0.persist_to = COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT;
+#ifdef ABC_COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT
+    lcbDurabilityOptions.v.v0.persist_to = ABC_COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT;
 #endif
-    lcbDurabilityOptions.v.v0.replicate_to = COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT;
+    lcbDurabilityOptions.v.v0.replicate_to = ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT;
     lcbDurabilityOptions.v.v0.timeout = 5000000; //5 second timeout is PLENTY, and/but we should probably change this in the place it gets its default if we leave it to zero [just as a TODOoptimization to lessen memory writing]
     lcb_durability_cmd_t lcbDurabilityCommand;
     memset(&lcbDurabilityCommand, 0, sizeof(lcb_durability_cmd_t));
@@ -375,7 +359,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
         //TODOreq: proper error handling bah
     }
 
-    //TODOreq: if durability isn't needed for this particular store, --m_PendingAddCount just like getCallback/etc
+    //TODOreq: if durability isn't needed for this particular store, --m_PendingStoreCount just like getCallback/etc
 }
 void AnonymousBitcoinComputingCouchbaseDB::getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp)
 {
@@ -403,7 +387,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
                 GetCouchbaseDocumentByKeyRequest::respond(originalRequest, 0, 0, false, true);
             }
             //TODOreq: you know the drill~
-            END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
+            ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
             return;
         }
 
@@ -416,7 +400,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         {
             GetCouchbaseDocumentByKeyRequest::respond(originalRequest, 0, 0, false, false);
         }
-        END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
+        ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
         return;
     }
 
@@ -494,7 +478,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         GetCouchbaseDocumentByKeyRequest::respond(originalRequest, resp->v.v0.bytes, resp->v.v0.nbytes, true, false);
     }
 
-    END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
+    ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
 }
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
@@ -517,7 +501,7 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
         }
         //TODOreq: if we make it to durability, the lcb op has succeeded?
 
-        END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
+        ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Store)
         return;
     }
     if(resp->v.v0.err != LCB_SUCCESS)
@@ -534,7 +518,7 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
         //TODOreq: if we make it to durability, the lcb op has succeeded?
 
         //TODOreq: handle errors
-        END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
+        ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Store)
         return;
     }
 
@@ -547,7 +531,7 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
         StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, true, false);
     }
 
-    END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Add)
+    ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Store)
 }
 void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic(int unusedSocket, short events, void *userData)
 {
@@ -577,7 +561,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
         if(getCouchbaseDocumentByKeyRequestFromWt != NULL)
         {
             cacheItem->CurrentlyFetchingPossiblyNew = true;
-            DO_SCHEDULE_COUCHBASE_GET()
+            ABC_DO_SCHEDULE_COUCHBASE_GET()
             //TODOreq: as i have it coded now, if i did two subscribables, they would each event_add the same timer using their own "100ms" thingy. not sure if they'd overwrite each other or what, but yea i need to fix that before ever doing multiple subscribables
         }
         else
@@ -606,7 +590,7 @@ void AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlo
     //TODOoptimization: don't implement this yet, but it would be good to have a timeout for the above (if the count doesn't become zero on time etc)
 
     //maybe we got lucky, or maybe there is no activity on the server
-    if(m_PendingAddCount == 0 && m_PendingGetCount == 0)
+    if(m_PendingStoreCount == 0 && m_PendingGetCount == 0)
     {
         notifyMainThreadWeAreFinishedWithAllPendingRequests();
     }
@@ -629,20 +613,20 @@ void AnonymousBitcoinComputingCouchbaseDB::notifyMainThreadWeAreFinishedWithAllP
     }
     m_IsFinishedWithAllPendingRequestsWaitCondition.notify_one();
 }
-void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd() //TODOoptional: change all these "Add" occurances to "Store", now that we LCB_SET too
+void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore()
 {
     if(m_NoMoreAllowedMuahahaha)
     {
         return;
     }
-    ++m_PendingAddCount; //TODOreq: overflow? meh not worried about it for now
+    ++m_PendingStoreCount; //TODOreq: overflow? meh not worried about it for now
 
     //TODOreq: delete at appropriate places (error, success)
     StoreCouchbaseDocumentByKeyRequest *storeCouchbaseDocumentByKeyRequestFromWt = new StoreCouchbaseDocumentByKeyRequest();
 
     {
-        std::istringstream addCouchbaseDocumentByKeyRequestFromWtSerialized((const char*)m_AddMessageQueuesCurrentMessageBuffer);
-        boost::archive::text_iarchive deSerializer(addCouchbaseDocumentByKeyRequestFromWtSerialized);
+        std::istringstream storeCouchbaseDocumentByKeyRequestFromWtSerialized(static_cast<const char*>(m_StoreMessageQueuesCurrentMessageBuffer));
+        boost::archive::text_iarchive deSerializer(storeCouchbaseDocumentByKeyRequestFromWtSerialized);
         deSerializer >> *storeCouchbaseDocumentByKeyRequestFromWt;
     }
 
@@ -651,13 +635,13 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd() //TODOoptional: c
     cmds[0] = &cmd;
     memset(&cmd, 0, sizeof(cmd));
 
-    const char *keyInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.c_str();
-    const char *documentInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.c_str();
+    const char *keyInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreKeyInput.c_str();
+    const char *documentInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreDocumentInput.c_str();
 
     cmd.v.v0.key = keyInput;
-    cmd.v.v0.nkey = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddKeyInput.length();
+    cmd.v.v0.nkey = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreKeyInput.length();
     cmd.v.v0.bytes = documentInput;
-    cmd.v.v0.nbytes = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseAddDocumentInput.length();
+    cmd.v.v0.nbytes = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreDocumentInput.length();
     if(storeCouchbaseDocumentByKeyRequestFromWt->LcbStoreModeIsAdd)
     {
         cmd.v.v0.operation = LCB_ADD;
@@ -678,6 +662,10 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd() //TODOoptional: c
         return;
     }
 }
+void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStoreLarge()
+{
+    //TODOreq
+}
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 {
     if(m_NoMoreAllowedMuahahaha) //damn double negatives xD
@@ -690,7 +678,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
     GetCouchbaseDocumentByKeyRequest *getCouchbaseDocumentByKeyRequestFromWt = new GetCouchbaseDocumentByKeyRequest();
 
     {
-        std::istringstream getCouchbaseDocumentByKeyRequestFromWtSerialized((const char*)m_GetMessageQueuesCurrentMessageBuffer);
+        std::istringstream getCouchbaseDocumentByKeyRequestFromWtSerialized(static_cast<const char*>(m_GetMessageQueuesCurrentMessageBuffer));
         boost::archive::text_iarchive deSerializer(getCouchbaseDocumentByKeyRequestFromWtSerialized);
         deSerializer >> *getCouchbaseDocumentByKeyRequestFromWt;
     }
@@ -844,30 +832,27 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
     }
 
     //TODOreq: proper error handling inside this macro there is a if("error  != LCB_SUCCESS") section (how da fuq do you put comments in macros?!!?)
-    DO_SCHEDULE_COUCHBASE_GET()
+    ABC_DO_SCHEDULE_COUCHBASE_GET()
 }
-//struct event *AnonymousBitcoinComputingCouchbaseDB::getAddEventCallbackForWt0()
+//struct event *AnonymousBitcoinComputingCouchbaseDB::getStoreEventCallbackForWt0()
 //{
-//    return m_AddEventCallbackForWt0;
+//    return m_StoreEventCallbackForWt0;
 //}
-BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_GETTER_MEMBER_DEFINITIONS_MACRO, Add)
-BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_GETTER_MEMBER_DEFINITIONS_MACRO, Get)
+BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DEFINITIONS_MACRO)
 
-//void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd0Static(evutil_socket_t unusedSocket, short events, void *userData)
+//void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore0Static(evutil_socket_t unusedSocket, short events, void *userData)
 //{
 //    (void)unusedSocket;
 //    (void)events;
-//    static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->eventSlotAdd0();
+//    static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->eventSlotStore0();
 //}
-BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_SLOT_STATIC_METHOD_DEFINITIONS_MACRO, Add)
-BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_SLOT_STATIC_METHOD_DEFINITIONS_MACRO, Get)
+BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOT_STATIC_METHOD_DEFINITIONS_MACRO)
 
-//void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtAdd0()
+//void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore0()
 //{
 //    unsigned int priority;
 //    message_queue::size_type actualMessageSize;
-//    m_AddWtMessageQueue0->receive(m_AddMessageQueuesCurrentMessageBuffer,(message_queue::size_type)HACK_WT_TO_COUCHBASE_MAX_MESSAGE_SIZE_Add, actualMessageSize, priority);
-//    eventSlotForWtAdd();
+//    m_StoreWtMessageQueue0->receive(m_StoreMessageQueuesCurrentMessageBuffer,(message_queue::size_type)HACK_WT_TO_COUCHBASE_MAX_MESSAGE_SIZE_Store, actualMessageSize, priority);
+//    eventSlotForWtStore();
 //}
-BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO, Add)
-BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO, Get)
+BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO)

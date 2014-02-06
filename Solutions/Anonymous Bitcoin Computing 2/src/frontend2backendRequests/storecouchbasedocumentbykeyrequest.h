@@ -17,8 +17,8 @@ public:
     enum LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum
     {
         AddMode,
-        StoreNoCasMode,
-        StoreWithCasMode
+        SetNoCasMode,
+        SetWithCasMode
     };
     enum WhatToDoWithOutputCasEnum
     {
@@ -26,17 +26,17 @@ public:
         SaveOutputCasMode
     };
     //save constructor no cas overload
-    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseAddKeyInput, std::string couchbaseAddDocumentInput, LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum lcbStoreMode = AddMode, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
+    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum lcbStoreMode = AddMode, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
     //save constructor cas overload
-    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseAddKeyInput, std::string couchbaseAddDocumentInput, u_int64_t cas, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
+    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, u_int64_t cas, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
     //load constructor
     StoreCouchbaseDocumentByKeyRequest();
 
     std::string WtSessionId;
     AnonymousBitcoinComputingWtGUI *AnonymousBitcoinComputingWtGUIPointerForCallback;
     static const unsigned char LengthOfAddressToAnonymousBitcoinComputingWtGUI = sizeof(AnonymousBitcoinComputingWtGUI*) + 1;
-    std::string CouchbaseAddKeyInput;
-    std::string CouchbaseAddDocumentInput;
+    std::string CouchbaseStoreKeyInput;
+    std::string CouchbaseStoreDocumentInput;
     bool LcbStoreModeIsAdd; //LCB_ADD vs. LCB_SET
     bool HasCasInput; //whether or not the following CAS is valid or not
     u_int64_t CasInput;
@@ -57,8 +57,8 @@ private:
         AddressToAnonymousBitcoinComputingWtGUIAsString[LengthOfAddressToAnonymousBitcoinComputingWtGUI-1] = '\0';
         ar & boost::serialization::make_binary_object(&AddressToAnonymousBitcoinComputingWtGUIAsString, LengthOfAddressToAnonymousBitcoinComputingWtGUI);
 
-        ar & CouchbaseAddKeyInput;
-        ar & CouchbaseAddDocumentInput;
+        ar & CouchbaseStoreKeyInput;
+        ar & CouchbaseStoreDocumentInput;
         ar & LcbStoreModeIsAdd;
         ar & HasCasInput;
         if(HasCasInput)
@@ -77,8 +77,8 @@ private:
         ar & boost::serialization::make_binary_object(&AddressToAnonymousBitcoinComputingWtGUIAsString, LengthOfAddressToAnonymousBitcoinComputingWtGUI);
         memcpy(&AnonymousBitcoinComputingWtGUIPointerForCallback, &AddressToAnonymousBitcoinComputingWtGUIAsString, LengthOfAddressToAnonymousBitcoinComputingWtGUI-1);
 
-        ar & CouchbaseAddKeyInput;
-        ar & CouchbaseAddDocumentInput;
+        ar & CouchbaseStoreKeyInput;
+        ar & CouchbaseStoreDocumentInput;
         ar & LcbStoreModeIsAdd;
         ar & HasCasInput;
         if(HasCasInput)

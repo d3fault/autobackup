@@ -48,43 +48,50 @@ using namespace std;
 
 /////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
 
-#if 0
-#define WT_MESSAGE_QUEUE_DECLARATIONS_MACRO(z, n, text) \
-static message_queue *m_##text##WtMessageQueue##n;
-#endif
+#define ABC_WT_STATIC_MESSAGE_QUEUE_SOURCE_DEFINITION_MACRO(text) \
+message_queue *AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
-#define WT_MESSAGE_QUEUE_DEFINITIONS_MACRO(z, n, text) \
-message_queue *AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[n] = NULL;
+#define ABC_WT_STATIC_EVENT_SOURCE_DEFINITION_MACRO(text) \
+event *AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
-#define WT_NEW_AND_OPEN_ADD_MESSAGE_QUEUE_MACRO(z, n, text) \
-m_AddWtMessageQueues[n] = new message_queue(open_only, WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
-"Add" \
+#define ABC_WT_STATIC_MUTEX_SOURCE_DEFINITION_MACRO(text) \
+boost::mutex AnonymousBitcoinComputingWtGUI::m_##text##MutexArray[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+
+#define ABC_WT_STATIC_MESSAGE_QUEUE_HEADER_DECLARATION_MACRO(text) \
+static message_queue *m_##text##WtMessageQueues[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+
+#define ABC_WT_STATIC_EVENT_HEADER_DECLARATION_MACRO(text) \
+static event *m_##text##EventCallbacksForWt[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+
+#define ABC_WT_STATIC_MUTEX_HEADER_DECLARATION_MACRO(text) \
+static boost::mutex m_##text##MutexArray[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+
+#define ABC_WT_NEW_AND_OPEN_MESSAGE_QUEUE_MACRO(z, n, text) \
+m_##text##WtMessageQueues[n] = new message_queue(open_only, WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
+#text \
 #n);
 
-#define WT_NEW_AND_OPEN_GET_MESSAGE_QUEUE_MACRO(z, n, text) \
-m_GetWtMessageQueues[n] = new message_queue(open_only, WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
-"Get" \
-#n);
+#define ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO(text) \
+uniform_int_distribution<> l_##text##MessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text - 1); \
+m_Current##text##MessageQueueIndex = l_##text##MessageQueuesRandomIntDistribution(taus88randomNumberGenerator);
 
-#define WT_DELETE_MESSAGE_QUEUE_MACRO(z, n, text) \
+#define ABC_WT_PER_QUEUE_CURRENT_RANDOM_INDEX_DECLARATION_MACRO(text) \
+int m_Current##text##MessageQueueIndex;
+
+#define ABC_WT_DELETE_MESSAGE_QUEUE_MACRO(z, n, text) \
 delete m_##text##WtMessageQueues[n]; \
 m_##text##WtMessageQueues[n] = NULL;
 
-#if 0
-#define WT_LIBEVENTS_MEMBER_DECLARATIONS_MACRO(z, n, text) \
-static event *m_##text##EventCallbackForWt##n;
-#endif
-
-#define WT_LIBEVENTS_MEMBER_DEFINITIONS_MACRO(z, n, text) \
-event *AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[n] = NULL;
-
-#if 0
-#define WT_MESSAGE_QUEUES_MUTEXES_MEMBER_DECLARATIONS_MACRO(z, n, text) \
-static boost::mutex m_##text##WtMessageQueue##n##Mutex;
+#ifndef ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO
+#define ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO(z, n, text) \
+BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET##n, text, ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET##n)
+#define ABC_sofdsufoMACRO_SUBSTITUTION_HACK_FUCK_EVERYTHINGisau(a,b) a(b)
+#define ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO(z, n, text) \
+ABC_sofdsufoMACRO_SUBSTITUTION_HACK_FUCK_EVERYTHINGisau(text,ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET##n)
 #endif
 
 //see cpp file for original code with comments
-#define SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(NormalOperationText, UpperCaseOperationText) \
+#define ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(text) \
 std::ostringstream couchbaseRequestSerialized; \
 { \
     boost::archive::text_oarchive serializer(couchbaseRequestSerialized); \
@@ -92,37 +99,37 @@ std::ostringstream couchbaseRequestSerialized; \
 } \
 std::string couchbaseRequesSerializedString = couchbaseRequestSerialized.str(); \
 size_t couchbaseRequesSerializedStringLength = couchbaseRequesSerializedString.length(); \
-if(couchbaseRequesSerializedStringLength > WT_TO_COUCHBASE_##UpperCaseOperationText##_MAX_MESSAGE_SIZE) \
+if(couchbaseRequesSerializedStringLength > SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text) \
 { \
     return; \
 } \
-++m_Current##NormalOperationText##MessageQueueIndex; \
-if(m_Current##NormalOperationText##MessageQueueIndex == NUMBER_OF_WT_TO_COUCHBASE_##UpperCaseOperationText##_MESSAGE_QUEUES) \
+++m_Current##text##MessageQueueIndex; \
+if(m_Current##text##MessageQueueIndex == NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) \
 { \
-    m_Current##NormalOperationText##MessageQueueIndex = 0; \
+    m_Current##text##MessageQueueIndex = 0; \
 } \
-int lockedMutexIndex = m_Current##NormalOperationText##MessageQueueIndex; \
-int veryLastMutexIndexToBlockLock = (m_Current##NormalOperationText##MessageQueueIndex == 0 ? (NUMBER_OF_WT_TO_COUCHBASE_##UpperCaseOperationText##_MESSAGE_QUEUES) : (m_Current##NormalOperationText##MessageQueueIndex-1)); \
+int lockedMutexIndex = m_Current##text##MessageQueueIndex; \
+int veryLastMutexIndexToBlockLock = (m_Current##text##MessageQueueIndex == 0 ? (NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) : (m_Current##text##MessageQueueIndex-1)); \
 while(true) \
 { \
     if(lockedMutexIndex == veryLastMutexIndexToBlockLock) \
     { \
-        m_##NormalOperationText##MutexArray[lockedMutexIndex].lock(); \
+        m_##text##MutexArray[lockedMutexIndex].lock(); \
         break; \
     } \
-    if(m_##NormalOperationText##MutexArray[lockedMutexIndex].try_lock()) \
+    if(m_##text##MutexArray[lockedMutexIndex].try_lock()) \
     { \
         break; \
     } \
     ++lockedMutexIndex; \
-    if(lockedMutexIndex == NUMBER_OF_WT_TO_COUCHBASE_##UpperCaseOperationText##_MESSAGE_QUEUES) \
+    if(lockedMutexIndex == NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) \
     { \
         lockedMutexIndex = 0; \
     } \
 } \
-m_##NormalOperationText##WtMessageQueues[lockedMutexIndex]->send(couchbaseRequesSerializedString.c_str(), couchbaseRequesSerializedStringLength, 0); \
-event_active(m_##NormalOperationText##EventCallbacksForWt[lockedMutexIndex], EV_READ|EV_WRITE, 0); \
-m_##NormalOperationText##MutexArray[lockedMutexIndex].unlock();
+m_##text##WtMessageQueues[lockedMutexIndex]->send(static_cast<const void*>(couchbaseRequesSerializedString.c_str()), couchbaseRequesSerializedStringLength, 0); \
+event_active(m_##text##EventCallbacksForWt[lockedMutexIndex], EV_READ|EV_WRITE, 0); \
+m_##text##MutexArray[lockedMutexIndex].unlock();
 
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
@@ -217,13 +224,21 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError);
     void doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(bool lcbOpSuccess, bool dbError);
 
+    //store
+    void storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas, bool lcbOpSuccess, bool dbError);
+    void storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
+    void storeCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
+
+    //get
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
     void getCouchbaseDocumentByKeySavingCasBegin(const std::string &keyToCouchbaseDocument);
-    void getAndSubscribeCouchbaseDocumentByKeySavingCas(const std::string &keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeEnum subscribeMode = GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
-    void storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
-    void setCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
     void getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
     void getCouchbaseDocumentByKeySavingCasFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+
+    //get and subscribe
+    void getAndSubscribeCouchbaseDocumentByKeySavingCas(const std::string &keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeEnum subscribeMode = GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
     void getAndSubscribeCouchbaseDocumentByKeySavingCas_UPDATE(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 
     bool isHomePath(const std::string &pathToCheck);
@@ -237,11 +252,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void doLoginTasks();
     void handleLogoutButtonClicked();
 
-    taus88 m_RandomNumberGenerator;
-    uniform_int_distribution<> m_AddMessageQueuesRandomIntDistribution;
-    uniform_int_distribution<> m_GetMessageQueuesRandomIntDistribution;
-    int m_CurrentAddMessageQueueIndex;
-    int m_CurrentGetMessageQueueIndex;
+    //int m_CurrentStoreMessageQueueIndex;
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_PER_QUEUE_CURRENT_RANDOM_INDEX_DECLARATION_MACRO)
 
     enum WhatTheStoreWithoutInputCasWasForEnum
     {
@@ -300,33 +312,14 @@ public:
     static void newAndOpenAllWtMessageQueues();
     static void deleteAllWtMessageQueues();
 
-    //had these private + friend class'd and it worked a little ago, but now it's bitching. try to move them back to private if you want
-    void storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
-    void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
-    void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas, bool lcbOpSuccess, bool dbError);
+    //static message_queue *m_StoreWtMessageQueues[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_STATIC_MESSAGE_QUEUE_HEADER_DECLARATION_MACRO)
 
-#if 0 //turns out arrays are easier than macros on this side of things
-    //static message_queue *m_AddWtMessageQueue0;
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, WT_MESSAGE_QUEUE_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, WT_MESSAGE_QUEUE_DECLARATIONS_MACRO, Get)
+    //static event *m_StoreEventCallbacksForWt[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_STATIC_EVENT_HEADER_DECLARATION_MACRO)
 
-    //static event *m_AddEventCallbackForWt0;
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, WT_LIBEVENTS_MEMBER_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, WT_LIBEVENTS_MEMBER_DECLARATIONS_MACRO, Get)
-
-
-    //static boost::mutex m_AddWtMessageQueue0Mutex
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES, WT_MESSAGE_QUEUES_MUTEXES_MEMBER_DECLARATIONS_MACRO, Add)
-    BOOST_PP_REPEAT(NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES, WT_MESSAGE_QUEUES_MUTEXES_MEMBER_DECLARATIONS_MACRO, Get)
-#endif
-    static message_queue *m_AddWtMessageQueues[NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES];
-    static message_queue *m_GetWtMessageQueues[NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES];
-
-    static event *m_AddEventCallbacksForWt[NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES];
-    static event *m_GetEventCallbacksForWt[NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES];
-
-    static boost::mutex m_AddMutexArray[NUMBER_OF_WT_TO_COUCHBASE_ADD_MESSAGE_QUEUES];
-    static boost::mutex m_GetMutexArray[NUMBER_OF_WT_TO_COUCHBASE_GET_MESSAGE_QUEUES];
+    //static boost::mutex m_StoreMutexArray[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_STATIC_MUTEX_HEADER_DECLARATION_MACRO)
 };
 
 #endif // ANONYMOUSBITCOINCOMPUTINGWTGUI_H
