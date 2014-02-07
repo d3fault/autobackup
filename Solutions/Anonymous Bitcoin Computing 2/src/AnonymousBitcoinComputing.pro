@@ -4,9 +4,10 @@
 #1) Copy /usr/share/Wt/resources/ to the directory that "wtAppHere" is located in
 #2) In /etc/wt/wt_config.xml, set:
 #   2a) <ajax-puzzle>true</ajax-puzzle>
-#   2b) <max-request-size>2097152</max-request-size> .... 2mb corresponding to "Store Large" defined below (but without message queue header)
+#   2b) <max-request-size>2048</max-request-size> .... 2mb corresponding to "Store Large" defined below (but without message queue header)
 #3) Try uncommenting the WStackedWidget's animation code, because I think it needed a css file that (1)'s resource hack thing brings in
-#4) Launch with ./wtAppHere --docroot ".;./resources/" --http-address 0.0.0.0 --http-port 7777
+#4) Uncomment DEPLOY VARIABLES below [and comment-out or delete TESTING VARIABLES]
+#5) Launch with ./wtAppHere --docroot ".;./resources/" --http-address 0.0.0.0 --http-port 7777
 
 TARGET = AnonymousBitcoinComputing
 TEMPLATE = app
@@ -69,13 +70,15 @@ HEADERS += \
     backend/anonymousbitcoincomputingcouchbasedb.h \
     frontend2backendRequests/getcouchbasedocumentbykeyrequest.h \
     frontend2backendRequests/storecouchbasedocumentbykeyrequest.h \
-    backend/getandsubscribecacheitem.h
+    backend/getandsubscribecacheitem.h \
+    frontend/filedeletingfileresource.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
     frontend/anonymousbitcoincomputingwtgui.cpp \
     backend/anonymousbitcoincomputingcouchbasedb.cpp \
     frontend2backendRequests/getcouchbasedocumentbykeyrequest.cpp \
-    frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp
+    frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp \
+    frontend/filedeletingfileresource.cpp
 
 LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals-mt -lboost_system-mt -lboost_thread-mt -lboost_serialization

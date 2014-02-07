@@ -22,6 +22,8 @@
 #include <Wt/Utils>
 #include <Wt/WDateTime> //TODOreq: take out time.h above and deps
 #include <Wt/WFileUpload>
+#include <Wt/WImage>
+#include <Wt/WLink>
 //#include <Wt/Chart/WCartesianChart>
 
 //TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
@@ -36,6 +38,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include "filedeletingfileresource.h"
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
 
@@ -170,6 +173,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
     WLineEdit *m_UploadNewSlotFiller_URL;
     WFileUpload *m_AdImageUploader;
+    WContainerWidget *m_AdImageUploadResultsContainerWidget;
+    std::string m_AdImageUploadFileLocation;
+    std::string m_AdImageUploadClientFilename;
     void handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished();
     void handleAdImageUploadFailedFileTooLarge();
 
@@ -220,16 +226,18 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_UserAccountLockedDuringBuyJson;
     void slotFillAkaPurchaseAddAttemptFinished(bool lcbOpSuccess, bool dbError);
     void transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(bool dbError);
+    void storeLargeAdImageInCouchbaseDbAttemptComplete(bool dbError, bool lcbOpSuccess); //read a huge article yesterday by the soup and was almost convinced to start using exceptions for error handling.... but how the fuck do you throw an exception across a thread O_o? (RpcGenerator's error mechanism was (is?) teh pro-est)
     void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError);
     void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError);
     void doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(bool lcbOpSuccess, bool dbError);
 
     //store
-    void storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void storeWithoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
     void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
     void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas, bool lcbOpSuccess, bool dbError);
-    void storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
-    void storeCouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
+    void store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
+    void store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
+    void storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
 
     //get
     void getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument);
@@ -259,21 +267,22 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     {
         INITIALINVALIDNULLSTOREWITHOUTINPUTCAS,
         REGISTERATTEMPTSTOREWITHOUTINPUTCAS,
+        LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS,
         BUYAKAFILLSLOTWITHSLOTFILLERSTOREWITHOUTINPUTCAS,
         CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS
     };
-    enum WhatTheSetWithInputCasWasForEnum
+    enum WhatTheStoreWithInputCasWasForEnum
     {
-        INITIALINVALIDNULLSETWITHCAS,
+        INITIALINVALIDNULLSTOREWITHCAS,
         //now there aren't any ops i'm using that set with an input cas without using it again later (saving the cas), but there probably will be in the future...
         //SEE!
         HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS,
         HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS,
         LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT
     };
-    enum WhatTheSetWithInputCasSavingOutputCasWasForEnum
+    enum WhatTheStoreWithInputCasSavingOutputCasWasForEnum
     {
-        INITIALINVALIDNULLSETWITHCASSAVINGCAS,
+        INITIALINVALIDNULLSTOREWITHCASSAVINGCAS,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS
     };
     enum WhatTheGetWasForEnum
@@ -295,10 +304,11 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS
     };
 
-    //TODOreq: set thees all to [semi-]null in constructor
-    WhatTheStoreWithoutInputCasWasForEnum m_WhatTheStoreWIthoutInputCasWasFor;
-    WhatTheSetWithInputCasWasForEnum m_WhatTheSetWithInputCasWasFor;
-    WhatTheSetWithInputCasSavingOutputCasWasForEnum m_WhatTheSetWithInputCasSavingOutputCasWasFor;
+    //TODOoptimziation: can probably use callbacks (boost::bind comes to mind) for these and would maybe be more efficient (idk)
+    //TODOreq: set these all to [semi-]null in constructor. Also might make sense to set them back to null after using, but as of writing i don't need to
+    WhatTheStoreWithoutInputCasWasForEnum m_WhatTheStoreWithoutInputCasWasFor;
+    WhatTheStoreWithInputCasWasForEnum m_WhatTheStoreWithInputCasWasFor;
+    WhatTheStoreWithInputCasSavingOutputCasWasForEnum m_WhatTheStoreWithInputCasSavingOutputCasWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
     WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
     WhatTheGetAndSubscribeSavingCasWasForEnum m_CurrentlySubscribedTo; //hack insted of 'bool m_CurrentlySubscribed' (which isn't future proof anyways)

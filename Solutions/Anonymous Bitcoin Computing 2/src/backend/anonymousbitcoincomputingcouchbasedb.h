@@ -127,6 +127,47 @@ if(error  != LCB_SUCCESS) \
 } \
 ++m_PendingGetCount; //TODOreq: overflow? meh not worried about it for now
 
+#define ABC_DO_SCHEDULE_COUCHBASE_STORE(storeSize) \
+if(m_NoMoreAllowedMuahahaha) \
+{ \
+    return; \
+} \
+++m_PendingStoreCount; \
+StoreCouchbaseDocumentByKeyRequest *storeCouchbaseDocumentByKeyRequestFromWt = new StoreCouchbaseDocumentByKeyRequest(); \
+{ \
+    std::istringstream storeCouchbaseDocumentByKeyRequestFromWtSerialized(static_cast<const char*>(m_##storeSize##MessageQueuesCurrentMessageBuffer)); \
+    boost::archive::text_iarchive deSerializer(storeCouchbaseDocumentByKeyRequestFromWtSerialized); \
+    deSerializer >> *storeCouchbaseDocumentByKeyRequestFromWt; \
+} \
+lcb_store_cmd_t cmd; \
+const lcb_store_cmd_t *cmds[1]; \
+cmds[0] = &cmd; \
+memset(&cmd, 0, sizeof(cmd)); \
+const char *keyInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreKeyInput.c_str(); \
+const char *documentInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreDocumentInput.c_str(); \
+cmd.v.v0.key = keyInput; \
+cmd.v.v0.nkey = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreKeyInput.length(); \
+cmd.v.v0.bytes = documentInput; \
+cmd.v.v0.nbytes = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreDocumentInput.length(); \
+if(storeCouchbaseDocumentByKeyRequestFromWt->LcbStoreModeIsAdd) \
+{ \
+    cmd.v.v0.operation = LCB_ADD; \
+} \
+else \
+{ \
+    cmd.v.v0.operation = LCB_SET; \
+    if(storeCouchbaseDocumentByKeyRequestFromWt->HasCasInput) \
+    { \
+        cmd.v.v0.cas = storeCouchbaseDocumentByKeyRequestFromWt->CasInput; \
+    } \
+} \
+lcb_error_t err = lcb_store(m_Couchbase, storeCouchbaseDocumentByKeyRequestFromWt, 1, cmds); \
+if(err != LCB_SUCCESS) \
+{ \
+    cerr << "Failed to set up store request: " << lcb_strerror(m_Couchbase, err) << endl; \
+    return; \
+}
+
 //You know you're a god when you can use a BOOST_PP_REPEAT within a call to BOOST_PP_REPEAT
 #ifndef ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO
 #define ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO(z, n, text) \

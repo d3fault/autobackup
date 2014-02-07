@@ -70,7 +70,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
         //TODOreq: might need to do more special handling here idfk
     }
 
-    //FINISH [current requests] != JOIN [and cleanup]. finish sets flags to not do any more operations, and lets current operations finish cleanly and then raises a wait condition when all current are done. It does NOT however delete/free any of the event callbacks, SINCE THE WT SERVER IS STILL RUNNING (and therefore using them (even though when it does use one, it gets instantly rejected because of the bool flags))
+    //telling them to FINISH [current requests] != JOIN [and cleanup]. finish sets flags to not do any more operations, and lets current operations finish cleanly and then raises a wait condition when all current are done. It does NOT however delete/free any of the event callbacks, SINCE THE WT SERVER IS STILL RUNNING (and therefore using them (even though when it does use one, it gets instantly rejected because of the bool flags))
 
     boost::unique_lock<boost::mutex> couchbaseHasFinishedAllPendingRequestsLock(*AnonymousBitcoinComputingCouchbaseDBScopedDeleterInstance.CouchbaseDb->isFinishedWithAllPendingRequestsMutex());
 

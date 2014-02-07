@@ -196,11 +196,22 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
 
     //logged in
     if(!m_AccountWidget)
-    {
+    {        
         m_AccountWidget = new WContainerWidget(m_MainStack);
-        new WText("== UPLOAD NEW ADVERTISEMENT (FOR USE IN BUYING AD SPACE) ==", m_AccountWidget);
-        new WBreak(m_AccountWidget);
-        WGridLayout *uploadNewSlotFillerGridLayout = new WGridLayout(m_AccountWidget);
+        WVBoxLayout *accountVLayout = new WVBoxLayout(m_AccountWidget);
+
+        accountVLayout->addWidget(new WText("Step 1) Fund Your Account via Bitcoin"));
+        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addWidget(new WBreak());
+        //TODOreq: dur
+
+
+
+        accountVLayout->addWidget(new WText("Step 2) Upload Advertisements (For use in buying ad space)")); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
+        accountVLayout->addWidget(new WBreak());
+        WGridLayout *uploadNewSlotFillerGridLayout = new WGridLayout();
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("--- 1) Nickname (unseen by others):"), 0, 0);
         m_UploadNewSlotFiller_NICKNAME = new WLineEdit();
@@ -228,25 +239,22 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         WPushButton *adImageUploadButton = new WPushButton("Submit");
         adImageUploadButton->clicked().connect(m_AdImageUploader, &WFileUpload::upload);
         adImageUploadButton->clicked().connect(adImageUploadButton, &WPushButton::disable);
-        adImageUploadButton->clicked().connect(this, &WApplication::deferRendering); //TODOreq: resume after upload (and getting line edit texts) obviously
+        //adImageUploadButton->clicked().connect(this, &WApplication::deferRendering); //TODOreq: resume after upload (and getting line edit texts) obviously -- TODOreq: doesn't work wtf, need app lock...
         uploadNewSlotFillerGridLayout->addWidget(adImageUploadButton, 4, 1);
         //TODOoptional: progress bar would be nice (and not too hard), but eh these images aren't going to take long to upload so fuck it
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("WARNING: Ads can't be deleted or modified after uploading"), 5, 0, 1, 2);
 
+        accountVLayout->addLayout(uploadNewSlotFillerGridLayout);
+
         //TODOreq: a place for them to view their uploaded ads (so they can verify their images uploaded ok and get a preview of how it will look (we might shrink it, for example (TODOreq: determine width/height, tell them what it is on this upload page) stuff)
 
+        accountVLayout->addWidget(new WBreak());
+        m_AdImageUploadResultsContainerWidget = new WContainerWidget(); //TODOreq: maybe make this a VBoxLayout so it doesn't go behind the fields like in the pic?
+        accountVLayout->addWidget(m_AdImageUploadResultsContainerWidget);
+
+
         //TODOreq: after the upload, set them up to do another upload (and perhaps show the previous upload right here/now)
-
-
-
-
-        new WBreak(m_AccountWidget);
-        new WBreak(m_AccountWidget);
-        new WBreak(m_AccountWidget);
-        new WText("== ADD FUNDS VIA BITCOIN ==", m_AccountWidget);
-        new WBreak(m_AccountWidget);
-        //TODOreq: dur
     }
     m_MainStack->setCurrentWidget(m_AccountWidget);
 }
@@ -254,20 +262,55 @@ void AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaIma
 {
     ptree pt;
     pt.put("username", m_CurrentlyLoggedInUsername);
-    pt.put("nickname", m_UploadNewSlotFiller_NICKNAME->text().toUTF8());
+    pt.put("nickname", m_UploadNewSlotFiller_NICKNAME->text().toUTF8()); //TODOreq: sanitize these
     pt.put("hoverText", m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8());
     pt.put("url", m_UploadNewSlotFiller_URL->text().toUTF8());
 
-    std::string temporaryFilename = m_AdImageUploader->spoolFileName();
+    m_AdImageUploadFileLocation = m_AdImageUploader->spoolFileName();
     m_AdImageUploader->stealSpooledFile(); //TODOreq: if i re-use this WFileUpload object, will the 2nd+ file upload be already stolen? Will it use a new spoolFileName? Easiest way around this is to just make a new WFileUpload object for new uploads
+    m_AdImageUploadClientFilename = m_AdImageUploader->clientFileName().toUTF8();
 
     //unsure if i should do the expensive read/b64encode here or in the db backend (passing only filename). i want an async api obviously, but laziness/KISS might dictate otherwise
 
-    pt.put("adImageB64", "a");
+    streampos fileSizeHack;
+    char *adImageBuffer; //TODOreq: maybe a smart pointer as a member of this class, so that it deallocates if the session dies (could be while we're still trying to store it, for example). Pretty much just like the WObject tree, somehow attach it.
+    ifstream adImageFileStream(m_AdImageUploadFileLocation.c_str(), ios::in | ios::binary | ios::ate);
+    if(adImageFileStream.is_open())
+    {
+        fileSizeHack = adImageFileStream.tellg();
+        adImageBuffer = new char[fileSizeHack]; //TODOreq: delete[]. TODOoptimization: running out of memory (server critical load) throws an exception, we could pre-allocate this, but how to then share it among WApplications? guh fuckit. i think 'new' is mutex protected underneath anyways, so bleh maybe using a mutex and a pre-allocated buffer is even faster than this (would of course be best to use rand() + mutex shits xD)... but then we can't have multiple doing it on thread pool at same time (unless rand() + mutex shits)
+        adImageFileStream.seekg(0,ios::beg);
+        adImageFileStream.read(adImageBuffer, fileSizeHack);
+        adImageFileStream.close();
+    }
+    else
+    {
+        //TODOreq: handle file failed to open error (delete, discard, give user error)
+    }
+
+    std::string adImageString = std::string(adImageBuffer, fileSizeHack);
+    std::string adImageB64string = base64Encode(adImageString); //TODOreq: doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
+
+    pt.put("adImageB64", adImageB64string); //TODOoptimization: maybe save a copy by doing base64encode right into second argument here? doubt it (and if this were Qt land, I'd be hesitant to even try it (shit disappears yo))
+
+    std::ostringstream adSlotFillerJsonDocBuffer;
+    write_json(adSlotFillerJsonDocBuffer, pt, false);
+
+    //TODOreq: maybe optional, idfk, but basically i want this store to just eh 'keep incrementing slot filler index until the LCB_ADD succeeds'. I'm just unsure whether or not the front-end or backend should be driving that. I think I have a choice here... and idk which is betterererer. Having the backend do it would probably be more efficient, but eh I think the front-end has to here/now/before-the-STORE-one-line-below determine the slot filler index to start trying to LCB_ADD at (else we'd be incredibly inefficient if we started at 0 and crawled up every damn time)... SO SINCE the front-end is already getting involved with it, maybe he should be the one directing the incrementing? It does seem "user specific" (user being frontend -> using backend), _BUT_ it also could be very easily genericized and used in tons of other apps... so long as we either use some "%N%" (no) in the key or make the number the very last part of the key (yes). I might even use this same thing with the bitcoin keys, but eh I haven't figured those out yet and don't want to yet (one problem at a time).
+    storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin("adSpaceSlotFillersJimboKnives0", adSlotFillerJsonDocBuffer.str());
+    //storeLarge has it's own 'begin', but it shares the 'finish' with the typical store
+    m_WhatTheStoreWithoutInputCasWasFor = LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS; //TODOoptional: make these enums more readable with underscores, and put numbering toward the beginning of them that matches up with the callback/function (perhaps renaming those too)
 
 
-    //TODOreq:
-    resumeRendering();
+    //TODOreq: after the store [is successful], i want to then display the image to them to preview. so i can either delete the file now and use the memory copy, or vice versa. Wt might be more efficient with memory when serving from "file".. but regardless of what I come up with, I want to delete BOTH copies as soon as I can (as soon as they are 'sent' to the user... though I'm not sure that deleted a WResource being used as an WImage will work without disappearing the image itself xD (Wt is TOO smart in that case :-/)...). For now I'm just going to work on the StoreLarge + response
+
+    delete [] adImageBuffer;
+
+    //fml: memory(httpd-wt) -> file(chillen) -> memory(my-wt) ->b64encode-> memory(my-wt) ->messageQueue-> memory(sendQueue) -> memory(receiveQueue) ->->messageQueue-> memory(my-couchbase) -> memory(couchbase-send-buffer)
+    //8 copies woo how efficient. maybe i should have just passed the backend the filename :-/...
+    //comparison(hypothetical): memory(httpd-wt) -> file(chillen), <send-filename-to-backend>, -> memory(my-couchbase) ->b64encode-> memory(my-couchbase) -> memory(couchbase-send-buffer)
+    //^^forgot the json, so 9? 10? fuckit just want it to work...
+    //4, hmmmm......... BUT I PUT SO MUCH EFFORT INTO THAT MACRO REFACTOR ;-p (fail argument is fail, but very common among humans). still, doing it here has the advantage of being on a threadpool thread (backend is just one thread), so it keeps the backend free from doing a disk read and base64encode. there's also the weak argument that my base64encode is a Wt function (that boost b64 shit (in commit history) failed like fuck (b64? seriously boost? 2014?)).. but bleh i could always hack a wrapper to Wt's into the frontend2backend message class. I genuinely don't know which is more efficient, but doing it here on the front-end seems to make more DESIGN/sanity sense (despite probably being less efficient (definitely less efficient with copies, but idk about whether or not it's less efficient overall (and such true/false evaluation might be dependent on filesize!))
 }
 void AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge()
 {
@@ -787,8 +830,8 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             write_json(jsonDocBuffer, pt, false);
             std::string accountLockedForBuyJsonDoc = jsonDocBuffer.str();
 
-            storeCouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, accountLockedForBuyJsonDoc, cas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
-            m_WhatTheSetWithInputCasSavingOutputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS;
+            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, accountLockedForBuyJsonDoc, cas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+            m_WhatTheStoreWithInputCasSavingOutputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS;
         }
         else
         {
@@ -857,8 +900,8 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
             write_json(userAccountUnlockedJsonBuffer, pt3, false);
 
             //cas-swap-unlock(no-debit)-accepting-fail (neighbor logins could have recovered)
-            storeCouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, userAccountUnlockedJsonBuffer.str(), m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
-            m_WhatTheSetWithInputCasWasFor = LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT;
+            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, userAccountUnlockedJsonBuffer.str(), m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            m_WhatTheStoreWithInputCasWasFor = LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT;
         }
     }
 }
@@ -900,8 +943,8 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
     pt.put("slotFilledWith", m_SlotFillerToUseInBuy);
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, pt, false);
-    storeWithoutInputCasCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful, jsonDocBuffer.str());
-    m_WhatTheStoreWIthoutInputCasWasFor = BUYAKAFILLSLOTWITHSLOTFILLERSTOREWITHOUTINPUTCAS;
+    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful, jsonDocBuffer.str());
+    m_WhatTheStoreWithoutInputCasWasFor = BUYAKAFILLSLOTWITHSLOTFILLERSTOREWITHOUTINPUTCAS;
 }
 void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool lcbOpSuccess, bool dbError)
 {
@@ -929,8 +972,8 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     pt.put("amount", m_CurrentPriceToUseForBuyingString);
     std::ostringstream transactionBuffer;
     write_json(transactionBuffer, pt, false);
-    storeWithoutInputCasCouchbaseDocumentByKeyBegin(string("txd3fault0Slot") + m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase, transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
-    m_WhatTheStoreWIthoutInputCasWasFor = CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS; //TODOreq: it goes without saying that 'recovery possy' needs it's own set of these, so as not to conflict
+    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(string("txd3fault0Slot") + m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase, transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+    m_WhatTheStoreWithoutInputCasWasFor = CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS; //TODOreq: it goes without saying that 'recovery possy' needs it's own set of these, so as not to conflict
     //TODOreq: i need a way of telling the backend that certain adds (like this one) are okay to fail. But really I already need a whole slew of error case handling to be coded into the backend, I guess I'll just do it later? So basically for adds where fails are not ok, we need to have two code paths... but for this one where the add failing is ok, we just pick up with one code path. I think the easiest way of doing this is to return a bool telling whether or not the add succeeded, and to just ignore it if it doesn't matter. But since there's many many ways of failing, maybe I should be passing around the LCB_ERROR itself? So far I've tried to keep front end and back end separate, so idk maybe "bool opTypeFail and bool dbTypeFail", where the first one is relating to cas/add fails and the second is like "500 internal server error" (of course, the backend would have retried backing off exponentially etc before resorting to that)
 }
 void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(bool dbError)
@@ -964,8 +1007,8 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     std::ostringstream jsonDocWithBalanceDeducted;
     write_json(jsonDocWithBalanceDeducted, pt, false);
 
-    storeCouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
-    m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure. can happen and sometimes will, but mostly won't. handle it by doing nothing but continuing the process
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_WhatTheStoreWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure. can happen and sometimes will, but mostly won't. handle it by doing nothing but continuing the process
 
     //TO DOnereq(set without cas): should we have done a multi-get to update the campaign doc also? i actually think not since we don't have the cas for that doc (but we could have gotten it~). more importantly i don't know whether or not i need the cas for it when i do the swap. seems safer no doubt.. but really would there be any contesting?? maybe only subsequent buys milliseconds later (probably in error, but maybe the campaign is just liek popular ya know ;-P)... so yea TODOreq do a cas-swap of the campaign doc, makes sure we're only n+1 the last purchased.... and i think maybe do an exponential backoff trying... because it's the same code that runs for when subsequent ones are purchased seconds later? or no... maybe we just do a set without cas because we know that all attempts to buy will fail until that set is complete (because they try to buy n+1 (which is what we just bought (so it will fail safely as beat-to-thepunch)), not n+2 (until the set we're about to do, is done))
     //TODOreq:^^Does the order of user-account-unlock and setting-the-campaign-doc-with-new-last-purchase matter? can we do them asynchronously (AKA HERE IS WHERE WE'D START 'UPDATING'/LCB_SET'ing CAMPAIGN), or do we need to do one before the other and then wait for whichever goes first to complete?
@@ -977,6 +1020,54 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     //TODOreq: ^it goes without saying that 'buy' events do not use the cached value. (NVM:) Hell, even hitting 'buy step 1' should maybe even do a proper get for the actual value (or just nudge cache to do it for him).... BUT then it becomes a DDOS point. since I'm thinking the polling intervals will be like 100-500ms, doing a non-cached get like that on "buy step 1" is probably not necessary (/NVM). But we definitely absolutely need to do it for buy step 2 (duh), and that is NOT a DDOS point because noobs would be giving ya monay each time so i mean yea ddos all ya fuggan want nobs <3
 
     //TODOreq: even though it seemed like a small optimization to do both the user-account-unlock and updating of campaign doc with a new 'last purchased' slot, that pattern of programming will lead to disaster so i shouldn't do it just in principle. Yes with this one case it wouldn't have led to disaster, but actually it MIGHT have given extreme circumstances. it opens up a race condition: say the 'user account unlock' happens really fast and the 'update campaign doc' happens to take a while. if we gave control back to the user after the 'user account unlock' was finished, they could do some action that would then conflict with the m_WhatThe[blahblahblah]WasFor related to the 'update campaign doc' store. As in, when the 'update campaign doc' finishes and gets posted back to the WApplication, the user's actions could have started something else and then we wouldn't have handled the finishing of the 'update campaign doc' properly (which would mean that we never notify our neighbors of buy event? actually not a problem if we do 'get-and-subscribe-polling' like i think i'm going to do (BUT LIKE I SAID THIS ONE GETS LUCKY, BUT AN OVERALL PATTERN TO AVOID)). So I'm going to do the successive sets synchronously, despite seeing a clear opportunity for optimization
+}
+void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComplete(bool dbError, bool lcbOpSuccess)
+{
+    if(dbError)
+    {
+        //TODOreq: handle appropriately (delete image prolly), notify user
+
+        //temp:
+        cerr << "storeLargeAdImageInCouchbaseDbAttemptComplete reported db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        //TODOreq: do it again with the index +1'd... unless you end up letting backend do that (in which case, we'd need to pass ourselves the final key chosen [for use in updating allAdSlotFillers])
+
+        //temp:
+        cerr << "storeLargeAdImageInCouchbaseDbAttemptComplete reported lcb op failed" << endl;
+
+        resumeRendering();
+        return;
+    }
+
+    //getting here means the add was successful
+
+    //so now show them the image that we already have on the heap (and on the filesystem).... now hmm which to show....
+
+    pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploadClientFilename);
+    FileDeletingFileResource *adImagePreviewResource = new FileDeletingFileResource("image/" + guessedExtensionAndMimeType.second, m_AdImageUploadFileLocation, guessedExtensionAndMimeType.first, m_AccountWidget); //semi-old (now using m_AccountWidget instead of 'this'): 'this' is set as parent for last resort cleanup of the WResource, but that doesn't account for it's underlying buffer. I also might want to delete this resource if they upload a 2nd/3rd/etc image, BUT TODOreq there are threading issues because the WImage/WResource is served concurrently I believe (or is that only true for static resources?). Perhaps changing internal paths would be a good time to delete all the images (or in WResource::handleRequest itself, since they'll only be used once anyways..), idfk. There is also the issue of me trying to re-use the same byte buffer for a 2nd upload (which is backing a resource for a first upload that hasn't yet finished streaming back / previewing back to them)
+    WImage *adImagePreview = new WImage(adImagePreviewResource, m_UploadNewSlotFiller_HOVERTEXT->text()); //NOPE (ownership of image changes when we give it to the WAnchor): so our file is deleted when the image is (parent deletes all children first, and the image must stop using the resource before we delete it (thus, the resource should be the parent))
+    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, m_UploadNewSlotFiller_URL->text().toUTF8()), adImagePreview);
+
+
+    //difference between these two?
+    adImagePreview->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
+    adImageAnchor->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
+
+    m_AdImageUploadResultsContainerWidget->addWidget(new WBreak());
+    m_AdImageUploadResultsContainerWidget->addWidget(adImageAnchor);
+
+
+    m_UploadNewSlotFiller_HOVERTEXT->setText("");
+    m_UploadNewSlotFiller_NICKNAME->setText("");
+    m_UploadNewSlotFiller_URL->setText("");
+    //TODOreq: also set up the WFileUpload for the next image, should they want to upload another
+
+    resumeRendering();
 }
 void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError)
 {
@@ -1030,8 +1121,8 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     write_json(updatedCampaignJsonDocBuffer, pt, false);
 
     //CAS-swap-accepting-fail
-    storeCouchbaseDocumentByKeyWithInputCasBegin(string("adSpaceSlotsd3fault0"), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
-    m_WhatTheSetWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS;
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(string("adSpaceSlotsd3fault0"), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_WhatTheStoreWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS;
 }
 void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError)
 {
@@ -1145,22 +1236,28 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
     m_GetMutexArray[lockedMutexIndex].unlock();
 #endif
 //despite one of the parameters mentioning CAS input, you shouldn't use this method if you want to use CAS input. You probably want one of the set* variants
-void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode)
+void AnonymousBitcoinComputingWtGUI::store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode)
 {
     deferRendering();
     StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Store)
 }
-void AnonymousBitcoinComputingWtGUI::storeCouchbaseDocumentByKeyWithInputCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum)
+void AnonymousBitcoinComputingWtGUI::store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum)
 {
     deferRendering();
     StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas, whatToDoWithOutputCasEnum);
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Store)
 }
+void AnonymousBitcoinComputingWtGUI::storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode)
+{
+    deferRendering();
+    StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
+    ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(StoreLarge)
+}
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
     resumeRendering();
-    //this hack STILL makes me giggle like a little school girl, tee hee
+    //this hack STILL makes me giggle like a little school girl, tee hee. the hack becomes life and all you know, and is no longer 'considered' a hack
     switch(m_WhatTheGetWasFor)
     {
     case HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET:
@@ -1230,11 +1327,11 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
         break;
     }
 }
-void AnonymousBitcoinComputingWtGUI::storeWIthoutInputCasCouchbaseDocumentByKeyFinished(const string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyFinished(const string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
     //no need to pass in the value, and we probably don't even need the key here... but might in the future. i do know that if i do the enableUpdates/triggerUpdate async design that i would probably very much need the key at least here. imagine they dispatch two "add" requests before the first one can return. but meh that's a pretty big design overhaul as it is so not worrying about it right now (if only there was a generator that could...)
     resumeRendering();
-    switch(m_WhatTheStoreWIthoutInputCasWasFor)
+    switch(m_WhatTheStoreWithoutInputCasWasFor)
     {
     case REGISTERATTEMPTSTOREWITHOUTINPUTCAS:
     {
@@ -1251,6 +1348,11 @@ void AnonymousBitcoinComputingWtGUI::storeWIthoutInputCasCouchbaseDocumentByKeyF
         transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(dbError);
     }
         break;
+    case LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS:
+    {
+        storeLargeAdImageInCouchbaseDbAttemptComplete(dbError, lcbOpSuccess);
+    }
+        break;
     case INITIALINVALIDNULLSTOREWITHOUTINPUTCAS:
     default:
         cerr << "got a couchbase 'store without input cas' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
@@ -1265,7 +1367,7 @@ void AnonymousBitcoinComputingWtGUI::storeWIthoutInputCasCouchbaseDocumentByKeyF
 void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinished(const string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
     resumeRendering();
-    switch(m_WhatTheSetWithInputCasWasFor)
+    switch(m_WhatTheStoreWithInputCasWasFor)
     {
     case HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS:
     {
@@ -1282,7 +1384,7 @@ void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinish
         doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(lcbOpSuccess, dbError);
     }
         break;
-    case INITIALINVALIDNULLSETWITHCAS:
+    case INITIALINVALIDNULLSTOREWITHCAS:
     default:
         cerr << "got a couchbase 'set' with input cas response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
         //TODOreq: 500 internal server error?
@@ -1296,14 +1398,14 @@ void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinish
 void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const string &keyToCouchbaseDocument, u_int64_t outputCas, bool lcbOpSuccess, bool dbError)
 {
     resumeRendering();
-    switch(m_WhatTheSetWithInputCasSavingOutputCasWasFor)
+    switch(m_WhatTheStoreWithInputCasSavingOutputCasWasFor)
     {
     case HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS:
     {
         userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd(outputCas, lcbOpSuccess, dbError);
     }
         break;
-    case INITIALINVALIDNULLSETWITHCASSAVINGCAS:
+    case INITIALINVALIDNULLSTOREWITHCASSAVINGCAS:
     default:
         cerr << "got a couchbase 'set' with input cas saving output cas response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
         //TODOreq: 500 internal server error?
@@ -1411,8 +1513,8 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     write_json(jsonDocBuffer, jsonDoc, false);
     std::string jsonString = jsonDocBuffer.str();
 
-    storeWithoutInputCasCouchbaseDocumentByKeyBegin("user" + username, jsonString);
-    m_WhatTheStoreWIthoutInputCasWasFor = REGISTERATTEMPTSTOREWITHOUTINPUTCAS;
+    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin("user" + username, jsonString);
+    m_WhatTheStoreWithoutInputCasWasFor = REGISTERATTEMPTSTOREWITHOUTINPUTCAS;
     //TODOreq: username already exists, invalid characters in username errors
 }
 void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()

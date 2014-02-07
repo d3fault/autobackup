@@ -25,11 +25,11 @@ public:
         DiscardOuputCasMode,
         SaveOutputCasMode
     };
-    //save constructor no cas overload
-    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum lcbStoreMode = AddMode, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
-    //save constructor cas overload
-    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string CouchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, u_int64_t cas, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
-    //load constructor
+    //serialize constructor no cas input overload
+    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum lcbStoreMode = AddMode, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
+    //serialize constructor cas input overload
+    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, u_int64_t cas, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
+    //deserialize constructor
     StoreCouchbaseDocumentByKeyRequest();
 
     std::string WtSessionId;

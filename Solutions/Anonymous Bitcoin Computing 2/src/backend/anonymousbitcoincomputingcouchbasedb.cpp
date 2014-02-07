@@ -615,56 +615,13 @@ void AnonymousBitcoinComputingCouchbaseDB::notifyMainThreadWeAreFinishedWithAllP
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore()
 {
-    if(m_NoMoreAllowedMuahahaha)
-    {
-        return;
-    }
-    ++m_PendingStoreCount; //TODOreq: overflow? meh not worried about it for now
-
-    //TODOreq: delete at appropriate places (error, success)
-    StoreCouchbaseDocumentByKeyRequest *storeCouchbaseDocumentByKeyRequestFromWt = new StoreCouchbaseDocumentByKeyRequest();
-
-    {
-        std::istringstream storeCouchbaseDocumentByKeyRequestFromWtSerialized(static_cast<const char*>(m_StoreMessageQueuesCurrentMessageBuffer));
-        boost::archive::text_iarchive deSerializer(storeCouchbaseDocumentByKeyRequestFromWtSerialized);
-        deSerializer >> *storeCouchbaseDocumentByKeyRequestFromWt;
-    }
-
-    lcb_store_cmd_t cmd;
-    const lcb_store_cmd_t *cmds[1];
-    cmds[0] = &cmd;
-    memset(&cmd, 0, sizeof(cmd));
-
-    const char *keyInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreKeyInput.c_str();
-    const char *documentInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreDocumentInput.c_str();
-
-    cmd.v.v0.key = keyInput;
-    cmd.v.v0.nkey = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreKeyInput.length();
-    cmd.v.v0.bytes = documentInput;
-    cmd.v.v0.nbytes = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreDocumentInput.length();
-    if(storeCouchbaseDocumentByKeyRequestFromWt->LcbStoreModeIsAdd)
-    {
-        cmd.v.v0.operation = LCB_ADD;
-    }
-    else
-    {
-        cmd.v.v0.operation = LCB_SET;
-        if(storeCouchbaseDocumentByKeyRequestFromWt->HasCasInput)
-        {
-            cmd.v.v0.cas = storeCouchbaseDocumentByKeyRequestFromWt->CasInput;
-        }
-    }
-    lcb_error_t err = lcb_store(m_Couchbase, storeCouchbaseDocumentByKeyRequestFromWt, 1, cmds);
-    if(err != LCB_SUCCESS)
-    {
-        cerr << "Failed to set up store request: " << lcb_strerror(m_Couchbase, err) << endl;
-        //TODOreq: handle failed store request
-        return;
-    }
+    ABC_DO_SCHEDULE_COUCHBASE_STORE(Store)
+    //TODOreq: delete StoreCouchbaseDocumentByKeyRequest in above macro at appropriate places (error, success)
+    //TODOreq: handle failed store request in above macro: if(err != LCB_SUCCESS)
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStoreLarge()
 {
-    //TODOreq
+    ABC_DO_SCHEDULE_COUCHBASE_STORE(StoreLarge)
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 {
