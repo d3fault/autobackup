@@ -173,7 +173,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
     WLineEdit *m_UploadNewSlotFiller_URL;
     WFileUpload *m_AdImageUploader;
-    WContainerWidget *m_AdImageUploadResultsContainerWidget;
+    WVBoxLayout *m_AdImageUploadResultsVLayout;
     std::string m_AdImageUploadFileLocation;
     std::string m_AdImageUploadClientFilename;
     void handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished();
@@ -212,7 +212,12 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+    ptree m_RunningAllSlotFillersJsonDoc;
+    u_int64_t m_RunningAllSlotFillersJsonDocCAS;
+    void determineNextSlotFillerIndexAndThenAddSlotFillerToIt(const string &allAdSlotFillersJsonDoc, u_int64_t casOfAllSlotFillersDocForUpdatingSafely, bool lcbOpSuccess, bool dbError);
+    void tryToAddAdSlotFillerToCouchbase(const std::string &slotFillerIndexToAttemptToAdd);
     void continueRecoveringLockedAccountAtLoginAttempt(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError);
+    void getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex(const string &adSlotFillerToExtractNicknameFrom, bool lcbOpSuccess, bool dbError);
     bool m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired;
     double m_CurrentPriceToUseForBuying;
     std::string m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds;
@@ -226,10 +231,11 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_UserAccountLockedDuringBuyJson;
     void slotFillAkaPurchaseAddAttemptFinished(bool lcbOpSuccess, bool dbError);
     void transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(bool dbError);
-    void storeLargeAdImageInCouchbaseDbAttemptComplete(bool dbError, bool lcbOpSuccess); //read a huge article yesterday by the soup and was almost convinced to start using exceptions for error handling.... but how the fuck do you throw an exception across a thread O_o? (RpcGenerator's error mechanism was (is?) teh pro-est)
+    void storeLargeAdImageInCouchbaseDbAttemptComplete(const string &keyToSlotFillerAttemptedToAddTo, bool dbError, bool lcbOpSuccess); //read a huge article yesterday by the soup and was almost convinced to start using exceptions for error handling.... but how the fuck do you throw an exception across a thread O_o? (RpcGenerator's error mechanism was (is?) teh pro-est)
     void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError);
     void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError);
     void doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(bool lcbOpSuccess, bool dbError);
+    void doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(bool lcbOpSuccess, bool dbError);
 
     //store
     void storeWithoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
@@ -274,8 +280,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     enum WhatTheStoreWithInputCasWasForEnum
     {
         INITIALINVALIDNULLSTOREWITHCAS,
-        //now there aren't any ops i'm using that set with an input cas without using it again later (saving the cas), but there probably will be in the future...
-        //SEE!
+        UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER,
         HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS,
         HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS,
         LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT
@@ -288,6 +293,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     enum WhatTheGetWasForEnum
     {
         INITIALINVALIDNULLGET,
+        GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET,
         ONLOGINACCOUNTLOCKEDRECOVERYDOESSLOTEXISTCHECK
     };
@@ -295,6 +301,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     {
         LOGINATTEMPTGET,
         INITIALINVALIDNULLGETSAVINGCAS,
+        ALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS,
         HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
     };

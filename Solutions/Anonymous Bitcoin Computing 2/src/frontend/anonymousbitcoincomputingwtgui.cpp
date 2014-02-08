@@ -249,9 +249,10 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
 
         //TODOreq: a place for them to view their uploaded ads (so they can verify their images uploaded ok and get a preview of how it will look (we might shrink it, for example (TODOreq: determine width/height, tell them what it is on this upload page) stuff)
 
-        accountVLayout->addWidget(new WBreak());
-        m_AdImageUploadResultsContainerWidget = new WContainerWidget(); //TODOreq: maybe make this a VBoxLayout so it doesn't go behind the fields like in the pic?
-        accountVLayout->addWidget(m_AdImageUploadResultsContainerWidget);
+        m_AdImageUploadResultsVLayout = new WVBoxLayout(); //TODOreq: maybe make this a VBoxLayout so it doesn't go behind the fields like in the pic?
+        m_AdImageUploadResultsVLayout->addWidget(new WBreak());
+        m_AdImageUploadResultsVLayout->addWidget(new WBreak());
+        accountVLayout->addLayout(m_AdImageUploadResultsVLayout);
 
 
         //TODOreq: after the upload, set them up to do another upload (and perhaps show the previous upload right here/now)
@@ -260,51 +261,19 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
 }
 void AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished()
 {
-    ptree pt;
-    pt.put("username", m_CurrentlyLoggedInUsername);
-    pt.put("nickname", m_UploadNewSlotFiller_NICKNAME->text().toUTF8()); //TODOreq: sanitize these
-    pt.put("hoverText", m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8());
-    pt.put("url", m_UploadNewSlotFiller_URL->text().toUTF8());
+    deferRendering();
 
-    m_AdImageUploadFileLocation = m_AdImageUploader->spoolFileName();
-    m_AdImageUploader->stealSpooledFile(); //TODOreq: if i re-use this WFileUpload object, will the 2nd+ file upload be already stolen? Will it use a new spoolFileName? Easiest way around this is to just make a new WFileUpload object for new uploads
-    m_AdImageUploadClientFilename = m_AdImageUploader->clientFileName().toUTF8();
+    //TODOreqNOPE-ish (outdated, see below): maybe optional, idfk, but basically i want this store to just eh 'keep incrementing slot filler index until the LCB_ADD succeeds'. I'm just unsure whether or not the front-end or backend should be driving that. I think I have a choice here... and idk which is betterererer. Having the backend do it would probably be more efficient, but eh I think the front-end has to here/now/before-the-STORE-one-line-below determine the slot filler index to start trying to LCB_ADD at (else we'd be incredibly inefficient if we started at 0 and crawled up every damn time)... SO SINCE the front-end is already getting involved with it, maybe he should be the one directing the incrementing? It does seem "user specific" (user being frontend -> using backend), _BUT_ it also could be very easily genericized and used in tons of other apps... so long as we either use some "%N%" (no) in the key or make the number the very last part of the key (yes). I might even use this same thing with the bitcoin keys, but eh I haven't figured those out yet and don't want to yet (one problem at a time).
 
-    //unsure if i should do the expensive read/b64encode here or in the db backend (passing only filename). i want an async api obviously, but laziness/KISS might dictate otherwise
+    //^^^^decided to just KISS and do it here on the front-end, knowing full well it'd be stupidly re-sending the image over and over on retries, FUCKIT. I'm going to be doing 'inline recovery' and the design for that is able to get complex, but by doing it here instead of on backend I am able to not eat my shotgun.
+    //^^^^^tl;dr: get allAdSlotFillers doc, choose the n+1 index, LCB_ADD to it, if lcbOpFail: cas-swap-accepting-fail updating allAdSlotFillers (inline recovery), do n+2 (really n+1 relative to the newest update) LCB_ADD, if fail: <repeat-this-segment-X-times> -> when the LCB_ADD doesn't fail, cas-swap-accepting-fail updating allAdSlotFillers, DONE. the very last cas-swap-accepting-fail can fail (as in, not happen!) and on the NEXT ad upload the state will be recovered (might be strange from end user's perspective, but fuck it)
 
-    streampos fileSizeHack;
-    char *adImageBuffer; //TODOreq: maybe a smart pointer as a member of this class, so that it deallocates if the session dies (could be while we're still trying to store it, for example). Pretty much just like the WObject tree, somehow attach it.
-    ifstream adImageFileStream(m_AdImageUploadFileLocation.c_str(), ios::in | ios::binary | ios::ate);
-    if(adImageFileStream.is_open())
-    {
-        fileSizeHack = adImageFileStream.tellg();
-        adImageBuffer = new char[fileSizeHack]; //TODOreq: delete[]. TODOoptimization: running out of memory (server critical load) throws an exception, we could pre-allocate this, but how to then share it among WApplications? guh fuckit. i think 'new' is mutex protected underneath anyways, so bleh maybe using a mutex and a pre-allocated buffer is even faster than this (would of course be best to use rand() + mutex shits xD)... but then we can't have multiple doing it on thread pool at same time (unless rand() + mutex shits)
-        adImageFileStream.seekg(0,ios::beg);
-        adImageFileStream.read(adImageBuffer, fileSizeHack);
-        adImageFileStream.close();
-    }
-    else
-    {
-        //TODOreq: handle file failed to open error (delete, discard, give user error)
-    }
-
-    std::string adImageString = std::string(adImageBuffer, fileSizeHack);
-    std::string adImageB64string = base64Encode(adImageString); //TODOreq: doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
-
-    pt.put("adImageB64", adImageB64string); //TODOoptimization: maybe save a copy by doing base64encode right into second argument here? doubt it (and if this were Qt land, I'd be hesitant to even try it (shit disappears yo))
-
-    std::ostringstream adSlotFillerJsonDocBuffer;
-    write_json(adSlotFillerJsonDocBuffer, pt, false);
-
-    //TODOreq: maybe optional, idfk, but basically i want this store to just eh 'keep incrementing slot filler index until the LCB_ADD succeeds'. I'm just unsure whether or not the front-end or backend should be driving that. I think I have a choice here... and idk which is betterererer. Having the backend do it would probably be more efficient, but eh I think the front-end has to here/now/before-the-STORE-one-line-below determine the slot filler index to start trying to LCB_ADD at (else we'd be incredibly inefficient if we started at 0 and crawled up every damn time)... SO SINCE the front-end is already getting involved with it, maybe he should be the one directing the incrementing? It does seem "user specific" (user being frontend -> using backend), _BUT_ it also could be very easily genericized and used in tons of other apps... so long as we either use some "%N%" (no) in the key or make the number the very last part of the key (yes). I might even use this same thing with the bitcoin keys, but eh I haven't figured those out yet and don't want to yet (one problem at a time).
-    storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin("adSpaceSlotFillersJimboKnives0", adSlotFillerJsonDocBuffer.str());
-    //storeLarge has it's own 'begin', but it shares the 'finish' with the typical store
-    m_WhatTheStoreWithoutInputCasWasFor = LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS; //TODOoptional: make these enums more readable with underscores, and put numbering toward the beginning of them that matches up with the callback/function (perhaps renaming those too)
+    //get adSpaceAllSlotFillers<username>
+    getCouchbaseDocumentByKeySavingCasBegin("adSpaceAllSlotFillers" + m_CurrentlyLoggedInUsername);
+    m_WhatTheGetSavingCasWasFor = ALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS;
 
 
     //TODOreq: after the store [is successful], i want to then display the image to them to preview. so i can either delete the file now and use the memory copy, or vice versa. Wt might be more efficient with memory when serving from "file".. but regardless of what I come up with, I want to delete BOTH copies as soon as I can (as soon as they are 'sent' to the user... though I'm not sure that deleted a WResource being used as an WImage will work without disappearing the image itself xD (Wt is TOO smart in that case :-/)...). For now I'm just going to work on the StoreLarge + response
-
-    delete [] adImageBuffer;
 
     //fml: memory(httpd-wt) -> file(chillen) -> memory(my-wt) ->b64encode-> memory(my-wt) ->messageQueue-> memory(sendQueue) -> memory(receiveQueue) ->->messageQueue-> memory(my-couchbase) -> memory(couchbase-send-buffer)
     //8 copies woo how efficient. maybe i should have just passed the backend the filename :-/...
@@ -681,12 +650,20 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_AllSlotFillersComboBox = new WComboBox(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        int adsCount = boost::lexical_cast<int>(pt.get<std::string>("adsCount"));
+        for(int i = 0; i < adsCount; ++i)
+        {
+            //json looks like this: "0" : "<nickname>"
+            m_AllSlotFillersComboBox->insertItem(i, pt.get<std::string>(boost::lexical_cast<std::string>(i)));
+        }
+#if 0 //old json design using array
         BOOST_FOREACH(const ptree::value_type &child, pt.get_child("allSlotFillers"))
         {
             const std::string &slotFillerNickname = child.second.get<std::string>("nickname");
             const std::string &slotFillerIndex = child.second.get<std::string>("slotFillerIndex");
             m_AllSlotFillersComboBox->insertItem(boost::lexical_cast<int>(slotFillerIndex), slotFillerNickname); //TODOreq: Wt probably/should already do[es] this, but the nicknames definitely need to be sanitized (when they're created)
         }
+#endif
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -850,6 +827,91 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         //^very real race condition vuln aside, what i was getting at originally is that maybe it's not a good idea to do "recover->proceed-with-buy" because who the fuck knows how much later they'd log in... and like maybe currentPrice would be waaaaay less than when they originally locked/tried-and-failed. It makes sense to at least ask them: "do you want to try this buy again" and then to also recalculate the price (which means re-locking the account (which probably has security considerations to boot)) on login
     }
 }
+void AnonymousBitcoinComputingWtGUI::determineNextSlotFillerIndexAndThenAddSlotFillerToIt(const string &allAdSlotFillersJsonDoc, u_int64_t casOfAllSlotFillersDocForUpdatingSafely, bool lcbOpSuccess, bool dbError)
+{
+    //TODOreq: doesn't belong here, but there's a race condition that we wouldn't recover from using current recover design for ad slot filler creation. user has 3 tabs open and hits submit for all 3 at the same time. guh i can't think of it but it has something to do with the last cas-swap-accepting-fail update of allAdSlotFillers doc at the end... AND i might be wrong anyways and it isn't a problem. BUT IF IT IS, it's a potential segfault.
+
+    if(dbError)
+    {
+        //TODOreq: handle. "500 Internal Server Error: Kill Yourself, Re-Evolve, Try Again (doing so puts you in an infinite loop of re-evolving/suiciding-at-the-same-spot that keeps looping and looping... until you eventually choose to not commit suicide. And since you can't live in a universe where you are dead (heh), you are already here in the universe where you chose not kill yourself. So yea just Try Again)"
+
+        //temp:
+        cerr << "determineNextSlotFillerIndexAndThenAddSlotFillerToIt db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+
+    m_RunningAllSlotFillersJsonDoc.clear();
+    m_RunningAllSlotFillersJsonDocCAS = casOfAllSlotFillersDocForUpdatingSafely;
+
+    string slotFillerIndexToAttemptToAdd;
+
+    if(!lcbOpSuccess)
+    {
+        //TODOreq: this is first slot filler add (or 2nd and first partially failed xD), allSlotFillersDoc doesn't exist yet, make it [after adding slot filler]. perhaps just set a flag indicating that after the slot filler is added, allSlotFillers doc needs to be ADD-accepting-fail INSTEAD OF cas-swap-accepting-fail (no previous = no cas)
+
+        slotFillerIndexToAttemptToAdd = "0";
+        m_RunningAllSlotFillersJsonDoc.put("adsCount", slotFillerIndexToAttemptToAdd); //initialize this 'string' index because later we +1 it, and it simplifies the code paths to already have it existing [on first ad slot filler create]
+    }
+    else
+    {
+        //allSlotFillersDoc exists
+        std::istringstream is(allAdSlotFillersJsonDoc);
+        read_json(is, m_RunningAllSlotFillersJsonDoc);
+
+        slotFillerIndexToAttemptToAdd = m_RunningAllSlotFillersJsonDoc.get<std::string>("adsCount"); //seems like off-by-one to not add "+1" here, but isn't :-P
+    }
+
+    tryToAddAdSlotFillerToCouchbase(slotFillerIndexToAttemptToAdd);
+    //^will most likely succeed, but our inline recovery code uses it too
+}
+void AnonymousBitcoinComputingWtGUI::tryToAddAdSlotFillerToCouchbase(const string &slotFillerIndexToAttemptToAdd)
+{
+    ptree pt;
+    pt.put("username", m_CurrentlyLoggedInUsername);
+    pt.put("nickname", m_UploadNewSlotFiller_NICKNAME->text().toUTF8()); //TODOreq: sanitize these
+    pt.put("hoverText", m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8());
+    pt.put("url", m_UploadNewSlotFiller_URL->text().toUTF8());
+
+    m_AdImageUploadFileLocation = m_AdImageUploader->spoolFileName();
+    m_AdImageUploader->stealSpooledFile(); //TODOreq: if i re-use this WFileUpload object, will the 2nd+ file upload be already stolen? Will it use a new spoolFileName? Easiest way around this is to just make a new WFileUpload object for new uploads
+    m_AdImageUploadClientFilename = m_AdImageUploader->clientFileName().toUTF8();
+
+    //unsure if i should do the expensive read/b64encode here or in the db backend (passing only filename). i want an async api obviously, but laziness/KISS might dictate otherwise
+
+    //TODOoptimization: had this as 'req' but memory management/sanity is much simpler when doing it less optimially xD (it's only ever paid during recovery code anyways): when doing inline recovery, don't re-read from disk. also if we then 'store it' as member or some such, make sure to delete it when it finishes successfully. The solution should use some form of WObject parent/child deletion...
+    streampos fileSizeHack;
+    char *adImageBuffer; //TODOreq: maybe a smart pointer as a member of this class, so that it deallocates if the session dies (could be while we're still trying to store it, for example). Pretty much just like the WObject tree, somehow attach it.
+    ifstream adImageFileStream(m_AdImageUploadFileLocation.c_str(), ios::in | ios::binary | ios::ate);
+    if(adImageFileStream.is_open())
+    {
+        fileSizeHack = adImageFileStream.tellg();
+        adImageBuffer = new char[fileSizeHack]; //TODOreq: delete[]. TODOoptimization: running out of memory (server critical load) throws an exception, we could pre-allocate this, but how to then share it among WApplications? guh fuckit. i think 'new' is mutex protected underneath anyways, so bleh maybe using a mutex and a pre-allocated buffer is even faster than this (would of course be best to use rand() + mutex shits xD)... but then we can't have multiple doing it on thread pool at same time (unless rand() + mutex shits)
+        adImageFileStream.seekg(0,ios::beg);
+        adImageFileStream.read(adImageBuffer, fileSizeHack);
+        adImageFileStream.close();
+    }
+    else
+    {
+        //TODOreq: handle file failed to open error (delete, discard, give user error)
+    }
+
+    std::string adImageString = std::string(adImageBuffer, fileSizeHack);
+    std::string adImageB64string = base64Encode(adImageString); //TODOreq: doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
+
+    pt.put("adImageB64", adImageB64string); //TODOoptimization: maybe save a copy by doing base64encode right into second argument here? doubt it (and if this were Qt land, I'd be hesitant to even try it (shit disappears yo))
+
+    std::ostringstream adSlotFillerJsonDocBuffer;
+    write_json(adSlotFillerJsonDocBuffer, pt, false);
+
+
+    storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin("adSpaceSlotFillers" + m_CurrentlyLoggedInUsername + slotFillerIndexToAttemptToAdd, adSlotFillerJsonDocBuffer.str());
+    //storeLarge has it's own 'begin', but it shares the 'finish' with the typical store
+    m_WhatTheStoreWithoutInputCasWasFor = LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS; //TODOoptional: make these enums more readable with underscores, and put numbering toward the beginning of them that matches up with the callback/function (perhaps renaming those too)
+
+    delete [] adImageBuffer;
+}
 void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttempt(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
@@ -904,6 +966,42 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
             m_WhatTheStoreWithInputCasWasFor = LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT;
         }
     }
+}
+void AnonymousBitcoinComputingWtGUI::getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex(const string &adSlotFillerToExtractNicknameFrom, bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        //TODOreq: handle
+
+        cerr << "getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex db error" << endl;
+        resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        //TODOreq: handle?
+        cerr << "TOTAL SYSTEM FAILURE: getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex -- an LCB_ADD to slot filler failed, so we tried to get it to extract nickname from it for updating allAdSlotFillers... but now it doesn't exist?? wtf?" << endl;
+        resumeRendering();
+        return;
+    }
+
+    //get succeeded
+    ptree pt;
+    std::istringstream is(adSlotFillerToExtractNicknameFrom);
+    read_json(is, pt);
+
+    std::string nicknameOfSlotFillerNotInAllAdSlotFillersDoc = pt.get<std::string>("nickname"); //mfw the entire base64 image is get'd just to figure out this nickname :)... but this is recovery code and won't run often
+
+    //json-add nickname to the 'running' allAdSlotFillers doc
+    std::string indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = m_RunningAllSlotFillersJsonDoc.get<std::string>("adsCount");
+    m_RunningAllSlotFillersJsonDoc.put(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat, nicknameOfSlotFillerNotInAllAdSlotFillersDoc);
+
+    //also increment 'adsCount' because we've just found/recovered one slot filler, and additionally will be using adsCount as our index to add the slot filler AGAIN (the one that initiated this recovery) in the 'next' slot
+    indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = boost::lexical_cast<std::string>(boost::lexical_cast<int>(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat) + 1); //the +1 here is important (had:key)!!!!
+    m_RunningAllSlotFillersJsonDoc.put("adsCount", indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat);
+
+    //now LCB_ADD index+1 again
+    tryToAddAdSlotFillerToCouchbase(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat);
 }
 void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError)
 {
@@ -1021,11 +1119,11 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
 
     //TODOreq: even though it seemed like a small optimization to do both the user-account-unlock and updating of campaign doc with a new 'last purchased' slot, that pattern of programming will lead to disaster so i shouldn't do it just in principle. Yes with this one case it wouldn't have led to disaster, but actually it MIGHT have given extreme circumstances. it opens up a race condition: say the 'user account unlock' happens really fast and the 'update campaign doc' happens to take a while. if we gave control back to the user after the 'user account unlock' was finished, they could do some action that would then conflict with the m_WhatThe[blahblahblah]WasFor related to the 'update campaign doc' store. As in, when the 'update campaign doc' finishes and gets posted back to the WApplication, the user's actions could have started something else and then we wouldn't have handled the finishing of the 'update campaign doc' properly (which would mean that we never notify our neighbors of buy event? actually not a problem if we do 'get-and-subscribe-polling' like i think i'm going to do (BUT LIKE I SAID THIS ONE GETS LUCKY, BUT AN OVERALL PATTERN TO AVOID)). So I'm going to do the successive sets synchronously, despite seeing a clear opportunity for optimization
 }
-void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComplete(bool dbError, bool lcbOpSuccess)
+void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComplete(const string &keyToSlotFillerAttemptedToAddTo, bool dbError, bool lcbOpSuccess)
 {
     if(dbError)
     {
-        //TODOreq: handle appropriately (delete image prolly), notify user
+        //TODOreq: handle appropriately (delete image file prolly), notify user
 
         //temp:
         cerr << "storeLargeAdImageInCouchbaseDbAttemptComplete reported db error" << endl;
@@ -1035,39 +1133,36 @@ void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComple
     }
     if(!lcbOpSuccess)
     {
+        //this indicates that the allAdSlotFillers we GET'd was in a bad state (either it just failed to be updated OR they have two tabs open doing two uploads at once etc). we need to do a GET for the one we just LCB_ADD fail'd in order to get the nickname for that slot filler, then we need to put it in our "running all slot fillers doc" and try to LCB_ADD the n+1 slot...... it all needs to loop sexily and after we finally get an LCB_ADD to succeed, we then take our "running all slot fillers doc" (which has been updated (modified, not submitted) 0+ times), add our final LCB_ADD that _just_ succeeded to it at the very end, then cas-swap-accepting-fail the allAdSlotFillers. This design does have the drawback that multiple tabs uploading simultaneously may frequently get the allAdSlotFillers into a bad state, BUT it will always be recovered from on subsequent updates. AND really it is a pretty rare race condition, because it'd have to go in between a sub-millisecond "GET" and an "LCB_ADD" (excluding the durability portion)..... trying to do that intentionally WHILE uploading binary images 'before' the GET/ADD sequence would be difficult, doing it accidentally is possible but not likely.
+        //TODOoptional: give user a button "hey where is my most recently uploaded ad" that does the recovery process manually (fuck this idea for now)
+
+        getCouchbaseDocumentByKeyBegin(keyToSlotFillerAttemptedToAddTo); //couchbase needs a "add or get" lcb op :), maybe i should file it as an enhancement
+        m_WhatTheGetWasFor = GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ; //kind of grossly inefficient to go in and out of the WApplication context so often like this to do 'business' work, but KISS idgaf suck mah dick. "AbcAppDb" was a 2+ year tangent (still incomplete)
+        //TODOreq: ^^if the add mentioned towards the end of that fails, we need to get right back here to this code path so that it loops
+
         //TODOreq: do it again with the index +1'd... unless you end up letting backend do that (in which case, we'd need to pass ourselves the final key chosen [for use in updating allAdSlotFillers])
 
         //temp:
-        cerr << "storeLargeAdImageInCouchbaseDbAttemptComplete reported lcb op failed" << endl;
+        //cerr << "storeLargeAdImageInCouchbaseDbAttemptComplete reported lcb op failed" << endl;
 
-        resumeRendering();
+        //resumeRendering();
         return;
     }
 
-    //getting here means the add was successful
+    //TODOreq: getting here means the add was successful, so record that fact in allAdSlotFillers
+    std::string oldAdsCountButAlsoOurIndexOfTheOneJustAdded = m_RunningAllSlotFillersJsonDoc.get<std::string>("adsCount");
+    m_RunningAllSlotFillersJsonDoc.put(oldAdsCountButAlsoOurIndexOfTheOneJustAdded, m_UploadNewSlotFiller_NICKNAME->text().toUTF8());
 
-    //so now show them the image that we already have on the heap (and on the filesystem).... now hmm which to show....
-
-    pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploadClientFilename);
-    FileDeletingFileResource *adImagePreviewResource = new FileDeletingFileResource("image/" + guessedExtensionAndMimeType.second, m_AdImageUploadFileLocation, guessedExtensionAndMimeType.first, m_AccountWidget); //semi-old (now using m_AccountWidget instead of 'this'): 'this' is set as parent for last resort cleanup of the WResource, but that doesn't account for it's underlying buffer. I also might want to delete this resource if they upload a 2nd/3rd/etc image, BUT TODOreq there are threading issues because the WImage/WResource is served concurrently I believe (or is that only true for static resources?). Perhaps changing internal paths would be a good time to delete all the images (or in WResource::handleRequest itself, since they'll only be used once anyways..), idfk. There is also the issue of me trying to re-use the same byte buffer for a 2nd upload (which is backing a resource for a first upload that hasn't yet finished streaming back / previewing back to them)
-    WImage *adImagePreview = new WImage(adImagePreviewResource, m_UploadNewSlotFiller_HOVERTEXT->text()); //NOPE (ownership of image changes when we give it to the WAnchor): so our file is deleted when the image is (parent deletes all children first, and the image must stop using the resource before we delete it (thus, the resource should be the parent))
-    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, m_UploadNewSlotFiller_URL->text().toUTF8()), adImagePreview);
-
-
-    //difference between these two?
-    adImagePreview->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
-    adImageAnchor->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
-
-    m_AdImageUploadResultsContainerWidget->addWidget(new WBreak());
-    m_AdImageUploadResultsContainerWidget->addWidget(adImageAnchor);
+    //now increment adsCount and put it back in xD
+    oldAdsCountButAlsoOurIndexOfTheOneJustAdded = boost::lexical_cast<std::string>(boost::lexical_cast<int>(oldAdsCountButAlsoOurIndexOfTheOneJustAdded)+1); //old becomes new :)
+    m_RunningAllSlotFillersJsonDoc.put("adsCount", oldAdsCountButAlsoOurIndexOfTheOneJustAdded);
 
 
-    m_UploadNewSlotFiller_HOVERTEXT->setText("");
-    m_UploadNewSlotFiller_NICKNAME->setText("");
-    m_UploadNewSlotFiller_URL->setText("");
-    //TODOreq: also set up the WFileUpload for the next image, should they want to upload another
-
-    resumeRendering();
+    //TODOreq: cas-swap-accepting-fail the allAdSlotFillers doc
+    std::ostringstream updatedAllAdSlotFillersJsonDocBuffer;
+    write_json(updatedAllAdSlotFillersJsonDocBuffer, m_RunningAllSlotFillersJsonDoc, false);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("adSpaceAllSlotFillers" + m_CurrentlyLoggedInUsername, updatedAllAdSlotFillersJsonDocBuffer.str(), m_RunningAllSlotFillersJsonDocCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_WhatTheStoreWithInputCasWasFor = UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER;
 }
 void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError)
 {
@@ -1166,6 +1261,58 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountLockedRecoveryUnlo
 
     //account locked recovery complete, make it look like a regular old login
     doLoginTasks();
+}
+void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        //TODOreq: handle, idkf how lawl
+
+        //temp:
+        cerr << "doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        //cas swap fail
+        //TODOreq: handle? this is what i was attempting to write might be a non-recoverable fault (not necessarily, but this is where we MIGHT need to do more processing). If they are adding two images simultaneously on two different tabs it would be semi-likely to get here (still quite rare). BUT that common case is handled fine when a 3rd image is uploaded. What does get me confused is if 3 images are uploaded simultaneously... it MIGHT put me in a state of non-recoverable fault (which would cause the app itself to segfault when iterating all ad slot fillers doc for populating the combo box in the buy step 2 population stage)
+
+        //TODOreq: should i still display their image to them? i mean the LCB_ADD did succeed for us to get here... so idfk...
+
+        //TODOreq: the obvious/expensive (and more work ;-P) answer is to say that if we get _HERE_ we just do an allAdSlotFillers doc verification/recovery process (even though we supposedly/probably just did it!), idfk need to smoke a bowl and meditate on this shit
+
+        cerr << "doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller lcb op fail, may or may not be an error read the comments near this error string xD idfk. MAYBE/probably in recoverable state" << endl;
+
+        resumeRendering();
+        return;
+    }
+
+    //cas-swap-update succeeded
+
+    //so now show them the image that we already have on the heap (and on the filesystem).... now hmm which to show....
+
+    pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploadClientFilename);
+    FileDeletingFileResource *adImagePreviewResource = new FileDeletingFileResource("image/" + guessedExtensionAndMimeType.second, m_AdImageUploadFileLocation, guessedExtensionAndMimeType.first, m_AccountWidget); //semi-old (now using m_AccountWidget instead of 'this'): 'this' is set as parent for last resort cleanup of the WResource, but that doesn't account for it's underlying buffer. I also might want to delete this resource if they upload a 2nd/3rd/etc image, BUT TODOreq there are threading issues because the WImage/WResource is served concurrently I believe (or is that only true for static resources?). Perhaps changing internal paths would be a good time to delete all the images (or in WResource::handleRequest itself, since they'll only be used once anyways..), idfk. There is also the issue of me trying to re-use the same byte buffer for a 2nd upload (which is backing a resource for a first upload that hasn't yet finished streaming back / previewing back to them)
+    WImage *adImagePreview = new WImage(adImagePreviewResource, m_UploadNewSlotFiller_HOVERTEXT->text()); //NOPE (ownership of image changes when we give it to the WAnchor): so our file is deleted when the image is (parent deletes all children first, and the image must stop using the resource before we delete it (thus, the resource should be the parent))
+    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, m_UploadNewSlotFiller_URL->text().toUTF8()), adImagePreview);
+
+
+    //difference between these two?
+    adImagePreview->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
+    adImageAnchor->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
+
+    m_AdImageUploadResultsVLayout->addWidget(adImageAnchor);
+    m_AdImageUploadResultsVLayout->addWidget(new WBreak());
+    m_AdImageUploadResultsVLayout->addWidget(new WBreak());
+
+    m_UploadNewSlotFiller_HOVERTEXT->setText("");
+    m_UploadNewSlotFiller_NICKNAME->setText("");
+    m_UploadNewSlotFiller_URL->setText("");
+    //TODOreq: also set up the WFileUpload for the next image, should they want to upload another
+
+    resumeRendering();
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
@@ -1270,6 +1417,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
         continueRecoveringLockedAccountAtLoginAttempt(couchbaseDocument, lcbOpSuccess, dbError);
     }
         break;
+    case GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ:
+    {
+        getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex(couchbaseDocument, lcbOpSuccess, dbError); //'slot filler add' = buyer creating a new ad; 'slot fill add' = buyer buying ad slot using created ad. xD too fucking subtle of a difference (but i'm so amped right now i can grasp the difference for the rest of this month long hack marathon)...
+    }
+        break;
     case INITIALINVALIDNULLGET:
     default:
         cerr << "got a couchbase 'get' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl;
@@ -1300,6 +1452,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
         {
             verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(couchbaseDocument, cas, lcbOpSuccess, dbError);
         }
+        break;
+    case ALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS:
+    {
+        determineNextSlotFillerIndexAndThenAddSlotFillerToIt(couchbaseDocument, cas, lcbOpSuccess, dbError);
+    }
         break;
     case INITIALINVALIDNULLGETSAVINGCAS:
     default:
@@ -1350,7 +1507,7 @@ void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyF
         break;
     case LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS:
     {
-        storeLargeAdImageInCouchbaseDbAttemptComplete(dbError, lcbOpSuccess);
+        storeLargeAdImageInCouchbaseDbAttemptComplete(keyToCouchbaseDocument, dbError, lcbOpSuccess);
     }
         break;
     case INITIALINVALIDNULLSTOREWITHOUTINPUTCAS:
@@ -1382,6 +1539,11 @@ void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinish
     case LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT:
     {
         doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(lcbOpSuccess, dbError);
+    }
+        break;
+    case UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER:
+    {
+        doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(lcbOpSuccess, dbError);
     }
         break;
     case INITIALINVALIDNULLSTOREWITHCAS:

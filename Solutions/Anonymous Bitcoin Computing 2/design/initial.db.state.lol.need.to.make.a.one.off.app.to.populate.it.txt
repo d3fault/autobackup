@@ -1,0 +1,9 @@
+adSpaceSlotsd3fault0
+{
+  "minPrice": "0.00000001",
+  "slotLengthHours": "24"
+}
+
+......lol i was expecting this to be much longer.... but now that I think of it that's just about it and the rest are created at run-time.
+
+Also should go into the db and give whatever test user you register some moneys (well, until bitcoin test environment is up :-D)

@@ -56,6 +56,7 @@ adSpaceSlotFillersJimboKnives should then list all of JimboKnives' ad campaigns 
 
 The full json document for adSpaceSlotFillersJimboKnives follows:
 
+--NOPE--: despite being more efficient, using ONLY 'all' slot fillers doc below is much simpler...
 //A 'PROFILE' VIEW FOR A USER WHO BUYS AD SPACE (and their associated slot fillers)
 adSpaceSlotFillersJimboKnives
 {
@@ -79,19 +80,12 @@ The full json document for adSpaceAllSlotFillersJimboKnives follows:
 //ALL OF A USER'S POTENTIAL ADS FOR USE IN BUYING AD SPACE (only JimboKnives can get this doc when clicking "buy" on abc.com/ads/buy-ad-space/d3fault/0. Also perhaps if he is logged in and goes to "ALL". Non logged in users go to view, JimboKnives gets the expensive doc)
 adSpaceAllSlotFillersJimboKnives
 {
-  "allSlotFillers": [
-    {
-      "nickname": "Widgets For Sale Ad Campaign",
-      "slotFillerIndex": "0"
-    },
-    {
-      "nickname": "Unused For Now",
-      "slotFillerIndex": "1"
-    }
-  ]
+  "adsCount": "2",
+  "0" : "Widgets For Sale Ad Campaign",
+  "1" : "Unused For Now"
 }
 
-^basically same as profile view, but the doc could get pretty big (TODOreq: ensure not > 20mb (lolol)) -- TODOoptimization: page'ination (guh)
+^basically same as profile view, but the doc could get pretty big (TODOreq: ensure not > 'store' wt2couchbase message size minus header size(lolol)) -- TODOoptimization: page'ination (guh)
 
 //CRITICAL SESSION/ACCOUNT DATA FOR JimboKnives -- has ability to buy slot fillers
 userJimboKnives
