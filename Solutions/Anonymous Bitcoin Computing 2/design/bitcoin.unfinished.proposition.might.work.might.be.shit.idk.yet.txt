@@ -1,0 +1,17 @@
+1) 20mb (roughly 699,050) of public keys, comma separated: hugeBitcoinKeyList
+2) 1000x "sets"/buffers of ~100 keys findable by using keys "bitcoinKeyBuffer0" -> "bitcoinKeyBuffer1000", and which to choose is determined via rand() % 1000
+3) Each set/buffer (2) has a corresponding "used" doc. Both the buffer and the "used" doc are queried, and then of the remaining/non-used keys, one is randomly chosen.
+4) User puts some account-specific (doesn't have to be the user-account itself, but could/maybe-should be?) key/doc into {"lockedAttemptingToMakePublicBitcoinKeyMine" : "thekeyitself", "correspondingSetNum" : "rand()%1000-thing"} mode, which is used for recovery if they fail just after it (or even later, after (5) but before (6))
+5) They do an LCB_ADD on the publicBitcoinKey_XXXXXXXX where XXXXXX is the actual bitcoin address. If they win, the key is theirs. Lose, it isn't. If they lose then they also LCB_APPEND that key to the "used" doc (they wouldn't have tried if it was already there (but maybe it was a race condition where someone else just happened to be trying simultaneously, SO TODOreq: the "used" doc can have the same key on it twice and it doesn't matter))
+6) If they win of course they also LCB_APPEND to the "used" doc
+7) If they determine that the "used" doc is full and that there's no keys left on the set/buffer (they must also perform this check whenever detecting a "lose" in (5), which can happen 0+ times), they are now responsible for refilling it.
+8) perform refill using hugeBitcoinKeyList, but i forget how lolol so ima edit this later (had something to do with emptying the "set" + "used" things and turning them into pages (but the 'current' is always accessible by 1/same key)... but even that is probably not entirely important. also had to do with keeping some index into hugeBitcoinKeyList for where to refill from, but now atomicity problems come to mind and i'll get back to you on this)
+
+=Refill Maybe=
+a) hugeBitcoinKeyList also has corresponding "used", but it covers ranges instead of individual keys used (if always 100, we needn't specify (but specifying 100 gives us flexibility [that might be worthless]))
+[to be continued arby is on his way over]
+
+
+Two recovery points:
+1) LCB_ADD fail (recovering another user who may have failed (may just be race condition))
+2) "Get Add Funds Key" pressed after previously pressing failed (and may have failed at/after many of the steps above)
