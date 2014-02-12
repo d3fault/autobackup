@@ -1,0 +1,26 @@
+The sets (rand() % 1000 = 1x set) are CAS-swapped in order to get a bitcoinKey from them (more expensive, but KISS + they are still '1000' so it is fine). The sets have both the bitcoinKey and the 'used' data on them.
+
+CAS-swap fail means: re-check if room available, then CAS-swap-attempt-AGAIN with exponential backoff [all in nice sexy loop]
+
+No more bitcoinKeys on set available = CAS-swap hugeBitcoinKeyList taking a 'range'
+hugeBitcoinKeyList CAS-swap fails = re-check if room available, then CAS-swap-attempt-AGAIN with exponential backoff [all in nice sexy loop]
+
+Holy shit fucking simple/easy/KISS xD
+
+
+No keys available on hugeBitcoinKeyList = don't set up any flagging (that just makes complexity not KISS), re-do the expensive shit determining hugeBitcoinKeyList is out over and over because it's our own damn fault. send notification over and over and over to me until i fucking CAS-swap hugeBitcoinKeyList manually [with exponential back-off/retry ;-P]
+
+
+
+
+.......dommit forgot recovery *thinks more*........
+
+NAMELY (most difficult/troublesome (introduces tons of complexity [again])): CAS-swap of bitcoinKeySet successful and key registered as 'gotten', but node fail before 'giving to user' (and/or setting in a user-specific doc (perhaps user-account itself idfk)) -- is difficult as fuck because bitcoinKeySet itself could have been refilled before the recovery is attempted, so that means we'd need a "paging" strategy and bleh this is starting to sound like that really complex attempt again :-/...
+
+guh the getting of a key and the refilling of sets appears to need that UUID strategy no matter what.... ffffffff..... am i wrong? (*hopes*)... *thinks*...
+
+
+
+I'm leaning towards "yes UUIDs needed, but the use of them won't be as complex of the earlier design (namely that atomicity problem i stopped at)"....
+
+...ok going back into code mode... (<3 highlighting matching-brackets and auto-spacing)

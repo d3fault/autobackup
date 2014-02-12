@@ -1,0 +1,90 @@
+/*example doc:
+
+bitcoinKeySet0
+{
+    currentPage: 1,                    <-- bitcoinKeySet0Page0 also exists and was created when/just-before bitcoinKeySet0 was refilled
+    keysCommaSeparated: "blah1,blah2"
+}
+
+*/
+
+class PseudoClass
+{
+    inline void PseudoMethod()
+    {
+    //Actor
+      //->
+        //Wt.GetAddFundsKey
+        {
+            //If User Doesn't Have Add Funds Key (first) || Old Add Funds Key Is "Confirmed+Done"
+            {
+                //If user's account isn't already in "locked attempting to get key from setN/pageX with a UUID-per-key-request" mode
+                {
+                    //setN = 'rand() % 1000' to select the bitcoinKeySet[setN] to use (and possibly refill if needed)
+                    //get bitcoinKeySet[setN] and it's corresponding bitcoinKeySetUsed[setN] docs, read 'currentPage' from it (current page is always accessible via same key, but when it becomes old page it moves to a key specific to that page)
+                    //If bitcoinKeySet[setN] IS NOT in "lock attempting refill with UUID-per-refill" mode
+                    {
+                        //If there are any keys left on bitcoinKeySet[setN] (from looking at bitcoinKeySetUsed[setN])
+                        {
+                            //put the user's [bitcoin (may or may not affect their user-account/balance thingo)] account into a "locked attempting to get key from setN/pageX with a UUID-per-key-request" mode
+                            //LCB_APPEND the username/UUID to setUsed[setN] -- username might not be necessary but might be handy (TODOreq: choose suitable max username length accounting for 100 keys, the UUID length, etc (probably going to be plenty of room here))
+                            //re-get bitcoinKeySetUsed[setN] to see which spot we got, which may have even been out of bounds in which case bitcoinKeySet[setN] needs refill. I think if there is a concurrent #aeriu# recover in process, the username could have been added twice. so wtf was the point of locking?
+                            //If the first occurance of our username/UUID-per-key-request inserted via LCB_APPEND isn't out of bounds
+                            {
+                                //######COMMON CASE##### WE GOT BITCOIN-KEY (earlier drafts had an LCB_ADD race to the bitcoinKey itself (as a doc), but an LCB_APPEND race does the same thing). TODOreq: recovery processes would also see this key-claim via the identical UUID (and it may even be on an old page by now!) and still have to, erm, 'utilize' it(?)
+                                //Utilizing:
+                                //CAS-Swap-Accepting-Fail (#aeriu# recovery collision is acceptable) the user's account from "locked" to "just got: bitcoinKeyBlah (the key itself)". That same key must then become "Confirmed+Done" before the user account is allowed to go back into "locked" mode
+                            }
+                            //Else: we just barely didn't make it, set[setN] needs refill
+                            {
+                                //CAS-swap-accepting-fail the bitcoinKeySet[setN] to put it into "lock attempting refill with UUID-per-refill" mode
+                                //If above CAS swap doesn't fail
+                                {
+                                    //Get hugeBitcoinKeyList and corresponding hugeBitcoinKeyListUsed docs
+                                    //If hugeBitcoinKeyList isn't in "hugeBitcoinKeyList changing pages" mode
+                                    {
+                                        //If hugeBitcoinKeyList has keys left (from looking at hugeBitcoinKeyListUsed)
+                                        {
+                                            //LCB_APPEND the UUID-per-refill to hugeBitcoinKeyListUsed (just decided to enforce even paging (100 is set in stone, and hugeBitcoinKeyList is multiple of 100 -- to simplify coding))
+                                            //re-get hugeBitcoinKeyListUsed to see what we got
+                                            //If the first occurance of UUID-per-refill into hugeBitcoinKeyListUsed isn't out of bounds
+                                            {
+                                                //TODOreq: doesn't belong here, but a UUID could have been added to the end of hugeBitcoinKeyListUsed, and then the page could have changed before we were able to re-get hugeBitcoinKeyListUsed to see which index we got. It is therefore necessary that hugeBitcoinKeyList has it's page changed (hugeBitcoinKeyList and hugeBitcoinKeyListUsed copied and given page-specific key) before hugeBitcoinKeyListUsed is cleared, so that upon detecting a UUID missing in hugeBitcoinKeyListUsed, we know that we can still request the old-to-entire-system-but-still-relevant-to-us-right-this-very-moment hugeBitcoinKeyListUsed[pageY] that the UUID _IS_ on (and TODOreq again: we may find that our UUID is out of bounds on that pageY, which means we need re-APPEND ourselves to the hugeBitcoinKeyListUsed in a nice sexy loop (because hugeBitcoinKeyListUsed _MIGHT_ have changed paged yet AGAIN by the time we re-get our LCB_APPEND (very unlikely, but proper code is proper))
+
+                                                //#######COMMON REFILL CASE####### WE GOT BITCOIN-KEY-RANGE
+                                                //Utilizing:
+                                                //Take your range and cas-swap-accepting-fail-unlock the bitcoinKeySet[setN] into a "just got range from hugeBitcoinKeyList_PageY + UUID" mode (TODOreq: on first/earlier inspection, seeing bitcoinKeySet[setN] in that mode should lightly/safely recover the getting of the appropriate range of keys using that page/UUID (whereas here/now, we already have the range of keys in memory))
+                                                //If above CAS-swap doesn't fail
+                                                {
+                                                    //FFFFFFFFFFFF atomicity of doing the actual refill of the set + purging of corresponding used doc (with pagination too)?
+                                                }
+                                                //Else: Stop if cas swap fails: indicates another instance is already actively doing refill (but that doesn't mean they've finished it, so it is NOT safe to try to grab a key from the set yet)
+                                                {
+                                                    //TODOreq: how get key then????? EASIEST SOLUTION IS TO JUST TELL USER TO TRY AGAIN IN A FEW SECONDS xD
+                                                }
+                                            }
+                                            //Else: hugeBitcoinKeyList needs page changing
+                                        }
+                                        //Else: hugeBitcoinKeyList needs page changing
+                                    }
+                                    //Else: event driven recovery lightly/safely the changing of the pages
+                                }
+                                //Else: Stop if cas swap fails: indicates another instance is already actively doing refill
+                                {
+                                    //TODOreq: how get key then????? sleep 100ms (maybe more since 20mb doc involved) and check bitcoinKeySet[setN] status? EASIEST SOLUTION IS TO JUST TELL USER TO TRY AGAIN IN A FEW SECONDS xD
+                                }
+                            }
+                        }
+                        //Else: if not, set[setN] needs refill
+                    }
+                    //Else: event driven recovery lightly/safely the refilling of bitcoinKeySet[setN]
+                }
+                //Else (#aeriu#): event driven recover lightly/safely the getting of the key using the locked setN/pageX info
+            }
+           //Else: Tell them to use/wait-for-confirm/done the key already assigned to them
+        }
+    }
+};
+
+//The UUID-per-key-request is to be able to differentiate two LCB_APPENDS to the same set[setN], which is quite likely to happen naturally (if we only did username, we would re-get an old key)
+//UUID-per-refill is used for similar reason, but different stage

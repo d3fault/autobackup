@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1392024560
+Documents/minddump/:1392180907
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1392023070
+Documents/minddump/dreams/:1392158402
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -120,6 +120,7 @@ Documents/minddump/dreams/near.death.experience.sdlfkjlsdjfljsdfljsdflkjsdoiuwel
 Documents/minddump/dreams/not.necessarily.a.dream.but.kinda.was.everything.is.arbitrary.txt:1344525905
 Documents/minddump/dreams/obstacle.course.in.the.sky.scam.chicken.sick.txt:1354666195
 Documents/minddump/dreams/orange.sunglasses.rocket.time.machine.with.inflatable.fail.airbags.txt:1354187671
+Documents/minddump/dreams/parachuting.on.thick.foresty.mountainside.momentarily.lucid.too.txt:1392158402
 Documents/minddump/dreams/paxos.mostly.awake.almost.asked.my.mom.to.help.me.decipher.txt:1338978881
 Documents/minddump/dreams/plane.crashes.sdflkjsdfouwerouasdlfjsadofuwerwerslfdj.txt:1390212158
 Documents/minddump/dreams/pry.open.your.mouth.while.in.drug.induced.sleep.and.listen.to.your.dreams.sdfjskldfjsdlfj.txt:1390920241
@@ -339,6 +340,7 @@ Documents/minddump/asdflkjsdflkjsadlkfjsdfousdflkjsdfouwerkjdsfou.txt:1360774627
 Documents/minddump/asdflkjsdflkjsdflkjsdfljsdaouwerlkjsdafouasdlfjwer.txt:1352101379
 Documents/minddump/asdflkjsdflkjsdfosdiulkjouwerlkjdsfouisdflkjwerouilfkjsdfoiu.txt:1357898617
 Documents/minddump/asdflkjsdflkjsdfouewlrjofudslkflsakdjflskjd.txt:1358373766
+Documents/minddump/asdflkjsdflkjsdlfjsldkfjsdofulkjweroulskfosduflkj.txt:1392170058
 Documents/minddump/asdflkjsdflkjsdlkfjsadlkfjsaldkjflskdjfsadouwerlkjsdfousdafljwer.txt:1351480455
 Documents/minddump/asdflkjsdflkjsodfulsdjfousdflkjsdofulsdjfouwelkrjoiuslkdjfosudfl.txt:1370664742
 Documents/minddump/asdflkjsdflskdajfouwerlkjsdfousadflkjasfouisdflkjwoeriusdfkl.txt:1348891958
@@ -479,6 +481,7 @@ Documents/minddump/asldfkjsaldkfjsdlkjfouierlkjouwelkjrosufdlskdfjouwerlkjoudsfl
 Documents/minddump/asldfkjsdafkjlwoeukjsdflkjsdfljk.txt:1357810222
 Documents/minddump/asldfkjsdlfkjsdlkfjoiuerkjdfsoiurk.txt:1354841164
 Documents/minddump/asldfkjsdofuwelrkjjaosadfuwerkjfdgoiuwekkeiejHI.txt:1333731501
+Documents/minddump/asldfkjskjfslkwersdfsjdfsoduflsdjfousdflkjsofjouilkjsf.txt:1392180907
 Documents/minddump/asldgjfsaodiuflkjweroisfdlksdjfsaoifdulwekrjlostinthoughtperfectlaskjfasofiuwel.txt:1339487591
 Documents/minddump/asldjkfasdlfkjowieurlkfjsdflkjwerou.txt:1339936146
 Documents/minddump/asldkfjasdfoiuwelrkjsdfkhsadfkljhweriuasdofiuwerlk.txt:1344300463
@@ -534,7 +537,7 @@ Documents/minddump/cant.beat.em.join.em.saljdfosdfusldfjouweljorulskjdfosudfls.t
 Documents/minddump/care.about.not.caring.asdflakweroausdfklj.txt:1343492054
 Documents/minddump/censoring.certain.names.will.allow.me.to.launch.fuck.yea.aldkfjasdlfkjweroiu.txt:1341528952
 Documents/minddump/censorsteps.sfsofiusdflkjsdfou.txt:1384968995
-Documents/minddump/chiptunes.list.of.songs.ill.miss.but.fuck.it.txt:1391193422
+Documents/minddump/chiptunes.list.of.songs.ill.miss.but.fuck.it.txt:1392183011
 Documents/minddump/choose.the.right.tools.but.first.you.must.know.of.their.existence.txt:1388233212
 Documents/minddump/cjlckzxlcjzxlkjclzkxjcudoasdoiusad.txt:1355827044
 Documents/minddump/clear.concise.and.working.but.still.a.piece.of.shit.qml.aslfkjsadflksaj.txt:1339321953
@@ -945,6 +948,7 @@ Documents/minddump/i.doubt.id.ever.say.this.im.not.that.cold.alsdkfjoawuersfdjks
 Documents/minddump/i.forget.the.rest.and.started.typing.this.before.the.previous.txt:1338003289
 Documents/minddump/i.genuinely.love.to.code.and.that.is.my.advantage.over.most.everyone.else.txt:1339821829
 Documents/minddump/i.guess.i.do.want.to.remain.unknown.being.popular.would.suck.fasldjfwoaurslafjsdaflkj.txt:1337293738
+Documents/minddump/i.guess.it.is.my.duty.to.make.them.smart.then.but.guh.futile.is.the.word.and.then.ive.wasted.my.own.life.too.bleh.txt:1392166895
 Documents/minddump/i.hate.copyright.so.i.use.copyleft.a.form.of.copyright.to.fight.copyright.and.similarly.i.will.fight.censorship.with.censorship.txt:1363798441
 Documents/minddump/i.leik.wordrap.most.dont.txt:1339487903
 Documents/minddump/i.love.ceep.and.am.not.ashamed.but.am.still.not.williing.to.go.to.prison.over.it.so.fuck.you.all.adslfjasdljf.txt:1352101702
@@ -1393,6 +1397,7 @@ Documents/minddump/sdfasdkfjsdalkjfouwerlkjosduflksjdfouwelrkjoudsflkjsdfouwekjr
 Documents/minddump/sdfasldkfjsladkjfosdufljsdfoulfjsofulsdjfosduflkjweorulkjsofulsdkjfosduifl.txt:1370664599
 Documents/minddump/sdfdslkfjslkdjfsdouflskjfosduflkjowuelrkjofiusdlfkjsaodfulsdjfouewr.txt:1370568336
 Documents/minddump/sdfjldsjfldjlasdfjlsdjfljskdjflsadjflkweroyhgkjhdf.txt:1355210058
+Documents/minddump/sdfjskdljfklsdjfouweljroudfsjdfouwelrjoudflsdjfou.txt:1392163356
 Documents/minddump/sdfjslkdfjlksdjfouwerlkjousdlfkjsoduflkdsjfousdfkl.txt:1371890893
 Documents/minddump/sdfkdjsflksjdfljsdfkjsfkdjsdfourwerousdf.txt:1359855551
 Documents/minddump/sdfkjasdlkfjsakldfjasdofulskdjfosduflkjsdfoulsdkfjsoduifsldkjfosduflkjweouf.txt:1379287456
@@ -1600,6 +1605,7 @@ Documents/minddump/sdlfkjsklfjdlskjflskjdflsdfjouwlrejsodfulsadkjfosduflkwejrous
 Documents/minddump/sdlfkjsklfjsdofuljeroulkdjsfousdflkjsdfousadlfkjsodfulkewroiusldfk.txt:1371530952
 Documents/minddump/sdlfkjsldfkjsdofulksdjfousdflkjsdofulskdjfousdflkjsdofu.txt:1371778903
 Documents/minddump/sdlfkjsldfkjsldkfjsdlfkjosdfulsdfjosudflskjfdouwelrkjoiusdflkjsdfoul.txt:1381781043
+Documents/minddump/sdlfkjsldkfjlksdjfousdflkjsdouewljrousdlfkjsdofui.txt:1392163065
 Documents/minddump/sdlfkjsldkfjosdufljweorulkjdfoisudfljsdofulwekjrousldfjosudfouo.txt:1370590000
 Documents/minddump/sdlfkjslkdjfsdfousdlfjsodufsdlkjfouewrlkjsdfousdflk.txt:1386009647
 Documents/minddump/sdlfkjworiuaslfdkjaosalkfweoiurfslfjsofiuwerlkajsdfoiurlek.txt:1339487531
@@ -1636,6 +1642,7 @@ Documents/minddump/sfdljsdflkjlsdkfjlkdjflkjsdlfkjsdofuwejrousdlfkjsdfoulkjer.tx
 Documents/minddump/sfdljsdlfjlsdjfouwerlkjsdfousdlfj.txt:1355325448
 Documents/minddump/sfdljsdlfjsdofulsjfosudflkjsdfoulsdjkfoiuwerljksfdfsd.txt:1365395305
 Documents/minddump/sfdlkfjslkjfosdufljsdfousdflkjweroulkjsdfosaudflkwjeroiuf.txt:1370568072
+Documents/minddump/sfdlkjslkdfjslkdjfosudflsjdfousdflkjsdofusdlfkj.txt:1392178593
 Documents/minddump/sfdlksjadfouwarkhsdfiawyroaisfhwerusdofiu.txt:1344187598
 Documents/minddump/sfdlkwejroiusdflkjawfsdopfsudflskjdoiuwerl.txt:1339058790
 Documents/minddump/sfdlsakdjflksdajflksdouretretwergfdafflejrkwoeirulkjsdf.txt:1363563716
@@ -2185,7 +2192,7 @@ Projects/GitUnrollRerollCensorshipMachine/src/lib/:1385062033
 Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.cpp:1385062033
 Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.h:1384772890
 Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.pri:1384332856
-Projects/Ideas/:1391712350
+Projects/Ideas/:1392178497
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -2440,6 +2447,7 @@ Projects/Ideas/serial.qcode.over.video.out.txt:1324818896
 Projects/Ideas/social.networking.friend.feed.and.outreach.feed.for.when.youre.bored.of.your.own.friends.but.not.bored.enough.to.wander.txt:1331350249
 Projects/Ideas/social.networking.is.nothing.special.just.a.small.part.of.a.larger.thing.txt:1322772117
 Projects/Ideas/soudclong.txt:1322063311
+Projects/Ideas/spend.rate.must.be.less.than.or.equal.to.receive.rate.hurr.ima.durr.txt:1392178497
 Projects/Ideas/subdomain.brainwash.with.periodic.ajax.loading.in.videos.or.anything.really.txt:1354836672
 Projects/Ideas/survival.peace.and.friendship.school.txt:1325873857
 Projects/Ideas/teaching.something.programming.for.example.txt:1344622722
@@ -3724,8 +3732,11 @@ Solutions/Anonymous Bitcoin Computing/src/shared/WtFrontEndAndAppDbProtocol.h:13
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
 Solutions/Anonymous Bitcoin Computing 2/:1391669092
-Solutions/Anonymous Bitcoin Computing 2/design/:1392024733
-Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.unfinished.proposition.might.work.might.be.shit.idk.yet.txt:1392076560
+Solutions/Anonymous Bitcoin Computing 2/design/:1392190697
+Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.with.recovery.cas.swap.to.get.a.key.with.uuids.for.refill.and.recovery.pseudocode.cpp:1392190606
+Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.without.recovery.kiss.but.not.most.efficient.solution.i.am.lolling.so.hard.right.now.txt:1392170170
+Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.NOPE.design.not.using.way.too.complex.lold.when.i.thought.up.more.expensive.much.simpler.design.about.to.write.txt:1392170213
+Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.unfinished.proposition.might.work.might.be.shit.idk.yet.txt:1392168942
 Solutions/Anonymous Bitcoin Computing 2/design/buy.sell.campaigns.slots.fillers.oh.my.splained.simply.txt:1390504428
 Solutions/Anonymous Bitcoin Computing 2/design/chart.helps.with.time.aspect.animated.for.js.and.static.for.not.txt:1390507673
 Solutions/Anonymous Bitcoin Computing 2/design/core.json.doc.design.for.use.case.user.jimboknives.an.buying.ad.slot.filler.txt:1391836337
@@ -3738,8 +3749,9 @@ Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.here.is.the.
 Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.slot.n.plus.one.existence.testing.drives.the.entire.app.with.1sec.max.latency.BUT.probable.code.aka.failable.code.drives.it.at.max.speed.but.there.is.100ms.get.and.subscribe.polling.txt:1390759647
 Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:1390077121
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
+Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1392026519
+Solutions/Anonymous Bitcoin Computing 2/src/:1392093516
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1392025705
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1391750783
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1392025705

@@ -1,3 +1,5 @@
+NOPE. THIS DESIGN IS SHIT BECAUSE TOO COMPLEX. SEE "bitcoin.FINAL.kiss.[...].txt" for the design actually implemented
+
 1) 20mb (roughly 699,050) of public keys, comma separated: hugeBitcoinKeyList
 2) 1000x "sets"/buffers of ~100 keys findable by using keys "bitcoinKeyBuffer0" -> "bitcoinKeyBuffer1000", and which to choose is determined via rand() % 1000
 3) Each set/buffer (2) has a corresponding "used" doc. Both the buffer and the "used" doc are queried, and then of the remaining/non-used keys, one is randomly chosen.
@@ -8,10 +10,23 @@
 8) perform refill using hugeBitcoinKeyList, but i forget how lolol so ima edit this later (had something to do with emptying the "set" + "used" things and turning them into pages (but the 'current' is always accessible by 1/same key)... but even that is probably not entirely important. also had to do with keeping some index into hugeBitcoinKeyList for where to refill from, but now atomicity problems come to mind and i'll get back to you on this)
 
 =Refill Maybe=
-a) hugeBitcoinKeyList also has corresponding "used", but it covers ranges instead of individual keys used (if always 100, we needn't specify (but specifying 100 gives us flexibility [that might be worthless]))
-[to be continued arby is on his way over]
+a) hugeBitcoinKeyList also has corresponding "used", but it covers ranges instead of individual keys used (if always 100, we needn't specify (but specifying the 100 gives us flexibility [that might be worthless]))
+b) you get the "used" range doc to determine if hugeBitcoinKeyList has any keys left ("no keys left end-user error" + notification to self + that is the furthest we recover without manual intervention (20mb of keys comma separated)). after determining there are keys, you LCB_APPEND your range-get to the used list, then re-get the LCB_APPEND and calcualte your "index into 20mb of comma separated that correspond to this LCB_INSERT position". similar math is used for seeing if there is enough room before even trying. the reason we re-get is because the time between the get determining whether or not there are any keys or not and the time we LCP_APPEND is not atomic so we may have run out since checking. the "used" doc must allow out of bounds ranges because of this, and it's up to the software to ignore those "out of bounds" 'APPEND-CLAIMS'.
+c) similar to the end of (b), a node who has taken on the responsibility of refilling a "set" must also coordinate a "UUID" for the "declaration of the attempt to refill said set" with his index/LCB_APPEND, so that he may safely back out of the race condition where hugeBitcoinKeyList is itself being refilled (rarely, manually (TODOreq: i say build this small part sooner rather than later because it will require a bit of CAS, and i will (had:might) forget that stuff)) and we have already declared that we are attempting to refill it using a specific-to-that-set field that might be used as a lock idk... BUT by the time we get to the LCB_APPEND,
+
+A recovery from the point after the LCB_APPEND attempt for a set is being declared attempted (perhaps a "lock" there) may cause the LCB_APPEND to happen twice. The software need only consider the FIRST entry for a setId/UUID (maybe-merge-those) into the "used" doc via LCB_APPEND, and that is another reason we re-get (or maybe i just repeated myself (nope, but kinda. was talking about entries out of bounds, but they are similar code paths)) after we do the LCB_APPEND (rare race condition)
+
+The software must not count the 1+th entry (ONLY count the 0th/first entry) into the LCB_APPEND (all dupes) toward the count for "out of bounds" of hugeBitcoinKeyList's corresponding-"used"-doc, though that seems like common sense.
+
+When doing the hugeBitcoinKeyList refill, the corresponding "used" doc is itself deleted (or perhaps saved as old page, but doesn't matter probably (since i will surely have other copies and monitoring them all automatically will be easy)). We may have deleted the UUID from an LCB_APPEND (it may have been out-of-bounds-and-not-yet-noticed(from the re-get) and that may trip up the code. it needs to just add that UUID again but generating a new one is ok too (doesn't matter)).
+
+NOPE: (V NAH):A per-wt static mutex keeping track of a rarely-changing hugeBitcoinKeyList index, which itself is recorded in a doc (either on or separate, i don't think it matters which (separate sounds safer but might not matter (and might make more trouble instead))). It is rarely locked (only when refilling a set) and it is waaaaaaay more rarely even changed. When it detects that a hugeBitcoinKeyList index it GET'd is all "used" up (analyzing corresponding "used"), it does a GET to see if their static
+^^^^^NAH should just be a cas-swapped-doc to keep track of current index, since refilling sets is itself rarely performed (if too often and makes the key too hot/costly (doubt it, since we rand() % 1000 to choose that set of 100 to get a key from to begin with), we simply change from 100-keys-per-set to something higher (or the 1000-total-sets to higher, but we're scaling the same thing at that point), easy)
+
+tl;dr: we rely on the db's ability to uniformly distribute bitcoinKeySet0 - bitcoinKeySet1000 and use locking around a hugeBitcoinKeyList_N and a corresponding 'current page cache' doc into the hugeBitcoinKeyList_N (N itself, which is easily 'found' if the doc doesn't exist or is wrong). It simplifies coding that I am alerted ahead of time and always have "next page" available when it is first needed (manual intervention has to be scheduled anyways). I _SHOULD_ just keep one page buffer at all times (so an extra 20mb of keys (or i can split/shrink it (but whY!?!?? easier NOT to (less intervention)))) and add the next one right when the current one starts being used (it might prove beneficial to have 2 spare hugeBitcoinKeyList pages and notify when first is depleted, but this is just a mathametical ratio of when to be notified ultimately xD)
 
 
 Two recovery points:
 1) LCB_ADD fail (recovering another user who may have failed (may just be race condition))
 2) "Get Add Funds Key" pressed after previously pressing failed (and may have failed at/after many of the steps above)
+

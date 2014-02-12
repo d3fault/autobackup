@@ -1,0 +1,3 @@
+Why is automation an order of magnitude more difficult than manual operation? Humans don't have fail/recover points up the wazoo.
+
+But the reward from finishing an automated segment = time. Sometimes minutes, sometimes hours, sometimes entire fucking lives.

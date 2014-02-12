@@ -1,0 +1,1 @@
+All this code/db/etc is intended for "enough resources" cases. I have not accounted for "out of resources" in any places, so who the fuck knows how shit will start failing when that happens. I can monitor shit and always be one step ahead so that never happens hopefully (my designs scale horizontally, so it needn't happen!)
