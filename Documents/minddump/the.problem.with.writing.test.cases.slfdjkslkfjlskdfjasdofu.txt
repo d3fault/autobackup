@@ -1,0 +1,9 @@
+int methodToBeTestedAkaSquared(int x)
+{
+	return x^2;
+}
+void DO_TEST_methodToBeTestedAkaSquared()
+{
+	int test = methodToBeTestedAkaSquared(3);
+	ASSERT(test == methodToBeTestedAkaSquared(3));
+}

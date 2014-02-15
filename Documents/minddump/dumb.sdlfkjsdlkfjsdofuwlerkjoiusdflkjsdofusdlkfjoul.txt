@@ -1,0 +1,3 @@
+#ifndef endif
+#define endif __INTERNAL_ENDIF
+#endif //JIT

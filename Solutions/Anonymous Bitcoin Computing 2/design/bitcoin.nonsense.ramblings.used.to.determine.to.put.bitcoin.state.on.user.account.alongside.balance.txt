@@ -1,0 +1,29 @@
+One problem before implementing that hella huge bitcoin distributed key dispersement design: the user-account-bitcoin doc and the user-account(balance) doc need to err em uhm definitely at some point leik transition or something (add balance, zero out bitcoin shit ("confirmed+done")), and/or maybe that means the bitcoin stuff (incl. current key) should go on the user-account doc as well (atomicity)? Basically just thinking out loud here bleh bleh bleh and TODOreq if the user-account is "lockedAttemptingToFill" then obviously we don't want to do ANYTHING relating to the bitcoin key (otherwise the CAS-swap to debit it will fail and the code will think that recovery had done it (when in fact it was just a stupid bitcoin key related operation that changed the CAS to make it fail (and no balance is debitted)). That's of course if they share the same doc and idk if they should yet. STATES!
+
+NoBitcoinKey ("Get Key") -> AttemptingToGetKey (rendering defered) -> BitcoinKeyNoPending ("Check for Pending") -> BitcoinKeySomePending ("Check Again For Pending", "Check for Confirmed") -> BitcoinKeySomeConfirmed ("Check Again For Pending", "Check Again For Confirmed" , "Done With This Key") -> NoBitcoinKey ("Get Key")
+
+Or perhaps "Done With This Key" can get the next key and put it into BitcoinKeyNoPending... BUT it is better key management (less wasted keys) to make them request keys (first key especially, but applies to all keys imo).
+
+Obviously DDOS for checking key balance etc factors in but that's irrelevant atm TODOreq.
+
+
+So the uhh "locked attempting to get key" and "just got key = theKeyItself" things/modes...... are they related to the above states? Is it an extra state between NoBitcoinKey and BitcoinKeyNoPending? Is it my choice whether to jam it in between there or(had:are) not? Which is the simplest? Atomicity/etc probably factors in, so jamming it ALL onto the user-account doc is probably the best, AS LONG AS i don't do _ANYTHING_ whenever user-account is lockedAttemptingToFill TODOreq.
+
+I don't want any of the BitcoinStates to keep the user from doing a SlotFillAkaPurchase (unless I must), but the inverse is not true: When doing a SlotFillAkaPurchase, ALL BitcoinState transitions are halted (fail with "retry in a few seconds") until the SlotFillAkaPurchase completes. I haven't thought it all the way through yet... whether the first sentence of this paragraph is possible (safely) or not... but I'm leaning towards yes, it will work fine and dandy as long as I always check that lockedAttemptingToFill isn't set whenever getting (just before a CAS-swap to transition BitcoinState). Of course that means if the CAS-swap fails for any of those transitions, we give a "retry in a few seconds" message, or possibly a "don't use multiple tabs noob" message.
+
+"Add Funds" button on account page queries the user-account for BitcoinState, and if in "locked attempting to get key" mode is seen, we do the exact same code (about to be written) that is used to attempt to get the key (in 'recovery' mode, but there is no difference really)... BUT perhaps we should wait 100ms and query the user-account again to see if it's out of "locked attempting to get key" mode now :), then try recovery if it isn't.
+
+Ok actually I think that is the simplest and will work just fine, BitcoinState: "stateNameHere" json field in user-account doc. Adding "attempting to get key" into the states above (wasn't there initially)
+
+
+And now I'm contemplating whether or not all of those states need to be in the db, or if simply having them in-memory is sufficient/superior. Minimized, it would be this:
+
+NoBitcoinKey ("Get Key") -> AttemptingToGetKey (rendering defered) -> HaveKey (buttons to show determined in memory only, but ultimately "Done With Key" shown) -> NoBitcoinKey ("Get Key")
+
+Downside is that if they go away from account and back again, they have to do "Check Pending" -> "Check Confirmed" again to even be able to see the "Done With Key" button... upside is simplicity and less db load (in exchange for more bitcoin load (only paid if navigating away -> back)). Yea methinks minimal is easier/betterer.
+
+Also instead of BitcoinState : blah, I should just call it "BitcoinKey" : "none", "getting", "theKeyItself", and use deducting reasoning to determine if the value is a bitcoin key or not (easy). Bitcoin keys can't be less than like 27 characters, so "none" or "getting" will never be valid bitcoin keys. THEN AGAIN "getting" has to specify which bitcoinKeySet[setN] it chose (recovery must use same), so bleh there goes my single json field simplicity :-P (who cares).
+
+
+
+SHIT editting this doc: by putting it on the doc with attemptingToFillSlot as well, we need to make sure that either we don't go into attemptingToFillSlot mode when BitcoinState is Getting Key (since it will likely transition OUT of that momentarily), OR we can (i will most likely do this) just not allow the transition of GettingKey -> HaveKey. It should just be a dumb error saying "lol how did you get in there?" and telling them to retry after the slot fill finishes. If I choose the first option, I have to edit many places where slot fill locks the doc. I can't even remember where, but I'm pretty sure it's many (including recovery possy). Dumb error is better, but I need to remember to do it! TODOreq

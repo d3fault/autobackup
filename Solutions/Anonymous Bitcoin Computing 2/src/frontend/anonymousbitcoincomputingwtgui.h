@@ -169,6 +169,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void showAccountWidget();
     WContainerWidget *m_AccountWidget;
     WContainerWidget *m_AuthenticationRequiredWidget;
+    void handleAddFundsClicked();
+    WVBoxLayout *m_AddFundsPlaceholderLayout;
     WLineEdit *m_UploadNewSlotFiller_NICKNAME;
     WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
     WLineEdit *m_UploadNewSlotFiller_URL;
@@ -209,14 +211,37 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError);
     void buySlotStep2d3faultCampaign0ButtonClicked();
+    std::string m_UserAccountJsonForLockingIntoGettingBitcoinKey;
+    u_int64_t m_UserAccountCASforBitcoinGettingKeyLockingAndUnlocking; //used both to lock the account into 'getting key', and to unlock it from that
+    bool m_UserAccountBitcoinDoingGettingKeyRecoverySoAccountLocked;
+    int m_BitcoinKeySetIndex_aka_setN;
+    int m_BitcoinKeySetPage_aka_PageY;
+    std::string m_PerGetBitcoinKeyUUID;
+    void checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(const &userAccountDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+    void determineBitcoinStateButDontLetThemProceedForwardIfLockedAttemptingToFillAkaPurchaseSlot(const string &userAccountJsonDoc, u_int64_t casOnlyUsedWhenBitcoinStateIsInGettingKey_aka_lightRecovery, bool lcbOpSuccess, bool dbError);
+    std::string m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage;
+    void gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRoomEtc(const std::string &bitcoinKeySetNpageY, u_int64_t bitcoinKeySetNpageY_CAS, bool lcbOpSuccess, bool dbError);
+    void getBitcoinKeySetNPageYAttemptFinishedSoCheckItIfItExistsAndMakeItIfItDont(const std::string &bitcoinKeySetNpageY_orNot, u_int64_t bitcoinKeySetNpageY_CAS_orNot, bool lcbOpSuccess, bool dbError);
+    void getHugeBitcoinKeyListActualPageAttemptCompleted(const std::string &hugeBitcoinKeyListActualPage, u_int64_t casForUsingInSafelyInsertingOurPerFillUuid, bool lcbOpSuccess, bool dbError);
+    void uuidPerRefillIsSeenOnHugeBitcoinListSoProceedWithActualNextPageFill();
+    void unlockUserAccountSafelyFromBitcoinGettingKeyBecauseShitWeGotAfuckingKey_NoSweatIfBeatenToIt();
+    void checkForPendingBitcoinBalanceButtonClicked();
+    void handleGetBitcoinKeyButtonClicked();
     ptree m_RunningAllSlotFillersJsonDoc;
     u_int64_t m_RunningAllSlotFillersJsonDocCAS;
     void determineNextSlotFillerIndexAndThenAddSlotFillerToIt(const string &allAdSlotFillersJsonDoc, u_int64_t casOfAllSlotFillersDocForUpdatingSafely, bool lcbOpSuccess, bool dbError);
     void tryToAddAdSlotFillerToCouchbase(const std::string &slotFillerIndexToAttemptToAdd);
     void continueRecoveringLockedAccountAtLoginAttempt(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError);
+    void analyzeBitcoinKeySetPageCacheDocToSeeWhatPageItIsOnAndIfItIsLocked(const std::string &bitcoinKeySetCurrentPageDoc, u_int64_t casOnlyForUseInFillingNextPageWayLaterOn, bool lcbOpSuccess, bool dbError);
+    u_int64_t m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater;
+    void proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
+    void hugeBitcoinKeyListCurrentPageGetComplete(const std::string &hugeBitcoinKeyList_CurrentPageJson, bool lcbOpSuccess, bool dbError);
+    std::string m_FillingNextBitcoinKeySet_aka_PageY_ForAfterCASswapLockSucceeds;
+    std::string m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds;
+    std::string m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList;
     void getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex(const string &adSlotFillerToExtractNicknameFrom, bool lcbOpSuccess, bool dbError);
     bool m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired;
     double m_CurrentPriceToUseForBuying;
@@ -225,6 +250,10 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase;
     std::string m_AdSlotAboutToBeFilledIfLockIsSuccessful;
     void userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError);
+    void userAccountBitcoinLockedIntoGettingKeyAttemptComplete(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError);
+    void userAccountBitcoinGettingKeyLocked_So_GetSavingCASbitcoinKeySetNPageY();
+    void attemptToLockBitcoinKeySetNintoFillingNextPageModeComplete(uint64 casFromLockSoWeCanSafelyUnlockAfterNextPageFillComplete, bool lcbOpSuccess, bool dbError);
+    void bitcoinKeySetN_currentPage_Locked_soDoKeyRangeClaimAndNextPageCreation();
     std::string m_StartTimestampUsedInNewPurchase;
     u_int64_t m_CasFromUserAccountLockSoWeCanSafelyUnlockLater;
     std::string m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase;
@@ -235,6 +264,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError);
     void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError);
     void doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(bool lcbOpSuccess, bool dbError);
+    void doneAttemptingToUnlockUserAccountFromBitcoinGettingKeyToBitcoinHaveKey(bool lcbOpSuccess, bool dbError);
+    void doneAttemptingToUpdateBitcoinKeySetViaCASswapAkaClaimingAKey(bool lcbOpSuccess, bool dbError);
+    void doneAttemptingHugeBitcoinKeyListKeyRangeClaim(bool lcbOpSuccess, bool dbError);
     void doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(bool lcbOpSuccess, bool dbError);
 
     //store
@@ -261,7 +293,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void handleLoginButtonClicked();
     std::string m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack;
     void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, u_int64_t casOnlyUsedWhenDoingRecoveryAtLogin, bool lcbOpSuccess, bool dbError);
-    std::string m_UserAccountLockedJsonToMaybeUseInAccountRecovery;
+    std::string m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin;
     u_int64_t m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay;
     void doLoginTasks();
     void handleLogoutButtonClicked();
@@ -280,6 +312,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     enum WhatTheStoreWithInputCasWasForEnum
     {
         INITIALINVALIDNULLSTOREWITHCAS,
+        UNLOCKUSERACCOUNTFROMBITCOINGETTINGKEYTOBITCOINHAVEKEY,
+        CLAIMBITCOINKEYONBITCOINKEYSETVIACASSWAP,
+        HUGEBITCOINKEYLISTKEYRANGECLAIMATTEMPT,
         UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER,
         HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS,
         HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS,
@@ -288,11 +323,14 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     enum WhatTheStoreWithInputCasSavingOutputCasWasForEnum
     {
         INITIALINVALIDNULLSTOREWITHCASSAVINGCAS,
+        USERACCOUNTBITCOINLOCKEDINTOGETTINGKEYMODE,
+        LOCKINGBITCOINKEYSETNINTOFILLINGNEXTPAGEMODE,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS
     };
     enum WhatTheGetWasForEnum
     {
         INITIALINVALIDNULLGET,
+        GETHUGEBITCOINKEYLISTCURRENTPAGE,
         GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET,
         ONLOGINACCOUNTLOCKEDRECOVERYDOESSLOTEXISTCHECK
@@ -301,6 +339,12 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     {
         LOGINATTEMPTGET,
         INITIALINVALIDNULLGETSAVINGCAS,
+        ADDFUNDSBUTTONCLICKEDSODETERMINEBITCOINSTATEBUTDONTLETTHEMPROCEEDIFLOCKEDATTEMPTINGTOFILLAKAPURCHASESLOT,
+        GETBITCOINKEYSETNCURRENTPAGETOSEEWHATPAGEITISONANDIFITISLOCKED,
+        GETBITCOINKEYSETNACTUALPAGETOSEEIFUUIDONITENOUGHROOM,
+        GETUSERACCOUNTFORGOINGINTOGETTINGBITCOINKEYMODE,
+        GETBITCOINKEYSETNPAGEYANDIFITEXISTSLOOPAROUNDCHECKINGUUIDBUTIFNOTEXISTMAKEITEXISTBITCH,
+        GETHUGEBITCOINKEYLISTACTUALPAGEFORANALYZINGANDMAYBECLAIMINGKEYRANGE,
         ALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS,
         HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET

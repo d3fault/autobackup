@@ -90,13 +90,19 @@ adSpaceAllSlotFillersJimboKnives
 //CRITICAL SESSION/ACCOUNT DATA FOR JimboKnives -- has ability to buy slot fillers
 userJimboKnives
 {
+  "balance": "0.098",
   "passwordHash": "MRGFtZyvcZU/2HdEW1H57bVtwfrPfw==",
   "passwordSalt": "1964Y1AFICvu1XiQE9w0xsPhDE8=",
-  "balance": "0.098"
+  "bitcoinState": "NoKey", //or "GettingKey" or "HaveKey"
+  [optional]"bitcoinStateData" : "not set when NoKey. if(bitcoinKeyState == GettingKey) { which bitcoinKeySet[setN] we're getting from } else if(bitcoinKeyState == HaveKey) { the bitcoin key itself }"
+  [optional]"bitcoinSetPage" : "PageY", //only appears when "GettingKey"
+  [optional]"bitcoinGetKeyUUID" : "per-key-request-uuid" //only appears when "GettingKey"
 }
 
 ##
 So before we allow JimboKnives to LCB_ADD adSpaceSlotsd3fault0Slot1, we first have to make sure he has enough funds. We also have to make sure he doesn't try to buy two things simultaneously (and doesn't have enough funds for both), so we have to 'lock' his userJimboKnives document by doing a CAS swap (if he tries to do two buys simultaneously, the second one will fail) and putting it into the following state while it is 'locked'
+
+!!!!!!!!TODOreq: we need to use ptree::erase to take off slotToAttemptToFillAkaPurchase stuff instead of re-making the ptree and copying values over. This applies to recovery possy code too!!! Otherwise BitcoinState stuff might be lost (and keys (POSSIBLY FUNDS ALREADY SENT TO IT) lost with it)!!!!!!!!!!!!!
 
 //CRITICAL SESSION/ACCOUNT DATA FOR JimboKnives -- buy abilities CAS-swap 'LOCKED' until transaction succeeds or fails (TODOreq: rollback/machine-failures)
 userJimboKnives
@@ -151,3 +157,45 @@ adSpaceSlotsd3fault0currentSlotCache
 }
 
 //SlotCache is just a shortcut/symbolic-link esq type doc. If it doesn't exist we can jump using math to what is about the right spot, or just walk the slots until we find one not existing. I may put the "slotFiller" in this cache as well, and possibly even "expiration" date... but for now KISS and just declaring it here to get it out of the campaign doc
+
+Not Locked:
+bitcoinKeySet[setN]_CurrentPage //setN = rand() % 1000
+{
+  "currentPage" : "PageY"
+}
+
+Locked:
+bitcoinKeySet[setN]_CurrentPage
+{
+  "fillingNextBitcoinKeySetPage" : "1", //indicates the NEXT page attemptint to be filled
+  "uuidPerFill" : "UUID-per-fill",
+  "hugeBitcoinKeyListStartingPage" : "PageZ"
+}
+
+bitcoinKeySet[setN]_PageY //example: bitcoinKeySet998_Page3
+{
+ "key0": "aaaabbbbbcccc69",
+
+  //...100 of such entries...
+
+ "key99": "zzzzzzdddddd3333",
+ "key99claimedUuid": "per-key-get-uuid", //get_optional, not existing if key unclaimed
+ "key99claimedUsername": "JimboKnives" //get_optional
+}
+
+hugeBitcoinKeyList_CurrentPage //no other state, can point to non-existent page (as optimization to give us simple lcbOp-fail-gets instead of huge doc gets/analyzings/THEN-fails)
+{
+  "currentPage" : 69
+}
+
+hugeBitcoinKeyList_Page0 //hardcoded key range size of 100 (matching bitcoinKeySet[setN]_PageY key count)
+{
+  "keyRange0" : "csv or json array whatever's easiest",
+
+  //....100 of such entries. hardcoding to ease the coding (i suck at boost::json) for now, but theoretically doesn't need to be consistent and can change from page to page (was thinking 20mb worth, but eh maybe 350kb-ish would be more optimal?). i would just need to iterate json entries better. HOWEVER THE SIZE OF EACH ENTRY/key-range/bitcoin-key-set-page (100 keys) must stay the same
+
+  "keyRange420" : "see above",
+  "keyRange420claimedUuid" : "per-set-refill-uuid", //get_optional, not existing if key range unclaimed (just like bitcoinKeySet[setN]_PageY)
+  "keyRange420claimedSetN" : "setN for book keeping" //get_optional
+              claimedSetNPageY??? is just book keeping anyways, idfk
+}
