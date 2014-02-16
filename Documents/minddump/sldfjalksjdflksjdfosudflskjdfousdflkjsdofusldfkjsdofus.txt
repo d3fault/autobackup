@@ -1,0 +1,1 @@
+As programmers, we spend 99% of our time determinig what is a necessary optimization versus what is an unnecessary optimization. Everything we do is an optimization (we convert human-manual-timeConsuming tasks into automatically-run-at-the-motherfucking-speed-of-light tasks).

@@ -281,7 +281,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                                 return 1;
                             }
                             //total system failure averted
-                            //the transaction doc exists now, which is proof that the driver or another recoverer is active so we can just stop (even if they crashed, another recoverer would get it). simplifies code
+                            //the transaction doc exists now, which is proof that the driver or another recoverer is active so we can just stop (even if they crashed, another recoverer would get it). simplifies code and lessens overall system load
                         }
                         else
                         {

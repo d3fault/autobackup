@@ -1,0 +1,18 @@
+==NON-RECOVERY==
+1) Typical get key from bitcoinKeySet[setN]_PageY
+2) Fill bitcoinKeySet[setN]_PageY+1 from hugeBitcoinKeyList[pageZ], get key from bitcoinKeySet[setN]_PageY+1
+3) Fill bitcoinKeySet[setN]_PageY+1 from hugeBitcoinKeyList[pageZ+1], get key from bitcoinKeySet[setN]_PageY+1
+
+(3) is where we set hugeBitcoinKeyList_CurrentPage?
+
+==RECOVERY==
+1) User-account already locked toward getting key, get key from bitcoinKeySet[setN-specified-in-lock]_[PageY-specified-in-lock]
+2) User-account not locked, bitcoinKeySet[setN]_CurrentPage locked toward filling bitcoinKeySet[setN]_PageY+1 from hugeBitcoinKeyList[pageZ]. Fill bitcoinKeySet[setN]_PageY+1 from hugeBitcoinKeyList[pageZ], get key from bitcoinKeySet[setN]_PageY+1
+3) User-account already locked toward getting key, bitcoinKeySet[setN]_CurrentPage locked toward filling bitcoinKeySet[setN]_PageY+1 from hugeBitcoinKeyList[pageZ]
+
+Bleh this didn't help at all.
+
+Makes sense that recovery can/should set hugeBitcoinKeyList_CurrentPage somewhere...
+...recovery able to start on "old" pageZ though!
+
+KISS

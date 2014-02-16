@@ -1,0 +1,1 @@
+bool isSpaghettiCode = isAsynchronous; //fuck 2014

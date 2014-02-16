@@ -91,7 +91,7 @@ class PseudoCode //My head hurts
                                 //GOTO #sdofuou38#
                             }
                         }
-                        else //no keys left on page Y
+                        else //no space left on page Y
                         {
                             //PageY++, then attempt to get it. The reason we don't rely on _CurrentPage here is because locked/recovery could be pointing to an "old" page, and we need to try all pages from what they specified up to the current page (including creating a new page if no space empty on current page)
                             //If next page doesn't exist:
@@ -103,6 +103,7 @@ class PseudoCode //My head hurts
                                 {
 #endif
                                 //Get hugeBitcoinKeyList_CurrentPage to see what page it's on
+                                //m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont = true; //baller
                                 //Attempt: bitcoinKeySet[setN]_CurrentPage CAS-swap-locked into "fillingNextPage with UUID-per-fill on pageZ of hugeBitcoinKeyList" mode (TODOreq: marking unusable [but light recovery proceeds i guess, and recovery starts from that page specified but doesn't rely on it being accurate])
                                 //If above CAS-swap succeeds
                                 {
@@ -110,7 +111,7 @@ class PseudoCode //My head hurts
                                     //Get hugeBitcoinKeyList[pageZ] attempt in order to see if it exists, retrieve it's CAS, check for relevant-UUID, and see if room left (if the last two are false and true respectively, we try to cas-swap insert our UUID claiming a range)
                                     //If hugeBitcoinKeyList[pageZ] exists
                                     {
-                                        //If the UUID-per-fill is on hugeBitcoinKeyList[pageZ] (first attempt = race condition/neighbor, 2nd+ attempt = normal, but we account for all attempts!)
+                                        //If the UUID-per-fill is on hugeBitcoinKeyList[pageZ] (first attempt = race condition/neighbor/recovery, 2nd+ attempt = normal, but we account for all attempts!)
                                         {
                                             //#hhjsbvu8748#
                                             //Lightly create bitcoinKeySet[setN] Page Y using the range obtained from hugeBitcoinKeyList[pageZ] via an LCB_ADD-accepting fail (LCB_ADD fail means recovery already created it)
@@ -124,6 +125,8 @@ class PseudoCode //My head hurts
                                             else
                                             {
                                                 //neighbor recovery 'caught up' beat us to the bitcoinKeySet[setN]_CurrentPage unlocking..... which means.... NOTHING. We don't give a fuck, do nothing! HOWEVER it might mean that the UUID-per-key request is already being filled? MIGHT != GUARANTEED, since any UUID-per-key request could be handling that "next page creation"
+
+                                                //TODOreq: neighbor recovery might have put it into fillingNextPage mode YET AGAIN in a race condition, so i don't think the jump below is safe.... ffffffffff. It is safe if the cas-swap succeeded though (i think (man i'm so lost because can't the neighbor/recovery then unlock it (oh wait that's how i am here))). We should maybe go to #ejfjdi83939# if the cas-swap fails?
                                             }
 
                                             //possibly do something with PageY (now valid) before the GOTO, but maybe nothing since it's member variable?
@@ -140,7 +143,7 @@ class PseudoCode //My head hurts
 
                                             //If there is space left on that hugeBitcoinKeyList[pageZ]
                                             {
-                                                //CAS-swap attempt hugeBitcoinKeyList[pageZ] claiming a range for the next page
+                                                //CAS-swap attempt hugeBitcoinKeyList[pageZ] claiming a range for the next bitcoinKeySet[setN] page
                                                 //If the previous CAS-Swap-claim-range succeeded
                                                 {
                                                     //Get'd = Store'd (we _KNOW_ UUID is on store'd, but the code we jump to analyzes the get'd), then GOTO #hhjsbvu8748#
@@ -167,9 +170,20 @@ class PseudoCode //My head hurts
                                                 }
 #endif
                                             }
-                                            else
+                                            else //no space left on pageZ (but there might be a next page)
                                             {
+                                                //++PageZ
+                                                //if(m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont)
+                                                {
+                                                    //put PageZ into the db in _CurrentPage via cas swap
+                                                }
+
+                                                //GOTO #iopqjiw848#
+
                                                 //TODOreq: the following says to update _CurrentPage, but I think we just want to ++PageZ member variable and loop around to trying it again? We do want to make _CurrentPage point to next (potentially non-existent) page at some point though!!!
+                                                //^How the fuck do I differentiate between "++PageZ Only" and "++PageZ and store it in _CurrentPage", where both of them then go onto looping around and trying to actually utilize PageZ. I guess it's just if PageZ was populated USING _CurrentPage (then it isn't recovery (recovery could be pointing to hella old PageZ)), but even then we don't know that _CurrentPage doesn't already point to PageZ+2... although I suppose CAS-Swap protects us against overwriting that?
+
+                                                //Semi-old:
                                                 //Update hugeBitcoinKeyList_CurrentPage to now point to the next page, regardless of whether or not it exists //TODOreq: set to non-existence page (to be added) in order to make the server not crash from out of memory when all keys run out and every Wt client then tries to get hugeBitcoinKeyList to determine if it's empty :-P
                                                 //^^^UNSURE if cas-swap needed, or just simple 'set' is sufficient(/SAFE)
 
@@ -192,6 +206,8 @@ class PseudoCode //My head hurts
                                     }
                                     else
                                     {
+                                        //If the "locked starting from page z" value isn't the page we just tried to get (that doesn't exist), we should 're-lock' it to the page that doesn't exist, for the sole reason of not running out of memory because every single bitcoin key request pulls the entire already-full hugeBitcoinKeyList page (pageZ-1). It is safe for both recovery and normal code to do this because recovery will have already checked for the UUID already in all the previous ones
+
                                         //#oiei38849# <- nobody jumps here, but an #ifdef'd out comment refers to it xD
                                         //no pages left on hugeBitcoinKeyList, so we do nothing and need to alert ourselves (email/etc) to do a manual LCB_ADD of next hugeBitcoinKeyList[pageZ] (that LCB_ADD failing doesn't make sense)
                                         //notify user to try again later.... waaaaaaay later.... like tomorrow or something :). I could even tell them to notify me (maybe one is within yelling distance (ex: "say this: 'OOGA BOOGA I AM THE HUGE BITCOIN KEY REFILL NOTIFICATION OUTSOURCED TO ONE OF YOUR SLAVE COCKSUCKERS'. I'll know what it means.").
@@ -214,7 +230,7 @@ class PseudoCode //My head hurts
                             }
                             else
                             {
-                                //TODOreq: ALSO weird race condition or possibly even failure of neighbor after page creation, we don't know that CurrentPage was updated (we don't know that it wasn't)...
+                                //TODOreq: ALSO weird race condition or possibly even failure of neighbor after page creation, we don't know that bitcoinKeySet[setN]_CurrentPage was updated (we don't know that it wasn't). Whoever created it and made us go to this race condition may have failed just after the creation but before the updating of bitcoinKeySet[setN]_CurrentPage. It also might not matter at all and might just be overly optimistic and improve some future operation by an insignificant amount. Or hey, maybe the system crashes :). Derp teh code comes along and seeing a page is full, gets the next one and updates the page. Methinks it's only an insignificant optimization to worry about _CurrentPage here, especially given how rare this race condition is.
 
                                 //GOTO #sdofuou38#
                             }
@@ -230,8 +246,8 @@ class PseudoCode //My head hurts
             else //already locked to fill-next-page. do recovery, then jump back to next step (depending on user account lock state)
             {
                 //despite being locked for filling next page, we still want to proceed forward because we will then be doing light recovery of it (TODOreq: recovery detects dupe work, but we still want to continue getting the key from the newly generated page (i guess if we are lazy we can just error out and say try again sorry))
-
-                //GOTO #iopqjiw848#
+                //m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont = false;
+                //GOTO #iopqjiw848#, which does the page fill and then jumps back to #ndjgir784#
 
                 //OLD(??):
                 //GOTO #ndjgir784# after filling in variables retrieved by locked doc (the one that got us here)

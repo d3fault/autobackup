@@ -69,12 +69,11 @@ if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
     double buyerBalance = boost::lexical_cast<double>(pt6.get<std::string>("balance")); \
     double purchasePrice = boost::lexical_cast<double>(purchasePriceString); \
     buyerBalance -= purchasePrice; \
-    ptree pt9; \
-    pt9.put("passwordHash", pt6.get<std::string>("passwordHash")); \
-    pt9.put("passwordSalt", pt6.get<std::string>("passwordSalt")); \
-    pt9.put("balance", boost::lexical_cast<std::string>(buyerBalance)); \
+    pt6.erase("slotToAttemptToFillAkaPurchase"); \
+    pt6.erase("slotToAttemptToFillAkaPurchaseItWith"); \
+    pt6.put("balance", boost::lexical_cast<std::string>(buyerBalance)); \
     std::ostringstream userAccountDebittedAndUnlockedJsonBuffer; \
-    write_json(userAccountDebittedAndUnlockedJsonBuffer, pt9, false); \
+    write_json(userAccountDebittedAndUnlockedJsonBuffer, pt6, false); \
     std::string userAccountDebittedAndUnlockedJson = userAccountDebittedAndUnlockedJsonBuffer.str(); \
     cmd.v.v0.bytes = userAccountDebittedAndUnlockedJson.c_str(); \
     cmd.v.v0.nbytes = userAccountDebittedAndUnlockedJson.length(); \

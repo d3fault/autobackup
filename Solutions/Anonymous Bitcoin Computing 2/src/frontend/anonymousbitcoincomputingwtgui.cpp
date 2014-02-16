@@ -24,9 +24,12 @@
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT "d3fault"
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 "d3fault's Ad Campaign #0"
 
+//TODOreq: FOREVER: any feature that modifies user-account doc must do so with a CAS-swap, _AND_ the 'get' for that CAS-swap must ALWAYS check that "slotToAttemptToFillAkaPurchase" isn't set on the user-account. If "slotToAttemptToFillAkaPurchase" is set, that feature must not work until "slotToAttemptToFillAkaPurchase" is gone. It should error out saying "don't use multiple tabs" or "please try again in a few seconds".
+//^just worth mentioning, but not worth fixing yet: when the buy slot aka slot fill fails just after using account locking (but before slot fill) and they log in and basically can't do shit with their account, it effectively makes the bitcoin stuff off limits too since it relies on the user account not being locked. As of right now they have to wait until the slot is purchased, but once I let them proceed/retry with the buy, then they can get themselves out of it (if they still want to do the purchase)
 //TODOreq: "Forgot Your Password?" --> "Tough shit, I hope you learned your lesson"
 //TODOreq: ^register page should give warning "There is no password reset functionality"
 //TODOreq: timezones fuck shit up? if so, we can send them the 'current timestamp' to use (but then there'd be a bit of latency delay)... or mb we can find out proper solution in js (toTime() gives us msecs since epoch... in greenwhich right? not local? maybe this isn't a problem)
+//TODOreq: no-js get-from-subscription-cache-but-dont-subscribe
 
 //TODOoptimization: lots of stuff needs to be moved into it's own object instead of just being a member in this class. it will reduce the memory-per-connection by...  maybe-a-significant... amount. for example the HackedInD3faultCampaign0 shit should be on it's own widget, but ON TOP OF THAT each "step" in the HackedInD3faultCampaign0 thing (buy step 1, buy step 2) can/should be it's own object (member of of HackedInD3faultCampaign0 object). We just have too many unused and unneeded-most-of-the-time member variables in this monster class... but KISS so ima continue for now, despite cringing at how ugly/hacky it's becoming :)
 
@@ -71,7 +74,7 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
 {
     //constructor body, in case you're confused...
     taus88 taus88randomNumberGenerator;
-    taus88randomNumberGenerator.seed((int)rawUniqueId());
+    taus88randomNumberGenerator.seed(static_cast<int>(rawUniqueId()));
 
     //uniform_int_distribution<> l_StoreMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store - 1); m_CurrentStoreMessageQueueIndex = l_StoreMessageQueuesRandomIntDistribution(taus88randomNumberGenerator);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO)
@@ -723,7 +726,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     //TODOreq: failed to lock your account for the purchase (???), failed to buy/fill the slot (insufficient funds, or someone beat us to it (unlock in both cases))
 }
-void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(const&userAccountDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(const string &userAccountDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError)
 {
     //TODOreq: we check that we are in fact in "NoKey" state before we transition out of it because if they have multiple tabs open or something they could have already requested one and done the transition (in which case, we'd be transitioning into ourselves (and getting another key?). TODOreq: all such transitions check the transition FROM state is what is expected
 
@@ -766,7 +769,7 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
     string bitcoinState = pt.get<std::string>("bitcoinState");
     if(bitcoinState != "NoKey")
     {
-        if(bitcoinState != "GettingKey")
+        if(bitcoinState != "GettingKey") //TODOreq: this is our second check? why the below message and not just giving them the key?
         {
             m_AddFundsPlaceholderLayout->addWidget(new WText("Please only use one browser tab/window at a time")); //TODOreq: we should throw them out of add funds mode or something (making them click it again)? idfk
             resumeRendering();
@@ -788,15 +791,16 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
 
         //generate random set number
         taus88 rng;
-        rng.seed((int)rawUniqueId());
+        rng.seed(static_cast<int>(rawUniqueId()) + static_cast<int>(WDateTime::currentDateTime().toTime_t()));
         uniform_int_distribution<> zeroThrough999(0,999);
-        m_BitcoinKeySetIndex_aka_setN = zeroThrough999(rng);
+        m_BitcoinKeySetIndex_aka_setN = boost::lexical_cast<std::string>(zeroThrough999(rng));
         //generate uuid-per-request (could be done later, but needs to not overwrite recovery one set above, so best to do it here/now)
         string uuidSeed = m_CurrentlyLoggedInUsername + uniqueId() + WDateTime::currentDateTime().toString().toUTF8() + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN);
         m_PerGetBitcoinKeyUUID = sha1(uuidSeed); //after one look at boost::uuid, looks shit
 
         //get the page that that set is currently on
-        m_BitcoinKeySetPage_aka_PageY = -1; //hack to tell us we aren't in recovery code (recovery code already has page, _AND_ recovery can't use 'most recent' because it needs to check 'old' pages for the UUID). TODOreq: utilize this -1 hack :)
+        m_BitcoinKeySetPage_aka_PageY = ""; //hack to tell us we aren't in recovery code (recovery code already has page, _AND_ recovery can't use 'most recent' because it needs to check 'old' pages for the UUID). TODOreq: utilize this -1 hack :)
+        //TODOreq: ^not there yet, but i think i need a similar hack for PageZ
 
 
         //pt.put("bitcoinState", "GettingKey");
@@ -806,7 +810,7 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
     //recovery and normal mode MERGE
 
     //save cas because way later if we try to fill the next page, we need the cas to lock it
-    getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN) + "_CurrentPage");
+    getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage"); //this exact get (incl enum) is copy/pasted to a later point when a cas-swap fails
     m_WhatTheGetSavingCasWasFor = GETBITCOINKEYSETNCURRENTPAGETOSEEWHATPAGEITISONANDIFITISLOCKED;
 
     //doesn't belong here, but see "SHIT editting this doc" in "bitcoin.nonsense.ramblings.[...].txt", it is a TODOreq that is very important
@@ -1072,7 +1076,9 @@ void AnonymousBitcoinComputingWtGUI::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDand
         {
             //no space left
             //TODOreq: next page get (fill if not exist, check uuid/space if exist)
-            ++m_BitcoinKeySetPage_aka_PageY;
+
+            //PageY++
+            m_BitcoinKeySetPage_aka_PageY = boost::lexical_cast<std::string>(boost::lexical_cast<int>(m_BitcoinKeySetPage_aka_PageY)+1);
             getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_Page" + m_BitcoinKeySetPage_aka_PageY);
             m_WhatTheGetSavingCasWasFor = GETBITCOINKEYSETNPAGEYANDIFITEXISTSLOOPAROUNDCHECKINGUUIDBUTIFNOTEXISTMAKEITEXISTBITCH;
         }
@@ -1096,11 +1102,12 @@ void AnonymousBitcoinComputingWtGUI::getBitcoinKeySetNPageYAttemptFinishedSoChec
 
         //TODOreq: fill next page
         //Get hugeBitcoinKeyList_CurrentPage to see what page it's on
-        getCouchbaseDocumentByKeyBegin("hugeBitcoinKeyList_CurrentPage");
-        m_WhatTheGetWasFor = GETHUGEBITCOINKEYLISTCURRENTPAGE;
+        getCouchbaseDocumentByKeySavingCasBegin("hugeBitcoinKeyList_CurrentPage");
+        m_WhatTheGetSavingCasWasFor = GETHUGEBITCOINKEYLISTCURRENTPAGE;
     }
     else
     {
+        //race condition
         //loop around to checking UUID/space-left, and possibly even getting here again <3
         gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRoomEtc(bitcoinKeySetNpageY_orNot, bitcoinKeySetNpageY_CAS_orNot, true, false);
     }
@@ -1119,12 +1126,30 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
     }
     if(!lcbOpSuccess)
     {
-        //TODOreq: so the set user-account and bitcoin key set both stay locked until the manual filling of more keys? methinks yes, but still seems strange from this point of view... and i was considering saying "no unlock em!" initially (it probably wouldn't matter, but keeping them locked is an optimization (and laziness wins :-P). just need to make sure it's ok that they remain locked is the point
+        //re-lock 'filling from page Z' in the db pointing to this non-existent page, to ensure the OLD/full page isn't pulled like crazy which would likely make the nodes run out of memory
+        if(m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList_NON_CHANGING != m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList) //hack but fuck it
+        {
+            ptree pt2;
 
-        //TODOreq: automated/machine notification
-        m_AddFundsPlaceholderLayout->addWidget(new WText("The server ran out of bitcoin keys and requires a manual refill by the administrator. If you are within shouting distance of him (or her, but lol there are no girls on the internet), say this: \"OOGA BOOGA I AM THE HUGE BITCOIN KEY REFILL NOTIFICATION OUTSOURCED TO ONE OF YOUR SLAVE COCKSUCKERS\". I'll know what it means."));
-        resumeRendering();
-        return;
+            //TODOreq: not sure it's safe to re-make this doc for re-locking it with new Z using these member variables (stale/inaccurate maybe???), but my instincts tell me it is safe and they are accurate. Still, so many fucking recovery paths and shit I'm a tad worried...
+            pt2.put("fillingNextBitcoinKeySetPage", m_BitcoinKeySetPage_aka_PageY);
+            pt2.put("uuidPerFill", m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
+            pt2.put("hugeBitcoinKeyListStartingPage", m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
+
+            std::ostringstream reLockedToNewPageZJsonBuffer;
+            write_json(reLockedToNewPageZJsonBuffer, pt2, false);
+
+            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage", reLockedToNewPageZJsonBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            m_WhatTheStoreWithInputCasWasFor = RELOCKBITCOINKEYSETN_CURRENTPAGETONONEXISTENTPAGEZASNECESSARYOPTIMIZATION;
+
+            //displays the error (as in the else) after the op completes
+        }
+        else
+        {
+            //just display the error
+            showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout();
+        }
+        return; //huge error to go on
     }
 
     //got hugeBitcoinKeyListActualPage
@@ -1135,7 +1160,7 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
     bool foundPerRefillUuidOnThisPage = false;
     bool doneInsertingIntoFirstUnclaimed = false; //we insert on first one we find, BUT we might discard the json if we 'detect' the uuid later (unlikely)
 
-    for(int i = 0; i < 100; ++i)
+    for(int i = 0; i < 100; ++i) //100 key ranges of 100 keys each, so 10k keys per hugeBitcoinKeyList page
     {
         const std::string keyPrefix = "keyRange" + boost::lexical_cast<std::string>(i);
         const std::string &claimedUuid = pt.get<std::string>(keyPrefix + "claimedUuid", "n");
@@ -1145,15 +1170,22 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
         {
             if(claimedUuid == m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds)
             {
-                TODO LEFT OFF
-                m_CommaSeparatedKeyRangeFromHugeBitcoinKeyList = pt.get<std::string>(keyPrefix);
+                //copy-paste'd below
+                string commaSeparatedKeyRangeFromHugeBitcoinKeyList = pt.get<std::string>(keyPrefix);
+                m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList.clear();
+                boost::split(m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList,commaSeparatedKeyRangeFromHugeBitcoinKeyList,boost::is_any_of(","));
+
                 foundPerRefillUuidOnThisPage = true;
                 break;
             }
         }
         else if(!doneInsertingIntoFirstUnclaimed) //unclaimed spot found! but we might not need it if the uuid is seen during this iteration
         {
-            m_CommaSeparatedKeyRangeFromHugeBitcoinKeyList = pt.get<std::string>(keyPrefix);
+            //copy-pasted from above
+            string commaSeparatedKeyRangeFromHugeBitcoinKeyList = pt.get<std::string>(keyPrefix);
+            m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList.clear();
+            boost::split(m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList,commaSeparatedKeyRangeFromHugeBitcoinKeyList,boost::is_any_of(","));
+
             pt.put(keyPrefix + "claimedUuid", m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
             //pt.put(keyPrefix + "claimedSetN", m_FillingNextBitcoinKeySetPage_ForAfterCASswapLockSucceeds);
             //TODOreq: PageY stored? i think pageY is what above refers to as "SetPage"... so where the fuck is setN?
@@ -1186,7 +1218,23 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
 
             //TODOreq: regarding what i was wondering with whether the hugeBitcoinKeyList_CurrentPage increment should be a cas-swap or just a plane set/store, I am now leaning towards cas swap because how do we know that it isn't now on the page after the one we are setting it to? It probably doesn't matter though because I think it'd just get set'd again after realizing that the page in between is full. I am unsure tbh, but keep this in mind: recovery needs to iterate all the pages between where it was locked to and the current page (might not even be relevant).
 
-            a
+            //++PageZ;
+            m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = boost::lexical_cast<std::string>(boost::lexical_cast<int>(m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList)+1);
+
+            if(m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont)
+            {
+                //set CurrentPage, then go to the method directly called in the else (even if cas swap fails? methinks yes)
+                ptree pt2;
+                pt2.put("currentPage", m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
+                std::ostringstream jsonDocBuffer;
+                write_json(jsonDocBuffer, pt2, false);
+                store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("hugeBitcoinKeyList_CurrentPage", jsonDocBuffer.str(), m_CasToUseForSafelyUpdatingHugeBitcoinKeyList_CurrentPageUsingIncrementedPageZ, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+                m_WhatTheStoreWithInputCasWasFor = HUGEBITCOINKEYLISTPAGECHANGE;
+            }
+            else
+            {
+                proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
+            }
         }
     }
 }
@@ -1194,7 +1242,20 @@ void AnonymousBitcoinComputingWtGUI::uuidPerRefillIsSeenOnHugeBitcoinListSoProce
 {
     //TODOreq
     //create bitcoinKeySet[setN] Page Y using the range obtained from hugeBitcoinKeyList[pageZ] via an LCB_ADD-accepting fail
-    a
+    ptree pt;
+    int bitcoinKeysVectorSize = static_cast<int>(m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList.size());
+    for(int i = 0; i < bitcoinKeysVectorSize; ++i)
+    {
+        pt.put("key" + boost::lexical_cast<std::string>(i), m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList[i]); //A stupid but actual TODOoptimization (don't do it) is to claim our key now.. would save us from doing it later. But nah suicide/insanity doesn't sound that fun, I'll pass...
+    }
+
+    std::ostringstream bitcoinKeySetPageJsonBuffer;
+    write_json(bitcoinKeySetPageJsonBuffer, pt, false);
+
+    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_Page" + m_BitcoinKeySetPage_aka_PageY, bitcoinKeySetPageJsonBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+    m_WhatTheStoreWithoutInputCasWasFor = BITCOINKEYSETNPAGEYCREATIONVIALCBADD;
+
+    m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList.clear();
 }
 void AnonymousBitcoinComputingWtGUI::unlockUserAccountSafelyFromBitcoinGettingKeyBecauseShitWeGotAfuckingKey_NoSweatIfBeatenToIt()
 {
@@ -1204,6 +1265,10 @@ void AnonymousBitcoinComputingWtGUI::unlockUserAccountSafelyFromBitcoinGettingKe
 
     pt.put("bitcoinState", "HaveKey");
     pt.put("bitcoinStateData", m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage); //TODOreq: pt::erase when transitioning to NoKey
+
+    //pt::erase the extra "GettingKey" fields
+    pt.erase("bitcoinSetPage");
+    pt.erase("bitcoinGetKeyUUID");
 
     std::ostringstream userAccountUnlockedToHaveKeyModeJsonDocBuffer;
     write_json(userAccountUnlockedToHaveKeyModeJsonDocBuffer, pt, false);
@@ -1353,12 +1418,11 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
             std::istringstream is2(m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin);
             read_json(is2, pt2);
 
-            ptree pt3; //lol there's gotta be a way to just remove them.... fuckit
-            pt3.put("passwordHash", pt2.get<std::string>("passwordHash"));
-            pt3.put("passwordSalt", pt2.get<std::string>("passwordSalt"));
-            pt3.put("balance", pt2.get<std::string>("balance"));
+            pt2.erase("slotToAttemptToFillAkaPurchase");
+            pt2.erase("slotToAttemptToFillAkaPurchaseItWith");
+
             std::ostringstream userAccountUnlockedJsonBuffer;
-            write_json(userAccountUnlockedJsonBuffer, pt3, false);
+            write_json(userAccountUnlockedJsonBuffer, pt2, false);
 
             //cas-swap-unlock(no-debit)-accepting-fail (neighbor logins could have recovered)
             store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, userAccountUnlockedJsonBuffer.str(), m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
@@ -1366,7 +1430,7 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
         }
     }
 }
-void AnonymousBitcoinComputingWtGUI::analyzeBitcoinKeySetPageCacheDocToSeeWhatPageItIsOnAndIfItIsLocked(const string &bitcoinKeySetCurrentPageDoc, u_int64_t casOnlyForUseInFillingNextPageWayLaterOn, bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::analyzeBitcoinKeySetN_CurrentPageDocToSeeWhatPageItIsOnAndIfItIsLocked(const string &bitcoinKeySetCurrentPageDoc, u_int64_t casOnlyForUseInFillingNextPageWayLaterOn, bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
@@ -1404,21 +1468,24 @@ void AnonymousBitcoinComputingWtGUI::analyzeBitcoinKeySetPageCacheDocToSeeWhatPa
         //TODOreq: it sets PageY before popping back to us if user account isn't locked via direct call to attemptToLockUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest();
 
         //populate the fillingNextBitcoinKeySetPage/uuid/pageZ from the locked doc (we are recovery. normal code path generates the 2nd two)
-        m_FillingNextBitcoinKeySet_aka_PageY_ForAfterCASswapLockSucceeds = fillingNextBitcoinKeySetPage_LOCKED_CHECK;
+        m_BitcoinKeySetPage_aka_PageY = fillingNextBitcoinKeySetPage_LOCKED_CHECK;
         m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds = pt.get<std::string>("uuidPerFill");
-        m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = pt.get<std::string>("hugeBitcoinKeyListStartingPage");;
+        m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = pt.get<std::string>("hugeBitcoinKeyListStartingPage");
+        m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList_NON_CHANGING = m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList;
+
+        m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont = false;
 
         //the jump into recovery
         bitcoinKeySetN_currentPage_Locked_soDoKeyRangeClaimAndNextPageCreation();
     }
     else //bitcoin key set not locked in fillingNextBitcoinKeySetPage mode, so set PageY using it's contents
     {
-        if(m_BitcoinKeySetPage_aka_PageY == -1)
+        if(m_BitcoinKeySetPage_aka_PageY == "")
         {
             //aren't in get-key recovery code, so we need to get/set PageY
-            m_BitcoinKeySetPage_aka_PageY = boost::lexical_cast<int>(pt.get<std::string>("currentPage"));
+            m_BitcoinKeySetPage_aka_PageY = pt.get<std::string>("currentPage");
         }
-        proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
+        proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked(); //method because we jump "[back]" to it after doing the page-fill also, and some other places
     }
 }
 void AnonymousBitcoinComputingWtGUI::proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked()
@@ -1441,7 +1508,7 @@ void AnonymousBitcoinComputingWtGUI::proceedToBitcoinKeySetNgettingAfterLockingU
         std::ostringstream jsonDocBuffer;
         write_json(jsonDocBuffer, pt, false);
 
-        store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, jsonDocBuffer.str(), m_UserAccountCASforBitcoinGettingKeyLockingAndUnlocking, StoreCouchbaseDocumentByKeyRequest::SaveCasOutput);
+        store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, jsonDocBuffer.str(), m_UserAccountCASforBitcoinGettingKeyLockingAndUnlocking, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
         m_WhatTheStoreWithInputCasSavingOutputCasWasFor = USERACCOUNTBITCOINLOCKEDINTOGETTINGKEYMODE;
     }
     else
@@ -1450,7 +1517,7 @@ void AnonymousBitcoinComputingWtGUI::proceedToBitcoinKeySetNgettingAfterLockingU
         userAccountBitcoinGettingKeyLocked_So_GetSavingCASbitcoinKeySetNPageY();
     }
 }
-void AnonymousBitcoinComputingWtGUI::hugeBitcoinKeyListCurrentPageGetComplete(const string &hugeBitcoinKeyList_CurrentPageJson, bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::hugeBitcoinKeyListCurrentPageGetComplete(const string &hugeBitcoinKeyList_CurrentPageJson, u_int64_t cas, bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
@@ -1467,34 +1534,38 @@ void AnonymousBitcoinComputingWtGUI::hugeBitcoinKeyListCurrentPageGetComplete(co
         //TODOreq: handle and notify
 
         //temp:
-        cerr << "TOTAL SYSTEM FAILURE hugeBitcoinKeyList_CurrentPageJson didn't exist and must" << endl;
+        cerr << "TOTAL SYSTEM FAILURE hugeBitcoinKeyList_CurrentPage didn't exist and must" << endl;
 
         resumeRendering();
         return;
     }
 
     //got hugeBitcoinKeyList_CurrentPage
-    //this code path knows that it isn't already locked, so Attempt: bitcoinKeySet[setN]_CurrentPage CAS-swap-locked into "fillingNextPage with UUID-per-fill on pageZ of hugeBitcoinKeyList" mode
+    //this code path knows that it isn't already locked, so Attempt: bitcoinKeySet[setN]_CurrentPage CAS-swap-locked into "fillingNextBitcoin with UUID-per-fill on pageZ of hugeBitcoinKeyList" mode
+
+    m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont = true;
+    m_CasToUseForSafelyUpdatingHugeBitcoinKeyList_CurrentPageUsingIncrementedPageZ = cas;
 
     ptree pt;
     std::istringstream is(hugeBitcoinKeyList_CurrentPageJson);
     read_json(is, pt);
 
     //remember the values put into the cas-swap, so we have them handy if/when the cas-swap succeeds
-    m_FillingNextBitcoinKeySet_aka_PageY_ForAfterCASswapLockSucceeds = boost::lexical_cast<std::string>(m_BitcoinKeySetPage_aka_PageY);
-    string uuidSeed = m_CurrentlyLoggedInUsername + uniqueId() + WDateTime::currentDateTime().toString().toUTF8() + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN) + m_FillingNextBitcoinKeySet_aka_PageY_ForAfterCASswapLockSucceeds;
+    m_BitcoinKeySetPage_aka_PageY = boost::lexical_cast<std::string>(m_BitcoinKeySetPage_aka_PageY);
+    string uuidSeed = m_CurrentlyLoggedInUsername + uniqueId() + WDateTime::currentDateTime().toString().toUTF8() + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN) + m_BitcoinKeySetPage_aka_PageY;
     m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds = sha1(uuidSeed);
     m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = pt.get<std::string>("currentPage");
+    m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList_NON_CHANGING = m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList;
 
     //now put them into json
     ptree pt2;
-    pt2.put("fillingNextBitcoinKeySetPage", m_FillingNextBitcoinKeySet_aka_PageY_ForAfterCASswapLockSucceeds;
+    pt2.put("fillingNextBitcoinKeySetPage", m_BitcoinKeySetPage_aka_PageY);
     pt2.put("uuidPerFill", m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
     pt2.put("hugeBitcoinKeyListStartingPage", m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList); //TODOreq: recovering from this doesn't segfault etc when that pageZ doesn't exist
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, pt2, false);
 
-    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("bitcoinKeySet" + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN) + "_CurrentPage", jsonDocBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::SaveCasOutput);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage", jsonDocBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
     m_WhatTheStoreWithInputCasSavingOutputCasWasFor = LOCKINGBITCOINKEYSETNINTOFILLINGNEXTPAGEMODE;
 }
 void AnonymousBitcoinComputingWtGUI::getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex(const string &adSlotFillerToExtractNicknameFrom, bool lcbOpSuccess, bool dbError)
@@ -1604,7 +1675,7 @@ void AnonymousBitcoinComputingWtGUI::userAccountBitcoinGettingKeyLocked_So_GetSa
     getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_Page" + m_BitcoinKeySetPage_aka_PageY);
     m_WhatTheGetSavingCasWasFor = GETBITCOINKEYSETNACTUALPAGETOSEEIFUUIDONITENOUGHROOM;
 }
-void AnonymousBitcoinComputingWtGUI::attemptToLockBitcoinKeySetNintoFillingNextPageModeComplete(uint64 casFromLockSoWeCanSafelyUnlockAfterNextPageFillComplete, bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::attemptToLockBitcoinKeySetNintoFillingNextPageModeComplete(u_int64_t casFromLockSoWeCanSafelyUnlockAfterNextPageFillComplete, bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
@@ -1636,9 +1707,6 @@ void AnonymousBitcoinComputingWtGUI::bitcoinKeySetN_currentPage_Locked_soDoKeyRa
     //Get hugeBitcoinKeyList[pageZ] attempt in order to retrieve it's CAS, check for relevant-UUID, and see if room left
     getCouchbaseDocumentByKeySavingCasBegin("hugeBitcoinKeyList_Page" + m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
     m_WhatTheGetSavingCasWasFor = GETHUGEBITCOINKEYLISTACTUALPAGEFORANALYZINGANDMAYBECLAIMINGKEYRANGE;
-
-    //TODOreq: later, jump BACK if user account not locked yet, but be sure to populate Page Y for that code
-    a
 }
 void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool lcbOpSuccess, bool dbError)
 {
@@ -1715,7 +1783,7 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
 
     //TODOreq: even though it seemed like a small optimization to do both the user-account-unlock and updating of campaign doc with a new 'last purchased' slot, that pattern of programming will lead to disaster so i shouldn't do it just in principle. Yes with this one case it wouldn't have led to disaster, but actually it MIGHT have given extreme circumstances. it opens up a race condition: say the 'user account unlock' happens really fast and the 'update campaign doc' happens to take a while. if we gave control back to the user after the 'user account unlock' was finished, they could do some action that would then conflict with the m_WhatThe[blahblahblah]WasFor related to the 'update campaign doc' store. As in, when the 'update campaign doc' finishes and gets posted back to the WApplication, the user's actions could have started something else and then we wouldn't have handled the finishing of the 'update campaign doc' properly (which would mean that we never notify our neighbors of buy event? actually not a problem if we do 'get-and-subscribe-polling' like i think i'm going to do (BUT LIKE I SAID THIS ONE GETS LUCKY, BUT AN OVERALL PATTERN TO AVOID)). So I'm going to do the successive sets synchronously, despite seeing a clear opportunity for optimization
 }
-void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComplete(const string &keyToSlotFillerAttemptedToAddTo, bool dbError, bool lcbOpSuccess)
+void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComplete(const string &keyToSlotFillerAttemptedToAddTo, bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
@@ -1759,6 +1827,38 @@ void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComple
     write_json(updatedAllAdSlotFillersJsonDocBuffer, m_RunningAllSlotFillersJsonDoc, false);
     store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("adSpaceAllSlotFillers" + m_CurrentlyLoggedInUsername, updatedAllAdSlotFillersJsonDocBuffer.str(), m_RunningAllSlotFillersJsonDocCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheStoreWithInputCasWasFor = UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER;
+}
+void AnonymousBitcoinComputingWtGUI::doneAttemptingBitcoinKeySetNnextPageYcreation(bool dbError)
+{
+    if(dbError)
+    {
+        //TODOreq: handle and notify
+
+        //temp:
+        cerr << "doneAttemptingBitcoinKeySetNnextPageYcreation reported db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+    /*if(!lcbOpSuccess)
+    {
+        //dgaf: recovery/neighbor-user would have made the exact same page (enforced by UUIDs)
+    }*/
+
+    //bitcoinKeySet[setN]_PageY now created
+
+    //CAS-swap-unlock bitcoinKeySet[setN]_CurrentPage into normal 'current page = Y' mode (fail is tolerated, just like this add failing was)
+
+    //TODOreq: the cas used for unlocking needs to be stored when doing recovery and seeing it's locked, and in the normal case when the lock that we just did completes. two different places/times
+
+    ptree pt;
+    pt.put("currentPage", m_BitcoinKeySetPage_aka_PageY);
+
+    std::ostringstream unlockedCurrentPageDoc;
+    write_json(unlockedCurrentPageDoc, pt, false);
+
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage", unlockedCurrentPageDoc.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_WhatTheStoreWithInputCasWasFor = SAFELYUNLOCKBITCOINKEYSETNCURRENTPAGEDOCFAILINGTOLERABLY;
 }
 void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError)
 {
@@ -1928,6 +2028,72 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingHugeBitcoinKeyListKeyRangeCla
         uuidPerRefillIsSeenOnHugeBitcoinListSoProceedWithActualNextPageFill();
     }
 }
+void AnonymousBitcoinComputingWtGUI::doneAttemptingToUnlockBitcoinKeySetN_CurrentPage(bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        //TODOreq: handle and notify
+
+        //temp:
+        cerr << "doneAttemptingToUnlockBitcoinKeySetN_CurrentPage db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        //since unlock failed, jump to a point that probes the lock status (might be unlocked by neighbor, but might be locked to NEXT one now in a rare race condition)
+        getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage"); //this 'get' and enum is copy/paste from the end of checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState
+        m_WhatTheGetSavingCasWasFor = GETBITCOINKEYSETNCURRENTPAGETOSEEWHATPAGEITISONANDIFITISLOCKED;
+
+        //OLD:
+        //we COULD have detected that a neighbor (not necessarily recovery) beat us to the punch here, BUT it would have been erroneous to have used such detection as a signal that we can stop. The page fill request could have been filled by any other users/wt-nodes doing get-key requests. Just because we got beat to the page-fill, doesn't mean that we got beat by someone processing the same per-key-request-uuid as us... SO we need to continue on, even if yes in fact it was hte same per-key-request-uuid (we'll detect that later (TODOreq) and then stop
+    }
+    else
+    {
+        //jump out of page filling mode and to a point where fillingNextPage is not set, but we don't know if we're in recovery or not so where we land will check that and act accordingly
+        proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
+    }
+}
+void AnonymousBitcoinComputingWtGUI::doneChangingHugeBitcoinKeyListCurrentPage(bool dbError)
+{
+    if(dbError)
+    {
+        //TODOreq: handle and notify
+
+        //temp:
+        cerr << "doneChangingHugeBitcoinKeyListCurrentPage db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+    //lcbOpFail very likely, means nothing. in fact we don't even need to wait for this operation to complete, but i have no way of saying 'dont-respond' in my wt->couchbase communication, so fuck it :). there are probably tons of other cases wehre i don't need to wait, but KISS (sanity > *)
+    proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
+}
+void AnonymousBitcoinComputingWtGUI::doneReLockingBitcoinKeySetN_CurrentPage_withNewFromPageZvalue(bool dbError)
+{
+    if(dbError)
+    {
+        //TODOreq: handle and notify
+
+        //temp:
+        cerr << "doneReLockingBitcoinKeySetN_CurrentPage_withNewFromPageZvalue db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+    //lcbOpFail very likely, means nothing.
+
+    showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout();
+}
+void AnonymousBitcoinComputingWtGUI::showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout()
+{
+    //TO DOnereq(yes): so the set user-account and bitcoin key set both stay locked until the manual filling of more keys? methinks yes, but still seems strange from this point of view... and i was considering saying "no unlock em!" initially (it probably wouldn't matter, but keeping them locked is an optimization (and laziness wins :-P). just need to make sure it's ok that they remain locked is the point
+
+    //TODOreq: automated/machine notification
+    m_AddFundsPlaceholderLayout->addWidget(new WText("The server ran out of bitcoin keys and requires a manual refill by the administrator. If you are within shouting distance of him (or her, but lol there are no girls on the internet), say this: \"OOGA BOOGA I AM THE HUGE BITCOIN KEY REFILL NOTIFICATION OUTSOURCED TO ONE OF YOUR SLAVE COCKSUCKERS\". I'll know what it means."));
+    resumeRendering();
+}
 void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
@@ -2088,11 +2254,6 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
         getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex(couchbaseDocument, lcbOpSuccess, dbError); //'slot filler add' = buyer creating a new ad; 'slot fill add' = buyer buying ad slot using created ad. xD too fucking subtle of a difference (but i'm so amped right now i can grasp the difference for the rest of this month long hack marathon)...
     }
         break;
-    case GETHUGEBITCOINKEYLISTCURRENTPAGE:
-    {
-        hugeBitcoinKeyListCurrentPageGetComplete(couchbaseDocument, lcbOpSuccess, dbError);
-    }
-        break;
     case INITIALINVALIDNULLGET:
     default:
         cerr << "got a couchbase 'get' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl;
@@ -2136,7 +2297,7 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
         break;
     case GETBITCOINKEYSETNCURRENTPAGETOSEEWHATPAGEITISONANDIFITISLOCKED:
     {
-        analyzeBitcoinKeySetPageCacheDocToSeeWhatPageItIsOnAndIfItIsLocked(couchbaseDocument, cas, lcbOpSuccess, dbError);
+        analyzeBitcoinKeySetN_CurrentPageDocToSeeWhatPageItIsOnAndIfItIsLocked(couchbaseDocument, cas, lcbOpSuccess, dbError);
     }
         break;
     case GETBITCOINKEYSETNACTUALPAGETOSEEIFUUIDONITENOUGHROOM:
@@ -2147,6 +2308,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
     case GETBITCOINKEYSETNPAGEYANDIFITEXISTSLOOPAROUNDCHECKINGUUIDBUTIFNOTEXISTMAKEITEXISTBITCH:
     {
         getBitcoinKeySetNPageYAttemptFinishedSoCheckItIfItExistsAndMakeItIfItDont(couchbaseDocument, cas, lcbOpSuccess, dbError);
+    }
+        break;
+    case GETHUGEBITCOINKEYLISTCURRENTPAGE:
+    {
+        hugeBitcoinKeyListCurrentPageGetComplete(couchbaseDocument, cas, lcbOpSuccess, dbError);
     }
         break;
     case GETHUGEBITCOINKEYLISTACTUALPAGEFORANALYZINGANDMAYBECLAIMINGKEYRANGE:
@@ -2208,7 +2374,12 @@ void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyF
         break;
     case LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS:
     {
-        storeLargeAdImageInCouchbaseDbAttemptComplete(keyToCouchbaseDocument, dbError, lcbOpSuccess);
+        storeLargeAdImageInCouchbaseDbAttemptComplete(keyToCouchbaseDocument, lcbOpSuccess, dbError);
+    }
+        break;
+    case BITCOINKEYSETNPAGEYCREATIONVIALCBADD:
+    {
+        doneAttemptingBitcoinKeySetNnextPageYcreation(dbError);
     }
         break;
     case INITIALINVALIDNULLSTOREWITHOUTINPUTCAS:
@@ -2255,6 +2426,21 @@ void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinish
     case HUGEBITCOINKEYLISTKEYRANGECLAIMATTEMPT:
     {
         doneAttemptingHugeBitcoinKeyListKeyRangeClaim(lcbOpSuccess, dbError);
+    }
+        break;
+    case SAFELYUNLOCKBITCOINKEYSETNCURRENTPAGEDOCFAILINGTOLERABLY:
+    {
+        doneAttemptingToUnlockBitcoinKeySetN_CurrentPage(lcbOpSuccess, dbError);
+    }
+        break;
+    case HUGEBITCOINKEYLISTPAGECHANGE:
+    {
+        doneChangingHugeBitcoinKeyListCurrentPage(dbError);
+    }
+        break;
+    case RELOCKBITCOINKEYSETN_CURRENTPAGETONONEXISTENTPAGEZASNECESSARYOPTIMIZATION:
+    {
+        doneReLockingBitcoinKeySetN_CurrentPage_withNewFromPageZvalue(dbError);
     }
         break;
     case UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER:
@@ -2393,9 +2579,10 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     std::string base64PasswordSaltHashed = base64Encode(passwordSaltHashed);
     //json'ify
     ptree jsonDoc;
+    jsonDoc.put("balance", "0.0");
     jsonDoc.put("passwordHash", base64PasswordSaltHashed);
     jsonDoc.put("passwordSalt", base64Salt);
-    jsonDoc.put("balance", "0.0");
+    jsonDoc.put("bitcoinState", "NoKey");
     //string'ify json
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, jsonDoc, false);
