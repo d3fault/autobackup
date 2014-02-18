@@ -39,7 +39,10 @@ DEFINES +=  ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS=3 \
                 SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_Get=500
 DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
             ABC_COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT=1 \ #just to give durability_poll something to do on my 1-node cluster test environment
-            WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\"
+            WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" \
+            NUM_BITCOIN_KEY_RANGES_ON_EACH_HUGEBITCOINLIST_PAGE=4 \
+            NUM_BITCOIN_KEYS_ON_EACH_BITCOINKEYSET_PAGE=3 \
+            NUM_BITCOINKEYSETS=2
 
 # DEPLOY VARIABLES
 #CORE TUNABLES (message queue count, message queue max messages, message queue max message size)
@@ -61,6 +64,9 @@ DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
 #                SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_SET2=500 #had '251' to reflect max key size, but that doesn't account for the rest of the message wt->couchbase message. When I'm done hacking shit in, I should do 251+overhead
 #DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=2 \
 #            WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\"
+#            NUM_BITCOIN_KEY_RANGES_ON_EACH_HUGEBITCOINLIST_PAGE=100 \
+#            NUM_BITCOIN_KEYS_ON_EACH_BITCOINKEYSET_PAGE=100 \ #also is number of bitcoin keys in each range on hugeBitcoinList
+#            NUM_BITCOINKEYSETS=1000
 
 # MIN MEMORY REQUIRED [for message queues only] calculated via above tunables: QUEUE_MAX_MESSAGE_SIZE * MAX_MESSAGES_IN_QUEUE * NUMBER_OF_QUEUES
 

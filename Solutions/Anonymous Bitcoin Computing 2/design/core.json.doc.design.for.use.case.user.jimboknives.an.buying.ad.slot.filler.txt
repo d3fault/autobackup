@@ -185,16 +185,16 @@ bitcoinKeySet[setN]_PageY //example: bitcoinKeySet998_Page3
 
 hugeBitcoinKeyList_CurrentPage //no other state, can point to non-existent page (as optimization to give us simple lcbOp-fail-gets instead of huge doc gets/analyzings/THEN-fails)
 {
-  "currentPage" : 69
+  "currentPage" : "69"
 }
 
 hugeBitcoinKeyList_Page0 //hardcoded key range size of 100 (matching bitcoinKeySet[setN]_PageY key count)
 {
-  "keyRange0" : "csv or json array whatever's easiest",
+  "keyRange0" : "comma separated list of bitcoin keys",
 
   //....100 of such entries. hardcoding to ease the coding (i suck at boost::json) for now, but theoretically doesn't need to be consistent and can change from page to page (was thinking 20mb worth, but eh maybe 350kb-ish would be more optimal?). i would just need to iterate json entries better. HOWEVER THE SIZE OF EACH ENTRY/key-range/bitcoin-key-set-page (100 keys) must stay the same
 
-  "keyRange420" : "see above",
+  "keyRange420" : "comma separated list of bitcoin keys",
   "keyRange420claimedUuid" : "per-set-refill-uuid", //get_optional, not existing if key range unclaimed (just like bitcoinKeySet[setN]_PageY)
   "keyRange420claimedSetN" : "setN for book keeping" //get_optional
               claimedSetNPageY??? is just book keeping anyways, idfk

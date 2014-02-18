@@ -31,7 +31,7 @@
 #include <boost/preprocessor/repeat.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp>
-#include <boost/random/taus88.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -77,7 +77,7 @@ m_##text##WtMessageQueues[n] = new message_queue(open_only, WT_COUCHBASE_MESSAGE
 
 #define ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO(text) \
 uniform_int_distribution<> l_##text##MessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text - 1); \
-m_Current##text##MessageQueueIndex = l_##text##MessageQueuesRandomIntDistribution(taus88randomNumberGenerator);
+m_Current##text##MessageQueueIndex = l_##text##MessageQueuesRandomIntDistribution(mersenneTwisterRandomNumberGenerator);
 
 #define ABC_WT_PER_QUEUE_CURRENT_RANDOM_INDEX_DECLARATION_MACRO(text) \
 int m_Current##text##MessageQueueIndex;

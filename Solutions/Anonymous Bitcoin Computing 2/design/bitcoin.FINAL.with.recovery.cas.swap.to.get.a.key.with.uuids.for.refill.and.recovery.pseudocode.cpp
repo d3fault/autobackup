@@ -121,6 +121,7 @@ class PseudoCode //My head hurts
                                             //If above CAS-swap succeeds we continue on no matter what so ignore two branches below, but it still needs to be a CAS-swap so we don't fuck up future changes (if this node/code is waaaaay behind)
                                             {
                                                 //Nothing to see here, common case where we unlocked
+                                                //GOTO #ndjgir784#
                                             }
                                             else
                                             {
@@ -129,8 +130,10 @@ class PseudoCode //My head hurts
                                                 //TODOreq: neighbor recovery might have put it into fillingNextPage mode YET AGAIN in a race condition, so i don't think the jump below is safe.... ffffffffff. It is safe if the cas-swap succeeded though (i think (man i'm so lost because can't the neighbor/recovery then unlock it (oh wait that's how i am here))). We should maybe go to #ejfjdi83939# if the cas-swap fails?
                                             }
 
+#if 0
                                             //possibly do something with PageY (now valid) before the GOTO, but maybe nothing since it's member variable?
                                             //GOTO #ndjgir784#
+#endif
 #if 0 //OLD'ish:
                                             //TODOreq: getting here did mean the bitcoinSet was locked, but the user-account itself may or may not have been locked, so i think the following jump is incorrect!
                                             //Refill/next-page-creation is complete [unless db error], so just GOTO #sdofuou38# -- ACTUALLY NOW THINKING: #ndjgir784#

@@ -73,10 +73,10 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_LoggedIn(false)
 {
     //constructor body, in case you're confused...
-    taus88 taus88randomNumberGenerator;
-    taus88randomNumberGenerator.seed(static_cast<int>(rawUniqueId()));
+    mt19937 mersenneTwisterRandomNumberGenerator;
+    mersenneTwisterRandomNumberGenerator.seed(static_cast<int>(WDateTime::currentDateTime().toTime_t())); //had taus88, but when used with bitcoin key dispersement set selection, i was getting the same number over and over for the entire app run. a TODOoptimization here might be to just do "time_t % num_queues" (or use unique id again), because i'd imagine these RNGs are expensive ish
 
-    //uniform_int_distribution<> l_StoreMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store - 1); m_CurrentStoreMessageQueueIndex = l_StoreMessageQueuesRandomIntDistribution(taus88randomNumberGenerator);
+    //uniform_int_distribution<> l_StoreMessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store - 1); m_CurrentStoreMessageQueueIndex = l_StoreMessageQueuesRandomIntDistribution(mersenneTwisterRandomNumberGenerator);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO)
 
     buildGui(); //everything that is NOT dependent on the internal path
@@ -207,6 +207,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         accountVLayout->addWidget(new WBreak());
         WPushButton *addFundsPushButton = new WPushButton("Add Funds");
         addFundsPushButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleAddFundsClicked); //TODOreq: perhaps disable after clicking? re-enable somewhere(s) too
+        accountVLayout->addWidget(addFundsPushButton);
         accountVLayout->addWidget(new WBreak());
         accountVLayout->addWidget(new WBreak());
         m_AddFundsPlaceholderLayout = new WVBoxLayout();
@@ -790,13 +791,13 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
         m_UserAccountBitcoinDoingGettingKeyRecoverySoAccountLocked = false;
 
         //generate random set number
-        taus88 rng;
-        rng.seed(static_cast<int>(rawUniqueId()) + static_cast<int>(WDateTime::currentDateTime().toTime_t()));
-        uniform_int_distribution<> zeroThrough999(0,999);
+        mt19937 rng;
+        rng.seed(static_cast<int>(WDateTime::currentDateTime().toTime_t()));
+        uniform_int_distribution<> zeroThrough999(0,(NUM_BITCOINKEYSETS-1));
         m_BitcoinKeySetIndex_aka_setN = boost::lexical_cast<std::string>(zeroThrough999(rng));
         //generate uuid-per-request (could be done later, but needs to not overwrite recovery one set above, so best to do it here/now)
         string uuidSeed = m_CurrentlyLoggedInUsername + uniqueId() + WDateTime::currentDateTime().toString().toUTF8() + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN);
-        m_PerGetBitcoinKeyUUID = sha1(uuidSeed); //after one look at boost::uuid, looks shit
+        m_PerGetBitcoinKeyUUID = base64Encode(sha1(uuidSeed)); //after one look at boost::uuid, looks shit
 
         //get the page that that set is currently on
         m_BitcoinKeySetPage_aka_PageY = ""; //hack to tell us we aren't in recovery code (recovery code already has page, _AND_ recovery can't use 'most recent' because it needs to check 'old' pages for the UUID). TODOreq: utilize this -1 hack :)
@@ -1028,7 +1029,7 @@ void AnonymousBitcoinComputingWtGUI::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDand
     bool foundPerKeyRequestUuidOnThisPage = false;
     bool doneInsertingIntoFirstUnclaimed = false; //we insert on first one we find, BUT we might discard the json if we 'detect' the uuid later (unlikely)
 
-    for(int i = 0; i < 100; ++i)
+    for(int i = 0; i < NUM_BITCOIN_KEYS_ON_EACH_BITCOINKEYSET_PAGE; ++i)
     {
         const std::string keyPrefix = "key" + boost::lexical_cast<std::string>(i);
         const std::string &bitcoinKey = pt.get<std::string>(keyPrefix); //yes, key is get'd by only the prefix (english teachers are raging)
@@ -1160,7 +1161,7 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
     bool foundPerRefillUuidOnThisPage = false;
     bool doneInsertingIntoFirstUnclaimed = false; //we insert on first one we find, BUT we might discard the json if we 'detect' the uuid later (unlikely)
 
-    for(int i = 0; i < 100; ++i) //100 key ranges of 100 keys each, so 10k keys per hugeBitcoinKeyList page
+    for(int i = 0; i < NUM_BITCOIN_KEY_RANGES_ON_EACH_HUGEBITCOINLIST_PAGE; ++i) //100 key ranges of 100 keys each, so 10k keys per hugeBitcoinKeyList page (~350kb/page)
     {
         const std::string keyPrefix = "keyRange" + boost::lexical_cast<std::string>(i);
         const std::string &claimedUuid = pt.get<std::string>(keyPrefix + "claimedUuid", "n");
@@ -1233,7 +1234,8 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
             }
             else
             {
-                proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
+                bitcoinKeySetN_currentPage_Locked_soDoKeyRangeClaimAndNextPageCreation();
+                //old/error: proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
             }
         }
     }
@@ -1263,7 +1265,7 @@ void AnonymousBitcoinComputingWtGUI::unlockUserAccountSafelyFromBitcoinGettingKe
     std::istringstream is(m_UserAccountJsonForLockingIntoGettingBitcoinKey);
     read_json(is, pt);
 
-    pt.put("bitcoinState", "HaveKey");
+    pt.put("bitcoinState", "HaveKey"); //TODOreq: this would be a good 'last resort' place to check if "slotToAttemptToFillAkaPurchase" is set and to fail/stop if it is... but it really should be checked earlier. AND besides there is also teh 'account locking into GettingKey' which would be a similar 'last resort' (two of em xD) to check for it. Depending on how confident you are that you checked them in the original GET...
     pt.put("bitcoinStateData", m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage); //TODOreq: pt::erase when transitioning to NoKey
 
     //pt::erase the extra "GettingKey" fields
@@ -1553,7 +1555,7 @@ void AnonymousBitcoinComputingWtGUI::hugeBitcoinKeyListCurrentPageGetComplete(co
     //remember the values put into the cas-swap, so we have them handy if/when the cas-swap succeeds
     m_BitcoinKeySetPage_aka_PageY = boost::lexical_cast<std::string>(m_BitcoinKeySetPage_aka_PageY);
     string uuidSeed = m_CurrentlyLoggedInUsername + uniqueId() + WDateTime::currentDateTime().toString().toUTF8() + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN) + m_BitcoinKeySetPage_aka_PageY;
-    m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds = sha1(uuidSeed);
+    m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds = base64Encode(sha1(uuidSeed));
     m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = pt.get<std::string>("currentPage");
     m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList_NON_CHANGING = m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList;
 
@@ -2068,7 +2070,8 @@ void AnonymousBitcoinComputingWtGUI::doneChangingHugeBitcoinKeyListCurrentPage(b
         return;
     }
     //lcbOpFail very likely, means nothing. in fact we don't even need to wait for this operation to complete, but i have no way of saying 'dont-respond' in my wt->couchbase communication, so fuck it :). there are probably tons of other cases wehre i don't need to wait, but KISS (sanity > *)
-    proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
+    bitcoinKeySetN_currentPage_Locked_soDoKeyRangeClaimAndNextPageCreation();
+    //old/error: proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
 }
 void AnonymousBitcoinComputingWtGUI::doneReLockingBitcoinKeySetN_CurrentPage_withNewFromPageZvalue(bool dbError)
 {

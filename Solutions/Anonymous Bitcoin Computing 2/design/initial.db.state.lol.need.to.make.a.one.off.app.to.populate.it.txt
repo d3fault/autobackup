@@ -4,6 +4,25 @@ adSpaceSlotsd3fault0
   "slotLengthHours": "24"
 }
 
+hugeBitcoinKeyList_CurrentPage
+{
+  "currentPage": "0"
+}
+hugeBitcoinKeyList_Page0
+{
+  "keyRange0" : "..."
+  //keyRange1-99
+}
+bitcoinKeySet0_CurrentPage //Set0-999
+{
+  "currentPage" : "0"
+}
+bitcoinKeySet0_Page0 //Set0-999
+{
+  "key0": "..."
+  //key1-99
+}
+
 ......lol i was expecting this to be much longer.... but now that I think of it that's just about it and the rest are created at run-time.
 
 Also should go into the db and give whatever test user you register some moneys (well, until bitcoin test environment is up :-D)
