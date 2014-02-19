@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1392725035
+Documents/minddump/:1392817577
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1633,6 +1633,7 @@ Documents/minddump/sdlfkjsldfkjsdofulksdjfousdflkjsdofulskdjfousdflkjsdofu.txt:1
 Documents/minddump/sdlfkjsldfkjsldkfjsdlfkjosdfulsdfjosudflskjfdouwelrkjoiusdflkjsdfoul.txt:1381781043
 Documents/minddump/sdlfkjsldkfjlksdjfousdflkjsdouewljrousdlfkjsdofui.txt:1392163065
 Documents/minddump/sdlfkjsldkfjosdufljweorulkjdfoisudfljsdofulwekjrousldfjosudfouo.txt:1370590000
+Documents/minddump/sdlfkjslkdjflskdjfosudflkjsdofusdfjweruoisuflk.save.yourself.nevets.txt:1392817620
 Documents/minddump/sdlfkjslkdjfsdfousdlfjsodufsdlkjfouewrlkjsdfousdflk.txt:1386009647
 Documents/minddump/sdlfkjworiuaslfdkjaosalkfweoiurfslfjsofiuwerlkajsdfoiurlek.txt:1339487531
 Documents/minddump/sdlfkowiurlskjfouwelrkjsdofiuasfdlkjwer.txt:1340901411
@@ -3782,14 +3783,14 @@ Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1392794990
+Solutions/Anonymous Bitcoin Computing 2/src/:1392833564
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1392025705
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1391750783
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1392025705
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1391108668
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1392792340
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1392792340
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1392733912
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1392833498
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1392833498
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1392830668
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/filedeletingfileresource.cpp:1391746710
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/filedeletingfileresource.h:1391740021
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1391750020

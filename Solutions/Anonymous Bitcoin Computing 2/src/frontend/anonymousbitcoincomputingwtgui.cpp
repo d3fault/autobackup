@@ -30,12 +30,17 @@
 //TODOreq: ^register page should give warning "There is no password reset functionality"
 //TODOreq: timezones fuck shit up? if so, we can send them the 'current timestamp' to use (but then there'd be a bit of latency delay)... or mb we can find out proper solution in js (toTime() gives us msecs since epoch... in greenwhich right? not local? maybe this isn't a problem)
 //TODOreq: no-js get-from-subscription-cache-but-dont-subscribe
+//TODOreq: find out when a signal connected to a dangerous slot can NOT be invoked by a user sifting through the html/js: signal disconnect should do it, but what about setVisible(false) and setEnabled(false), or changing a stackedwidget's current item (slot connected to button on stack item underneath). The easiest way to find this out is to ask; fuck trying to dig through Wt (and definitely fuck trying to dig through the html/js). Another related question: is there a race condition between resumeRendering at the beginning of a function and accessing a [editable-via-gui] member variable later in that same method (hacky solution to that is to always resumeRendering at the end of the method, and a hacky way to do that with lots of scope exit points in the function is using the stack struct destructor hack). I'm guessing the resumeRendering thing isn't a problem because the input events aren't (read:PROBABLY-AREN't(idk)) processed until the method ends and wt gets control again
+//TODOreq: litter if(!m_LoggedIn) lots of places. It's a cheap but effective safeguard
+//TODOreq: to double or to int64? that is the question. boost::lexical_cast threw an exception when i tried to convert it to u_int64_t, maybe int64_t will have better luck. there's a "proper money handling" page that tells you to use int64.... but i'm trying to figure out what the fuck the point of that even is if i have to go "through" double anyways. maybe i should just string replace the decimal place for an empty string and then viola it is an int64 (still needs lexical casting for maths :-/). re: "through double" = double is usually more than enough on most platforms, but on some it isn't <- rationale for using int64. but if you're going string -> double -> int64 anyways, won't you have already lost precision? or maybe it's only when the math is being performed. I still am leaning towards int64 (if i can fucking convert my strings to it) because it does appear to be the right way to do rounding (deal with single Satoshis = no rounding needed)
+//venting/OT: fucking bitcoin testnet-box-3 has tons of bitcoins, but they're all immature/orphaned so unspendable until i mine 120 fucking blocks. i'm averaging 1 block an hour -_-. box 2 didn't have this problem when i was fucking around with it years ago. i have the code written to test bitcoin interactions, but no test bitcoins available hahaha (i guess i can write the bulk bitcoins generator -> hugeBitcoinList/bitcoinKeySetN setter upper thingo first... zzz...
 
 //TODOoptimization: lots of stuff needs to be moved into it's own object instead of just being a member in this class. it will reduce the memory-per-connection by...  maybe-a-significant... amount. for example the HackedInD3faultCampaign0 shit should be on it's own widget, but ON TOP OF THAT each "step" in the HackedInD3faultCampaign0 thing (buy step 1, buy step 2) can/should be it's own object (member of of HackedInD3faultCampaign0 object). We just have too many unused and unneeded-most-of-the-time member variables in this monster class... but KISS so ima continue for now, despite cringing at how ugly/hacky it's becoming :)
 
 //TODOreq: can't remember if i wrote this anywhere or only thought of it, but i need to add underscores between certain things in my couchbase docs. for example a user named JimboKnives0 would have a conflict with a user named JimboKnives. adSpaceSlotFillersJimboKnives0 would now point to a specific ad slot filler, _AND_ the "profile view" (last 10 slot fillers set up) for JimboKnives0 -- hence, conflict. Could maybe solve this another way by perhaps always having the username be the very last part of the key???
 
 //TODOoptimization: walking the internal path via "next sub path" (including sanitization at each step) is a good way to organize the website and additionally fill in json key pieces. example: /ads/buy-ad-space/d3fault/0 could be organized in Wt as: class Ads { class BuyAdSpace { m_SellerUsername = d3fault; m_SellerCampaign = 0; } }.... and organized in json as ads_buy_d3fault_0.  sanitization errors would be simple 404s, and it goes without saying that neither can/should include underscores or slashes
+//TODOreq: sanitize underscores(well,maybe.. if used as key 'split' identifier (isn't currently)), slashes(ditto if done for internal path 'walking'), and spaces (couchbase keys cannot contain spaces) from all user input AS A MINIMUM. really i'm probably going to go overkill and just allow a-z and 0-9 in a whitelist :-D. fuggit
 
 //TODOreq: vulnerable to session fixation attacks xD... but my login shit doesn't work when i changeSessionId xD. ok wtf now changeSessionId _does_ work [and solves it]... fuck it. Nvm, even when using changeSessionId I can still 'jump into' the session by copy/pasting the url (not current, but any of the links (or current after i've clicked any of the links (so that the change session id has taken effect))) into a new tab... but maybe this is fine since the session is still not known to an adversary who may have given a victim their own. HOWEVER it is still vulnerable to copy/pasting of of the URLs to irc/forums/wherever.... i think (not sure (i saw wt has user agent identification protection, but bah easily forged anyways)). i only think and am not sure because i wonder if that's the intended functionality? Perhaps my IP is doing the protection at this point and I'd only be vulnerable to others on my LAN? Fucking http/www is a piece of shit. Cookies aren't secure, get/post isn't secure... WHAT THE FUCK _IS_ secure!?!?!? "Yea just don't run an http server and you're set"
 //TODOreq: so long as Wt detects/thwarts two IPs (with matching user agents) trying to use the same session id, I think I'm happy enough with that... but gah still an office building network admin could snoop http[s?] requests and then login as any of his (O WAIT HE COULD KEYLOGGER THEM ANYWAYS LOLOL)
@@ -59,6 +64,9 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_AdvertisingBuyAdSpaceWidget(0),
       m_AccountWidget(0),
       m_AuthenticationRequiredWidget(0),
+      m_PendingBitcoinBalanceLabel(0),
+      m_ConfirmedBitcoinBalanceLabel(0),
+      m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked(0.0),
       m_RegisterWidget(0),
       /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0),
       m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0),
@@ -164,7 +172,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingWidget()
     if(!m_AdvertisingWidget)
     {
         m_AdvertisingWidget = new WContainerWidget(m_MainStack);
-        new WText("Sub-categories:" + WString(ABC_ANCHOR_TEXTS_PATH_ADS), m_AdvertisingWidget);
+        new WText(ABC_ANCHOR_TEXTS_PATH_ADS " - Sub-categories:", m_AdvertisingWidget);
         new WBreak(m_AdvertisingWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingWidget);
     }
@@ -175,7 +183,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceWidget()
     if(!m_AdvertisingBuyAdSpaceWidget)
     {
         m_AdvertisingBuyAdSpaceWidget = new WContainerWidget(m_MainStack);
-        new WText("Users with ad space for sale:" + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE), m_AdvertisingBuyAdSpaceWidget);
+        new WText("Users with ad space for sale:", m_AdvertisingBuyAdSpaceWidget);
         new WBreak(m_AdvertisingBuyAdSpaceWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT, m_AdvertisingBuyAdSpaceWidget);
     }
@@ -215,8 +223,9 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         m_AddFundsPlaceholderLayout = new WVBoxLayout();
         accountVLayout->addLayout(m_AddFundsPlaceholderLayout);
         accountVLayout->addWidget(new WBreak());
-        //TODOreq: dur
-
+        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addWidget(new WBreak());
 
 
         accountVLayout->addWidget(new WText("Step 2) Upload Advertisements (For use in buying ad space)")); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
@@ -986,7 +995,7 @@ void AnonymousBitcoinComputingWtGUI::determineBitcoinStateButDontLetThemProceedF
             //TODOreq: light/safe recovery (don't resume rendering [yet] either)
             checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(userAccountJsonDoc, casOnlyUsedWhenBitcoinStateIsInGettingKey_aka_lightRecovery, true, false); //re-parsing json and re-checking slotToAttemptToFillAkaPurchase not set, but saving lines of code and complexity...
 
-            return; //no resume rendering. TODOreq: since recovery and the button are slightly different paths, my defer/resume counts might not match and i need to hackily fix that
+            return; //no resume rendering. TODOreq: since recovery and the button are slightly different paths, my defer/resume counts might not match and i need to hackily fix that. starting to think they match up perfectly. at least the code functions just fine. "get bitcoin key" push button slot defers, whereas we are ALREADY deferred and join up with that code moments later... so yea i think they match...
         }
     }
     else
@@ -1000,7 +1009,7 @@ void AnonymousBitcoinComputingWtGUI::presentBitcoinKeyForPaymentsToUser(const st
     m_CurrentBitcoinKeyForPayments = bitcoinKey;
     m_AddFundsPlaceholderLayout->addWidget(new WText("Current Bitcoin Key: " + bitcoinKey));
 
-    WPushButton *checkForPendingButton = new WPushButton("Check For Pending"); //changes to "Check For Pending Again" after > 0 pending seen
+    WPushButton *checkForPendingButton = new WPushButton("Check For Pending Bitcoins"); //changes to "Check For Pending Again" after > 0 pending seen
     checkForPendingButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::checkForPendingBitcoinBalanceButtonClicked);
     m_AddFundsPlaceholderLayout->addWidget(checkForPendingButton); //TODOreq: 2 keys in same session needs to not remake this (and similar) buttons
 
@@ -1248,6 +1257,69 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
         }
     }
 }
+void AnonymousBitcoinComputingWtGUI::creditConfirmedBitcoinAmountAfterAnalyzingUserAccount(const string &userAccountJsonDoc, u_int64_t userAccountCAS, bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        //TODOreq: handle and notify
+
+        //temp:
+        cerr << "creditConfirmedBitcoinAmountAfterAnalyzingUserAccount db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        //TODOreq: handle and notify
+
+        //temp:
+        cerr << "TOTAL SYSTEM FAILURE: user account didn't exist and must. creditConfirmedBitcoinAmountAfterAnalyzingUserAccount" << endl;
+
+        resumeRendering();
+        return;
+    }
+
+    //got user-account doc
+
+    std::istringstream is(userAccountJsonDoc);
+    ptree pt;
+    read_json(is, pt);
+
+    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
+    if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK != "n")
+    {
+        m_AddFundsPlaceholderLayout->addWidget(new WText("Please try again in a few moments"));
+        resumeRendering();
+        return;
+    }
+
+    //check that they're not trying to credit the amount multiple times
+    string bitcoinState = pt.get<std::string>("bitcoinState");
+    string bitcoinStateData = pt.get<std::string>("bitcoinStateData", "n"); //key ("n" because they could segfault us by doing the hack we're about to check for)
+    if(bitcoinState != "HaveKey" || bitcoinStateData != m_CurrentBitcoinKeyForPayments)
+    {
+        m_AddFundsPlaceholderLayout->addWidget(new WText("Nice try, you already creditted those bitcoins in another tab/window ;-)")); //TODOreq: no-js allows you to use the same session in multiple windows by copy/pasting sessionId, but what are the implications for that with the state of the web-app. Can they be viewing different pages? Don't they share member variables? I can't exactly put my finger on it, but I think that this hack still might be vulnerable. Something like this: tab1 is at 'done' step, just before clicking (and getting here). tab2 then steals sessionId and (???). Still not sure what they could do (change the key? idfk. don't think they could even do that...), BUT the paranoid thought wonders whether or not tab1 can still click 'done' or not. i also wrote a TODOreq about this up towards the top, relating to when the fuck a slot is not longer activatable (idk lol)
+
+        resumeRendering();
+        return;
+    }
+
+    //TODOreq: doesn't belong here and probably pointless, but as a safety precaution, we should set the 'confirmed about' to zero after the CAS-swap-creditting is successful
+
+    double userBalance = boost::lexical_cast<double>(pt.get<std::string>("balance"));
+    userBalance += m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked; //TODOreq: usual paranoia applies... rounding errors, etc
+
+    pt.put("balance", boost::lexical_cast<std::string>(userBalance));
+    pt.put("bitcoinState", "NoKey");
+    pt.erase("bitcoinStateData");
+
+    std::ostringstream userAccountWithConfirmedBitcoinAmountCredittedJsonBuffer;
+    write_json(userAccountWithConfirmedBitcoinAmountCredittedJsonBuffer, pt, false);
+
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, userAccountWithConfirmedBitcoinAmountCredittedJsonBuffer.str(), userAccountCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_WhatTheStoreWithInputCasWasFor = CREDITCONFIRMEDBITCOINBALANCEFORCURRENTPAYMENTKEYCASSWAPUSERACCOUNT;
+}
 void AnonymousBitcoinComputingWtGUI::uuidPerRefillIsSeenOnHugeBitcoinListSoProceedWithActualNextPageFill()
 {
     //TODOreq
@@ -1295,8 +1367,26 @@ void AnonymousBitcoinComputingWtGUI::checkForPendingBitcoinBalanceButtonClicked(
 
     //TODOreq: doesn't belong here, but later in this code path after the "Done With This Key" button is pressed, it is IMPERITIVE that we check that slotToAttemptToFillAkaPurchase isn't set on the user-account before transitioning from BitcoinState:HaveKey to BitcoinState:NoKey (creditting account at same time). The GET for that CAS-swap is where we should make sure slotToAttemptToFillAkaPurchase is not set (if it is, fail saying try again later or stop using multiple tabs noob)
 }
+void AnonymousBitcoinComputingWtGUI::checkForConfirmedBitcoinBalanceButtonClicked()
+{
+    m_BitcoinAddressBalancePollerPollingPendingBalance = false;
+    sendRpcJsonBalanceRequestToBitcoinD();
+}
+void AnonymousBitcoinComputingWtGUI::doneSendingBitcoinsToCurrentAddressButtonClicked()
+{
+    //cas-swap creditting user-account, but TODOreq: fail and say try again in a few moments _IF_ slotToAttemptToFill[...] is present (ie., the account is locked). Set bitcoinState back to NoKey during creditting cas-swap
+
+    //TODOreq: (had:i am unsure if it makes sense to) first check that bitcoinState is even at "HaveKey" and that the key we have in the member variable is accurate. A tiny hunch (probably paranoia) tells me they could maybe credit the amount twice if we don't perform that verification... perhaps using two tabs or fuck I don't know (the cas swap should protect us from this, what am I on about (NO WAIT I AM RIGHT HAHA: two (or 'N' holy shit huuuuuge bug just squashed) sessions/tabs, walk both through pending->confirmed process, 'done' on first session, it completes, 'done' on respective sessions, they complete. We should DEFINITELY verify that bitcoinState is HaveKey and that the key is accurate!!! We should detect the double(N)-credit and laugh at them :-P. It is NOT a cas-swap-fail, but is an inaccurate bitcoinState or bitcoinStateData(key)))
+
+    deferRendering();
+
+    //get user-account for cas-swap-credit
+    getCouchbaseDocumentByKeySavingCasBegin("user" + m_CurrentlyLoggedInUsername);
+    m_WhatTheGetSavingCasWasFor = CREDITCONFIRMEDBITCOINAMOUNTAFTERANALYZINGUSERACCOUNT;
+}
 void AnonymousBitcoinComputingWtGUI::sendRpcJsonBalanceRequestToBitcoinD()
 {
+    //TODOreq: prevent DDOS of checking balance, since I _think_ it's an expensive operation. A simple 1-check-per-X-seconds would suffice, and there is also the design where I poll 'getblockcount' every few seconds and then only even bother doing a minconf=1 balance check when the block count changes
     if(!m_BitcoinAddressBalancePoller)
     {
         m_BitcoinAddressBalancePoller = new Wt::Http::Client(this);
@@ -1304,38 +1394,11 @@ void AnonymousBitcoinComputingWtGUI::sendRpcJsonBalanceRequestToBitcoinD()
         m_BitcoinAddressBalancePoller->setMaximumResponseSize(2048);
         m_BitcoinAddressBalancePoller->done().connect(boost::bind(&AnonymousBitcoinComputingWtGUI::handleBitcoinAddressBalancePollerReceivedResponse, this, _1, _2));
     }
-
-    ptree requestPt;
-    requestPt.put("jsonrpc", "1.0");
-    requestPt.put("id", "bitcoinRpcTest"); //TODOreq: uniqueId + incrementing
-    requestPt.put("method", "getreceivedbyaddress");
-
-    ptree paramsPt;
-    ptree param0pt, param1pt;
-
-    param0pt.put("", m_CurrentBitcoinKeyForPayments);
-    const std::string minConfPlaceholder = "#(*)@#$(*MINCONFPLACEHOLDER)(&DSFOIU#**(";
-    param1pt.put("", minConfPlaceholder); // + (m_BitcoinAddressBalancePollerPollingPendingBalance ? "0" : "1" )); //minconf= 0 for pending, 1 for confirmed
-
-    paramsPt.push_back(std::make_pair("", param0pt));
-    paramsPt.push_back(std::make_pair("", param1pt));
-
-    requestPt.add_child("params", paramsPt);
-
-    std::ostringstream bitcoinJsonRpcMessageBuffer;
-    write_json(bitcoinJsonRpcMessageBuffer, requestPt, false);
-
-    //change minconf from string to json-int by simply getting rid of the quotes xD
-    std::string bitcoinJsonRpcMessageWithJsonIntForMinConfLoL = bitcoinJsonRpcMessageBuffer.str();
-    boost::replace_all(bitcoinJsonRpcMessageWithJsonIntForMinConfLoL, "\"" + minConfPlaceholder + "\"", (m_BitcoinAddressBalancePollerPollingPendingBalance ? "0" : "1" ));
-
-    //^^you know, i could have just copy/pasted a fucking string and built the json manually.... instead of tons of looking up how to use ptree.... too late now xD...
-
     Wt::Http::Message bitcoinJsonRpcMessage;
     bitcoinJsonRpcMessage.addHeader("content-type", "text/plain");
-    bitcoinJsonRpcMessage.addBodyText(bitcoinJsonRpcMessageWithJsonIntForMinConfLoL);
+    bitcoinJsonRpcMessage.addBodyText("{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getreceivedbyaddress\", \"params\": [\"" + m_CurrentBitcoinKeyForPayments + "\", " + (m_BitcoinAddressBalancePollerPollingPendingBalance ? "0" : "1" ) + "] }");
 
-    if(m_BitcoinAddressBalancePoller->post("http://testu:testp@127.0.0.1:19001", bitcoinJsonRpcMessage))
+    if(m_BitcoinAddressBalancePoller->post("http://testu:testp@127.0.0.1:19001/", bitcoinJsonRpcMessage))
     {
         deferRendering();
     }
@@ -1358,20 +1421,55 @@ void AnonymousBitcoinComputingWtGUI::handleBitcoinAddressBalancePollerReceivedRe
             cerr << "error in json returned handleBitcoinAddressBalancePollerReceivedResponse: " << response.body() << endl;
             return;
         }
-        double balance = boost::lexical_cast<double>(pt.get<std::string>("result"));
+        string balanceString = pt.get<std::string>("result");
+        double balance = boost::lexical_cast<double>(balanceString);
         if(balance > 0.0)
         {
             if(m_BitcoinAddressBalancePollerPollingPendingBalance)
             {
+                if(!m_PendingBitcoinBalanceLabel)
+                {
+                    m_PendingBitcoinBalanceLabel = new WText();
+                    m_AddFundsPlaceholderLayout->addWidget(m_PendingBitcoinBalanceLabel);
+
+                    //enable 'check for confirmed'
+                    WPushButton *checkForConfirmedPushButton = new WPushButton("Check For Confirmed Bitcoins");
+                    checkForConfirmedPushButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::checkForConfirmedBitcoinBalanceButtonClicked);
+                }
                 //display pending balance
-                //enable 'check for confirmed' (don't double create/enable)
+                m_PendingBitcoinBalanceLabel->setText("Pending Bitcoins Received: " + balanceString);
             }
             else
             {
+                if(!m_ConfirmedBitcoinBalanceLabel)
+                {
+                    m_ConfirmedBitcoinBalanceLabel = new WText();
+                    m_AddFundsPlaceholderLayout->addWidget(m_ConfirmedBitcoinBalanceLabel);
+
+                    //enable 'done with this key'
+                    WPushButton *doneSendingBitcoinsButton = new WPushButton("Done Sending Bitcoins To This Address (Add To My Account)"); //TODOreq: explain more thoroughly to user that they can not send bitcoins to that address anymore after clicking this. Give a huge warning
+                    doneSendingBitcoinsButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::doneSendingBitcoinsToCurrentAddressButtonClicked);
+                }
                 //display confirmed balance
-                //enable 'done with this key' (don't double create/enable)
+                m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = balance;
+                m_ConfirmedBitcoinBalanceLabel->setText("Confirmed Bitcoins Received: " + balanceString);
             }
         }
+        else
+        {
+            if(m_BitcoinAddressBalancePollerPollingPendingBalance)
+            {
+                m_AddFundsPlaceholderLayout->addWidget(new WText("No pending bitcoins received yet. Try again in a minute or so. You did send them, right ;-P?"));
+            }
+            else
+            {
+                m_AddFundsPlaceholderLayout->addWidget(new WText("It takes roughly 10 minutes for pending bitcoins to become confirmed. Try again when the next bitcoin block is mined."));
+            }
+        }
+    }
+    else
+    {
+        //TODOreq: handle and notify. lots of reasons it could fail, simple timeout for example
     }
 }
 void AnonymousBitcoinComputingWtGUI::handleGetBitcoinKeyButtonClicked()
@@ -2179,6 +2277,37 @@ void AnonymousBitcoinComputingWtGUI::doneReLockingBitcoinKeySetN_CurrentPage_wit
 
     showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout();
 }
+void AnonymousBitcoinComputingWtGUI::doneAttemptingCredittingConfirmedBitcoinBalanceForCurrentPaymentKeyCasSwapUserAccount(bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        //TODOreq: handle and notify
+
+        //temp:
+        cerr << "doneAttemptingCredittingConfirmedBitcoinBalanceForCurrentPaymentKeyCasSwapUserAccount db error" << endl;
+
+        resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        //TODOreq: loop back around to the same get/get-cas (with exponential backoff) and store-with-cas (getting back to here), or give error message saying try again in a few moments? Going with safer option of retry momentarily message for now... but I have a hunch it is fine and dandy to just go right back to the getSavingCas (re-using the enum too!) because strict sanitization is done there
+        m_AddFundsPlaceholderLayout->addWidget(new WText("Please try again in a few moments"));
+        resumeRendering();
+        return;
+    }
+
+    //successful credit of user-account balance && changing of bitcoinState back to "NoKey" :-D
+
+    m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0.0; //probably pointless, but will make me sleep better at night
+    m_CurrentBitcoinKeyForPayments = ""; //ditto
+
+    m_AddFundsPlaceholderLayout->addWidget(new WText("Your account has been creditted. Do NOT send any more bitcoins to that address")); //TODOreq: enable "get bitcoin key" button again, make check-for-pending/confirmed/done buttons go away (delete?).
+
+    //TODOreq: also probably a good idea to show their total balance somewhere... I'm thinking the logout widget where it says their name (esp since we already have the user-account doc at that point)
+
+    resumeRendering();
+}
 void AnonymousBitcoinComputingWtGUI::showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout()
 {
     //TO DOnereq(yes): so the set user-account and bitcoin key set both stay locked until the manual filling of more keys? methinks yes, but still seems strange from this point of view... and i was considering saying "no unlock em!" initially (it probably wouldn't matter, but keeping them locked is an optimization (and laziness wins :-P). just need to make sure it's ok that they remain locked is the point
@@ -2413,6 +2542,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
         getHugeBitcoinKeyListActualPageAttemptCompleted(couchbaseDocument, cas, lcbOpSuccess, dbError);
     }
         break;
+    case CREDITCONFIRMEDBITCOINAMOUNTAFTERANALYZINGUSERACCOUNT:
+    {
+        creditConfirmedBitcoinAmountAfterAnalyzingUserAccount(couchbaseDocument, cas, lcbOpSuccess, dbError);
+    }
+        break;
     case ALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS:
     {
         determineNextSlotFillerIndexAndThenAddSlotFillerToIt(couchbaseDocument, cas, lcbOpSuccess, dbError);
@@ -2534,6 +2668,11 @@ void AnonymousBitcoinComputingWtGUI::setCouchbaseDocumentByKeyWithInputCasFinish
     case RELOCKBITCOINKEYSETN_CURRENTPAGETONONEXISTENTPAGEZASNECESSARYOPTIMIZATION:
     {
         doneReLockingBitcoinKeySetN_CurrentPage_withNewFromPageZvalue(dbError);
+    }
+        break;
+    case CREDITCONFIRMEDBITCOINBALANCEFORCURRENTPAYMENTKEYCASSWAPUSERACCOUNT:
+    {
+        doneAttemptingCredittingConfirmedBitcoinBalanceForCurrentPaymentKeyCasSwapUserAccount(lcbOpSuccess, dbError);
     }
         break;
     case UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER:

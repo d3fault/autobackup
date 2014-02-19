@@ -174,6 +174,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_AuthenticationRequiredWidget;
     void handleAddFundsClicked();
     WVBoxLayout *m_AddFundsPlaceholderLayout;
+    WText *m_PendingBitcoinBalanceLabel;
+    WText *m_ConfirmedBitcoinBalanceLabel;
+    double m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
     WLineEdit *m_UploadNewSlotFiller_NICKNAME;
     WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
     WLineEdit *m_UploadNewSlotFiller_URL;
@@ -231,10 +234,13 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRoomEtc(const std::string &bitcoinKeySetNpageY, u_int64_t bitcoinKeySetNpageY_CAS, bool lcbOpSuccess, bool dbError);
     void getBitcoinKeySetNPageYAttemptFinishedSoCheckItIfItExistsAndMakeItIfItDont(const std::string &bitcoinKeySetNpageY_orNot, u_int64_t bitcoinKeySetNpageY_CAS_orNot, bool lcbOpSuccess, bool dbError);
     void getHugeBitcoinKeyListActualPageAttemptCompleted(const std::string &hugeBitcoinKeyListActualPage, u_int64_t casForUsingInSafelyInsertingOurPerFillUuid, bool lcbOpSuccess, bool dbError);
+    void creditConfirmedBitcoinAmountAfterAnalyzingUserAccount(const std::string &userAccountJsonDoc, u_int64_t userAccountCAS, bool lcbOpSuccess, bool dbError);
     vector<string> m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList; //i think this might be the first time i've used an std::vector xD
     void uuidPerRefillIsSeenOnHugeBitcoinListSoProceedWithActualNextPageFill();
     void unlockUserAccountSafelyFromBitcoinGettingKeyBecauseShitWeGotAfuckingKey_NoSweatIfBeatenToIt();
     void checkForPendingBitcoinBalanceButtonClicked();
+    void checkForConfirmedBitcoinBalanceButtonClicked();
+    void doneSendingBitcoinsToCurrentAddressButtonClicked();
     void sendRpcJsonBalanceRequestToBitcoinD();
     void handleBitcoinAddressBalancePollerReceivedResponse(boost::system::error_code err, const Http::Message& response);
     void handleGetBitcoinKeyButtonClicked();
@@ -279,6 +285,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void doneAttemptingToUnlockBitcoinKeySetN_CurrentPage(bool lcbOpSuccess, bool dbError);
     void doneChangingHugeBitcoinKeyListCurrentPage(bool dbError);
     void doneReLockingBitcoinKeySetN_CurrentPage_withNewFromPageZvalue(bool dbError);
+    void doneAttemptingCredittingConfirmedBitcoinBalanceForCurrentPaymentKeyCasSwapUserAccount(bool lcbOpSuccess, bool dbError);
     void showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout();
     void doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(bool lcbOpSuccess, bool dbError);
     bool m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont;
@@ -334,6 +341,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         SAFELYUNLOCKBITCOINKEYSETNCURRENTPAGEDOCFAILINGTOLERABLY,
         HUGEBITCOINKEYLISTPAGECHANGE,
         RELOCKBITCOINKEYSETN_CURRENTPAGETONONEXISTENTPAGEZASNECESSARYOPTIMIZATION,
+        CREDITCONFIRMEDBITCOINBALANCEFORCURRENTPAYMENTKEYCASSWAPUSERACCOUNT,
         UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER,
         HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS,
         HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS,
@@ -364,6 +372,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         GETBITCOINKEYSETNPAGEYANDIFITEXISTSLOOPAROUNDCHECKINGUUIDBUTIFNOTEXISTMAKEITEXISTBITCH,
         GETHUGEBITCOINKEYLISTCURRENTPAGE,
         GETHUGEBITCOINKEYLISTACTUALPAGEFORANALYZINGANDMAYBECLAIMINGKEYRANGE,
+        CREDITCONFIRMEDBITCOINAMOUNTAFTERANALYZINGUSERACCOUNT,
         ALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS,
         HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
