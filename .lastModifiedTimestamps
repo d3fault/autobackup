@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1392701356
+Documents/minddump/:1392725035
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1421,6 +1421,7 @@ Documents/minddump/sdfjslkdfjlksdjfouwerlkjousdlfkjsoduflkdsjfousdfkl.txt:137189
 Documents/minddump/sdfkdjsflksjdfljsdfkjsfkdjsdfourwerousdf.txt:1359855551
 Documents/minddump/sdfkjasdlkfjsakldfjasdofulskdjfosduflkjsdfoulsdkfjsoduifsldkjfosduflkjweouf.txt:1379287456
 Documents/minddump/sdfkjasldkfjoasduiflwkjeroiusdfljsdofuwelrkjoufsdlkjeworulfsdkj.txt:1352804408
+Documents/minddump/sdfkjlskjfklswersdfsdfjdfousdflkjsdofusdlfk.txt:1392725035
 Documents/minddump/sdfkjsafdlksadjfouwersdofiusdlfkjweorulsdkfjsdf.txt:1353338338
 Documents/minddump/sdfkjsdlfkjsoduflskdjfouwerljsdouflskdjf.txt:1355383352
 Documents/minddump/sdfkjsdlkjfsdofuwlejrousdflkwersdafsdfjdsfoulkwjouiwrelkjsdfoiusdflk.txt:1371702758
@@ -1540,6 +1541,7 @@ Documents/minddump/sdflskdjflkjsdfdsouflksjdfousdflkjsdfousfd.txt:1359763844
 Documents/minddump/sdflskdjflksdjflksdfoiuwelrjousdlkfjosduflsdkjfouwerlkjousdflkjsdoful.txt:1382988536
 Documents/minddump/sdflskdjflskdjflkjsdfouwlekjroiusdflkjsdfoiu.txt:1363563728
 Documents/minddump/sdflskdjfslkjdfsoduflksdjfousdfjsdaofuasdflkjsaoduflksdfjousldkfjlsdfk.txt:1379232277
+Documents/minddump/sdflskjdfkljsdklfjsdofuisdlkfjosudflksdjfou.txt:1392723694
 Documents/minddump/sdflskjdflkjasdfosudfljsdfousdfljdfousfdlskjdfousdflkjsdf.txt:1389981460
 Documents/minddump/sdflskjdflkjsdfousldkjfoiusdfiuiouwerkjlkfj.txt:1365287712
 Documents/minddump/sdflskjdflsdkjfoiulwjerouljkdsfoaudsflkjsdafoiuelwrkjfd.txt:1370567967
@@ -3439,7 +3441,7 @@ Projects/d3fault/caq.not.sure.if.this.belongs.in.here.because.isnt.d3fault.mostl
 Projects/d3fault/protocol.document.types.and.subtypes.originally.for.lifeshaper.but.too.ambitious.so.d3fault.it.is.txt:1355305033
 Projects/d3fault/some.thoughts.on.timeline.items.etc.and.a.desktop.integration.or.replacement.etc.idea.txt:1348976498
 Projects/designEqualsImplementation/:1344095494
-Projects/designEqualsImplementation/design/:1379236962
+Projects/designEqualsImplementation/design/:1392729086
 Projects/designEqualsImplementation/design/100.percent.lgpl.95.percent.profit.goes.to.them.5.percent.to.me.txt:1322953540
 Projects/designEqualsImplementation/design/100.percent.transparent.business.except.for.security.lol.how.do.i.do.security.does.the.community.do.it.for.me.lol.txt:1322065974
 Projects/designEqualsImplementation/design/add.use.case.use.case.rofllewl.txt:1320581057
@@ -3480,6 +3482,7 @@ Projects/designEqualsImplementation/design/plan.txt:1323841719
 Projects/designEqualsImplementation/design/public.slots.never.just.public.methods.except.constructor.and.maybe.rare.cases.idk.txt:1323591030
 Projects/designEqualsImplementation/design/rationale.because.designing.is.autopilot.and.coding.with.a.design.handy.is.too.rofl.YESSS.txt:1350504348
 Projects/designEqualsImplementation/design/self.sustaining.and.anonymous.as.fuck.use.nobodyme.as.verbatim-everything.minddump.for.every.user.but.not.private.or.unpublished.txt:1322605421
+Projects/designEqualsImplementation/design/sharing.explainations.does.not.depend.on.you.two.having.the.same.formatting.txt:1392729086
 Projects/designEqualsImplementation/design/signals.with.no.params.can.connect.to.slots.with.values.and.we.specify.the.single.value.to.pass.in.during.connect.and.obviously.not.for.use.with.dynamic.variables.txt:1371565790
 Projects/designEqualsImplementation/design/sprint.motherfucker.what.are.you.waiting.for.its.at.least.a.billion.dollars.txt:1322580929
 Projects/designEqualsImplementation/design/the.last.os.youll.ever.need.to.install.marketting.phrase.txt:1323374148
@@ -3779,14 +3782,14 @@ Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1392717667
+Solutions/Anonymous Bitcoin Computing 2/src/:1392794990
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1392025705
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1391750783
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1392025705
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1391108668
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1392716274
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1392716274
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1392708154
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1392792340
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1392792340
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1392733912
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/filedeletingfileresource.cpp:1391746710
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/filedeletingfileresource.h:1391740021
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1391750020
@@ -3895,7 +3898,7 @@ autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
-autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1389322566
+autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1392793802
 autobackupScripts/linux/base64theMd5SumOfAFileProperly.sh:1385203690
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665

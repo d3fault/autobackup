@@ -1,0 +1,5 @@
+preview auto layout: you spend a lot of time adding uml items/interactions and you wonder if the computer's auto-formatting of uml shit would look better, so you can preview it but aren't forced to use it
+shareable design with ".pro.user" of design layout (optionally shareable, but independent of design itself)
+network/conference/recorded-demo-aka-explaination-of-design where recorder talks and highlights UML (boxes/lines) with mouse and it auto-translates to the viewer's "pro.user" design formatting (and notifying if something the speaker highlighted is off screen (and temporary changing to recorder's design formatting (or anyones at any time (saving old one as perhaps a state (auto merging of new elements are just plopped onto your old design if you revert the FORMAT when looking at a new COMMIT)))
+
+almost makes sense to have a default-view-format-independent that all users should be forced to have it set at when communicating with one another, BUT the network/conference shit above counters that. would obviously be "vector" recording instead of "raster" (smart,uml-knowing -- not just a fucking bitmap recording)

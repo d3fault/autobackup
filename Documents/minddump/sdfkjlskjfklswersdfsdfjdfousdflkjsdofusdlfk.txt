@@ -1,0 +1,9 @@
+onReceive(Something *something)
+{
+	//Environment.cpp defines class Life
+	Life *life = dynamic_cast<Life*>(something);
+	if(life)
+	{
+		life->live();
+	}
+}

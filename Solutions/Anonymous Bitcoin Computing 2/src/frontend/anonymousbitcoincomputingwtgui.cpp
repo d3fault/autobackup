@@ -70,7 +70,9 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true),
       m_WhatTheGetWasFor(INITIALINVALIDNULLGET),
       m_CurrentlySubscribedTo(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING),
-      m_LoggedIn(false)
+      m_LoggedIn(false),
+      m_BitcoinAddressBalancePollerPollingPendingBalance(true),
+      m_BitcoinAddressBalancePoller(0)
 {
     //constructor body, in case you're confused...
     mt19937 mersenneTwisterRandomNumberGenerator;
@@ -969,12 +971,7 @@ void AnonymousBitcoinComputingWtGUI::determineBitcoinStateButDontLetThemProceedF
     string bitcoinState = pt.get<std::string>("bitcoinState"); //TODOreq: registration sets this to "NoKey"
     if(bitcoinState == "HaveKey")
     {
-        m_AddFundsPlaceholderLayout->addWidget(new WText("Current Bitcoin Key: " + pt.get<std::string>("bitcoinStateData")));
-
-        WPushButton *checkForPendingButton = new WPushButton("Check For Pending"); //changes to "Check For Pending Again" after > 0 pending seen
-        checkForPendingButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::checkForPendingBitcoinBalanceButtonClicked);
-
-        //check for pending and check for confirmed don't modify the BitcoinState in the user-account, so that means they are safe to perform even when slotToAttemptToFillAkaPurchase is set
+        presentBitcoinKeyForPaymentsToUser(pt.get<std::string>("bitcoinStateData"));
     }
     else if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK == "n")
     {
@@ -997,6 +994,17 @@ void AnonymousBitcoinComputingWtGUI::determineBitcoinStateButDontLetThemProceedF
         m_AddFundsPlaceholderLayout->addWidget(new WText("You are attempting to purchase a slot, so bitcoin key activity is disabled until that finishes"));
     }
     resumeRendering();
+}
+void AnonymousBitcoinComputingWtGUI::presentBitcoinKeyForPaymentsToUser(const string &bitcoinKey)
+{
+    m_CurrentBitcoinKeyForPayments = bitcoinKey;
+    m_AddFundsPlaceholderLayout->addWidget(new WText("Current Bitcoin Key: " + bitcoinKey));
+
+    WPushButton *checkForPendingButton = new WPushButton("Check For Pending"); //changes to "Check For Pending Again" after > 0 pending seen
+    checkForPendingButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::checkForPendingBitcoinBalanceButtonClicked);
+    m_AddFundsPlaceholderLayout->addWidget(checkForPendingButton); //TODOreq: 2 keys in same session needs to not remake this (and similar) buttons
+
+    //check for pending and check for confirmed don't modify the BitcoinState in the user-account, so that means they are safe to perform even when slotToAttemptToFillAkaPurchase is set
 }
 void AnonymousBitcoinComputingWtGUI::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRoomEtc(const string &bitcoinKeySetNpageY, u_int64_t bitcoinKeySetNpageY_CAS, bool lcbOpSuccess, bool dbError)
 {
@@ -1282,7 +1290,89 @@ void AnonymousBitcoinComputingWtGUI::checkForPendingBitcoinBalanceButtonClicked(
 {
     //TODOreq: do check, enable "Check For Confirmed" button if appropriate
 
+    m_BitcoinAddressBalancePollerPollingPendingBalance = true;
+    sendRpcJsonBalanceRequestToBitcoinD();
+
     //TODOreq: doesn't belong here, but later in this code path after the "Done With This Key" button is pressed, it is IMPERITIVE that we check that slotToAttemptToFillAkaPurchase isn't set on the user-account before transitioning from BitcoinState:HaveKey to BitcoinState:NoKey (creditting account at same time). The GET for that CAS-swap is where we should make sure slotToAttemptToFillAkaPurchase is not set (if it is, fail saying try again later or stop using multiple tabs noob)
+}
+void AnonymousBitcoinComputingWtGUI::sendRpcJsonBalanceRequestToBitcoinD()
+{
+    if(!m_BitcoinAddressBalancePoller)
+    {
+        m_BitcoinAddressBalancePoller = new Wt::Http::Client(this);
+        m_BitcoinAddressBalancePoller->setTimeout(30);
+        m_BitcoinAddressBalancePoller->setMaximumResponseSize(2048);
+        m_BitcoinAddressBalancePoller->done().connect(boost::bind(&AnonymousBitcoinComputingWtGUI::handleBitcoinAddressBalancePollerReceivedResponse, this, _1, _2));
+    }
+
+    ptree requestPt;
+    requestPt.put("jsonrpc", "1.0");
+    requestPt.put("id", "bitcoinRpcTest"); //TODOreq: uniqueId + incrementing
+    requestPt.put("method", "getreceivedbyaddress");
+
+    ptree paramsPt;
+    ptree param0pt, param1pt;
+
+    param0pt.put("", m_CurrentBitcoinKeyForPayments);
+    const std::string minConfPlaceholder = "#(*)@#$(*MINCONFPLACEHOLDER)(&DSFOIU#**(";
+    param1pt.put("", minConfPlaceholder); // + (m_BitcoinAddressBalancePollerPollingPendingBalance ? "0" : "1" )); //minconf= 0 for pending, 1 for confirmed
+
+    paramsPt.push_back(std::make_pair("", param0pt));
+    paramsPt.push_back(std::make_pair("", param1pt));
+
+    requestPt.add_child("params", paramsPt);
+
+    std::ostringstream bitcoinJsonRpcMessageBuffer;
+    write_json(bitcoinJsonRpcMessageBuffer, requestPt, false);
+
+    //change minconf from string to json-int by simply getting rid of the quotes xD
+    std::string bitcoinJsonRpcMessageWithJsonIntForMinConfLoL = bitcoinJsonRpcMessageBuffer.str();
+    boost::replace_all(bitcoinJsonRpcMessageWithJsonIntForMinConfLoL, "\"" + minConfPlaceholder + "\"", (m_BitcoinAddressBalancePollerPollingPendingBalance ? "0" : "1" ));
+
+    //^^you know, i could have just copy/pasted a fucking string and built the json manually.... instead of tons of looking up how to use ptree.... too late now xD...
+
+    Wt::Http::Message bitcoinJsonRpcMessage;
+    bitcoinJsonRpcMessage.addHeader("content-type", "text/plain");
+    bitcoinJsonRpcMessage.addBodyText(bitcoinJsonRpcMessageWithJsonIntForMinConfLoL);
+
+    if(m_BitcoinAddressBalancePoller->post("http://testu:testp@127.0.0.1:19001", bitcoinJsonRpcMessage))
+    {
+        deferRendering();
+    }
+    else
+    {
+        //TODOreq: error message, shouldn't ever happen though... fuck it
+    }
+}
+void AnonymousBitcoinComputingWtGUI::handleBitcoinAddressBalancePollerReceivedResponse(boost::system::error_code err, const Http::Message &response)
+{
+    resumeRendering();
+    if (!err && response.status() == 200)
+    {
+        std::istringstream is(response.body());
+        ptree pt;
+        read_json(is, pt);
+        if(pt.get<std::string>("error") != "null")
+        {
+            //TODOreq: handle and notify
+            cerr << "error in json returned handleBitcoinAddressBalancePollerReceivedResponse: " << response.body() << endl;
+            return;
+        }
+        double balance = boost::lexical_cast<double>(pt.get<std::string>("result"));
+        if(balance > 0.0)
+        {
+            if(m_BitcoinAddressBalancePollerPollingPendingBalance)
+            {
+                //display pending balance
+                //enable 'check for confirmed' (don't double create/enable)
+            }
+            else
+            {
+                //display confirmed balance
+                //enable 'done with this key' (don't double create/enable)
+            }
+        }
+    }
 }
 void AnonymousBitcoinComputingWtGUI::handleGetBitcoinKeyButtonClicked()
 {
@@ -1981,7 +2071,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingToUnlockUserAccountFromBitcoi
     }
 
     //GettingKey -> HaveKey transition completed successfully, present key to user
-    m_AddFundsPlaceholderLayout->addWidget(new WText("Current Bitcoin Key: " + m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage));
+    presentBitcoinKeyForPaymentsToUser(m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage);
     resumeRendering();
 }
 void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateBitcoinKeySetViaCASswapAkaClaimingAKey(bool lcbOpSuccess, bool dbError)

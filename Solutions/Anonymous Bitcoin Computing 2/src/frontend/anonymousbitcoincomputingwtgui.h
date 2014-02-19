@@ -24,6 +24,7 @@
 #include <Wt/WFileUpload>
 #include <Wt/WImage>
 #include <Wt/WLink>
+#include <Wt/Http/Client>
 //#include <Wt/Chart/WCartesianChart>
 
 //TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
@@ -38,6 +39,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include "filedeletingfileresource.h"
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
@@ -223,6 +225,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
     void determineBitcoinStateButDontLetThemProceedForwardIfLockedAttemptingToFillAkaPurchaseSlot(const string &userAccountJsonDoc, u_int64_t casOnlyUsedWhenBitcoinStateIsInGettingKey_aka_lightRecovery, bool lcbOpSuccess, bool dbError);
+    void presentBitcoinKeyForPaymentsToUser(const std::string &bitcoinKey);
+    std::string m_CurrentBitcoinKeyForPayments;
     std::string m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage;
     void gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRoomEtc(const std::string &bitcoinKeySetNpageY, u_int64_t bitcoinKeySetNpageY_CAS, bool lcbOpSuccess, bool dbError);
     void getBitcoinKeySetNPageYAttemptFinishedSoCheckItIfItExistsAndMakeItIfItDont(const std::string &bitcoinKeySetNpageY_orNot, u_int64_t bitcoinKeySetNpageY_CAS_orNot, bool lcbOpSuccess, bool dbError);
@@ -231,6 +235,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void uuidPerRefillIsSeenOnHugeBitcoinListSoProceedWithActualNextPageFill();
     void unlockUserAccountSafelyFromBitcoinGettingKeyBecauseShitWeGotAfuckingKey_NoSweatIfBeatenToIt();
     void checkForPendingBitcoinBalanceButtonClicked();
+    void sendRpcJsonBalanceRequestToBitcoinD();
+    void handleBitcoinAddressBalancePollerReceivedResponse(boost::system::error_code err, const Http::Message& response);
     void handleGetBitcoinKeyButtonClicked();
     ptree m_RunningAllSlotFillersJsonDoc;
     u_int64_t m_RunningAllSlotFillersJsonDocCAS;
@@ -379,6 +385,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     bool m_LoggedIn;
     std::string m_CurrentlyLoggedInUsername; //only valid if logged in
+
+    bool m_BitcoinAddressBalancePollerPollingPendingBalance;
+    Wt::Http::Client *m_BitcoinAddressBalancePoller;
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
     virtual void finalize();
