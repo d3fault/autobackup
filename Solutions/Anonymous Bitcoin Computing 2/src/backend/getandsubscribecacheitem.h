@@ -6,7 +6,6 @@
 #include <boost/unordered_map.hpp>
 
 typedef boost::unordered_map<void * /* WApplication pointer */, void * /* GetCouchbaseDocumentByKeyRequest pointer */> SubscribersType;
-//TODOreq: when sessionId changes (login), we need to change it here too
 
 struct GetAndSubscribeCacheItem
 {
@@ -16,8 +15,6 @@ struct GetAndSubscribeCacheItem
     u_int64_t DocumentCAS;
     SubscribersType NewSubscribers; //want whatever next fetch gives
     SubscribersType Subscribers; //only want changes
-
-    //TODOreq: unsubscribe at appropriate times too!
 };
 
 #endif // GETANDSUBSCRIBECACHEITEM_H

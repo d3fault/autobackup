@@ -8,7 +8,7 @@
 #include <Wt/WEnvironment>
 #include <Wt/WApplication>
 #include <Wt/WStackedWidget>
-#include <Wt/WAnimation>
+//#include <Wt/WAnimation>
 #include <Wt/WContainerWidget>
 #include <Wt/WHBoxLayout>
 #include <Wt/WVBoxLayout>
@@ -20,7 +20,7 @@
 #include <Wt/WPushButton>
 #include <Wt/WComboBox>
 #include <Wt/Utils>
-#include <Wt/WDateTime> //TODOreq: take out time.h above and deps
+#include <Wt/WDateTime>
 #include <Wt/WFileUpload>
 #include <Wt/WImage>
 #include <Wt/WLink>
@@ -54,31 +54,33 @@ using namespace std;
 
 /////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
 
+#define QUOTE_MACRO_HACK_LOL(text) #text //I guess i could have lexically cast'd int->string instead...
+
 #define ABC_WT_STATIC_MESSAGE_QUEUE_SOURCE_DEFINITION_MACRO(text) \
-message_queue *AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+message_queue *AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
 #define ABC_WT_STATIC_EVENT_SOURCE_DEFINITION_MACRO(text) \
-event *AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+event *AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
 #define ABC_WT_STATIC_MUTEX_SOURCE_DEFINITION_MACRO(text) \
-boost::mutex AnonymousBitcoinComputingWtGUI::m_##text##MutexArray[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+boost::mutex AnonymousBitcoinComputingWtGUI::m_##text##MutexArray[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
 #define ABC_WT_STATIC_MESSAGE_QUEUE_HEADER_DECLARATION_MACRO(text) \
-static message_queue *m_##text##WtMessageQueues[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+static message_queue *m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
 #define ABC_WT_STATIC_EVENT_HEADER_DECLARATION_MACRO(text) \
-static event *m_##text##EventCallbacksForWt[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+static event *m_##text##EventCallbacksForWt[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
 #define ABC_WT_STATIC_MUTEX_HEADER_DECLARATION_MACRO(text) \
-static boost::mutex m_##text##MutexArray[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+static boost::mutex m_##text##MutexArray[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
 #define ABC_WT_NEW_AND_OPEN_MESSAGE_QUEUE_MACRO(z, n, text) \
-m_##text##WtMessageQueues[n] = new message_queue(open_only, WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
+m_##text##WtMessageQueues[n] = new message_queue(open_only, ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
 #text \
 #n);
 
 #define ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO(text) \
-uniform_int_distribution<> l_##text##MessageQueuesRandomIntDistribution(0, NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text - 1); \
+uniform_int_distribution<> l_##text##MessageQueuesRandomIntDistribution(0, ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text - 1); \
 m_Current##text##MessageQueueIndex = l_##text##MessageQueuesRandomIntDistribution(mersenneTwisterRandomNumberGenerator);
 
 #define ABC_WT_PER_QUEUE_CURRENT_RANDOM_INDEX_DECLARATION_MACRO(text) \
@@ -105,17 +107,17 @@ std::ostringstream couchbaseRequestSerialized; \
 } \
 std::string couchbaseRequesSerializedString = couchbaseRequestSerialized.str(); \
 size_t couchbaseRequesSerializedStringLength = couchbaseRequesSerializedString.length(); \
-if(couchbaseRequesSerializedStringLength > SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text) \
+if(couchbaseRequesSerializedStringLength > ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text) \
 { \
     return; \
 } \
 ++m_Current##text##MessageQueueIndex; \
-if(m_Current##text##MessageQueueIndex == NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) \
+if(m_Current##text##MessageQueueIndex == ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) \
 { \
     m_Current##text##MessageQueueIndex = 0; \
 } \
 int lockedMutexIndex = m_Current##text##MessageQueueIndex; \
-int veryLastMutexIndexToBlockLock = (m_Current##text##MessageQueueIndex == 0 ? (NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) : (m_Current##text##MessageQueueIndex-1)); \
+int veryLastMutexIndexToBlockLock = (m_Current##text##MessageQueueIndex == 0 ? (ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) : (m_Current##text##MessageQueueIndex-1)); \
 while(true) \
 { \
     if(lockedMutexIndex == veryLastMutexIndexToBlockLock) \
@@ -128,7 +130,7 @@ while(true) \
         break; \
     } \
     ++lockedMutexIndex; \
-    if(lockedMutexIndex == NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) \
+    if(lockedMutexIndex == ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) \
     { \
         lockedMutexIndex = 0; \
     } \
@@ -158,6 +160,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WAnchor *m_LinkToAccount;
 
     WStackedWidget *m_MainStack;
+    WContainerWidget *m_404NotFoundWidget;
 
     //stack items for m_MainStack follow
     WContainerWidget *m_HomeWidget;
@@ -293,8 +296,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     //store
     void storeWithoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
-    void setCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
-    void setCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas, bool lcbOpSuccess, bool dbError);
+    void storeCouchbaseDocumentByKeyWithInputCasFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void storeCouchbaseDocumentByKeyWithInputCasSavingOutputCasFinished(const std::string &keyToCouchbaseDocument, u_int64_t outputCas, bool lcbOpSuccess, bool dbError);
     void store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
     void store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum);
     void storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode = StoreCouchbaseDocumentByKeyRequest::AddMode);
@@ -315,6 +318,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void handleLoginButtonClicked();
     std::string m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack;
     void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, u_int64_t casOnlyUsedWhenDoingRecoveryAtLogin, bool lcbOpSuccess, bool dbError);
+    void usernameOrPasswordYouProvidedIsIncorrect();
     std::string m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin;
     u_int64_t m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay;
     void doLoginTasks();
@@ -363,8 +367,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     };
     enum WhatTheGetSavingCasWasForEnum
     {
-        LOGINATTEMPTGET,
         INITIALINVALIDNULLGETSAVINGCAS,
+        LOGINATTEMPTGET,
         ADDFUNDSBUTTONCLICKEDSODETERMINEBITCOINSTATEBUTDONTLETTHEMPROCEEDIFLOCKEDATTEMPTINGTOFILLAKAPURCHASESLOT,
         GETBITCOINKEYSETNCURRENTPAGETOSEEWHATPAGEITISONANDIFITISLOCKED,
         GETBITCOINKEYSETNACTUALPAGETOSEEIFUUIDONITENOUGHROOM,
@@ -384,7 +388,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     };
 
     //TODOoptimziation: can probably use callbacks (boost::bind comes to mind) for these and would maybe be more efficient (idk)
-    //TODOreq: set these all to [semi-]null in constructor. Also might make sense to set them back to null after using, but as of writing i don't need to
+    //TODOoptional: might make sense to set them back to null after using, but as of writing i don't need to
     WhatTheStoreWithoutInputCasWasForEnum m_WhatTheStoreWithoutInputCasWasFor;
     WhatTheStoreWithInputCasWasForEnum m_WhatTheStoreWithInputCasWasFor;
     WhatTheStoreWithInputCasSavingOutputCasWasForEnum m_WhatTheStoreWithInputCasSavingOutputCasWasFor;
@@ -404,13 +408,13 @@ public:
     static void newAndOpenAllWtMessageQueues();
     static void deleteAllWtMessageQueues();
 
-    //static message_queue *m_StoreWtMessageQueues[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
+    //static message_queue *m_StoreWtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_STATIC_MESSAGE_QUEUE_HEADER_DECLARATION_MACRO)
 
-    //static event *m_StoreEventCallbacksForWt[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
+    //static event *m_StoreEventCallbacksForWt[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_STATIC_EVENT_HEADER_DECLARATION_MACRO)
 
-    //static boost::mutex m_StoreMutexArray[NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
+    //static boost::mutex m_StoreMutexArray[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_STATIC_MUTEX_HEADER_DECLARATION_MACRO)
 };
 

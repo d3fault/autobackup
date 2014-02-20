@@ -58,7 +58,7 @@ free(m_##text##MessageQueuesCurrentMessageBuffer); \
 m_##text##MessageQueuesCurrentMessageBuffer = NULL;
 
 #define ABC_REMOVE_ALL_MESSAGE_QUEUES_MACRO(z, n, text) \
-message_queue::remove(WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
+message_queue::remove(ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
 #text \
 #n);
 
@@ -67,12 +67,12 @@ delete m_##text##WtMessageQueue##n; \
 m_##text##WtMessageQueue##n = NULL;
 
 #define ABC_MALLOC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(text) \
-m_##text##MessageQueuesCurrentMessageBuffer = malloc(SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
+m_##text##MessageQueuesCurrentMessageBuffer = malloc(ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
 
 #define ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) \
-m_##text##WtMessageQueue##n = new message_queue(create_only, WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
+m_##text##WtMessageQueue##n = new message_queue(create_only, ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
 #text \
-#n, MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_##text, SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
+#n, MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_##text, ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
 
 #define ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DEFINITIONS_MACRO(z, n, text) \
 struct event *AnonymousBitcoinComputingCouchbaseDB::get##text##EventCallbackForWt##n() \
@@ -93,7 +93,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n() \
 { \
     unsigned int priority; \
     message_queue::size_type actualMessageSize; \
-    m_##text##WtMessageQueue##n->receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority); \
+    m_##text##WtMessageQueue##n->receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority); \
     eventSlotForWt##text(); \
 }
 
@@ -104,13 +104,16 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n() \
 } \
 m_IsConnectedWaitCondition.notify_one();
 
-#define ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(GetOrStore) \
-delete originalRequest; \
+#define ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(GetOrStore) \
 --m_Pending##GetOrStore##Count; \
 if(m_NoMoreAllowedMuahahaha && m_PendingStoreCount == 0 && m_PendingGetCount == 0) \
 { \
     notifyMainThreadWeAreFinishedWithAllPendingRequests(); \
-} \
+}
+
+#define ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(GetOrStore) \
+delete originalRequest; \
+ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(GetOrStore)
 
 #define ABC_DO_SCHEDULE_COUCHBASE_GET() \
 lcb_get_cmd_t cmd; \
@@ -125,7 +128,7 @@ if(error  != LCB_SUCCESS) \
 { \
     cerr << "Failed to setup get request: " << lcb_strerror(m_Couchbase, error) << endl; \
 } \
-++m_PendingGetCount; //TODOreq: overflow? meh not worried about it for now
+++m_PendingGetCount; //TODOoptional: overflow? meh not worried about it for now xD
 
 #define ABC_DO_SCHEDULE_COUCHBASE_STORE(storeSize) \
 if(m_NoMoreAllowedMuahahaha) \
@@ -133,39 +136,47 @@ if(m_NoMoreAllowedMuahahaha) \
     return; \
 } \
 ++m_PendingStoreCount; \
-StoreCouchbaseDocumentByKeyRequest *storeCouchbaseDocumentByKeyRequestFromWt = new StoreCouchbaseDocumentByKeyRequest(); \
+StoreCouchbaseDocumentByKeyRequest *originalRequest = new StoreCouchbaseDocumentByKeyRequest(); \
 { \
-    std::istringstream storeCouchbaseDocumentByKeyRequestFromWtSerialized(static_cast<const char*>(m_##storeSize##MessageQueuesCurrentMessageBuffer)); \
-    boost::archive::text_iarchive deSerializer(storeCouchbaseDocumentByKeyRequestFromWtSerialized); \
-    deSerializer >> *storeCouchbaseDocumentByKeyRequestFromWt; \
+    std::istringstream originalRequestSerialized(static_cast<const char*>(m_##storeSize##MessageQueuesCurrentMessageBuffer)); \
+    boost::archive::text_iarchive deSerializer(originalRequestSerialized); \
+    deSerializer >> *originalRequest; \
 } \
 lcb_store_cmd_t cmd; \
 const lcb_store_cmd_t *cmds[1]; \
 cmds[0] = &cmd; \
 memset(&cmd, 0, sizeof(cmd)); \
-const char *keyInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreKeyInput.c_str(); \
-const char *documentInput = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreDocumentInput.c_str(); \
+const char *keyInput = originalRequest->CouchbaseStoreKeyInput.c_str(); \
+const char *documentInput = originalRequest->CouchbaseStoreDocumentInput.c_str(); \
 cmd.v.v0.key = keyInput; \
-cmd.v.v0.nkey = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreKeyInput.length(); \
+cmd.v.v0.nkey = originalRequest->CouchbaseStoreKeyInput.length(); \
 cmd.v.v0.bytes = documentInput; \
-cmd.v.v0.nbytes = storeCouchbaseDocumentByKeyRequestFromWt->CouchbaseStoreDocumentInput.length(); \
-if(storeCouchbaseDocumentByKeyRequestFromWt->LcbStoreModeIsAdd) \
+cmd.v.v0.nbytes = originalRequest->CouchbaseStoreDocumentInput.length(); \
+if(originalRequest->LcbStoreModeIsAdd) \
 { \
     cmd.v.v0.operation = LCB_ADD; \
 } \
 else \
 { \
     cmd.v.v0.operation = LCB_SET; \
-    if(storeCouchbaseDocumentByKeyRequestFromWt->HasCasInput) \
+    if(originalRequest->HasCasInput) \
     { \
-        cmd.v.v0.cas = storeCouchbaseDocumentByKeyRequestFromWt->CasInput; \
+        cmd.v.v0.cas = originalRequest->CasInput; \
     } \
 } \
-lcb_error_t err = lcb_store(m_Couchbase, storeCouchbaseDocumentByKeyRequestFromWt, 1, cmds); \
+lcb_error_t err = lcb_store(m_Couchbase, originalRequest, 1, cmds); \
 if(err != LCB_SUCCESS) \
 { \
     cerr << "Failed to set up store request: " << lcb_strerror(m_Couchbase, err) << endl; \
-    return; \
+    if(originalRequest->SaveCasOutput) \
+    { \
+        StoreCouchbaseDocumentByKeyRequest::respondWithCas(originalRequest, 0, false, true); \
+    } \
+    else \
+    { \
+        StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, false, true); \
+    } \
+    ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Store) \
 }
 
 //You know you're a god when you can use a BOOST_PP_REPEAT within a call to BOOST_PP_REPEAT
