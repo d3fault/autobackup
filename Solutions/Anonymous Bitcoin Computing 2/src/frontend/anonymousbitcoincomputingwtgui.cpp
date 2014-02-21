@@ -68,11 +68,9 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0),
       m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0),
       m_FirstPopulate(false),
-      m_CurrentPriceLabel(0),
       m_BuySlotFillerStep1Button(0),
       m_HackedInD3faultCampaign0_NoPreviousSlotPurchases(true),
       m_BuyStep2placeholder(0),
-      m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired(true),
       m_WhatTheStoreWithoutInputCasWasFor(INITIALINVALIDNULLSTOREWITHOUTINPUTCAS),
       m_WhatTheStoreWithInputCasWasFor(INITIALINVALIDNULLSTOREWITHCAS),
       m_WhatTheStoreWithInputCasSavingOutputCasWasFor(INITIALINVALIDNULLSTOREWITHCASSAVINGCAS),
@@ -476,6 +474,12 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         //still dunno if i should block or do it async? instincts tell me async, but "SUB MILLISECOND LATENCY" tells me async might actually be wasteful/slower??? The obvious answer is "benchmark it xD" (FUCK FUCK FUCK FUCK FUCK THAT, async it is (because even if slower, it still allows us to scale bettarer))
         //^To clarify, I have 3 options: wait on a wait condition right here that is notified by couchbase thread and we serve up result viola, deferRendering/resumeRendering, or enableUpdates/TriggerUpdates. The last one requires ajax. Both the last 2 are async (despite defer "blocking" (read:disabling) the GUI)
 
+        new WText("Buy ad space for ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_CampaignLengthHoursLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(" hours, starting: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_CampaignSlotCurrentlyForSaleStartDateTimeLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceDomPath = m_CurrentPriceLabel->jsRef();
@@ -589,22 +593,21 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         //TODOreq: PointSeries/CircleMarker for 'now', LineSeries/NoMarker for everything else
 #endif
 
+    if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
+    {
+        //TODOreq (done i think, but test this): no purchases yet, use static min price (but still be able to transform to javascript countdown on buy event)
+        m_CurrentPriceLabel->setText(m_HackedInD3faultCampaign0_MinPrice);
+        m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText("immediately after purchase");
+    }
+    else
+    {
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>("slotIndex");
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("purchaseTimestamp");
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
 
-    if(environment().ajax())
-    {        
-        if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
+        if(environment().ajax())
         {
-            //TODOreq (done i think, but test this): no purchases yet, use static min price (but still be able to transform to javascript countdown on buy event)
-            m_CurrentPriceLabel->setText(m_HackedInD3faultCampaign0_MinPrice);
-        }
-        else
-        {
-            //these pt.gets() are a copy-paste job from environment()._NO_ajax() code path
-            m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>("slotIndex");
-            m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("purchaseTimestamp");
-            m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
-            m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
-
             //timer either already running, about to start running (first populate), so give these variables real values
             m_CurrentPriceLabel->doJavaScript
             (
@@ -623,48 +626,26 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             );
         }
 
-        //TODOoptional(was req, but fuck it): navigating away should turn off the timer, coming back turns it back on
-        if(m_FirstPopulate)
+        //check expired. js checks expired itself, BUT we still follow this code path just to get the starting 'datetime' of purchaseable slot accurately set [for both js and no-js]
+        double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
+        double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
+        if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
         {
-            m_FirstPopulate = false;
-            resumeRendering();
-            m_CurrentPriceLabel->doJavaScript
-            (
-                m_CurrentPriceDomPath + ".z0bj.minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";" +
-                ABC_START_JS_INTERVAL_SNIPPET
-                //TODOreq: does re-subscribe re-enable the timer? i would think the timer would still be in whatever state it was in when we left/unsubscribed, SO THAT MEANS: if we unsubscribe -> the timer 'stops' (minprice) _AND_ there is a buy event before we re-subscribe = the timer is still sitting at stopped/min-price and does not get re-enabled (despite us having accurate 'values' for calculating).
-                //^it appears that the timer only gets turned on at first populate. a buy event after the timer stops (min-price) probably won't enable it either, which is related to the directly above req
-            );
-        }
-        triggerUpdate();
-    }
-    else
-    {
-        if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases) //TODOreq: not related to js/here/etc, but when a "buy event" is received and we're on, say, step 1 of 2 clicked, we would then possibly toggle the value of NoPreviousSlotPurchases and need to make sure that... err... something...
-        {
-            m_CurrentPriceLabel->setText(m_HackedInD3faultCampaign0_MinPrice);
+            //expired, so use min price
+            if(!environment().ajax()) //js sets it to min price on it's own (after first timeout)
+            {
+                m_CurrentPriceLabel->setText(m_HackedInD3faultCampaign0_MinPrice);
+            }
+            m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText("immediately after purchase");
         }
         else
         {
-            //these pt.gets() are a copy-paste job from environment().ajax() code path
-            m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>("slotIndex");
-            m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("purchaseTimestamp");
-            m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
-            m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
+            //not expired, so calculate. despite determining it's not expired here, we are not going to set "m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;", because it may have expired by the time they hit buy step 2. We have to check when/after they click buy step 2. Could be minutes/hours/days after the page has been rendered (this code)
 
+            m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText(WDateTime::fromTime_t(lastSlotFilledAkaPurchasedExpireDateTime).toString());
 
-            //check expired
-            double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
-            double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
-            if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
+            if(!environment().ajax()) //since not expired, no-js now calculates current price
             {
-                //expired, so use min price
-                m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
-            }
-            else
-            {
-                //not expired, so calculate. despite determining it's not expired here, we are not going to set "m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;", because it may have expired by the time they hit buy step 2. We have to check when/after they click buy step 2. Could be minutes/hours/days after the page has been rendered (this code)
-
                 //TODOreq: javascript-less UI should update price after buy step 1 is clicked
                 //TODOreq: maybe a 60 second timer to refresh js-less page, or a refresh button
 
@@ -677,6 +658,29 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             }
         }
     }
+
+    if(environment().ajax()) //derp i hate when my k-maps (which i don't even actually formally make) don't come out nicely and i have to check the same bool twice
+    {
+        if(m_FirstPopulate)
+        {
+            m_FirstPopulate = false;
+            resumeRendering();
+            m_CampaignLengthHoursLabel->setText(m_HackedInD3faultCampaign0_SlotLengthHours);
+            m_CurrentPriceLabel->doJavaScript
+            (
+                m_CurrentPriceDomPath + ".z0bj.minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";" +
+                ABC_START_JS_INTERVAL_SNIPPET
+                //TODOreq: does re-subscribe re-enable the timer? i would think the timer would still be in whatever state it was in when we left/unsubscribed, SO THAT MEANS: if we unsubscribe -> the timer 'stops' (minprice) _AND_ there is a buy event before we re-subscribe = the timer is still sitting at stopped/min-price and does not get re-enabled (despite us having accurate 'values' for calculating).
+                //^it appears that the timer only gets turned on at first populate. a buy event after the timer stops (min-price) probably won't enable it either, which is related to the directly above req
+            );
+        }
+        triggerUpdate();
+    }
+    else //no-js
+    {
+        m_CampaignLengthHoursLabel->setText(m_HackedInD3faultCampaign0_SlotLengthHours);
+    }
+
     if(!m_BuySlotFillerStep1Button)
     {
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -695,6 +699,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
     {
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptimization: a DDOS to make server run out of ram: click 'buy step 1' a billion fucking times (easy since it doesn't move on screen). each one is a heap allocate. solution = only one "log in first"
         new WText("Log In First", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_BuySlotFillerStep1Button->enable();
         return;
     }
 
@@ -726,13 +731,12 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("You need to set up some advertisements before you can buy ad space: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        //TODOreq: on logout, we should roll back everything back to pre-step1-clicked (my deleting of account link made me think of that, but it applies to way more things)
         return;
     }
 
     //if we get here, allAds doc exists (which means it has at least one ad)
 
-    string currentPriceStringForConfirmingOnly = boost::lexical_cast<std::string>(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp))); //TODOreq: rounding/etc
+    string currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (boost::lexical_cast<std::string>(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp)))); //TODOreq: rounding/etc
 
     if(!environment().ajax())
     {
@@ -756,6 +760,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
     //TODOreq: unsubscribing (navigating away) and resubscribing (coming back) might have missed a buy event, but actually i think re-subscribe should give us an updated value right away (well, within 100ms xD) and when we receive it we'll then roll back to pre-step 1. test this
 
+    //setting this bool to false here instead of at the buy event makes the user have to click buy step 1 again
     m_BuyInProgress = false;
 
     if(!m_BuyStep2placeholder)
@@ -977,6 +982,8 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     std::istringstream is(userAccountJsonDoc);
     read_json(is, pt);
 
+    m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = true; //default to true until we prove it false
+
     std::string ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
     if(ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase == "n")
     {
@@ -992,7 +999,6 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         {
             //no last purchase, so use min price
             m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
-            m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = true; //not necessary to set here, but to be on the safe side..
         }
         else
         {
@@ -1004,7 +1010,6 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             {
                 //expired, so use min price
                 m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
-                m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = true;
             }
             else
             {

@@ -11,8 +11,8 @@
 - all ad slot fillers preview (view query or expensive? maybe just expensive but only for owner as optimization (not security/privacy(LOL)). would still warrant pagination imo)
 - doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
 - No ops cause too big of messages to be sent through the message queue
-- Tell date range (day) for currently purchaseable slot
-- missing the slot (confirmed miss) unlocks user account (just jump to login recovery code that already does that)
+- missing the slot (confirmed miss) unlocks user account (just jump to login recovery code that already does that (to be safe, jump to the pre-confirm-i-didnt-get-the-slot code)). i guess also related to this is that if a no-js user presses buy step 2 a long time after the buy event, we go all the way to locking and attempting to LCB_ADD before we see it being full.. so maybe no-js should do a campaign-get to see if the one they are saying they are interested in after pressing buy step 2 is still even available? i guess really as long as the user-account auto-unlocks it's fine the way it is
+
 
 ==1.1 Bugs==
 

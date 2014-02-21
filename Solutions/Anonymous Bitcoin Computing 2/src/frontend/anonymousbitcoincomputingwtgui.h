@@ -210,6 +210,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void showAdvertisingBuyAdSpaceD3faultWidget();
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     bool m_FirstPopulate;
+    WText *m_CampaignLengthHoursLabel;
+    WText *m_CampaignSlotCurrentlyForSaleStartDateTimeLabel;
     WText *m_CurrentPriceLabel;
     std::string m_CurrentPriceDomPath;
     WPushButton *m_BuySlotFillerStep1Button;
