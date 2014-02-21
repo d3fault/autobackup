@@ -399,7 +399,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
                 */
             }
 
-            //TODOreq: MAYBE lcb_get_replica when error qualifies (play around with failover stuff + timeouts. i don't know how couchbase does failovers, it might just be a normal retry (assuming failover time is less than message timeout (so by the time the second one is dispatched, failover has occured)) instead of the get_replica thing)
+            //TODOreq: MAYBE lcb_get_replica when error qualifies (play around with failover stuff + timeouts. i don't know how couchbase does failovers, I might just need a normal retry (assuming failover time is less than message timeout (so by the time the second one is dispatched, failover has occured)) instead of the get_replica thing)
 
             cerr << "Error couchbase getCallback:" << lcb_strerror(m_Couchbase, error) << endl;
             if(originalRequest->SaveCAS)
@@ -427,7 +427,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         return;
     }
 
-    if(originalRequest->GetAndSubscribe)
+    if(originalRequest->GetAndSubscribe != 0)
     {
         //TODOreq: handle case where key doesn't exist (but since we're manually setting up get and subscribe shit for now (including recompilations), that is ridiculously unlikely)
 
@@ -442,8 +442,85 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
 
             //exception thrown if not found
 
-            cacheItem->CurrentlyFetchingPossiblyNew = false;
+            //the following two for loops are our processing of unsubscribe/change-session id requests. we could have done it right when we got the requests in eventSlotForWtGet, but we do it here instead to prevent a segfault when request hackily being used requests unsubscribe/change-session-id during the time it's being hackily used. now that we've finished using the request to pull out our cacheItem, it's ok if it gets deleted
+            size_t requestVectorSize = m_UnsubscribeRequestsToProcessMomentarily.size();
+            for(int i = (static_cast<int>(requestVectorSize)-1); i > -1; --i)
+            {
+                //process unsubscribe requests
+                GetCouchbaseDocumentByKeyRequest *originalUnsubscribeRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(m_UnsubscribeRequestsToProcessMomentarily[i]);
+                m_UnsubscribeRequestsToProcessMomentarily.pop_back();
 
+                GetCouchbaseDocumentByKeyRequest *existingSubscription;
+                try
+                {
+                    existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->NewSubscribers.at(originalUnsubscribeRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+
+                    //is in new subscribers
+                    cacheItem->NewSubscribers.erase(originalUnsubscribeRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //see TODOoptimization in change session id about using a find iterator instead
+                    delete existingSubscription;
+                }
+                catch(std::out_of_range &notInNewSubscribersException)
+                {
+                    try
+                    {
+                        existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->Subscribers.at(originalUnsubscribeRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+
+                        //is in old subscribers
+                        cacheItem->Subscribers.erase(originalUnsubscribeRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //see TODOoptimization in change session id about using a find iterator instead
+                        delete existingSubscription;
+                    }
+                    catch(std::out_of_range &notInOldSubscribersException)
+                    {
+                        //double  unsubscribe is quite likely so we don't care when it happens
+                    }
+                }
+
+                //always delete the unsubscribe request
+                delete originalUnsubscribeRequestFromWt;
+            }
+            requestVectorSize = m_ChangeSessionIdRequestsToProcessMomentarily.size();
+            for(int i = (static_cast<int>(requestVectorSize)-1); i > -1; --i)
+            {
+                //process change session id requests
+                GetCouchbaseDocumentByKeyRequest *originalChangeSessionIdRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(m_ChangeSessionIdRequestsToProcessMomentarily[i]);
+                m_ChangeSessionIdRequestsToProcessMomentarily.pop_back();
+
+                GetCouchbaseDocumentByKeyRequest *existingSubscription;
+                try
+                {
+                    existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->NewSubscribers.at(originalChangeSessionIdRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+
+                    //is in new subscription
+                    //delete the old session id's request, but we're about to 'insert' so no need to erase from hash
+                    delete existingSubscription;
+                }
+                catch(std::out_of_range &notInNewSubscribersException)
+                {
+                    try
+                    {
+                        existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->Subscribers.at(originalChangeSessionIdRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+
+                        //is in old subscribers
+                        cacheItem->Subscribers.erase(originalChangeSessionIdRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //TODOoptimization: we could use 'find' instead of 'at' and already have the iterator, which makes for faster erasing here (fuckit)
+                        delete existingSubscription;
+                    }
+                    catch(std::out_of_range &notInOldSubscribersException)
+                    {
+                        //TODOreq:
+                        cerr << "i'm not sure what it means if we get a change session id request for a wapplication that isn't subscribed... so for now give an error and just return doing nothing" << endl;
+                        delete originalChangeSessionIdRequestFromWt;
+                        return;
+                    }
+                }
+
+                //if we get here then the old request was 'delete'd (and if it was in old subscribers hash, it was removed from it), so now we just add to new subscribers (which would overwrite the old one if it was even there)
+                cacheItem->NewSubscribers[originalChangeSessionIdRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback] = originalChangeSessionIdRequestFromWt;
+                //we put ourself in NewSubscribers because we definitely want the next poll. we also don't even know if the old session id is in new subscribers or old subscribers list, but putting it into new will get it put into old soon anyways
+            }
+
+
+            //traditional subscription update checks
+            cacheItem->CurrentlyFetchingPossiblyNew = false;
             std::string possiblyNewValueDependingOnCas = std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes);
             lcb_cas_t casToTellUsIfTheDocChangedOrNot = resp->v.v0.cas;
 
@@ -643,9 +720,6 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStoreLarge()
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 {
-    //TODOreq: for fixing the unsubscribe/change-session-id segfault, it's probably easiest to just keep track of (on a per-subscribable-key basis) the WApplication pointer doing the current 'polling get' and to check that the one sent along with unsubscribe/change-session-id isn't the same. If it is the same, we use a simple boolean flag (on per-key basis as well ofc) 'deleteRequestHackilyUsingForPollingGet' and process it when the polling get finishes. change session-id might have different way of processing that, so perhaps 2 flags?
-    //^^the alternative is to keep track of 'unsubscribe/change-session-id' requests and to process them when a polling get finishes. neither one sound TOO complicated...
-
     if(m_NoMoreAllowedMuahahaha)
     {
         return;
@@ -670,86 +744,31 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         {
             //TODOreq: if we've just scheduled our 100ms poll to couchbase and are expecting a fresh value soon, we should just add ourself to the subscribers list. we could respond with the probably-about-to-be-made-stale one, but we shouldn't
             //TODOreq: if the 100ms poll doesn't return a 'new' doc (based on cas), there's still going to be a list (sometimes of size zero) of subscribers who are interested in being given _A_ result. The directly above TODOreq mentions a kind that would be interested, and there is also the "many successive get-and-subscribes" in a row really fast, where all but the first simply added themselves to said list (that actually implies that there was no cache hit, but eh just like above TODOreq above says: if one is scheduled, we wait for it!)
-            //^^So I'm thinking something like m_ListOfSubscribersWhoOnlyWant_NEW_Updates and m_ListOfSubscribersWhoDontHaveShitYet. Upon the 100ms poll getting a value (any value), it gives it's result to m_ListOfSubscribersWhoDontHaveShitYet, then checks to see if the cas has changed and then if it has gives it's result to m_ListOfSubscribersWhoOnlyWant_NEW_Updates. Then it adds-while-clearing m_ListOfSubscribersWhoDontHaveShitYet _into_ m_ListOfSubscribersWhoOnlyWant_NEW_Updates
+            //^^So I'm thinking something like m_ListOfSubscribersWhoOnlyWant_CHANGED_Updates and m_ListOfSubscribersWhoDontHaveShitYet (old and new subscribers, respectively). Upon the 100ms poll getting a value (any value), it gives it's result to m_ListOfSubscribersWhoDontHaveShitYet, then checks to see if the cas has changed and then if it has gives it's result to m_ListOfSubscribersWhoOnlyWant_NEW_Updates. Then it adds-while-clearing m_ListOfSubscribersWhoDontHaveShitYet _into_ m_ListOfSubscribersWhoOnlyWant_CHANGED_Updates
             //^^^The point is, if some bool 'm_PollIsActive' (for that particular key), then we don't want to do the 'respondWithCAS' a few lines down
 
-            //TODOreq: for the actual poll / cache miss, I need to use ONE OF the GetCouchbaseDocumentByKeyRequests (subscribers) to do the get itself using existing infrastructure. It will be easy to "pull back out" (as being GetAndSubscribe 'mode') because of the same bool I used to get to here. BUT doing so is a bit hacky and does lead to a tiny race condition that when happened would make the 100ms now 200ms (or possibly longer, but it gets rarer and rarer). If the end-user for the corresponding GetCouchbaseDocumentByKeyRequest should UNSUBSCRIBE (navigate away, disconnect) while the 'get poll' is taking place, we might not see him in the list anymore and might... idk... disregard the result? Hard to wrap my head around but now that I've typed this shit, I'll double check that I accounted for it later. Might not matter at all depending how I code it (lookup by KEY = doesn't matter)
+            //first thought of unsubscribe segfault, before completely comprehending:
+            //TO DOnereq(problem-described-backwards-but-yet): for the actual poll / cache miss, I need to use ONE OF the GetCouchbaseDocumentByKeyRequests (subscribers) to do the get itself using existing infrastructure. It will be easy to "pull back out" (as being GetAndSubscribe 'mode') because of the same bool I used to get to here. BUT doing so is a bit hacky and does lead to a tiny race condition that when happened would make the 100ms now 200ms (or possibly longer, but it gets rarer and rarer). If the end-user for the corresponding GetCouchbaseDocumentByKeyRequest should UNSUBSCRIBE (navigate away, disconnect) while the 'get poll' is taking place, we might not see him in the list anymore and might... idk... disregard the result? Hard to wrap my head around but now that I've typed this shit, I'll double check that I accounted for it later. Might not matter at all depending how I code it (lookup by KEY = doesn't matter)
 
             //I have written previously that the polling will be lazy. I said it should do a get if 'lastGet' happened >= 100ms ago. I have changed my mind BECAUSE: you could have shit tons of 'subscribers' sitting waiting for their "Post" updates only... and very little of them doing "first page load 'get'ing" (and only the first page load get'ing would go through the code path to see if >= 100ms has elapsed). Since the primary way of pushing updates is to them (masses) via Post without them requiring to do a 'get' (hence the name 'SUBSCRIBE'), I'm going to use an actual timer for polling and not lazy/event-driven polling like I said earlier.
-
-            //TODOreq: an unsubscribe request for the 'request' that we're hackily using to do the 100ms poll needs to be handled specially. if we unsubscribe him and 'delete' it, we'll segfault when the 100ms poll completes
 
             //try to get
             keyValueCacheItem = m_GetAndSubscribeCacheHash.at(getCouchbaseDocumentByKeyRequestFromWt->CouchbaseGetKeyInput);
 
             //CACHE HIT if we get this far and the exception isn't thrown
-            //first handle our two special cases
+
+            //first handle our two special cases (change session id and unsubscribe) by queuing their requests, to be processed when the next poll completes. if we processed them here, we'd run the risk of deleting the message being hackily used to poll the value every 100ms
             if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe == 2) //change session id
             {
-                GetCouchbaseDocumentByKeyRequest *existingSubscription;
-                try
-                {
-                    existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(keyValueCacheItem->NewSubscribers.at(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
-
-                    //is in new subscription
-                    //delete the old session id's request, but we're about to 'insert' so no need to erase from hash
-                    delete existingSubscription;
-                }
-                catch(std::out_of_range &notInNewSubscribersException)
-                {
-                    try
-                    {
-                        existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(keyValueCacheItem->Subscribers.at(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
-
-                        //is in old subscribers
-                        keyValueCacheItem->Subscribers.erase(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //TODOoptimization: we could use 'find' instead of 'at' and already have the iterator, which makes for faster erasing here (fuckit)
-                        delete existingSubscription;
-                    }
-                    catch(std::out_of_range &notInOldSubscribersException)
-                    {
-                        //TODOreq:
-                        cerr << "i'm not sure what it means if we get a change session id request for a wapplication that isn't subscribed... so for now give an error and just return doing nothing" << endl;
-                        delete getCouchbaseDocumentByKeyRequestFromWt;
-                        return;
-                    }
-                }
-
-                //if we get here then the old request was 'delete'd (and if it was in old subscribers hash, it was removed from it), so now we just add to new subscribers (which would overwrite the old one if it was even there)
-                keyValueCacheItem->NewSubscribers[getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback] = getCouchbaseDocumentByKeyRequestFromWt;
+                m_ChangeSessionIdRequestsToProcessMomentarily.push_back(getCouchbaseDocumentByKeyRequestFromWt);
 
                 //don't continue doing get [and/or subscribe]
                 return;
-
-                //we put ourself in NewSubscribers because we definitely want the next poll. we also don't even know if the old session id is in new subscribers or old subscribers list, but putting it into new will get it put into old soon anyways. there is a race condition not even worth fixing where the value changes right around 'now' and the old session id gets posted to before we've made this new subscriber (added few lines up) gets put (read:overwritten) into the old subscribers. Wt handles this safely i'm pretty sure and it's quite rare that i don't give a shit
-                //^^^^DISREGARD, since memory leak if i don't hunt down and delete the 'old session id' getCouchbaseDocumentByKeyRequestFromWt
             }
             else if(getCouchbaseDocumentByKeyRequestFromWt->GetAndSubscribe == 3) //unsubscribe
             {
-                GetCouchbaseDocumentByKeyRequest *existingSubscription;
-                try
-                {
-                    existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(keyValueCacheItem->NewSubscribers.at(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
+                m_UnsubscribeRequestsToProcessMomentarily.push_back(getCouchbaseDocumentByKeyRequestFromWt);
 
-                    //is in new subscribers
-                    keyValueCacheItem->NewSubscribers.erase(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //see TODOoptimization in change session id about using a find iterator instead
-                    delete existingSubscription;
-                }
-                catch(std::out_of_range &notInNewSubscribersException)
-                {
-                    try
-                    {
-                        existingSubscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(keyValueCacheItem->Subscribers.at(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback));
-
-                        //is in old subscribers
-                        keyValueCacheItem->Subscribers.erase(getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback); //see TODOoptimization in change session id about using a find iterator instead
-                        delete existingSubscription;
-                    }
-                    catch(std::out_of_range &notInOldSubscribersException)
-                    {
-                        //double  unsubscribe is quite likely so we don't care when it happens
-                        delete getCouchbaseDocumentByKeyRequestFromWt;
-                    }
-                }
                 //don't continue doing get [and/or subscribe]
                 return;
             }
@@ -759,6 +778,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
             //TO DOnereq: the 2nd user to subscribe might get to this code path before the very first 'get' has populated document/cas... so... wtf?
             if(!keyValueCacheItem->CurrentlyFetchingPossiblyNew)
             {
+                //the cache item has a value, so we return the new subscriber the value now as an optimization and add him to the old subscribers
                 GetCouchbaseDocumentByKeyRequest::respondWithCAS(getCouchbaseDocumentByKeyRequestFromWt, keyValueCacheItem->Document, keyValueCacheItem->DocumentCAS, true, false);
                 keyValueCacheItem->Subscribers[getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback] = getCouchbaseDocumentByKeyRequestFromWt;
             }
@@ -767,8 +787,6 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
                 //we'll wait for the one that's about to come (especially since there might not even be ONE yet)
                 keyValueCacheItem->NewSubscribers[getCouchbaseDocumentByKeyRequestFromWt->AnonymousBitcoinComputingWtGUIPointerForCallback] = getCouchbaseDocumentByKeyRequestFromWt;
             }
-
-            //--m_PendingGetCount; //TODOreq: ???
 
             //whether or not we're already subscribed, looking up takes just as long as inserting [again possibly], so we just insert. In fact inserting is faster if the key already exists, because then there's just one lookup
 

@@ -254,11 +254,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         m_AdImageUploader->fileTooLarge().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge);
         uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploader, rowIndex, 1);
 
-        uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 2 mb --- Width: "
-ABC_QUOTE_MACRO_HACK_LOL(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS)
-" px --- Height: "
-ABC_QUOTE_MACRO_HACK_LOL(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS)
-" px"), ++rowIndex, 0, 1, 2);
+        uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 2 mb --- Width: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS) + " px --- Height: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS) + " px"), ++rowIndex, 0, 1, 2);
         uploadNewSlotFillerGridLayout->addWidget(new WText("Accepted Image Formats: png/jpeg/gif/bmp/svg"), ++rowIndex, 0, 1, 2); //TODOreq: do i really want to allow animated gifs?!?!?!? always thought no, but idk never really thought about it lol
 
         WPushButton *adImageUploadButton = new WPushButton("Submit");
@@ -424,7 +420,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
     if(!m_AdvertisingBuyAdSpaceD3faultWidget)
     {
         m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(m_MainStack);
-        new WText("d3fault's ad campaigns:" + WString(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT), m_AdvertisingBuyAdSpaceD3faultWidget);
+        new WText("d3fault's ad campaigns:", m_AdvertisingBuyAdSpaceD3faultWidget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultWidget);
     }
