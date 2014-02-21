@@ -25,6 +25,7 @@
 #include <Wt/WImage>
 #include <Wt/WLink>
 #include <Wt/Http/Client>
+#include <Wt/WDefaultLoadingIndicator>
 //#include <Wt/Chart/WCartesianChart>
 
 //TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
@@ -184,12 +185,16 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WLineEdit *m_UploadNewSlotFiller_NICKNAME;
     WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
     WLineEdit *m_UploadNewSlotFiller_URL;
+    WContainerWidget *m_AdImageUploaderPlaceholder;
     WFileUpload *m_AdImageUploader;
+    WPushButton *m_AdImageUploadButton;
     WVBoxLayout *m_AdImageUploadResultsVLayout;
-    std::string m_AdImageUploadFileLocation;
-    std::string m_AdImageUploadClientFilename;
+    void setUpAdImageUploaderAndPutItInPlaceholder();
     void handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished();
     void handleAdImageUploadFailedFileTooLarge();
+    void resetAdSlotFillerImageUploadFieldsForAnotherUpload();
+    bool m_MostRecentlyUploadedImageWasSetAsPreview;
+    FileDeletingFileResource *m_MostRecentlyUploadedImageAsFileResource;
 
     WContainerWidget *m_RegisterWidget;
     WLineEdit *m_RegisterUsernameLineEdit;

@@ -62,6 +62,8 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_PendingBitcoinBalanceLabel(0),
       m_ConfirmedBitcoinBalanceLabel(0),
       m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked(0.0),
+      m_MostRecentlyUploadedImageWasSetAsPreview(false),
+      m_MostRecentlyUploadedImageAsFileResource(0),
       m_RegisterWidget(0),
       /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0),
       m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0),
@@ -115,6 +117,9 @@ void AnonymousBitcoinComputingWtGUI::finalize()
 void AnonymousBitcoinComputingWtGUI::buildGui()
 {
     setTitle("Anonymous Bitcoin Computing");
+    WDefaultLoadingIndicator *theLoadingIndicator = new WDefaultLoadingIndicator();
+    theLoadingIndicator->setMessage("Computing..."); //'Computing' just barely beat out 'Raping yer mum'
+    setLoadingIndicator(theLoadingIndicator);
     //WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
     //m_MainStack->setTransitionAnimation(slideInFromBottom, true);
 
@@ -247,20 +252,17 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         //TODOreq: sanitize above line edits
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image:"), ++rowIndex, 0);
-        m_AdImageUploader = new WFileUpload();
-        //TODOreq: i can probably specify the temporary location of the uploaded file, and obviously i would want to use a tmpfs. would be even better if i could just upload into memory...
-        m_AdImageUploader->setFileTextSize(40); //TODOreq: wtf is this, filename size or file size? i'll probably disregard filename when putting into b64/json... so if it's filename set it to like 256 or some sane max idfk, but worth noting i use the filename in a WFileResource to serve them the FIRST preview copy of the image they just uploaded
-        m_AdImageUploader->uploaded().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished); //TODOreq: doc says i should delete the WFileUpload after an upload
-        m_AdImageUploader->fileTooLarge().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge);
-        uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploader, rowIndex, 1);
+
+        m_AdImageUploaderPlaceholder = new WContainerWidget();
+        uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploaderPlaceholder, rowIndex, 1);
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 2 mb --- Width: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS) + " px --- Height: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS) + " px"), ++rowIndex, 0, 1, 2);
         uploadNewSlotFillerGridLayout->addWidget(new WText("Accepted Image Formats: png/jpeg/gif/bmp/svg"), ++rowIndex, 0, 1, 2); //TODOreq: do i really want to allow animated gifs?!?!?!? always thought no, but idk never really thought about it lol
 
-        WPushButton *adImageUploadButton = new WPushButton("Submit");
-        adImageUploadButton->clicked().connect(m_AdImageUploader, &WFileUpload::upload);
-        adImageUploadButton->clicked().connect(adImageUploadButton, &WPushButton::disable); //TODOreq: maybe catch the clicked signal so we can deferRendering, and THEN call upload manually?
-        uploadNewSlotFillerGridLayout->addWidget(adImageUploadButton, ++rowIndex, 1);
+        m_AdImageUploadButton = new WPushButton("Submit");
+        setUpAdImageUploaderAndPutItInPlaceholder();
+        m_AdImageUploadButton->clicked().connect(m_AdImageUploadButton, &WPushButton::disable);
+        uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploadButton, ++rowIndex, 1);
         //TODOoptional: progress bar would be nice (and not too hard), but eh these images aren't going to take long to upload so fuck it
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("WARNING: Ads can't be deleted or modified after uploading"), ++rowIndex, 0, 1, 2);
@@ -269,13 +271,11 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
 
         //TODOreq: a place for them to view their uploaded ads (so they can verify their images uploaded ok and get a preview of how it will look (we might shrink it, for example (TODOreq: determine width/height, tell them what it is on this upload page) stuff)
 
-        m_AdImageUploadResultsVLayout = new WVBoxLayout(); //TODOreq: maybe make this a VBoxLayout so it doesn't go behind the fields like in the pic?
+        m_AdImageUploadResultsVLayout = new WVBoxLayout();
+        m_AdImageUploadResultsVLayout->addWidget(new WBreak());
         m_AdImageUploadResultsVLayout->addWidget(new WBreak());
         m_AdImageUploadResultsVLayout->addWidget(new WBreak());
         accountVLayout->addLayout(m_AdImageUploadResultsVLayout);
-
-
-        //TODOreq: after the upload, set them up to do another upload (and perhaps show the previous upload right here/now)
     }
     m_MainStack->setCurrentWidget(m_AccountWidget);
 }
@@ -287,6 +287,15 @@ void AnonymousBitcoinComputingWtGUI::handleAddFundsClicked()
 
     getCouchbaseDocumentByKeySavingCasBegin("user" + m_CurrentlyLoggedInUsername); //ACTUALLY: changing back to get with cas because if we see the state is in "GettingKey" mode, we do light recovery from there and in fact need the cas for that. NOPE: was tempted to have this be a 'get with cas', but the user might wait a while and possibly do other things (slot fills namely) before doing any further actions, so the CAS may be hella stale by then.
     m_WhatTheGetSavingCasWasFor = ADDFUNDSBUTTONCLICKEDSODETERMINEBITCOINSTATEBUTDONTLETTHEMPROCEEDIFLOCKEDATTEMPTINGTOFILLAKAPURCHASESLOT;
+}
+void AnonymousBitcoinComputingWtGUI::setUpAdImageUploaderAndPutItInPlaceholder()
+{
+    m_AdImageUploader = new WFileUpload(m_AdImageUploaderPlaceholder);
+    m_AdImageUploadButton->clicked().connect(m_AdImageUploader, &WFileUpload::upload);
+    //TODOreq: i can probably specify the temporary location of the uploaded file, and obviously i would want to use a tmpfs. would be even better if i could just upload into memory...
+    m_AdImageUploader->setFileTextSize(40); //TODOreq: wtf is this, filename size or file size? i'll probably disregard filename when putting into b64/json... so if it's filename set it to like 256 or some sane max idfk, but worth noting i use the filename in a WFileResource to serve them the FIRST preview copy of the image they just uploaded
+    m_AdImageUploader->uploaded().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished); //TODOreq: doc says i should delete the WFileUpload after an upload
+    m_AdImageUploader->fileTooLarge().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge);
 }
 void AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished()
 {
@@ -310,6 +319,28 @@ void AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaIma
 void AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge()
 {
     m_AdImageUploadResultsVLayout->addWidget(new WText("Your ad's image exceeded the maximum file size of 2 megabytes"));
+    resetAdSlotFillerImageUploadFieldsForAnotherUpload();
+}
+void AnonymousBitcoinComputingWtGUI::resetAdSlotFillerImageUploadFieldsForAnotherUpload()
+{
+    m_UploadNewSlotFiller_NICKNAME->setText("");
+    m_UploadNewSlotFiller_HOVERTEXT->setText("");
+    m_UploadNewSlotFiller_URL->setText("");
+    m_AdImageUploadButton->setEnabled(true);
+    delete m_AdImageUploader;
+    setUpAdImageUploaderAndPutItInPlaceholder();
+
+    if(!m_MostRecentlyUploadedImageWasSetAsPreview)
+    {
+        if(m_MostRecentlyUploadedImageAsFileResource)
+        {
+            delete m_MostRecentlyUploadedImageAsFileResource;
+            m_MostRecentlyUploadedImageAsFileResource = 0;
+        }
+    }
+    m_MostRecentlyUploadedImageWasSetAsPreview = false;
+
+    resumeRendering();
 }
 void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
 {
@@ -1487,7 +1518,7 @@ void AnonymousBitcoinComputingWtGUI::determineNextSlotFillerIndexAndThenAddSlotF
         //temp:
         cerr << "determineNextSlotFillerIndexAndThenAddSlotFillerToIt db error" << endl;
 
-        resumeRendering();
+        resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;
     }
 
@@ -1523,16 +1554,17 @@ void AnonymousBitcoinComputingWtGUI::tryToAddAdSlotFillerToCouchbase(const strin
     pt.put("hoverText", m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8());
     pt.put("url", m_UploadNewSlotFiller_URL->text().toUTF8());
 
-    m_AdImageUploadFileLocation = m_AdImageUploader->spoolFileName();
-    m_AdImageUploader->stealSpooledFile(); //TODOreq: if i re-use this WFileUpload object, will the 2nd+ file upload be already stolen? Will it use a new spoolFileName? Easiest way around this is to just make a new WFileUpload object for new uploads
-    m_AdImageUploadClientFilename = m_AdImageUploader->clientFileName().toUTF8(); //TODOreq: sanitize before being passed to the mime type checker (or make sure mime type checker works safely)
+    std::string adImageUploadFileLocation = m_AdImageUploader->spoolFileName();
+    pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8()); //TODOreq: sanitize before being passed to the mime type checker (or make sure mime type checker works safely)
+    m_MostRecentlyUploadedImageAsFileResource = new FileDeletingFileResource("image/" + guessedExtensionAndMimeType.second, adImageUploadFileLocation, guessedExtensionAndMimeType.first, m_AccountWidget); //semi-old (now using m_AccountWidget instead of 'this'): 'this' is set as parent for last resort cleanup of the WResource, but that doesn't account for it's underlying buffer. I also might want to delete this resource if they upload a 2nd/3rd/etc image, BUT TODOreq there are threading issues because the WImage/WResource is served concurrently I believe (or is that only true for static resources?). Perhaps changing internal paths would be a good time to delete all the images (or in WResource::handleRequest itself, since they'll only be used once anyways..), idfk. There is also the issue of me trying to re-use the same byte buffer for a 2nd upload (which is backing a resource for a first upload that hasn't yet finished streaming back / previewing back to them)
+    m_AdImageUploader->stealSpooledFile();
 
     //unsure if i should do the expensive read/b64encode here or in the db backend (passing only filename). i want an async api obviously, but laziness/KISS might dictate otherwise
 
     //TODOoptimization: had this as 'req' but memory management/sanity is much simpler when doing it less optimially xD (it's only ever paid during recovery code anyways): when doing inline recovery, don't re-read from disk. also if we then 'store it' as member or some such, make sure to delete it when it finishes successfully. The solution should use some form of WObject parent/child deletion...
     streampos fileSizeHack;
     char *adImageBuffer; //TODOreq: maybe a smart pointer as a member of this class, so that it deallocates if the session dies (could be while we're still trying to store it, for example). Pretty much just like the WObject tree, somehow attach it.
-    ifstream adImageFileStream(m_AdImageUploadFileLocation.c_str(), ios::in | ios::binary | ios::ate);
+    ifstream adImageFileStream(adImageUploadFileLocation.c_str(), ios::in | ios::binary | ios::ate);
     if(adImageFileStream.is_open())
     {
         fileSizeHack = adImageFileStream.tellg();
@@ -1544,6 +1576,9 @@ void AnonymousBitcoinComputingWtGUI::tryToAddAdSlotFillerToCouchbase(const strin
     else
     {
         //TODOreq: handle file failed to open error (delete, discard, give user error)
+
+        resetAdSlotFillerImageUploadFieldsForAnotherUpload();
+        return;
     }
 
     std::string adImageString = std::string(adImageBuffer, fileSizeHack);
@@ -1760,14 +1795,14 @@ void AnonymousBitcoinComputingWtGUI::getAdSlotFillerThatIsntInAllAdSlotFillersAt
         //TODOreq: handle and notify
 
         cerr << "getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex db error" << endl;
-        resumeRendering();
+        resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;
     }
     if(!lcbOpSuccess)
     {
         //TODOreq: handle?
         cerr << "TOTAL SYSTEM FAILURE: getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex -- an LCB_ADD to slot filler failed, so we tried to get it to extract nickname from it for updating allAdSlotFillers... but now it doesn't exist?? wtf?" << endl;
-        resumeRendering();
+        resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;
     }
 
@@ -1980,7 +2015,7 @@ void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComple
         //temp:
         cerr << "storeLargeAdImageInCouchbaseDbAttemptComplete reported db error" << endl;
 
-        resumeRendering();
+        resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;
     }
     if(!lcbOpSuccess)
@@ -2332,7 +2367,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateAllAdSlotFillersDocSi
         //temp:
         cerr << "doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller db error" << endl;
 
-        resumeRendering();
+        resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;
     }
     if(!lcbOpSuccess)
@@ -2347,7 +2382,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateAllAdSlotFillersDocSi
 
         cerr << "doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller lcb op fail, may or may not be an error read the comments near this error string xD idfk. MAYBE/probably in recoverable state" << endl;
 
-        resumeRendering();
+        resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;
     }
 
@@ -2355,27 +2390,25 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateAllAdSlotFillersDocSi
 
     //so now show them the image that we already have on the heap (and on the filesystem).... now hmm which to show....
 
-    pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploadClientFilename);
-    FileDeletingFileResource *adImagePreviewResource = new FileDeletingFileResource("image/" + guessedExtensionAndMimeType.second, m_AdImageUploadFileLocation, guessedExtensionAndMimeType.first, m_AccountWidget); //semi-old (now using m_AccountWidget instead of 'this'): 'this' is set as parent for last resort cleanup of the WResource, but that doesn't account for it's underlying buffer. I also might want to delete this resource if they upload a 2nd/3rd/etc image, BUT TODOreq there are threading issues because the WImage/WResource is served concurrently I believe (or is that only true for static resources?). Perhaps changing internal paths would be a good time to delete all the images (or in WResource::handleRequest itself, since they'll only be used once anyways..), idfk. There is also the issue of me trying to re-use the same byte buffer for a 2nd upload (which is backing a resource for a first upload that hasn't yet finished streaming back / previewing back to them)
-    WImage *adImagePreview = new WImage(adImagePreviewResource, m_UploadNewSlotFiller_HOVERTEXT->text()); //NOPE (ownership of image changes when we give it to the WAnchor): so our file is deleted when the image is (parent deletes all children first, and the image must stop using the resource before we delete it (thus, the resource should be the parent))
+    WImage *adImagePreview = new WImage(m_MostRecentlyUploadedImageAsFileResource, m_UploadNewSlotFiller_HOVERTEXT->text());
     adImagePreview->resize(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);
     WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, m_UploadNewSlotFiller_URL->text().toUTF8()), adImagePreview);
-
 
     //difference between these two?
     adImagePreview->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
     adImageAnchor->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
 
+    m_AdImageUploadResultsVLayout->addWidget(new WText("Preview of '" + m_UploadNewSlotFiller_NICKNAME->text() + "':"));
     m_AdImageUploadResultsVLayout->addWidget(adImageAnchor);
     m_AdImageUploadResultsVLayout->addWidget(new WBreak());
     m_AdImageUploadResultsVLayout->addWidget(new WBreak());
+    m_AdImageUploadResultsVLayout->addWidget(new WBreak());
 
-    m_UploadNewSlotFiller_HOVERTEXT->setText("");
-    m_UploadNewSlotFiller_NICKNAME->setText("");
-    m_UploadNewSlotFiller_URL->setText("");
-    //TODOreq: also set up the WFileUpload for the next image, should they want to upload another
+    //prevents image file from being deleted in the 'reset' coming up
+    m_MostRecentlyUploadedImageWasSetAsPreview = true;
 
-    resumeRendering();
+    //done, so...
+    resetAdSlotFillerImageUploadFieldsForAnotherUpload();
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {

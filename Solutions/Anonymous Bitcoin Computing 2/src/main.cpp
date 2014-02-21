@@ -9,10 +9,10 @@
 3) exponential backoff (app + db + recovery-possy)
 4) couchbase key collisions from usernames
 5) sanitize
-6) upload as many ad slot fillers as you want without new session
-7) all ad slot fillers preview (view query or expensive? maybe just expensive but only for owner as optimization (not security/privacy(LOL)). would still warrant pagination imo)
-8) doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
-9) No ops cause too big of messages to be sent through the message queue
+6) all ad slot fillers preview (view query or expensive? maybe just expensive but only for owner as optimization (not security/privacy(LOL)). would still warrant pagination imo)
+7) doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
+8) No ops cause too big of messages to be sent through the message queue
+9) Adding many ad images scrunches instead of adding scrollbars xD. On campaign 0 page, clicking 'buy step 1' 50 times without being logged in, then logging in = can't see the buy step 2 stuff (no scrunching, no scroll bars)
 
 ==1.1 Bugs==
 

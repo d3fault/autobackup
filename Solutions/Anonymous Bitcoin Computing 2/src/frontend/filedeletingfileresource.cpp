@@ -14,7 +14,7 @@ FileDeletingFileResource::~FileDeletingFileResource()
 {
     beingDeleted();
 
-    if(remove(this->fileName().c_str()) != 0) //TODOreq: sanitize filename, though i think WFileUpload makes up a new one
+    if(remove(this->fileName().c_str()) != 0)
     {
         cerr << "Failed to remove: " << this->fileName() << " in ~FileDeletingFileResource()" << endl;
     }
