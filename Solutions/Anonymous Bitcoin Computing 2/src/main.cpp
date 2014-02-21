@@ -5,7 +5,7 @@
 ==1.0 [Launch] Blockers==
 
 send 'time' for currentPrice calculation
-'buy what intended and never what was just doubled to moments ago' race condition
+'buy what intended and never what was just doubled to moments ago' race condition, rolling back to pre-step 1 on buy event. ultra fast double click (just did on accident) buys two in a row (in fact you can buy as many as you want, BUT definitely need to ignore '2nd' click if faster than gui can make buttan disappear)
 exponential backoff (app + db + recovery-possy)
 couchbase key collisions from usernames
 sanitize

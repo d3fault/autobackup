@@ -54,7 +54,10 @@ using namespace std;
 
 /////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
 
-#define QUOTE_MACRO_HACK_LOL(text) #text //I guess i could have lexically cast'd int->string instead...
+#define ABC_QUOTE_MACRO_HACK_LOL(text) #text //I guess i could have lexically cast'd int->string instead...
+
+//100ms javascript interval
+#define ABC_START_JS_INTERVAL_SNIPPET m_CurrentPriceDomPath + ".z0bj.tehIntervalz = setInterval(" + m_CurrentPriceDomPath + ".z0bj.tehIntervalzCallback, 100);" + m_CurrentPriceDomPath + ".z0bj.tehIntervalIsRunnan = true;"
 
 #define ABC_WT_STATIC_MESSAGE_QUEUE_SOURCE_DEFINITION_MACRO(text) \
 message_queue *AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];

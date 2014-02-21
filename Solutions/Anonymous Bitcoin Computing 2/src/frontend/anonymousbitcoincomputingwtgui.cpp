@@ -255,9 +255,9 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploader, rowIndex, 1);
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 2 mb --- Width: "
-QUOTE_MACRO_HACK_LOL(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS)
+ABC_QUOTE_MACRO_HACK_LOL(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS)
 " px --- Height: "
-QUOTE_MACRO_HACK_LOL(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS)
+ABC_QUOTE_MACRO_HACK_LOL(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS)
 " px"), ++rowIndex, 0, 1, 2);
         uploadNewSlotFillerGridLayout->addWidget(new WText("Accepted Image Formats: png/jpeg/gif/bmp/svg"), ++rowIndex, 0, 1, 2); //TODOreq: do i really want to allow animated gifs?!?!?!? always thought no, but idk never really thought about it lol
 
@@ -479,14 +479,16 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
                 m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs = 0;" +
                 m_CurrentPriceDomPath + ".z0bj.m = 0;" +
                 m_CurrentPriceDomPath + ".z0bj.b = 0;" +
-                m_CurrentPriceDomPath + ".z0bj.tehIntervalz = 0;"
-                "function updatePriceTimeoutFunction()"
+                m_CurrentPriceDomPath + ".z0bj.tehIntervalz = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.tehIntervalIsRunnan = false;" +
+                m_CurrentPriceDomPath + ".z0bj.tehIntervalzCallback = function()"
                 "{"
                     "var currentDateTimeMSecs = new Date().getTime();"
                     "if(currentDateTimeMSecs >= " + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs)"
                     "{" +
                         m_CurrentPriceDomPath + ".innerHTML = " + m_CurrentPriceDomPath + ".z0bj.minPrice.toFixed(8);" //TODOreq: rounding?
-                        "clearInterval(" + m_CurrentPriceDomPath + ".z0bj.tehIntervalz);" //TODOreq: start it again on buy event
+                        "clearInterval(" + m_CurrentPriceDomPath + ".z0bj.tehIntervalz);"
+                        + m_CurrentPriceDomPath + ".z0bj.tehIntervalIsRunnan = false;"
                     "}"
                     "else"
                     "{"
@@ -568,7 +570,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
             m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
 
-            //timer either already running or (if first populate) about to start running, so give these variables real values
+            //timer either already running, about to start running (first populate), so give these variables real values
             m_CurrentPriceLabel->doJavaScript
             (
                 m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTime = new Date((" + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp + "*1000)+((" + m_HackedInD3faultCampaign0_SlotLengthHours + "*3600)*1000));" +
@@ -576,12 +578,17 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
                 m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchaseTimestamp = " + m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp + ";" +
                 m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs = " + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTime.getTime();" +
                 m_CurrentPriceDomPath + ".z0bj.m = ((" + m_HackedInD3faultCampaign0_MinPrice + "-(" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchasePrice*2))/((" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)-" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchaseTimestamp));" +
-                m_CurrentPriceDomPath + ".z0bj.b = (" + m_HackedInD3faultCampaign0_MinPrice + " - (" + m_CurrentPriceDomPath + ".z0bj.m * (" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)));"
+                m_CurrentPriceDomPath + ".z0bj.b = (" + m_HackedInD3faultCampaign0_MinPrice + " - (" + m_CurrentPriceDomPath + ".z0bj.m * (" + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs/1000)));" +
+
+                //Price at minPrice -> buy-event (Re-enable timer if it's not on and this isn't the first populate (if it's first populate, we enable it later after setting minPrice))
+                (m_FirstPopulate ? "" : ("if(" + m_CurrentPriceDomPath + ".z0bj.tehIntervalIsRunnan == false)"
+                "{" +
+                        ABC_START_JS_INTERVAL_SNIPPET
+                "}"))
             );
         }
 
-        //TODOreq: it turns itself off after first timeout if using min price (right?).. but we need this here so we can activate later on buy event
-        //TODOreq: navigating away should turn off the timer, coming back turns it back on
+        //TODOoptional(was req, but fuck it): navigating away should turn off the timer, coming back turns it back on
         if(m_FirstPopulate)
         {
             m_FirstPopulate = false;
@@ -589,7 +596,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             m_CurrentPriceLabel->doJavaScript
             (
                 m_CurrentPriceDomPath + ".z0bj.minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";" +
-                m_CurrentPriceDomPath + ".z0bj.tehIntervalz = setInterval(updatePriceTimeoutFunction, 100);"  //100ms interval
+                ABC_START_JS_INTERVAL_SNIPPET
                 //TODOreq: does re-subscribe re-enable the timer? i would think the timer would still be in whatever state it was in when we left/unsubscribed, SO THAT MEANS: if we unsubscribe -> the timer 'stops' (minprice) _AND_ there is a buy event before we re-subscribe = the timer is still sitting at stopped/min-price and does not get re-enabled (despite us having accurate 'values' for calculating).
                 //^it appears that the timer only gets turned on at first populate. a buy event after the timer stops (min-price) probably won't enable it either, which is related to the directly above req
             );
@@ -624,7 +631,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
                 //not expired, so calculate. despite determining it's not expired here, we are not going to set "m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;", because it may have expired by the time they hit buy step 2. We have to check when/after they click buy step 2. Could be minutes/hours/days after the page has been rendered (this code)
 
                 //TODOreq: javascript-less UI should update price after buy step 1 is clicked
-                //TODOreq: maybe a 60 second timer to refresh js-less page
+                //TODOreq: maybe a 60 second timer to refresh js-less page, or a refresh button
 
                 double currentPrice = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
 
