@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1393072979
+Documents/minddump/:1393098537
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1756,6 +1756,7 @@ Documents/minddump/sldkfjslkdjfosiduflkjweorulkajsdfousdaflkjsdfoiulwkjreoulsdjk
 Documents/minddump/sldkfjslkdjfskjdflksjdflkjsdfoudflkjsdfjkl.txt:1361983161
 Documents/minddump/sldkfjslkfjsldkjfoisudflkjsdfousdflkjweorulkdjfosudfslkdf.txt:1381113677
 Documents/minddump/sldkfskljdfkjsdflkjsdflkjsdflkjsfdsfdlkj.txt:1361109442
+Documents/minddump/sldkjflksjdflkjsdfousdflkjsofusdlkfjsdofu.txt:1393098537
 Documents/minddump/sldkjflskdjfkljsdjfsjsdfoiu.txt:1355730456
 Documents/minddump/sldkjflskdjflskdjfoiuwelrkjosdiuflskdjfouwelrkjouflskdjfouiwelrkjouisdflk.txt:1381341605
 Documents/minddump/sldkjfsdjfousldfkjouwelrjkouflkjasdfoiuerksdaflkj.txt:1366068707
@@ -3778,7 +3779,7 @@ Solutions/Anonymous Bitcoin Computing/src/shared/WtFrontEndAndAppDbProtocol.h:13
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
 Solutions/Anonymous Bitcoin Computing 2/:1391669092
-Solutions/Anonymous Bitcoin Computing 2/design/:1392716033
+Solutions/Anonymous Bitcoin Computing 2/design/:1393084980
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.with.recovery.cas.swap.to.get.a.key.with.uuids.for.refill.and.recovery.pseudocode.cpp:1392716033
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.without.recovery.kiss.but.not.most.efficient.solution.i.am.lolling.so.hard.right.now.txt:1392170170
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.NOPE.design.not.using.way.too.complex.lold.when.i.thought.up.more.expensive.much.simpler.design.about.to.write.txt:1392170213
@@ -3795,6 +3796,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/optimization.math.to.determine.be
 Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.here.is.the.flow.or.pseudo.code.sdkfjlaskdjf.txt:1390952616
 Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.slot.n.plus.one.existence.testing.drives.the.entire.app.with.1sec.max.latency.BUT.probable.code.aka.failable.code.drives.it.at.max.speed.but.there.is.100ms.get.and.subscribe.polling.txt:1390759647
 Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:1390077121
+Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.increments.pretty.shit.imo.txt:1393084980
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
