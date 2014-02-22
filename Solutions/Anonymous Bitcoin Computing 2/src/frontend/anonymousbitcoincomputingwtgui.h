@@ -330,6 +330,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void handleRegisterButtonClicked();
     void handleLoginButtonClicked();
     std::string m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack;
+    WText *m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel;
+    std::string m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly;
     void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, u_int64_t casOnlyUsedWhenDoingRecoveryAtLogin, bool lcbOpSuccess, bool dbError);
     void usernameOrPasswordYouProvidedIsIncorrect();
     std::string m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin;

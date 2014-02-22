@@ -221,7 +221,8 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         accountVLayout->addWidget(new WText("Step 1) Fund Your Account via Bitcoin"), 0, Wt::AlignTop | Wt::AlignLeft);
         accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
         WPushButton *addFundsPushButton = new WPushButton("Add Funds");
-        addFundsPushButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleAddFundsClicked); //TODOreq: perhaps disable after clicking? re-enable somewhere(s) too
+        addFundsPushButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleAddFundsClicked);
+        addFundsPushButton->clicked().connect(addFundsPushButton, &WPushButton::disable); //never-renables unless Account widget is re-created, since it only serves as an optimization to not get the user-account + bitcoin key status anyways
         accountVLayout->addWidget(addFundsPushButton, 0, Wt::AlignTop | Wt::AlignLeft);
         accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
         accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
@@ -509,6 +510,8 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
             (
                 m_CurrentPriceDomPath + ".z0bj = new Object();" +
                 m_CurrentPriceDomPath + ".z0bj.minPrice = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.serverTimestamp = 0;" +
+                m_CurrentPriceDomPath + ".z0bj.clientServerTimeOffsetMSecs = 0;" + //fuck timezones or just plain wrong times, now the only inaccuracy will be 'latency'
                 m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTime = 0;" +
                 m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchasePrice = 0;" +
                 m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedPurchaseTimestamp = 0;" +
@@ -520,6 +523,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
                 m_CurrentPriceDomPath + ".z0bj.tehIntervalzCallback = function()"
                 "{"
                     "var currentDateTimeMSecs = new Date().getTime();"
+                    "currentDateTimeMSecs += " + m_CurrentPriceDomPath + ".z0bj.clientServerTimeOffsetMSecs;"
                     "if(currentDateTimeMSecs >= " + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs)"
                     "{" +
                         m_CurrentPriceDomPath + ".innerHTML = " + m_CurrentPriceDomPath + ".z0bj.minPrice.toFixed(8);" //TODOreq: rounding?
@@ -537,7 +541,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
     }
     else //widget already created, so just re-subscribe
     {
-        //TODOreq: need to handle no-js mode here as well
+        //TODOreq: need to handle no-js mode here as well (currently no-js receives a subscription update but doesn't triggerUpdate it (and isn't defered xD), so really you just keep seeing stale data from the first view)
         getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
         m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
         //TODOreq: the data will still be populated, but the data may be stale (maybe i shouldn't ever show such stale info (could be really really old, BUT if everything is working it will get updated really fast ([probably] not even a couchbase hit, so SUB-SUB-MILLISECONDS!?!?)))
@@ -669,6 +673,8 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             m_CurrentPriceLabel->doJavaScript
             (
                 m_CurrentPriceDomPath + ".z0bj.minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";" +
+                m_CurrentPriceDomPath + ".z0bj.serverTimestamp = " + boost::lexical_cast<std::string>(static_cast<double>(WDateTime::currentDateTime().toTime_t())) + "*1000;" +
+                m_CurrentPriceDomPath + ".z0bj.clientServerTimeOffsetMSecs = (" + m_CurrentPriceDomPath + ".z0bj.serverTimestamp -" + "(new Date().getTime()));" +
                 ABC_START_JS_INTERVAL_SNIPPET
                 //TODOreq: does re-subscribe re-enable the timer? i would think the timer would still be in whatever state it was in when we left/unsubscribed, SO THAT MEANS: if we unsubscribe -> the timer 'stops' (minprice) _AND_ there is a buy event before we re-subscribe = the timer is still sitting at stopped/min-price and does not get re-enabled (despite us having accurate 'values' for calculating).
                 //^it appears that the timer only gets turned on at first populate. a buy event after the timer stops (min-price) probably won't enable it either, which is related to the directly above req
@@ -1441,7 +1447,10 @@ void AnonymousBitcoinComputingWtGUI::creditConfirmedBitcoinAmountAfterAnalyzingU
     double userBalance = boost::lexical_cast<double>(pt.get<std::string>("balance"));
     userBalance += m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked; //TODOreq: usual paranoia applies... rounding errors, etc
 
-    pt.put("balance", boost::lexical_cast<std::string>(userBalance));
+    std::string userBalanceString = boost::lexical_cast<std::string>(userBalance);
+    m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = userBalanceString;
+
+    pt.put("balance", userBalanceString);
     pt.put("bitcoinState", "NoKey");
     pt.erase("bitcoinStateData");
 
@@ -2114,7 +2123,9 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     //now do the debit of the balance and put it back in the json doc
     double userBalance = boost::lexical_cast<double>(pt.get<std::string>("balance"));
     userBalance -= m_CurrentPriceToUseForBuying; //TODOreq: again, just scurred of rounding errors etc. I think as long as I  use 'more precision than needed' (as much as an double provides), I should be ok...
-    pt.put("balance", boost::lexical_cast<std::string>(userBalance));
+    std::string balanceString = boost::lexical_cast<std::string>(userBalance);
+    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(balanceString); //TODOoptional: jumping the gun by setting it here before even finishing the cas-swap of their user-account doc, BUT the transaction doc and slot fill/add are already complete at this point so we KNOW it will 'become' accurate soon (if we fail, recovery possy will do it)... so seeing as this is visual ONLY, it's acceptable. Unlike account creditting ("done with this key"), which waits until the cas swap succeeds before updating the label, we KNOW that if we get here that it will work (and if we were to wait for the cas swap and the cas swap FAILED, the balance label would never be updated (because recovery possy is different app (i guess i could... (*shoots self in face*)))
+    pt.put("balance", balanceString);
     //now convert the json doc back to string for couchbase
     std::ostringstream jsonDocWithBalanceDeducted;
     write_json(jsonDocWithBalanceDeducted, pt, false);
@@ -2485,6 +2496,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingCredittingConfirmedBitcoinBal
     //successful credit of user-account balance && changing of bitcoinState back to "NoKey" :-D
 
     m_AddFundsPlaceholderLayout->addWidget(new WText("Your account has been creditted BTC: + " + boost::lexical_cast<std::string>(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments), 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: enable "get bitcoin key" button again, make check-for-pending/confirmed/done buttons go away (delete?).
+    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly);
 
     m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0.0; //probably pointless, but will make me sleep better at night
     m_CurrentBitcoinKeyForPayments = ""; //ditto
@@ -3077,6 +3089,8 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         m_LoginUsernameLineEdit->setText("");
         m_LoginPasswordLineEdit->setText("");
 
+        m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = pt.get<std::string>("balance");
+
         std::string slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
         if(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST == "n")
         {
@@ -3124,6 +3138,9 @@ void AnonymousBitcoinComputingWtGUI::doLoginTasks()
     new WText("Hello, " + m_CurrentlyLoggedInUsername + " ", m_LogoutWidget);
     WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
     logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
+    new WBreak(m_LogoutWidget);
+    new WText("Balance: BTC ", m_LogoutWidget);
+    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel = new WText(m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly, m_LogoutWidget);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
 
     if(m_LinkToAccount)

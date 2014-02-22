@@ -4,7 +4,6 @@
 
 ==1.0 [Launch] Blockers==
 
-- send 'time' for currentPrice calculation
 - exponential backoff (app + db + recovery-possy)
 - couchbase key collisions from usernames
 - sanitize
