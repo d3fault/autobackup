@@ -4,17 +4,16 @@
 
 ==1.0 [Launch] Blockers==
 
-1) send 'time' for currentPrice calculation
-2) 'buy what intended and never what was just doubled to moments ago' race condition, rolling back to pre-step 1 on buy event. ultra fast double click (just did on accident) buys two in a row (in fact you can buy as many as you want, BUT definitely need to ignore '2nd' click if faster than gui can make buttan disappear)
-3) exponential backoff (app + db + recovery-possy)
-4) couchbase key collisions from usernames
-5) sanitize
-6) all ad slot fillers preview (view query or expensive? maybe just expensive but only for owner as optimization (not security/privacy(LOL)). would still warrant pagination imo)
-7) doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
-8) No ops cause too big of messages to be sent through the message queue
-9) Tell date range (day) for currently purchaseable slot
-10) js-slot-buy doesn't update current price up top [for himself] (or maybe it does, can't tell)
-11) Login -> Buy Step 1 -> Log out -> Log in as different user: see first user's ad slot fillers (gui problem, db adds using index and correct username)
+- send 'time' for currentPrice calculation
+- exponential backoff (app + db + recovery-possy)
+- couchbase key collisions from usernames
+- sanitize
+- all ad slot fillers preview (view query or expensive? maybe just expensive but only for owner as optimization (not security/privacy(LOL)). would still warrant pagination imo)
+- doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
+- No ops cause too big of messages to be sent through the message queue
+- Tell date range (day) for currently purchaseable slot
+- missing the slot (confirmed miss) unlocks user account (just jump to login recovery code that already does that)
+- buying 2 in a row with no-js fails. tries to buy the first one again and it fails saying someone beat them to it
 
 ==1.1 Bugs==
 

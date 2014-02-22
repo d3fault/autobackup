@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1393066835
+Documents/minddump/:1393072979
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1393053942
+Documents/minddump/dreams/:1393075962
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -135,6 +135,7 @@ Documents/minddump/dreams/sdfljsldkjfsdofusldjfosudfljsdfoudfjsflksjdfsfodusldfj
 Documents/minddump/dreams/sdflkjasdflkjsadlkfjsdalkfjsdfuwoeurlkjsdfousdlfkjsdfouldfskjdfsouilk.txt:1377938455
 Documents/minddump/dreams/sdflkjslfkjskljfsdofusdlfkjouwelrkjosufsldfj.txt:1392528781
 Documents/minddump/dreams/sdflksdflkjsdfoiuwerlkjdfouisdlfkjoiurfjk.txt:1355127688
+Documents/minddump/dreams/sdflksjfkjslfkjskldjfsdoifudsfkjsdofusldfkjulkjrweoulksjfo.txt:1393075962
 Documents/minddump/dreams/sdflskdfjsdlkfjowuerlkjofuasldfjosdufsdfousdfljsdfou.txt:1392976456
 Documents/minddump/dreams/sdkjflskjdflskjdfosudfljsdfousdfljsfdoulkjeroiusdlfkjsdofuo.txt:1391895285
 Documents/minddump/dreams/sdlafjlasjflsajdfsdufowieurlkasjdfouasfdljouwerlkjsdoafuslfdjkaslf.txt:1381489684
@@ -1238,6 +1239,7 @@ Documents/minddump/lskdjflsjkadfousdlfkjsdouflsdjfoiuwelkjousdflkjsdf.txt:138394
 Documents/minddump/lskdjflskdjfosudflksjdfousdfljsdfuisfusofusdfljsfousdflk.txt:1392551152
 Documents/minddump/lskfjasfopwieruslafkjsdfoiuwerkldsfjoiu.txt:1339487667
 Documents/minddump/lskfjslkfjskdljfoiuwerlkjsdfoukjlkwerj.txt:1354931147
+Documents/minddump/lskjdfkljsdkfljsdfosudflkjdsofusdlkjfosduflskdjfousdflkjsdfou.txt:1393072979
 Documents/minddump/lskjdfkljslkfjsdfoudslkfjsdofuisdlfkjsdfouewrlkjsdf.txt:1359960295
 Documents/minddump/lskjdflkjsadfosuidflkjsdofiusldfjsdofiulkjweoruiljksdfoiusdlfkjsdoifulkjewroiu.txt:1383337477
 Documents/minddump/lskjdflksjdfousadflkjsdofusdlfjosudfljweorusdfkl.txt:1384665523
@@ -1331,6 +1333,7 @@ Documents/minddump/sadflkjweoriusdflkjsafdiaioysfsdf.txt:1338993028
 Documents/minddump/sadfoiuwerlasjkdflskjdaflaskdfjouiewrlkjsdfoiuwerlkjosaduflsdkjf.txt:1380541259
 Documents/minddump/sadfoiuweroiudsflkjsdofulaskfjasdlkfjasoduflkjoewurlkjfd.txt:1353177379
 Documents/minddump/sadfouaworeljasodfuawkrasodfuawlerjkasofuawerousfdlkj.txt:1343314397
+Documents/minddump/sadfsadflksjdfkljsdklfjsdofusdlkjfewrouweoriu.txt:1393069186
 Documents/minddump/sadfwkerjjlskfjoiuweriuipasfdlkj.txt:1338992924
 Documents/minddump/sadlfjlsdjfousdflkjsdouflsdkjfousdflkjosuifoauisdSADyesSADfuckYou.txt:1370290713
 Documents/minddump/sadlfjsadfuouwlekrjoisduflksdufoisdufljsdfouwerljsodfusdlkfjsodfulk.txt:1379127907
@@ -3795,14 +3798,14 @@ Solutions/Anonymous Bitcoin Computing 2/design/privacy.policy.YOU.HAVE.NONE.txt:
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1393068870
+Solutions/Anonymous Bitcoin Computing 2/src/:1393080647
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1392993663
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1392993662
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1392990238
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1392921748
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1393068237
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1393068237
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1393067950
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1393080283
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1393080283
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1393079026
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/filedeletingfileresource.cpp:1393000886
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/filedeletingfileresource.h:1391740021
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1392922022
@@ -3813,7 +3816,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchb
 Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1392984036
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1392898023
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1392898082
-Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1393068853
+Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1393080587
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
 Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021

@@ -205,6 +205,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     //WContainerWidget *m_RegisterSuccessfulWidget;
 
     //hardcoded
+    bool m_BuyInProgress;
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
     void showAdvertisingBuyAdSpaceD3faultWidget();
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
@@ -218,6 +219,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_HackedInD3faultCampaign0_MinPrice;
     std::string m_HackedInD3faultCampaign0_SlotLengthHours;
     bool m_HackedInD3faultCampaign0_NoPreviousSlotPurchases;
+    std::string m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp;
@@ -234,6 +236,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_BitcoinKeySetPage_aka_PageY;
     std::string m_PerGetBitcoinKeyUUID;
     void checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(const string &userAccountDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+    void rollBackToBeforeBuyStep1(const string &messageWhyRollingBack);
+    WContainerWidget *m_BuyStep2placeholder;
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
