@@ -482,7 +482,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 
         if(!environment().ajax())
         {
-            //TODOreq: get, don't subscribe (but still use subsciption cache!)
+            //TODOreq: get, don't subscribe (but still use subsciption cache!). when you impl that, change it for the no-js successful slot buy as well, since it is currently hackily a copy/paste job from this code block :)
 
             getCouchbaseDocumentByKeySavingCasBegin("adSpaceSlotsd3fault0");
             m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET; //TODOreq: why the fuck do i save the cas? surely i should re-fetch the doc- OH BUT IT NEVER CHANGES UNLESS THERE'S A BUY EVENT!!!
@@ -550,7 +550,7 @@ double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double currentTime_
     //y = m(x)+b
     return ((m*currentTime_x)+b);
 }
-void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &couchbaseDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
+void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
 {
     //This is ALSO (but not always (first get)) what I have referred to as a "buy event", so if they have clicked "buy step 1" we need to roll back the GUI so they have to click buy step 1 again (various GUI object organizational changes to support this)
     //Goes without saying that the new 'slot index' that they will try to buy (which is locked in after clicking buy step 1) should be set in this method
@@ -558,21 +558,16 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     //TODOoptional: unsubscribing + resubscribing would make the resubscriber a NewSubscriber, and he'd get an update even if it's the same value (this probably won't matter (and isn't even worth coding for))
 
     //if they're passed step 1 when a buy event is received, roll back
-    if(m_BuyStep2placeholder)
-    {
-        delete m_BuyStep2placeholder;
-        m_BuyStep2placeholder = 0;
-        m_BuySlotFillerStep1Button->enable();
-    }
+    rollBackToBeforeBuyStep1ifNeeded();
 
-    m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = couchbaseDocument;
+    m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = advertisingBuyAdSpaceD3faultCampaign0JsonDocument;
     m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
 
     //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
     //TODOreq: if we do the new-ing in 'begin' a populating in 'finish' (here), we need to deferRendering to make things such as 'buy step 1' not clickable until the first 'finish' (which is more appropriately 'update'/populate now)... but we shouldn't do resumeRendering every time, because buy events don't need to do it. I guess we could force it to be invisible until 'finish', but I'm not certain that makes it unclickable (so a hacker could segfault me still). I'm 50/50 on this, I think Wt might make invisible objects 'unclickable' in that sense. setDisabled should do the same, but again unsure if that makes the inner js -> c++ slot mechanism not usable/hackable(hackable-because-segfault)
 
     ptree pt;
-    std::istringstream is(couchbaseDocument);
+    std::istringstream is(advertisingBuyAdSpaceD3faultCampaign0JsonDocument);
     read_json(is, pt);
 
     m_HackedInD3faultCampaign0_MinPrice = pt.get<std::string>("minPrice");
@@ -687,6 +682,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_BuySlotFillerStep1Button = new WPushButton("Buy At This Price (Step 1 of 2)", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_BuySlotFillerStep1Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked);
+        m_BuySlotFillerStep1Button->clicked().connect(m_BuySlotFillerStep1Button, &WPushButton::disable);
     }
     //TODOreq: get and subscribe testing so far will not include rolling back of anything after step 1 of 2 clicked, so i gotta do the rest of that process later
 }
@@ -709,9 +705,6 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
     //^^^^^^^^we also want to 'roll back' after the buy is successful, but certain messages should remain
     m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy = m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
 
-    //TODOreq: re-enable on roll back etc
-    m_BuySlotFillerStep1Button->disable();
-
     getCouchbaseDocumentByKeyBegin("adSpaceAllSlotFillers" + m_CurrentlyLoggedInUsername); //TODOreq: obviously we'd have sanitized the username by here...
     m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET;
     deferRendering();
@@ -722,6 +715,10 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
     if(dbError)
     {
         //TODOreq: 500 internal server error
+
+        //temp:
+        cerr << "buySlotPopulateStep2d3faultCampaign0 db error" << endl;
+
         return;
     }
     if(!lcbOpSuccess) //allAds doc doesn't exist
@@ -751,7 +748,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Someone just bought that slot, so you have to click step 1 again to buy the NEXT slot", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
-        //"roll back" to pre-step 1, but since we haven't set up anything yet we just return. oh yea dat disabled buttan
+        //"roll back" to pre-step 1, but since we haven't set up anything yet we just re-enable step 1 buttan
         m_BuySlotFillerStep1Button->enable();
         return;
     }
@@ -795,6 +792,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         new WBreak(m_BuyStep2placeholder);
         WPushButton *buySlotFillerStep2Button = new WPushButton("Buy At This Price (Step 2 of 2)", m_BuyStep2placeholder); //TODOoptional: this button could have the js-price-falling thing on it, so they look right at the price when they click it (and buy event 'right before' they click buy step 1 is more likely to be seen/noticed!)
         buySlotFillerStep2Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked);
+        buySlotFillerStep2Button->clicked().connect(buySlotFillerStep2Button, &WPushButton::disable); //we don't rely on this
     }
 }
 void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
@@ -802,7 +800,9 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
     if(m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy != m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex)
     {
         //shouldn't get here but maybe via a race condition?
-        rollBackToBeforeBuyStep1("Someone just bought that slot, so you have to click step 1 again to buy the NEXT slot");
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Someone just bought that slot, so you have to click step 1 again to buy the NEXT slot", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        rollBackToBeforeBuyStep1ifNeeded();
         return;
     }
 
@@ -821,7 +821,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
    //TODOreq: this doesn't belong here, but the combo box probably depends on the user to send in the slotfiller index, so we need to sanitize that input (also applies to nickname if it is used (i don't currently plan to))
 
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WText("Attempting to buy ad space with advertisement: " + m_AllSlotFillersComboBox->currentText(), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("Attempting to buy ad space with advertisement: " + m_AllSlotFillersComboBox->currentText() + " ...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
     //TODOreq: change to 'sending them the time' [for use in js], because it not only solves the timezones/incorrect-system-time problem, but it also has the added benefit of GUARANTEEING that the price they see will be above the internal price (because of latency)... so much so that we don't need them to send it in anymore. the slot index would be enough. Also worth noting that the js should use an accurate timer to calculate the 'current time' (from the time we sent them and they saved). I doubt setInterval is a high precision timer. I was originally thinking they could delta the time we sent them against their system time, but then there'd be the problem of if they changed their system time while running then it'd fuck shit up (not a big deal though since it's a rare case. still if js has a high precision timer object ("time elapsed since x"), use that).
     //^that guarantee depends on all wt nodes being time sync'd like fuck, but that goes without saying
@@ -928,17 +928,13 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
 
     //doesn't belong here, but see "SHIT editting this doc" in "bitcoin.nonsense.ramblings.[...].txt", it is a TODOreq that is very important
 }
-void AnonymousBitcoinComputingWtGUI::rollBackToBeforeBuyStep1(const std::string &messageWhyRollingBack)
+void AnonymousBitcoinComputingWtGUI::rollBackToBeforeBuyStep1ifNeeded()
 {
-    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WText(messageWhyRollingBack, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-
-    m_BuySlotFillerStep1Button->enable();
-
     if(m_BuyStep2placeholder)
     {
         delete m_BuyStep2placeholder;
         m_BuyStep2placeholder = 0;
+        m_BuySlotFillerStep1Button->enable();
     }
 }
 void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError)
@@ -968,7 +964,9 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     //since we haven't done anything we can still roll back with ease. common-ish race condition
     if(m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy != m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex)
     {
-        rollBackToBeforeBuyStep1("Someone just bought that slot, so you have to click step 1 again to buy the NEXT slot");
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Someone just bought that slot, so you have to click step 1 again to buy the NEXT slot", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
@@ -1940,7 +1938,9 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
     }
     if(!lcbOpSuccess)
     {
-        rollBackToBeforeBuyStep1("It appears you're logged in to more than one location and are trying to make multiple purchases simultaneously. You can only do one at a time");
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("It appears you're logged in to more than one location and are trying to make multiple purchases simultaneously. You can only do one at a time", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
@@ -2056,7 +2056,9 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     if(!lcbOpSuccess)
     {
         //getting beat to the punch
-        rollBackToBeforeBuyStep1("Sorry, someone else bought the slot just moments before you...");
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Sorry, someone else bought the slot just moments before you...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        rollBackToBeforeBuyStep1ifNeeded();
 
         //TODOreq: account unlock without debitting, cas-swap-accepting-fail (just like login account locked recovery, which is already coded)
 
@@ -2280,7 +2282,9 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
     if(dbError)
     {
         //TODOreq: 500 internal server error
-        rollBackToBeforeBuyStep1("There was an internal error, but you probably still purchased the slot. Try refreshing in a few minutes to see if you got the slot. Don't worry, if you didn't get the purchase, you won't be charged"); //TODOreq: similar errors where appropriated
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("There was an internal error, but you probably still purchased the slot. Try refreshing in a few minutes to see if you got the slot. Don't worry, if you didn't get the purchase, you won't be charged", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOreq: similar errors where appropriated
+        rollBackToBeforeBuyStep1ifNeeded();
 
         //temp:
         cerr << "doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase db error" << endl;
@@ -2293,11 +2297,14 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
 
     if(!environment().ajax())
     {
-        //no-js doesn't have 'buy event', so we hackily update the new current price using the price they just purchased at (it isn't relied on anyways) :)
-        m_CurrentPriceLabel->setText(boost::lexical_cast<std::string>(m_CurrentPriceToUseForBuying*2));
+        //no-js doesn't have 'buy event', so we get the fresh results even though it would be a TODOoptimization to have just saved them (but if recovery possy did campaign update in race condition, we still would have to do the get we're about to do (if the cas swap succeeded, we could have just called finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget directly for that optimization)). KISS
+        getCouchbaseDocumentByKeySavingCasBegin("adSpaceSlotsd3fault0");
+        m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
     }
 
-    rollBackToBeforeBuyStep1("You successfully bought the slot for BTC: " + m_CurrentPriceToUseForBuyingString);
+    new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("SUCCESS! You bought the ad space for BTC: " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    //buy event rolls us back to before buy step 1 [for next slot]. will come shortly for js, and we just scheduled it above for no-js
     resumeRendering();
     //TODOoptimization(dumb): getting here means were the driver (unless i merge this function, but yea) so we can now ahead-of-time-a-la-event-driven update the 'get and subscribe' people (at least the ones on this wt node)... but we don't really NEED to...
 }
@@ -3144,7 +3151,7 @@ void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
         delete m_BuyStep2placeholder;
         m_BuyStep2placeholder = 0;
         m_BuySlotFillerStep1Button->enable();
-    }
+    }    
     m_LoggedIn = false;
     m_CurrentlyLoggedInUsername = "";
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget);

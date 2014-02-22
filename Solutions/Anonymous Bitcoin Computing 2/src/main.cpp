@@ -13,12 +13,12 @@
 - No ops cause too big of messages to be sent through the message queue
 - Tell date range (day) for currently purchaseable slot
 - missing the slot (confirmed miss) unlocks user account (just jump to login recovery code that already does that)
-- buying 2 in a row with no-js fails. tries to buy the first one again and it fails saying someone beat them to it
 
 ==1.1 Bugs==
 
-fail after user-account locked to buying a slot -> allow recovery via buying slot locked to
-get-and-subscribe only works with one key (timeout stuff needs changing (all share timer? or each get own?), as does other stuff such as subscription-update callback receiving update to something we just unsubscribed from (segfaulting almost every time))
+- fail after user-account locked to buying a slot -> allow recovery via buying slot locked to
+- get-and-subscribe only works with one key (timeout stuff needs changing (all share timer? or each get own?), as does other stuff such as subscription-update callback receiving update to something we just unsubscribed from (segfaulting almost every time))
+- buy slot[s], log out, log in as new user, old "attempting/SUCCESS" messages still there. only visual artifacts, idgaf
 
 */
 
