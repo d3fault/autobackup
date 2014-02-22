@@ -26,6 +26,7 @@
 #include <Wt/WLink>
 #include <Wt/Http/Client>
 #include <Wt/WDefaultLoadingIndicator>
+#include <Wt/WScrollArea>
 //#include <Wt/Chart/WCartesianChart>
 
 //TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
@@ -149,7 +150,6 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     friend class GetCouchbaseDocumentByKeyRequest;
 
     void buildGui();
-    WHBoxLayout *m_HeaderHlayout;
     WHBoxLayout *m_BodyHLayout;
     WVBoxLayout *m_LinksVLayout;
     WVBoxLayout *m_MainVLayout;
@@ -175,6 +175,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void showAdvertisingBuyAdSpaceWidget();
 
     void showAccountWidget();
+    WScrollArea *m_AccountWidgetScrollArea;
     WContainerWidget *m_AccountWidget;
     WContainerWidget *m_AuthenticationRequiredWidget;
     void handleAddFundsClicked();

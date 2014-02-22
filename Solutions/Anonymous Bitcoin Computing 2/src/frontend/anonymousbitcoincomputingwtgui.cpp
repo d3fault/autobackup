@@ -42,7 +42,6 @@
 
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv),
-      m_HeaderHlayout(new WHBoxLayout()),
       m_BodyHLayout(new WHBoxLayout()),
       m_LinksVLayout(new WVBoxLayout()),
       m_MainVLayout(new WVBoxLayout(root())),
@@ -57,7 +56,7 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_HomeWidget(0),
       m_AdvertisingWidget(0),
       m_AdvertisingBuyAdSpaceWidget(0),
-      m_AccountWidget(0),
+      m_AccountWidgetScrollArea(0),
       m_AuthenticationRequiredWidget(0),
       m_PendingBitcoinBalanceLabel(0),
       m_ConfirmedBitcoinBalanceLabel(0),
@@ -124,6 +123,7 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     //m_MainStack->setTransitionAnimation(slideInFromBottom, true);
 
     //Login Widget
+    m_LoginWidget->setContentAlignment(Wt::AlignTop | Wt::AlignRight);
     new WText("Username:", m_LoginWidget);
     m_LoginUsernameLineEdit = new WLineEdit(m_LoginWidget);
     m_LoginUsernameLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked);
@@ -137,25 +137,25 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_REGISTER), ABC_ANCHOR_TEXTS_REGISTER, m_LoginWidget);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget); //might not be necessary, since it's the only one added at this point (comment is not worth...)
 
-    m_HeaderHlayout->addWidget(new WText("<h2>Anonymous Bitcoin Computing</h2>"), 1, Wt::AlignTop | Wt::AlignCenter);
-    m_HeaderHlayout->addWidget(m_LoginLogoutStackWidget, 0, Wt::AlignTop | Wt::AlignRight);
+    WHBoxLayout *titleHeaderHlayout = new WHBoxLayout();
+    titleHeaderHlayout->addWidget(new WText("<h2>Anonymous Bitcoin Computing</h2>"), 0, Wt::AlignTop | Wt::AlignCenter);
+    m_MainVLayout->addLayout(titleHeaderHlayout, 0, Wt::AlignTop | Wt::AlignCenter);
 
-    m_MainVLayout->addLayout(m_HeaderHlayout, 0, Wt::AlignTop | Wt::AlignRight);
+    WHBoxLayout *loginLogoutHeaderHLayout = new WHBoxLayout();
+    loginLogoutHeaderHLayout->addWidget(m_LoginLogoutStackWidget, 0, Wt::AlignTop | Wt::AlignRight);
+    m_MainVLayout->addLayout(loginLogoutHeaderHLayout, 0, Wt::AlignTop | Wt::AlignRight);
 
     //LINKS -- TODOoptional: disable clickability of current location
-    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME));
-    m_LinksVLayout->addWidget(new WBreak());
-    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS));
-    m_LinksVLayout->addWidget(new WBreak());
-    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE));
-    m_LinksVLayout->addWidget(new WBreak());
-    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT));
-    m_LinksVLayout->addWidget(new WBreak());
-    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0));
-    m_LinksVLayout->addWidget(new WBreak());
-    m_LinksVLayout->addWidget(new WBreak()); //second wbreak to give one line gap between regular links and user account link (which isn't created until login
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS), ABC_ANCHOR_TEXTS_PATH_ADS), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft); //second wbreak to give one line gap between regular links and user account link (which isn't created until login
 
     m_BodyHLayout->addLayout(m_LinksVLayout, 0, Wt::AlignTop | Wt::AlignLeft);
+    m_MainStack->setOverflow(WContainerWidget::OverflowAuto);
     m_BodyHLayout->addWidget(m_MainStack, 1, Wt::AlignTop | Wt::AlignLeft);
 
     m_MainVLayout->addLayout(m_BodyHLayout, 1, Wt::AlignTop | Wt::AlignLeft);
@@ -196,10 +196,10 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
 {
     if(!m_LoggedIn)
     {
-        if(m_AccountWidget)
+        if(m_AccountWidgetScrollArea)
         {
-            delete m_AccountWidget;
-            m_AccountWidget = 0;
+            delete m_AccountWidgetScrollArea;
+            m_AccountWidgetScrollArea = 0;
         }
         if(!m_AuthenticationRequiredWidget)
         {
@@ -211,73 +211,76 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
     }
 
     //logged in
-    if(!m_AccountWidget)
-    {        
-        m_AccountWidget = new WContainerWidget(m_MainStack);
+    if(!m_AccountWidgetScrollArea)
+    {
+        m_AccountWidgetScrollArea = new WScrollArea(m_MainStack);
+        m_AccountWidget = new WContainerWidget();
+        m_AccountWidgetScrollArea->setWidget(m_AccountWidget);
+
         WVBoxLayout *accountVLayout = new WVBoxLayout(m_AccountWidget);
 
-        accountVLayout->addWidget(new WText("Step 1) Fund Your Account via Bitcoin"));
-        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addWidget(new WText("Step 1) Fund Your Account via Bitcoin"), 0, Wt::AlignTop | Wt::AlignLeft);
+        accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
         WPushButton *addFundsPushButton = new WPushButton("Add Funds");
         addFundsPushButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleAddFundsClicked); //TODOreq: perhaps disable after clicking? re-enable somewhere(s) too
-        accountVLayout->addWidget(addFundsPushButton);
-        accountVLayout->addWidget(new WBreak());
-        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addWidget(addFundsPushButton, 0, Wt::AlignTop | Wt::AlignLeft);
+        accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+        accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
         m_AddFundsPlaceholderLayout = new WVBoxLayout();
-        accountVLayout->addLayout(m_AddFundsPlaceholderLayout);
-        accountVLayout->addWidget(new WBreak());
-        accountVLayout->addWidget(new WBreak());
-        accountVLayout->addWidget(new WBreak());
-        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addLayout(m_AddFundsPlaceholderLayout, 0, Wt::AlignTop | Wt::AlignLeft);
+        accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+        accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+        accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+        accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
 
 
-        accountVLayout->addWidget(new WText("Step 2) Upload Advertisements (For use in buying ad space)")); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
-        accountVLayout->addWidget(new WBreak());
+        accountVLayout->addWidget(new WText("Step 2) Upload Advertisements (For use in buying ad space)"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
+        accountVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
         WGridLayout *uploadNewSlotFillerGridLayout = new WGridLayout();
 
         int rowIndex = -1;
 
-        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 1) Nickname (unseen by others):"), ++rowIndex, 0);
+        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 1) Nickname (unseen by others):"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_UploadNewSlotFiller_NICKNAME = new WLineEdit();
-        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_NICKNAME, rowIndex, 1);
+        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_NICKNAME, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
 
-        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 2) Mouse Hover Text:"), ++rowIndex, 0);
+        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 2) Mouse Hover Text:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_UploadNewSlotFiller_HOVERTEXT = new WLineEdit();
-        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_HOVERTEXT, rowIndex, 1);
+        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_HOVERTEXT, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
 
-        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 3) URL:"), ++rowIndex, 0);
+        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 3) URL:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_UploadNewSlotFiller_URL = new WLineEdit();
-        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_URL, rowIndex, 1);
+        uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_URL, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
 
         //TODOreq: sanitize above line edits
 
-        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image:"), ++rowIndex, 0);
+        uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
 
         m_AdImageUploaderPlaceholder = new WContainerWidget();
-        uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploaderPlaceholder, rowIndex, 1);
+        uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploaderPlaceholder, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
 
-        uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 2 mb --- Width: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS) + " px --- Height: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS) + " px"), ++rowIndex, 0, 1, 2);
-        uploadNewSlotFillerGridLayout->addWidget(new WText("Accepted Image Formats: png/jpeg/gif/bmp/svg"), ++rowIndex, 0, 1, 2); //TODOreq: do i really want to allow animated gifs?!?!?!? always thought no, but idk never really thought about it lol
+        uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 2 mb --- Width: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS) + " px --- Height: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS) + " px"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
+        uploadNewSlotFillerGridLayout->addWidget(new WText("Accepted Image Formats: png/jpeg/gif/bmp/svg"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft); //TODOreq: do i really want to allow animated gifs?!?!?!? always thought no, but idk never really thought about it lol
 
         m_AdImageUploadButton = new WPushButton("Submit");
         setUpAdImageUploaderAndPutItInPlaceholder();
         m_AdImageUploadButton->clicked().connect(m_AdImageUploadButton, &WPushButton::disable);
-        uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploadButton, ++rowIndex, 1);
+        uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploadButton, ++rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         //TODOoptional: progress bar would be nice (and not too hard), but eh these images aren't going to take long to upload so fuck it
 
-        uploadNewSlotFillerGridLayout->addWidget(new WText("WARNING: Ads can't be deleted or modified after uploading"), ++rowIndex, 0, 1, 2);
+        uploadNewSlotFillerGridLayout->addWidget(new WText("WARNING: Ads can't be deleted or modified after uploading"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
-        accountVLayout->addLayout(uploadNewSlotFillerGridLayout);
+        accountVLayout->addLayout(uploadNewSlotFillerGridLayout, 0, Wt::AlignTop | Wt::AlignLeft);
 
         //TODOreq: a place for them to view their uploaded ads (so they can verify their images uploaded ok and get a preview of how it will look (we might shrink it, for example (TODOreq: determine width/height, tell them what it is on this upload page) stuff)
 
         m_AdImageUploadResultsVLayout = new WVBoxLayout();
-        m_AdImageUploadResultsVLayout->addWidget(new WBreak());
-        m_AdImageUploadResultsVLayout->addWidget(new WBreak());
-        m_AdImageUploadResultsVLayout->addWidget(new WBreak());
-        accountVLayout->addLayout(m_AdImageUploadResultsVLayout);
+        m_AdImageUploadResultsVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+        m_AdImageUploadResultsVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+        m_AdImageUploadResultsVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+        accountVLayout->addLayout(m_AdImageUploadResultsVLayout, 0, Wt::AlignTop | Wt::AlignLeft);
     }
-    m_MainStack->setCurrentWidget(m_AccountWidget);
+    m_MainStack->setCurrentWidget(m_AccountWidgetScrollArea);
 }
 void AnonymousBitcoinComputingWtGUI::handleAddFundsClicked()
 {
@@ -350,58 +353,58 @@ void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
         WGridLayout *registerGridLayout = new WGridLayout(m_RegisterWidget);
         int rowIndex = -1;
 
-        registerGridLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME), ++rowIndex, 0, 1, 2);
+        registerGridLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
-        registerGridLayout->addWidget(new WText("Username:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WText("Username:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterUsernameLineEdit = new WLineEdit();
-        registerGridLayout->addWidget(m_RegisterUsernameLineEdit, rowIndex, 1);
+        registerGridLayout->addWidget(m_RegisterUsernameLineEdit, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterUsernameLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked); //was tempted to not put this here because if they press enter in username then they probably aren't done, BUT that 'implicit form submission' bullshit would submit it anyways. might as well make sure it's pointing at the right form...
 
-        registerGridLayout->addWidget(new WText("Password:"), ++rowIndex, 0);
+        registerGridLayout->addWidget(new WText("Password:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterPasswordLineEdit = new WLineEdit();
-        registerGridLayout->addWidget(m_RegisterPasswordLineEdit, rowIndex, 1);
+        registerGridLayout->addWidget(m_RegisterPasswordLineEdit, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterPasswordLineEdit->setEchoMode(WLineEdit::Password);
         m_RegisterPasswordLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
 
         ++rowIndex;
 
         WPushButton *registerButton = new WPushButton("Register");
-        registerGridLayout->addWidget(registerButton, ++rowIndex, 1);
+        registerGridLayout->addWidget(registerButton, ++rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         registerButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
 
-        registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2);
+        registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
         ++rowIndex;
 
-        registerGridLayout->addWidget(new WText("Optional:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WText("Sexual Preference:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Social Security Number:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Religion:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Political Beliefs:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Time of day your wife is home alone:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Where you keep your gun:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Your wife's cycle:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Your mum's cycle:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Credit Card #:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
-        registerGridLayout->addWidget(new WText("Credit Card Pin #:"), ++rowIndex, 0);
-        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1);
+        registerGridLayout->addWidget(new WText("Optional:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Sexual Preference:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Social Security Number:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Religion:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Political Beliefs:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Time of day your wife is home alone:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Where you keep your gun:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Your wife's cycle:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Your mum's cycle:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Credit Card #:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Credit Card Pin #:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
 
         //;-) and then secretly ;-) on the deployed/binary version ;-) i actually save these values ;-) and then sell them to hollywood ;-) to make movies off of them ;-) and then use the funds from that to take over the world ;-) and solve us of our corporate cancers (of which hollywood is an item) ;-) muaahahahahhahaha
 
         WPushButton *registerButton2 = new WPushButton("Register");
-        registerGridLayout->addWidget(registerButton2, ++rowIndex, 1);
+        registerGridLayout->addWidget(registerButton2, ++rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         registerButton2->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
 
-        registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2);
+        registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
     }
     m_MainStack->setCurrentWidget(m_RegisterWidget);
 }
@@ -464,6 +467,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
     if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget) //TODOreq: this object, once created, should never be deleted until the WApplication is deleted. The reason is that get and subscribe updates might be sent to it (even if the user has navigated away, there is a race condition where they did not 'unsubscribe' yet so they'd still get the update (Wt handles this just fine. you can setText on something not being shown without crashing (but if I were to delete it, THEN we'd be fucked)))
     {
         m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new WContainerWidget(m_MainStack);
+        m_AdvertisingBuyAdSpaceD3faultCampaign0Widget->setOverflow(WContainerWidget::OverflowAuto);
         new WText(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -807,7 +811,7 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
     string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
     if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK != "n")
     {
-        m_AddFundsPlaceholderLayout->addWidget(new WText("It appears you are attempting to purchase a slot. Wait until that finishes and try again"));
+        m_AddFundsPlaceholderLayout->addWidget(new WText("It appears you are attempting to purchase a slot. Wait until that finishes and try again"), 0, Wt::AlignTop | Wt::AlignLeft);
         resumeRendering();
         return;
     }
@@ -817,7 +821,7 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
     {
         if(bitcoinState != "GettingKey") //TODOreq: this is our second check? why the below message and not just giving them the key?
         {
-            m_AddFundsPlaceholderLayout->addWidget(new WText("Please only use one browser tab/window at a time")); //TODOreq: we should throw them out of add funds mode or something (making them click it again)? idfk
+            m_AddFundsPlaceholderLayout->addWidget(new WText("Please only use one browser tab/window at a time"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: we should throw them out of add funds mode or something (making them click it again)? idfk
             resumeRendering();
             return;
         }
@@ -1014,7 +1018,7 @@ void AnonymousBitcoinComputingWtGUI::determineBitcoinStateButDontLetThemProceedF
         {
             WPushButton *getKeyButton = new WPushButton("Get Bitcoin Key"); //TODOreq: hide after clicking, unhide somewhere(s) (or just delete/recreate idfk)
             getKeyButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleGetBitcoinKeyButtonClicked);
-            m_AddFundsPlaceholderLayout->addWidget(getKeyButton);
+            m_AddFundsPlaceholderLayout->addWidget(getKeyButton, 0, Wt::AlignTop | Wt::AlignLeft);
         }
         else if(bitcoinState == "GettingKey")
         {
@@ -1026,18 +1030,18 @@ void AnonymousBitcoinComputingWtGUI::determineBitcoinStateButDontLetThemProceedF
     }
     else
     {
-        m_AddFundsPlaceholderLayout->addWidget(new WText("You are attempting to purchase a slot, so bitcoin key activity is disabled until that finishes"));
+        m_AddFundsPlaceholderLayout->addWidget(new WText("You are attempting to purchase a slot, so bitcoin key activity is disabled until that finishes"), 0, Wt::AlignTop | Wt::AlignLeft);
     }
     resumeRendering();
 }
 void AnonymousBitcoinComputingWtGUI::presentBitcoinKeyForPaymentsToUser(const string &bitcoinKey)
 {
     m_CurrentBitcoinKeyForPayments = bitcoinKey;
-    m_AddFundsPlaceholderLayout->addWidget(new WText("Current Bitcoin Key: " + bitcoinKey));
+    m_AddFundsPlaceholderLayout->addWidget(new WText("Current Bitcoin Key: " + bitcoinKey), 0, Wt::AlignTop | Wt::AlignLeft);
 
     WPushButton *checkForPendingButton = new WPushButton("Check For Pending Bitcoins"); //changes to "Check For Pending Again" after > 0 pending seen
     checkForPendingButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::checkForPendingBitcoinBalanceButtonClicked);
-    m_AddFundsPlaceholderLayout->addWidget(checkForPendingButton); //TODOreq: 2 keys in same session needs to not remake this (and similar) buttons
+    m_AddFundsPlaceholderLayout->addWidget(checkForPendingButton, 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: 2 keys in same session needs to not remake this (and similar) buttons
 
     //check for pending and check for confirmed don't modify the BitcoinState in the user-account, so that means they are safe to perform even when slotToAttemptToFillAkaPurchase is set
 }
@@ -1317,7 +1321,7 @@ void AnonymousBitcoinComputingWtGUI::creditConfirmedBitcoinAmountAfterAnalyzingU
     string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
     if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK != "n")
     {
-        m_AddFundsPlaceholderLayout->addWidget(new WText("Please try again in a few moments"));
+        m_AddFundsPlaceholderLayout->addWidget(new WText("Please try again in a few moments"), 0, Wt::AlignTop | Wt::AlignLeft);
         resumeRendering();
         return;
     }
@@ -1327,7 +1331,7 @@ void AnonymousBitcoinComputingWtGUI::creditConfirmedBitcoinAmountAfterAnalyzingU
     string bitcoinStateData = pt.get<std::string>("bitcoinStateData", "n"); //key ("n" because they could segfault us by doing the hack we're about to check for)
     if(bitcoinState != "HaveKey" || bitcoinStateData != m_CurrentBitcoinKeyForPayments)
     {
-        m_AddFundsPlaceholderLayout->addWidget(new WText("Nice try, you already creditted those bitcoins in another tab/window ;-)")); //TODOreq: no-js allows you to use the same session in multiple windows by copy/pasting sessionId, but what are the implications for that with the state of the web-app. Can they be viewing different pages? Don't they share member variables? I can't exactly put my finger on it, but I think that this hack still might be vulnerable. Something like this: tab1 is at 'done' step, just before clicking (and getting here). tab2 then steals sessionId and (???). Still not sure what they could do (change the key? idfk. don't think they could even do that...), BUT the paranoid thought wonders whether or not tab1 can still click 'done' or not. i also wrote a TODOreq about this up towards the top, relating to when the fuck a slot is not longer activatable (idk lol)
+        m_AddFundsPlaceholderLayout->addWidget(new WText("Nice try, you already creditted those bitcoins in another tab/window ;-)"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: no-js allows you to use the same session in multiple windows by copy/pasting sessionId, but what are the implications for that with the state of the web-app. Can they be viewing different pages? Don't they share member variables? I can't exactly put my finger on it, but I think that this hack still might be vulnerable. Something like this: tab1 is at 'done' step, just before clicking (and getting here). tab2 then steals sessionId and (???). Still not sure what they could do (change the key? idfk. don't think they could even do that...), BUT the paranoid thought wonders whether or not tab1 can still click 'done' or not. i also wrote a TODOreq about this up towards the top, relating to when the fuck a slot is not longer activatable (idk lol)
 
         resumeRendering();
         return;
@@ -1456,7 +1460,7 @@ void AnonymousBitcoinComputingWtGUI::handleBitcoinAddressBalancePollerReceivedRe
                 if(!m_PendingBitcoinBalanceLabel)
                 {
                     m_PendingBitcoinBalanceLabel = new WText();
-                    m_AddFundsPlaceholderLayout->addWidget(m_PendingBitcoinBalanceLabel);
+                    m_AddFundsPlaceholderLayout->addWidget(m_PendingBitcoinBalanceLabel, 0, Wt::AlignTop | Wt::AlignLeft);
 
                     //enable 'check for confirmed'
                     WPushButton *checkForConfirmedPushButton = new WPushButton("Check For Confirmed Bitcoins");
@@ -1470,7 +1474,7 @@ void AnonymousBitcoinComputingWtGUI::handleBitcoinAddressBalancePollerReceivedRe
                 if(!m_ConfirmedBitcoinBalanceLabel)
                 {
                     m_ConfirmedBitcoinBalanceLabel = new WText();
-                    m_AddFundsPlaceholderLayout->addWidget(m_ConfirmedBitcoinBalanceLabel);
+                    m_AddFundsPlaceholderLayout->addWidget(m_ConfirmedBitcoinBalanceLabel, 0, Wt::AlignTop | Wt::AlignLeft);
 
                     //enable 'done with this key'
                     WPushButton *doneSendingBitcoinsButton = new WPushButton("Done Sending Bitcoins To This Address (Add To My Account)"); //TODOreq: explain more thoroughly to user that they can not send bitcoins to that address anymore after clicking this. Give a huge warning
@@ -1485,11 +1489,11 @@ void AnonymousBitcoinComputingWtGUI::handleBitcoinAddressBalancePollerReceivedRe
         {
             if(m_BitcoinAddressBalancePollerPollingPendingBalance)
             {
-                m_AddFundsPlaceholderLayout->addWidget(new WText("No pending bitcoins received yet. Try again in a minute or so. You did send them, right ;-P?"));
+                m_AddFundsPlaceholderLayout->addWidget(new WText("No pending bitcoins received yet. Try again in a minute or so. You did send them, right ;-P?"), 0, Wt::AlignTop | Wt::AlignLeft);
             }
             else
             {
-                m_AddFundsPlaceholderLayout->addWidget(new WText("It takes roughly 10 minutes for pending bitcoins to become confirmed. Try again when the next bitcoin block is mined."));
+                m_AddFundsPlaceholderLayout->addWidget(new WText("It takes roughly 10 minutes for pending bitcoins to become confirmed. Try again when the next bitcoin block is mined."), 0, Wt::AlignTop | Wt::AlignLeft);
             }
         }
     }
@@ -1882,7 +1886,7 @@ void AnonymousBitcoinComputingWtGUI::userAccountBitcoinLockedIntoGettingKeyAttem
     }
     if(!lcbOpSuccess)
     {
-        m_AddFundsPlaceholderLayout->addWidget(new WText("Please only use one browser tab/window at a time. Try again")); //TODOreq: make this error the same in all places i use it
+        m_AddFundsPlaceholderLayout->addWidget(new WText("Please only use one browser tab/window at a time. Try again"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: make this error the same in all places i use it
         resumeRendering();
         return;
     }
@@ -1913,7 +1917,7 @@ void AnonymousBitcoinComputingWtGUI::attemptToLockBitcoinKeySetNintoFillingNextP
     if(!lcbOpSuccess)
     {
         //another neighbor/user (or maybe our own recovery alternate tab) beat us to it, no biggy
-        m_AddFundsPlaceholderLayout->addWidget(new WText("A recoverable error occured, please try again in a few moments"));
+        m_AddFundsPlaceholderLayout->addWidget(new WText("A recoverable error occured, please try again in a few moments"), 0, Wt::AlignTop | Wt::AlignLeft);
         resumeRendering();
         return;
     }
@@ -2156,7 +2160,7 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
     {
         //TODOreq: 500 internal server error
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("There was an internal error, but you may have still purchased the slot. Try refreshing in a few minutes to see if you got the slot. Don't worry, if you didn't get the purchase, you won't be charged", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOreq: similar errors where appropriated
+        new WText("There was an internal error, but you probably still purchased the slot. Try refreshing in a few minutes to see if you got the slot. Don't worry, if you didn't get the purchase, you won't be charged", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOreq: similar errors where appropriated
         return;
     }
 
@@ -2204,7 +2208,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingToUnlockUserAccountFromBitcoi
     if(!lcbOpSuccess)
     {
         //could have been a slot fill (takes presedence) or a recovery neighbor simply beat us
-        m_AddFundsPlaceholderLayout->addWidget(new WText("Are you using multiple browser tabs/windows? Don't do that. Retry getting the key")); //TODOreq: i guess in this case we DON'T want to hide "Get Key" button? Or we re-enable it or idfk...
+        m_AddFundsPlaceholderLayout->addWidget(new WText("Are you using multiple browser tabs/windows? Don't do that. Retry getting the key"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: i guess in this case we DON'T want to hide "Get Key" button? Or we re-enable it or idfk...
         resumeRendering();
         return;
     }
@@ -2333,14 +2337,14 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingCredittingConfirmedBitcoinBal
     if(!lcbOpSuccess)
     {
         //TODOreq: loop back around to the same get/get-cas (with exponential backoff) and store-with-cas (getting back to here), or give error message saying try again in a few moments? Going with safer option of retry momentarily message for now... but I have a hunch it is fine and dandy to just go right back to the getSavingCas (re-using the enum too!) because strict sanitization is done there
-        m_AddFundsPlaceholderLayout->addWidget(new WText("Please try again in a few moments"));
+        m_AddFundsPlaceholderLayout->addWidget(new WText("Please try again in a few moments"), 0, Wt::AlignTop | Wt::AlignLeft);
         resumeRendering();
         return;
     }
 
     //successful credit of user-account balance && changing of bitcoinState back to "NoKey" :-D
 
-    m_AddFundsPlaceholderLayout->addWidget(new WText("Your account has been creditted BTC: + " + boost::lexical_cast<std::string>(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments)); //TODOreq: enable "get bitcoin key" button again, make check-for-pending/confirmed/done buttons go away (delete?).
+    m_AddFundsPlaceholderLayout->addWidget(new WText("Your account has been creditted BTC: + " + boost::lexical_cast<std::string>(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments), 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: enable "get bitcoin key" button again, make check-for-pending/confirmed/done buttons go away (delete?).
 
     m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0.0; //probably pointless, but will make me sleep better at night
     m_CurrentBitcoinKeyForPayments = ""; //ditto
@@ -2355,7 +2359,7 @@ void AnonymousBitcoinComputingWtGUI::showOutOfBitcoinKeysErrorToUserInAddFundsPl
     //TO DOnereq(yes): so the set user-account and bitcoin key set both stay locked until the manual filling of more keys? methinks yes, but still seems strange from this point of view... and i was considering saying "no unlock em!" initially (it probably wouldn't matter, but keeping them locked is an optimization (and laziness wins :-P). just need to make sure it's ok that they remain locked is the point
 
     //TODOreq: automated/machine notification
-    m_AddFundsPlaceholderLayout->addWidget(new WText("The server ran out of bitcoin keys and requires a manual refill by the administrator. If you are within shouting distance of him (or her, but lol there are no girls on the internet), say this: \"OOGA BOOGA I AM THE HUGE BITCOIN KEY REFILL NOTIFICATION OUTSOURCED TO ONE OF YOUR SLAVE COCKSUCKERS\". I'll know what it means."));
+    m_AddFundsPlaceholderLayout->addWidget(new WText("The server ran out of bitcoin keys and requires a manual refill by the administrator. If you are within shouting distance of him (or her, but lol there are no girls on the internet), say this: \"OOGA BOOGA I AM THE HUGE BITCOIN KEY REFILL NOTIFICATION OUTSOURCED TO ONE OF YOUR SLAVE COCKSUCKERS\". I'll know what it means."), 0, Wt::AlignTop | Wt::AlignLeft);
     resumeRendering();
 }
 void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(bool lcbOpSuccess, bool dbError)
@@ -2976,18 +2980,18 @@ void AnonymousBitcoinComputingWtGUI::doLoginTasks()
         delete m_LogoutWidget;
     }
     m_LogoutWidget = new WContainerWidget(m_LoginLogoutStackWidget);
-    new WText("Hello, " + m_CurrentlyLoggedInUsername, m_LogoutWidget);
+    m_LogoutWidget->setContentAlignment(Wt::AlignTop | Wt::AlignRight);
+    new WText("Hello, " + m_CurrentlyLoggedInUsername + " ", m_LogoutWidget);
     WPushButton *logoutButton = new WPushButton("Log Out", m_LogoutWidget);
     logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
 
     if(m_LinkToAccount)
     {
-        m_LinksVLayout->removeWidget(m_LinkToAccount);
         delete m_LinkToAccount;
     }
     m_LinkToAccount = new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT);
-    m_LinksVLayout->addWidget(m_LinkToAccount);
+    m_LinksVLayout->addWidget(m_LinkToAccount, 0, Wt::AlignTop | Wt::AlignLeft);
 
     m_LoggedIn = true;
     resumeRendering();
@@ -2997,10 +3001,10 @@ void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
     if(!m_LoggedIn)
         return;
 
-    if(m_AccountWidget)
+    if(m_AccountWidgetScrollArea)
     {
-        delete m_AccountWidget;
-        m_AccountWidget = 0;
+        delete m_AccountWidgetScrollArea;
+        m_AccountWidgetScrollArea = 0;
     }
     if(m_LinkToAccount) //probably not necessary since it's only ever created when we're logged in
     {

@@ -1,0 +1,6 @@
+When I was first getting into computers I wanted my own just so I could organize folders/files. Years later of folders/files organization, I have the same desire but with couchbase-json documents (despite hating json (ebml sounds nice, but i've never used it (QDataStream makes custom binary formats a breeze though)), it's "available-now" and necessary to use couchbase-views). filename is optional, key is sha1 of 'datab64' field... all of course in some fancy fucken revision system etc etc. oh and of course an optional array of tags to replace the folders concept...
+
+... it all sounds so tasty i want to do it right now! but guh priorities etc...
+
+
+obviously the fact that couchbase provides motherfucking reliability guarantees much higher than that of a single fucking hard drive -_- (so much data loss in my life) factors in, but really it's also superior organizing. file/folder model is dumb/arbitrary, but is the de facto standard that most people don't even understand isn't necessary

@@ -12,7 +12,9 @@
 6) all ad slot fillers preview (view query or expensive? maybe just expensive but only for owner as optimization (not security/privacy(LOL)). would still warrant pagination imo)
 7) doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
 8) No ops cause too big of messages to be sent through the message queue
-9) Adding many ad images scrunches instead of adding scrollbars xD. On campaign 0 page, clicking 'buy step 1' 50 times without being logged in, then logging in = can't see the buy step 2 stuff (no scrunching, no scroll bars)
+9) Tell date range (day) for currently purchaseable slot
+10) js-slot-buy doesn't update current price up top [for himself] (or maybe it does, can't tell)
+11) Login -> Buy Step 1 -> Log out -> Log in as different user: see first user's ad slot fillers (gui problem, db adds using index and correct username)
 
 ==1.1 Bugs==
 

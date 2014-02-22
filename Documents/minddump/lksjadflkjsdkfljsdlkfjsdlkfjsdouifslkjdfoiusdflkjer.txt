@@ -1,0 +1,1 @@
+Codan an app that handles every kind of error case and/or resource exhaustion (max server load, in the case of abc) is difficult, but that's how our universe executes every single vector frame: perfect.
