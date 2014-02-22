@@ -8,8 +8,153 @@
 #include <boost/random/random_device.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
+#include "abc2couchbaseandjsonkeydefines.h"
+
 using namespace std;
 using namespace boost::property_tree;
+
+//TODOreq: exponential backoffs and/or just plain old in the m_LastOpStatus error checking in this macro here, idfk. also for all the other checks of m_LastOpStatus that follow in the core while(true) loop...
+#define DO_COUCHBASE_GET_CAMPAIGN_DOC() \
+{ \
+    lcb_get_cmd_t cmd; \
+    const lcb_get_cmd_t *cmds[1]; \
+    cmds[0] = &cmd; \
+    memset(&cmd, 0, sizeof(cmd)); \
+    cmd.v.v0.key = campaignDocKey.c_str(); \
+    cmd.v.v0.nkey = campaignDocKey.length(); \
+    lcb_error_t error = lcb_get(m_Couchbase, NULL, 1, cmds); \
+    if(error  != LCB_SUCCESS) \
+    { \
+        cerr << "Failed to setup get request for campaign doc: " << lcb_strerror(m_Couchbase, error) << endl; \
+        lcb_destroy(m_Couchbase); \
+        return 1; \
+    } \
+} \
+if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
+{ \
+    cerr << "Failed to lcb_wait after get campaign doc': " << lcb_strerror(m_Couchbase, error) << endl; \
+    lcb_destroy(m_Couchbase); \
+    return 1; \
+} \
+if(m_LastOpStatus != LCB_SUCCESS) \
+{ \
+    cerr << "Failed to get campaign doc: " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl; \
+    lcb_destroy(m_Couchbase); \
+    return 1; \
+}
+
+#define DO_COUCHBASE_GET_TRANSACTION_DOC() \
+{ \
+    lcb_get_cmd_t cmd; \
+    const lcb_get_cmd_t *cmds[1]; \
+    cmds[0] = &cmd; \
+    memset(&cmd, 0, sizeof(cmd)); \
+    cmd.v.v0.key = transactionDocKey.c_str(); \
+    cmd.v.v0.nkey = transactionDocKey.length(); \
+    error = lcb_get(m_Couchbase, NULL, 1, cmds); \
+    if(error  != LCB_SUCCESS) \
+    { \
+        cerr << "Failed to setup get request for tx that might exist (" + transactionDocKey + "): " << lcb_strerror(m_Couchbase, error) << endl; \
+        lcb_destroy(m_Couchbase); \
+        return 1; \
+    } \
+} \
+if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
+{ \
+    cerr << "Failed to lcb_wait after get request for tx that might exist (" + transactionDocKey + "): " << lcb_strerror(m_Couchbase, error) << endl; \
+    lcb_destroy(m_Couchbase); \
+    return 1; \
+}
+
+#define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK() \
+{ \
+    lcb_store_cmd_t cmd; \
+    const lcb_store_cmd_t *cmds[1]; \
+    cmds[0] = &cmd; \
+    memset(&cmd, 0, sizeof(cmd)); \
+    cmd.v.v0.key = userAccountKeyString.c_str(); \
+    cmd.v.v0.nkey = userAccountKeyString.length(); \
+    double buyerBalance = boost::lexical_cast<double>(pt6.get<std::string>(JSON_USER_ACCOUNT_BALANCE)); \
+    double purchasePrice = boost::lexical_cast<double>(purchasePriceString); \
+    buyerBalance -= purchasePrice; \
+    pt6.erase(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL); \
+    pt6.erase(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH); \
+    pt6.put(JSON_USER_ACCOUNT_BALANCE, boost::lexical_cast<std::string>(buyerBalance)); \
+    std::ostringstream userAccountDebittedAndUnlockedJsonBuffer; \
+    write_json(userAccountDebittedAndUnlockedJsonBuffer, pt6, false); \
+    std::string userAccountDebittedAndUnlockedJson = userAccountDebittedAndUnlockedJsonBuffer.str(); \
+    cmd.v.v0.bytes = userAccountDebittedAndUnlockedJson.c_str(); \
+    cmd.v.v0.nbytes = userAccountDebittedAndUnlockedJson.length(); \
+    cmd.v.v0.operation = LCB_SET; \
+    cmd.v.v0.cas = userAccountCas; \
+    error = lcb_store(m_Couchbase, NULL, 1, cmds); \
+    if(error != LCB_SUCCESS) \
+    { \
+        cerr << "Failed to set up set request for user account unlocking+debitting: " << lcb_strerror(m_Couchbase, error) << endl; \
+        lcb_destroy(m_Couchbase); \
+        return 1; \
+    } \
+} \
+if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
+{ \
+    cerr << "Failed to lcb_wait after set request for user account unlocking+debitting: " << lcb_strerror(m_Couchbase, error) << endl; \
+    lcb_destroy(m_Couchbase); \
+    return 1; \
+} \
+if(m_LastOpStatus != LCB_SUCCESS) \
+{ \
+    if(m_LastOpStatus != LCB_KEY_EEXISTS) \
+    { \
+        cerr << "Failed to cas-swap set user account unlocking+debitting: " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl; \
+        lcb_destroy(m_Couchbase); \
+        return 1; \
+    } \
+}
+
+#define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_CAMPAIGN_DOC_UPDATE() \
+{ \
+    lcb_store_cmd_t cmd; \
+    const lcb_store_cmd_t *cmds[1]; \
+    cmds[0] = &cmd; \
+    memset(&cmd, 0, sizeof(cmd)); \
+    cmd.v.v0.key = campaignDocKey.c_str(); \
+    cmd.v.v0.nkey = campaignDocKey.length(); \
+    ptree pt8; \
+    pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX, slotIndexForSlotThatShouldntExistButMightString); \
+    pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP)); \
+    pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP)); \
+    pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE)); \
+    pt2.put_child(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED, pt8); \
+    std::ostringstream updatedCampaignDocJsonBuffer; \
+    write_json(updatedCampaignDocJsonBuffer, pt2, false); \
+    std::string updatedCampaignDocJson = updatedCampaignDocJsonBuffer.str(); \
+    cmd.v.v0.bytes = updatedCampaignDocJson.c_str(); \
+    cmd.v.v0.nbytes = updatedCampaignDocJson.length(); \
+    cmd.v.v0.operation = LCB_SET; \
+    cmd.v.v0.cas = campaignDocToUpdateCAS; \
+    error = lcb_store(m_Couchbase, NULL, 1, cmds); \
+    if(error != LCB_SUCCESS) \
+    { \
+        cerr << "Failed to set up set request for updating campaign doc: " << lcb_strerror(m_Couchbase, error) << endl; \
+        lcb_destroy(m_Couchbase); \
+        return 1; \
+    } \
+} \
+if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
+{ \
+    cerr << "Failed to lcb_wait after set request for updating campaign doc: " << lcb_strerror(m_Couchbase, error) << endl; \
+    lcb_destroy(m_Couchbase); \
+    return 1; \
+} \
+if(m_LastOpStatus != LCB_SUCCESS) \
+{ \
+    if(m_LastOpStatus != LCB_KEY_EEXISTS) \
+    { \
+        cerr << "Failed to cas-swap update campaign doc: " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl; \
+        lcb_destroy(m_Couchbase); \
+        return 1; \
+    } \
+}
 
 //TODOoptimization: starting to think that any time an "acceptable-fail" is seen, we can stop doing the recovery process because we have proof someone else is doing it. Will mainly just lessen network congestion, but probably not even by a significant amount. Too lazy to do that easy optimization for now (especially since I haven't even tested that this shit works yet!)
 
@@ -72,27 +217,27 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
             //selected ourself to do audit (recovery probably not necessary)
 
             //0 - get campaign doc (note these numbers do NOT match the 'perfected.the.design.here.is.the.flow.aka.pseudocode.txt')
-            std::string campaignDocKey = "adSpaceSlotsd3fault0";
+            std::string campaignDocKey = adSpaceCampaignKey("d3fault", "0");
             DO_COUCHBASE_GET_CAMPAIGN_DOC()
 
             //1 - analyze campaign doc, so we know which slot+1 to pessimistically check the existence of
             ptree pt;
             std::istringstream is(m_LastDocGetted);
             read_json(is, pt);
-            boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional("lastSlotFilledAkaPurchased");
+            boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED);
             int slotIndexForSlotThatShouldntExistButMight = 0;
             std::string slotIndexForSlotThatShouldntExistButMightString = "0";
             if(lastSlotFilledAkaPurchased.is_initialized())
             {
                 //n + 1
-                slotIndexForSlotThatShouldntExistButMight = boost::lexical_cast<int>(lastSlotFilledAkaPurchased.get().get<std::string>("slotIndex")) + 1;
+                slotIndexForSlotThatShouldntExistButMight = boost::lexical_cast<int>(lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX)) + 1;
                 slotIndexForSlotThatShouldntExistButMightString = boost::lexical_cast<std::string>(slotIndexForSlotThatShouldntExistButMight);
             }
             //else, no purchases so watch index 0
 
             //2 - check (via get) for existence of doc that shouldn't exist (but very well might because of a not-so-rare race condition)
 
-            std::string slotThatShouldntExistAkaBeFilledButMightKey = "adSpaceSlotsd3fault0Slot" + slotIndexForSlotThatShouldntExistButMightString;
+            std::string slotThatShouldntExistAkaBeFilledButMightKey = adSpaceCampaignSlotKey("d3fault", "0", slotIndexForSlotThatShouldntExistButMightString);
 
             {
                 lcb_get_cmd_t cmd;
@@ -139,12 +284,12 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                 ptree pt2;
                 std::istringstream is2(m_LastDocGetted);
                 read_json(is2, pt2);
-                boost::optional<ptree&> lastSlotFilledAkaPurchased2 = pt2.get_child_optional("lastSlotFilledAkaPurchased");
+                boost::optional<ptree&> lastSlotFilledAkaPurchased2 = pt2.get_child_optional(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED);
                 bool campaignDocWasFixedIn100msExtraTimeWeGaveIt = false;
                 if(lastSlotFilledAkaPurchased2.is_initialized())
                 {
                     //if(lastSlotFilledAkaPurchased2.get().get<std::string>("slotIndex") == nextSlotIndexString) //actually, it can be greater than or equal to (incredibly rare race condition, but hey...)
-                    int slotIndexInCampaignThisTimeAround = boost::lexical_cast<int>(lastSlotFilledAkaPurchased2.get().get<std::string>("slotIndex"));
+                    int slotIndexInCampaignThisTimeAround = boost::lexical_cast<int>(lastSlotFilledAkaPurchased2.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX));
                     if(slotIndexInCampaignThisTimeAround >= slotIndexForSlotThatShouldntExistButMight)
                     {
                         //driver (or neighbor recoverer) updated it -- very common race condition, recovery mode complete
@@ -159,7 +304,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                     lcb_cas_t campaignDocToUpdateCAS = m_LastGetCas; //save this for later...
 
                     //9 - check to see if transaction doc exists (TODOoptimization: maybe we can/should just LCB_ADD accepting fail the tx at this point?)
-                    std::string transactionDocKey = "txd3fault0Slot" + slotIndexForSlotThatShouldntExistButMightString;
+                    std::string transactionDocKey = transactionKey("d3fault", "0", slotIndexForSlotThatShouldntExistButMightString);
                     DO_COUCHBASE_GET_TRANSACTION_DOC()
 
                     //10 - transaction 'get' finished, so depending on whether or not it exists we take a certain recovery path (but just use a bool flag since they're mostly the same)
@@ -186,12 +331,12 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         ptree pt3;
                         std::istringstream is3(m_LastDocGetted);
                         read_json(is3, pt3);
-                        usernameOfBuyer = pt3.get<std::string>("buyer");
+                        usernameOfBuyer = pt3.get<std::string>(JSON_TRANSACTION_BUYER);
                     }
                     else
                     {
                         //we have to look up the slot filler we're doing recovery for in order to get the username of the buyer
-                        std::string slotFilledWithAkaSlotFillerKey = pt4.get<std::string>("slotFilledWith");
+                        std::string slotFilledWithAkaSlotFillerKey = pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH);
 
                         {
                             lcb_get_cmd_t cmd;
@@ -224,19 +369,19 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         ptree pt5;
                         std::istringstream is5(m_LastDocGetted);
                         read_json(is5, pt5);
-                        usernameOfBuyer = pt5.get<std::string>("username");
+                        usernameOfBuyer = pt5.get<std::string>(JSON_SLOT_FILLER_USERNAME);
                     }
 
                     //11b - get the user account of the buyer and do recovery tasks if needed
-                    std::string userAccountKey = "user" + usernameOfBuyer;
+                    std::string userAccountKeyString = userAccountKey(usernameOfBuyer);
 
                     {
                         lcb_get_cmd_t cmd;
                         const lcb_get_cmd_t *cmds[1];
                         cmds[0] = &cmd;
                         memset(&cmd, 0, sizeof(cmd));
-                        cmd.v.v0.key = userAccountKey.c_str();
-                        cmd.v.v0.nkey = userAccountKey.length();
+                        cmd.v.v0.key = userAccountKeyString.c_str();
+                        cmd.v.v0.nkey = userAccountKeyString.length();
                         error = lcb_get(m_Couchbase, NULL, 1, cmds);
                         if(error  != LCB_SUCCESS)
                         {
@@ -263,8 +408,8 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                     ptree pt6;
                     std::istringstream is6(m_LastDocGetted);
                     read_json(is6, pt6);
-                    bool userAccountIsLockedPointingAtSlotJustFilled = (pt6.get<std::string>("slotToAttemptToFillAkaPurchase", "n") == slotThatShouldntExistAkaBeFilledButMightKey ? true : false);
-                    std::string purchasePriceString = pt4.get<std::string>("purchasePrice");
+                    bool userAccountIsLockedPointingAtSlotJustFilled = (pt6.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n") == slotThatShouldntExistAkaBeFilledButMightKey ? true : false);
+                    std::string purchasePriceString = pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_SLOT_PURCHASE_PRICE);
                     if(!transactionDocExists)
                     {
                         //12a
@@ -298,9 +443,9 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                                 cmd.v.v0.nkey = transactionDocKey.length();
 
                                 ptree pt7;
-                                pt7.put("buyer", usernameOfBuyer);
-                                pt7.put("seller", "d3fault");
-                                pt7.put("amount", purchasePriceString);
+                                pt7.put(JSON_TRANSACTION_BUYER, usernameOfBuyer);
+                                pt7.put(JSON_TRANSACTION_SELLER, "d3fault");
+                                pt7.put(JSON_TRANSACTION_AMOUNT, purchasePriceString);
                                 std::ostringstream transactionJsonBuffer;
                                 write_json(transactionJsonBuffer, pt7, false);
                                 std::string transactionJson = transactionJsonBuffer.str();

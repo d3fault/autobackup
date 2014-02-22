@@ -1,0 +1,1 @@
+I find myself pressing CTRL-C like 3+ times and like err eh uhm pretty hard. Feedback would be nice (applies to other HID as well ;-P)

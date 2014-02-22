@@ -81,7 +81,8 @@ HEADERS += \
     frontend2backendRequests/getcouchbasedocumentbykeyrequest.h \
     frontend2backendRequests/storecouchbasedocumentbykeyrequest.h \
     backend/getandsubscribecacheitem.h \
-    frontend/filedeletingfileresource.h
+    frontend/filedeletingfileresource.h \
+    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -90,5 +91,7 @@ SOURCES += main.cpp \
     frontend2backendRequests/getcouchbasedocumentbykeyrequest.cpp \
     frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp \
     frontend/filedeletingfileresource.cpp
+
+INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 
 LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals-mt -lboost_system-mt -lboost_thread-mt -lboost_serialization

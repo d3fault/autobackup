@@ -1,5 +1,7 @@
 #include "anonymousbitcoincomputingwtgui.h"
 
+#include "abc2couchbaseandjsonkeydefines.h"
+
 //internal paths
 
 #define ABC_INTERNAL_PATH_REGISTER "/register"
@@ -28,12 +30,13 @@
 //^just worth mentioning, but not worth fixing yet: when the buy slot aka slot fill fails just after using account locking (but before slot fill) and they log in and basically can't do shit with their account, it effectively makes the bitcoin stuff off limits too since it relies on the user account not being locked. As of right now they have to wait until the slot is purchased, but once I let them proceed/retry with the buy, then they can get themselves out of it (if they still want to do the purchase)
 //TODOreq: "Forgot Your Password?" --> "Tough shit, I hope you learned your lesson"
 //TODOreq: no-js get-from-subscription-cache-but-dont-subscribe
-//TODOreq: find out when a signal connected to a dangerous slot can NOT be invoked by a user sifting through the html/js: signal disconnect should do it, but what about setVisible(false) and setEnabled(false), or changing a stackedwidget's current item (slot connected to button on stack item underneath). The easiest way to find this out is to ask; fuck trying to dig through Wt (and definitely fuck trying to dig through the html/js). Another related question: is there a race condition between resumeRendering at the beginning of a function and accessing a [editable-via-gui] member variable later in that same method (hacky solution to that is to always resumeRendering at the end of the method, and a hacky way to do that with lots of scope exit points in the function is using the stack struct destructor hack). I'm guessing the resumeRendering thing isn't a problem because the input events aren't (read:PROBABLY-AREN't(idk)) processed until the method ends and wt gets control again. hell, i don't even know for sure that deferRendering is even giving me the protection i'm assuming it is...
+//TODOreq: find out when a signal connected to a dangerous slot can NOT be invoked by a user sifting through the html/js: signal disconnect should do it, but what about setVisible(false) and setEnabled(false), or changing a stackedwidget's current item (slot connected to button on stack item underneath). The easiest way to find this out is to ask; fuck trying to dig through Wt (and definitely fuck trying to dig through the html/js). Another related question: is there a race condition between resumeRendering at the beginning of a function and accessing a [editable-via-gui] member variable later in that same method (hacky solution to that is to always resumeRendering at the end of the method, and a hacky way to do that with lots of scope exit points in the function is using the stack struct destructor hack). I'm guessing the resumeRendering thing isn't a problem because the input events aren't (read:PROBABLY-AREN't(idk)) processed until the method ends and wt gets control again. hell, i don't even know for sure that deferRendering is even giving me the protection i'm assuming it is. More: does connecting a button's clicked signal to disable and/or calling deferRendering in slot connected to it solve the 'two clicks really fast' race condition, OR do i need to use a boolean flag checked/set at the very beginning of the slot (and unset at the end of the operation [i don't want to happen twice concurrently])
 //TODOreq: litter if(!m_LoggedIn) lots of places. It's a cheap but effective safeguard
 //TODOreq: to double or to int64? that is the question. boost::lexical_cast threw an exception when i tried to convert it to u_int64_t, maybe int64_t will have better luck. there's a "proper money handling" page that tells you to use int64.... but i'm trying to figure out what the fuck the point of that even is if i have to go "through" double anyways. maybe i should just string replace the decimal place for an empty string and then viola it is an int64 (still needs lexical casting for maths :-/). re: "through double" = double is usually more than enough on most platforms, but on some it isn't <- rationale for using int64. but if you're going string -> double -> int64 anyways, won't you have already lost precision? or maybe it's only when the math is being performed. I still am leaning towards int64 (if i can fucking convert my strings to it) because it does appear to be the right way to do rounding (deal with single Satoshis = no rounding needed)
 //venting/OT: fucking bitcoin testnet-box-3 has tons of bitcoins, but they're all immature/orphaned so unspendable until i mine 120 fucking blocks. i'm averaging 1 block an hour -_-. box 2 didn't have this problem when i was fucking around with it years ago. i have the code written to test bitcoin interactions, but no test bitcoins available hahaha (i guess i can write the bulk bitcoins generator -> hugeBitcoinList/bitcoinKeySetN setter upper thingo first... zzz...
 
 //TODOoptimization: lots of stuff needs to be moved into it's own object instead of just being a member in this class. it will reduce the memory-per-connection by...  maybe-a-significant... amount. for example the HackedInD3faultCampaign0 shit should be on it's own widget, but ON TOP OF THAT each "step" in the HackedInD3faultCampaign0 thing (buy step 1, buy step 2) can/should be it's own object (member of of HackedInD3faultCampaign0 object). We just have too many unused and unneeded-most-of-the-time member variables in this monster class... but KISS so ima continue for now, despite cringing at how ugly/hacky it's becoming :)
+//^for string values that aren't needed most of the time but still need to be members because accessed in various async methods etc, i can put them in a ptree (that is itself a member). this way they only take up any memory when they are needed (this monster class has a lot of corner cases and even those corner cases declare members). ptree isn't just for json (i lol'd when i was thinking to myself "hmm i need some sort of... property... tree..."). a hash with string key/value would also work and might be faster. i've never done memory management in such a way but hey i think it'll work...
 
 //TODOreq: can't remember if i wrote this anywhere or only thought of it, but i need to add underscores between certain things in my couchbase docs. for example a user named JimboKnives0 would have a conflict with a user named JimboKnives. adSpaceSlotFillersJimboKnives0 would now point to a specific ad slot filler, _AND_ the "profile view" (last 10 slot fillers set up) for JimboKnives0 -- hence, conflict. Could maybe solve this another way by perhaps always having the username be the very last part of the key???
 
@@ -288,7 +291,7 @@ void AnonymousBitcoinComputingWtGUI::handleAddFundsClicked()
 
     //even though we are already logged in, we still need to get the user-account doc because if we kept it in memory instead it might be stale or some shit. could be wrong here idfk, but fuck it
 
-    getCouchbaseDocumentByKeySavingCasBegin("user" + m_CurrentlyLoggedInUsername); //ACTUALLY: changing back to get with cas because if we see the state is in "GettingKey" mode, we do light recovery from there and in fact need the cas for that. NOPE: was tempted to have this be a 'get with cas', but the user might wait a while and possibly do other things (slot fills namely) before doing any further actions, so the CAS may be hella stale by then.
+    getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(m_CurrentlyLoggedInUsername)); //ACTUALLY: changing back to get with cas because if we see the state is in "GettingKey" mode, we do light recovery from there and in fact need the cas for that. NOPE: was tempted to have this be a 'get with cas', but the user might wait a while and possibly do other things (slot fills namely) before doing any further actions, so the CAS may be hella stale by then.
     m_WhatTheGetSavingCasWasFor = ADDFUNDSBUTTONCLICKEDSODETERMINEBITCOINSTATEBUTDONTLETTHEMPROCEEDIFLOCKEDATTEMPTINGTOFILLAKAPURCHASESLOT;
 }
 void AnonymousBitcoinComputingWtGUI::setUpAdImageUploaderAndPutItInPlaceholder()
@@ -310,7 +313,7 @@ void AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaIma
     //^^^^^tl;dr: get allAdSlotFillers doc, choose the n+1 index, LCB_ADD to it, if lcbOpFail: cas-swap-accepting-fail updating allAdSlotFillers (inline recovery), do n+2 (really n+1 relative to the newest update) LCB_ADD, if fail: <repeat-this-segment-X-times> -> when the LCB_ADD doesn't fail, cas-swap-accepting-fail updating allAdSlotFillers, DONE. the very last cas-swap-accepting-fail can fail (as in, not happen!) and on the NEXT ad upload the state will be recovered (might be strange from end user's perspective, but fuck it)
 
     //get adSpaceAllSlotFillers<username>
-    getCouchbaseDocumentByKeySavingCasBegin("adSpaceAllSlotFillers" + m_CurrentlyLoggedInUsername);
+    getCouchbaseDocumentByKeySavingCasBegin(adSpaceAllSlotFillersKey(m_CurrentlyLoggedInUsername));
     m_WhatTheGetSavingCasWasFor = ALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS;
 
     //fml: memory(httpd-wt) -> file(chillen) -> memory(my-wt) ->b64encode-> memory(my-wt) ->messageQueue-> memory(sendQueue) -> memory(receiveQueue) ->->messageQueue-> memory(my-couchbase) -> memory(couchbase-send-buffer)
@@ -454,7 +457,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
     if(!m_AdvertisingBuyAdSpaceD3faultWidget)
     {
         m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(m_MainStack);
-        new WText("d3fault's ad campaigns:", m_AdvertisingBuyAdSpaceD3faultWidget);
+        new WText("d3fault's ad space campaigns:", m_AdvertisingBuyAdSpaceD3faultWidget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultWidget);
     }
@@ -481,7 +484,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         m_CampaignSlotCurrentlyForSaleStartDateTimeLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("Price in BTC: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Price: BTC ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceDomPath = m_CurrentPriceLabel->jsRef();
 
@@ -489,7 +492,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         {
             //TODOreq: get, don't subscribe (but still use subsciption cache!). when you impl that, change it for the no-js successful slot buy as well, since it is currently hackily a copy/paste job from this code block :)
 
-            getCouchbaseDocumentByKeySavingCasBegin("adSpaceSlotsd3fault0");
+            getCouchbaseDocumentByKeySavingCasBegin(adSpaceCampaignKey("d3fault", "0"));
             m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET; //TODOreq: why the fuck do i save the cas? surely i should re-fetch the doc- OH BUT IT NEVER CHANGES UNLESS THERE'S A BUY EVENT!!!
         }
         else
@@ -500,7 +503,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
             m_FirstPopulate = true; //so we know to call resumeRendering on first populate/update, but not populates/updates thereafter
             deferRendering();
 
-            getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
             m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
 
             //TODOoptimization: shorten js variable names (LOL JS). use defines to retain sanity
@@ -542,7 +545,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
     else //widget already created, so just re-subscribe
     {
         //TODOreq: need to handle no-js mode here as well (currently no-js receives a subscription update but doesn't triggerUpdate it (and isn't defered xD), so really you just keep seeing stale data from the first view)
-        getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
+        getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
         m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
         //TODOreq: the data will still be populated, but the data may be stale (maybe i shouldn't ever show such stale info (could be really really old, BUT if everything is working it will get updated really fast ([probably] not even a couchbase hit, so SUB-SUB-MILLISECONDS!?!?)))
         //^still, should i disable gui or something?
@@ -578,9 +581,9 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     std::istringstream is(advertisingBuyAdSpaceD3faultCampaign0JsonDocument);
     read_json(is, pt);
 
-    m_HackedInD3faultCampaign0_MinPrice = pt.get<std::string>("minPrice");
-    m_HackedInD3faultCampaign0_SlotLengthHours = pt.get<std::string>("slotLengthHours");
-    boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional("lastSlotFilledAkaPurchased");
+    m_HackedInD3faultCampaign0_MinPrice = pt.get<std::string>(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE);
+    m_HackedInD3faultCampaign0_SlotLengthHours = pt.get<std::string>(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS);
+    boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED);
     m_HackedInD3faultCampaign0_NoPreviousSlotPurchases = !lastSlotFilledAkaPurchased.is_initialized();
 
 
@@ -605,10 +608,10 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     }
     else
     {
-        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>("slotIndex");
-        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("purchaseTimestamp");
-        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>("startTimestamp");
-        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>("purchasePrice");
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX);
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP);
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP);
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE);
 
         if(environment().ajax())
         {
@@ -716,7 +719,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
     //^^^^^^^^we also want to 'roll back' after the buy is successful, but certain messages should remain
     m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy = m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
 
-    getCouchbaseDocumentByKeyBegin("adSpaceAllSlotFillers" + m_CurrentlyLoggedInUsername); //TODOreq: obviously we'd have sanitized the username by here...
+    getCouchbaseDocumentByKeyBegin(adSpaceAllSlotFillersKey(m_CurrentlyLoggedInUsername)); //TODOreq: obviously we'd have sanitized the username by here...
     m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET;
     deferRendering();
 }
@@ -784,7 +787,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
         new WBreak(m_BuyStep2placeholder);
         m_AllSlotFillersComboBox = new WComboBox(m_BuyStep2placeholder);
-        int adsCount = boost::lexical_cast<int>(pt.get<std::string>("adsCount"));
+        int adsCount = boost::lexical_cast<int>(pt.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT));
         for(int i = 0; i < adsCount; ++i)
         {
             //json looks like this: "0" : "<nickname>"
@@ -832,7 +835,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
    //TODOreq: this doesn't belong here, but the combo box probably depends on the user to send in the slotfiller index, so we need to sanitize that input (also applies to nickname if it is used (i don't currently plan to))
 
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WText("Attempting to buy ad space with advertisement: " + m_AllSlotFillersComboBox->currentText() + " ...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("Attempting to buy ad space with advertisement: '" + m_AllSlotFillersComboBox->currentText() + "'...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
     //TODOreq: change to 'sending them the time' [for use in js], because it not only solves the timezones/incorrect-system-time problem, but it also has the added benefit of GUARANTEEING that the price they see will be above the internal price (because of latency)... so much so that we don't need them to send it in anymore. the slot index would be enough. Also worth noting that the js should use an accurate timer to calculate the 'current time' (from the time we sent them and they saved). I doubt setInterval is a high precision timer. I was originally thinking they could delta the time we sent them against their system time, but then there'd be the problem of if they changed their system time while running then it'd fuck shit up (not a big deal though since it's a rare case. still if js has a high precision timer object ("time elapsed since x"), use that).
     //^that guarantee depends on all wt nodes being time sync'd like fuck, but that goes without saying
@@ -843,10 +846,10 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     //TODOreq: sanitize slot index (user could have forged), verify it in fact exists (was thinking i should try to pull the doc, BUT we already have the "allSlotFillers" doc and can just verify that it's in that instead (so we would be depending on earlier sanity checks when setting up the slotFiller instead)
 
-    m_SlotFillerToUseInBuy = "adSpaceSlotFillers" + m_CurrentlyLoggedInUsername + boost::lexical_cast<std::string>(m_AllSlotFillersComboBox->currentIndex());
+    m_SlotFillerToUseInBuy = adSpaceSlotFillerKey(m_CurrentlyLoggedInUsername, boost::lexical_cast<std::string>(m_AllSlotFillersComboBox->currentIndex()));
     //TODOreq: making username 'last' part of key doesn't solve the problem: adSpaceSlotFillers12joe (slot filler 1/username '2joe' conflicts with slot filler 12/username 'joe'). It would solve it if we used leading zeros, but fuck that underscores is better solution
 
-    getCouchbaseDocumentByKeySavingCasBegin("user" + m_CurrentlyLoggedInUsername);
+    getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(m_CurrentlyLoggedInUsername));
     m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET;
 
     //TO DOnereq (vague so pretty much done (spread out to many other reqs)): the above get shouldn't fail since they need to already be logged in to get this far, but what the fuck do i know? it probably CAN (db overload etc), so i need to account for that
@@ -886,7 +889,7 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
     std::istringstream is(userAccountDoc);
     read_json(is, pt);
 
-    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
+    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
     if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK != "n")
     {
         m_AddFundsPlaceholderLayout->addWidget(new WText("It appears you are attempting to purchase a slot. Wait until that finishes and try again"), 0, Wt::AlignTop | Wt::AlignLeft);
@@ -894,10 +897,10 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
         return;
     }
 
-    string bitcoinState = pt.get<std::string>("bitcoinState");
-    if(bitcoinState != "NoKey")
+    string bitcoinState = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE);
+    if(bitcoinState != JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY)
     {
-        if(bitcoinState != "GettingKey") //TODOreq: this is our second check? why the below message and not just giving them the key?
+        if(bitcoinState != JSON_USER_ACCOUNT_BITCOIN_STATE_GETTING_KEY) //TODOreq: this is our second check? why the below message and not just giving them the key?
         {
             m_AddFundsPlaceholderLayout->addWidget(new WText("Please only use one browser tab/window at a time"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: we should throw them out of add funds mode or something (making them click it again)? idfk
             resumeRendering();
@@ -908,9 +911,9 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
         m_UserAccountBitcoinDoingGettingKeyRecoverySoAccountLocked = true;
 
         //Fill in details from previous GettingKey attempt
-        m_BitcoinKeySetIndex_aka_setN = pt.get<std::string>("bitcoinStateData");
-        m_BitcoinKeySetPage_aka_PageY = pt.get<std::string>("bitcoinSetPage");
-        m_PerGetBitcoinKeyUUID = pt.get<std::string>("bitcoinGetKeyUUID");
+        m_BitcoinKeySetIndex_aka_setN = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA);
+        m_BitcoinKeySetPage_aka_PageY = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_SET_PAGE);
+        m_PerGetBitcoinKeyUUID = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_GET_KEY_UUID);
     }
     else //bitcoinState == "NoKey"
     {
@@ -934,7 +937,7 @@ void AnonymousBitcoinComputingWtGUI::checkNotAttemptingToFillAkaPurchaseSlotThen
     //recovery and normal mode MERGE
 
     //save cas because way later if we try to fill the next page, we need the cas to lock it
-    getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage"); //this exact get (incl enum) is copy/pasted to a later point when a cas-swap fails
+    getCouchbaseDocumentByKeySavingCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN)); //this exact get (incl enum) is copy/pasted to a later point when a cas-swap fails
     m_WhatTheGetSavingCasWasFor = GETBITCOINKEYSETNCURRENTPAGETOSEEWHATPAGEITISONANDIFITISLOCKED;
 
     //doesn't belong here, but see "SHIT editting this doc" in "bitcoin.nonsense.ramblings.[...].txt", it is a TODOreq that is very important
@@ -990,11 +993,11 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
 
     m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = true; //default to true until we prove it false
 
-    std::string ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
+    std::string ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
     if(ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase == "n")
     {
         //not already locked
-        std::string userBalanceString = pt.get<std::string>("balance");
+        std::string userBalanceString = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
         double userBalance = boost::lexical_cast<double>(userBalanceString);
 
         //TO DOnereq: we should probably calculate balance HERE/now instead of in buySlotStep2d3faultCampaign0ButtonClicked (where it isn't even needed). Those extra [SUB ;-P]-milliseconds will get me millions and millions of satoshis over time muahhahaha superman 3
@@ -1051,16 +1054,16 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
                 slotIndexToAttemptToBuy = (boost::lexical_cast<int>(m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy) + 1);
             }
             m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase = boost::lexical_cast<std::string>(slotIndexToAttemptToBuy);
-            m_AdSlotAboutToBeFilledIfLockIsSuccessful = "adSpaceSlotsd3fault0Slot" + m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase;
-            pt.put("slotToAttemptToFillAkaPurchase", m_AdSlotAboutToBeFilledIfLockIsSuccessful);
+            m_AdSlotAboutToBeFilledIfLockIsSuccessful = adSpaceCampaignSlotKey("d3fault", "0", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
+            pt.put(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, m_AdSlotAboutToBeFilledIfLockIsSuccessful);
             //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
             //TODOreq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
-            pt.put("slotToAttemptToFillAkaPurchaseItWith", m_SlotFillerToUseInBuy);
+            pt.put(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH, m_SlotFillerToUseInBuy);
             std::ostringstream jsonDocBuffer;
             write_json(jsonDocBuffer, pt, false);
             std::string accountLockedForBuyJsonDoc = jsonDocBuffer.str();
 
-            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, accountLockedForBuyJsonDoc, cas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), accountLockedForBuyJsonDoc, cas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
             m_WhatTheStoreWithInputCasSavingOutputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS;
         }
         else
@@ -1113,21 +1116,21 @@ void AnonymousBitcoinComputingWtGUI::determineBitcoinStateButDontLetThemProceedF
     std::istringstream is(userAccountJsonDoc);
     read_json(is, pt);
 
-    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
-    string bitcoinState = pt.get<std::string>("bitcoinState"); //TODOreq: registration sets this to "NoKey"
-    if(bitcoinState == "HaveKey")
+    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
+    string bitcoinState = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE); //TODOreq: registration sets this to "NoKey"
+    if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_HAVE_KEY)
     {
-        presentBitcoinKeyForPaymentsToUser(pt.get<std::string>("bitcoinStateData"));
+        presentBitcoinKeyForPaymentsToUser(pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA));
     }
     else if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK == "n")
     {
-        if(bitcoinState == "NoKey")
+        if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY)
         {
             WPushButton *getKeyButton = new WPushButton("Get Bitcoin Key"); //TODOreq: hide after clicking, unhide somewhere(s) (or just delete/recreate idfk)
             getKeyButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleGetBitcoinKeyButtonClicked);
             m_AddFundsPlaceholderLayout->addWidget(getKeyButton, 0, Wt::AlignTop | Wt::AlignLeft);
         }
-        else if(bitcoinState == "GettingKey")
+        else if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_GETTING_KEY)
         {
             //light/safe recovery (don't resume rendering [yet] either)
             checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(userAccountJsonDoc, casOnlyUsedWhenBitcoinStateIsInGettingKey_aka_lightRecovery, true, false); //re-parsing json and re-checking slotToAttemptToFillAkaPurchase not set, but saving lines of code and complexity...
@@ -1185,9 +1188,9 @@ void AnonymousBitcoinComputingWtGUI::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDand
 
     for(int i = 0; i < ABC_NUM_BITCOIN_KEYS_ON_EACH_BITCOINKEYSET_PAGE; ++i)
     {
-        const std::string keyPrefix = "key" + boost::lexical_cast<std::string>(i);
+        const std::string keyPrefix = JSON_BITCOIN_KEY_SET_KEY_PREFIX + boost::lexical_cast<std::string>(i);
         const std::string &bitcoinKey = pt.get<std::string>(keyPrefix); //yes, key is get'd by only the prefix (english teachers are raging)
-        const std::string &claimedUuid = pt.get<std::string>(keyPrefix + "claimedUuid", "n");
+        const std::string &claimedUuid = pt.get<std::string>(keyPrefix + JSON_BITCOIN_KEY_SET_CLAIMED_UUID_SUFFIX, "n");
         //we don't care about GET'ing the claimedUsername (TO DOnereq: be sure to pt::put it (is just good book keeping imo, since the uuid will vanish later)
         if(claimedUuid != "n") //claimed, check uuid
         {
@@ -1201,8 +1204,8 @@ void AnonymousBitcoinComputingWtGUI::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDand
         else if(!doneInsertingIntoFirstUnclaimed) //unclaimed spot found! but we might not need it if the uuid is seen during this iteration
         {
             m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage = bitcoinKey;
-            pt.put(keyPrefix + "claimedUuid", m_PerGetBitcoinKeyUUID);
-            pt.put(keyPrefix + "claimedUsername", m_CurrentlyLoggedInUsername);
+            pt.put(keyPrefix + JSON_BITCOIN_KEY_SET_CLAIMED_UUID_SUFFIX, m_PerGetBitcoinKeyUUID);
+            pt.put(keyPrefix + JSON_BITCOIN_KEY_SET_CLAIMED_USERNAME_SUFFIX, m_CurrentlyLoggedInUsername);
             doneInsertingIntoFirstUnclaimed = true;
             break;
         }
@@ -1225,7 +1228,7 @@ void AnonymousBitcoinComputingWtGUI::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDand
             std::ostringstream jsonDocBuffer;
             write_json(jsonDocBuffer, pt, false);
 
-            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_Page" + m_BitcoinKeySetPage_aka_PageY, jsonDocBuffer.str(),bitcoinKeySetNpageY_CAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY), jsonDocBuffer.str(), bitcoinKeySetNpageY_CAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
             m_WhatTheStoreWithInputCasWasFor = CLAIMBITCOINKEYONBITCOINKEYSETVIACASSWAP;
         }
         else
@@ -1235,7 +1238,7 @@ void AnonymousBitcoinComputingWtGUI::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDand
 
             //PageY++
             m_BitcoinKeySetPage_aka_PageY = boost::lexical_cast<std::string>(boost::lexical_cast<int>(m_BitcoinKeySetPage_aka_PageY)+1);
-            getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_Page" + m_BitcoinKeySetPage_aka_PageY);
+            getCouchbaseDocumentByKeySavingCasBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY));
             m_WhatTheGetSavingCasWasFor = GETBITCOINKEYSETNPAGEYANDIFITEXISTSLOOPAROUNDCHECKINGUUIDBUTIFNOTEXISTMAKEITEXISTBITCH;
         }
     }
@@ -1258,7 +1261,7 @@ void AnonymousBitcoinComputingWtGUI::getBitcoinKeySetNPageYAttemptFinishedSoChec
 
         //fill next page
         //Get hugeBitcoinKeyList_CurrentPage to see what page it's on
-        getCouchbaseDocumentByKeySavingCasBegin("hugeBitcoinKeyList_CurrentPage");
+        getCouchbaseDocumentByKeySavingCasBegin(hugeBitcoinKeyListCurrentPageKey());
         m_WhatTheGetSavingCasWasFor = GETHUGEBITCOINKEYLISTCURRENTPAGE;
     }
     else
@@ -1288,14 +1291,14 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
             ptree pt2;
 
             //TODOreq: not sure it's safe to re-make this doc for re-locking it with new Z using these member variables (stale/inaccurate maybe???), but my instincts tell me it is safe and they are accurate. Still, so many fucking recovery paths and shit I'm a tad worried...
-            pt2.put("fillingNextBitcoinKeySetPage", m_BitcoinKeySetPage_aka_PageY);
-            pt2.put("uuidPerFill", m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
-            pt2.put("hugeBitcoinKeyListStartingPage", m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
+            pt2.put(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE, m_BitcoinKeySetPage_aka_PageY);
+            pt2.put(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE_UUID_PER_FILL, m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
+            pt2.put(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE_START_LOOKING_ON_HUGEBITCOINKEYLIST_PAGE, m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
 
             std::ostringstream reLockedToNewPageZJsonBuffer;
             write_json(reLockedToNewPageZJsonBuffer, pt2, false);
 
-            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage", reLockedToNewPageZJsonBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), reLockedToNewPageZJsonBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
             m_WhatTheStoreWithInputCasWasFor = RELOCKBITCOINKEYSETN_CURRENTPAGETONONEXISTENTPAGEZASNECESSARYOPTIMIZATION;
 
             //displays the error (as in the else) after the op completes
@@ -1318,8 +1321,8 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
 
     for(int i = 0; i < ABC_NUM_BITCOIN_KEY_RANGES_ON_EACH_HUGEBITCOINLIST_PAGE; ++i) //100 key ranges of 100 keys each, so 10k keys per hugeBitcoinKeyList page (~350kb/page)
     {
-        const std::string keyPrefix = "keyRange" + boost::lexical_cast<std::string>(i);
-        const std::string &claimedUuid = pt.get<std::string>(keyPrefix + "claimedUuid", "n");
+        const std::string keyPrefix = JSON_HUGE_BITCOIN_KEY_LIST_PAGE_KEY_RANGE_PREFIX + boost::lexical_cast<std::string>(i);
+        const std::string &claimedUuid = pt.get<std::string>(keyPrefix + JSON_HUGE_BITCOIN_KEY_LIST_PAGE_KEY_RANGE_CLAIMED_UUID_SUFFIX, "n");
         //we don't care about GET'ing the claimedSetN (or PageY if we decide to utilize it)
 
         if(claimedUuid != "n") //claimed, check uuid
@@ -1342,9 +1345,7 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
             m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList.clear();
             boost::split(m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList,commaSeparatedKeyRangeFromHugeBitcoinKeyList,boost::is_any_of(","));
 
-            pt.put(keyPrefix + "claimedUuid", m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
-            //pt.put(keyPrefix + "claimedSetN", m_FillingNextBitcoinKeySetPage_ForAfterCASswapLockSucceeds);
-            //TODOreq: PageY stored? i think pageY is what above refers to as "SetPage"... so where the fuck is setN?
+            pt.put(keyPrefix + JSON_HUGE_BITCOIN_KEY_LIST_PAGE_KEY_RANGE_CLAIMED_UUID_SUFFIX, m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
 
             doneInsertingIntoFirstUnclaimed = true;
             break;
@@ -1366,7 +1367,7 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
             write_json(jsonDocBuffer, pt, false);
 
             //CAS-swap attempt hugeBitcoinKeyList[pageZ] claiming a range for the next bitcoinKeySet[setN]_PageY
-            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("hugeBitcoinKeyList_Page" + m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList, jsonDocBuffer.str(), casForUsingInSafelyInsertingOurPerFillUuid, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(hugeBitcoinKeyListPageKey(m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList), jsonDocBuffer.str(), casForUsingInSafelyInsertingOurPerFillUuid, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
             m_WhatTheStoreWithInputCasWasFor = HUGEBITCOINKEYLISTKEYRANGECLAIMATTEMPT;
         }
         else
@@ -1382,10 +1383,10 @@ void AnonymousBitcoinComputingWtGUI::getHugeBitcoinKeyListActualPageAttemptCompl
             {
                 //set CurrentPage, then go to the method directly called in the else (even if cas swap fails? methinks yes)
                 ptree pt2;
-                pt2.put("currentPage", m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
+                pt2.put(JSON_HUGE_BITCOIN_KEY_LIST_CURRENT_PAGE_KEY, m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
                 std::ostringstream jsonDocBuffer;
                 write_json(jsonDocBuffer, pt2, false);
-                store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("hugeBitcoinKeyList_CurrentPage", jsonDocBuffer.str(), m_CasToUseForSafelyUpdatingHugeBitcoinKeyList_CurrentPageUsingIncrementedPageZ, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+                store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(hugeBitcoinKeyListCurrentPageKey(), jsonDocBuffer.str(), m_CasToUseForSafelyUpdatingHugeBitcoinKeyList_CurrentPageUsingIncrementedPageZ, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
                 m_WhatTheStoreWithInputCasWasFor = HUGEBITCOINKEYLISTPAGECHANGE;
             }
             else
@@ -1425,7 +1426,7 @@ void AnonymousBitcoinComputingWtGUI::creditConfirmedBitcoinAmountAfterAnalyzingU
     ptree pt;
     read_json(is, pt);
 
-    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
+    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
     if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK != "n")
     {
         m_AddFundsPlaceholderLayout->addWidget(new WText("Please try again in a few moments"), 0, Wt::AlignTop | Wt::AlignLeft);
@@ -1434,9 +1435,9 @@ void AnonymousBitcoinComputingWtGUI::creditConfirmedBitcoinAmountAfterAnalyzingU
     }
 
     //check that they're not trying to credit the amount multiple times
-    string bitcoinState = pt.get<std::string>("bitcoinState");
-    string bitcoinStateData = pt.get<std::string>("bitcoinStateData", "n"); //key ("n" because they could segfault us by doing the hack we're about to check for)
-    if(bitcoinState != "HaveKey" || bitcoinStateData != m_CurrentBitcoinKeyForPayments)
+    string bitcoinState = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE);
+    string bitcoinStateData = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA, "n"); //key ("n" because they could segfault us by doing the hack we're about to check for)
+    if(bitcoinState != JSON_USER_ACCOUNT_BITCOIN_STATE_HAVE_KEY || bitcoinStateData != m_CurrentBitcoinKeyForPayments)
     {
         m_AddFundsPlaceholderLayout->addWidget(new WText("Nice try, you already creditted those bitcoins in another tab/window ;-)"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOreq: no-js allows you to use the same session in multiple windows by copy/pasting sessionId, but what are the implications for that with the state of the web-app. Can they be viewing different pages? Don't they share member variables? I can't exactly put my finger on it, but I think that this hack still might be vulnerable. Something like this: tab1 is at 'done' step, just before clicking (and getting here). tab2 then steals sessionId and (???). Still not sure what they could do (change the key? idfk. don't think they could even do that...), BUT the paranoid thought wonders whether or not tab1 can still click 'done' or not. i also wrote a TODOreq about this up towards the top, relating to when the fuck a slot is not longer activatable (idk lol)
 
@@ -1444,37 +1445,36 @@ void AnonymousBitcoinComputingWtGUI::creditConfirmedBitcoinAmountAfterAnalyzingU
         return;
     }
 
-    double userBalance = boost::lexical_cast<double>(pt.get<std::string>("balance"));
+    double userBalance = boost::lexical_cast<double>(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
     userBalance += m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked; //TODOreq: usual paranoia applies... rounding errors, etc
 
     std::string userBalanceString = boost::lexical_cast<std::string>(userBalance);
     m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = userBalanceString;
 
-    pt.put("balance", userBalanceString);
-    pt.put("bitcoinState", "NoKey");
-    pt.erase("bitcoinStateData");
+    pt.put(JSON_USER_ACCOUNT_BALANCE, userBalanceString);
+    pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY);
+    pt.erase(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA);
 
     std::ostringstream userAccountWithConfirmedBitcoinAmountCredittedJsonBuffer;
     write_json(userAccountWithConfirmedBitcoinAmountCredittedJsonBuffer, pt, false);
 
-    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, userAccountWithConfirmedBitcoinAmountCredittedJsonBuffer.str(), userAccountCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), userAccountWithConfirmedBitcoinAmountCredittedJsonBuffer.str(), userAccountCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheStoreWithInputCasWasFor = CREDITCONFIRMEDBITCOINBALANCEFORCURRENTPAYMENTKEYCASSWAPUSERACCOUNT;
 }
 void AnonymousBitcoinComputingWtGUI::uuidPerRefillIsSeenOnHugeBitcoinListSoProceedWithActualNextPageFill()
 {
-    //TODOreq
     //create bitcoinKeySet[setN] Page Y using the range obtained from hugeBitcoinKeyList[pageZ] via an LCB_ADD-accepting fail
     ptree pt;
     int bitcoinKeysVectorSize = static_cast<int>(m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList.size());
     for(int i = 0; i < bitcoinKeysVectorSize; ++i)
     {
-        pt.put("key" + boost::lexical_cast<std::string>(i), m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList[i]); //A stupid but actual TODOoptimization (don't do it) is to claim our key now.. would save us from doing it later. But nah suicide/insanity doesn't sound that fun, I'll pass...
+        pt.put(JSON_BITCOIN_KEY_SET_KEY_PREFIX + boost::lexical_cast<std::string>(i), m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList[i]); //A stupid but actual TODOoptimization (don't do it) is to claim our key now.. would save us from doing it later. But nah suicide/insanity doesn't sound that fun, I'll pass...
     }
 
     std::ostringstream bitcoinKeySetPageJsonBuffer;
     write_json(bitcoinKeySetPageJsonBuffer, pt, false);
 
-    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_Page" + m_BitcoinKeySetPage_aka_PageY, bitcoinKeySetPageJsonBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY), bitcoinKeySetPageJsonBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
     m_WhatTheStoreWithoutInputCasWasFor = BITCOINKEYSETNPAGEYCREATIONVIALCBADD;
 
     m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList.clear();
@@ -1485,17 +1485,17 @@ void AnonymousBitcoinComputingWtGUI::unlockUserAccountSafelyFromBitcoinGettingKe
     std::istringstream is(m_UserAccountJsonForLockingIntoGettingBitcoinKey);
     read_json(is, pt);
 
-    pt.put("bitcoinState", "HaveKey"); //TODOreq: this would be a good 'last resort' place to check if "slotToAttemptToFillAkaPurchase" is set and to fail/stop if it is... but it really should be checked earlier. AND besides there is also teh 'account locking into GettingKey' which would be a similar 'last resort' (two of em xD) to check for it. Depending on how confident you are that you checked them in the original GET...
-    pt.put("bitcoinStateData", m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage); //TODOreq: pt::erase when transitioning to NoKey
+    pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_HAVE_KEY); //TODOreq: this would be a good 'last resort' place to check if "slotToAttemptToFillAkaPurchase" is set and to fail/stop if it is... but it really should be checked earlier. AND besides there is also teh 'account locking into GettingKey' which would be a similar 'last resort' (two of em xD) to check for it. Depending on how confident you are that you checked them in the original GET...
+    pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA, m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage); //TODOreq: pt::erase when transitioning to NoKey
 
     //pt::erase the extra "GettingKey" fields
-    pt.erase("bitcoinSetPage");
-    pt.erase("bitcoinGetKeyUUID");
+    pt.erase(JSON_USER_ACCOUNT_BITCOIN_SET_PAGE);
+    pt.erase(JSON_USER_ACCOUNT_BITCOIN_GET_KEY_UUID);
 
     std::ostringstream userAccountUnlockedToHaveKeyModeJsonDocBuffer;
     write_json(userAccountUnlockedToHaveKeyModeJsonDocBuffer, pt, false);
 
-    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, userAccountUnlockedToHaveKeyModeJsonDocBuffer.str(), m_UserAccountCASforBitcoinGettingKeyLockingAndUnlocking, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), userAccountUnlockedToHaveKeyModeJsonDocBuffer.str(), m_UserAccountCASforBitcoinGettingKeyLockingAndUnlocking, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheStoreWithInputCasWasFor = UNLOCKUSERACCOUNTFROMBITCOINGETTINGKEYTOBITCOINHAVEKEY;
 }
 void AnonymousBitcoinComputingWtGUI::checkForPendingBitcoinBalanceButtonClicked()
@@ -1521,7 +1521,7 @@ void AnonymousBitcoinComputingWtGUI::doneSendingBitcoinsToCurrentAddressButtonCl
     deferRendering();
 
     //get user-account for cas-swap-credit
-    getCouchbaseDocumentByKeySavingCasBegin("user" + m_CurrentlyLoggedInUsername);
+    getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(m_CurrentlyLoggedInUsername));
     m_WhatTheGetSavingCasWasFor = CREDITCONFIRMEDBITCOINAMOUNTAFTERANALYZINGUSERACCOUNT;
 }
 void AnonymousBitcoinComputingWtGUI::sendRpcJsonBalanceRequestToBitcoinD()
@@ -1618,7 +1618,7 @@ void AnonymousBitcoinComputingWtGUI::handleGetBitcoinKeyButtonClicked()
 
     //TODOreq: get user-account for CAS, check AGAIN that slotAttemptingToFill isn't set, then do the hella long pseudo-code for getting a bitcoin key
 
-    getCouchbaseDocumentByKeySavingCasBegin("user" + m_CurrentlyLoggedInUsername);
+    getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(m_CurrentlyLoggedInUsername));
     m_WhatTheGetSavingCasWasFor = GETUSERACCOUNTFORGOINGINTOGETTINGBITCOINKEYMODE;
 }
 void AnonymousBitcoinComputingWtGUI::determineNextSlotFillerIndexAndThenAddSlotFillerToIt(const string &allAdSlotFillersJsonDoc, u_int64_t casOfAllSlotFillersDocForUpdatingSafely, bool lcbOpSuccess, bool dbError)
@@ -1646,7 +1646,7 @@ void AnonymousBitcoinComputingWtGUI::determineNextSlotFillerIndexAndThenAddSlotF
         //TODOreq: this is first slot filler add (or 2nd and first partially failed xD), allSlotFillersDoc doesn't exist yet, make it [after adding slot filler]. perhaps just set a flag indicating that after the slot filler is added, allSlotFillers doc needs to be ADD-accepting-fail INSTEAD OF cas-swap-accepting-fail (no previous = no cas)
 
         slotFillerIndexToAttemptToAdd = "0";
-        m_RunningAllSlotFillersJsonDoc.put("adsCount", slotFillerIndexToAttemptToAdd); //initialize this 'string' index because later we +1 it, and it simplifies the code paths to already have it existing [on first ad slot filler create]
+        m_RunningAllSlotFillersJsonDoc.put(JSON_ALL_SLOT_FILLERS_ADS_COUNT, slotFillerIndexToAttemptToAdd); //initialize this 'string' index because later we +1 it, and it simplifies the code paths to already have it existing [on first ad slot filler create]
     }
     else
     {
@@ -1654,7 +1654,7 @@ void AnonymousBitcoinComputingWtGUI::determineNextSlotFillerIndexAndThenAddSlotF
         std::istringstream is(allAdSlotFillersJsonDoc);
         read_json(is, m_RunningAllSlotFillersJsonDoc);
 
-        slotFillerIndexToAttemptToAdd = m_RunningAllSlotFillersJsonDoc.get<std::string>("adsCount"); //seems like off-by-one to not add "+1" here, but isn't :-P
+        slotFillerIndexToAttemptToAdd = m_RunningAllSlotFillersJsonDoc.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT); //seems like off-by-one to not add "+1" here, but isn't :-P
     }
 
     tryToAddAdSlotFillerToCouchbase(slotFillerIndexToAttemptToAdd);
@@ -1663,10 +1663,10 @@ void AnonymousBitcoinComputingWtGUI::determineNextSlotFillerIndexAndThenAddSlotF
 void AnonymousBitcoinComputingWtGUI::tryToAddAdSlotFillerToCouchbase(const string &slotFillerIndexToAttemptToAdd)
 {
     ptree pt;
-    pt.put("username", m_CurrentlyLoggedInUsername);
-    pt.put("nickname", m_UploadNewSlotFiller_NICKNAME->text().toUTF8()); //TODOreq: sanitize these
-    pt.put("hoverText", m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8());
-    pt.put("url", m_UploadNewSlotFiller_URL->text().toUTF8());
+    pt.put(JSON_SLOT_FILLER_USERNAME, m_CurrentlyLoggedInUsername);
+    pt.put(JSON_SLOT_FILLER_NICKNAME, m_UploadNewSlotFiller_NICKNAME->text().toUTF8()); //TODOreq: sanitize these
+    pt.put(JSON_SLOT_FILLER_HOVERTEXT, m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8());
+    pt.put(JSON_SLOT_FILLER_URL, m_UploadNewSlotFiller_URL->text().toUTF8());
 
     std::string adImageUploadFileLocation = m_AdImageUploader->spoolFileName();
     pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8()); //TODOreq: sanitize before being passed to the mime type checker (or make sure mime type checker works safely)
@@ -1698,13 +1698,13 @@ void AnonymousBitcoinComputingWtGUI::tryToAddAdSlotFillerToCouchbase(const strin
     std::string adImageString = std::string(adImageBuffer, fileSizeHack);
     std::string adImageB64string = base64Encode(adImageString); //TODOreq: doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
 
-    pt.put("adImageB64", adImageB64string); //TODOoptimization: maybe save a copy by doing base64encode right into second argument here? doubt it (and if this were Qt land, I'd be hesitant to even try it (shit disappears yo))
+    pt.put(JSON_SLOT_FILLER_IMAGEB64, adImageB64string); //TODOoptimization: maybe save a copy by doing base64encode right into second argument here? doubt it (and if this were Qt land, I'd be hesitant to even try it (shit disappears yo))
 
     std::ostringstream adSlotFillerJsonDocBuffer;
     write_json(adSlotFillerJsonDocBuffer, pt, false);
 
 
-    storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin("adSpaceSlotFillers" + m_CurrentlyLoggedInUsername + slotFillerIndexToAttemptToAdd, adSlotFillerJsonDocBuffer.str());
+    storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(adSpaceSlotFillerKey(m_CurrentlyLoggedInUsername, slotFillerIndexToAttemptToAdd), adSlotFillerJsonDocBuffer.str());
     //storeLarge has it's own 'begin', but it shares the 'finish' with the typical store
     m_WhatTheStoreWithoutInputCasWasFor = LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS; //TODOoptional: make these enums more readable with underscores, and put numbering toward the beginning of them that matches up with the callback/function (perhaps renaming those too)
 
@@ -1737,10 +1737,10 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
         std::istringstream is(maybeExistentSlot);
         read_json(is, pt);
 
-        std::string slotFilledWith = pt.get<std::string>("slotFilledWith");
+        std::string slotFilledWith = pt.get<std::string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH);
         if(slotFilledWith == m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack)
         {
-            //we got it, so do NOTHING because recovery process will handle it :-)
+            //we got it, so do NOTHING because recovery process will handle it, a TODOoptimization would be to trigger recovery possy code, but that requires a merge and fuck that
             new WText("Try logging in again in like 1 minute (don't ask why)", m_LoginWidget); //fuck teh police~
             resumeRendering();
         }
@@ -1752,14 +1752,14 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
             std::istringstream is2(m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin);
             read_json(is2, pt2);
 
-            pt2.erase("slotToAttemptToFillAkaPurchase");
-            pt2.erase("slotToAttemptToFillAkaPurchaseItWith");
+            pt2.erase(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL);
+            pt2.erase(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH);
 
             std::ostringstream userAccountUnlockedJsonBuffer;
             write_json(userAccountUnlockedJsonBuffer, pt2, false);
 
             //cas-swap-unlock(no-debit)-accepting-fail (neighbor logins could have recovered)
-            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, userAccountUnlockedJsonBuffer.str(), m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), userAccountUnlockedJsonBuffer.str(), m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
             m_WhatTheStoreWithInputCasWasFor = LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT;
         }
     }
@@ -1794,7 +1794,7 @@ void AnonymousBitcoinComputingWtGUI::analyzeBitcoinKeySetN_CurrentPageDocToSeeWh
     std::istringstream is(bitcoinKeySetCurrentPageDoc);
     read_json(is, pt);
 
-    std::string fillingNextBitcoinKeySetPage_LOCKED_CHECK = pt.get<std::string>("fillingNextBitcoinKeySetPage", "n"); //TODOreq: pt::erase this and siblings at appropriate places
+    std::string fillingNextBitcoinKeySetPage_LOCKED_CHECK = pt.get<std::string>(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE, "n"); //TODOreq: pt::erase this and siblings at appropriate places
     if(fillingNextBitcoinKeySetPage_LOCKED_CHECK != "n")
     {
         //light recovery of filling next bitcoin key set page
@@ -1803,8 +1803,8 @@ void AnonymousBitcoinComputingWtGUI::analyzeBitcoinKeySetN_CurrentPageDocToSeeWh
 
         //populate the fillingNextBitcoinKeySetPage/uuid/pageZ from the locked doc (we are recovery. normal code path generates the 2nd two)
         m_BitcoinKeySetPage_aka_PageY = fillingNextBitcoinKeySetPage_LOCKED_CHECK;
-        m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds = pt.get<std::string>("uuidPerFill");
-        m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = pt.get<std::string>("hugeBitcoinKeyListStartingPage");
+        m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds = pt.get<std::string>(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE_UUID_PER_FILL);
+        m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = pt.get<std::string>(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE_START_LOOKING_ON_HUGEBITCOINKEYLIST_PAGE);
         m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList_NON_CHANGING = m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList;
 
         m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont = false;
@@ -1817,7 +1817,7 @@ void AnonymousBitcoinComputingWtGUI::analyzeBitcoinKeySetN_CurrentPageDocToSeeWh
         if(m_BitcoinKeySetPage_aka_PageY == "")
         {
             //aren't in get-key recovery code, so we need to get/set PageY
-            m_BitcoinKeySetPage_aka_PageY = pt.get<std::string>("currentPage");
+            m_BitcoinKeySetPage_aka_PageY = pt.get<std::string>(JSON_BITCOIN_KEY_SET_CURRENT_PAGE);
         }
         proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked(); //method because we jump "[back]" to it after doing the page-fill also, and some other places
     }
@@ -1834,15 +1834,15 @@ void AnonymousBitcoinComputingWtGUI::proceedToBitcoinKeySetNgettingAfterLockingU
         std::istringstream is(m_UserAccountJsonForLockingIntoGettingBitcoinKey);
         read_json(is, pt);
 
-        pt.put("bitcoinState", "GettingKey");
-        pt.put("bitcoinStateData", m_BitcoinKeySetIndex_aka_setN); //TODOreq: pt::erase when transitioning to NoKey
-        pt.put("bitcoinSetPage", m_BitcoinKeySetPage_aka_PageY); //TODOreq: pt::erase when transitioning to HaveKey -- methinks these bottom two are implicitly erased because i use m_UserAccountJsonForLockingIntoGettingBitcoinKey as basis for unlocking
-        pt.put("bitcoinGetKeyUUID", m_PerGetBitcoinKeyUUID); //TODOreq: pt::erase when transitioning to HaveKey
+        pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_GETTING_KEY);
+        pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA, m_BitcoinKeySetIndex_aka_setN); //TODOreq: pt::erase when transitioning to NoKey
+        pt.put(JSON_USER_ACCOUNT_BITCOIN_SET_PAGE, m_BitcoinKeySetPage_aka_PageY); //TODOreq: pt::erase when transitioning to HaveKey -- methinks these bottom two are implicitly erased because i use m_UserAccountJsonForLockingIntoGettingBitcoinKey as basis for unlocking
+        pt.put(JSON_USER_ACCOUNT_BITCOIN_GET_KEY_UUID, m_PerGetBitcoinKeyUUID); //TODOreq: pt::erase when transitioning to HaveKey
 
         std::ostringstream jsonDocBuffer;
         write_json(jsonDocBuffer, pt, false);
 
-        store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, jsonDocBuffer.str(), m_UserAccountCASforBitcoinGettingKeyLockingAndUnlocking, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+        store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), jsonDocBuffer.str(), m_UserAccountCASforBitcoinGettingKeyLockingAndUnlocking, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
         m_WhatTheStoreWithInputCasSavingOutputCasWasFor = USERACCOUNTBITCOINLOCKEDINTOGETTINGKEYMODE;
     }
     else
@@ -1885,21 +1885,19 @@ void AnonymousBitcoinComputingWtGUI::hugeBitcoinKeyListCurrentPageGetComplete(co
     read_json(is, pt);
 
     //remember the values put into the cas-swap, so we have them handy if/when the cas-swap succeeds
-    m_BitcoinKeySetPage_aka_PageY = boost::lexical_cast<std::string>(m_BitcoinKeySetPage_aka_PageY);
-    string uuidSeed = m_CurrentlyLoggedInUsername + uniqueId() + WDateTime::currentDateTime().toString().toUTF8() + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN) + m_BitcoinKeySetPage_aka_PageY;
-    m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds = base64Encode(sha1(uuidSeed));
-    m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = pt.get<std::string>("currentPage");
+    m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds = m_BitcoinKeySetIndex_aka_setN + "_" + m_BitcoinKeySetPage_aka_PageY;
+    m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList = pt.get<std::string>(JSON_HUGE_BITCOIN_KEY_LIST_CURRENT_PAGE_KEY);
     m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList_NON_CHANGING = m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList;
 
     //now put them into json
     ptree pt2;
-    pt2.put("fillingNextBitcoinKeySetPage", m_BitcoinKeySetPage_aka_PageY);
-    pt2.put("uuidPerFill", m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
-    pt2.put("hugeBitcoinKeyListStartingPage", m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList); //TODOreq: recovering from this doesn't segfault etc when that pageZ doesn't exist
+    pt2.put(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE, m_BitcoinKeySetPage_aka_PageY);
+    pt2.put(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE_UUID_PER_FILL, m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds);
+    pt2.put(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE_START_LOOKING_ON_HUGEBITCOINKEYLIST_PAGE, m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList); //TODOreq: recovering from this doesn't segfault etc when that pageZ doesn't exist
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, pt2, false);
 
-    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage", jsonDocBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), jsonDocBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
     m_WhatTheStoreWithInputCasSavingOutputCasWasFor = LOCKINGBITCOINKEYSETNINTOFILLINGNEXTPAGEMODE;
 }
 void AnonymousBitcoinComputingWtGUI::getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex(const string &adSlotFillerToExtractNicknameFrom, bool lcbOpSuccess, bool dbError)
@@ -1925,15 +1923,15 @@ void AnonymousBitcoinComputingWtGUI::getAdSlotFillerThatIsntInAllAdSlotFillersAt
     std::istringstream is(adSlotFillerToExtractNicknameFrom);
     read_json(is, pt);
 
-    std::string nicknameOfSlotFillerNotInAllAdSlotFillersDoc = pt.get<std::string>("nickname"); //mfw the entire base64 image is get'd just to figure out this nickname :)... but this is recovery code and won't run often
+    std::string nicknameOfSlotFillerNotInAllAdSlotFillersDoc = pt.get<std::string>(JSON_SLOT_FILLER_NICKNAME); //mfw the entire base64 image is get'd just to figure out this nickname :)... but this is recovery code and won't run often
 
     //json-add nickname to the 'running' allAdSlotFillers doc
-    std::string indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = m_RunningAllSlotFillersJsonDoc.get<std::string>("adsCount");
+    std::string indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = m_RunningAllSlotFillersJsonDoc.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT);
     m_RunningAllSlotFillersJsonDoc.put(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat, nicknameOfSlotFillerNotInAllAdSlotFillersDoc);
 
     //also increment 'adsCount' because we've just found/recovered one slot filler, and additionally will be using adsCount as our index to add the slot filler AGAIN (the one that initiated this recovery) in the 'next' slot
     indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = boost::lexical_cast<std::string>(boost::lexical_cast<int>(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat) + 1); //the +1 here is important (had:key)!!!!
-    m_RunningAllSlotFillersJsonDoc.put("adsCount", indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat);
+    m_RunningAllSlotFillersJsonDoc.put(JSON_ALL_SLOT_FILLERS_ADS_COUNT, indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat);
 
     //now LCB_ADD index+1 again
     tryToAddAdSlotFillerToCouchbase(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat);
@@ -1981,12 +1979,12 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
         }
     }
 
-    //populate 'slot filler' doc
+    //populate 'slot' doc
     ptree pt;
-    pt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
-    pt.put("startTimestamp", m_StartTimestampUsedInNewPurchase);
-    pt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
-    pt.put("slotFilledWith", m_SlotFillerToUseInBuy);
+    pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_PURCHASE_TIMESTAMP, m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
+    pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_START_TIMESTAMP, m_StartTimestampUsedInNewPurchase);
+    pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_PURCHASE_PRICE, m_CurrentPriceToUseForBuyingString);
+    pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH, m_SlotFillerToUseInBuy);
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, pt, false);
     store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful, jsonDocBuffer.str());
@@ -2019,7 +2017,7 @@ void AnonymousBitcoinComputingWtGUI::userAccountBitcoinLockedIntoGettingKeyAttem
 void AnonymousBitcoinComputingWtGUI::userAccountBitcoinGettingKeyLocked_So_GetSavingCASbitcoinKeySetNPageY()
 {
     //get bitcoinKeySet[setN]_PageY
-    getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_Page" + m_BitcoinKeySetPage_aka_PageY);
+    getCouchbaseDocumentByKeySavingCasBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY));
     m_WhatTheGetSavingCasWasFor = GETBITCOINKEYSETNACTUALPAGETOSEEIFUUIDONITENOUGHROOM;
 }
 void AnonymousBitcoinComputingWtGUI::attemptToLockBitcoinKeySetNintoFillingNextPageModeComplete(u_int64_t casFromLockSoWeCanSafelyUnlockAfterNextPageFillComplete, bool lcbOpSuccess, bool dbError)
@@ -2052,7 +2050,7 @@ void AnonymousBitcoinComputingWtGUI::bitcoinKeySetN_currentPage_Locked_soDoKeyRa
     //this method expects m_FillingNextBitcoinKeySetPage_ForAfterCASswapLockSucceeds, m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds, and m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList to be accurate before calling
 
     //Get hugeBitcoinKeyList[pageZ] attempt in order to retrieve it's CAS, check for relevant-UUID, and see if room left
-    getCouchbaseDocumentByKeySavingCasBegin("hugeBitcoinKeyList_Page" + m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
+    getCouchbaseDocumentByKeySavingCasBegin(hugeBitcoinKeyListPageKey(m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList));
     m_WhatTheGetSavingCasWasFor = GETHUGEBITCOINKEYLISTACTUALPAGEFORANALYZINGANDMAYBECLAIMINGKEYRANGE;
 }
 void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool lcbOpSuccess, bool dbError)
@@ -2084,12 +2082,12 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
 
     //create transaction doc using lcb_add accepting fail -- i can probably re-use this code later (merge into functions), for now KISS
     ptree pt;
-    pt.put("buyer", m_CurrentlyLoggedInUsername);
-    pt.put("seller", "d3fault"); //TODOreq: implied/deducable from key name...
-    pt.put("amount", m_CurrentPriceToUseForBuyingString);
+    pt.put(JSON_TRANSACTION_BUYER, m_CurrentlyLoggedInUsername);
+    pt.put(JSON_TRANSACTION_SELLER, "d3fault"); //TODOreq: implied/deducable from key name...
+    pt.put(JSON_TRANSACTION_AMOUNT, m_CurrentPriceToUseForBuyingString);
     std::ostringstream transactionBuffer;
     write_json(transactionBuffer, pt, false);
-    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(string("txd3fault0Slot") + m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase, transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(transactionKey("d3fault", "0", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase), transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
     m_WhatTheStoreWithoutInputCasWasFor = CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS; //TODOreq: it goes without saying that 'recovery possy' needs it's own set of these, so as not to conflict
     //TODOreq: i need a way of telling the backend that certain adds (like this one) are okay to fail. But really I already need a whole slew of error case handling to be coded into the backend, I guess I'll just do it later? So basically for adds where fails are not ok, we need to have two code paths... but for this one where the add failing is ok, we just pick up with one code path. I think the easiest way of doing this is to return a bool telling whether or not the add succeeded, and to just ignore it if it doesn't matter. But since there's many many ways of failing, maybe I should be passing around the LCB_ERROR itself? So far I've tried to keep front end and back end separate, so idk maybe "bool opTypeFail and bool dbTypeFail", where the first one is relating to cas/add fails and the second is like "500 internal server error" (of course, the backend would have retried backing off exponentially etc before resorting to that)
 }
@@ -2121,16 +2119,16 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     std::istringstream is(m_UserAccountLockedDuringBuyJson);
     read_json(is, pt);
     //now do the debit of the balance and put it back in the json doc
-    double userBalance = boost::lexical_cast<double>(pt.get<std::string>("balance"));
+    double userBalance = boost::lexical_cast<double>(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
     userBalance -= m_CurrentPriceToUseForBuying; //TODOreq: again, just scurred of rounding errors etc. I think as long as I  use 'more precision than needed' (as much as an double provides), I should be ok...
     std::string balanceString = boost::lexical_cast<std::string>(userBalance);
     m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(balanceString); //TODOoptional: jumping the gun by setting it here before even finishing the cas-swap of their user-account doc, BUT the transaction doc and slot fill/add are already complete at this point so we KNOW it will 'become' accurate soon (if we fail, recovery possy will do it)... so seeing as this is visual ONLY, it's acceptable. Unlike account creditting ("done with this key"), which waits until the cas swap succeeds before updating the label, we KNOW that if we get here that it will work (and if we were to wait for the cas swap and the cas swap FAILED, the balance label would never be updated (because recovery possy is different app (i guess i could... (*shoots self in face*)))
-    pt.put("balance", balanceString);
+    pt.put(JSON_USER_ACCOUNT_BALANCE, balanceString);
     //now convert the json doc back to string for couchbase
     std::ostringstream jsonDocWithBalanceDeducted;
     write_json(jsonDocWithBalanceDeducted, pt, false);
 
-    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("user" + m_CurrentlyLoggedInUsername, jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheStoreWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure. can happen and sometimes will, but mostly won't. handle it by doing nothing but continuing the process
 
     //TO DOnereq(set without cas): should we have done a multi-get to update the campaign doc also? i actually think not since we don't have the cas for that doc (but we could have gotten it~). more importantly i don't know whether or not i need the cas for it when i do the swap. seems safer no doubt.. but really would there be any contesting?? maybe only subsequent buys milliseconds later (probably in error, but maybe the campaign is just liek popular ya know ;-P)... so yea TODOreq do a cas-swap of the campaign doc, makes sure we're only n+1 the last purchased.... and i think maybe do an exponential backoff trying... because it's the same code that runs for when subsequent ones are purchased seconds later? or no... maybe we just do a set without cas because we know that all attempts to buy will fail until that set is complete (because they try to buy n+1 (which is what we just bought (so it will fail safely as beat-to-thepunch)), not n+2 (until the set we're about to do, is done))
@@ -2175,18 +2173,18 @@ void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComple
     }
 
     //TODOreq: getting here means the add was successful, so record that fact in allAdSlotFillers
-    std::string oldAdsCountButAlsoOurIndexOfTheOneJustAdded = m_RunningAllSlotFillersJsonDoc.get<std::string>("adsCount");
+    std::string oldAdsCountButAlsoOurIndexOfTheOneJustAdded = m_RunningAllSlotFillersJsonDoc.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT);
     m_RunningAllSlotFillersJsonDoc.put(oldAdsCountButAlsoOurIndexOfTheOneJustAdded, m_UploadNewSlotFiller_NICKNAME->text().toUTF8());
 
     //now increment adsCount and put it back in xD
     oldAdsCountButAlsoOurIndexOfTheOneJustAdded = boost::lexical_cast<std::string>(boost::lexical_cast<int>(oldAdsCountButAlsoOurIndexOfTheOneJustAdded)+1); //old becomes new :)
-    m_RunningAllSlotFillersJsonDoc.put("adsCount", oldAdsCountButAlsoOurIndexOfTheOneJustAdded);
+    m_RunningAllSlotFillersJsonDoc.put(JSON_ALL_SLOT_FILLERS_ADS_COUNT, oldAdsCountButAlsoOurIndexOfTheOneJustAdded);
 
 
     //TODOreq: cas-swap-accepting-fail the allAdSlotFillers doc
     std::ostringstream updatedAllAdSlotFillersJsonDocBuffer;
     write_json(updatedAllAdSlotFillersJsonDocBuffer, m_RunningAllSlotFillersJsonDoc, false);
-    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("adSpaceAllSlotFillers" + m_CurrentlyLoggedInUsername, updatedAllAdSlotFillersJsonDocBuffer.str(), m_RunningAllSlotFillersJsonDocCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(adSpaceAllSlotFillersKey(m_CurrentlyLoggedInUsername), updatedAllAdSlotFillersJsonDocBuffer.str(), m_RunningAllSlotFillersJsonDocCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheStoreWithInputCasWasFor = UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER;
 }
 void AnonymousBitcoinComputingWtGUI::doneAttemptingBitcoinKeySetNnextPageYcreation(bool dbError)
@@ -2213,12 +2211,12 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingBitcoinKeySetNnextPageYcreati
     //TODOreq: the cas used for unlocking needs to be stored when doing recovery and seeing it's locked, and in the normal case when the lock that we just did completes. two different places/times
 
     ptree pt;
-    pt.put("currentPage", m_BitcoinKeySetPage_aka_PageY);
+    pt.put(JSON_BITCOIN_KEY_SET_CURRENT_PAGE, m_BitcoinKeySetPage_aka_PageY);
 
     std::ostringstream unlockedCurrentPageDoc;
     write_json(unlockedCurrentPageDoc, pt, false);
 
-    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage", unlockedCurrentPageDoc.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), unlockedCurrentPageDoc.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheStoreWithInputCasWasFor = SAFELYUNLOCKBITCOINKEYSETNCURRENTPAGEDOCFAILINGTOLERABLY;
 }
 void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError)
@@ -2272,12 +2270,12 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     }
 #endif
     ptree lastPurchasedPt;
-    lastPurchasedPt.put("slotIndex", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
-    lastPurchasedPt.put("purchaseTimestamp", m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
-    lastPurchasedPt.put("startTimestamp", m_StartTimestampUsedInNewPurchase);
-    lastPurchasedPt.put("purchasePrice", m_CurrentPriceToUseForBuyingString);
+    lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX, m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
+    lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP, m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
+    lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP, m_StartTimestampUsedInNewPurchase);
+    lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE, m_CurrentPriceToUseForBuyingString);
 
-    pt.put_child("lastSlotFilledAkaPurchased", lastPurchasedPt);
+    pt.put_child(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED, lastPurchasedPt);
 
     //TODOreq: we also need to MAYBE update 'current' and/or 'next', depending on if it's appropriate. the only one we DEFINITELY update is 'last purchased'. if current is expired and there is a next -- holy race condition batman TODOreq (maybe solution is to not list "next" in the doc... and shit i'm actually starting to think maybe i shouldn't even list current. maybe whether or not there is a current is detected on the fly and when needed... by seeing if the (slotIndex-of-the-just-expired-current)+1 exists.. and if it doesn't then shit we don't have a current :-P... yea actually i'm liking that more and more :). simplifies managing the campaign doc too, only two states: no purchase and last purchase (whether it's expired is not that relevant to us, except maybe later when doing a buy announce event (but... polling...?). STILL, I do feel as though I need to keep track of 'current' SOMEWHERE. My thoughts are drifting and although it does make sense to do the 'get n+1' and that's our next if it exists method, who and when exactly would that be done? If it's the "client" of abc (so like the page where i'm fucking dancing naked coding tripping balls on video), who initiates the "ok expired now gimmeh next" and then abc does the n+1 shit,... err i guess what i mean is who has the final say of what n is to begin with? should for example the client die and come back and forget n, how would it figure out it's state again? I GUESS we could just keep doing n+1 or n-1 until we found it, and hell we could even use hella accurate jumping to the middle of all of our slots based on SlotLength, slot0 start time (polled), and the current date time. Would be accurate as fuck list jump with maybe an extra get to correct off by one. SO maybe the abc client does keep track of "n" and then gives it to abc as a parameter a la "hint". Client(dance-vid-page): abc.getNextSlot(n_justExpired /*or n+1, but it doesn't matter who does the incrementing*/), and if it's 0 (state lost somehow) then abc does the list jump mechanism to find it asap. but guh, i haven't worked out any of the details of the abc client (dance-vid-page), so idfk what it's state or code or ANYTHING even looks like on that side of things...
     //^regardless of what i choose, the fact that we can figure out the current slot by doing math with near 100% accuracy (3 gets tops i'd estimate (first for slot 0, second for our guess based on math (so yea 4 gets if you include campaign doc get), third as potential recovery from mistake in math (timezones? idfk...) -- assumes slotLengthHours never changes of course...
@@ -2290,7 +2288,7 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     write_json(updatedCampaignJsonDocBuffer, pt, false);
 
     //CAS-swap-accepting-fail
-    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(string("adSpaceSlotsd3fault0"), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(adSpaceCampaignKey("d3fault", "0"), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_WhatTheStoreWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS;
 }
 void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError)
@@ -2314,7 +2312,7 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
     if(!environment().ajax())
     {
         //no-js doesn't have 'buy event', so we get the fresh results even though it would be a TODOoptimization to have just saved them (but if recovery possy did campaign update in race condition, we still would have to do the get we're about to do (if the cas swap succeeded, we could have just called finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget directly for that optimization)). KISS
-        getCouchbaseDocumentByKeySavingCasBegin("adSpaceSlotsd3fault0");
+        getCouchbaseDocumentByKeySavingCasBegin(adSpaceCampaignKey("d3fault", "0"));
         m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
     }
 
@@ -2429,7 +2427,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingToUnlockBitcoinKeySetN_Curren
     if(!lcbOpSuccess)
     {
         //since unlock failed, jump to a point that probes the lock status (might be unlocked by neighbor, but might be locked to NEXT one now in a rare race condition)
-        getCouchbaseDocumentByKeySavingCasBegin("bitcoinKeySet" + m_BitcoinKeySetIndex_aka_setN + "_CurrentPage"); //this 'get' and enum is copy/paste from the end of checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState
+        getCouchbaseDocumentByKeySavingCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN)); //this 'get' and enum is copy/paste from the end of checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState
         m_WhatTheGetSavingCasWasFor = GETBITCOINKEYSETNCURRENTPAGETOSEEWHATPAGEITISONANDIFITISLOCKED;
 
         //OLD:
@@ -2942,7 +2940,7 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
             //looks like i need some auxillary message queues for communicating with backend... fffff /lazy
             //also applies to changing sessionId, guh. 'get' and 'store' just don't cut-it/qualify (though i could PROBABLY hack them in xD). I'm mainly hesitant because it is MACRO HELL dealing with that shiz (i was tempted to do it for 'cas' vs. 'no-cas' etc, but ultimately said fuck it and just hacked onto the regular (but in hindsight, it wouldn't have worked [easily] because i only have 1x couchbase get/store callback!). I smell a refactor commit, which scares me because they often are the last times i touch codebases
 
-            getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: to be future proof for use with other subscriptions i'd have to call a method passing in m_CurrentlySubscribedTo in order to get the key to pass in here (easy but lazy)
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: to be future proof for use with other subscriptions i'd have to call a method passing in m_CurrentlySubscribedTo in order to get the key to pass in here (easy but lazy)
 
             //we don't expect a response from the backend, so this is our frontend's flag that we are now unsubscribed
             m_CurrentlySubscribedTo = INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING;
@@ -3009,16 +3007,16 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     std::string base64PasswordSaltHashed = base64Encode(passwordSaltHashed);
     //json'ify
     ptree jsonDoc;
-    jsonDoc.put("balance", "0.0");
-    jsonDoc.put("passwordHash", base64PasswordSaltHashed);
-    jsonDoc.put("passwordSalt", base64Salt);
-    jsonDoc.put("bitcoinState", "NoKey");
+    jsonDoc.put(JSON_USER_ACCOUNT_BALANCE, "0.0");
+    jsonDoc.put(JSON_USER_ACCOUNT_PASSWORD_HASH, base64PasswordSaltHashed);
+    jsonDoc.put(JSON_USER_ACCOUNT_PASSWORD_SALT, base64Salt);
+    jsonDoc.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY);
     //string'ify json
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, jsonDoc, false);
     std::string jsonString = jsonDocBuffer.str();
 
-    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin("user" + username, jsonString);
+    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(userAccountKey(username), jsonString);
     m_WhatTheStoreWithoutInputCasWasFor = REGISTERATTEMPTSTOREWITHOUTINPUTCAS;
 }
 void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
@@ -3028,7 +3026,7 @@ void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
     //TODOreq: it might make sense to clear the line edit's in the login widget, and to save the login credentials as member variables, and to also clear the password member variable (memset) to zero after it has been compared with the db hash (or even just after it has been hashed (so just make the hash a member xD))
     std::string username = m_LoginUsernameLineEdit->text().toUTF8();
     deferRendering(); //2-layered defer/resume because we want to stay deferred until possible login recovery completes
-    getCouchbaseDocumentByKeySavingCasBegin("user" + username);
+    getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(username));
     m_WhatTheGetSavingCasWasFor = LOGINATTEMPTGET;
 }
 void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, u_int64_t casOnlyUsedWhenDoingRecoveryAtLogin, bool lcbOpSuccess, bool dbError)
@@ -3059,8 +3057,8 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
     std::istringstream is(userProfileCouchbaseDocAsJson);
     read_json(is, pt);
 
-    std::string passwordHashInBase64FromDb = pt.get<std::string>("passwordHash");
-    std::string passwordSaltInBase64FromDb = pt.get<std::string>("passwordSalt");
+    std::string passwordHashInBase64FromDb = pt.get<std::string>(JSON_USER_ACCOUNT_PASSWORD_HASH);
+    std::string passwordSaltInBase64FromDb = pt.get<std::string>(JSON_USER_ACCOUNT_PASSWORD_SALT);
 
     std::string passwordFromUserInput = m_LoginPasswordLineEdit->text().toUTF8();
     std::string passwordHashFromUserInput = sha1(passwordFromUserInput + passwordSaltInBase64FromDb);
@@ -3080,7 +3078,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         if(m_CurrentlySubscribedTo != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
         {
             //we're subscribed to something, so need to notify backend that we changed session id
-            getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeChangeSessionIdMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeChangeSessionIdMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
         }
 
         m_CurrentlyLoggedInUsername = m_LoginUsernameLineEdit->text().toUTF8(); //TODOreq(depends on how much security deferRending gives me): do we need to keep rendering deferred until we capture this (or perhaps capture it earlier (when it's used to LCB_GET)?)? Maybe they could 'change usernames' at precise moment to give them access to account that isn't theirs. idk [wt] tbh, but sounds plausible. should be captured as m_UsernameToAttemptToLoginAs (because this one is reserved for post-login), and then use simple assignment HERE
@@ -3089,9 +3087,10 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         m_LoginUsernameLineEdit->setText("");
         m_LoginPasswordLineEdit->setText("");
 
-        m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = pt.get<std::string>("balance");
+        //we save a copy of it here, but we don't display it until doLoginTasks is called, or recovery completes (which also calls that)
+        m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
 
-        std::string slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST = pt.get<std::string>("slotToAttemptToFillAkaPurchase", "n");
+        std::string slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
         if(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST == "n")
         {
             doLoginTasks();
@@ -3105,7 +3104,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
             //if slotToAttemptToFillAkaPurchase exists and we got it, do nothing
             //if slotToAttemptToFillAkaPurchase exists and we didn't get it, unlock [without debitting]
             //NOPE FOR NOW /lazy: if slotToAttemptToFillAkaPurchase doesn't exist, offer user to get it (just redirect to page? but that would require login guh)
-            m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack = pt.get<std::string>("slotToAttemptToFillAkaPurchaseItWith"); //need this after the GET for comparing
+            m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH); //need this after the GET for comparing
             getCouchbaseDocumentByKeyBegin(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST);
             m_WhatTheGetWasFor = ONLOGINACCOUNTLOCKEDRECOVERYDOESSLOTEXISTCHECK;
             m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin = userProfileCouchbaseDocAsJson;

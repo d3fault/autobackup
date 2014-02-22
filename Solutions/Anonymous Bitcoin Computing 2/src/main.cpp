@@ -5,7 +5,6 @@
 ==1.0 [Launch] Blockers==
 
 - exponential backoff (app + db + recovery-possy)
-- couchbase key collisions from usernames
 - sanitize
 - all ad slot fillers preview (view query or expensive? maybe just expensive but only for owner as optimization (not security/privacy(LOL)). would still warrant pagination imo)
 - doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
