@@ -359,6 +359,7 @@ void AnonymousBitcoinComputingWtGUI::handleAdImageUploadButtonClicked()
 }
 void AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished()
 {
+    //TODOreq: since we can't deferRendering() before/during the upload (WHY!??!?), the user may have done something (namely logged out, but the possibilities extend to every possible op theoretically). If the user for example logged out while the upload was in progress, we obviously don't want to continue forward with adding the ad slot filler, especially if we were to rely on a now blanked username (or worse, a logout/login NEW username WTF TODOreq). However it's also worth noting that logout deletes the account widget, which deletes the file upload object itself. Wtf happens when you delete a file upload object when an upload is in progress? Even still, there's probably a race condition where the upload object sends the upload finished signal, gets deleted just after that, and we still process the upload object's finished signal here. Maybe I need to protect the log out functionality with a bool m_AnUploadIsInProgress and just refuse until it's false again (note do it for tooBigOfFile as well ofc).... I think checking m_LoggedIn here/now won't cut it because they could have logged out and back in again as a different user, so that bool would still be true (that's a ridiculously unlikely race condition and would probably require automation and luck to accomplish.... and ultimately there would be very little gain because it's not funds or anything, just an advertisement image/etc). Protecting the log out with 'uploadIsInProgress' plugs that race condition, BUT now am I supposed to check that uploadIsInProgress before doing _ANY_ app op? Blah I wish I could just deferRendering and this wouldn't even be a problem.
     if(!userSuppliedAdSlotFillerFieldsAreValid())
     {
         resetAdSlotFillerImageUploadFieldsForAnotherUpload();
@@ -1771,11 +1772,21 @@ void AnonymousBitcoinComputingWtGUI::tryToAddAdSlotFillerToCouchbase(const strin
 
     delete [] adImageBuffer;
 }
-void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttempt(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttempt_OrAnalyzingSlotBuyBeatToThePunch(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
-        m_LoginStatusMessagesPlaceholder->setText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE);
+        if(!m_LoggedIn)
+        {
+            //login recovery
+            m_LoginStatusMessagesPlaceholder->setText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE);
+        }
+        else
+        {
+            //slot purchase beat to the punch
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            m_AdvertisingBuyAdSpaceD3faultCampaign0Widget->addWidget(new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE));
+        }
         resumeRendering();
         return;
     }
@@ -1783,7 +1794,21 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
     if(!lcbOpSuccess)
     {
         //slot not purchased/filled
-        m_LoginStatusMessagesPlaceholder->setText("We're sorry, our system has experience a temporary failure and your account is locked until someone else buys that slot you tried to purchase during your last session. Please try logging in again once that slot is purchased");
+        if(!m_LoggedIn)
+        {
+            //login recovery
+            m_LoginStatusMessagesPlaceholder->setText("We're sorry, our system has experience a temporary failure and your account is locked until someone else buys that slot you tried to purchase during your last session. Please try logging in again once that slot is purchased");
+        }
+        else
+        {
+            //slot purchase beat to the punch
+
+            //this will never happen, because the LCB_ADD for the slot had to have failed via lcbOp failure in order for us to get here (which means someone did an LCB_ADD already... yet this code block says that it ISN'T filled...
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            m_AdvertisingBuyAdSpaceD3faultCampaign0Widget->addWidget(new WText("Nothing makes any sense, suicide is the only option"));
+
+            cerr << "Nothing makes any sense, suicide is the only option" << endl;
+        }
         resumeRendering();
         return;
         //TODOreq: allow them to buy it, because clearly they've expressed interest
@@ -1801,7 +1826,19 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
         if(slotFilledWith == m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack)
         {
             //we got it, so do NOTHING because recovery process will handle it, a TODOoptimization would be to trigger recovery possy code, but that requires a merge and fuck that
-            m_LoginStatusMessagesPlaceholder->setText("Try logging in again in like 1 minute (don't ask why)"); //fuck teh police~
+            if(m_LoggedIn)
+            {
+                //login recovery
+                m_LoginStatusMessagesPlaceholder->setText("Try logging in again in like 1 minute (don't ask why)"); //fuck teh police~
+            }
+            else
+            {
+                //slot purchase beat to the punch
+                //this also should never happen (actually it can once i enable "continue buying declared attempt after fail after account lock"), but even then it's a race condition I can't wrap my head completely around right now. Something like 'buy and go forward with locked buy on a new tab/session simultaneously, the normal buying session would get here.
+                new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+                m_AdvertisingBuyAdSpaceD3faultCampaign0Widget->addWidget(new WText("Don't use multiple tabs/windows plz"));
+
+            }
             resumeRendering();
         }
         else
@@ -1820,7 +1857,7 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
 
             //cas-swap-unlock(no-debit)-accepting-fail (neighbor logins could have recovered)
             store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), userAccountUnlockedJsonBuffer.str(), m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
-            m_WhatTheStoreWithInputCasWasFor = LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT;
+            m_WhatTheStoreWithInputCasWasFor = LOGINACCOUNTRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_UNLOCKINGWITHOUTDEBITTINGUSERACCOUNT;
         }
     }
 }
@@ -2022,7 +2059,6 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
     //TODOoptional: we could maybe check the buy event race condition here too and roll back including unlocking without debitting, but eh seems kinda dangerous without thinking it through so idk...
 
     m_CasFromUserAccountLockSoWeCanSafelyUnlockLater = casFromLockSoWeCanSafelyUnlockLater;
-    //TODOreq: unlock user account after successful add
     //TODOreq: handle beat to punch error case (unlock without deducting)
 
     //do the LCB_ADD for the slot!
@@ -2128,13 +2164,7 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     if(!lcbOpSuccess)
     {
         //getting beat to the punch
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("Sorry, someone else bought the slot just moments before you...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        rollBackToBeforeBuyStep1ifNeeded();
-
-        //TODOreq: account unlock without debitting, cas-swap-accepting-fail (just like login account locked recovery, which is already coded)
-
-        resumeRendering();
+        unlockUserAccountWithoutDebittingIfSlotDeclaredAttemptingToPurchaseIsPurchasedBySomeoneElse(m_AdSlotAboutToBeFilledIfLockIsSuccessful, m_SlotFillerToUseInBuy, m_UserAccountLockedDuringBuyJson, m_CasFromUserAccountLockSoWeCanSafelyUnlockLater);
         return;
     }
 
@@ -2382,23 +2412,55 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
     resumeRendering();
     //TODOoptimization(dumb): getting here means were the driver (unless i merge this function, but yea) so we can now ahead-of-time-a-la-event-driven update the 'get and subscribe' people (at least the ones on this wt node)... but we don't really NEED to...
 }
-void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountUnlockingWithoutDebittingFor_LoginRecovery_And_SlotPurchaseBeatToThePunch(bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
-        m_LoginStatusMessagesPlaceholder->setText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE);
+        if(!m_LoggedIn)
+        {
+            //login recovery
+            m_LoginStatusMessagesPlaceholder->setText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE);
+        }
+        else
+        {
+            //slot purchase beat to the punch
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            m_AdvertisingBuyAdSpaceD3faultCampaign0Widget->addWidget(new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE));
+        }
         resumeRendering();
         return;
     }
     if(!lcbOpSuccess)
     {
-        m_LoginStatusMessagesPlaceholder->setText("Uhh, try logging in again, I'm not sure what just happened..."); //seriously, can't wrap my head around this right now... xD (neighbor login beat them to the recovery.... but what should i _DO_??? it is perhaps NOTHING, but i can't guarantee that the user-account isn't now locked towards something else (and still in failed state (or something confusing fuck it))
+        if(!m_LoggedIn)
+        {
+            //login recovery
+            m_LoginStatusMessagesPlaceholder->setText("Uhh, try logging in again. I'm not sure what just happened..."); //seriously, can't wrap my head around this right now... xD (neighbor login beat them to the recovery.... but what should i _DO_??? it is perhaps NOTHING, but i can't guarantee that the user-account isn't now locked towards something else (and still in failed state (or something confusing fuck it))
+        }
+        else
+        {
+            //slot purchase beat to the punch
+            //not 100% sure (just like for login recovery above), but i think this is a similar race condition only available once i enable 'going forward' on a locked user account as the one in the chunk of code that initiated the db hit that we are not responding to
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            m_AdvertisingBuyAdSpaceD3faultCampaign0Widget->addWidget(new WText("Don't use multiple tabs/windows plz"));
+        }
         resumeRendering();
         return;
     }
 
-    //account locked recovery complete, make it look like a regular old login
-    doLoginTasks();
+    if(!m_LoggedIn)
+    {
+        //account locked recovery complete, make it look like a regular old login
+        doLoginTasks();
+    }
+    else
+    {
+        //slot purchase beat to the punch
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Sorry, someone else bought the slot just moments before you...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        rollBackToBeforeBuyStep1ifNeeded();
+        resumeRendering();
+    }
 }
 void AnonymousBitcoinComputingWtGUI::doneAttemptingToUnlockUserAccountFromBitcoinGettingKeyToBitcoinHaveKey(bool lcbOpSuccess, bool dbError)
 {
@@ -2721,9 +2783,9 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
         buySlotPopulateStep2d3faultCampaign0(couchbaseDocument, lcbOpSuccess, dbError);
     }
         break;
-    case ONLOGINACCOUNTLOCKEDRECOVERYDOESSLOTEXISTCHECK:
+    case ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK:
     {
-        continueRecoveringLockedAccountAtLoginAttempt(couchbaseDocument, lcbOpSuccess, dbError);
+        continueRecoveringLockedAccountAtLoginAttempt_OrAnalyzingSlotBuyBeatToThePunch(couchbaseDocument, lcbOpSuccess, dbError);
     }
         break;
     case GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ:
@@ -2890,9 +2952,9 @@ void AnonymousBitcoinComputingWtGUI::storeCouchbaseDocumentByKeyWithInputCasFini
         doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(dbError);
     }
         break;
-    case LOGINACCOUNTRECOVERYUNLOCKINGWITHOUTDEBITTINGUSERACCOUNT:
+    case LOGINACCOUNTRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_UNLOCKINGWITHOUTDEBITTINGUSERACCOUNT:
     {
-        doneAttemptingUserAccountLockedRecoveryUnlockWithoutDebitting(lcbOpSuccess, dbError);
+        doneAttemptingUserAccountUnlockingWithoutDebittingFor_LoginRecovery_And_SlotPurchaseBeatToThePunch(lcbOpSuccess, dbError);
     }
         break;
     case UNLOCKUSERACCOUNTFROMBITCOINGETTINGKEYTOBITCOINHAVEKEY:
@@ -3167,11 +3229,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
             //if slotToAttemptToFillAkaPurchase exists and we got it, do nothing
             //if slotToAttemptToFillAkaPurchase exists and we didn't get it, unlock [without debitting]
             //NOPE FOR NOW /lazy: if slotToAttemptToFillAkaPurchase doesn't exist, offer user to get it (just redirect to page? but that would require login guh)
-            m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH); //need this after the GET for comparing
-            getCouchbaseDocumentByKeyBegin(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST);
-            m_WhatTheGetWasFor = ONLOGINACCOUNTLOCKEDRECOVERYDOESSLOTEXISTCHECK;
-            m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin = userProfileCouchbaseDocAsJson;
-            m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay = casOnlyUsedWhenDoingRecoveryAtLogin;
+            unlockUserAccountWithoutDebittingIfSlotDeclaredAttemptingToPurchaseIsPurchasedBySomeoneElse(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST, pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH), userProfileCouchbaseDocAsJson, casOnlyUsedWhenDoingRecoveryAtLogin); //if it's empty, we are stuck waiting. if it's purchased by us, recovery possy will unlock us (debitting)
         }
     }
     else
@@ -3181,6 +3239,15 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         resumeRendering();
         return;
     }
+}
+//method used for both login account recovery and attempting buying a slot and simply getting beat to the punch
+void AnonymousBitcoinComputingWtGUI::unlockUserAccountWithoutDebittingIfSlotDeclaredAttemptingToPurchaseIsPurchasedBySomeoneElse(const std::string &slotLockedUserAccountIsDeclaredAttemptingToFill, const std::string &slotFillerLockedUserAccountIsDeclaredAttemptingToFillSlotWith, const std::string &lockedUserAccountJson, u_int64_t casOfLockedUserAccount)
+{
+    getCouchbaseDocumentByKeyBegin(slotLockedUserAccountIsDeclaredAttemptingToFill);
+    m_WhatTheGetWasFor = ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK;
+    m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack = slotFillerLockedUserAccountIsDeclaredAttemptingToFillSlotWith;
+    m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin = lockedUserAccountJson;
+    m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay = casOfLockedUserAccount;
 }
 void AnonymousBitcoinComputingWtGUI::usernameOrPasswordYouProvidedIsIncorrect()
 {
@@ -3220,7 +3287,7 @@ void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
         delete m_AccountWidgetScrollArea;
         m_AccountWidgetScrollArea = 0;
     }
-    if(m_LinkToAccount) //probably not necessary since it's created at login
+    if(m_LinkToAccount) //check probably not necessary since it's created at login
     {
         delete m_LinkToAccount;
         m_LinkToAccount = 0;
