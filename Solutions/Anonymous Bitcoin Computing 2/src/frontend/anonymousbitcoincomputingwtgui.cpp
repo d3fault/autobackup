@@ -150,7 +150,7 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     loginButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked);
     new WBreak(m_LoginWidget);
     m_LoginStatusMessagesPlaceholder = new WText(m_LoginWidget);
-    new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_REGISTER), " " ABC_ANCHOR_TEXTS_REGISTER, m_LoginWidget);
+    new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_REGISTER), ABC_ANCHOR_TEXTS_REGISTER, m_LoginWidget);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget); //might not be necessary, since it's the only one added at this point (comment is not worth...)
 
     WHBoxLayout *titleHeaderHlayout = new WHBoxLayout();
@@ -168,7 +168,6 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
     m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE), 0, Wt::AlignTop | Wt::AlignLeft);
     m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
-    m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft); //second wbreak to give one line gap between regular links and user account link (which isn't created until login
 
     m_BodyHLayout->addLayout(m_LinksVLayout, 0, Wt::AlignTop | Wt::AlignLeft);
     m_MainStack->setOverflow(WContainerWidget::OverflowAuto);
@@ -276,7 +275,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         uploadNewSlotFillerGridLayout->addWidget(new WText("--- 3) URL:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_UploadNewSlotFiller_URL = new WLineEdit("http://");
         uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_URL, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
-        WRegExpValidator *urlValidator = new WRegExpValidator("(((https?|ftps?|onion)://)(%[0-9A-Fa-f]{2}|[-()_.!~*';/?:@&=+$,A-Za-z0-9])+)([).!';/?:,][[:blank:]])?", m_UploadNewSlotFiller_URL); //TODOoptional: i was thinking about making this an input filter just like the other ones, but i'm not sure that url regex will work as one (not sure that it won't, but quite franky i have no idea wtf it's even doing)
+        WRegExpValidator *urlValidator = new WRegExpValidator("(((https?|ftps?|onion|irc|gnunet)://)(%[0-9A-Fa-f]{2}|[-()_.!~*';/?:@&=+$,A-Za-z0-9])+)([).!';/?:,][[:blank:]])?", m_UploadNewSlotFiller_URL); //TODOoptional: i was thinking about making this an input filter just like the other ones, but i'm not sure that url regex will work as one (not sure that it won't, but quite franky i have no idea wtf it's even doing)
         urlValidator->setMandatory(true);
         urlValidator->setInvalidNoMatchText("Invalid URL");
         urlValidator->setNoMatchText("Invalid URL");
@@ -330,17 +329,17 @@ void AnonymousBitcoinComputingWtGUI::setUpAdImageUploaderAndPutItInPlaceholder()
 }
 bool AnonymousBitcoinComputingWtGUI::userSuppliedAdSlotFillerFieldsAreValid()
 {
-    if(!m_UploadNewSlotFiller_HOVERTEXT->validate() != WValidator::Valid)
+    if(m_UploadNewSlotFiller_HOVERTEXT->validate() != WValidator::Valid)
     {
         m_AdImageUploadResultsVLayout->addWidget(new WText("Invalid Hover text"));
         return false;
     }
-    if(!m_UploadNewSlotFiller_NICKNAME->validate() != WValidator::Valid)
+    if(m_UploadNewSlotFiller_NICKNAME->validate() != WValidator::Valid)
     {
         m_AdImageUploadResultsVLayout->addWidget(new WText("Invalid Nickname"));
         return false;
     }
-    if(!m_UploadNewSlotFiller_URL->validate() != WValidator::Valid)
+    if(m_UploadNewSlotFiller_URL->validate() != WValidator::Valid)
     {
         m_AdImageUploadResultsVLayout->addWidget(new WText("Invalid URL"));
         return false;
@@ -417,7 +416,7 @@ void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
         WGridLayout *registerGridLayout = new WGridLayout(m_RegisterWidget);
         int rowIndex = -1;
 
-        registerGridLayout->addWidget(new WText("Username/Password: " LETTERS_NUMBERS_ONLY_REGEXPVALIDATOR_AND_INPUT_FILTER_ACCEPTABLE_RANGE_STRING), ++rowIndex, 1, 2, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Username/Password: " LETTERS_NUMBERS_ONLY_REGEXPVALIDATOR_AND_INPUT_FILTER_ACCEPTABLE_RANGE_STRING), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
         registerGridLayout->addWidget(new WText("Username:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterUsernameLineEdit = new WLineEdit();
@@ -3203,14 +3202,10 @@ void AnonymousBitcoinComputingWtGUI::doLoginTasks()
     new WBreak(m_LogoutWidget);
     new WText("Balance: BTC ", m_LogoutWidget);
     m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel = new WText(m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly, m_LogoutWidget);
+    new WBreak(m_LogoutWidget);
+    m_LinkToAccount = new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_LogoutWidget);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
     m_LoginStatusMessagesPlaceholder->setText("");
-    if(m_LinkToAccount)
-    {
-        delete m_LinkToAccount;
-    }
-    m_LinkToAccount = new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT);
-    m_LinksVLayout->addWidget(m_LinkToAccount, 0, Wt::AlignTop | Wt::AlignLeft);
 
     m_LoggedIn = true;
     resumeRendering();
@@ -3225,7 +3220,7 @@ void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
         delete m_AccountWidgetScrollArea;
         m_AccountWidgetScrollArea = 0;
     }
-    if(m_LinkToAccount) //probably not necessary since it's only ever created when we're logged in
+    if(m_LinkToAccount) //probably not necessary since it's created at login
     {
         delete m_LinkToAccount;
         m_LinkToAccount = 0;
