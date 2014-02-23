@@ -31,7 +31,7 @@ DEFINES +=  ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS=3 \
                 ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET1=2 \
                 ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_StoreLarge=2 \
                 MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_StoreLarge=1 \
-                ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_StoreLarge=2097152 \
+                ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_StoreLarge=2157392 \
             \ #set 2 -- Get
                 ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET2=Get \
                 ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET2=3 \
@@ -57,7 +57,7 @@ DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
 #                ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET1=StoreLarge \
 #                ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET1=3 \
 #                ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_SET1=2 \
-#                ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_SET1=2097152 \ #2mb + 10kb overhead
+#                ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_SET1=2157392 \ #~2.5mb, to account for overhead + b64encoding
 #            \ #set 2 -- Get
 #                ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET2=Get \
 #                ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET2=125 \
@@ -82,7 +82,10 @@ HEADERS += \
     frontend2backendRequests/storecouchbasedocumentbykeyrequest.h \
     backend/getandsubscribecacheitem.h \
     frontend/filedeletingfileresource.h \
-    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h
+    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
+    frontend/registersuccessfulwidget.h \
+    frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h \
+    frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -90,7 +93,10 @@ SOURCES += main.cpp \
     backend/anonymousbitcoincomputingcouchbasedb.cpp \
     frontend2backendRequests/getcouchbasedocumentbykeyrequest.cpp \
     frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp \
-    frontend/filedeletingfileresource.cpp
+    frontend/filedeletingfileresource.cpp \
+    frontend/registersuccessfulwidget.cpp \
+    frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.cpp \
+    frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 

@@ -144,6 +144,9 @@ m_##text##MutexArray[lockedMutexIndex].unlock();
 
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
+class LettersNumbersOnlyRegExpValidatorAndInputFilter;
+class RegisterSuccessfulWidget;
+
 class AnonymousBitcoinComputingWtGUI : public WApplication
 {
     friend class StoreCouchbaseDocumentByKeyRequest;
@@ -158,6 +161,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_LoginWidget; //since we don't use cookies/etc, it is IMPOSSIBLE to not have the login widget shown, so we set it up asap (constructor). Logout widget is state dependent though, so we initialize it to zero
     WLineEdit *m_LoginUsernameLineEdit;
     WLineEdit *m_LoginPasswordLineEdit;
+    LettersNumbersOnlyRegExpValidatorAndInputFilter *m_LettersNumbersOnlyValidatorAndInputFilter;
+    WText *m_LoginStatusMessagesPlaceholder;
     WContainerWidget *m_LogoutWidget;
     WAnchor *m_LinkToAccount;
 
@@ -184,6 +189,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WText *m_ConfirmedBitcoinBalanceLabel;
     double m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
     WLineEdit *m_UploadNewSlotFiller_NICKNAME;
+    std::string m_UploadNewSlotFiller_NICKNAME_B64;
     WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
     WLineEdit *m_UploadNewSlotFiller_URL;
     WContainerWidget *m_AdImageUploaderPlaceholder;
@@ -191,6 +197,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WPushButton *m_AdImageUploadButton;
     WVBoxLayout *m_AdImageUploadResultsVLayout;
     void setUpAdImageUploaderAndPutItInPlaceholder();
+    bool userSuppliedAdSlotFillerFieldsAreValid();
+    void handleAdImageUploadButtonClicked();
     void handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished();
     void handleAdImageUploadFailedFileTooLarge();
     void resetAdSlotFillerImageUploadFieldsForAnotherUpload();
@@ -200,9 +208,10 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_RegisterWidget;
     WLineEdit *m_RegisterUsernameLineEdit;
     WLineEdit *m_RegisterPasswordLineEdit;
+    WText *m_RegisterStatusMessagesPlaceholder;
     void showRegisterWidget();
     void registerAttemptFinished(bool lcbOpSuccess, bool dbError);
-    //WContainerWidget *m_RegisterSuccessfulWidget;
+    RegisterSuccessfulWidget *m_RegisterSuccessfulWidget;
 
     //hardcoded
     bool m_BuyInProgress;
@@ -240,6 +249,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(const string &userAccountDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
     void rollBackToBeforeBuyStep1ifNeeded();
     WContainerWidget *m_BuyStep2placeholder;
+    int m_AllSlotFillersAdsCount;
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);

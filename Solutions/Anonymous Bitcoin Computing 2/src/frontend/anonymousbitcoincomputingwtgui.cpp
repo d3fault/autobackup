@@ -1,6 +1,9 @@
 #include "anonymousbitcoincomputingwtgui.h"
 
 #include "abc2couchbaseandjsonkeydefines.h"
+#include "validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
+#include "validatorsandinputfilters/safetextvalidatorandinputfilter.h"
+#include "registersuccessfulwidget.h"
 
 //internal paths
 
@@ -26,11 +29,15 @@
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT "d3fault"
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 "d3fault's Ad Campaign #0"
 
+#define ABC_500_INTERNAL_SERVER_ERROR_MESSAGE "500 Internal Server Error"
+#define ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH 64
+#define ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH_STRING "64"
+
 //TODOreq: FOREVER: any feature that modifies user-account doc must do so with a CAS-swap, _AND_ the 'get' for that CAS-swap must ALWAYS check that "slotToAttemptToFillAkaPurchase" isn't set on the user-account. If "slotToAttemptToFillAkaPurchase" is set, that feature must not work until "slotToAttemptToFillAkaPurchase" is gone. It should error out saying "don't use multiple tabs" or "please try again in a few seconds".
 //^just worth mentioning, but not worth fixing yet: when the buy slot aka slot fill fails just after using account locking (but before slot fill) and they log in and basically can't do shit with their account, it effectively makes the bitcoin stuff off limits too since it relies on the user account not being locked. As of right now they have to wait until the slot is purchased, but once I let them proceed/retry with the buy, then they can get themselves out of it (if they still want to do the purchase)
 //TODOreq: "Forgot Your Password?" --> "Tough shit, I hope you learned your lesson"
 //TODOreq: no-js get-from-subscription-cache-but-dont-subscribe
-//TODOreq: find out when a signal connected to a dangerous slot can NOT be invoked by a user sifting through the html/js: signal disconnect should do it, but what about setVisible(false) and setEnabled(false), or changing a stackedwidget's current item (slot connected to button on stack item underneath). The easiest way to find this out is to ask; fuck trying to dig through Wt (and definitely fuck trying to dig through the html/js). Another related question: is there a race condition between resumeRendering at the beginning of a function and accessing a [editable-via-gui] member variable later in that same method (hacky solution to that is to always resumeRendering at the end of the method, and a hacky way to do that with lots of scope exit points in the function is using the stack struct destructor hack). I'm guessing the resumeRendering thing isn't a problem because the input events aren't (read:PROBABLY-AREN't(idk)) processed until the method ends and wt gets control again. hell, i don't even know for sure that deferRendering is even giving me the protection i'm assuming it is. More: does connecting a button's clicked signal to disable and/or calling deferRendering in slot connected to it solve the 'two clicks really fast' race condition, OR do i need to use a boolean flag checked/set at the very beginning of the slot (and unset at the end of the operation [i don't want to happen twice concurrently])
+//TODOreq: find out when a signal connected to a dangerous slot can NOT be invoked by a user sifting through the html/js: signal disconnect should do it, but what about setVisible(false) and setEnabled(false), or changing a stackedwidget's current item (slot connected to button on stack item underneath). The easiest way to find this out is to ask; fuck trying to dig through Wt (and definitely fuck trying to dig through the html/js). Another related question: is there a race condition between resumeRendering at the beginning of a function and accessing a [editable-via-gui] member variable later in that same method (hacky solution to that is to always resumeRendering at the end of the method, and a hacky way to do that with lots of scope exit points in the function is using the stack struct destructor hack). I'm guessing the resumeRendering thing isn't a problem because the input events aren't (read:PROBABLY-AREN't(idk)) processed until the method ends and wt gets control again. hell, i don't even know for sure that deferRendering is even giving me the protection i'm assuming it is. More: does connecting a button's clicked signal to disable and/or calling deferRendering in slot connected to it solve the 'two clicks really fast' race condition, OR do i need to use a boolean flag checked/set at the very beginning of the slot (and unset at the end of the operation [i don't want to happen twice concurrently]). Does WComboBox sanitize it's currentIndex? Does LineEdit server-side-enforce maxLength?
 //TODOreq: litter if(!m_LoggedIn) lots of places. It's a cheap but effective safeguard
 //TODOreq: to double or to int64? that is the question. boost::lexical_cast threw an exception when i tried to convert it to u_int64_t, maybe int64_t will have better luck. there's a "proper money handling" page that tells you to use int64.... but i'm trying to figure out what the fuck the point of that even is if i have to go "through" double anyways. maybe i should just string replace the decimal place for an empty string and then viola it is an int64 (still needs lexical casting for maths :-/). re: "through double" = double is usually more than enough on most platforms, but on some it isn't <- rationale for using int64. but if you're going string -> double -> int64 anyways, won't you have already lost precision? or maybe it's only when the math is being performed. I still am leaning towards int64 (if i can fucking convert my strings to it) because it does appear to be the right way to do rounding (deal with single Satoshis = no rounding needed)
 //venting/OT: fucking bitcoin testnet-box-3 has tons of bitcoins, but they're all immature/orphaned so unspendable until i mine 120 fucking blocks. i'm averaging 1 block an hour -_-. box 2 didn't have this problem when i was fucking around with it years ago. i have the code written to test bitcoin interactions, but no test bitcoins available hahaha (i guess i can write the bulk bitcoins generator -> hugeBitcoinList/bitcoinKeySetN setter upper thingo first... zzz...
@@ -67,8 +74,9 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_MostRecentlyUploadedImageWasSetAsPreview(false),
       m_MostRecentlyUploadedImageAsFileResource(0),
       m_RegisterWidget(0),
+      m_RegisterSuccessfulWidget(0),
       m_BuyInProgress(false),
-      /*m_RegisterSuccessfulWidget(0),*/ m_AdvertisingBuyAdSpaceD3faultWidget(0),
+      m_AdvertisingBuyAdSpaceD3faultWidget(0),
       m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0),
       m_FirstPopulate(false),
       m_BuySlotFillerStep1Button(0),
@@ -110,7 +118,7 @@ void AnonymousBitcoinComputingWtGUI::finalize()
     if(m_CurrentlySubscribedTo != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
     {
         //we're subscribed to something, so unsubscribe
-        getAndSubscribeCouchbaseDocumentByKeySavingCas("adSpaceSlotsd3fault0", GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
+        getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
         //no need to reset m_CurrentlySubscribedTo to because 'this' is about to be deleted...
     }
     WApplication::finalize();
@@ -133,10 +141,16 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     m_LoginPasswordLineEdit = new WLineEdit(m_LoginWidget);
     m_LoginPasswordLineEdit->setEchoMode(WLineEdit::Password);
     m_LoginPasswordLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked);
+    m_LettersNumbersOnlyValidatorAndInputFilter = new LettersNumbersOnlyRegExpValidatorAndInputFilter(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH_STRING, m_LoginWidget); //TODOoptimization: thread safe? "service" class? maybe making this static would lessen per-connection-memory
+    m_LoginUsernameLineEdit->setMaxLength(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH);
+    m_LoginPasswordLineEdit->setMaxLength(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH);
+    m_LoginUsernameLineEdit->setValidator(m_LettersNumbersOnlyValidatorAndInputFilter);
+    m_LoginPasswordLineEdit->setValidator(m_LettersNumbersOnlyValidatorAndInputFilter);
     WPushButton *loginButton = new WPushButton("Log In", m_LoginWidget);
     loginButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked);
     new WBreak(m_LoginWidget);
-    new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_REGISTER), ABC_ANCHOR_TEXTS_REGISTER, m_LoginWidget);
+    m_LoginStatusMessagesPlaceholder = new WText(m_LoginWidget);
+    new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_REGISTER), " " ABC_ANCHOR_TEXTS_REGISTER, m_LoginWidget);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget); //might not be necessary, since it's the only one added at this point (comment is not worth...)
 
     WHBoxLayout *titleHeaderHlayout = new WHBoxLayout();
@@ -246,16 +260,28 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         uploadNewSlotFillerGridLayout->addWidget(new WText("--- 1) Nickname (unseen by others):"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_UploadNewSlotFiller_NICKNAME = new WLineEdit();
         uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_NICKNAME, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        SafeTextValidatorAndInputFilter *nicknameSafeTextValidator = new SafeTextValidatorAndInputFilter("64", m_UploadNewSlotFiller_NICKNAME);
+        m_UploadNewSlotFiller_NICKNAME->setMaxLength(64);
+        m_UploadNewSlotFiller_NICKNAME->setValidator(nicknameSafeTextValidator);
+
+        //these more lenient validators (allowing characters and spaces) go through b64encode before being stored in db, otherwise they're vulnerable like an sql injection (except json injection)
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("--- 2) Mouse Hover Text:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_UploadNewSlotFiller_HOVERTEXT = new WLineEdit();
         uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_HOVERTEXT, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+        SafeTextValidatorAndInputFilter *hovertextSafeTextValidator = new SafeTextValidatorAndInputFilter("512", m_UploadNewSlotFiller_HOVERTEXT);
+        m_UploadNewSlotFiller_HOVERTEXT->setValidator(hovertextSafeTextValidator);
+        m_UploadNewSlotFiller_HOVERTEXT->setMaxLength(512); //for randall
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("--- 3) URL:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
-        m_UploadNewSlotFiller_URL = new WLineEdit();
+        m_UploadNewSlotFiller_URL = new WLineEdit("http://");
         uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_URL, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
-
-        //TODOreq: sanitize above line edits
+        WRegExpValidator *urlValidator = new WRegExpValidator("(((https?|ftps?|onion)://)(%[0-9A-Fa-f]{2}|[-()_.!~*';/?:@&=+$,A-Za-z0-9])+)([).!';/?:,][[:blank:]])?", m_UploadNewSlotFiller_URL); //TODOoptional: i was thinking about making this an input filter just like the other ones, but i'm not sure that url regex will work as one (not sure that it won't, but quite franky i have no idea wtf it's even doing)
+        urlValidator->setMandatory(true);
+        urlValidator->setInvalidNoMatchText("Invalid URL");
+        urlValidator->setNoMatchText("Invalid URL");
+        m_UploadNewSlotFiller_URL->setValidator(urlValidator);
+        m_UploadNewSlotFiller_URL->setMaxLength(2048);
 
         uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
 
@@ -267,7 +293,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
 
         m_AdImageUploadButton = new WPushButton("Submit");
         setUpAdImageUploaderAndPutItInPlaceholder();
-        m_AdImageUploadButton->clicked().connect(m_AdImageUploadButton, &WPushButton::disable);
+        m_AdImageUploadButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdImageUploadButtonClicked);
         uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploadButton, ++rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         //TODOoptional: progress bar would be nice (and not too hard), but eh these images aren't going to take long to upload so fuck it
 
@@ -297,14 +323,48 @@ void AnonymousBitcoinComputingWtGUI::handleAddFundsClicked()
 void AnonymousBitcoinComputingWtGUI::setUpAdImageUploaderAndPutItInPlaceholder()
 {
     m_AdImageUploader = new WFileUpload(m_AdImageUploaderPlaceholder);
-    m_AdImageUploadButton->clicked().connect(m_AdImageUploader, &WFileUpload::upload);
     //TODOreq: i can probably specify the temporary location of the uploaded file, and obviously i would want to use a tmpfs. would be even better if i could just upload into memory...
     m_AdImageUploader->setFileTextSize(40); //TODOreq: wtf is this, filename size or file size? i'll probably disregard filename when putting into b64/json... so if it's filename set it to like 256 or some sane max idfk, but worth noting i use the filename in a WFileResource to serve them the FIRST preview copy of the image they just uploaded
-    m_AdImageUploader->uploaded().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished); //TODOreq: doc says i should delete the WFileUpload after an upload
+    m_AdImageUploader->uploaded().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished);
     m_AdImageUploader->fileTooLarge().connect(this, &AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge);
+}
+bool AnonymousBitcoinComputingWtGUI::userSuppliedAdSlotFillerFieldsAreValid()
+{
+    if(!m_UploadNewSlotFiller_HOVERTEXT->validate() != WValidator::Valid)
+    {
+        m_AdImageUploadResultsVLayout->addWidget(new WText("Invalid Hover text"));
+        return false;
+    }
+    if(!m_UploadNewSlotFiller_NICKNAME->validate() != WValidator::Valid)
+    {
+        m_AdImageUploadResultsVLayout->addWidget(new WText("Invalid Nickname"));
+        return false;
+    }
+    if(!m_UploadNewSlotFiller_URL->validate() != WValidator::Valid)
+    {
+        m_AdImageUploadResultsVLayout->addWidget(new WText("Invalid URL"));
+        return false;
+    }
+    return true;
+}
+void AnonymousBitcoinComputingWtGUI::handleAdImageUploadButtonClicked()
+{
+    //would be dumb to upload the image THEN sanitize, but we sanitize twice because they can change the fields while it's uploading
+    if(!userSuppliedAdSlotFillerFieldsAreValid())
+    {
+        return;
+    }
+
+    m_AdImageUploadButton->disable();
+    m_AdImageUploader->upload();
 }
 void AnonymousBitcoinComputingWtGUI::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished()
 {
+    if(!userSuppliedAdSlotFillerFieldsAreValid())
+    {
+        resetAdSlotFillerImageUploadFieldsForAnotherUpload();
+        return;
+    }
     deferRendering();
 
     //TO DOnereqNOPE-ish (outdated, see below): maybe optional, idfk, but basically i want this store to just eh 'keep incrementing slot filler index until the LCB_ADD succeeds'. I'm just unsure whether or not the front-end or backend should be driving that. I think I have a choice here... and idk which is betterererer. Having the backend do it would probably be more efficient, but eh I think the front-end has to here/now/before-the-STORE-one-line-below determine the slot filler index to start trying to LCB_ADD at (else we'd be incredibly inefficient if we started at 0 and crawled up every damn time)... SO SINCE the front-end is already getting involved with it, maybe he should be the one directing the incrementing? It does seem "user specific" (user being frontend -> using backend), _BUT_ it also could be very easily genericized and used in tons of other apps... so long as we either use some "%N%" (no) in the key or make the number the very last part of the key (yes). I might even use this same thing with the bitcoin keys, but eh I haven't figured those out yet and don't want to yet (one problem at a time).
@@ -330,6 +390,7 @@ void AnonymousBitcoinComputingWtGUI::handleAdImageUploadFailedFileTooLarge()
 void AnonymousBitcoinComputingWtGUI::resetAdSlotFillerImageUploadFieldsForAnotherUpload()
 {
     m_UploadNewSlotFiller_NICKNAME->setText("");
+    m_UploadNewSlotFiller_NICKNAME_B64 = "";
     m_UploadNewSlotFiller_HOVERTEXT->setText("");
     m_UploadNewSlotFiller_URL->setText("");
     m_AdImageUploadButton->setEnabled(true);
@@ -356,28 +417,31 @@ void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
         WGridLayout *registerGridLayout = new WGridLayout(m_RegisterWidget);
         int rowIndex = -1;
 
-        registerGridLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
+        registerGridLayout->addWidget(new WText("Username/Password: " LETTERS_NUMBERS_ONLY_REGEXPVALIDATOR_AND_INPUT_FILTER_ACCEPTABLE_RANGE_STRING), ++rowIndex, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
         registerGridLayout->addWidget(new WText("Username:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterUsernameLineEdit = new WLineEdit();
         registerGridLayout->addWidget(m_RegisterUsernameLineEdit, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterUsernameLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked); //was tempted to not put this here because if they press enter in username then they probably aren't done, BUT that 'implicit form submission' bullshit would submit it anyways. might as well make sure it's pointing at the right form...
+        m_RegisterUsernameLineEdit->setMaxLength(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH);
+        m_RegisterUsernameLineEdit->setValidator(m_LettersNumbersOnlyValidatorAndInputFilter);
 
         registerGridLayout->addWidget(new WText("Password:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterPasswordLineEdit = new WLineEdit();
         registerGridLayout->addWidget(m_RegisterPasswordLineEdit, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterPasswordLineEdit->setEchoMode(WLineEdit::Password);
         m_RegisterPasswordLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
+        m_RegisterPasswordLineEdit->setMaxLength(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH);
+        m_RegisterPasswordLineEdit->setValidator(m_LettersNumbersOnlyValidatorAndInputFilter);
 
-        ++rowIndex;
+        registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
         WPushButton *registerButton = new WPushButton("Register");
         registerGridLayout->addWidget(registerButton, ++rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         registerButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
 
-        registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
-
-        ++rowIndex;
+        m_RegisterStatusMessagesPlaceholder = new WText();
+        registerGridLayout->addWidget(m_RegisterStatusMessagesPlaceholder, ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
         registerGridLayout->addWidget(new WText("Optional:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         registerGridLayout->addWidget(new WText("Sexual Preference:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
@@ -403,11 +467,11 @@ void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
 
         //;-) and then secretly ;-) on the deployed/binary version ;-) i actually save these values ;-) and then sell them to hollywood ;-) to make movies off of them ;-) and then use the funds from that to take over the world ;-) and solve us of our corporate cancers (of which hollywood is an item) ;-) muaahahahahhahaha
 
+        registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
+
         WPushButton *registerButton2 = new WPushButton("Register");
         registerGridLayout->addWidget(registerButton2, ++rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         registerButton2->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
-
-        registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
     }
     m_MainStack->setCurrentWidget(m_RegisterWidget);
 }
@@ -415,42 +479,30 @@ void AnonymousBitcoinComputingWtGUI::registerAttemptFinished(bool lcbOpSuccess, 
 {
     if(dbError)
     {
-        //TODOreq: 500 internal server error?
+        m_RegisterStatusMessagesPlaceholder->setText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE);
         return;
     }
     if(!lcbOpSuccess)
     {
-        new WText("That username is already taken, please try another", m_RegisterWidget); //TODOreq: put this in a better spot. below all our joke fields probably wouldn't even be seen (we could put it just by the username field and make it disappear once they start typing again (or hit submit again (depending))
+        m_RegisterStatusMessagesPlaceholder->setText("That username is already taken, please try another");
         return;
     }
 
     //if we get here, the registration doc add was successful
 
-    WContainerWidget *registerSuccessfulWidget = new WContainerWidget(m_MainStack);
-    new WText("Welcome to Anonymous Bitcoin Computing, " + m_RegisterUsernameLineEdit->text() + ". You can now log in.", registerSuccessfulWidget);
-
-    new WBreak(registerSuccessfulWidget);
-    new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_HOME), ABC_ANCHOR_TEXTS_PATH_HOME, registerSuccessfulWidget);
-
-    //in case they browse back to it. TODOreq: probably should do this in other places as well
-    m_RegisterUsernameLineEdit->setText("");
-    m_RegisterPasswordLineEdit->setText("");
-
-    m_MainStack->setCurrentWidget(registerSuccessfulWidget);
-
-    //TODOoptimization: if the user keeps registering, logging in, logging out, registering new, etc etc.. and never navigates away.. then they still have the same "session" (even though yes, session id changes on login) and we'll be adding a bunch of registerSuccessFulWidgets which never get deleted until they navigate away and the session is destroyed. BUT REALLY at that point it's probably a larger concern all the database they're wasting xD. I had the below ifdef'd out code, but it doesn't account for logout->register new user. The old logged out username would still be shown. Lots of ways to deal with this problem, fuck it for now. Not technically a memory leak...
-#if 0
     if(!m_RegisterSuccessfulWidget)
     {
-        m_RegisterSuccessfulWidget = new WContainerWidget(m_MainStack);
-        new WText("Welcome to Anonymous Bitcoin Computing, " + m_RegisterUsername->text() + ". You can now log in.", m_RegisterSuccessfulWidget);
-
-        //in case they browse back to it. TODOreq: probably should do this in other places as well
-        m_RegisterUsername->setText("");
-        m_RegisterPassword->setText("");
+        m_RegisterSuccessfulWidget = new RegisterSuccessfulWidget(m_RegisterUsernameLineEdit->text().toUTF8(), m_MainStack);
     }
-    m_MainStack(m_RegisterSuccessfulWidget);
-#endif
+    else
+    {
+        m_RegisterSuccessfulWidget->setUsername(m_RegisterUsernameLineEdit->text().toUTF8());
+    }
+    m_MainStack->setCurrentWidget(m_RegisterSuccessfulWidget);
+
+    m_RegisterStatusMessagesPlaceholder->setText("");
+    m_RegisterUsernameLineEdit->setText("");
+    m_RegisterPasswordLineEdit->setText("");
 }
 void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
 {
@@ -719,7 +771,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
     //^^^^^^^^we also want to 'roll back' after the buy is successful, but certain messages should remain
     m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy = m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
 
-    getCouchbaseDocumentByKeyBegin(adSpaceAllSlotFillersKey(m_CurrentlyLoggedInUsername)); //TODOreq: obviously we'd have sanitized the username by here...
+    getCouchbaseDocumentByKeyBegin(adSpaceAllSlotFillersKey(m_CurrentlyLoggedInUsername));
     m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET;
     deferRendering();
 }
@@ -787,12 +839,11 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
         new WBreak(m_BuyStep2placeholder);
         m_AllSlotFillersComboBox = new WComboBox(m_BuyStep2placeholder);
-        int adsCount = boost::lexical_cast<int>(pt.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT));
-        for(int i = 0; i < adsCount; ++i)
+        m_AllSlotFillersAdsCount = boost::lexical_cast<int>(pt.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT));
+        for(int i = 0; i < m_AllSlotFillersAdsCount; ++i)
         {
             //json looks like this: "0" : "<nickname>"
-            m_AllSlotFillersComboBox->insertItem(i, pt.get<std::string>(boost::lexical_cast<std::string>(i)));
-            //TODOreq: Wt probably/should already do[es] this, but the nicknames definitely need to be sanitized (when they're created)
+            m_AllSlotFillersComboBox->insertItem(i, base64Decode(pt.get<std::string>(boost::lexical_cast<std::string>(i))));
         }
 
         new WBreak(m_BuyStep2placeholder);
@@ -820,6 +871,15 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
         return;
     }
 
+    int currentIndex = m_AllSlotFillersComboBox->currentIndex();
+    if(currentIndex < 0 || currentIndex >= m_AllSlotFillersAdsCount)
+    {
+        //user forged invalid range for combo box
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Haha nice try forging dat combo box", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        return;
+    }
+
     //handle two or more clicks perfectly timed that might be accidental, and additionally on the button we haven't yet rolled back (they want to buy another, it has to be after they click step 1 again)
     if(m_BuyInProgress)
     {
@@ -832,8 +892,6 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     //DO ACTUAL BUY (check balance + lock user account, then associate slot with slot filler, aka fill the slot)
 
-   //TODOreq: this doesn't belong here, but the combo box probably depends on the user to send in the slotfiller index, so we need to sanitize that input (also applies to nickname if it is used (i don't currently plan to))
-
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
     new WText("Attempting to buy ad space with advertisement: '" + m_AllSlotFillersComboBox->currentText() + "'...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
@@ -844,9 +902,9 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     //had calculate current price here, but moved it to a few sub-milliseconds later
 
-    //TODOreq: sanitize slot index (user could have forged), verify it in fact exists (was thinking i should try to pull the doc, BUT we already have the "allSlotFillers" doc and can just verify that it's in that instead (so we would be depending on earlier sanity checks when setting up the slotFiller instead)
 
-    m_SlotFillerToUseInBuy = adSpaceSlotFillerKey(m_CurrentlyLoggedInUsername, boost::lexical_cast<std::string>(m_AllSlotFillersComboBox->currentIndex()));
+
+    m_SlotFillerToUseInBuy = adSpaceSlotFillerKey(m_CurrentlyLoggedInUsername, boost::lexical_cast<std::string>(currentIndex));
     //TODOreq: making username 'last' part of key doesn't solve the problem: adSpaceSlotFillers12joe (slot filler 1/username '2joe' conflicts with slot filler 12/username 'joe'). It would solve it if we used leading zeros, but fuck that underscores is better solution
 
     getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(m_CurrentlyLoggedInUsername));
@@ -1627,7 +1685,8 @@ void AnonymousBitcoinComputingWtGUI::determineNextSlotFillerIndexAndThenAddSlotF
 
     if(dbError)
     {
-        //TODOreq: handle. "500 Internal Server Error: Kill Yourself, Re-Evolve, Try Again (doing so puts you in an infinite loop of re-evolving/suiciding-at-the-same-spot that keeps looping and looping... until you eventually choose to not commit suicide. And since you can't live in a universe where you are dead (heh), you are already here in the universe where you chose not kill yourself. So yea just Try Again)"
+        m_AdImageUploadResultsVLayout->addWidget(new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE));
+        //TO DOnereq: handle. "500 Internal Server Error: Kill Yourself, Re-Evolve, Try Again (doing so puts you in an infinite loop of re-evolving/suiciding-at-the-same-spot that keeps looping and looping... until you eventually choose to not commit suicide. And since you can't live in a universe where you are dead (heh), you are already here in the universe where you chose not kill yourself. So yea just Try Again)"
 
         //temp:
         cerr << "determineNextSlotFillerIndexAndThenAddSlotFillerToIt db error" << endl;
@@ -1664,12 +1723,15 @@ void AnonymousBitcoinComputingWtGUI::tryToAddAdSlotFillerToCouchbase(const strin
 {
     ptree pt;
     pt.put(JSON_SLOT_FILLER_USERNAME, m_CurrentlyLoggedInUsername);
-    pt.put(JSON_SLOT_FILLER_NICKNAME, m_UploadNewSlotFiller_NICKNAME->text().toUTF8()); //TODOreq: sanitize these
-    pt.put(JSON_SLOT_FILLER_HOVERTEXT, m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8());
-    pt.put(JSON_SLOT_FILLER_URL, m_UploadNewSlotFiller_URL->text().toUTF8());
+
+    //already sanitized, but we base64 these since we allow all kinds of crazy characters our json might not like
+    m_UploadNewSlotFiller_NICKNAME_B64 = base64Encode(m_UploadNewSlotFiller_NICKNAME->text().toUTF8());
+    pt.put(JSON_SLOT_FILLER_NICKNAME, m_UploadNewSlotFiller_NICKNAME_B64);
+    pt.put(JSON_SLOT_FILLER_HOVERTEXT, base64Encode(m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8()));
+    pt.put(JSON_SLOT_FILLER_URL, base64Encode(m_UploadNewSlotFiller_URL->text().toUTF8()));
 
     std::string adImageUploadFileLocation = m_AdImageUploader->spoolFileName();
-    pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8()); //TODOreq: sanitize before being passed to the mime type checker (or make sure mime type checker works safely)
+    pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8());
     m_MostRecentlyUploadedImageAsFileResource = new FileDeletingFileResource("image/" + guessedExtensionAndMimeType.second, adImageUploadFileLocation, guessedExtensionAndMimeType.first, m_AccountWidget); //semi-old (now using m_AccountWidget instead of 'this'): 'this' is set as parent for last resort cleanup of the WResource, but that doesn't account for it's underlying buffer. I also might want to delete this resource if they upload a 2nd/3rd/etc image, BUT TODOreq there are threading issues because the WImage/WResource is served concurrently I believe (or is that only true for static resources?). Perhaps changing internal paths would be a good time to delete all the images (or in WResource::handleRequest itself, since they'll only be used once anyways..), idfk. There is also the issue of me trying to re-use the same byte buffer for a 2nd upload (which is backing a resource for a first upload that hasn't yet finished streaming back / previewing back to them)
     m_AdImageUploader->stealSpooledFile();
 
@@ -1714,8 +1776,7 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
 {
     if(dbError)
     {
-        new WBreak(m_LoginWidget);
-        new WText("500 Internal Server Error, try again later", m_LoginWidget);
+        m_LoginStatusMessagesPlaceholder->setText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE);
         resumeRendering();
         return;
     }
@@ -1723,7 +1784,7 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
     if(!lcbOpSuccess)
     {
         //slot not purchased/filled
-        new WText("We're sorry, our system has experience a temporary failure and your account is locked until someone else buys that slot you tried to purchase during your last session. Please try logging in again once that slot is purchased", m_LoginWidget);
+        m_LoginStatusMessagesPlaceholder->setText("We're sorry, our system has experience a temporary failure and your account is locked until someone else buys that slot you tried to purchase during your last session. Please try logging in again once that slot is purchased");
         resumeRendering();
         return;
         //TODOreq: allow them to buy it, because clearly they've expressed interest
@@ -1741,7 +1802,7 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
         if(slotFilledWith == m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack)
         {
             //we got it, so do NOTHING because recovery process will handle it, a TODOoptimization would be to trigger recovery possy code, but that requires a merge and fuck that
-            new WText("Try logging in again in like 1 minute (don't ask why)", m_LoginWidget); //fuck teh police~
+            m_LoginStatusMessagesPlaceholder->setText("Try logging in again in like 1 minute (don't ask why)"); //fuck teh police~
             resumeRendering();
         }
         else
@@ -1904,7 +1965,7 @@ void AnonymousBitcoinComputingWtGUI::getAdSlotFillerThatIsntInAllAdSlotFillersAt
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        m_AdImageUploadResultsVLayout->addWidget(new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE));
 
         cerr << "getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex db error" << endl;
         resetAdSlotFillerImageUploadFieldsForAnotherUpload();
@@ -1912,7 +1973,7 @@ void AnonymousBitcoinComputingWtGUI::getAdSlotFillerThatIsntInAllAdSlotFillersAt
     }
     if(!lcbOpSuccess)
     {
-        //TODOreq: handle?
+        m_AdImageUploadResultsVLayout->addWidget(new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE));
         cerr << "TOTAL SYSTEM FAILURE: getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex -- an LCB_ADD to slot filler failed, so we tried to get it to extract nickname from it for updating allAdSlotFillers... but now it doesn't exist?? wtf?" << endl;
         resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;
@@ -1927,7 +1988,7 @@ void AnonymousBitcoinComputingWtGUI::getAdSlotFillerThatIsntInAllAdSlotFillersAt
 
     //json-add nickname to the 'running' allAdSlotFillers doc
     std::string indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = m_RunningAllSlotFillersJsonDoc.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT);
-    m_RunningAllSlotFillersJsonDoc.put(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat, nicknameOfSlotFillerNotInAllAdSlotFillersDoc);
+    m_RunningAllSlotFillersJsonDoc.put(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat, nicknameOfSlotFillerNotInAllAdSlotFillersDoc); //TODOreq: nicknames at 512*adsCount might go over message queue max size guh, this applies to normal code as well (we are recovery). Maybe allAdSlotFillers needs to use StoreLarge (even then, i have no maximum amount of ads!)?
 
     //also increment 'adsCount' because we've just found/recovered one slot filler, and additionally will be using adsCount as our index to add the slot filler AGAIN (the one that initiated this recovery) in the 'next' slot
     indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = boost::lexical_cast<std::string>(boost::lexical_cast<int>(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat) + 1); //the +1 here is important (had:key)!!!!
@@ -2146,7 +2207,7 @@ void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComple
 {
     if(dbError)
     {
-        //TODOreq: handle appropriately (delete image file prolly), notify user
+        m_AdImageUploadResultsVLayout->addWidget(new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE));
 
         //temp:
         cerr << "storeLargeAdImageInCouchbaseDbAttemptComplete reported db error" << endl;
@@ -2174,7 +2235,7 @@ void AnonymousBitcoinComputingWtGUI::storeLargeAdImageInCouchbaseDbAttemptComple
 
     //TODOreq: getting here means the add was successful, so record that fact in allAdSlotFillers
     std::string oldAdsCountButAlsoOurIndexOfTheOneJustAdded = m_RunningAllSlotFillersJsonDoc.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT);
-    m_RunningAllSlotFillersJsonDoc.put(oldAdsCountButAlsoOurIndexOfTheOneJustAdded, m_UploadNewSlotFiller_NICKNAME->text().toUTF8());
+    m_RunningAllSlotFillersJsonDoc.put(oldAdsCountButAlsoOurIndexOfTheOneJustAdded, m_UploadNewSlotFiller_NICKNAME_B64);
 
     //now increment adsCount and put it back in xD
     oldAdsCountButAlsoOurIndexOfTheOneJustAdded = boost::lexical_cast<std::string>(boost::lexical_cast<int>(oldAdsCountButAlsoOurIndexOfTheOneJustAdded)+1); //old becomes new :)
@@ -2326,15 +2387,13 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountLockedRecoveryUnlo
 {
     if(dbError)
     {
-        new WBreak(m_LoginWidget);
-        new WText("500 Internal Server Error, try again in a few minutes", m_LoginWidget);
+        m_LoginStatusMessagesPlaceholder->setText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE);
         resumeRendering();
         return;
     }
     if(!lcbOpSuccess)
     {
-        new WBreak(m_LoginWidget);
-        new WText("Uhh, try logging in again, I'm not sure what just happened...", m_LoginWidget); //seriously, can't wrap my head around this right now... xD (neighbor login beat them to the recovery.... but what should i _DO_??? it is perhaps NOTHING, but i can't guarantee that the user-account isn't now locked towards something else (and still in failed state (or something confusing fuck it))
+        m_LoginStatusMessagesPlaceholder->setText("Uhh, try logging in again, I'm not sure what just happened..."); //seriously, can't wrap my head around this right now... xD (neighbor login beat them to the recovery.... but what should i _DO_??? it is perhaps NOTHING, but i can't guarantee that the user-account isn't now locked towards something else (and still in failed state (or something confusing fuck it))
         resumeRendering();
         return;
     }
@@ -2516,7 +2575,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateAllAdSlotFillersDocSi
 {
     if(dbError)
     {
-        //TODOreq: handle, idkf how lawl
+        m_AdImageUploadResultsVLayout->addWidget(new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE));
 
         //temp:
         cerr << "doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller db error" << endl;
@@ -2542,7 +2601,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingToUpdateAllAdSlotFillersDocSi
 
     //cas-swap-update succeeded
 
-    //so now show them the image that we already have on the heap (and on the filesystem).... now hmm which to show....
+    //so now show them the image
 
     WImage *adImagePreview = new WImage(m_MostRecentlyUploadedImageAsFileResource, m_UploadNewSlotFiller_HOVERTEXT->text());
     adImagePreview->resize(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);
@@ -2992,7 +3051,11 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
 }
 void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
 {
-    //TODOreq: sanitize username at least (my json encoder doesn't like periods, for starters). since password is being b64 encoded we can probably skip sanitization (famous last words?)
+    if(m_RegisterUsernameLineEdit->validate() != WValidator::Valid || m_RegisterPasswordLineEdit->validate() != WValidator::Valid)
+    {
+        m_RegisterStatusMessagesPlaceholder->setText(m_LettersNumbersOnlyValidatorAndInputFilter->invalidNoMatchText());
+        return;
+    }
 
     std::string username = m_RegisterUsernameLineEdit->text().toUTF8();
     std::string passwordPlainText = m_RegisterPasswordLineEdit->text().toUTF8();
@@ -3021,7 +3084,11 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
 }
 void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
 {
-    //TODOreq: sanitize. keep in mind username is part of lots of keys, so maybe make it like 20 characters and keep in mind during key/doc design to make sure you don't make a key that is > 230 characters long (250 is max key length in couchbase)
+    if(m_LoginUsernameLineEdit->validate() != WValidator::Valid || m_LoginPasswordLineEdit->validate() != WValidator::Valid)
+    {
+        m_LoginStatusMessagesPlaceholder->setText(m_LettersNumbersOnlyValidatorAndInputFilter->invalidNoMatchText());
+        return;
+    }
 
     //TODOreq: it might make sense to clear the line edit's in the login widget, and to save the login credentials as member variables, and to also clear the password member variable (memset) to zero after it has been compared with the db hash (or even just after it has been hashed (so just make the hash a member xD))
     std::string username = m_LoginUsernameLineEdit->text().toUTF8();
@@ -3033,7 +3100,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
 {
     if(dbError)
     {
-        //TODOreq: 500 internal server error
+        m_LoginStatusMessagesPlaceholder->setText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE);
 
         //temp:
         cerr << "loginIfInputHashedEqualsDbInfo db error" << endl;
@@ -3043,9 +3110,6 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
     }
     if(!lcbOpSuccess)
     {
-        //if you change the code here in this block, change it in the login recovery code path as well (copy paste job)
-        //^^??
-
         usernameOrPasswordYouProvidedIsIncorrect();
         resumeRendering();
         return;
@@ -3121,8 +3185,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
 }
 void AnonymousBitcoinComputingWtGUI::usernameOrPasswordYouProvidedIsIncorrect()
 {
-    new WBreak(m_LoginWidget);
-    new WText("The username or password you provided is incorrect", m_LoginWidget); //TODOreq: don't add multiple because it'll look retarded, BUT if we only have one how do we tell them that it failed the second time? 'highlighting' animation makes sense, as does clearing the message when they start typing again. also TODOreq: make message go away after user logs out (failed login attempt -> successful login attempt -> logout)
+    m_LoginStatusMessagesPlaceholder->setText("The username or password you provided is incorrect"); //TODOreq: how do we tell them that it failed the second time? 'highlighting' animation makes sense, as does clearing the message when they start typing again
     m_LoginPasswordLineEdit->setText("");
 }
 void AnonymousBitcoinComputingWtGUI::doLoginTasks()
@@ -3141,7 +3204,7 @@ void AnonymousBitcoinComputingWtGUI::doLoginTasks()
     new WText("Balance: BTC ", m_LogoutWidget);
     m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel = new WText(m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly, m_LogoutWidget);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
-
+    m_LoginStatusMessagesPlaceholder->setText("");
     if(m_LinkToAccount)
     {
         delete m_LinkToAccount;
