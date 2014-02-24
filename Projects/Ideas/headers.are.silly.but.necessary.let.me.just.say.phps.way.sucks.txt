@@ -1,0 +1,12 @@
+Excplicitly including headers (also applies to namespaces too) in C/C++ (or hypothetical designEquals usage of them) should be optional. It does become problematic when there are multiple libraries with the same class names, function names, etc. HOWEVER it does not start off as a problem (if it does, you explicitly include the one you want). This doc is describing a smarter system which can determine the "old implicitly used headers (namespaces too)" when you, for example, install new software that causes conflict.
+
+Flow:
+
+1) Code Softwares
+2) Compile, system deduces headers/namespaces implicitly
+3) Install new software that coincidentally conflicts with the software you coded earlier, the system is unable to determine which to use implicitly (without the 'invention' described in this doc). Your compilation is broken (unless you explicitly include/etc).
+4) The system/'invention' is able to look "back in time" at your system's state before there was conflict and to them emulate/mimic that state SOLELY FOR DETERMINING WHAT IT USED _THEN_ FOR THE HEADERS/NAMESPACES IN CONFLICT. Essentially, when compiling gives notification of ambiguity conflicts, a button is presented that says "Use what was working before".
+
+It would be an error to not show that button in (4), because we can't know that the user doesn't intend to now use the newer/alternate versions that are causing the ambiguity problems to begin with. Obviously any time a header/namespace is included/declared explicitly, it is locked into that 'version' (not as in numbers, but as in ambiguity) until they explicitly change it. This idea is just to ease INITIAL programming.
+
+When the source is bundled in a form for sharing with others, it can encode specially the headers/namespaces that were 'implicitly chosen' on the sending user's system, in case the receiving user's system is not able to deduce them himself. The receiving user should be given options on what to do in that case, and only one of them is to mimic the sender's implicit decision. It may be desireable for the user to use a different set of implicitly chosen libraries (and if he only has one that satisfies the requirement, PERHAPS no prompt is given (but maybe a warning would be wise...)), or they can choose between the ones they have installed, or some other option I'd only thing up while implementing it.

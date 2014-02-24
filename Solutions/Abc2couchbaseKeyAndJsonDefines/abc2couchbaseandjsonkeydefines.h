@@ -17,12 +17,7 @@
 #define JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE "purchasePrice"
 
 //ex: adSpaceCampaignKey("d3fault", "0");
-const std::string adSpaceCampaignKey(const std::string &username, const std::string &campaignIndex)
-{
-	//ex: adSpaceCampaign_d3fault_0
-	return COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX
-		ABC_COUCHBASE_KEY_SEPARATOR + username + ABC_COUCHBASE_KEY_SEPARATOR + campaignIndex;
-}
+const std::string adSpaceCampaignKey(const std::string &username, const std::string &campaignIndex);
 
 
 //slot
@@ -33,12 +28,7 @@ const std::string adSpaceCampaignKey(const std::string &username, const std::str
 #define JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH "slotFilledWith"
 
 //ex: adSpaceCampaignSlotKey("d3fault", "0", "34");
-const std::string adSpaceCampaignSlotKey(const std::string &username, const std::string &campaignIndex, const std::string &slotIndex)
-{
-	//ex: adSpaceCampaign_d3fault_0_34
-	return COUCHBASE_AD_SPACE_CAMPAIGN_SLOT_KEY_PREFIX
-		ABC_COUCHBASE_KEY_SEPARATOR + username + ABC_COUCHBASE_KEY_SEPARATOR + campaignIndex + ABC_COUCHBASE_KEY_SEPARATOR + slotIndex;
-}
+const std::string adSpaceCampaignSlotKey(const std::string &username, const std::string &campaignIndex, const std::string &slotIndex);
 
 
 //slot filler
@@ -50,12 +40,7 @@ const std::string adSpaceCampaignSlotKey(const std::string &username, const std:
 #define JSON_SLOT_FILLER_IMAGEB64 "adImageB64"
 
 //ex: adSpaceSlotFillerKey("JimboKnives", "1");
-const std::string adSpaceSlotFillerKey(const std::string &username, const std::string &slotFillerIndex)
-{
-	//ex: adSpaceSlotFiller_JimboKnives_1
-	return COUCHBASE_SLOT_FILLER_KEY_PREFIX
-		ABC_COUCHBASE_KEY_SEPARATOR + username + ABC_COUCHBASE_KEY_SEPARATOR + slotFillerIndex;
-}
+const std::string adSpaceSlotFillerKey(const std::string &username, const std::string &slotFillerIndex);
 
 
 //all slot fillers
@@ -63,12 +48,7 @@ const std::string adSpaceSlotFillerKey(const std::string &username, const std::s
 #define JSON_ALL_SLOT_FILLERS_ADS_COUNT "adsCount"
 
 //ex: adSpaceAllSlotFillersKey("JimboKnives");
-const std::string adSpaceAllSlotFillersKey(const std::string &username)
-{
-	//ex: adSpaceAllSlotFillers_JimboKnives
-	return COUCHBASE_ALL_SLOT_FILLERS_KEY_PREFIX
-		ABC_COUCHBASE_KEY_SEPARATOR + username;
-}
+const std::string adSpaceAllSlotFillersKey(const std::string &username);
 
 
 //user account
@@ -90,12 +70,7 @@ const std::string adSpaceAllSlotFillersKey(const std::string &username)
 #define JSON_USER_ACCOUNT_BITCOIN_GET_KEY_UUID "uuidPerKey" //per-key-request-uuid (GettingKey)
 
 //ex: userAccountKey("JimboKnives");
-const std::string userAccountKey(const std::string &username)
-{
-	//ex: user_JimboKnives
-	return COUCHBASE_USER_ACCOUNT_KEY_PREFIX
-		ABC_COUCHBASE_KEY_SEPARATOR + username;
-}
+const std::string userAccountKey(const std::string &username);
 
 
 //transaction
@@ -105,12 +80,7 @@ const std::string userAccountKey(const std::string &username)
 #define JSON_TRANSACTION_AMOUNT "amount"
 
 //ex: transactionKey("d3fault", "0", "1");
-const std::string transactionKey(const std::string &campaignOwnerUsername, const std::string &campaignIndex, const std::string &slotIndex)
-{
-	//ex: tx_d3fault_0_1
-	return COUCHBASE_TRANSACTION_KEY_PREFIX
-		ABC_COUCHBASE_KEY_SEPARATOR + campaignOwnerUsername + ABC_COUCHBASE_KEY_SEPARATOR + campaignIndex + ABC_COUCHBASE_KEY_SEPARATOR + slotIndex;
-}
+const std::string transactionKey(const std::string &campaignOwnerUsername, const std::string &campaignIndex, const std::string &slotIndex);
 
 
 //current page of bitcoin key set
@@ -122,12 +92,7 @@ const std::string transactionKey(const std::string &campaignOwnerUsername, const
 #define JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE_START_LOOKING_ON_HUGEBITCOINKEYLIST_PAGE "hugeBitcoinKeyListStartingPage"
 
 //ex: bitcoinKeySetCurrentPageKey("4");
-const std::string bitcoinKeySetCurrentPageKey(const std::string &setN)
-{
-	//ex: bitcoinKeySetCurrentPage_4
-	return COUCHBASE_BITCOIN_KEY_SET_CURRENT_PAGE_KEY_PREFIX
-		ABC_COUCHBASE_KEY_SEPARATOR + setN;
-}
+const std::string bitcoinKeySetCurrentPageKey(const std::string &setN);
 
 
 //bitcoin key set page
@@ -138,19 +103,14 @@ const std::string bitcoinKeySetCurrentPageKey(const std::string &setN)
 #define JSON_BITCOIN_KEY_SET_CLAIMED_USERNAME_SUFFIX "claimedUsername"
 
 //ex: bitcoinKeySetPageKey("4", "69");
-const std::string bitcoinKeySetPageKey(const std::string &setN, const std::string &pageY)
-{
-    //ex: bitcoinKeySetPage_4_69
-	return COUCHBASE_BITCOIN_KEY_SET_PAGE_KEY_PREFIX
-        ABC_COUCHBASE_KEY_SEPARATOR + setN + ABC_COUCHBASE_KEY_SEPARATOR + pageY;
-}
+const std::string bitcoinKeySetPageKey(const std::string &setN, const std::string &pageY);
 
 
 //current page of huge bitcoin key list
 #define COUCHBASE_HUGE_BITCOIN_KEY_LIST_CURRENT_PAGE_KEY "hugeBitcoinKeyListCurrentPage"
 #define JSON_HUGE_BITCOIN_KEY_LIST_CURRENT_PAGE_KEY "currentPage"
 
-const std::string hugeBitcoinKeyListCurrentPageKey() { return COUCHBASE_HUGE_BITCOIN_KEY_LIST_CURRENT_PAGE_KEY; } //derp
+const std::string hugeBitcoinKeyListCurrentPageKey();
 
 
 //huge bitcoin key list page
@@ -160,11 +120,6 @@ const std::string hugeBitcoinKeyListCurrentPageKey() { return COUCHBASE_HUGE_BIT
 #define JSON_HUGE_BITCOIN_KEY_LIST_PAGE_KEY_RANGE_CLAIMED_UUID_SUFFIX "keyRangeClaimedUuid"
 
 //ex: hugeBitcoinKeyListPageKey("6");
-const std::string hugeBitcoinKeyListPageKey(const std::string &pageZ)
-{
-	//ex: hugeBitcoinKeyListPage_6
-	return COUCHBASE_HUGE_BITCOIN_KEY_LIST_PAGE_KEY_PREFIX
-		ABC_COUCHBASE_KEY_SEPARATOR + pageZ;
-}
+const std::string hugeBitcoinKeyListPageKey(const std::string &pageZ);
 
 #endif // ABC2_COUCHBASE_AND_JSON_KEY_DEFINES_H

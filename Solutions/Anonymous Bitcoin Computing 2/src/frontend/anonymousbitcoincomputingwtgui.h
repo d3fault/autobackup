@@ -24,9 +24,7 @@
 #include <Wt/WFileUpload>
 #include <Wt/WImage>
 #include <Wt/WLink>
-#include <Wt/Http/Client>
 #include <Wt/WDefaultLoadingIndicator>
-#include <Wt/WScrollArea>
 //#include <Wt/Chart/WCartesianChart>
 
 //TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
@@ -40,10 +38,10 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
-#include "filedeletingfileresource.h"
+#include "accounttabs/actuallazyloadedtabwidget.h"
+
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
 
@@ -146,9 +144,17 @@ m_##text##MutexArray[lockedMutexIndex].unlock();
 
 class LettersNumbersOnlyRegExpValidatorAndInputFilter;
 class RegisterSuccessfulWidget;
+class AddFundsAccountTabBody;
+class NewAdSlotFillerAccountTabBody;
+class ViewAllExistingAdSlotFillersAccountTabBody;
 
 class AnonymousBitcoinComputingWtGUI : public WApplication
 {
+    //69'ing friend classes
+    friend class AddFundsAccountTabBody;
+    friend class NewAdSlotFillerAccountTabBody;
+    friend class ViewAllExistingAdSlotFillersAccountTabBody;
+
     friend class StoreCouchbaseDocumentByKeyRequest;
     friend class GetCouchbaseDocumentByKeyRequest;
 
@@ -180,30 +186,13 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void showAdvertisingBuyAdSpaceWidget();
 
     void showAccountWidget();
+    void handleAccountTabWidgetTabChanged();
+    ActualLazyLoadedTabWidget *m_AccountTabWidget;
+    AddFundsAccountTabBody *m_AddFundsAccountTab;
+    NewAdSlotFillerAccountTabBody *m_NewAdSlotFillerAccountTab;
     WScrollArea *m_AccountWidgetScrollArea;
     WContainerWidget *m_AccountWidget;
     WContainerWidget *m_AuthenticationRequiredWidget;
-    void handleAddFundsClicked();
-    WVBoxLayout *m_AddFundsPlaceholderLayout;
-    WText *m_PendingBitcoinBalanceLabel;
-    WText *m_ConfirmedBitcoinBalanceLabel;
-    double m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
-    WLineEdit *m_UploadNewSlotFiller_NICKNAME;
-    std::string m_UploadNewSlotFiller_NICKNAME_B64;
-    WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
-    WLineEdit *m_UploadNewSlotFiller_URL;
-    WContainerWidget *m_AdImageUploaderPlaceholder;
-    WFileUpload *m_AdImageUploader;
-    WPushButton *m_AdImageUploadButton;
-    WVBoxLayout *m_AdImageUploadResultsVLayout;
-    void setUpAdImageUploaderAndPutItInPlaceholder();
-    bool userSuppliedAdSlotFillerFieldsAreValid();
-    void handleAdImageUploadButtonClicked();
-    void handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished();
-    void handleAdImageUploadFailedFileTooLarge();
-    void resetAdSlotFillerImageUploadFieldsForAnotherUpload();
-    bool m_MostRecentlyUploadedImageWasSetAsPreview;
-    FileDeletingFileResource *m_MostRecentlyUploadedImageAsFileResource;
 
     WContainerWidget *m_RegisterWidget;
     WLineEdit *m_RegisterUsernameLineEdit;
@@ -240,49 +229,14 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError);
     void buySlotStep2d3faultCampaign0ButtonClicked();
-    std::string m_UserAccountJsonForLockingIntoGettingBitcoinKey;
-    u_int64_t m_UserAccountCASforBitcoinGettingKeyLockingAndUnlocking; //used both to lock the account into 'getting key', and to unlock it from that
-    bool m_UserAccountBitcoinDoingGettingKeyRecoverySoAccountLocked;
-    std::string m_BitcoinKeySetIndex_aka_setN;
-    std::string m_BitcoinKeySetPage_aka_PageY;
-    std::string m_PerGetBitcoinKeyUUID;
-    void checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(const string &userAccountDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
     void rollBackToBeforeBuyStep1ifNeeded();
     WContainerWidget *m_BuyStep2placeholder;
     int m_AllSlotFillersAdsCount;
     WComboBox *m_AllSlotFillersComboBox; //TODOoptimization: meh slot buying page needs to break out to it's own object methinks... fuck it for now
     std::string m_SlotFillerToUseInBuy;
     void verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(const string &userAccountJsonDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
-    void determineBitcoinStateButDontLetThemProceedForwardIfLockedAttemptingToFillAkaPurchaseSlot(const string &userAccountJsonDoc, u_int64_t casOnlyUsedWhenBitcoinStateIsInGettingKey_aka_lightRecovery, bool lcbOpSuccess, bool dbError);
-    void presentBitcoinKeyForPaymentsToUser(const std::string &bitcoinKey);
-    std::string m_CurrentBitcoinKeyForPayments;
-    std::string m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage;
-    void gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRoomEtc(const std::string &bitcoinKeySetNpageY, u_int64_t bitcoinKeySetNpageY_CAS, bool lcbOpSuccess, bool dbError);
-    void getBitcoinKeySetNPageYAttemptFinishedSoCheckItIfItExistsAndMakeItIfItDont(const std::string &bitcoinKeySetNpageY_orNot, u_int64_t bitcoinKeySetNpageY_CAS_orNot, bool lcbOpSuccess, bool dbError);
-    void getHugeBitcoinKeyListActualPageAttemptCompleted(const std::string &hugeBitcoinKeyListActualPage, u_int64_t casForUsingInSafelyInsertingOurPerFillUuid, bool lcbOpSuccess, bool dbError);
-    void creditConfirmedBitcoinAmountAfterAnalyzingUserAccount(const std::string &userAccountJsonDoc, u_int64_t userAccountCAS, bool lcbOpSuccess, bool dbError);
-    vector<string> m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList; //i think this might be the first time i've used an std::vector xD
-    void uuidPerRefillIsSeenOnHugeBitcoinListSoProceedWithActualNextPageFill();
-    void unlockUserAccountSafelyFromBitcoinGettingKeyBecauseShitWeGotAfuckingKey_NoSweatIfBeatenToIt();
-    void checkForPendingBitcoinBalanceButtonClicked();
-    void checkForConfirmedBitcoinBalanceButtonClicked();
-    void doneSendingBitcoinsToCurrentAddressButtonClicked();
-    void sendRpcJsonBalanceRequestToBitcoinD();
-    void handleBitcoinAddressBalancePollerReceivedResponse(boost::system::error_code err, const Http::Message& response);
-    void handleGetBitcoinKeyButtonClicked();
-    ptree m_RunningAllSlotFillersJsonDoc;
-    u_int64_t m_RunningAllSlotFillersJsonDocCAS;
-    void determineNextSlotFillerIndexAndThenAddSlotFillerToIt(const string &allAdSlotFillersJsonDoc, u_int64_t casOfAllSlotFillersDocForUpdatingSafely, bool lcbOpSuccess, bool dbError);
-    void tryToAddAdSlotFillerToCouchbase(const std::string &slotFillerIndexToAttemptToAdd);
     void continueRecoveringLockedAccountAtLoginAttempt_OrAnalyzingSlotBuyBeatToThePunch(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError);
-    void analyzeBitcoinKeySetN_CurrentPageDocToSeeWhatPageItIsOnAndIfItIsLocked(const std::string &bitcoinKeySetCurrentPageDoc, u_int64_t casOnlyForUseInFillingNextPageWayLaterOn, bool lcbOpSuccess, bool dbError);
-    u_int64_t m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater;
     void proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
-    void hugeBitcoinKeyListCurrentPageGetComplete(const std::string &hugeBitcoinKeyList_CurrentPageJson, u_int64_t cas, bool lcbOpSuccess, bool dbError);
-    std::string m_FillingNextBitcoinKeySetPerFillUuid_ForAfterCASswapLockSucceeds;
-    std::string m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList;
-    std::string m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList_NON_CHANGING;
-    void getAdSlotFillerThatIsntInAllAdSlotFillersAttemptFinished_soAddItToAllAddSlotFillersAndInitiateSlotFillerAddAtNextIndex(const string &adSlotFillerToExtractNicknameFrom, bool lcbOpSuccess, bool dbError);
     bool m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired;
     double m_CurrentPriceToUseForBuying;
     std::string m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds;
@@ -290,32 +244,15 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase;
     std::string m_AdSlotAboutToBeFilledIfLockIsSuccessful;
     void userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError);
-    void userAccountBitcoinLockedIntoGettingKeyAttemptComplete(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError);
-    void userAccountBitcoinGettingKeyLocked_So_GetSavingCASbitcoinKeySetNPageY();
-    void attemptToLockBitcoinKeySetNintoFillingNextPageModeComplete(u_int64_t casFromLockSoWeCanSafelyUnlockAfterNextPageFillComplete, bool lcbOpSuccess, bool dbError);
-    void bitcoinKeySetN_currentPage_Locked_soDoKeyRangeClaimAndNextPageCreation();
     std::string m_StartTimestampUsedInNewPurchase;
     u_int64_t m_CasFromUserAccountLockSoWeCanSafelyUnlockLater;
     std::string m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase;
     std::string m_UserAccountLockedDuringBuyJson;
     void slotFillAkaPurchaseAddAttemptFinished(bool lcbOpSuccess, bool dbError);
     void transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(bool dbError);
-    void storeLargeAdImageInCouchbaseDbAttemptComplete(const string &keyToSlotFillerAttemptedToAddTo, bool lcbOpSuccess, bool dbError); //read a huge article yesterday by the soup and was almost convinced to start using exceptions for error handling.... but how the fuck do you throw an exception across a thread O_o? (RpcGenerator's error mechanism was (is?) teh pro-est)
-    void doneAttemptingBitcoinKeySetNnextPageYcreation(bool dbError);
     void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError);
     void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError);
     void doneAttemptingUserAccountUnlockingWithoutDebittingFor_LoginRecovery_And_SlotPurchaseBeatToThePunch(bool lcbOpSuccess, bool dbError);
-    void doneAttemptingToUnlockUserAccountFromBitcoinGettingKeyToBitcoinHaveKey(bool lcbOpSuccess, bool dbError);
-    void doneAttemptingToUpdateBitcoinKeySetViaCASswapAkaClaimingAKey(bool lcbOpSuccess, bool dbError);
-    void doneAttemptingHugeBitcoinKeyListKeyRangeClaim(bool lcbOpSuccess, bool dbError);
-    void doneAttemptingToUnlockBitcoinKeySetN_CurrentPage(bool lcbOpSuccess, bool dbError);
-    void doneChangingHugeBitcoinKeyListCurrentPage(bool dbError);
-    void doneReLockingBitcoinKeySetN_CurrentPage_withNewFromPageZvalue(bool dbError);
-    void doneAttemptingCredittingConfirmedBitcoinBalanceForCurrentPaymentKeyCasSwapUserAccount(bool lcbOpSuccess, bool dbError);
-    void showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout();
-    void doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(bool lcbOpSuccess, bool dbError);
-    bool m_PageZisFromCurrentPageInDbSoCasSwapIncremementCurrentPageWhenIncrementingPageZ_AsOpposedToPageZbeingSeenFromLockedRecoveryInWhichCaseDont;
-    u_int64_t m_CasToUseForSafelyUpdatingHugeBitcoinKeyList_CurrentPageUsingIncrementedPageZ;
 
     //store
     void storeWithoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
@@ -395,7 +332,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     {
         INITIALINVALIDNULLGETSAVINGCAS,
         LOGINATTEMPTGET,
-        ADDFUNDSBUTTONCLICKEDSODETERMINEBITCOINSTATEBUTDONTLETTHEMPROCEEDIFLOCKEDATTEMPTINGTOFILLAKAPURCHASESLOT,
+        DETERMINEBITCOINSTATEBUTDONTLETTHEMPROCEEDIFLOCKEDATTEMPTINGTOFILLAKAPURCHASESLOT,
         GETBITCOINKEYSETNCURRENTPAGETOSEEWHATPAGEITISONANDIFITISLOCKED,
         GETBITCOINKEYSETNACTUALPAGETOSEEIFUUIDONITENOUGHROOM,
         GETUSERACCOUNTFORGOINGINTOGETTINGBITCOINKEYMODE,
@@ -424,9 +361,6 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     bool m_LoggedIn;
     std::string m_CurrentlyLoggedInUsername; //only valid if logged in
-
-    bool m_BitcoinAddressBalancePollerPollingPendingBalance;
-    Wt::Http::Client *m_BitcoinAddressBalancePoller;
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
     virtual void finalize();

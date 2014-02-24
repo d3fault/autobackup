@@ -40,7 +40,6 @@ DEFINES +=  ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS=3 \
                 ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_Get=500
 DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
             ABC_COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT=1 \ #just to give durability_poll something to do on my 1-node cluster test environment
-            ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" \
             ABC_NUM_BITCOIN_KEY_RANGES_ON_EACH_HUGEBITCOINLIST_PAGE=4 \
             ABC_NUM_BITCOIN_KEYS_ON_EACH_BITCOINKEYSET_PAGE=3 \
             ABC_NUM_BITCOINKEYSETS=2
@@ -64,14 +63,15 @@ DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
 #                ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_SET2=50 \
 #                ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_SET2=500 #had '251' to reflect max key size, but that doesn't account for the rest of the message wt->couchbase message. When I'm done hacking shit in, I should do 251+overhead. problem is i dunno how much space boost serialization is using :-P
 #DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=2 \
-#            ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\"
 #            ABC_NUM_BITCOIN_KEY_RANGES_ON_EACH_HUGEBITCOINLIST_PAGE=100 \
 #            ABC_NUM_BITCOIN_KEYS_ON_EACH_BITCOINKEYSET_PAGE=100 \ #also is number of bitcoin keys in each range on a hugeBitcoinList page
 #            ABC_NUM_BITCOINKEYSETS=1000
 
 # MIN MEMORY REQUIRED [for message queues only] calculated via above tunables: QUEUE_MAX_MESSAGE_SIZE * MAX_MESSAGES_IN_QUEUE * NUMBER_OF_QUEUES
 
-DEFINES +=  ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS=640 \
+DEFINES +=  ABC_500_INTERNAL_SERVER_ERROR_MESSAGE=\\\"500.Internal.Server.Error\\\" \ #lol can't have spaces what the fuck
+            ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" \
+            ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS=640 \
             ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS=100
 
 HEADERS += \
@@ -85,7 +85,12 @@ HEADERS += \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
     frontend/registersuccessfulwidget.h \
     frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h \
-    frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h
+    frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h \
+    frontend/accounttabs/addfundsaccounttabbody.h \
+    frontend/accounttabs/newadslotfilleraccounttabbody.h \
+    frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.h \
+    frontend/accounttabs/iaccounttabwidgettabbody.h \
+    frontend/accounttabs/actuallazyloadedtabwidget.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -96,7 +101,12 @@ SOURCES += main.cpp \
     frontend/filedeletingfileresource.cpp \
     frontend/registersuccessfulwidget.cpp \
     frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.cpp \
-    frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp
+    frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp \
+    frontend/accounttabs/addfundsaccounttabbody.cpp \
+    frontend/accounttabs/newadslotfilleraccounttabbody.cpp \
+    frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.cpp \
+    frontend/accounttabs/actuallazyloadedtabwidget.cpp \
+    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 
