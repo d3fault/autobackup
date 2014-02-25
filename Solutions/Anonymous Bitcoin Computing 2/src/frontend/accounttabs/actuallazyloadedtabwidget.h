@@ -2,6 +2,7 @@
 #define ACTUALLAZYLOADEDTABWIDGET_H
 
 #include <Wt/WTabWidget>
+#include <Wt/WMenuItem>
 using namespace Wt;
 
 #include "iaccounttabwidgettabbody.h"
@@ -10,7 +11,7 @@ class ActualLazyLoadedTabWidget : public WTabWidget //OLD (was protected but eh)
 {
 public:
     ActualLazyLoadedTabWidget(WContainerWidget *parent = 0);
-    WMenuItem *addTab(IAccountTabWidgetTabBody *child, const WString& label,
+    WMenuItem *myAddTab(IAccountTabWidgetTabBody *child, const WString& label,
               LoadPolicy loadingPolicy = LazyLoading);
 private:
     void handleCurrentTabChanged();

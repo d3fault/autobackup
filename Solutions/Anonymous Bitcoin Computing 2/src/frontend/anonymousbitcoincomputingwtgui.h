@@ -190,6 +190,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     ActualLazyLoadedTabWidget *m_AccountTabWidget;
     AddFundsAccountTabBody *m_AddFundsAccountTab;
     NewAdSlotFillerAccountTabBody *m_NewAdSlotFillerAccountTab;
+    ViewAllExistingAdSlotFillersAccountTabBody *m_ViewAllExistingAdSlotFillersAccountTab;
     WScrollArea *m_AccountWidgetScrollArea;
     WContainerWidget *m_AccountWidget;
     WContainerWidget *m_AuthenticationRequiredWidget;
@@ -326,6 +327,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         INITIALINVALIDNULLGET,
         GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET,
+        GETALLADSLOTFILLERSDOCFORVIEWING,
+        HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS,
         ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK
     };
     enum WhatTheGetSavingCasWasForEnum

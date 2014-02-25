@@ -8,7 +8,9 @@
 - all ad slot fillers preview (view query or expensive? maybe just expensive but only for owner as optimization (not security/privacy(LOL)). would still warrant pagination imo)
 - doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
 - No ops cause too big of messages to be sent through the message queue. This is mostly done already via sanitization, but one place that needs some thought is 'all ad slot fillers' doc. Either need a max amount of ad slot fillers.. or... [???]. The fact that nickname can be on it makes it variable (but nickname is max 64 chars, so...). It is not a problem when GET'ing the doc (std::string dynamic), but only when STORE'ing it (message queue fixed message size)
-
+- all ad slot fillers 'store' should use StoreLarge, but still have a relatively high maximum (and perhaps tell that max in the UI)
+- going to a non-existent page of all ad slot viewers for some reason makes the wresources for the page you are on to be re-requested (but they are gone so segfault)
+- apparent off by one for last page viewing of all ad slot viewers, requests non-existent slots [and THEN disables next page button]...
 
 ==1.1 Bugs==
 

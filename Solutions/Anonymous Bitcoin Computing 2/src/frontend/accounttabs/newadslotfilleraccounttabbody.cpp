@@ -84,13 +84,14 @@ void NewAdSlotFillerAccountTabBody::setUpAdImageUploaderAndPutItInPlaceholder()
     m_AdImageUploader = new WFileUpload(m_AdImageUploaderPlaceholder);
     //TODOreq: i can probably specify the temporary location of the uploaded file, and obviously i would want to use a tmpfs. would be even better if i could just upload into memory...
     m_AdImageUploader->setFileTextSize(40); //TODOreq: wtf is this, filename size or file size? i'll probably disregard filename when putting into b64/json... so if it's filename set it to like 256 or some sane max idfk, but worth noting i use the filename in a WFileResource to serve them the FIRST preview copy of the image they just uploaded
-    m_AdImageUploader->uploaded().connect(this, &NewAdSlotFillerAccountTabBody::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished);
+    m_AdImageUploader->uploaded().connect(this, &NewAdSlotFillerAccountTabBody::handleAdSlotFillerImageUploadFinished);
     m_AdImageUploader->fileTooLarge().connect(this, &NewAdSlotFillerAccountTabBody::handleAdImageUploadFailedFileTooLarge);
 }
-void NewAdSlotFillerAccountTabBody::handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished()
+void NewAdSlotFillerAccountTabBody::handleAdSlotFillerImageUploadFinished()
 {
     //TO DOnereq(relying on the fact that wfileupload gets deleted on logout, but using a simple m_LoggedIn check below to protect against said hypothetical race condition describe herein (any username is better than no username ;-P)): since we can't deferRendering() before/during the upload (WHY!??!?), the user may have done something (namely logged out, but the possibilities extend to every possible op theoretically). If the user for example logged out while the upload was in progress, we obviously don't want to continue forward with adding the ad slot filler, especially if we were to rely on a now blanked username (or worse, a logout/login NEW username WTF TODOreq). However it's also worth noting that logout deletes the account widget, which deletes the file upload object itself. Wtf happens when you delete a file upload object when an upload is in progress? Even still, there's probably a race condition where the upload object sends the upload finished signal, gets deleted just after that, and we still process the upload object's finished signal here. Maybe I need to protect the log out functionality with a bool m_AnUploadIsInProgress and just refuse until it's false again (note do it for tooBigOfFile as well ofc).... I think checking m_LoggedIn here/now won't cut it because they could have logged out and back in again as a different user, so that bool would still be true (that's a ridiculously unlikely race condition and would probably require automation and luck to accomplish.... and ultimately there would be very little gain because it's not funds or anything, just an advertisement image/etc). Protecting the log out with 'uploadIsInProgress' plugs that race condition, BUT now am I supposed to check that uploadIsInProgress before doing _ANY_ app op? Blah I wish I could just deferRendering and this wouldn't even be a problem.
-    if(!m_AbcApp->m_NewAdSlotFillerAccountTab || !userSuppliedAdSlotFillerFieldsAreValid())
+    //^^pretty sure the slot connected to upload finished (this one) WON'T get invoked if log out is pressed during upload (since log out deletes it). the signal emitter will not be exposed because it will be deleted, so the slot invocation will be discarded (i think/hope ;-P)
+    if(!userSuppliedAdSlotFillerFieldsAreValid())
     {
         resetAdSlotFillerImageUploadFieldsForAnotherUpload(); //TODOoptional: don't clear nickname/hover/url on this specific call (other calls to the method do want to)
         return;
@@ -122,7 +123,7 @@ void NewAdSlotFillerAccountTabBody::resetAdSlotFillerImageUploadFieldsForAnother
     m_UploadNewSlotFiller_NICKNAME->setText("");
     m_UploadNewSlotFiller_NICKNAME_B64 = "";
     m_UploadNewSlotFiller_HOVERTEXT->setText("");
-    m_UploadNewSlotFiller_URL->setText("");
+    m_UploadNewSlotFiller_URL->setText("http://");
     m_AdImageUploadButton->setEnabled(true);
     delete m_AdImageUploader;
     setUpAdImageUploaderAndPutItInPlaceholder();
@@ -312,6 +313,7 @@ void NewAdSlotFillerAccountTabBody::doneAttemptingToUpdateAllAdSlotFillersDocSin
     WImage *adImagePreview = new WImage(m_MostRecentlyUploadedImageAsFileResource, m_UploadNewSlotFiller_HOVERTEXT->text());
     adImagePreview->resize(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);
     WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, m_UploadNewSlotFiller_URL->text().toUTF8()), adImagePreview);
+    adImageAnchor->setTarget(TargetNewWindow);
 
     //difference between these two?
     adImagePreview->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());

@@ -42,7 +42,7 @@ private:
     void setUpAdImageUploaderAndPutItInPlaceholder();
     bool userSuppliedAdSlotFillerFieldsAreValid();
     void handleAdImageUploadButtonClicked();
-    void handleAdSlotFillerSubmitButtonClickedAkaImageUploadFinished();
+    void handleAdSlotFillerImageUploadFinished();
     void handleAdImageUploadFailedFileTooLarge();
     void resetAdSlotFillerImageUploadFieldsForAnotherUpload();
     void determineNextSlotFillerIndexAndThenAddSlotFillerToIt(const string &allAdSlotFillersJsonDoc, u_int64_t casOfAllSlotFillersDocForUpdatingSafely, bool lcbOpSuccess, bool dbError);

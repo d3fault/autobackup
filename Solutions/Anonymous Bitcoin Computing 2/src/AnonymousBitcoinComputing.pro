@@ -90,7 +90,8 @@ HEADERS += \
     frontend/accounttabs/newadslotfilleraccounttabbody.h \
     frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.h \
     frontend/accounttabs/iaccounttabwidgettabbody.h \
-    frontend/accounttabs/actuallazyloadedtabwidget.h
+    frontend/accounttabs/actuallazyloadedtabwidget.h \
+    frontend/accounttabs/singleuseselfdeletingmemoryresource.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -106,7 +107,8 @@ SOURCES += main.cpp \
     frontend/accounttabs/newadslotfilleraccounttabbody.cpp \
     frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.cpp \
     frontend/accounttabs/actuallazyloadedtabwidget.cpp \
-    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp
+    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
+    frontend/accounttabs/singleuseselfdeletingmemoryresource.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 
