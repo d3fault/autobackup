@@ -3,6 +3,7 @@
 
 #include <Wt/WResource>
 #include <Wt/Http/Response>
+#include <Wt/WDateTime>
 
 using namespace Wt;
 using namespace std;
@@ -15,6 +16,7 @@ public:
     virtual void handleRequest(const Http::Request &request, Http::Response &response);
 private:
     std::string *m_MemoryResource;
+    const std::string &dateTimeToRfc1123(const WDateTime &dateTime);
 };
 
 #endif // SINGLEUSESELFDELETINGMEMORYRESOURCE_H

@@ -1378,7 +1378,7 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
         break;
     case HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS:
     {
-        m_ViewAllExistingAdSlotFillersAccountTab->oneAdSlotFillerFromHackyMultiGetAttemptFinished(couchbaseDocument, lcbOpSuccess, dbError);
+        m_ViewAllExistingAdSlotFillersAccountTab->oneAdSlotFillerFromHackyMultiGetAttemptFinished(keyToCouchbaseDocument, couchbaseDocument, lcbOpSuccess, dbError);
     }
         break;
     case INITIALINVALIDNULLGET:

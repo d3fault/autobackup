@@ -10,7 +10,7 @@
 
 //TODOoptimization: for js, we should triggerUpdate the images as they come. no-js just stays deferRendered until the last one...
 ViewAllExistingAdSlotFillersAccountTabBody::ViewAllExistingAdSlotFillersAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
-    : IAccountTabWidgetTabBody(abcApp), m_CurrentPageOneIndexBased(1), m_PointerToCurrentPageInConstruction(0)
+    : IAccountTabWidgetTabBody(abcApp), m_CurrentPageOneIndexBased(1)
 { }
 void ViewAllExistingAdSlotFillersAccountTabBody::populateAndInitialize()
 {
@@ -54,64 +54,73 @@ void ViewAllExistingAdSlotFillersAccountTabBody::attemptToGetAllAdSlotFillersFin
     read_json(is, pt);
 
     m_AdsCount = boost::lexical_cast<int>(pt.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT));
+    m_TotalPagesCount = static_cast<int>(ceil(static_cast<double>(m_AdsCount) / static_cast<double>(VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE)));
 
-    buildCurrentPageAndAddToStackAndPageHash(); //async dispatch start. results will still go below controls
+    //[First-button][Previous-button] Page [spinbox-showing-current-page] [Go-button] of %numPages% [Next-button][Last-button] ...... where First/Previous/Next/Last are enabled/disabled as appropriate
 
-    //[Previous-button] Page [spinbox-showing-current-page] [Go-button] of %numPages% [Next-button] ...... where Next/Previous are both optionally enabled
+    m_FirstPageButton = new WPushButton("First Page", this);
+    m_FirstPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::firstPageButtonClicked);
+    m_FirstPageButton->disable(); //starts disabled because on first page
+
     m_PreviousPageButton = new WPushButton("Previous Page", this);
     m_PreviousPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::previousPageButtonClicked);
-    m_PreviousPageButton->disable(); //starts disabled because on first page
+    m_PreviousPageButton->disable(); //ditto
 
     new WText(" Page: ", this);
 
     m_PageSpinbox = new WSpinBox(this); //TODOreq: can't set validator because built in, but does C++ still need to call validate() ?
-    m_PageSpinbox->setRange(1, totalPagesCount());
+    m_PageSpinbox->setRange(1, m_TotalPagesCount);
     m_PageSpinbox->setValue(1);
     m_PageSpinbox->enterPressed().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::goToPageButtonClicked);
 
     WPushButton *goToPageButton = new WPushButton("Go", this); //TODOreq: handle jumping to same page by doing nothing
     goToPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::goToPageButtonClicked);
 
-    new WText(" of " + boost::lexical_cast<std::string>(totalPagesCount()) + " pages. ", this);
-
+    new WText(" of " + boost::lexical_cast<std::string>(m_TotalPagesCount) + " pages. ", this);
 
     m_NextPageButton = new WPushButton("Next Page", this);
     m_NextPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::nextPageButtonClicked);
-    m_NextPageButton->setEnabled(m_AdsCount > VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE); //TODOreq: off by one? methinks not
+    m_NextPageButton->setEnabled(m_TotalPagesCount > 1);
 
-    //TODOoptional: "First" and "Last" page buttons...
+    m_LastPageButton = new WPushButton("Last Page", this);
+    m_LastPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::lastPageButtonClicked);
+    m_LastPageButton->setEnabled(m_TotalPagesCount > 1);
 
 
     new WBreak(this);
     m_AllAdSlotFillersPagesStack = new WStackedWidget(this); //this was in the constructor, but we want it to be below the page controls (not that it matters since rendering is deferred still)
+
+    buildCurrentPageAndAddToStackAndPageHash(); //had this earlier as "async dispatch start. results will still go below controls", but now moving to below the controls because it depends on m_AllAdSlotFillersPagesStack being already created now :-P
 }
 void ViewAllExistingAdSlotFillersAccountTabBody::buildCurrentPageAndAddToStackAndPageHash()
 {
     m_NumberOfAdsHackilyMultiGetting = VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE; //sensible defaults (was zero)
-    if(m_CurrentPageOneIndexBased == totalPagesCount())
+    if(m_CurrentPageOneIndexBased == m_TotalPagesCount)
     {
-        //last page
+        //first and last pages may have uneven numbers (what's that fancy word i'm looking for...)
         m_NumberOfAdsHackilyMultiGetting = (m_AdsCount % VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE);
-        if(m_NumberOfAdsHackilyMultiGetting == 0)
+        if(m_NumberOfAdsHackilyMultiGetting == 0) //but maybe they don't ;-P
         {
             m_NumberOfAdsHackilyMultiGetting = VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE;
         }
-    }
-
-    //in case first page has < max per page:
-    m_NumberOfAdsHackilyMultiGetting = min(VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE, m_AdsCount);
+    }    
 
     //zero based indexes here (my head kind of hurts)
     int startDbIndex = ((m_CurrentPageOneIndexBased-1) * VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE);
     int endDbIndex = startDbIndex + m_NumberOfAdsHackilyMultiGetting;
+    m_AdSlotFillersOnePageOrderingHash.clear();
+    m_PointerToCurrentPageInConstruction = new WContainerWidget(m_AllAdSlotFillersPagesStack);
     for(int i = startDbIndex; i < endDbIndex; ++i)
     {
-        m_AbcApp->getCouchbaseDocumentByKeyBegin(adSpaceSlotFillerKey(m_AbcApp->m_CurrentlyLoggedInUsername, boost::lexical_cast<std::string>(i)));
+        const std::string &keyToCurrentAdSlotFiller = adSpaceSlotFillerKey(m_AbcApp->m_CurrentlyLoggedInUsername, boost::lexical_cast<std::string>(i));
+        m_AbcApp->getCouchbaseDocumentByKeyBegin(keyToCurrentAdSlotFiller);
+        m_AdSlotFillersOnePageOrderingHash[keyToCurrentAdSlotFiller] = new WContainerWidget(m_PointerToCurrentPageInConstruction); //empty placeholder, setting up the ordering here/now. the hash is to be able to access it again later to populate it
     }
     m_AbcApp->m_WhatTheGetWasFor = AnonymousBitcoinComputingWtGUI::HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS; //came up with this while sleeping, should work...
 }
-void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGetAttemptFinished(const string &oneAdSlotFillerJsonDoc, bool lcbOpSuccess, bool dbError)
+void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGetAttemptFinished(const std::string &keyToAdSlotFillerArriving, const string &oneAdSlotFillerJsonDoc, bool lcbOpSuccess, bool dbError)
 {
+    //TODOreq: ordering of the responses (key analysis? idfk)
     --m_NumberOfAdsHackilyMultiGetting; //TODOreq: we definitely still want to decrement this even if dbError or lcbOpFail, but err ehh uhmm idk i need some kind of special handling of that shit... like what if only one out of the 10 fails? or all 10 fail? etc
     if(dbError)
     {
@@ -146,23 +155,18 @@ void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGe
     std::istringstream is(oneAdSlotFillerJsonDoc);
     read_json(is, pt);
 
-    //first ad slot filler of multi-get received
-    if(!m_PointerToCurrentPageInConstruction)
-    {
-        m_PointerToCurrentPageInConstruction = new WContainerWidget(m_AllAdSlotFillersPagesStack);
-    }
-
     //every ad slot filler sets up an image
-    new WBreak(m_PointerToCurrentPageInConstruction);
-    new WBreak(m_PointerToCurrentPageInConstruction);
-    new WText("Preview of '" + pt.get<std::string>(JSON_SLOT_FILLER_NICKNAME) + "':", m_PointerToCurrentPageInConstruction);
-    new WBreak(m_PointerToCurrentPageInConstruction);
+    WContainerWidget *adImageAnchorOrderingPlaceholderContainer = m_AdSlotFillersOnePageOrderingHash.at(keyToAdSlotFillerArriving);
+    new WBreak(adImageAnchorOrderingPlaceholderContainer);
+    new WBreak(adImageAnchorOrderingPlaceholderContainer);
+    new WText("Preview of '" + base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_NICKNAME)) + "':", adImageAnchorOrderingPlaceholderContainer);
+    new WBreak(adImageAnchorOrderingPlaceholderContainer);
 
-    SingleUseSelfDeletingMemoryResource *adImageResource = new SingleUseSelfDeletingMemoryResource(base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_IMAGEB64)), m_PointerToCurrentPageInConstruction);
+    SingleUseSelfDeletingMemoryResource *adImageResource = new SingleUseSelfDeletingMemoryResource(base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_IMAGEB64)), adImageAnchorOrderingPlaceholderContainer);
     const std::string &adImageHoverText = base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_HOVERTEXT));
     WImage *adImage = new WImage(adImageResource, adImageHoverText);
-    adImage->resize(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);
-    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_URL))), adImage, m_PointerToCurrentPageInConstruction);
+    adImage->resize(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);    
+    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_URL))), adImage, adImageAnchorOrderingPlaceholderContainer);
     adImageAnchor->setTarget(TargetNewWindow);
     adImage->setToolTip(adImageHoverText);
     adImageAnchor->setToolTip(adImageHoverText);
@@ -171,16 +175,28 @@ void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGe
     {
         //got all (just got last) ad slot fillers for this page
         m_AllAdSlotFillersPagesStack->setCurrentWidget(m_PointerToCurrentPageInConstruction);
-        m_AdSlotFillersPagesOneBasedIndexHash[m_CurrentPageOneIndexBased] = m_PointerToCurrentPageInConstruction; //record the fact that the page is created
-        m_PointerToCurrentPageInConstruction = 0; //without deleting current page, set to zero for when the 'next' page is requested
+        m_AdSlotFillersPagesOneBasedIndexHash[m_CurrentPageOneIndexBased] = m_PointerToCurrentPageInConstruction; //record the fact that the page is created, so we don't re-create it if they come back to this page
         m_AbcApp->resumeRendering();
     }
+}
+void ViewAllExistingAdSlotFillersAccountTabBody::firstPageButtonClicked()
+{
+    if(m_CurrentPageOneIndexBased == 1)
+    {
+        //should never get here, but just in case we do (bug), we make sure it won't happen again xD
+        m_FirstPageButton->disable();
+        m_PreviousPageButton->disable();
+        return;
+    }
+    m_CurrentPageOneIndexBased = 1;
+    doAllAdSlotFillersViewPageChange();
 }
 void ViewAllExistingAdSlotFillersAccountTabBody::previousPageButtonClicked()
 {
     if(m_CurrentPageOneIndexBased == 1)
     {
         //should never get here, but just in case we do (bug), we make sure it won't happen again xD
+        m_FirstPageButton->disable();
         m_PreviousPageButton->disable();
         return;
     }
@@ -205,21 +221,36 @@ void ViewAllExistingAdSlotFillersAccountTabBody::goToPageButtonClicked()
 }
 void ViewAllExistingAdSlotFillersAccountTabBody::nextPageButtonClicked()
 {
-    if(m_CurrentPageOneIndexBased == totalPagesCount())
+    if(m_CurrentPageOneIndexBased == m_TotalPagesCount)
     {
         //should never get here, but just in case we do (bug), we make sure it won't happen again xD
         m_NextPageButton->disable();
+        m_LastPageButton->disable();
         return;
     }
     ++m_CurrentPageOneIndexBased;
     doAllAdSlotFillersViewPageChange();
 }
+void ViewAllExistingAdSlotFillersAccountTabBody::lastPageButtonClicked()
+{
+    if(m_CurrentPageOneIndexBased == m_TotalPagesCount)
+    {
+        //should never get here, but just in case we do (bug), we make sure it won't happen again xD
+        m_NextPageButton->disable();
+        m_LastPageButton->disable();
+        return;
+    }
+    m_CurrentPageOneIndexBased = m_TotalPagesCount;
+    doAllAdSlotFillersViewPageChange();
+}
 void ViewAllExistingAdSlotFillersAccountTabBody::doAllAdSlotFillersViewPageChange()
 {
     //Enable/Disable Previous/Next buttons depending...
+    m_FirstPageButton->setDisabled(m_CurrentPageOneIndexBased == 1);
     m_PreviousPageButton->setDisabled(m_CurrentPageOneIndexBased == 1);
-    m_NextPageButton->setDisabled(m_CurrentPageOneIndexBased == totalPagesCount());
     m_PageSpinbox->setValue(m_CurrentPageOneIndexBased);
+    m_NextPageButton->setDisabled(m_CurrentPageOneIndexBased == m_TotalPagesCount);
+    m_LastPageButton->setDisabled(m_CurrentPageOneIndexBased == m_TotalPagesCount);
 
     //first see if the page is already made. if it is, we just bring it to the top of the stacked widget
     try
@@ -235,8 +266,4 @@ void ViewAllExistingAdSlotFillersAccountTabBody::doAllAdSlotFillersViewPageChang
         buildCurrentPageAndAddToStackAndPageHash();
         m_AbcApp->deferRendering();
     }
-}
-int ViewAllExistingAdSlotFillersAccountTabBody::totalPagesCount()
-{
-    return ((m_AdsCount / VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE)+1); //integer imprecision intentional :)
 }

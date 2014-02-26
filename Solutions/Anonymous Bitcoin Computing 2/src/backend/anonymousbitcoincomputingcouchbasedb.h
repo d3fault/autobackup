@@ -88,13 +88,16 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n##Static(evuti
     static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->eventSlotForWt##text##n(); \
 }
 
+//My assumption (or, faulty understanding) that libevents were like signals and that emitting them multiple times would cause the receiving slot (callback) to be invoked the same amount of times was wrong. The 'event' is either active or inactive, and making it active when it's already active does nothing. I'd rather be wrong and have to change a tiny bit of code (adding the below while(try_receive) now) than be right and have to refactor a ton of it (a la lockfree::queue or some other solution)
 #define ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO(z, n, text) \
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n() \
 { \
     unsigned int priority; \
     message_queue::size_type actualMessageSize; \
-    m_##text##WtMessageQueue##n->receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority); \
-    eventSlotForWt##text(); \
+    while(m_##text##WtMessageQueue##n->try_receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority)) \
+    { \
+        eventSlotForWt##text(); \
+    } \
 }
 
 #define ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO \

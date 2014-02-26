@@ -3,9 +3,7 @@
 //oh the joys of polymorphism :)
 ActualLazyLoadedTabWidget::ActualLazyLoadedTabWidget(WContainerWidget *parent)
     : WTabWidget(parent)
-{
-    currentChanged().connect(this, &ActualLazyLoadedTabWidget::handleCurrentTabChanged);
-}
+{ }
 WMenuItem *ActualLazyLoadedTabWidget::myAddTab(IAccountTabWidgetTabBody *child, const WString &label, WTabWidget::LoadPolicy loadingPolicy)
 {
     bool firstAdd = count() == 0 ? true : false;
