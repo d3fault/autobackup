@@ -1,10 +1,10 @@
 #include "singleuseselfdeletingmemoryresource.h"
 
-SingleUseSelfDeletingMemoryResource::SingleUseSelfDeletingMemoryResource(const string &data, WObject *parent)
-    : WResource(parent), m_MemoryResource(new std::string())
+SingleUseSelfDeletingMemoryResource::SingleUseSelfDeletingMemoryResource(const string &data, const string &suggestedFilename, const string &mimeType, DispositionType dispositionType, WObject *parent)
+    : WResource(parent), m_MemoryResource(new std::string()), m_MimeType(mimeType)
 {
-    //TODOreq: suggest file name and mime type and all that jazz just like FileDeleting[...]
-    *m_MemoryResource = data; //TODOreq: does deep copy (even though less efficient, i want it to)
+    *m_MemoryResource = data;
+    suggestFileName(suggestedFilename, dispositionType);
 }
 SingleUseSelfDeletingMemoryResource::~SingleUseSelfDeletingMemoryResource()
 {
@@ -23,15 +23,14 @@ SingleUseSelfDeletingMemoryResource::~SingleUseSelfDeletingMemoryResource()
 void SingleUseSelfDeletingMemoryResource::handleRequest(const Http::Request &request, Http::Response &response)
 {
     (void)request;
-    if(m_MemoryResource) //making top most in stacked widget for some reason re-requests this. hopefully the caching below will help, but we still should do the check in case the browser doesn't comply (never let your app segfault when a browser doesn't feel like complying). initial testing seems to indicate that the cache headers solved it :)
+    if(m_MemoryResource) //making top most in stacked widget for some reason re-requests this. hopefully the caching below will help, but we still should do the check in case the browser doesn't comply (never let your app segfault when a browser doesn't feel like complying, because if there's one thing a browser's good at...). initial testing seems to indicate that the 'expires' header solves it :)
     {
-        //TODOreq (proper): response.setMimeType("plain/text");
         WDateTime now = WDateTime::currentDateTime();
-        response.addHeader("Date", dateTimeToRfc1123(now)); //does wt handle the colon?
+        response.addHeader("Date", dateTimeToRfc1123(now));
         WDateTime oneYearFromNow = now.addYears(1);
         response.addHeader("Expires", dateTimeToRfc1123(oneYearFromNow));
         response.setContentLength(m_MemoryResource->length());
-        response.setMimeType("image/png");
+        response.setMimeType(m_MimeType);
         response.out() << *m_MemoryResource;
 
         //what's the opposite of JIT? well this is it.
@@ -40,7 +39,7 @@ void SingleUseSelfDeletingMemoryResource::handleRequest(const Http::Request &req
     }
 }
 //expects/demands UTC (WDateTime::currentDateTime() complies), there's no 'letters' timezone format thingo, only numbers one :(
-const string &SingleUseSelfDeletingMemoryResource::dateTimeToRfc1123(const WDateTime &dateTime)
+const string SingleUseSelfDeletingMemoryResource::dateTimeToRfc1123(const WDateTime &dateTime)
 {
     return dateTime.toString("ddd, dd MMM yyyy hh:mm:ss GMT").toUTF8(); //hacked together RFC 1123 (that wasn't so bad)
 }

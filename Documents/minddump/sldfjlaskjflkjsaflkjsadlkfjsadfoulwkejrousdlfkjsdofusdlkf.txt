@@ -1,0 +1,3 @@
+If it doesn't compile under C89, it isn't worth compiling.
+
+:-P

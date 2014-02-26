@@ -81,7 +81,7 @@ HEADERS += \
     frontend2backendRequests/getcouchbasedocumentbykeyrequest.h \
     frontend2backendRequests/storecouchbasedocumentbykeyrequest.h \
     backend/getandsubscribecacheitem.h \
-    frontend/filedeletingfileresource.h \
+    frontend/accounttabs/filedeletingfileresource.h \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
     frontend/registersuccessfulwidget.h \
     frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h \
@@ -91,7 +91,8 @@ HEADERS += \
     frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.h \
     frontend/accounttabs/iaccounttabwidgettabbody.h \
     frontend/accounttabs/actuallazyloadedtabwidget.h \
-    frontend/accounttabs/singleuseselfdeletingmemoryresource.h
+    frontend/accounttabs/singleuseselfdeletingmemoryresource.h \
+    frontend/accounttabs/stupidmimefromextensionutil.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -99,7 +100,7 @@ SOURCES += main.cpp \
     backend/anonymousbitcoincomputingcouchbasedb.cpp \
     frontend2backendRequests/getcouchbasedocumentbykeyrequest.cpp \
     frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp \
-    frontend/filedeletingfileresource.cpp \
+    frontend/accounttabs/filedeletingfileresource.cpp \
     frontend/registersuccessfulwidget.cpp \
     frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.cpp \
     frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp \

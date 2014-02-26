@@ -38,6 +38,7 @@ const std::string adSpaceCampaignSlotKey(const std::string &username, const std:
 #define JSON_SLOT_FILLER_HOVERTEXT "hoverText"
 #define JSON_SLOT_FILLER_URL "url"
 #define JSON_SLOT_FILLER_IMAGEB64 "adImageB64"
+#define JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION "adImageExt"
 
 //ex: adSpaceSlotFillerKey("JimboKnives", "1");
 const std::string adSpaceSlotFillerKey(const std::string &username, const std::string &slotFillerIndex);

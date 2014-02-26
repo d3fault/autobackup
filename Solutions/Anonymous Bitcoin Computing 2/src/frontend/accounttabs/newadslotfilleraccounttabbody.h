@@ -12,7 +12,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-#include "../filedeletingfileresource.h"
+#include "filedeletingfileresource.h"
 
 using namespace Wt;
 using namespace boost::property_tree;

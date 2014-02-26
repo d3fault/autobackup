@@ -2,6 +2,7 @@
 
 #include "../anonymousbitcoincomputingwtgui.h"
 #include "../validatorsandinputfilters/safetextvalidatorandinputfilter.h"
+#include "stupidmimefromextensionutil.h"
 
 #include "abc2couchbaseandjsonkeydefines.h"
 
@@ -19,7 +20,9 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
 
     m_AdSlotFillersVLayout->addWidget(new WText("Upload Advertisements (For use in buying ad space)"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
     m_AdSlotFillersVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
-
+    m_AdSlotFillersVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_AdSlotFillersVLayout->addWidget(new WText("Note: For the time being, the maximum number of advertisements you can upload is ten thousand. If you need more (wtf?), create a new account (or bitch at me to fix/raise this limit)"), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_AdSlotFillersVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
     m_AdSlotFillersVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
     WGridLayout *uploadNewSlotFillerGridLayout = new WGridLayout();
 
@@ -105,7 +108,7 @@ void NewAdSlotFillerAccountTabBody::handleAdSlotFillerImageUploadFinished()
 
     //get adSpaceAllSlotFillers<username>
     m_AbcApp->getCouchbaseDocumentByKeySavingCasBegin(adSpaceAllSlotFillersKey(m_AbcApp->m_CurrentlyLoggedInUsername));
-    m_AbcApp->m_WhatTheGetSavingCasWasFor = AnonymousBitcoinComputingWtGUI::ALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS;
+    m_AbcApp->m_WhatTheGetSavingCasWasFor = AnonymousBitcoinComputingWtGUI::GETALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS;
 
     //fml: memory(httpd-wt) -> file(chillen) -> memory(my-wt) ->b64encode-> memory(my-wt) ->messageQueue-> memory(sendQueue) -> memory(receiveQueue) ->->messageQueue-> memory(my-couchbase) -> memory(couchbase-send-buffer)
     //8 copies woo how efficient. maybe i should have just passed the backend the filename :-/...
@@ -133,9 +136,9 @@ void NewAdSlotFillerAccountTabBody::resetAdSlotFillerImageUploadFieldsForAnother
         if(m_MostRecentlyUploadedImageAsFileResource)
         {
             delete m_MostRecentlyUploadedImageAsFileResource;
-            m_MostRecentlyUploadedImageAsFileResource = 0;
         }
     }
+    m_MostRecentlyUploadedImageAsFileResource = 0; //delete only under certain circumstances, but always set to zero for next image upload
     m_MostRecentlyUploadedImageWasSetAsPreview = false;
 
     m_AbcApp->resumeRendering();
@@ -175,6 +178,13 @@ void NewAdSlotFillerAccountTabBody::determineNextSlotFillerIndexAndThenAddSlotFi
         read_json(is, m_RunningAllSlotFillersJsonDoc);
 
         slotFillerIndexToAttemptToAdd = m_RunningAllSlotFillersJsonDoc.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT); //seems like off-by-one to not add "+1" here, but isn't :-P
+
+        if(boost::lexical_cast<int>(slotFillerIndexToAttemptToAdd) == 9999)
+        {
+            m_AdSlotFillersVLayout->addWidget(new WText("You hit the maximum amount of advertisement uploads (ten thousand). Please make a new account and/or bitch at me to raise this limit"));
+            resetAdSlotFillerImageUploadFieldsForAnotherUpload();
+            return;
+        }
     }
 
     tryToAddAdSlotFillerToCouchbase(slotFillerIndexToAttemptToAdd);
@@ -192,8 +202,8 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     pt.put(JSON_SLOT_FILLER_URL, base64Encode(m_UploadNewSlotFiller_URL->text().toUTF8()));
 
     std::string adImageUploadFileLocation = m_AdImageUploader->spoolFileName();
-    pair<string,string> guessedExtensionAndMimeType = FileDeletingFileResource::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8());
-    m_MostRecentlyUploadedImageAsFileResource = new FileDeletingFileResource("image/" + guessedExtensionAndMimeType.second, adImageUploadFileLocation, guessedExtensionAndMimeType.first, this); //semi-old (now using m_AccountWidget instead of 'this'): 'this' is set as parent for last resort cleanup of the WResource, but that doesn't account for it's underlying buffer. I also might want to delete this resource if they upload a 2nd/3rd/etc image, BUT TODOreq there are threading issues because the WImage/WResource is served concurrently I believe (or is that only true for static resources?). Perhaps changing internal paths would be a good time to delete all the images (or in WResource::handleRequest itself, since they'll only be used once anyways..), idfk. There is also the issue of me trying to re-use the same byte buffer for a 2nd upload (which is backing a resource for a first upload that hasn't yet finished streaming back / previewing back to them)
+    pair<string,string> guessedExtensionAndMimeType = StupidMimeFromExtensionUtil::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8());
+    m_MostRecentlyUploadedImageAsFileResource = new FileDeletingFileResource(adImageUploadFileLocation, "image" + guessedExtensionAndMimeType.first, "image/" + guessedExtensionAndMimeType.second, WResource::Inline, this); //semi-old (now using m_AccountWidget instead of 'this'): 'this' is set as parent for last resort cleanup of the WResource, but that doesn't account for it's underlying buffer. I also might want to delete this resource if they upload a 2nd/3rd/etc image, BUT TODOreq there are threading issues because the WImage/WResource is served concurrently I believe (or is that only true for static resources?). Perhaps changing internal paths would be a good time to delete all the images (or in WResource::handleRequest itself, since they'll only be used once anyways..), idfk. There is also the issue of me trying to re-use the same byte buffer for a 2nd upload (which is backing a resource for a first upload that hasn't yet finished streaming back / previewing back to them)
     m_AdImageUploader->stealSpooledFile();
 
     //unsure if i should do the expensive read/b64encode here or in the db backend (passing only filename). i want an async api obviously, but laziness/KISS might dictate otherwise
@@ -222,6 +232,7 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     std::string adImageB64string = base64Encode(adImageString); //TODOreq: doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
 
     pt.put(JSON_SLOT_FILLER_IMAGEB64, adImageB64string); //TODOoptimization: maybe save a copy by doing base64encode right into second argument here? doubt it (and if this were Qt land, I'd be hesitant to even try it (shit disappears yo))
+    pt.put(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION, guessedExtensionAndMimeType.first);
 
     std::ostringstream adSlotFillerJsonDocBuffer;
     write_json(adSlotFillerJsonDocBuffer, pt, false);
@@ -272,10 +283,9 @@ void NewAdSlotFillerAccountTabBody::storeLargeAdImageInCouchbaseDbAttemptComplet
     m_RunningAllSlotFillersJsonDoc.put(JSON_ALL_SLOT_FILLERS_ADS_COUNT, oldAdsCountButAlsoOurIndexOfTheOneJustAdded);
 
 
-    //TODOreq: cas-swap-accepting-fail the allAdSlotFillers doc
     std::ostringstream updatedAllAdSlotFillersJsonDocBuffer;
     write_json(updatedAllAdSlotFillersJsonDocBuffer, m_RunningAllSlotFillersJsonDoc, false);
-    m_AbcApp->store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(adSpaceAllSlotFillersKey(m_AbcApp->m_CurrentlyLoggedInUsername), updatedAllAdSlotFillersJsonDocBuffer.str(), m_RunningAllSlotFillersJsonDocCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_AbcApp->storeLarge_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(adSpaceAllSlotFillersKey(m_AbcApp->m_CurrentlyLoggedInUsername), updatedAllAdSlotFillersJsonDocBuffer.str(), m_RunningAllSlotFillersJsonDocCAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_AbcApp->m_WhatTheStoreWithInputCasWasFor = AnonymousBitcoinComputingWtGUI::UPDATEALLADSLOTFILLERSDOCSINCEWEJUSTCREATEDNEWADSLOTFILLER;
 }
 void NewAdSlotFillerAccountTabBody::doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(bool lcbOpSuccess, bool dbError)

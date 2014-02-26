@@ -53,10 +53,14 @@ void ViewAllExistingAdSlotFillersAccountTabBody::attemptToGetAllAdSlotFillersFin
     std::istringstream is(allAdSlotFillersJsonDocMaybe);
     read_json(is, pt);
 
-    m_AdsCount = boost::lexical_cast<int>(pt.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT));
+    std::string adsCountString = pt.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT);
+    m_AdsCount = boost::lexical_cast<int>(adsCountString);
     m_TotalPagesCount = static_cast<int>(ceil(static_cast<double>(m_AdsCount) / static_cast<double>(VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE)));
 
     //[First-button][Previous-button] Page [spinbox-showing-current-page] [Go-button] of %numPages% [Next-button][Last-button] ...... where First/Previous/Next/Last are enabled/disabled as appropriate
+
+    new WText("Advertisements uploaded: " + adsCountString, this);
+    new WBreak(this);
 
     m_FirstPageButton = new WPushButton("First Page", this);
     m_FirstPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::firstPageButtonClicked);
@@ -162,7 +166,8 @@ void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGe
     new WText("Preview of '" + base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_NICKNAME)) + "':", adImageAnchorOrderingPlaceholderContainer);
     new WBreak(adImageAnchorOrderingPlaceholderContainer);
 
-    SingleUseSelfDeletingMemoryResource *adImageResource = new SingleUseSelfDeletingMemoryResource(base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_IMAGEB64)), adImageAnchorOrderingPlaceholderContainer);
+    std::pair<string,string> guessedExtensionAndMimeType = StupidMimeFromExtensionUtil::guessExtensionAndMimeType(pt.get<std::string>(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION));
+    SingleUseSelfDeletingMemoryResource *adImageResource = new SingleUseSelfDeletingMemoryResource(base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_IMAGEB64)), "image" + guessedExtensionAndMimeType.first, "image/" + guessedExtensionAndMimeType.second, WResource::Inline, adImageAnchorOrderingPlaceholderContainer);
     const std::string &adImageHoverText = base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_HOVERTEXT));
     WImage *adImage = new WImage(adImageResource, adImageHoverText);
     adImage->resize(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);    

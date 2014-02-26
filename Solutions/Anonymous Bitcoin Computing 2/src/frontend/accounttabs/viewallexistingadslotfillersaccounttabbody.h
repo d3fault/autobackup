@@ -16,6 +16,7 @@
 #include <boost/unordered_map.hpp>
 
 #include "singleuseselfdeletingmemoryresource.h"
+#include "stupidmimefromextensionutil.h"
 
 using namespace Wt;
 using namespace std;
