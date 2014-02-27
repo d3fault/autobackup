@@ -177,10 +177,14 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
         return;
     }
 
+    //libevent events
+
     //m_StoreEventCallbackForWt0 = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, eventSlotForWtStore0Static, this);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO)
 
     m_GetAndSubscribePollingTimeout = evtimer_new(LibEventBaseScopedDeleterInstance.LibEventBase, &AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic, this);
+    AutoRetryingWithExponentialBackoffCouchbaseGetRequest::setAnonymousBitcoinComputingCouchbaseDB(this);
+    AutoRetryingWithExponentialBackoffCouchbaseGetRequest::setEventBase(LibEventBaseScopedDeleterInstance.LibEventBase); //need this as a member to add exponential backoff timers at runtime
     m_BeginStoppingCouchbaseCleanlyEvent = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, &AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic, this);
     m_FinalCleanUpAndJoinEvent = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, &AnonymousBitcoinComputingCouchbaseDB::finalCleanupAndJoin, LibEventBaseScopedDeleterInstance.LibEventBase);
 
@@ -376,12 +380,16 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
 void AnonymousBitcoinComputingCouchbaseDB::getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp)
 {
     //TODOoptional: boost::bind might do this recontextualizing for me (hell it might even just be a macro doing the same thing!), but idk and usually only use boost::bind when i'm told to. I find it hilarious that Qt allows you to pass a pointer across a thread, and boost allows you to point to a specific class instance's method... but both say that the other's is "wrong"... and yet they are both C++ frameworks/libraries that provide a lot of the same functionality. I'll tell you one thing: although I'm glad I can still swim in boost land, I much prefer Qt. Much neater and stuff (hard to explain unless you are coder too in which case you already know so what the fuck who am I typing this to?)
-    const_cast<AnonymousBitcoinComputingCouchbaseDB*>(static_cast<const AnonymousBitcoinComputingCouchbaseDB*>(lcb_get_cookie(instance)))->getCallback(cookie, error, resp);
+    AnonymousBitcoinComputingCouchbaseDB *anonymousBitcoinComputingCouchbaseDB = const_cast<AnonymousBitcoinComputingCouchbaseDB*>(static_cast<const AnonymousBitcoinComputingCouchbaseDB*>(lcb_get_cookie(instance)));
+    anonymousBitcoinComputingCouchbaseDB->getCallback(cookie, error, resp);
+    anonymousBitcoinComputingCouchbaseDB->decrementPendingGetCountAndHandle(); //because too many damn exit points in getCallback, BUT we do only want to call it _AFTER_ all of them (and in fact i think i was forgetting to call it in some places. putting it here ensures it always gets called :-P)
 }
 void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp)
 {
-    GetCouchbaseDocumentByKeyRequest *originalRequest = const_cast<GetCouchbaseDocumentByKeyRequest*>(static_cast<const GetCouchbaseDocumentByKeyRequest*>(cookie));
+    AutoRetryingWithExponentialBackoffCouchbaseGetRequest *autoRetryingWithExponentialBackoffCouchbaseGetRequest = const_cast<AutoRetryingWithExponentialBackoffCouchbaseGetRequest*>(static_cast<const AutoRetryingWithExponentialBackoffCouchbaseGetRequest*>(cookie));
+    GetCouchbaseDocumentByKeyRequest *originalRequest = autoRetryingWithExponentialBackoffCouchbaseGetRequest->requestRetrying();
 
+    //TODOoptimization: __unlikely, though i think the innards of an if statement are that by default (since "jump". but maybe __unlikely optimizes the statement evaluation as well?)
     if(error != LCB_SUCCESS)
     {
         if(error != LCB_KEY_ENOENT)
@@ -397,6 +405,8 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
                     LCB_BUSY
                     LCB_NOT_MY_VBUCKET
                 */
+                autoRetryingWithExponentialBackoffCouchbaseGetRequest->backoffAndRetryAgain();
+                return;
             }
 
             //TODOreq: MAYBE lcb_get_replica when error qualifies (play around with failover stuff + timeouts. i don't know how couchbase does failovers, I might just need a normal retry (assuming failover time is less than message timeout (so by the time the second one is dispatched, failover has occured)) instead of the get_replica thing)
@@ -410,6 +420,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             {
                 GetCouchbaseDocumentByKeyRequest::respond(originalRequest, 0, 0, false, true);
             }
+            m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
             ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
             return;
         }
@@ -423,9 +434,13 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         {
             GetCouchbaseDocumentByKeyRequest::respond(originalRequest, 0, 0, false, false);
         }
+        m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
         ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
         return;
     }
+
+    //getting here means no more exponential retrying for this request is necessary, so recycle it into the cache
+    m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
 
     if(originalRequest->GetAndSubscribe != 0)
     {
@@ -447,7 +462,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             for(int i = (static_cast<int>(requestVectorSize)-1); i > -1; --i)
             {
                 //process unsubscribe requests
-                GetCouchbaseDocumentByKeyRequest *originalUnsubscribeRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(m_UnsubscribeRequestsToProcessMomentarily[i]);
+                GetCouchbaseDocumentByKeyRequest *originalUnsubscribeRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(m_UnsubscribeRequestsToProcessMomentarily.back());
                 m_UnsubscribeRequestsToProcessMomentarily.pop_back();
 
                 GetCouchbaseDocumentByKeyRequest *existingSubscription;
@@ -479,10 +494,10 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
                 delete originalUnsubscribeRequestFromWt;
             }
             requestVectorSize = m_ChangeSessionIdRequestsToProcessMomentarily.size();
-            for(int i = (static_cast<int>(requestVectorSize)-1); i > -1; --i)
+            for(int i = (static_cast<int>(requestVectorSize)-1); i > -1; --i) //TODOoptimization: change to while(!empty)
             {
                 //process change session id requests
-                GetCouchbaseDocumentByKeyRequest *originalChangeSessionIdRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(m_ChangeSessionIdRequestsToProcessMomentarily[i]);
+                GetCouchbaseDocumentByKeyRequest *originalChangeSessionIdRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(m_ChangeSessionIdRequestsToProcessMomentarily.back());
                 m_ChangeSessionIdRequestsToProcessMomentarily.pop_back();
 
                 GetCouchbaseDocumentByKeyRequest *existingSubscription;
@@ -519,7 +534,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             }
 
 
-            //traditional subscription update checks
+            //traditional subscription update checks (now that we've handled unsubscribes + change session ids)
             cacheItem->CurrentlyFetchingPossiblyNew = false;
             std::string possiblyNewValueDependingOnCas = std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes);
             lcb_cas_t casToTellUsIfTheDocChangedOrNot = resp->v.v0.cas;
@@ -561,8 +576,8 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             //we should probably also remove the cacheItem from the list and delete the pointer, SO THAT the cache 'misses' when someone new subscribes and then they do a full get and the timer shits starts back up
             //^^that's probably not the only time we need to [??? to what ???]
         }
-        ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(Get)
-        return;
+        //ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(Get)
+        return; //don't delete the request hackily used for polling for two reasons: 1) might still be a subscriber, 2) if it unsubscribed it has already been deleted
     }
 
     if(originalRequest->SaveCAS) //TODOoptimization: __unlikely or whatever i can find in boost
@@ -575,6 +590,11 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
     }
 
     ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Get)
+}
+//context is everything
+void AnonymousBitcoinComputingCouchbaseDB::decrementPendingGetCountAndHandle()
+{
+    ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(Get)
 }
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
@@ -637,6 +657,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
 }
 void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlot()
 {
+    //TODOreq: subscribers shouldn't take up an AutoRetry thingy, but if they reeaaally need to because it would warrant a huge refactor otherwise, i guess it's ok :-/...
     std::list<std::string> listOfKeysWithNoSubscribers;
     BOOST_FOREACH(GetAndSubscribeCacheHashType::value_type &v, m_GetAndSubscribeCacheHash)
     {
@@ -645,6 +666,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
         //get the first subscriber found. if there aren't any subscribers found, we don't do the get and then remove it from m_GetAndSubscribeCacheHash and delete the cache item
 
         GetCouchbaseDocumentByKeyRequest *getCouchbaseDocumentByKeyRequestFromWt = NULL; //had it called 'aRequestToHackilyUseLoL' but eh MACRO
+        //TODOreq: update this to use auto retrying wrapper (will segfault :P)
         if(!cacheItem->Subscribers.empty())
         {
             getCouchbaseDocumentByKeyRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->Subscribers.begin()->second);
@@ -657,7 +679,8 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
         if(getCouchbaseDocumentByKeyRequestFromWt != NULL)
         {
             cacheItem->CurrentlyFetchingPossiblyNew = true;
-            ABC_DO_SCHEDULE_COUCHBASE_GET()
+            //ABC_DO_SCHEDULE_COUCHBASE_GET()
+            scheduleGetRequest(0);
             //TODOreq: as i have it coded now, if i did two subscribables, they would each event_add the same timer using their own "100ms" thingy. not sure if they'd overwrite each other or what, but yea i need to fix that before ever doing multiple subscribables
         }
         else
@@ -708,6 +731,11 @@ void AnonymousBitcoinComputingCouchbaseDB::notifyMainThreadWeAreFinishedWithAllP
         m_IsFinishedWithAllPendingRequests = true;
     }
     m_IsFinishedWithAllPendingRequestsWaitCondition.notify_one();
+}
+void AnonymousBitcoinComputingCouchbaseDB::scheduleGetRequest(AutoRetryingWithExponentialBackoffCouchbaseGetRequest *autoRetryingWithExponentialBackoffCouchbaseGetRequest)
+{
+    //TODOoptional: move that macro's body to here since it's now worthless
+    ABC_DO_SCHEDULE_COUCHBASE_GET
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore()
 {
@@ -827,9 +855,23 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         }
     }
 
+    //get new or recycled AutoRetryingWithExponentialBackoffCouchbaseGetRequest
+    AutoRetryingWithExponentialBackoffCouchbaseGetRequest *newOrRecycledExponentialBackoffTimerAndCallback;
+    if(m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.empty())
+    {
+        //get new
+        newOrRecycledExponentialBackoffTimerAndCallback = new AutoRetryingWithExponentialBackoffCouchbaseGetRequest();
+    }
+    else
+    {
+        //or recycled
+        newOrRecycledExponentialBackoffTimerAndCallback = m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.back();
+        m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.pop_back();
+    }
+    newOrRecycledExponentialBackoffTimerAndCallback->setNewRequestToRetry(getCouchbaseDocumentByKeyRequestFromWt);
     //TODOreq: proper error handling inside this macro there is a if("error  != LCB_SUCCESS") section (how da fuq do you put comments in macros?!!?)
     //^^Instincts tell me to do object deletion if scheduling isn't LCB_SUCCESS in following macro (just like we do for store), but what are the implications of deleting that if we're hackily using it for get-and-subscribe?
-    ABC_DO_SCHEDULE_COUCHBASE_GET()
+    scheduleGetRequest(newOrRecycledExponentialBackoffTimerAndCallback);
 }
 //struct event *AnonymousBitcoinComputingCouchbaseDB::getStoreEventCallbackForWt0()
 //{

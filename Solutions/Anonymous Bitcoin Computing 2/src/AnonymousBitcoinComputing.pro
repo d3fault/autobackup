@@ -7,8 +7,10 @@
 #   2a) <ajax-puzzle>true</ajax-puzzle>
 #   2b) <max-request-size>2048</max-request-size> .... 2mb corresponding to "Store Large" defined below (but without message queue header)
 #3) Try uncommenting the WStackedWidget's animation code, because I think it needed a css file that (1)'s resource hack thing brings in
+#4) Uncomment the 'triggered' connection in ActualLazyLoadedTabWidget (too lazy to update my devbox (whereas my test vm has it xD))
 #4) Uncomment DEPLOY VARIABLES below [and comment-out or delete TESTING VARIABLES]
-#5) Launch with ./wtAppHere --docroot ".;./resources/" --http-address 0.0.0.0 --http-port 7777
+#5) Launch with ./wtAppHere --docroot ".;/usr/local/share/Wt" --http-address 0.0.0.0 --http-port 7777
+#                                        ^or just /usr/share/Wt if using Wt from debian repository
 
 TARGET = AnonymousBitcoinComputing
 TEMPLATE = app
@@ -92,7 +94,8 @@ HEADERS += \
     frontend/accounttabs/iaccounttabwidgettabbody.h \
     frontend/accounttabs/actuallazyloadedtabwidget.h \
     frontend/accounttabs/singleuseselfdeletingmemoryresource.h \
-    frontend/accounttabs/stupidmimefromextensionutil.h
+    frontend/accounttabs/stupidmimefromextensionutil.h \
+    backend/exponentialbackofftimerandcallback.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -109,7 +112,8 @@ SOURCES += main.cpp \
     frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.cpp \
     frontend/accounttabs/actuallazyloadedtabwidget.cpp \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
-    frontend/accounttabs/singleuseselfdeletingmemoryresource.cpp
+    frontend/accounttabs/singleuseselfdeletingmemoryresource.cpp \
+    backend/exponentialbackofftimerandcallback.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 

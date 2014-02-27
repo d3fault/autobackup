@@ -13,6 +13,7 @@
 #include <boost/foreach.hpp>
 
 #include "getandsubscribecacheitem.h"
+#include "exponentialbackofftimerandcallback.h"
 
 using namespace boost::interprocess;
 
@@ -114,19 +115,20 @@ if(m_NoMoreAllowedMuahahaha && m_PendingStoreCount == 0 && m_PendingGetCount == 
     notifyMainThreadWeAreFinishedWithAllPendingRequests(); \
 }
 
+//TODOoptional: delete this now worthless macro
 #define ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(GetOrStore) \
-delete originalRequest; \
-ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(GetOrStore)
+delete originalRequest;
+//ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(GetOrStore)
 
-#define ABC_DO_SCHEDULE_COUCHBASE_GET() \
+#define ABC_DO_SCHEDULE_COUCHBASE_GET \
 lcb_get_cmd_t cmd; \
 const lcb_get_cmd_t *cmds[1]; \
 cmds[0] = &cmd; \
-const char *keyInput = getCouchbaseDocumentByKeyRequestFromWt->CouchbaseGetKeyInput.c_str(); \
+const char *keyInput = autoRetryingWithExponentialBackoffCouchbaseGetRequest->requestRetrying()->CouchbaseGetKeyInput.c_str(); \
 memset(&cmd, 0, sizeof(cmd)); \
 cmd.v.v0.key = keyInput; \
 cmd.v.v0.nkey = strlen(keyInput); \
-lcb_error_t error = lcb_get(m_Couchbase, getCouchbaseDocumentByKeyRequestFromWt, 1, cmds); \
+lcb_error_t error = lcb_get(m_Couchbase, autoRetryingWithExponentialBackoffCouchbaseGetRequest, 1, cmds); \
 if(error  != LCB_SUCCESS) \
 { \
     cerr << "Failed to setup get request: " << lcb_strerror(m_Couchbase, error) << endl; \
@@ -213,6 +215,8 @@ public:
     //struct event *getStoreEventCallbackForWt0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO)
 private:
+    friend class AutoRetryingWithExponentialBackoffCouchbaseGetRequest;
+
     boost::thread m_Thread;
     lcb_t m_Couchbase;
     boost::condition_variable m_IsConnectedWaitCondition;
@@ -233,6 +237,7 @@ private:
     std::vector<void*> m_ChangeSessionIdRequestsToProcessMomentarily;
     static const struct timeval m_OneHundredMilliseconds;
     struct event *m_GetAndSubscribePollingTimeout; //all keys share a timeout for now (and possibly forever), KISS
+    std::vector<AutoRetryingWithExponentialBackoffCouchbaseGetRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache;
 
     void threadEntryPoint();
 
@@ -247,6 +252,7 @@ private:
 
     static void getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
     void getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
+    void decrementPendingGetCountAndHandle();
 
     static void durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp);
     void durabilityCallback(const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp);
@@ -278,6 +284,7 @@ private:
     //static void eventSlotForWtStore0Static(evutil_socket_t unusedSocket, short events, void *userData);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO)
 
+    void scheduleGetRequest(AutoRetryingWithExponentialBackoffCouchbaseGetRequest *autoRetryingWithExponentialBackoffCouchbaseGetRequest);
     //void eventSlotForWtStore0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO)
 
