@@ -1,31 +1,28 @@
-#ifndef EXPONENTIALBACKOFFTIMERANDCALLBACK_H
-#define EXPONENTIALBACKOFFTIMERANDCALLBACK_H
+#ifndef IAUTORETRYINGWITHEXPONENTIALBACKOFFCOUCHBASEREQUEST_H
+#define IAUTORETRYINGWITHEXPONENTIALBACKOFFCOUCHBASEREQUEST_H
 
 #include <event2/event.h>
 
 class AnonymousBitcoinComputingCouchbaseDB;
-class GetCouchbaseDocumentByKeyRequest;
 
-class AutoRetryingWithExponentialBackoffCouchbaseGetRequest
+class IAutoRetryingWithExponentialBackoffCouchbaseRequest
 {
 public:
     static void setAnonymousBitcoinComputingCouchbaseDB(AnonymousBitcoinComputingCouchbaseDB *anonymousBitcoinComputingCouchbaseDB);
     static void setEventBase(struct event_base *eventBase);
 
-    AutoRetryingWithExponentialBackoffCouchbaseGetRequest();
-    ~AutoRetryingWithExponentialBackoffCouchbaseGetRequest();
-    void setNewRequestToRetry(GetCouchbaseDocumentByKeyRequest *newRequestToRetry);
-    GetCouchbaseDocumentByKeyRequest *requestRetrying();
+    IAutoRetryingWithExponentialBackoffCouchbaseRequest();
+    ~IAutoRetryingWithExponentialBackoffCouchbaseRequest();
     void backoffAndRetryAgain();
-private:
+protected:
     static AnonymousBitcoinComputingCouchbaseDB *m_AnonymousBitcoinComputingCouchbaseDB;
     static struct event_base *m_EventBase;
 
+    void resetTimeval();
     struct event *m_MyLibEventTimer;
     struct timeval m_MyBackoffTimeval;
     static void timeoutCallbackStatic(int unusedSocket, short events, void *userData);
-    void timeoutCallback();
-    GetCouchbaseDocumentByKeyRequest *m_RequestToRetry;
+    virtual void timeoutCallback()=0;
 };
 
-#endif // EXPONENTIALBACKOFFTIMERANDCALLBACK_H
+#endif // IAUTORETRYINGWITHEXPONENTIALBACKOFFCOUCHBASEREQUEST_H

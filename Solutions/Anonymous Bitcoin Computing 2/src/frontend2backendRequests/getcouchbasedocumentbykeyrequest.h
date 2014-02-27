@@ -41,7 +41,7 @@ public:
     bool SaveCAS;
     unsigned char GetAndSubscribe;
 
-    static void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes, bool lcbOpSuccess, bool dbError);
+    static void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, std::string couchbaseDocument, bool lcbOpSuccess, bool dbError);
     static void respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest,  std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 private:
     friend class boost::serialization::access;

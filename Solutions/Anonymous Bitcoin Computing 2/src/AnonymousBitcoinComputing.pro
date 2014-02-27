@@ -95,7 +95,9 @@ HEADERS += \
     frontend/accounttabs/actuallazyloadedtabwidget.h \
     frontend/accounttabs/singleuseselfdeletingmemoryresource.h \
     frontend/accounttabs/stupidmimefromextensionutil.h \
-    backend/exponentialbackofftimerandcallback.h
+    backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h \
+    backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h \
+    backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -113,7 +115,9 @@ SOURCES += main.cpp \
     frontend/accounttabs/actuallazyloadedtabwidget.cpp \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
     frontend/accounttabs/singleuseselfdeletingmemoryresource.cpp \
-    backend/exponentialbackofftimerandcallback.cpp
+    backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp \
+    backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp \
+    backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 

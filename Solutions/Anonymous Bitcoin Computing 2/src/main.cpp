@@ -4,7 +4,7 @@
 
 ==1.0 [Launch] Blockers==
 
-- exponential backoff (app + db + recovery-possy)
+- exponential backoff (app + recovery-possy)
 - doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
 - No ops cause too big of messages to be sent through the message queue. This is mostly done already via sanitization, but one place that needs some thought is 'all ad slot fillers' doc. Either need a max amount of ad slot fillers.. or... [???]. The fact that nickname can be on it makes it variable (but nickname is max 64 chars, so...). It is not a problem when GET'ing the doc (std::string dynamic), but only when STORE'ing it (message queue fixed message size)
 

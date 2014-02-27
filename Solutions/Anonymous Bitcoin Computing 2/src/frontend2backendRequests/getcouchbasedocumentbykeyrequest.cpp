@@ -31,9 +31,9 @@ GetCouchbaseDocumentByKeyRequest::GetCouchbaseDocumentByKeyRequest()
     : AnonymousBitcoinComputingWtGUIPointerForCallback(NULL), SaveCAS(false), GetAndSubscribe(0)
 { }
 
-void GetCouchbaseDocumentByKeyRequest::respond(GetCouchbaseDocumentByKeyRequest *originalRequest, const void *couchbaseDocument, size_t couchbaseDocumentSizeBytes, bool lcbOpSuccess, bool dbError)
+void GetCouchbaseDocumentByKeyRequest::respond(GetCouchbaseDocumentByKeyRequest *originalRequest, std::string couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
-    Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2, _3, _4), originalRequest->CouchbaseGetKeyInput, std::string(static_cast<const char*>(couchbaseDocument), couchbaseDocumentSizeBytes), lcbOpSuccess, dbError));
+    Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2, _3, _4), originalRequest->CouchbaseGetKeyInput, couchbaseDocument, lcbOpSuccess, dbError));
 }
 void GetCouchbaseDocumentByKeyRequest::respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest, std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError)
 {
@@ -43,7 +43,7 @@ void GetCouchbaseDocumentByKeyRequest::respondWithCAS(GetCouchbaseDocumentByKeyR
         return;
     }
 
-    //get and subscribe populate/update
+    //get and subscribe populate/update (TODOoptional: my use always wants CAS, but future proof means it shouldn't depend caller wanting it)
     Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas_UPDATE, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2, _3, _4, _5), originalRequest->CouchbaseGetKeyInput, couchbaseDocument, cas, lcbOpSuccess, dbError));
     //TODOoptional(was req, but finalize() should do it right when fallback would start being used, BUT fallback sounds more failsafe (session id changes or some such?)): maybe the fallback function passed to "Post" is our quickest way to determine a disconnect (unsubscribe), but really it might take just as long as the tradition disconnect (wapplication destroy), I am unsure. still makes sense to plug both points and to make sure that the backend can handle an unsubscribe request for a wapplication that isn't subscribed (race condition between the two)
 }

@@ -13,7 +13,8 @@
 #include <boost/foreach.hpp>
 
 #include "getandsubscribecacheitem.h"
-#include "exponentialbackofftimerandcallback.h"
+#include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h"
+#include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h"
 
 using namespace boost::interprocess;
 
@@ -115,73 +116,18 @@ if(m_NoMoreAllowedMuahahaha && m_PendingStoreCount == 0 && m_PendingGetCount == 
     notifyMainThreadWeAreFinishedWithAllPendingRequests(); \
 }
 
-//TODOoptional: delete this now worthless macro
-#define ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(GetOrStore) \
-delete originalRequest;
-//ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(GetOrStore)
+//TO DOneoptional: delete this now worthless macro (theoretically, all macros are worthless (because everything evaluates to one))
 
-#define ABC_DO_SCHEDULE_COUCHBASE_GET \
-lcb_get_cmd_t cmd; \
-const lcb_get_cmd_t *cmds[1]; \
-cmds[0] = &cmd; \
-const char *keyInput = autoRetryingWithExponentialBackoffCouchbaseGetRequest->requestRetrying()->CouchbaseGetKeyInput.c_str(); \
-memset(&cmd, 0, sizeof(cmd)); \
-cmd.v.v0.key = keyInput; \
-cmd.v.v0.nkey = strlen(keyInput); \
-lcb_error_t error = lcb_get(m_Couchbase, autoRetryingWithExponentialBackoffCouchbaseGetRequest, 1, cmds); \
-if(error  != LCB_SUCCESS) \
-{ \
-    cerr << "Failed to setup get request: " << lcb_strerror(m_Couchbase, error) << endl; \
-} \
-++m_PendingGetCount; //TODOoptional: overflow? meh not worried about it for now xD
-
-#define ABC_DO_SCHEDULE_COUCHBASE_STORE(storeSize) \
+#define ABC_READ_STORE_REQUEST_FROM_APPROPRIATE_MESSAGE_BUFFER(storeSize) \
 if(m_NoMoreAllowedMuahahaha) \
 { \
     return; \
 } \
-++m_PendingStoreCount; \
 StoreCouchbaseDocumentByKeyRequest *originalRequest = new StoreCouchbaseDocumentByKeyRequest(); \
 { \
     std::istringstream originalRequestSerialized(static_cast<const char*>(m_##storeSize##MessageQueuesCurrentMessageBuffer)); \
     boost::archive::text_iarchive deSerializer(originalRequestSerialized); \
     deSerializer >> *originalRequest; \
-} \
-lcb_store_cmd_t cmd; \
-const lcb_store_cmd_t *cmds[1]; \
-cmds[0] = &cmd; \
-memset(&cmd, 0, sizeof(cmd)); \
-const char *keyInput = originalRequest->CouchbaseStoreKeyInput.c_str(); \
-const char *documentInput = originalRequest->CouchbaseStoreDocumentInput.c_str(); \
-cmd.v.v0.key = keyInput; \
-cmd.v.v0.nkey = originalRequest->CouchbaseStoreKeyInput.length(); \
-cmd.v.v0.bytes = documentInput; \
-cmd.v.v0.nbytes = originalRequest->CouchbaseStoreDocumentInput.length(); \
-if(originalRequest->LcbStoreModeIsAdd) \
-{ \
-    cmd.v.v0.operation = LCB_ADD; \
-} \
-else \
-{ \
-    cmd.v.v0.operation = LCB_SET; \
-    if(originalRequest->HasCasInput) \
-    { \
-        cmd.v.v0.cas = originalRequest->CasInput; \
-    } \
-} \
-lcb_error_t err = lcb_store(m_Couchbase, originalRequest, 1, cmds); \
-if(err != LCB_SUCCESS) \
-{ \
-    cerr << "Failed to set up store request: " << lcb_strerror(m_Couchbase, err) << endl; \
-    if(originalRequest->SaveCasOutput) \
-    { \
-        StoreCouchbaseDocumentByKeyRequest::respondWithCas(originalRequest, 0, false, true); \
-    } \
-    else \
-    { \
-        StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, false, true); \
-    } \
-    ABC_END_OF_WT_REQUEST_LIFETIME_IN_DB_BACKEND_MACRO(Store) \
 }
 
 //You know you're a god when you can use a BOOST_PP_REPEAT within a call to BOOST_PP_REPEAT
@@ -216,6 +162,7 @@ public:
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO)
 private:
     friend class AutoRetryingWithExponentialBackoffCouchbaseGetRequest;
+    friend class AutoRetryingWithExponentialBackoffCouchbaseStoreRequest;
 
     boost::thread m_Thread;
     lcb_t m_Couchbase;
@@ -237,6 +184,7 @@ private:
     std::vector<void*> m_ChangeSessionIdRequestsToProcessMomentarily;
     static const struct timeval m_OneHundredMilliseconds;
     struct event *m_GetAndSubscribePollingTimeout; //all keys share a timeout for now (and possibly forever), KISS
+    std::vector<AutoRetryingWithExponentialBackoffCouchbaseStoreRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseStoreRequestCache;
     std::vector<AutoRetryingWithExponentialBackoffCouchbaseGetRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache;
 
     void threadEntryPoint();
@@ -249,6 +197,7 @@ private:
 
     static void storeCallbackStatic(lcb_t instance, const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp);
     void storeCallback(const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp);
+    void decrementPendingStoreCountAndHandle();
 
     static void getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
     void getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
@@ -285,6 +234,7 @@ private:
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO)
 
     void scheduleGetRequest(AutoRetryingWithExponentialBackoffCouchbaseGetRequest *autoRetryingWithExponentialBackoffCouchbaseGetRequest);
+    void scheduleStoreRequest(AutoRetryingWithExponentialBackoffCouchbaseStoreRequest *autoRetryingWithExponentialBackoffCouchbaseStoreRequest);
     //void eventSlotForWtStore0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO)
 
