@@ -5,6 +5,9 @@
 
 #define ABC_COUCHBASE_KEY_SEPARATOR "_"
 
+//doesn't belong in this class, but /lazy:
+#define ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(errorVarName) errorVarName == LCB_EBUSY || errorVarName == LCB_ETMPFAIL || errorVarName == LCB_CLIENT_ETMPFAIL
+
 //campaign
 #define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign"
 #define JSON_AD_SPACE_CAMPAIGN_MIN_PRICE "minPrice"

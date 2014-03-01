@@ -316,7 +316,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     {
         if(error != LCB_KEY_EEXISTS)
         {
-            if(error == LCB_EBUSY || error == LCB_ETMPFAIL || error == LCB_CLIENT_ETMPFAIL)
+            if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF)
             {
                 autoRetryingWithExponentialBackoffCouchbaseStoreRequest->backoffAndRetryAgain();
                 return;
@@ -432,7 +432,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
     {
         if(error != LCB_KEY_ENOENT)
         {
-            if(error == LCB_EBUSY || error == LCB_ETMPFAIL || error == LCB_CLIENT_ETMPFAIL)
+            if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF)
             {
                 /*
                 TODOreq: exponential backoff. I'm thinking a getNewOrRecycled queue of libevent timeouts (i'm dumb for doing macro hell to solve the 'n' methods/functions problem. class/object instantiation solves it betterer :-P)

@@ -16,6 +16,9 @@ private:
     bool m_Connected;
     std::string m_LastDocGetted;
     lcb_cas_t m_LastGetCas;
+    __useconds_t m_CurrentExponentialBackoffMicrosecondsAmount;
+    unsigned int m_CurrentExponentialBackoffSecondsAmount;
+
 
     static void errorCallbackStatic(lcb_t instance, lcb_error_t error, const char *errinfo);
     void errorCallback(lcb_error_t error, const char *errinfo);

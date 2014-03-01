@@ -14,54 +14,67 @@ using namespace std;
 using namespace boost::property_tree;
 
 //TODOreq: exponential backoffs and/or just plain old in the m_LastOpStatus error checking in this macro here, idfk. also for all the other checks of m_LastOpStatus that follow in the core while(true) loop...
-#define DO_COUCHBASE_GET_CAMPAIGN_DOC() \
+#define ABCP_DO_RESET_EXPONENTIAL_SLEEP_TIMERS \
+m_CurrentExponentialBackoffMicrosecondsAmount = 2500; \
+m_CurrentExponentialBackoffSecondsAmount = 0; //5ms is first sleep amount
+
+#define ABCP_DO_ONE_EXPONENTIAL_SLEEP \
+if(m_CurrentExponentialBackoffSecondsAmount > 0) \
+{ \
+    m_CurrentExponentialBackoffSecondsAmount *= 2; \
+    sleep(m_CurrentExponentialBackoffSecondsAmount); \
+} \
+else \
+{ \
+    m_CurrentExponentialBackoffMicrosecondsAmount *= 2; \
+    if(m_CurrentExponentialBackoffMicrosecondsAmount > 1000000) \
+    { \
+        m_CurrentExponentialBackoffSecondsAmount = 1; \
+        sleep(m_CurrentExponentialBackoffSecondsAmount); \
+    } \
+    else \
+    { \
+        usleep(m_CurrentExponentialBackoffMicrosecondsAmount); \
+    } \
+}
+
+#define ABCP_DO_ONE_COUCHBASE_GET_REQUEST(keyStringVar, descriptionOfRequestStringLiteral) \
 { \
     lcb_get_cmd_t cmd; \
     const lcb_get_cmd_t *cmds[1]; \
     cmds[0] = &cmd; \
     memset(&cmd, 0, sizeof(cmd)); \
-    cmd.v.v0.key = campaignDocKey.c_str(); \
-    cmd.v.v0.nkey = campaignDocKey.length(); \
+    cmd.v.v0.key = keyStringVar.c_str(); \
+    cmd.v.v0.nkey = keyStringVar.length(); \
     lcb_error_t error = lcb_get(m_Couchbase, NULL, 1, cmds); \
     if(error  != LCB_SUCCESS) \
     { \
-        cerr << "Failed to setup get request for campaign doc: " << lcb_strerror(m_Couchbase, error) << endl; \
+        cerr << "Failed to setup get request for " << descriptionOfRequestStringLiteral << ": " << lcb_strerror(m_Couchbase, error) << endl; \
         lcb_destroy(m_Couchbase); \
         return 1; \
     } \
 } \
 if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
 { \
-    cerr << "Failed to lcb_wait after get campaign doc': " << lcb_strerror(m_Couchbase, error) << endl; \
-    lcb_destroy(m_Couchbase); \
-    return 1; \
-} \
-if(m_LastOpStatus != LCB_SUCCESS) \
-{ \
-    cerr << "Failed to get campaign doc: " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl; \
+    cerr << "Failed to lcb_wait after lcb_get for " << descriptionOfRequestStringLiteral << ": " << lcb_strerror(m_Couchbase, error) << endl; \
     lcb_destroy(m_Couchbase); \
     return 1; \
 }
 
-#define DO_COUCHBASE_GET_TRANSACTION_DOC() \
+#define ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF(keyStringVar, descriptionOfRequestStringLiteral) \
+ABCP_DO_RESET_EXPONENTIAL_SLEEP_TIMERS \
+ABCP_DO_ONE_COUCHBASE_GET_REQUEST(keyStringVar, descriptionOfRequestStringLiteral) \
+while(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(m_LastOpStatus)) \
 { \
-    lcb_get_cmd_t cmd; \
-    const lcb_get_cmd_t *cmds[1]; \
-    cmds[0] = &cmd; \
-    memset(&cmd, 0, sizeof(cmd)); \
-    cmd.v.v0.key = transactionDocKey.c_str(); \
-    cmd.v.v0.nkey = transactionDocKey.length(); \
-    error = lcb_get(m_Couchbase, NULL, 1, cmds); \
-    if(error  != LCB_SUCCESS) \
-    { \
-        cerr << "Failed to setup get request for tx that might exist (" + transactionDocKey + "): " << lcb_strerror(m_Couchbase, error) << endl; \
-        lcb_destroy(m_Couchbase); \
-        return 1; \
-    } \
-} \
-if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
+    ABCP_DO_ONE_EXPONENTIAL_SLEEP \
+    ABCP_DO_ONE_COUCHBASE_GET_REQUEST(keyStringVar, descriptionOfRequestStringLiteral) \
+}
+
+#define ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF_REQUIRING_LCB_SUCCESS(keyStringVar, descriptionOfRequestStringLiteral) \
+ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF(keyStringVar, descriptionOfRequestStringLiteral) \
+if(m_LastOpStatus != LCB_SUCCESS) \
 { \
-    cerr << "Failed to lcb_wait after get request for tx that might exist (" + transactionDocKey + "): " << lcb_strerror(m_Couchbase, error) << endl; \
+    cerr << "Failed to get " << descriptionOfRequestStringLiteral << ": " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl; \
     lcb_destroy(m_Couchbase); \
     return 1; \
 }
@@ -218,7 +231,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
 
             //0 - get campaign doc (note these numbers do NOT match the 'perfected.the.design.here.is.the.flow.aka.pseudocode.txt')
             std::string campaignDocKey = adSpaceCampaignKey("d3fault", "0");
-            DO_COUCHBASE_GET_CAMPAIGN_DOC()
+            ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF_REQUIRING_LCB_SUCCESS(campaignDocKey, "campaign doc for initial audit")
 
             //1 - analyze campaign doc, so we know which slot+1 to pessimistically check the existence of
             ptree pt;
@@ -239,29 +252,9 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
 
             std::string slotThatShouldntExistAkaBeFilledButMightKey = adSpaceCampaignSlotKey("d3fault", "0", slotIndexForSlotThatShouldntExistButMightString);
 
-            {
-                lcb_get_cmd_t cmd;
-                const lcb_get_cmd_t *cmds[1];
-                cmds[0] = &cmd;
-                memset(&cmd, 0, sizeof(cmd));
-                cmd.v.v0.key = slotThatShouldntExistAkaBeFilledButMightKey.c_str();
-                cmd.v.v0.nkey = slotThatShouldntExistAkaBeFilledButMightKey.length();
-                error = lcb_get(m_Couchbase, NULL, 1, cmds);
-                if(error  != LCB_SUCCESS)
-                {
-                    cerr << "Failed to setup get request for slot that shouldn't exist (adSpaceSlotsd3fault0Slot" + slotIndexForSlotThatShouldntExistButMightString + "): " << lcb_strerror(m_Couchbase, error) << endl;
-                    lcb_destroy(m_Couchbase);
-                    return 1;
-                }
-            }
-            if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS)
-            {
-                cerr << "Failed to lcb_wait after get request for slot that shouldn't exist (adSpaceSlotsd3fault0Slot" + slotIndexForSlotThatShouldntExistButMightString + "): " << lcb_strerror(m_Couchbase, error) << endl;
-                lcb_destroy(m_Couchbase);
-                return 1;
-            }
+            ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF(slotThatShouldntExistAkaBeFilledButMightKey, "slot that shouldn't exist (" + slotThatShouldntExistAkaBeFilledButMightKey + ")")
 
-            //3 - we WANT to see LCB_KEY_ENOENT (key doesn't exist)
+            //3 - we WANT to see LCB_KEY_ENOENT (key doesn't exist), otherwise we need to do recovery on campaign doc/etc
             if(m_LastOpStatus != LCB_KEY_ENOENT)
             {
                 //we didn't get the error we wanted, so let's make sure it wasn't some other db error
@@ -275,11 +268,15 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                 std::istringstream is4(m_LastDocGetted);//save this for later: getting username from it when transaction doc doesn't exist, also getting purchase price from it when user account is locked pointing the slot of interest
                 read_json(is4, pt4);
 
-                //5 - wait another 100ms for the state to correct itself (race condition, the driver could still be functioning fine)
+                //5a - do a durability poll on that slot so that we aren't 'ahead of' the driver (because he's doing one too), even after our 100ms waiting in 5b
+                //TODOreq
+
+                //5b - wait another 100ms for the state to correct itself (race condition, the driver could still be functioning fine)
                 usleep(100000);
 
-                //6 - we've waited 100ms for driver to finish, so now we check campaign doc to see whether or not we need to continue
-                DO_COUCHBASE_GET_CAMPAIGN_DOC()
+                //6 - we've waited 100ms for driver to finish, so now we check campaign doc again to see if driver finished it
+                ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF_REQUIRING_LCB_SUCCESS(campaignDocKey, "campaign doc after 100ms wait")
+
                 //7 - analyze campaign doc AGAIN
                 ptree pt2;
                 std::istringstream is2(m_LastDocGetted);
@@ -296,7 +293,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         campaignDocWasFixedIn100msExtraTimeWeGaveIt = true;
                     }
                 }
-                //else: STILL no last purchase in campaign doc means we need to do recovery for the slot we just discovered exists
+                //else: STILL no last purchase in campaign doc means we need to do recovery for the [0th] slot we just discovered exists
 
                 if(!campaignDocWasFixedIn100msExtraTimeWeGaveIt)
                 {
@@ -305,7 +302,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
 
                     //9 - check to see if transaction doc exists (TODOoptimization: maybe we can/should just LCB_ADD accepting fail the tx at this point?)
                     std::string transactionDocKey = transactionKey("d3fault", "0", slotIndexForSlotThatShouldntExistButMightString);
-                    DO_COUCHBASE_GET_TRANSACTION_DOC()
+                    ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF(transactionDocKey, "tx that might exist (" + transactionDocKey + "): ")
 
                     //10 - transaction 'get' finished, so depending on whether or not it exists we take a certain recovery path (but just use a bool flag since they're mostly the same)
                     bool transactionDocExists = false;
@@ -337,6 +334,8 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                     {
                         //we have to look up the slot filler we're doing recovery for in order to get the username of the buyer
                         std::string slotFilledWithAkaSlotFillerKey = pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH);
+
+                        TODO LEFT OFF (1x durability poll above skipped as well)
 
                         {
                             lcb_get_cmd_t cmd;

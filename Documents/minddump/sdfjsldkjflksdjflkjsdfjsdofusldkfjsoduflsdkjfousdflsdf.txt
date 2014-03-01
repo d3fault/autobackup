@@ -1,0 +1,44 @@
+I can and am trying to right now build a logical barrier from that, because the depression buys me nothing (or.. actually... it buys me eventual appreciation... but...). High level the while true loop is stupid. Pour cement on it, fucking stupid. I have free will, so I choose to:
+
+APPRECIATE LIFE AND NOT FEAR DEATH
+
+always
+bool appreciateLifeAndNotFearDeath = true;
+
+how does the boolean get set to true? free will duh. that is all.
+no logical blah behind it (except there actually definitely is, i just don't [...])
+
+there doesn't need to be
+it might not fold
+some contradictions
+
+chop off the spinning/toggling side effect (via free will as well)
+fuck you.
+fuck me.
+
+i'm pissed. all stemming from couchbase, but amplified by the rest of my life of course....
+fuck couchbase, i'll just go forward. why? becuase my alternative is to commit suicide, "BUT BEFORE I DO..." (i go forward with couchbase not giving a shit). who cares if there's no durability, it's not like it's money we-
+fucking piece of shit, gfs is such a simple design and so many ddbs get it wrong. i could code it, but eh time etc (and if i did i'd want/use an rp-)
+
+fuck it. fuck it. i want fingers and to go the fuck outside. i'll work at a higher level and not give a shit about stupid fucking bugs. design equals longer term, fingers+outside shorter term, FUCKING VIDEO CAMERA AT FACE WITH AD AGENCY RIDICULOUSLY SHORT TERM (or die). fuck rpc,ddb,qt,wt,and even d3fault for now. perfectionist coders make zero progress. it's fun but...
+
+i'd rather make music, outside, in the jungle, with my monkey cousins
+rather die from a lion than sitting in this chair
+
+how did i get so far without realizing that huge design flaw? bah.
+
+ok i can do this. i hvae to do this (no i don't). i want to do this and i don't care if it's hacked together with duct tape. who gives a shit about the bits. if i don't fingers+outside soon ima fucking snap. i feel my rage contained. i want to let it out in a healthy manner (fingers/etc), but if i don't soon it's going to squirt out in some other way. i don't want to be on the run/hiding so i have to channel it. don't care to fight evil because that's dumb. don't want to fight good because that's impossible. want to flail in a room high on my own adrenaline, bare minimum of "good" so the good leave me the fuck alone. yea i'll code and give my work/thoughts away for free, but i'm not doing it for you.
+
+i'm going to kill myself if i don't do this soon, my water level is at 99%. need to poke a hole in the side/bottom before it overflows the top. make a giant gravity bong out of life is the only option. either that or my guts spill all over the place and who knows what happens (losing it actually sounds kind of fun. more fun than this)
+
+
+
+THE CONTRADICTION IS THE SOURCE
+
+"appreciation of life stems/grows/emerges from the fear of death" -me, much earlier
+
+and yet i just set a boolean ... stating not to fear death
+
+i'm depressed at even trying to think of the implications of that
+
+fuck it man, i don't even care anymore. i trust myself 10 minutes ago. "appreciate life without fearing death" sounds like the best approach, copy/paste that into a mental banner always visible plx. i highlighted the existence of whatever contradiction that was just a few seconds ago, i'll let some other braver soul dive into it (or maybe me later when i'm less depressed. right now i need to cling mindlessly)
