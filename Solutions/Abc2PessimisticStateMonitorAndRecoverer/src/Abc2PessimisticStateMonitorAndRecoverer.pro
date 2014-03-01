@@ -7,7 +7,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    abc2pessimisticstatemonitorandrecoverer.cpp
+    abc2pessimisticstatemonitorandrecoverer.cpp \
+    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp
 
 HEADERS += \
     abc2pessimisticstatemonitorandrecoverer.h \

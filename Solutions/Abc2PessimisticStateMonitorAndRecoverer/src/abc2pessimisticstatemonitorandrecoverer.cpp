@@ -61,6 +61,33 @@ if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
     return 1; \
 }
 
+#define ABCP_DO_ONE_COUCHBASE_STORE_REQUEST(keyStringVar, valueStringVar, lcbOp, tehCas, descriptionOfRequestStringLiteral) \
+{ \
+    lcb_store_cmd_t cmd; \
+    const lcb_store_cmd_t *cmds[1]; \
+    cmds[0] = &cmd; \
+    memset(&cmd, 0, sizeof(cmd)); \
+    cmd.v.v0.key = keyStringVar.c_str(); \
+    cmd.v.v0.nkey = keyStringVar.length(); \
+    cmd.v.v0.bytes = valueStringVar.c_str(); \
+    cmd.v.v0.nbytes = valueStringVar.length(); \
+    cmd.v.v0.operation = lcbOp; \
+    cmd.v.v0.cas = tehCas; \
+    error = lcb_store(m_Couchbase, NULL, 1, cmds); \
+    if(error != LCB_SUCCESS) \
+    { \
+        cerr << "Failed to set up add request for " << descriptionOfRequestStringLiteral << lcb_strerror(m_Couchbase, error) << endl; \
+        lcb_destroy(m_Couchbase); \
+        return 1; \
+    } \
+} \
+if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
+{ \
+    cerr << "Failed to lcb_wait after set request for " << descriptionOfRequestStringLiteral << lcb_strerror(m_Couchbase, error) << endl; \
+    lcb_destroy(m_Couchbase); \
+    return 1; \
+}
+
 #define ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF(keyStringVar, descriptionOfRequestStringLiteral) \
 ABCP_DO_RESET_EXPONENTIAL_SLEEP_TIMERS \
 ABCP_DO_ONE_COUCHBASE_GET_REQUEST(keyStringVar, descriptionOfRequestStringLiteral) \
@@ -68,6 +95,15 @@ while(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(m_LastOpS
 { \
     ABCP_DO_ONE_EXPONENTIAL_SLEEP \
     ABCP_DO_ONE_COUCHBASE_GET_REQUEST(keyStringVar, descriptionOfRequestStringLiteral) \
+}
+
+#define ABCP_DO_COUCHBASE_STORE_REQUEST_WITH_EXPONENTIAL_BACKOFF(keyStringVar, valueStringVar, lcbOp, tehCas, descriptionOfRequestStringLiteral) \
+ABCP_DO_RESET_EXPONENTIAL_SLEEP_TIMERS \
+ABCP_DO_ONE_COUCHBASE_STORE_REQUEST(keyStringVar, valueStringVar, lcbOp, tehCas, descriptionOfRequestStringLiteral) \
+while(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(m_LastOpStatus)) \
+{ \
+    ABCP_DO_ONE_EXPONENTIAL_SLEEP \
+    ABCP_DO_ONE_COUCHBASE_STORE_REQUEST(keyStringVar, valueStringVar, lcbOp, tehCas, descriptionOfRequestStringLiteral) \
 }
 
 #define ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF_REQUIRING_LCB_SUCCESS(keyStringVar, descriptionOfRequestStringLiteral) \
@@ -79,41 +115,17 @@ if(m_LastOpStatus != LCB_SUCCESS) \
     return 1; \
 }
 
-#define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK() \
-{ \
-    lcb_store_cmd_t cmd; \
-    const lcb_store_cmd_t *cmds[1]; \
-    cmds[0] = &cmd; \
-    memset(&cmd, 0, sizeof(cmd)); \
-    cmd.v.v0.key = userAccountKeyString.c_str(); \
-    cmd.v.v0.nkey = userAccountKeyString.length(); \
-    double buyerBalance = boost::lexical_cast<double>(pt6.get<std::string>(JSON_USER_ACCOUNT_BALANCE)); \
-    double purchasePrice = boost::lexical_cast<double>(purchasePriceString); \
-    buyerBalance -= purchasePrice; \
-    pt6.erase(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL); \
-    pt6.erase(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH); \
-    pt6.put(JSON_USER_ACCOUNT_BALANCE, boost::lexical_cast<std::string>(buyerBalance)); \
-    std::ostringstream userAccountDebittedAndUnlockedJsonBuffer; \
-    write_json(userAccountDebittedAndUnlockedJsonBuffer, pt6, false); \
-    std::string userAccountDebittedAndUnlockedJson = userAccountDebittedAndUnlockedJsonBuffer.str(); \
-    cmd.v.v0.bytes = userAccountDebittedAndUnlockedJson.c_str(); \
-    cmd.v.v0.nbytes = userAccountDebittedAndUnlockedJson.length(); \
-    cmd.v.v0.operation = LCB_SET; \
-    cmd.v.v0.cas = userAccountCas; \
-    error = lcb_store(m_Couchbase, NULL, 1, cmds); \
-    if(error != LCB_SUCCESS) \
-    { \
-        cerr << "Failed to set up set request for user account unlocking+debitting: " << lcb_strerror(m_Couchbase, error) << endl; \
-        lcb_destroy(m_Couchbase); \
-        return 1; \
-    } \
-} \
-if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
-{ \
-    cerr << "Failed to lcb_wait after set request for user account unlocking+debitting: " << lcb_strerror(m_Couchbase, error) << endl; \
-    lcb_destroy(m_Couchbase); \
-    return 1; \
-} \
+#define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK \
+double buyerBalance = boost::lexical_cast<double>(pt6.get<std::string>(JSON_USER_ACCOUNT_BALANCE)); \
+double purchasePrice = boost::lexical_cast<double>(purchasePriceString); \
+buyerBalance -= purchasePrice; \
+pt6.erase(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL); \
+pt6.erase(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH); \
+pt6.put(JSON_USER_ACCOUNT_BALANCE, boost::lexical_cast<std::string>(buyerBalance)); \
+std::ostringstream userAccountDebittedAndUnlockedJsonBuffer; \
+write_json(userAccountDebittedAndUnlockedJsonBuffer, pt6, false); \
+std::string userAccountDebittedAndUnlockedJson = userAccountDebittedAndUnlockedJsonBuffer.str(); \
+ABCP_DO_COUCHBASE_STORE_REQUEST_WITH_EXPONENTIAL_BACKOFF(userAccountKeyString, userAccountDebittedAndUnlockedJson, LCB_SET, userAccountCas, "cas-swap user account unlock+debitting") \
 if(m_LastOpStatus != LCB_SUCCESS) \
 { \
     if(m_LastOpStatus != LCB_KEY_EEXISTS) \
@@ -122,43 +134,20 @@ if(m_LastOpStatus != LCB_SUCCESS) \
         lcb_destroy(m_Couchbase); \
         return 1; \
     } \
+    continue; \
 }
 
-#define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_CAMPAIGN_DOC_UPDATE() \
-{ \
-    lcb_store_cmd_t cmd; \
-    const lcb_store_cmd_t *cmds[1]; \
-    cmds[0] = &cmd; \
-    memset(&cmd, 0, sizeof(cmd)); \
-    cmd.v.v0.key = campaignDocKey.c_str(); \
-    cmd.v.v0.nkey = campaignDocKey.length(); \
-    ptree pt8; \
-    pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX, slotIndexForSlotThatShouldntExistButMightString); \
-    pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP)); \
-    pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP)); \
-    pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE)); \
-    pt2.put_child(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED, pt8); \
-    std::ostringstream updatedCampaignDocJsonBuffer; \
-    write_json(updatedCampaignDocJsonBuffer, pt2, false); \
-    std::string updatedCampaignDocJson = updatedCampaignDocJsonBuffer.str(); \
-    cmd.v.v0.bytes = updatedCampaignDocJson.c_str(); \
-    cmd.v.v0.nbytes = updatedCampaignDocJson.length(); \
-    cmd.v.v0.operation = LCB_SET; \
-    cmd.v.v0.cas = campaignDocToUpdateCAS; \
-    error = lcb_store(m_Couchbase, NULL, 1, cmds); \
-    if(error != LCB_SUCCESS) \
-    { \
-        cerr << "Failed to set up set request for updating campaign doc: " << lcb_strerror(m_Couchbase, error) << endl; \
-        lcb_destroy(m_Couchbase); \
-        return 1; \
-    } \
-} \
-if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS) \
-{ \
-    cerr << "Failed to lcb_wait after set request for updating campaign doc: " << lcb_strerror(m_Couchbase, error) << endl; \
-    lcb_destroy(m_Couchbase); \
-    return 1; \
-} \
+#define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_CAMPAIGN_DOC_UPDATE \
+ptree pt8; \
+pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX, slotIndexForSlotThatShouldntExistButMightString); \
+pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP)); \
+pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP)); \
+pt8.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE, pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE)); \
+pt2.put_child(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED, pt8); \
+std::ostringstream updatedCampaignDocJsonBuffer; \
+write_json(updatedCampaignDocJsonBuffer, pt2, false); \
+std::string updatedCampaignDocJson = updatedCampaignDocJsonBuffer.str(); \
+ABCP_DO_COUCHBASE_STORE_REQUEST_WITH_EXPONENTIAL_BACKOFF(campaignDocKey, updatedCampaignDocJson, LCB_SET, campaignDocToUpdateCAS, "cas-swap updating campaign doc") \
 if(m_LastOpStatus != LCB_SUCCESS) \
 { \
     if(m_LastOpStatus != LCB_KEY_EEXISTS) \
@@ -167,9 +156,8 @@ if(m_LastOpStatus != LCB_SUCCESS) \
         lcb_destroy(m_Couchbase); \
         return 1; \
     } \
+    continue; \
 }
-
-//TODOoptimization: starting to think that any time an "acceptable-fail" is seen, we can stop doing the recovery process because we have proof someone else is doing it. Will mainly just lessen network congestion, but probably not even by a significant amount. Too lazy to do that easy optimization for now (especially since I haven't even tested that this shit works yet!)
 
 //monitor-er? ^^ the things that keep me up at night...
 Abc2PessimisticStateMonitorAndRecoverer::Abc2PessimisticStateMonitorAndRecoverer()
@@ -268,7 +256,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                 std::istringstream is4(m_LastDocGetted);//save this for later: getting username from it when transaction doc doesn't exist, also getting purchase price from it when user account is locked pointing the slot of interest
                 read_json(is4, pt4);
 
-                //5a - do a durability poll on that slot so that we aren't 'ahead of' the driver (because he's doing one too), even after our 100ms waiting in 5b
+                //5a - TODOreq: durability poll on that slot so that we aren't 'ahead of' the driver (because he's doing one too), even after our 100ms waiting in 5b
                 //TODOreq
 
                 //5b - wait another 100ms for the state to correct itself (race condition, the driver could still be functioning fine)
@@ -300,7 +288,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                     //8 - ok shit just got real because it still isn't up to date, time to try all of the post-slot-fill tasks in order (in order) to fix the state
                     lcb_cas_t campaignDocToUpdateCAS = m_LastGetCas; //save this for later...
 
-                    //9 - check to see if transaction doc exists (TODOoptimization: maybe we can/should just LCB_ADD accepting fail the tx at this point?)
+                    //9 - check to see if transaction doc exists
                     std::string transactionDocKey = transactionKey("d3fault", "0", slotIndexForSlotThatShouldntExistButMightString);
                     ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF(transactionDocKey, "tx that might exist (" + transactionDocKey + "): ")
 
@@ -335,35 +323,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         //we have to look up the slot filler we're doing recovery for in order to get the username of the buyer
                         std::string slotFilledWithAkaSlotFillerKey = pt4.get<std::string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH);
 
-                        TODO LEFT OFF (1x durability poll above skipped as well)
-
-                        {
-                            lcb_get_cmd_t cmd;
-                            const lcb_get_cmd_t *cmds[1];
-                            cmds[0] = &cmd;
-                            memset(&cmd, 0, sizeof(cmd));
-                            cmd.v.v0.key = slotFilledWithAkaSlotFillerKey.c_str();
-                            cmd.v.v0.nkey = slotFilledWithAkaSlotFillerKey.length();
-                            error = lcb_get(m_Couchbase, NULL, 1, cmds);
-                            if(error  != LCB_SUCCESS)
-                            {
-                                cerr << "Failed to setup get request for slot filler to retrieve username from it (" + slotFilledWithAkaSlotFillerKey + "): " << lcb_strerror(m_Couchbase, error) << endl;
-                                lcb_destroy(m_Couchbase);
-                                return 1;
-                            }
-                        }
-                        if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS)
-                        {
-                            cerr << "Failed to lcb_wait after get request for slot filler to retrieve username from it (" + slotFilledWithAkaSlotFillerKey + "): " << lcb_strerror(m_Couchbase, error) << endl;
-                            lcb_destroy(m_Couchbase);
-                            return 1;
-                        }
-                        if(m_LastOpStatus != LCB_SUCCESS)
-                        {
-                            cerr << "Failed to get slot filler to retrieve username from it (" + slotFilledWithAkaSlotFillerKey + "): " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl;
-                            lcb_destroy(m_Couchbase);
-                            return 1;
-                        }
+                        ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF_REQUIRING_LCB_SUCCESS(slotFilledWithAkaSlotFillerKey, "slot filler to retrieve username of buyer from it: (" + slotFilledWithAkaSlotFillerKey + ")")
 
                         ptree pt5;
                         std::istringstream is5(m_LastDocGetted);
@@ -374,33 +334,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                     //11b - get the user account of the buyer and do recovery tasks if needed
                     std::string userAccountKeyString = userAccountKey(usernameOfBuyer);
 
-                    {
-                        lcb_get_cmd_t cmd;
-                        const lcb_get_cmd_t *cmds[1];
-                        cmds[0] = &cmd;
-                        memset(&cmd, 0, sizeof(cmd));
-                        cmd.v.v0.key = userAccountKeyString.c_str();
-                        cmd.v.v0.nkey = userAccountKeyString.length();
-                        error = lcb_get(m_Couchbase, NULL, 1, cmds);
-                        if(error  != LCB_SUCCESS)
-                        {
-                            cerr << "Failed to setup get request for user account (user" + usernameOfBuyer + "): " << lcb_strerror(m_Couchbase, error) << endl;
-                            lcb_destroy(m_Couchbase);
-                            return 1;
-                        }
-                    }
-                    if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS)
-                    {
-                        cerr << "Failed to lcb_wait after get request for user account (user" + usernameOfBuyer + "): " << lcb_strerror(m_Couchbase, error) << endl;
-                        lcb_destroy(m_Couchbase);
-                        return 1;
-                    }
-                    if(m_LastOpStatus != LCB_SUCCESS)
-                    {
-                        cerr << "Failed to get user account (user" + usernameOfBuyer + "): " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl;
-                        lcb_destroy(m_Couchbase);
-                        return 1;
-                    }
+                    ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF_REQUIRING_LCB_SUCCESS(userAccountKeyString, "user account doc (" + userAccountKeyString + ")")
 
                     //12 - analyze user doc, do recovery if needed
                     lcb_cas_t userAccountCas = m_LastGetCas;
@@ -417,10 +351,10 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         {
                             //12a.i
                             //there is one last race condition check to prove that total system failure didn't occur (whether transaction doc now exists)
-                            DO_COUCHBASE_GET_TRANSACTION_DOC()
+                            ABCP_DO_COUCHBASE_GET_REQUEST_WITH_EXPONENTIAL_BACKOFF(transactionDocKey, "tx that must exist: (" + transactionDocKey + ")")
                             if(m_LastOpStatus != LCB_SUCCESS) //TODOreq: exponential backoffs etc xD
                             {
-                                cerr << "TOTAL SYSTEM FAILURE: USER ACCOUNT WAS UNLOCKED WITHOUT TRANSACTION DOC BEING CREATED: (txd3fault0Slot" + slotIndexForSlotThatShouldntExistButMightString + "): " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl; //TODOreq: email yourself and/or kill abc2 actual, or something?
+                                cerr << "TOTAL SYSTEM FAILURE: USER ACCOUNT WAS UNLOCKED WITHOUT TRANSACTION DOC BEING CREATED: (" + transactionDocKey + "): " << lcb_strerror(m_Couchbase, m_LastOpStatus) << endl; //TODOreq: email yourself and/or kill abc2 actual, or something?
                                 lcb_destroy(m_Couchbase);
                                 return 1;
                             }
@@ -432,40 +366,17 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                             //12a.ii -- transaction needs create -> user account needs unlocking -> campaign doc update
 
                             //add-accepting-fail the transaction document itself
+                            ptree pt7;
+                            pt7.put(JSON_TRANSACTION_BUYER, usernameOfBuyer);
+                            pt7.put(JSON_TRANSACTION_SELLER, "d3fault");
+                            pt7.put(JSON_TRANSACTION_AMOUNT, purchasePriceString);
+                            std::ostringstream transactionJsonBuffer;
+                            write_json(transactionJsonBuffer, pt7, false);
+                            std::string transactionJson = transactionJsonBuffer.str();
 
-                            {
-                                lcb_store_cmd_t cmd;
-                                const lcb_store_cmd_t *cmds[1];
-                                cmds[0] = &cmd;
-                                memset(&cmd, 0, sizeof(cmd));
-                                cmd.v.v0.key = transactionDocKey.c_str();
-                                cmd.v.v0.nkey = transactionDocKey.length();
+                            ABCP_DO_COUCHBASE_STORE_REQUEST_WITH_EXPONENTIAL_BACKOFF(transactionDocKey, transactionJson, LCB_ADD, 0, "transaction add")
+                            //TODOreq: durability poll on the tx add (??????)
 
-                                ptree pt7;
-                                pt7.put(JSON_TRANSACTION_BUYER, usernameOfBuyer);
-                                pt7.put(JSON_TRANSACTION_SELLER, "d3fault");
-                                pt7.put(JSON_TRANSACTION_AMOUNT, purchasePriceString);
-                                std::ostringstream transactionJsonBuffer;
-                                write_json(transactionJsonBuffer, pt7, false);
-                                std::string transactionJson = transactionJsonBuffer.str();
-
-                                cmd.v.v0.bytes = transactionJson.c_str();
-                                cmd.v.v0.nbytes = transactionJson.length();
-                                cmd.v.v0.operation = LCB_ADD;
-                                error = lcb_store(m_Couchbase, NULL, 1, cmds);
-                                if(error != LCB_SUCCESS)
-                                {
-                                    cerr << "Failed to set up set request for transaction add: " << lcb_strerror(m_Couchbase, error) << endl;
-                                    lcb_destroy(m_Couchbase);
-                                    return 1;
-                                }
-                            }
-                            if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS)
-                            {
-                                cerr << "Failed to lcb_wait after set request for transaction add: " << lcb_strerror(m_Couchbase, error) << endl;
-                                lcb_destroy(m_Couchbase);
-                                return 1;
-                            }
                             if(m_LastOpStatus != LCB_SUCCESS)
                             {
                                 if(m_LastOpStatus != LCB_KEY_EEXISTS)
@@ -474,19 +385,20 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                                     lcb_destroy(m_Couchbase);
                                     return 1;
                                 }
+                                continue; //bowing out to neighbor/driver already on top of it
                             }
                             //success or add-fail (driver or neighbor responsible) of transaction creation (TODOoptimization: each 'acceptable fail' stage could verify whatever beat them to the punch. It wouldn't apply to all the docs (campaign for example could have changed TWICE), but the ones that were LCB_ADD'd definitely could do it)
 
 
                             //cas-swap-accepting-fail the user-account to unlock+debit it
 
-                            DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK()
+                            DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK
                             //success or just cas-swap-fail (driver or neighbor responsible) of unlocking+debitting user-account
 
 
                             //cas-swap-accepting-fail updating the campaign doc
 
-                            DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_CAMPAIGN_DOC_UPDATE()
+                            DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_CAMPAIGN_DOC_UPDATE
                             //success or just cas-swap-fail (driver or neighbor responsible) of updating campaign doc, RECOVERY COMPLETE
                         }
                     }
@@ -497,13 +409,13 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         if(userAccountIsLockedPointingAtSlotJustFilled)
                         {
                             //'unlock+debitting' the user-account
-                            DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK()
+                            DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK
                         }
                         //else, update campaign doc only (sharing code path)
 
 
                         //update campaign doc
-                        DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_CAMPAIGN_DOC_UPDATE()
+                        DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_CAMPAIGN_DOC_UPDATE
                     }
                 }
                 //else, typical race condition detected so recovery not needed

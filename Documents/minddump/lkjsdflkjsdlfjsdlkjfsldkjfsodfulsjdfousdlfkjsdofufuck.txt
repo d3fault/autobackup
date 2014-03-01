@@ -1,0 +1,1 @@
+Fuck durability polling, I can just do a periodic/expensive/external 'verification' of all balance related operations. All keys have the username that claimed them (unless... aww fuck)

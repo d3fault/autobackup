@@ -4,7 +4,8 @@
 
 ==1.0 [Launch] Blockers==
 
-- exponential backoff (app + recovery-possy)
+- exponential backoff for app ops, namely key claiming and key range claiming, but others may apply
+- durability polling? worth it? on adds it should always succeed, but cas swaps (even asked on their forum thing). also realized that before a durability poll completes, the key can still be get'd. even when my durability fails, at this point my code just cerr's the dbFail and that's it (whereas it SHOULD... err... failover and retry?? idfk but i'm starting to not like couchbase :-/. BUT that's the entire point. the durability polling fails is SUPPOSED to indicate the value isn't stored, except with couchbase it doesn't (the value has to have been stored [on only one node] before durability polling even begins, *sigh*))
 - doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
 - No ops cause too big of messages to be sent through the message queue. This is mostly done already via sanitization, but one place that needs some thought is 'all ad slot fillers' doc. Either need a max amount of ad slot fillers.. or... [???]. The fact that nickname can be on it makes it variable (but nickname is max 64 chars, so...). It is not a problem when GET'ing the doc (std::string dynamic), but only when STORE'ing it (message queue fixed message size)
 

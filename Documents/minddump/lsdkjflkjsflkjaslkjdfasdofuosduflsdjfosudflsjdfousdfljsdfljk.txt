@@ -1,0 +1,20 @@
+write -> fail -> failover -> write
+is supposed to be the flow of a ddb. my code currently just cerrors the dbError (fail) and does nothing, but that doesn't mean i can't adapt it.
+
+Couchbase (pos): write -> fail -> failover -> write (the write fails because the fail didn't really fail) -_- <<---- assumes LCB_ADD
+
+durability fail != write fail, but it needs to be!
+
+
+
+i think the cas-swap creditting/debitting of the user account is the most affected operation by couchbase's limitations (or just shitty design). i don't think you can durability poll a cas swap, was thinking about writing a test for that but eh the following makes me think that that's not even worth it: a write can be get'd before the durability poll completes (regardless of it's outcome). that... err... fucks shit up. hard to even say how.
+
+why is it so hard to do this:
+write received at node responsible, he writes to 2 replicas (or they 'pass along' and last one acks to node responsible, but no matter)
+if write received during that, it blocks pending the outcome (fail of above = USE this one, success of above = fail this one)
+if read received during that, block (fail of write = read fail (key not exist), success = return it)
+
+that's how gfs is, but bah fucking proprietary pos.
+
+
+i said i said i'd be ok with 99% rates for this abc2 project, so fuck it fuck everything i'm just going to remove durability polling completely. as long as i scale ahead of the demand i should be alright (my code demands that anyways (not checking new/malloc isn't returning null etc)). famous last words or famous first words? who gives a shit.

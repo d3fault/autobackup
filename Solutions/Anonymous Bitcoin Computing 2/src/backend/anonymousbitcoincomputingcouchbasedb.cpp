@@ -2,6 +2,7 @@
 
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
+#include "../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h" //TODOreq: oops now my backend kind of depends on my frontend, but only because of the ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF that doesn't even belong in there but i put in there out of laziness (fuggit for now)
 
 using namespace std;
 
@@ -316,7 +317,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     {
         if(error != LCB_KEY_EEXISTS)
         {
-            if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF)
+            if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(error))
             {
                 autoRetryingWithExponentialBackoffCouchbaseStoreRequest->backoffAndRetryAgain();
                 return;
@@ -432,7 +433,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
     {
         if(error != LCB_KEY_ENOENT)
         {
-            if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF)
+            if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(error))
             {
                 /*
                 TODOreq: exponential backoff. I'm thinking a getNewOrRecycled queue of libevent timeouts (i'm dumb for doing macro hell to solve the 'n' methods/functions problem. class/object instantiation solves it betterer :-P)
