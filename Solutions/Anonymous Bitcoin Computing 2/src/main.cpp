@@ -4,10 +4,13 @@
 
 ==1.0 [Launch] Blockers==
 
-- exponential backoff for app ops, namely key claiming and key range claiming, but others may apply
-- durability polling? worth it? on adds it should always succeed, but cas swaps (even asked on their forum thing). also realized that before a durability poll completes, the key can still be get'd. even when my durability fails, at this point my code just cerr's the dbFail and that's it (whereas it SHOULD... err... failover and retry?? idfk but i'm starting to not like couchbase :-/. BUT that's the entire point. the durability polling fails is SUPPOSED to indicate the value isn't stored, except with couchbase it doesn't (the value has to have been stored [on only one node] before durability polling even begins, *sigh*))
+- make some use of auto-failover shit?
 - doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
-- No ops cause too big of messages to be sent through the message queue. This is mostly done already via sanitization, but one place that needs some thought is 'all ad slot fillers' doc. Either need a max amount of ad slot fillers.. or... [???]. The fact that nickname can be on it makes it variable (but nickname is max 64 chars, so...). It is not a problem when GET'ing the doc (std::string dynamic), but only when STORE'ing it (message queue fixed message size)
+- No ops cause too big of messages to be sent through the message queue. This is mostly done already via sanitization
+- satoshis, since i've witnessed the hilarious rounding stuff (only where it matters (js does not))
+- "add advertisment first", *does*, message still there after returning
+- "Sorry, someone bought the slot just before you" doesn't get current slot value, so same error message over and over. this is related to not having no-js pull from subscription cache (although it's a slightly different path (the 'resubscribe no-js' variant))
+- clicking buy step 1 with no-js doesn't update to most recent price (if just bought in another tab/session), and obviously results in "Sorry, someone bought...". The correct thing to do is to show the updated price right when they click buy step 1 (thought i was doing this).
 
 
 ==1.1 Bugs==
@@ -20,8 +23,6 @@
 
 */
 
-//TODOreq: two tabs open sharing same session, one of them performs an action that then deletes a WContainerWidget [that is still visiable/cached on the other tab]. The other tab with the cached view then performs an action on the deleted WContainerWidget. segfault? My login/logout widgets comes to mind, because I was thinking about 'deleting' the "welcome, [name]" shit on logout and recreating it again on login (but i guess i don't have to). Safest way is to just never delete anything and only let WApplication do it when it is deleted
-//^this appears to be handled correctly by Wt, which states that the signal is not exposed. HOWEVER, it made me think of a race condition and ultimately makes me wonder even further what exactly deferRendering does. Initiate an op that does one or more messages to db, click 'log out' button (on other tab with same session). I guess really I'm just repeating myself here, but idk like for example if I cleared the username on logout, and then the async callbacks later used that username for something, it could be a json injection or segfault
 int main(int argc, char **argv)
 {
     AnonymousBitcoinComputing abc;

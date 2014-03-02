@@ -16,6 +16,8 @@
 #include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h"
 #include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h"
 
+//#define ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
+
 using namespace boost::interprocess;
 
 typedef boost::unordered_map<std::string /*key*/, GetAndSubscribeCacheItem* /*doc,cas,listOfSubscribers*/> GetAndSubscribeCacheHashType;
@@ -91,14 +93,26 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n##Static(evuti
 }
 
 //My assumption (or, faulty understanding) that libevents were like signals and that emitting them multiple times would cause the receiving slot (callback) to be invoked the same amount of times was wrong. The 'event' is either active or inactive, and making it active when it's already active does nothing. I'd rather be wrong and have to change a tiny bit of code (adding the below while(try_receive) now) than be right and have to refactor a ton of it (a la lockfree::queue or some other solution)
+//TO DOnereq(using 3 max (seen as '< 4' in code) successful try_receives before giving other queues a chance): now that i've changed to a while(try_receive) design, there's a very real possibility that when a server's at high load, that a SINGLE queue will never leave that while loop! it needs to be fair-ER and give the other queues a chance, even when there are more. Random [FAIL (keep readan]] solution: if the 2nd try_receive succeeds, we add our queue # to a list (queue ;-P) that we 'come back to' after trying... err... other... queues. but if the 2nd try_receive fails, we don't add ourselves to that queue because then we know event_active will take care of it. but when to process that list/queue? when a 2nd try_receive fails i suppose... but we'd need to also make it loop so that if we're checking BECAUSE of queued, we can re-enter queued if we try_receive two in a row. so two in a row are ever at most tried, THEN WE GO BACK TO LETTING LIBEVENT DECIDE WHICH MESSAGE QUEUE. if only one try_receive from that... aww shit now there's the problem of being in the accidental 'sweet spot' (bad in this case).... basically we could be stuck ONLY processing ones with 1x message in their queue that are incidently in that list/queue but never then processing the libevent ones------ lockfree::queue here i come..... WAIT NO lockfree::queue doesn't help me at all here ffffffff, i'd be in the same boat... oh shit oh shit...
+//^^maybe timers of length 0 (so long as they don't optimize themselves and become direct calls) whenever a 2nd try_receive succeeds? or hell, make active the very same one that got us here if 2nd try_receive succeeds? it IS thread-safe after all (again, as long as it doesn't optimize itself to become direct call). there is also the current number of messages, so i could check that it's > 0 after just one check (or do 2 or N) and then make the event active based on that...
 #define ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO(z, n, text) \
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n() \
 { \
     unsigned int priority; \
     message_queue::size_type actualMessageSize; \
-    while(m_##text##WtMessageQueue##n->try_receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority)) \
+    unsigned char currentReadsBeforeGivingOtherQueuesAchance = 0; \
+    bool receiveSuccess; \
+    do \
     { \
+        if(!(receiveSuccess = m_##text##WtMessageQueue##n->try_receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority))) \
+        { \
+            return; \
+        } \
         eventSlotForWt##text(); \
+    }while(++currentReadsBeforeGivingOtherQueuesAchance < 4); \
+    if(receiveSuccess && (m_##text##WtMessageQueue##n->get_num_msg() > 0)) \
+    { \
+        event_active(m_##text##EventCallbackForWt##n, EV_READ|EV_WRITE, 0); \
     } \
 }
 
@@ -203,8 +217,10 @@ private:
     void getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
     void decrementPendingGetCountAndHandle();
 
+#ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
     static void durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp);
     void durabilityCallback(const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp);
+#endif
 
     static void getAndSubscribePollingTimeoutEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData);
     void getAndSubscribePollingTimeoutEventSlot();

@@ -938,7 +938,7 @@ void AnonymousBitcoinComputingWtGUI::continueRecoveringLockedAccountAtLoginAttem
         if(slotFilledWith == m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack)
         {
             //we got it, so do NOTHING because recovery process will handle it, a TODOoptimization would be to trigger recovery possy code, but that requires a merge and fuck that
-            if(m_LoggedIn)
+            if(!m_LoggedIn)
             {
                 //login recovery
                 m_LoginStatusMessagesPlaceholder->setText("Try logging in again in like 1 minute (don't ask why)"); //fuck teh police~
@@ -1257,6 +1257,7 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountUnlockingWithoutDe
     else
     {
         //slot purchase beat to the punch
+        //TODOreq: schedule getting new slot to populate buy step 1 proper, right now it rolls back, but to the outdated values
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Sorry, someone else bought the slot just moments before you...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         resumeRendering();

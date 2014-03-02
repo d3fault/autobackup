@@ -183,7 +183,9 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     lcb_set_configuration_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::configurationCallbackStatic);
     lcb_set_get_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::getCallbackStatic);
     lcb_set_store_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::storeCallbackStatic);
+#ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
     lcb_set_durability_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic);
+#endif
     if((error = lcb_connect(m_Couchbase)) != LCB_SUCCESS)
     {
         cerr << "Failed to start connecting libcouchbase instance: " << lcb_strerror(m_Couchbase, error) << endl;
@@ -363,8 +365,8 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     //getting here means no more exponential retrying for this store request is necessary, so recycle it into the cache
     m_AutoRetryingWithExponentialBackoffCouchbaseStoreRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseStoreRequest);
 
+#ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
     //durability polling has it's own built in exponential backoff <3
-
     lcb_durability_opts_t lcbDurabilityOptions;
     memset(&lcbDurabilityOptions, 0, sizeof(lcb_durability_opts_t));
 #ifdef ABC_COUCHBASE_DURABILITY_WAIT_FOR_PERSISTED_COUNT
@@ -381,7 +383,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     //^do 2 cas-swaps back to back before the first one gets replicated both receive a successful durability poll???
 
 
-    if(originalRequest->HasCasInput) //TODOoptimization i am dumb i think the reason my static_casting didn't work earlier was because i didn't use const keyword. change the ugly casts to these kinds in other occurances
+    if(originalRequest->HasCasInput)
     {
         //LCB_SET implied
         lcbDurabilityCommand.v.v0.cas = resp->v.v0.cas;
@@ -407,8 +409,19 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
         }
         delete originalRequest;
     }
+#else //no durability polling, just respond
+    if(originalRequest->SaveCasOutput)
+    {
+        StoreCouchbaseDocumentByKeyRequest::respondWithCas(originalRequest, resp->v.v0.cas, true, false);
+    }
+    else
+    {
+        StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, true, false);
+    }
+    delete originalRequest;
+#endif // ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
 
-    //TODOoptional (N/A for now because all my stores use durability): if durability isn't needed for this particular store, --m_PendingStoreCount just like getCallback/etc
+    //TODOreq: maybe a m_PendingDurabilityCount; used to not decrement pendingStoreCount until the durability finished, but i think i accidentally took that out. but really am considering removing durability polling altogether right now so idfk. OLD: if durability isn't needed for this particular store, --m_PendingStoreCount just like getCallback/etc
 }
 //no it isn't ;-P
 void AnonymousBitcoinComputingCouchbaseDB::decrementPendingStoreCountAndHandle()
@@ -633,13 +646,16 @@ void AnonymousBitcoinComputingCouchbaseDB::decrementPendingGetCountAndHandle()
 {
     ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(Get)
 }
+#ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
     const_cast<AnonymousBitcoinComputingCouchbaseDB*>(static_cast<const AnonymousBitcoinComputingCouchbaseDB*>(lcb_get_cookie(instance)))->durabilityCallback(cookie, error, resp);
 }
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
-    StoreCouchbaseDocumentByKeyRequest *originalRequest = const_cast<StoreCouchbaseDocumentByKeyRequest*>(static_cast<const StoreCouchbaseDocumentByKeyRequest*>(cookie));
+    AutoRetryingWithExponentialBackoffCouchbaseStoreRequest *autoRetryingWithExponentialBackoffCouchbaseStoreRequest = const_cast<AutoRetryingWithExponentialBackoffCouchbaseStoreRequest*>(static_cast<const AutoRetryingWithExponentialBackoffCouchbaseStoreRequest*>(cookie));
+    StoreCouchbaseDocumentByKeyRequest *originalRequest = autoRetryingWithExponentialBackoffCouchbaseStoreRequest->storeRequestRetrying();
+
     if(error != LCB_SUCCESS)
     {
         cerr << "Error: Generic lcb_durability_poll callback failure: " << lcb_strerror(m_Couchbase, error) << endl;
@@ -686,6 +702,7 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
 
     delete originalRequest;
 }
+#endif // ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
 void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic(int unusedSocket, short events, void *userData)
 {
     (void)unusedSocket;

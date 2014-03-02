@@ -1,0 +1,1 @@
+How do you keep a perfectionist occupied indefinitely? Give him a C++ compiler and tell him to code an application.

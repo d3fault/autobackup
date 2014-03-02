@@ -3,8 +3,6 @@
 #include "../anonymousbitcoincomputingwtgui.h"
 #include "abc2couchbaseandjsonkeydefines.h"
 
-//defer loading = change all occurances of m_AddFundsPlaceholderLayout->addWidget with new WBreak(this) and then whatever was in the addWidget call..
-
 AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp),
       m_BitcoinAddressBalancePollerPollingPendingBalance(true),
@@ -58,7 +56,7 @@ void AddFundsAccountTabBody::determineBitcoinStateButDontLetThemProceedForwardIf
     read_json(is, pt);
 
     string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
-    string bitcoinState = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE); //TODOreq: registration sets this to "NoKey"
+    string bitcoinState = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE);
     if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_HAVE_KEY)
     {
         presentBitcoinKeyForPaymentsToUser(pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA));
@@ -296,6 +294,7 @@ void AddFundsAccountTabBody::userAccountBitcoinLockedIntoGettingKeyAttemptComple
 void AddFundsAccountTabBody::userAccountBitcoinGettingKeyLocked_So_GetSavingCASbitcoinKeySetNPageY()
 {
     //get bitcoinKeySet[setN]_PageY
+    //TODOoptimization: here, and when getting pageZ (same thing but for RANGES), we should be doing exponential backoff of getting this doc. the subsequent STORE (CAS-swap in both of these cases) should not have any waiting (otherwise that increases the chances that the cas has changed and we have to loop again), the waiting must go before the GET'ing or else i did it wrong. this is different from how the db is already handling exponential backoffs already because what we want to exponentially back off FROM (cas swap failure) is not flagged in the db backend as eligible (and rightly so, since the db has no concept of 'key claiming' and 'key range claiming', which must be done with the GET before the Store/CAS-swap. A random TODOoptimization that will cause more confusion i bet: the db could use a callback in between the get and the store to allow the business layer to do the modifications needed for the store to make any sense, but i'm not sure that optimization fits abc2 specifically (since wt uses a thread pool etc)
     m_AbcApp->getCouchbaseDocumentByKeySavingCasBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY));
     m_AbcApp->m_WhatTheGetSavingCasWasFor = AnonymousBitcoinComputingWtGUI::GETBITCOINKEYSETNACTUALPAGETOSEEIFUUIDONITENOUGHROOM;
 }
