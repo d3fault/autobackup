@@ -9,6 +9,7 @@
 //all pages are 1 index based, even though the db stuff backing it is not
 
 //TODOoptimization: for js, we should triggerUpdate the images as they come. no-js just stays deferRendered until the last one...
+//TODOoptimization: to defend against DDOS, we can delete all our in memory SingleUseSelfDeletingMemoryResource for the 'page changing from' when changing to a new page. It is exploitable (even accidentally, by.. say... lynx) because the large images stay in memory until they are requested. Deleting them, whether they were used or not, on page change, is one way to help fight this (but ultimately, many sessions/tabs open gets right around that defense so guh). There's also the threading issue of resources being served concurrently, not even sure I can delete them (look in SingleUseSelfDeletingMemoryResource's destructor for more info about that) xD...
 ViewAllExistingAdSlotFillersAccountTabBody::ViewAllExistingAdSlotFillersAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp), m_CurrentPageOneIndexBased(1)
 { }
@@ -21,9 +22,7 @@ void ViewAllExistingAdSlotFillersAccountTabBody::populateAndInitialize()
     m_AbcApp->deferRendering();
     new WText("View all your previously uploaded advertisements", this);
     new WBreak(this);
-    //TODOreq: refresh buttan to pull in new uploads during the same session (low priority, since they already have a preview after upload..), OR uploading one can 'push' it directly over to us (after checking we aren't NULL or something). That pushing over strategy wouldn't work if they have two tabs/sessions open, but oh well
-
-    //TODOreq: showing them total pages and including a 'jump to page' spinbox would be easy, but note that if you do that then the 'index' in stackedwidget won't correlate with the actual page, so if they hit 'previous page' after jumping to... say... 100, they should then go to page 99 and not whatever page they jumped from (page 1 for example), despite page 100 being 'index 1' and page 1 being 'index 0'
+    //TODOoptional: refresh buttan to pull in new uploads during the same session (low priority, since they already have a preview after upload..), OR uploading one can 'push' it directly over to us (after checking we aren't NULL or something). That pushing over strategy wouldn't work if they have two tabs/sessions open, but oh well
 }
 void ViewAllExistingAdSlotFillersAccountTabBody::attemptToGetAllAdSlotFillersFinished(const string &allAdSlotFillersJsonDocMaybe, bool lcbOpSuccess, bool dbError)
 {
@@ -72,12 +71,12 @@ void ViewAllExistingAdSlotFillersAccountTabBody::attemptToGetAllAdSlotFillersFin
 
     new WText(" Page: ", this);
 
-    m_PageSpinbox = new WSpinBox(this); //TODOreq: can't set validator because built in, but does C++ still need to call validate() ?
+    m_PageSpinbox = new WSpinBox(this);
     m_PageSpinbox->setRange(1, m_TotalPagesCount);
     m_PageSpinbox->setValue(1);
     m_PageSpinbox->enterPressed().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::goToPageButtonClicked);
 
-    WPushButton *goToPageButton = new WPushButton("Go", this); //TODOreq: handle jumping to same page by doing nothing
+    WPushButton *goToPageButton = new WPushButton("Go", this);
     goToPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::goToPageButtonClicked);
 
     new WText(" of " + boost::lexical_cast<std::string>(m_TotalPagesCount) + " pages. ", this);
@@ -124,7 +123,6 @@ void ViewAllExistingAdSlotFillersAccountTabBody::buildCurrentPageAndAddToStackAn
 }
 void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGetAttemptFinished(const std::string &keyToAdSlotFillerArriving, const string &oneAdSlotFillerJsonDoc, bool lcbOpSuccess, bool dbError)
 {
-    //TODOreq: ordering of the responses (key analysis? idfk)
     --m_NumberOfAdsHackilyMultiGetting; //TODOreq: we definitely still want to decrement this even if dbError or lcbOpFail, but err ehh uhmm idk i need some kind of special handling of that shit... like what if only one out of the 10 fails? or all 10 fail? etc
     if(dbError)
     {

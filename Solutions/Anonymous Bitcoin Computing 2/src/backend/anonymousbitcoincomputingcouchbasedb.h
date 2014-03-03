@@ -232,18 +232,16 @@ private:
 
     void notifyMainThreadWeAreFinishedWithAllPendingRequests();
 
-
     struct event *m_BeginStoppingCouchbaseCleanlyEvent;
     struct event *m_FinalCleanUpAndJoinEvent;
-    //TODOreq: = NULL;
 
-    //message_queue *m_StoreWtMessageQueue0 = NULL;
+    //message_queue *m_StoreWtMessageQueue0;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO)
 
     //void *m_StoreMessageQueue0CurrentMessageBuffer;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO)
 
-    //struct event *m_StoreEventCallbackForWt0 = NULL;
+    //struct event *m_StoreEventCallbackForWt0;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO)
 
     //static void eventSlotForWtStore0Static(evutil_socket_t unusedSocket, short events, void *userData);

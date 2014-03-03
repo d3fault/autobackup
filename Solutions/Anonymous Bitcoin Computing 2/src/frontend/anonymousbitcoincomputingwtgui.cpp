@@ -34,19 +34,20 @@
 #define ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH 64
 #define ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH_STRING "64"
 
+#define ABC_SOMEONE_BOUGHT_SLOT_MOMENTS_BEFORE_YOU_MESSAGE "Sorry, someone else just bought that slot. You have to click step 1 again to buy the NEXT slot"
+
 //TODOreq: FOREVER: any feature that modifies user-account doc must do so with a CAS-swap, _AND_ the 'get' for that CAS-swap must ALWAYS check that "slotToAttemptToFillAkaPurchase" isn't set on the user-account. If "slotToAttemptToFillAkaPurchase" is set, that feature must not work until "slotToAttemptToFillAkaPurchase" is gone. It should error out saying "don't use multiple tabs" or "please try again in a few seconds".
 //^just worth mentioning, but not worth fixing yet: when the buy slot aka slot fill fails just after using account locking (but before slot fill) and they log in and basically can't do shit with their account, it effectively makes the bitcoin stuff off limits too since it relies on the user account not being locked. As of right now they have to wait until the slot is purchased, but once I let them proceed/retry with the buy, then they can get themselves out of it (if they still want to do the purchase)
 //TODOreq: "Forgot Your Password?" --> "Tough shit, I hope you learned your lesson"
-//TODOreq: no-js get-from-subscription-cache-but-dont-subscribe
-//TODOreq: find out when a signal connected to a dangerous slot can NOT be invoked by a user sifting through the html/js: signal disconnect should do it, but what about setVisible(false) and setEnabled(false), or changing a stackedwidget's current item (slot connected to button on stack item underneath). The easiest way to find this out is to ask; fuck trying to dig through Wt (and definitely fuck trying to dig through the html/js). Another related question: is there a race condition between resumeRendering at the beginning of a function and accessing a [editable-via-gui] member variable later in that same method (hacky solution to that is to always resumeRendering at the end of the method, and a hacky way to do that with lots of scope exit points in the function is using the stack struct destructor hack). I'm guessing the resumeRendering thing isn't a problem because the input events aren't (read:PROBABLY-AREN't(idk)) processed until the method ends and wt gets control again. hell, i don't even know for sure that deferRendering is even giving me the protection i'm assuming it is. More: does connecting a button's clicked signal to disable and/or calling deferRendering in slot connected to it solve the 'two clicks really fast' race condition, OR do i need to use a boolean flag checked/set at the very beginning of the slot (and unset at the end of the operation [i don't want to happen twice concurrently]). Does WComboBox sanitize it's currentIndex? Does LineEdit server-side-enforce maxLength?
+//TO DOnereq(deferRendering is god, i checked the source code of wt): find out when a signal connected to a dangerous slot can NOT be invoked by a user sifting through the html/js: signal disconnect should do it, but what about setVisible(false) and setEnabled(false), or changing a stackedwidget's current item (slot connected to button on stack item underneath). The easiest way to find this out is to ask; fuck trying to dig through Wt (and definitely fuck trying to dig through the html/js). Another related question: is there a race condition between resumeRendering at the beginning of a function and accessing a [editable-via-gui] member variable later in that same method (hacky solution to that is to always resumeRendering at the end of the method, and a hacky way to do that with lots of scope exit points in the function is using the stack struct destructor hack). I'm guessing the resumeRendering thing isn't a problem because the input events aren't (read:PROBABLY-AREN't(idk)) processed until the method ends and wt gets control again. hell, i don't even know for sure that deferRendering is even giving me the protection i'm assuming it is. More: does connecting a button's clicked signal to disable and/or calling deferRendering in slot connected to it solve the 'two clicks really fast' race condition, OR do i need to use a boolean flag checked/set at the very beginning of the slot (and unset at the end of the operation [i don't want to happen twice concurrently]). Does WComboBox sanitize it's currentIndex? Does LineEdit server-side-enforce maxLength?
 //TODOreq: litter if(!m_LoggedIn) lots of places. It's a cheap but effective safeguard
-//TODOreq: to double or to int64? that is the question. boost::lexical_cast threw an exception when i tried to convert it to u_int64_t, maybe int64_t will have better luck. there's a "proper money handling" page that tells you to use int64.... but i'm trying to figure out what the fuck the point of that even is if i have to go "through" double anyways. maybe i should just string replace the decimal place for an empty string and then viola it is an int64 (still needs lexical casting for maths :-/). re: "through double" = double is usually more than enough on most platforms, but on some it isn't <- rationale for using int64. but if you're going string -> double -> int64 anyways, won't you have already lost precision? or maybe it's only when the math is being performed. I still am leaning towards int64 (if i can fucking convert my strings to it) because it does appear to be the right way to do rounding (deal with single Satoshis = no rounding needed)
+//TO DOnereq(SatoshiInt = long long, which is basically(?) int64 except lexical_cast can handle it): to double or to int64? that is the question. boost::lexical_cast threw an exception when i tried to convert it to u_int64_t, maybe int64_t will have better luck. there's a "proper money handling" page that tells you to use int64.... but i'm trying to figure out what the fuck the point of that even is if i have to go "through" double anyways. maybe i should just string replace the decimal place for an empty string and then viola it is an int64 (still needs lexical casting for maths :-/). re: "through double" = double is usually more than enough on most platforms, but on some it isn't <- rationale for using int64. but if you're going string -> double -> int64 anyways, won't you have already lost precision? or maybe it's only when the math is being performed. I still am leaning towards int64 (if i can fucking convert my strings to it) because it does appear to be the right way to do rounding (deal with single Satoshis = no rounding needed)
 //venting/OT: fucking bitcoin testnet-box-3 has tons of bitcoins, but they're all immature/orphaned so unspendable until i mine 120 fucking blocks. i'm averaging 1 block an hour -_-. box 2 didn't have this problem when i was fucking around with it years ago. i have the code written to test bitcoin interactions, but no test bitcoins available hahaha (i guess i can write the bulk bitcoins generator -> hugeBitcoinList/bitcoinKeySetN setter upper thingo first... zzz...
 
 //TODOoptimization: lots of stuff needs to be moved into it's own object instead of just being a member in this class. it will reduce the memory-per-connection by...  maybe-a-significant... amount. for example the HackedInD3faultCampaign0 shit should be on it's own widget, but ON TOP OF THAT each "step" in the HackedInD3faultCampaign0 thing (buy step 1, buy step 2) can/should be it's own object (member of of HackedInD3faultCampaign0 object). We just have too many unused and unneeded-most-of-the-time member variables in this monster class... but KISS so ima continue for now, despite cringing at how ugly/hacky it's becoming :)
 //^for string values that aren't needed most of the time but still need to be members because accessed in various async methods etc, i can put them in a ptree (that is itself a member). this way they only take up any memory when they are needed (this monster class has a lot of corner cases and even those corner cases declare members). ptree isn't just for json (i lol'd when i was thinking to myself "hmm i need some sort of... property... tree..."). a hash with string key/value would also work and might be faster. i've never done memory management in such a way but hey i think it'll work...
 
-//TODOreq: can't remember if i wrote this anywhere or only thought of it, but i need to add underscores between certain things in my couchbase docs. for example a user named JimboKnives0 would have a conflict with a user named JimboKnives. adSpaceSlotFillersJimboKnives0 would now point to a specific ad slot filler, _AND_ the "profile view" (last 10 slot fillers set up) for JimboKnives0 -- hence, conflict. Could maybe solve this another way by perhaps always having the username be the very last part of the key???
+//TO DOnereq: can't remember if i wrote this anywhere or only thought of it, but i need to add underscores between certain things in my couchbase docs. for example a user named JimboKnives0 would have a conflict with a user named JimboKnives. adSpaceSlotFillersJimboKnives0 would now point to a specific ad slot filler, _AND_ the "profile view" (last 10 slot fillers set up) for JimboKnives0 -- hence, conflict. Could maybe solve this another way by perhaps always having the username be the very last part of the key???
 
 //TODOoptimization: walking the internal path via "next sub path" (including sanitization at each step) is a good way to organize the website and additionally fill in json key pieces. example: /ads/buy-ad-space/d3fault/0 could be organized in Wt as: class Ads { class BuyAdSpace { m_SellerUsername = d3fault; m_SellerCampaign = 0; } }.... and organized in json as ads_buy_d3fault_0.  sanitization errors would be simple 404s, and it goes without saying that neither can/should include underscores or slashes
 //^sanitize underscores(well,maybe.. if used as key 'split' identifier (isn't currently)), slashes(ditto if done for internal path 'walking'), and spaces (couchbase keys cannot contain spaces) from all user input AS A MINIMUM. really i'm probably going to go overkill and just allow a-z and 0-9 in a whitelist :-D. fuggit
@@ -346,7 +347,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 {
     //TO DOnereqoptimization(but comments mentions other designs): this is going to be my most expensive document (the home link might be too, but it doesn't hit the db). I need SOME sort of caching solution [in order to make this horizontally scalable (so in other words, it isn't an absolute must pre-launch task], even if it's hacked-in/hardcoded who cares. getAndSubscribe comes to mind (but sounds complicated). a fucking mutex locked when new'ing the WContainerWidget below would be easy and would scale horizontally. Hell it MIGHT even be faster than a db hit (and there's always a 'randomly selected mutex in array of mutexes' hack xD)
 
-    if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget) //TODOreq: this object, once created, should never be deleted until the WApplication is deleted. The reason is that get and subscribe updates might be sent to it (even if the user has navigated away, there is a race condition where they did not 'unsubscribe' yet so they'd still get the update (Wt handles this just fine. you can setText on something not being shown without crashing (but if I were to delete it, THEN we'd be fucked)))
+    if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget) //TO DOnereq(rarely anything is deleted): this object, once created, should never be deleted until the WApplication is deleted. The reason is that get and subscribe updates might be sent to it (even if the user has navigated away, there is a race condition where they did not 'unsubscribe' yet so they'd still get the update (Wt handles this just fine. you can setText on something not being shown without crashing (but if I were to delete it, THEN we'd be fucked)))
     {
         m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new WContainerWidget(m_MainStack);
         m_AdvertisingBuyAdSpaceD3faultCampaign0Widget->setOverflow(WContainerWidget::OverflowAuto);
@@ -370,8 +371,6 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         if(!environment().ajax())
         {
             doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
-            //getCouchbaseDocumentByKeySavingCasBegin(adSpaceCampaignKey("d3fault", "0"));
-            //m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
         }
         else
         {
@@ -433,7 +432,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
             getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
             m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
         }
-        //TODOreq: the data will still be populated, but the data may be stale (maybe i shouldn't ever show such stale info (could be really really old, BUT if everything is working it will get updated really fast ([probably] not even a couchbase hit, so SUB-SUB-MILLISECONDS!?!?)))
+        //TO DOnereq(newest cache poll always gotten): the data will still be populated, but the data may be stale (maybe i shouldn't ever show such stale info (could be really really old, BUT if everything is working it will get updated really fast ([probably] not even a couchbase hit, so SUB-SUB-MILLISECONDS!?!?)))
         //^still, should i disable gui or something?
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -465,8 +464,8 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = advertisingBuyAdSpaceD3faultCampaign0JsonDocument;
     m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
 
-    //TODOreq: this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
-    //TODOreq: if we do the new-ing in 'begin' a populating in 'finish' (here), we need to deferRendering to make things such as 'buy step 1' not clickable until the first 'finish' (which is more appropriately 'update'/populate now)... but we shouldn't do resumeRendering every time, because buy events don't need to do it. I guess we could force it to be invisible until 'finish', but I'm not certain that makes it unclickable (so a hacker could segfault me still). I'm 50/50 on this, I think Wt might make invisible objects 'unclickable' in that sense. setDisabled should do the same, but again unsure if that makes the inner js -> c++ slot mechanism not usable/hackable(hackable-because-segfault)
+    //TO DOnereq(we send them the time, and we never rely on their stuff): this is the javascript impl of the countdown shit. we obviously need to still verify that the math is correct when a buy attempt happens (we'll be using C++ doubles as well, so will be more precise). we should detect when a value lower than 'current' is attempted, and then laugh at their silly hack attempt. i should make the software laugh at me to test that i have coded it properly (a temporary "submit at price [x]" line edit just for testing), but then leave it (the laughing when verification fails, NOT the line edit for testing) in for fun.
+    //TO DOnereq: if we do the new-ing in 'begin' a populating in 'finish' (here), we need to deferRendering to make things such as 'buy step 1' not clickable until the first 'finish' (which is more appropriately 'update'/populate now)... but we shouldn't do resumeRendering every time, because buy events don't need to do it. I guess we could force it to be invisible until 'finish', but I'm not certain that makes it unclickable (so a hacker could segfault me still). I'm 50/50 on this, I think Wt might make invisible objects 'unclickable' in that sense. setDisabled should do the same, but again unsure if that makes the inner js -> c++ slot mechanism not usable/hackable(hackable-because-segfault)
 
     ptree pt;
     std::istringstream is(advertisingBuyAdSpaceD3faultCampaign0JsonDocument);
@@ -493,7 +492,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
 
     if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
     {
-        //TODOreq (done i think, but test this): no purchases yet, use static min price (but still be able to transform to javascript countdown on buy event)
+        //TODOreq (done i think, but test this): but still be able to transform from no purchases yet to javascript countdown on buy event
         m_CurrentPriceLabel->setText(m_HackedInD3faultCampaign0_MinPrice);
         m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText("immediately after purchase");
     }
@@ -544,12 +543,11 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
 
             if(!environment().ajax()) //since not expired, no-js now calculates current price
             {
-                //TODOreq: javascript-less UI should update price after buy step 1 is clicked
                 //TODOreq: maybe a 60 second timer to refresh js-less page, or a refresh button
 
                 double currentPriceOverAccurate = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
 
-                m_CurrentPriceLabel->setText(jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(currentPriceOverAccurate)); //TODOreq: 8 decimal places, since it's presented to user
+                m_CurrentPriceLabel->setText(jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(currentPriceOverAccurate));
                 //TODOoptional: if viewing campaign/countdown with js on and you then disallow js, the price is empty/blank (not even zero). weirdly though, coming directly to the page (no session) with javascript already disabled works fine. I think it has something to do with noscript not re-fetching the source during the "reload"... because on the noscript-reload tab i see "Scripts currently forbidden" (with options to allow them), and on "navigated directly to campaign with js already off" tab I don't see that message (no js was served). I don't even think I CAN fix this problem heh :-P... but it might be a Wt bug... not gracefully degrading when session becomes js-less?
 
                 //TODOreq: "current price is XXX and it will be back at YYYYY at ZZZZZZZ (should nobody buy any further slots). Click here to refresh this information to see if it's still valid, as someone may have purchased a slot since you loaded this page (enable javascript if you want to see it count down automatically)"
@@ -588,12 +586,11 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         m_BuySlotFillerStep1Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked);
         m_BuySlotFillerStep1Button->clicked().connect(m_BuySlotFillerStep1Button, &WPushButton::disable);
     }
-    //TODOreq: get and subscribe testing so far will not include rolling back of anything after step 1 of 2 clicked, so i gotta do the rest of that process later
 }
 void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
 {
-    //TODOreq: anything between step 1 being clicked and the slot being successfully purchased/filled needs to be able to roll back to a pre-step-1-clicked state: buy events, insufficient funds, user-account-lock fails, etc (there are probably more)
-    //TODOreq: semi-related to ^. since the user is already logged in (actually that's checked a few lines down from here), we can do ANOTHER ahead-of-time sufficient funds check (DO NOT DEPEND ON IT THOUGH) right when the user clicks buy step 1
+    //TODOreq(mostly done but a thorough check of the path wouldn't hurt): anything between step 1 being clicked and the slot being successfully purchased/filled needs to be able to roll back to a pre-step-1-clicked state: buy events, insufficient funds, user-account-lock fails, etc (there are probably more)
+    //TODOoptional: since the user is already logged in (actually that's checked a few lines down from here), we can do ANOTHER ahead-of-time sufficient funds check (DO NOT DEPEND ON IT THOUGH) right when the user clicks buy step 1, but this creates more problems than it's worth because what if they add funds in a different tab? isn't worth a db get [until buy step 2 clicked], so probably isn't worth it at all
 
     if(!m_LoggedIn)
     {
@@ -603,9 +600,9 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
         return;
     }
 
-    //TODOreq: we should record the current slot index here and make sure that after buy step 2 is pressed, the slot index when they pressed it matches the one we recorded here. that's common sense, HOWEVER the current slot index might have even changed by the time the below db-get returns (before we create teh buy step 2 button), so it makes sense to check it in two places (just before creating buy step 2 button + in buy step 2's clicked slot). ADDITIONALLY, we should use the slot index recorded here to do the buy attempt, so that even if our checks fail and they somehow get passed those two checks, we don't use 'current slot index' but the slot index recorded here/now. i think that about covers it, aside from of course the visual rollback stuff
+    //TO DOnereq: we should record the current slot index here and make sure that after buy step 2 is pressed, the slot index when they pressed it matches the one we recorded here. that's common sense, HOWEVER the current slot index might have even changed by the time the below db-get returns (before we create teh buy step 2 button), so it makes sense to check it in two places (just before creating buy step 2 button + in buy step 2's clicked slot). ADDITIONALLY, we should use the slot index recorded here to do the buy attempt, so that even if our checks fail and they somehow get passed those two checks, we don't use 'current slot index' but the slot index recorded here/now. i think that about covers it, aside from of course the visual rollback stuff
     //^^actually buy event rolling back to pre-step-1 means i don't need to check it's valid after the db-get below, WHICH MEANS buy event itself needs to check the recorded value's accuracy. wait no, it always rolls back durr ;-P. still, isn't there a race condition where they hit buy step 1 right around/at/before/after (WHICH?) the buy event that would leave the buy step 2 button visible and [HOPEFULLY] pointing to the wrong slot index?
-    //^^^race condition(?): buy event doesn't see step 2 enabled, so doesn't disable it. buy step 1 click event is still traveling to server and when it gets here,.... err then we'd have the value from the most recent buy event, which although accurate-ish isn't what it was when they pressed buy step 1. it would be up to them to look at the gui (BUT WHAT IF MAH buy step 2 enabling beats --- no nvm it won't beat the buy event that CAME BEFORE IT (tcp guarantees this)). TODOreq: it is mandatory that buy step 1 updates the price when in no-js mode, otherwise the user wouldn't see that and well duh this is obvious and has nothing to do with a race condition
+    //^^^race condition(?): buy event doesn't see step 2 enabled, so doesn't disable it. buy step 1 click event is still traveling to server and when it gets here,.... err then we'd have the value from the most recent buy event, which although accurate-ish isn't what it was when they pressed buy step 1. it would be up to them to look at the gui (BUT WHAT IF MAH buy step 2 enabling beats --- no nvm it won't beat the buy event that CAME BEFORE IT (tcp guarantees this)). TO DOnereq: it is mandatory that buy step 1 updates the price when in no-js mode, otherwise the user wouldn't see that and well duh this is obvious and has nothing to do with a race condition
     //^^^^^the race condition where buy event happens before teh below db-get finishes DOES matter, because the buy event will not see step 2 created yet (it isn't). it won't end up making the user buy a slot for twice what they want (it will fail), BUT their gui won't roll back for the 'buy event', so we DO need to check just before setting up buy step 2 xD
     //^^^^^^^^we also want to 'roll back' after the buy is successful, but certain messages should remain
     m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy = m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
@@ -690,7 +687,8 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
     resumeRendering();
     if(dbError)
     {
-        //TODOreq: 500 internal server error
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         //temp:
         cerr << "buySlotPopulateStep2d3faultCampaign0 db error" << endl;
@@ -711,7 +709,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
     //if we get here, allAds doc exists (which means it has at least one ad)
 
-    string currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp)))); //TODOreq: rounding/etc
+    string currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp))));
 
     if(!environment().ajax())
     {
@@ -725,7 +723,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         //buy event race condition
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("Someone just bought that slot, so you have to click step 1 again to buy the NEXT slot", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_SOMEONE_BOUGHT_SLOT_MOMENTS_BEFORE_YOU_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         //"roll back" to pre-step 1, but since we haven't set up anything yet we just re-enable step 1 buttan
         m_BuySlotFillerStep1Button->enable();
@@ -733,7 +731,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
     }
 
 
-    //TODOreq: unsubscribing (navigating away) and resubscribing (coming back) might have missed a buy event, but actually i think re-subscribe should give us an updated value right away (well, within 100ms xD) and when we receive it we'll then roll back to pre-step 1. test this
+    //TODOreq(pretty sure done, but still worth testing): unsubscribing (navigating away) and resubscribing (coming back) might have missed a buy event, but actually i think re-subscribe should give us an updated value right away (well, within 100ms xD) and when we receive it we'll then roll back to pre-step 1. test this
 
     //setting this bool to false here instead of at the buy event makes the user have to click buy step 1 again
     m_BuyInProgress = false;
@@ -787,7 +785,7 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
     if(lcbOpSuccessAkaWhetherOrNotTheSlotWeWantToBuyExistsBitch)
     {
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("Sorry, someone beat you to it", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: make these error messages the same via a define
+        new WText(ABC_SOMEONE_BOUGHT_SLOT_MOMENTS_BEFORE_YOU_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         if(!environment().ajax())
         {
             doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
@@ -829,10 +827,9 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
             //not expired, so calculate
 
             //calculate internal price
-            //TODOreq: all uses of this currrent price conform
             m_CurrentPriceInSatoshisToUseForBuying = jsonDoubleToSatoshiIntIncludingRounding(calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), lastSlotFilledAkaPurchasedExpireDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp)));
 
-            //TODOreq: when we use this variable later, we first check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases. If true, we then use the PURCHASE time as the start time. That is also true for when the last purchase is already expired (check both and in mentioned order). We also need to make sure we always check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases before checking if last purchase is expired, because there isn't a last purchase so we'd get undefined results
+            //TODOreq(i vaguely recall doing this already): when we use this variable later, we first check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases. If true, we then use the PURCHASE time as the start time. That is also true for when the last purchase is already expired (check both and in mentioned order). We also need to make sure we always check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases before checking if last purchase is expired, because there isn't a last purchase so we'd get undefined results
             m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = boost::lexical_cast<std::string>(lastSlotFilledAkaPurchasedExpireDateTime);
 
             m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;
@@ -849,8 +846,8 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
         //make 'account locked' json doc [by just appending to the one we already have]
 
         pt.put(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, m_AdSlotAboutToBeFilledIfLockIsSuccessful);
-        //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
-        //TODOreq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
+        //TO DOnereq (read next T0d0req first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
+        //TO DOnereq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
         pt.put(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH, m_SlotFillerToUseInBuy);
         std::ostringstream jsonDocBuffer;
         write_json(jsonDocBuffer, pt, false);
@@ -874,7 +871,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
     {
         //shouldn't get here but maybe via a race condition?
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("Someone just bought that slot, so you have to click step 1 again to buy the NEXT slot", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_SOMEONE_BOUGHT_SLOT_MOMENTS_BEFORE_YOU_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         rollBackToBeforeBuyStep1ifNeeded();
         return;
     }
@@ -895,7 +892,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
     }
     m_BuyInProgress = true;
 
-    deferRendering(); //haha it hit me while laying in bed that you can call this multiple times. never thought i'd use that feature but blamo here i am using it and loving Wt :). TODOreq: make sure the 'second' deferRendering is called in all error cases from here
+    deferRendering(); //haha it hit me while laying in bed that you can call this multiple times. never thought i'd use that feature but blamo here i am using it and loving Wt :). TODOreq(pretty sure done, but walk along it): make sure the 'second' deferRendering is called in all error cases from here
     //TO DOnereqopt: idk if required or optional or optimization, but it makes sense that we consolidate the defer/resume renderings here. The result of that button clicked (the signal that brought us here) makes us do TWO couchbase round trips: the first one to verify balance and lock account, the second to do the actual slot-filling/buying. It makes sense to only defer rendering once HERE, and to resume rendering only once LATER (error, or slot filled, etc). It might not matter at all.
 
     //DO ACTUAL BUY (check balance + lock user account, then associate slot with slot filler, aka fill the slot)
@@ -903,10 +900,8 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
     new WText("Attempting to buy ad space with advertisement: '" + m_AllSlotFillersComboBox->currentText() + "'...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
-    //TODOreq: change to 'sending them the time' [for use in js], because it not only solves the timezones/incorrect-system-time problem, but it also has the added benefit of GUARANTEEING that the price they see will be above the internal price (because of latency)... so much so that we don't need them to send it in anymore. the slot index would be enough. Also worth noting that the js should use an accurate timer to calculate the 'current time' (from the time we sent them and they saved). I doubt setInterval is a high precision timer. I was originally thinking they could delta the time we sent them against their system time, but then there'd be the problem of if they changed their system time while running then it'd fuck shit up (not a big deal though since it's a rare case. still if js has a high precision timer object ("time elapsed since x"), use that).
+    //TO DOnereq: change to 'sending them the time' [for use in js], because it not only solves the timezones/incorrect-system-time problem, but it also has the added benefit of GUARANTEEING that the price they see will be above the internal price (because of latency)... so much so that we don't need them to send it in anymore. the slot index would be enough. Also worth noting that the js should use an accurate timer to calculate the 'current time' (from the time we sent them and they saved). I doubt setInterval is a high precision timer. I was originally thinking they could delta the time we sent them against their system time, but then there'd be the problem of if they changed their system time while running then it'd fuck shit up (not a big deal though since it's a rare case. still if js has a high precision timer object ("time elapsed since x"), use that).
     //^that guarantee depends on all wt nodes being time sync'd like fuck, but that goes without saying
-
-    //TODOreq: handle cases where no puchases yet (use min), no next, no balls, current expired (use min),etc
 
     //had calculate current price here, but moved it to a few sub-milliseconds later
 
@@ -918,7 +913,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
     //TO DOnereq (vague so pretty much done (spread out to many other reqs)): the above get shouldn't fail since they need to already be logged in to get this far, but what the fuck do i know? it probably CAN (db overload etc), so i need to account for that
     //^everything can DEFINITELY fail, it is only success that can ever at most PROBABLY happen
 
-    //TODOreq: failed to lock your account for the purchase (???), failed to buy/fill the slot (insufficient funds, or someone beat us to it (unlock in both cases))
+    //TODOreq: failed to lock your account for the purchase (???)
 }
 void AnonymousBitcoinComputingWtGUI::rollBackToBeforeBuyStep1ifNeeded()
 {
@@ -934,21 +929,26 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     if(dbError)
     {
         //TODOreq: now that i think of it, a lot of these errors, whether 500 or 'lcbOpSuccess' are going to require rolling back things. maybe just gui type stuff, but maybe db type stuff. lots to consider.
-        //TODOreq: 500 internal server error
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         //temp:
         cerr << "verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked db error" << endl;
 
-        //TODOreq: MAYBE rollBackToBeforeBuyStep1(); for this, lcbOpFail, and all subsequent db/lcbOpFails before the slot fill completes. this is the first db error where it's applicable though, so don't go backwards
+        //TODOreq(in progress but not complete, walk the path): rollBackToBeforeBuyStep1(); for this, lcbOpFail, and all subsequent db/lcbOpFails before the slot fill completes. this is the first db error where it's applicable though, so don't go backwards
 
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
     if(!lcbOpSuccess)
     {
-        //TODOreq: 500 internal server error
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
         cerr << "TOTAL SYSTEM FAILURE: got 'key does not exist' in 'verify user has sufficient funds', which requires them to already be logged in (them logging in proves the key exists)" << endl;
 
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
@@ -957,7 +957,7 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     if(m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy != m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex)
     {
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("Someone just bought that slot, so you have to click step 1 again to buy the NEXT slot", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_SOMEONE_BOUGHT_SLOT_MOMENTS_BEFORE_YOU_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
@@ -977,7 +977,7 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     {
         //not already locked
 
-        //TODOreq: make sure the slot doesn't already exist before proceeding, because it might and if it does we will fuck shit up if we lock the user account AGAIN towards one we already purchased, which is a race condition that happens a lot when js is disabled
+        //TO DOnereq: make sure the slot doesn't already exist before proceeding, because it might and if it does we will fuck shit up if we lock the user account AGAIN towards one we already purchased, which is a race condition that happens a lot when js is disabled
         int slotIndexToAttemptToBuy = 0;
         if(!m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
         {
@@ -991,7 +991,7 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     else
     {
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("Our records indicate you're currently trying to purchase some ad space. Either do one purchase at a time, or perhaps you should try logging out and back in again to remedy the issue", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Our records indicate you're currently trying to purchase some ad space. Either do only one purchase at a time, or perhaps you should try logging out and back in again to remedy the issue", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         resumeRendering();
         //we probably want to allow them to continue with the buy even if the account is locked, so long as it's locked "to" the same one they're trying to buy now (buy failure recovery) -- TODOreq: this should go either in login recovery or here, but not both (since getting _here_ requires being logged in (ALTHOUGH ACTUALLY NVM, IT IS POSSIBLE TO GET HERE IF THE DB/node FAILS WHILE THEY ARE LOGGED IN LOOKING AT BUY PAGE FFFFFF))
         //Semi-outdated:
@@ -1092,11 +1092,13 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
 {
     if(dbError)
     {
-        //TODOreq: 500 internal server error?
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         //temp:
         cerr << "userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd db error" << endl;
 
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
@@ -1104,6 +1106,7 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
     {
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("It appears you're logged in to more than one location and are trying to make multiple purchases simultaneously. You can only do one at a time", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
         rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
@@ -1114,7 +1117,7 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
     //TODOoptional: we could maybe check the buy event race condition here too and roll back including unlocking without debitting, but eh seems kinda dangerous without thinking it through so idk...
 
     m_CasFromUserAccountLockSoWeCanSafelyUnlockLater = casFromLockSoWeCanSafelyUnlockLater;
-    //TODOreq: handle beat to punch error case (unlock without deducting)
+    //TO DOnereq: handle beat to punch error case (unlock without deducting)
 
     //do the LCB_ADD for the slot!
 
@@ -1145,11 +1148,13 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
 {
     if(dbError)
     {
-        //TODOreq: 500 internal server error?
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         //temp:
         cerr << "slotFillAkaPurchaseAddAttemptFinished db error" << endl;
 
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
@@ -1157,6 +1162,7 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     {
         //getting beat to the punch
         unlockUserAccountWithoutDebittingIfSlotDeclaredAttemptingToPurchaseIsPurchasedBySomeoneElse(m_AdSlotAboutToBeFilledIfLockIsSuccessful, m_SlotFillerToUseInBuy, m_UserAccountUnlockedJustBeforeBuyingJson, m_CasFromUserAccountLockSoWeCanSafelyUnlockLater);
+
         rollBackToBeforeBuyStep1ifNeeded();
         return;
     }
@@ -1166,22 +1172,24 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     //create transaction doc using lcb_add accepting fail -- i can probably re-use this code later (merge into functions), for now KISS
     ptree pt;
     pt.put(JSON_TRANSACTION_BUYER, m_CurrentlyLoggedInUsername);
-    pt.put(JSON_TRANSACTION_SELLER, "d3fault"); //TODOreq: implied/deducable from key name...
+    pt.put(JSON_TRANSACTION_SELLER, "d3fault"); //TODOoptional: implied/deducable from key name...
     pt.put(JSON_TRANSACTION_AMOUNT, m_CurrentPriceInSatoshisToUseForBuyingString);
     std::ostringstream transactionBuffer;
     write_json(transactionBuffer, pt, false);
     store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(transactionKey("d3fault", "0", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase), transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
-    m_WhatTheStoreWithoutInputCasWasFor = CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS; //TODOreq: it goes without saying that 'recovery possy' needs it's own set of these, so as not to conflict
-    //TODOreq: i need a way of telling the backend that certain adds (like this one) are okay to fail. But really I already need a whole slew of error case handling to be coded into the backend, I guess I'll just do it later? So basically for adds where fails are not ok, we need to have two code paths... but for this one where the add failing is ok, we just pick up with one code path. I think the easiest way of doing this is to return a bool telling whether or not the add succeeded, and to just ignore it if it doesn't matter. But since there's many many ways of failing, maybe I should be passing around the LCB_ERROR itself? So far I've tried to keep front end and back end separate, so idk maybe "bool opTypeFail and bool dbTypeFail", where the first one is relating to cas/add fails and the second is like "500 internal server error" (of course, the backend would have retried backing off exponentially etc before resorting to that)
+    m_WhatTheStoreWithoutInputCasWasFor = CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS; //TO DOnereq(possy is synchronous standalone app lol): it goes without saying that 'recovery possy' needs it's own set of these, so as not to conflict
+    //TO DOnereq(cute, my younger/stupider self <3): i need a way of telling the backend that certain adds (like this one) are okay to fail. But really I already need a whole slew of error case handling to be coded into the backend, I guess I'll just do it later? So basically for adds where fails are not ok, we need to have two code paths... but for this one where the add failing is ok, we just pick up with one code path. I think the easiest way of doing this is to return a bool telling whether or not the add succeeded, and to just ignore it if it doesn't matter. But since there's many many ways of failing, maybe I should be passing around the LCB_ERROR itself? So far I've tried to keep front end and back end separate, so idk maybe "bool opTypeFail and bool dbTypeFail", where the first one is relating to cas/add fails and the second is like "500 internal server error" (of course, the backend would have retried backing off exponentially etc before resorting to that)
 }
 void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(bool dbError)
 {
     if(dbError)
     {
-        //TODOreq: 500 internal server error?
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         cerr << "transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting db error" << endl;
 
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
@@ -1212,36 +1220,34 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     write_json(jsonDocWithBalanceDeducted, pt, false);
 
     store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), jsonDocWithBalanceDeducted.str(), m_CasFromUserAccountLockSoWeCanSafelyUnlockLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
-    m_WhatTheStoreWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq: handle cas swap UNLOCK failure. can happen and sometimes will, but mostly won't. handle it by doing nothing but continuing the process
+    m_WhatTheStoreWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS; //TODOreq(prbly done): handle cas swap UNLOCK failure. can happen and sometimes will, but mostly won't. handle it by doing nothing but continuing the process
 
     //TO DOnereq(set without cas): should we have done a multi-get to update the campaign doc also? i actually think not since we don't have the cas for that doc (but we could have gotten it~). more importantly i don't know whether or not i need the cas for it when i do the swap. seems safer no doubt.. but really would there be any contesting?? maybe only subsequent buys milliseconds later (probably in error, but maybe the campaign is just liek popular ya know ;-P)... so yea TODOreq do a cas-swap of the campaign doc, makes sure we're only n+1 the last purchased.... and i think maybe do an exponential backoff trying... because it's the same code that runs for when subsequent ones are purchased seconds later? or no... maybe we just do a set without cas because we know that all attempts to buy will fail until that set is complete (because they try to buy n+1 (which is what we just bought (so it will fail safely as beat-to-thepunch)), not n+2 (until the set we're about to do, is done))
-    //TODOreq:^^Does the order of user-account-unlock and setting-the-campaign-doc-with-new-last-purchase matter? can we do them asynchronously (AKA HERE IS WHERE WE'D START 'UPDATING'/LCB_SET'ing CAMPAIGN), or do we need to do one before the other and then wait for whichever goes first to complete?
+    //TODOoptimization(don't do it if you want to stay sane):^^Does the order of user-account-unlock and setting-the-campaign-doc-with-new-last-purchase matter? can we do them asynchronously (AKA HERE IS WHERE WE'D START 'UPDATING'/LCB_SET'ing CAMPAIGN), or do we need to do one before the other and then wait for whichever goes first to complete?
 
+    //TO DOnereq: dispatch the buy event to our neighbor wt nodes so they can post the buy event to their end users etc (how da fuq? rpc? get-and-subscribe polling model? guh). polling is easiest and really having N[ode-count] hits ever i[N]terval [m]seconds is still not that expensive (get and subscribe also acts as caching layer so that we don't get 10-freaking-thousand hits per second to that same document)
+    //TO DOnereq: definitely doesn't belong here, but a get-and-subscribe / polling method could do a "poll" for the current value and when the poll finishes, the last end-user could have disconnected in that time and we MIGHT think it would be an error but we'd be wrong. in that case we'd just discard/disregard that last polled value (and of course, not do any more polling until at least one end-user connected)
+    //TO DOnereq: ^it goes without saying that 'buy' events do not use the cached value. (NVM:) Hell, even hitting 'buy step 1' should maybe even do a proper get for the actual value (or just nudge cache to do it for him).... BUT then it becomes a DDOS point. since I'm thinking the polling intervals will be like 100-500ms, doing a non-cached get like that on "buy step 1" is probably not necessary (/NVM). But we definitely absolutely need to do it for buy step 2 (duh), and that is NOT a DDOS point because noobs would be giving ya monay each time so i mean yea ddos all ya fuggan want nobs <3
 
-    //TODOreq: need to update the adSpaceSlotsd3fault0 to make the filler that just succeded the most recent purchased
-    //TODOreq: dispatch the buy event to our neighbor wt nodes so they can post the buy event to their end users etc (how da fuq? rpc? get-and-subscribe polling model? guh). polling is easiest and really having N[ode-count] hits ever i[N]terval [m]seconds is still not that expensive (get and subscribe also acts as caching layer so that we don't get 10-freaking-thousand hits per second to that same document)
-    //TODOreq: definitely doesn't belong here, but a get-and-subscribe / polling method could do a "poll" for the current value and when the poll finishes, the last end-user could have disconnected in that time and we MIGHT think it would be an error but we'd be wrong. in that case we'd just discard/disregard that last polled value (and of course, not do any more polling until at least one end-user connected)
-    //TODOreq: ^it goes without saying that 'buy' events do not use the cached value. (NVM:) Hell, even hitting 'buy step 1' should maybe even do a proper get for the actual value (or just nudge cache to do it for him).... BUT then it becomes a DDOS point. since I'm thinking the polling intervals will be like 100-500ms, doing a non-cached get like that on "buy step 1" is probably not necessary (/NVM). But we definitely absolutely need to do it for buy step 2 (duh), and that is NOT a DDOS point because noobs would be giving ya monay each time so i mean yea ddos all ya fuggan want nobs <3
-
-    //TODOreq: even though it seemed like a small optimization to do both the user-account-unlock and updating of campaign doc with a new 'last purchased' slot, that pattern of programming will lead to disaster so i shouldn't do it just in principle. Yes with this one case it wouldn't have led to disaster, but actually it MIGHT have given extreme circumstances. it opens up a race condition: say the 'user account unlock' happens really fast and the 'update campaign doc' happens to take a while. if we gave control back to the user after the 'user account unlock' was finished, they could do some action that would then conflict with the m_WhatThe[blahblahblah]WasFor related to the 'update campaign doc' store. As in, when the 'update campaign doc' finishes and gets posted back to the WApplication, the user's actions could have started something else and then we wouldn't have handled the finishing of the 'update campaign doc' properly (which would mean that we never notify our neighbors of buy event? actually not a problem if we do 'get-and-subscribe-polling' like i think i'm going to do (BUT LIKE I SAID THIS ONE GETS LUCKY, BUT AN OVERALL PATTERN TO AVOID)). So I'm going to do the successive sets synchronously, despite seeing a clear opportunity for optimization
+    //TO DOnereq(tl;dr): even though it seemed like a small optimization to do both the user-account-unlock and updating of campaign doc with a new 'last purchased' slot, that pattern of programming will lead to disaster so i shouldn't do it just in principle. Yes with this one case it wouldn't have led to disaster, but actually it MIGHT have given extreme circumstances. it opens up a race condition: say the 'user account unlock' happens really fast and the 'update campaign doc' happens to take a while. if we gave control back to the user after the 'user account unlock' was finished, they could do some action that would then conflict with the m_WhatThe[blahblahblah]WasFor related to the 'update campaign doc' store. As in, when the 'update campaign doc' finishes and gets posted back to the WApplication, the user's actions could have started something else and then we wouldn't have handled the finishing of the 'update campaign doc' properly (which would mean that we never notify our neighbors of buy event? actually not a problem if we do 'get-and-subscribe-polling' like i think i'm going to do (BUT LIKE I SAID THIS ONE GETS LUCKY, BUT AN OVERALL PATTERN TO AVOID)). So I'm going to do the successive sets synchronously, despite seeing a clear opportunity for optimization
 }
 void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError)
 {
     if(dbError)
     {
-        //TODOreq: 500 internal server error
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         //temp:
         cerr << "doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase db error" << endl;
 
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
 #if 0 //nvm this isn't valid proof of the hack, because recovery possy can beat them to it in a not-so-rare race condition...
     if(!lcbOpSuccess)
     {
-        //TODOreq: handle and notify
-
         //temp:
         cerr << "TOTAL SYSTEM FAILURE: fail-after-buy-attempt 'roll back hack' (they still got slot): " << m_CurrentlyLoggedInUsername << endl;
 
@@ -1263,7 +1269,7 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     //boost::optional<ptree&> currentSlotOnDisplay = pt.get_child_optional("currentSlotOnDisplay");
     //boost::optional<ptree&> nextSlotOnDisplay = pt.get_child_optional("nextSlotOnDisplay");
 
-    //TODOreq: ^starting to think the current/next slot shit can/SHOULD go on it's own document (that, as we mentioned somewhere, can be re-figuredout/generated somewhat easily). getting the doc should maybe check expiration, existence of 'next', etc... but idk i'll design that shit later. BUT TODOreq I think it's worth noting that actually having current/next on the same doc as the 'lastPurchased' might give weird conflicting errors against the "rand() % 10" recovery possy. for example, they're supposed to not care when a campaign doc update fails because of cas failure. they are supposed to not care because then that means one of the other recovery possy (or probable driver) must have done it. HOWEVER, by putting current/next on there, an 'expiration' event would now trigger the cas failure and the campaign doc might not get updated. BUT now that I've written all that out, I think all that would mean is that the recovery process would run AGAIN (this time using the current/next'd doc as the orig) and succeed...... but it's definitely worth writing and considering and analyzing and ensuring whatever i come up with is ok
+    //TO DOnereq(untrusted cache it pointer it is (calculate if expired and crawl + update cache)): ^starting to think the current/next slot shit can/SHOULD go on it's own document (that, as we mentioned somewhere, can be re-figuredout/generated somewhat easily). getting the doc should maybe check expiration, existence of 'next', etc... but idk i'll design that shit later. BUT TO DOnereq I think it's worth noting that actually having current/next on the same doc as the 'lastPurchased' might give weird conflicting errors against the "rand() % 10" recovery possy. for example, they're supposed to not care when a campaign doc update fails because of cas failure. they are supposed to not care because then that means one of the other recovery possy (or probable driver) must have done it. HOWEVER, by putting current/next on there, an 'expiration' event would now trigger the cas failure and the campaign doc might not get updated. BUT now that I've written all that out, I think all that would mean is that the recovery process would run AGAIN (this time using the current/next'd doc as the orig) and succeed...... but it's definitely worth writing and considering and analyzing and ensuring whatever i come up with is ok
 
 #if 0
     if(lastSlotFilledAkaPurchased.is_initialized())
@@ -1283,7 +1289,7 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
 
     pt.put_child(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED, lastPurchasedPt);
 
-    //TODOreq: we also need to MAYBE update 'current' and/or 'next', depending on if it's appropriate. the only one we DEFINITELY update is 'last purchased'. if current is expired and there is a next -- holy race condition batman TODOreq (maybe solution is to not list "next" in the doc... and shit i'm actually starting to think maybe i shouldn't even list current. maybe whether or not there is a current is detected on the fly and when needed... by seeing if the (slotIndex-of-the-just-expired-current)+1 exists.. and if it doesn't then shit we don't have a current :-P... yea actually i'm liking that more and more :). simplifies managing the campaign doc too, only two states: no purchase and last purchase (whether it's expired is not that relevant to us, except maybe later when doing a buy announce event (but... polling...?). STILL, I do feel as though I need to keep track of 'current' SOMEWHERE. My thoughts are drifting and although it does make sense to do the 'get n+1' and that's our next if it exists method, who and when exactly would that be done? If it's the "client" of abc (so like the page where i'm fucking dancing naked coding tripping balls on video), who initiates the "ok expired now gimmeh next" and then abc does the n+1 shit,... err i guess what i mean is who has the final say of what n is to begin with? should for example the client die and come back and forget n, how would it figure out it's state again? I GUESS we could just keep doing n+1 or n-1 until we found it, and hell we could even use hella accurate jumping to the middle of all of our slots based on SlotLength, slot0 start time (polled), and the current date time. Would be accurate as fuck list jump with maybe an extra get to correct off by one. SO maybe the abc client does keep track of "n" and then gives it to abc as a parameter a la "hint". Client(dance-vid-page): abc.getNextSlot(n_justExpired /*or n+1, but it doesn't matter who does the incrementing*/), and if it's 0 (state lost somehow) then abc does the list jump mechanism to find it asap. but guh, i haven't worked out any of the details of the abc client (dance-vid-page), so idfk what it's state or code or ANYTHING even looks like on that side of things...
+    //TO DOnereq(only 'user' of abc (blog/etc) cares about 'current)): we also need to MAYBE update 'current' and/or 'next', depending on if it's appropriate. the only one we DEFINITELY update is 'last purchased'. if current is expired and there is a next -- holy race condition batman TO DOnereq(tl;dr) (maybe solution is to not list "next" in the doc... and shit i'm actually starting to think maybe i shouldn't even list current. maybe whether or not there is a current is detected on the fly and when needed... by seeing if the (slotIndex-of-the-just-expired-current)+1 exists.. and if it doesn't then shit we don't have a current :-P... yea actually i'm liking that more and more :). simplifies managing the campaign doc too, only two states: no purchase and last purchase (whether it's expired is not that relevant to us, except maybe later when doing a buy announce event (but... polling...?). STILL, I do feel as though I need to keep track of 'current' SOMEWHERE. My thoughts are drifting and although it does make sense to do the 'get n+1' and that's our next if it exists method, who and when exactly would that be done? If it's the "client" of abc (so like the page where i'm fucking dancing naked coding tripping balls on video), who initiates the "ok expired now gimmeh next" and then abc does the n+1 shit,... err i guess what i mean is who has the final say of what n is to begin with? should for example the client die and come back and forget n, how would it figure out it's state again? I GUESS we could just keep doing n+1 or n-1 until we found it, and hell we could even use hella accurate jumping to the middle of all of our slots based on SlotLength, slot0 start time (polled), and the current date time. Would be accurate as fuck list jump with maybe an extra get to correct off by one. SO maybe the abc client does keep track of "n" and then gives it to abc as a parameter a la "hint". Client(dance-vid-page): abc.getNextSlot(n_justExpired /*or n+1, but it doesn't matter who does the incrementing*/), and if it's 0 (state lost somehow) then abc does the list jump mechanism to find it asap. but guh, i haven't worked out any of the details of the abc client (dance-vid-page), so idfk what it's state or code or ANYTHING even looks like on that side of things...
     //^regardless of what i choose, the fact that we can figure out the current slot by doing math with near 100% accuracy (3 gets tops i'd estimate (first for slot 0, second for our guess based on math (so yea 4 gets if you include campaign doc get), third as potential recovery from mistake in math (timezones? idfk...) -- assumes slotLengthHours never changes of course...
     //^^i think i'll cross that bridge when i get there (buy event and 'gimmeh ad plx client request'). dats how da hackas doeet (that being said, i should now consider current and next to NOT be in the campaign json doc (will re-add later if determined i should))
 
@@ -1301,14 +1307,15 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
 {
     if(dbError)
     {
-        //TODOreq: 500 internal server error
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("There was an internal error, but you probably still purchased the slot. Try refreshing in a few minutes to see if you got the slot. Don't worry, if you didn't get the purchase, you won't be charged", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOreq: similar errors where appropriated
-        rollBackToBeforeBuyStep1ifNeeded();
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);        
+        new WText("There was an internal error, but you probably still purchased the slot. Try refreshing in a few minutes to see if you got the slot. Don't worry, if you didn't get the purchase, you won't be charged", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOreq: similar errors where appropriate via a define (anything after the LCB_ADD success of the slot fill itself. walk the code path)
 
         //temp:
         cerr << "doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase db error" << endl;
 
+        rollBackToBeforeBuyStep1ifNeeded();
         resumeRendering();
         return;
     }
@@ -1373,12 +1380,11 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountUnlockingWithoutDe
     else
     {
         //slot purchase beat to the punch
-        //TODOreq: schedule getting new slot to populate buy step 1 proper, right now it rolls back, but to the outdated values
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("Sorry, someone else bought the slot just moments before you...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_SOMEONE_BOUGHT_SLOT_MOMENTS_BEFORE_YOU_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         if(!environment().ajax())
         {
-            //js only sees above error in rare race condition, and if/when they do they will get the subscription update to 'fix' it soon anyways. no-js needs to request the update manually
+            //js only sees above error in rare race condition, and if/when they do they will get the subscription update to 'fix' it soon anyways. no-js sees it pretty often, and needs to request the update manually
             doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
         }
         resumeRendering();
@@ -1415,7 +1421,7 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode, subscribeMode);
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get)
 }
-//original semi-outdated code with comments
+//original outdated code with comments
 //S3RIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE
 #if 0
     std::ostringstream couchbaseRequestSerialized;
@@ -1430,7 +1436,7 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
     size_t couchbaseRequesSerializedStringLength = couchbaseRequesSerializedString.length();
     if(couchbaseRequesSerializedStringLength > WT_TO_COUCHBASE_GET_MAX_MESSAGE_SIZE) //assumes 1 character is 1 byte... i think this is right because it worked down below for our c_str() passed in, which i'm pretty damn sure is 1ch=1by
     {
-        //TODOreq: handle serialized buffer over maximum message size properly
+        //TO DOnereq: handle serialized buffer over maximum message size properly
         //^the problem is that we need a place to put the error message, and need a generic message too!
         return;
     }
@@ -1480,6 +1486,10 @@ void AnonymousBitcoinComputingWtGUI::store_SETonly_CouchbaseDocumentByKeyWithInp
     StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas, whatToDoWithOutputCasEnum);
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Store)
 }
+//these two "StoreLarge" methods are currently used in three places:
+//1) Ad Slot Filler Upload (2mb max)
+//2) All Ad Slot Fillers Updating (10k ad slot fillers max)
+//3) BitcoinSet Page creating (10k keys)
 void AnonymousBitcoinComputingWtGUI::storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode)
 {
     deferRendering();
@@ -1531,7 +1541,7 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     case INITIALINVALIDNULLGET:
     default:
         cerr << "got a couchbase 'get' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl;
-        //TODOreq: 500 internal server error shown to user?
+        //TODOreq: 500 internal server error shown to user? where to put it?
         break;
     }
     //if(environment().ajax())
@@ -1902,7 +1912,7 @@ void AnonymousBitcoinComputingWtGUI::handleLoginButtonClicked()
         return;
     }
 
-    //TODOreq: it might make sense to clear the line edit's in the login widget, and to save the login credentials as member variables, and to also clear the password member variable (memset) to zero after it has been compared with the db hash (or even just after it has been hashed (so just make the hash a member xD))
+    //TO DOnereq(defer makes it safe): it might make sense to clear the line edit's in the login widget, and to save the login credentials as member variables, and to also clear the password member variable (memset) to zero after it has been compared with the db hash (or even just after it has been hashed (so just make the hash a member xD))
     std::string username = m_LoginUsernameLineEdit->text().toUTF8();
     deferRendering(); //2-layered defer/resume because we want to stay deferred until possible login recovery completes
     getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(username));
@@ -1957,7 +1967,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
             getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeChangeSessionIdMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
         }
 
-        m_CurrentlyLoggedInUsername = m_LoginUsernameLineEdit->text().toUTF8(); //TODOreq(depends on how much security deferRending gives me): do we need to keep rendering deferred until we capture this (or perhaps capture it earlier (when it's used to LCB_GET)?)? Maybe they could 'change usernames' at precise moment to give them access to account that isn't theirs. idk [wt] tbh, but sounds plausible. should be captured as m_UsernameToAttemptToLoginAs (because this one is reserved for post-login), and then use simple assignment HERE
+        m_CurrentlyLoggedInUsername = m_LoginUsernameLineEdit->text().toUTF8(); //TO DOnereq(depends on how much security deferRending gives me): do we need to keep rendering deferred until we capture this (or perhaps capture it earlier (when it's used to LCB_GET)?)? Maybe they could 'change usernames' at precise moment to give them access to account that isn't theirs. idk [wt] tbh, but sounds plausible. should be captured as m_UsernameToAttemptToLoginAs (because this one is reserved for post-login), and then use simple assignment HERE
 
         //TODOreq: do this on key not found fail (and all other relevant errors) also (if only there was a generator that let you see if there was any kind of error and then let you drill down).
         m_LoginUsernameLineEdit->setText("");
@@ -2002,7 +2012,7 @@ void AnonymousBitcoinComputingWtGUI::unlockUserAccountWithoutDebittingIfSlotDecl
 }
 void AnonymousBitcoinComputingWtGUI::usernameOrPasswordYouProvidedIsIncorrect()
 {
-    m_LoginStatusMessagesPlaceholder->setText("The username or password you provided is incorrect"); //TODOreq: how do we tell them that it failed the second time? 'highlighting' animation makes sense, as does clearing the message when they start typing again
+    m_LoginStatusMessagesPlaceholder->setText("The username or password you provided is incorrect"); //TODOoptional: how do we tell them that it failed the second time? 'highlighting' animation makes sense, as does clearing the message when they start typing again
     m_LoginPasswordLineEdit->setText("");
 }
 void AnonymousBitcoinComputingWtGUI::doLoginTasks()
@@ -2037,7 +2047,7 @@ void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
     {
         delete m_AccountTabWidget;
         m_AccountTabWidget = 0;
-        m_NewAdSlotFillerAccountTab = 0; //it gets deleted by object parent/child heirchy when m_AccountTabWidget is deleted, but we set it to zero ALSO because we can't defer rendering during upload, we check that this isn't now zero when the upload finished signal completes (m_LoggedIn doesn't cut it because they could have logged out and in again in the meantime). It might also fuck shit up if we stop showing m_NewAdSlotFillerAccountTab as the first tab in m_AccountTabWidget, but I am unsure TODOreq verify it's safe and/or fix
+        m_NewAdSlotFillerAccountTab = 0; //it gets deleted by object parent/child heirchy when m_AccountTabWidget is deleted, but we set it to zero ALSO because we can't defer rendering during upload, we check that this isn't now zero when the upload finished signal completes (m_LoggedIn doesn't cut it because they could have logged out and in again in the meantime). It might also fuck shit up if we stop showing m_NewAdSlotFillerAccountTab as the first tab in m_AccountTabWidget, but I am unsure TO DOnereq verify it's safe and/or fix
     }
     if(m_LinkToAccount) //check probably not necessary since it's created at login
     {

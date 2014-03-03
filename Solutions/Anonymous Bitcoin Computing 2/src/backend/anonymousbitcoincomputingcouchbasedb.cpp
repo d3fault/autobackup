@@ -24,6 +24,8 @@ schedule##GetOrStore##Request(newOrRecycledExponentialBackoffTimerAndCallback);
 
 AnonymousBitcoinComputingCouchbaseDB::AnonymousBitcoinComputingCouchbaseDB()
     : m_Thread(boost::bind(&AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint, this)), m_IsDoneInitializing(false), m_IsConnected(false), m_ThreadExittedCleanly(false), m_IsInEventLoop(false), m_NoMoreAllowedMuahahaha(false), m_PendingStoreCount(0), m_PendingGetCount(0), m_IsFinishedWithAllPendingRequests(false)
+    , m_BeginStoppingCouchbaseCleanlyEvent(NULL)
+    , m_FinalCleanUpAndJoinEvent(NULL)
     //, m_StoreWtMessageQueue0(NULL)
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_MESSAGE_QUEUE_NULL_INITIALIZATION_MACRO)
     //, m_StoreMessageQueuesCurrentMessageBuffer(NULL);
@@ -265,14 +267,12 @@ void AnonymousBitcoinComputingCouchbaseDB::errorCallbackStatic(lcb_t instance, l
 }
 void AnonymousBitcoinComputingCouchbaseDB::errorCallback(lcb_error_t error, const char *errinfo)
 {
-    cerr << "ERROR: " << lcb_strerror(m_Couchbase, error) << errinfo << endl;
+    cerr << "COUCHBASE ERROR CALLBACK: " << lcb_strerror(m_Couchbase, error) << errinfo << endl;
 
     if(!m_IsConnected)
     {
         ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO
     }
-
-    //TODOreq: mucho handlo por que donde ti amo grande gordo gato buneo
 }
 void AnonymousBitcoinComputingCouchbaseDB::configurationCallbackStatic(lcb_t instance, lcb_configuration_t config)
 {
@@ -338,7 +338,6 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
             }
             m_AutoRetryingWithExponentialBackoffCouchbaseStoreRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseStoreRequest);
             delete originalRequest;
-            //TODOreq(done just above?): handle failed store (including decrementing 'pendingStoreCount' if appropriate). we should err ehh uhm...
             return;
         }
 
@@ -421,7 +420,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     delete originalRequest;
 #endif // ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
 
-    //TODOreq: maybe a m_PendingDurabilityCount; used to not decrement pendingStoreCount until the durability finished, but i think i accidentally took that out. but really am considering removing durability polling altogether right now so idfk. OLD: if durability isn't needed for this particular store, --m_PendingStoreCount just like getCallback/etc
+    //TODOoptional: maybe a m_PendingDurabilityCount; used to not decrement pendingStoreCount until the durability finished, but i think i accidentally took that out. but really am considering removing durability polling altogether right now so idfk. OLD: if durability isn't needed for this particular store, --m_PendingStoreCount just like getCallback/etc
 }
 //no it isn't ;-P
 void AnonymousBitcoinComputingCouchbaseDB::decrementPendingStoreCountAndHandle()
@@ -449,8 +448,8 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(error))
             {
                 /*
-                TODOreq: exponential backoff. I'm thinking a getNewOrRecycled queue of libevent timeouts (i'm dumb for doing macro hell to solve the 'n' methods/functions problem. class/object instantiation solves it betterer :-P)
-                Other potential error message candidates (unsure), which if I use should be added to the Store callback as well:
+                TO DOnereq: exponential backoff. I'm thinking a getNewOrRecycled queue of libevent timeouts (i'm dumb for doing macro hell to solve the 'n' methods/functions problem. class/object instantiation solves it betterer :-P)
+                Other potential error message candidates (unsure):
                     LCB_ETIMEDOUT
                     LCB_ENOMEM
                     LCB_CLIENT_ENOMEM
@@ -503,8 +502,10 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         //TO DOnereq (not sure about the end of this comment, but deleting of the cache happens when timeout occurs and that slot sees it as being empty): the last person to unsubscribe himself should also remove the cache item from m_GetAndSubscribeCacheHash and delete the cache item (see the catch code path's comments (this is an other time we need to "???" <-, but is it the only?)
 
         GetAndSubscribeCacheItem *cacheItem;
-        try //TODOreq: this try might not be necessary, depending what we end up doing for unsubscribe code
+#if 0
+        try //TO DOnereq(a get and subscribe poll means that the cache item definitely exists, since we process unsubscribe requests in the poll callback just below here): this try might not be necessary, depending what we end up doing for unsubscribe code
         {
+#endif
             cacheItem = m_GetAndSubscribeCacheHash.at(originalRequest->CouchbaseGetKeyInput);
 
             //exception thrown if not found
@@ -571,7 +572,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
                     }
                     catch(std::out_of_range &notInOldSubscribersException)
                     {
-                        //TODOreq:
+                        //TODOoptional:
                         cerr << "i'm not sure what it means if we get a change session id request for a wapplication that isn't subscribed... so for now give an error and just continue onto other change session id requests doing nothing with this one" << endl;
                         delete originalChangeSessionIdRequestFromWt;
                         continue; //had return, but that is error
@@ -644,14 +645,16 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
 
             //TODOreq: doing it here makes get and subscribe not future proof for multiple keys
             event_add(m_GetAndSubscribePollingTimeout, &m_OneHundredMilliseconds);
+#if 0
         }
         catch(std::out_of_range &keyNotInCacheException)
         {
-            //TODOreq
-            //this is a race conditon where the last subscriber has unsubscribed but we still had a get dispatched (HOLY SHIT WE COULD SEGFAULT IF THE POINTER TO GetCouchbaseDocumentByKeyRequest WAS DELETED DURING UNSUBSCRIBE TODOreq). i think all it means is that we don't want to do the 100ms timer again...
+            //TO DOnereq
+            //this is a race conditon where the last subscriber has unsubscribed but we still had a get dispatched (HOLY SHIT WE COULD SEGFAULT IF THE POINTER TO GetCouchbaseDocumentByKeyRequest WAS DELETED DURING UNSUBSCRIBE TO DOnereq). i think all it means is that we don't want to do the 100ms timer again...
             //we should probably also remove the cacheItem from the list and delete the pointer, SO THAT the cache 'misses' when someone new subscribes and then they do a full get and the timer shits starts back up
             //^^that's probably not the only time we need to [??? to what ???]
         }
+#endif
         //ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(Get)
         return; //don't delete the request hackily used for polling for two reasons: 1) might still be a subscriber, 2) if it unsubscribed it has already been deleted
     }
@@ -693,7 +696,7 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
         {
             StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, true, true);
         }
-        //TODOreq: if we make it to durability, the lcb op has succeeded?
+        //TODOoptional: if we make it to durability, the lcb op has succeeded?
         //^Yes, but what the fuck are the implications of that??? My business logic for now assumes that db error lcb op failed (it doesn't even check it). It's especially worth noting that a 'recovery possy' member might see an LCB_ADD whose replication failed (here) and then do a bunch of recovery steps.... and/but our business will be out of sync in some obscure way I have never thought about (maybe it doesn't mess anything up, maybe the world ends)
 
         delete originalRequest;
@@ -710,7 +713,7 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
         {
             StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, true, true);
         }
-        //TODOreq: if we make it to durability, the lcb op has succeeded?
+        //TODOoptional: if we make it to durability, the lcb op has succeeded?
         //^Yes, see same req above for concerns
 
         delete originalRequest;
@@ -738,7 +741,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
 //had some lulz just now thinking that it'd be smart to periodically vacuum the get new or recycled exponential backoff vectors... except that makes absolutely no sense at all because they are there to help with high server load, and vacuuming them would only help, YOU GUESSED IT, at high server load...
 void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlot()
 {
-    //TODOreq: subscribers shouldn't take up an AutoRetry thingy, but if they reeaaally need to because it would warrant a huge refactor otherwise, i guess it's ok :-/...
+    //TO DOnereq(they don't, except the one hackily used for polling ofc): subscribers shouldn't take up an AutoRetry thingy, but if they reeaaally need to because it would warrant a huge refactor otherwise, i guess it's ok :-/...
     std::list<std::string> listOfKeysWithNoSubscribers;
     BOOST_FOREACH(GetAndSubscribeCacheHashType::value_type &v, m_GetAndSubscribeCacheHash)
     {
@@ -747,7 +750,6 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
         //get the first subscriber found. if there aren't any subscribers found, we don't do the get and then remove it from m_GetAndSubscribeCacheHash and delete the cache item
 
         GetCouchbaseDocumentByKeyRequest *originalRequest = NULL; //had it called 'aRequestToHackilyUseLoL' but eh MACRO
-        //TODOreq: update this to use auto retrying wrapper (will segfault :P)
         if(!cacheItem->Subscribers.empty())
         {
             originalRequest = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->Subscribers.begin()->second);
@@ -877,14 +879,10 @@ void AnonymousBitcoinComputingCouchbaseDB::scheduleStoreRequest(AutoRetryingWith
         {
             StoreCouchbaseDocumentByKeyRequest::respond(originalRequest, false, true);
         }
-        delete originalRequest;
+        delete originalRequest; //TODOreq: consider the implications of deleting that if we're hackily using it for get-and-subscribe? for now just crossing my fingers :). oh btw TODOreq: is it lcb_store that returns LCB_CLIENT_ENOMEM (warranting exponential backoff/retry here too)?
         return;
     }
     ++m_PendingStoreCount;
-
-    //TODOreq: proper error handling inside this macro there is a if("error  != LCB_SUCCESS") section (how da fuq do you put comments in macros?!!?)
-    //^^Instincts tell me to do object deletion if scheduling isn't LCB_SUCCESS in following macro (just like we do for store), but what are the implications of deleting that if we're hackily using it for get-and-subscribe?
-    //TODOreq (done i think): delete StoreCouchbaseDocumentByKeyRequest in above macro at appropriate places (error, success)
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore()
 {
@@ -904,8 +902,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         //TODOoptional: post() a response, BUT really that doesn't matter too much because i mean the server's about to go down regardless... (unless i'm taking db down ONLY and wt is staying up (lol wut?))
     }
 
-    //TODOreq: 'delete' for various error exits (we're using it as cookie :-P), including proper/normal place
-    GetCouchbaseDocumentByKeyRequest *originalRequest = new GetCouchbaseDocumentByKeyRequest();
+    GetCouchbaseDocumentByKeyRequest *originalRequest = new GetCouchbaseDocumentByKeyRequest(); //TODOoptimization: get new or recycled maybe? idfk. i think since i'm always so tempted to do get new or recycled all around my code, i should finally benchmark it... xD. still i've heard that "allocations are ridiculously slow", and this makes sense especially considering there's a mutex lock involved. i think i benchmarked something similar a while back, but it had some other qt shit involved so idk
 
     {
         std::istringstream getCouchbaseDocumentByKeyRequestFromWtSerialized(static_cast<const char*>(m_GetMessageQueuesCurrentMessageBuffer));
@@ -921,7 +918,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         try
         {
             //TODOreq: if we've just scheduled our 100ms poll to couchbase and are expecting a fresh value soon, we should just add ourself to the subscribers list. we could respond with the probably-about-to-be-made-stale one, but we shouldn't
-            //TODOreq: if the 100ms poll doesn't return a 'new' doc (based on cas), there's still going to be a list (sometimes of size zero) of subscribers who are interested in being given _A_ result. The directly above TODOreq mentions a kind that would be interested, and there is also the "many successive get-and-subscribes" in a row really fast, where all but the first simply added themselves to said list (that actually implies that there was no cache hit, but eh just like above TODOreq above says: if one is scheduled, we wait for it!)
+            //TO DOnereq(NewSubscribers): if the 100ms poll doesn't return a 'new' doc (based on cas), there's still going to be a list (sometimes of size zero) of subscribers who are interested in being given _A_ result. The directly above T0d0req mentions a kind that would be interested, and there is also the "many successive get-and-subscribes" in a row really fast, where all but the first simply added themselves to said list (that actually implies that there was no cache hit, but eh just like above T0d0req above says: if one is scheduled, we wait for it!)
             //^^So I'm thinking something like m_ListOfSubscribersWhoOnlyWant_CHANGED_Updates and m_ListOfSubscribersWhoDontHaveShitYet (old and new subscribers, respectively). Upon the 100ms poll getting a value (any value), it gives it's result to m_ListOfSubscribersWhoDontHaveShitYet, then checks to see if the cas has changed and then if it has gives it's result to m_ListOfSubscribersWhoOnlyWant_NEW_Updates. Then it adds-while-clearing m_ListOfSubscribersWhoDontHaveShitYet _into_ m_ListOfSubscribersWhoOnlyWant_CHANGED_Updates
             //^^^The point is, if some bool 'm_PollIsActive' (for that particular key), then we don't want to do the 'respondWithCAS' a few lines down
 
@@ -954,7 +951,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
             {
                 //TO DOnereq: if subscription cache doesn't fulfill our [sexual] needs, set GetAndSubscribe to 6 and send it on through as a hard get. setting it to 6 will make sure it doesn't go through regular get and subscibe stuff in the getCallback stage, BUT also uses the "UPDATE" callback when sending the result back to Wt
 
-                //since this chunk of code can happen RIGHT AFTER a buy event (if the no-js user was the one that bought it), what the subscription cache has is PROBABLY stale so we don't want it. but it gets even more complicated because we don't even know if the subscription cache has anything. TODOreq: what if keyValueCacheItem doesn't exist also?
+                //since this chunk of code can happen RIGHT AFTER a buy event (if the no-js user was the one that bought it), what the subscription cache has is PROBABLY stale so we don't want it. but it gets even more complicated because we don't even know if the subscription cache has anything. TO DOnereq(hard get): what if keyValueCacheItem doesn't exist also?
 
                 //give us the next value, no matter what it is, which must/should be the value that we just 'stored' as the buyer (however TO DOnereq(LOLOL solved it via incredibly dirty hacks. '5'. basically making it get the NEXT NEXT polling update): i'm not sure it is always true given race conditions of events being raised etc :-/. will probably be true MOST OF THE TIME though, which makes this ehh fuck (omg so fucking hard to even think about my brain is going to explode and for now i'm just going to 'not give a shit' (tm) and just put it in new subscribers and pull it out hackily, because it should work MOST of the time and eh i am not sure how to make it work all of the time))
                 keyValueCacheItem->NewSubscribers[originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback] = originalRequest;
@@ -988,9 +985,8 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
             if(originalRequest->GetAndSubscribe == 2) //for these two specials: if there is no cache hit, we don't do jack shit (hey it rhymes)
             {
                 //change sessionId
-                delete originalRequest; //TODOreq: when there is a cache hit we still probably want to delete these (since no responding)
+                delete originalRequest;
                 return;
-                //TODOreq: since we delete the ACTUAL object for a session-id just like the unsubscribing, we are probably vulnerable to the same segfault problem
             }
             else if(originalRequest->GetAndSubscribe == 3)
             {
@@ -1007,7 +1003,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
                 //create cache item, even though we have nothing to put in it yet. TODOreq: we need to make sure that we wait for the first get to finish before we ever give someone the "Document" from the cache item (BECAUSE IT IS EMPTY)
                 GetAndSubscribeCacheItem *newKeyValueCacheItem = new GetAndSubscribeCacheItem();
 
-                //if we get here, we definitely need to do the first 'get' (when it returns, it sets up the 100ms poller (TODOreq: unless all users have unsubscribed by then xD))
+                //if we get here, we definitely need to do the first 'get' (when it returns, it sets up the 100ms poller (TO DOnereq(we still do the timeout if all unsubscribed by then, but the timeout callback doesn't do the db get (and hence the timeout doesn't get rescheduled a 2nd time either)): unless all users have unsubscribed by then xD))
 
                 m_GetAndSubscribeCacheHash[originalRequest->CouchbaseGetKeyInput] = newKeyValueCacheItem;
                 keyValueCacheItem = newKeyValueCacheItem;
@@ -1024,8 +1020,6 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 
     //get new or recycled AutoRetryingWithExponentialBackoffCouchbaseGetRequest
     ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(Get)
-    //TODOreq: proper error handling inside this macro there is a if("error  != LCB_SUCCESS") section (how da fuq do you put comments in macros?!!?)
-    //^^Instincts tell me to do object deletion if scheduling isn't LCB_SUCCESS in following macro (just like we do for store), but what are the implications of deleting that if we're hackily using it for get-and-subscribe?
 }
 //struct event *AnonymousBitcoinComputingCouchbaseDB::getStoreEventCallbackForWt0()
 //{

@@ -1,5 +1,5 @@
 #This time KISS. I want the last two years of my 20s back :-/... holy shit I am (this.timeLeft() == indefinite ? "smart" : "stupid")...
-#Alpha 0.1, only 332 req To Do items xD. 259 now after one ctrl+f pass, most of them seem dumb
+#Alpha 0.1, only 332 req To Do items xD. 259 now after one ctrl+f pass, most of them seem dumb. 104 now after 2nd ctrl+f pass and let's call it Beta 0.5 <3
 
 ###############DEPLOY############
 #1) Copy /usr/share/Wt/resources/ to the directory that "wtAppHere" is located in
@@ -53,10 +53,10 @@ DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
 #                ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET0=Store \
 #                ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET0=25 \
 #                ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_SET0=5 \
-#                ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_SET0=10240 \ #10kb per store is probably plenty... TODOreq: code needs to check sizes before trying, or sanitize all user inputs in some other way
+#                ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_SET0=10240 \ #10kb per store is probably plenty...
 #            \ #set 1 -- Store Large
 #                ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET1=StoreLarge \
-#                ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET1=3 \
+#                ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET1=6 \
 #                ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_SET1=2 \
 #                ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_SET1=2157392 \ #~2.5mb, to account for overhead + b64encoding
 #            \ #set 2 -- Get

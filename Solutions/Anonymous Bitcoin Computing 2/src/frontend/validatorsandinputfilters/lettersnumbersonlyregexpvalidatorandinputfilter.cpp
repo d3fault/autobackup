@@ -1,7 +1,7 @@
 #include "lettersnumbersonlyregexpvalidatorandinputfilter.h"
 
 LettersNumbersOnlyRegExpValidatorAndInputFilter::LettersNumbersOnlyRegExpValidatorAndInputFilter(std::string maxCharacters, WObject *parent)
-    : WRegExpValidator(LETTERS_NUMBERS_ONLY_REGEXPVALIDATOR_AND_INPUT_FILTER_REGEX "{1," + maxCharacters + "}", parent) //TODOreq: verify max length is working like i think it is
+    : WRegExpValidator(LETTERS_NUMBERS_ONLY_REGEXPVALIDATOR_AND_INPUT_FILTER_REGEX "{1," + maxCharacters + "}", parent)
 {
     setMandatory(true);
     setInvalidNoMatchText(LETTERS_NUMBERS_ONLY_REGEXPVALIDATOR_AND_INPUT_FILTER_INVALID_MESSAGE);

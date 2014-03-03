@@ -86,7 +86,7 @@ void NewAdSlotFillerAccountTabBody::setUpAdImageUploaderAndPutItInPlaceholder()
 {
     m_AdImageUploader = new WFileUpload(m_AdImageUploaderPlaceholder);
     //TODOreq: i can probably specify the temporary location of the uploaded file, and obviously i would want to use a tmpfs. would be even better if i could just upload into memory...
-    m_AdImageUploader->setFileTextSize(40); //TODOreq: wtf is this, filename size or file size? i'll probably disregard filename when putting into b64/json... so if it's filename set it to like 256 or some sane max idfk, but worth noting i use the filename in a WFileResource to serve them the FIRST preview copy of the image they just uploaded
+    m_AdImageUploader->setFileTextSize(64); //TODOreq: wtf is this, filename size or file size? more importantly, what happens when the user exceeds it?
     m_AdImageUploader->uploaded().connect(this, &NewAdSlotFillerAccountTabBody::handleAdSlotFillerImageUploadFinished);
     m_AdImageUploader->fileTooLarge().connect(this, &NewAdSlotFillerAccountTabBody::handleAdImageUploadFailedFileTooLarge);
 }
@@ -210,28 +210,29 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
 
     //TODOoptimization: had this as 'req' but memory management/sanity is much simpler when doing it less optimially xD (it's only ever paid during recovery code anyways): when doing inline recovery, don't re-read from disk. also if we then 'store it' as member or some such, make sure to delete it when it finishes successfully. The solution should use some form of WObject parent/child deletion...
     streampos fileSizeHack;
-    char *adImageBuffer; //TODOreq: maybe a smart pointer as a member of this class, so that it deallocates if the session dies (could be while we're still trying to store it, for example). Pretty much just like the WObject tree, somehow attach it.
+    char *adImageBuffer;
     ifstream adImageFileStream(adImageUploadFileLocation.c_str(), ios::in | ios::binary | ios::ate);
     if(adImageFileStream.is_open())
     {
         fileSizeHack = adImageFileStream.tellg();
-        adImageBuffer = new char[fileSizeHack]; //TODOreq: delete[]. TODOoptimization: running out of memory (server critical load) throws an exception, we could pre-allocate this, but how to then share it among WApplications? guh fuckit. i think 'new' is mutex protected underneath anyways, so bleh maybe using a mutex and a pre-allocated buffer is even faster than this (would of course be best to use rand() + mutex shits xD)... but then we can't have multiple doing it on thread pool at same time (unless rand() + mutex shits)
+        adImageBuffer = new char[fileSizeHack]; //TODOoptimization: running out of memory (server critical load) throws an exception, we could pre-allocate this, but how to then share it among WApplications? guh fuckit. i think 'new' is mutex protected underneath anyways, so bleh maybe using a mutex and a pre-allocated buffer is even faster than this (would of course be best to use rand() + mutex shits xD)... but then we can't have multiple doing it on thread pool at same time (unless rand() + mutex shits)
         adImageFileStream.seekg(0,ios::beg);
         adImageFileStream.read(adImageBuffer, fileSizeHack);
         adImageFileStream.close();
     }
     else
     {
-        //TODOreq: handle file failed to open error (delete, discard, give user error)
-
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
+        //NOPE: delete [] adImageBuffer;
         resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;
     }
 
     std::string adImageString = std::string(adImageBuffer, fileSizeHack);
-    std::string adImageB64string = base64Encode(adImageString); //TODOreq: doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
+    std::string adImageB64string = base64Encode(adImageString); //TODOreq(done i THINK. made 2.5mb queue max, but 2mb wfileupload max): doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
 
-    pt.put(JSON_SLOT_FILLER_IMAGEB64, adImageB64string); //TODOoptimization: maybe save a copy by doing base64encode right into second argument here? doubt it (and if this were Qt land, I'd be hesitant to even try it (shit disappears yo))
+    pt.put(JSON_SLOT_FILLER_IMAGEB64, adImageB64string);
     pt.put(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION, guessedExtensionAndMimeType.first);
 
     std::ostringstream adSlotFillerJsonDocBuffer;
@@ -263,9 +264,6 @@ void NewAdSlotFillerAccountTabBody::storeLargeAdImageInCouchbaseDbAttemptComplet
 
         m_AbcApp->getCouchbaseDocumentByKeyBegin(keyToSlotFillerAttemptedToAddTo); //couchbase needs a "add or get" lcb op :), maybe i should file it as an enhancement
         m_AbcApp->m_WhatTheGetWasFor = AnonymousBitcoinComputingWtGUI::GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ; //kind of grossly inefficient to go in and out of the WApplication context so often like this to do 'business' work, but KISS idgaf suck mah dick. "AbcAppDb" was a 2+ year tangent (still incomplete)
-        //TODOreq: ^^if the add mentioned towards the end of that fails, we need to get right back here to this code path so that it loops
-
-        //TODOreq: do it again with the index +1'd... unless you end up letting backend do that (in which case, we'd need to pass ourselves the final key chosen [for use in updating allAdSlotFillers])
 
         //temp:
         //cerr << "storeLargeAdImageInCouchbaseDbAttemptComplete reported lcb op failed" << endl;
@@ -274,7 +272,7 @@ void NewAdSlotFillerAccountTabBody::storeLargeAdImageInCouchbaseDbAttemptComplet
         return;
     }
 
-    //TODOreq: getting here means the add was successful, so record that fact in allAdSlotFillers
+    //getting here means the add was successful, so record that fact in allAdSlotFillers
     std::string oldAdsCountButAlsoOurIndexOfTheOneJustAdded = m_RunningAllSlotFillersJsonDoc.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT);
     m_RunningAllSlotFillersJsonDoc.put(oldAdsCountButAlsoOurIndexOfTheOneJustAdded, m_UploadNewSlotFiller_NICKNAME_B64);
 
@@ -309,6 +307,9 @@ void NewAdSlotFillerAccountTabBody::doneAttemptingToUpdateAllAdSlotFillersDocSin
         //^^makes sense that as soon as the image is received from the file upload, i put it in a WFileResource with 'this' as parent, regardless of the db stuff. i also need to make sure i delete the file only ever by deleting that WFileResource, like when the image is too big or something
 
         //TODOreq: the obvious/expensive (and more work ;-P) answer is to say that if we get _HERE_ we just do an allAdSlotFillers doc verification/recovery process (even though we supposedly/probably just did it!), idfk need to smoke a bowl and meditate on this shit
+
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         cerr << "doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller lcb op fail, may or may not be an error read the comments near this error string xD idfk. MAYBE/probably in recoverable state" << endl;
 
@@ -368,7 +369,7 @@ void NewAdSlotFillerAccountTabBody::getAdSlotFillerThatIsntInAllAdSlotFillersAtt
 
     //json-add nickname to the 'running' allAdSlotFillers doc
     std::string indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = m_RunningAllSlotFillersJsonDoc.get<std::string>(JSON_ALL_SLOT_FILLERS_ADS_COUNT);
-    m_RunningAllSlotFillersJsonDoc.put(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat, nicknameOfSlotFillerNotInAllAdSlotFillersDoc); //TODOreq: nicknames at 512*adsCount might go over message queue max size guh, this applies to normal code as well (we are recovery). Maybe allAdSlotFillers needs to use StoreLarge (even then, i have no maximum amount of ads!)?
+    m_RunningAllSlotFillersJsonDoc.put(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat, nicknameOfSlotFillerNotInAllAdSlotFillersDoc); //TO DOnereq(StoreLarge): nicknames 64*10000 might go over message queue max size guh, this applies to normal code as well (we are recovery). Maybe allAdSlotFillers needs to use StoreLarge (even then, i have no maximum amount of ads!)?
 
     //also increment 'adsCount' because we've just found/recovered one slot filler, and additionally will be using adsCount as our index to add the slot filler AGAIN (the one that initiated this recovery) in the 'next' slot
     indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat = boost::lexical_cast<std::string>(boost::lexical_cast<int>(indexWeTriedToAddToBecauseAllSlotFillersDocSaidItWasEmptyButItWasWrongSoHereWeAreRecoveringFromThat) + 1); //the +1 here is important (had:key)!!!!

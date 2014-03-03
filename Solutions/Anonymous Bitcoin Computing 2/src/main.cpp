@@ -6,7 +6,6 @@
 
 - make some use of auto-failover shit?
 - doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
-- No ops cause too big of messages to be sent through the message queue. This is mostly done already via sanitization
 
 
 ==1.1 Bugs==

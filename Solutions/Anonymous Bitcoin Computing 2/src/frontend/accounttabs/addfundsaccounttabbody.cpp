@@ -1,6 +1,11 @@
 #include "addfundsaccounttabbody.h"
 
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+
 #include "../anonymousbitcoincomputingwtgui.h"
+
+using namespace boost::random;
 
 AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp),
@@ -26,10 +31,11 @@ void AddFundsAccountTabBody::determineBitcoinStateButDontLetThemProceedForwardIf
 {
     if(dbError)
     {
-        //TODOreq: notify and fail
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
-        cerr << "determineBitcoinStateButDontLetThemProceedForwardIfLockedAttemptingToFillAkaPurchaseSlot db fail" << endl;
+        cerr << "determineBitcoinStateButDontLetThemProceedForwardIfLockedAttemptingToFillAkaPurchaseSlot db error" << endl;
 
         m_AbcApp->resumeRendering();
         return;
@@ -38,7 +44,8 @@ void AddFundsAccountTabBody::determineBitcoinStateButDontLetThemProceedForwardIf
     {
         //get failed?? should never happen
 
-        //TODOreq: notify and fail
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp (we should 'notify' ourselves for any of these total system failures), or i guess hook one up to cerr ;-P
         cerr << "TOTAL SYSTEM FAILURE: user account doc doesn't exist and we're logged in wtfz? in determineBitcoinStateButDontLetThemProceedForwardIfLockedAttemptingToFillAkaPurchaseSlot method" << endl;
@@ -97,7 +104,8 @@ void AddFundsAccountTabBody::checkNotAttemptingToFillAkaPurchaseSlotThenTransiti
 
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState db error" << endl;
@@ -107,7 +115,8 @@ void AddFundsAccountTabBody::checkNotAttemptingToFillAkaPurchaseSlotThenTransiti
     }
     if(!lcbOpSuccess)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "TOTAL SYSTEM FAILURE USER ACCOUNT DIDN'T EXIST AND WE ARE LOGGED IN WTFZ: checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState" << endl;
@@ -182,7 +191,8 @@ void AddFundsAccountTabBody::analyzeBitcoinKeySetN_CurrentPageDocToSeeWhatPageIt
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "analyzeBitcoinKeySetPageCacheDocToSeeWhatPageItIsOnAndIfItIsLocked db error" << endl;
@@ -192,7 +202,8 @@ void AddFundsAccountTabBody::analyzeBitcoinKeySetN_CurrentPageDocToSeeWhatPageIt
     }
     if(!lcbOpSuccess)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "TOTAL SYSTEM FAILURE: analyzeBitcoinKeySetPageCacheDocToSeeWhatPageItIsOnAndIfItIsLocked lcb op failed" << endl;
@@ -208,12 +219,11 @@ void AddFundsAccountTabBody::analyzeBitcoinKeySetN_CurrentPageDocToSeeWhatPageIt
     std::istringstream is(bitcoinKeySetCurrentPageDoc);
     read_json(is, pt);
 
-    std::string fillingNextBitcoinKeySetPage_LOCKED_CHECK = pt.get<std::string>(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE, "n"); //TODOreq: pt::erase this and siblings at appropriate places
+    std::string fillingNextBitcoinKeySetPage_LOCKED_CHECK = pt.get<std::string>(JSON_BITCOIN_KEY_SET_CURRENT_PAGE_LOCKED_FILLING_NEXT_PAGE, "n"); //TODOreq(done i think via just making a new "currentPage": "X" doc, not explicitly erasing): pt::erase this and siblings at appropriate places
     if(fillingNextBitcoinKeySetPage_LOCKED_CHECK != "n")
     {
         //light recovery of filling next bitcoin key set page
         //jumps way the fuck deep into recovery code, then pops back to us later if user account isn't locked (flag already set previously).
-        //TODOreq: it sets PageY before popping back to us if user account isn't locked via direct call to attemptToLockUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest();
 
         //populate the fillingNextBitcoinKeySetPage/uuid/pageZ from the locked doc (we are recovery. normal code path generates the 2nd two)
         m_BitcoinKeySetPage_aka_PageY = fillingNextBitcoinKeySetPage_LOCKED_CHECK;
@@ -249,9 +259,9 @@ void AddFundsAccountTabBody::proceedToBitcoinKeySetNgettingAfterLockingUserAccou
         read_json(is, pt);
 
         pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_GETTING_KEY);
-        pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA, m_BitcoinKeySetIndex_aka_setN); //TODOreq: pt::erase when transitioning to NoKey
-        pt.put(JSON_USER_ACCOUNT_BITCOIN_SET_PAGE, m_BitcoinKeySetPage_aka_PageY); //TODOreq: pt::erase when transitioning to HaveKey -- methinks these bottom two are implicitly erased because i use m_UserAccountJsonForLockingIntoGettingBitcoinKey as basis for unlocking
-        pt.put(JSON_USER_ACCOUNT_BITCOIN_GET_KEY_UUID, m_PerGetBitcoinKeyUUID); //TODOreq: pt::erase when transitioning to HaveKey
+        pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA, m_BitcoinKeySetIndex_aka_setN);
+        pt.put(JSON_USER_ACCOUNT_BITCOIN_SET_PAGE, m_BitcoinKeySetPage_aka_PageY);
+        pt.put(JSON_USER_ACCOUNT_BITCOIN_GET_KEY_UUID, m_PerGetBitcoinKeyUUID);
 
         std::ostringstream jsonDocBuffer;
         write_json(jsonDocBuffer, pt, false);
@@ -269,7 +279,8 @@ void AddFundsAccountTabBody::userAccountBitcoinLockedIntoGettingKeyAttemptComple
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "userAccountBitcoinLockedIntoGettingKeyAttemptComplete db error" << endl;
@@ -280,7 +291,7 @@ void AddFundsAccountTabBody::userAccountBitcoinLockedIntoGettingKeyAttemptComple
     if(!lcbOpSuccess)
     {
         new WBreak(this);
-        new WText("Please only use one browser tab/window at a time. Try again", this); //TODOreq: make this error the same in all places i use it
+        new WText("Please only use one browser tab/window at a time. Try again", this); //TODOoptional: make this error the same in all places i use it via define
         m_AbcApp->resumeRendering();
         return;
     }
@@ -301,7 +312,8 @@ void AddFundsAccountTabBody::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRo
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRoomEtc db error" << endl;
@@ -311,7 +323,8 @@ void AddFundsAccountTabBody::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRo
     }
     if(!lcbOpSuccess)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "TOTAL SYSTEM FAILURE: lcbOpFail: bitcoinKeySetNpageY was supposed to exist but didn't in gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRoomEtc" << endl;
@@ -370,7 +383,7 @@ void AddFundsAccountTabBody::gotBitcoinKeySetNpageYSoAnalyzeItForUUIDandEnoughRo
             std::ostringstream jsonDocBuffer;
             write_json(jsonDocBuffer, pt, false);
 
-            m_AbcApp->store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY), jsonDocBuffer.str(), bitcoinKeySetNpageY_CAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            m_AbcApp->storeLarge_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY), jsonDocBuffer.str(), bitcoinKeySetNpageY_CAS, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
             m_AbcApp->m_WhatTheStoreWithInputCasWasFor = AnonymousBitcoinComputingWtGUI::CLAIMBITCOINKEYONBITCOINKEYSETVIACASSWAP;
         }
         else
@@ -389,7 +402,8 @@ void AddFundsAccountTabBody::doneAttemptingToUpdateBitcoinKeySetViaCASswapAkaCla
 {
     if(dbError)
     {
-        //TODOreq: handle, idkf how lawl
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "doneAttemptingToUpdateBitcoinKeySetViaCASswapAkaClaimingAKey db error" << endl;
@@ -415,7 +429,7 @@ void AddFundsAccountTabBody::unlockUserAccountSafelyFromBitcoinGettingKeyBecause
     read_json(is, pt);
 
     pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_HAVE_KEY); //TODOreq: this would be a good 'last resort' place to check if "slotToAttemptToFillAkaPurchase" is set and to fail/stop if it is... but it really should be checked earlier. AND besides there is also teh 'account locking into GettingKey' which would be a similar 'last resort' (two of em xD) to check for it. Depending on how confident you are that you checked them in the original GET...
-    pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA, m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage); //TODOreq: pt::erase when transitioning to NoKey
+    pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA, m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage);
 
     //pt::erase the extra "GettingKey" fields
     pt.erase(JSON_USER_ACCOUNT_BITCOIN_SET_PAGE);
@@ -431,7 +445,8 @@ void AddFundsAccountTabBody::doneAttemptingToUnlockUserAccountFromBitcoinGetting
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "doneAttemptingToUnlockUserAccountFromBitcoinGettingKeyToBitcoinHaveKey db error" << endl;
@@ -466,8 +481,6 @@ void AddFundsAccountTabBody::presentBitcoinKeyForPaymentsToUser(const string &bi
 }
 void AddFundsAccountTabBody::checkForPendingBitcoinBalanceButtonClicked()
 {
-    //TODOreq: do check, enable "Check For Confirmed" button if appropriate
-
     m_BitcoinAddressBalancePollerPollingPendingBalance = true;
     sendRpcJsonBalanceRequestToBitcoinD();
 
@@ -510,7 +523,9 @@ void AddFundsAccountTabBody::sendRpcJsonBalanceRequestToBitcoinD()
     }
     else
     {
-        //TODOreq: error message, shouldn't ever happen though... fuck it
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
+        cerr << "(Wt::Http::Client)m_BitcoinAddressBalancePoller->post returned false, malformed url?" << endl;
     }
 }
 void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(boost::system::error_code err, const Http::Message &response)
@@ -523,7 +538,8 @@ void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(b
         read_json(is, pt);
         if(pt.get<std::string>("error") != "null")
         {
-            //TODOreq: handle and notify
+            new WBreak(this);
+            new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
             cerr << "error in json returned handleBitcoinAddressBalancePollerReceivedResponse: " << response.body() << endl;
             return;
         }
@@ -554,7 +570,7 @@ void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(b
                     m_ConfirmedBitcoinBalanceLabel = new WText(this);
 
                     //enable 'done with this key'
-                    WPushButton *doneSendingBitcoinsButton = new WPushButton("Done Sending Bitcoins To This Address (Add To My Account)", this); //TODOreq: explain more thoroughly to user that they can not send bitcoins to that address anymore after clicking this. Give a huge warning
+                    WPushButton *doneSendingBitcoinsButton = new WPushButton("Done Sending Bitcoins To This Address (Add To My Account)", this); //TODOreq: explain more thoroughly to user that they can not send bitcoins to that address anymore after clicking this. Give a huge warning, like a js 'alert' except not because fuck js
                     doneSendingBitcoinsButton->clicked().connect(this, &AddFundsAccountTabBody::doneSendingBitcoinsToCurrentAddressButtonClicked);
                 }
                 //display confirmed balance
@@ -578,14 +594,18 @@ void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(b
     }
     else
     {
-        //TODOreq: handle and notify. lots of reasons it could fail, simple timeout for example
+        //TODOreq: handle (retry? what?). lots of reasons it could fail, simple timeout for example
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
+        cerr << "bitcoin poller did not return HTTP 200 OK" << endl << "http status: " << response.status() << endl << "http body: " << response.body() << endl;
     }
 }
 void AddFundsAccountTabBody::creditConfirmedBitcoinAmountAfterAnalyzingUserAccount(const string &userAccountJsonDoc, u_int64_t userAccountCAS, bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "creditConfirmedBitcoinAmountAfterAnalyzingUserAccount db error" << endl;
@@ -595,7 +615,8 @@ void AddFundsAccountTabBody::creditConfirmedBitcoinAmountAfterAnalyzingUserAccou
     }
     if(!lcbOpSuccess)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "TOTAL SYSTEM FAILURE: user account didn't exist and must. creditConfirmedBitcoinAmountAfterAnalyzingUserAccount" << endl;
@@ -651,7 +672,8 @@ void AddFundsAccountTabBody::attemptToLockBitcoinKeySetNintoFillingNextPageModeC
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "attemptToLockBitcoinKeySetNintoFillingNextPageModeComplete db error" << endl;
@@ -685,7 +707,8 @@ void AddFundsAccountTabBody::doneAttemptingCredittingConfirmedBitcoinBalanceForC
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "doneAttemptingCredittingConfirmedBitcoinBalanceForCurrentPaymentKeyCasSwapUserAccount db error" << endl;
@@ -711,9 +734,6 @@ void AddFundsAccountTabBody::doneAttemptingCredittingConfirmedBitcoinBalanceForC
     m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0; //probably pointless, but will make me sleep better at night
     m_CurrentBitcoinKeyForPayments = ""; //ditto
 
-
-    //TODOreq: also probably a good idea to show their total balance somewhere... I'm thinking the logout widget where it says their name (esp since we already have the user-account doc at that point)
-
     m_AbcApp->resumeRendering();
 }
 void AddFundsAccountTabBody::showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout()
@@ -729,7 +749,8 @@ void AddFundsAccountTabBody::getBitcoinKeySetNPageYAttemptFinishedSoCheckItIfItE
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "getBitcoinKeySetNPageYAttemptFinishedSoCheckItIfItExistsAndMakeItIfItDont db error" << endl;
@@ -757,7 +778,8 @@ void AddFundsAccountTabBody::getHugeBitcoinKeyListActualPageAttemptCompleted(con
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "getHugeBitcoinKeyListActualPageAttemptCompleted db error" << endl;
@@ -780,7 +802,7 @@ void AddFundsAccountTabBody::getHugeBitcoinKeyListActualPageAttemptCompleted(con
             std::ostringstream reLockedToNewPageZJsonBuffer;
             write_json(reLockedToNewPageZJsonBuffer, pt2, false);
 
-            m_AbcApp->store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), reLockedToNewPageZJsonBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            m_AbcApp->storeLarge_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), reLockedToNewPageZJsonBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
             m_AbcApp->m_WhatTheStoreWithInputCasWasFor = AnonymousBitcoinComputingWtGUI::RELOCKBITCOINKEYSETN_CURRENTPAGETONONEXISTENTPAGEZASNECESSARYOPTIMIZATION;
 
             //displays the error (as in the else) after the op completes
@@ -820,7 +842,7 @@ void AddFundsAccountTabBody::getHugeBitcoinKeyListActualPageAttemptCompleted(con
                 break;
             }
         }
-        else if(!doneInsertingIntoFirstUnclaimed) //unclaimed spot found! but we might not need it if the uuid is seen during this iteration
+        else if(!doneInsertingIntoFirstUnclaimed) //unclaimed spot found! but we might not need it if the uuid is seen during this iteration (but it would have been found already)
         {
             //copy-pasted from above
             string commaSeparatedKeyRangeFromHugeBitcoinKeyList = pt.get<std::string>(keyPrefix);
@@ -849,7 +871,7 @@ void AddFundsAccountTabBody::getHugeBitcoinKeyListActualPageAttemptCompleted(con
             write_json(jsonDocBuffer, pt, false);
 
             //CAS-swap attempt hugeBitcoinKeyList[pageZ] claiming a range for the next bitcoinKeySet[setN]_PageY
-            m_AbcApp->store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(hugeBitcoinKeyListPageKey(m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList), jsonDocBuffer.str(), casForUsingInSafelyInsertingOurPerFillUuid, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+            m_AbcApp->storeLarge_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(hugeBitcoinKeyListPageKey(m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList), jsonDocBuffer.str(), casForUsingInSafelyInsertingOurPerFillUuid, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
             m_AbcApp->m_WhatTheStoreWithInputCasWasFor = AnonymousBitcoinComputingWtGUI::HUGEBITCOINKEYLISTKEYRANGECLAIMATTEMPT;
         }
         else
@@ -868,7 +890,7 @@ void AddFundsAccountTabBody::getHugeBitcoinKeyListActualPageAttemptCompleted(con
                 pt2.put(JSON_HUGE_BITCOIN_KEY_LIST_CURRENT_PAGE_KEY, m_FillingNextBitcoinKeySetStartingFromPageZofHugeBitcoinList);
                 std::ostringstream jsonDocBuffer;
                 write_json(jsonDocBuffer, pt2, false);
-                m_AbcApp->store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(hugeBitcoinKeyListCurrentPageKey(), jsonDocBuffer.str(), m_CasToUseForSafelyUpdatingHugeBitcoinKeyList_CurrentPageUsingIncrementedPageZ, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+                m_AbcApp->storeLarge_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(hugeBitcoinKeyListCurrentPageKey(), jsonDocBuffer.str(), m_CasToUseForSafelyUpdatingHugeBitcoinKeyList_CurrentPageUsingIncrementedPageZ, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
                 m_AbcApp->m_WhatTheStoreWithInputCasWasFor = AnonymousBitcoinComputingWtGUI::HUGEBITCOINKEYLISTPAGECHANGE;
             }
             else
@@ -892,7 +914,7 @@ void AddFundsAccountTabBody::uuidPerRefillIsSeenOnHugeBitcoinListSoProceedWithAc
     std::ostringstream bitcoinKeySetPageJsonBuffer;
     write_json(bitcoinKeySetPageJsonBuffer, pt, false);
 
-    m_AbcApp->store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY), bitcoinKeySetPageJsonBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+    m_AbcApp->storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(bitcoinKeySetPageKey(m_BitcoinKeySetIndex_aka_setN, m_BitcoinKeySetPage_aka_PageY), bitcoinKeySetPageJsonBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
     m_AbcApp->m_WhatTheStoreWithoutInputCasWasFor = AnonymousBitcoinComputingWtGUI::BITCOINKEYSETNPAGEYCREATIONVIALCBADD;
 
     m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList.clear();
@@ -901,7 +923,8 @@ void AddFundsAccountTabBody::hugeBitcoinKeyListCurrentPageGetComplete(const stri
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "hugeBitcoinKeyListCurrentPageGetComplete db error" << endl;
@@ -911,7 +934,8 @@ void AddFundsAccountTabBody::hugeBitcoinKeyListCurrentPageGetComplete(const stri
     }
     if(!lcbOpSuccess)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "TOTAL SYSTEM FAILURE hugeBitcoinKeyList_CurrentPage didn't exist and must" << endl;
@@ -943,14 +967,15 @@ void AddFundsAccountTabBody::hugeBitcoinKeyListCurrentPageGetComplete(const stri
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, pt2, false);
 
-    m_AbcApp->store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), jsonDocBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+    m_AbcApp->storeLarge_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), jsonDocBuffer.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
     m_AbcApp->m_WhatTheStoreWithInputCasSavingOutputCasWasFor = AnonymousBitcoinComputingWtGUI::LOCKINGBITCOINKEYSETNINTOFILLINGNEXTPAGEMODE;
 }
 void AddFundsAccountTabBody::doneAttemptingBitcoinKeySetNnextPageYcreation(bool dbError)
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "doneAttemptingBitcoinKeySetNnextPageYcreation reported db error" << endl;
@@ -975,14 +1000,15 @@ void AddFundsAccountTabBody::doneAttemptingBitcoinKeySetNnextPageYcreation(bool 
     std::ostringstream unlockedCurrentPageDoc;
     write_json(unlockedCurrentPageDoc, pt, false);
 
-    m_AbcApp->store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), unlockedCurrentPageDoc.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+    m_AbcApp->storeLarge_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(bitcoinKeySetCurrentPageKey(m_BitcoinKeySetIndex_aka_setN), unlockedCurrentPageDoc.str(), m_BitcoinKeySetCurrentPageCASForFillingNextPageWayLater, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
     m_AbcApp->m_WhatTheStoreWithInputCasWasFor = AnonymousBitcoinComputingWtGUI::SAFELYUNLOCKBITCOINKEYSETNCURRENTPAGEDOCFAILINGTOLERABLY;
 }
 void AddFundsAccountTabBody::doneAttemptingHugeBitcoinKeyListKeyRangeClaim(bool lcbOpSuccess, bool dbError)
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "doneAttemptingHugeBitcoinKeyListKeyRangeClaim db error" << endl;
@@ -1005,7 +1031,8 @@ void AddFundsAccountTabBody::doneAttemptingToUnlockBitcoinKeySetN_CurrentPage(bo
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "doneAttemptingToUnlockBitcoinKeySetN_CurrentPage db error" << endl;
@@ -1032,7 +1059,8 @@ void AddFundsAccountTabBody::doneChangingHugeBitcoinKeyListCurrentPage(bool dbEr
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "doneChangingHugeBitcoinKeyListCurrentPage db error" << endl;
@@ -1048,7 +1076,8 @@ void AddFundsAccountTabBody::doneReLockingBitcoinKeySetN_CurrentPage_withNewFrom
 {
     if(dbError)
     {
-        //TODOreq: handle and notify
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
 
         //temp:
         cerr << "doneReLockingBitcoinKeySetN_CurrentPage_withNewFromPageZvalue db error" << endl;

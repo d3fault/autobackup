@@ -7,7 +7,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 {
     //start couchbase and wait for it to finish connecting/initializing
     AnonymousBitcoinComputingCouchbaseDB couchbaseDb;
-    //TODOreq: the AnonymousBitcoinComputingCouchbaseDB object should be both instantiated and destructed ON the couchbase thread. However I'm not experiencing any bugs here so fuck it for now
+    //TODOoptional: the AnonymousBitcoinComputingCouchbaseDB object should be both instantiated and destructed ON the couchbase thread. However I'm not experiencing any bugs here so fuck it for now
 
     boost::unique_lock<boost::mutex> couchbaseConnectingLock(*couchbaseDb.isConnectedMutex());
     while(!couchbaseDb.isDoneInitializing())

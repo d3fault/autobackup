@@ -32,13 +32,10 @@
 #include <boost/preprocessor/repeat.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/replace.hpp>
 
 #include "accounttabs/actuallazyloadedtabwidget.h"
 
@@ -50,7 +47,6 @@
 using namespace Wt;
 using namespace Wt::Utils;
 using namespace boost::interprocess;
-using namespace boost::random;
 using namespace boost::property_tree;
 using namespace std;
 
