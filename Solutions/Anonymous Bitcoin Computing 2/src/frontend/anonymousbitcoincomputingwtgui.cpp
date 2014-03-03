@@ -448,6 +448,7 @@ double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double currentTime_
     //y = m(x)+b
     return ((m*currentTime_x)+b);
 }
+//NOTE: a lot of the body of this method has been copy/pasted to ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1, so if you change this, you should probably change that as well
 void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
 {
     //This is ALSO (but not always (first get)) what I have referred to as a "buy event", so if they have clicked "buy step 1" we need to roll back the GUI so they have to click buy step 1 again (various GUI object organizational changes to support this)
@@ -474,7 +475,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     m_HackedInD3faultCampaign0_NoPreviousSlotPurchases = !lastSlotFilledAkaPurchased.is_initialized();
 
 
-    //TODOoptional: would be nifty to have over to the right side of the graph, the last 10 purchases (with last at the bottom and momentarily highlighted on a buy event)
+    //TODOoptional: would be NIFTY to have over to the right side of the graph, the last 10 purchases (with last at the bottom and momentarily highlighted on a buy event)
 
 #ifdef LOL_I_HAVE_PLENTY_OF_TIME_TO_KILL_AND_AM_BORED_AND_DONT_WANT_TO_LAUNCH_ASEP //Wt's chart seemed good enough for visualization, but didn't appear at a glance to be very javascript-interaction-friendly. Hoving your mouse over the line and seeing 'price at that time' would be nifty, as would the "dot"/ball aka "now" slowly going down to minprice. A 3rd party javascript lib might be better/easier, but then it's a matter of making it play nice with Wt (i'd just put the entire lib in "doJavascript" i'd imagine xD?) and then remembering I have bigger problems than this
         //TODOreq: populate model for chart first
@@ -606,9 +607,80 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
     //^^^^^^^^we also want to 'roll back' after the buy is successful, but certain messages should remain
     m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy = m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex;
 
+    if(environment().ajax())
+    {
+        getCouchbaseDocumentByKeyBegin(adSpaceAllSlotFillersKey(m_CurrentlyLoggedInUsername));
+        m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET;
+    }
+    else
+    {
+        //no-js needs to get the campaign doc again [from subscription cache] before proceeding to next step (uses same enum as above afterwards)
+        getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
+        m_CurrentlySubscribedTo = NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK;
+        //we use the same enum going in as the no-js single get hack, but a different enum for pulling back out (since we don't want to end up at pre-step 1)
+    }
+    deferRendering();
+}
+//this method is kinda like finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget, except not. it reads the json the same way (copy/paste), but doesn't set any values (with exception to current purchaseable slot start date time)
+void AnonymousBitcoinComputingWtGUI::ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1(const string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        cerr << "ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1 db error" << endl;
+        m_BuySlotFillerStep1Button->enable();
+        resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        cerr << "TOTAL SYSTEM FAILURE: campaign doc didn't exist and must in ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1" << endl;
+        m_BuySlotFillerStep1Button->enable();
+        resumeRendering();
+        return;
+    }
+
+    //got campaign doc, now read in the fresh values from it (WHILE WE'RE HERE, IT MAKES SENSE TO DO AN *EXTRA* (not relied upon) CHECK THAT THE SLOT WE INTEND TO PURCHASE ISN'T ALREADY PURCHASED <-- do that later since it is not required and does nothing besides being a rarely used optimization) to use during 'recalculation' during buy step 2 populating
+
+    //--------------------------BEGIN SURGICAL PRECISION CONSERVATIVE COPY/PASTE JOB FROM 'finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget', ONLY GETTING WHAT IS NEEDED FOR CALCULATION WHEN WE RE-JOIN WITH YES-JS MOMENTARILY, BUT ALSO MANUALLY UPDATING OF CURRENT PURCHASEABLE SLOT START DATE TIME---------------------
+    ptree pt;
+    std::istringstream is(advertisingBuyAdSpaceD3faultCampaign0JsonDocument);
+    read_json(is, pt);
+
+    m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase = advertisingBuyAdSpaceD3faultCampaign0JsonDocument;
+    m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase = casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase;
+
+    boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED);
+    m_HackedInD3faultCampaign0_NoPreviousSlotPurchases = !lastSlotFilledAkaPurchased.is_initialized();
+
+    if(!m_HackedInD3faultCampaign0_NoPreviousSlotPurchases) //if there is a previous slot purchase
+    {
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX);
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP);
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP);
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE);
+
+        double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
+        double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
+        if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
+        {
+            //expired
+            m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText("immediately after purchase");
+        }
+        else
+        {
+            m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText(WDateTime::fromTime_t(lastSlotFilledAkaPurchasedExpireDateTime).toString());
+        }
+    }
+    //else: it's already set to "immediately after purchase" from in 'finishShowing'
+    //--------------------------END SURGICAL PRECISION CONSERVATIVE COPY/PASTE JOB FROM 'finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget'
+
+    //now join back up with the yes-js code path (enum copy/paste job)
     getCouchbaseDocumentByKeyBegin(adSpaceAllSlotFillersKey(m_CurrentlyLoggedInUsername));
     m_WhatTheGetWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET;
-    deferRendering();
 }
 void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const std::string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError)
 {
@@ -703,6 +775,7 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
 {
     if(dbError)
     {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         cerr << "ensureSlotDoesntExistThenContinueWithLockingUserAccountIntoAttemptingToBuyItAndThenGoAheadWithBuyEtcIfThatSucceeds db error" << endl;
         resumeRendering();
@@ -710,6 +783,7 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
     }
     if(lcbOpSuccessAkaWhetherOrNotTheSlotWeWantToBuyExistsBitch)
     {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Sorry, someone beat you to it", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: make these error messages the same via a define
         if(!environment().ajax())
         {
@@ -918,7 +992,8 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     }
     else
     {
-        new WText("Our records indicate you're already trying to purchase a slot. Either do one at a time, or perhaps you should try logging out and back in again to remedy the issue", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Our records indicate you're currently trying to purchase some ad space. Either do one purchase at a time, or perhaps you should try logging out and back in again to remedy the issue", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         resumeRendering();
         //we probably want to allow them to continue with the buy even if the account is locked, so long as it's locked "to" the same one they're trying to buy now (buy failure recovery) -- TODOreq: this should go either in login recovery or here, but not both (since getting _here_ requires being logged in (ALTHOUGH ACTUALLY NVM, IT IS POSSIBLE TO GET HERE IF THE DB/node FAILS WHILE THEY ARE LOGGED IN LOOKING AT BUY PAGE FFFFFF))
         //Semi-outdated:
@@ -1556,8 +1631,15 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
     case SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX:
     {
         resumeRendering(); //get and subscribe mode generally does not defer/resume, but this is a no-js hack so it makes an exception!
-        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas);
         m_CurrentlySubscribedTo = INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING; //end of subscription after just one (so we don't 'unsubscribe' or send change session id stuff)
+        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas);        
+    }
+        break;
+    case NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK:
+    {
+        //since we go to a specialized method, we can just resumeRendering in there (whereas the above no-js hack shares the 'finish showing' method with yes-js). but in fact, we don't want to resumeRendering anyways until a bit later (another [regular] db hit)
+        m_CurrentlySubscribedTo = INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING; //still want to unsubscribe tho, just makes more sense to put it here
+        ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1(couchbaseDocument, cas, lcbOpSuccess, dbError);
     }
         break;
     case INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING:
