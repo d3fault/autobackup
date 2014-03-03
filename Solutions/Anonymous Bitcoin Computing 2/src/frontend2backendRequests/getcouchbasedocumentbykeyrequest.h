@@ -26,8 +26,11 @@ public:
 
         //in both of these modes, the backend does not respond and the frontend always assumes it works (TODOoptimization: expect response in frontend using timeout or some such. blah probably a dumb idea because if the backend doesn't do it, shit is ALREADY fucked)
         GetAndSubscribeChangeSessionIdMode,
-        GetAndSubscribeUnsubscribeMode
-        //TODOreq: maybe this is where the js special 'get-FROM-subscription-but-dont-subscribe-unless-there-isnt-one-in-which-case-do-a-full-get-fuck-it-if-its-costly-ish' (tm)
+        GetAndSubscribeUnsubscribeMode,
+        GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx,
+        GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthxDONTUSETHIS5ISRESERVEDASAFUCKINGCRAZYASSHACK,
+        GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthxEVENMOREHACKSFORTHEHARDGETTHING
+        //TO DOnereq: maybe this is where the js special 'get-FROM-subscription-but-dont-subscribe-unless-there-isnt-one-in-which-case-do-a-full-get-fuck-it-if-its-costly-ish' (tm)
     };
     //save constructor
     GetCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseGetKeyInput, CasMode casMode = DiscardCASMode, GetAndSubscribeEnum subscribeMode = JustGetDontSubscribeMode);

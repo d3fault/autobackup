@@ -494,7 +494,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
     //getting here means no more exponential retrying for this get request is necessary, so recycle it into the cache
     m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
 
-    if(originalRequest->GetAndSubscribe != 0)
+    if(originalRequest->GetAndSubscribe != 0 && originalRequest->GetAndSubscribe != 6)
     {
         //TODOreq: handle case where key doesn't exist (but since we're manually setting up get and subscribe shit for now (including recompilations), that is ridiculously unlikely)
 
@@ -592,7 +592,10 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             //new subscribers want what we just got no matter what
             BOOST_FOREACH(SubscribersType::value_type &v, cacheItem->NewSubscribers)
             {
-                GetCouchbaseDocumentByKeyRequest::respondWithCAS(static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second), possiblyNewValueDependingOnCas, casToTellUsIfTheDocChangedOrNot, true, false);
+                if(static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second)->GetAndSubscribe != 4)
+                {
+                    GetCouchbaseDocumentByKeyRequest::respondWithCAS(static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second), possiblyNewValueDependingOnCas, casToTellUsIfTheDocChangedOrNot, true, false);
+                }
             }
 
             //old subscribers only notified if the cas has changed
@@ -608,15 +611,38 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
                 }
             }
 
-            //new subscribers become old subscribers no matter what
+            SubscribersType noJsSingleGetHackRequestsThatWantThe_NEXT_RequestBecauseThisOneMightBeOffBecauseOfARaceConditionLoL;
+
+            //new subscribers become old subscribers no matter what (unless they are no-js single get hack, in which case we delete them :-P)
             BOOST_FOREACH(SubscribersType::value_type &v, cacheItem->NewSubscribers)
             {
-                cacheItem->Subscribers[v.first] = v.second;
+                GetCouchbaseDocumentByKeyRequest *getCouchbaseDocumentByKeyRequest = static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second);
+                if(getCouchbaseDocumentByKeyRequest->GetAndSubscribe == 4)
+                {
+                    //'4' wasn't responded to yet, and we hackily make it in new subscribers for the NEXT one
+                    noJsSingleGetHackRequestsThatWantThe_NEXT_RequestBecauseThisOneMightBeOffBecauseOfARaceConditionLoL[v.first] = v.second;
+                    getCouchbaseDocumentByKeyRequest->GetAndSubscribe = 5;
+                }
+                else if(getCouchbaseDocumentByKeyRequest->GetAndSubscribe == 5)
+                {
+                    //special no-js single get hack (is already responded to, so now just delete)
+                    delete getCouchbaseDocumentByKeyRequest;
+                }
+                else
+                {
+                    //normal making of new subscriber old subscriber
+                    cacheItem->Subscribers[v.first] = v.second;
+                }
             }
             cacheItem->NewSubscribers.clear();
 
+            //no-js single get 'add back to new subscribers' [for NEXT poll result] hack
+            BOOST_FOREACH(SubscribersType::value_type &v, noJsSingleGetHackRequestsThatWantThe_NEXT_RequestBecauseThisOneMightBeOffBecauseOfARaceConditionLoL)
+            {
+                cacheItem->NewSubscribers[v.first] = v.second;
+            }
 
-            //TODOreq: now set up timer? i don't think we want to set up the timer when the key isn't in cache (all unsubscribed). also doing it here makes get and subscribe not future proof for multiple keys
+            //TODOreq: doing it here makes get and subscribe not future proof for multiple keys
             event_add(m_GetAndSubscribePollingTimeout, &m_OneHundredMilliseconds);
         }
         catch(std::out_of_range &keyNotInCacheException)
@@ -924,6 +950,16 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
                 //don't continue doing get [and/or subscribe]
                 return;
             }
+            else if(originalRequest->GetAndSubscribe == 4) //no-js hack that just wants single update
+            {
+                //TO DOnereq: if subscription cache doesn't fulfill our [sexual] needs, set GetAndSubscribe to 6 and send it on through as a hard get. setting it to 6 will make sure it doesn't go through regular get and subscibe stuff in the getCallback stage, BUT also uses the "UPDATE" callback when sending the result back to Wt
+
+                //since this chunk of code can happen RIGHT AFTER a buy event (if the no-js user was the one that bought it), what the subscription cache has is PROBABLY stale so we don't want it. but it gets even more complicated because we don't even know if the subscription cache has anything. TODOreq: what if keyValueCacheItem doesn't exist also?
+
+                //give us the next value, no matter what it is, which must/should be the value that we just 'stored' as the buyer (however TO DOnereq(LOLOL solved it via incredibly dirty hacks. '5'. basically making it get the NEXT NEXT polling update): i'm not sure it is always true given race conditions of events being raised etc :-/. will probably be true MOST OF THE TIME though, which makes this ehh fuck (omg so fucking hard to even think about my brain is going to explode and for now i'm just going to 'not give a shit' (tm) and just put it in new subscribers and pull it out hackily, because it should work MOST of the time and eh i am not sure how to make it work all of the time))
+                keyValueCacheItem->NewSubscribers[originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback] = originalRequest;
+                return; //don't continue as normal get and subscribe
+            }
 
             //traditional get and subscribe
 
@@ -966,15 +1002,22 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
             //add ourself and if get isn't already scheduled (we're the first), schedule it. If we get here then we might be the first, but we might also be very close after the first so that the very first get (which is already schedule by the first) hasn't finished yet. Once the first POLL is completed, we should never get here
             //^^NOPE, that is subscriber cache, this miss is for just the key itself (first miss creates it)
 
-            //create cache item, even though we have nothing to put in it yet. TODOreq: we need to make sure that we wait for the first get to finish before we ever give someone the "Document" from the cache item (BECAUSE IT IS EMPTY)
-            GetAndSubscribeCacheItem *newKeyValueCacheItem = new GetAndSubscribeCacheItem();
+            if(originalRequest->GetAndSubscribe != 4)
+            {
+                //create cache item, even though we have nothing to put in it yet. TODOreq: we need to make sure that we wait for the first get to finish before we ever give someone the "Document" from the cache item (BECAUSE IT IS EMPTY)
+                GetAndSubscribeCacheItem *newKeyValueCacheItem = new GetAndSubscribeCacheItem();
 
-            //if we get here, we definitely need to do the first 'get' (when it returns, it sets up the 100ms poller (TODOreq: unless all users have unsubscribed by then xD))
+                //if we get here, we definitely need to do the first 'get' (when it returns, it sets up the 100ms poller (TODOreq: unless all users have unsubscribed by then xD))
 
-            m_GetAndSubscribeCacheHash[originalRequest->CouchbaseGetKeyInput] = newKeyValueCacheItem;
-            keyValueCacheItem = newKeyValueCacheItem;
-            keyValueCacheItem->NewSubscribers[originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback] = originalRequest;
-
+                m_GetAndSubscribeCacheHash[originalRequest->CouchbaseGetKeyInput] = newKeyValueCacheItem;
+                keyValueCacheItem = newKeyValueCacheItem;
+                keyValueCacheItem->NewSubscribers[originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback] = originalRequest;
+            }
+            else //GetAndSubscribe == 4 (no-js single get hack)
+            {
+                //get and subscribe cache doesn't have anything for the 'no-js' single get hack, so set to 6 for special hard db get, and then doeeeet
+                originalRequest->GetAndSubscribe = 6;
+            }
             //we don't return, because we want to actually do the get!
         }
     }

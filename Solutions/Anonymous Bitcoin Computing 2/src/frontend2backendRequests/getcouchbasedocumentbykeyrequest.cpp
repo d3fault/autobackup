@@ -25,6 +25,18 @@ GetCouchbaseDocumentByKeyRequest::GetCouchbaseDocumentByKeyRequest(std::string w
     {
         GetAndSubscribe = 3;
     }
+    else if(subscribeMode == GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx)
+    {
+        GetAndSubscribe = 4; //TODOoptional: it's probably fine to just serialize the enum itself, but eh fuggit
+    }
+    else if(subscribeMode == GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthxDONTUSETHIS5ISRESERVEDASAFUCKINGCRAZYASSHACK)
+    {
+        GetAndSubscribe = 5; //'reserved' number used in hack, don't ask. look for the number '5' in the backend to see how this hack is used. basically we want the next+1 get and subscribe update...
+    }
+    else if(subscribeMode == GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthxEVENMOREHACKSFORTHEHARDGETTHING)
+    {
+        GetAndSubscribe = 6; //another hack that i'm just 'reserving', but this time for when the no-js thingo does a hard db get...
+    }
 }
 //load constructor
 GetCouchbaseDocumentByKeyRequest::GetCouchbaseDocumentByKeyRequest()
@@ -37,7 +49,7 @@ void GetCouchbaseDocumentByKeyRequest::respond(GetCouchbaseDocumentByKeyRequest 
 }
 void GetCouchbaseDocumentByKeyRequest::respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest, std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError)
 {
-    if(!originalRequest->GetAndSubscribe)
+    if(originalRequest->GetAndSubscribe == 0)
     {
         Wt::WServer::instance()->post(originalRequest->WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished, originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback, _1, _2, _3, _4, _5), originalRequest->CouchbaseGetKeyInput, couchbaseDocument, cas, lcbOpSuccess, dbError));
         return;

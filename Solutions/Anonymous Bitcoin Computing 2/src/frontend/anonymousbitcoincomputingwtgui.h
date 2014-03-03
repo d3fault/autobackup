@@ -254,6 +254,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError);
     void doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError);
     void doneAttemptingUserAccountUnlockingWithoutDebittingFor_LoginRecovery_And_SlotPurchaseBeatToThePunch(bool lcbOpSuccess, bool dbError);
+    void doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
 
     //store
     void storeWithoutInputCasCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError);
@@ -345,13 +346,14 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         GETHUGEBITCOINKEYLISTACTUALPAGEFORANALYZINGANDMAYBECLAIMINGKEYRANGE,
         CREDITCONFIRMEDBITCOINAMOUNTAFTERANALYZINGUSERACCOUNT,
         GETALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS,
-        HACKEDIND3FAULTCAMPAIGN0GET,
+        //HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
     };
     enum WhatTheGetAndSubscribeSavingCasWasForEnum
     {
         INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING,
-        HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS
+        HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS,
+        SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX //no-js equivalent of above subscription (hack)
     };
 
     //TODOoptimziation: can probably use callbacks (boost::bind comes to mind) for these and would maybe be more efficient (idk)

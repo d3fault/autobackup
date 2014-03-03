@@ -370,9 +370,9 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         if(!environment().ajax())
         {
             //TODOreq: get, don't subscribe (but still use subsciption cache!). when you impl that, change it for the no-js successful slot buy as well, since it is currently hackily a copy/paste job from this code block :)
-
-            getCouchbaseDocumentByKeySavingCasBegin(adSpaceCampaignKey("d3fault", "0"));
-            m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET; //TODOreq: why the fuck do i save the cas? surely i should re-fetch the doc- OH BUT IT NEVER CHANGES UNLESS THERE'S A BUY EVENT!!!
+            doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
+            //getCouchbaseDocumentByKeySavingCasBegin(adSpaceCampaignKey("d3fault", "0"));
+            //m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET; //TODOreq: why the fuck do i save the cas? surely i should re-fetch the doc- OH BUT IT NEVER CHANGES UNLESS THERE'S A BUY EVENT!!!
         }
         else
         {
@@ -421,11 +421,19 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
             );
         }
     }
-    else //widget already created, so just re-subscribe
+    else //widget already created, so...
     {
-        //TODOreq: need to handle no-js mode here as well (currently no-js receives a subscription update but doesn't triggerUpdate it (and isn't defered xD), so really you just keep seeing stale data from the first view)
-        getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
-        m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
+        if(!environment().ajax())
+        {
+            //get current/fresh values
+            doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
+        }
+        else
+        {
+            //just re-subscribe
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
+            m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
+        }
         //TODOreq: the data will still be populated, but the data may be stale (maybe i shouldn't ever show such stale info (could be really really old, BUT if everything is working it will get updated really fast ([probably] not even a couchbase hit, so SUB-SUB-MILLISECONDS!?!?)))
         //^still, should i disable gui or something?
     }
@@ -612,6 +620,8 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         //temp:
         cerr << "buySlotPopulateStep2d3faultCampaign0 db error" << endl;
 
+        //"roll back" to pre-step 1, but since we haven't set up anything yet we just re-enable step 1 buttan
+        m_BuySlotFillerStep1Button->enable();
         return;
     }
     if(!lcbOpSuccess) //allAds doc doesn't exist
@@ -619,6 +629,8 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("You need to set up some advertisements before you can buy ad space: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        //"roll back" to pre-step 1, but since we haven't set up anything yet we just re-enable step 1 buttan
+        m_BuySlotFillerStep1Button->enable();
         return;
     }
 
@@ -1203,8 +1215,9 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
     if(!environment().ajax())
     {
         //no-js doesn't have 'buy event', so we get the fresh results even though it would be a TODOoptimization to have just saved them (but if recovery possy did campaign update in race condition, we still would have to do the get we're about to do (if the cas swap succeeded, we could have just called finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget directly for that optimization)). KISS
-        getCouchbaseDocumentByKeySavingCasBegin(adSpaceCampaignKey("d3fault", "0"));
-        m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
+        doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
+        //getCouchbaseDocumentByKeySavingCasBegin(adSpaceCampaignKey("d3fault", "0"));
+        //m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
     }
 
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
@@ -1260,8 +1273,27 @@ void AnonymousBitcoinComputingWtGUI::doneAttemptingUserAccountUnlockingWithoutDe
         //TODOreq: schedule getting new slot to populate buy step 1 proper, right now it rolls back, but to the outdated values
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Sorry, someone else bought the slot just moments before you...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        if(!environment().ajax())
+        {
+            //js only sees above error in rare race condition, and if/when they do they will get the subscription update to 'fix' it soon anyways. no-js needs to request the update manually
+            doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
+        }
         resumeRendering();
     }
+}
+void AnonymousBitcoinComputingWtGUI::doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser()
+{
+    //this is effectively a db get, but preferably from the subscription cache (else a ddos point), of the current contents of the campaign doc. it is for no-js clients, because if they have js then they will already be receiving updates.
+
+    //all no-js:
+    //1) navigating to campaign 0 for the first time
+    //2) coming back to campaign 0 ('re-subscribe' analog)
+    //3) 'sorry, someone else bought the slot just moments before you'
+    //4) successful slot purchase
+
+    getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
+    m_CurrentlySubscribedTo = SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX;
+    deferRendering(); //getAndSubscribe doesn't defer/resume, but we need to since no-js (the switch/'case' for the above special no-js enum does the resume)
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
@@ -1409,11 +1441,13 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
         loginIfInputHashedEqualsDbInfo(couchbaseDocument, cas, lcbOpSuccess, dbError);
     }
         break;
+#if 0
     case HACKEDIND3FAULTCAMPAIGN0GET:
     {
         finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas); //TODOreq: tempted to pass lcbOpsSuccess and dbError into here, but this is ultimately going to change when i implement get-and-subscribe-via-polling so i'm not sure they still apply (not sure they don't apply also!)
     }
         break;
+#endif
     case HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET:
     {
         verifyUserHasSufficientFundsAndThatTheirAccountIsntAlreadyLockedAndThenStartTryingToLockItIfItIsntAlreadyLocked(couchbaseDocument, cas, lcbOpSuccess, dbError);
@@ -1481,7 +1515,14 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
     {
     case HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS:
     {
-        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas); //TODOreq: calling this from two places now, need to.. err.. fix that
+        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas); //TODOreq: lcbOpSuccess + dbError? my backend already needs special attention to this stuff for the request hackily being used for polling, so that may be related to this
+    }
+        break;
+    case SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX:
+    {
+        resumeRendering(); //get and subscribe mode generally does not defer/resume, but this is a no-js hack so it makes an exception!
+        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas);
+        m_CurrentlySubscribedTo = INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING; //end of subscription after just one (so we don't 'unsubscribe' or send change session id stuff)
     }
         break;
     case INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING:
