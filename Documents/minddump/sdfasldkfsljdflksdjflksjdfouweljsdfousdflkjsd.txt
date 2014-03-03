@@ -1,0 +1,12 @@
+My fellow engineers have done a splendid job of confusing the hell out of it. I should from now on refer to them as "bits". Why is a byte, 8, the typically referred to unit? What is so special about 8 (aside from it being a power of 2)? I hear byte and I often confuse it with 32 (also a power of 2 and frequently used unit). Fucking idiots everywhere, and the marketing department fucks shit up even further by jumping back to bits to make it seem like you get more. Guh
+
+9.76 KiB
+
+Could be anywhere between:
+1000*9.76 = 9760 bits
+or
+1024*9.76*8 = 79953.92 bits (how the fuck you have a fraction of a bit is beyond me, but just goes to show how retardedly confusing it is)
+
+bits.
+1.
+state the quantity as a number, none of this abbreviation shit that my fellow engineers also can't seem to agree on (kibi, kilo, kelo, keko), and follow it with the word bits. only convert when the library/etc demands it (and hope they don't use an abbreviation such as "kb, kB, Kb, KiB, etc)

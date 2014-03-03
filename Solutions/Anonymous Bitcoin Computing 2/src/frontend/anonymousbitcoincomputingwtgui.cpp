@@ -699,6 +699,103 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
         buySlotFillerStep2Button->clicked().connect(buySlotFillerStep2Button, &WPushButton::disable); //we don't rely on this
     }
 }
+void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockingUserAccountIntoAttemptingToBuyItAndThenGoAheadWithBuyEtcIfThatSucceeds(bool lcbOpSuccessAkaWhetherOrNotTheSlotWeWantToBuyExistsBitch, bool dbError)
+{
+    if(dbError)
+    {
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        cerr << "ensureSlotDoesntExistThenContinueWithLockingUserAccountIntoAttemptingToBuyItAndThenGoAheadWithBuyEtcIfThatSucceeds db error" << endl;
+        resumeRendering();
+        return;
+    }
+    if(lcbOpSuccessAkaWhetherOrNotTheSlotWeWantToBuyExistsBitch)
+    {
+        new WText("Sorry, someone beat you to it", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: make these error messages the same via a define
+        if(!environment().ajax())
+        {
+            doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
+        }
+        resumeRendering();
+        return;
+    }
+
+    //slot doesn't exist, so it's safe to lock user account attempting to fill it (safe only because we use cas from BEFORE the slot existent check (hard to explain but suck my dick (i barely understand it so yea)))
+
+    ptree pt;
+    std::istringstream is(m_UserAccountUnlockedJustBeforeBuyingJson); //we've already parsed this json once to verify it isn't already locked attempting to buy some slot
+    read_json(is, pt);
+
+    std::string userBalanceString = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
+    double userBalance = boost::lexical_cast<double>(userBalanceString);
+
+    //TO DOnereq: we should probably calculate balance HERE/now instead of in buySlotStep2d3faultCampaign0ButtonClicked (where it isn't even needed). Those extra [SUB ;-P]-milliseconds will get me millions and millions of satoshis over time muahhahaha superman 3
+
+    double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
+
+    if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
+    {
+        //no last purchase, so use min price
+        m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
+    }
+    else
+    {
+        //there is a last purchase
+
+        //check to see if last purchase is expired
+        double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
+        if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
+        {
+            //expired, so use min price
+            m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
+        }
+        else
+        {
+            //not expired, so calculate
+
+            //calculate internal price
+            m_CurrentPriceToUseForBuying = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), lastSlotFilledAkaPurchasedExpireDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
+
+            //TODOreq: when we use this variable later, we first check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases. If true, we then use the PURCHASE time as the start time. That is also true for when the last purchase is already expired (check both and in mentioned order). We also need to make sure we always check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases before checking if last purchase is expired, because there isn't a last purchase so we'd get undefined results
+            m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = boost::lexical_cast<std::string>(lastSlotFilledAkaPurchasedExpireDateTime);
+
+            m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;
+        }
+    }
+
+    //std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
+    //TODOreq: why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++. BUT SERIOUSLY THOUGH I need to make sure that this doesn't fuck up shit and money get leaked/lost/whatever. Maybe rounding errors in this method of converting double -> string, and since I'm using it as the actual value in the json doc, I need it to be accurate. The very fact that I have to use 6 instead of 8 just makes me wonder...
+    //TODOreq: ^ok wtf now i got 7 decimal places, so maybe it's dependent on the value........... maybe i should just store/utilize as many decimal places as possible (maybe trimming to 8 _ONLY_ when the user sees the value).... and then force the bitcoin client to do the rounding shizzle :-P
+    //currentPriceStream /*<< setprecision(6)*/ << m_CurrentPriceToUseForBuying; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
+    //m_CurrentPriceToUseForBuyingString = currentPriceStream.str();
+    m_CurrentPriceToUseForBuyingString = boost::lexical_cast<std::string>(m_CurrentPriceToUseForBuying); //or snprintf? I'm thinking lexical_cast will keep as many decimal places as it can (but is that what i want, or do i want to mimic bitcoin rounding?), so...
+    m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = boost::lexical_cast<std::string>(currentDateTime); //TO DOnereq: just fixed this, but need to make sure other code paths (???) also do the same: i was doing 'currentDateTime' twice and in between couchbase requests... but i need to make sure that the timestamp used to calculate the price is the same one stored alongside it in the json doc as 'purchase time' (and possibly start time, depending if last is expired). just fixed it now i'm pretty sure. since i was calculating it twice and the second time was later after a couchbase request, the timestamp would have been off by [sub]-milliseconds... and we've all seen superman 3 (actually i'm not sure that i have (probably have when i was young as shit, but don't remember it (hmmmm time for a rewatch)), but i've definitely seen office space (oh yea i want to rewatch that also!))
+
+    if(userBalance >= m_CurrentPriceToUseForBuying) //idk why but this makes me cringe. suspicion of rounding errors and/or other hackability...
+    {
+        //proceed with trying to lock account
+
+        //make 'account locked' json doc [by just appending to the one we already have]
+
+        pt.put(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, m_AdSlotAboutToBeFilledIfLockIsSuccessful);
+        //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
+        //TODOreq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
+        pt.put(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH, m_SlotFillerToUseInBuy);
+        std::ostringstream jsonDocBuffer;
+        write_json(jsonDocBuffer, pt, false);
+        std::string accountLockedForBuyJsonDoc = jsonDocBuffer.str();
+
+        store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), accountLockedForBuyJsonDoc, m_UserAccountUnlockedJustBeforeBuyingCas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
+        m_WhatTheStoreWithInputCasSavingOutputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS;
+    }
+    else
+    {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Insufficient Funds. Add Funds Here: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        resumeRendering();
+        //TO DOnereq(did opposite, no account activity while purchase is in progress): doesn't belong here but i probalby shouldn't let them do ANY purchase activity when they have 'pending'/unconfirmed (bitcoin) funds. It just complicates the logic too much and I'm probably going to use account locking for that too
+    }
+}
 void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 {
     if(m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy != m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex)
@@ -741,10 +838,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
 
     //had calculate current price here, but moved it to a few sub-milliseconds later
 
-
-
     m_SlotFillerToUseInBuy = adSpaceSlotFillerKey(m_CurrentlyLoggedInUsername, boost::lexical_cast<std::string>(currentIndex));
-    //TODOreq: making username 'last' part of key doesn't solve the problem: adSpaceSlotFillers12joe (slot filler 1/username '2joe' conflicts with slot filler 12/username 'joe'). It would solve it if we used leading zeros, but fuck that underscores is better solution
 
     getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(m_CurrentlyLoggedInUsername));
     m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET;
@@ -798,7 +892,8 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     }
 
 
-    m_UserAccountLockedDuringBuyJson = userAccountJsonDoc; //our starting point for when we debit the user account during unlock (after the slot fill later on)
+    m_UserAccountUnlockedJustBeforeBuyingJson = userAccountJsonDoc; //our starting point for when we debit the user account during unlock (after the slot fill later on), and also used after one last check that the slot doesn't exist before user account locking (just below is the dispatch for that)
+    m_UserAccountUnlockedJustBeforeBuyingCas = cas;
     ptree pt;
     std::istringstream is(userAccountJsonDoc);
     read_json(is, pt);
@@ -809,87 +904,22 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     if(ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase == "n")
     {
         //not already locked
-        std::string userBalanceString = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
-        double userBalance = boost::lexical_cast<double>(userBalanceString);
 
-        //TO DOnereq: we should probably calculate balance HERE/now instead of in buySlotStep2d3faultCampaign0ButtonClicked (where it isn't even needed). Those extra [SUB ;-P]-milliseconds will get me millions and millions of satoshis over time muahhahaha superman 3
-
-        double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
-
-        if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
+        //TODOreq: make sure the slot doesn't already exist before proceeding, because it might and if it does we will fuck shit up if we lock the user account AGAIN towards one we already purchased, which is a race condition that happens a lot when js is disabled
+        int slotIndexToAttemptToBuy = 0;
+        if(!m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
         {
-            //no last purchase, so use min price
-            m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
+            slotIndexToAttemptToBuy = (boost::lexical_cast<int>(m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy) + 1);
         }
-        else
-        {
-            //there is a last purchase
-
-            //check to see if last purchase is expired
-            double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
-            if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
-            {
-                //expired, so use min price
-                m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
-            }
-            else
-            {
-                //not expired, so calculate
-
-                //calculate internal price
-                m_CurrentPriceToUseForBuying = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), lastSlotFilledAkaPurchasedExpireDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
-
-                //TODOreq: when we use this variable later, we first check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases. If true, we then use the PURCHASE time as the start time. That is also true for when the last purchase is already expired (check both and in mentioned order). We also need to make sure we always check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases before checking if last purchase is expired, because there isn't a last purchase so we'd get undefined results
-                m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = boost::lexical_cast<std::string>(lastSlotFilledAkaPurchasedExpireDateTime);
-
-                m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;
-            }
-        }
-
-        //std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
-        //TODOreq: why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++. BUT SERIOUSLY THOUGH I need to make sure that this doesn't fuck up shit and money get leaked/lost/whatever. Maybe rounding errors in this method of converting double -> string, and since I'm using it as the actual value in the json doc, I need it to be accurate. The very fact that I have to use 6 instead of 8 just makes me wonder...
-        //TODOreq: ^ok wtf now i got 7 decimal places, so maybe it's dependent on the value........... maybe i should just store/utilize as many decimal places as possible (maybe trimming to 8 _ONLY_ when the user sees the value).... and then force the bitcoin client to do the rounding shizzle :-P
-        //currentPriceStream /*<< setprecision(6)*/ << m_CurrentPriceToUseForBuying; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
-        //m_CurrentPriceToUseForBuyingString = currentPriceStream.str();
-        m_CurrentPriceToUseForBuyingString = boost::lexical_cast<std::string>(m_CurrentPriceToUseForBuying); //or snprintf? I'm thinking lexical_cast will keep as many decimal places as it can (but is that what i want, or do i want to mimic bitcoin rounding?), so...
-        m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = boost::lexical_cast<std::string>(currentDateTime); //TO DOnereq: just fixed this, but need to make sure other code paths (???) also do the same: i was doing 'currentDateTime' twice and in between couchbase requests... but i need to make sure that the timestamp used to calculate the price is the same one stored alongside it in the json doc as 'purchase time' (and possibly start time, depending if last is expired). just fixed it now i'm pretty sure. since i was calculating it twice and the second time was later after a couchbase request, the timestamp would have been off by [sub]-milliseconds... and we've all seen superman 3 (actually i'm not sure that i have (probably have when i was young as shit, but don't remember it (hmmmm time for a rewatch)), but i've definitely seen office space (oh yea i want to rewatch that also!))
-
-        if(userBalance >= m_CurrentPriceToUseForBuying) //idk why but this makes me cringe. suspicion of rounding errors and/or other hackability...
-        {
-            //proceed with trying to lock account
-
-            //make 'account locked' json doc [by just appending to the one we already have]
-
-            int slotIndexToAttemptToBuy = 0;
-            if(!m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
-            {
-                slotIndexToAttemptToBuy = (boost::lexical_cast<int>(m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy) + 1);
-            }
-            m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase = boost::lexical_cast<std::string>(slotIndexToAttemptToBuy);
-            m_AdSlotAboutToBeFilledIfLockIsSuccessful = adSpaceCampaignSlotKey("d3fault", "0", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
-            pt.put(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, m_AdSlotAboutToBeFilledIfLockIsSuccessful);
-            //TODOreq (read next TODOreq first): seriously it appears as though i'm still not getting the user's input to verify the slot index. we could have a 'buy event' that could update m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex and even push it to their client just milliseconds before they hit 'buy' step 2.... and if they have sufficient funds they'd now buy at near-exactly twice what they wanted to [and be pissed]. i need some boolean guards in javascript surrounding a "are you sure" prompt thingo (except i can't/shouldn't depend on js so gah) -> jsignal-emit-with-that-value -> unlock the boolean guards (to allow buy events to update that slot index and/or price). an amateur wouldn't see this HUGE bug
-            //TODOreq: ^bleh, i should 'lock in the slot index' when the user clicks buy step 1, DUH (fuck js) (if they receive a buy event during that time, we undo step 1, requiring them to click it again [at a now double price]. BUT it's _VITAL_ that i don't allow the internal code to modify their locked in slot index and allow them to proceed forward with the buy)
-            pt.put(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH, m_SlotFillerToUseInBuy);
-            std::ostringstream jsonDocBuffer;
-            write_json(jsonDocBuffer, pt, false);
-            std::string accountLockedForBuyJsonDoc = jsonDocBuffer.str();
-
-            store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(userAccountKey(m_CurrentlyLoggedInUsername), accountLockedForBuyJsonDoc, cas, StoreCouchbaseDocumentByKeyRequest::SaveOutputCasMode);
-            m_WhatTheStoreWithInputCasSavingOutputCasWasFor = HACKEDIND3FAULTCAMPAIGN0BUYSTEP2bLOCKACCOUNTFORBUYINGSETWITHCASSAVINGCAS;
-        }
-        else
-        {
-            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-            new WText("Insufficient Funds. Add Funds Here: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-            new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-            resumeRendering();
-            return;
-            //TO DOnereq(did opposite, no account activity while purchase is in progress): doesn't belong here but i probalby shouldn't let them do ANY purchase activity when they have 'pending'/unconfirmed (bitcoin) funds. It just complicates the logic too much and I'm probably going to use account locking for that too
-        }
+        m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase = boost::lexical_cast<std::string>(slotIndexToAttemptToBuy);
+        m_AdSlotAboutToBeFilledIfLockIsSuccessful = adSpaceCampaignSlotKey("d3fault", "0", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
+        getCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful);
+        m_WhatTheGetWasFor = ENSURESLOTABOUTTOLOCKUSERACCOUNTTOWARDSATTEMPTINGTOPURCHASEDOESNTEXISTBECAUSEIFITDOESANDWEBOUGHTITSTATEWOULDBEFUCKED;
     }
     else
     {
+        new WText("Our records indicate you're already trying to purchase a slot. Either do one at a time, or perhaps you should try logging out and back in again to remedy the issue", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        resumeRendering();
         //we probably want to allow them to continue with the buy even if the account is locked, so long as it's locked "to" the same one they're trying to buy now (buy failure recovery) -- TODOreq: this should go either in login recovery or here, but not both (since getting _here_ requires being logged in (ALTHOUGH ACTUALLY NVM, IT IS POSSIBLE TO GET HERE IF THE DB/node FAILS WHILE THEY ARE LOGGED IN LOOKING AT BUY PAGE FFFFFF))
         //Semi-outdated:
         //TO DOnereq(describes the roll-back hack): account already locked so error out of this buy. they're logged in elsewhere and trying to buy two things at once? etc. It jumps at me that it might be a place to do 'recovery' code, but I think for now I'm only going to do that during 'login' (TO DOnereq: maybe doing recovery at login isn't such a good idea (at least, the PROCEED WITH BUY kind isn't a good idea (rollback is DEFINITELY good idea (once we verify that they didn't get it(OMG RACE CONDITION HACKABLE TO DOnereq: they are on two machines they log in on a different one just after clicking "buy" and get lucky so that their account IS locked, but the separate-login-machine checks to see if they got the slot. When it sees they didn't, it rolls back their account. Meanwhile the original machine they clicked "buy" on is still trying to buy the slot (by LCB_ADD'ing the slot). The hack depends on the machine they press "buy" on being slower (more load, etc) than the alternate one they log in to (AND NOTE, BY MACHINE I MEAN WT SERVER, not end user machine). So wtf rolling back is dangerous? Wat do. It would also depend on the buying machine crashing immediately after the slot is purchased, because otherwise it would be all like 'hey wtf who unlocked that account motherfucker, I was still working on it' and at least error out TO DOnereq(can't think of a way to detect that scenario because recovery-possy can cas-swap-unlock+debitting also)))))
@@ -1053,7 +1083,7 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     if(!lcbOpSuccess)
     {
         //getting beat to the punch
-        unlockUserAccountWithoutDebittingIfSlotDeclaredAttemptingToPurchaseIsPurchasedBySomeoneElse(m_AdSlotAboutToBeFilledIfLockIsSuccessful, m_SlotFillerToUseInBuy, m_UserAccountLockedDuringBuyJson, m_CasFromUserAccountLockSoWeCanSafelyUnlockLater);
+        unlockUserAccountWithoutDebittingIfSlotDeclaredAttemptingToPurchaseIsPurchasedBySomeoneElse(m_AdSlotAboutToBeFilledIfLockIsSuccessful, m_SlotFillerToUseInBuy, m_UserAccountUnlockedJustBeforeBuyingJson, m_CasFromUserAccountLockSoWeCanSafelyUnlockLater);
         rollBackToBeforeBuyStep1ifNeeded();
         return;
     }
@@ -1096,7 +1126,7 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     //user account debiting + unlock
     //first parse the json doc that we saved before doing the lock
     ptree pt;
-    std::istringstream is(m_UserAccountLockedDuringBuyJson);
+    std::istringstream is(m_UserAccountUnlockedJustBeforeBuyingJson);
     read_json(is, pt);
     //now do the debit of the balance and put it back in the json doc
     double userBalance = boost::lexical_cast<double>(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
@@ -1288,7 +1318,7 @@ void AnonymousBitcoinComputingWtGUI::doHackyOneTimeBuyEventUpdateThingoForNoJava
     //all no-js:
     //1) navigating to campaign 0 for the first time
     //2) coming back to campaign 0 ('re-subscribe' analog)
-    //3) 'sorry, someone else bought the slot just moments before you'
+    //3) 'sorry, someone else bought the slot just moments before you' (multiple)
     //4) successful slot purchase
 
     getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
@@ -1398,6 +1428,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     case HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET:
     {
         buySlotPopulateStep2d3faultCampaign0(couchbaseDocument, lcbOpSuccess, dbError);
+    }
+        break;
+    case ENSURESLOTABOUTTOLOCKUSERACCOUNTTOWARDSATTEMPTINGTOPURCHASEDOESNTEXISTBECAUSEIFITDOESANDWEBOUGHTITSTATEWOULDBEFUCKED:
+    {
+        ensureSlotDoesntExistThenContinueWithLockingUserAccountIntoAttemptingToBuyItAndThenGoAheadWithBuyEtcIfThatSucceeds(lcbOpSuccess, dbError);
     }
         break;
     case ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK:

@@ -229,6 +229,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase);
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError);
+    void ensureSlotDoesntExistThenContinueWithLockingUserAccountIntoAttemptingToBuyItAndThenGoAheadWithBuyEtcIfThatSucceeds(bool lcbOpSuccessAkaWhetherOrNotTheSlotWeWantToBuyExistsBitch, bool dbError);
     void buySlotStep2d3faultCampaign0ButtonClicked();
     void rollBackToBeforeBuyStep1ifNeeded();
     WContainerWidget *m_BuyStep2placeholder;
@@ -248,7 +249,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_StartTimestampUsedInNewPurchase;
     u_int64_t m_CasFromUserAccountLockSoWeCanSafelyUnlockLater;
     std::string m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase;
-    std::string m_UserAccountLockedDuringBuyJson;
+    std::string m_UserAccountUnlockedJustBeforeBuyingJson;
+    u_int64_t m_UserAccountUnlockedJustBeforeBuyingCas;
     void slotFillAkaPurchaseAddAttemptFinished(bool lcbOpSuccess, bool dbError);
     void transactionDocCreatedSoCasSwapUnlockAcceptingFailUserAccountDebitting(bool dbError);
     void doneUnlockingUserAccountAfterSuccessfulPurchaseSoNowUpdateCampaignDocCasSwapAcceptingFail_SettingOurPurchaseAsLastPurchase(bool dbError);
@@ -329,6 +331,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         INITIALINVALIDNULLGET,
         GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET,
+        ENSURESLOTABOUTTOLOCKUSERACCOUNTTOWARDSATTEMPTINGTOPURCHASEDOESNTEXISTBECAUSEIFITDOESANDWEBOUGHTITSTATEWOULDBEFUCKED,
         GETALLADSLOTFILLERSDOCFORVIEWING,
         HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS,
         ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK
