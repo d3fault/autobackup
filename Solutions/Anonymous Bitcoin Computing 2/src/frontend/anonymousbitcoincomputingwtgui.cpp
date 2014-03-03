@@ -7,9 +7,6 @@
 #include "accounttabs/newadslotfilleraccounttabbody.h"
 #include "accounttabs/viewallexistingadslotfillersaccounttabbody.h"
 
-#include "abc2couchbaseandjsonkeydefines.h"
-
-
 //internal paths
 
 #define ABC_INTERNAL_PATH_REGISTER "/register"
@@ -91,10 +88,13 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_LoggedIn(false)
 {
     //constructor body, in case you're confused...
+#if 0
     mt19937 mersenneTwisterRandomNumberGenerator;
     mersenneTwisterRandomNumberGenerator.seed(static_cast<int>(WDateTime::currentDateTime().toTime_t())); //had taus88, but when used with bitcoin key dispersement set selection, i was getting the same number over and over for the entire app run. a TODOoptimization here might be to just do "time_t % num_queues" (or use unique id again), because i'd imagine these RNGs are expensive ish
+#endif
+    //OLD: uniform_int_distribution<> l_StoreMessageQueuesRandomIntDistribution(0, ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store - 1); m_CurrentStoreMessageQueueIndex = l_StoreMessageQueuesRandomIntDistribution(mersenneTwisterRandomNumberGenerator);
 
-    //uniform_int_distribution<> l_StoreMessageQueuesRandomIntDistribution(0, ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store - 1); m_CurrentStoreMessageQueueIndex = l_StoreMessageQueuesRandomIntDistribution(mersenneTwisterRandomNumberGenerator);
+    //m_CurrentStoreMessageQueueIndex = rawUniqueId() % ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO)
 
     buildGui(); //everything that is NOT dependent on the internal path
@@ -369,10 +369,9 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 
         if(!environment().ajax())
         {
-            //TODOreq: get, don't subscribe (but still use subsciption cache!). when you impl that, change it for the no-js successful slot buy as well, since it is currently hackily a copy/paste job from this code block :)
             doHackyOneTimeBuyEventUpdateThingoForNoJavascriptUser();
             //getCouchbaseDocumentByKeySavingCasBegin(adSpaceCampaignKey("d3fault", "0"));
-            //m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET; //TODOreq: why the fuck do i save the cas? surely i should re-fetch the doc- OH BUT IT NEVER CHANGES UNLESS THERE'S A BUY EVENT!!!
+            //m_WhatTheGetSavingCasWasFor = HACKEDIND3FAULTCAMPAIGN0GET;
         }
         else
         {
@@ -408,7 +407,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
                     "currentDateTimeMSecs += " + m_CurrentPriceDomPath + ".z0bj.clientServerTimeOffsetMSecs;"
                     "if(currentDateTimeMSecs >= " + m_CurrentPriceDomPath + ".z0bj.lastSlotFilledAkaPurchasedExpireDateTimeMSecs)"
                     "{" +
-                        m_CurrentPriceDomPath + ".innerHTML = " + m_CurrentPriceDomPath + ".z0bj.minPrice.toFixed(8);" //TODOreq: rounding?
+                        m_CurrentPriceDomPath + ".innerHTML = " + m_CurrentPriceDomPath + ".z0bj.minPrice.toFixed(8);"
                         "clearInterval(" + m_CurrentPriceDomPath + ".z0bj.tehIntervalz);"
                         + m_CurrentPriceDomPath + ".z0bj.tehIntervalIsRunnan = false;"
                     "}"
@@ -446,7 +445,11 @@ double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double currentTime_
     //b = y-(m*x)
     double b = (minPrice_y2 - (m * lastSlotFilledAkaPurchasedExpireDateTime_x2));
     //y = m(x)+b
+
     return ((m*currentTime_x)+b);
+
+    //rounding
+    //return satoshiIntToJsonDouble(jsonDoubleToSatoshiIntIncludingRounding(ret));
 }
 //NOTE: a lot of the body of this method has been copy/pasted to ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1, so if you change this, you should probably change that as well
 void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
@@ -469,7 +472,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     std::istringstream is(advertisingBuyAdSpaceD3faultCampaign0JsonDocument);
     read_json(is, pt);
 
-    m_HackedInD3faultCampaign0_MinPrice = pt.get<std::string>(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE);
+    m_HackedInD3faultCampaign0_MinPrice = satoshiStringToJsonString(pt.get<std::string>(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE));
     m_HackedInD3faultCampaign0_SlotLengthHours = pt.get<std::string>(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS);
     boost::optional<ptree&> lastSlotFilledAkaPurchased = pt.get_child_optional(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED);
     m_HackedInD3faultCampaign0_NoPreviousSlotPurchases = !lastSlotFilledAkaPurchased.is_initialized();
@@ -499,7 +502,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX);
         m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP);
         m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP);
-        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE);
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = satoshiStringToJsonString(lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE));
 
         if(environment().ajax())
         {
@@ -544,9 +547,9 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
                 //TODOreq: javascript-less UI should update price after buy step 1 is clicked
                 //TODOreq: maybe a 60 second timer to refresh js-less page, or a refresh button
 
-                double currentPrice = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
+                double currentPriceOverAccurate = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
 
-                m_CurrentPriceLabel->setText(boost::lexical_cast<std::string>(currentPrice)); //TODOreq: 8 decimal places, since it's presented to user
+                m_CurrentPriceLabel->setText(jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(currentPriceOverAccurate)); //TODOreq: 8 decimal places, since it's presented to user
                 //TODOoptional: if viewing campaign/countdown with js on and you then disallow js, the price is empty/blank (not even zero). weirdly though, coming directly to the page (no session) with javascript already disabled works fine. I think it has something to do with noscript not re-fetching the source during the "reload"... because on the noscript-reload tab i see "Scripts currently forbidden" (with options to allow them), and on "navigated directly to campaign with js already off" tab I don't see that message (no js was served). I don't even think I CAN fix this problem heh :-P... but it might be a Wt bug... not gracefully degrading when session becomes js-less?
 
                 //TODOreq: "current price is XXX and it will be back at YYYYY at ZZZZZZZ (should nobody buy any further slots). Click here to refresh this information to see if it's still valid, as someone may have purchased a slot since you loaded this page (enable javascript if you want to see it count down automatically)"
@@ -661,7 +664,7 @@ void AnonymousBitcoinComputingWtGUI::ehhGetLatestValuesFromCampaignDocForNoJsUse
         m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedSlotIndex = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX);
         m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP);
         m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP);
-        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE);
+        m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice = satoshiStringToJsonString(lastSlotFilledAkaPurchased.get().get<std::string>(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE));
 
         double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
         double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
@@ -708,7 +711,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
     //if we get here, allAds doc exists (which means it has at least one ad)
 
-    string currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (boost::lexical_cast<std::string>(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp)))); //TODOreq: rounding/etc
+    string currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp)))); //TODOreq: rounding/etc
 
     if(!environment().ajax())
     {
@@ -799,8 +802,7 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
     std::istringstream is(m_UserAccountUnlockedJustBeforeBuyingJson); //we've already parsed this json once to verify it isn't already locked attempting to buy some slot
     read_json(is, pt);
 
-    std::string userBalanceString = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
-    double userBalance = boost::lexical_cast<double>(userBalanceString);
+    SatoshiInt userBalance = satoshiStringToSatoshiInt(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
 
     //TO DOnereq: we should probably calculate balance HERE/now instead of in buySlotStep2d3faultCampaign0ButtonClicked (where it isn't even needed). Those extra [SUB ;-P]-milliseconds will get me millions and millions of satoshis over time muahhahaha superman 3
 
@@ -809,7 +811,7 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
     if(m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
     {
         //no last purchase, so use min price
-        m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
+        m_CurrentPriceInSatoshisToUseForBuying = jsonStringToSatoshiInt(m_HackedInD3faultCampaign0_MinPrice);
     }
     else
     {
@@ -820,14 +822,15 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
         if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
         {
             //expired, so use min price
-            m_CurrentPriceToUseForBuying = boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice);
+            m_CurrentPriceInSatoshisToUseForBuying = jsonStringToSatoshiInt(m_HackedInD3faultCampaign0_MinPrice);
         }
         else
         {
             //not expired, so calculate
 
             //calculate internal price
-            m_CurrentPriceToUseForBuying = calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), lastSlotFilledAkaPurchasedExpireDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp));
+            //TODOreq: all uses of this currrent price conform
+            m_CurrentPriceInSatoshisToUseForBuying = jsonDoubleToSatoshiIntIncludingRounding(calculateCurrentPrice(currentDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), lastSlotFilledAkaPurchasedExpireDateTime, boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp)));
 
             //TODOreq: when we use this variable later, we first check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases. If true, we then use the PURCHASE time as the start time. That is also true for when the last purchase is already expired (check both and in mentioned order). We also need to make sure we always check m_HackedInD3faultCampaign0_NoPreviousSlotPurchases before checking if last purchase is expired, because there isn't a last purchase so we'd get undefined results
             m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds = boost::lexical_cast<std::string>(lastSlotFilledAkaPurchasedExpireDateTime);
@@ -836,15 +839,10 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
         }
     }
 
-    //std::ostringstream currentPriceStream; //TODOreq: all other number->string conversions should use this method
-    //TODOreq: why the fuck does setprecision(6) give me 8 decimal places and setprecision(8) gives me 10!?!?!? lol C++. BUT SERIOUSLY THOUGH I need to make sure that this doesn't fuck up shit and money get leaked/lost/whatever. Maybe rounding errors in this method of converting double -> string, and since I'm using it as the actual value in the json doc, I need it to be accurate. The very fact that I have to use 6 instead of 8 just makes me wonder...
-    //TODOreq: ^ok wtf now i got 7 decimal places, so maybe it's dependent on the value........... maybe i should just store/utilize as many decimal places as possible (maybe trimming to 8 _ONLY_ when the user sees the value).... and then force the bitcoin client to do the rounding shizzle :-P
-    //currentPriceStream /*<< setprecision(6)*/ << m_CurrentPriceToUseForBuying; //TODOreq:rounding errors maybe? I need to make a decision on that, and I need to make sure that what I tell them it was purchased at is the same thing we have in our db
-    //m_CurrentPriceToUseForBuyingString = currentPriceStream.str();
-    m_CurrentPriceToUseForBuyingString = boost::lexical_cast<std::string>(m_CurrentPriceToUseForBuying); //or snprintf? I'm thinking lexical_cast will keep as many decimal places as it can (but is that what i want, or do i want to mimic bitcoin rounding?), so...
+    m_CurrentPriceInSatoshisToUseForBuyingString = satoshiIntToSatoshiString(m_CurrentPriceInSatoshisToUseForBuying);
     m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = boost::lexical_cast<std::string>(currentDateTime); //TO DOnereq: just fixed this, but need to make sure other code paths (???) also do the same: i was doing 'currentDateTime' twice and in between couchbase requests... but i need to make sure that the timestamp used to calculate the price is the same one stored alongside it in the json doc as 'purchase time' (and possibly start time, depending if last is expired). just fixed it now i'm pretty sure. since i was calculating it twice and the second time was later after a couchbase request, the timestamp would have been off by [sub]-milliseconds... and we've all seen superman 3 (actually i'm not sure that i have (probably have when i was young as shit, but don't remember it (hmmmm time for a rewatch)), but i've definitely seen office space (oh yea i want to rewatch that also!))
 
-    if(userBalance >= m_CurrentPriceToUseForBuying) //idk why but this makes me cringe. suspicion of rounding errors and/or other hackability...
+    if(userBalance >= m_CurrentPriceInSatoshisToUseForBuying) //cringing less now that they are fixed integers :)
     {
         //proceed with trying to lock account
 
@@ -1136,7 +1134,7 @@ void AnonymousBitcoinComputingWtGUI::userAccountLockAttemptFinish_IfOkayDoTheAct
     ptree pt;
     pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_PURCHASE_TIMESTAMP, m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
     pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_START_TIMESTAMP, m_StartTimestampUsedInNewPurchase);
-    pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_PURCHASE_PRICE, m_CurrentPriceToUseForBuyingString);
+    pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_PURCHASE_PRICE, m_CurrentPriceInSatoshisToUseForBuyingString);
     pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH, m_SlotFillerToUseInBuy);
     std::ostringstream jsonDocBuffer;
     write_json(jsonDocBuffer, pt, false);
@@ -1169,7 +1167,7 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     ptree pt;
     pt.put(JSON_TRANSACTION_BUYER, m_CurrentlyLoggedInUsername);
     pt.put(JSON_TRANSACTION_SELLER, "d3fault"); //TODOreq: implied/deducable from key name...
-    pt.put(JSON_TRANSACTION_AMOUNT, m_CurrentPriceToUseForBuyingString);
+    pt.put(JSON_TRANSACTION_AMOUNT, m_CurrentPriceInSatoshisToUseForBuyingString);
     std::ostringstream transactionBuffer;
     write_json(transactionBuffer, pt, false);
     store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(transactionKey("d3fault", "0", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase), transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
@@ -1204,10 +1202,10 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     std::istringstream is(m_UserAccountUnlockedJustBeforeBuyingJson);
     read_json(is, pt);
     //now do the debit of the balance and put it back in the json doc
-    double userBalance = boost::lexical_cast<double>(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
-    userBalance -= m_CurrentPriceToUseForBuying; //TODOreq: again, just scurred of rounding errors etc. I think as long as I  use 'more precision than needed' (as much as an double provides), I should be ok...
-    std::string balanceString = boost::lexical_cast<std::string>(userBalance);
-    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(balanceString); //TODOoptional: jumping the gun by setting it here before even finishing the cas-swap of their user-account doc, BUT the transaction doc and slot fill/add are already complete at this point so we KNOW it will 'become' accurate soon (if we fail, recovery possy will do it)... so seeing as this is visual ONLY, it's acceptable. Unlike account creditting ("done with this key"), which waits until the cas swap succeeds before updating the label, we KNOW that if we get here that it will work (and if we were to wait for the cas swap and the cas swap FAILED, the balance label would never be updated (because recovery possy is different app (i guess i could... (*shoots self in face*)))
+    SatoshiInt userBalance = satoshiStringToSatoshiInt(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
+    userBalance -= m_CurrentPriceInSatoshisToUseForBuying;
+    std::string balanceString = satoshiIntToSatoshiString(userBalance);
+    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(satoshiStringToJsonString(balanceString)); //TODOoptional: jumping the gun by setting it here before even finishing the cas-swap of their user-account doc, BUT the transaction doc and slot fill/add are already complete at this point so we KNOW it will 'become' accurate soon (if we fail, recovery possy will do it)... so seeing as this is visual ONLY, it's acceptable. Unlike account creditting ("done with this key"), which waits until the cas swap succeeds before updating the label, we KNOW that if we get here that it will work (and if we were to wait for the cas swap and the cas swap FAILED, the balance label would never be updated (because recovery possy is different app (i guess i could... (*shoots self in face*)))
     pt.put(JSON_USER_ACCOUNT_BALANCE, balanceString);
     //now convert the json doc back to string for couchbase
     std::ostringstream jsonDocWithBalanceDeducted;
@@ -1281,7 +1279,7 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX, m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
     lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_TIMESTAMP, m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase);
     lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_START_TIMESTAMP, m_StartTimestampUsedInNewPurchase);
-    lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE, m_CurrentPriceToUseForBuyingString);
+    lastPurchasedPt.put(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE, m_CurrentPriceInSatoshisToUseForBuyingString);
 
     pt.put_child(JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED, lastPurchasedPt);
 
@@ -1326,7 +1324,7 @@ void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAr
     }
 
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WText("SUCCESS! You bought the ad space for BTC: " + m_CurrentPriceToUseForBuyingString, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("SUCCESS! You bought the ad space for: BTC " + satoshiStringToJsonString(m_CurrentPriceInSatoshisToUseForBuyingString), m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
     //buy event rolls us back to before buy step 1 [for next slot]. will come shortly for js, and we just scheduled it above for no-js
     resumeRendering();
     //TODOoptimization(dumb): getting here means were the driver (unless i merge this function, but yea) so we can now ahead-of-time-a-la-event-driven update the 'get and subscribe' people (at least the ones on this wt node)... but we don't really NEED to...
@@ -1802,7 +1800,7 @@ bool AnonymousBitcoinComputingWtGUI::isHomePath(const std::string &pathToCheck)
 }
 void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string &newInternalPath)
 {
-    if(!internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0)) //we would check ALL eligible subscriptions before going into this if block (future proof)
+    if(!internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0)) //we would check ALL eligible subscriptions before going into this if block (future proof), or I suppose a better solution would be to put all subscription paths under the same clean url prefix...
     {
         //now in 'non-subscribeable' area
 
@@ -1884,7 +1882,7 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     std::string base64PasswordSaltHashed = base64Encode(passwordSaltHashed);
     //json'ify
     ptree jsonDoc;
-    jsonDoc.put(JSON_USER_ACCOUNT_BALANCE, "0.0");
+    jsonDoc.put(JSON_USER_ACCOUNT_BALANCE, "0");
     jsonDoc.put(JSON_USER_ACCOUNT_PASSWORD_HASH, base64PasswordSaltHashed);
     jsonDoc.put(JSON_USER_ACCOUNT_PASSWORD_SALT, base64Salt);
     jsonDoc.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY);
@@ -2021,7 +2019,7 @@ void AnonymousBitcoinComputingWtGUI::doLoginTasks()
     logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
     new WBreak(m_LogoutWidget);
     new WText("Balance: BTC ", m_LogoutWidget);
-    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel = new WText(m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly, m_LogoutWidget);
+    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel = new WText(satoshiStringToJsonString(m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly), m_LogoutWidget);
     new WBreak(m_LogoutWidget);
     m_LinkToAccount = new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_LogoutWidget);
     m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
@@ -2077,3 +2075,33 @@ BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUC
 
 //boost::mutex AnonymousBitcoinComputingWtGUI::m_StoreMutexArray[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store];
 BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_STATIC_MUTEX_SOURCE_DEFINITION_MACRO)
+
+#ifdef ARCHIVAL_MODE_FOR_THE_WIN_AND_LULZ_AND_YEA_KALJDSFKLJADKLSJADLAKJSDALSKDJ //conclusion: need doubles for 'current price' calculation (first commented out shit didn't work); satoshis for storage, presentation, debitting and creditting
+//    int64_t m = (00000001-00000002)/((1393822416+(60*60*24))-1393822416);
+//    int64_t b = 00000001-(m*(1393822416+(60*60*24)));
+//    int64_t result = (m*1393865615)+b;
+//    cout << m << endl << b << endl << result << endl;
+
+    double m = (.00000001-.00000002)/((1393822416+(60*60*24))-1393822416);
+    double b = .00000001-(m*(1393822416+(60*60*24)));
+
+    //before 12 hours by 1 second
+    double result = (m*1393865615)+b;
+
+//    //at exactly 12 hours (as per ".5", rounds up :-P)
+//    double result = (m*1393865616)+b;
+
+//    //after 12 hours by 1 second
+//    double result = (m*1393865617)+b;
+
+    int64_t satoshi = (int64_t)(result * 1e8 + (result < 0.0 ? -.5 : .5));
+    double backAgain = (double)satoshi / 1e8;
+
+    cout << m << endl << b << endl << satoshi << endl;
+
+    char balls[20]; //21,000,000.00000000 = 17 characters, including the decimal point (16 without)
+    sprintf(balls, "%.8f", backAgain); //C++ provides no way to do this, boost::lexical_cast keeps giving me scientific. WWWWWWWWRRRRRRRYYYYYYYYY
+    string wat(balls, strlen(balls));
+
+    cout << wat << endl << wat.length() << endl;
+#endif

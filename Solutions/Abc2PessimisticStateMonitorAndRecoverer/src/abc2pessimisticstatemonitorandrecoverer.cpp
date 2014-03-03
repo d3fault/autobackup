@@ -116,12 +116,12 @@ if(m_LastOpStatus != LCB_SUCCESS) \
 }
 
 #define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK \
-double buyerBalance = boost::lexical_cast<double>(pt6.get<std::string>(JSON_USER_ACCOUNT_BALANCE)); \
-double purchasePrice = boost::lexical_cast<double>(purchasePriceString); \
+SatoshiInt buyerBalance = satoshiStringToSatoshiInt(pt6.get<std::string>(JSON_USER_ACCOUNT_BALANCE)); \
+SatoshiInt purchasePrice = satoshiStringToSatoshiInt(purchasePriceString); \
 buyerBalance -= purchasePrice; \
 pt6.erase(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL); \
 pt6.erase(JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH); \
-pt6.put(JSON_USER_ACCOUNT_BALANCE, boost::lexical_cast<std::string>(buyerBalance)); \
+pt6.put(JSON_USER_ACCOUNT_BALANCE, satoshiIntToSatoshiString(buyerBalance)); \
 std::ostringstream userAccountDebittedAndUnlockedJsonBuffer; \
 write_json(userAccountDebittedAndUnlockedJsonBuffer, pt6, false); \
 std::string userAccountDebittedAndUnlockedJson = userAccountDebittedAndUnlockedJsonBuffer.str(); \

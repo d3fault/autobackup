@@ -7,7 +7,6 @@
 - make some use of auto-failover shit?
 - doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
 - No ops cause too big of messages to be sent through the message queue. This is mostly done already via sanitization
-- satoshis, since i've witnessed the hilarious rounding stuff (only where it matters (js does not)). however if i use satoshis then i'll never get off 0.00000001 (because integer math CHOPS. could be wrong though). i need to conver the satoshi to a doubles for the calculating, then call 'round()' to round it to nearest satoshi, then convert back to int64 i guess? i'm so confused, won't that solution not work for the larger numbers?
 
 
 ==1.1 Bugs==

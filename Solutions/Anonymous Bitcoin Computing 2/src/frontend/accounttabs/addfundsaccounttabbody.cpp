@@ -1,7 +1,6 @@
 #include "addfundsaccounttabbody.h"
 
 #include "../anonymousbitcoincomputingwtgui.h"
-#include "abc2couchbaseandjsonkeydefines.h"
 
 AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp),
@@ -9,7 +8,7 @@ AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *a
       m_BitcoinAddressBalancePoller(0),
       m_PendingBitcoinBalanceLabel(0),
       m_ConfirmedBitcoinBalanceLabel(0),
-      m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked(0.0)
+      m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked(0)
 { }
 void AddFundsAccountTabBody::populateAndInitialize()
 {
@@ -529,8 +528,8 @@ void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(b
             return;
         }
         string balanceString = pt.get<std::string>("result");
-        double balance = boost::lexical_cast<double>(balanceString);
-        if(balance > 0.0)
+        SatoshiInt balance = jsonStringToSatoshiInt(balanceString);
+        if(balance > 0)
         {
             if(m_BitcoinAddressBalancePollerPollingPendingBalance)
             {
@@ -632,13 +631,13 @@ void AddFundsAccountTabBody::creditConfirmedBitcoinAmountAfterAnalyzingUserAccou
         return;
     }
 
-    double userBalance = boost::lexical_cast<double>(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
-    userBalance += m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked; //TODOreq: usual paranoia applies... rounding errors, etc
+    SatoshiInt userBalance = satoshiStringToSatoshiInt(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
+    userBalance += m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
 
-    std::string userBalanceString = boost::lexical_cast<std::string>(userBalance);
-    m_AbcApp->m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = userBalanceString;
+    std::string userBalanceInSatoshisString = satoshiIntToSatoshiString(userBalance);
+    m_AbcApp->m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = userBalanceInSatoshisString;
 
-    pt.put(JSON_USER_ACCOUNT_BALANCE, userBalanceString);
+    pt.put(JSON_USER_ACCOUNT_BALANCE, userBalanceInSatoshisString);
     pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY);
     pt.erase(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA);
 
@@ -706,10 +705,10 @@ void AddFundsAccountTabBody::doneAttemptingCredittingConfirmedBitcoinBalanceForC
     //successful credit of user-account balance && changing of bitcoinState back to "NoKey" :-D
 
     new WBreak(this);
-    new WText("Your account has been creditted BTC: + " + boost::lexical_cast<std::string>(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments, this); //TODOreq: enable "get bitcoin key" button again, make check-for-pending/confirmed/done buttons go away (delete?).
-    m_AbcApp->m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(m_AbcApp->m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly);
+    new WText("Your account has been creditted: BTC " + satoshiIntToJsonString(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments, this); //TODOreq: enable "get bitcoin key" button again, make check-for-pending/confirmed/done buttons go away (delete?).
+    m_AbcApp->m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(satoshiStringToJsonString(m_AbcApp->m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly));
 
-    m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0.0; //probably pointless, but will make me sleep better at night
+    m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0; //probably pointless, but will make me sleep better at night
     m_CurrentBitcoinKeyForPayments = ""; //ditto
 
 

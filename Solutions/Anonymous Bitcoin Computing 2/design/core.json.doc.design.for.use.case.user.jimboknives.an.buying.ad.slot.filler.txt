@@ -3,13 +3,13 @@ d3fault is selling adspace, and this is his "0th" ad selling campaign. It is con
 //AD SPACE BEING SOLD CAMPAIGN -- regular up and running full doc (alternates/variations below)
 adSpaceSlotsd3fault0
 {
-  "minPrice": "0.001",
+  "minPrice": "1",
   "slotLengthHours": "24",
   "lastSlotFilledAkaPurchased": {
     "slotIndex": "4",
     "purchaseTimestamp": "1972",
     "startTimestamp": "1975",
-    "purchasePrice": "0.005872"
+    "purchasePrice": "2"
   }
 }
 
@@ -21,7 +21,7 @@ The full json document for adSpaceSlotsd3fault0 before any purchases at all foll
 
 adSpaceSlotsd3fault0
 {
-  "minPrice": "0.001",
+  "minPrice": "1",
   "slotLengthHours": "24"
 }
 
@@ -32,7 +32,7 @@ adSpaceSlotsd3fault0Slot1 //these are the keys/docs that are CAS-raced to (LCB_A
 {
   "purchaseTimestamp": "1970",
   "startTimestamp" : "1971",
-  "purchasePrice": "0.002",
+  "purchasePrice": "2",
   "slotFilledWith": "adSpaceSlotFillersJimboKnives0"	
 }
 
@@ -90,7 +90,7 @@ adSpaceAllSlotFillersJimboKnives
 //CRITICAL SESSION/ACCOUNT DATA FOR JimboKnives -- has ability to buy slot fillers
 userJimboKnives
 {
-  "balance": "0.098",
+  "balance": "50",
   "passwordHash": "MRGFtZyvcZU/2HdEW1H57bVtwfrPfw==",
   "passwordSalt": "1964Y1AFICvu1XiQE9w0xsPhDE8=",
   "bitcoinState": "NoKey", //or "GettingKey" or "HaveKey"
@@ -109,7 +109,7 @@ userJimboKnives
 {
   "passwordHash": "MRGFtZyvcZU/2HdEW1H57bVtwfrPfw==",
   "passwordSalt": "1964Y1AFICvu1XiQE9w0xsPhDE8=",
-  "balance": "0.098",
+  "balance": "50",
   "slotToAttemptToFillAkaPurchase": "adSpaceSlotsd3fault0Slot1",
   "slotToAttemptToFillAkaPurchaseItWith" : "adSpaceSlotFillersJimboKnives0"
 }
@@ -145,7 +145,7 @@ txd3fault0Slot1 // corresponding to adSpaceSlotsd3fault0Slot1 of course
 {
 	"buyer" : "JimboKnives",
 	"seller" : "d3fault",
-	"amount" : "0.002"
+	"amount" : "2"
 	//timestamp? probably no, KISS
 }
 

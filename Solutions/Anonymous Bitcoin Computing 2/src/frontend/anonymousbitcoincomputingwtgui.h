@@ -45,6 +45,8 @@
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
 
+#include "abc2couchbaseandjsonkeydefines.h"
+
 using namespace Wt;
 using namespace Wt::Utils;
 using namespace boost::interprocess;
@@ -80,9 +82,14 @@ m_##text##WtMessageQueues[n] = new message_queue(open_only, ABC_WT_COUCHBASE_MES
 #text \
 #n);
 
+#if 0
 #define ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO(text) \
 uniform_int_distribution<> l_##text##MessageQueuesRandomIntDistribution(0, ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text - 1); \
 m_Current##text##MessageQueueIndex = l_##text##MessageQueuesRandomIntDistribution(mersenneTwisterRandomNumberGenerator);
+#endif
+
+#define ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO(text) \
+m_Current##text##MessageQueueIndex = rawUniqueId() % ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text;
 
 #define ABC_WT_PER_QUEUE_CURRENT_RANDOM_INDEX_DECLARATION_MACRO(text) \
 int m_Current##text##MessageQueueIndex;
@@ -241,9 +248,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void continueRecoveringLockedAccountAtLoginAttempt_OrAnalyzingSlotBuyBeatToThePunch(const string &maybeExistentSlot, bool lcbOpSuccess, bool dbError);
     void proceedToBitcoinKeySetNgettingAfterLockingUserAccountInto_GetAkeyFromPageYofSetNusingUuidPerKeyRequest_UnlessUserAccountAlreadyLocked();
     bool m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired;
-    double m_CurrentPriceToUseForBuying;
+    SatoshiInt m_CurrentPriceInSatoshisToUseForBuying;
     std::string m_LastSlotFilledAkaPurchasedExpireDateTime_ToBeUsedAsStartDateTimeIfTheBuySucceeds;
-    std::string m_CurrentPriceToUseForBuyingString;
+    std::string m_CurrentPriceInSatoshisToUseForBuyingString;
     std::string m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase;
     std::string m_AdSlotAboutToBeFilledIfLockIsSuccessful;
     void userAccountLockAttemptFinish_IfOkayDoTheActualSlotFillAdd(u_int64_t casFromLockSoWeCanSafelyUnlockLater, bool lcbOpSuccess, bool dbError);

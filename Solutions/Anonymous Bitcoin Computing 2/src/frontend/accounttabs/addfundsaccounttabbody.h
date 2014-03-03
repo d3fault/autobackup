@@ -12,6 +12,8 @@
 
 #include "iaccounttabwidgettabbody.h"
 
+#include "abc2couchbaseandjsonkeydefines.h"
+
 using namespace std;
 using namespace Wt;
 
@@ -40,7 +42,7 @@ private:
     std::string m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage;
     WText *m_PendingBitcoinBalanceLabel;
     WText *m_ConfirmedBitcoinBalanceLabel;
-    double m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
+    SatoshiInt m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
     vector<string> m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList; //i think this might be the first time i've used an std::vector xD
 
     void populateAndInitialize();

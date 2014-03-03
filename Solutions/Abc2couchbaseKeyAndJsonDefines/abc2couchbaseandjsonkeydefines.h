@@ -2,11 +2,25 @@
 #define ABC2_COUCHBASE_AND_JSON_KEY_DEFINES_H
 
 #include <string>
+#include <boost/lexical_cast.hpp> //bitcoin util
 
 #define ABC_COUCHBASE_KEY_SEPARATOR "_"
 
 //doesn't belong in this class, but /lazy:
 #define ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(errorVarName) errorVarName == LCB_EBUSY || errorVarName == LCB_ETMPFAIL || errorVarName == LCB_CLIENT_ETMPFAIL
+
+//sort of belongs here, but would more appropriately go into a bitcoin util file
+typedef long long int SatoshiInt;
+inline SatoshiInt satoshiStringToSatoshiInt(const std::string &satoshiString) { return boost::lexical_cast<SatoshiInt>(satoshiString); /* if changing to int64_t for some reason, need to cast 'through' double */ }
+inline SatoshiInt jsonDoubleToSatoshiIntIncludingRounding(double inputDouble) { return (SatoshiInt)(inputDouble * 1e8 + (inputDouble < 0.0 ? -.5 : .5)); }
+inline double satoshiIntToJsonDouble(SatoshiInt inputSatoshiInt) { return (double)inputSatoshiInt / 1e8; }
+inline std::string satoshiIntToSatoshiString(SatoshiInt inputSatoshiInt) { return boost::lexical_cast<std::string>(inputSatoshiInt); /*char buf[20]; snprintf(buf, 20, "%d", inputSatoshiInt); std::string ret(buf, strlen(buf)); return ret;*/ }
+//inline std::string jsonDoubleToJsonString(double inputDouble) { char buf[20]; snprintf(buf, 20, "%.8f", inputDouble); std::string ret(buf, strlen(buf)); return ret; }
+//^shouldn't use because must convert to satoshi first to do proper rounding
+inline std::string jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(double inputDouble) { double rounded = satoshiIntToJsonDouble(jsonDoubleToSatoshiIntIncludingRounding(inputDouble)); char buf[20]; snprintf(buf, 20, "%.8f", rounded); std::string ret(buf, strlen(buf)); return ret; }
+inline std::string satoshiStringToJsonString(const std::string &inputSatoshiString) { std::string ret = jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(satoshiIntToJsonDouble(satoshiStringToSatoshiInt(inputSatoshiString))); return ret; }
+inline SatoshiInt jsonStringToSatoshiInt(const std::string &inputJsonString) { return jsonDoubleToSatoshiIntIncludingRounding(boost::lexical_cast<double>(inputJsonString)); }
+inline std::string satoshiIntToJsonString(SatoshiInt inputSatoshiInt) { return jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(satoshiIntToJsonDouble(inputSatoshiInt)); }
 
 //campaign
 #define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign"
