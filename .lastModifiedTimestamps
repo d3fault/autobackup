@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1393873580
+Documents/minddump/:1393907019
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1441,6 +1441,7 @@ Documents/minddump/sdalfkjasdofuijwlrjaosfiusdalkfjsadofiwerlksfadoasiudflk.txt:
 Documents/minddump/sdalfkjdslfkjsodulwjeroiuslfkjf.txt:1355653593
 Documents/minddump/sdalfkjlsdkjfsldajflksdjfosuflkjsdf.txt:1361423161
 Documents/minddump/sdalfkjsalkdfjsoaduflasdjfouasdfljkasdfouoiuewr.txt:1384486819
+Documents/minddump/sdalfkjsdlkjfksldjfouwelrjousdfljksdfoujouiwerlkj.txt:1393907019
 Documents/minddump/sdalfkjsdofuljsdofusldkufowuierlkjsoiuflskjdf.txt:1363798116
 Documents/minddump/sdalfkjslkdjflswerwerkadjfosufskjfosudfslkdfjosu.txt:1391196541
 Documents/minddump/sdalkfjdskljfsdofujwerousdlkfjsdflkjsdferou.txt:1358371699
@@ -3681,11 +3682,11 @@ Projects/libAvGraphicsItem3/src/frontend/videoplayerwidget.cpp:1327006070
 Projects/libAvGraphicsItem3/src/frontend/videoplayerwidget.h:1327005797
 Projects/libAvGraphicsItem3/src/libAvGraphicsItem3.pro:1327004311
 Projects/libAvGraphicsItem3/src/main.cpp:1327003410
-Solutions/:1393083066
+Solutions/:1393916231
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/:1393096791
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/:1390931989
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/initial.idea.txt:1390932309
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1393835911
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1393919057
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/Abc2PessimisticStateMonitorAndRecoverer.pro:1393711247
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1393835816
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.h:1393537494
@@ -3693,6 +3694,26 @@ Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/main.cpp:1390952248
 Solutions/Abc2couchbaseKeyAndJsonDefines/:1393835350
 Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1393279001
 Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1393835350
+Solutions/Abc2dbInitializer/:1393907655
+Solutions/Abc2dbInitializer/src/:1393920575
+Solutions/Abc2dbInitializer/src/cli/:1393921679
+Solutions/Abc2dbInitializer/src/cli/Abc2dbInitializercli.pro:1393916414
+Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.cpp:1393921679
+Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.h:1393913424
+Solutions/Abc2dbInitializer/src/cli/main.cpp:1393907451
+Solutions/Abc2dbInitializer/src/lib/:1393921735
+Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.cpp:1393921735
+Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.h:1393921679
+Solutions/Abc2hugeBitcoinKeyListPageAdder/:1393916472
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/:1393920450
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/:1393921817
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/Abc2hugeBitcoinKeyListPageAdderCli.pro:1393916645
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/abc2hugebitcoinkeylistpageaddercli.cpp:1393921817
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/abc2hugebitcoinkeylistpageaddercli.h:1393921045
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/main.cpp:1393916257
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/lib/:1393921771
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/lib/abc2hugebitcoinkeylistpageadder.cpp:1393921771
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/lib/abc2hugebitcoinkeylistpageadder.h:1393921759
 Solutions/Anonymous Bitcoin Computing/:1334997525
 Solutions/Anonymous Bitcoin Computing/design/:1360590321
 Solutions/Anonymous Bitcoin Computing/design/AppDb.will.push.all.updates.to.every.Wt.Front.End.this.may.need.to.change.later.txt:1334343874
@@ -3851,7 +3872,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1393884546
+Solutions/Anonymous Bitcoin Computing 2/src/:1393908645
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1393879409
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -3864,10 +3885,10 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcou
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1393879409
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1393799993
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1393884420
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1393884528
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1393906623
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1393884528
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1393361188
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.cpp:1393884487
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.cpp:1393906623
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.h:1393834694
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/filedeletingfileresource.cpp:1393448627
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/filedeletingfileresource.h:1393448163

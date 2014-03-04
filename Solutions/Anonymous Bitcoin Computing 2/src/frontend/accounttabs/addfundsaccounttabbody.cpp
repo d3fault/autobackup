@@ -517,7 +517,7 @@ void AddFundsAccountTabBody::sendRpcJsonBalanceRequestToBitcoinD()
     bitcoinJsonRpcMessage.addHeader("content-type", "text/plain");
     bitcoinJsonRpcMessage.addBodyText("{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getreceivedbyaddress\", \"params\": [\"" + m_CurrentBitcoinKeyForPayments + "\", " + (m_BitcoinAddressBalancePollerPollingPendingBalance ? "0" : "1" ) + "] }");
 
-    if(m_BitcoinAddressBalancePoller->post("http://testu:testp@127.0.0.1:19001/", bitcoinJsonRpcMessage))
+    if(m_BitcoinAddressBalancePoller->post("http://admin2:123@127.0.0.1:19011/", bitcoinJsonRpcMessage))
     {
         m_AbcApp->deferRendering();
     }
