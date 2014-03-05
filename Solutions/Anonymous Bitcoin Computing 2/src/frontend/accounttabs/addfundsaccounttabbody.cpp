@@ -14,10 +14,14 @@ AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *a
       m_PendingBitcoinBalanceLabel(0),
       m_ConfirmedBitcoinBalanceLabel(0),
       m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked(0)
+      ,m_GetBitcoinKeyPlaceholder(0)
+      ,m_HaveBitcoinKeyPlaceholder(0)
+      ,m_BalancePollingThrottler_aka_TimeTofLastCheck(0)
 { }
 void AddFundsAccountTabBody::populateAndInitialize()
 {
     new WText("Fund Your Account via Bitcoin", this);
+    new WBreak(this);
     new WBreak(this); //gap before any responses
 
     m_AbcApp->deferRendering();
@@ -26,6 +30,24 @@ void AddFundsAccountTabBody::populateAndInitialize()
     //we get the bitcoin state to present them either: 1) get key button, 2) check for pending button, or 3) doing HaveKey recovery (which eventually gives them 'check for pending button' like (2))
     m_AbcApp->getCouchbaseDocumentByKeySavingCasBegin(userAccountKey(m_AbcApp->m_CurrentlyLoggedInUsername)); //ACTUALLY: changing back to get with cas because if we see the state is in "GettingKey" mode, we do light recovery from there and in fact need the cas for that. NOPE: was tempted to have this be a 'get with cas', but the user might wait a while and possibly do other things (slot fills namely) before doing any further actions, so the CAS may be hella stale by then.
     m_AbcApp->m_WhatTheGetSavingCasWasFor = AnonymousBitcoinComputingWtGUI::DETERMINEBITCOINSTATEBUTDONTLETTHEMPROCEEDIFLOCKEDATTEMPTINGTOFILLAKAPURCHASESLOT;
+}
+void AddFundsAccountTabBody::changeToGetBitcoinKeyMode()
+{
+    if(m_HaveBitcoinKeyPlaceholder)
+    {
+        delete m_HaveBitcoinKeyPlaceholder;
+        m_HaveBitcoinKeyPlaceholder = 0;
+        m_PendingBitcoinBalanceLabel = 0; //deleted implicitly with above, but needs to be zero'd for deciding whether or not to create or just update
+        m_ConfirmedBitcoinBalanceLabel = 0; //ditto
+    }
+
+    if(!m_GetBitcoinKeyPlaceholder)
+    {
+        m_GetBitcoinKeyPlaceholder = new WContainerWidget(this);
+        WPushButton *getKeyButton = new WPushButton("Get Bitcoin Key", m_GetBitcoinKeyPlaceholder);
+        getKeyButton->clicked().connect(this, &AddFundsAccountTabBody::handleGetBitcoinKeyButtonClicked);
+        getKeyButton->clicked().connect(getKeyButton, &WPushButton::disable);
+    }
 }
 void AddFundsAccountTabBody::determineBitcoinStateButDontLetThemProceedForwardIfLockedAttemptingToFillAkaPurchaseSlot(const string &userAccountJsonDoc, u_int64_t casOnlyUsedWhenBitcoinStateIsInGettingKey_aka_lightRecovery, bool lcbOpSuccess, bool dbError)
 {
@@ -65,14 +87,13 @@ void AddFundsAccountTabBody::determineBitcoinStateButDontLetThemProceedForwardIf
     string bitcoinState = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE);
     if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_HAVE_KEY)
     {
-        presentBitcoinKeyForPaymentsToUser(pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA));
+        changeToHaveBitcoinKeyMode(pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA));
     }
     else if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK == "n")
     {
         if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY)
         {
-            WPushButton *getKeyButton = new WPushButton("Get Bitcoin Key", this); //TODOreq: hide after clicking, unhide somewhere(s) (or just delete/recreate idfk)
-            getKeyButton->clicked().connect(this, &AddFundsAccountTabBody::handleGetBitcoinKeyButtonClicked);
+            changeToGetBitcoinKeyMode();
         }
         else if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_GETTING_KEY)
         {
@@ -464,20 +485,31 @@ void AddFundsAccountTabBody::doneAttemptingToUnlockUserAccountFromBitcoinGetting
     }
 
     //GettingKey -> HaveKey transition completed successfully, present key to user
-    presentBitcoinKeyForPaymentsToUser(m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage);
+    changeToHaveBitcoinKeyMode(m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage);
     m_AbcApp->resumeRendering();
 }
-void AddFundsAccountTabBody::presentBitcoinKeyForPaymentsToUser(const string &bitcoinKey)
+void AddFundsAccountTabBody::changeToHaveBitcoinKeyMode(const string &bitcoinKey)
 {
-    m_CurrentBitcoinKeyForPayments = bitcoinKey;
-    new WBreak(this);
-    new WText("Current Bitcoin Key: " + bitcoinKey, this);
+    if(m_GetBitcoinKeyPlaceholder)
+    {
+        delete m_GetBitcoinKeyPlaceholder;
+        m_GetBitcoinKeyPlaceholder = 0;
+    }
 
-    new WBreak(this);
-    WPushButton *checkForPendingButton = new WPushButton("Check For Pending Bitcoins", this); //changes to "Check For Pending Again" after > 0 pending seen. //TODOreq: 2 keys in same session needs to not remake this (and similar) buttons
-    checkForPendingButton->clicked().connect(this, &AddFundsAccountTabBody::checkForPendingBitcoinBalanceButtonClicked);
+    if(!m_HaveBitcoinKeyPlaceholder)
+    {
+        m_HaveBitcoinKeyPlaceholder = new WContainerWidget(this);
+        m_CurrentBitcoinKeyForPayments = bitcoinKey;
+        new WText("Current Bitcoin Key: " + bitcoinKey, m_HaveBitcoinKeyPlaceholder);
+        new WBreak(m_HaveBitcoinKeyPlaceholder);
+        m_CurrentBitcoinOperationsRowPlaceholder = new WContainerWidget(m_HaveBitcoinKeyPlaceholder);
 
-    //check for pending and check for confirmed don't modify the BitcoinState in the user-account, so that means they are safe to perform even when slotToAttemptToFillAkaPurchase is set
+        m_CheckForPendingBitcoinsButton = new WPushButton("Check For Pending Bitcoins", m_CurrentBitcoinOperationsRowPlaceholder); //changes to "Check For Pending Again" after > 0 pending seen
+        m_CheckForPendingBitcoinsButton->clicked().connect(this, &AddFundsAccountTabBody::checkForPendingBitcoinBalanceButtonClicked);
+
+        //check for pending and check for confirmed don't modify the BitcoinState in the user-account, so that means they are safe to perform even when slotToAttemptToFillAkaPurchase is set
+
+    }
 }
 void AddFundsAccountTabBody::checkForPendingBitcoinBalanceButtonClicked()
 {
@@ -506,6 +538,15 @@ void AddFundsAccountTabBody::doneSendingBitcoinsToCurrentAddressButtonClicked()
 void AddFundsAccountTabBody::sendRpcJsonBalanceRequestToBitcoinD()
 {
     //TODOreq: prevent DDOS of checking balance, since I _think_ it's an expensive operation. A simple 1-check-per-X-seconds would suffice, and there is also the design where I poll 'getblockcount' every few seconds and then only even bother doing a minconf=1 balance check when the block count changes
+    time_t currentTime = WDateTime::currentDateTime().toTime_t();
+    if((currentTime - m_BalancePollingThrottler_aka_TimeTofLastCheck) < 60)
+    {
+        new WBreak(m_HaveBitcoinKeyPlaceholder);
+        new WText("Slow down. You can only check the balance of a key once per minute.", m_HaveBitcoinKeyPlaceholder);
+        return;
+    }
+    m_BalancePollingThrottler_aka_TimeTofLastCheck = currentTime;
+
     if(!m_BitcoinAddressBalancePoller)
     {
         m_BitcoinAddressBalancePoller = new Wt::Http::Client(this);
@@ -551,13 +592,16 @@ void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(b
             {
                 if(!m_PendingBitcoinBalanceLabel)
                 {
-                    new WBreak(this);
-                    m_PendingBitcoinBalanceLabel = new WText(this);
+                    m_CheckForPendingBitcoinsButton->setText("Check For Pending Bitcoins Again");
+                    new WBreak(m_HaveBitcoinKeyPlaceholder);
+                    m_PendingBitcoinBalanceLabel = new WText(m_HaveBitcoinKeyPlaceholder);
+
+                    m_BalancePollingThrottler_aka_TimeTofLastCheck -= 60; //we courteously hack our own throttler, allowing them to check for confirmed immediately after their successful check for pending (because hey, maybe they sent it yesterday...)
 
                     //enable 'check for confirmed'
-                    new WBreak(this);
-                    WPushButton *checkForConfirmedPushButton = new WPushButton("Check For Confirmed Bitcoins", this);
-                    checkForConfirmedPushButton->clicked().connect(this, &AddFundsAccountTabBody::checkForConfirmedBitcoinBalanceButtonClicked);
+                    new WText(" ", m_CurrentBitcoinOperationsRowPlaceholder);
+                    m_CheckForConfirmedBitcoinsButton = new WPushButton("Check For Confirmed Bitcoins", m_CurrentBitcoinOperationsRowPlaceholder);
+                    m_CheckForConfirmedBitcoinsButton->clicked().connect(this, &AddFundsAccountTabBody::checkForConfirmedBitcoinBalanceButtonClicked);
                 }
                 //display pending balance
                 m_PendingBitcoinBalanceLabel->setText("Pending Bitcoins Received: " + balanceString);
@@ -566,12 +610,17 @@ void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(b
             {
                 if(!m_ConfirmedBitcoinBalanceLabel)
                 {
-                    new WBreak(this);
-                    m_ConfirmedBitcoinBalanceLabel = new WText(this);
+                    m_CheckForConfirmedBitcoinsButton->setText("Check For Confirmed Bitcoins Again");
+                    new WBreak(m_HaveBitcoinKeyPlaceholder);
+                    m_ConfirmedBitcoinBalanceLabel = new WText(m_HaveBitcoinKeyPlaceholder);
 
                     //enable 'done with this key'
-                    WPushButton *doneSendingBitcoinsButton = new WPushButton("Done Sending Bitcoins To This Address (Add To My Account)", this); //TODOreq: explain more thoroughly to user that they can not send bitcoins to that address anymore after clicking this. Give a huge warning, like a js 'alert' except not because fuck js
+                    new WText(" ", m_CurrentBitcoinOperationsRowPlaceholder);
+                    WPushButton *doneSendingBitcoinsButton = new WPushButton("Done With This Address (Credit Bitcoins To My Account)", m_CurrentBitcoinOperationsRowPlaceholder); //TODOreq: explain more thoroughly to user that they can not send bitcoins to that address anymore after clicking this. Give a huge warning, like a js 'alert' except not because fuck js
                     doneSendingBitcoinsButton->clicked().connect(this, &AddFundsAccountTabBody::doneSendingBitcoinsToCurrentAddressButtonClicked);
+                    new WBreak(m_HaveBitcoinKeyPlaceholder);
+                    new WBreak(m_HaveBitcoinKeyPlaceholder);
+                    new WText("NOTE: Do not click 'Done With This Address' until all the funds you've sent to it are showing up as confirmed. You can not send more bitcoins to this address after clicking done. Doing so will result in lost bitcoins.", m_HaveBitcoinKeyPlaceholder);
                 }
                 //display confirmed balance
                 m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = balance;
@@ -582,13 +631,13 @@ void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(b
         {
             if(m_BitcoinAddressBalancePollerPollingPendingBalance)
             {
-                new WBreak(this);
-                new WText("No pending bitcoins received yet. Try again in a minute or so. You did send them, right ;-P?", this);
+                new WBreak(m_HaveBitcoinKeyPlaceholder);
+                new WText("No pending bitcoins received yet. Try again in a minute or so. You did send them, right?", m_HaveBitcoinKeyPlaceholder);
             }
             else
             {
-                new WBreak(this);
-                new WText("It takes roughly 10 minutes for pending bitcoins to become confirmed. Try again when the next bitcoin block is mined.", this);
+                new WBreak(m_HaveBitcoinKeyPlaceholder);
+                new WText("It takes roughly 10 minutes for pending bitcoins to become confirmed. Try again when the next bitcoin block is mined.", m_HaveBitcoinKeyPlaceholder);
             }
         }
     }
@@ -634,8 +683,8 @@ void AddFundsAccountTabBody::creditConfirmedBitcoinAmountAfterAnalyzingUserAccou
     string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
     if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK != "n")
     {
-        new WBreak(this);
-        new WText("Please try again in a few moments", this);
+        new WBreak(m_HaveBitcoinKeyPlaceholder);
+        new WText("Try again after the ad space you're attempting to purchase finishes. Please only use one tab/window at at time", m_HaveBitcoinKeyPlaceholder);
         m_AbcApp->resumeRendering();
         return;
     }
@@ -645,8 +694,8 @@ void AddFundsAccountTabBody::creditConfirmedBitcoinAmountAfterAnalyzingUserAccou
     string bitcoinStateData = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA, "n"); //key ("n" because they could segfault us by doing the hack we're about to check for)
     if(bitcoinState != JSON_USER_ACCOUNT_BITCOIN_STATE_HAVE_KEY || bitcoinStateData != m_CurrentBitcoinKeyForPayments)
     {
-        new WBreak(this);
-        new WText("Nice try, you already creditted those bitcoins in another tab/window ;-)", this); //TODOreq: no-js allows you to use the same session in multiple windows by copy/pasting sessionId, but what are the implications for that with the state of the web-app. Can they be viewing different pages? Don't they share member variables? I can't exactly put my finger on it, but I think that this hack still might be vulnerable. Something like this: tab1 is at 'done' step, just before clicking (and getting here). tab2 then steals sessionId and (???). Still not sure what they could do (change the key? idfk. don't think they could even do that...), BUT the paranoid thought wonders whether or not tab1 can still click 'done' or not. i also wrote a TODOreq about this up towards the top, relating to when the fuck a slot is not longer activatable (idk lol)
+        new WBreak(m_HaveBitcoinKeyPlaceholder);
+        new WText("Nice try, you already creditted those bitcoins in another tab/window ;-)", m_HaveBitcoinKeyPlaceholder); //TODOreq: no-js allows you to use the same session in multiple windows by copy/pasting sessionId, but what are the implications for that with the state of the web-app. Can they be viewing different pages? Don't they share member variables? I can't exactly put my finger on it, but I think that this hack still might be vulnerable. Something like this: tab1 is at 'done' step, just before clicking (and getting here). tab2 then steals sessionId and (???). Still not sure what they could do (change the key? idfk. don't think they could even do that...), BUT the paranoid thought wonders whether or not tab1 can still click 'done' or not. i also wrote a TODOreq about this up towards the top, relating to when the fuck a slot is not longer activatable (idk lol)
 
         m_AbcApp->resumeRendering();
         return;
@@ -728,13 +777,14 @@ void AddFundsAccountTabBody::doneAttemptingCredittingConfirmedBitcoinBalanceForC
     //successful credit of user-account balance && changing of bitcoinState back to "NoKey" :-D
 
     new WBreak(this);
-    new WText("Your account has been creditted: BTC " + satoshiIntToJsonString(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments, this); //TODOreq: enable "get bitcoin key" button again, make check-for-pending/confirmed/done buttons go away (delete?).
+    new WText("Your account has been creditted: BTC " + satoshiIntToJsonString(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments, this);
     m_AbcApp->m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(satoshiStringToJsonString(m_AbcApp->m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly));
 
     m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0; //probably pointless, but will make me sleep better at night
     m_CurrentBitcoinKeyForPayments = ""; //ditto
 
     m_AbcApp->resumeRendering();
+    changeToGetBitcoinKeyMode();
 }
 void AddFundsAccountTabBody::showOutOfBitcoinKeysErrorToUserInAddFundsPlaceholderLayout()
 {

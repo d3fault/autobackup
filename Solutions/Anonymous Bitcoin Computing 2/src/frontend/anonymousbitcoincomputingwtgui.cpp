@@ -539,7 +539,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         {
             //not expired, so calculate. despite determining it's not expired here, we are not going to set "m_HackedInD3faultCampaign0_LastSlotPurchasesIsExpired = false;", because it may have expired by the time they hit buy step 2. We have to check when/after they click buy step 2. Could be minutes/hours/days after the page has been rendered (this code)
 
-            m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText(WDateTime::fromTime_t(lastSlotFilledAkaPurchasedExpireDateTime).toString());
+            m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText(WDateTime::fromTime_t(lastSlotFilledAkaPurchasedExpireDateTime).toString() + " UTC");
 
             if(!environment().ajax()) //since not expired, no-js now calculates current price
             {
@@ -672,7 +672,7 @@ void AnonymousBitcoinComputingWtGUI::ehhGetLatestValuesFromCampaignDocForNoJsUse
         }
         else
         {
-            m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText(WDateTime::fromTime_t(lastSlotFilledAkaPurchasedExpireDateTime).toString());
+            m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText(WDateTime::fromTime_t(lastSlotFilledAkaPurchasedExpireDateTime).toString() + " UTC");
         }
     }
     //else: it's already set to "immediately after purchase" from in 'finishShowing'
@@ -2012,7 +2012,7 @@ void AnonymousBitcoinComputingWtGUI::unlockUserAccountWithoutDebittingIfSlotDecl
 }
 void AnonymousBitcoinComputingWtGUI::usernameOrPasswordYouProvidedIsIncorrect()
 {
-    m_LoginStatusMessagesPlaceholder->setText("The username or password you provided is incorrect"); //TODOoptional: how do we tell them that it failed the second time? 'highlighting' animation makes sense, as does clearing the message when they start typing again
+    m_LoginStatusMessagesPlaceholder->setText("The username or password you provided is incorrect "); //TODOoptional: how do we tell them that it failed the second time? 'highlighting' animation makes sense, as does clearing the message when they start typing again
     m_LoginPasswordLineEdit->setText("");
 }
 void AnonymousBitcoinComputingWtGUI::doLoginTasks()

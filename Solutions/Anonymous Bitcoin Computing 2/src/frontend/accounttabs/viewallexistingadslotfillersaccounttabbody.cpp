@@ -65,6 +65,8 @@ void ViewAllExistingAdSlotFillersAccountTabBody::attemptToGetAllAdSlotFillersFin
     m_FirstPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::firstPageButtonClicked);
     m_FirstPageButton->disable(); //starts disabled because on first page
 
+    new WText(" ", this);
+
     m_PreviousPageButton = new WPushButton("Previous Page", this);
     m_PreviousPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::previousPageButtonClicked);
     m_PreviousPageButton->disable(); //ditto
@@ -76,6 +78,8 @@ void ViewAllExistingAdSlotFillersAccountTabBody::attemptToGetAllAdSlotFillersFin
     m_PageSpinbox->setValue(1);
     m_PageSpinbox->enterPressed().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::goToPageButtonClicked);
 
+    new WText(" ", this);
+
     WPushButton *goToPageButton = new WPushButton("Go", this);
     goToPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::goToPageButtonClicked);
 
@@ -84,6 +88,8 @@ void ViewAllExistingAdSlotFillersAccountTabBody::attemptToGetAllAdSlotFillersFin
     m_NextPageButton = new WPushButton("Next Page", this);
     m_NextPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::nextPageButtonClicked);
     m_NextPageButton->setEnabled(m_TotalPagesCount > 1);
+
+    new WText(" ", this);
 
     m_LastPageButton = new WPushButton("Last Page", this);
     m_LastPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::lastPageButtonClicked);

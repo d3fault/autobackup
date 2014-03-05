@@ -44,9 +44,15 @@ private:
     WText *m_ConfirmedBitcoinBalanceLabel;
     SatoshiInt m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
     vector<string> m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList; //i think this might be the first time i've used an std::vector xD
+    WContainerWidget *m_GetBitcoinKeyPlaceholder;
+    WContainerWidget *m_HaveBitcoinKeyPlaceholder;
+    WContainerWidget *m_CurrentBitcoinOperationsRowPlaceholder;
+    WPushButton *m_CheckForPendingBitcoinsButton;
+    WPushButton *m_CheckForConfirmedBitcoinsButton;
+    time_t m_BalancePollingThrottler_aka_TimeTofLastCheck;
 
     void populateAndInitialize();
-    //WVBoxLayout *m_AddFundsPlaceholderLayout;
+    void changeToGetBitcoinKeyMode();
     void handleGetBitcoinKeyButtonClicked();
     void checkNotAttemptingToFillAkaPurchaseSlotThenTransitionIntoGettingBitcoinKeyState(const string &userAccountDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
     void analyzeBitcoinKeySetN_CurrentPageDocToSeeWhatPageItIsOnAndIfItIsLocked(const string &bitcoinKeySetCurrentPageDoc, u_int64_t casOnlyForUseInFillingNextPageWayLaterOn, bool lcbOpSuccess, bool dbError);
@@ -56,7 +62,7 @@ private:
     void doneAttemptingToUpdateBitcoinKeySetViaCASswapAkaClaimingAKey(bool lcbOpSuccess, bool dbError);
     void unlockUserAccountSafelyFromBitcoinGettingKeyBecauseShitWeGotAfuckingKey_NoSweatIfBeatenToIt();
     void doneAttemptingToUnlockUserAccountFromBitcoinGettingKeyToBitcoinHaveKey(bool lcbOpSuccess, bool dbError);
-    void presentBitcoinKeyForPaymentsToUser(const string &bitcoinKey);
+    void changeToHaveBitcoinKeyMode(const string &bitcoinKey);
     void checkForPendingBitcoinBalanceButtonClicked();
     void checkForConfirmedBitcoinBalanceButtonClicked();
     void doneSendingBitcoinsToCurrentAddressButtonClicked();

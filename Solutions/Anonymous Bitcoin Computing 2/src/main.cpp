@@ -5,7 +5,7 @@
 ==1.0 [Launch] Blockers==
 
 - make some use of auto-failover shit?
-- doing any app-op multiple times in same session functions correctly (re-using widgets where appropriate, namely not segfaulting xD)
+- make slot fillers upload max is accurate. currently a < 1mb image (just barely, was testing) becomes 2808647 bytes before going onto the queue. b64 makes it ~1.5x larger, and the rest is from boost serialization. either lower the displayed/wt-config'd max, or raise the queue message size, idgaf
 
 
 ==1.1 Bugs==
