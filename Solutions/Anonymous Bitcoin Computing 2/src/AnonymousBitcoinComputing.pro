@@ -9,7 +9,8 @@
 #3) Try uncommenting the WStackedWidget's animation code, because I think it needed a css file that (1)'s resource hack thing brings in
 #4) Uncomment the 'triggered' connection in ActualLazyLoadedTabWidget (too lazy to update my devbox (whereas my test vm has it xD))
 #4) Uncomment DEPLOY VARIABLES below [and comment-out or delete TESTING VARIABLES]
-#5) Launch with ./wtAppHere --docroot ".;/usr/local/share/Wt" --http-address 0.0.0.0 --http-port 7777
+#5) Turn on auto-failover
+#6) Launch with ./wtAppHere --docroot ".;/usr/local/share/Wt" --http-address 0.0.0.0 --http-port 7777
 #                                        ^or just /usr/share/Wt if using Wt from debian repository
 
 TARGET = AnonymousBitcoinComputing

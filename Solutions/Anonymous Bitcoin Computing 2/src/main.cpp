@@ -2,11 +2,6 @@
 
 /*
 
-==1.0 [Launch] Blockers==
-
-- make some use of auto-failover shit? is.. turning it on.. enough?
-
-
 ==1.1 Bugs==
 
 - fail after user-account locked to buying a slot -> allow recovery via buying slot locked to

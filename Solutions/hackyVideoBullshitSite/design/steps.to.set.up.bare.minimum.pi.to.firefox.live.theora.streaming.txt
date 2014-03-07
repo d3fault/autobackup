@@ -1,0 +1,25 @@
+1) On transcoding/saving comp (receive raw h.264 over tcp/netcat and mux it into rtp). Note, you can add a "tee" after nc to save the raw h264 stream to local file, or tee to N netcats etc, daisy chaining etc etc. mybigideas.co.uk/RPiCamera/ has a few variations of these, including skipping the rtsp->http step and going straight to http (although I plan on still doing local to remote using rtsp _AFTER_ transcoding)
+
+netcat -l -p 5001 | cvlc -vvv stream:///dev/stdin --sout '#rtp{sdp=rtsp://:8554/}' :demux=h264
+
+
+2) On the pi, start the transmission (1 must be 'waiting' for it, or else this command will fail instantly). Those 9x nines give you 31 years of time before raspivid ends, should be plenty. 640x480 @ 500 kbps. The raspivid has lots of tunables, and the main important thing is the IP address/port at end (the netcat command). The IP must be of the comp used in (1), and the port must match the command used in (1). The framerate being only 25 is because I can't figure out how to make (1) accept a framerate of 30. It shows the fps selected in the -vvv debug output, and I keep getting 25 (the default) no matter what
+
+raspivid -t 9999999999 -o - --width 640 --height 480 --bitrate 500000 --vflip --nopreview --framerate 25 | netcat 192.168.1.3 5001
+
+
+3) Now for the HTTP server (or if you like, you can do an RTSP server in between (1) and the HTTP server dedicated to transcoding/uploading/whatever. I plan on transcoding/sending locally and then receiving that stream on a high bandwidth server dedicated to serving (NOT transcoding)). Can and probably should customize the "Theora/Vorbis (OGG)" transcode preset in VLC, for example if there is no audio.
+
+Open VLC and do File->Stream, then select Network and type in rtsp://localhost:8554/ , then click next and Add the http module, pick a path and _IMPORTANT_ add ".ogv" to the end of it, otherwise firefox won't know what it is and it won't work (-_-). Do whatever port you want (8080) and select "Theora/Vorbis (OGG)" transcoding type. Then click next again if you want to see it in command line format. Here's mine for reference:
+:sout=#transcode{vcodec=theo,vb=800,scale=1,acodec=vorb,ab=128,channels=2,samplerate=44100}:http{dst=:8080/httpVideoStreamPath.ogv} :sout-keep
+
+
+4) Make an html file with this in the body:
+
+<video width="640" height="480" autoplay>
+<source src="http://localhost:8080/httpVideoStreamPath.ogv" type="video/ogg; codecs=theora" />
+Upgrade Browser
+</video>
+
+
+5) Open html file in either firefox or chrome
