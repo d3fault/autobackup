@@ -6,6 +6,10 @@
 
 #include "abc2couchbaseandjsonkeydefines.h"
 
+//accepts jpg/bmp only via magic header whitelist. OLD (fucking png/webp suck too): primitive gif detection/removal (safely reading first few bytes/header)? maybe i should change to jpg/png/webp only, but don't png/webp support animations anyways? my fellow engineers are fucking noobs. there's a word for animated image: it's called video
+
+#define ABC_AD_SLOT_FILLERS_ACCEPT_IMAGE_FORMATS_MESSAGE "Accepted image formats: jpeg/bmp"
+
 NewAdSlotFillerAccountTabBody::NewAdSlotFillerAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp),
       m_MostRecentlyUploadedImageWasSetAsPreview(false),
@@ -47,7 +51,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     uploadNewSlotFillerGridLayout->addWidget(new WText("--- 3) URL:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
     m_UploadNewSlotFiller_URL = new WLineEdit("http://");
     uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_URL, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
-    WRegExpValidator *urlValidator = new WRegExpValidator("(((https?|ftps?|onion|irc|gnunet)://)(%[0-9A-Fa-f]{2}|[-()_.!~*';/?:@&=+$,A-Za-z0-9])+)([).!';/?:,][[:blank:]])?", m_UploadNewSlotFiller_URL); //TODOoptional: i was thinking about making this an input filter just like the other ones, but i'm not sure that url regex will work as one (not sure that it won't, but quite franky i have no idea wtf it's even doing)
+    WRegExpValidator *urlValidator = new WRegExpValidator("(((https?|ftps?|gnunet)://)(%[0-9A-Fa-f]{2}|[-()_.!~*';/?:@&=+$,A-Za-z0-9])+)([).!';/?:,][[:blank:]])?", m_UploadNewSlotFiller_URL); //TODOoptional: i was thinking about making this an input filter just like the other ones, but i'm not sure that url regex will work as one (not sure that it won't, but quite franky i have no idea wtf it's even doing)
     urlValidator->setMandatory(true);
     urlValidator->setInvalidNoMatchText("Invalid URL");
     urlValidator->setNoMatchText("Invalid URL");
@@ -59,8 +63,8 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     m_AdImageUploaderPlaceholder = new WContainerWidget();
     uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploaderPlaceholder, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
 
-    uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 2 mb --- Width: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS) + " px --- Height: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS) + " px"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
-    uploadNewSlotFillerGridLayout->addWidget(new WText("Accepted Image Formats: png/jpeg/gif/bmp/svg"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft); //TODOreq: do i really want to allow animated gifs?!?!?!? always thought no, but idk never really thought about it lol
+    uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 164 kb --- Width: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS) + " px --- Height: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS) + " px"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
+    uploadNewSlotFillerGridLayout->addWidget(new WText(ABC_AD_SLOT_FILLERS_ACCEPT_IMAGE_FORMATS_MESSAGE), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
     m_AdImageUploadButton = new WPushButton("Submit");
     setUpAdImageUploaderAndPutItInPlaceholder();
@@ -118,7 +122,7 @@ void NewAdSlotFillerAccountTabBody::handleAdSlotFillerImageUploadFinished()
 }
 void NewAdSlotFillerAccountTabBody::handleAdImageUploadFailedFileTooLarge()
 {
-    m_AdSlotFillersVLayout->addWidget(new WText("Your ad's image exceeded the maximum file size of 2 megabytes"));
+    m_AdSlotFillersVLayout->addWidget(new WText("Your ad's image exceeded the maximum file size of 164 kilobytes"));
     resetAdSlotFillerImageUploadFieldsForAnotherUpload();
 }
 void NewAdSlotFillerAccountTabBody::resetAdSlotFillerImageUploadFieldsForAnotherUpload()
@@ -215,8 +219,31 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     if(adImageFileStream.is_open())
     {
         fileSizeHack = adImageFileStream.tellg();
-        adImageBuffer = new char[fileSizeHack]; //TODOoptimization: running out of memory (server critical load) throws an exception, we could pre-allocate this, but how to then share it among WApplications? guh fuckit. i think 'new' is mutex protected underneath anyways, so bleh maybe using a mutex and a pre-allocated buffer is even faster than this (would of course be best to use rand() + mutex shits xD)... but then we can't have multiple doing it on thread pool at same time (unless rand() + mutex shits)
         adImageFileStream.seekg(0,ios::beg);
+        bool imageHeaderMagicAccepted = false; //prove to me otherwise!
+        if(fileSizeHack > 1) //yea i mean i've heard of ImageMagick.. but I've also seen it in numerous CVE reports xD...
+        {
+            char headerMagic[2] = {0};
+            adImageFileStream.read(headerMagic, 2);
+            if(static_cast<unsigned char>(headerMagic[0]) == 'B' && static_cast<unsigned char>(headerMagic[1]) == 'M') //42 AD //BM[P]
+            {
+                imageHeaderMagicAccepted = true;
+            }
+            else if(static_cast<unsigned char>(headerMagic[0]) == 0xFF && static_cast<unsigned char>(headerMagic[1]) == 0xD8) //JPEG
+            {
+                imageHeaderMagicAccepted = true;
+            }
+        }
+        if(!imageHeaderMagicAccepted)
+        {
+            new WBreak(this);
+            new WText("Invalid image file format. " ABC_AD_SLOT_FILLERS_ACCEPT_IMAGE_FORMATS_MESSAGE, this);
+            adImageFileStream.close();
+            resetAdSlotFillerImageUploadFieldsForAnotherUpload();
+            return;
+        }
+        adImageFileStream.seekg(0,ios::beg);
+        adImageBuffer = new char[fileSizeHack]; //TODOoptimization: running out of memory (server critical load) throws an exception, we could pre-allocate this, but how to then share it among WApplications? guh fuckit. i think 'new' is mutex protected underneath anyways, so bleh maybe using a mutex and a pre-allocated buffer is even faster than this (would of course be best to use rand() + mutex shits xD)... but then we can't have multiple doing it on thread pool at same time (unless rand() + mutex shits)
         adImageFileStream.read(adImageBuffer, fileSizeHack);
         adImageFileStream.close();
     }
@@ -230,7 +257,7 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     }
 
     std::string adImageString = std::string(adImageBuffer, fileSizeHack);
-    std::string adImageB64string = base64Encode(adImageString); //TODOreq(done i THINK. made 2.5mb queue max, but 2mb wfileupload max): doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
+    std::string adImageB64string = base64Encode(adImageString); //TODOreq(done i THINK. made 2.5mb queue max, but 164 kb wfileupload max): doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
 
     pt.put(JSON_SLOT_FILLER_IMAGEB64, adImageB64string);
     pt.put(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION, guessedExtensionAndMimeType.first);

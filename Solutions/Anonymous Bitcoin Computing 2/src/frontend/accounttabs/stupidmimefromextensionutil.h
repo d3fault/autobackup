@@ -12,7 +12,7 @@ class StupidMimeFromExtensionUtil
 {
 public:
     //pair because "svg+xml" wouldn't make a good filename extension (i'm completely surrounded by morons)...
-    static pair<string, string> guessExtensionAndMimeType(string filename)
+    static pair<string, string> guessExtensionAndMimeType(string filename) //TODOoptional: delete this shit and use image header magic ONLY. can probably also not store the extension in the db as well and just re-analyze header.. but bleh
     {
         //std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower); //ugly, Qt5Life (had: <guess>)
 
@@ -24,6 +24,14 @@ public:
         {
             return guessedExtensionAndMime;
         }
+        if(boost::algorithm::ends_with(filename, ".bmp")) //TODOoptimization: maybe security risk, and definitely adds dependencies, but would save bandwidth, to convert this to png
+        {
+            guessedExtensionAndMime.first = ".bmp";
+            guessedExtensionAndMime.second = "bmp";
+            return guessedExtensionAndMime;
+        }
+        return guessedExtensionAndMime;
+#if 0 //used to allow below kinds, but now don't
         if(boost::algorithm::ends_with(filename, ".png"))
         {
             guessedExtensionAndMime.first = ".png";
@@ -34,12 +42,6 @@ public:
         {
             guessedExtensionAndMime.first = ".gif";
             guessedExtensionAndMime.second = "gif";
-            return guessedExtensionAndMime;
-        }
-        if(boost::algorithm::ends_with(filename, ".bmp")) //TODOoptimization: maybe security risk, but would save bandwidth, to convert this to png
-        {
-            guessedExtensionAndMime.first = ".bmp";
-            guessedExtensionAndMime.second = "bmp";
             return guessedExtensionAndMime;
         }
         if(boost::algorithm::ends_with(filename, ".svg"))
@@ -55,6 +57,7 @@ public:
             return guessedExtensionAndMime;
         }
         return guessedExtensionAndMime;
+#endif
     }
 };
 

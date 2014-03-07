@@ -5,7 +5,7 @@
 #1) Copy /usr/share/Wt/resources/ to the directory that "wtAppHere" is located in
 #2) In /etc/wt/wt_config.xml, set:
 #   2a) <ajax-puzzle>true</ajax-puzzle>
-#   2b) <max-request-size>2048</max-request-size> .... 2mb corresponding to "Store Large" defined below (but without message queue header)
+#   2b) <max-request-size>175</max-request-size> .... 175 kb corresponding to 576x96 24-bit uncompressed BMP ad slot filler, which comes out to 163.x kb max, but I am not sure if that includes the http headers so 175 sounds fine...
 #3) Try uncommenting the WStackedWidget's animation code, because I think it needed a css file that (1)'s resource hack thing brings in
 #4) Uncomment the 'triggered' connection in ActualLazyLoadedTabWidget (too lazy to update my devbox (whereas my test vm has it xD))
 #4) Uncomment DEPLOY VARIABLES below [and comment-out or delete TESTING VARIABLES]
@@ -76,8 +76,8 @@ DEFINES +=  ABC_COUCHBASE_DURABILITY_WAIT_FOR_REPLICACTION_COUNT=0 \
 
 DEFINES +=  ABC_500_INTERNAL_SERVER_ERROR_MESSAGE=\\\"500.Internal.Server.Error\\\" \ #lol can't have spaces what the fuck
             ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME=\\\"AbcWtToCouchbaseMessageQueuesBaseName\\\" \
-            ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS=640 \
-            ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS=100
+            ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS=576 \
+            ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS=96
 
 HEADERS += \
     anonymousbitcoincomputing.h \
