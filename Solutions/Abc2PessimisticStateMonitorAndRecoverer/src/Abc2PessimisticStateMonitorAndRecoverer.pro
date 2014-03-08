@@ -12,8 +12,10 @@ SOURCES += main.cpp \
 
 HEADERS += \
     abc2pessimisticstatemonitorandrecoverer.h \
-    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h
+    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
+    ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
+INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 
 LIBS += -lcouchbase -lboost_random

@@ -8,6 +8,8 @@ using namespace std;
 
 const struct timeval AnonymousBitcoinComputingCouchbaseDB::m_OneHundredMilliseconds = {0,100000};
 
+//TODOoptimization: not only will lockfree::queue be faster just as a queue implementation, but it provides two additional benefits: 1) dynamic sizing at run-time, so I don't need Store, StoreLarge, and Get (just Get and Store). 2) I think I can just pass the pointer to the request object instead of serializing/copying/reading/deserializing it, but unsure about this. Another benefit that is mostly design related, is that I can use proper boost::bind callbacks etc since I won't be serializing anything. I can clean up the "what x was for" enum code (as in, delete it), and boost::bind also provides a solution to expanding GetAndSubscribe (currently, changing subscriptions may still receive a subscription or two for the old subcription, but since we use "what x was for", they OLD subscription would go to the NEW callback and blah segfault (but boost::bind fixes this :-P)). Also the WApplication::bind thing I've never used.
+
 #define ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(GetOrStore) \
 AutoRetryingWithExponentialBackoffCouchbase##GetOrStore##Request *newOrRecycledExponentialBackoffTimerAndCallback; \
 if(m_AutoRetryingWithExponentialBackoffCouchbase##GetOrStore##RequestCache.empty()) \

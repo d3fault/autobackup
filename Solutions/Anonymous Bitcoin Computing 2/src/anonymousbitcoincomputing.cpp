@@ -66,7 +66,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     beginStoppingCouchbase(&couchbaseDb);
 
     //then:
-    wtServer.stop();
+    wtServer.stop(); //TODOoptional: start may have returned false and it might not be good to call this (bah)
 
     //tell couchbase to clean up and join (this is where we break the event loop)
     finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);

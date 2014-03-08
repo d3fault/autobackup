@@ -4,11 +4,6 @@
 #include <string>
 #include <boost/lexical_cast.hpp> //bitcoin util
 
-#define ABC_COUCHBASE_KEY_SEPARATOR "_"
-
-//doesn't belong in this class, but /lazy:
-#define ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(errorVarName) errorVarName == LCB_EBUSY || errorVarName == LCB_ETMPFAIL || errorVarName == LCB_CLIENT_ETMPFAIL
-
 //sort of belongs here, but would more appropriately go into a bitcoin util file
 typedef long long int SatoshiInt;
 inline SatoshiInt satoshiStringToSatoshiInt(const std::string &satoshiString) { return boost::lexical_cast<SatoshiInt>(satoshiString); /* if changing to int64_t for some reason, need to cast 'through' double */ }
@@ -34,7 +29,7 @@ inline std::string satoshiIntToJsonString(SatoshiInt inputSatoshiInt) { return j
 #define JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_PURCHASE_PRICE "purchasePrice"
 
 //ex: adSpaceCampaignKey("d3fault", "0");
-const std::string adSpaceCampaignKey(const std::string &username, const std::string &campaignIndex);
+const std::string adSpaceCampaignKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex);
 
 
 //slot
@@ -45,7 +40,7 @@ const std::string adSpaceCampaignKey(const std::string &username, const std::str
 #define JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH "slotFilledWith"
 
 //ex: adSpaceCampaignSlotKey("d3fault", "0", "34");
-const std::string adSpaceCampaignSlotKey(const std::string &username, const std::string &campaignIndex, const std::string &slotIndex);
+const std::string adSpaceCampaignSlotKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex, const std::string &slotIndex);
 
 
 //slot filler
@@ -100,7 +95,6 @@ const std::string userAccountKey(const std::string &username);
 //ex: transactionKey("d3fault", "0", "1");
 const std::string transactionKey(const std::string &campaignOwnerUsername, const std::string &campaignIndex, const std::string &slotIndex);
 
-
 //current page of bitcoin key set
 #define COUCHBASE_BITCOIN_KEY_SET_CURRENT_PAGE_KEY_PREFIX "bitcoinKeySetCurrentPage"
 #define JSON_BITCOIN_KEY_SET_CURRENT_PAGE "currentPage"
@@ -139,5 +133,12 @@ const std::string hugeBitcoinKeyListCurrentPageKey();
 
 //ex: hugeBitcoinKeyListPageKey("6");
 const std::string hugeBitcoinKeyListPageKey(const std::string &pageZ);
+
+
+//campaign current slot CACHE
+#define COUCHBASE_AD_SPACE_CAMPAIGN_SLOT_CACHE_KEY_PREFIX "adSpaceCampaignSlotCache"
+#define JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT "currentSlot"
+
+const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex);
 
 #endif // ABC2_COUCHBASE_AND_JSON_KEY_DEFINES_H

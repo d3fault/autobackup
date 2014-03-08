@@ -1,0 +1,1 @@
+One thing that macros have over [inline] functions is context. Less boolean flagging checking etc (which is both good and bad simultaneously! But as I'm refactoring my synchronous couchbase code, I'm starting to think that my losing the context is making the code a bit more complex)

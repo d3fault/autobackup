@@ -23,6 +23,8 @@ private:
     void errorCallback(lcb_error_t error, const char *errinfo);
     static void configurationCallbackStatic(lcb_t instance, lcb_configuration_t config);
     void configurationCallback(lcb_configuration_t config);
+    static void getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
+    void getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
     static void storeCallbackStatic(lcb_t instance, const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp);
     void storeCallback(const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp);
 signals:
