@@ -51,7 +51,7 @@ void SynchronousTodaysAdSlotGetter::getTodaysAdSlot(const string &campaignOwnerU
     //try to get slot
     while(true) //ok so much for that pseudo :-P
     {
-        if(!couchbaseGetRequestWithExponentialBackoff(adSpaceCampaignSlotKey(campaignOwnerUsername, campaignIndex, slotIndexToTry)))
+        if(!couchbaseGetRequestWithExponentialBackoff(adSpaceCampaignSlotKey(campaignOwnerUsername, campaignIndex, slotIndexToTry), "slot checking if it's todays"))
             return;
 
         if(m_LastOpStatus != LCB_SUCCESS)
@@ -71,7 +71,7 @@ void SynchronousTodaysAdSlotGetter::getTodaysAdSlot(const string &campaignOwnerU
             //woot, found todays slot :)
 
             //now we look up the ad slot filler to get the hover/url/image
-            if(!couchbaseGetRequestWithExponentialBackoffRequiringSuccess(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH)))
+            if(!couchbaseGetRequestWithExponentialBackoffRequiringSuccess(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH), "todays ad slot filler"))
                 return;
 
             //have ad slot filler

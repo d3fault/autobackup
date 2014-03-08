@@ -12,12 +12,14 @@ public:
     ISynchronousLibCouchbaseUser();
 protected:
     lcb_t m_Couchbase;
-    lcb_error_t m_LastOpStatus;
     bool m_Connected;
+    lcb_error_t m_LastOpStatus;
     std::string m_LastDocGetted;
+    lcb_cas_t m_LastGetCas;
 
+    //be sure to call base implementation if overriding xD, though really i can't even imagine any cases where i would override to begin with...
     virtual void errorCallback(lcb_error_t error, const char *errinfo);
-    void configurationCallback(lcb_configuration_t config);
+    virtual void configurationCallback(lcb_configuration_t config);
     virtual void getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
     virtual void storeCallback(const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp);
 
@@ -34,7 +36,7 @@ protected:
 private:
     void resetExponentialSleepTimers();
     void exponentialSleep();
-    lcb_cas_t m_LastGetCas;    __useconds_t m_CurrentExponentialBackoffMicrosecondsAmount;
+    __useconds_t m_CurrentExponentialBackoffMicrosecondsAmount;
     unsigned int m_CurrentExponentialBackoffSecondsAmount;
 
     //zzz

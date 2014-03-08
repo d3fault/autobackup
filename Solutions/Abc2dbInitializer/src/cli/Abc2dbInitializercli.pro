@@ -18,14 +18,17 @@ TEMPLATE = app
 HEADERS += \
     ../lib/abc2dbinitializer.h \
     ../../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
-    abc2dbinitializercli.h
+    abc2dbinitializercli.h \
+    ../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h
 
 SOURCES += main.cpp \
     ../lib/abc2dbinitializer.cpp \
     ../../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
-    abc2dbinitializercli.cpp
+    abc2dbinitializercli.cpp \
+    ../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp
 
 INCLUDEPATH += ../../../Abc2couchbaseKeyAndJsonDefines/
+INCLUDEPATH += ../../../../GloballySharedClasses/distributeddatabase/
 INCLUDEPATH += ../lib/
 
 LIBS += -lcouchbase

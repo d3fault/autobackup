@@ -17,15 +17,18 @@ TEMPLATE = app
 
 HEADERS += ../../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
     ../lib/abc2hugebitcoinkeylistpageadder.h \
-    abc2hugebitcoinkeylistpageaddercli.h
+    abc2hugebitcoinkeylistpageaddercli.h \
+    ../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h
 
 SOURCES += main.cpp \
             ../../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
     ../lib/abc2hugebitcoinkeylistpageadder.cpp \
-    abc2hugebitcoinkeylistpageaddercli.cpp
+    abc2hugebitcoinkeylistpageaddercli.cpp \
+    ../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp
 
 INCLUDEPATH += ../../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../lib/
+INCLUDEPATH += ../../../../GloballySharedClasses/distributeddatabase/
 
 LIBS += -lcouchbase
 

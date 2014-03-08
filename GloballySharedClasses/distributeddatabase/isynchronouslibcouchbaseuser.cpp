@@ -5,8 +5,8 @@
 #include "d3faultscouchbaseshared.h"
 
 ISynchronousLibCouchbaseUser::ISynchronousLibCouchbaseUser()
-{
-}
+    : m_Connected(false) //i think my initializer/page-adder forgot to set this to false, so this refactor caught a potentially large bug
+{ }
 void ISynchronousLibCouchbaseUser::errorCallback(lcb_error_t error, const char *errinfo)
 {
     errorOutput("Got an error in our couchbase error callback: " + string(lcb_strerror(m_Couchbase, error)) + " / " + string(errinfo));

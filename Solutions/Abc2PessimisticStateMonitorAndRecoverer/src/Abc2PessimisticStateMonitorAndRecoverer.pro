@@ -8,12 +8,13 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     abc2pessimisticstatemonitorandrecoverer.cpp \
-    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp
+    ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
+    ../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp
 
 HEADERS += \
     abc2pessimisticstatemonitorandrecoverer.h \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
-    ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h
+    ../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
