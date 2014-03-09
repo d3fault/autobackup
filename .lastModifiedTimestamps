@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1394269605
+Documents/minddump/:1394404257
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -666,6 +666,7 @@ Documents/minddump/dsalfkjsldfkjsalkdfjsldkjfsdofusldfjosdufljsdfosudflsjdfouwer
 Documents/minddump/dsfasdflkjsdflkjsdoufljwerouljadfoudsflkjdsofulfsdjsodufl.txt:1367218456
 Documents/minddump/dsfasdklfjsdlfkjouwerljosduflksdjfouwerlkjoufdlkasdjfoulk.txt:1371977001
 Documents/minddump/dsfaslkdfjaowerusldafjkhasfsdflawujlsadfjkasfdkhjasdf.txt:1344306039
+Documents/minddump/dsfjlfjlksdjflksdjflksjdflkjsdlfkjsdf.obvious.sdjfksjdfjsduweroiuslkdfj.txt:1394402619
 Documents/minddump/dsfkajsdflkjsdlkfjsdlkfjsdfhsdfklkjglkjsdfhlkjsflkjfsd.txt:1363122657
 Documents/minddump/dsfkjsadflkjsadlfkjsdafousadfouisdaf.txt:1384512249
 Documents/minddump/dsfkljsldfkjlsdkjflskdjflsdkjfouwerljsdofusldkfsodul.txt:1382369330
@@ -841,6 +842,7 @@ Documents/minddump/fdsfasdjflkasjofiyuawerowyfsdfusadofujjdfaosiuf.txt:132869507
 Documents/minddump/fdslfjsladkfjsdaofuljeowuljsdfouflkjasdfouwelrkjousdflsjdfoui.txt:1372012751
 Documents/minddump/fdslfkjslkfjlksdjfklsdjfsdjkflksdjflksdjfsduowerlkjsdflkjsdfl.txt:1380539300
 Documents/minddump/fdslkfjkljfslkdfjsdalkfjsdlfkjsdflkjsdfouwelrkjouflksjdfouerwksf.txt:1376994772
+Documents/minddump/fdslkfjlsdkjflskdjfosudflsdjfousdlfjsoduflskjdflk.txt:1394404185
 Documents/minddump/fdslkfjsldjfosduljwersoiudskljfsdoifusfousflkjsdfdsfouewlrjdfsousdfl.txt:1364511950
 Documents/minddump/fdslkjflsjdflksjdflksjdflksjdflsdjfk.txt:1361421876
 Documents/minddump/ffsdalfjasdofuaworufslkfjadsfoisudfpoasdu.txt:1328223309
@@ -1227,6 +1229,7 @@ Documents/minddump/lsakjflsdkjfsdoiuwelrjksdofusdlfj.txt:1356155323
 Documents/minddump/lsdajkflksdjflsdjfouilkjoiuwerlkjsdaf.txt:1359536460
 Documents/minddump/lsdakfjalskjdflksdjfosudflkjsdfousdfljksdofu.txt:1388990461
 Documents/minddump/lsdakjfsdlkjfsdlkjfoiuwerlkjsdfousdflkjwero.txt:1357061331
+Documents/minddump/lsdfajljsflkjsldfkjousldfjouwerlkjousdfljslfjksdfjoerulkfd.txt:1394404257
 Documents/minddump/lsdfkjlskjdfowuerlkjsdfousdflk.txt:1355478503
 Documents/minddump/lsdfkjsldkfjsadoifulkjweroulskjfdosdufljsdfouwljreousldfkjsdoiulkwjeroiusdflkj.txt:1370677027
 Documents/minddump/lsdjfaowuralsjfaworuaowruawfljsadlfkjsofuweorjwlkjsfdosaudfwjerlkj.txt:1343313151
@@ -3720,12 +3723,12 @@ Solutions/Abc2dbInitializer/src/lib/:1394268209
 Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.cpp:1394268209
 Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.h:1394267540
 Solutions/Abc2getTodaysAdSlot/:1394268588
-Solutions/Abc2getTodaysAdSlot/src/:1394269768
+Solutions/Abc2getTodaysAdSlot/src/:1394405427
 Solutions/Abc2getTodaysAdSlot/src/Abc2getTodaysAdSlot.pro:1394264781
 Solutions/Abc2getTodaysAdSlot/src/gettodaysadslotwresource.cpp:1394265500
 Solutions/Abc2getTodaysAdSlot/src/gettodaysadslotwresource.h:1394264859
 Solutions/Abc2getTodaysAdSlot/src/main.cpp:1394257411
-Solutions/Abc2getTodaysAdSlot/src/synchronoustodaysadslotgetter.cpp:1394268579
+Solutions/Abc2getTodaysAdSlot/src/synchronoustodaysadslotgetter.cpp:1394402811
 Solutions/Abc2getTodaysAdSlot/src/synchronoustodaysadslotgetter.h:1394262776
 Solutions/Abc2hugeBitcoinKeyListPageAdder/:1393916472
 Solutions/Abc2hugeBitcoinKeyListPageAdder/src/:1394268143
@@ -3964,9 +3967,10 @@ Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1388241228
 Solutions/hackyVideoBullshitSite/:1394166588
-Solutions/hackyVideoBullshitSite/design/:1394173861
+Solutions/hackyVideoBullshitSite/design/:1394405329
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
 Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firefox.live.theora.streaming.txt:1394180190
+Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
 Solutions/launchASEPbecauseRedAlert/:1387670248
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681
