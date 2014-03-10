@@ -2,7 +2,7 @@
 
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
-#include "../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h" //TODOreq: oops now my backend kind of depends on my frontend, but only because of the ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF that doesn't even belong in there but i put in there out of laziness (fuggit for now)
+#include "d3faultscouchbaseshared.h"
 
 using namespace std;
 
@@ -321,7 +321,7 @@ void AnonymousBitcoinComputingCouchbaseDB::storeCallback(const void *cookie, lcb
     {
         if(error != LCB_KEY_EEXISTS)
         {
-            if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(error))
+            if(D3faultsCouchbaseShared::lcbErrorTypeIsEligibleForExponentialBackoff(error))
             {
                 autoRetryingWithExponentialBackoffCouchbaseStoreRequest->backoffAndRetryAgain();
                 return;
@@ -447,16 +447,10 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
     {
         if(error != LCB_KEY_ENOENT)
         {
-            if(ABC_COUCHBASE_LCB_ERROR_TYPE_IS_ELIGIBLE_FOR_EXPONENTIAL_BACKOFF(error))
+            if(D3faultsCouchbaseShared::lcbErrorTypeIsEligibleForExponentialBackoff(error))
             {
                 /*
                 TO DOnereq: exponential backoff. I'm thinking a getNewOrRecycled queue of libevent timeouts (i'm dumb for doing macro hell to solve the 'n' methods/functions problem. class/object instantiation solves it betterer :-P)
-                Other potential error message candidates (unsure):
-                    LCB_ETIMEDOUT
-                    LCB_ENOMEM
-                    LCB_CLIENT_ENOMEM
-                    LCB_BUSY
-                    LCB_NOT_MY_VBUCKET
                 */
                 autoRetryingWithExponentialBackoffCouchbaseGetRequest->backoffAndRetryAgain();
                 return;

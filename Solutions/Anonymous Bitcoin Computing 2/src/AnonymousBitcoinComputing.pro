@@ -101,7 +101,8 @@ HEADERS += \
     frontend/accounttabs/stupidmimefromextensionutil.h \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h \
-    backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h
+    backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h \
+    ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -124,5 +125,6 @@ SOURCES += main.cpp \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
+INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 
-LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals-mt -lboost_system-mt -lboost_thread-mt -lboost_serialization
+LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals -lboost_system -lboost_thread -lboost_serialization
