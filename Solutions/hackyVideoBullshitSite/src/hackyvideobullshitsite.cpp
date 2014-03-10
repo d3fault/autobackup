@@ -1,60 +1,47 @@
 #include "hackyvideobullshitsite.h"
 
-#include <boost/thread.hpp>
+#include <QCoreApplication>
+#include <QThread>
 
-#include "boostthreadinitializationsynchronizationkit.h"
-#include "adimagegetandsubscribemanager.h"
+#include "backend/adimagegetandsubscribemanager.h"
+#include "frontend/hackyvideobullshitsitegui.h"
 
 int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int argc, char *argv[])
 {
-    //start ad image get and subscribe thread and wait for it to finish initializing
-    BoostThreadInitializationSynchronizationKit<AdImageGetAndSubscribeManager> threadInitializationSynchronizationKit;
-    struct AdImageGetAndSubscribeThreadScopedDeleter
-    {
-        boost::thread m_AdImageGetAndSubscribeThread;
-        AdImageGetAndSubscribeThreadScopedDeleter()
-            : m_AdImageGetAndSubscribeThread(boost::bind(boost::bind(&HackyVideoBullshitSite::adImageGetAndSubscribeThreadEntryPoint, this, _1), &threadInitializationSynchronizationKit))
-        { }
-        ~AdImageGetAndSubscribeThreadScopedDeleter()
-        {
-            m_AdImageGetAndSubscribeThread.join();
-        }
-    } AdImageGetAndSubscribeThreadScopedDeleterInstance;
+    QCoreApplication qapp(argc, argv); //not sure if this is necessary (I've seen various documentation saying "can't call this until QCoreApplication is instantiated")... but probably won't hurt. I know I don't need to call qapp.exec at least
 
-    boost::lock_guard<boost::mutex> adImageThreadFinishedInitializingLock(threadInitializationSynchronizationKit.InitializationMutex);
-    while(!threadInitializationSynchronizationKit.isInitialized)
+    //start ad image get and subscribe thread and wait for it to finish initializing
+    struct AdImageGetAndSubscribeScopedDeleter
     {
-        threadInitializationSynchronizationKit.InitializationWaitCondition.wait(adImageThreadFinishedInitializingLock);
-    }
+        AdImageGetAndSubscribeManager m_AdImageGetAndSubscribeManager;
+        QThread m_AdImageGetAndSubscribeManagerThread;
+        AdImageGetAndSubscribeScopedDeleter()
+        {
+            //using a style i dislike (object not instantiating on thread that 'owns' it, but oh well)
+            m_AdImageGetAndSubscribeManager.moveToThread(&m_AdImageGetAndSubscribeManagerThread);
+            m_AdImageGetAndSubscribeManagerThread.start();
+        }
+        ~AdImageGetAndSubscribeScopedDeleter()
+        {
+            m_AdImageGetAndSubscribeManagerThread.quit();
+            m_AdImageGetAndSubscribeManagerThread.wait();
+        }
+    } AdImageGetAndSubscribeScopedDeleterInstance;
+
+    QMetaObject::invokeMethod(&AdImageGetAndSubscribeScopedDeleterInstance.m_AdImageGetAndSubscribeManager, "initializeAndStart", Qt::BlockingQueuedConnection);
 
     //AdImageGetAndSubscribeManager is done initializing, so now we set up Wt and then start the Wt server
 
-    struct TellWtToNewAndOpenButEventuallyCloseAndDeleteMessageQueuesWeKnowItHasScopedDeleter
-    {
-        TellWtToNewAndOpenButEventuallyCloseAndDeleteMessageQueuesWeKnowItHasScopedDeleter()
-        {
-            AnonymousBitcoinComputingWtGUI::newAndOpenAllWtMessageQueues();
-        }
-        ~TellWtToNewAndOpenButEventuallyCloseAndDeleteMessageQueuesWeKnowItHasScopedDeleter()
-        {
-            AnonymousBitcoinComputingWtGUI::deleteAllWtMessageQueues();
-        }
-    } TellWtToNewAndOpenButEventuallyCloseAndDeleteMessageQueuesWeKnowItHasScopedDeleterInstance;
+    HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = &AdImageGetAndSubscribeScopedDeleterInstance.m_AdImageGetAndSubscribeManager;
 
-
-    //register the wt -> couchbase events
-    //AnonymousBitcoinComputingWtGUI::m_StoreEventCallbacksForWt[0] = couchbaseDb.getStoreEventCallbackForWt0();
-    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_TELL_WT_ABOUT_THE_LIBEVENTS_WE_SET_UP_FOR_IT_TO_SEND_MESSAGES_TO_COUCHBASE_MACRO)
-
-            //start server, waitForShutdown(), event_active a couchbase event to let it finish current actions (also sets bool to not allow further), server.stop, tell couchbase to join, wait for couchbase to join
-            WServer wtServer(argv[0]);
-
+    //start server, waitForShutdown(), invoke via BlockingQueuedConnection a 'stop' to AdImageGetAndSubscribeManager to let it finish current actions (also sets bool to not allow further), server.stop, tell AdImageGetAndSubscribeManager to quit, wait for AdImageGetAndSubscribeManager to join
+    WServer wtServer(argv[0]);
     wtServer.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
-
-    wtServer.addEntryPoint(Application, &AnonymousBitcoinComputing::createAnonymousBitcoinComputingWtGUI);
+    wtServer.addEntryPoint(Application, &HackyVideoBullshitSite::hackyVideoBullshitSiteGuiEntryPoint);
 
     int ret = 0;
-    if(wtServer.start())
+    bool successfullyStartedWtServer = false;
+    if((successfullyStartedWtServer = wtServer.start()))
     {
         ret = wtServer.waitForShutdown();
         if(ret == 2 || ret == 3 || ret == 15) //SIGINT, SIGQUIT, SIGTERM, respectively (TODOportability: are these the same on windows?). Any other signal we return verbatim
@@ -67,37 +54,27 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         ret = 1;
     }
 
-    //telling them to FINISH [current requests] != JOIN [and cleanup]. finish sets flags to not do any more operations, and lets current operations finish cleanly and then raises a wait condition when all current are done. It does NOT however delete/free any of the event callbacks, SINCE THE WT SERVER IS STILL RUNNING (and therefore using them (even though when it does use one, it gets instantly rejected because of the bool flags))
-    beginStoppingCouchbase(&couchbaseDb);
+    //tell AdImageGetAndSubscribeManager to finish. sets flags to not do any more operations, and lets current operations finish cleanly and then raises a wait condition when all current are done. It does NOT stop/destroy AdImageGetAndSubscribeManager completely, SINCE THE WT SERVER IS STILL RUNNING (and therefore using them (even though when it does use one, it gets instantly rejected because of the bool flags))
+    QMetaObject::invokeMethod(&AdImageGetAndSubscribeScopedDeleterInstance.m_AdImageGetAndSubscribeManager, "beginStopping", Qt::BlockingQueuedConnection);
 
     //then:
-    wtServer.stop(); //TODOoptional: start may have returned false and it might not be good to call this (bah)
+    if(successfullyStartedWtServer)
+        wtServer.stop();
 
-    //tell couchbase to clean up and join (this is where we break the event loop)
-    finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);
+    QMetaObject::invokeMethod(&AdImageGetAndSubscribeScopedDeleterInstance.m_AdImageGetAndSubscribeManager, "finishStopping", Qt::BlockingQueuedConnection);
 
-    if(!couchbaseDb.threadExittedCleanly())
-    {
-        cout << "Couchbase thread did not exit cleanly" << endl;
-        if(ret == 0)
-        {
-            return 2;
-        }
-        return ret;
-    }
     if(ret == 0)
     {
-        cout << "Now Exitting Cleanly" << endl;
+        cout << "HackyVideoBullshitSite Now Exitting Cleanly" << endl;
     }
     else
     {
-        cout << "NOT exitting cleanly, return code: " << ret << endl;
+        cout << "HackyVideoBullshitSite NOT exitting cleanly, return code: " << ret << endl;
     }
     return ret;
-    //cleanup is done in the scoped structs
+    //rest of cleanup is done in the scoped structs
 }
-void HackyVideoBullshitSite::adImageGetAndSubscribeThreadEntryPoint(BoostThreadInitializationSynchronizationKit *threadInitializationSynchronizationKit)
+WApplication *HackyVideoBullshitSite::hackyVideoBullshitSiteGuiEntryPoint(const WEnvironment &env)
 {
-    AdImageGetAndSubscribeManager adImageGetAndSubscribeManager;
-    adImageGetAndSubscribeManager.startManagingAdImageSubscriptionsAndWaitUntilToldToStop(threadInitializationSynchronizationKit);
+    return new HackyVideoBullshitSiteGUI(env);
 }

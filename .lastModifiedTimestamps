@@ -1961,7 +1961,7 @@ Documents/oldGitLogsFrom1tbDrive/working_slash_Projects_slash_guiWithTestBackend
 Documents/oldGitLogsFrom1tbDrive/working_slash_Projects_slash_libavGraphicsObject.gitlog.txt:1380049302
 Documents/a.starting.point.this.is.the.only.thing.i.am.certain.of.txt:1356263099
 Documents/bookmarks_2013-12-11.html:1386815178
-GloballySharedClasses/:1394252907
+GloballySharedClasses/:1394441873
 GloballySharedClasses/distributeddatabase/:1394424681
 GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h:1394424681
 GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1394265803
@@ -1984,6 +1984,8 @@ GloballySharedClasses/filesystem/simplifiedlastmodifiedtimestamp.h:1387279644
 GloballySharedClasses/gui/:1387282127
 GloballySharedClasses/gui/labellineeditbrowsebutton.cpp:1387281116
 GloballySharedClasses/gui/labellineeditbrowsebutton.h:1387280968
+GloballySharedClasses/image/:1394443296
+GloballySharedClasses/image/nonanimatedimagheaderchecker.h:1394443296
 GloballySharedClasses/network/:1370998417
 GloballySharedClasses/network/ssl/:1370686848
 GloballySharedClasses/network/ssl/testcerts/:1344899950
@@ -2304,7 +2306,7 @@ Projects/GitUnrollRerollCensorshipMachine/src/lib/:1385062033
 Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.cpp:1385062033
 Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.h:1384772890
 Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.pri:1384332856
-Projects/Ideas/:1393276912
+Projects/Ideas/:1394440981
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -2554,6 +2556,7 @@ Projects/Ideas/saving.is.a.waste.of.time.but.changing.i.mean.adding.a.title.wher
 Projects/Ideas/scalable.dynamic.chunk.sizing.solution.for.backend.threads.sdlkfjsldkfj.txt:1383613809
 Projects/Ideas/scaling.optimization.to.find.sweet.spot.of.recursive.slot.chunk.size.but.the.number.might.suck.idfk.txt:1365287779
 Projects/Ideas/schizOS.audio.out.can.leak.data.aldkfjsdalfkj.txt:1352774261
+Projects/Ideas/sdklfjsdkljflksdjflkjewroulsjkdfousdflkjsdfousdflkjsdflkglhf.txt:1394440981
 Projects/Ideas/seed.hash.chaining.alsdfjasdfoiuwerlakjsdfoasudflk.txt:1337989129
 Projects/Ideas/sell.cs.tag.as.an.ad.slot.lol.asldfjsaldfjsoiusdf.txt:1332971365
 Projects/Ideas/selling.books.is.basically.being.paid.to.create.a.backup.im.down.rofl.txt:1340901921
@@ -2872,7 +2875,7 @@ Projects/Prototypes/QSslTest1/src/shared/protocol.h:1329942208
 Projects/Prototypes/QtBroadcastServerWtClient/:1389318432
 Projects/Prototypes/QtBroadcastServerWtClient/design/:1333011399
 Projects/Prototypes/QtBroadcastServerWtClient/design/initial.design.txt:1333011399
-Projects/Prototypes/QtBroadcastServerWtClient/src/:1394428514
+Projects/Prototypes/QtBroadcastServerWtClient/src/:1394446040
 Projects/Prototypes/QtBroadcastServerWtClient/src/QtBroadcastServerWtClient.pro:1389318415
 Projects/Prototypes/QtBroadcastServerWtClient/src/main.cpp:1389319930
 Projects/Prototypes/QtBroadcastServerWtClient/src/myrandomnumbergenerator.cpp:1333037257
@@ -3899,8 +3902,8 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1394425393
-Solutions/Anonymous Bitcoin Computing 2/src/backend/:1394424670
+Solutions/Anonymous Bitcoin Computing 2/src/:1394446089
+Solutions/Anonymous Bitcoin Computing 2/src/backend/:1394440400
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h:1393531477
@@ -3908,19 +3911,19 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialb
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h:1393528690
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp:1393527299
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h:1393526820
-Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1394424669
+Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1394440400
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1393996398
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1393799993
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1394001847
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1394424415
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1394424415
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1394442873
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1394442366
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1393361188
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.cpp:1394002206
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.h:1393999390
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/filedeletingfileresource.cpp:1393448627
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/filedeletingfileresource.h:1393448163
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/iaccounttabwidgettabbody.h:1393279734
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/newadslotfilleraccounttabbody.cpp:1394152027
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/newadslotfilleraccounttabbody.cpp:1394442873
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/newadslotfilleraccounttabbody.h:1393447292
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/singleuseselfdeletingmemoryresource.cpp:1393449653
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/singleuseselfdeletingmemoryresource.h:1393449653
@@ -3941,7 +3944,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/getcouchbas
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/getcouchbasedocumentbykeyrequest.h:1393803385
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp:1392910056
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchbasedocumentbykeyrequest.h:1391749961
-Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1394424781
+Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1394442259
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1394257446
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1392898082
 Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1394425135
@@ -3967,18 +3970,24 @@ Solutions/d3faultPublicLicense/:1388241167
 Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.it.later.txt:1387589098
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1388241228
-Solutions/hackyVideoBullshitSite/:1394424984
+Solutions/hackyVideoBullshitSite/:1394443989
 Solutions/hackyVideoBullshitSite/design/:1394405329
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
 Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firefox.live.theora.streaming.txt:1394180190
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1394428973
-Solutions/hackyVideoBullshitSite/src/adimagegetandsubscribemanager.cpp:1394428760
-Solutions/hackyVideoBullshitSite/src/adimagegetandsubscribemanager.h:1394426995
-Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1394428973
-Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1394427803
-Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1394427023
-Solutions/hackyVideoBullshitSite/src/main.cpp:1394425089
+Solutions/hackyVideoBullshitSite/src/:1394446086
+Solutions/hackyVideoBullshitSite/src/backend/:1394445977
+Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1394445397
+Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1394445243
+Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.cpp:1394445977
+Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.h:1394437304
+Solutions/hackyVideoBullshitSite/src/frontend/:1394445922
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1394445922
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1394444070
+Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1394446020
+Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1394444545
+Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1394444885
+Solutions/hackyVideoBullshitSite/src/main.cpp:1394445146
 Solutions/launchASEPbecauseRedAlert/:1387670248
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681

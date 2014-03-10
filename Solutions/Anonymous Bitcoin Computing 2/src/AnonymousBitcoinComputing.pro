@@ -102,7 +102,8 @@ HEADERS += \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h \
-    ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h
+    ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h \
+    ../../../GloballySharedClasses/image/nonanimatedimagheaderchecker.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -126,5 +127,6 @@ SOURCES += main.cpp \
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
+INCLUDEPATH += ../../../GloballySharedClasses/image/
 
 LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals -lboost_system -lboost_thread -lboost_serialization

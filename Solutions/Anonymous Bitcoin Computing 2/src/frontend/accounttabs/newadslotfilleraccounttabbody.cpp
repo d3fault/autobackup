@@ -3,7 +3,7 @@
 #include "../anonymousbitcoincomputingwtgui.h"
 #include "../validatorsandinputfilters/safetextvalidatorandinputfilter.h"
 #include "stupidmimefromextensionutil.h"
-
+#include "nonanimatedimagheaderchecker.h"
 #include "abc2couchbaseandjsonkeydefines.h"
 
 //accepts jpg/bmp only via magic header whitelist. OLD (fucking png/webp suck too): primitive gif detection/removal (safely reading first few bytes/header)? maybe i should change to jpg/png/webp only, but don't png/webp support animations anyways? my fellow engineers are fucking noobs. there's a word for animated image: it's called video
@@ -225,14 +225,7 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
         {
             char headerMagic[2] = {0};
             adImageFileStream.read(headerMagic, 2);
-            if(static_cast<unsigned char>(headerMagic[0]) == 'B' && static_cast<unsigned char>(headerMagic[1]) == 'M') //42 AD //BM[P]
-            {
-                imageHeaderMagicAccepted = true;
-            }
-            else if(static_cast<unsigned char>(headerMagic[0]) == 0xFF && static_cast<unsigned char>(headerMagic[1]) == 0xD8) //JPEG
-            {
-                imageHeaderMagicAccepted = true;
-            }
+            imageHeaderMagicAccepted = NonAnimatedImageHeaderChecker::headerIndicatesNonAnimatedImage(headerMagic);
         }
         if(!imageHeaderMagicAccepted)
         {

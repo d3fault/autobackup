@@ -892,7 +892,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStoreLarge()
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 {
-    if(m_NoMoreAllowedMuahahaha)
+    if(m_NoMoreAllowedMuahahaha) //TODOoptional: we should still allow unsubscribe requests to be processed? probably doesn't matter but idk tbh...
     {
         return;
         //TODOoptional: post() a response, BUT really that doesn't matter too much because i mean the server's about to go down regardless... (unless i'm taking db down ONLY and wt is staying up (lol wut?))

@@ -2,16 +2,15 @@
 #define HACKYVIDEOBULLSHITSITE_H
 
 #include <Wt/WServer>
+#include <Wt/WApplication>
 using namespace Wt;
-
-class BoostThreadInitializationSynchronizationKit;
 
 class HackyVideoBullshitSite
 {
 public:
     int startHackyVideoBullshitSiteAndWaitForFinished(int argc, char* argv[]);
 private:
-    void adImageGetAndSubscribeThreadEntryPoint(BoostThreadInitializationSynchronizationKit *threadInitializationSynchronizationKit);
+    static WApplication *hackyVideoBullshitSiteGuiEntryPoint(const WEnvironment &env);
 };
 
 #endif // HACKYVIDEOBULLSHITSITE_H
