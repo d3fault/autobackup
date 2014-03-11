@@ -244,6 +244,7 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     {
         new WBreak(this);
         new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
+        cerr << "failed to open new ad slot filler just uploaded for reading" << endl;
         //NOPE: delete [] adImageBuffer;
         resetAdSlotFillerImageUploadFieldsForAnotherUpload();
         return;

@@ -28,7 +28,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     videoPlayer->addSource(WLink(WLink::Url, "http://localhost:8080/video.ogv"), "video/ogg");
     videoPlayer->resize(640, 480);
-    videoPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 video, or there was an error establishing connection to the video stream"));
+    videoPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 video, or there was an error establishing a connection to the video stream"));
 
     new WBreak(container); //is WAudio even visual?
     new WBreak(container);
@@ -36,7 +36,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     WAudio *audioPlayer = new WAudio(container);
     audioPlayer->setOptions(WAbstractMedia::Autoplay);
     audioPlayer->addSource(WLink(WLink::Url, "http://localhost:8081/audio.opus"), "audio/opus");
-    audioPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 audio, or there was an error establishing connection to the audio stream"));
+    audioPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 audio, or there was an error establishing a connection to the audio stream"));
 
     enableUpdates(true);
 }
@@ -49,6 +49,21 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
 {
     if(m_AdImageAnchor)
         delete m_AdImageAnchor; //delete/replace the previous one, if there was one (TODOoptimization: maybe just setImage/setUrl/etc instead?)
+
+    if(newAdUrl == "n") //hack. both newAdImageResource and newAdAltAndHover are undefined if url is "n" (they may be 0/empty, or they may still be 'yesterdays')
+    {
+        //set up "no ad" placeholder
+        WImage *placeholderAdImage = new WImage(WLink(WLink::Url, /*http://d3fault.net*/"/no.ad.placeholder.jpg"), "Buy this ad space for BTC 0.00001");
+        placeholderAdImage->resize(576, 96);
+        m_AdImageAnchor = new WAnchor(WLink(WLink::Url, "http://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"), placeholderAdImage, m_AdImagePlaceholderContainer); //TODOreq: still need a link like that below/around the ad when purchased as well
+        m_AdImageAnchor->setTarget(TargetNewWindow);
+        placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
+        m_AdImageAnchor->setToolTip("Buy this ad space for BTC 0.00001");
+        triggerUpdate();
+        return;
+    }
+
+    //TODOoptional: it would be trivial to show a 'price countdown' just like on abc2 just below the image itself (and has a wow factor of over 9000), but actually UPDATING that value on new purchases would NOT be [as] trivial :-/... so fuck it
 
     WImage *adImage = new WImage(newAdImageResource, newAdAltAndHover);
     adImage->resize(576, 96); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date

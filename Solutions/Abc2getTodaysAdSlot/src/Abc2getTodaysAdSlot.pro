@@ -22,4 +22,4 @@ SOURCES += main.cpp \
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 
-LIBS += -lcouchbase -lwt -lwthttp
+LIBS += -lcouchbase -lwt -lwthttp -lboost_signals -lboost_system

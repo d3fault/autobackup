@@ -1,9 +1,12 @@
 #include "hackyvideobullshitsite.h"
 
+#include <fstream>
+
 #include <QCoreApplication>
 #include <QThread>
 
 #include "backend/adimagegetandsubscribemanager.h"
+#include "backend/adimagewresource.h"
 #include "frontend/hackyvideobullshitsitegui.h"
 
 int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int argc, char *argv[])
@@ -28,6 +31,37 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         }
     } AdImageGetAndSubscribeScopedDeleterInstance;
 
+    WServer wtServer(argv[0]);
+    wtServer.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
+    wtServer.addEntryPoint(Application, &HackyVideoBullshitSite::hackyVideoBullshitSiteGuiEntryPoint);
+    //add the no ad global/public resource
+
+    WResource *noAdPlaceholderImageResource = 0;
+
+    {
+        streampos fileSizeHack;
+        char *noAdPlaceholderImageBuffer;
+        ifstream noAdPlaceholderImageFileStream("no.ad.placeholder.jpg", ios::in | ios::binary | ios::ate);
+        if(noAdPlaceholderImageFileStream.is_open())
+        {
+            fileSizeHack = noAdPlaceholderImageFileStream.tellg();
+            noAdPlaceholderImageFileStream.seekg(0,ios::beg);
+            noAdPlaceholderImageBuffer = new char[fileSizeHack];
+            noAdPlaceholderImageFileStream.read(noAdPlaceholderImageBuffer, fileSizeHack);
+            noAdPlaceholderImageFileStream.close();
+        }
+        else
+        {
+            cerr << "failed to open no ad image placeholder for reading" << endl;
+            return 1;
+        }
+        std::string noAdPlaceholderImageString = std::string(noAdPlaceholderImageBuffer, fileSizeHack);
+        noAdPlaceholderImageResource = new AdImageWResource(noAdPlaceholderImageString, "image/jpeg", "image.jpg", WResource::Inline);
+        delete [] noAdPlaceholderImageBuffer;
+    }
+
+    wtServer.addResource(noAdPlaceholderImageResource, "/no.ad.placeholder.jpg");
+
     QMetaObject::invokeMethod(&AdImageGetAndSubscribeScopedDeleterInstance.m_AdImageGetAndSubscribeManager, "initializeAndStart", Qt::BlockingQueuedConnection);
 
     //AdImageGetAndSubscribeManager is done initializing, so now we set up Wt and then start the Wt server
@@ -35,9 +69,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
     HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = &AdImageGetAndSubscribeScopedDeleterInstance.m_AdImageGetAndSubscribeManager;
 
     //start server, waitForShutdown(), invoke via BlockingQueuedConnection a 'stop' to AdImageGetAndSubscribeManager to let it finish current actions (also sets bool to not allow further), server.stop, tell AdImageGetAndSubscribeManager to quit, wait for AdImageGetAndSubscribeManager to join
-    WServer wtServer(argv[0]);
-    wtServer.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
-    wtServer.addEntryPoint(Application, &HackyVideoBullshitSite::hackyVideoBullshitSiteGuiEntryPoint);
+
 
     int ret = 0;
     bool successfullyStartedWtServer = false;
@@ -62,6 +94,8 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         wtServer.stop();
 
     QMetaObject::invokeMethod(&AdImageGetAndSubscribeScopedDeleterInstance.m_AdImageGetAndSubscribeManager, "finishStopping", Qt::BlockingQueuedConnection);
+
+    delete noAdPlaceholderImageResource;
 
     if(ret == 0)
     {

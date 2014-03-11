@@ -141,4 +141,12 @@ const std::string hugeBitcoinKeyListPageKey(const std::string &pageZ);
 
 const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex);
 
+
+//'get todays ad slot' json response
+#define JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_KEY "error"
+#define JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_NOERROR_VALUE "false"
+#define JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_YESERROR_VALUE "true"
+#define JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER "{ \"" JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_KEY "\": \"" JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_YESERROR_VALUE "\" }"
+#define JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_EXPIRATION_DATETIME "todaysAdSlotExpireDateTime"
+
 #endif // ABC2_COUCHBASE_AND_JSON_KEY_DEFINES_H

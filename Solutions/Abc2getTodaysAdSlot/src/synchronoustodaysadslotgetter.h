@@ -12,9 +12,13 @@ class SynchronousTodaysAdSlotGetter : public ISynchronousLibCouchbaseUser
 {
 public:
     SynchronousTodaysAdSlotGetter();
-    void getTodaysAdSlot(const string &campaignOwnerUsername, const string &campaignIndex, long long currentDateTime);
+    bool tryToGetTodaysAdSlot(const string &campaignOwnerUsername, const string &campaignIndex, long long currentDateTime);
+    string todaysAdSlotJson();
+    long long todaysAdSlotExpirationDate();
 private:
     void errorOutput(const string &errorString);
+    string m_TodaysAdSlotJson;
+    long long m_TodaysAdSlotExpirationDate;
 };
 
 #endif // SYNCHRONOUSTODAYSADSLOTGETTER_H

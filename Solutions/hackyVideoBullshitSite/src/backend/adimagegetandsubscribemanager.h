@@ -41,16 +41,28 @@ private:
     AdImageWResource *m_YesterdaysAdImage;
     string m_CurrentAdUrl;
     string m_CurrentAdAltAndHover;
+    long long m_CurrentAdExpirationDateTime;
     bool m_Stopping;
+    bool m_CurrentlyShowingNoAdPlaceholder;
+    QNetworkAccessManager* m_NetworkAccessManager;
+
+    void startHttpRequestForNextAdSlot();
+    inline std::string base64decodeStdString(const std::string &input)
+    {
+        QByteArray b64decodedByteArray = QByteArray::fromBase64(QByteArray::fromRawData(input.c_str(), input.length()));
+        string ret(b64decodedByteArray.constData(), b64decodedByteArray.length());
+        return ret;
+    }
 public slots:
     void initializeAndStart();
-    void getAndSubscribe(AdImageSubscriberIdentifier *adImageSubscriberIdentifier, string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback);
-    void unsubscribe(AdImageSubscriberIdentifier *adImageSubscriberIdentifier);
+    void getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, std::string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback);
+    void unsubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier);
     void beginStopping();
     void finishStopping();
 private slots:
     void handleNetworkRequestRepliedTo(QNetworkReply *reply);
     void updateSubscribers();
+    void expireTimerTimedOut();
 };
 
 #endif // ADIMAGEGETANDSUBSCRIBEMANAGER_H

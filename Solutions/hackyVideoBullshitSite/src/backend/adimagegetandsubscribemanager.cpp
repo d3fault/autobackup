@@ -2,6 +2,8 @@
 
 #include <QNetworkReply>
 #include <QHashIterator>
+#include <QDateTime>
+#include <QTimer>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -14,7 +16,7 @@ using namespace Wt;
 using namespace boost::property_tree;
 
 AdImageGetAndSubscribeManager::AdImageGetAndSubscribeManager(QObject *parent)
-    : QObject(parent), m_CurrentAdImage(0), m_YesterdaysAdImage(0), m_Stopping(false)
+    : QObject(parent), m_CurrentAdImage(0), m_YesterdaysAdImage(0), m_CurrentAdUrl("n"), m_CurrentAdExpirationDateTime(0), m_Stopping(false), m_CurrentlyShowingNoAdPlaceholder(true), m_NetworkAccessManager(0)
 {
     qRegisterMetaType<GetAndSubscriptionUpdateCallbackType>("GetAndSubscriptionUpdateCallbackType"); //because invokeObject sends these as Q_ARG's
     qRegisterMetaType<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>("AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*");
@@ -35,14 +37,21 @@ AdImageGetAndSubscribeManager::~AdImageGetAndSubscribeManager()
         delete sessionInfo;
     }
 }
+void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
+{
+    m_NetworkAccessManager->get(QNetworkRequest(QUrl("http://anonymousbitcoincomputing.com/getTodaysAdSlot"))); //TODOreq: maybe a shared secret url or special 'token', and definitely want SSL so no MITM lawl (even self signed cert is better than none)
+}
 void AdImageGetAndSubscribeManager::initializeAndStart()
 {
     //TODOreq: read in the "no ad" placeholder and keep it in memory at all times (perhaps a global/public resource with a ridiculously long expiration date)
 
     //do the first GET for today's ad
-    QNetworkAccessManager* networkAccessManager = new QNetworkAccessManager(this);
-    connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleNetworkRequestRepliedTo(QNetworkReply*)));
-    networkAccessManager->get(QNetworkRequest(QUrl("http://anonymousbitcoincomputing.com/getTodaysAdvertisement"))); //TODOreq: maybe a shared secret url or special 'token', and definitely want SSL so no MITM lawl (even self signed cert is better than none)
+    if(!m_NetworkAccessManager)
+    {
+        m_NetworkAccessManager = new QNetworkAccessManager(this);
+        connect(m_NetworkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleNetworkRequestRepliedTo(QNetworkReply*)));
+    }
+    startHttpRequestForNextAdSlot();
 
     //TODOreq: set up timer to expire 30 seconds before ad image change
 
@@ -50,7 +59,7 @@ void AdImageGetAndSubscribeManager::initializeAndStart()
 
     m_Stopping = false;
 }
-void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback)
+void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, std::string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback)
 {
     if(m_Stopping)
         return;
@@ -77,23 +86,52 @@ void AdImageGetAndSubscribeManager::finishStopping()
 {
     //???
 }
-void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply *reply) //TODOreq: errors?
+void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply *reply) //TODOreq: errors, such as timeout, use "no ad" placeholder and of course schedule a retry in a little
 {
     //read the ad image json and b64decode it
-    QTextStream replyTextStream(reply);
-    QString replyQString = replyTextStream.readAll();
-    const string replyStdString = replyQString.toStdString();
+    bool someError = (reply->error() != QNetworkReply::NoError);
     ptree pt;
-    istringstream is(replyStdString);
-    read_json(is, pt);
+    if(!someError)
+    {
+        QTextStream replyTextStream(reply);
+        QString replyQString = replyTextStream.readAll();
+        const string replyStdString = replyQString.toStdString();
+        istringstream is(replyStdString);
+        read_json(is, pt);
+        const string error = pt.get<string>(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_KEY);
+        someError = (error == JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_YESERROR_VALUE);
+    }
+
+    if(someError)
+    {
+        //"no ad" placeholder
+        if(!m_CurrentlyShowingNoAdPlaceholder) //don't 'double' show it
+        {
+            m_CurrentlyShowingNoAdPlaceholder = true;
+
+            //update subscribers to "no ad" placeholder, a global/public resource with hella long cache expiration date...
+            m_CurrentAdUrl = "n"; //hack/lazy
+            QMetaObject::invokeMethod(this, "updateSubscribers", Qt::QueuedConnection);
+        }
+
+        QTimer::singleShot(((5*60)*1000) /*5 mins*/, Qt::VeryCoarseTimer, this, SLOT(expireTimerTimedOut()));
+        reply->deleteLater();
+        return;
+    }
+    //else if "NOERROR" (/lazy)
+    m_CurrentlyShowingNoAdPlaceholder = false;
 
     const string imageBase64 = pt.get<string>(JSON_SLOT_FILLER_IMAGEB64);
+#if 0
     QByteArray imageByteArray = QByteArray::fromBase64(QByteArray::fromRawData(imageBase64.c_str(), imageBase64.length()));
     QString imageQString(imageByteArray);
     const string imageStdString = imageQString.toStdString();
+#else
+    const string imageStdString = base64decodeStdString(imageBase64);
+#endif
     if(m_YesterdaysAdImage)
     {
-        delete m_YesterdaysAdImage; //we keep an ad image around for an extra day, which pretty much assures us that there won't be any requests still asking for it (since it's a concurrent resource). TODOreq: delete yesterdays/current in destructor or whatever
+        delete m_YesterdaysAdImage; //we keep an ad image around for an extra day, which pretty much assures us that there won't be any requests still asking for it (since it's a concurrent resource)
     }
     m_YesterdaysAdImage = m_CurrentAdImage; //there may still be requests for it happening right this very moment, so we hold off on deleting it (i still don't understand how beingDeleted() works xD)
     std::string mimeTypeHalfAndFileExtension = "jpeg";
@@ -105,10 +143,15 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
 
     }
     m_CurrentAdImage = new AdImageWResource(imageStdString, "image/" + mimeTypeHalfAndFileExtension, "image." + mimeTypeHalfAndFileExtension, WResource::Inline);
-    m_CurrentAdUrl = pt.get<string>(JSON_SLOT_FILLER_URL);
-    m_CurrentAdAltAndHover = pt.get<string>(JSON_SLOT_FILLER_HOVERTEXT);
+
+    m_CurrentAdUrl = base64decodeStdString(pt.get<string>(JSON_SLOT_FILLER_URL));
+    m_CurrentAdAltAndHover = base64decodeStdString(pt.get<string>(JSON_SLOT_FILLER_HOVERTEXT));
+    m_CurrentAdExpirationDateTime = boost::lexical_cast<long long>(pt.get<string>(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_EXPIRATION_DATETIME));
 
     QMetaObject::invokeMethod(this, "updateSubscribers", Qt::QueuedConnection); //free dat stack memory from above first kthx :-P
+
+    long long expireDateTimeMSecs = (m_CurrentAdExpirationDateTime*1000)-30;
+    QTimer::singleShot(static_cast<int>(expireDateTimeMSecs - QDateTime::currentMSecsSinceEpoch()), Qt::VeryCoarseTimer, this, SLOT(expireTimerTimedOut()));
 
     //TODOreq: expire time needs to have been put in and extracted from the json. TODOreqoptimization: if two "no ad" placeholders in a row (thinking 5 min expiration dates), the second one does not transfer image bytes or even WServer::post
 
@@ -121,7 +164,12 @@ void AdImageGetAndSubscribeManager::updateSubscribers()
     QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
     while(it.hasNext())
     {
+        it.next();
         AdImageSubscriberSessionInfo *sessionInfo = it.value();
         WServer::instance()->post(sessionInfo->SessionId, boost::bind(sessionInfo->GetAndSubscriptionUpdateCallback, m_CurrentAdImage, m_CurrentAdUrl, m_CurrentAdAltAndHover));
     }
+}
+void AdImageGetAndSubscribeManager::expireTimerTimedOut()
+{
+    startHttpRequestForNextAdSlot();
 }

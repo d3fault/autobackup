@@ -4,9 +4,11 @@
 #include <Wt/WResource>
 
 #include <string>
+#include <boost/thread/mutex.hpp>
 
 using namespace Wt;
 using namespace std;
+using namespace boost;
 
 class GetTodaysAdSlotWResource : public WResource
 {
@@ -15,7 +17,10 @@ public:
     ~GetTodaysAdSlotWResource();
     void handleRequest(const Http::Request& request, Http::Response& response);
 private:
-    void getTodaysAdSlot(const string &campaignOwnerUsername, const string &campaignIndex);
+    static void getTodaysAdSlot(const string &campaignOwnerUsername, const string &campaignIndex, long long currentDateTime);
+    static mutex m_TodaysAdSlotMutex;
+    static string m_TodaysAdSlotJson;
+    static long long m_TodaysAdSlotExpirationDate;
 };
 
 #endif // GETTODAYSADSLOTWRESOURCE_H

@@ -5,7 +5,7 @@ QT -= gui
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG += no_keywords #bah
+#CONFIG += no_keywords #bah
 
 #DEFINES += QT_NO_KEYWORDS
 

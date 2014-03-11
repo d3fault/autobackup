@@ -5,7 +5,7 @@
 
 //doesn't make sense for this to be "backend", but also doesn't NEED to be front end (abstract WResource pointer is "enough"). need to refactor my backend to not depend on anything Wt related, but don't give nearly enough of a fuck to do that now...
 AdImageWResource::AdImageWResource(const std::string &adImageBytes, const std::string &adImageMimeType, const std::string &adImageSuggestedFilename, DispositionType dispositionType, WObject *parent)
-    : WResource(parent), m_AdImageBytes(adImageBytes), m_AdImageMimeType(adImageMimeType), m_AdImageBytesLength(adImageBytes.length())
+    : WResource(parent), m_AdImageBytes(adImageBytes), m_AdImageBytesLength(adImageBytes.length()), m_AdImageMimeType(adImageMimeType)
 {
     suggestFileName(adImageSuggestedFilename, dispositionType);
 }
