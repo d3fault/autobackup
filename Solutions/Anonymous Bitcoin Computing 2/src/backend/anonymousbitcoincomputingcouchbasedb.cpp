@@ -459,16 +459,26 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             //TODOreq: MAYBE lcb_get_replica when error qualifies (play around with failover stuff + timeouts. i don't know how couchbase does failovers, I might just need a normal retry (assuming failover time is less than message timeout (so by the time the second one is dispatched, failover has occured)) instead of the get_replica thing)
 
             cerr << "Error couchbase getCallback:" << lcb_strerror(m_Couchbase, error) << endl;
-            if(originalRequest->SaveCAS)
+
+            //hack: deleting the request hackily used for get and subscribe would lead to a segfault later, and/or at the very least make our get and subscribe polling mechanism timer stop...
+            if(originalRequest->GetAndSubscribe != 0 && originalRequest->GetAndSubscribe != 6)
             {
-                GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, "", 0, false, true);
+                //i honestly don't konw what to do with a get and subscribe error thing, so don't "respond" it and definitely don't delete it... just ehh continue as if nothing had happened and maybe the error will be gone in 100ms xD...
+                event_add(m_GetAndSubscribePollingTimeout, &m_OneHundredMilliseconds); //just like with our "normal" call, we probably need to do something else with this to make get and subscribe work with other keys
             }
             else
             {
-                GetCouchbaseDocumentByKeyRequest::respond(originalRequest, "", false, true);
+                if(originalRequest->SaveCAS)
+                {
+                    GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, "", 0, false, true);
+                }
+                else
+                {
+                    GetCouchbaseDocumentByKeyRequest::respond(originalRequest, "", false, true);
+                }
+                m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
+                delete originalRequest;
             }
-            m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
-            delete originalRequest;
             return;
         }
 

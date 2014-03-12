@@ -1,7 +1,6 @@
 #include "adimagegetandsubscribemanager.h"
 
 #include <QNetworkReply>
-#include <QHashIterator>
 #include <QDateTime>
 #include <QTimer>
 
@@ -16,7 +15,7 @@ using namespace Wt;
 using namespace boost::property_tree;
 
 AdImageGetAndSubscribeManager::AdImageGetAndSubscribeManager(QObject *parent)
-    : QObject(parent), m_CurrentAdImage(0), m_YesterdaysAdImage(0), m_CurrentAdUrl("n"), m_CurrentAdExpirationDateTime(0), m_Stopping(false), m_CurrentlyShowingNoAdPlaceholder(true), m_NetworkAccessManager(0)
+    : QObject(parent), m_CurrentAdImage(0), m_YesterdaysAdImage(0), m_CurrentAdUrl("n"), m_CurrentAdExpirationDateTime(0), m_Stopping(false), m_CurrentlyShowingNoAdPlaceholder(true), m_NetworkAccessManager(0), m_UpdateSubscribersHashIterator(0)
 {
     qRegisterMetaType<GetAndSubscriptionUpdateCallbackType>("GetAndSubscriptionUpdateCallbackType"); //because invokeObject sends these as Q_ARG's
     qRegisterMetaType<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>("AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*");
@@ -161,6 +160,16 @@ void AdImageGetAndSubscribeManager::updateSubscribers()
 {
     //the "spread out over 5 mins" thing is going to be a tiny bit of a pain in the ass (nothing i can't handle) to implement, because an unsubscribe while "sleeping" would modify the hash and could make us skip notifying a subscriber. hanging onto the iterator might work since modifications to the hash make a copy of it (and i guess we'd have to 'delete' the iterator to free our stale (but we want it to be stale as per the first sentence of this comment) copy of the hash after we're finished). Also need to make sure we don't start ANOTHER updateSubscribers call before out prior one finishes, but that shouldn't be too hard (spread out over "4:20 seconds" instead of "5", since 5 is the "no ad" poll interval and it would be initiated at 4:30))
 
+    //as a precautionary measure, we check to see if a subscription update 'over 5 mins' is already active. if it is, we just return. this should never happen but you never know...
+    if(!m_UpdateSubscribersHashIterator)
+        return;
+
+    m_UpdateSubscribersHashIterator = new QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*>(m_Subscribers); //increments reference count, so if a new subscriber or unsubscribe, m_Subscribers does a COW and doesn't affect our list of updaters. new subscribers are handled instantly in "subscribe", and unsubscribers are handled by WServer::post knowing when a WApplication has been destroyed
+
+    //update 10 every .3 seconds, the first 10 right now :P
+    updateTenAndScheduleA30msTimeoutUntilAllEmpty();
+
+#if 0
     QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
     while(it.hasNext())
     {
@@ -168,8 +177,29 @@ void AdImageGetAndSubscribeManager::updateSubscribers()
         AdImageSubscriberSessionInfo *sessionInfo = it.value();
         WServer::instance()->post(sessionInfo->SessionId, boost::bind(sessionInfo->GetAndSubscriptionUpdateCallback, m_CurrentAdImage, m_CurrentAdUrl, m_CurrentAdAltAndHover));
     }
+#endif
 }
 void AdImageGetAndSubscribeManager::expireTimerTimedOut()
 {
     startHttpRequestForNextAdSlot();
+}
+void AdImageGetAndSubscribeManager::updateTenAndScheduleA30msTimeoutUntilAllEmpty() //could easily dynamic the 10 and .3 seconds, but dgaf
+{
+    for(int i = 0; i < 10; ++i)
+    {
+        if(!m_UpdateSubscribersHashIterator->hasNext())
+        {
+            //done updating subscribers
+            delete m_UpdateSubscribersHashIterator;
+            m_UpdateSubscribersHashIterator = 0;
+            return;
+        }
+
+        m_UpdateSubscribersHashIterator->next();
+        AdImageSubscriberSessionInfo *sessionInfo = m_UpdateSubscribersHashIterator->value();
+        WServer::instance()->post(sessionInfo->SessionId, boost::bind(sessionInfo->GetAndSubscriptionUpdateCallback, m_CurrentAdImage, m_CurrentAdUrl, m_CurrentAdAltAndHover));
+    }
+
+    //done with this 10, schedule timer calling self .3 seconds later
+    QTimer::singleShot(300, Qt::CoarseTimer, this, SLOT(updateTenAndScheduleA30msTimeoutUntilAllEmpty()));
 }

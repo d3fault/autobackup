@@ -36,7 +36,7 @@
 
 #define ABC_SOMEONE_BOUGHT_SLOT_MOMENTS_BEFORE_YOU_MESSAGE "Sorry, someone else just bought that slot. You have to click step 1 again to buy the NEXT slot"
 
-#define ABC2_IMMEDIATELY_AFTER_PURCHASE_GIVE_OR_TAKE_5_MINS_STRING "immediately after purchase (give or take 5 minutes)"
+#define ABC2_IMMEDIATELY_AFTER_PURCHASE_GIVE_OR_TAKE_5_MINS_STRING "immediately after purchase (give or take 10 minutes)"
 
 //TODOreq: FOREVER: any feature that modifies user-account doc must do so with a CAS-swap, _AND_ the 'get' for that CAS-swap must ALWAYS check that "slotToAttemptToFillAkaPurchase" isn't set on the user-account. If "slotToAttemptToFillAkaPurchase" is set, that feature must not work until "slotToAttemptToFillAkaPurchase" is gone. It should error out saying "don't use multiple tabs" or "please try again in a few seconds".
 //^just worth mentioning, but not worth fixing yet: when the buy slot aka slot fill fails just after using account locking (but before slot fill) and they log in and basically can't do shit with their account, it effectively makes the bitcoin stuff off limits too since it relies on the user account not being locked. As of right now they have to wait until the slot is purchased, but once I let them proceed/retry with the buy, then they can get themselves out of it (if they still want to do the purchase)

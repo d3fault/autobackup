@@ -4,6 +4,7 @@
 
 ==1.1 Bugs==
 
+- not a bug but i think lockfree::queue will improve performance and allow me to use boost::bind functions and stuff because i don't need to serialize the request, just pass a pointer on the queue (which come in handy for making get and subscribe future proof, among other things)
 - fail after user-account locked to buying a slot -> allow recovery via buying slot locked to
 - get-and-subscribe only works with one key (timeout stuff needs changing (all share timer? or each get own?), as does other stuff such as subscription-update callback receiving update to something we just unsubscribed from (segfaulting almost every time))
 - buy slot[s], log out, log in as new user, old "attempting/SUCCESS" messages still there. only visual artifacts, idgaf

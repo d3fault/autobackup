@@ -1,0 +1,23 @@
+I am my product. I'm addicted to hacking and am going to document live on video the creation of my various ideas. Within the first 24 hours, I'll have made a wearable musical computer out of an Arduino (tm), some analog sensors, and a C++ compiler. My video segments will serve as tutorials so that viewers can follow along and, should they desire, even learn programming in the process. Everything I create, whether video/code/music/other, will be released for free and under a permissive free software / copyleft license (very similar to the GNU LGPL). I am against patents and copyright, and will use defensive publication and copyleft, respectively, to combat them. I am a freedom of speech advocate, and I believe that the only way a person can truly have freedom of speech on earth in 2014 is for them to own their own business. For that reason, I'll be selling advertising space next to the live video stream, and that will be my only source of revenue. I have already coded a completely automated advertising system in C++ (using Wt/Couchbase/Bitcoin), and will be releasing the source code to that the moment my video stream goes live. In addition and perhaps more importantly, I'll be releasing the decryption keys to every file I've ever created (numerous video/audio/txt/code/pictures, adding up to roughly 8gb when compressed), which you can preload below. I don't like mentioning that I'll be releasing the decryption keys at launch, simply because it makes me feel like I'm holding my files hostage... whereas in reality I want nothing more than to set them free (keeping them private/encrypted is becoming a mental burden, especially since the NSA has permission from Congress to spy on me without warrant).
+
+I only need $X to set this up. Bitcoin donations are appreciated: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm
+
+Preload my files:
+
+MyBrain-PublicFiles.7z.001 - Efficient (torrent), Leech (http)
+MyBrain-PublicFiles.7z.002 - Efficient (torrent), Leech (http)
+MyBrain-PublicFiles.7z.003 - Efficient (torrent), Leech (http)
+
+
+Additional files I'm unable to give out the decryption keys to:
+
+MyBrain-PrivateFiles.7z.001 - Efficient (torrent), Leech (http)
+MyBrain-PrivateFiles.7z.002 - Efficient (torrent), Leech (http)
+MyBrain-PrivateFiles.7z.003 - Efficient (torrent), Leech (http)
+MyBrain-PrivateFiles.7z.004 - Efficient (torrent), Leech (http)
+MyBrain-PrivateFiles.7z.005 - Efficient (torrent), Leech (http)
+
+
+
+Last but not least, I am a graduate of /b/ university and have a sense of humor that will make you vomit and cry simultaneously.
+Last but not least, I am a graduate of /b/ university and have a special appreciation for anonymity, despite my choosing not to utilize it.

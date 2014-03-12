@@ -24,6 +24,10 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     new WBreak(container);
     new WBreak(container);
 
+    //Checkbox: "Audio", checked by default
+
+    //Radio: "Video" /// "Auto" (default), "Virtual Only" (screen), "Actual Only" (face), "Both". Auto is controlled by me through some manual mechanism (propagates via WServer::post). If I'm codan etc, screen. If not, face. Actually this sounds like too much of a pain in the ass for me to do manually, but idk what to default to otherwise xD (defaulting to "both" sounds good, but then I've just doubled my bandwidth rofl!)
+
     WVideo *videoPlayer = new WVideo(container);
     videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     videoPlayer->addSource(WLink(WLink::Url, "http://localhost:8080/video.ogv"), "video/ogg");

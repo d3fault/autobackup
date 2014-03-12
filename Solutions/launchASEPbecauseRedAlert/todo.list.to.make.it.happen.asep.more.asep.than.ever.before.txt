@@ -2,7 +2,7 @@
 [x] - Upload Data (Freenet Full Copy, Start Seeding Torrent)
 [x] - Finish Bitcoin Key Gen
 [x] - Code hacky/shitty "abc" (probably single-user to start ("dogfood"-ONLY)) to be hosted from home on business connection
-[] - Hack together shitty video solution + webpage (it being a 'user of' abc2)
+[x] - Hack together shitty video solution + webpage (it being a 'user of' abc2)
 [] - Calculate and gather funds
 [] - Buy hardware + move out + set up hardware
 [] - Launch via 1337/dirty h4x, leaseweb most likely (get offline backup however/hackily (use offline machine being recorded by another offline machine AND by an online machine (probably multiple vga splitters). 3 machines, 2 offline. The one you type/broadcast on does not record (might also need code testing filming solution). Same setup for your face)) (user/d3fault/data CAN contain only: sha1/md5/magnet (freenet, bittorrent), decryption key/password to it all. Will eventually actually server the data)

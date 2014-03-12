@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1394522481
+Documents/minddump/:1394615654
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1271,6 +1271,7 @@ Documents/minddump/lskdjflksjdflskjdfouwelkjroiusldkjfosduflksajdfouwelkjrousdfl
 Documents/minddump/lskdjflksjdfsdofulsdjfosduflkjsdfoulkjweroulkjsdfoiuwkeruoiulsfdjsdlkfjsdou.txt:1370671695
 Documents/minddump/lskdjflsjkadfousdlfkjsdouflsdjfoiuwelkjousdflkjsdf.txt:1383944559
 Documents/minddump/lskdjflskdjfosudflksjdfousdfljsdfuisfusofusdfljsfousdflk.txt:1392551152
+Documents/minddump/lskfdjalksjfdlkjsdkfljsjflksjdflkjasdlkfjslkfdjouwelkrjousdlkfjsodf.txt:1394615654
 Documents/minddump/lskfjasfopwieruslafkjsdfoiuwerkldsfjoiu.txt:1339487667
 Documents/minddump/lskfjslkfjskdljfoiuwerlkjsdfoukjlkwerj.txt:1354931147
 Documents/minddump/lskjdfkljsdkfljsdfosudflkjdsofusdlkjfosduflskdjfousdflkjsdfou.txt:1393072979
@@ -3904,8 +3905,8 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1394522398
-Solutions/Anonymous Bitcoin Computing 2/src/backend/:1394440400
+Solutions/Anonymous Bitcoin Computing 2/src/:1394616252
+Solutions/Anonymous Bitcoin Computing 2/src/backend/:1394616057
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h:1393531477
@@ -3913,7 +3914,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialb
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h:1393528690
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp:1393527299
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h:1393526820
-Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1394440400
+Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1394616057
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1393996398
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1393799993
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1394522384
@@ -3937,7 +3938,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/l
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1393161161
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp:1393160674
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h:1393161161
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1394522384
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1394613335
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1393884420
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.cpp:1393117307
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.h:1393117244
@@ -3949,7 +3950,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchb
 Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1394442259
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1394257446
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1392898082
-Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1394425135
+Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1394616225
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
 Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021
@@ -3977,20 +3978,20 @@ Solutions/hackyVideoBullshitSite/design/:1394405329
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
 Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firefox.live.theora.streaming.txt:1394180190
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1394522553
-Solutions/hackyVideoBullshitSite/src/backend/:1394521797
-Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1394521797
-Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1394520899
+Solutions/hackyVideoBullshitSite/src/:1394619474
+Solutions/hackyVideoBullshitSite/src/backend/:1394615175
+Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1394615175
+Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1394614336
 Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.cpp:1394513815
 Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.h:1394437304
-Solutions/hackyVideoBullshitSite/src/frontend/:1394521303
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1394521303
+Solutions/hackyVideoBullshitSite/src/frontend/:1394619467
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1394619467
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1394444070
 Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1394516721
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1394512549
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1394444885
 Solutions/hackyVideoBullshitSite/src/main.cpp:1394445146
-Solutions/launchASEPbecauseRedAlert/:1387670248
+Solutions/launchASEPbecauseRedAlert/:1394623844
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/donate.txt:1387599799
@@ -4004,14 +4005,16 @@ Solutions/launchASEPbecauseRedAlert/index.3.html:1371126908
 Solutions/launchASEPbecauseRedAlert/index.4.html:1371126888
 Solutions/launchASEPbecauseRedAlert/index.html:1371126798
 Solutions/launchASEPbecauseRedAlert/initial.idea.explained.some.txt:1371117803
+Solutions/launchASEPbecauseRedAlert/kickstarter.etc.draft.thingo.lul.but.fun.to.write.txt:1394623878
 Solutions/launchASEPbecauseRedAlert/launchPlaceholderSvgStickFigureMeditating.svg:1371128864
 Solutions/launchASEPbecauseRedAlert/list.of.domains.to.buy.at.or.just.before.launch.txt:1384667000
 Solutions/launchASEPbecauseRedAlert/meAnalyzingTheSituationWithPoliceHelicopterJuryAimingBothGunAndNetAtMe.svg:1371125630
 Solutions/launchASEPbecauseRedAlert/meAutoGrapplingTheFuckOutOfThereBecauseRedAlert.svg:1371123108
 Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if.i.generate.book.from.script.fuggit.txt:1384672643
+Solutions/launchASEPbecauseRedAlert/pricing.breakdown.asdf.txt:1394619523
 Solutions/launchASEPbecauseRedAlert/pursuingHappiness.svg:1371126578
 Solutions/launchASEPbecauseRedAlert/restricted.access.cookie.check.idea.thingo.asdflksadflkjsadf.txt:1388735956
-Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1394155104
+Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1394617891
 Solutions/launchASEPbecauseRedAlert/todo.lol.asdflkjsdfousdfweroiu.txt:1387173891
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1390041567
 VariousTreeingsDuringHugeArchivePurge/:1367600874
