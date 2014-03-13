@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1394615654
+Documents/minddump/:1394733957
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1394500841
+Documents/minddump/dreams/:1394683902
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -150,6 +150,7 @@ Documents/minddump/dreams/sffgdfgdkjlskjdflkjsdfljsdlkfjsdfouewrj.txt:1393067471
 Documents/minddump/dreams/sflsdlfkjsdlkfjlkdjsflsdkjflkjsdflsdakjfouwelkrjousdflkjsofuwlkjerulkjfosudf.txt:1383071212
 Documents/minddump/dreams/six.flags.passport.matt.txt:1354516951
 Documents/minddump/dreams/sjdfkljsdlkfjsdkljfsdofusdfuosdfou.girl.coder.in.green.txt:1390836907
+Documents/minddump/dreams/sjdfljasdflkjskdjfowuerlkjosduflskjdfosduflksdjfouwerlk.txt:1394683902
 Documents/minddump/dreams/slakdjfsldkjflksajdflksjdfoudsfouwelrjkousdflkjsdofudsl.txt:1391543176
 Documents/minddump/dreams/sldfjklsadkjflsdkjflsdkjfoiuwelrjousdfjskdfsjsdfoiuewr.txt:1390571228
 Documents/minddump/dreams/sldjfklasjdkfsaoduflsajfosudfljsdfousdlfk.txt:1385555624
@@ -1184,6 +1185,7 @@ Documents/minddump/lkjsdflkjsdlfjsdlkjfsldkjfsodfulsjdfousdlfkjsdofufuck.txt:139
 Documents/minddump/lkjsdflkjsdlkfjsaofiulsdfjousdfljsoduflskdjfousdflkjou.txt:1383341870
 Documents/minddump/lkjsdlfkjlsdkjfosdufsjdofuslfkjsoufsljdfouerjosuflkjsdfoul.txt:1392348040
 Documents/minddump/lkjsfdiuweroiusdflkjsdfghkjshdf.txt:1338992999
+Documents/minddump/lkjsflkjlaksdjflkjsdfkljsdfkljouwerlkjsoudflkj.txt:1394733957
 Documents/minddump/lksadfjlkasdjfouwelrkjouflkjasodfulkwjerouasdlfkjsdofulkwjerousdflkjasdofuwe.txt:1371607431
 Documents/minddump/lksaflkasjdfosaudflksjadfousdflkjsdofulskjdfoulkerwoiul.txt:1384689616
 Documents/minddump/lksajdfsdajfoisdufsdaljfdslkjfaoj.tangent.but.should.come.full.circle.txt:1328859655
@@ -1398,6 +1400,7 @@ Documents/minddump/saflkjsdflkjsdofiuwelrkjosufdlskadjfsoaduflkj.txt:1353348690
 Documents/minddump/saflksjdflouwerlkjdsfousdlfkj.txt:1355639380
 Documents/minddump/saflsakjdfoawulsdjfosadfuasljer.txt:1343314612
 Documents/minddump/safsldkfjasdfouwlrekjsdfouiwlerkjsadfoui.txt:1340016021
+Documents/minddump/sakdfjslkdjflksjdflkjsdfouwelkrjsdfsdfoulkjlk.txt:1394733734
 Documents/minddump/saldfjalkjdflkjflaskjdfasdofulerkjouasdlfkjasdfouasdflkjsadfou.txt:1374413200
 Documents/minddump/saldfjklskdjfouisdflkjwerousdfljsdofulwejouerljfds.txt:1368517580
 Documents/minddump/saldfjlksjfdlkjsdfoulkjsdfdfslkjsdfjk.txt:1359547109
@@ -1664,6 +1667,7 @@ Documents/minddump/sdlfjlskdjflkjeroukhsflksdjflksdjflk.txt:1355828835
 Documents/minddump/sdlfjlskdjflsdkjflksjdfsldkjfjsdkfsdl.txt:1360823299
 Documents/minddump/sdlfjsadlfkjsdoiuflwejouijrourlkjw.txt:1356063149
 Documents/minddump/sdlfjsadlkfjouwerljosudflaksjdfouwlkrjoudsflkjsadfouewlrkjoudfs.txt:1371591009
+Documents/minddump/sdlfjsakdjfskldjfklsjfdouwelkrjousdfjsdfjsldkf.txt:1394698488
 Documents/minddump/sdlfjsfkjsdlfkjsdfousdjlfksdfuosdifulkjdsfousdlfkjsdofuwerlkjsdfou.txt:1380139952
 Documents/minddump/sdlfjsldfjlsdkjflksdjflksdjfodsuflsjdfousdflweorusdflk.txt:1393516876
 Documents/minddump/sdlfjsldfjsldjfdslkjflsdkjflsdjflwurousdlfjsodfusdlfkjsldf.txt:1379127231
@@ -3991,7 +3995,7 @@ Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1394516721
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1394512549
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1394444885
 Solutions/hackyVideoBullshitSite/src/main.cpp:1394445146
-Solutions/launchASEPbecauseRedAlert/:1394623844
+Solutions/launchASEPbecauseRedAlert/:1394685780
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/donate.txt:1387599799
@@ -4000,6 +4004,7 @@ Solutions/launchASEPbecauseRedAlert/baseDirForDist/readme.nfo:1387578750
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/readme.txt:1388204069
 Solutions/launchASEPbecauseRedAlert/an.note.saldfkjsdlakfjoweurljoufssdlkf.txt:1371120857
 Solutions/launchASEPbecauseRedAlert/clickableSvgQuoteChristmasTreeUnquote.svg:1371121165
+Solutions/launchASEPbecauseRedAlert/fundraising.index.html:1394691615
 Solutions/launchASEPbecauseRedAlert/index.2.html:1371128097
 Solutions/launchASEPbecauseRedAlert/index.3.html:1371126908
 Solutions/launchASEPbecauseRedAlert/index.4.html:1371126888
