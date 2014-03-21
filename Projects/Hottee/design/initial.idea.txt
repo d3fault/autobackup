@@ -1,0 +1,55 @@
+tee with hot swappable destination (a large hard drive that becomes full and must be swapped out)
+
+target: ridiculously fucking long streams of video (ideally of indefinite length)
+
+"hot tee", "hotty"
+
+...doesn't even use "tee" app itself, but is custom C++ app that manually copies bytes to two destination (input = netcat, output = netcat, the hot swappable destination = saving to a large hard drive (and another drive is needed for buffering during the swap))...
+
+QProcess(netcatIn);
+
+void onReadyRead()
+{
+	read into x
+	write x to QProcess(netcatOut);
+	if(100mb of space left)
+		write x to 100mb chunk file in "destination" folder (resides on mount point that is hot swappable)
+	else
+		write x to 'other' drive (thinking OS drive for now) and raise a notification that human intervention is needed
+
+	when the "destination" folder is... made available again (other empty drive now attached + mounted), flush everything written to "other" drive to destination folder ("catch up"), and also all further writings go to destination folder, back in regular mode. delete "other" drive's copy when caught up.
+}
+
+ideally memory would be used as "other" drive, and a nice large swapfile to back it... but eh idk (idk why idk (complexity of code. KISS))
+
+
+COULD ALSO JUST USE 2x "destinations" and it auto-alternates between the two, yes that sounds best. the notification should come at 80% drive full, so you have time to make the 2nd drive available. would still need a notification for when the switch happens, so you know when you can unmount the one that is now full and start... sync'ing (which implies lots of things, "master copy" + vp9'ing eventually) it...
+
+2014: sharing a master copy is illegal :)
+
+the "2nd highest hd legal" = vp9 hd, shared via torrents only initially...
+
+
+so yea anyways back to the point, now that the logic is simplified:
+
+void onReadyRead()
+{
+	read into x
+	write x to QProcess(netcatOut);
+	if(!spaceLeftOnCurrent100mbChunk)
+	{
+		if(totalSizeOfChunkSizesOnThisDestination <= 80% && (totalSizeOfChunkSizesOnThisDestination+100mb) > 80%) //only emit the 'change soon' notification when crossing 80% boundary (could use 'first' flagging instead)
+		{
+			emit 'change soon' notification, indicating you MUST plug in a drive for it and mount it soon (TODOoptional: doesn't emit notification if it has already been done long ago)
+		}
+		if(100mb isn't available)
+		{
+			hot swap the destination folder writing to (TOTAL SYSTEM FAILURE if 'change soon' hasn't been responded to). continue netcatting only
+		}
+		create+open the 100mb chunk in destination folder (possibly closing previous file (but maybe that comes at better time (TODOreq: ensure closed before emitting "safe to take now full one out")))
+		emit "safe to take now full one out" ??
+	}
+	write min(spaceLeft, sizeof(x)) to that 100mb chunk; //or maybe i mean max()
+}
+
+cons: my netcat in is receiving raw video frames, but by cutting it up into 100mb chunks i may have half a frame in one chunk and the other half in another. should the system ever go down and need to be restarted, i don't know how my tools will react :-/. i know the "data is there", but restarting mid-frame may prove to be challenging. i considered using libavformat.h, but IIRC it's a huge pain in the ass to work with. time consuming to figure out and i'm in ultra hack asap mode.
