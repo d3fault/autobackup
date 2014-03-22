@@ -23,3 +23,5 @@ HEADERS += \
     ../lib/hottee.h
 
 LIBS += -lboost_filesystem
+
+include(../../../../GloballySharedClasses/objectonthreadhelper.pri)

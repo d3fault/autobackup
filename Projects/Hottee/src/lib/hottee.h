@@ -14,18 +14,21 @@ public:
 private:
     QProcess *m_InputProcess;
     QProcess *m_OutputProcess;
-
+    bool m_WriteToOutputProcess;
     QFile *m_CurrentOutputFile;
     QString m_CurrentDestinationEndingWithSlash;
     qint64 m_Current100mbChunkWriteOffset;
     QString m_Destination1endingWithSlash;
     QString m_Destination2endingWithSlash;
     bool m_Dest2;
-
+    bool m_CurrentlyWritingToEitherDestination;
+    bool m_StopWritingAtEndOfThisChunk;
+    bool m_StartWritingAtBeginningOfNextChunk;
+    bool m_QuitAfterThisChunkFinishes;
     qint64 m_100mbChunkOffsetForFilename;
 
     void toggleDestinations();
-    void createAndOpen100mbFileAtCurrentDestination();
+    bool createAndOpen100mbFileAtCurrentDestination();
     inline QString appendSlashIfNeeded(QString inputString)
     {
         if(!inputString.endsWith("/"))
@@ -35,11 +38,14 @@ private:
     bool readInputProcessesStdOutAndWriteAccordingly();
 signals:
     void d(const QString &);
-    void changeAlternateSoon(const QString &destinationAboutSwitchToSoon);
-    void destinationToggled(const QString &destinationJustSwitchedFrom);
+    void o(const QString &);
 public slots:
-    void startHotteeing(const QString &inputProcessPathAndArgs, const QString &outputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2);
-    void stopHotteeing();
+    void startHotteeing(const QString &inputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2, const QString &outputProcessPathAndArgs);
+    void queryChunkWriteOffsetAndStorageCapacityStuff();
+    void startWritingAtNextChunkStart();
+    void stopWritingAtEndOfThisChunk();
+    void quitAfterThisChunkFinishes();
+    void cleanupHotteeing();
 private slots:
     void handleInputProcessReadyReadStandardOutput();
     void handleInputStdErr();

@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     HotteeCli cli;
-    cli.startHotteeAndWaitUntilDone();
+    Q_UNUSED(cli)
 
     return a.exec();
 }

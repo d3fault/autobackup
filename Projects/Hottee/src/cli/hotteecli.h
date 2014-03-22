@@ -4,22 +4,30 @@
 #include <QObject>
 #include <QTextStream>
 
-class Hottee;
+#include "objectonthreadhelper.h"
+#include "../lib/hottee.h"
 
 class HotteeCli : public QObject
 {
     Q_OBJECT
 public:
     explicit HotteeCli(QObject *parent = 0);
-    void startHotteeAndWaitUntilDone();
+    void cliUserInterfaceLoop();
 private:
-    void usage();
+    QTextStream m_StdIn;
     QTextStream m_StdOut;
-    Hottee *m_Hottee;
+    ObjectOnThreadHelper<Hottee> m_BusinessThread;
+
+    void usage();
+signals:
+    void startHotteeingRequested(const QString &inputProcessAndArgs, const QString &destination1, const QString &destination2, const QString &outputProcessAndArgs);
+    void queryChunkWriteOffsetAndStorageCapacityStuffRequested();
+    void startWritingAtNextChunkStartRequested();
+    void stopWritingAtEndOfThisChunkRequested();
+    void quitAfterThisChunkFinishesRequested();
 private slots:
     void handleD(const QString &msg);
-    void handleChangeAlternateSoon(const QString &destinationAboutToChangeTo);
-    void handleDestinationToggled(const QString &destinationChangedFrom);
+    void handleHotteeReadyForConnections();
     void handleAboutToQuit();
 };
 
