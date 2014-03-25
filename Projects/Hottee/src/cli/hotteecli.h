@@ -2,9 +2,9 @@
 #define HOTTEECLI_H
 
 #include <QObject>
+#include <QSocketNotifier>
 #include <QTextStream>
 
-#include "objectonthreadhelper.h"
 #include "../lib/hottee.h"
 
 class HotteeCli : public QObject
@@ -12,13 +12,14 @@ class HotteeCli : public QObject
     Q_OBJECT
 public:
     explicit HotteeCli(QObject *parent = 0);
-    void cliUserInterfaceLoop();
 private:
+    QSocketNotifier m_StdInSocketNotifier; //fucking finally
     QTextStream m_StdIn;
     QTextStream m_StdOut;
-    ObjectOnThreadHelper<Hottee> m_BusinessThread;
+    Hottee m_Hottee;
 
-    void usage();
+    void cliUsage();
+    void cliUserInterfaceMenu();
 signals:
     void startHotteeingRequested(const QString &inputProcessAndArgs, const QString &destination1, const QString &destination2, const QString &outputProcessAndArgs);
     void queryChunkWriteOffsetAndStorageCapacityStuffRequested();
@@ -27,8 +28,7 @@ signals:
     void quitAfterThisChunkFinishesRequested();
 private slots:
     void handleD(const QString &msg);
-    void handleHotteeReadyForConnections();
-    void handleAboutToQuit();
+    void stdInHasLineOfInput();
 };
 
 #endif // HOTTEECLI_H

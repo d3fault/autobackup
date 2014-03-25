@@ -11,6 +11,7 @@ class Hottee : public QObject
     Q_OBJECT
 public:
     explicit Hottee(QObject *parent = 0);
+    ~Hottee();
 private:
     QProcess *m_InputProcess;
     QProcess *m_OutputProcess;

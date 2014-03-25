@@ -16,6 +16,10 @@
 Hottee::Hottee(QObject *parent) :
     QObject(parent), m_InputProcess(0), m_OutputProcess(0), m_WriteToOutputProcess(false), m_CurrentOutputFile(0), m_Current100mbChunkWriteOffset(0), m_Dest2(false), m_CurrentlyWritingToEitherDestination(false), m_StopWritingAtEndOfThisChunk(false), m_StartWritingAtBeginningOfNextChunk(false), m_QuitAfterThisChunkFinishes(false), m_100mbChunkOffsetForFilename(0)
 { }
+Hottee::~Hottee()
+{
+    cleanupHotteeing();
+}
 void Hottee::toggleDestinations()
 {
     emit o("NOTICE: Just changed from " + m_CurrentDestinationEndingWithSlash); //listeners of this can know that the last 100mb chunk is flushed/closed by qt (but likely still needs "sync" system call (umount should take care of that))
@@ -35,7 +39,7 @@ bool Hottee::createAndOpen100mbFileAtCurrentDestination()
         m_CurrentOutputFile = new QFile(this);
     }
     QString chunkIndexStringWithZeroPadding = QString("%1").arg(m_100mbChunkOffsetForFilename, 9, 10, QChar('0')); //width of 9 gives me ~253 years of 100mb chunks, the padding is to help with sorting ofc (although probably not necessary fuckit)
-    m_CurrentOutputFile->setFileName(m_CurrentDestinationEndingWithSlash + "streamChunk_" + chunkIndexStringWithZeroPadding + ".bin"); //when daisy chaining across network, only chunk offset in filename will allow for 'matching' the filenames across systems (otherwise they would be milliseconds off)
+    m_CurrentOutputFile->setFileName(m_CurrentDestinationEndingWithSlash + "streamChunk_" + chunkIndexStringWithZeroPadding + ".bin"); //when daisy chaining across network, only chunk offset in filename will allow for 'matching' the filenames across systems. using timestamps in filename would be inaccurate [sometimes]
     if(!m_CurrentOutputFile->open(QIODevice::WriteOnly))
     {
         emit d("opening destination file for writing failed: " + m_CurrentOutputFile->fileName());
@@ -85,9 +89,9 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
                 {
                     emit d("Hottee is cleanly quitting at end of chunk: " + m_CurrentOutputFile->fileName());
                     emit d("Wait...");
-                    cleanupHotteeing();
-                    QCoreApplication::quit();
-                    return false; //true/false doesn't matter here, since readyRead is never emitted again we never geto to where it would matter
+                    cleanupHotteeing(); //it isn't strictly necessary to call this here, since it's called by our destructor... but in order to make readyRead never be emitted again, it's best to call it as soon as possible (now)
+                    QMetaObject::invokeMethod(QCoreApplication::instance(), SLOT(quit()));
+                    return true; //true/false doesn't matter here, since readyRead is never emitted again we never geto to where it would matter
                 }
 
                 if(m_StopWritingAtEndOfThisChunk)
@@ -243,8 +247,7 @@ void Hottee::queryChunkWriteOffsetAndStorageCapacityStuff()
                     << "Currently pointing at Destination " << (m_Dest2 ? ("2 (" + m_Destination2endingWithSlash + ")") : ("1 (" + m_Destination1endingWithSlash + ")")) << endl
                     << "Current 100mb chunk write offset: " << m_Current100mbChunkWriteOffset << endl
                     << "Percent Full, Destination 1 (" + m_Destination1endingWithSlash + "): " << dest1percentUsed << endl
-                    << "Percent Full, Destination 2 (" + m_Destination2endingWithSlash + "): " << dest2percentUsed << endl
-                    << endl;
+                    << "Percent Full, Destination 2 (" + m_Destination2endingWithSlash + "): " << dest2percentUsed;
     }
 
     emit d(ret);
@@ -307,9 +310,14 @@ void Hottee::cleanupHotteeing()
 void Hottee::handleInputProcessReadyReadStandardOutput()
 {
     if(!readInputProcessesStdOutAndWriteAccordingly())
+    {
         m_CurrentlyWritingToEitherDestination = false;
+        emit d("stopped writing to destinations because of above error");
+    }
 }
 void Hottee::handleInputStdErr()
 {
-    emit d("input process wrote to stderr: " + QString(m_InputProcess->readAllStandardError()));
+    QByteArray allStdErrBA = m_InputProcess->readAllStandardError();
+    QString allStdErrString(allStdErrBA);
+    emit d("input process wrote to stderr: " + allStdErrString);
 }
