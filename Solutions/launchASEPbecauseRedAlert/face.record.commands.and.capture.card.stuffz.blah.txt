@@ -1,18 +1,11 @@
 //raspivid writes to stdout, so it is intended that it is netcatted along an [offline/secure] network and saved using "Hottee". This/these are our "master" copies
 
-raspivid -t 0 -o - --width 1920 --height 1080 --bitrate 1500000 --vflip --hflip --framerate 30 --inline --brightness 55 --contrast 45 --sharpness 99
+raspivid -t 0 -o - --width 1920 --height 1080 --bitrate 1500000 --vflip --hflip --framerate 30 --inline
 
 
-//That particular pi is using component (yellow) video output, which is plugged into my TV Wonder Pro and being captured on an internet connnected computer. ffmpeg could probably do the job that cvlc does here, but I had trouble getting ffmpeg to select specific inputs on the capture card
+//That particular pi is using component (yellow) video output, which is plugged into my TV Wonder Pro and being captured on an internet connnected computer (the raspivid _PREVIEW_ is being captured <3). Note the cropping params in the following command are probably specific to my ATI Wonder Pro, other cap cards need to recalculate them
 
-cvlc v4l2:///dev/video0 :v4l2-standard= :input-slave=alsa:// :v4l2-chroma= :v4l2-input=1 :v4l2-audio-input=-1 :v4l2-width=720 :v4l2-height=480 :v4l2-aspect-ratio=4\:3 :v4l2-fps=10 :no-v4l2-use-libv4l2 :v4l2-tuner=0 :v4l2-tuner-frequency=-1 :v4l2-tuner-audio-modes=-1 :no-v4l2-controls-reset :v4l2-brightness=-1 :v4l2-brightness-auto=-1 :v4l2-contrast=-1 :v4l2-saturation=-1 :v4l2-hue=-1 :v4l2-hue-auto=-1 :v4l2-white-balance-tempurature=-1 :v4l2-auto-white-balance=-1 :v4l2-red-balance=-1 :v4l2-blue-balance=-1 :v4l2-gamma=-1 :v4l2-autogain=-1 :v4l2-gain=-1 :v4l2-sharpness=-1 :v4l2-chroma-gain=-1 :v4l2-chroma-gain-auto=-1 :v4l2-power-line-frequency=-1 :v4l2-backlight-compensation=-1 :v4l2-band-stop-filter=-1 :no-v4l2-hflip :no-v4l2-vflip :v4l2-rotate=-1 :v4l2-color-killer=-1 :v4l2-color-effect=-1 :v4l2-audio-volume=-1 :v4l2-audio-balance=-1 :v4l2-audio-mute :v4l2-audio-bass=-1 :v4l2-audio-treble=-1 :no-v4l2-audio-loudness :v4l2-set-ctrls= :live-caching=300 --sout '#transcode{vcodec=theo,vb=110,fps=10,scale=1,width=720,height=480,acodec=none}:http{dst=:8080/face.ogg}'
+ffmpeg -f video4linux2 -s 720x480 -aspect 3:2 -channel 1 -i /dev/video0 -b 110000 -vcodec theora -an -r 10 -map 0 -vf crop=720:452:0:17 -f segment -segment_time 180 -segment_list_size 999999999 -segment_wrap 999999999 -segment_list segments.txt -reset_timestamps 1 face-%d.ogv
 
 
-//Then we use 2x alternating ffmpeg instances to make "segments". A custom app that merely listens for the first bytes sent to stdin (ffmpeg's stdout) and then knows it can stop the other one
-
-ffmpeg -i http://127.0.0.1:8080/face.ogg -vcodec copy -f ogg -an - | customAppGoesHere; //come to think of it, Hottee should work on stdin like this as well (ideally you would be able to specify, but the default should be stdin). On second thought, customAppGoesHere should NOT have it's data piped into it through stdin because customAppGoesHere will be stopping and re-executing the app. Does make sense for Hottee still, since inputProcess never ends
-
-OR:
-
-ffmpeg -i http://127.0.0.1:8080/face.ogg -vcodec copy -f segment -an -segment_time 10 -map 0 vidya-%d.ogg
-^^^^had huge reliability issues testing this command, ffmpeg kept crashing... wtf...
+//Then we simply watch that segments.txt for activity. ffmpeg appends a filename to it when it starts that segment, so we begin uploading the previous segment right when a filename is appended. It *might* be possible to begin uploading right as ffmpeg is encoding, so long as ffmpeg only ever appends to the file. I am unsure. It might even be possible to start http serving up the partially uploaded .ogv file, but that would probably qualify as "streaming media" anyways.

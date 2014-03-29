@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1395472999
+Documents/minddump/:1396053085
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1048,6 +1048,7 @@ Documents/minddump/kljsdflsdjfljsdlfjldfalskflaskdjfouerouwerouiqaeruio.txt:1352
 Documents/minddump/kljsdlkfjsdlkjfdfglskdjfslkjfsldkjfousdlkjfsoduflkj.txt:1392976737
 Documents/minddump/klsdjflkjsdlkfjsdoufslkdjfouerljosiudflksd.txt:1392987038
 Documents/minddump/ksfsjdflkjsdklfjsdlkjfweourlkj.txt:1355827559
+Documents/minddump/ksjfljslkadjflksjadflkjsdfouwerlkdfs.txt:1396053085
 Documents/minddump/ladkjflksdjflksdjfoiuwerlkjosdfusldkfjoweuirlkjadfsoui.txt:1354188555
 Documents/minddump/ladskfjalsdkjfasdouflawjosduflsdkjfowurlwkejfsdou.txt:1353176324
 Documents/minddump/lafkjdslkfjlsakdjflsadfouwerljsoufoweiurojfjk.txt:1354189416
@@ -1428,6 +1429,7 @@ Documents/minddump/saldkfjsdlkfjsdlfjosduflsdkjfosdufsadflkjsdfosduflkjweroudsal
 Documents/minddump/saldkfjsdlkfjsdouflwkejrousfldkjsadofusadlkjfouwerlkjsadfoul.txt:1371533976
 Documents/minddump/saldkfjslakjflskjdflkjsdfkljsdlfksdlfkjouwerlkjsdf.txt:1393725385
 Documents/minddump/saldkflkjsdfkjsdflksdjfosdflkjdsflkjsdflkdsfjlksdfdsfouedf.txt:1361167399
+Documents/minddump/salfjlsdjflksjdfkljsdfouewrljsdofusdfskldjf.txt:1396053063
 Documents/minddump/salfjsldfkjsldkjfouiwerlkjsdfouisdflk.txt:1355145501
 Documents/minddump/salfkjalskjfklsjdfoiulsdkjfoisudflkjsdofusdlkf.txt:1391830052
 Documents/minddump/salfkjsdalfkjsdofuwlkjeousdflkjsdofulkjrousdlkjfoasduflk.txt:1371892973
@@ -2102,7 +2104,7 @@ Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-K
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
-Projects/:1395376648
+Projects/:1396053223
 Projects/AdAgency/:1333471837
 Projects/AdAgency/design/:1333472910
 Projects/AdAgency/design/Add.Funds.Request.dia:1330206440
@@ -2679,6 +2681,18 @@ Projects/LossyDirectoryCopier/src/lossydirectorycopiergui.h:1386649739
 Projects/LossyDirectoryCopier/src/lossydirectorycopierwidget.cpp:1386987034
 Projects/LossyDirectoryCopier/src/lossydirectorycopierwidget.h:1386987034
 Projects/LossyDirectoryCopier/src/main.cpp:1386648220
+Projects/MouseAndOrMotionViewMaker/:1396063179
+Projects/MouseAndOrMotionViewMaker/design/:1396053309
+Projects/MouseAndOrMotionViewMaker/design/initial.idea.txt:1396053674
+Projects/MouseAndOrMotionViewMaker/src/:1396067365
+Projects/MouseAndOrMotionViewMaker/src/MouseAndOrMotionViewMaker.pro:1396053889
+Projects/MouseAndOrMotionViewMaker/src/main.cpp:1396064851
+Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmaker.cpp:1396067311
+Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmaker.h:1396063749
+Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.cpp:1396064089
+Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396063749
+Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1396063867
+Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396063771
 Projects/OptionallySecureAsFuckBitcoinBankServer/:1331099023
 Projects/OptionallySecureAsFuckBitcoinBankServer/design/:1383865538
 Projects/OptionallySecureAsFuckBitcoinBankServer/design/initial.design.2.ok.i.think.i.figured.out.how.to.do.balance.transfers.securely.w0000t.presign.permission.to.transfer.a.balance.txt:1331099803
@@ -4022,7 +4036,7 @@ Solutions/launchASEPbecauseRedAlert/baseDirForDist/readme.nfo:1387578750
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/readme.txt:1388204069
 Solutions/launchASEPbecauseRedAlert/an.note.saldfkjsdlakfjoweurljoufssdlkf.txt:1371120857
 Solutions/launchASEPbecauseRedAlert/clickableSvgQuoteChristmasTreeUnquote.svg:1371121165
-Solutions/launchASEPbecauseRedAlert/face.record.commands.and.capture.card.stuffz.blah.txt:1395576326
+Solutions/launchASEPbecauseRedAlert/face.record.commands.and.capture.card.stuffz.blah.txt:1395752039
 Solutions/launchASEPbecauseRedAlert/fundraising.index.html:1394691615
 Solutions/launchASEPbecauseRedAlert/index.2.html:1371128097
 Solutions/launchASEPbecauseRedAlert/index.3.html:1371126908

@@ -1,0 +1,17 @@
+int updateInterval = 300ms;
+
+if(mouseMovedSinceLastUpdate) //optimization, we don't want to always check for motion since it's expensive
+	use mouse as center point and 'present' 800x600 view around it
+else if(there is any motion) //i want it to follow my keystrokes
+	find dimensions of it (could be an entire window moving) and do same 800x600 presentation (scaling down if needed)
+else
+	do not update the presented view, as it would waste [more] cpu cycles (some were already wasted on checking for motion)
+
+
+OPTIONALLY, fancy: use easing curves to follow mouse/motion... just for sex appeal
+
+
+
+EXPLAINATION: capturing 1920x1200 vga/hdmi/dvi is expensive, _AND_ it is even more expensive to broadcast. there's also the fact that most of the cheap ones don't work with v4l2... SO since i'm doing ghetto launch i'm going to use 3x tv wonder pros (already have one and have prototyped it for face viewing, works great). the s-video resolution is 800x600, which is a good size for an internet video (cost wise especially).
+
+This app basically just finds the "optimal content" to put in that 800x600 area to be captured, and likely "zooms in a bit" to make text easier to read.
