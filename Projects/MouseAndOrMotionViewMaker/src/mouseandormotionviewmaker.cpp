@@ -9,7 +9,7 @@
 #include <QPainter>
 
 MouseAndOrMotionViewMaker::MouseAndOrMotionViewMaker(QObject *parent) :
-    QObject(parent), m_Initialized(false), m_ViewWidth(800), m_ViewHeight(600), m_MousePixmapToDraw(":/mouseCursor.svg")
+    QObject(parent), m_Initialized(false), m_MousePixmapToDraw(":/mouseCursor.svg")
 {
     m_Screen = QGuiApplication::primaryScreen();
     if(!m_Screen || (m_Screen->grabWindow(0).toImage().format() != QImage::Format_RGB32))
@@ -24,13 +24,11 @@ MouseAndOrMotionViewMaker::MouseAndOrMotionViewMaker(QObject *parent) :
     connect(&m_IntervalTimer, SIGNAL(timeout()), this, SLOT(intervalTimerTimedOut()));
 }
 //TODOoptional: error quit if screen dimensions < view dimensions, for now it is simply undefined. I was tempted to write that the app would be pointless if that were the case, but actually once I implement "zoom", then it would still even be handy on 640x480 (working) -> 800x600 (view) cases (though why you wouldn't use 800x600 for working is beyond me)
-QRect MouseAndOrMotionViewMaker::makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint)
+QPoint MouseAndOrMotionViewMaker::makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint)
 {
     //start with a normal rectangle around the point
-    QRect ret(inputPoint.x()-(m_ViewWidth/2),
-              inputPoint.y()-(m_ViewHeight/2),
-              m_ViewWidth,
-              m_ViewHeight);
+    QPoint ret(inputPoint.x()-(m_ViewWidth/2),
+              inputPoint.y()-(m_ViewHeight/2));
 
     //then adjust
     if(ret.x() < 0)
@@ -52,14 +50,16 @@ QRect MouseAndOrMotionViewMaker::makeRectAroundPointStayingWithinResolution(cons
     }
     return ret;
 }
-void MouseAndOrMotionViewMaker::startMakingMouseAndOrMotionViews()
+void MouseAndOrMotionViewMaker::startMakingMouseAndOrMotionViews(const QSize &viewSize, int updateInterval)
 {
     if(!m_Initialized)
     {
-        emit d("failed to initialize screen, or wrong image format from grabWindow");
+        //emit d("failed to initialize screen, or wrong image format from grabWindow");
         return;
     }
-    m_IntervalTimer.start(256);
+    m_ViewWidth = viewSize.width();
+    m_ViewHeight = viewSize.height();
+    m_IntervalTimer.start(updateInterval);
 }
 void MouseAndOrMotionViewMaker::intervalTimerTimedOut()
 {
@@ -74,15 +74,8 @@ void MouseAndOrMotionViewMaker::intervalTimerTimedOut()
         //TODOreq: "pre-zoom" before grab
 
         //don't start grabbing to the left of, or above, the screen
-        const QRect &rectWithinResolution = makeRectAroundPointStayingWithinResolution(currentCursorPosition);
-#if 0
-        int grabX = qMax(currentCursorPosition.x()-(m_ViewWidth/2), 0);
-        int grabY = qMax(currentCursorPosition.y()-(m_ViewHeight/2), 0);
+        const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(currentCursorPosition);
 
-        //don't grab to the right of, or below, the screen
-        int grabWidth = qMin((grabX+m_ViewWidth), m_ScreenResolutionX);
-        int grabHeight = qMin((grabY+m_ViewHeight), m_ScreenResolutionY);
-#endif
         //TODOqt4: QPixmap::grabWindow(), not sure if 'grabbing only primary screen' will work (and heck, surprised it's even working now in qt5)
         m_CurrentPixmap = m_Screen->grabWindow(0, //0 makes entire desktop eligible, restrained by a rect in following params
                                                rectWithinResolution.x(),
@@ -92,8 +85,7 @@ void MouseAndOrMotionViewMaker::intervalTimerTimedOut()
         //draw mouse cursor
         {
             QPainter painter(&m_CurrentPixmap);
-            //fucked, except in top-left case: painter.drawPixmap(currentCursorPosition.x(), currentCursorPosition.y(), m_MousePixmapToDraw.width(), m_MousePixmapToDraw.height(), m_MousePixmapToDraw);
-            painter.drawPixmap(currentCursorPosition.x(), currentCursorPosition.y(), m_MousePixmapToDraw.width(), m_MousePixmapToDraw.height(), m_MousePixmapToDraw);
+            painter.drawPixmap(currentCursorPosition.x()-rectWithinResolution.x(), currentCursorPosition.y()-rectWithinResolution.y(), m_MousePixmapToDraw.width(), m_MousePixmapToDraw.height(), m_MousePixmapToDraw);
         }
         emit presentPixmapForViewingRequested(m_CurrentPixmap);
         m_PreviousPixmap = QPixmap(); //motion detection requires two non-mouse-movement frames in a row
@@ -138,68 +130,8 @@ void MouseAndOrMotionViewMaker::intervalTimerTimedOut()
 
             if(differenceSeen)
             {
-#if MOUSE_DOESNT_MOVE_DURING_WINDOW_MOVE
-                //then left -> right
-                //the goal is to create a rectangle containing any motion
-
-                differenceSeen = false; //each direction sets this back to false
-                for(int i = 0; i < currentImageWidth; ++i)
-                {
-                    for(int j = 0; j < currentImageHeight; ++j)
-                    {
-                        const QRgb currentImagePixel = currentImage.pixel(i, j);
-                        const QRgb previousImagePixel = previousImage.pixel(i, j);
-                        if(currentImagePixel != previousImagePixel)
-                        {
-                            leftOfDiffRect = i;
-                            differenceSeen = true;
-                            break;
-                        }
-                    }
-                    if(differenceSeen)
-                        break;
-                }
-
-                //then right -> left
-
-                differenceSeen = false;
-                for(int i = currentImageWidth-1; i > -1; --i)
-                {
-                    for(int j = currentImageHeight-1; j > -1; --j)
-                    {
-                        const QRgb currentImagePixel = currentImage.pixel(i, j);
-                        const QRgb previousImagePixel = previousImage.pixel(i, j);
-                        if(currentImagePixel != previousImagePixel)
-                        {
-                            rightOfDiffRect = i;
-                            differenceSeen = true;
-                            break;
-                        }
-                    }
-                    if(differenceSeen)
-                        break;
-                }
-
-                //then bottom -> top
-
-                differenceSeen = false;
-                for(int j = currentImageHeight-1; j > -1; --j)
-                {
-                    for(int i = currentImageWidth-1; i > -1; --i)
-                    {
-
-                    }
-                }
-                //use "DiffRect"
-#endif
                 //use first difference seen point
-                const QRect &rectWithinResolution = makeRectAroundPointStayingWithinResolution(firstDifferenceSeenPoint);
-#if 0
-                int motionX = qMax(firstDifferenceSeenPoint.x()-(m_ViewWidth/2), 0);
-                int motionY = qMax(firstDifferenceSeenPoint.y()-(m_ViewHeight/2), 0);
-                int motionWidth = qMin((motionX+m_ViewWidth), m_ScreenResolutionX);
-                int motionHeight = qMin((motionY+m_ViewHeight), m_ScreenResolutionY);
-#endif
+                const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(firstDifferenceSeenPoint);
                 QPixmap motionPixmap = m_CurrentPixmap.copy(rectWithinResolution.x(), rectWithinResolution.y(), m_ViewWidth, m_ViewHeight); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
                 emit presentPixmapForViewingRequested(motionPixmap);
             }

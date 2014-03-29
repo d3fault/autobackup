@@ -28,12 +28,12 @@ private:
     QPixmap m_CurrentPixmap;
     QPixmap m_MousePixmapToDraw;
 
-    QRect makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
+    QPoint makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
 signals:
-    void d(const QString &);
+    //void d(const QString &);
     void presentPixmapForViewingRequested(const QPixmap &);
 public slots:
-    void startMakingMouseAndOrMotionViews();
+    void startMakingMouseAndOrMotionViews(const QSize &viewSize, int updateInterval);
     void intervalTimerTimedOut();
 };
 

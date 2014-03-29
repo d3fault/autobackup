@@ -2,6 +2,8 @@
 #define MOUSEANDORMOTIONVIEWMAKERGUI_H
 
 #include <QObject>
+#include <QStringList>
+#include <QSize>
 
 #include "objectonthreadhelper.h"
 #include "mouseandormotionviewmaker.h"
@@ -12,9 +14,12 @@ class MouseAndOrMotionViewMakerGui : public QObject
     Q_OBJECT
 public:
     explicit MouseAndOrMotionViewMakerGui(QObject *parent = 0);
+    ~MouseAndOrMotionViewMakerGui();
 private:
     ObjectOnThreadHelper<MouseAndOrMotionViewMaker> m_BusinessThread;
-    MouseAndOrMotionViewMakerWidget m_Gui;
+    MouseAndOrMotionViewMakerWidget *m_Gui;
+    QSize m_ViewSize;
+    int m_UpdateIntervalMs;
 public slots:
     void handleMouseAndOrMotionViewMakerReadyForConnections();
     void handleAboutToQuit();
