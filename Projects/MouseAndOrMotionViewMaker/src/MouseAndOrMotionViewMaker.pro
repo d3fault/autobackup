@@ -22,3 +22,6 @@ HEADERS  += mouseandormotionviewmakerwidget.h \
     mouseandormotionviewmaker.h
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
+
+RESOURCES += \
+    mouseCursor.qrc

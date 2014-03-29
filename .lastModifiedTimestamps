@@ -2684,11 +2684,13 @@ Projects/LossyDirectoryCopier/src/main.cpp:1386648220
 Projects/MouseAndOrMotionViewMaker/:1396063179
 Projects/MouseAndOrMotionViewMaker/design/:1396053309
 Projects/MouseAndOrMotionViewMaker/design/initial.idea.txt:1396053674
-Projects/MouseAndOrMotionViewMaker/src/:1396067365
-Projects/MouseAndOrMotionViewMaker/src/MouseAndOrMotionViewMaker.pro:1396053889
+Projects/MouseAndOrMotionViewMaker/src/:1396111204
+Projects/MouseAndOrMotionViewMaker/src/MouseAndOrMotionViewMaker.pro:1396110368
 Projects/MouseAndOrMotionViewMaker/src/main.cpp:1396064851
-Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmaker.cpp:1396067311
-Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmaker.h:1396063749
+Projects/MouseAndOrMotionViewMaker/src/mouseCursor.qrc:1396110428
+Projects/MouseAndOrMotionViewMaker/src/mouseCursor.svg:1396110150
+Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmaker.cpp:1396111204
+Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmaker.h:1396105569
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.cpp:1396064089
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396063749
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1396063867

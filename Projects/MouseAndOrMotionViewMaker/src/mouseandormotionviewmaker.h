@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <QPixmap>
 #include <QPoint>
+#include <QRect>
+#include <QCursor>
 
 class QScreen;
 
@@ -24,6 +26,9 @@ private:
     int m_ViewHeight;
     QPixmap m_PreviousPixmap;
     QPixmap m_CurrentPixmap;
+    QPixmap m_MousePixmapToDraw;
+
+    QRect makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
 signals:
     void d(const QString &);
     void presentPixmapForViewingRequested(const QPixmap &);
