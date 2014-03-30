@@ -1,6 +1,5 @@
 #include "anonymousbitcoincomputingwtgui.h"
 
-
 #include "validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
 #include "registersuccessfulwidget.h"
 #include "accounttabs/addfundsaccounttabbody.h"
@@ -1409,18 +1408,30 @@ void AnonymousBitcoinComputingWtGUI::doHackyOneTimeBuyEventUpdateThingoForNoJava
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
 {
     deferRendering();
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::DiscardCASMode);
+#else
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::DiscardCASMode);
+#endif
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get)
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasBegin(const string &keyToCouchbaseDocument)
 {
     deferRendering();
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
+#else
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
+#endif
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get)
 }
 void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas(const string &keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeEnum subscribeMode)
 {
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode, subscribeMode);
+#else
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode, subscribeMode);
+#endif
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Get)
 }
 //original outdated code with comments
@@ -1479,13 +1490,21 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
 void AnonymousBitcoinComputingWtGUI::store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode)
 {
     deferRendering();
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    StoreCouchbaseDocumentByKeyRequest *couchbaseRequest = new StoreCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
+#else
     StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
+#endif
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Store)
 }
 void AnonymousBitcoinComputingWtGUI::store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum)
 {
     deferRendering();
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    StoreCouchbaseDocumentByKeyRequest *couchbaseRequest = new StoreCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas, whatToDoWithOutputCasEnum);
+#else
     StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas, whatToDoWithOutputCasEnum);
+#endif
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Store)
 }
 //these two "StoreLarge" methods are currently used in three places:
@@ -1495,14 +1514,24 @@ void AnonymousBitcoinComputingWtGUI::store_SETonly_CouchbaseDocumentByKeyWithInp
 void AnonymousBitcoinComputingWtGUI::storeLarge_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, StoreCouchbaseDocumentByKeyRequest::LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum storeMode)
 {
     deferRendering();
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    StoreCouchbaseDocumentByKeyRequest *couchbaseRequest = new StoreCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
+    ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Store)
+#else
     StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, storeMode);
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(StoreLarge)
+#endif
 }
 void AnonymousBitcoinComputingWtGUI::storeLarge_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, StoreCouchbaseDocumentByKeyRequest::WhatToDoWithOutputCasEnum whatToDoWithOutputCasEnum)
 {
     deferRendering();
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    StoreCouchbaseDocumentByKeyRequest *couchbaseRequest = new StoreCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas, whatToDoWithOutputCasEnum);
+    ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(Store)
+#else
     StoreCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, couchbaseDocument, cas, whatToDoWithOutputCasEnum);
     ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(StoreLarge)
+#endif
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {

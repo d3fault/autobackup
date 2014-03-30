@@ -50,7 +50,7 @@ QPoint MouseAndOrMotionViewMaker::makeRectAroundPointStayingWithinResolution(con
     }
     return ret;
 }
-void MouseAndOrMotionViewMaker::startMakingMouseAndOrMotionViews(const QSize &viewSize, int updateInterval)
+void MouseAndOrMotionViewMaker::startMakingMouseAndOrMotionViews(const QSize &viewSize, int updateInterval, int bottomPixelRowsToIgnore)
 {
     if(!m_Initialized)
     {
@@ -60,6 +60,7 @@ void MouseAndOrMotionViewMaker::startMakingMouseAndOrMotionViews(const QSize &vi
     m_ViewWidth = viewSize.width();
     m_ViewHeight = viewSize.height();
     m_IntervalTimer.start(updateInterval);
+    m_BottomPixelRowsToIgnore = bottomPixelRowsToIgnore; //woot Xfce lets me specify this directly/easily
 }
 void MouseAndOrMotionViewMaker::intervalTimerTimedOut()
 {
@@ -109,7 +110,8 @@ void MouseAndOrMotionViewMaker::intervalTimerTimedOut()
 
             //scan left right top down until difference seen. TODOoptimization: would definitely be more efficient to just center on the first difference seen, though on "window moving" we'd then see the top-left corner of the window being moved [only]. still, for typing etc it would suffice and save cpu. damnit, mfw window moves will trigger mouse movement code path anyways -_-
             bool differenceSeen = false;
-            for(int j = 0; j < currentImageHeight; ++j) //TODOoptional: chop out the bottom right hand corner of screen from motion analysis, since my clock is updated every one second and i want to keep it that way...
+            //what's easier? patching+recompiling qt so that it doesn't show the line/col numbers (motion) at the top right corner (move it to bottom, or hide it altogether)... OR just scanning for motion from the bottom -> top? ;-P.
+            for(int j = ((currentImageHeight-1)-m_BottomPixelRowsToIgnore); j > -1; --j) //TO DOneoptional: chop out the 'start bar' from motion analysis, since my clock is updated every one second and i want to keep it that way...
             {
                 const QRgb *currentImagePixel = (const QRgb*)(currentImage.constScanLine(j));
                 const QRgb *previousImagePixel = (const QRgb*)(previousImage.constScanLine(j));

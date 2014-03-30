@@ -1,6 +1,13 @@
 #ifndef GETCOUCHBASEDOCUMENTBYKEYREQUEST_H
 #define GETCOUCHBASEDOCUMENTBYKEYREQUEST_H
 
+#include "../abc2common.h"
+
+#include <sys/types.h>
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#include <string>
+#else
 #include <cstring>
 
 #include <boost/archive/text_iarchive.hpp>
@@ -8,6 +15,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/binary_object.hpp>
 #include <boost/serialization/split_member.hpp>
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 class AnonymousBitcoinComputingWtGUI;
 
@@ -47,6 +55,7 @@ public:
     static void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, std::string couchbaseDocument, bool lcbOpSuccess, bool dbError);
     static void respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest,  std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 private:
+#ifndef ABC_USE_BOOST_LOCKFREE_QUEUE
     friend class boost::serialization::access;
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const
@@ -78,6 +87,7 @@ private:
         ar & GetAndSubscribe;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 };
 
 #endif // GETCOUCHBASEDOCUMENTBYKEYREQUEST_H

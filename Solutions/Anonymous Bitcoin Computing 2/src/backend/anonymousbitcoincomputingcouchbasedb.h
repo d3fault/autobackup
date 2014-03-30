@@ -7,18 +7,25 @@
 
 #include <boost/preprocessor/repeat.hpp>
 #include <boost/thread.hpp>
-#include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/function.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/foreach.hpp>
+
+#include "../abc2common.h"
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#include <boost/lockfree/queue.hpp>
+using namespace boost::lockfree;
+#else
+#include <boost/interprocess/ipc/message_queue.hpp>
+using namespace boost::interprocess;
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 #include "getandsubscribecacheitem.h"
 #include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h"
 #include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h"
 
 //#define ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
-
-using namespace boost::interprocess;
 
 typedef boost::unordered_map<std::string /*key*/, GetAndSubscribeCacheItem* /*doc,cas,listOfSubscribers*/> GetAndSubscribeCacheHashType;
 
@@ -27,11 +34,29 @@ typedef boost::unordered_map<std::string /*key*/, GetAndSubscribeCacheItem* /*do
 #define ABC_COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO(z, n, text) \
 struct event *m_##text##EventCallbackForWt##n;
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO(z, n, text) \
-message_queue *m_##text##WtMessageQueue##n;
+    queue<text##CouchbaseDocumentByKeyRequest*> *m_##text##WtMessageQueue##n;
+#else
+#define ABC_COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO(z, n, text) \
+    message_queue *m_##text##WtMessageQueue##n;
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO(text) \
-void *m_##text##MessageQueuesCurrentMessageBuffer; //TODOoptimization: really only need one message buffer queue on backend, but it needs to be the size of the largest type of message (store,storeLarge,get <- most likely storeLarge's size in those 3 xD)
+    text##CouchbaseDocumentByKeyRequest *m_##text##MessageQueuesCurrentMessageBuffer;
+#else
+#define ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO(text) \
+    void *m_##text##MessageQueuesCurrentMessageBuffer;
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
+//TODOoptimization: ^really only need one message buffer queue on backend, but it needs to be the size of the largest type of message (store,storeLarge,get <- most likely storeLarge's size in those 3 xD)
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DECLARATIONS_MACRO(z, n, text) \
+queue<text##CouchbaseDocumentByKeyRequest*> *get##text##LockFreeQueueForWt##n();
+#else
+#define ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DECLARATIONS_MACRO(z, n, text)
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 #define ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO(z, n, text) \
 struct event *get##text##EventCallbackForWt##n();
@@ -57,26 +82,55 @@ void eventSlotForWt##text();
 #define ABC_SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO(z, n, text) \
 m_##text##EventCallbackForWt##n = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, eventSlotForWt##text##n##Static, this);
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(text) \
-free(m_##text##MessageQueuesCurrentMessageBuffer); \
-m_##text##MessageQueuesCurrentMessageBuffer = NULL;
+    m_##text##MessageQueuesCurrentMessageBuffer = NULL;
+#else
+#define ABC_FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(text) \
+    free(m_##text##MessageQueuesCurrentMessageBuffer); \
+    m_##text##MessageQueuesCurrentMessageBuffer = NULL;
+#endif
 
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_REMOVE_ALL_MESSAGE_QUEUES_MACRO(z, n, text)
+#else
 #define ABC_REMOVE_ALL_MESSAGE_QUEUES_MACRO(z, n, text) \
-message_queue::remove(ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
-#text \
-#n);
+    message_queue::remove(ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
+    #text \
+    #n);
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 #define ABC_CLOSE_AND_DELETE_ALL_NEWD_COUCHBASE_MESSAGE_QUEUES_MACRO(z, n, text) \
 delete m_##text##WtMessageQueue##n; \
 m_##text##WtMessageQueue##n = NULL;
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_MALLOC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(text)
+#else
 #define ABC_MALLOC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO(text) \
-m_##text##MessageQueuesCurrentMessageBuffer = malloc(ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
+    m_##text##MessageQueuesCurrentMessageBuffer = malloc(ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) \
-m_##text##WtMessageQueue##n = new message_queue(create_only, ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
-#text \
-#n, ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_##text, ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
+    m_##text##WtMessageQueue##n = new queue<text##CouchbaseDocumentByKeyRequest*>(); /*TODOreq: should i specify a capacity? err not even sure that's what the example means, but guessing yes. capacity probably not necessary, but if i want memory usage to stay constant[-ER(because 'variable amount of connections make that impossibru)] i should set one... */
+#else
+#define ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) \
+    m_##text##WtMessageQueue##n = new message_queue(create_only, ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
+    #text \
+    #n, ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_##text, ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text);
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DEFINITIONS_MACRO(z, n, text) \
+    queue<text##CouchbaseDocumentByKeyRequest*> *AnonymousBitcoinComputingCouchbaseDB::get##text##LockFreeQueueForWt##n() \
+    { \
+        return m_##text##WtMessageQueue##n; \
+    }
+#else
+    #define ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DEFINITIONS_MACRO(z, n, text)
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 #define ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DEFINITIONS_MACRO(z, n, text) \
 struct event *AnonymousBitcoinComputingCouchbaseDB::get##text##EventCallbackForWt##n() \
@@ -92,29 +146,50 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n##Static(evuti
     static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->eventSlotForWt##text##n(); \
 }
 
+#define NUMBER_OF_MESSAGES_TO_READ_FROM_QUEUE_BEFORE_GIVING_A_DIFFERENT_QUEUE_A_CHANCE 4
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO(z, n, text) \
+    void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n() \
+    { \
+        unsigned char currentReadsBeforeGivingOtherQueuesAchance = 0; \
+        bool receiveSuccess; \
+        do \
+        { \
+            if(!(receiveSuccess = m_##text##WtMessageQueue##n->pop(m_##text##MessageQueuesCurrentMessageBuffer))) \
+            { \
+                return; \
+            } \
+            eventSlotForWt##text(); \
+        }while(++currentReadsBeforeGivingOtherQueuesAchance < NUMBER_OF_MESSAGES_TO_READ_FROM_QUEUE_BEFORE_GIVING_A_DIFFERENT_QUEUE_A_CHANCE); \
+/* for now just going to spend the extra POTENTIALLY needless re-schedule. HAD:       if(receiveSuccess && !m_##text##WtMessageQueue##n->empty()) TODOreq: not sure if this empty() check is safe, the documentation seems to imply it ISN'T, but eh it might be given my usage of it... */ \
+            event_active(m_##text##EventCallbackForWt##n, EV_READ|EV_WRITE, 0); \
+    }
+#else
+#define ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO(z, n, text) \
+    void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n() \
+    { \
+        unsigned int priority; \
+        message_queue::size_type actualMessageSize; \
+        unsigned char currentReadsBeforeGivingOtherQueuesAchance = 0; \
+        bool receiveSuccess; \
+        do \
+        { \
+            if(!(receiveSuccess = m_##text##WtMessageQueue##n->try_receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority))) \
+            { \
+                return; \
+            } \
+            eventSlotForWt##text(); \
+        }while(++currentReadsBeforeGivingOtherQueuesAchance < NUMBER_OF_MESSAGES_TO_READ_FROM_QUEUE_BEFORE_GIVING_A_DIFFERENT_QUEUE_A_CHANCE); \
+        if(receiveSuccess && (m_##text##WtMessageQueue##n->get_num_msg() > 0)) \
+        { \
+            event_active(m_##text##EventCallbackForWt##n, EV_READ|EV_WRITE, 0); \
+        } \
+    }
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 //My assumption (or, faulty understanding) that libevents were like signals and that emitting them multiple times would cause the receiving slot (callback) to be invoked the same amount of times was wrong. The 'event' is either active or inactive, and making it active when it's already active does nothing. I'd rather be wrong and have to change a tiny bit of code (adding the below while(try_receive) now) than be right and have to refactor a ton of it (a la lockfree::queue or some other solution)
 //TO DOnereq(using 3 max (seen as '< 4' in code) successful try_receives before giving other queues a chance): now that i've changed to a while(try_receive) design, there's a very real possibility that when a server's at high load, that a SINGLE queue will never leave that while loop! it needs to be fair-ER and give the other queues a chance, even when there are more. Random [FAIL (keep readan]] solution: if the 2nd try_receive succeeds, we add our queue # to a list (queue ;-P) that we 'come back to' after trying... err... other... queues. but if the 2nd try_receive fails, we don't add ourselves to that queue because then we know event_active will take care of it. but when to process that list/queue? when a 2nd try_receive fails i suppose... but we'd need to also make it loop so that if we're checking BECAUSE of queued, we can re-enter queued if we try_receive two in a row. so two in a row are ever at most tried, THEN WE GO BACK TO LETTING LIBEVENT DECIDE WHICH MESSAGE QUEUE. if only one try_receive from that... aww shit now there's the problem of being in the accidental 'sweet spot' (bad in this case).... basically we could be stuck ONLY processing ones with 1x message in their queue that are incidently in that list/queue but never then processing the libevent ones------ lockfree::queue here i come..... WAIT NO lockfree::queue doesn't help me at all here ffffffff, i'd be in the same boat... oh shit oh shit...
 //^^maybe timers of length 0 (so long as they don't optimize themselves and become direct calls) whenever a 2nd try_receive succeeds? or hell, make active the very same one that got us here if 2nd try_receive succeeds? it IS thread-safe after all (again, as long as it doesn't optimize itself to become direct call). there is also the current number of messages, so i could check that it's > 0 after just one check (or do 2 or N) and then make the event active based on that...
-#define ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO(z, n, text) \
-void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##text##n() \
-{ \
-    unsigned int priority; \
-    message_queue::size_type actualMessageSize; \
-    unsigned char currentReadsBeforeGivingOtherQueuesAchance = 0; \
-    bool receiveSuccess; \
-    do \
-    { \
-        if(!(receiveSuccess = m_##text##WtMessageQueue##n->try_receive(m_##text##MessageQueuesCurrentMessageBuffer,(message_queue::size_type)ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_##text, actualMessageSize, priority))) \
-        { \
-            return; \
-        } \
-        eventSlotForWt##text(); \
-    }while(++currentReadsBeforeGivingOtherQueuesAchance < 4); \
-    if(receiveSuccess && (m_##text##WtMessageQueue##n->get_num_msg() > 0)) \
-    { \
-        event_active(m_##text##EventCallbackForWt##n, EV_READ|EV_WRITE, 0); \
-    } \
-}
 
 #define ABC_TELL_MAIN_THREAD_THAT_COUCHBASE_FAILED_MACRO \
 { \
@@ -132,17 +207,26 @@ if(m_NoMoreAllowedMuahahaha && m_PendingStoreCount == 0 && m_PendingGetCount == 
 
 //TO DOneoptional: delete this now worthless macro (theoretically, all macros are worthless (because everything evaluates to one))
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_READ_STORE_REQUEST_FROM_APPROPRIATE_MESSAGE_BUFFER(storeSize) \
-if(m_NoMoreAllowedMuahahaha) \
-{ \
-    return; \
-} \
-StoreCouchbaseDocumentByKeyRequest *originalRequest = new StoreCouchbaseDocumentByKeyRequest(); \
-{ \
-    std::istringstream originalRequestSerialized(static_cast<const char*>(m_##storeSize##MessageQueuesCurrentMessageBuffer)); \
-    boost::archive::text_iarchive deSerializer(originalRequestSerialized); \
-    deSerializer >> *originalRequest; \
-}
+    if(m_NoMoreAllowedMuahahaha) \
+    { \
+        return; \
+    } \
+    StoreCouchbaseDocumentByKeyRequest *originalRequest = m_##storeSize##MessageQueuesCurrentMessageBuffer;
+#else
+#define ABC_READ_STORE_REQUEST_FROM_APPROPRIATE_MESSAGE_BUFFER(storeSize) \
+    if(m_NoMoreAllowedMuahahaha) \
+    { \
+        return; \
+    } \
+    StoreCouchbaseDocumentByKeyRequest *originalRequest = new StoreCouchbaseDocumentByKeyRequest(); \
+    { \
+        std::istringstream originalRequestSerialized(static_cast<const char*>(m_##storeSize##MessageQueuesCurrentMessageBuffer)); \
+        boost::archive::text_iarchive deSerializer(originalRequestSerialized); \
+        deSerializer >> *originalRequest; \
+    }
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 //You know you're a god when you can use a BOOST_PP_REPEAT within a call to BOOST_PP_REPEAT
 #ifndef ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO
@@ -171,6 +255,9 @@ public:
     bool isFinishedWithAllPendingRequests();
     void waitForJoin();
     bool threadExittedCleanly();
+
+    //queue<StoreCouchbaseDocumentByKeyRequest*> *getStoreLockFreeQueueForWt0();
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DECLARATIONS_MACRO)
 
     //struct event *getStoreEventCallbackForWt0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO)

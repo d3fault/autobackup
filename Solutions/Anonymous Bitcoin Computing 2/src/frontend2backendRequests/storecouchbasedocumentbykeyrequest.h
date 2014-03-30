@@ -1,6 +1,13 @@
 #ifndef STORECOUCHBASEDOCUMENTBYKEYREQUEST_H
 #define STORECOUCHBASEDOCUMENTBYKEYREQUEST_H
 
+#include "../abc2common.h"
+
+#include <sys/types.h>
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#include <string>
+#else
 #include <cstring>
 
 #include <boost/archive/text_iarchive.hpp>
@@ -8,6 +15,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/binary_object.hpp>
 #include <boost/serialization/split_member.hpp>
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 class AnonymousBitcoinComputingWtGUI;
 
@@ -45,6 +53,7 @@ public:
     static void respond(StoreCouchbaseDocumentByKeyRequest *originalRequest, bool lcbOpSuccess, bool dbError);
     static void respondWithCas(StoreCouchbaseDocumentByKeyRequest *originalRequest, u_int64_t casOutput, bool lcbOpSuccess, bool dbError);
 private:
+#ifndef ABC_USE_BOOST_LOCKFREE_QUEUE
     friend class boost::serialization::access;
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const
@@ -88,6 +97,7 @@ private:
         ar & SaveCasOutput;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 };
 
 #endif // STORECOUCHBASEDOCUMENTBYKEYREQUEST_H

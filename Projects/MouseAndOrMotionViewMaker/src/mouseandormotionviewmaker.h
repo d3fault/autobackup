@@ -24,6 +24,7 @@ private:
     int m_ScreenResolutionY;
     int m_ViewWidth;
     int m_ViewHeight;
+    int m_BottomPixelRowsToIgnore;
     QPixmap m_PreviousPixmap;
     QPixmap m_CurrentPixmap;
     QPixmap m_MousePixmapToDraw;
@@ -33,7 +34,7 @@ signals:
     //void d(const QString &);
     void presentPixmapForViewingRequested(const QPixmap &);
 public slots:
-    void startMakingMouseAndOrMotionViews(const QSize &viewSize, int updateInterval);
+    void startMakingMouseAndOrMotionViews(const QSize &viewSize, int updateInterval, int bottomPixelRowsToIgnore);
     void intervalTimerTimedOut();
 };
 

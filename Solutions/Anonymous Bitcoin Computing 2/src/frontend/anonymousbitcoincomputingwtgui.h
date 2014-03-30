@@ -27,8 +27,6 @@
 #include <Wt/WDefaultLoadingIndicator>
 //#include <Wt/Chart/WCartesianChart>
 
-//TODOoptimization: a compile time switch alternating between message_queue and lockfree::queue (lockfree::queue doesn't need mutexes or the try, try try, blockLock logic)
-#include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/preprocessor/repeat.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp>
@@ -36,6 +34,16 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+
+#include "../abc2common.h"
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#include <boost/lockfree/queue.hpp>
+using namespace boost::lockfree;
+#else
+#include <boost/interprocess/ipc/message_queue.hpp>
+using namespace boost::interprocess;
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 #include "accounttabs/actuallazyloadedtabwidget.h"
 
@@ -46,7 +54,6 @@
 
 using namespace Wt;
 using namespace Wt::Utils;
-using namespace boost::interprocess;
 using namespace boost::property_tree;
 using namespace std;
 
@@ -55,28 +62,51 @@ using namespace std;
 //100ms javascript interval
 #define ABC_START_JS_INTERVAL_SNIPPET m_CurrentPriceDomPath + ".z0bj.tehIntervalz = setInterval(" + m_CurrentPriceDomPath + ".z0bj.tehIntervalzCallback, 100);" + m_CurrentPriceDomPath + ".z0bj.tehIntervalIsRunnan = true;"
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_WT_STATIC_MESSAGE_QUEUE_SOURCE_DEFINITION_MACRO(text) \
-message_queue *AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+    queue<text##CouchbaseDocumentByKeyRequest*> *AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+#else
+#define ABC_WT_STATIC_MESSAGE_QUEUE_SOURCE_DEFINITION_MACRO(text) \
+    message_queue *AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 #define ABC_WT_STATIC_EVENT_SOURCE_DEFINITION_MACRO(text) \
 event *AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    #define ABC_WT_STATIC_MUTEX_SOURCE_DEFINITION_MACRO(text)
+#else
 #define ABC_WT_STATIC_MUTEX_SOURCE_DEFINITION_MACRO(text) \
-boost::mutex AnonymousBitcoinComputingWtGUI::m_##text##MutexArray[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+    boost::mutex AnonymousBitcoinComputingWtGUI::m_##text##MutexArray[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_WT_STATIC_MESSAGE_QUEUE_HEADER_DECLARATION_MACRO(text) \
-static message_queue *m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+    static queue<text##CouchbaseDocumentByKeyRequest*> *m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+#else
+#define ABC_WT_STATIC_MESSAGE_QUEUE_HEADER_DECLARATION_MACRO(text) \
+    static message_queue *m_##text##WtMessageQueues[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 #define ABC_WT_STATIC_EVENT_HEADER_DECLARATION_MACRO(text) \
 static event *m_##text##EventCallbacksForWt[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_WT_STATIC_MUTEX_HEADER_DECLARATION_MACRO(text)
+#else
 #define ABC_WT_STATIC_MUTEX_HEADER_DECLARATION_MACRO(text) \
-static boost::mutex m_##text##MutexArray[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+    static boost::mutex m_##text##MutexArray[ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text];
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_WT_NEW_AND_OPEN_MESSAGE_QUEUE_MACRO(z, n, text)
+#else
 #define ABC_WT_NEW_AND_OPEN_MESSAGE_QUEUE_MACRO(z, n, text) \
 m_##text##WtMessageQueues[n] = new message_queue(open_only, ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
 #text \
 #n);
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
+
 
 #if 0
 #define ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO(text) \
@@ -90,9 +120,14 @@ m_Current##text##MessageQueueIndex = rawUniqueId() % ABC_NUMBER_OF_WT_TO_COUCHBA
 #define ABC_WT_PER_QUEUE_CURRENT_RANDOM_INDEX_DECLARATION_MACRO(text) \
 int m_Current##text##MessageQueueIndex;
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_WT_DELETE_MESSAGE_QUEUE_MACRO(z, n, text) \
+m_##text##WtMessageQueues[n] = NULL; //couchbase side deletes the lockfree queues
+#else
 #define ABC_WT_DELETE_MESSAGE_QUEUE_MACRO(z, n, text) \
 delete m_##text##WtMessageQueues[n]; \
 m_##text##WtMessageQueues[n] = NULL;
+#endif /*ABC_USE_BOOST_LOCKFREE_QUEUE*/
 
 #ifndef ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO
 #define ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO(z, n, text) \
@@ -103,6 +138,38 @@ ABC_sofdsufoMACRO_SUBSTITUTION_HACK_FUCK_EVERYTHINGisau(text,ABC_NAME_OF_WT_TO_C
 #endif
 
 //see cpp file for original code with comments
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+
+#define ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(text) \
+++m_Current##text##MessageQueueIndex; \
+if(m_Current##text##MessageQueueIndex == ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) \
+{ \
+    m_Current##text##MessageQueueIndex = 0; \
+} \
+int lockedMutexIndex = m_Current##text##MessageQueueIndex; \
+int veryLastMutexIndexToBlockLock = (m_Current##text##MessageQueueIndex == 0 ? (ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) : (m_Current##text##MessageQueueIndex-1)); \
+while(true) \
+{ \
+    if(lockedMutexIndex == veryLastMutexIndexToBlockLock) \
+    { \
+        while(!m_##text##WtMessageQueues[lockedMutexIndex]->push(couchbaseRequest)) ; /* keep trying to push until success */ \
+        break; \
+    } \
+    if(m_##text##WtMessageQueues[lockedMutexIndex]->push(couchbaseRequest)) \
+    { \
+        break; \
+    } \
+    ++lockedMutexIndex; \
+    if(lockedMutexIndex == ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_##text) \
+    { \
+        lockedMutexIndex = 0; \
+    } \
+} \
+event_active(m_##text##EventCallbacksForWt[lockedMutexIndex], EV_READ|EV_WRITE, 0);
+
+
+#else // ABC_USE_BOOST_LOCKFREE_QUEUE
+
 #define ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(text) \
 std::ostringstream couchbaseRequestSerialized; \
 { \
@@ -142,6 +209,8 @@ while(true) \
 m_##text##WtMessageQueues[lockedMutexIndex]->send(static_cast<const void*>(couchbaseRequesSerializedString.c_str()), couchbaseRequesSerializedStringLength, 0); \
 event_active(m_##text##EventCallbacksForWt[lockedMutexIndex], EV_READ|EV_WRITE, 0); \
 m_##text##MutexArray[lockedMutexIndex].unlock();
+
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 

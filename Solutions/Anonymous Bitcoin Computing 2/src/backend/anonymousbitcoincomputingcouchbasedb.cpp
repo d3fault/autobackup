@@ -294,7 +294,6 @@ void AnonymousBitcoinComputingCouchbaseDB::configurationCallback(lcb_configurati
             BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_REMOVE_ALL_MESSAGE_QUEUES_MACRO)
 
 
-
             //m_StoreWtMessageQueue0 = new message_queue(create_only, "BlahBaseNameStore0", 200x, 100kb);
             BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO)
 
@@ -895,11 +894,13 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore()
     ABC_READ_STORE_REQUEST_FROM_APPROPRIATE_MESSAGE_BUFFER(Store)
     ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(Store)
 }
+#ifndef ABC_USE_BOOST_LOCKFREE_QUEUE //hack. couldn't boost pp repeat these since Get is way different (get and subscribe hackery (which, if moved to a separate object entirely, would probably solve the problem))...
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStoreLarge()
 {
     ABC_READ_STORE_REQUEST_FROM_APPROPRIATE_MESSAGE_BUFFER(StoreLarge)
     ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(Store) //not StoreLarge!
 }
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 {
     if(m_NoMoreAllowedMuahahaha) //TODOoptional: we should still allow unsubscribe requests to be processed? probably doesn't matter but idk tbh...
@@ -908,6 +909,9 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         //TODOoptional: post() a response, BUT really that doesn't matter too much because i mean the server's about to go down regardless... (unless i'm taking db down ONLY and wt is staying up (lol wut?))
     }
 
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    GetCouchbaseDocumentByKeyRequest *originalRequest = m_GetMessageQueuesCurrentMessageBuffer;
+#else
     GetCouchbaseDocumentByKeyRequest *originalRequest = new GetCouchbaseDocumentByKeyRequest(); //TODOoptimization: get new or recycled maybe? idfk. i think since i'm always so tempted to do get new or recycled all around my code, i should finally benchmark it... xD. still i've heard that "allocations are ridiculously slow", and this makes sense especially considering there's a mutex lock involved. i think i benchmarked something similar a while back, but it had some other qt shit involved so idk
 
     {
@@ -915,6 +919,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         boost::archive::text_iarchive deSerializer(getCouchbaseDocumentByKeyRequestFromWtSerialized);
         deSerializer >> *originalRequest;
     }
+#endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
     if(originalRequest->GetAndSubscribe != 0)
     {
@@ -1027,6 +1032,12 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
     //get new or recycled AutoRetryingWithExponentialBackoffCouchbaseGetRequest
     ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(Get)
 }
+//queue<StoreCouchbaseDocumentByKeyRequest*> *AnonymousBitcoinComputingCouchbaseDB::getStoreLockFreeQueueForWt0()
+//{
+//    return m_StoreWtMessageQueue0;
+//}
+BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DEFINITIONS_MACRO)
+
 //struct event *AnonymousBitcoinComputingCouchbaseDB::getStoreEventCallbackForWt0()
 //{
 //    return m_StoreEventCallbackForWt0;

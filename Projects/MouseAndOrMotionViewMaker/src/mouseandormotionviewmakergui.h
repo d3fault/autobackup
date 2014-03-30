@@ -20,6 +20,7 @@ private:
     MouseAndOrMotionViewMakerWidget *m_Gui;
     QSize m_ViewSize;
     int m_UpdateIntervalMs;
+    int m_BottomPixelRowsToIgnore;
 public slots:
     void handleMouseAndOrMotionViewMakerReadyForConnections();
     void handleAboutToQuit();

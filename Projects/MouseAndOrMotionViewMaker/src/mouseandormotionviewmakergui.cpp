@@ -39,6 +39,15 @@ MouseAndOrMotionViewMakerGui::MouseAndOrMotionViewMakerGui(QObject *parent) :
             m_UpdateIntervalMs = updateInterval;
         }
     }
+    m_BottomPixelRowsToIgnore = 25;
+    if(arguments.size() > 4)
+    {
+        int bottomPixelRowsToIgnore = arguments.at(4).toInt(&convertOk);
+        if(convertOk && bottomPixelRowsToIgnore > -1) //&& < resolutionHeight
+        {
+            m_BottomPixelRowsToIgnore = bottomPixelRowsToIgnore;
+        }
+    }
     //TODOoptional: could do drawn cursor image path, whether or not to save the image as video, etc...
 
     m_Gui = new MouseAndOrMotionViewMakerWidget(m_ViewSize);
@@ -55,7 +64,7 @@ void MouseAndOrMotionViewMakerGui::handleMouseAndOrMotionViewMakerReadyForConnec
     connect(business, SIGNAL(presentPixmapForViewingRequested(QPixmap)), m_Gui, SLOT(presentPixmapForViewing(QPixmap)));
 
     m_Gui->show();
-    QMetaObject::invokeMethod(business, "startMakingMouseAndOrMotionViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_UpdateIntervalMs));
+    QMetaObject::invokeMethod(business, "startMakingMouseAndOrMotionViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_UpdateIntervalMs), Q_ARG(int, m_BottomPixelRowsToIgnore));
 }
 void MouseAndOrMotionViewMakerGui::handleAboutToQuit()
 {

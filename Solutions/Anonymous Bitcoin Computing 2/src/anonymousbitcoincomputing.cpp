@@ -1,7 +1,24 @@
 #include "anonymousbitcoincomputing.h"
 
+#include <boost/preprocessor/repeat.hpp>
+
+#include "abc2common.h"
 #include "frontend/anonymousbitcoincomputingwtgui.h"
 #include "backend/anonymousbitcoincomputingcouchbasedb.h"
+
+/////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
+
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+#define ABC_GIVE_WT_THE_LOCKFREE_QUEUE_POINTERS(z, n, text) \
+    AnonymousBitcoinComputingWtGUI::m_##text##WtMessageQueues[n] = couchbaseDb.get##text##LockFreeQueueForWt##n();
+#else
+#define ABC_GIVE_WT_THE_LOCKFREE_QUEUE_POINTERS(z, n, text)
+#endif
+
+#define ABC_TELL_WT_ABOUT_THE_LIBEVENTS_WE_SET_UP_FOR_IT_TO_SEND_MESSAGES_TO_COUCHBASE_MACRO(z, n, text) \
+AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[n] = couchbaseDb.get##text##EventCallbackForWt##n();
+
+/////////////////////////////////////////////////////END MACRO HELL/////////////////////////////////////////////////
 
 int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 {
@@ -36,6 +53,9 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
         }
     } TellWtToNewAndOpenButEventuallyCloseAndDeleteMessageQueuesWeKnowItHasScopedDeleterInstance;
 
+    //give wt the lockfree queue pointers. this is pretty much equivalent to newAndOpenAllWtMessageQueues, except for lockfree queue
+    //AnonymousBitcoinComputingWtGUI::m_StoreWtMessageQueues[n] = couchbaseDb.getStoreLockFreeQueueForWt0();
+    BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_GIVE_WT_THE_LOCKFREE_QUEUE_POINTERS)
 
     //register the wt -> couchbase events
     //AnonymousBitcoinComputingWtGUI::m_StoreEventCallbacksForWt[0] = couchbaseDb.getStoreEventCallbackForWt0();
