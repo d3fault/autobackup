@@ -14,7 +14,7 @@
 //TODOoptional: could also put each 100mb chunk through a hash for checksumming etc
 //TODOreq: no idea how i would 'stop' this endless process... since i don't even want to! the whole purpose of the app is to keep a stream going indefinitely... so an exit point doesn't even make any sense...
 Hottee::Hottee(QObject *parent) :
-    QObject(parent), m_InputProcess(0), m_OutputProcess(0), m_WriteToOutputProcess(false), m_CurrentOutputFile(0), m_Current100mbChunkWriteOffset(0), m_Dest2(false), m_CurrentlyWritingToEitherDestination(false), m_StopWritingAtEndOfThisChunk(false), m_StartWritingAtBeginningOfNextChunk(false), m_QuitAfterThisChunkFinishes(false), m_100mbChunkOffsetForFilename(0)
+    QObject(parent), m_InputProcess(0), m_OutputProcess(0), m_WriteToOutputProcess(false), m_CurrentOutputFile(0), m_Current100mbChunkWriteOffset(0), m_Dest2(false), m_CurrentlyWritingToEitherDestination(false), m_StopWritingAtEndOfThisChunk(false), m_StartWritingAtBeginningOfNextChunk(false), m_QuitAfterThisChunkFinishes(false), m_100mbChunkOffsetForFilename(0), m_DestinationStoragePercentUsedLastTime(0)
 { }
 Hottee::~Hottee()
 {
@@ -22,6 +22,7 @@ Hottee::~Hottee()
 }
 void Hottee::toggleDestinations()
 {
+    m_DestinationStoragePercentUsedLastTime = 0;
     emit o("NOTICE: Just changed from " + m_CurrentDestinationEndingWithSlash); //listeners of this can know that the last 100mb chunk is flushed/closed by qt (but likely still needs "sync" system call (umount should take care of that))
     if(m_Dest2)
     {
@@ -66,6 +67,7 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
             if(m_StartWritingAtBeginningOfNextChunk)
             {
                 m_CurrentlyWritingToEitherDestination = true;
+                m_DestinationStoragePercentUsedLastTime = 0;
             }
             if(m_CurrentlyWritingToEitherDestination)
             {
@@ -76,6 +78,7 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
                     if(!m_CurrentOutputFile->flush())
                     {
                         emit d("error flushing 100mb chunk file: " + m_CurrentOutputFile->fileName());
+                        m_CurrentOutputFile->close();
                         return false;
                     }
                     m_CurrentOutputFile->close();
@@ -91,7 +94,7 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
                     emit d("Wait...");
                     cleanupHotteeing(); //it isn't strictly necessary to call this here, since it's called by our destructor... but in order to make readyRead never be emitted again, it's best to call it as soon as possible (now)
                     QMetaObject::invokeMethod(QCoreApplication::instance(), SLOT(quit()));
-                    return true; //true/false doesn't matter here, since readyRead is never emitted again we never geto to where it would matter
+                    return true; //true/false doesn't matter here, since readyRead is never emitted again we never get to to where it would matter
                 }
 
                 if(m_StopWritingAtEndOfThisChunk)
@@ -123,12 +126,15 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
                 }
 
                 //see if we are crossing over the 80% full border. if we are, output the "change soon" notification
-                double spaceUsedBeforeNext100mb = spaceCapacity-spaceAvailable;
-                double percentUsedBeforeNext100Mb = ((spaceUsedBeforeNext100mb/spaceCapacity)*100);
+                double destinationStorageSpaceUsedNow = spaceCapacity-spaceAvailable;
+                double destinationStoragePercentUsedNow = ((destinationStorageSpaceUsedNow/spaceCapacity)*100);
+#if 0 //bug, if the os is doing anything else, or if two hottee instances were running on same machine, the 80% threshold might not have been seen as crossed. the 'percent after' could have been 79.9999, then the os could have made it 80.0001, then the test would have failed and the signal never would have been emitted
                 double percentUsedAfterNext100mb = (((spaceUsedBeforeNext100mb+ONE_HUNDRED_MEGABYTES)/spaceCapacity)*100);
                 if(percentUsedBeforeNext100Mb < EMIT_CHANGE_SOON_AT_PERCENT && percentUsedAfterNext100mb >= EMIT_CHANGE_SOON_AT_PERCENT)
+#endif
+                if(m_DestinationStoragePercentUsedLastTime < EMIT_CHANGE_SOON_AT_PERCENT && destinationStoragePercentUsedNow >= EMIT_CHANGE_SOON_AT_PERCENT)
                 {
-                    //emit change soon, BUT check to see that it wasn't already done (hack)... by seeing if 100mb is available on it
+                    //emit 'urgent change soon' if the destination about to changed to isn't already empty/ready... by (hack) seeing if 100mb is available on it. Ideally they'd have done right when "INFO: destination changed" was seen
                     QString destinationAboutToChangeTo(m_Dest2 ? m_Destination1endingWithSlash : m_Destination2endingWithSlash);
                     boost::filesystem::path pathAboutToChangeTo(destinationAboutToChangeTo.toStdString());
                     boost::filesystem::space_info spaceInfoAboutToChangeTo = boost::filesystem::space(pathAboutToChangeTo);
@@ -137,6 +143,7 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
                         emit o("URGENT: 100mb is not available on: " + destinationAboutToChangeTo);
                     }
                 }
+                m_DestinationStoragePercentUsedLastTime = destinationStoragePercentUsedNow;
 
                 if(!createAndOpen100mbFileAtCurrentDestination())
                     return false;

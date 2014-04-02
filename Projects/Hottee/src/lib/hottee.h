@@ -27,6 +27,7 @@ private:
     bool m_StartWritingAtBeginningOfNextChunk;
     bool m_QuitAfterThisChunkFinishes;
     qint64 m_100mbChunkOffsetForFilename;
+    double m_DestinationStoragePercentUsedLastTime;
 
     void toggleDestinations();
     bool createAndOpen100mbFileAtCurrentDestination();

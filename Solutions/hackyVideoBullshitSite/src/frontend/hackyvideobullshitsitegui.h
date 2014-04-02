@@ -18,6 +18,7 @@ public:
 private:
     WContainerWidget *m_AdImagePlaceholderContainer;
     WAnchor *m_AdImageAnchor; //so angry
+    bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
     void handleAdImageChanged(WResource *newAdImageResource, std::string newAdUrl, std::string newAdAltAndHover);
 };

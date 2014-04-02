@@ -6,11 +6,12 @@
 #include <Wt/WAnchor>
 #include <Wt/WText>
 #include <Wt/WLink>
+#include <Wt/WEnvironment>
 
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
 
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
-    : WApplication(env), m_AdImageAnchor(0)
+    : WApplication(env), m_AdImageAnchor(0), m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
 {
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "getAndSubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, static_cast<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>(this)), Q_ARG(std::string, sessionId()), Q_ARG(GetAndSubscriptionUpdateCallbackType, boost::bind(&HackyVideoBullshitSiteGUI::handleAdImageChanged, this, _1, _2, _3)));
 
@@ -26,13 +27,13 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     //Checkbox: "Audio", checked by default
 
-    //Radio: "Video" /// "Auto" (default), "Virtual Only" (screen), "Actual Only" (face), "Both". Auto is controlled by me through some manual mechanism (propagates via WServer::post). If I'm codan etc, screen. If not, face. Actually this sounds like too much of a pain in the ass for me to do manually, but idk what to default to otherwise xD (defaulting to "both" sounds good, but then I've just doubled my bandwidth rofl!)
+    //Radio: "Video" /// "Auto" (default), "Virtual Only" (screen), "Actual Only" (face), "Both". Auto is controlled by me through some manual mechanism (propagates via WServer::post). If I'm codan etc, screen. If not, face. Actually this sounds like too much of a pain in the ass for me to do manually, but idk what to default to otherwise xD (defaulting to "both" sounds good, but then I've just doubled my bandwidth rofl!). Another idea almost worth its own text file is to use my mouse and/or motion detector to determine whether or not to show face only, or screen with face as thumbnail (which can still be 'separated' via this radio). Detecting motion on a SCREEN is easy and lossless, so whenever there ISN'T motion, we maximize face and don't even need to show the screen. I've decided I'll implement this later, however...
 
     WVideo *videoPlayer = new WVideo(container);
     videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     videoPlayer->addSource(WLink(WLink::Url, "http://localhost:8080/video.ogv"), "video/ogg");
     videoPlayer->resize(640, 480);
-    videoPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 video, or there was an error establishing a connection to the video stream"));
+    videoPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 Video, or there was an error establishing a connection to the video stream"));
 
     new WBreak(container); //is WAudio even visual?
     new WBreak(container);
@@ -40,17 +41,30 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     WAudio *audioPlayer = new WAudio(container);
     audioPlayer->setOptions(WAbstractMedia::Autoplay);
     audioPlayer->addSource(WLink(WLink::Url, "http://localhost:8081/audio.opus"), "audio/opus");
-    audioPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 audio, or there was an error establishing a connection to the audio stream"));
+    audioPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 Audio, or there was an error establishing a connection to the audio stream"));
 
-    enableUpdates(true);
+    if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
+    {
+        deferRendering();
+    }
+    else
+    {
+        enableUpdates(true);
+    }
 }
 HackyVideoBullshitSiteGUI::~HackyVideoBullshitSiteGUI()
 {
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "unsubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, this));
 }
-//TODOoptional: serialized wt instructions/etc passed in here and i could grow/transform the entire site before their eyes (has tons of WOO factor (but tbh, 'the web' (http/www) is fucking boring/shit), with the video being the only constant factor. i don't know the 'best' way to do what i describe, but i could do it hackily and i'm sure there's a 'proper' way to do it as well (would make for interesting reading)...
+//TODOoptional: serialized wt instructions/etc passed in here and i could grow/transform the entire site before their eyes (has tons of WOO factor (but tbh, 'the web' (http/www) is fucking boring/shit), with the video being the only constant factor. i don't know the 'best' way to do what i describe, but i could do it hackily and i'm sure there's a 'proper' way to do it as well (would make for interesting reading). I've thought more on this just because it's mildly interesting, and I think dynamic/run-time plugins would be the best way to do it
 void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResource, string newAdUrl, string newAdAltAndHover)
 {
+    if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred)
+    {
+        resumeRendering();
+        m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred = false;
+    }
+
     if(m_AdImageAnchor)
         delete m_AdImageAnchor; //delete/replace the previous one, if there was one (TODOoptimization: maybe just setImage/setUrl/etc instead?)
 
@@ -63,7 +77,10 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
         m_AdImageAnchor->setTarget(TargetNewWindow);
         placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
         m_AdImageAnchor->setToolTip("Buy this ad space for BTC 0.00001");
-        triggerUpdate();
+        if(environment.ajax())
+        {
+            triggerUpdate();
+        }
         return;
     }
 
@@ -78,5 +95,10 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
     adImage->setToolTip(newAdAltAndHover);
     m_AdImageAnchor->setToolTip(newAdAltAndHover);
 
-    triggerUpdate();
+    if(environment.ajax())
+    {
+        triggerUpdate();
+    }
+    //else: no-js will see the ad image update if/when they refresh or click a link to another item (TODOreq: test/confirm this, because i'm not sure it's true). COULD use a timer (which i'm more sure will work), but eh... naw..
+    //^if you actually do any code for this 'else', should probably copy/paste it to the no ad placeholder part too
 }

@@ -89,7 +89,7 @@ void MouseAndOrMotionViewMaker::intervalTimerTimedOut()
             painter.drawPixmap(currentCursorPosition.x()-rectWithinResolution.x(), currentCursorPosition.y()-rectWithinResolution.y(), m_MousePixmapToDraw.width(), m_MousePixmapToDraw.height(), m_MousePixmapToDraw);
         }
         emit presentPixmapForViewingRequested(m_CurrentPixmap);
-        m_PreviousPixmap = QPixmap(); //motion detection requires two non-mouse-movement frames in a row
+        m_PreviousPixmap = QPixmap(); //motion detection requires two non-mouse-movement frames in a row. this makes our !isNull check below fail
         return;
     }
 
@@ -110,21 +110,21 @@ void MouseAndOrMotionViewMaker::intervalTimerTimedOut()
 
             //scan left right top down until difference seen. TODOoptimization: would definitely be more efficient to just center on the first difference seen, though on "window moving" we'd then see the top-left corner of the window being moved [only]. still, for typing etc it would suffice and save cpu. damnit, mfw window moves will trigger mouse movement code path anyways -_-
             bool differenceSeen = false;
-            //what's easier? patching+recompiling qt so that it doesn't show the line/col numbers (motion) at the top right corner (move it to bottom, or hide it altogether)... OR just scanning for motion from the bottom -> top? ;-P.
+            //what's easier? patching+recompiling qtcreator so that it doesn't show the line/col numbers (motion) at the top right corner (move it to bottom, or hide it altogether)... OR just scanning for motion from the bottom -> top instead of top -> bottom? ;-P.
             for(int j = ((currentImageHeight-1)-m_BottomPixelRowsToIgnore); j > -1; --j) //TO DOneoptional: chop out the 'start bar' from motion analysis, since my clock is updated every one second and i want to keep it that way...
             {
-                const QRgb *currentImagePixel = (const QRgb*)(currentImage.constScanLine(j));
-                const QRgb *previousImagePixel = (const QRgb*)(previousImage.constScanLine(j));
+                const QRgb *currentPixelOfCurrentImage = (const QRgb*)(currentImage.constScanLine(j));
+                const QRgb *currentPixelOfPreviousImage = (const QRgb*)(previousImage.constScanLine(j));
                 for(int i = 0; i < currentImageWidth; ++i)
                 {
-                    if(*currentImagePixel != *previousImagePixel)
+                    if(*currentPixelOfCurrentImage != *currentPixelOfPreviousImage)
                     {
                         firstDifferenceSeenPoint = QPoint(i, j);
                         differenceSeen = true;
                         break;
                     }
-                    ++currentImagePixel;
-                    ++previousImagePixel;
+                    ++currentPixelOfCurrentImage;
+                    ++currentPixelOfPreviousImage;
                 }
                 if(differenceSeen)
                     break;
