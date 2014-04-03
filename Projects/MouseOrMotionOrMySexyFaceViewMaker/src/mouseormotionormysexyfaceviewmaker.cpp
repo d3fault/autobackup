@@ -9,9 +9,20 @@
 #include <QProcessEnvironment>
 #include <QStringList>
 #include <QDebug>
+#include <QTime>
+
+#define MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_AT_EACH_BEFORE_TOGGLING_MS 2000
+#define MOUSE_OR_MOTION_OR_MY_SEXY_FACE_DIVIDE_MY_SEXY_FACE_BY_WHEN_MAKING_THUMBNAIL 4
+
+#define MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter) \
+QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32); \
+QImage mySexyFaceImageThumbnail = mySexyFaceImage.scaled(m_CameraResolution.width() / MOUSE_OR_MOTION_OR_MY_SEXY_FACE_DIVIDE_MY_SEXY_FACE_BY_WHEN_MAKING_THUMBNAIL, m_CameraResolution.height() / MOUSE_OR_MOTION_OR_MY_SEXY_FACE_DIVIDE_MY_SEXY_FACE_BY_WHEN_MAKING_THUMBNAIL); \
+int border = 20; \
+painter.drawImage(m_ViewWidth-mySexyFaceImageThumbnail.width()-border, m_ViewHeight-mySexyFaceImageThumbnail.height()-border, mySexyFaceImageThumbnail); \
+
 
 MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *parent) :
-    QObject(parent), m_Initialized(false), m_MousePixmapToDraw(":/mouseCursor.svg"), m_HaveFrameOfMySexyFace(false)
+    QObject(parent), m_Initialized(false), m_MousePixmapToDraw(":/mouseCursor.svg"), m_HaveFrameOfMySexyFace(false), m_ShowingMySexyFace(false) /*the worst default ever*/, m_TogglingMinimumsTimerIsStarted(false)
 {
     m_Screen = QGuiApplication::primaryScreen();
     if(!m_Screen || (m_Screen->grabWindow(0).toImage().format() != QImage::Format_RGB32))
@@ -95,7 +106,7 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
     QStringList ffmpegArguments;
     ffmpegArguments << "-loglevel" << "warning" << "-f" << "video4linux2" << "-s" <<  (QString::number(cameraResolution.width()) + QString("x") + QString::number(cameraResolution.height()));
     //need to upgrade my ffmpeg version: ffmpegArguments << "-aspect" << "3:2";
-    ffmpegArguments << "-channel" << "1" << "-i" << cameraDevice << "-vcodec" << "rawvideo" << "-an" << "-r" << "11" << "-map" << "0" /*<< "-vf" << "crop=720:452:0:17"*/ << "-f" << "rawvideo" << "-pix_fmt" << "rgb32" << "-"; //QCamera is shit, libav too hard to use directly (isuck (actually i'd argue that that means the api sucks. cli args and c/c++ api should map 1:1 imotbh)). fuck yea one liners...
+    ffmpegArguments << "-channel" << "1" << "-i" << cameraDevice << "-vcodec" << "rawvideo" << "-an" << "-r" << "21" << "-map" << "0" /*<< "-vf" << "crop=720:452:0:17"*/ << "-f" << "rawvideo" << "-pix_fmt" << "rgb32" << "-"; //QCamera is shit, libav too hard to use directly (isuck (actually i'd argue that that means the api sucks. cli args and c/c++ api should map 1:1 imotbh)). fuck yea one liners...
     m_FfMpegProcess.start("/usr/local/bin/ffmpeg", ffmpegArguments, QIODevice::ReadOnly);
 
     //m_BytesNeededForOneRawRGB32frame = cameraResolution.width() * cameraResolution.height() * 32; //TODOoptional: bpp should be any format QImage accepts, but really ffmpeg is pro as fuck at converting anything and everything into RGB32 :-D, so it's kind of a useless customization...
@@ -112,6 +123,9 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
     m_PreviousCursorPosition = currentCursorPosition;
     if(mousePositionChanged)
     {
+        m_ShowingMySexyFace = false;
+        m_TogglingMinimumsTimerIsStarted = false;
+
         //TODOreq: "pre-zoom" before grab
 
         //don't start grabbing to the left of, or above, the screen
@@ -126,6 +140,12 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
         {
             QPainter painter(&m_CurrentPixmap);
             painter.drawPixmap(currentCursorPosition.x()-rectWithinResolution.x(), currentCursorPosition.y()-rectWithinResolution.y(), m_MousePixmapToDraw.width(), m_MousePixmapToDraw.height(), m_MousePixmapToDraw);
+
+            //draw my sexy face thumb
+            if(m_HaveFrameOfMySexyFace)
+            {
+                MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter)
+            }
         }
         emit presentPixmapForViewingRequested(m_CurrentPixmap);
         m_PreviousPixmap = QPixmap(); //motion detection requires two non-mouse-movement frames in a row. this makes our !isNull check below fail
@@ -171,17 +191,43 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
 
             if(differenceSeen)
             {
+                m_ShowingMySexyFace = false;
+                m_TogglingMinimumsTimerIsStarted = false;
+
                 //use first difference seen point
                 const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(firstDifferenceSeenPoint);
                 QPixmap motionPixmap = m_CurrentPixmap.copy(rectWithinResolution.x(), rectWithinResolution.y(), m_ViewWidth, m_ViewHeight); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
 
-                //TODOreq: thumbnail my sexy face in bottom right hand corner before presenting (and also for mouse moved code path)
+                //draw my sexy face thumb
+                if(m_HaveFrameOfMySexyFace)
+                {
+                    QPainter painter(&motionPixmap);
+                    MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter)
+                }
 
                 emit presentPixmapForViewingRequested(motionPixmap);
             }
             else if(m_HaveFrameOfMySexyFace)
             {
-                //TODOreq: a "minimum time with no differences seen before toggling" (and perhaps vice versa) check, so it doesn't bounce back and forth giving aneurisms. not implementing yet because it will just confuse me
+                //TO DOnereq: a "minimum time with no differences seen before toggling" (and perhaps vice versa, but I'd say that one is less important (motion on desktop = jump back immediately makes sense to me)) check, so it doesn't bounce back and forth giving aneurisms. not implementing yet because it will just confuse me
+                if(!m_ShowingMySexyFace)
+                {
+                    if(!m_TogglingMinimumsTimerIsStarted)
+                    {
+                        m_TogglingMinimumsElapsedTimer.start();
+                        m_TogglingMinimumsTimerIsStarted = true;
+                        return;
+                    }
+                    if(m_TogglingMinimumsElapsedTimer.elapsed() >= MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_AT_EACH_BEFORE_TOGGLING_MS)
+                    {
+                        m_ShowingMySexyFace = true;
+                        m_TogglingMinimumsTimerIsStarted = false; //not necessary since mouse/motion set to false...
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
 
                 //present my sexy face. no desktop thumbnail for now, might change my mind on this later (pointless since it would be motionless and unreadable)
                 QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32);
@@ -192,17 +238,6 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
                 }
                 QPixmap mySexyFacePixmap = QPixmap::fromImage(mySexyFaceImageMaybeScaled);
                 emit presentPixmapForViewingRequested(mySexyFacePixmap);
-
-#if 0 //relic, had all the supporting code too before realizing QCamera is teh suck
-                if(m_CurrentFrame.map(QAbstractVideoBuffer::ReadOnly))
-                {
-                    QImage mySexyFaceImage(m_CurrentFrame.bits(), m_ImageWidth, m_ImageHeight, m_ImageFormat);
-                    QImage mySexyFaceImageScaledToViewSize = mySexyFaceImage.scaled(m_ViewWidth, m_ViewHeight);
-                    QPixmap mySexyFacePixmap = QPixmap::fromImage(mySexyFaceImageScaledToViewSize);
-                    emit presentPixmapForViewingRequested(mySexyFacePixmap);
-                    m_CurrentFrame.unmap();
-                }
-#endif
             }
         }
     }

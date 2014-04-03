@@ -9,6 +9,7 @@
 #include <QCursor>
 #include <QProcess>
 #include <QSize>
+#include <QTime>
 
 class QScreen;
 
@@ -39,6 +40,9 @@ private:
     QByteArray m_LastReadFrameOfMySexyFace;
     QSize m_CameraResolution;
     qint64 m_BytesNeededForOneRawRGB32frame;
+    bool m_ShowingMySexyFace;
+    bool m_TogglingMinimumsTimerIsStarted;
+    QTime m_TogglingMinimumsElapsedTimer;
 
     //Mouse Or Motion methods
     QPoint makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
