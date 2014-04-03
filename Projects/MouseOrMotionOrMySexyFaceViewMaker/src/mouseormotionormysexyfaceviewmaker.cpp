@@ -20,6 +20,11 @@ QImage mySexyFaceImageThumbnail = mySexyFaceImage.scaled(m_CameraResolution.widt
 int border = 20; \
 painter.drawImage(m_ViewWidth-mySexyFaceImageThumbnail.width()-border, m_ViewHeight-mySexyFaceImageThumbnail.height()-border, mySexyFaceImageThumbnail); \
 
+//we want the video to update on the thumbnail during the 2 seconds we wait (especially since there will be lots of tiny pauses (less than 2 seconds) during normal usage where we still want video to continue)
+#define REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP \
+QPainter painter(&m_CurrentPixmapBeingPresented); \
+MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter) \
+emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
 
 MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *parent) :
     QObject(parent), m_Initialized(false), m_MousePixmapToDraw(":/mouseCursor.svg"), m_HaveFrameOfMySexyFace(false), m_ShowingMySexyFace(false) /*the worst default ever*/, m_TogglingMinimumsTimerIsStarted(false)
@@ -115,7 +120,7 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
 }
 void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
 {
-    m_CurrentPixmap = QPixmap(); //memory optimization apparently
+    m_CurrentPixmapForMotionDetection = QPixmap(); //memory optimization apparently
 
     //see if mouse position changed as optimization
     QPoint currentCursorPosition = QCursor::pos();
@@ -131,14 +136,14 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
         //don't start grabbing to the left of, or above, the screen
         const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(currentCursorPosition);
         //TODOqt4: QPixmap::grabWindow(), not sure if 'grabbing only primary screen' will work (and heck, surprised it's even working now in qt5)
-        m_CurrentPixmap = m_Screen->grabWindow(0, //0 makes entire desktop eligible, restrained by a rect in following params
+        m_CurrentPixmapBeingPresented = m_Screen->grabWindow(0, //0 makes entire desktop eligible, restrained by a rect in following params
                                                rectWithinResolution.x(),
                                                rectWithinResolution.y(),
                                                m_ViewWidth, //my makeRect need only return topLeft point, fuck it
                                                m_ViewHeight);
         //draw mouse cursor
         {
-            QPainter painter(&m_CurrentPixmap);
+            QPainter painter(&m_CurrentPixmapBeingPresented);
             painter.drawPixmap(currentCursorPosition.x()-rectWithinResolution.x(), currentCursorPosition.y()-rectWithinResolution.y(), m_MousePixmapToDraw.width(), m_MousePixmapToDraw.height(), m_MousePixmapToDraw);
 
             //draw my sexy face thumb
@@ -147,17 +152,17 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
                 MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter)
             }
         }
-        emit presentPixmapForViewingRequested(m_CurrentPixmap);
-        m_PreviousPixmap = QPixmap(); //motion detection requires two non-mouse-movement frames in a row. this makes our !isNull check below fail
+        emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
+        m_PreviousPixmapForMotionDetection = QPixmap(); //motion detection requires two non-mouse-movement frames in a row. this makes our !isNull check below fail
         return;
     }
 
     //see if there was motion
-    m_CurrentPixmap = m_Screen->grabWindow(0, 0, 0, m_ScreenResolutionX, m_ScreenResolutionY); //entire desktop
-    if(!m_PreviousPixmap.isNull())
+    m_CurrentPixmapForMotionDetection = m_Screen->grabWindow(0, 0, 0, m_ScreenResolutionX, m_ScreenResolutionY); //entire desktop
+    if(!m_PreviousPixmapForMotionDetection.isNull())
     {
-        const QImage currentImage = m_CurrentPixmap.toImage();
-        const QImage previousImage = m_PreviousPixmap.toImage(); //TODOreq: can optimize this re-using image from last time. should.
+        const QImage currentImage = m_CurrentPixmapForMotionDetection.toImage();
+        const QImage previousImage = m_PreviousPixmapForMotionDetection.toImage(); //TODOreq: can optimize this re-using image from last time. should.
         //TODOoptimization: might be an optimization to compose current over previous using the xor thingo
 
         if(currentImage.size() == previousImage.size()) //don't crash/etc on resolution changes, just do nothing for now
@@ -196,16 +201,17 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
 
                 //use first difference seen point
                 const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(firstDifferenceSeenPoint);
-                QPixmap motionPixmap = m_CurrentPixmap.copy(rectWithinResolution.x(), rectWithinResolution.y(), m_ViewWidth, m_ViewHeight); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
+                m_CurrentPixmapBeingPresented = m_CurrentPixmapForMotionDetection.copy(rectWithinResolution.x(), rectWithinResolution.y(), m_ViewWidth, m_ViewHeight); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
+                //m_PreviousPixmap = QPixmap();
 
                 //draw my sexy face thumb
                 if(m_HaveFrameOfMySexyFace)
                 {
-                    QPainter painter(&motionPixmap);
+                    QPainter painter(&m_CurrentPixmapBeingPresented);
                     MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter)
                 }
 
-                emit presentPixmapForViewingRequested(motionPixmap);
+                emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
             }
             else if(m_HaveFrameOfMySexyFace)
             {
@@ -215,6 +221,9 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
                     if(!m_TogglingMinimumsTimerIsStarted)
                     {
                         m_TogglingMinimumsElapsedTimer.start();
+
+
+
                         m_TogglingMinimumsTimerIsStarted = true;
                         return;
                     }
@@ -225,6 +234,9 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
                     }
                     else
                     {
+                        REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
+
+                        //not enough time elaspsed
                         return;
                     }
                 }
@@ -241,7 +253,7 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
             }
         }
     }
-    m_PreviousPixmap = m_CurrentPixmap;
+    m_PreviousPixmapForMotionDetection = m_CurrentPixmapForMotionDetection;
 
 }
 void MouseOrMotionOrMySexyFaceViewMaker::handleFfMpegStandardOutputReadyRead()

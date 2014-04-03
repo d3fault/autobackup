@@ -30,8 +30,9 @@ private:
     int m_ViewWidth;
     int m_ViewHeight;
     int m_BottomPixelRowsToIgnore;
-    QPixmap m_PreviousPixmap;
-    QPixmap m_CurrentPixmap;
+    QPixmap m_PreviousPixmapForMotionDetection;
+    QPixmap m_CurrentPixmapForMotionDetection;
+    QPixmap m_CurrentPixmapBeingPresented;
     QPixmap m_MousePixmapToDraw;
 
     //ffmpeg members
