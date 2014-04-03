@@ -1,8 +1,8 @@
-#include "mouseandormotionviewmakergui.h"
+#include "mouseormotionormysexyfaceviewmakergui.h"
 
 #include <QCoreApplication>
 
-MouseAndOrMotionViewMakerGui::MouseAndOrMotionViewMakerGui(QObject *parent) :
+MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QObject *parent) :
     QObject(parent), m_Gui(0)
 {
     connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(handleAboutToQuit()));
@@ -30,7 +30,7 @@ MouseAndOrMotionViewMakerGui::MouseAndOrMotionViewMakerGui(QObject *parent) :
             m_ViewSize.setHeight(viewHeight);
         }
     }
-    m_UpdateIntervalMs = 200;
+    m_UpdateIntervalMs = 100;
     if(arguments.size() > 3)
     {
         int updateInterval = arguments.at(3).toInt(&convertOk);
@@ -48,24 +48,51 @@ MouseAndOrMotionViewMakerGui::MouseAndOrMotionViewMakerGui(QObject *parent) :
             m_BottomPixelRowsToIgnore = bottomPixelRowsToIgnore;
         }
     }
+    m_CameraDeviceName = "/dev/video0";
+    if(arguments.size() > 5)
+    {
+        QString cameraDeviceNameString = arguments.at(5).trimmed();
+        if(!cameraDeviceNameString.isEmpty())
+            m_CameraDeviceName = cameraDeviceNameString.toUtf8();
+
+    }
+    m_CameraResolution.setWidth(720);
+    if(arguments.size() > 6)
+    {
+        int cameraResolutionWidth = arguments.at(6).toInt(&convertOk);
+        if(convertOk && cameraResolutionWidth > 0)
+        {
+            m_CameraResolution.setWidth(cameraResolutionWidth);
+        }
+    }
+    m_CameraResolution.setHeight(480);
+    //m_CameraResolution.setHeight(452); //derp damn bug was funnily hard to hunt down xD
+    if(arguments.size() > 7)
+    {
+        int cameraResolutionHeight = arguments.at(7).toInt(&convertOk);
+        if(convertOk && cameraResolutionHeight > 0)
+        {
+            m_CameraResolution.setHeight(cameraResolutionHeight);
+        }
+    }
     //TODOoptional: could do drawn cursor image path, whether or not to save the image as video, etc...
 
-    m_Gui = new MouseAndOrMotionViewMakerWidget(m_ViewSize);
+    m_Gui = new MouseOrMotionOrMySexyFaceViewMakerWidget(m_ViewSize);
 }
-MouseAndOrMotionViewMakerGui::~MouseAndOrMotionViewMakerGui()
+MouseOrMotionOrMySexyFaceViewMakerGui::~MouseOrMotionOrMySexyFaceViewMakerGui()
 {
     if(m_Gui)
         delete m_Gui;
 }
-void MouseAndOrMotionViewMakerGui::handleMouseAndOrMotionViewMakerReadyForConnections()
+void MouseOrMotionOrMySexyFaceViewMakerGui::handleMouseAndOrMotionViewMakerReadyForConnections()
 {
-    MouseAndOrMotionViewMaker *business = m_BusinessThread.getObjectPointerForConnectionsOnly();
+    MouseOrMotionOrMySexyFaceViewMaker *business = m_BusinessThread.getObjectPointerForConnectionsOnly();
     connect(business, SIGNAL(presentPixmapForViewingRequested(QPixmap)), m_Gui, SLOT(presentPixmapForViewing(QPixmap)));
 
     m_Gui->show();
-    QMetaObject::invokeMethod(business, "startMakingMouseAndOrMotionViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_UpdateIntervalMs), Q_ARG(int, m_BottomPixelRowsToIgnore));
+    QMetaObject::invokeMethod(business, "startMakingMouseOrMotionOrMySexyFaceViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_UpdateIntervalMs), Q_ARG(int, m_BottomPixelRowsToIgnore), Q_ARG(QString, m_CameraDeviceName), Q_ARG(QSize, m_CameraResolution));
 }
-void MouseAndOrMotionViewMakerGui::handleAboutToQuit()
+void MouseOrMotionOrMySexyFaceViewMakerGui::handleAboutToQuit()
 {
     m_BusinessThread.quit();
     m_BusinessThread.wait();
