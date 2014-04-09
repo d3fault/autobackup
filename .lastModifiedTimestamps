@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1396905841
+Documents/minddump/:1397083715
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -481,6 +481,7 @@ Documents/minddump/asfsalkjfweoruisladkfjsadfiusadofiwuerlkwaroiusaflkjweoriulk.
 Documents/minddump/asjdflaskfjwoiufsdlkjweroiusaflkjeroult.txt:1339319274
 Documents/minddump/ask.bro.for.5meo.when.ready.to.launch.or.just.get.some.idgaf.txt:1338636073
 Documents/minddump/askfjslfkwjeoriuslfdklkjsfosiuwerlkjsdfouiwerlk.txt:1339951335
+Documents/minddump/askldjflksjdflksjdflkjsdklfsdouflskdjfouewrlkjsdfouisdlfkjsd.txt:1397076309
 Documents/minddump/asklfjslfkjwoeruaflskjsdflkashlfkjsfd.cheesy.possibly.manipulative.but.also.cool.txt:1339487634
 Documents/minddump/asldfjaowurlaskfjdakshfaskdfhaklfhasdfiouwerlkj.txt:1343932118
 Documents/minddump/asldfjasdfjworusdlfkjweorusdlfkjweakrhsdfjoruwerlkjsadfouwrekl.launch.or.die.txt:1345422883
@@ -585,6 +586,7 @@ Documents/minddump/daflsdfljsdlfjsdfouwlekrjsdfoukjrelkjsdfouwerlkjsdf.txt:13530
 Documents/minddump/dalfkasdlfkjsdafouwerlkjasdflkjsdfosuflwkejroufsdlkfjasodufwlekrjsousdflk.txt:1349689967
 Documents/minddump/dalfkjasdlfjsadfoulwerjaosfusdlakfjwaoerulasdfj.txt:1351116443
 Documents/minddump/dalskjflaksjdflasdkfjasdofuasldfjsadofulsadkjfoasudflkjsdfousdf.txt:1374412635
+Documents/minddump/damn.this.explains.why.ive.wasted.so.much.damn.time.heh.but.then.again.it.also.means.ill.never.run.out.of.shit.to.code.hehehe.txt:1397027127
 Documents/minddump/dasfldsalfjasdlfjouwlrjasofduswklerjosuflksdjfowuerlkjf.txt:1352985957
 Documents/minddump/dasfljsdlfjsdouelrjsodifusldkj.txt:1355712168
 Documents/minddump/dasfljsdofiuareouasklfjsadlfjsaofujasdlkfjas.txt:1331350458
@@ -1282,6 +1284,7 @@ Documents/minddump/lsjdflksjdflkjsdfosduiflsdjfousdflolololjsdflksjdfosfolololsd
 Documents/minddump/lsjfdlskjdflsflksjfsuidflkdsjfouiwelrkjousdflkjsdfoudslfjksdoful.txt:1393170768
 Documents/minddump/lsjflsjflksjdlfkjsdfoiusdfljsdofulsdjfluiksdjf.txt:1393066372
 Documents/minddump/lsjkdflkjdsfousdflkjsdfoulkjweouirlkjsfdsdjf.txt:1359856407
+Documents/minddump/lsjkflkjsdflkajsdfjsdflkjslkdjflksjflkjsdfouwre.txt:1397083715
 Documents/minddump/lskaflksdfjksdfoulekrjoufsdlkjsdfouewrlkjfdoiul.txt:1358380152
 Documents/minddump/lskajfkjsdfkljsdlkfjlsdkjflkjsdfouewljrousdfljsdfouil.txt:1393253152
 Documents/minddump/lskdafjlsdkfjsdoafusdalkfjsodfulksdfjousdflkjsdfousdfljsdofuljsdfou.txt:1377207554
@@ -1632,6 +1635,7 @@ Documents/minddump/sdflkweroiusdfoiuwreklweroiaufwe098234.txt:1339058881
 Documents/minddump/sdflsadjfaosdufwerlkjasdfoiuasflsakjf.txt:1333103151
 Documents/minddump/sdflsdjflkjwourlksjdfouwelrjoufl.txt:1355707892
 Documents/minddump/sdflsdjflksdajfoiuwelrjousdlfjsdouflwejrousdlfjksdoful.txt:1370674837
+Documents/minddump/sdflsjflkjslkdfjljwreouslkfjsdofusldkjfsldkjflkwejroulksjdfl.txt:1397029837
 Documents/minddump/sdflskadfjlsdkafjouwerlkjsdfasdfoulkjfsdfouwerkj.txt:1351479219
 Documents/minddump/sdflskdjflkjsdfdsouflksjdfousdflkjsdfousfd.txt:1359763844
 Documents/minddump/sdflskdjflksdjflksdfoiuwelrjousdlkfjosduflsdkjfouwerlkjousdflkjsdoful.txt:1382988536
@@ -2010,7 +2014,10 @@ Documents/a.starting.point.this.is.the.only.thing.i.am.certain.of.txt:1356263099
 Documents/bookmarks_2013-12-11.html:1386815178
 Documents/sup.txt:1396677921
 Documents/uhh.this.goes.here.too.an.d.yea.i.am.mhigh.txt:1396678563
-GloballySharedClasses/:1394441873
+GloballySharedClasses/:1397025600
+GloballySharedClasses/cli/:1397080779
+GloballySharedClasses/cli/standardinputnotifier.cpp:1397080779
+GloballySharedClasses/cli/standardinputnotifier.h:1397025380
 GloballySharedClasses/distributeddatabase/:1394424681
 GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h:1394424681
 GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1394265803
@@ -2092,6 +2099,7 @@ GloballySharedClasses/sslclienttestcerts.pri:1353348455
 GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
+GloballySharedClasses/standardinputnotifier.pri:1397025625
 Pictures/:1391752831
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
@@ -2359,13 +2367,13 @@ Projects/Hottee/:1395376892
 Projects/Hottee/design/:1395376928
 Projects/Hottee/design/initial.idea.txt:1395376928
 Projects/Hottee/src/:1396460993
-Projects/Hottee/src/cli/:1397023356
+Projects/Hottee/src/cli/:1397084787
 Projects/Hottee/src/cli/HotteeCli.pro:1395740585
-Projects/Hottee/src/cli/hotteecli.cpp:1395744004
+Projects/Hottee/src/cli/hotteecli.cpp:1397024594
 Projects/Hottee/src/cli/hotteecli.h:1397022328
 Projects/Hottee/src/cli/main.cpp:1395473624
-Projects/Hottee/src/lib/:1396460912
-Projects/Hottee/src/lib/hottee.cpp:1396460912
+Projects/Hottee/src/lib/:1397082991
+Projects/Hottee/src/lib/hottee.cpp:1397082991
 Projects/Hottee/src/lib/hottee.h:1396460703
 Projects/Ideas/:1394440981
 Projects/Ideas/QtSslRpc/:1341833104
@@ -4057,7 +4065,7 @@ Solutions/d3faultPublicLicense/:1388241167
 Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.it.later.txt:1387589098
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1388241228
-Solutions/hackyVideoBullshitSite/:1394443989
+Solutions/hackyVideoBullshitSite/:1397023709
 Solutions/hackyVideoBullshitSite/design/:1396897440
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
 Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firefox.live.theora.streaming.txt:1394180190
@@ -4076,6 +4084,17 @@ Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1394516721
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1394512549
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1394444885
 Solutions/hackyVideoBullshitSite/src/main.cpp:1394445146
+Solutions/hackyVideoBullshitSite/tools/:1397023744
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1397084795
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1397073591
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1397084778
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1397083862
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1397081096
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1397082759
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1397082759
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1397082705
 Solutions/launchASEPbecauseRedAlert/:1395576326
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681

@@ -93,7 +93,7 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
                     emit d("Hottee is cleanly quitting at end of chunk: " + m_CurrentOutputFile->fileName());
                     emit d("Wait...");
                     cleanupHotteeing(); //it isn't strictly necessary to call this here, since it's called by our destructor... but in order to make readyRead never be emitted again, it's best to call it as soon as possible (now)
-                    QMetaObject::invokeMethod(QCoreApplication::instance(), SLOT(quit()));
+                    QMetaObject::invokeMethod(QCoreApplication::instance(), SLOT(quit())); //TODOreq: backends should not call "quit", they should just emit "done" or "stopped" and then the listener can decide when to call quit. BECAUSE: if there are multiple backends. I think there is a way to do that "waiting for all backends to finish" thing fancily using QFuture or similar, but can't find it. QFutureSynchronizer sounds right, but has no signals wtf -_-. I _COULD_ solve that uglily by using a separate thread whose job is just to synchronously wait on all my backends to finish, and then he emits a signal. Ugly and expensive, but would work.
                     return true; //true/false doesn't matter here, since readyRead is never emitted again we never get to to where it would matter
                 }
 

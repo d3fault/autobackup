@@ -1,0 +1,1 @@
+Infinite error cases in programming, so use a strongly typed language so your compiler can at least catch the stupid ones.

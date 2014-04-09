@@ -1,0 +1,5 @@
+The only difference between an operating system and a botnet is that an operating system has the user's permission to be installed. Any operating system with any form of "automatic updates" enabled is controlled in the same way that a botnet is.
+
+I'd rather stay on the operating system side of things. People will choose to install your software (because they don't know how to code, and because they're bored). There is no need to sneakily install it through some exploit.
+
+Of course, if you're an uncreative individual who just wants to use others' machines for something as stupid as bitcoin mining (you only have dollar signs in your eyes (certainly not implying bitcoin is stupid <3)), nobody will want to install your software.

@@ -1,0 +1,1 @@
+Perfect code is impossible because error cases are infinite.

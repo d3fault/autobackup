@@ -4,7 +4,7 @@
 #include <QStringList>
 
 HotteeCli::HotteeCli(QObject *parent) :
-    QObject(parent), m_StdInSocketNotifier(0/*portable?*/, QSocketNotifier::Read), m_StdIn(stdin, QIODevice::ReadOnly), m_StdOut(stdout, QIODevice::WriteOnly)
+    QObject(parent), m_StdInSocketNotifier(0, QSocketNotifier::Read), m_StdIn(stdin, QIODevice::ReadOnly), m_StdOut(stdout, QIODevice::WriteOnly)
 {
     connect(&m_StdInSocketNotifier, SIGNAL(activated(int)), this, SLOT(stdInHasLineOfInput()));
 
