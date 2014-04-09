@@ -1,0 +1,37 @@
+//ON UPLOAD MACHINE
+ffmpeg sements list reader/follower (something similar to "tail -f"'s stdout (but using tail specifically might miss the first few segments if started too late), if needed)
+->
+onSegmentEntryAdded()
+{
+	if(!havePreviousEntry) //first/current entry is still being written
+		return;
+	enQueuePreviousEntryForScp();
+}
+onEntryEnqueuedForScp()
+{
+	while(queue.hasNext())
+	{
+		current = next();
+		while(scp(current) > 0)
+		{
+			cerr << "error scping"; //infinite trying loop, perhaps with timeout between each try
+		}
+		//scp success for current
+		while(!persistentSshConnection.moveCurrentToWatchImportFolder())
+		{
+			cerr << "error ssh moving to watch import folder"; //ditto
+		}
+	}
+}
+
+//REMOTE MACHINE (target of scp and ssh-move cmd above)
+QFileSystemWatcher (or poller) of "watch import folder". NOTE: the ssh user that scp/move use has write access to watch import folder, but the user running this QFileSystemWatcher moves the file yet again to an area that the scp/move ssh user does NOT have write access to (so if upload machine is compromised, all 'already uploaded' files are still in tact. small/cheap security mechanism that buys barely anything)
+
+onFileAddedToWatchedFolder()
+{
+	foreach(file in watchedFolder) //sorted by timestamp
+	{
+		move(file, folderNotWriteableByTheSshUploadUser);
+		//somehow give to wt (sigusr1 to waitForShutdown() will work, as will QLocalSocket to the qt ad backend)
+	}
+}

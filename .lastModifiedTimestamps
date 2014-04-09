@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1396824015
+Documents/minddump/:1396905841
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1396203681
+Documents/minddump/dreams/:1397020470
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -94,6 +94,7 @@ Documents/minddump/dreams/is.aboutToQuit.sync.or.async.lawl.sdfksjdfouewlrkjosdu
 Documents/minddump/dreams/iuyiuyiklajsdflkjsaldkfjasodfulsdjfousdfljsadofusdlfkj.txt:1384134275
 Documents/minddump/dreams/kaylee.final.rejection.disappear.off.the.radar.stupid.correlation.should.override.txt:1353975391
 Documents/minddump/dreams/kljasdlkjfaslkdfjlksdjflksjflkjsdflkjsdlfkjsadlfkjweoriulskjfsdflskdfj.gunman.txt:1382180059
+Documents/minddump/dreams/lajsdflkjslkdfjlksdjfkjsflkjweoruljsdfousdflkjoureljwer.txt:1396898225
 Documents/minddump/dreams/lakjflskdjflkasdjflksajdflksjdflkjsdfywflkhjsodfusaldkfjsdaoful.txt:1377937899
 Documents/minddump/dreams/laskjfklsjdfsdoiuflwekjrousdflkjsdfoiuwerlkjaosiuf.txt:1358037716
 Documents/minddump/dreams/ldfkjselkjdflkjsdfsdfweorusjdfsofduilkwjeroukjfsfsodiuflk.txt:1391367794
@@ -140,6 +141,7 @@ Documents/minddump/dreams/sdflkjasdflkjsadlkfjsdalkfjsdfuwoeurlkjsdfousdlfkjsdfo
 Documents/minddump/dreams/sdflkjslfkjskljfsdofusdlfkjouwelrkjosufsldfj.txt:1392528781
 Documents/minddump/dreams/sdflksdflkjsdfoiuwerlkjdfouisdlfkjoiurfjk.txt:1355127688
 Documents/minddump/dreams/sdflksjfkjslfkjskldjfsdoifudsfkjsdofusldfkjulkjrweoulksjfo.txt:1393075962
+Documents/minddump/dreams/sdflsajdfljksdlkfjsldkjfuwoerulkjsdfousdlfkjsdfou.txt:1397020470
 Documents/minddump/dreams/sdflskdfjsdlkfjowuerlkjofuasldfjosdufsdfousdfljsdfou.txt:1392976456
 Documents/minddump/dreams/sdflskdjflkjsdlfjslkdjflsjdflksjdflkjsdlkfjouwekrjousdflkjlskdfjsdlkf.txt:1394142935
 Documents/minddump/dreams/sdkjflskjdflskjdfosudfljsdfousdfljsfdoulkjeroiusdlfkjsdofuo.txt:1391895285
@@ -851,7 +853,7 @@ Documents/minddump/fdlskjfldsjfsdfouwerljouweljsdflkjsdflk.txt:1355830766
 Documents/minddump/fdoiureflaksdflkdjsfouewrjlkjsdjflk.txt:1354841983
 Documents/minddump/fdsaflkweoriusfdlkjsdfoiuwerlkjfdl.txt:1339059297
 Documents/minddump/fdsfasdjflkasjofiyuawerowyfsdfusadofujjdfaosiuf.txt:1328695071
-Documents/minddump/fdsjfhsdjkfhsjkdhfkjsdfhkjsdhfkjsdfhjsdfskfj,txt:1396699434
+Documents/minddump/fdsjfhsdjkfhsjkdhfkjsdfhkjsdhfkjsdfhjsdfskfj.txt:1396895851
 Documents/minddump/fdslfjsladkfjsdaofuljeowuljsdfouflkjasdfouwelrkjousdflsjdfoui.txt:1372012751
 Documents/minddump/fdslfkjslkfjlksdjfklsdjfsdjkflksdjflksdjfsduowerlkjsdflkjsdfl.txt:1380539300
 Documents/minddump/fdslkfjkljfslkdfjsdalkfjsdlfkjsdflkjsdfouwelrkjouflksjdfouerwksf.txt:1376994772
@@ -1212,6 +1214,7 @@ Documents/minddump/lksdfkjslfkjsdofusdlfjsdouflsjdfousdflkjsdfouiouw.txt:1392550
 Documents/minddump/lksdfljksdlfkjlsdfjljsdflkjdsfoudsfljsdfousdflkjdfou.txt:1393714440
 Documents/minddump/lksdjafourjsflksdfoaurposaiufslkfjdsoiul.txt:1329096358
 Documents/minddump/lksdjflkjasdfousdlfkjsodifusdklfjsoudfslfdjosufdl.just.say.cool.instead.of.weird.txt:1391106722
+Documents/minddump/lksdjflkjsalkdfjklwerouslkjdfsodufsdlkfj.txt:1396905841
 Documents/minddump/lksdjflkjsdklfjsdklfjsdofuisldkjfsdufsdofiulkjsdfoiudsflk.txt:1392191501
 Documents/minddump/lksdjflksdjfouljsdofulsdkjfouiwelrkjousdlfkjsofdulkjwerouisldkjfosiudf.txt:1370663744
 Documents/minddump/lksdjflksdjfsdlfjoiweruafl.txt:1338398255
@@ -1302,6 +1305,7 @@ Documents/minddump/lskjdfkljslkfjsdfoudslkfjsdofuisdlfkjsdfouewrlkjsdf.txt:13599
 Documents/minddump/lskjdfljsldkjflksdjfouwerlkjsoduflsdjkfosudflskdjfouljweroulkjsdfsfdjkkljsdkf.txt:1394268960
 Documents/minddump/lskjdflkjsadfosuidflkjsdofiusldfjsdofiulkjweoruiljksdfoiusdlfkjsdoifulkjewroiu.txt:1383337477
 Documents/minddump/lskjdflkjsflkjslkjdflsrtertjdfsokdjfsoduflkwjerouljsdfouldskjfoewur.txt:1396667615
+Documents/minddump/lskjdflksjadflkjwerhlkshdfousdflkjweoruiklsdf.txt:1396905462
 Documents/minddump/lskjdflksjdfousadflkjsdofusdlfjosudfljweorusdfkl.txt:1384665523
 Documents/minddump/lskjfdlakjsdflksajdfosuaflkjsdofusdlfjouwerlkjsdfousflkjdsfklj.txt:1383121081
 Documents/minddump/lskjfdlksjdfosdufljkdfosufljasfduolkwjeroiusdfkjs.txt:1368536860
@@ -2355,10 +2359,10 @@ Projects/Hottee/:1395376892
 Projects/Hottee/design/:1395376928
 Projects/Hottee/design/initial.idea.txt:1395376928
 Projects/Hottee/src/:1396460993
-Projects/Hottee/src/cli/:1396461010
+Projects/Hottee/src/cli/:1397023356
 Projects/Hottee/src/cli/HotteeCli.pro:1395740585
 Projects/Hottee/src/cli/hotteecli.cpp:1395744004
-Projects/Hottee/src/cli/hotteecli.h:1395743792
+Projects/Hottee/src/cli/hotteecli.h:1397022328
 Projects/Hottee/src/cli/main.cpp:1395473624
 Projects/Hottee/src/lib/:1396460912
 Projects/Hottee/src/lib/hottee.cpp:1396460912
@@ -2726,9 +2730,9 @@ Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396200558
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1396112933
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396112897
 Projects/MouseOrMotionOrMySexyFaceViewMaker/:1396501297
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1396504407
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1396895119
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1396499493
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1396477674
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1396895537
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1396477109
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.cpp:1396504283
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.h:1396503882
@@ -4030,7 +4034,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:139621
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1396219028
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1396217132
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
-Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1394616225
+Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1396895185
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
 Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021
@@ -4054,9 +4058,10 @@ Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1388241228
 Solutions/hackyVideoBullshitSite/:1394443989
-Solutions/hackyVideoBullshitSite/design/:1394405329
+Solutions/hackyVideoBullshitSite/design/:1396897440
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
 Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firefox.live.theora.streaming.txt:1394180190
+Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
 Solutions/hackyVideoBullshitSite/src/:1396472436
 Solutions/hackyVideoBullshitSite/src/backend/:1394615175

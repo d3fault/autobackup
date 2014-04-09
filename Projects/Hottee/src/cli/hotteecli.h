@@ -13,7 +13,7 @@ class HotteeCli : public QObject
 public:
     explicit HotteeCli(QObject *parent = 0);
 private:
-    QSocketNotifier m_StdInSocketNotifier; //fucking finally
+    QSocketNotifier m_StdInSocketNotifier; //fucking finally. damnit nvm, apparently doesn't work on windows (fuck you bill gates)
     QTextStream m_StdIn;
     QTextStream m_StdOut;
     Hottee m_Hottee;
