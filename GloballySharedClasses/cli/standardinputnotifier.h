@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QTextStream>
 
-#if defined(Q_OS_WIN32) || defined(Q_OS_WINCE)
+#if defined(Q_OS_WIN) || defined(Q_WS_WIN)
 #include <QTimer>
 #else
 #include <QSocketNotifier>
@@ -19,7 +19,7 @@ public:
 private:
 QTextStream m_StandardInputTextStream;
 
-#if defined(Q_OS_WIN32) || defined(Q_OS_WINCE)
+#if defined(Q_OS_WIN) || defined(Q_WS_WIN)
     QTimer *m_StandardInputPollingTimerLoLWindows;
 #else
     QSocketNotifier *m_StandardInputSocketNotifierWootEventDriven;

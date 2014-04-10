@@ -20,6 +20,7 @@ private:
     void cliUsage();
     void cliUserInterfaceMenu();
 signals:
+    void tellSegmentInformationsRequested();
     void stopUploadingFfmpegSegmentsRequested();
 private slots:
     void handleStandardInputReceived(const QString &standardInputLine);

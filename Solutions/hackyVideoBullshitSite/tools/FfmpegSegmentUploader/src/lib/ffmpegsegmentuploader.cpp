@@ -3,13 +3,16 @@
 #include <QFile>
 #include <QFileSystemWatcher> //was considering QSocketNotifier, but QFile::handle() doesn't work on windows -_-
 #include <QDateTime>
-#include <QTimer>
 #include <QStringList>
 
 //at first i was amped to learn about sftp, but now after trying to use it in automation it's a freaking pain in the ass. provides very little feedback (whereas scp i'd just check return code == 0). hmm, *tries cranking up verbosity*. cool, increasing verbosity does NOTHING (except a bunch of shit i don't care about on stderr). there's no "upload complete" message... pos...
 FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent) :
-    QObject(parent), m_FfmpegSegmentsEntryListFile(0), m_FfmpegSegmentsEntryListFileWatcher(0), m_SftpProcess(0), m_SftpProcessTextStream(0), m_SftpIsReadyForCommands(false), m_SftpPutInProgressSoWatchForRenameCommandEcho(false), m_SftpWasToldToQuit(false)
-{ }
+    QObject(parent), m_FfmpegSegmentsEntryListFile(0), m_FfmpegSegmentsEntryListFileWatcher(0), m_FiveSecondRetryTimer(new QTimer(this)), m_SftpProcess(0), m_SftpProcessTextStream(0), m_SftpIsReadyForCommands(false), m_SftpPutInProgressSoWatchForRenameCommandEcho(false), m_SftpWasToldToQuit(false)
+{
+    m_FiveSecondRetryTimer->setInterval(5000);
+    m_FiveSecondRetryTimer->setSingleShot(true);
+    connect(m_FiveSecondRetryTimer, SIGNAL(timeout()), this, SLOT(tryDequeueAndUploadSingleSegment()));
+}
 FfmpegSegmentUploader::~FfmpegSegmentUploader()
 {
     if(m_SftpProcessTextStream)
@@ -23,6 +26,25 @@ void FfmpegSegmentUploader::startSftpProcessInBatchMode()
     //m_SftpProcess->waitForStarted(-1); //connect(m_SftpProcess, SIGNAL(started())
     //how the fuck do i know when the sftp session is READY? surely it isn't just when the process is started, guh
 }
+void FfmpegSegmentUploader::stopSftpProcess()
+{
+    if(m_SftpIsReadyForCommands)
+    {
+        *m_SftpProcessTextStream << "bye" << endl << "bye" << endl; //idfk why, but when i was testing this it needed two byes. since the second one [probably?] won't hurt, fuck it :-P
+    }
+    else if(m_SftpProcess->isOpen())
+    {
+        m_SftpProcess->close(); //hmmm idk lol
+    }
+}
+void FfmpegSegmentUploader::enQueuePreviousSegmentEntryForUpload()
+{
+    QPair<QString,QString> newPair;
+    newPair.first = m_PreviousSegmentEntryTimestamp;
+    newPair.second = m_PreviousSegmentEntry;
+    m_SegmentsQueuedForUpload.enqueue(newPair);
+    QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection);
+}
 void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegStartsEncodingTheNextOne(const QString &filenameOfSegmentsEntryList, const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath)
 {
     if(remoteDestinationToMoveTo.isEmpty() || remoteDestinationToUploadTo.isEmpty())
@@ -32,13 +54,13 @@ void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegStartsEncodingTheNex
     }
     if(userHostPathComboSftpArg.isEmpty())
     {
-        emit d("can't have empty user host path (combo) sftp arg. should look like this: 'username@host:/path'' -- or just 'host' at a minimum");
+        emit d("can't have empty user host path (combo) sftp arg. should look like this: 'username@host' -- or just 'host' at a minimum");
         return;
     }
     m_UserHostPathComboSftpArg = userHostPathComboSftpArg;
     m_RemoteDestinationToUploadToWithSlashAppended = appendSlashIfMissing(remoteDestinationToUploadTo);
     m_RemoteDestinationToMoveToWithSlashAppended = appendSlashIfMissing(remoteDestinationToMoveTo);
-    if(filenameOfSegmentsEntryList.isEmpty() || !QFile::exists(filenameOfSegmentsEntryList))
+    if(filenameOfSegmentsEntryList.isEmpty())
     {
         emit d("invalid filename of segments entry list: '" + filenameOfSegmentsEntryList + "'");
         return;
@@ -56,17 +78,29 @@ void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegStartsEncodingTheNex
     }
 
     if(m_FfmpegSegmentsEntryListFile)
-        delete m_FfmpegSegmentsEntryListFile;
-    m_FfmpegSegmentsEntryListFile = new QFile(filenameOfSegmentsEntryList, this);
-    if(!m_FfmpegSegmentsEntryListFile->open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        emit d("failed to open file for reading: '" + filenameOfSegmentsEntryList + "'");
         delete m_FfmpegSegmentsEntryListFile;
         m_FfmpegSegmentsEntryListFile = 0;
-        return;
     }
-    m_FfmpegSegmentsEntryListFileTextStream.setDevice(m_FfmpegSegmentsEntryListFile);
-    m_FfmpegSegmentsEntryListFileTextStream.seek(0);
+    m_FilenameOfSegmentsEntryList = filenameOfSegmentsEntryList;
+    if(!m_FfmpegSegmentsEntryListFile)
+    {
+        if(!QFile::exists(m_FilenameOfSegmentsEntryList))
+        {
+            emit d("segment entry list file does not exist: '" + m_FilenameOfSegmentsEntryList + "'");
+            return; //TODOreq: this, and the below return, and probably otherh places, should quit cleanly/now. do more than just return (sftp may be running for example)
+        }
+        m_FfmpegSegmentsEntryListFile = new QFile(m_FilenameOfSegmentsEntryList, this);
+        if(!m_FfmpegSegmentsEntryListFile->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            emit d("failed to open file for reading: '" + m_FilenameOfSegmentsEntryList + "'");
+            delete m_FfmpegSegmentsEntryListFile;
+            m_FfmpegSegmentsEntryListFile = 0;
+            return;
+        }
+        m_FfmpegSegmentsEntryListFileTextStream.setDevice(m_FfmpegSegmentsEntryListFile);
+        m_FfmpegSegmentsEntryListFileTextStream.seek(0);
+    }
 
     if(m_FfmpegSegmentsEntryListFileWatcher)
         delete m_FfmpegSegmentsEntryListFileWatcher;
@@ -89,23 +123,35 @@ void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegStartsEncodingTheNex
     m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
     m_SftpWasToldToQuit = false;
     startSftpProcessInBatchMode();
+    emit d("ffmpeg segment uploader starting");
+}
+void FfmpegSegmentUploader::tellStatus()
+{
+    int queueSize = m_SegmentsQueuedForUpload.size();
+    QString headOfUploadQueue = (queueSize > 0 ?  m_SegmentsQueuedForUpload.head().second : "");
+    QString segmentInformations = "==Ffmpeg Segment Uploader Status==\n\tMost recent segment entry (which is probably still being encoded): " + m_PreviousSegmentEntry + "\n\tSize of upload queue: " + QString::number(queueSize) + "\n\t'Head' of the upload queue: " + headOfUploadQueue + "\n\tsftp connection status: " + (m_SftpIsReadyForCommands ? "" : "NOT ") + "ready for commands";
+    emit d(segmentInformations);
 }
 void FfmpegSegmentUploader::stopUploadingFfmpegSegments()
 {
-    //TODOreq: stop after current upload (who stops first, us or ffmpeg? i guess ffmpeg and then we would ideally stop after ALL segments are uploaded)
+    m_SftpWasToldToQuit = true;
 
-    //eventually:
-    emit stoppedUploadingFfmpegSegments();
+    //hack to deal with the very last segment in the list, which wouldn't have been uploaded since we wait until the next one to start encoding before we begin upload
+    enQueuePreviousSegmentEntryForUpload();
+
+#if 0
+    //deal with queue already empty (won't get to our other code)
+    if(m_SegmentsQueuedForUpload.size() == 0)
+    {
+        stopSftpProcess();
+    }
+#endif
 }
 void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
 {
     if(!m_PreviousSegmentEntry.isEmpty())
     {
-        QPair<QString,QString> newPair;
-        newPair.first = m_PreviousSegmentEntryTimestamp;
-        newPair.second = m_PreviousSegmentEntry;
-        m_SegmentsQueuedForUpload.enqueue(newPair);
-        QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection);
+        enQueuePreviousSegmentEntryForUpload();
     }
 
     m_PreviousSegmentEntryTimestamp = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000);
@@ -113,9 +159,12 @@ void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
 }
 void FfmpegSegmentUploader::tryDequeueAndUploadSingleSegment()
 {
+    if(m_FiveSecondRetryTimer->isActive())
+    {
+        m_FiveSecondRetryTimer->stop();
+    }
     if(m_SegmentsQueuedForUpload.isEmpty() || m_SftpPutInProgressSoWatchForRenameCommandEcho)
-        return;
-    const QPair<QString,QString> &queuedPair = m_SegmentsQueuedForUpload.head();
+        return;    
 #if 0 //pseudo-code
      bool uploadedOne = false;
     if(scpUpload(queuedPair.second, m_RemoteDestinationToUploadToWithSlashAppended)) //sftp >
@@ -143,6 +192,7 @@ void FfmpegSegmentUploader::tryDequeueAndUploadSingleSegment()
 #endif
     if(m_SftpIsReadyForCommands)
     {
+        const QPair<QString,QString> &queuedPair = m_SegmentsQueuedForUpload.head();
         QString remoteUploadPath = "\"" + m_RemoteDestinationToUploadToWithSlashAppended + queuedPair.second + "\"";
         QString putCommand = "put \"" + m_LocalPathWithSlashAppended + queuedPair.second + "\" " + remoteUploadPath;
         QString renameCommand = "rename \"" + remoteUploadPath + "\" \"" + m_RemoteDestinationToMoveToWithSlashAppended + queuedPair.first + ".ogg\"";
@@ -153,7 +203,10 @@ void FfmpegSegmentUploader::tryDequeueAndUploadSingleSegment()
     else
     {
         emit d("segment queue couldn't upload because sftp is not ready for commands, trying again in 5 sec");
-        QTimer::singleShot(5000, Qt::VeryCoarseTimer, this, SLOT(tryDequeueAndUploadSingleSegment()));
+        if(!m_FiveSecondRetryTimer->isActive())
+        {
+            m_FiveSecondRetryTimer->start();
+        }
     }
 }
 void FfmpegSegmentUploader::handleSftpProcessReadyReadStandardOut()
@@ -177,6 +230,13 @@ void FfmpegSegmentUploader::handleSftpProcessReadyReadStandardOut()
             {
                 m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
                 m_SegmentsQueuedForUpload.dequeue();
+                if(m_SftpWasToldToQuit && m_SegmentsQueuedForUpload.size() == 0)
+                {
+                    emit d("FfmpegSegmentUploader now cleanly stopping since upload queue is empty...");
+                    stopSftpProcess();
+                    return;
+                }
+                //now onto the next one
                 QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection);
             }
             //disregard the "uploading ..." lines. worthless
@@ -203,7 +263,9 @@ void FfmpegSegmentUploader::handleSftpProcessFinished(int exitCode, QProcess::Ex
     }
     else
     {
-        //TODOreq: our normal shutdown code
+        m_SftpWasToldToQuit = false;
+        emit d("...FfmpegSegmentUploader has cleanly stopped");
+        emit stoppedUploadingFfmpegSegments();
     }
     if(exitCode != 0)
     {

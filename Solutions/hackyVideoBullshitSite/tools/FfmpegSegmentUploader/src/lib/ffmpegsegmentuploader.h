@@ -6,6 +6,7 @@
 #include <QQueue>
 #include <QPair>
 #include <QProcess>
+#include <QTimer>
 
 class QFile;
 class QFileSystemWatcher;
@@ -17,6 +18,7 @@ public:
     explicit FfmpegSegmentUploader(QObject *parent = 0);
     ~FfmpegSegmentUploader();
 private:
+    QString m_FilenameOfSegmentsEntryList;
     QFile *m_FfmpegSegmentsEntryListFile;
     QFileSystemWatcher *m_FfmpegSegmentsEntryListFileWatcher;
     QTextStream m_FfmpegSegmentsEntryListFileTextStream;
@@ -28,6 +30,7 @@ private:
     QString m_PreviousSegmentEntryTimestamp;
     QString m_PreviousSegmentEntry;
     QQueue<QPair<QString /*unixTimestamp*/, QString /*filename*/> > m_SegmentsQueuedForUpload;
+    QTimer *m_FiveSecondRetryTimer;
 
     QProcess *m_SftpProcess;
     QString m_UserHostPathComboSftpArg;
@@ -38,6 +41,8 @@ private:
     bool m_SftpWasToldToQuit;
 
     void startSftpProcessInBatchMode();
+    void stopSftpProcess();
+    void enQueuePreviousSegmentEntryForUpload();
     static inline QString appendSlashIfMissing(QString stringInput)
     {
         if(!stringInput.endsWith("/"))
@@ -51,6 +56,7 @@ signals:
     void stoppedUploadingFfmpegSegments();
 public slots:
     void startUploadingSegmentsOnceFfmpegStartsEncodingTheNextOne(const QString &filenameOfSegmentsEntryList, const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath);
+    void tellStatus();
     void stopUploadingFfmpegSegments();
 private slots:
     void handleSegmentsEntryListFileModified();
