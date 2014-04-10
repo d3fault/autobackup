@@ -1,13 +1,7 @@
 #include "standardinputnotifier.h"
 
-#include <QDebug>
-
 //because windows is teh suck, but i still really want to use qsocketnotifier wherever i can
-StandardInputNotifier::StandardInputNotifier(QObject *parent)
-{
-    StandardInputNotifier(200, parent);
-}
-StandardInputNotifier::StandardInputNotifier(int msecTimeoutForPollingStandardInput_WINDOWS_ONLY, QObject *parent) :
+StandardInputNotifier::StandardInputNotifier(QObject *parent, int msecTimeoutForPollingStandardInput_WINDOWS_ONLY) :
     QObject(parent), m_StandardInputTextStream(stdin, QIODevice::ReadOnly)
   #if defined(Q_OS_WIN) || defined(Q_WS_WIN) //targetting 4 && 5 is becoming a bitch xD, i'm thinking of just doing 5 since it's inevitibru, but i also don't have any compelling reason to switch. even if i did, i'd likely keep it on a project by project basis
     , m_StandardInputPollingTimerLoLWindows(new QTimer(this))

@@ -14,8 +14,7 @@ class StandardInputNotifier : public QObject
 {
     Q_OBJECT
 public:
-    explicit StandardInputNotifier(QObject *parent = 0);
-    explicit StandardInputNotifier(int msecTimeoutForPollingStandardInput_WINDOWS_ONLY, QObject *parent = 0);
+    explicit StandardInputNotifier(QObject *parent = 0, int msecTimeoutForPollingStandardInput_WINDOWS_ONLY = 500);
 private:
 QTextStream m_StandardInputTextStream;
 

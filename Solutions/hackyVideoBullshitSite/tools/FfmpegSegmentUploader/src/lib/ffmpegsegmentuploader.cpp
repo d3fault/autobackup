@@ -15,6 +15,21 @@ FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent) :
 }
 FfmpegSegmentUploader::~FfmpegSegmentUploader()
 {
+    if(m_SftpProcess && m_SftpProcess->isOpen())
+    {
+        if(m_SftpProcessTextStream)
+        {
+            stopSftpProcess();
+        }
+        if(m_SftpProcess->isOpen())
+        {
+            m_SftpProcess->terminate();
+            if(!m_SftpProcess->waitForFinished(5))
+            {
+                m_SftpProcess->kill();
+            }
+        }
+    }
     if(m_SftpProcessTextStream)
         delete m_SftpProcessTextStream;
 }
@@ -23,8 +38,6 @@ void FfmpegSegmentUploader::startSftpProcessInBatchMode()
     QStringList sftpArgs;
     sftpArgs << "-b" << "-" << m_UserHostPathComboSftpArg;
     m_SftpProcess->start(m_SftpProcessPath, sftpArgs, QIODevice::ReadWrite); //TODOidgaf: does windows use \r\n for stdin delimiting also? if so, QIODevice::Text flag should be passed in too
-    //m_SftpProcess->waitForStarted(-1); //connect(m_SftpProcess, SIGNAL(started())
-    //how the fuck do i know when the sftp session is READY? surely it isn't just when the process is started, guh
 }
 void FfmpegSegmentUploader::stopSftpProcess()
 {
@@ -34,7 +47,7 @@ void FfmpegSegmentUploader::stopSftpProcess()
     }
     else if(m_SftpProcess->isOpen())
     {
-        m_SftpProcess->close(); //hmmm idk lol
+        m_SftpProcess->terminate(); //hmmm idk lol
     }
 }
 void FfmpegSegmentUploader::enQueuePreviousSegmentEntryForUpload()
@@ -116,6 +129,7 @@ void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegStartsEncodingTheNex
         delete m_SftpProcessTextStream;
     m_SftpProcessTextStream = new QTextStream(m_SftpProcess);
     m_SftpProcess->setReadChannel(QProcess::StandardOutput);
+    connect(m_SftpProcess, SIGNAL(started()), this, SLOT(handleSftpProcessStarted()));
     connect(m_SftpProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleSftpProcessFinished(int,QProcess::ExitStatus)));
     connect(m_SftpProcess, SIGNAL(readyReadStandardError()), this, SLOT(handleSftpProcessReadyReadStandardError()));
     connect(m_SftpProcess, SIGNAL(readyRead()), this, SLOT(handleSftpProcessReadyReadStandardOut()));
@@ -136,16 +150,15 @@ void FfmpegSegmentUploader::stopUploadingFfmpegSegments()
 {
     m_SftpWasToldToQuit = true;
 
-    //hack to deal with the very last segment in the list, which wouldn't have been uploaded since we wait until the next one to start encoding before we begin upload
-    enQueuePreviousSegmentEntryForUpload();
-
-#if 0
-    //deal with queue already empty (won't get to our other code)
-    if(m_SegmentsQueuedForUpload.size() == 0)
+    //hack to deal with the very last segment in the list, which wouldn't have been uploaded since we wait until the next one to start encoding before we begin upload. but maybe we don't have any entries, in which case it's an empty string still
+    if(!m_PreviousSegmentEntry.isEmpty())
+    {
+        enQueuePreviousSegmentEntryForUpload();
+    }
+    else //start -> stop no segment entries seen
     {
         stopSftpProcess();
     }
-#endif
 }
 void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
 {
@@ -209,11 +222,29 @@ void FfmpegSegmentUploader::tryDequeueAndUploadSingleSegment()
         }
     }
 }
+void FfmpegSegmentUploader::handleSftpProcessStarted()
+{
+    //m_SftpProcess->waitForStarted(-1);
+    //how the fuck do i know when the sftp session is READY? surely it isn't just when the process is started, guh
+    //the only hacky solution i can think of is to see if the process DOESN'T finish in a few seconds. if auth fail or whatever, it will finish soon. lame but whatever...
+    if(m_SftpProcess->waitForFinished(5)) //TODOoptional: 5 second startup time unnecessarily added to my app, fuck you sftp
+    {
+        m_SftpIsReadyForCommands = false;
+        m_SftpWasToldToQuit = true; //give it permission to not retry
+        emit d("sftp started and then finished pretty quickly, so auth probably failed or something?");
+    }
+    else
+    {
+        m_SftpIsReadyForCommands = true;
+        QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection); //might use this code path for initial connection (race condition), but if this is a reconnect, we might want to resume uploading if queue isn't empty
+    }
+}
 void FfmpegSegmentUploader::handleSftpProcessReadyReadStandardOut()
 {
     while(!m_SftpProcessTextStream->atEnd())
     {
         QString currentLine = m_SftpProcessTextStream->readLine();
+#if 0
         if(!m_SftpIsReadyForCommands)
         {
             if(currentLine.startsWith("sftp>"))
@@ -223,6 +254,8 @@ void FfmpegSegmentUploader::handleSftpProcessReadyReadStandardOut()
             }
         }
         else
+#endif
+        if(m_SftpIsReadyForCommands)
         {
             //process or disregard standard out
             //TODOreq: seeing the "rename" command being echo'd back to us means that the upload that preceeded it finished [successfully if the process didn't abort], which means we can now start uploading the next segment in the queue (if any)
@@ -240,6 +273,10 @@ void FfmpegSegmentUploader::handleSftpProcessReadyReadStandardOut()
                 QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection);
             }
             //disregard the "uploading ..." lines. worthless
+        }
+        else //it shouldn't say anything unless we give it a command
+        {
+            emit d("sftp is not ready for commands and said: '" + currentLine + "'");
         }
     }
 }

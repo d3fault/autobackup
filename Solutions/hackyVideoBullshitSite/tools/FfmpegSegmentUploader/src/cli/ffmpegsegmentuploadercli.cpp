@@ -17,7 +17,7 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent) :
     if(arguments.size() < 6 || arguments.size() > 7)
     {
         cliUsage();
-        QMetaObject::invokeMethod(QCoreApplication::instance(), SLOT(quit()));
+        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit");
         return;
     }
     int argIndex = 1; //baller

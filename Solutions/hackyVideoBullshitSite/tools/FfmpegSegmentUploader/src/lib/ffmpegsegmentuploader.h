@@ -61,6 +61,7 @@ public slots:
 private slots:
     void handleSegmentsEntryListFileModified();
     void tryDequeueAndUploadSingleSegment();
+    void handleSftpProcessStarted();
     void handleSftpProcessReadyReadStandardOut();
     void handleSftpProcessReadyReadStandardError();
     void handleSftpProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
