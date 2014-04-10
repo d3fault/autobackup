@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1397083715
+Documents/minddump/:1397164885
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1072,6 +1072,7 @@ Documents/minddump/ladkjflksdjflksdjfoiuwerlkjosdfusldkfjoweuirlkjadfsoui.txt:13
 Documents/minddump/ladskfjalsdkjfasdouflawjosduflsdkjfowurlwkejfsdou.txt:1353176324
 Documents/minddump/lafkjdslkfjlsakdjflsadfouwerljsoufoweiurojfjk.txt:1354189416
 Documents/minddump/lajsdflkjasldkfjsldkjflasdjkflaksjdflksjdflkjsadfoiuwrlkjosudflksjdfoui.txt:1377935130
+Documents/minddump/lajsdflkjsdflkjsdkljflsdkjfouwerlkjousfljsfljksfdkldfsdjfouwerk.txt:1397164885
 Documents/minddump/lajsflkjsdfoiusdflkjsodfiusldkfjsodfiuoiwuertstoiweytlkj.txt:1367218699
 Documents/minddump/lajsldkfjasdlfkjsadfljksdfosudflkjsdfousalfkdjsdofusldfjksdofulsdfkjlsdfkj.txt:1373884545
 Documents/minddump/lakdfjladksjfoulkwjeroulkjdfsodauflkjweroulks.txt:1355322313
@@ -1596,6 +1597,7 @@ Documents/minddump/sdflkjsdlfkjsdlkfjsdouflkjewroulfkjsdflkj.txt:1358504357
 Documents/minddump/sdflkjsdlfkjsdlkjfsoduflsdjfouelkrjoiusdflksjdfoiusdoufdljsd.txt:1393516648
 Documents/minddump/sdflkjsdlfkjsldkjfsdoufsdljfosduflskjdfousdfljsofdulksdf.txt:1391543411
 Documents/minddump/sdflkjsdlfkjslkdjflksdjoiur.txt:1354515758
+Documents/minddump/sdflkjsdlkfjlsdkjflkjsdflkjweorulkjsflkjsf.txt:1397164814
 Documents/minddump/sdflkjsdlkfjouwerlkjosduflkjsdfouasdflkt.txt:1384429977
 Documents/minddump/sdflkjsdlkfjsdfjoiuwerlkjsdfoulkjrwerousdflk.txt:1358805363
 Documents/minddump/sdflkjsdlkfjsldfkjsdlkfjlsdkjfdofulskdjfousdlkfjsdfouwerjklsf.txt:1379395080
@@ -2762,7 +2764,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1390325478
+Projects/Prototypes/:1397165009
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1390331620
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1390584039
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -3052,6 +3054,18 @@ Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/robustnetwo
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/testserver.cpp:1347200647
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/src/server/testserver.h:1347200506
 Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/this.design.is.outdated.methinks.txt:1351842982
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/:1397165049
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/:1397167886
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/:1397170204
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/RuntimeDynamicIterationsDeterminerRetainingResponsivenessGui.pro:1397165375
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/main.cpp:1397170185
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/runtimedynamiciterationsdeterminerretainingresponsivenessgui.cpp:1397169595
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/runtimedynamiciterationsdeterminerretainingresponsivenessgui.h:1397167080
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/runtimedynamiciterationsdeterminerretainingresponsivenesswidget.cpp:1397170094
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/runtimedynamiciterationsdeterminerretainingresponsivenesswidget.h:1397169450
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/:1397170031
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.cpp:1397170031
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.h:1397168986
 Projects/Prototypes/WtServerPostTest/:1344095866
 Projects/Prototypes/WtServerPostTest/src/:1333034917
 Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/:1332677175
@@ -4087,7 +4101,7 @@ Solutions/hackyVideoBullshitSite/src/main.cpp:1394445146
 Solutions/hackyVideoBullshitSite/tools/:1397023744
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1397118848
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1397119216
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1397073591
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1397115975
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1397116399
