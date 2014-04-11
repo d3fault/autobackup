@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1397164885
+Documents/minddump/:1397191650
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1397020470
+Documents/minddump/dreams/:1397206918
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -48,6 +48,7 @@ Documents/minddump/dreams/asdlfkjsdlfjsdlfkjsdoufsdflkjsodfuljwoeulkjdofusdlfkjo
 Documents/minddump/dreams/asldfjlskdfjlasjdkflksajdfosdauflksdjfoulkjouwelkrjoiulfksf.txt:1379774842
 Documents/minddump/dreams/asldfkjsldkjfkjsdlfjslkdfjslkjdfkljsdkfljsdlkfjsdkjfouwerk.txt:1394500841
 Documents/minddump/dreams/asldkfjlksadjflsdfousdflkjsdofusdfkljsdouerkljousdflksdf.txt:1393156669
+Documents/minddump/dreams/aslkfjlskajfwerlkjsdfkljweorulkjsdfousdflkjsdfklouerlkjsdf.txt:1397206918
 Documents/minddump/dreams/black.jellyfish.cute.spanish.cleaning.girl.txt:1384575360
 Documents/minddump/dreams/blowjob.machine.fat.ish.neighbor.txt:1340077130
 Documents/minddump/dreams/break.in.hey.grunt.sdfkjdsfljsdfljdsfsdfj.txt:1377626128
@@ -1833,6 +1834,7 @@ Documents/minddump/sldfjlsfjlsfjosudflsjdfoudslfkjsodfuilsdkfjosduflsdkjf.txt:13
 Documents/minddump/sldfjlsfkjlsfkdjsdofiulsdkfjoisudflksdfoiusldkjfsoufsd.txt:1380224025
 Documents/minddump/sldfjlskdjflksjdflkjsdlkfjskldjflskdjfouwerlkjousdlfkjsflkj.txt:1391198515
 Documents/minddump/sldfjlskjdflskjdfsdlkjfsdlkfjsdfou.maybe.maybe.not.ill.never.know.but.i.acknowledge.possibility.txt:1391291190
+Documents/minddump/sldfjlskjflksjdflkjsdlfkjsdofulewkjrousdfkjsdflwerjk.metaphor.txt:1397191652
 Documents/minddump/sldfjsdlafjsdalkfjoiuwerlkjsdfousdflk.txt:1356355477
 Documents/minddump/sldfkjalskdjflksjdflksjdfosduflkwjerousdfjsdflkjreoi.txt:1396824015
 Documents/minddump/sldfkjasdofuwlrkjsafdihsdfkajoruwerlksjdfourl.txt:1345058845
@@ -2017,9 +2019,9 @@ Documents/bookmarks_2013-12-11.html:1386815178
 Documents/sup.txt:1396677921
 Documents/uhh.this.goes.here.too.an.d.yea.i.am.mhigh.txt:1396678563
 GloballySharedClasses/:1397025600
-GloballySharedClasses/cli/:1397117035
-GloballySharedClasses/cli/standardinputnotifier.cpp:1397117016
-GloballySharedClasses/cli/standardinputnotifier.h:1397117035
+GloballySharedClasses/cli/:1397205706
+GloballySharedClasses/cli/standardinputnotifier.cpp:1397205599
+GloballySharedClasses/cli/standardinputnotifier.h:1397205706
 GloballySharedClasses/distributeddatabase/:1394424681
 GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h:1394424681
 GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1394265803
@@ -2249,7 +2251,7 @@ Projects/BulkFileTextPrepender/src/lib/:1388244833
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.cpp:1388244833
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.h:1388239361
 Projects/ConcurrentLossyDirectoryCopier/:1396501263
-Projects/ConcurrentLossyDirectoryCopier/src/:1396501273
+Projects/ConcurrentLossyDirectoryCopier/src/:1397196904
 Projects/ConcurrentLossyDirectoryCopier/src/ConcurrentLossyDirectoryCopier.pro:1387197904
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopier.cpp:1387206600
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopier.h:1387197927
@@ -2362,7 +2364,7 @@ Projects/GitUnrollRerollCensorshipMachine/src/gui/gitunrollrerollcensorshipmachi
 Projects/GitUnrollRerollCensorshipMachine/src/gui/gitunrollrerollcensorshipmachinewidget.h:1385060837
 Projects/GitUnrollRerollCensorshipMachine/src/gui/main.cpp:1385057229
 Projects/GitUnrollRerollCensorshipMachine/src/lib/:1385062033
-Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.cpp:1385062033
+Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.cpp:1397200390
 Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.h:1384772890
 Projects/GitUnrollRerollCensorshipMachine/src/lib/gitunrollrerollcensorshipmachine.pri:1384332856
 Projects/Hottee/:1395376892
@@ -3064,7 +3066,7 @@ Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/sr
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/runtimedynamiciterationsdeterminerretainingresponsivenesswidget.cpp:1397170094
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/runtimedynamiciterationsdeterminerretainingresponsivenesswidget.h:1397169450
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/:1397170031
-Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.cpp:1397170031
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.cpp:1397204320
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.h:1397168986
 Projects/Prototypes/WtServerPostTest/:1344095866
 Projects/Prototypes/WtServerPostTest/src/:1333034917
@@ -4101,14 +4103,14 @@ Solutions/hackyVideoBullshitSite/src/main.cpp:1394445146
 Solutions/hackyVideoBullshitSite/tools/:1397023744
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1397119216
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1397205734
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1397073591
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1397115975
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1397204945
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1397116399
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1397118848
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1397118414
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1397118414
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1397117850
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1397204565
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1397204565
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1397203772
 Solutions/launchASEPbecauseRedAlert/:1395576326
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681
@@ -4118,7 +4120,7 @@ Solutions/launchASEPbecauseRedAlert/baseDirForDist/readme.nfo:1387578750
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/readme.txt:1388204069
 Solutions/launchASEPbecauseRedAlert/an.note.saldfkjsdlakfjoweurljoufssdlkf.txt:1371120857
 Solutions/launchASEPbecauseRedAlert/clickableSvgQuoteChristmasTreeUnquote.svg:1371121165
-Solutions/launchASEPbecauseRedAlert/face.record.commands.and.capture.card.stuffz.blah.txt:1397111399
+Solutions/launchASEPbecauseRedAlert/face.record.commands.and.capture.card.stuffz.blah.txt:1397199921
 Solutions/launchASEPbecauseRedAlert/fundraising.index.html:1394691615
 Solutions/launchASEPbecauseRedAlert/index.2.html:1371128097
 Solutions/launchASEPbecauseRedAlert/index.3.html:1371126908
@@ -4188,7 +4190,7 @@ autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
-autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1392793802
+autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1397189257
 autobackupScripts/linux/base64theMd5SumOfAFileProperly.sh:1385203690
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665

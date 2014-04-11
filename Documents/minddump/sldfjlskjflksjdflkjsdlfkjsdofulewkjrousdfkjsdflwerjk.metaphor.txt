@@ -1,0 +1,1 @@
+I am a compromised tor hidden service in an OpenBSD jail, whose only available form of communication is through my uncompromised host. I have no idea where I am (but I have at least some control of/in my own little world).

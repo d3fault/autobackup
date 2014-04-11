@@ -16,8 +16,9 @@ void RuntimeDynamicIterationsDeterminerRetainingResponsiveness::doSingleIteratio
     if(x % 100000 == 0)
         emit d(hashResult);
 }
-//core 2 quad 2.83ghz: we determined that we can do 196418 sha1 iterations while still being responsive within 250 milliseconds
-//Ping -> Pong took 293 milliseconds. Is that less than what's in the above line edit :-D? <-- my input was 250. It makes sense why it's off, the more realistic max is n*2. I could account for that in the code, but too lazy for now. I'm happy with it as is and I'm just dicking around anyways :-P
+//example results, core 2 quad 2.83ghz in a VM:
+	//we determined that we can do 196418 sha1 iterations while still being responsive within 250 milliseconds
+	//Ping -> Pong took 293 milliseconds. Is that less than what's in the above line edit :-D? <-- my input was 250. It makes sense why it's off, the more realistic max is n*2. I could account for that in the code, but too lazy for now. I'm happy with it as is and I'm just dicking around anyways :-P
 void RuntimeDynamicIterationsDeterminerRetainingResponsiveness::determineIterationsToRetainResponsivenessWithin(qint64 msecTargetMaxResponseTime)
 {
     //it would be more accurate to just increment by 1 instead of using golden ratio, but that would incur a greater startup time. further analysis could be done once msecTargetMaxResponseTime is surpased, ie a hybrid golden ratio and "increment by 1" solution. for now, KISS
@@ -53,6 +54,7 @@ void RuntimeDynamicIterationsDeterminerRetainingResponsiveness::startDoingWorkUt
     m_StopRequested = false;
     doMultipleUnitsOfWorkUsingDeterminedIterations();
 }
+//Dear Vin Diesel, here is an example of one unit of execution (and in this case, we really are trying to maximize speeeeeeeeed xD):
 void RuntimeDynamicIterationsDeterminerRetainingResponsiveness::doMultipleUnitsOfWorkUsingDeterminedIterations()
 {
     if(m_StopRequested)
@@ -64,7 +66,7 @@ void RuntimeDynamicIterationsDeterminerRetainingResponsiveness::doMultipleUnitsO
     {
         doSingleIterationOfWork();
     }
-    QMetaObject::invokeMethod(this, "doMultipleUnitsOfWorkUsingDeterminedIterations", Qt::QueuedConnection); //queued connection vital here
+    QMetaObject::invokeMethod(this, "doMultipleUnitsOfWorkUsingDeterminedIterations", Qt::QueuedConnection); //queued connection vital here. TODOoptimization: find out if it's faster to just call processEvents() instead (in which case we just enclose this entire method body in a forever loop). still i like this queued invoke better DESIGN wise
 }
 void RuntimeDynamicIterationsDeterminerRetainingResponsiveness::ping()
 {

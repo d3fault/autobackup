@@ -3,9 +3,13 @@
 raspivid -t 0 -o - --width 1920 --height 1080 --bitrate 1500000 --vflip --hflip --framerate 30 --inline
 
 
-//That particular pi is using component (yellow) video output, which is plugged into my TV Wonder Pro and being captured on an internet connnected computer (the raspivid _PREVIEW_ is being captured <3). Note the cropping params in the following command are probably specific to my ATI Wonder Pro, other cap cards need to recalculate them
+//That particular pi is using component (yellow) video output, which is plugged into my TV Wonder Pro and being captured on an internet connnected computer (the raspivid _PREVIEW_ is being captured <3). Note the cropping params in the following command are probably specific to my ATI Wonder Pro (I now have 4 ATI Wonder Pros xD), other cap cards need to recalculate them
 
-ffmpeg -f video4linux2 -s 720x480 -aspect 3:2 -channel 1 -i /dev/video0 -b:v 110000 -vcodec theora -an -r 10 -map 0 -vf crop=720:452:0:17 -f segment -segment_time 180 -segment_list_size 999999999 -segment_wrap 999999999 -segment_list segments.txt -reset_timestamps 1 face-%d.ogg
+_AUDIO-AND-VIDEO_ (the a/v sync (-itsoffset) might need to be adjusted when using MouseOrMotionOrMySexyFaceViewMaker in the mix)
+ffmpeg -f alsa -i hw:0 -f video4linux2 -s 720x480 -channel 1 -i /dev/video0 -acodec opus -b:a 32k -ac 1 -b:v 110k -vcodec theora -r 10 -map 0 -map 1 -vf crop=720:452:0:17 -f segment -segment_time 15 -segment_list_size 999999999 -segment_wrap 999999999 -segment_list segmentsEntryList -reset_timestamps 1 face-%d.ogg
+
+_VIDEO-ONLY_
+ffmpeg -f video4linux2 -s 720x480 -channel 1 -i /dev/video0 -b:v 110000 -vcodec theora -an -r 10 -map 0 -vf crop=720:452:0:17 -f segment -segment_time 180 -segment_list_size 999999999 -segment_wrap 999999999 -segment_list segments.txt -reset_timestamps 1 face-%d.ogg
 
 
-//Then we simply watch that segments.txt for activity. ffmpeg appends a filename to it when it starts that segment, so we begin uploading the previous segment right when a filename is appended. It *might* be possible to begin uploading right as ffmpeg is encoding, so long as ffmpeg only ever appends to the file. I am unsure. It might even be possible to start http serving up the partially uploaded .ogv file, but that would probably qualify as "streaming media" anyways.
+//Then we simply watch that segments.txt for activity. ffmpeg appends a filename to it when it finishes that segment, so we begin uploading the segment when a filename is appended. It *might* be possible to begin uploading right as ffmpeg is encoding, so long as ffmpeg only ever appends to the video file. I am unsure. It might even be possible to start http serving up the partially uploaded .ogg file, but that would probably qualify as "streaming media" anyways.

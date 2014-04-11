@@ -26,13 +26,22 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent) :
     QString remoteDestinationToUploadTo = arguments.at(argIndex++);
     QString remoteDestinationToMoveTo = arguments.at(argIndex++);
     QString userHostPathComboSftpArg = arguments.at(argIndex++);
+    bool convertOk = false;
+    qint64 segmentLengthSeconds = static_cast<qint64>(arguments.at(argIndex++).toInt(&convertOk));
+    if(!convertOk)
+    {
+        cliUsage();
+        handleD("segment length not a valid number");
+        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit");
+        return;
+    }
     QString sftpProcessPath;
-    if(arguments.size() > 6) //TODOoptional: this if based on argIndex vs size(), so i can add some in between without changing the 6 hardcode <3
+    if(arguments.size() > 7) //TODOoptional: this if based on argIndex vs size(), so i can add some in between without changing the 7 hardcode <3
     {
         sftpProcessPath = arguments.at(argIndex++);
     }
 
-    QMetaObject::invokeMethod(m_FfmpegSegmentUploader, "startUploadingSegmentsOnceFfmpegStartsEncodingTheNextOne", Q_ARG(QString, filenameOfSegmentsEntryList), Q_ARG(QString, localPath), Q_ARG(QString, remoteDestinationToUploadTo), Q_ARG(QString, remoteDestinationToMoveTo), Q_ARG(QString, userHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
+    QMetaObject::invokeMethod(m_FfmpegSegmentUploader, "startUploadingSegmentsOnceFfmpegAddsThemToTheSegmentsEntryList", Q_ARG(QString, filenameOfSegmentsEntryList), Q_ARG(QString, localPath), Q_ARG(QString, remoteDestinationToUploadTo), Q_ARG(QString, remoteDestinationToMoveTo), Q_ARG(QString, userHostPathComboSftpArg), Q_ARG(qint64, segmentLengthSeconds), Q_ARG(QString, sftpProcessPath));
     //vs: m_FfmpegSegmentUploader->startUplo... -- above has benefit of not needing to be changed if m_FfmpegSegmentUploader is ever moved to another thread. the autoconnection makes it basically a direct call anyways <3. man i fucking love qt. who am i kidding though, this isn't performance code... guh...
 
     cliUserInterfaceMenu();

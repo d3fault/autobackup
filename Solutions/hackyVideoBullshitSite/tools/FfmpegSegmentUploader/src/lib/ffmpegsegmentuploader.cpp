@@ -50,16 +50,14 @@ void FfmpegSegmentUploader::stopSftpProcess()
         m_SftpProcess->terminate(); //hmmm idk lol
     }
 }
-void FfmpegSegmentUploader::enQueuePreviousSegmentEntryForUpload()
+void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegAddsThemToTheSegmentsEntryList(const QString &filenameOfSegmentsEntryList, const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, qint64 segmentLengthSeconds, const QString &sftpProcessPath)
 {
-    QPair<QString,QString> newPair;
-    newPair.first = m_PreviousSegmentEntryTimestamp;
-    newPair.second = m_PreviousSegmentEntry;
-    m_SegmentsQueuedForUpload.enqueue(newPair);
-    QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection);
-}
-void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegStartsEncodingTheNextOne(const QString &filenameOfSegmentsEntryList, const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath)
-{
+    if(segmentLengthSeconds < 1)
+    {
+        emit d("segment length can't be less than 1");
+        return;
+    }
+    m_SegmentLengthSeconds = segmentLengthSeconds;
     if(remoteDestinationToMoveTo.isEmpty() || remoteDestinationToUploadTo.isEmpty())
     {
         emit d("can't have empty remote destinations");
@@ -120,7 +118,6 @@ void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegStartsEncodingTheNex
     m_FfmpegSegmentsEntryListFileWatcher = new QFileSystemWatcher(this);
     m_FfmpegSegmentsEntryListFileWatcher->addPath(filenameOfSegmentsEntryList);
     connect(m_FfmpegSegmentsEntryListFileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleSegmentsEntryListFileModified()));
-    m_PreviousSegmentEntry.clear();
 
     if(m_SftpProcess)
         delete m_SftpProcess;
@@ -143,32 +140,25 @@ void FfmpegSegmentUploader::tellStatus()
 {
     int queueSize = m_SegmentsQueuedForUpload.size();
     QString headOfUploadQueue = (queueSize > 0 ?  m_SegmentsQueuedForUpload.head().second : "");
-    QString segmentInformations = "==Ffmpeg Segment Uploader Status==\n\tMost recent segment entry (which is probably still being encoded): " + m_PreviousSegmentEntry + "\n\tSize of upload queue: " + QString::number(queueSize) + "\n\t'Head' of the upload queue: " + headOfUploadQueue + "\n\tsftp connection status: " + (m_SftpIsReadyForCommands ? "" : "NOT ") + "ready for commands";
+    QString segmentInformations = "==Ffmpeg Segment Uploader Status==\n\tMost recent segment entry: " + (queueSize > 0 ?  m_SegmentsQueuedForUpload.back().second : "") + "\n\tSize of upload queue: " + QString::number(queueSize) + "\n\t'Head' of the upload queue: " + headOfUploadQueue + "\n\tsftp connection status: " + (m_SftpIsReadyForCommands ? "" : "NOT ") + "ready for commands";
     emit d(segmentInformations);
 }
 void FfmpegSegmentUploader::stopUploadingFfmpegSegments()
 {
     m_SftpWasToldToQuit = true;
 
-    //hack to deal with the very last segment in the list, which wouldn't have been uploaded since we wait until the next one to start encoding before we begin upload. but maybe we don't have any entries, in which case it's an empty string still
-    if(!m_PreviousSegmentEntry.isEmpty())
-    {
-        enQueuePreviousSegmentEntryForUpload();
-    }
-    else //start -> stop no segment entries seen
+    if(m_SegmentsQueuedForUpload.isEmpty()) //start -> stop no segment entries seen, and also if ffmpeg was stopped a while ago
     {
         stopSftpProcess();
     }
 }
 void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
 {
-    if(!m_PreviousSegmentEntry.isEmpty())
-    {
-        enQueuePreviousSegmentEntryForUpload();
-    }
-
-    m_PreviousSegmentEntryTimestamp = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000);
-    m_PreviousSegmentEntry = m_FfmpegSegmentsEntryListFileTextStream.readLine();
+    QPair<QString,QString> newPair;
+    newPair.first = QString::number(QDateTime::currentDateTime().addSecs(-m_SegmentLengthSeconds).toMSecsSinceEpoch()/1000); //it's added to the segment entry list right when encoding finishes. idfk how i thought it was added right when encoding starts (thought i saw it happen!)... now gotta un-code dat shiz
+    newPair.second = m_FfmpegSegmentsEntryListFileTextStream.readLine();
+    m_SegmentsQueuedForUpload.enqueue(newPair);
+    QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection);
 }
 void FfmpegSegmentUploader::tryDequeueAndUploadSingleSegment()
 {
@@ -257,13 +247,13 @@ void FfmpegSegmentUploader::handleSftpProcessReadyReadStandardOut()
 #endif
         if(m_SftpIsReadyForCommands)
         {
-            //process or disregard standard out
-            //TODOreq: seeing the "rename" command being echo'd back to us means that the upload that preceeded it finished [successfully if the process didn't abort], which means we can now start uploading the next segment in the queue (if any)
+            //process or disregard sftp's standard out
+            //seeing the "rename" command being echo'd back to us means that the upload that preceeded it finished [successfully if the process didn't abort], which means we can now start uploading the next segment in the queue (if any)
             if(m_SftpPutInProgressSoWatchForRenameCommandEcho && currentLine.startsWith("sftp> rename "))
             {
                 m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
                 m_SegmentsQueuedForUpload.dequeue();
-                if(m_SftpWasToldToQuit && m_SegmentsQueuedForUpload.size() == 0)
+                if(m_SftpWasToldToQuit && m_SegmentsQueuedForUpload.isEmpty()) //TODOoptional: the last segment PROBABLY won't be segmentLengthSeconds long, so the timestamp we calculate when it's added to the segment entry list will be early and 'pointing to a time in the previous segment'. i could solve this by keeping track of time elapsed or whatever and then only using that for the very last segment added when quitting, but i'm too lazy for now :-P
                 {
                     emit d("FfmpegSegmentUploader now cleanly stopping since upload queue is empty...");
                     stopSftpProcess();

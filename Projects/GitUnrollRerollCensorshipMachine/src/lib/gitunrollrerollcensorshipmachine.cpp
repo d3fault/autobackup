@@ -1,6 +1,6 @@
 #include "gitunrollrerollcensorshipmachine.h"
 
-#define CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT 1
+//#define CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT 1
 
 #ifdef CUSTOM_GIT_UNROLL_REROLL_HACKS_FOR_D3FAULT
 #include <QProcess>
