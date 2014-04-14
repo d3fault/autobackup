@@ -14,6 +14,7 @@
 using namespace Wt;
 using namespace boost::property_tree;
 
+//class originally intended to only be for ad image backend, now transform[ing|ed] into video segment 'pusher' (perhaps i should push that functionality into an object that this class hasA. still, even in that case it would be proper'er to rename this class to just HackyVideoBullshitBackend. maybe even should push  the ad image get and subscribe functionality into an object, for modularity reasons
 AdImageGetAndSubscribeManager::AdImageGetAndSubscribeManager(QObject *parent)
     : QObject(parent), m_CurrentAdImage(0), m_YesterdaysAdImage(0), m_CurrentAdUrl("n"), m_CurrentAdExpirationDateTime(0), m_Stopping(false), m_CurrentlyShowingNoAdPlaceholder(true), m_NetworkAccessManager(0), m_UpdateSubscribersHashIterator(0)
 {
@@ -23,18 +24,7 @@ AdImageGetAndSubscribeManager::AdImageGetAndSubscribeManager(QObject *parent)
 }
 AdImageGetAndSubscribeManager::~AdImageGetAndSubscribeManager()
 {
-    if(m_CurrentAdImage)
-        delete m_CurrentAdImage;
-    if(m_YesterdaysAdImage)
-        delete m_YesterdaysAdImage;
-
-    QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
-    while(it.hasNext())
-    {
-        it.next();
-        AdImageSubscriberSessionInfo *sessionInfo = it.value();
-        delete sessionInfo;
-    }
+    //moved this to finishStopping because finishStopping is called on the thread moved to, whereas destructor is called from main thread :-/
 }
 void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
 {
@@ -42,8 +32,6 @@ void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
 }
 void AdImageGetAndSubscribeManager::initializeAndStart()
 {
-    //TODOreq: read in the "no ad" placeholder and keep it in memory at all times (perhaps a global/public resource with a ridiculously long expiration date)
-
     //do the first GET for today's ad
     if(!m_NetworkAccessManager)
     {
@@ -83,7 +71,25 @@ void AdImageGetAndSubscribeManager::beginStopping()
 }
 void AdImageGetAndSubscribeManager::finishStopping()
 {
-    //???
+    if(m_CurrentAdImage)
+    {
+        delete m_CurrentAdImage;
+        m_CurrentAdImage = 0;
+    }
+    if(m_YesterdaysAdImage)
+    {
+        delete m_YesterdaysAdImage;
+        m_YesterdaysAdImage = 0;
+    }
+
+    QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
+    while(it.hasNext())
+    {
+        it.next();
+        AdImageSubscriberSessionInfo *sessionInfo = it.value();
+        delete sessionInfo;
+    }
+    m_Subscribers.clear();
 }
 void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply *reply) //TODOreq: errors, such as timeout, use "no ad" placeholder and of course schedule a retry in a little
 {

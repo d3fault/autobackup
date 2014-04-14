@@ -1,14 +1,21 @@
 #include "hackyvideobullshitsitegui.h"
 
 #include <Wt/WVideo>
-#include <Wt/WAudio>
 #include <Wt/WImage>
 #include <Wt/WAnchor>
 #include <Wt/WText>
 #include <Wt/WLink>
 #include <Wt/WEnvironment>
 
+#include <QAtomicInt>
+#include <QString>
+
+#define WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
+
+//segfault if server is started before assigning these :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
+QAtomicInt* HackyVideoBullshitSiteGUI::m_SharedVideoSegmentsArrayIndex = 0;
+//mindfuck, maybe i don't need to set it to zero though, std::string *(*m_SharedVideoSegmentsArray)[SHARED_VIDEO_SEGMENTS_ARRAY_SIZE];
 
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env), m_AdImageAnchor(0), m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
@@ -35,14 +42,6 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     videoPlayer->resize(640, 480);
     videoPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 Video, or there was an error establishing a connection to the video stream"));
 
-    new WBreak(container); //is WAudio even visual?
-    new WBreak(container);
-
-    WAudio *audioPlayer = new WAudio(container);
-    audioPlayer->setOptions(WAbstractMedia::Autoplay);
-    audioPlayer->addSource(WLink(WLink::Url, "http://localhost:8081/audio.opus"), "audio/opus");
-    audioPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 Audio, or there was an error establishing a connection to the audio stream"));
-
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
     {
         deferRendering();
@@ -50,6 +49,18 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     else
     {
         enableUpdates(true);
+    }
+
+    QString theInternalPath = QString::fromStdString(internalPath());
+    if(theInternalPath == "/" || theInternalPath == "" || theInternalPath.startsWith(WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/") || theInternalPath == WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS)
+    {
+        const int sharedVideoSegmentsArrayIndex = m_SharedVideoSegmentsArrayIndex->load();
+
+    }
+    else
+    {
+        //TODOreq: MyBrain archive browsing, 404'ing.
+        //TODOreq: post launch files should have a drop watch folder thingo too i suppose...
     }
 }
 HackyVideoBullshitSiteGUI::~HackyVideoBullshitSiteGUI()
@@ -77,7 +88,7 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
         m_AdImageAnchor->setTarget(TargetNewWindow);
         placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
         m_AdImageAnchor->setToolTip("Buy this ad space for BTC 0.00001");
-        if(environment.ajax())
+        if(environment().ajax())
         {
             triggerUpdate();
         }
@@ -95,7 +106,7 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
     adImage->setToolTip(newAdAltAndHover);
     m_AdImageAnchor->setToolTip(newAdAltAndHover);
 
-    if(environment.ajax())
+    if(environment().ajax())
     {
         triggerUpdate();
     }

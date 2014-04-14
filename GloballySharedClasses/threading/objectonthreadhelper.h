@@ -12,7 +12,7 @@ public:
 protected:
     QObject *m_TheObject;
     virtual void run() = 0;
-signals:
+Q_SIGNALS:
     void objectIsReadyForConnectionsOnly();
 };
 
@@ -20,6 +20,7 @@ template<class UserObjectType>
 class ObjectOnThreadHelper : public ObjectOnThreadHelperBase
 {
 public:
+    explicit ObjectOnThreadHelper(QObject *parent = 0) : ObjectOnThreadHelperBase(parent) { }
     UserObjectType *getObjectPointerForConnectionsOnly()
     {
         return static_cast<UserObjectType*>(m_TheObject);
@@ -27,22 +28,26 @@ public:
 protected:
     virtual void run()
     {
-        //The user's object is allocated on the heap right when the thread starts and remember it's address in a member pointer so the thread that created us can request it when they respond to our objectIsReadyForConnectionsOnly() signal. Due to limitations with MOC, we cannot emit a templated type
-        m_TheObject = new UserObjectType();
+        struct UserObjectTypeScopedDeleterStruct //The struct hack ensures that m_TheObject is set back to zero in case the object throws
+        {
+            ~UserObjectTypeScopedDeleterStruct()
+            {
+                m_TheObject = 0; //Just in case they ask for it again (they shouldn't)
+            }
+        } UserObjectTypeScopedDeleterStructInstance;
+        Q_UNUSED(UserObjectTypeScopedDeleterStructInstance)
+
+        //The user's object is allocated on the stack (not heap because this way if the object throws, it is still destroyed) right when the thread starts and we record it's address in a member pointer so the thread that created us can request it when they receive our objectIsReadyForConnectionsOnly() signal. Due to limitations with MOC, we cannot emit the object pointer as a signal parameter (because it is a templated type)
+        UserObjectType theObject; //m_TheObject = new UserObjectType();
+        m_TheObject = &theObject;
 
         //Tell whoever created us that the object is ready for connections
-        emit objectIsReadyForConnectionsOnly();
+        Q_EMIT objectIsReadyForConnectionsOnly();
 
         //Enter the event loop and do not leave it until QThread::quit() or QThread::terminate() are called
         exec();
 
-        //After exec() returns (from calling QThread::quit() ideally), we delete the object
-        delete m_TheObject;
-
-        //Just in case they ask for it again (they shouldn't)
-        m_TheObject = 0;
-
-        //Qt can safely handle signals/slots to a non-existing object, so you don't have to worry about disconnect()'ing them
+        //After exec() returns (from calling QThread::quit() ideally), the object goes out of scope and is deleted and m_TheObject set back to zero
     }
 };
 

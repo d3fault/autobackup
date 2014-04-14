@@ -1,0 +1,5 @@
+I was going to use an atomic to point to an index into an array, but after realizing that it'd probably require way too much ram I've decided to just rely on the filesystem cache (and even read up on it and discovered a nifty little utility "vmtouch" that I want to remember in the back of my mind (good license too <3)) and do what I _THOUGHT_ were expensive calls (directory lists) in each WApplication, fuck it and KISS.
+
+Commit with string saldfkjsdfjkweriouewr082304980349 will show you the design I was going to use before changing my mind here.
+
+Oh and another note for myself: Adding a folder (right now I'm thinking each "day" has it's own folder (might do years (folder) + days (folder) + 3 minute segments (files))) must have a file already in it (create folder, move file into it, move folder to the area getting "ls"'d). This ensures that ls in said dir will never return 0 entries.
