@@ -1,10 +1,11 @@
 #include "hackyvideobullshitsite.h"
 
+#include <Wt/WServer>
+
 #include <fstream>
 
 #include <QCoreApplication>
 #include <QThread>
-#include <QAtomicInt>
 
 #include "backend/hackyvideobullshitsitebackend.h"
 #include "backend/adimagewresource.h"
@@ -17,12 +18,10 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
     //start ad image get and subscribe thread and wait for it to finish initializing
     struct HackyVideoBullshitSiteBackendScopedDeleter
     {
-        QAtomicInt m_SharedVideoSegmentsArrayIndex; //main object for VideoSegmentsImporterFolderWatcher -> Wt communication
         HackyVideoBullshitSiteBackend m_HackyVideoBullshitSiteBackend;
         QThread m_HackyVideoBullshitSiteBackendThread;
         HackyVideoBullshitSiteBackendScopedDeleter()
-                : m_SharedVideoSegmentsArrayIndex(-1)
-                , m_HackyVideoBullshitSiteBackend(&m_SharedVideoSegmentsArrayIndex)
+                : m_HackyVideoBullshitSiteBackend("&m_SharedVideoSegmentsArrayIndex", "lol", "hi")
         {
             //using a style i dislike (object not instantiating on thread that 'owns' it, but oh well)
             m_HackyVideoBullshitSiteBackend.moveToThread(&m_HackyVideoBullshitSiteBackendThread);
@@ -71,7 +70,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
     //AdImageGetAndSubscribeManager is done initializing, so now we set up Wt and then start the Wt server
 
     HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = HackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend.adImageGetAndSubscribeManager();
-    HackyVideoBullshitSiteGUI::m_SharedVideoSegmentsArrayIndex = &HackyVideoBullshitSiteBackendScopedDeleterInstance.m_SharedVideoSegmentsArrayIndex; //similarly, instead of a pointer to a video segment file, i could point to a plugin to expand capability without shutting the server down :-P
+    //OLD-when-atomic: similarly, instead of a pointer to a video segment file, i could point to a plugin to expand capability without shutting the server down :-P
 
     //start server, waitForShutdown(), invoke via BlockingQueuedConnection a 'stop' to AdImageGetAndSubscribeManager to let it finish current actions (also sets bool to not allow further), server.stop, tell AdImageGetAndSubscribeManager to quit, wait for AdImageGetAndSubscribeManager to join
 

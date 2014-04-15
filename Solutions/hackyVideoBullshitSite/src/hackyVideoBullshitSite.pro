@@ -5,11 +5,9 @@ QT -= gui
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG += no_keywords #bah
 
-DEFINES += QT_NO_KEYWORDS \
-    SHARED_VIDEO_SEGMENTS_ARRAY_SIZE 1000000 #(((1000000*64)/8)*3)/60/24/365 = 45.66210 days before i run out, with only the cost of 8mb :-P, 4mb on 32-bit platforms (excluding the size of the strings they point to, which will be all over the place and allocated as needed xD)
-
+#CONFIG += no_keywords #bah, wt is great except it's GPL and fucks with my signals/slots
+#DEFINES += QT_NO_KEYWORDS
 
 SOURCES += main.cpp \
     hackyvideobullshitsite.cpp \

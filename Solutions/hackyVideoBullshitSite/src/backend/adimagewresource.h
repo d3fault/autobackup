@@ -1,6 +1,7 @@
 #ifndef ADIMAGEWRESOURCE_H
 #define ADIMAGEWRESOURCE_H
 
+#include <Wt/WServer>
 #include <Wt/WResource>
 using namespace Wt;
 

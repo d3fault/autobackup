@@ -1,5 +1,6 @@
 #include "adimagegetandsubscribemanager.h"
 
+#include <Wt/WServer>
 #include <QNetworkReply>
 #include <QDateTime>
 #include <QTimer>

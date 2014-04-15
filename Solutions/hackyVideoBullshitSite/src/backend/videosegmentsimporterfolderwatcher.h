@@ -2,7 +2,8 @@
 #define VIDEOSEGMENTSIMPORTERFOLDERWATCHER_H
 
 #include <QObject>
-#include <QAtomicInt>
+#include <QDateTime>
+#include <QDir>
 
 class QFileSystemWatcher;
 
@@ -10,13 +11,22 @@ class VideoSegmentsImporterFolderWatcher : public QObject
 {
     Q_OBJECT
 public:
-    explicit VideoSegmentsImporterFolderWatcher(QAtomicInt *sharedVideoSegmentsArrayIndex, QObject *parent = 0);
+    explicit VideoSegmentsImporterFolderWatcher(QObject *parent = 0);
 private:
     QFileSystemWatcher *m_DirectoryWatcher;
-    QAtomicInt *m_SharedVideoSegmentsArrayIndex;
-public Q_SLOTS:
-    void initializeAndStart();
-private Q_SLOTS:
+    QString m_VideoSegmentsImporterFolderToWatchWithSlashAppended;
+    QDir m_VideoSegmentsImporterFolderScratchSpace;
+    QString m_VideoSegmentsImporterFolderToMoveToWithSlashAppended;
+
+    int m_CurrentYearFolder;
+    int m_CurrentDayOfYearFolder;
+
+    inline QString appendSlashIfNeeded(QString inputString) { return inputString.endsWith("/") ? inputString : inputString.append("/"); } //always easier than a pri include
+signals:
+    void d(const QString &);
+public slots:
+    void initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo);
+private slots:
     void handleDirectoryChanged(const QString &path);
 };
 

@@ -1,5 +1,6 @@
 #include "adimagewresource.h"
 
+#include <Wt/WServer>
 #include <Wt/Http/Response>
 #include <Wt/WDateTime>
 

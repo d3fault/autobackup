@@ -1,6 +1,7 @@
 #ifndef HACKYVIDEOBULLSHITSITEBACKEND_H
 #define HACKYVIDEOBULLSHITSITEBACKEND_H
 
+#include <Wt/WServer>
 #include <QObject>
 
 #include "objectonthreadhelper.h"
@@ -8,24 +9,27 @@
 #include "videosegmentsimporterfolderwatcher.h"
 
 class AdImageGetAndSubscribeManager;
-class QAtomicInt;
 
 class HackyVideoBullshitSiteBackend : public QObject
 {
     Q_OBJECT
 public:
-    explicit HackyVideoBullshitSiteBackend(QAtomicInt *sharedVideoSegmentsArrayIndex, QObject *parent = 0);
+    explicit HackyVideoBullshitSiteBackend(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, QObject *parent = 0);
     ~HackyVideoBullshitSiteBackend();
     AdImageGetAndSubscribeManager *adImageGetAndSubscribeManager();
 private:
     AdImageGetAndSubscribeManager *m_AdImageGetAndSubscribeManager;
     ObjectOnThreadHelper<VideoSegmentsImporterFolderWatcher> *m_VideoSegmentsImporterFolderWatcherThread;
 
-    //pass through
-    QAtomicInt *m_SharedVideoSegmentsArrayIndex;
+    //Pass through
+    QString m_VideoSegmentsImporterFolderToWatch; //sftp user writeable
+    QString m_VideoSegmentsImporterFolderScratchSpace; //should be the same physical filesystem as the "ToWatch" or "MoveTo"
+    QString m_VideoSegmentsImporterFolderToMoveTo; //not sftp user writeable
 
-    void endVideoSegmentsImporterFolderWatcherThreadIfNeeded():
-public Q_SLOTS:
+    void stopVideoSegmentsImporterFolderWatcherThreadIfNeeded();
+signals:
+    void d(const QString &);
+public slots:
     void initializeAndStart();
     void handleVideoSegmentsImporterFolderWatcherReadyForConnections();
     void beginStopping();

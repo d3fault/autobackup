@@ -1,21 +1,26 @@
 #include "hackyvideobullshitsitegui.h"
 
+#include <Wt/WServer>
 #include <Wt/WVideo>
 #include <Wt/WImage>
 #include <Wt/WAnchor>
 #include <Wt/WText>
 #include <Wt/WLink>
 #include <Wt/WEnvironment>
+#include <Wt/WFileResource>
+#include <Wt/WPushButton>
 
-#include <QAtomicInt>
 #include <QString>
+#include <QStringList>
+#include <QDir>
+#include <QFile>
+#include <QDate>
 
-#define WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
+#define HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER "/some/placeholder/video/TODOreq.ogg" //TODOoptional: when no year/day folders are present (error imo) i could add code to present this... and it could even server as a pre-launch kind... of... countdown... thingo... (nah (ok changed my mind, yah (since it was a simple patch 'if year == 2013' xD)))
+#define HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
 
 //segfault if server is started before assigning these :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
-QAtomicInt* HackyVideoBullshitSiteGUI::m_SharedVideoSegmentsArrayIndex = 0;
-//mindfuck, maybe i don't need to set it to zero though, std::string *(*m_SharedVideoSegmentsArray)[SHARED_VIDEO_SEGMENTS_ARRAY_SIZE];
 
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env), m_AdImageAnchor(0), m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
@@ -32,16 +37,6 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     new WBreak(container);
     new WBreak(container);
 
-    //Checkbox: "Audio", checked by default
-
-    //Radio: "Video" /// "Auto" (default), "Virtual Only" (screen), "Actual Only" (face), "Both". Auto is controlled by me through some manual mechanism (propagates via WServer::post). If I'm codan etc, screen. If not, face. Actually this sounds like too much of a pain in the ass for me to do manually, but idk what to default to otherwise xD (defaulting to "both" sounds good, but then I've just doubled my bandwidth rofl!). Another idea almost worth its own text file is to use my mouse and/or motion detector to determine whether or not to show face only, or screen with face as thumbnail (which can still be 'separated' via this radio). Detecting motion on a SCREEN is easy and lossless, so whenever there ISN'T motion, we maximize face and don't even need to show the screen. I've decided I'll implement this later, however...
-
-    WVideo *videoPlayer = new WVideo(container);
-    videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
-    videoPlayer->addSource(WLink(WLink::Url, "http://localhost:8080/video.ogv"), "video/ogg");
-    videoPlayer->resize(640, 480);
-    videoPlayer->setAlternativeContent(new WText("Either your browser doesn't support HTML5 Video, or there was an error establishing a connection to the video stream"));
-
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
     {
         deferRendering();
@@ -52,15 +47,38 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     }
 
     QString theInternalPath = QString::fromStdString(internalPath());
-    if(theInternalPath == "/" || theInternalPath == "" || theInternalPath.startsWith(WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/") || theInternalPath == WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS)
+    if(theInternalPath == "/" || theInternalPath == "" || theInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
     {
-        const int sharedVideoSegmentsArrayIndex = m_SharedVideoSegmentsArrayIndex->load();
+        std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
+        //latestVideoSegmentFilePath is either set to most recent or to placeholder
+        //WVideo(WFileResource) dat shit. TODOreq: download video file button
+
+        //TODOreq: previous button
+        WPushButton *nextVideoClipPushButton = new WPushButton("Next Video Clip", container); //if next != current; aka if new-current != current-when-started-playing
+        //TODOreq: changing internal paths deletes/zeros button
+        nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
+
+        WVideo *videoPlayer = new WVideo(container); //TODOreq: changing paths (archive browsing, etc) deletes/zeros videoPlayer
+        WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
+        videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
+        videoPlayer->addSource(WLink(latestVideoSegmentFileResource), "video/ogg");
+        videoPlayer->resize(800, 600);
+        videoPlayer->setAlternativeContent(new WText("Either your browser is a piece of shit and doesn't support HTML5 Video (You should use Mozilla Firefox), or there was an error establishing a connection to the video stream."));
+        if(!environment().ajax())
+        {
+            return;
+        }
+        videoPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
+    }
+    else if(theInternalPath.startsWith(HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/")) //this might (SHOULD!) be same code as "archive browsing"
+    {
 
     }
     else
     {
         //TODOreq: MyBrain archive browsing, 404'ing.
         //TODOreq: post launch files should have a drop watch folder thingo too i suppose...
+        //TODOreq: don't allow "../../../../" all the way up to root system folder hahaha, but i do still want to do my archive browsing based on the url supplied by user (thought about caching the URLs, but i'd just be duplicating what the filesystem buffer cache already does...)
     }
 }
 HackyVideoBullshitSiteGUI::~HackyVideoBullshitSiteGUI()
@@ -88,10 +106,11 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
         m_AdImageAnchor->setTarget(TargetNewWindow);
         placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
         m_AdImageAnchor->setToolTip("Buy this ad space for BTC 0.00001");
-        if(environment().ajax())
+        if(!environment().ajax())
         {
-            triggerUpdate();
+            return;
         }
+        triggerUpdate();
         return;
     }
 
@@ -106,10 +125,59 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
     adImage->setToolTip(newAdAltAndHover);
     m_AdImageAnchor->setToolTip(newAdAltAndHover);
 
-    if(environment().ajax())
+    if(!environment().ajax())
     {
-        triggerUpdate();
+        //no-js will see the ad image update if/when they refresh or click a link to another item (TODOreq: test/confirm this, because i'm not sure it's true). COULD use a timer (which i'm more sure will work), but eh... naw..
+        //^if you actually do any code for this, should probably copy/paste it to the no ad placeholder part too
+        return;
     }
-    //else: no-js will see the ad image update if/when they refresh or click a link to another item (TODOreq: test/confirm this, because i'm not sure it's true). COULD use a timer (which i'm more sure will work), but eh... naw..
-    //^if you actually do any code for this 'else', should probably copy/paste it to the no ad placeholder part too
+    triggerUpdate();
+}
+void HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded()
+{
+    //TODOreq:
+}
+void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
+{
+
+}
+string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholder()
+{
+#if 0 //OTHER_SOLUTION_TO_SORTING_PROBLEM_MENTIONED_IN_COMMENTS_FOUND_LOL_WOOT
+    {
+        QDir videoSegmentsRootDir("/run/shm/butts");
+        QStringList yearsDirListing = QDir::entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Name); //TODOoptimization: even though the disk buffer cache saves us a hdd read, i'm willing to bet that the sorted results aren't cached. the further along in time i go (years wise), and also the further along int the year i get, and also the further along in the day i get, the more memory and cpu usage needed to re-sort over and over and over. so yea uhh solve that problem (unless it isn't a problem!). but for now KISS :-P
+        QDir latestVideoSegmentYearDir(videoSegmentsRootDir.absolutePath() + QDir::separator() + yearsDirListing.first()); //it is definitely an optimization to just use QDateTime to find the year folder, BUT it might not exist if we've transitioned years but not yet moved
+    }
+#endif
+    const QDate &currentDate = QDate::currentDate(); //WDate seems more natural given the context, but I doubt it matters.... AND Qt would probably be the faster of the two (or they're identical (this comment not...))
+    for(;;) //i think this is faster than while(true) because there's no testing involved, but really i'd bet the compiler optimizes that out, in which case i like the look and readability of while(true) better (forever is just as schmexy (tried using it here but i have no_keywords shit going on guh))
+    {
+        bool yearFolderFound = QFile::exists("/run/shm/vidya/" + QString::number(currentDate.year())); //woot sorting problem solved for root folder ls SORT'ing
+        if(!yearFolderFound)
+        {
+            currentDate = currentDate.addYears(-1);
+            if(currentDate.year() == 2013) //can't time travel...
+            {
+                return HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER;
+            }
+            continue; //TODOreq: make sure video segment uploader is started and has uploaded at least one segment (and our VideoSegmentsImporterFolderWatcher has to have imported it and created relevant folders, OTHERWISE this will spinlock until int wraps around from negatives and finally does see the folder existing rofl. will do that for every WApplication too...
+        }
+        //year folder found, now find day folder using same method
+        for(;;)
+        {
+            bool dayFolderFound = QFile::exists("/run/shm/vidya/" + QString::number(currentDate.year()) + QDir::separator() + currentDate.dayOfYear()); //TODOreq: as we are subtracting years, would it maybe make dayOfYear change as well in the leap year case (whoever invented leap years should be shot)
+            if(!dayFolderFound)
+            {
+                currentDate = currentDate.addDays(-1);
+                continue;
+            }
+            //day folder found, now find latest segment using sorting :(
+            QDir dayFolder("/run/shm/vidya/" + QString::number(currentDate.year()) + QDir::separator() + currentDate.dayOfYear());
+            const QStringList all3MinuteSegmentsInDayFolder = dayFolder.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Name | QDir::Reversed);
+            return all3MinuteSegmentsInDayFolder.isEmpty() ? HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER /*perhaps should also prevent the year/day folder spinlock described above */ : all3MinuteSegmentsInDayFolder.first().toStdString(); //TODOoptimization: read the if'd out stuff above about fixing having to list (cached.) + sort (probably not cached?) the dir. basically ~11:59pm will be more expensive than ~12:01am
+        }
+    }
+    //should never get here, but just in case and to make compiler stfu:
+    return HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER;
 }
