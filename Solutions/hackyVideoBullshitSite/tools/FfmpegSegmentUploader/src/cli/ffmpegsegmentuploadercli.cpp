@@ -55,6 +55,7 @@ void FfmpegSegmentUploaderCli::cliUserInterfaceMenu()
 {
     handleD("Available Actions (H to show this again):");
     handleD(" 0 - Query ffmpeg segment status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)");
+    //TODOoptional: maybe an increase/decrease verbosity command as well
     handleD(" q - Quit after all segments are uploaded (you need to stop ffmpeg first)"); //TODOreq: decide if "quit now", "quit after current upload finishes", or "quit when queue is next seen empty", or all three :-P. the last one implies that ffmpeg is stopped separately/before
 }
 void FfmpegSegmentUploaderCli::handleStandardInputReceived(const QString &standardInputLine)

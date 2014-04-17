@@ -141,7 +141,7 @@ void FfmpegSegmentUploader::tellStatus()
 {
     int queueSize = m_SegmentsQueuedForUpload.size();
     QString headOfUploadQueue = (queueSize > 0 ?  m_SegmentsQueuedForUpload.head().second : "");
-    QString segmentInformations = "==Ffmpeg Segment Uploader Status==\nMost recent segment entry: " + (queueSize > 0 ?  m_SegmentsQueuedForUpload.back().second : "") + "\nSize of upload queue: " + QString::number(queueSize) + "\n'Head' of the upload queue: " + headOfUploadQueue + "\nsftp connection status: " + (m_SftpIsReadyForCommands ? "" : "NOT ") + "ready for commands";
+    QString segmentInformations = "==Ffmpeg Segment Uploader Status==\nSize of upload queue: " + QString::number(queueSize) + "\n'Head' of the upload queue: " + headOfUploadQueue + "\n'Tail' of upload queue: " + (queueSize > 0 ?  m_SegmentsQueuedForUpload.back().second : "") + "\nsftp connection status: " + (m_SftpIsReadyForCommands ? "" : "NOT ") + "ready for commands";
     emit d(segmentInformations);
 }
 void FfmpegSegmentUploader::stopUploadingFfmpegSegments()

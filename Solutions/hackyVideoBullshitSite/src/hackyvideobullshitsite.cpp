@@ -25,7 +25,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
 
     QCoreApplication qapp(argc, argv); //not sure if this is necessary (I've seen various documentation saying "can't call this until QCoreApplication is instantiated")... but probably won't hurt. I know I don't need to call qapp.exec at least
 
-    QString placeholderPathForEdittingInSettings = "!!!!!placeholder";
+    QString placeholderPathForEdittingInSettings = "/-!-!-!-!-!-!-!-placeholder/path-!-!-!-!-!-!-!/";
     QString videoSegmentsImporterFolderToWatch = placeholderPathForEdittingInSettings;
     QString videoSegmentsImporterFolderScratchSpace = placeholderPathForEdittingInSettings;
     QString airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = placeholderPathForEdittingInSettings;
@@ -35,7 +35,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
 
         bool atLeastOneDidntExist = false;
 
-        videoSegmentsImporterFolderToWatch = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, placeholderPathForEdittingInSettings).toString();
+        videoSegmentsImporterFolderToWatch = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, placeholderPathForEdittingInSettings).toString());
         if(videoSegmentsImporterFolderToWatch == placeholderPathForEdittingInSettings)
         {
             cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch " not set" << endl;
@@ -43,7 +43,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderToWatch);
         }
 
-        videoSegmentsImporterFolderScratchSpace = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, placeholderPathForEdittingInSettings).toString();
+        videoSegmentsImporterFolderScratchSpace = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, placeholderPathForEdittingInSettings).toString());
         if(videoSegmentsImporterFolderScratchSpace == placeholderPathForEdittingInSettings)
         {
             cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace " not set" << endl;
@@ -51,7 +51,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, videoSegmentsImporterFolderScratchSpace);
         }
 
-        airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, placeholderPathForEdittingInSettings).toString();
+        airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, placeholderPathForEdittingInSettings).toString());
         if(airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo == placeholderPathForEdittingInSettings)
         {
             cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo " not set" << endl;

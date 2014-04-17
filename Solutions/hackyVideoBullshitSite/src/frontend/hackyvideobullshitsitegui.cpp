@@ -37,13 +37,11 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "getAndSubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, static_cast<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>(this)), Q_ARG(std::string, sessionId()), Q_ARG(GetAndSubscriptionUpdateCallbackType, boost::bind(&HackyVideoBullshitSiteGUI::handleAdImageChanged, this, _1, _2, _3)));
 
     WContainerWidget *container = new WContainerWidget(root());
-    container->setContentAlignment(Wt::AlignCenter);
+    container->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
 
     m_AdImagePlaceholderContainer = new WContainerWidget(container);
-    m_AdImagePlaceholderContainer->setContentAlignment(Wt::AlignCenter);
+    m_AdImagePlaceholderContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
 
-    new WBreak(container);
-    new WBreak(container);
     new WBreak(container);
 
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
@@ -63,7 +61,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
         //WVideo(WFileResource) dat shit. TODOreq: download video file button
 
         //TODOreq: previous button
-        WPushButton *nextVideoClipPushButton = new WPushButton("Next Video Clip", container); //if next != current; aka if new-current != current-when-started-playing
+        WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", container); //if next != current; aka if new-current != current-when-started-playing
         //TODOreq: changing internal paths deletes/zeros button
         nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
 
@@ -71,7 +69,8 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
         WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
         videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
         videoPlayer->addSource(WLink(latestVideoSegmentFileResource), "video/ogg");
-        videoPlayer->resize(800, 600);
+        videoPlayer->resize(720, 480);
+        //videoPlayer->resize(800, 600);
         videoPlayer->setAlternativeContent(new WText("Either your browser is a piece of shit and doesn't support HTML5 Video (You should use Mozilla Firefox), or there was an error establishing a connection to the video stream."));
         if(!environment().ajax())
         {
@@ -178,16 +177,17 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
         //year folder found, now find day folder using same method
         for(;;)
         {
-            bool dayFolderFound = QFile::exists(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL + QString::number(currentDate.year()) + QDir::separator() + currentDate.dayOfYear()); //TODOreq: as we are subtracting years, would it maybe make dayOfYear change as well in the leap year case (whoever invented leap years should be shot)
+            const QString &dayFolderToLookFor = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL + QString::number(currentDate.year()) + QDir::separator() + QString::number(currentDate.dayOfYear()) + QDir::separator();
+            bool dayFolderFound = QFile::exists(dayFolderToLookFor); //TODOreq: as we are subtracting years, would it maybe make dayOfYear change as well in the leap year case (whoever invented leap years should be shot)
             if(!dayFolderFound)
             {
                 currentDate = currentDate.addDays(-1);
                 continue;
             }
             //day folder found, now find latest segment using sorting :(
-            QDir dayFolder(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL + QString::number(currentDate.year()) + QDir::separator() + currentDate.dayOfYear());
+            QDir dayFolder(dayFolderToLookFor);
             const QStringList all3MinuteSegmentsInDayFolder = dayFolder.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Name | QDir::Reversed);
-            return all3MinuteSegmentsInDayFolder.isEmpty() ? HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER /*perhaps should also prevent the year/day folder spinlock described above */ : all3MinuteSegmentsInDayFolder.first().toStdString(); //TODOoptimization: read the if'd out stuff above about fixing having to list (cached.) + sort (probably not cached?) the dir. basically ~11:59pm will be more expensive than ~12:01am
+            return all3MinuteSegmentsInDayFolder.isEmpty() ? HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER /*perhaps should also prevent the year/day folder spinlock described above */ : (dayFolderToLookFor + all3MinuteSegmentsInDayFolder.first()).toStdString(); //TODOoptimization: read the if'd out stuff above about fixing having to list (cached.) + sort (probably not cached?) the dir. basically ~11:59pm will be more expensive than ~12:01am
         }
     }
     //should never get here, but just in case and to make compiler stfu:
