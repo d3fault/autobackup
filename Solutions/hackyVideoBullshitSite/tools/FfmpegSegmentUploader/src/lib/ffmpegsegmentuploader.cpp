@@ -6,6 +6,7 @@
 #include <QStringList>
 
 //at first i was amped to learn about sftp, but now after trying to use it in automation it's a freaking pain in the ass. provides very little feedback (whereas scp i'd just check return code == 0). hmm, *tries cranking up verbosity*. cool, increasing verbosity does NOTHING (except a bunch of shit i don't care about on stderr). there's no "upload complete" message... pos...
+//TODOreq: if sftp fails connecting, it currently does a retry loop as fast as possible and not a 5 second delay
 FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent) :
     QObject(parent), m_FfmpegSegmentsEntryListFile(0), m_FfmpegSegmentsEntryListFileWatcher(0), m_FiveSecondRetryTimer(new QTimer(this)), m_SftpProcess(0), m_SftpProcessTextStream(0), m_SftpIsReadyForCommands(false), m_SftpPutInProgressSoWatchForRenameCommandEcho(false), m_SftpWasToldToQuit(false)
 {
@@ -140,7 +141,7 @@ void FfmpegSegmentUploader::tellStatus()
 {
     int queueSize = m_SegmentsQueuedForUpload.size();
     QString headOfUploadQueue = (queueSize > 0 ?  m_SegmentsQueuedForUpload.head().second : "");
-    QString segmentInformations = "==Ffmpeg Segment Uploader Status==\n\tMost recent segment entry: " + (queueSize > 0 ?  m_SegmentsQueuedForUpload.back().second : "") + "\n\tSize of upload queue: " + QString::number(queueSize) + "\n\t'Head' of the upload queue: " + headOfUploadQueue + "\n\tsftp connection status: " + (m_SftpIsReadyForCommands ? "" : "NOT ") + "ready for commands";
+    QString segmentInformations = "==Ffmpeg Segment Uploader Status==\nMost recent segment entry: " + (queueSize > 0 ?  m_SegmentsQueuedForUpload.back().second : "") + "\nSize of upload queue: " + QString::number(queueSize) + "\n'Head' of the upload queue: " + headOfUploadQueue + "\nsftp connection status: " + (m_SftpIsReadyForCommands ? "" : "NOT ") + "ready for commands";
     emit d(segmentInformations);
 }
 void FfmpegSegmentUploader::stopUploadingFfmpegSegments()
@@ -155,8 +156,10 @@ void FfmpegSegmentUploader::stopUploadingFfmpegSegments()
 void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
 {
     QPair<QString,QString> newPair;
-    newPair.first = QString::number(QDateTime::currentDateTime().addSecs(-m_SegmentLengthSeconds).toMSecsSinceEpoch()/1000); //it's added to the segment entry list right when encoding finishes. idfk how i thought it was added right when encoding starts (thought i saw it happen!)... now gotta un-code dat shiz
     newPair.second = m_FfmpegSegmentsEntryListFileTextStream.readLine();
+    if(newPair.second.isEmpty())
+        return; //idk my bff jill, but i saw sftp try to upload the localPath folder because 'second' was an empty string (no recursive flag = fails/exits)
+    newPair.first = QString::number(QDateTime::currentDateTime().addSecs(-m_SegmentLengthSeconds).toMSecsSinceEpoch()/1000); //it's added to the segment entry list right when encoding finishes. idfk how i thought it was added right when encoding starts (thought i saw it happen (fucking saw it happen again and then stop happening one run later, WTFZ))... now gotta un-code dat shiz
     m_SegmentsQueuedForUpload.enqueue(newPair);
     QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection);
 }
@@ -167,7 +170,7 @@ void FfmpegSegmentUploader::tryDequeueAndUploadSingleSegment()
         m_FiveSecondRetryTimer->stop();
     }
     if(m_SegmentsQueuedForUpload.isEmpty() || m_SftpPutInProgressSoWatchForRenameCommandEcho)
-        return;    
+        return;
 #if 0 //pseudo-code
      bool uploadedOne = false;
     if(scpUpload(queuedPair.second, m_RemoteDestinationToUploadToWithSlashAppended)) //sftp >
@@ -286,7 +289,8 @@ void FfmpegSegmentUploader::handleSftpProcessFinished(int exitCode, QProcess::Ex
         //sftp -b mode will quit with exitCode == 1 any time an operation does not succeed, and I'd imagine also if/when the connection is 'lost' (?)... though perhaps that isn't noticed until an operation fails? idk lol
 
         //reconnect by starting it again
-        startSftpProcessInBatchMode();
+        emit d("sftp will try to start again in 5 seconds...");
+        QTimer::singleShot(5000, Qt::VeryCoarseTimer, this, SLOT(startSftpProcessInBatchMode()));
     }
     else
     {

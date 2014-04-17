@@ -27,7 +27,8 @@ HEADERS += \
     ../../../GloballySharedClasses/image/nonanimatedimagheaderchecker.h \
     ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h \
     backend/hackyvideobullshitsitebackend.h \
-    backend/videosegmentsimporterfolderwatcher.h
+    backend/videosegmentsimporterfolderwatcher.h \
+    hackyvideobullshitsitebackendscopeddeleter.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/

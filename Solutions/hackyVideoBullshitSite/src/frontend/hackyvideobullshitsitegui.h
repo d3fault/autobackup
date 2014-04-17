@@ -12,11 +12,15 @@ using namespace Wt;
 class HackyVideoBullshitSiteGUI : public WApplication, public AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier
 {
 public:
+    static void setAdImageGetAndSubscribeManager(AdImageGetAndSubscribeManager* adImageGetAndSubscribeManager);
+    static void setAirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL(const QString &airborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL);
+
     HackyVideoBullshitSiteGUI(const WEnvironment &env);
     ~HackyVideoBullshitSiteGUI();
-
-    static AdImageGetAndSubscribeManager* m_AdImageGetAndSubscribeManager;
 private:
+    static AdImageGetAndSubscribeManager* m_AdImageGetAndSubscribeManager;
+    static QString m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL;
+
     WContainerWidget *m_AdImagePlaceholderContainer;
     WAnchor *m_AdImageAnchor; //so angry
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;

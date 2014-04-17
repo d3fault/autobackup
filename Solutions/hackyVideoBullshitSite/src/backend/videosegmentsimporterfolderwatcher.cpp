@@ -108,5 +108,9 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
         {
             emit d("failed to rename: '" + (m_VideoSegmentsImporterFolderToWatchWithSlashAppended + currentEntry) + "' to '" + targetFileDestinationName + "'"); //don't stop, but do tell
         }
+
+        //TODOreq: there are 3 renames/moves above that each need to trigger a "start propagating to sibling server" [via sftp i guess]. whenever a video segment is moved into "VideoSegmentsImporterFolderToMoveTo", it should also be added to the queue to propagate it
+        //^also worth noting is that the very "last" server in the daisy chain of that shit (if not using bit-torrent but using sftp) should NOT queue the file, since nobody else needs it
+        //^^this only needs to be done before i scale to 2 servers
     }
 }

@@ -16,14 +16,16 @@ class StandardInputNotifier : public QObject
 public:
     explicit StandardInputNotifier(QObject *parent = 0);
     explicit StandardInputNotifier(int msecTimeoutForPollingStandardInput_WINDOWS_ONLY, QObject *parent = 0);
+    ~StandardInputNotifier();
 private:
-    QTextStream m_StandardInputTextStream;
+    QTextStream *m_StandardInputTextStream;
 #if defined(Q_OS_WIN) || defined(Q_WS_WIN)
-    void constructor(int msecTimeoutForPollingStandardInput_WINDOWS_ONLY);
     QTimer *m_StandardInputPollingTimerLoLWindows;
 #else
     QSocketNotifier *m_StandardInputSocketNotifierWootEventDriven;
 #endif
+
+    void constructor(int msecTimeoutForPollingStandardInput_WINDOWS_ONLY);
 signals:
     void standardInputReceivedLine(const QString &);
 public slots:

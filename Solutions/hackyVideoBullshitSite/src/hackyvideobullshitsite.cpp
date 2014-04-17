@@ -6,33 +6,68 @@
 
 #include <QCoreApplication>
 #include <QThread>
+#include <QSettings>
 
-#include "backend/hackyvideobullshitsitebackend.h"
+#include "hackyvideobullshitsitebackendscopeddeleter.h"
 #include "backend/adimagewresource.h"
 #include "frontend/hackyvideobullshitsitegui.h"
 
+#define HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch "VideoSegmentsImporterFolderToWatch"
+#define HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace "VideoSegmentsImporterFolderScratchSpace"
+#define HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo "AirborneVideoSegmentsBaseDir_aka_videoSegmentsImporterFolderToMoveTo"
+
 int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int argc, char *argv[])
 {
+    //QCoreApplication::setOrganizationName("HackyVideoBullshitSiteOrganization");
+    //QCoreApplication::setOrganizationDomain("HackyVideoBullshitSiteDomain.tld");
+    //QCoreApplication::setApplicationName("HackyVideoBullshitSite");
+    //QSettings::setDefaultFormat(QSettings::IniFormat);
+
     QCoreApplication qapp(argc, argv); //not sure if this is necessary (I've seen various documentation saying "can't call this until QCoreApplication is instantiated")... but probably won't hurt. I know I don't need to call qapp.exec at least
 
-    //start ad image get and subscribe thread and wait for it to finish initializing
-    struct HackyVideoBullshitSiteBackendScopedDeleter
+    QString placeholderPathForEdittingInSettings = "!!!!!placeholder";
+    QString videoSegmentsImporterFolderToWatch = placeholderPathForEdittingInSettings;
+    QString videoSegmentsImporterFolderScratchSpace = placeholderPathForEdittingInSettings;
+    QString airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = placeholderPathForEdittingInSettings;
+
     {
-        HackyVideoBullshitSiteBackend m_HackyVideoBullshitSiteBackend;
-        QThread m_HackyVideoBullshitSiteBackendThread;
-        HackyVideoBullshitSiteBackendScopedDeleter()
-                : m_HackyVideoBullshitSiteBackend("&m_SharedVideoSegmentsArrayIndex", "lol", "hi")
+        QSettings hackyVideoBullshitSiteSettings(QSettings::IniFormat, QSettings::UserScope, "HackyVideoBullshitSiteOrganization", "HackyVideoBullshitSite"); //because too lazy to integrate with Wt args... TODOoptional yea do it because editing settings files is teh suck (especially for automation). Still, future proofing for that by passing the settings by args to child objects instead of the static "setX" way of using qsettings (commented out above)
+
+        bool atLeastOneDidntExist = false;
+
+        videoSegmentsImporterFolderToWatch = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, placeholderPathForEdittingInSettings).toString();
+        if(videoSegmentsImporterFolderToWatch == placeholderPathForEdittingInSettings)
         {
-            //using a style i dislike (object not instantiating on thread that 'owns' it, but oh well)
-            m_HackyVideoBullshitSiteBackend.moveToThread(&m_HackyVideoBullshitSiteBackendThread);
-            m_HackyVideoBullshitSiteBackendThread.start();
+            cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch " not set" << endl;
+            atLeastOneDidntExist = true;
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderToWatch);
         }
-        ~HackyVideoBullshitSiteBackendScopedDeleter()
+
+        videoSegmentsImporterFolderScratchSpace = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, placeholderPathForEdittingInSettings).toString();
+        if(videoSegmentsImporterFolderScratchSpace == placeholderPathForEdittingInSettings)
         {
-            m_HackyVideoBullshitSiteBackendThread.quit();
-            m_HackyVideoBullshitSiteBackendThread.wait();
+            cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace " not set" << endl;
+            atLeastOneDidntExist = true;
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, videoSegmentsImporterFolderScratchSpace);
         }
-    } HackyVideoBullshitSiteBackendScopedDeleterInstance;
+
+        airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, placeholderPathForEdittingInSettings).toString();
+        if(airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo == placeholderPathForEdittingInSettings)
+        {
+            cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo " not set" << endl;
+            atLeastOneDidntExist = true;
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
+        }
+
+        if(atLeastOneDidntExist)
+        {
+            cout << "exitting with error because the settings in '" + hackyVideoBullshitSiteSettings.fileName().toStdString() + "' were not properly defined. look for the string '" + placeholderPathForEdittingInSettings.toStdString() + "' and fill in the proper paths" << endl;
+            return 1;
+        }
+    }
+
+    //start ad image get and subscribe thread and wait for it to finish initializing
+    HackyVideoBullshitSiteBackendScopedDeleter hackyVideoBullshitSiteBackendScopedDeleterInstance(videoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderScratchSpace, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
 
     WServer wtServer(argv[0]);
     wtServer.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
@@ -65,15 +100,15 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
 
     wtServer.addResource(noAdPlaceholderImageResource, "/no.ad.placeholder.jpg");
 
-    QMetaObject::invokeMethod(&HackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend, "initializeAndStart", Qt::BlockingQueuedConnection);
+    QMetaObject::invokeMethod(&hackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend, "initializeAndStart", Qt::BlockingQueuedConnection);
 
     //AdImageGetAndSubscribeManager is done initializing, so now we set up Wt and then start the Wt server
 
-    HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = HackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend.adImageGetAndSubscribeManager();
+    HackyVideoBullshitSiteGUI::setAdImageGetAndSubscribeManager(hackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend.adImageGetAndSubscribeManager());
+    HackyVideoBullshitSiteGUI::setAirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL(airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
     //OLD-when-atomic: similarly, instead of a pointer to a video segment file, i could point to a plugin to expand capability without shutting the server down :-P
 
     //start server, waitForShutdown(), invoke via BlockingQueuedConnection a 'stop' to AdImageGetAndSubscribeManager to let it finish current actions (also sets bool to not allow further), server.stop, tell AdImageGetAndSubscribeManager to quit, wait for AdImageGetAndSubscribeManager to join
-
 
     int ret = 0;
     bool successfullyStartedWtServer = false;
@@ -91,13 +126,13 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
     }
 
     //tell AdImageGetAndSubscribeManager to finish. sets flags to not do any more operations, and lets current operations finish cleanly and then raises a wait condition when all current are done. It does NOT stop/destroy AdImageGetAndSubscribeManager completely, SINCE THE WT SERVER IS STILL RUNNING (and therefore using them (even though when it does use one, it gets instantly rejected because of the bool flags))
-    QMetaObject::invokeMethod(&HackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend, "beginStopping", Qt::BlockingQueuedConnection);
+    QMetaObject::invokeMethod(&hackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend, "beginStopping", Qt::BlockingQueuedConnection);
 
     //then:
     if(successfullyStartedWtServer)
         wtServer.stop();
 
-    QMetaObject::invokeMethod(&HackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend, "finishStopping", Qt::BlockingQueuedConnection);
+    QMetaObject::invokeMethod(&hackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend, "finishStopping", Qt::BlockingQueuedConnection);
 
     delete noAdPlaceholderImageResource;
 

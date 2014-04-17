@@ -39,7 +39,6 @@ private:
     bool m_SftpPutInProgressSoWatchForRenameCommandEcho;
     bool m_SftpWasToldToQuit;
 
-    void startSftpProcessInBatchMode();
     void stopSftpProcess();
     static inline QString appendSlashIfMissing(QString stringInput)
     {
@@ -57,6 +56,7 @@ public slots:
     void tellStatus();
     void stopUploadingFfmpegSegments();
 private slots:
+    void startSftpProcessInBatchMode();
     void handleSegmentsEntryListFileModified();
     void tryDequeueAndUploadSingleSegment();
     void handleSftpProcessStarted();

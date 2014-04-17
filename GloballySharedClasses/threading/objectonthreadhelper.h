@@ -9,6 +9,10 @@ class ObjectOnThreadHelperBase : public QThread
     Q_OBJECT
 public:
     explicit ObjectOnThreadHelperBase(QObject *parent = 0) : QThread(parent), m_TheObject(0) { }
+    QObject *getBaseObjectPointerForConnectionsOnly()
+    {
+        return m_TheObject;
+    }
 protected:
     QObject *m_TheObject;
     virtual void run() = 0;

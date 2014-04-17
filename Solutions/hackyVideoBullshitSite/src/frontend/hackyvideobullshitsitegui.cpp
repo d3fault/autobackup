@@ -19,9 +19,18 @@
 #define HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER "/some/placeholder/video/TODOreq.ogg" //TODOoptional: when no year/day folders are present (error imo) i could add code to present this... and it could even server as a pre-launch kind... of... countdown... thingo... (nah (ok changed my mind, yah (since it was a simple patch 'if year == 2013' xD)))
 #define HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
 
-//segfault if server is started before assigning these :-P (fuck yea performance)
+//segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
+QString HackyVideoBullshitSiteGUI::m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL = QDir::rootPath(); //root tends to have a small number of files that rarely change, so a good default for when the user forgets to specify (since it will be 'watched')
 
+void HackyVideoBullshitSiteGUI::setAdImageGetAndSubscribeManager(AdImageGetAndSubscribeManager *adImageGetAndSubscribeManager)
+{
+    m_AdImageGetAndSubscribeManager = adImageGetAndSubscribeManager;
+}
+void HackyVideoBullshitSiteGUI::setAirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL(const QString &airborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL)
+{
+    m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL = airborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL;
+}
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env), m_AdImageAnchor(0), m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
 {
@@ -46,8 +55,8 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
         enableUpdates(true);
     }
 
-    QString theInternalPath = QString::fromStdString(internalPath());
-    if(theInternalPath == "/" || theInternalPath == "" || theInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
+    const std::string theInternalPathStdString = internalPath();
+    if(theInternalPathStdString == "/" || theInternalPathStdString == "" || theInternalPathStdString == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
     {
         std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
         //latestVideoSegmentFilePath is either set to most recent or to placeholder
@@ -69,8 +78,11 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
             return;
         }
         videoPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
+        return;
     }
-    else if(theInternalPath.startsWith(HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/")) //this might (SHOULD!) be same code as "archive browsing"
+
+    QString theInternalPathQString = QString::fromStdString(internalPath());
+    if(theInternalPathQString.startsWith(HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/")) //this might (SHOULD!) be same code as "archive browsing"
     {
 
     }
@@ -150,10 +162,10 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
         QDir latestVideoSegmentYearDir(videoSegmentsRootDir.absolutePath() + QDir::separator() + yearsDirListing.first()); //it is definitely an optimization to just use QDateTime to find the year folder, BUT it might not exist if we've transitioned years but not yet moved
     }
 #endif
-    const QDate &currentDate = QDate::currentDate(); //WDate seems more natural given the context, but I doubt it matters.... AND Qt would probably be the faster of the two (or they're identical (this comment not...))
+    QDate currentDate = QDate::currentDate(); //WDate seems more natural given the context, but I doubt it matters.... AND Qt would probably be the faster of the two (or they're identical (this comment not...))
     for(;;) //i think this is faster than while(true) because there's no testing involved, but really i'd bet the compiler optimizes that out, in which case i like the look and readability of while(true) better (forever is just as schmexy (tried using it here but i have no_keywords shit going on guh))
     {
-        bool yearFolderFound = QFile::exists("/run/shm/vidya/" + QString::number(currentDate.year())); //woot sorting problem solved for root folder ls SORT'ing
+        bool yearFolderFound = QFile::exists(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL + QString::number(currentDate.year())); //woot sorting problem solved for root folder ls SORT'ing
         if(!yearFolderFound)
         {
             currentDate = currentDate.addYears(-1);
@@ -166,14 +178,14 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
         //year folder found, now find day folder using same method
         for(;;)
         {
-            bool dayFolderFound = QFile::exists("/run/shm/vidya/" + QString::number(currentDate.year()) + QDir::separator() + currentDate.dayOfYear()); //TODOreq: as we are subtracting years, would it maybe make dayOfYear change as well in the leap year case (whoever invented leap years should be shot)
+            bool dayFolderFound = QFile::exists(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL + QString::number(currentDate.year()) + QDir::separator() + currentDate.dayOfYear()); //TODOreq: as we are subtracting years, would it maybe make dayOfYear change as well in the leap year case (whoever invented leap years should be shot)
             if(!dayFolderFound)
             {
                 currentDate = currentDate.addDays(-1);
                 continue;
             }
             //day folder found, now find latest segment using sorting :(
-            QDir dayFolder("/run/shm/vidya/" + QString::number(currentDate.year()) + QDir::separator() + currentDate.dayOfYear());
+            QDir dayFolder(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL + QString::number(currentDate.year()) + QDir::separator() + currentDate.dayOfYear());
             const QStringList all3MinuteSegmentsInDayFolder = dayFolder.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Name | QDir::Reversed);
             return all3MinuteSegmentsInDayFolder.isEmpty() ? HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER /*perhaps should also prevent the year/day folder spinlock described above */ : all3MinuteSegmentsInDayFolder.first().toStdString(); //TODOoptimization: read the if'd out stuff above about fixing having to list (cached.) + sort (probably not cached?) the dir. basically ~11:59pm will be more expensive than ~12:01am
         }

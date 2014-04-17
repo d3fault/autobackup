@@ -23,7 +23,7 @@ private:
 
     //Pass through
     QString m_VideoSegmentsImporterFolderToWatch; //sftp user writeable
-    QString m_VideoSegmentsImporterFolderScratchSpace; //should be the same physical filesystem as the "ToWatch" or "MoveTo"
+    QString m_VideoSegmentsImporterFolderScratchSpace; //should be the same physical filesystem as the "ToWatch" or "MoveTo", otherwise would incur a stupid cost
     QString m_VideoSegmentsImporterFolderToMoveTo; //not sftp user writeable
 
     void stopVideoSegmentsImporterFolderWatcherThreadIfNeeded();

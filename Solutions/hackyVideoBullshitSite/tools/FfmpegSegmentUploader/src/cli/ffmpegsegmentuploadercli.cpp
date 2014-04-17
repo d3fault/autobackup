@@ -14,7 +14,7 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent) :
     connect(m_FfmpegSegmentUploader, SIGNAL(stoppedUploadingFfmpegSegments()), QCoreApplication::instance(), SLOT(quit())); //hmm i think a custom object with a QFutureSynchronizer and a handful of QFutures passed to it would solve the.... oh nvm i think i need QFutureWatchers with it too in order to not block
 
     QStringList arguments = QCoreApplication::arguments();
-    if(arguments.size() < 6 || arguments.size() > 7)
+    if(arguments.size() < 7 || arguments.size() > 8)
     {
         cliUsage();
         QMetaObject::invokeMethod(QCoreApplication::instance(), "quit");
@@ -49,13 +49,13 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent) :
 void FfmpegSegmentUploaderCli::cliUsage()
 {
     handleD("Usage:");
-    handleD("FfmpegSegmentUploaderCli filenameOfSegmentsEntryList localPathWhereSegmentsAreWritten remoteDestinationToUploadTo remoteDestinationToMoveTo userHostPathComboSftpArg [sftpProcessPath=/usr/bin/sftp]");
+    handleD("FfmpegSegmentUploaderCli filenameOfSegmentsEntryList localPathWhereSegmentsAreWritten remoteDestinationToUploadTo remoteDestinationToMoveTo userHostPathComboSftpArg segmentLengthSeconds [sftpProcessPath=/usr/bin/sftp]");
 }
 void FfmpegSegmentUploaderCli::cliUserInterfaceMenu()
 {
     handleD("Available Actions (H to show this again):");
-    handleD("\t0\t- Display ffmpeg segment status (most recent segment entry (which is probably still being encoded), the size of the upload queue, the 'head' of the upload queue, and the sftp connection status)");
-    handleD("\tq\t- Quit after all segments are uploaded (you need to stop ffmpeg first)"); //TODOreq: decide if "quit now", "quit after current upload finishes", or "quit when queue is next seen empty", or all three :-P. the last one implies that ffmpeg is stopped separately/before
+    handleD(" 0 - Query ffmpeg segment status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)");
+    handleD(" q - Quit after all segments are uploaded (you need to stop ffmpeg first)"); //TODOreq: decide if "quit now", "quit after current upload finishes", or "quit when queue is next seen empty", or all three :-P. the last one implies that ffmpeg is stopped separately/before
 }
 void FfmpegSegmentUploaderCli::handleStandardInputReceived(const QString &standardInputLine)
 {
