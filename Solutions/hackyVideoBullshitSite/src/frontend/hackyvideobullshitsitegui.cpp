@@ -69,8 +69,8 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
         WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
         videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
         videoPlayer->addSource(WLink(latestVideoSegmentFileResource), "video/ogg");
-        videoPlayer->resize(720, 480);
-        //videoPlayer->resize(800, 600);
+        //videoPlayer->resize(720, 480);
+        videoPlayer->resize(800, 600);
         videoPlayer->setAlternativeContent(new WText("Either your browser is a piece of shit and doesn't support HTML5 Video (You should use Mozilla Firefox), or there was an error establishing a connection to the video stream."));
         if(!environment().ajax())
         {

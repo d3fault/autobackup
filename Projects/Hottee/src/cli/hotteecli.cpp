@@ -22,7 +22,7 @@ HotteeCli::HotteeCli(QObject *parent) :
     if(args.size() < 4 || args.size() > 5)
     {
         cliUsage();
-        QMetaObject::invokeMethod(QCoreApplication::instance(), SLOT(quit()));
+        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
         return;
     }
 
@@ -82,7 +82,7 @@ void HotteeCli::stdInHasLineOfInput()
     else if(lineOfInput == "qq")
     {
         disconnect(&m_StdInSocketNotifier, SIGNAL(activated(int)));
-        QMetaObject::invokeMethod(QCoreApplication::instance(), SLOT(quit()));
+        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
     }    
     else if(lineOfInput == "q")
     {

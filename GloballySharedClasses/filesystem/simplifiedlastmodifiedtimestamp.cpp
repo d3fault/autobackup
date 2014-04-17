@@ -1,5 +1,7 @@
 #include "simplifiedlastmodifiedtimestamp.h"
 
+#include <QTextStream>
+
 const QString SimplifiedLastModifiedTimestamp::m_Colon = ":";
 const QString SimplifiedLastModifiedTimestamp::m_ColonEscaped = "\\:";
 const QString SimplifiedLastModifiedTimestamp::m_IllegalFilePath = "......./////////......\\\\\\\\BUTTS;;;}[0+^%12!@#$%^&*()_+=-`~-/oneofthesehastobe<>,.? ]";
@@ -21,7 +23,25 @@ SimplifiedLastModifiedTimestamp::SimplifiedLastModifiedTimestamp(const QString &
     m_LastModifiedTimestamp = QDateTime::fromMSecsSinceEpoch(lastModifiedTimestamp*1000);
     m_FilePath = splitAtColons.at(0);
     m_FilePath = m_FilePath.replace(m_IllegalFilePath, m_Colon);
-    m_IsDirectory = m_FilePath.endsWith("/") ? true : false;
+    detectIfFilePathIsDirectory();
+}
+SimplifiedLastModifiedTimestamp::SimplifiedLastModifiedTimestamp(const QString &filePath, const QDateTime &lastModifiedTimestamp, IsDirectoryDetectionEnum isDirectoryDetection)
+    : m_FilePath(filePath)
+    , m_LastModifiedTimestamp(lastModifiedTimestamp)
+{
+    switch(isDirectoryDetection)
+    {
+    case DirectoryIfEndingInSlashAutoDetection:
+        detectIfFilePathIsDirectory();
+        break;
+    case IsDirectory:
+        m_IsDirectory = true;
+        m_FilePath = appendSlashIfNeeded(m_FilePath);
+        break;
+    case IsNotDirectory:
+        m_IsDirectory = false;
+        break;
+    }
 }
 const QString &SimplifiedLastModifiedTimestamp::filePath()
 {
@@ -37,6 +57,7 @@ const QDateTime &SimplifiedLastModifiedTimestamp::lastModifiedTimestamp()
 }
 QString SimplifiedLastModifiedTimestamp::toColonSeparatedLineOfText()
 {
-    QString ret = m_FilePath + m_Colon + QString::number(m_LastModifiedTimestamp.toMSecsSinceEpoch()/1000);
+    QString ret = m_FilePath.replace(m_Colon, m_ColonEscaped);
+    ret.append(m_Colon + QString::number(m_LastModifiedTimestamp.toMSecsSinceEpoch()/1000));
     return ret;
 }

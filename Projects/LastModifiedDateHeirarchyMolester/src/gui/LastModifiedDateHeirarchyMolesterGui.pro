@@ -9,6 +9,7 @@ QT       += core gui
 TARGET = LastModifiedDateHeirarchyMolesterGui
 TEMPLATE = app
 
+########  OBSOLETE: USE SimplifiedHeirarchyMolester instead!!!!!!! (you were here trying to fix the widgets dependency huh?)
 
 SOURCES += main.cpp\
         lastmodifieddateheirarchymolesterwidget.cpp \

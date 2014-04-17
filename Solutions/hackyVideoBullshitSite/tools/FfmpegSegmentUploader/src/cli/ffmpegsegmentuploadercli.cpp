@@ -17,7 +17,7 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent) :
     if(arguments.size() < 7 || arguments.size() > 8)
     {
         cliUsage();
-        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit");
+        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
         return;
     }
     int argIndex = 1; //baller
@@ -32,7 +32,7 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent) :
     {
         cliUsage();
         handleD("segment length not a valid number");
-        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit");
+        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
         return;
     }
     QString sftpProcessPath;
