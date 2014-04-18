@@ -1,6 +1,7 @@
 #include "hackyvideobullshitsitegui.h"
 
 #include <Wt/WServer>
+#include <Wt/WAudio>
 #include <Wt/WVideo>
 #include <Wt/WImage>
 #include <Wt/WAnchor>
@@ -15,13 +16,20 @@
 #include <QDir>
 #include <QFile>
 #include <QDate>
+#include <QFileInfo>
 
 #define HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER "/some/placeholder/video/TODOreq.ogg" //TODOoptional: when no year/day folders are present (error imo) i could add code to present this... and it could even server as a pre-launch kind... of... countdown... thingo... (nah (ok changed my mind, yah (since it was a simple patch 'if year == 2013' xD)))
 #define HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
+#define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
+#define HVBS_NO_HTML_MEDIA_OR_ERROR(mediaType) "Either your browser is a piece of shit and doesn't support HTML5 " #mediaType " (You should use Mozilla Firefox), or there was an error establishing a connection to the " #mediaType " stream"
+#define HVBS_NO_HTML5_VIDEO_OR_ERROR HVBS_NO_HTML_MEDIA_OR_ERROR(video)
+#define HVBS_NO_HTML5_AUDIO_OR_ERROR HVBS_NO_HTML_MEDIA_OR_ERROR(audio)
+#define HVBS_DOWNLOAD_LOVE "Download / Save / Keep / Steal / Absorb / Own / Incorporate / Memorize / Archive / Persist / Cache / Receive / Replicate / Grab / Get / Copy" //fukken saved
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
-QString HackyVideoBullshitSiteGUI::m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL = QDir::rootPath(); //root tends to have a small number of files that rarely change, so a good default for when the user forgets to specify (since it will be 'watched')
+QString HackyVideoBullshitSiteGUI::m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended = QDir::rootPath(); //root tends to have a small number of files that rarely change, so a good default for when the user forgets to specify (since it will be 'watched')
+QString HackyVideoBullshitSiteGUI::m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended = QDir::homePath(); //internal path is concatenated onto this, and already has a slash at the beginning
 
 void HackyVideoBullshitSiteGUI::setAdImageGetAndSubscribeManager(AdImageGetAndSubscribeManager *adImageGetAndSubscribeManager)
 {
@@ -29,20 +37,36 @@ void HackyVideoBullshitSiteGUI::setAdImageGetAndSubscribeManager(AdImageGetAndSu
 }
 void HackyVideoBullshitSiteGUI::setAirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL(const QString &airborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL)
 {
-    m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL = airborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL;
+    m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended = airborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL;
+}
+void HackyVideoBullshitSiteGUI::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended(const QString &myBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended)
+{
+    m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended = myBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended;
 }
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
-    : WApplication(env), m_AdImageAnchor(0), m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
+    : WApplication(env)
+    , m_ContentPlaceholderContainer(0)
+    , m_AdImageAnchor(0)
+    , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
 {
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "getAndSubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, static_cast<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>(this)), Q_ARG(std::string, sessionId()), Q_ARG(GetAndSubscriptionUpdateCallbackType, boost::bind(&HackyVideoBullshitSiteGUI::handleAdImageChanged, this, _1, _2, _3)));
 
-    WContainerWidget *container = new WContainerWidget(root());
-    container->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
+    setTitle("I've been living the past few years as if there were tiny cameras all around me. The only path to sanity is to make it true");
+    root()->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
 
-    m_AdImagePlaceholderContainer = new WContainerWidget(container);
-    m_AdImagePlaceholderContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
+    //TODOreq: license click to expand (also: download copies have it) -- copyright.txt or licence.dpl.txt or both?
+    //TODOoptional: some filenames have lots of dots in them, and cleanPath makes them now not found. clicking "back" after going to one of them also doesn't work
+    //TODOreq: filename suggestion for download
+    //TODOreq: link to "MyBrain" full downloads (torrents + files)
+    //TODOreq: root folder listing (i'm back and forth on this, since I want it to be my sexy face)
+    //TODOreq: when viewing a file, "go back" [to directory view]
+    //TODOreq: tabs and spacing (especially for code). maybe i need a <pre> thing? but that would need xhtml bah
+    //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand?
 
-    new WBreak(container);
+    m_AdImagePlaceholderContainer = new WContainerWidget(root());
+    m_AdImagePlaceholderContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
+
+    new WBreak(root());
 
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
     {
@@ -53,25 +77,43 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
         enableUpdates(true);
     }
 
-    const std::string theInternalPathStdString = internalPath();
-    if(theInternalPathStdString == "/" || theInternalPathStdString == "" || theInternalPathStdString == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
+    internalPathChanged().connect(this, &HackyVideoBullshitSiteGUI::handleInternalPathChanged);
+    handleInternalPathChanged(internalPath());
+}
+HackyVideoBullshitSiteGUI::~HackyVideoBullshitSiteGUI()
+{
+    QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "unsubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, this));
+}
+void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInternalPath)
+{
+    if(m_ContentPlaceholderContainer)
+        delete m_ContentPlaceholderContainer;
+    m_ContentPlaceholderContainer = new WContainerWidget(root());
+    m_ContentPlaceholderContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
+
+    if(newInternalPath == "/" || newInternalPath == "" || newInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
     {
         std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
         //latestVideoSegmentFilePath is either set to most recent or to placeholder
-        //WVideo(WFileResource) dat shit. TODOreq: download video file button
+
+        WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentPlaceholderContainer);
+        new WBreak(m_ContentPlaceholderContainer);
+        new WBreak(m_ContentPlaceholderContainer);
 
         //TODOreq: previous button
-        WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", container); //if next != current; aka if new-current != current-when-started-playing
+        WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", m_ContentPlaceholderContainer); //if next != current; aka if new-current != current-when-started-playing
+        new WBreak(m_ContentPlaceholderContainer);
         //TODOreq: changing internal paths deletes/zeros button
         nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
 
-        WVideo *videoPlayer = new WVideo(container); //TODOreq: changing paths (archive browsing, etc) deletes/zeros videoPlayer
+        WVideo *videoPlayer = new WVideo(m_ContentPlaceholderContainer); //TODOreq: changing paths (archive browsing, etc) deletes/zeros videoPlayer
         WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
         videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
         videoPlayer->addSource(WLink(latestVideoSegmentFileResource), "video/ogg");
+        downloadButton->setResource(latestVideoSegmentFileResource);
         //videoPlayer->resize(720, 480);
         videoPlayer->resize(800, 600);
-        videoPlayer->setAlternativeContent(new WText("Either your browser is a piece of shit and doesn't support HTML5 Video (You should use Mozilla Firefox), or there was an error establishing a connection to the video stream."));
+        videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR));
         if(!environment().ajax())
         {
             return;
@@ -80,21 +122,65 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
         return;
     }
 
-    QString theInternalPathQString = QString::fromStdString(internalPath());
-    if(theInternalPathQString.startsWith(HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/")) //this might (SHOULD!) be same code as "archive browsing"
+    QString theInternalPathCleanedQString = QDir::cleanPath(QString::fromStdString(newInternalPath)); //strips trailing slash if dir
+    if(theInternalPathCleanedQString.contains("..", Qt::CaseSensitive))
     {
+        //TODOreq: folder 'jail' escape attempt, 404 dat shiz, mb redirect() to a 404 that is a global resource before the quit()
+        quit();
+        return;
+    }
 
-    }
-    else
+    //TODOreq: MyBrain archive browsing, 404'ing.
+    //TODOreq: post launch files should have a drop watch folder thingo too i suppose...
+    //TODOreq: don't allow "../../../../" all the way up to root system folder hahaha, but i do still want to do my archive browsing based on the url supplied by user (thought about caching the URLs, but i'd just be duplicating what the filesystem buffer cache already does...)
+
+    const QString &myBrainItemToPresentAbsolutePathQString = m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended + theInternalPathCleanedQString;
+    if(QFile::exists(myBrainItemToPresentAbsolutePathQString))
     {
-        //TODOreq: MyBrain archive browsing, 404'ing.
-        //TODOreq: post launch files should have a drop watch folder thingo too i suppose...
-        //TODOreq: don't allow "../../../../" all the way up to root system folder hahaha, but i do still want to do my archive browsing based on the url supplied by user (thought about caching the URLs, but i'd just be duplicating what the filesystem buffer cache already does...)
+        QFileInfo myBrainItemFileInfo(myBrainItemToPresentAbsolutePathQString);
+        const std::string myBrainItemToPresentAbsolutePathStdString = myBrainItemToPresentAbsolutePathQString.toStdString();
+        if(myBrainItemFileInfo.isFile())
+        {
+            WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentPlaceholderContainer);
+            new WBreak(m_ContentPlaceholderContainer);
+            new WBreak(m_ContentPlaceholderContainer);
+
+            const std::string &mimeType = embedBasedOnFileExtensionAndReturnMimeType(myBrainItemToPresentAbsolutePathQString);
+
+            WFileResource *downloadResource = new WFileResource(mimeType, myBrainItemToPresentAbsolutePathStdString, downloadButton);
+            downloadResource->setDispositionType(WResource::Attachment);
+            //TODoreq: maybe set filename, but maybe WFileResource does this itself
+            downloadButton->setResource(downloadResource);
+        }
+        else if(myBrainItemFileInfo.isDir())
+        {
+            //TODOoptimization: pagination of dir shitz (maybe a #page thingo to keep urls clean while still allowing page specification?)
+            //TODOoptimization: minddump is like 1800 entries (and growing) so uhm......... maybe a special case for it? idfk. ls->sort->ls->sort xD
+
+            std::string upOneLevel;
+
+            {
+                const QString upOneLevelCleaned = QDir::cleanPath(theInternalPathCleanedQString + "/../"); //if i ever find a solution for mybrain root dir listing, this should obviously not be shown
+                upOneLevel = upOneLevelCleaned.toStdString();
+            }
+
+            new WAnchor(WLink(WLink::InternalPath, upOneLevel), "Go up one folder level", m_ContentPlaceholderContainer);
+            new WBreak(m_ContentPlaceholderContainer);
+
+            QDir myBrainFolder(myBrainItemToPresentAbsolutePathQString);
+            const QStringList myBrainFolderEntryList = myBrainFolder.entryList((QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs | QDir::Hidden), (QDir::Time /* | QDir::Reversed*/)); //OOPS BACKWARDS: sorting by reverse time shows my latest (better) stuff at the top (people don't scroll), sorting normal shows my oldest (lol) stuff at the top. one flag will determine whether or not i make enough in ad revenue to not have to commit suicide
+            int myBrainFolderEntryListSize = myBrainFolderEntryList.size();
+            const std::string &theInternalPathCleanedStdString = theInternalPathCleanedQString.toStdString();
+            for(int i = 0; i < myBrainFolderEntryListSize; ++i)
+            {
+                //TODOoptional: sort dirs at top and make them visually different
+                const std::string &currentEntryString = myBrainFolderEntryList.at(i).toStdString();
+                new WAnchor(WLink(WLink::InternalPath, theInternalPathCleanedStdString + "/" + currentEntryString), currentEntryString, m_ContentPlaceholderContainer);
+                new WBreak(m_ContentPlaceholderContainer);
+            }
+        }
+        //fuck symlinks etc
     }
-}
-HackyVideoBullshitSiteGUI::~HackyVideoBullshitSiteGUI()
-{
-    QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "unsubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, this));
 }
 //TODOoptional: serialized wt instructions/etc passed in here and i could grow/transform the entire site before their eyes (has tons of WOO factor (but tbh, 'the web' (http/www) is fucking boring/shit), with the video being the only constant factor. i don't know the 'best' way to do what i describe, but i could do it hackily and i'm sure there's a 'proper' way to do it as well (would make for interesting reading). I've thought more on this just because it's mildly interesting, and I think dynamic/run-time plugins would be the best way to do it
 void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResource, string newAdUrl, string newAdAltAndHover)
@@ -164,7 +250,7 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
     QDate currentDate = QDate::currentDate(); //WDate seems more natural given the context, but I doubt it matters.... AND Qt would probably be the faster of the two (or they're identical (this comment not...))
     for(;;) //i think this is faster than while(true) because there's no testing involved, but really i'd bet the compiler optimizes that out, in which case i like the look and readability of while(true) better (forever is just as schmexy (tried using it here but i have no_keywords shit going on guh))
     {
-        bool yearFolderFound = QFile::exists(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL + QString::number(currentDate.year())); //woot sorting problem solved for root folder ls SORT'ing
+        bool yearFolderFound = QFile::exists(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + QString::number(currentDate.year())); //woot sorting problem solved for root folder ls SORT'ing
         if(!yearFolderFound)
         {
             currentDate = currentDate.addYears(-1);
@@ -177,7 +263,7 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
         //year folder found, now find day folder using same method
         for(;;)
         {
-            const QString &dayFolderToLookFor = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL + QString::number(currentDate.year()) + QDir::separator() + QString::number(currentDate.dayOfYear()) + QDir::separator();
+            const QString &dayFolderToLookFor = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + QString::number(currentDate.year()) + QDir::separator() + QString::number(currentDate.dayOfYear()) + QDir::separator();
             bool dayFolderFound = QFile::exists(dayFolderToLookFor); //TODOreq: as we are subtracting years, would it maybe make dayOfYear change as well in the leap year case (whoever invented leap years should be shot)
             if(!dayFolderFound)
             {
@@ -186,10 +272,122 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
             }
             //day folder found, now find latest segment using sorting :(
             QDir dayFolder(dayFolderToLookFor);
-            const QStringList all3MinuteSegmentsInDayFolder = dayFolder.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Name | QDir::Reversed);
+            const QStringList all3MinuteSegmentsInDayFolder = dayFolder.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed));
             return all3MinuteSegmentsInDayFolder.isEmpty() ? HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER /*perhaps should also prevent the year/day folder spinlock described above */ : (dayFolderToLookFor + all3MinuteSegmentsInDayFolder.first()).toStdString(); //TODOoptimization: read the if'd out stuff above about fixing having to list (cached.) + sort (probably not cached?) the dir. basically ~11:59pm will be more expensive than ~12:01am
         }
     }
     //should never get here, but just in case and to make compiler stfu:
     return HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER;
+}
+void HackyVideoBullshitSiteGUI::embedPicture(const string &mimeType, const QString &filename)
+{
+    const std::string &filenameStdString = filename.toStdString();
+    WFileResource *pictureResource = new WFileResource(mimeType, filenameStdString, m_ContentPlaceholderContainer);
+    new WImage(WLink(pictureResource), filenameStdString, m_ContentPlaceholderContainer);
+}
+void HackyVideoBullshitSiteGUI::embedVideoFile(const string &mimeType, const QString &filename)
+{
+    WVideo *videoPlayer = new WVideo(m_ContentPlaceholderContainer);
+    WFileResource *videoFileResource = new WFileResource(mimeType, filename.toStdString(), videoPlayer);
+    videoFileResource->setDispositionType(WResource::Inline);
+    videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
+    videoPlayer->addSource(WLink(videoFileResource), mimeType);
+    videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR));
+}
+void HackyVideoBullshitSiteGUI::embedAudioFile(const string &mimeType, const QString &filename)
+{
+    WAudio *audioPlayer = new WAudio(m_ContentPlaceholderContainer);
+    audioPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
+    WFileResource *audioFileResource = new WFileResource(mimeType, filename.toStdString(), audioPlayer);
+    audioPlayer->addSource(WLink(audioFileResource), mimeType);
+    audioPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_AUDIO_OR_ERROR));
+}
+string HackyVideoBullshitSiteGUI::embedBasedOnFileExtensionAndReturnMimeType(const QString &filename)
+{
+    const QString &filenameToLower = filename.toLower();
+
+    //PICTURES
+    if(filenameToLower.endsWith(".jpeg") || filenameToLower.endsWith(".jpg"))
+    {
+        std::string jpegMime = "image/jpeg";
+        embedPicture(jpegMime, filename);
+        return jpegMime;
+    }
+    if(filenameToLower.endsWith(".webp"))
+    {
+        std::string webpMime = "image/webp";
+        embedPicture(webpMime, filename);
+        return webpMime;
+    }
+    if(filenameToLower.endsWith(".gif"))
+    {
+        std::string gifMime = "image/gif";
+        embedPicture(gifMime, filename);
+        return gifMime;
+    }
+    if(filenameToLower.endsWith(".png"))
+    {
+        std::string pngMime = "image/png";
+        embedPicture(pngMime, filename);
+        return pngMime;
+    }
+
+    //VIDEO
+    if(filenameToLower.endsWith(".webm"))
+    {
+        std::string webmMime = "video/webm";
+        embedVideoFile(webmMime, filename);
+        return webmMime;
+    }
+    if(filenameToLower.endsWith(".ogg") || filenameToLower.endsWith(".ogv"))
+    {
+        std::string oggMime = "video/ogg";
+        embedVideoFile(oggMime, filename);
+        return oggMime;
+    }
+    if(filenameToLower.endsWith(".mkv"))
+    {
+        std::string mkvMime = "video/x-matroska";
+        embedVideoFile(mkvMime, filename);
+        return mkvMime;
+    }
+    //was tempted to do avi/wmv/etc, but the chances of them even playing in a browser approaches zero...
+
+    //AUDIO
+    if(filenameToLower.endsWith(".opus"))
+    {
+        std::string opusMime = "audio/opus";
+        embedAudioFile(opusMime, filename);
+        return opusMime;
+    }
+    if(filenameToLower.endsWith(".oga"))
+    {
+        std::string ogaMime = "audio/ogg";
+        embedAudioFile(ogaMime, filename);
+        return ogaMime;
+    }
+    //ditto with the audio xD
+
+    //TEXT
+    if(filenameToLower.endsWith(".txt") || filenameToLower.endsWith(".c") || filenameToLower.endsWith(".cpp") || filenameToLower.endsWith(".h") || filenameToLower.endsWith(".html") || filenameToLower.endsWith(".php") || filenameToLower.endsWith(".phps") || filenameToLower.endsWith(".s") || filenameToLower.endsWith(".java") || filenameToLower.endsWith(".xml") || filenameToLower.endsWith(".bat") || filenameToLower.endsWith(".sh") || filenameToLower.endsWith(".ini") || filenameToLower.endsWith(".pri") || filenameToLower.endsWith(".pro"))
+    {
+        QString textFileString;
+        {
+            QFile textFile(filename);
+            if(!textFile.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                //TODOreq: 500 internal server errror
+                return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
+            }
+            QTextStream textFileStream(&textFile);
+            textFileString = textFileStream.readAll();
+        }
+        new WText(WString::fromUTF8((const char *)textFileString.toUtf8()), Wt::PlainText, m_ContentPlaceholderContainer);
+        std::string textPlainMime = "text/plain";
+        return textPlainMime;
+    }
+    //TODOreq: zzzz
+
+    new WText("No web-view available for this type of file, but you can still download it", Wt::PlainText, m_ContentPlaceholderContainer);
+    return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
 }

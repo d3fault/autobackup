@@ -17,6 +17,10 @@ private:
     {
         return inputString.endsWith("/") ? inputString : (inputString + "/");
     }
+    inline QString removeTrailingSlashIfNeeded(const QString &inputString)
+    {
+        return inputString.endsWith("/") ? inputString.left(inputString.length()-1) : inputString;
+    }
 };
 
 #endif // HACKYVIDEOBULLSHITSITE_H

@@ -1,0 +1,3 @@
+I feel like my brain is constantly being thrown out of whirlpools (only to land in another one for a while until I'm ejected again). So many "event loops" in my life... and that's how they really behave. Shit is so cash.
+
+It's a tiny bit naseuating, but it sure as fuck beats the alternative (event loops bring sanity to coding)...
