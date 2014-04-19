@@ -1,6 +1,7 @@
 Deploying Wt in "/" (the default) without clean URLs adding ?_= bullshit
 1) copy /usr/share/Wt/resources/ to the directory that "wtAppHere" is located in
-2) ./wtAppHere --docroot ".;./resources/" --http-address 0.0.0.0 --http-port 7777
+2) ./wtAppHere --docroot ".;/usr/local/share/Wt" --http-address 0.0.0.0 --http-port 7777
+                                        ^or just /usr/share/Wt if using Wt from debian repository
 
 the semicolon resources is the hack to get rid of the ?_= bullshit. idfk why, but it works so fuck it :). it also must be in quotes otherwise the shell will interpret the semicolon...
 

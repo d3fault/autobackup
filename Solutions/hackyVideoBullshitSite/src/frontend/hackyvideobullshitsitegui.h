@@ -23,8 +23,11 @@ private:
     static QString m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended;
     static QString m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended;
 
+    WContainerWidget *m_CentralNorthContainerWidgetPositionPlaceholderOnly;
+    WContainerWidget *m_CentralNorthContainerWidget;
+    WBorderLayout *m_CentralBorderLayout;
+    WScrollArea *m_CentralScrollArea;
     WContainerWidget *m_AdImagePlaceholderContainer;
-    WContainerWidget *m_ContentPlaceholderContainer;
     WAnchor *m_AdImageAnchor; //so angry
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
@@ -33,7 +36,6 @@ private:
     void handleLatestVideoSegmentEnded();
     void handleNextVideoClipButtonClicked();
     std::string determineLatestVideoSegmentPathOrUsePlaceholder();
-    void handleDownloadButtonClicked();
 
     void embedBasedOnMimeType(const std::string &mimeType);
     void embedPicture(const std::string &mimeType, const QString &filename);
@@ -41,6 +43,9 @@ private:
     void embedAudioFile(const std::string &mimeType, const QString &filename);
 
     string embedBasedOnFileExtensionAndReturnMimeType(const QString &filename);
+
+    void hvbs404();
+    void blahSetContent(WWidget *contentToSet);
 };
 
 #endif // HACKYVIDEOBULLSHITSITEGUI_H
