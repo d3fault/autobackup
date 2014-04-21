@@ -23,6 +23,10 @@
 
 #define HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER "/some/placeholder/video/TODOreq.ogg" //TODOoptional: when no year/day folders are present (error imo) i could add code to present this... and it could even server as a pre-launch kind... of... countdown... thingo... (nah (ok changed my mind, yah (since it was a simple patch 'if year == 2013' xD)))
 #define HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
+#define HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN "/Browse"
+#define HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN "/Download"
+#define HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP "Proceed with caution. What is seen can never be unseen"
+#define HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING "Download My Brain In Full"
 #define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
 #define HVBS_NO_HTML_MEDIA_OR_ERROR(mediaType) "Either your browser is a piece of shit and doesn't support HTML5 " #mediaType " (You should use Mozilla Firefox), or there was an error establishing a connection to the " #mediaType " stream"
 #define HVBS_NO_HTML5_VIDEO_OR_ERROR HVBS_NO_HTML_MEDIA_OR_ERROR(video)
@@ -47,6 +51,7 @@
     "/ Hoard " \
     "/ Receive " \
     "/ Replicate " \
+    "/ Reproduce" \
     "/ Grab " \
     "/ Get " \
     "/ Copy"
@@ -56,6 +61,8 @@
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
 QString HackyVideoBullshitSiteGUI::m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended = QDir::rootPath(); //root tends to have a small number of files that rarely change, so a good default for when the user forgets to specify (since it will be 'watched')
 QString HackyVideoBullshitSiteGUI::m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended = QDir::homePath(); //internal path is concatenated onto this, and already has a slash at the beginning
+std::string HackyVideoBullshitSiteGUI::m_CopyrightText = "All Rights Reserved"; //the legal default, but don't interpret this as my liking it
+std::string HackyVideoBullshitSiteGUI::m_DplLicenseText = "Geef monies and then you can express yourself without breaking the law and worrying about getting v&"; //kim dot com
 
 void HackyVideoBullshitSiteGUI::setAdImageGetAndSubscribeManager(AdImageGetAndSubscribeManager *adImageGetAndSubscribeManager)
 {
@@ -69,6 +76,14 @@ void HackyVideoBullshitSiteGUI::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoS
 {
     m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended = myBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended;
 }
+void HackyVideoBullshitSiteGUI::setCopyrightText(const string &copyrightText)
+{
+    m_CopyrightText = "<pre>" + Wt::Utils::htmlEncode(copyrightText) + "</pre>";
+}
+void HackyVideoBullshitSiteGUI::setDplLicenseText(const string &dplLicenseText)
+{
+    m_DplLicenseText = "<pre>" + Wt::Utils::htmlEncode(dplLicenseText) + "</pre>";
+}
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
     , m_AdImageAnchor(0)
@@ -80,73 +95,39 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     setTitle("I've been living the past few years as if there were tiny cameras all around me. The only path to sanity is to make that definitely true");
 
-#if 0
-    WBorderLayout *surroundingBorderLayout = new WBorderLayout();
-    surroundingBorderLayout->setSpacing(0);
-    surroundingBorderLayout->setContentsMargins(0, 0, 0, 0);
-#endif
-
+    styleSheet().addRule("body", "background-color: black; color: white; font-family: arial;");
+    styleSheet().addRule("a:link", "color: #e1e1e1;");
+    styleSheet().addRule("a:visited", "color: #ffa2a2;");
     styleSheet().addRule("pre", "white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;"); //fucking hate css, not as much as js but (had:way) more than html (except when css saves the day from htmls shortcomings...). on that note, fuck the rule saying you can't use an apostrophe s unless it means "<something> is" (unless used with proper noun(?)). "htmls" looks fucking retarded. html owns the shortcomings, therefore posessive, who cares if it's not a proper noun (or is it? fuck if i know guh all subjective bullshit anyways. i'm going for clarity, suck my dick)
 
-    //TODOreq: license click to expand (also: download copies have it) -- copyright.txt or licence.dpl.txt or both?
-    //TODOoptional: some filenames have lots of dots in them, and cleanPath makes them now not found. clicking "back" after going to one of them also doesn't work, in addition to fucking up the layout royally because blahSetContent() is never called. i might fix this manually by just renaming my files xD..
-    //TODOreq: filename suggestion for download
-    //TODOreq: link to "MyBrain" full downloads (torrents + files)
-    //TODOreq: root folder listing (i'm back and forth on this, since I want it to be my sexy face)
-    //TODOreq: when viewing a file, "go back"/up [to directory view]
+    //TODOreq: text files downloaded copies have copyright.txt at top. I'm thinking my 'master' branch has copyright.txt prepend thing always at top, and another separate branch is what I work on (script prepends and merges/pushes/whatevers into master). master because it should be the default for anyone that checks it out... but i don't want to permanently put that shit at the top of mine because it will annoy the fuck out of me (especially since i don't want the EMBED copy to have it since it is way sexier to have it in a WPanel). It could be called the allrightsreserved branch xD. Note: not that it matters, but I think I'd need to be constantly creating a temporary branch, running the prepender, committing, and then... err... i think rebasing ONTO master? idfk lol... i suck at git
+    //TODOreq: MyBrain increments(?)
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand?
-    //TODOreq: huge image -- no-js = fine, js = scrunched -_-
     //TODOoptional: "random"
     //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
+    //TODOoptional: video alternate content isn't deleted when video widget is (wtf? not parenting internally?). for now just disabling alternate content altogether...
+    //TODOoptional: when "no web view", show list of desktop apps <--> extensions mapping
 
     m_AdImagePlaceholderContainer = new WContainerWidget(root());
     m_AdImagePlaceholderContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
-
-#if 0
-    surroundingBorderLayout->addWidget(m_AdImagePlaceholderContainer, WBorderLayout::West); //in the age of widescreen, vertical ad banners save precious real estate. hopefully this isn't too much of a bitch to change (prior to now, i planned on using a horizontal ad above the vidya stream)
-
-    WContainerWidget *centralContainerWidget = new WContainerWidget();
-    m_CentralBorderLayout = new WBorderLayout(); //main content should set itself as the 'center' widget of this layout
-    m_CentralBorderLayout->setSpacing(0);
-    m_CentralBorderLayout->setContentsMargins(0, 0, 0, 0);
-
-
-    WContainerWidget *copyrightAndLicenseDropDownAndContentToolbarsContainerWidget = new WContainerWidget();
-    copyrightAndLicenseDropDownAndContentToolbarsContainerWidget->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
-
-
-#if 0
-    new WAnchor(WLink(WLink::InternalPath, "/copyright.txt"), , copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
-    new WBreak(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
-    new WAnchor(WLink(WLink::InternalPath, "/licenses/license.dpl.txt"), , copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
-    new WBreak(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
-#endif
-
-    m_CentralNorthContainerWidgetPositionPlaceholderOnly = new WContainerWidget(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
-
-    new WBreak(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
-
-#endif
 
     WPanel *copyrightDropDown = new WPanel(root());
     copyrightDropDown->setCollapsible(true);
     copyrightDropDown->setCollapsed(true);
     copyrightDropDown->setTitle("Copyright (C) 2014 Steven Curtis Wieler II <http://d3fault.net/> -- All Freedoms Preserved -- Click here for more information about your right to copy");
-    copyrightDropDown->setCentralWidget(new WText("sex"));
+    copyrightDropDown->setCentralWidget(new WText(m_CopyrightText, Wt::XHTMLUnsafeText));
+    copyrightDropDown->decorationStyle().setCursor(PointingHandCursor);
 
     WPanel *dplDropDown = new WPanel(root());
     dplDropDown->setCollapsible(true);
     dplDropDown->setCollapsed(true);
     dplDropDown->setTitle("d3fault public license, version 3+ -- Click here to read the legal text");
-    dplDropDown->setCentralWidget(new WText("boob"));
+    dplDropDown->setCentralWidget(new WText(m_DplLicenseText, Wt::XHTMLUnsafeText));
+    dplDropDown->decorationStyle().setCursor(PointingHandCursor);
 
-#if 0
-    m_CentralBorderLayout->addWidget(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget, WBorderLayout::South);
-
-    centralContainerWidget->setLayout(m_CentralBorderLayout, Wt::AlignTop | Wt::AlignJustify);
-    surroundingBorderLayout->addWidget(centralContainerWidget, WBorderLayout::Center);
-    root()->setLayout(surroundingBorderLayout, Wt::AlignTop | Wt::AlignJustify);
-#endif
+    new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", root());
+    new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::PlainText, root());
+    new WBreak(root());
 
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
     {
@@ -178,39 +159,26 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     }
     //m_Contents = new WContainerWidget(root());
 
-#if 0
-    //layout defaults (empty m_CentralNorthContainerWidget and nothing set for m_CentralBorderLayout's "center" widget)
-    if(m_CentralNorthContainerWidget)
-        delete m_CentralNorthContainerWidget;
-    m_CentralNorthContainerWidget = new WContainerWidget(m_CentralNorthContainerWidgetPositionPlaceholderOnly);
-    m_CentralNorthContainerWidget->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
-#if 0
-    WWidget *currentlyCenteredWidgetMaybe = m_CentralBorderLayout->widgetAt(WBorderLayout::Center); //depends if first page view or not
-    if(currentlyCenteredWidgetMaybe)
-    {
-        m_CentralBorderLayout->removeWidget(currentlyCenteredWidgetMaybe);
-        delete currentlyCenteredWidgetMaybe;
-    }
-
-    if(m_CentralScrollArea)
-    {
-        m_CentralBorderLayout->removeWidget(m_CentralScrollArea); //not sure if necessary
-        delete m_CentralScrollArea;
-    }
-#endif
-    if(!m_CentralScrollArea)
-    {
-        m_CentralScrollArea = new WScrollArea(); //I find scroll area widget usually fucks everything up even more -_-
-        //m_CentralScrollArea->setScrollBarPolicy(WScrollArea::ScrollBarAlwaysOn);
-        m_CentralBorderLayout->addWidget(m_CentralScrollArea, WBorderLayout::Center);
-    }
-#endif
-
 
     if(newInternalPath == "/" || newInternalPath == "" || newInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
     {
         std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
         //latestVideoSegmentFilePath is either set to most recent or to placeholder
+
+        WAnchor *browseMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), "Browse My Brain Online", m_ContentsHeaderRow);
+        browseMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
+        browseMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+        browseMyBrainAnchor->setTarget(TargetNewWindow);
+        //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
+
+        new WText(" or ", Wt::PlainText, m_ContentsHeaderRow);
+
+        WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN), HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING, m_ContentsHeaderRow);
+        downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
+        downloadMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+        downloadMyBrainAnchor->setTarget(TargetNewWindow);
+
+        new WBreak(m_ContentsHeaderRow);
 
         WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentsHeaderRow);
         //TODOreq: "Link to this: ", needs to chop off base dir from absolute path to make clean url...
@@ -222,7 +190,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
 
-        WVideo *videoPlayer = new WVideo(); //TODOreq: changing paths (archive browsing, etc) deletes/zeros videoPlayer
+        WVideo *videoPlayer = new WVideo();
         setMainContent(videoPlayer);
         WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
         QFileInfo fileInfo(QString::fromStdString(latestVideoSegmentFilePath));
@@ -233,7 +201,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         downloadButton->setResource(latestVideoSegmentFileResource);
         //videoPlayer->resize(720, 480);
         videoPlayer->resize(800, 600);
-        videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
+        //videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
         if(!environment().ajax())
         {
             return;
@@ -241,22 +209,52 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         videoPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
         return;
     }
+    std::string rewrittenInternalPath = newInternalPath;
+    if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN) //Note: a file called "Browse" will never be viewed xD
+    {
+        rewrittenInternalPath = "";
+    }
+    else if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN) //Note: a file called "Download" will never be viewed :-P
+    {
+        //TODOreq: host and link to the torrent files (tpb is good enough placeholder for now, fuck it)
+        WContainerWidget *downloadContainer = new WContainerWidget();
+        new WBreak(downloadContainer);
+        new WText("Download in full:", downloadContainer);
+        new WBreak(downloadContainer);
+        WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, "http://thepiratebay.se/torrent/9754200/My_Brain_-_Public_Files"), "My Brain - Public Files", downloadContainer);
+        tpbMyBrainPublicFilesAnchor->setTarget(TargetNewWindow);
 
-    QString theInternalPathCleanedQString = QDir::cleanPath(QString::fromStdString(newInternalPath)); //strips trailing slash if dir
-    if(theInternalPathCleanedQString.contains("../", Qt::CaseSensitive) || theInternalPathCleanedQString == "..") //even if i didn't have the right half of this or statment, the items they would see would be un-navigable because clicking them would go to a "../" (left half) internal path
+        new WBreak(downloadContainer);
+
+        new WText("Hold onto this for me plz:", downloadContainer);
+        new WBreak(downloadContainer);
+        WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, "http://thepiratebay.se/torrent/9754217/My_Brain_-_Private_Files"), "My Brain - Private Files", downloadContainer);
+        tpbMyBrainPrivateFilesAnchor->setTarget(TargetNewWindow);
+
+        setMainContent(downloadContainer);
+
+        return;
+    }
+
+    QString theInternalPathCleanedQString = QDir::cleanPath(QString::fromStdString(rewrittenInternalPath)); //strips trailing slash if dir
+    if(theInternalPathCleanedQString.contains("/..", Qt::CaseSensitive)) //even if i didn't have the right half of this or statment, the items they would see would be un-navigable because clicking them would go to a "../" (left half) internal path
     {
         hvbs404();
         //quit();
         return;
     }
 
-    //TODOreq: MyBrain archive browsing, 404'ing.
     //TODOreq: post launch files should have a drop watch folder thingo too i suppose...
-    //TODOreq: don't allow "../../../../" all the way up to root system folder hahaha, but i do still want to do my archive browsing based on the url supplied by user (thought about caching the URLs, but i'd just be duplicating what the filesystem buffer cache already does...)
 
     const QString &myBrainItemToPresentAbsolutePathQString = m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended + theInternalPathCleanedQString;
     if(QFile::exists(myBrainItemToPresentAbsolutePathQString))
     {
+        WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN), HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING, m_ContentsHeaderRow);
+        downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
+        downloadMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+
+        new WBreak(m_ContentsHeaderRow);
+
         QFileInfo myBrainItemFileInfo(myBrainItemToPresentAbsolutePathQString);
         const std::string myBrainItemToPresentAbsolutePathStdString = myBrainItemToPresentAbsolutePathQString.toStdString();
         const std::string &theInternalPathCleanedStdString = theInternalPathCleanedQString.toStdString();
@@ -288,10 +286,15 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
             {
                 const QString upOneLevelCleaned = QDir::cleanPath(theInternalPathCleanedQString + "/../"); //if i ever find a solution for mybrain root dir listing, this should obviously not be shown
                 upOneLevel = upOneLevelCleaned.toStdString();
+                if(upOneLevel == "/")
+                {
+                    upOneLevel = HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN;
+                }
             }
 
             WContainerWidget *directoryBrowsingContainerWidget = new WContainerWidget();
-            new WAnchor(WLink(WLink::InternalPath, upOneLevel), "Go up one folder level", directoryBrowsingContainerWidget);
+            WAnchor *upOneFolderAnchor = new WAnchor(WLink(WLink::InternalPath, upOneLevel), "Go up one folder level", directoryBrowsingContainerWidget);
+            upOneFolderAnchor->decorationStyle().setForegroundColor(WColor(77, 92, 207));
             new WBreak(directoryBrowsingContainerWidget);
 
             QDir myBrainFolder(myBrainItemToPresentAbsolutePathQString);
@@ -426,7 +429,7 @@ void HackyVideoBullshitSiteGUI::embedVideoFile(const string &mimeType, const QSt
     videoFileResource->setDispositionType(WResource::Inline);
     videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     videoPlayer->addSource(WLink(videoFileResource), mimeType);
-    videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
+    //videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
 }
 void HackyVideoBullshitSiteGUI::embedAudioFile(const string &mimeType, const QString &filename)
 {
@@ -523,7 +526,7 @@ string HackyVideoBullshitSiteGUI::embedBasedOnFileExtensionAndReturnMimeType(con
 
         WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8()));
         Wt::Utils::removeScript(htmlEncoded);
-        WText *textDoc = new WText("<pre>" + htmlEncoded + "</pre>");
+        WText *textDoc = new WText("<pre>" + htmlEncoded + "</pre>", Wt::XHTMLUnsafeText);
         setMainContent(textDoc);
         return std::string("text/plain");
     }

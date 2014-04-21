@@ -1,0 +1,10 @@
+onFreeWill() //or something
+{
+	//normal state
+
+	disconnect(&body, SIGNAL(pain()));
+	//numb
+
+	connect(&body, SIGNAL(pain()), &brain, SLOT(pleasure()));
+	//masochist
+}

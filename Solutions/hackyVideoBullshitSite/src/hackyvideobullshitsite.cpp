@@ -107,8 +107,51 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         noAdPlaceholderImageResource = new AdImageWResource(noAdPlaceholderImageString, "image/jpeg", "image.jpg", WResource::Inline);
         delete [] noAdPlaceholderImageBuffer;
     }
-
     wtServer.addResource(noAdPlaceholderImageResource, "/no.ad.placeholder.jpg");
+
+
+    {
+        streampos fileSizeHack;
+        char *copyrightBuffer;
+        ifstream copyrightFileStream("../../../copyright.txt", ios::in | ios::binary | ios::ate);
+        if(copyrightFileStream.is_open())
+        {
+            fileSizeHack = copyrightFileStream.tellg();
+            copyrightFileStream.seekg(0,ios::beg);
+            copyrightBuffer = new char[fileSizeHack];
+            copyrightFileStream.read(copyrightBuffer, fileSizeHack);
+            copyrightFileStream.close();
+        }
+        else
+        {
+            cerr << "failed to open copyright.txt for reading" << endl;
+            return 1;
+        }
+        std::string copyrightString = std::string(copyrightBuffer, fileSizeHack);
+        HackyVideoBullshitSiteGUI::setCopyrightText(copyrightString);
+        delete [] copyrightBuffer;
+    }
+    {
+        streampos fileSizeHack;
+        char *dplLicenseBuffer; //eh redundant naming, unseen code is unseen, dgaf
+        ifstream dplLicenseFileStream("../../../license.dpl.txt", ios::in | ios::binary | ios::ate);
+        if(dplLicenseFileStream.is_open())
+        {
+            fileSizeHack = dplLicenseFileStream.tellg();
+            dplLicenseFileStream.seekg(0,ios::beg);
+            dplLicenseBuffer = new char[fileSizeHack];
+            dplLicenseFileStream.read(dplLicenseBuffer, fileSizeHack);
+            dplLicenseFileStream.close();
+        }
+        else
+        {
+            cerr << "failed to open license.dpl.txt for reading" << endl;
+            return 1;
+        }
+        std::string dplLicenseString = std::string(dplLicenseBuffer, fileSizeHack);
+        HackyVideoBullshitSiteGUI::setDplLicenseText(dplLicenseString);
+        delete [] dplLicenseBuffer;
+    }
 
     QMetaObject::invokeMethod(&hackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend, "initializeAndStart", Qt::BlockingQueuedConnection);
 

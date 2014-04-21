@@ -23,6 +23,7 @@ void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &video
         emit d("VideoSegmentsImporterFolderWatcher: failed to add '" + videoSegmentsImporterFolderToWatch + "' to filesystem watcher");
         delete m_DirectoryWatcher;
         m_DirectoryWatcher = 0;
+        return;
     }
     connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged(QString)));
     m_CurrentYearFolder = -1;
