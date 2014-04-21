@@ -23,12 +23,10 @@ private:
     static QString m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended;
     static QString m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended;
 
-    WContainerWidget *m_CentralNorthContainerWidgetPositionPlaceholderOnly;
-    WContainerWidget *m_CentralNorthContainerWidget;
-    WBorderLayout *m_CentralBorderLayout;
-    WScrollArea *m_CentralScrollArea;
     WContainerWidget *m_AdImagePlaceholderContainer;
     WAnchor *m_AdImageAnchor; //so angry
+    WContainerWidget *m_ContentsHeaderRow;
+    WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
     void handleInternalPathChanged(const std::string &newInternalPath);
@@ -45,7 +43,7 @@ private:
     string embedBasedOnFileExtensionAndReturnMimeType(const QString &filename);
 
     void hvbs404();
-    void blahSetContent(WWidget *contentToSet);
+    void setMainContent(WWidget *contentToSet);
 };
 
 #endif // HACKYVIDEOBULLSHITSITEGUI_H

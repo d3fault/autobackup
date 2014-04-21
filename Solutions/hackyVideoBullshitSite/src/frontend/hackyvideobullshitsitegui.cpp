@@ -11,10 +11,8 @@
 #include <Wt/WFileResource>
 #include <Wt/WPushButton>
 #include <Wt/WPanel>
-#include <Wt/WTextArea>
-#include <Wt/WBorderLayout>
-#include <Wt/WScrollArea>
 #include <Wt/Utils>
+#include <Wt/WCssStyleSheet>
 
 #include <QString>
 #include <QStringList>
@@ -39,6 +37,7 @@
     "/ Use " \
     "/ Absorb " \
     "/ Own " \
+    "/ Assimilate" \
     "/ Incorporate " \
     "/ Memorize " \
     "/ Multiply " \
@@ -72,20 +71,22 @@ void HackyVideoBullshitSiteGUI::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoS
 }
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
-    , m_CentralNorthContainerWidget(0)
-    , m_CentralScrollArea(0)
     , m_AdImageAnchor(0)
+    , m_ContentsHeaderRow(0)
+    , m_Contents(0)
     , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
 {
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "getAndSubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, static_cast<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>(this)), Q_ARG(std::string, sessionId()), Q_ARG(GetAndSubscriptionUpdateCallbackType, boost::bind(&HackyVideoBullshitSiteGUI::handleAdImageChanged, this, _1, _2, _3)));
 
     setTitle("I've been living the past few years as if there were tiny cameras all around me. The only path to sanity is to make that definitely true");
+
+#if 0
     WBorderLayout *surroundingBorderLayout = new WBorderLayout();
     surroundingBorderLayout->setSpacing(0);
     surroundingBorderLayout->setContentsMargins(0, 0, 0, 0);
+#endif
 
-    WText *bannerText = new WText("<h2><center>d3fault</center></h2>", Wt::XHTMLUnsafeText); //TODOoptional: scrunch this UP more somehow :-/...
-    surroundingBorderLayout->addWidget(bannerText, WBorderLayout::North);
+    styleSheet().addRule("pre", "white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;"); //fucking hate css, not as much as js but (had:way) more than html (except when css saves the day from htmls shortcomings...). on that note, fuck the rule saying you can't use an apostrophe s unless it means "<something> is" (unless used with proper noun(?)). "htmls" looks fucking retarded. html owns the shortcomings, therefore posessive, who cares if it's not a proper noun (or is it? fuck if i know guh all subjective bullshit anyways. i'm going for clarity, suck my dick)
 
     //TODOreq: license click to expand (also: download copies have it) -- copyright.txt or licence.dpl.txt or both?
     //TODOoptional: some filenames have lots of dots in them, and cleanPath makes them now not found. clicking "back" after going to one of them also doesn't work, in addition to fucking up the layout royally because blahSetContent() is never called. i might fix this manually by just renaming my files xD..
@@ -95,15 +96,20 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOreq: when viewing a file, "go back"/up [to directory view]
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand?
     //TODOreq: huge image -- no-js = fine, js = scrunched -_-
+    //TODOoptional: "random"
+    //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
 
-    m_AdImagePlaceholderContainer = new WContainerWidget();
-    m_AdImagePlaceholderContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
+    m_AdImagePlaceholderContainer = new WContainerWidget(root());
+    m_AdImagePlaceholderContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
+
+#if 0
     surroundingBorderLayout->addWidget(m_AdImagePlaceholderContainer, WBorderLayout::West); //in the age of widescreen, vertical ad banners save precious real estate. hopefully this isn't too much of a bitch to change (prior to now, i planned on using a horizontal ad above the vidya stream)
 
     WContainerWidget *centralContainerWidget = new WContainerWidget();
     m_CentralBorderLayout = new WBorderLayout(); //main content should set itself as the 'center' widget of this layout
     m_CentralBorderLayout->setSpacing(0);
     m_CentralBorderLayout->setContentsMargins(0, 0, 0, 0);
+
 
     WContainerWidget *copyrightAndLicenseDropDownAndContentToolbarsContainerWidget = new WContainerWidget();
     copyrightAndLicenseDropDownAndContentToolbarsContainerWidget->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
@@ -120,25 +126,27 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     new WBreak(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
 
-    WPanel *copyrightDropDown = new WPanel(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
+#endif
+
+    WPanel *copyrightDropDown = new WPanel(root());
     copyrightDropDown->setCollapsible(true);
     copyrightDropDown->setCollapsed(true);
-    copyrightDropDown->setTitle("Copyright (C) 2014 Steven Curtis Wieler II <http://d3fault.net/> -- All Freedoms Preserved -- Click here for more information");
+    copyrightDropDown->setTitle("Copyright (C) 2014 Steven Curtis Wieler II <http://d3fault.net/> -- All Freedoms Preserved -- Click here for more information about your right to copy");
     copyrightDropDown->setCentralWidget(new WText("sex"));
 
-    new WBreak(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
-
-    WPanel *dplDropDown = new WPanel(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget);
+    WPanel *dplDropDown = new WPanel(root());
     dplDropDown->setCollapsible(true);
     dplDropDown->setCollapsed(true);
-    dplDropDown->setTitle("Licence: d3fault public license, versions 3 or later -- Click here to read the legal text");
+    dplDropDown->setTitle("d3fault public license, version 3+ -- Click here to read the legal text");
     dplDropDown->setCentralWidget(new WText("boob"));
 
+#if 0
     m_CentralBorderLayout->addWidget(copyrightAndLicenseDropDownAndContentToolbarsContainerWidget, WBorderLayout::South);
 
     centralContainerWidget->setLayout(m_CentralBorderLayout, Wt::AlignTop | Wt::AlignJustify);
     surroundingBorderLayout->addWidget(centralContainerWidget, WBorderLayout::Center);
     root()->setLayout(surroundingBorderLayout, Wt::AlignTop | Wt::AlignJustify);
+#endif
 
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
     {
@@ -158,6 +166,19 @@ HackyVideoBullshitSiteGUI::~HackyVideoBullshitSiteGUI()
 }
 void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInternalPath)
 {
+    //layout defaults (empty m_ContentsHeaderRow, m_Contents pointing to zero)
+    if(m_ContentsHeaderRow)
+        delete m_ContentsHeaderRow;
+    m_ContentsHeaderRow = new WContainerWidget(root());
+
+    if(m_Contents)
+    {
+        delete m_Contents;
+        m_Contents = 0; //this isn't used [anymore] to "add the content into/onto", but is now just a pointer to the content added DIRECTLY to root(). reasoning: WText word wrapping doesn't work when it's a child of WContainerWidget, but i still need a way to delete it (hence, pointer)
+    }
+    //m_Contents = new WContainerWidget(root());
+
+#if 0
     //layout defaults (empty m_CentralNorthContainerWidget and nothing set for m_CentralBorderLayout's "center" widget)
     if(m_CentralNorthContainerWidget)
         delete m_CentralNorthContainerWidget;
@@ -183,6 +204,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         //m_CentralScrollArea->setScrollBarPolicy(WScrollArea::ScrollBarAlwaysOn);
         m_CentralBorderLayout->addWidget(m_CentralScrollArea, WBorderLayout::Center);
     }
+#endif
 
 
     if(newInternalPath == "/" || newInternalPath == "" || newInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
@@ -190,18 +212,18 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
         //latestVideoSegmentFilePath is either set to most recent or to placeholder
 
-        //TODOreq: previous button
-        WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", m_CentralNorthContainerWidget); //if next != current; aka if new-current != current-when-started-playing
-        new WBreak(m_CentralNorthContainerWidget);
-
-        WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_CentralNorthContainerWidget);
+        WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentsHeaderRow);
         //TODOreq: "Link to this: ", needs to chop off base dir from absolute path to make clean url...
-        //new WBreak(m_CentralNorthContainerWidget);
+        new WBreak(m_ContentsHeaderRow);
+
+        //TODOreq: previous button
+        WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", m_ContentsHeaderRow); //if next != current; aka if new-current != current-when-started-playing
+        new WBreak(m_ContentsHeaderRow);
 
         nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
 
         WVideo *videoPlayer = new WVideo(); //TODOreq: changing paths (archive browsing, etc) deletes/zeros videoPlayer
-        blahSetContent(videoPlayer);
+        setMainContent(videoPlayer);
         WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
         QFileInfo fileInfo(QString::fromStdString(latestVideoSegmentFilePath));
         const std::string &filenameOnly = fileInfo.fileName().toStdString();
@@ -221,7 +243,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     }
 
     QString theInternalPathCleanedQString = QDir::cleanPath(QString::fromStdString(newInternalPath)); //strips trailing slash if dir
-    if(theInternalPathCleanedQString.contains("..", Qt::CaseSensitive))
+    if(theInternalPathCleanedQString.contains("../", Qt::CaseSensitive) || theInternalPathCleanedQString == "..") //even if i didn't have the right half of this or statment, the items they would see would be un-navigable because clicking them would go to a "../" (left half) internal path
     {
         hvbs404();
         //quit();
@@ -240,20 +262,19 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         const std::string &theInternalPathCleanedStdString = theInternalPathCleanedQString.toStdString();
         if(myBrainItemFileInfo.isFile())
         {
-            new WBreak(m_CentralNorthContainerWidget);
-            new WText("Link to this: ", Wt::PlainText, m_CentralNorthContainerWidget);
-            const std::string &filenameOnly = myBrainItemFileInfo.fileName().toStdString();
-            new WAnchor(WLink(WLink::InternalPath, theInternalPathCleanedStdString), filenameOnly, m_CentralNorthContainerWidget);
-            new WBreak(m_CentralNorthContainerWidget);
+            WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentsHeaderRow);
+            new WBreak(m_ContentsHeaderRow);
 
-            WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_CentralNorthContainerWidget);
-            //new WBreak(m_CentralNorthContainerWidget);
+            new WText("Link to this: ", Wt::PlainText, m_ContentsHeaderRow);
+            const std::string &filenameOnly = myBrainItemFileInfo.fileName().toStdString();
+            new WAnchor(WLink(WLink::InternalPath, theInternalPathCleanedStdString), filenameOnly, m_ContentsHeaderRow);
+            new WBreak(m_ContentsHeaderRow);
 
             const std::string &mimeType = embedBasedOnFileExtensionAndReturnMimeType(myBrainItemToPresentAbsolutePathQString);
 
             WFileResource *downloadResource = new WFileResource(mimeType, myBrainItemToPresentAbsolutePathStdString, downloadButton);
             downloadResource->suggestFileName(filenameOnly, WResource::Attachment);
-            //TODoreq: maybe set filename, but maybe WFileResource does this itself
+            //TODoreq: maybe set filename, but maybe WFileResource does this itself. done ish but not for segments viewing
             downloadButton->setResource(downloadResource);
             return;
         }
@@ -283,12 +304,12 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
                 new WAnchor(WLink(WLink::InternalPath, theInternalPathCleanedStdString + "/" + currentEntryString), currentEntryString, directoryBrowsingContainerWidget);
                 new WBreak(directoryBrowsingContainerWidget);
             }
-            blahSetContent(directoryBrowsingContainerWidget);
+            setMainContent(directoryBrowsingContainerWidget);
             return;
         }
         //fuck symlinks etc
     }
-    hvbs404();
+    hvbs404(); //Note (had:TODOforever): if adding more non-404 cases, they should end with "return;" just like the others do...
 }
 //TODOoptional: serialized wt instructions/etc passed in here and i could grow/transform the entire site before their eyes (has tons of WOO factor (but tbh, 'the web' (http/www) is fucking boring/shit), with the video being the only constant factor. i don't know the 'best' way to do what i describe, but i could do it hackily and i'm sure there's a 'proper' way to do it as well (would make for interesting reading). I've thought more on this just because it's mildly interesting, and I think dynamic/run-time plugins would be the best way to do it
 void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResource, string newAdUrl, string newAdAltAndHover)
@@ -306,7 +327,7 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
     {
         //set up "no ad" placeholder
         WImage *placeholderAdImage = new WImage(WLink(WLink::Url, /*http://d3fault.net*/"/no.ad.placeholder.jpg"), "Buy this ad space for BTC 0.00001");
-        placeholderAdImage->resize(96, 576); //in the age of widescreen, vertical banners save precious real estate (up till now i was planning on using a horizontal banner above the video)
+        placeholderAdImage->resize(576, 96);
         m_AdImageAnchor = new WAnchor(WLink(WLink::Url, "http://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"), placeholderAdImage, m_AdImagePlaceholderContainer); //TODOreq: still need a link like that below/around the ad when purchased as well
         m_AdImageAnchor->setTarget(TargetNewWindow);
         placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
@@ -322,7 +343,7 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
     //TODOoptional: it would be trivial to show a 'price countdown' just like on abc2 just below the image itself (and has a wow factor of over 9000), but actually UPDATING that value on new purchases would NOT be [as] trivial :-/... so fuck it
 
     WImage *adImage = new WImage(newAdImageResource, newAdAltAndHover);
-    adImage->resize(96, 576); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date
+    adImage->resize(576, 96); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date
     m_AdImageAnchor = new WAnchor(WLink(WLink::Url, newAdUrl), adImage, m_AdImagePlaceholderContainer);
     m_AdImageAnchor->setTarget(TargetNewWindow);
 
@@ -390,13 +411,17 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
 void HackyVideoBullshitSiteGUI::embedPicture(const string &mimeType, const QString &filename)
 {
     const std::string &filenameStdString = filename.toStdString();
-    WFileResource *pictureResource = new WFileResource(mimeType, filenameStdString, m_CentralNorthContainerWidget);
-    blahSetContent(new WImage(WLink(pictureResource), filenameStdString));
+    WAnchor *pictureAnchor = new WAnchor();
+    WFileResource *pictureResource = new WFileResource(mimeType, filenameStdString, pictureAnchor);
+    pictureAnchor->setLink(WLink(pictureResource));
+    pictureAnchor->setImage(new WImage(WLink(pictureResource), filenameStdString));
+    pictureAnchor->setTarget(TargetNewWindow);
+    setMainContent(pictureAnchor);
 }
 void HackyVideoBullshitSiteGUI::embedVideoFile(const string &mimeType, const QString &filename)
 {
     WVideo *videoPlayer = new WVideo();
-    blahSetContent(videoPlayer);
+    setMainContent(videoPlayer);
     WFileResource *videoFileResource = new WFileResource(mimeType, filename.toStdString(), videoPlayer);
     videoFileResource->setDispositionType(WResource::Inline);
     videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
@@ -406,7 +431,7 @@ void HackyVideoBullshitSiteGUI::embedVideoFile(const string &mimeType, const QSt
 void HackyVideoBullshitSiteGUI::embedAudioFile(const string &mimeType, const QString &filename)
 {
     WAudio *audioPlayer = new WAudio();
-    blahSetContent(audioPlayer);
+    setMainContent(audioPlayer);
     audioPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     WFileResource *audioFileResource = new WFileResource(mimeType, filename.toStdString(), audioPlayer);
     audioPlayer->addSource(WLink(audioFileResource), mimeType);
@@ -417,17 +442,17 @@ string HackyVideoBullshitSiteGUI::embedBasedOnFileExtensionAndReturnMimeType(con
     const QString &filenameToLower = filename.toLower();
 
     //PICTURES
-    if(filenameToLower.endsWith(".jpeg") || filenameToLower.endsWith(".jpg"))
-    {
-        std::string jpegMime = "image/jpeg";
-        embedPicture(jpegMime, filename);
-        return jpegMime;
-    }
     if(filenameToLower.endsWith(".webp"))
     {
         std::string webpMime = "image/webp";
         embedPicture(webpMime, filename);
         return webpMime;
+    }
+    if(filenameToLower.endsWith(".jpeg") || filenameToLower.endsWith(".jpg"))
+    {
+        std::string jpegMime = "image/jpeg";
+        embedPicture(jpegMime, filename);
+        return jpegMime;
     }
     if(filenameToLower.endsWith(".gif"))
     {
@@ -499,21 +524,23 @@ string HackyVideoBullshitSiteGUI::embedBasedOnFileExtensionAndReturnMimeType(con
         WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8()));
         Wt::Utils::removeScript(htmlEncoded);
         WText *textDoc = new WText("<pre>" + htmlEncoded + "</pre>");
-        textDoc->setWordWrap(true);
-        blahSetContent(textDoc);
+        setMainContent(textDoc);
         return std::string("text/plain");
     }
     //TODOreq: zzzz
 
-    blahSetContent(new WText("No web-view available for this type of file, but you can still download it", Wt::PlainText));
+    setMainContent(new WText("No web-view available for this type of file, but you can still download it", Wt::PlainText));
     return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
 }
 void HackyVideoBullshitSiteGUI::hvbs404()
 {
-    blahSetContent(new WText("404 Not Found", Wt::PlainText));
+    setMainContent(new WText("404 Not Found", Wt::PlainText));
 }
-void HackyVideoBullshitSiteGUI::blahSetContent(WWidget *contentToSet)
+void HackyVideoBullshitSiteGUI::setMainContent(WWidget *contentToSet)
 {
     //m_CentralBorderLayout->addWidget(contentToSet, WBorderLayout::Center);
-    m_CentralScrollArea->setWidget(contentToSet);
+    //m_CentralScrollArea->setWidget(contentToSet);
+    //m_ContentsPlaceholder->addWidget(contentToSet);
+    m_Contents = contentToSet; //bah, wtext wordwrapping text doesn't work when it's the child of a wcontainer -_-. pita..
+    root()->addWidget(contentToSet);
 }

@@ -18,7 +18,12 @@ void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &video
     if(m_DirectoryWatcher)
         delete m_DirectoryWatcher;
     m_DirectoryWatcher = new QFileSystemWatcher(this);
-    m_DirectoryWatcher->addPath(videoSegmentsImporterFolderToWatch);
+    if(!m_DirectoryWatcher->addPath(videoSegmentsImporterFolderToWatch))
+    {
+        emit d("VideoSegmentsImporterFolderWatcher: failed to add '" + videoSegmentsImporterFolderToWatch + "' to filesystem watcher");
+        delete m_DirectoryWatcher;
+        m_DirectoryWatcher = 0;
+    }
     connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged(QString)));
     m_CurrentYearFolder = -1;
     m_CurrentDayOfYearFolder = -1;
