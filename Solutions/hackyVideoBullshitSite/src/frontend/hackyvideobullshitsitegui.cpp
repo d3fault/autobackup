@@ -26,6 +26,7 @@
 #define HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN "/Browse"
 #define HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN "/Download"
 #define HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP "Proceed with caution. What is seen can never be unseen"
+#define HVBS_BROWSE_MY_BRAIN_STRING "Browse My Brain Online"
 #define HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING "Download My Brain In Full"
 #define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
 #define HVBS_NO_HTML_MEDIA_OR_ERROR(mediaType) "Either your browser is a piece of shit and doesn't support HTML5 " #mediaType " (You should use Mozilla Firefox), or there was an error establishing a connection to the " #mediaType " stream"
@@ -105,7 +106,6 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand?
     //TODOoptional: "random"
     //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
-    //TODOoptional: video alternate content isn't deleted when video widget is (wtf? not parenting internally?). for now just disabling alternate content altogether...
     //TODOoptional: when "no web view", show list of desktop apps <--> extensions mapping
 
     m_AdImagePlaceholderContainer = new WContainerWidget(root());
@@ -165,7 +165,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
         //latestVideoSegmentFilePath is either set to most recent or to placeholder
 
-        WAnchor *browseMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), "Browse My Brain Online", m_ContentsHeaderRow);
+        WAnchor *browseMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), HVBS_BROWSE_MY_BRAIN_STRING, m_ContentsHeaderRow);
         browseMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
         browseMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
         browseMyBrainAnchor->setTarget(TargetNewWindow);
@@ -190,8 +190,9 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
 
-        WVideo *videoPlayer = new WVideo();
-        setMainContent(videoPlayer);
+        WContainerWidget *videoContainer = new WContainerWidget(); //derp alternate content is not deleted when the WVideo is
+        WVideo *videoPlayer = new WVideo(videoContainer);
+        setMainContent(videoContainer);
         WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
         QFileInfo fileInfo(QString::fromStdString(latestVideoSegmentFilePath));
         const std::string &filenameOnly = fileInfo.fileName().toStdString();
@@ -201,7 +202,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         downloadButton->setResource(latestVideoSegmentFileResource);
         //videoPlayer->resize(720, 480);
         videoPlayer->resize(800, 600);
-        //videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
+        videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
         if(!environment().ajax())
         {
             return;
@@ -218,6 +219,13 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     {
         //TODOreq: host and link to the torrent files (tpb is good enough placeholder for now, fuck it)
         WContainerWidget *downloadContainer = new WContainerWidget();
+
+        WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), HVBS_BROWSE_MY_BRAIN_STRING, downloadContainer);
+        downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
+        downloadMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+
+        new WBreak(downloadContainer);
+
         new WBreak(downloadContainer);
         new WText("Download in full:", downloadContainer);
         new WBreak(downloadContainer);
@@ -290,9 +298,14 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
                 {
                     upOneLevel = HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN;
                 }
+                else if(upOneLevel == "/..")
+                {
+                    upOneLevel = "/";
+                }
             }
 
             WContainerWidget *directoryBrowsingContainerWidget = new WContainerWidget();
+            new WBreak(directoryBrowsingContainerWidget);
             WAnchor *upOneFolderAnchor = new WAnchor(WLink(WLink::InternalPath, upOneLevel), "Go up one folder level", directoryBrowsingContainerWidget);
             upOneFolderAnchor->decorationStyle().setForegroundColor(WColor(77, 92, 207));
             new WBreak(directoryBrowsingContainerWidget);
@@ -423,18 +436,20 @@ void HackyVideoBullshitSiteGUI::embedPicture(const string &mimeType, const QStri
 }
 void HackyVideoBullshitSiteGUI::embedVideoFile(const string &mimeType, const QString &filename)
 {
-    WVideo *videoPlayer = new WVideo();
-    setMainContent(videoPlayer);
+    WContainerWidget *videoContainer = new WContainerWidget();
+    WVideo *videoPlayer = new WVideo(videoContainer);
+    setMainContent(videoContainer);
     WFileResource *videoFileResource = new WFileResource(mimeType, filename.toStdString(), videoPlayer);
     videoFileResource->setDispositionType(WResource::Inline);
     videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     videoPlayer->addSource(WLink(videoFileResource), mimeType);
-    //videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
+    videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
 }
 void HackyVideoBullshitSiteGUI::embedAudioFile(const string &mimeType, const QString &filename)
 {
-    WAudio *audioPlayer = new WAudio();
-    setMainContent(audioPlayer);
+    WContainerWidget *audioPlayerContainer = new WContainerWidget();
+    WAudio *audioPlayer = new WAudio(audioPlayerContainer);
+    setMainContent(audioPlayerContainer);
     audioPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     WFileResource *audioFileResource = new WFileResource(mimeType, filename.toStdString(), audioPlayer);
     audioPlayer->addSource(WLink(audioFileResource), mimeType);

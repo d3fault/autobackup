@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QHash>
+#include <QHash>
 #include <QHashIterator>
 
 #include <boost/function.hpp>
@@ -47,6 +48,7 @@ private:
     bool m_CurrentlyShowingNoAdPlaceholder;
     QNetworkAccessManager* m_NetworkAccessManager;
     QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> *m_UpdateSubscribersHashIterator;
+    QList<AdImageSubscriberIdentifier*> m_QueuedUnsubscriptionRequests;
 
     void startHttpRequestForNextAdSlot();
     inline std::string base64decodeStdString(const std::string &input)

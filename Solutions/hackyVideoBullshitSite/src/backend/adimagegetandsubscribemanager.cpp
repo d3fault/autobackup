@@ -4,6 +4,7 @@
 #include <QNetworkReply>
 #include <QDateTime>
 #include <QTimer>
+#include <QListIterator>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -52,7 +53,7 @@ void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManage
     if(m_Stopping)
         return;
 
-    //optimization to do the 'get' now before the subscribe below, but hardly makes any difference...
+    //optimization to finish the 'get' now before the subscribe below, but hardly makes any difference...
     WServer::instance()->post(sessionId, boost::bind(getAndSubscriptionUpdateCallback, m_CurrentAdImage, m_CurrentAdUrl, m_CurrentAdAltAndHover)); //TODOreq: make sure this is populated [with at least a default value] right away (so perhaps a blocking/queued initialize call?), and make sure you use synchronous http get (but actually async get might be fine (the m_CurrentAdImage needs to be modified in 'one method' however), just a race condition where they see an image for a brief moment ya know (race condition exists NO MATTER WHAT though, and isn't 'bad'))
 
     AdImageSubscriberSessionInfo *sessionInfo = new AdImageSubscriberSessionInfo();
@@ -63,12 +64,30 @@ void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManage
 //TODOforever: just like IRL junk mail, unsubscribing may still yield a few more subscription updates before the unsubscribe is processed. Subscribers need to be able to handle this (in HackyVideoBullshitSite I handle this easily, because WServer::post handles delete case and I only ever unsubscribe in the destructor)
 void AdImageGetAndSubscribeManager::unsubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier)
 {
+    //TO DOnereq: even though yes my "update over 5 minutes" hash iterator makes a copy of the hash so that unsubscribes are still in it, and I had been relying on the fact that wt can handle a post to a wapplication that doesn't exist anymore, I THINK I FIGURED OUT WHY I KEPT SEEING SEGFAULTS xD and it's because i'm deleting the value itself... and since the hash iterator is using pointers, that it makes a 'copy' of it does not help us out at all. The segfault errors were obscure and the stack trace didn't help much, but all I saw that looked familiar was the boost bind stuffs (value is a binding!). I solved this in my sleep by the way, fucking weird/pro. Well I knew I should look harder at my initializeAndStart and stopping procedure to make sure that everything was done correctly (and here I find it isn't).
+    //it may have been a different problem altogether (fff), because it also mentioned boost::spirit and i'm leik "wtfz? i never used dat!"
+
+
+    if(m_UpdateSubscribersHashIterator) //currently iterating, so deleting will cause segfault. queue for delete!
+    {
+        m_QueuedUnsubscriptionRequests.append(adImageSubscriberIdentifier);
+        return;
+    }
+
+    //not currently iterating/updating = safe to just delete here/now
     AdImageSubscriberSessionInfo *sessionInfo = m_Subscribers.take(adImageSubscriberIdentifier);
-    delete sessionInfo; //TODOreq: destructor should iterate/delete too? really depends on my shutdown procedure and future proofing etc (fuck noobs imo)
+    delete sessionInfo;
 }
 void AdImageGetAndSubscribeManager::beginStopping()
 {
     m_Stopping = true;
+
+    //optimization, so we aren't flooded with ~10k queued unsubscribe requests (they are handled as they are received instead of queued). without this optimization, finishStopping would have been where they were deleted (but still, our already queued deletions will still be processed then)
+    if(m_UpdateSubscribersHashIterator)
+    {
+        delete m_UpdateSubscribersHashIterator;
+        m_UpdateSubscribersHashIterator = 0;
+    }
 }
 void AdImageGetAndSubscribeManager::finishStopping()
 {
@@ -83,6 +102,14 @@ void AdImageGetAndSubscribeManager::finishStopping()
         m_YesterdaysAdImage = 0;
     }
 
+    if(m_UpdateSubscribersHashIterator)
+    {
+        delete m_UpdateSubscribersHashIterator;
+        m_UpdateSubscribersHashIterator = 0;
+    }
+
+    m_QueuedUnsubscriptionRequests.clear(); //they get processed/deleted in a sec when m_Subscribers is processed, but leaving em in here will cause us a segfault if we start back up again later!
+
     QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
     while(it.hasNext())
     {
@@ -94,6 +121,12 @@ void AdImageGetAndSubscribeManager::finishStopping()
 }
 void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply *reply) //TODOreq: errors, such as timeout, use "no ad" placeholder and of course schedule a retry in a little
 {
+    if(m_Stopping)
+    {
+        reply->deleteLater();
+        return;
+    }
+
     //read the ad image json and b64decode it
     bool someError = (reply->error() != QNetworkReply::NoError);
     ptree pt;
@@ -165,10 +198,13 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
 }
 void AdImageGetAndSubscribeManager::updateSubscribers()
 {
+    if(m_Stopping)
+        return;
+
     //the "spread out over 5 mins" thing is going to be a tiny bit of a pain in the ass (nothing i can't handle) to implement, because an unsubscribe while "sleeping" would modify the hash and could make us skip notifying a subscriber. hanging onto the iterator might work since modifications to the hash make a copy of it (and i guess we'd have to 'delete' the iterator to free our stale (but we want it to be stale as per the first sentence of this comment) copy of the hash after we're finished). Also need to make sure we don't start ANOTHER updateSubscribers call before out prior one finishes, but that shouldn't be too hard (spread out over "4:20 seconds" instead of "5", since 5 is the "no ad" poll interval and it would be initiated at 4:30))
 
     //as a precautionary measure, we check to see if a subscription update 'over 5 mins' is already active. if it is, we just return. this should never happen but you never know...
-    if(!m_UpdateSubscribersHashIterator)
+    if(m_UpdateSubscribersHashIterator) //wtf, had this as the opposite of what it should have been (logical not sign in front), and yet my testing of it still worked!?!?!? shouldn't have so now i'm just leik "wat"
         return;
 
     m_UpdateSubscribersHashIterator = new QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*>(m_Subscribers); //increments reference count, so if a new subscriber or unsubscribe, m_Subscribers does a COW and doesn't affect our list of updaters. new subscribers are handled instantly in "subscribe", and unsubscribers are handled by WServer::post knowing when a WApplication has been destroyed
@@ -188,10 +224,16 @@ void AdImageGetAndSubscribeManager::updateSubscribers()
 }
 void AdImageGetAndSubscribeManager::expireTimerTimedOut()
 {
+    if(m_Stopping)
+        return;
+
     startHttpRequestForNextAdSlot();
 }
 void AdImageGetAndSubscribeManager::updateTenAndScheduleA30msTimeoutUntilAllEmpty() //could easily dynamic the 10 and .3 seconds, but dgaf
 {
+    if(m_Stopping)
+        return;
+
     for(int i = 0; i < 10; ++i)
     {
         if(!m_UpdateSubscribersHashIterator->hasNext())
@@ -199,6 +241,20 @@ void AdImageGetAndSubscribeManager::updateTenAndScheduleA30msTimeoutUntilAllEmpt
             //done updating subscribers
             delete m_UpdateSubscribersHashIterator;
             m_UpdateSubscribersHashIterator = 0;
+
+            //so now process queued unsubscription requests (if they were processed while we were iterating, we would have segfaulted when we tried to update a "delete"-d [un]subscriber)
+
+            {
+                QListIterator<AdImageSubscriberIdentifier*> it(m_QueuedUnsubscriptionRequests);
+                while(it.hasNext())
+                {
+                    AdImageSubscriberIdentifier *currentIdentifier = it.next();
+                    AdImageSubscriberSessionInfo *sessionInfo = m_Subscribers.take(currentIdentifier);
+                    delete sessionInfo;
+                }
+            }
+            m_QueuedUnsubscriptionRequests.clear();
+
             return;
         }
 
