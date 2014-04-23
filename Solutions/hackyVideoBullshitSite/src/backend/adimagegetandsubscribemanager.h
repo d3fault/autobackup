@@ -48,6 +48,7 @@ private:
     bool m_CurrentlyShowingNoAdPlaceholder;
     QNetworkAccessManager* m_NetworkAccessManager;
     QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> *m_UpdateSubscribersHashIterator;
+    QHash<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> m_QueuedSubscriptionRequests;
     QList<AdImageSubscriberIdentifier*> m_QueuedUnsubscriptionRequests;
 
     void startHttpRequestForNextAdSlot();

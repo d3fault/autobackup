@@ -59,6 +59,14 @@ void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManage
     AdImageSubscriberSessionInfo *sessionInfo = new AdImageSubscriberSessionInfo();
     sessionInfo->SessionId = sessionId;
     sessionInfo->GetAndSubscriptionUpdateCallback = getAndSubscriptionUpdateCallback;
+
+    if(m_UpdateSubscribersHashIterator) //currently iterating, so inserting will cause a deep copy. queue it instead as an optimization
+    {
+        m_QueuedSubscriptionRequests.insert(adImageSubscriberIdentifier, sessionInfo);
+        return;
+    }
+
+    //not currently iterating, so insert now
     m_Subscribers.insert(adImageSubscriberIdentifier, sessionInfo); //TODOoptional: won't need it for HackyVideoBullshitSite, but if future proofing this it may be wise to first check if it exists and to not double add it (would leak memory of old session info). The same check kind of exists for unsubscribe
 }
 //TODOforever: just like IRL junk mail, unsubscribing may still yield a few more subscription updates before the unsubscribe is processed. Subscribers need to be able to handle this (in HackyVideoBullshitSite I handle this easily, because WServer::post handles delete case and I only ever unsubscribe in the destructor)
@@ -110,16 +118,29 @@ void AdImageGetAndSubscribeManager::finishStopping()
 
     m_QueuedUnsubscriptionRequests.clear(); //they get processed/deleted in a sec when m_Subscribers is processed, but leaving em in here will cause us a segfault if we start back up again later!
 
-    QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
-    while(it.hasNext())
     {
-        it.next();
-        AdImageSubscriberSessionInfo *sessionInfo = it.value();
-        delete sessionInfo;
+        QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
+        while(it.hasNext())
+        {
+            it.next();
+            AdImageSubscriberSessionInfo *sessionInfo = it.value();
+            delete sessionInfo;
+        }
+        m_Subscribers.clear();
     }
-    m_Subscribers.clear();
+
+    {
+        QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_QueuedSubscriptionRequests);
+        while(it.hasNext())
+        {
+            it.next();
+            AdImageSubscriberSessionInfo *sessionInfo = it.value();
+            delete sessionInfo;
+        }
+        m_QueuedSubscriptionRequests.clear();
+    }
 }
-void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply *reply) //TODOreq: errors, such as timeout, use "no ad" placeholder and of course schedule a retry in a little
+void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply *reply)
 {
     if(m_Stopping)
     {
@@ -141,7 +162,7 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
         someError = (error == JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_YESERROR_VALUE);
     }
 
-    if(someError)
+    if(someError) //errors, such as timeout, use "no ad" placeholder and of course schedule a retry in a little
     {
         //"no ad" placeholder
         if(!m_CurrentlyShowingNoAdPlaceholder) //don't 'double' show it
@@ -179,7 +200,6 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
         const char* imageCStr = imageStdString.c_str();
         char imageHeader[2] = {imageCStr[0], imageCStr[1]};
         mimeTypeHalfAndFileExtension = NonAnimatedImageHeaderChecker::guessImageFormatFromHeaderMagic(imageHeader);
-
     }
     m_CurrentAdImage = new AdImageWResource(imageStdString, "image/" + mimeTypeHalfAndFileExtension, "image." + mimeTypeHalfAndFileExtension, WResource::Inline);
 
@@ -191,8 +211,6 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
 
     long long expireDateTimeMSecs = (m_CurrentAdExpirationDateTime*1000)-30;
     QTimer::singleShot(static_cast<int>(expireDateTimeMSecs - QDateTime::currentMSecsSinceEpoch()), Qt::VeryCoarseTimer, this, SLOT(expireTimerTimedOut()));
-
-    //TODOreq: expire time needs to have been put in and extracted from the json. TODOreqoptimization: if two "no ad" placeholders in a row (thinking 5 min expiration dates), the second one does not transfer image bytes or even WServer::post
 
     reply->deleteLater();
 }
@@ -244,6 +262,18 @@ void AdImageGetAndSubscribeManager::updateTenAndScheduleA30msTimeoutUntilAllEmpt
 
             //so now process queued unsubscription requests (if they were processed while we were iterating, we would have segfaulted when we tried to update a "delete"-d [un]subscriber)
 
+            //process queued subscription requests
+            {
+                QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_QueuedSubscriptionRequests);
+                while(it.hasNext())
+                {
+                    it.next();
+                    m_Subscribers.insert(it.key(), it.value());
+                }
+                m_QueuedSubscriptionRequests.clear();
+            }
+
+            //process queued unsubscribe requests
             {
                 QListIterator<AdImageSubscriberIdentifier*> it(m_QueuedUnsubscriptionRequests);
                 while(it.hasNext())
@@ -252,8 +282,8 @@ void AdImageGetAndSubscribeManager::updateTenAndScheduleA30msTimeoutUntilAllEmpt
                     AdImageSubscriberSessionInfo *sessionInfo = m_Subscribers.take(currentIdentifier);
                     delete sessionInfo;
                 }
+                m_QueuedUnsubscriptionRequests.clear();
             }
-            m_QueuedUnsubscriptionRequests.clear();
 
             return;
         }

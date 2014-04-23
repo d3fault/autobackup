@@ -39,8 +39,7 @@ void HackyVideoBullshitSiteBackend::initializeAndStart()
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "initializeAndStart"); //if m_AdImageGetAndSubscribeManager is ever moved to [yet another] different thread, this [PROBABLY(because that's how i coded it before, but honestly i haven't verified it's necessary)] needs to be BlockingQueuedConnection. meh i've said that before too, perhaps i shouuld just fucking implement it into qt... (AutoConnectionBlockingQueuedIfNotSameThread... or BlockingAutoConnection). this comment is making me set up qt/gerrit comitting for first time ever (including compiling qt for first time ever (well, i did once before on freebsd for fun, but ran out of hdd space before it completed xD)
 
 
-    if(m_VideoSegmentsImporterFolderWatcherThread)
-        delete m_VideoSegmentsImporterFolderWatcherThread;
+    stopVideoSegmentsImporterFolderWatcherThreadIfNeeded();
     m_VideoSegmentsImporterFolderWatcherThread = new ObjectOnThreadHelper<VideoSegmentsImporterFolderWatcher>(this);
     connect(m_VideoSegmentsImporterFolderWatcherThread, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleVideoSegmentsImporterFolderWatcherReadyForConnections()));
     m_VideoSegmentsImporterFolderWatcherThread->start(); //we don't need to wait for it to start before our own initializeAndStart is considered complete (unlike the AdImageGetAndSubscribeManager)
