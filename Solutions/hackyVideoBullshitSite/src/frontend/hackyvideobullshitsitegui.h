@@ -19,7 +19,8 @@ public:
     static void setDplLicenseText(const std::string &dplLicenseText);
 
     HackyVideoBullshitSiteGUI(const WEnvironment &env);
-    ~HackyVideoBullshitSiteGUI();
+protected:
+    virtual void finalize();
 private:
     static AdImageGetAndSubscribeManager* m_AdImageGetAndSubscribeManager;
     static QString m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended;
@@ -27,8 +28,8 @@ private:
     static std::string m_CopyrightText;
     static std::string m_DplLicenseText;
 
-    WContainerWidget *m_AdImagePlaceholderContainer;
-    WAnchor *m_AdImageAnchor; //so angry
+    WContainerWidget *m_AdImagePositionPlaceholder;
+    WContainerWidget *m_AdImageContainer; //such an angry image container
     WContainerWidget *m_ContentsHeaderRow;
     WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;

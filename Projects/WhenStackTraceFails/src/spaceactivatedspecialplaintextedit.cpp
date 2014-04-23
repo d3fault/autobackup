@@ -5,7 +5,9 @@
 SpaceActivatedSpecialPlainTextEdit::SpaceActivatedSpecialPlainTextEdit(QWidget *parent)
     : QPlainTextEdit(parent)
     , m_CurrentIndex(0)
-{ }
+{
+    setWordWrapMode(QTextOption::NoWrap); //fucking word wrap in plaintextedit makes this fucked (goes to where wrap, instead of where end of line REALLY (arguably) is)
+}
 void SpaceActivatedSpecialPlainTextEdit::insertLoLAtCurrentLine()
 {
     textCursor().clearSelection();

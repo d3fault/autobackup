@@ -29,6 +29,7 @@
 #define HVBS_BROWSE_MY_BRAIN_STRING "Browse My Brain Online"
 #define HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING "Download My Brain In Full"
 #define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
+#define HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL "https://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"
 #define HVBS_NO_HTML_MEDIA_OR_ERROR(mediaType) "Either your browser is a piece of shit and doesn't support HTML5 " #mediaType " (You should use Mozilla Firefox), or there was an error establishing a connection to the " #mediaType " stream"
 #define HVBS_NO_HTML5_VIDEO_OR_ERROR HVBS_NO_HTML_MEDIA_OR_ERROR(video)
 #define HVBS_NO_HTML5_AUDIO_OR_ERROR HVBS_NO_HTML_MEDIA_OR_ERROR(audio)
@@ -87,7 +88,7 @@ void HackyVideoBullshitSiteGUI::setDplLicenseText(const string &dplLicenseText)
 }
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
-    , m_AdImageAnchor(0)
+    , m_AdImageContainer(0)
     , m_ContentsHeaderRow(0)
     , m_Contents(0)
     , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
@@ -96,40 +97,48 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     setTitle("I've been living the past few years as if there were tiny cameras all around me. The only path to sanity is to make that definitely true");
 
-    styleSheet().addRule("body", "background-color: black; color: white; font-family: arial;");
+    setCssTheme("polished");
+
+    styleSheet().addRule("body", "background-color: black; color: white; font-family: arial; font-size: large");
     styleSheet().addRule("a:link", "color: #e1e1e1;");
     styleSheet().addRule("a:visited", "color: #ffa2a2;");
-    styleSheet().addRule("pre", "white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word; font-size: larger"); //fucking hate css, not as much as js but (had:way) more than html (except when css saves the day from htmls shortcomings...). on that note, fuck the rule saying you can't use an apostrophe s unless it means "<something> is" (unless used with proper noun(?)). "htmls" looks fucking retarded. html owns the shortcomings, therefore posessive, who cares if it's not a proper noun (or is it? fuck if i know guh all subjective bullshit anyways. i'm going for clarity, suck my dick)
+    styleSheet().addRule("pre", "white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;"); //fucking hate css, not as much as js but (had:way) more than html (except when css saves the day from htmls shortcomings...). on that note, fuck the rule saying you can't use an apostrophe s unless it means "<something> is" (unless used with proper noun(?)). "htmls" looks fucking retarded. html owns the shortcomings, therefore posessive, who cares if it's not a proper noun (or is it? fuck if i know guh all subjective bullshit anyways. i'm going for clarity, suck my dick)
 
     //TODOreq: text files downloaded copies have copyright.txt at top. I'm thinking my 'master' branch has copyright.txt prepend thing always at top, and another separate branch is what I work on (script prepends and merges/pushes/whatevers into master). master because it should be the default for anyone that checks it out... but i don't want to permanently put that shit at the top of mine because it will annoy the fuck out of me (especially since i don't want the EMBED copy to have it since it is way sexier to have it in a WPanel). It could be called the allrightsreserved branch xD. Note: not that it matters, but I think I'd need to be constantly creating a temporary branch, running the prepender, committing, and then... err... i think rebasing ONTO master? idfk lol... i suck at git
     //but also collaboration and merging etc will mean i have to deal with licenses anyways. for code i don't care that much tbh, but for text files that aren't even that long.... fuuuuuuck i don't want stupid headers prepended on all of em. BUT honestly they're easy to both insert and remove via scripting so... (lol at the bug where i 'remove' the text and then it removes it from the file that i used as input to tell me what to remove (easily fixed by pulling it back out of git history (or a skip file exception) but still i'm predicting it will happen :-P)
 
-    //TODOoptional: timestamps
+    //TODOreq: timestamps
     //TODOreq: MyBrain increments(?)
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
     //TODOoptional: "random"
     //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
     //TODOoptional: when "no web view", show list of desktop apps <--> extensions mapping
 
-    m_AdImagePlaceholderContainer = new WContainerWidget(root());
-    m_AdImagePlaceholderContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
+    m_AdImagePositionPlaceholder = new WContainerWidget(root());
+    m_AdImagePositionPlaceholder->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
 
     WPanel *copyrightDropDown = new WPanel(root());
     copyrightDropDown->setCollapsible(true);
     copyrightDropDown->setCollapsed(true);
     copyrightDropDown->setTitle("Copyright (C) 2014 Steven Curtis Wieler II <http://d3fault.net/> -- All Freedoms Preserved -- Click here for more information about your right to copy");
-    copyrightDropDown->setCentralWidget(new WText(m_CopyrightText, Wt::XHTMLUnsafeText));
-    copyrightDropDown->decorationStyle().setCursor(PointingHandCursor);
+    WText *copyrightText = new WText(m_CopyrightText, Wt::XHTMLUnsafeText);
+    copyrightText->decorationStyle().setBackgroundColor(WColor(0,0,0));
+    copyrightText->decorationStyle().setForegroundColor(WColor(255,255,255));
+    copyrightDropDown->setCentralWidget(copyrightText);
+    //copyrightDropDown->decorationStyle().setCursor(PointingHandCursor);
 
     WPanel *dplDropDown = new WPanel(root());
     dplDropDown->setCollapsible(true);
     dplDropDown->setCollapsed(true);
     dplDropDown->setTitle("d3fault public license, version 3+ -- Click here to read the legal text");
-    dplDropDown->setCentralWidget(new WText(m_DplLicenseText, Wt::XHTMLUnsafeText));
-    dplDropDown->decorationStyle().setCursor(PointingHandCursor);
+    WText *dplText = new WText(m_DplLicenseText, Wt::XHTMLUnsafeText);
+    dplText->decorationStyle().setBackgroundColor(WColor(0,0,0));
+    dplText->decorationStyle().setForegroundColor(WColor(255,255,255));
+    dplDropDown->setCentralWidget(dplText);
+    //dplDropDown->decorationStyle().setCursor(PointingHandCursor);
 
     new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", root());
-    new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::PlainText, root());
+    new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, root());
     new WBreak(root());
 
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
@@ -143,8 +152,16 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     internalPathChanged().connect(this, &HackyVideoBullshitSiteGUI::handleInternalPathChanged);
     handleInternalPathChanged(internalPath());
+
+    if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred || env.agentIsGecko() /* iceweasel would do the animation only a few times and then not show it if clicked again. maybe newer versions of firefox have this fixed, but iceweasel 17.0.10 is bugged */)
+        return;
+
+    WAnimation slideDownAnimation(WAnimation::SlideInFromTop, WAnimation::EaseOut, 250);
+
+    copyrightDropDown->setAnimation(slideDownAnimation);
+    dplDropDown->setAnimation(slideDownAnimation);
 }
-HackyVideoBullshitSiteGUI::~HackyVideoBullshitSiteGUI()
+void HackyVideoBullshitSiteGUI::finalize()
 {
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "unsubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, this));
 }
@@ -174,7 +191,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         browseMyBrainAnchor->setTarget(TargetNewWindow);
         //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
 
-        new WText(" or ", Wt::PlainText, m_ContentsHeaderRow);
+        new WText(" or ", Wt::XHTMLUnsafeText, m_ContentsHeaderRow);
 
         WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN), HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING, m_ContentsHeaderRow);
         downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
@@ -205,7 +222,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         downloadButton->setResource(latestVideoSegmentFileResource);
         //videoPlayer->resize(720, 480);
         videoPlayer->resize(800, 600);
-        videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
+        videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
         if(!environment().ajax())
         {
             return;
@@ -230,14 +247,14 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         new WBreak(downloadContainer);
 
         new WBreak(downloadContainer);
-        new WText("Download in full:", downloadContainer);
+        new WText("Download in full:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
         WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, "http://thepiratebay.se/torrent/9754200/My_Brain_-_Public_Files"), "My Brain - Public Files", downloadContainer);
         tpbMyBrainPublicFilesAnchor->setTarget(TargetNewWindow);
 
         new WBreak(downloadContainer);
 
-        new WText("Hold onto this for me plz:", downloadContainer);
+        new WText("Hold onto this for me plz:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
         WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, "http://thepiratebay.se/torrent/9754217/My_Brain_-_Private_Files"), "My Brain - Private Files", downloadContainer);
         tpbMyBrainPrivateFilesAnchor->setTarget(TargetNewWindow);
@@ -274,7 +291,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
             WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentsHeaderRow);
             new WBreak(m_ContentsHeaderRow);
 
-            new WText("Link to this: ", Wt::PlainText, m_ContentsHeaderRow);
+            new WText("Link to this: ", Wt::XHTMLUnsafeText, m_ContentsHeaderRow);
             const std::string &filenameOnly = myBrainItemFileInfo.fileName().toStdString();
             new WAnchor(WLink(WLink::InternalPath, theInternalPathCleanedStdString), filenameOnly, m_ContentsHeaderRow);
             new WBreak(m_ContentsHeaderRow);
@@ -339,15 +356,17 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
         m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred = false;
     }
 
-    if(m_AdImageAnchor)
-        delete m_AdImageAnchor; //delete/replace the previous one, if there was one (TODOoptimization: maybe just setImage/setUrl/etc instead?)
+    if(m_AdImageContainer)
+        delete m_AdImageContainer; //delete/replace the previous one, if there was one (TODOoptimization: maybe just setImage/setUrl/etc instead?)
+    m_AdImageContainer = new WContainerWidget(m_AdImagePositionPlaceholder);
+    m_AdImageContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
 
     if(newAdUrl == "n") //hack. both newAdImageResource and newAdAltAndHover are undefined if url is "n" (they may be 0/empty, or they may still be 'yesterdays')
     {
         //set up "no ad" placeholder
         WImage *placeholderAdImage = new WImage(WLink(WLink::Url, /*http://d3fault.net*/"/no.ad.placeholder.jpg"), "Buy this ad space for BTC 0.00001");
         placeholderAdImage->resize(576, 96);
-        m_AdImageAnchor = new WAnchor(WLink(WLink::Url, "http://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"), placeholderAdImage, m_AdImagePlaceholderContainer); //TODOreq: still need a link like that below/around the ad when purchased as well
+        m_AdImageAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), placeholderAdImage, m_AdImageContainer);
         m_AdImageAnchor->setTarget(TargetNewWindow);
         placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
         m_AdImageAnchor->setToolTip("Buy this ad space for BTC 0.00001");
@@ -363,8 +382,10 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
 
     WImage *adImage = new WImage(newAdImageResource, newAdAltAndHover);
     adImage->resize(576, 96); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date
-    m_AdImageAnchor = new WAnchor(WLink(WLink::Url, newAdUrl), adImage, m_AdImagePlaceholderContainer);
+    m_AdImageAnchor = new WAnchor(WLink(WLink::Url, newAdUrl), adImage, m_AdImageContainer);
     m_AdImageAnchor->setTarget(TargetNewWindow);
+    new WBreak(m_AdImageContainer);
+    new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Buy this ad space", m_AdImageContainer);
 
     //difference between these two?
     adImage->setToolTip(newAdAltAndHover);
@@ -446,7 +467,7 @@ void HackyVideoBullshitSiteGUI::embedVideoFile(const string &mimeType, const QSt
     videoFileResource->setDispositionType(WResource::Inline);
     videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     videoPlayer->addSource(WLink(videoFileResource), mimeType);
-    videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::PlainText));
+    videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
 }
 void HackyVideoBullshitSiteGUI::embedAudioFile(const string &mimeType, const QString &filename)
 {
@@ -456,7 +477,7 @@ void HackyVideoBullshitSiteGUI::embedAudioFile(const string &mimeType, const QSt
     audioPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
     WFileResource *audioFileResource = new WFileResource(mimeType, filename.toStdString(), audioPlayer);
     audioPlayer->addSource(WLink(audioFileResource), mimeType);
-    audioPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_AUDIO_OR_ERROR, Wt::PlainText));
+    audioPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_AUDIO_OR_ERROR, Wt::XHTMLUnsafeText));
 }
 string HackyVideoBullshitSiteGUI::embedBasedOnFileExtensionAndReturnMimeType(const QString &filename)
 {
@@ -543,19 +564,19 @@ string HackyVideoBullshitSiteGUI::embedBasedOnFileExtensionAndReturnMimeType(con
         //textArea->setReadOnly(true);
 
         WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8()));
-        Wt::Utils::removeScript(htmlEncoded);
+        //Wt::Utils::removeScript(htmlEncoded);
         WText *textDoc = new WText("<pre>" + htmlEncoded + "</pre>", Wt::XHTMLUnsafeText);
         setMainContent(textDoc);
         return std::string("text/plain");
     }
     //TODOreq: zzzz
 
-    setMainContent(new WText("No web-view available for this type of file, but you can still download it", Wt::PlainText));
+    setMainContent(new WText("No web-view available for this type of file, but you can still download it", Wt::XHTMLUnsafeText));
     return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
 }
 void HackyVideoBullshitSiteGUI::hvbs404()
 {
-    setMainContent(new WText("404 Not Found", Wt::PlainText));
+    setMainContent(new WText("404 Not Found", Wt::XHTMLUnsafeText));
 }
 void HackyVideoBullshitSiteGUI::setMainContent(WWidget *contentToSet)
 {
