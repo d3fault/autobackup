@@ -10,8 +10,9 @@
 #4) Uncomment the 'triggered' connection in ActualLazyLoadedTabWidget (too lazy to update my devbox (whereas my test vm has it xD))
 #4) Uncomment DEPLOY VARIABLES below [and comment-out or delete TESTING VARIABLES]
 #5) Turn on auto-failover
-#6) Launch with ./wtAppHere --docroot ".;/usr/local/share/Wt" --http-address 0.0.0.0 --http-port 7777
-#                                        ^or just /usr/share/Wt if using Wt from debian repository
+#5) cd into wtAppHere and `ln -s /usr/local/share/Wt/resources/ resources`
+#                                   ^or just /usr/share/Wt if using Wt from debian repository
+#6) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777
 
 TARGET = AnonymousBitcoinComputing
 TEMPLATE = app

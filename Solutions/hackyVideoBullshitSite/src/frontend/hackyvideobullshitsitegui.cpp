@@ -107,6 +107,9 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOreq: text files downloaded copies have copyright.txt at top. I'm thinking my 'master' branch has copyright.txt prepend thing always at top, and another separate branch is what I work on (script prepends and merges/pushes/whatevers into master). master because it should be the default for anyone that checks it out... but i don't want to permanently put that shit at the top of mine because it will annoy the fuck out of me (especially since i don't want the EMBED copy to have it since it is way sexier to have it in a WPanel). It could be called the allrightsreserved branch xD. Note: not that it matters, but I think I'd need to be constantly creating a temporary branch, running the prepender, committing, and then... err... i think rebasing ONTO master? idfk lol... i suck at git
     //but also collaboration and merging etc will mean i have to deal with licenses anyways. for code i don't care that much tbh, but for text files that aren't even that long.... fuuuuuuck i don't want stupid headers prepended on all of em. BUT honestly they're easy to both insert and remove via scripting so... (lol at the bug where i 'remove' the text and then it removes it from the file that i used as input to tell me what to remove (easily fixed by pulling it back out of git history (or a skip file exception) but still i'm predicting it will happen :-P)
 
+    //TODOreq: qdiriterator + pagination for browsing, will use "page 1 of ???(hover-splainin)" and lol at the even page break last page message "sorry we dumb"
+    //TODOplz: timeline view, using .lastModifiedTimestamps and similar pagination :)
+
     //TODOreq: timestamps
     //TODOreq: MyBrain increments(?)
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
@@ -124,6 +127,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     WText *copyrightText = new WText(m_CopyrightText, Wt::XHTMLUnsafeText);
     copyrightText->decorationStyle().setBackgroundColor(WColor(0,0,0));
     copyrightText->decorationStyle().setForegroundColor(WColor(255,255,255));
+    copyrightText->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(104, 128, 160)));
     copyrightDropDown->setCentralWidget(copyrightText);
     //copyrightDropDown->decorationStyle().setCursor(PointingHandCursor);
 
@@ -134,9 +138,11 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     WText *dplText = new WText(m_DplLicenseText, Wt::XHTMLUnsafeText);
     dplText->decorationStyle().setBackgroundColor(WColor(0,0,0));
     dplText->decorationStyle().setForegroundColor(WColor(255,255,255));
+    dplText->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(104, 128, 160)));
     dplDropDown->setCentralWidget(dplText);
     //dplDropDown->decorationStyle().setCursor(PointingHandCursor);
 
+    //new WBreak(root()); eh weird indentation without this WBreak, BUT i'll take that over an entire wasted line!
     new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", root());
     new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, root());
     new WBreak(root());
@@ -366,10 +372,10 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
         //set up "no ad" placeholder
         WImage *placeholderAdImage = new WImage(WLink(WLink::Url, /*http://d3fault.net*/"/no.ad.placeholder.jpg"), "Buy this ad space for BTC 0.00001");
         placeholderAdImage->resize(576, 96);
-        m_AdImageAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), placeholderAdImage, m_AdImageContainer);
-        m_AdImageAnchor->setTarget(TargetNewWindow);
+        WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), placeholderAdImage, m_AdImageContainer);
+        adImageAnchor->setTarget(TargetNewWindow);
         placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
-        m_AdImageAnchor->setToolTip("Buy this ad space for BTC 0.00001");
+        adImageAnchor->setToolTip("Buy this ad space for BTC 0.00001");
         if(!environment().ajax())
         {
             return;
@@ -382,14 +388,14 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
 
     WImage *adImage = new WImage(newAdImageResource, newAdAltAndHover);
     adImage->resize(576, 96); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date
-    m_AdImageAnchor = new WAnchor(WLink(WLink::Url, newAdUrl), adImage, m_AdImageContainer);
-    m_AdImageAnchor->setTarget(TargetNewWindow);
+    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, newAdUrl), adImage, m_AdImageContainer);
+    adImageAnchor->setTarget(TargetNewWindow);
     new WBreak(m_AdImageContainer);
     new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Buy this ad space", m_AdImageContainer);
 
     //difference between these two?
     adImage->setToolTip(newAdAltAndHover);
-    m_AdImageAnchor->setToolTip(newAdAltAndHover);
+    adImageAnchor->setToolTip(newAdAltAndHover);
 
     if(!environment().ajax())
     {

@@ -132,6 +132,11 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     //WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
     //m_MainStack->setTransitionAnimation(slideInFromBottom, true);
 
+    setCssTheme("polished");
+    styleSheet().addRule("body", "background-color: black; color: white; font-family: arial; font-size: large");
+    styleSheet().addRule("a:link", "color: #e1e1e1;");
+    styleSheet().addRule("a:visited", "color: #ffa2a2;");
+
     //Login Widget
     m_LoginWidget->setContentAlignment(Wt::AlignTop | Wt::AlignRight);
     new WText("Username:", m_LoginWidget);

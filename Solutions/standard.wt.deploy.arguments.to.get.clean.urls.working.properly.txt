@@ -1,7 +1,9 @@
 Deploying Wt in "/" (the default) without clean URLs adding ?_= bullshit
-1) copy /usr/share/Wt/resources/ to the directory that "wtAppHere" is located in
-2) ./wtAppHere --docroot ".;/usr/local/share/Wt" --http-address 0.0.0.0 --http-port 7777
-                                        ^or just /usr/share/Wt if using Wt from debian repository
+1) cd into dir with wtAppHere in it and then `ln -s /usr/local/share/Wt/resources/ resources`
+							^or just /usr/share/Wt/resources/ if using Wt from debian repository
+2) ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777
+
+OT: after tons of trial and error, for some fucking reason ".;/absolute/path" doesn't work, neither does copy/pasting and doing ".;./resources" or ".;resources" (wt is really picky about having the slash in front of of "resources" (i guess it is ALSO a static-deploy path and so using ln is leik err ehh uhm mimicking that?)) etc. and i think doing it wrong might even cause an intermittent segfault (obviously i haven't confirmed that)
 
 the semicolon resources is the hack to get rid of the ?_= bullshit. idfk why, but it works so fuck it :). it also must be in quotes otherwise the shell will interpret the semicolon...
 
