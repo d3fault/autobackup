@@ -65,7 +65,7 @@ void ViewAllExistingAdSlotFillersAccountTabBody::attemptToGetAllAdSlotFillersFin
     m_FirstPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::firstPageButtonClicked);
     m_FirstPageButton->disable(); //starts disabled because on first page
 
-    new WText(" ", this);
+    new WText(" ", this); //TODOoptimization: litter Wt::XHTMLUnsafeText anywhere there's a string literal
 
     m_PreviousPageButton = new WPushButton("Previous Page", this);
     m_PreviousPageButton->clicked().connect(this, &ViewAllExistingAdSlotFillersAccountTabBody::previousPageButtonClicked);
@@ -219,13 +219,13 @@ void ViewAllExistingAdSlotFillersAccountTabBody::goToPageButtonClicked()
         //uhh.....
         return;
     }
-    m_PageSpinbox->value();
-    if(m_PageSpinbox->value() == m_CurrentPageOneIndexBased)
+    const int newPage = m_PageSpinbox->value();
+    if(newPage == m_CurrentPageOneIndexBased)
     {
         //change to same page? bah. TODOoptional: if js is enabled, listen to 'changed' and then enable/disable it if not current page (still do this sanity check though of course). would start off disabled in that case...
         return;
     }
-    m_CurrentPageOneIndexBased = m_PageSpinbox->value();
+    m_CurrentPageOneIndexBased = newPage;
     doAllAdSlotFillersViewPageChange();
 }
 void ViewAllExistingAdSlotFillersAccountTabBody::nextPageButtonClicked()

@@ -21,6 +21,8 @@
 #include <QDate>
 #include <QFileInfo>
 
+#include "directorybrowsingwtwidget.h"
+
 #define HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER "/some/placeholder/video/TODOreq.ogg" //TODOoptional: when no year/day folders are present (error imo) i could add code to present this... and it could even server as a pre-launch kind... of... countdown... thingo... (nah (ok changed my mind, yah (since it was a simple patch 'if year == 2013' xD)))
 #define HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
 #define HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN "/Browse"
@@ -92,6 +94,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     , m_ContentsHeaderRow(0)
     , m_Contents(0)
     , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
+    , m_BrowseMyBrainDirWidget(0)
 {
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "getAndSubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, static_cast<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>(this)), Q_ARG(std::string, sessionId()), Q_ARG(GetAndSubscriptionUpdateCallbackType, boost::bind(&HackyVideoBullshitSiteGUI::handleAdImageChanged, this, _1, _2, _3)));
 
@@ -278,7 +281,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         return;
     }
 
-    //TODOreq: post launch files should have a drop watch folder thingo too i suppose...
+    //TODOreq: post launch files should have a drop watch folder thingo too i suppose... but I mean I move them manually too so idk wtf I'm on about...
 
     const QString &myBrainItemToPresentAbsolutePathQString = m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended + theInternalPathCleanedQString;
     if(QFile::exists(myBrainItemToPresentAbsolutePathQString))
@@ -336,6 +339,19 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
             upOneFolderAnchor->decorationStyle().setForegroundColor(WColor(77, 92, 207));
             new WBreak(directoryBrowsingContainerWidget);
 
+            const std::string *pageNumParam = environment().getParameter("page");
+            int pageNumToUse = 1;
+            if(pageNumParam)
+            {
+                bool convertOk = false;
+                QString numQString = QString::fromStdString(*pageNumParam);
+                int attempt = numQString.toInt(&convertOk);
+                if(convertOk)
+                    pageNumToUse = attempt;
+            }
+            m_BrowseMyBrainDirWidget = new DirectoryBrowsingWtWidget(myBrainItemToPresentAbsolutePathQString, theInternalPathCleanedStdString, pageNumToUse, directoryBrowsingContainerWidget);
+
+#if 0 //OLD: pre-qdiriterator && paginization
             QDir myBrainFolder(myBrainItemToPresentAbsolutePathQString);
             const QStringList myBrainFolderEntryList = myBrainFolder.entryList((QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs | QDir::Hidden), (QDir::Time /* | QDir::Reversed*/)); //OOPS BACKWARDS: sorting by reverse time shows my latest (better) stuff at the top (people don't scroll), sorting normal shows my oldest (lol) stuff at the top. one flag will determine whether or not i make enough in ad revenue to not have to commit suicide
             int myBrainFolderEntryListSize = myBrainFolderEntryList.size();
@@ -346,6 +362,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
                 new WAnchor(WLink(WLink::InternalPath, theInternalPathCleanedStdString + "/" + currentEntryString), currentEntryString, directoryBrowsingContainerWidget);
                 new WBreak(directoryBrowsingContainerWidget);
             }
+#endif
             setMainContent(directoryBrowsingContainerWidget);
             return;
         }

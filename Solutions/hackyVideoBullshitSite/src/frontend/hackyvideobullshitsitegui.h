@@ -9,6 +9,8 @@
 
 using namespace Wt;
 
+class DirectoryBrowsingWtWidget;
+
 class HackyVideoBullshitSiteGUI : public WApplication, public AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier
 {
 public:
@@ -33,6 +35,8 @@ private:
     WContainerWidget *m_ContentsHeaderRow;
     WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
+
+    DirectoryBrowsingWtWidget *m_BrowseMyBrainDirWidget;
 
     void handleInternalPathChanged(const std::string &newInternalPath);
     void handleAdImageChanged(WResource *newAdImageResource, std::string newAdUrl, std::string newAdAltAndHover);

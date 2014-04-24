@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     backend/adimagewresource.cpp \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
     backend/hackyvideobullshitsitebackend.cpp \
-    backend/videosegmentsimporterfolderwatcher.cpp
+    backend/videosegmentsimporterfolderwatcher.cpp \
+    frontend/directorybrowsingwtwidget.cpp
 
 HEADERS += \
     hackyvideobullshitsite.h \
@@ -28,7 +29,8 @@ HEADERS += \
     ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h \
     backend/hackyvideobullshitsitebackend.h \
     backend/videosegmentsimporterfolderwatcher.h \
-    hackyvideobullshitsitebackendscopeddeleter.h
+    hackyvideobullshitsitebackendscopeddeleter.h \
+    frontend/directorybrowsingwtwidget.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/
