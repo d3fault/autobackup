@@ -10,6 +10,8 @@ class LastModifiedTimestampsSorter : public QObject
     Q_OBJECT
 public:
     explicit LastModifiedTimestampsSorter(QObject *parent = 0);
+private:
+    void formatAndOutputSortedLine(long long timestamp, const QString &path);
 signals:
     void d(const QString &);
     void sortedLineOutput(const QString &);

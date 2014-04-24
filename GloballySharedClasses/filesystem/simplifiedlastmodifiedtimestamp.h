@@ -23,10 +23,12 @@ public:
     bool isDirectory();
     const QDateTime &lastModifiedTimestamp();
     QString toColonSeparatedLineOfText();
+    bool isValid();
 private:
     QString m_FilePath;
     bool m_IsDirectory;
     QDateTime m_LastModifiedTimestamp;
+    bool m_IsValid;
 
     static const QString m_Colon;
     static const QString m_ColonEscaped;

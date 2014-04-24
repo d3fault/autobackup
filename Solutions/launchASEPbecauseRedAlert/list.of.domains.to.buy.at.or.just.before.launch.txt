@@ -55,6 +55,7 @@ tshpienak[k]
 
 //lihveleyeve
 
+WikiOS (inline editable, shared nothing public dht, etc)
 
 
 mb, just thought up now:

@@ -15,6 +15,7 @@
 
 */
 
+//I'd imagine lots would want to use this + hackyvideobullshitsite themselves (yw)... so here's a note to anyone genricizing (making not-'d3fault' specific): abstract my specific stuff into some kind of "profile" loaded at runtime or whatever, that way i can pull your changes back in and spread the software further around :-P (row row fight the powa)
 int main(int argc, char *argv[])
 {
     AnonymousBitcoinComputing abc;
