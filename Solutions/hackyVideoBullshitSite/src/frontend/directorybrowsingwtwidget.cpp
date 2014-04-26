@@ -10,55 +10,48 @@
 
 #define HVBS_BROWSE_MY_BRAIN_THOUGHTS_PER_PAGE 100
 
-//TODOreq: handle ?page=blah, keeping dir iterator alive hopefull (and of course deleting it when necessary/appropriate). if no session and ?page=3 passed, we have to make a new one and skip the first two pages by just calling 'next' over and over xD
-//TODOreq: handle when hasNext returns false but shownSoFar hasn't shown the thoughts per page amount
-
-//TODOreq: when using a passed in url?page=3, we need to make sure that dir iterator actually made it to page 3 before enabling the previous page button
-
-//TODOreq: previous paging when jumped directly is difficult. we need to keep track of how many items (or pages, sameshit) were skipped because otherwise we have no idea where the fuck we are... <3 qdiriterator
-
 //TODOoptional: user selectable filters, dirs, files, hidden, etc :). changing the filters goes back to page 1 i'd imagine, basically resetting everything including the stack widget...
 
-//TODOoptional: next/previous page buttons at bottom too
+#define DBWTW_MAKE_PREVIOUS_PAGE_BUTTAN(variableName) \
+variableName = new WPushButton("Previous Page", this); \
+variableName->clicked().connect(this, &DirectoryBrowsingWtWidget::previousPageButtonClicked); \
+variableName->disable();
 
-//TODOreq: pageX, view doc, back -> 404 (because internal path changed is emitted fml)
-//TODOreq: setInternalPath is url encoding my page=X shit, wtfz??? but not when js is enable guh
-//TODOreq: when js is enabled, jumping to page=X via url makes it add on ANOTHER page=X, makes sense but yea...
+#define DBWTW_MAKE_SPINBOX(variableName) \
+m_TopPageSpinbox = new WSpinBox(this); \
+m_TopPageSpinbox->setRange(1, 99999999); /* TODOoptional: make range 1 if no other pages... or even disable it altogether...*/ \
+m_TopPageSpinbox->enterPressed().connect(this, &DirectoryBrowsingWtWidget::goToPageButtonClicked);
 
-DirectoryBrowsingWtWidget::DirectoryBrowsingWtWidget(const QString &absolutePathToIterate, const string &theInternalPathCleanedStdString, int pageOfDirectoryToShow, WContainerWidget *parent)
+#define DBWTW_MAKE_PAGE_SELECTION_ROW(variablePart) \
+DBWTW_MAKE_PREVIOUS_PAGE_BUTTAN(m_##variablePart##PreviousPageButton) \
+new WText(" Page: ", Wt::XHTMLUnsafeText, this); \
+DBWTW_MAKE_SPINBOX(m_##variablePart##PageSpinbox) \
+new WText(" ", Wt::XHTMLUnsafeText, this); \
+WPushButton *variablePart##goToPageButton = new WPushButton("Go", this); \
+variablePart##goToPageButton->clicked().connect(this, &DirectoryBrowsingWtWidget::goToPageButtonClicked); \
+WText *variablePart##splaination = new WText(" of ??? pages. ", this); \
+variablePart##splaination->setToolTip("It's an optimization for the software to not know how many pages there are in total. This may be fixed in the future, but is low as fuck priority", Wt::XHTMLUnsafeText); \
+m_##variablePart##NextPageButton = new WPushButton("Next Page", this); \
+m_##variablePart##NextPageButton->clicked().connect(this, &DirectoryBrowsingWtWidget::nextPageButtonClicked); \
+m_##variablePart##NextPageButton->disable();
+//new WText(" ", this);
+
+DirectoryBrowsingWtWidget::DirectoryBrowsingWtWidget(const QString &absolutePathToIterate, /*int pageOfDirectoryToShow,*/ const string &theInternalPathCleanedStdString, WContainerWidget *parent)
     : WContainerWidget(parent)
     , m_SorryNoPage(0)
     , m_AbsolutePathToIterate(absolutePathToIterate)
     , m_TheInternalPathCleanedStdString(theInternalPathCleanedStdString)
     , m_DirInternalPath(WApplication::instance()->internalPath())
     , m_DirIteratorPosition_ZeroIndexBased(0)
-    , m_DirCurrentPage_OneIndexBased((pageOfDirectoryToShow > 0) ? pageOfDirectoryToShow : 1)
+    , m_DirCurrentPage_OneIndexBased(/*(pageOfDirectoryToShow > 0) ? pageOfDirectoryToShow : */ 1)
 {
-    m_PreviousPageButton = new WPushButton("Previous Page", this);
-    m_PreviousPageButton->clicked().connect(this, &DirectoryBrowsingWtWidget::previousPageButtonClicked);
-    m_PreviousPageButton->disable();
-
-    new WText(" Page: ", Wt::XHTMLUnsafeText, this);
-
-    m_PageSpinbox = new WSpinBox(this);
-    m_PageSpinbox->setRange(1, 99999999); //TODOoptional: make range 1 if no other pages... or even disable it altogether...
-    m_PageSpinbox->enterPressed().connect(this, &DirectoryBrowsingWtWidget::goToPageButtonClicked);
-
-    new WText(" ", Wt::XHTMLUnsafeText, this);
-
-    WPushButton *goToPageButton = new WPushButton("Go", this);
-    goToPageButton->clicked().connect(this, &DirectoryBrowsingWtWidget::goToPageButtonClicked);
-
-    WText *splaination = new WText(" of ??? pages. ", this);
-    splaination->setToolTip("It's an optimization for the software to not know how many pages there are in total. This may be fixed in the future, but is low as fuck priority", Wt::XHTMLUnsafeText);
-
-    m_NextPageButton = new WPushButton("Next Page", this);
-    m_NextPageButton->clicked().connect(this, &DirectoryBrowsingWtWidget::nextPageButtonClicked);
-    m_NextPageButton->disable();
-    //new WText(" ", this);
+    DBWTW_MAKE_PAGE_SELECTION_ROW(Top)
 
     new WBreak(this);
     m_DirectoryPagesStack = new WStackedWidget(this);
+
+    new WBreak(this);
+    DBWTW_MAKE_PAGE_SELECTION_ROW(Bottom)
 
     createDirIterator();
 
@@ -88,10 +81,10 @@ void DirectoryBrowsingWtWidget::displayCurrentPage()
     }
 
     //Enable/Disable Previous/Next buttons depending...
-    m_PreviousPageButton->setDisabled(m_DirCurrentPage_OneIndexBased == 1);
-    m_PageSpinbox->setValue(m_DirCurrentPage_OneIndexBased); //TODOreq: set to ?page=X, and maybe only if it exists...
+    setPreviousPageButtonsDisabled(m_DirCurrentPage_OneIndexBased == 1);
+    setPageSpinBoxValues(m_DirCurrentPage_OneIndexBased); //TODOreq: set to ?page=X, and maybe only if it exists...
 
-    m_NextPageButton->enable();
+    setNextPageButtonsDisabled(false);
 
     //first see if the page is already made. if it is, we just bring it to the top of the stacked widget
     try
@@ -128,9 +121,9 @@ void DirectoryBrowsingWtWidget::buildOnePageOf100dirEntriesAndPresentAndCacheIt_
             resetDirIterator(); //because what else should be done with it? needs to be in valid state and obviously can't be used anymore...
             m_SorryNoPage = new WText("Sorry, that page in this directory does not exist. This may seem strange, but we had no way of knowing this page wasn't there until just now.", m_DirectoryPagesStack);
             m_DirectoryPagesStack->setCurrentWidget(m_SorryNoPage);
-            m_NextPageButton->disable();
+            setNextPageButtonsDisabled(true);
             //TODOreq: we don't necessarily want to enable the previous page button... because they might have done it via spinbox and been way off. HOWEVER we do know that the previous page before this one was there... so we can err calculate it and yea enable previous page button. for now and to KISS, i'm just going to disable it:
-            m_PreviousPageButton->disable();
+            setPreviousPageButtonsDisabled(true);
             return;
         }
         m_DirIterator->next(); //dgaf about what it returns
@@ -161,12 +154,12 @@ void DirectoryBrowsingWtWidget::buildOnePageOf100dirEntriesAndPresentAndCacheIt_
     if(shownSoFar == 0 && m_DirCurrentPage_OneIndexBased > 1) //if current page == 1, then the dir was just empty (but my git shit wouldn't have gotten it then, so that's extremely unlikely to ever happen!)...
     {
         //not an entry on new page, set it to page=nope
-        WApplication::instance()->setInternalPath(m_DirInternalPath + "?page=nope", false); //TODOreq: detect page=nope pasted into url bar as soon as possible and yea don't show or try to show anything
+        //WApplication::instance()->setInternalPath(m_DirInternalPath + "?page=nope", false); //TODOreq: detect page=nope pasted into url bar as soon as possible and yea don't show or try to show anything
         //TODOreq: oops sorry no page
         //TODOreq: enable previous page button (back button will also work pretty sure)
         m_SorryNoPage = new WText("You've reached the end of this directory. This may seem strange, but we had no way of knowing there wasn't another page until just now. Go ahead and hit that previous button.", m_DirectoryPagesStack);
         m_DirectoryPagesStack->setCurrentWidget(m_SorryNoPage);
-        m_NextPageButton->disable();
+        setNextPageButtonsDisabled(true);
         delete currentPage;
         return;
     }
@@ -177,10 +170,17 @@ void DirectoryBrowsingWtWidget::buildOnePageOf100dirEntriesAndPresentAndCacheIt_
         //OLD: we don't know for sure, but there's very likely another page...
 
         //since we didn't see how many we present per page, we know that there isn't another page (TODOoptional: maybe just leave it enabled because if they're watching my vidya shit and i add a file or a group of files, they could then press next and shit would just show up (i think, depends on qdiriterator but yea it makes sense since qdiriterator just keeps going until no more)... whereas now they'd need to hard refresh and yea~)
-        m_NextPageButton->disable();
+        setNextPageButtonsDisabled(true);
     }
 
     //at least one item on new page
+
+    //present
+    m_DirectoryPagesStack->setCurrentWidget(currentPage);
+    //cache
+    m_DirectoryPagesOneBasedIndexHash[m_DirCurrentPage_OneIndexBased] = currentPage;
+
+#if 0
     if(m_DirCurrentPage_OneIndexBased == 1)
     {
        WApplication::instance()->setInternalPath(m_DirInternalPath, false);
@@ -189,17 +189,13 @@ void DirectoryBrowsingWtWidget::buildOnePageOf100dirEntriesAndPresentAndCacheIt_
     {
         WApplication::instance()->setInternalPath(m_DirInternalPath + "?page=" + QString::number(m_DirCurrentPage_OneIndexBased).toStdString(), false);
     }
-
-    //present
-    m_DirectoryPagesStack->setCurrentWidget(currentPage);
-    //cache
-    m_DirectoryPagesOneBasedIndexHash[m_DirCurrentPage_OneIndexBased] = currentPage;
+#endif
 }
 void DirectoryBrowsingWtWidget::previousPageButtonClicked()
 {
     if(m_DirCurrentPage_OneIndexBased == 1)
     {
-        m_PreviousPageButton->disable();
+        setPreviousPageButtonsDisabled(true);
         return; //wtf
     }
     --m_DirCurrentPage_OneIndexBased;
@@ -208,12 +204,12 @@ void DirectoryBrowsingWtWidget::previousPageButtonClicked()
 void DirectoryBrowsingWtWidget::goToPageButtonClicked()
 {
     //want to ddos me? go to the last page and keep clicking previous page :-P
-    if(m_PageSpinbox->validate() != WValidator::Valid)
+    if(m_TopPageSpinbox->validate() != WValidator::Valid)
     {
         //uhh.....
         return;
     }
-    const int newPage = m_PageSpinbox->value();
+    const int newPage = m_TopPageSpinbox->value();
     if(newPage == m_DirCurrentPage_OneIndexBased)
     {
         //change to same page? bah. TODOoptional: if js is enabled, listen to 'changed' and then enable/disable it if not current page (still do this sanity check though of course). would start off disabled in that case...
@@ -224,6 +220,21 @@ void DirectoryBrowsingWtWidget::goToPageButtonClicked()
 }
 void DirectoryBrowsingWtWidget::nextPageButtonClicked()
 {
-    ++m_DirCurrentPage_OneIndexBased; //TODOreq: set to ??? when no item on new page, perhaps just leaving it as is until they hit previous...
+    ++m_DirCurrentPage_OneIndexBased;
     displayCurrentPage();
+}
+void DirectoryBrowsingWtWidget::setPreviousPageButtonsDisabled(bool disabled)
+{
+    m_TopPreviousPageButton->setDisabled(disabled);
+    m_BottomPreviousPageButton->setDisabled(disabled);
+}
+void DirectoryBrowsingWtWidget::setPageSpinBoxValues(int newValue)
+{
+    m_TopPageSpinbox->setValue(newValue);
+    m_BottomPageSpinbox->setValue(newValue);
+}
+void DirectoryBrowsingWtWidget::setNextPageButtonsDisabled(bool disabled)
+{
+    m_TopNextPageButton->setDisabled(disabled);
+    m_BottomNextPageButton->setDisabled(disabled);
 }

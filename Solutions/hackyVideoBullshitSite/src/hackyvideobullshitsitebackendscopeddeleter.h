@@ -16,9 +16,9 @@ public:
             : m_HackyVideoBullshitSiteBackend(videoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderScratchSpace, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo)
     {
         //using a style i dislike (object not instantiating on thread that 'owns' it, but oh well)
-        connect(&m_HackyVideoBullshitSiteBackend, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
         m_HackyVideoBullshitSiteBackendThread.start();
         m_HackyVideoBullshitSiteBackend.moveToThread(&m_HackyVideoBullshitSiteBackendThread);
+        connect(&m_HackyVideoBullshitSiteBackend, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
     }
     ~HackyVideoBullshitSiteBackendScopedDeleter()
     {

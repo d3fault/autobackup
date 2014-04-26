@@ -21,15 +21,33 @@
 #include <QDate>
 #include <QFileInfo>
 
+#include "timelinewtwidget.h"
 #include "directorybrowsingwtwidget.h"
 
 #define HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER "/some/placeholder/video/TODOreq.ogg" //TODOoptional: when no year/day folders are present (error imo) i could add code to present this... and it could even server as a pre-launch kind... of... countdown... thingo... (nah (ok changed my mind, yah (since it was a simple patch 'if year == 2013' xD)))
 #define HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
-#define HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN "/Browse"
-#define HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN "/Download"
-#define HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP "Proceed with caution. What is seen can never be unseen"
-#define HVBS_BROWSE_MY_BRAIN_STRING "Browse My Brain Online"
-#define HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING "Download My Brain In Full"
+
+#define HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/MyBrain"
+
+#define HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE \
+    HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/TimeLine"
+#define HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN \
+    HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Browse"
+#define HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_DOWNLOAD \
+    HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Download"
+
+#define HVBS_VIEW_MYBRAIN_STRING "View My [Archived] Brain On A Platter"
+
+#define HVBS_TIMELINE_MY_BRAIN_STRING "TimeLine"
+#define HVBS_BROWSE_MY_BRAIN_STRING "Browse"
+#define HVBS_DOWNLOAD_MY_BRAIN_STRING "Full download for offline viewing"
+
+#define HVBS_VIEW_MYBRAIN_TOOLTIP "Point at it and laugh: \"Haha, faggot!\""
+
+#define HVBS_TIMELINE_MYBRAIN_TOOLTIP "In the beginning, there was d3fault..."
+#define HVBS_BROWSE_MYBRAIN_TOOLTIP "Traditional Directory Heirarchy"
+#define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain becomes your brain"
+
 #define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
 #define HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL "https://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"
 #define HVBS_NO_HTML_MEDIA_OR_ERROR(mediaType) "Either your browser is a piece of shit and doesn't support HTML5 " #mediaType " (You should use Mozilla Firefox), or there was an error establishing a connection to the " #mediaType " stream"
@@ -94,6 +112,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     , m_ContentsHeaderRow(0)
     , m_Contents(0)
     , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
+    , m_TimeLineMyBrainWidget(0)
     , m_BrowseMyBrainDirWidget(0)
 {
     QMetaObject::invokeMethod(m_AdImageGetAndSubscribeManager, "getAndSubscribe", Qt::QueuedConnection, Q_ARG(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*, static_cast<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>(this)), Q_ARG(std::string, sessionId()), Q_ARG(GetAndSubscriptionUpdateCallbackType, boost::bind(&HackyVideoBullshitSiteGUI::handleAdImageChanged, this, _1, _2, _3)));
@@ -110,10 +129,10 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOreq: text files downloaded copies have copyright.txt at top. I'm thinking my 'master' branch has copyright.txt prepend thing always at top, and another separate branch is what I work on (script prepends and merges/pushes/whatevers into master). master because it should be the default for anyone that checks it out... but i don't want to permanently put that shit at the top of mine because it will annoy the fuck out of me (especially since i don't want the EMBED copy to have it since it is way sexier to have it in a WPanel). It could be called the allrightsreserved branch xD. Note: not that it matters, but I think I'd need to be constantly creating a temporary branch, running the prepender, committing, and then... err... i think rebasing ONTO master? idfk lol... i suck at git
     //but also collaboration and merging etc will mean i have to deal with licenses anyways. for code i don't care that much tbh, but for text files that aren't even that long.... fuuuuuuck i don't want stupid headers prepended on all of em. BUT honestly they're easy to both insert and remove via scripting so... (lol at the bug where i 'remove' the text and then it removes it from the file that i used as input to tell me what to remove (easily fixed by pulling it back out of git history (or a skip file exception) but still i'm predicting it will happen :-P)
 
-    //TODOreq: finish qdiriterator + pagination for browsing
     //TODOplz: timeline view, using .lastModifiedTimestamps and similar pagination :)
+    //TODOoptional: timeline view might solve this, but for browsing with qdiriterator and pagination, any entry not on page 1 [probably(?)] won't get search index'd. but honestly i expect to get censored anyways so who gives a shit..
 
-    //TODOreq: timestamps
+    //TODOreq: timestamps. timestamps everywhere
     //TODOreq: MyBrain increments(?)
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
     //TODOoptional: "random"
@@ -150,6 +169,14 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //new WBreak(root()); eh weird indentation without this WBreak, BUT i'll take that over an entire wasted line!
     new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", root());
     new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, root());
+    new WBreak(root());
+
+    WAnchor *viewMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER), HVBS_VIEW_MYBRAIN_STRING, root());
+    viewMyBrainAnchor->setToolTip(HVBS_VIEW_MYBRAIN_TOOLTIP);
+    viewMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+    viewMyBrainAnchor->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)), Wt::Bottom);
+    //browseMyBrainAnchor->setTarget(TargetNewWindow);
+    //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
     new WBreak(root());
 
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
@@ -190,24 +217,22 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     }
     //m_Contents = new WContainerWidget(root());
 
+    if(m_TimeLineMyBrainWidget) //has it's own because i _DO_ want to be able to use internal paths for navigating (and so crawlers can too)
+    {
+        const QString &newInternalPathTempQString = QString::fromStdString(newInternalPath);
+        if(!newInternalPathTempQString.startsWith(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE))
+        {
+            //navigating away from timeline, so delete it...
+            delete m_TimeLineMyBrainWidget;
+            m_TimeLineMyBrainWidget = 0;
+        }
+    }
+
 
     if(newInternalPath == "/" || newInternalPath == "" || newInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
     {
         std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
         //latestVideoSegmentFilePath is either set to most recent or to placeholder
-
-        WAnchor *browseMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), HVBS_BROWSE_MY_BRAIN_STRING, m_ContentsHeaderRow);
-        browseMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
-        browseMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-        browseMyBrainAnchor->setTarget(TargetNewWindow);
-        //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
-
-        new WText(" or ", Wt::XHTMLUnsafeText, m_ContentsHeaderRow);
-
-        WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN), HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING, m_ContentsHeaderRow);
-        downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
-        downloadMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-        downloadMyBrainAnchor->setTarget(TargetNewWindow);
 
         new WBreak(m_ContentsHeaderRow);
 
@@ -241,18 +266,44 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         videoPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
         return;
     }
-    std::string rewrittenInternalPath = newInternalPath;
-    if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN) //Note: a file called "Browse" will never be viewed xD
+
+    if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER) //Note: a file/dir called "MyBrain" will never be viewed xD, perhaps i should make it and explain in it
     {
-        rewrittenInternalPath = "";
+        WContainerWidget *viewMyBrainContainerWidget = new WContainerWidget(root());
+
+        new WText("There are 3 ways to view my [archived] brain, take your pick:",  viewMyBrainContainerWidget);
+
+        new WBreak(viewMyBrainContainerWidget);
+        new WBreak(viewMyBrainContainerWidget);
+
+        new WText("1: ", Wt::XHTMLUnsafeText, viewMyBrainContainerWidget);
+        WAnchor *myBrainTimelineAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE), HVBS_TIMELINE_MY_BRAIN_STRING, viewMyBrainContainerWidget);
+        myBrainTimelineAnchor->setToolTip(HVBS_TIMELINE_MYBRAIN_TOOLTIP);
+
+        new WBreak(viewMyBrainContainerWidget);
+
+        new WText("2: ", Wt::XHTMLUnsafeText, viewMyBrainContainerWidget);
+        WAnchor *browseMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), HVBS_BROWSE_MY_BRAIN_STRING, viewMyBrainContainerWidget);
+        browseMyBrainAnchor->setToolTip(HVBS_BROWSE_MYBRAIN_TOOLTIP);
+
+        new WBreak(viewMyBrainContainerWidget);
+
+        new WText("3: ", Wt::XHTMLUnsafeText, viewMyBrainContainerWidget);
+        //TODOreq: Download In Full (link to torrents n increments and shit, could even just be a directory to simplify adding increments...)
+        WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_DOWNLOAD), HVBS_DOWNLOAD_MY_BRAIN_STRING, viewMyBrainContainerWidget);
+        downloadMyBrainAnchor->setToolTip(HVBS_DOWNLOAD_MYBRAIN_TOOLTIP);
+
+        setMainContent(viewMyBrainContainerWidget);
+        return;
     }
-    else if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN) //Note: a file called "Download" will never be viewed :-P
+
+    if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_DOWNLOAD)
     {
         //TODOreq: host and link to the torrent files (tpb is good enough placeholder for now, fuck it)
         WContainerWidget *downloadContainer = new WContainerWidget();
 
         WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), HVBS_BROWSE_MY_BRAIN_STRING, downloadContainer);
-        downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
+        downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_MYBRAIN_TOOLTIP);
         downloadMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
 
         new WBreak(downloadContainer);
@@ -275,25 +326,31 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         return;
     }
 
+    std::string rewrittenInternalPath = newInternalPath;
+    if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN)
+    {
+        rewrittenInternalPath = "";
+    }
+
     QString theInternalPathCleanedQString = QDir::cleanPath(QString::fromStdString(rewrittenInternalPath)); //strips trailing slash if dir
-    if(theInternalPathCleanedQString.contains("/..", Qt::CaseSensitive)) //even if i didn't have the right half of this or statment, the items they would see would be un-navigable because clicking them would go to a "../" (left half) internal path
+    if(theInternalPathCleanedQString.contains("/../", Qt::CaseSensitive) || theInternalPathCleanedQString == "/..")
     {
         hvbs404();
         //quit();
         return;
     }
 
-    //TODOreq: post launch files should have a drop watch folder thingo too i suppose... but I mean I move them manually too so idk wtf I'm on about...
+    if(theInternalPathCleanedQString.startsWith(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE))
+    {
+        if(!m_TimeLineMyBrainWidget)
+            m_TimeLineMyBrainWidget = new TimeLineWtWidget(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE, root());
+        m_TimeLineMyBrainWidget->handleInternalPathChanged(theInternalPathCleanedQString);
+        return;
+    }
 
     const QString &myBrainItemToPresentAbsolutePathQString = m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended + theInternalPathCleanedQString;
     if(QFile::exists(myBrainItemToPresentAbsolutePathQString))
     {
-        WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_DOWNLOAD_MYBRAIN), HVBS_DOWNLOAD_MY_BRAIN_IN_FULL_STRING, m_ContentsHeaderRow);
-        downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_ANDOR_DOWNLOAD_TOOLTIP);
-        downloadMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-
-        new WBreak(m_ContentsHeaderRow);
-
         QFileInfo myBrainItemFileInfo(myBrainItemToPresentAbsolutePathQString);
         const std::string myBrainItemToPresentAbsolutePathStdString = myBrainItemToPresentAbsolutePathQString.toStdString();
         const std::string &theInternalPathCleanedStdString = theInternalPathCleanedQString.toStdString();
@@ -341,6 +398,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
             upOneFolderAnchor->decorationStyle().setForegroundColor(WColor(77, 92, 207));
             new WBreak(directoryBrowsingContainerWidget);
 
+#if 0
             const std::string *pageNumParam = environment().getParameter("page");
             int pageNumToUse = 1;
             if(pageNumParam)
@@ -351,7 +409,8 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
                 if(convertOk)
                     pageNumToUse = attempt;
             }
-            m_BrowseMyBrainDirWidget = new DirectoryBrowsingWtWidget(myBrainItemToPresentAbsolutePathQString, theInternalPathCleanedStdString, pageNumToUse, directoryBrowsingContainerWidget);
+#endif
+            m_BrowseMyBrainDirWidget = new DirectoryBrowsingWtWidget(myBrainItemToPresentAbsolutePathQString, theInternalPathCleanedStdString,/*pageNumToUse,*/ directoryBrowsingContainerWidget);
 
 #if 0 //OLD: pre-qdiriterator && paginization
             QDir myBrainFolder(myBrainItemToPresentAbsolutePathQString);

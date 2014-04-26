@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
     backend/hackyvideobullshitsitebackend.cpp \
     backend/videosegmentsimporterfolderwatcher.cpp \
-    frontend/directorybrowsingwtwidget.cpp
+    frontend/directorybrowsingwtwidget.cpp \
+    frontend/timelinewtwidget.cpp
 
 HEADERS += \
     hackyvideobullshitsite.h \
@@ -30,7 +31,8 @@ HEADERS += \
     backend/hackyvideobullshitsitebackend.h \
     backend/videosegmentsimporterfolderwatcher.h \
     hackyvideobullshitsitebackendscopeddeleter.h \
-    frontend/directorybrowsingwtwidget.h
+    frontend/directorybrowsingwtwidget.h \
+    frontend/timelinewtwidget.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/

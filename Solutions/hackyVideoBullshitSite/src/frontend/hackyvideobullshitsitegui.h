@@ -9,6 +9,7 @@
 
 using namespace Wt;
 
+class TimeLineWtWidget;
 class DirectoryBrowsingWtWidget;
 
 class HackyVideoBullshitSiteGUI : public WApplication, public AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier
@@ -36,6 +37,7 @@ private:
     WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
+    TimeLineWtWidget *m_TimeLineMyBrainWidget;
     DirectoryBrowsingWtWidget *m_BrowseMyBrainDirWidget;
 
     void handleInternalPathChanged(const std::string &newInternalPath);

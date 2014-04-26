@@ -76,7 +76,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         }
     }
 
-    //start ad image get and subscribe thread and wait for it to finish initializing
+    //start backend thread
     HackyVideoBullshitSiteBackendScopedDeleter hackyVideoBullshitSiteBackendScopedDeleterInstance(videoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderScratchSpace, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
 
     WServer wtServer(argv[0]);
@@ -153,6 +153,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         delete [] dplLicenseBuffer;
     }
 
+    //synchronously initialize backend
     QMetaObject::invokeMethod(&hackyVideoBullshitSiteBackendScopedDeleterInstance.m_HackyVideoBullshitSiteBackend, "initializeAndStart", Qt::BlockingQueuedConnection);
 
     //AdImageGetAndSubscribeManager is done initializing, so now we set up Wt and then start the Wt server

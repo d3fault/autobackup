@@ -1,0 +1,11 @@
+If you let others modify you, then you are nothing more than a collective mesh of their desires.
+
+
+vs: If you sit in a black room since the day you're born, you'll be fucking retarded.
+
+Let them pull you up when you're young, passing along generic knowledge as it was passed along to them. Once you've caught up with (was temped to put surpassed, but that isn't a requirement) those around you, reject their influences outright (of course there's the glaring contradiction: collaboration is good and accomplishes tons). Think for yourself; arbitrate your own desires and amusement, no matter how silly they may seem [to others, or even to yourself].
+
+if(!evil && youWantToDoIt /* && othersApprove */)
+{
+	doItFaggot();
+}

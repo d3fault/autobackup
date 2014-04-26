@@ -1,0 +1,1 @@
+Being a hacker is knowing how to answer your own questions. Everybody asks "hmm how can I get my computer to do X?", but a hacker thrusts himself into his screen, deep into the ones and zeros, and finds out how to do X. If X can't be done given the current arrangement of ones and zeros, he can modify the existing, or insert new, ones and zeros, to accomplish/achieve X.
