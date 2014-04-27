@@ -17,7 +17,7 @@
 //5 minutes is so long it's like stupid long, and the memory that stays around that long is "not that big that it's significant at all but would be significant if i didn't free it every time shit changed (as in, if they were kept around)"
 
 //I feel guilty for enjoying coding this. It's not like I've been, you know, putting off coding it for... well over 3 years... (MusicTimeline became ...)
-QAtomicPointer<LastModifiedTimestampsAndPaths> * TimeLineWtWidget::m_LastModifiedTimestampsAndPaths = 0;
+QAtomicPointer<LastModifiedTimestampsAndPaths> *TimeLineWtWidget::m_LastModifiedTimestampsAndPaths = 0; //segfault if not set. performance performance performance! vroom.
 QString TimeLineWtWidget::m_MyOwnInternalPath = "";
 void TimeLineWtWidget::setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer)
 {

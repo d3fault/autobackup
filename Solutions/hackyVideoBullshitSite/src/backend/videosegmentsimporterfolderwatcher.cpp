@@ -8,37 +8,23 @@
 
 VideoSegmentsImporterFolderWatcher::VideoSegmentsImporterFolderWatcher(QObject *parent) :
     QObject(parent)
-  , m_DirectoryWatcher(0)
-{ }
-VideoSegmentsImporterFolderWatcher::~VideoSegmentsImporterFolderWatcher()
+  , m_DirectoryWatcher(new QFileSystemWatcher(this))
+  , m_CurrentYearFolder(-1)
+  , m_CurrentDayOfYearFolder(-1)
 {
-    finishStopping();
+    connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged(QString)));
 }
 void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo)
 {
     m_VideoSegmentsImporterFolderToWatchWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToWatch);
     m_VideoSegmentsImporterFolderScratchSpace.setPath(videoSegmentsImporterFolderScratchSpace); //because using folder to watch would trigger more directory changed stuffs (already does when leaving, but that is fine. creating folders in it though would create problems), and the folders need to already have a file in them before they are put in videoSegmentsImporterFolderToMoveTo
     m_VideoSegmentsImporterFolderToMoveToWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToMoveTo);
-    if(m_DirectoryWatcher)
-        delete m_DirectoryWatcher;
-    m_DirectoryWatcher = new QFileSystemWatcher(this);
+
+    m_DirectoryWatcher->removePaths(m_DirectoryWatcher->directories()); //clear out old stuffz
     if(!m_DirectoryWatcher->addPath(videoSegmentsImporterFolderToWatch))
     {
-        emit d("VideoSegmentsImporterFolderWatcher: failed to add '" + videoSegmentsImporterFolderToWatch + "' to filesystem watcher");
-        delete m_DirectoryWatcher;
-        m_DirectoryWatcher = 0;
+        emit e("VideoSegmentsImporterFolderWatcher: failed to add '" + videoSegmentsImporterFolderToWatch + "' to filesystem watcher");
         return;
-    }
-    connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged(QString)));
-    m_CurrentYearFolder = -1;
-    m_CurrentDayOfYearFolder = -1;
-}
-void VideoSegmentsImporterFolderWatcher::finishStopping()
-{
-    if(m_DirectoryWatcher)
-    {
-        delete m_DirectoryWatcher;
-        m_DirectoryWatcher = 0;
     }
 }
 //moves file added to watch directory to <year>/<day>/
@@ -85,34 +71,34 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
             const QString &yearFolderAboutToMake = m_VideoSegmentsImporterFolderScratchSpace.absolutePath() + QDir::separator() + QString::number(m_CurrentYearFolder) + QDir::separator();
             if(!m_VideoSegmentsImporterFolderScratchSpace.mkdir(yearFolderAboutToMake))
             {
-                emit d("failed to make year directory: '" + yearFolderAboutToMake + "'");
+                emit e("failed to make year directory: '" + yearFolderAboutToMake + "'");
                 continue; //don't stop, but do tell
             }
             //make new day folder in scratch space
             const QString &dayFolderAboutToMake = yearFolderAboutToMake + QString::number(m_CurrentDayOfYearFolder) + QDir::separator();
             if(!m_VideoSegmentsImporterFolderScratchSpace.mkpath(dayFolderAboutToMake))
             {
-                emit d("failed to make day directory: '" + dayFolderAboutToMake + "'");
+                emit e("failed to make day directory: '" + dayFolderAboutToMake + "'");
                 continue; //don't stop, but do tell
             }
             //move to new day folder
             const QString &newFileScratchSpaceAbsoluteFilePath = dayFolderAboutToMake + currentEntry;
             if(!QFile::rename(currentEntryAbsoluteFilePath, newFileScratchSpaceAbsoluteFilePath))
             {
-                emit d("failed to move: '" + currentEntryAbsoluteFilePath + "' to '" + newFileScratchSpaceAbsoluteFilePath + "'");
+                emit e("failed to move: '" + currentEntryAbsoluteFilePath + "' to '" + newFileScratchSpaceAbsoluteFilePath + "'");
                 continue; //don't stop, but do tell
             }
             //move new year to moveTo
             const QString &moveToDestinationYearFolder = m_VideoSegmentsImporterFolderToMoveToWithSlashAppended + QString::number(m_CurrentYearFolder);
             if(!QFile::rename(yearFolderAboutToMake, moveToDestinationYearFolder))
             {
-                emit d("failed to move '" + yearFolderAboutToMake + "' to '" + moveToDestinationYearFolder + "'");
+                emit e("failed to move '" + yearFolderAboutToMake + "' to '" + moveToDestinationYearFolder + "'");
                 continue; //don't stop, but do tell
             }
             //remake new year (since it disappeared with above move, yet we still need it for new days)
             if(!m_VideoSegmentsImporterFolderScratchSpace.mkdir(yearFolderAboutToMake))
             {
-                emit d("failed to re-make year directory: '" + yearFolderAboutToMake + "'");
+                emit e("failed to re-make year directory: '" + yearFolderAboutToMake + "'");
                 continue; //don't stop, but do tell
             }
             continue;
@@ -125,21 +111,21 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
             const QString &dayFolderAboutToMake = m_VideoSegmentsImporterFolderScratchSpace.absolutePath() + QDir::separator() + QString::number(m_CurrentYearFolder) + QDir::separator() + QString::number(m_CurrentDayOfYearFolder) + QDir::separator();
             if(!m_VideoSegmentsImporterFolderScratchSpace.mkpath(dayFolderAboutToMake))
             {
-                emit d("failed to make day directory: '" + dayFolderAboutToMake + "'");
+                emit e("failed to make day directory: '" + dayFolderAboutToMake + "'");
                 continue; //don't stop, but do tell
             }
             //move to new day folder
             const QString &newFileScratchSpaceAbsoluteFilePath = dayFolderAboutToMake + currentEntry;
             if(!QFile::rename(currentEntryAbsoluteFilePath, newFileScratchSpaceAbsoluteFilePath))
             {
-                emit d("failed to move: '" + currentEntryAbsoluteFilePath + "' to '" + newFileScratchSpaceAbsoluteFilePath + "'");
+                emit e("failed to move: '" + currentEntryAbsoluteFilePath + "' to '" + newFileScratchSpaceAbsoluteFilePath + "'");
                 continue; //don't stop, but do tell
             }
             //move new day to moveTo/year
             const QString &moveToDestinationDayFolder = m_VideoSegmentsImporterFolderToMoveToWithSlashAppended + QString::number(m_CurrentYearFolder) + QDir::separator() + QString::number(m_CurrentDayOfYearFolder);
             if(!QFile::rename(dayFolderAboutToMake, moveToDestinationDayFolder))
             {
-                emit d("failed to move '" + dayFolderAboutToMake + "' to '" + moveToDestinationDayFolder + "'");
+                emit e("failed to move '" + dayFolderAboutToMake + "' to '" + moveToDestinationDayFolder + "'");
                 continue; //don't stop, but do tell
             }
             //no remake of day folder that just disappeared necessary, because the rest of this days entries will skip scratch space altogether
@@ -150,7 +136,7 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
         const QString &moveToDestinationFilename = m_VideoSegmentsImporterFolderToMoveToWithSlashAppended + QString::number(m_CurrentYearFolder) + QDir::separator() + QString::number(m_CurrentDayOfYearFolder) + QDir::separator() + currentEntry;
         if(!QFile::rename(currentEntryAbsoluteFilePath, moveToDestinationFilename))
         {
-            emit d("failed to move '" + currentEntryAbsoluteFilePath + "' to '" + moveToDestinationFilename + "'");
+            emit e("failed to move '" + currentEntryAbsoluteFilePath + "' to '" + moveToDestinationFilename + "'");
             continue; //don't stop, but do tell
         }
 

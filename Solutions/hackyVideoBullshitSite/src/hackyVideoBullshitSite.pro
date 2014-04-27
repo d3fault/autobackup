@@ -15,12 +15,12 @@ SOURCES += main.cpp \
     frontend/hackyvideobullshitsitegui.cpp \
     backend/adimagewresource.cpp \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
-    backend/hackyvideobullshitsitebackend.cpp \
     backend/videosegmentsimporterfolderwatcher.cpp \
     frontend/directorybrowsingwtwidget.cpp \
     frontend/timelinewtwidget.cpp \
     backend/lastmodifiedtimestampswatcher.cpp \
-    ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp
+    ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp \
+    wtcontrollerandstdoutowner.cpp
 
 HEADERS += \
     hackyvideobullshitsite.h \
@@ -30,14 +30,13 @@ HEADERS += \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
     ../../../GloballySharedClasses/image/nonanimatedimagheaderchecker.h \
     ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h \
-    backend/hackyvideobullshitsitebackend.h \
     backend/videosegmentsimporterfolderwatcher.h \
-    hackyvideobullshitsitebackendscopeddeleter.h \
     frontend/directorybrowsingwtwidget.h \
     frontend/timelinewtwidget.h \
     backend/lastmodifiedtimestampswatcher.h \
     ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h \
-    lastmodifiedtimestampsandpaths.h
+    lastmodifiedtimestampsandpaths.h \
+    wtcontrollerandstdoutowner.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/
@@ -48,3 +47,4 @@ LIBS += -lwt -lwthttp -lboost_signals
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../GloballySharedClasses/simplifiedlastmodifiedtimestamp.pri)
+include(../../../GloballySharedClasses/standardinputnotifier.pri)

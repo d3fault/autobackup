@@ -18,11 +18,12 @@ class LastModifiedTimestampsWatcher : public QObject
     Q_OBJECT
 public:
     explicit LastModifiedTimestampsWatcher(QObject *parent = 0);
+    QAtomicPointer<LastModifiedTimestampsAndPaths> *getTimestampsAndPathsAtomicPointer();
     ~LastModifiedTimestampsWatcher();
 private:
     QFileSystemWatcher *m_LastModifiedTimestampsFileWatcher;
     QString m_LastModifiedTimestampsFile;
-    QAtomicPointer<LastModifiedTimestampsAndPaths> *m_CurrentTimestampsAndPathsAtomicPointer;
+    QAtomicPointer<LastModifiedTimestampsAndPaths> m_CurrentTimestampsAndPathsAtomicPointer;
     QTimer *m_DeleteInFiveMinsTimer;
     QQueue<LastModifiedTimestampsAndPaths*> *m_TimestampsAndPathsQueuedForDelete;
 
@@ -30,8 +31,7 @@ private:
 signals:
     void e(const QString &);
 public slots:
-    void startWatchingLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile, QAtomicPointer<LastModifiedTimestampsAndPaths> *timestampsAndPathsSharedAtomicPointer);
-    void finishStopping();
+    void startWatchingLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
 private slots:
     void handleLastModifiedTimestampsChanged();
     void handleDeleteInFiveMinsTimerTimedOut();

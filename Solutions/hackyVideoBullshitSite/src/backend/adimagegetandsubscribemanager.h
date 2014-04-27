@@ -59,11 +59,9 @@ private:
         return ret;
     }
 public slots:
-    void initializeAndStart();
     void getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, std::string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback);
     void unsubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier);
     void beginStopping();
-    void finishStopping();
 private slots:
     void handleNetworkRequestRepliedTo(QNetworkReply *reply);
     void updateSubscribers();

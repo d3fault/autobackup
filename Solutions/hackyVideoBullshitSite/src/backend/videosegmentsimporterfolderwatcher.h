@@ -12,7 +12,6 @@ class VideoSegmentsImporterFolderWatcher : public QObject
     Q_OBJECT
 public:
     explicit VideoSegmentsImporterFolderWatcher(QObject *parent = 0);
-    ~VideoSegmentsImporterFolderWatcher();
 private:
     QFileSystemWatcher *m_DirectoryWatcher;
     QString m_VideoSegmentsImporterFolderToWatchWithSlashAppended;
@@ -24,10 +23,9 @@ private:
 
     inline QString appendSlashIfNeeded(QString inputString) { return inputString.endsWith("/") ? inputString : inputString.append("/"); } //always easier than a pri include
 signals:
-    void d(const QString &);
+    void e(const QString &);
 public slots:
     void initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo);
-    void finishStopping();
 private slots:
     void handleDirectoryChanged(const QString &path);
 };

@@ -2,6 +2,7 @@
 #define OBJECTONTHREADHELPER_H
 
 #include <QThread>
+//#include <QStack> //destructor does LIFO, so i should too
 
 //This base class is just a hack around MOC not playing nicely with templates
 class ObjectOnThreadHelperBase : public QThread
@@ -9,6 +10,14 @@ class ObjectOnThreadHelperBase : public QThread
     Q_OBJECT
 public:
     explicit ObjectOnThreadHelperBase(QObject *parent = 0) : QThread(parent), m_TheObject(0) { }
+    ~ObjectOnThreadHelperBase()
+    {
+        if(isRunning())
+        {
+            quit();
+        }
+        wait();
+    }
     QObject *getBaseObjectPointerForConnectionsOnly()
     {
         return m_TheObject;
@@ -73,6 +82,53 @@ protected:
 
         //After exec() returns (from calling QThread::quit() ideally), the object goes out of scope and is deleted and m_TheObject set back to zero
         m_TheObject = 0; //Just in case they ask for it again (they shouldn't)
+    }
+};
+
+class ObjectOnThreadSynchronizer : public QObject
+{
+    Q_OBJECT
+public:
+    explicit ObjectOnThreadSynchronizer(QObject *parent = 0)
+        : QObject(parent)
+        , m_ObjectsLeftToSynchronize(0)
+    { }
+#if 0
+    ~ObjectOnThreadSynchronizer()
+    {
+        while(!m_ObjectOnThreadsToQuitWhenDestructorIsCalled.isEmpty())
+        {
+            ObjectOnThreadHelperBase *objectOnThreadHelper = m_ObjectOnThreadsToQuitWhenDestructorIsCalled.pop();
+            /*unsafe: if(objectOnThreadHelper->isRunning())
+                objectOnThreadHelper->quit();*/
+
+            //safe <3 Qt (i'm pretty sure calling quit twice (no isRunning check anymore because it isn't safe) is ok):
+            QMetaObject::invokeMethod(objectOnThreadHelper, "quit");
+        }
+        emit internalSignalUsedToMakeThreadsQuit();
+    }
+#endif
+    void addObjectToSynchronizer(ObjectOnThreadHelperBase *objectOnThreadHelper)
+    {
+        connect(objectOnThreadHelper, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleOneObjectIsReadyForConnections()));
+        //connect(this, SIGNAL(internalSignalUsedToMakeThreadsQuit()), objectOnThreadHelper, SLOT(quit()));
+        connect(this, SIGNAL(destroyed()), objectOnThreadHelper, SLOT(quit())); //now it's only not asynchronous if synchronizer isn't destroyed first, not a freaking segfault...
+        //m_ObjectOnThreadsToQuitWhenDestructorIsCalled.push(objectOnThreadHelper);
+        ++m_ObjectsLeftToSynchronize;
+    }
+private:
+    int m_ObjectsLeftToSynchronize;
+    //QStack<ObjectOnThreadHelperBase*> m_ObjectOnThreadsToQuitWhenDestructorIsCalled; //quit but not wait :-P
+signals:
+    void allObjectsOnThreadsReadyForConnections();
+    //void internalSignalUsedToMakeThreadsQuit();
+private slots:
+    void handleOneObjectIsReadyForConnections()
+    {
+        if(--m_ObjectsLeftToSynchronize == 0)
+        {
+            emit allObjectsOnThreadsReadyForConnections();
+        }
     }
 };
 

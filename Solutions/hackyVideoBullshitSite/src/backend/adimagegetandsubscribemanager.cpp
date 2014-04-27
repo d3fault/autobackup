@@ -23,17 +23,7 @@ AdImageGetAndSubscribeManager::AdImageGetAndSubscribeManager(QObject *parent)
     qRegisterMetaType<GetAndSubscriptionUpdateCallbackType>("GetAndSubscriptionUpdateCallbackType"); //because invokeObject sends these as Q_ARG's
     qRegisterMetaType<AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*>("AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier*");
     qRegisterMetaType<std::string>("std::string");
-}
-AdImageGetAndSubscribeManager::~AdImageGetAndSubscribeManager()
-{
-    //moved this to finishStopping because finishStopping is called on the thread moved to, whereas destructor is called from main thread :-/
-}
-void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
-{
-    m_NetworkAccessManager->get(QNetworkRequest(QUrl("http://anonymousbitcoincomputing.com/getTodaysAdSlot"))); //TODOreq: maybe a shared secret url or special 'token', and definitely want SSL so no MITM lawl (even self signed cert is better than none)
-}
-void AdImageGetAndSubscribeManager::initializeAndStart()
-{
+
     //do the first GET for today's ad
     if(!m_NetworkAccessManager)
     {
@@ -45,8 +35,50 @@ void AdImageGetAndSubscribeManager::initializeAndStart()
     //TODOreq: set up timer to expire 30 seconds before ad image change
 
     //TODOreq: spread out WServer::post'ing over a 5 minute span (perhaps also explain this to ad slot buyer on Abc2). as an additional optimization (efficiency/speed one), we can have a "max time between each WServer::post", for when there aren't very many users watching (or just on that server). 10 viewers shouldn't use the "over 5 minutes" bandwidth optimization, nah mean?
+}
+AdImageGetAndSubscribeManager::~AdImageGetAndSubscribeManager()
+{
+    if(m_CurrentAdImage)
+    {
+        delete m_CurrentAdImage;
+    }
+    if(m_YesterdaysAdImage)
+    {
+        delete m_YesterdaysAdImage;
+    }
 
-    m_Stopping = false;
+    if(m_UpdateSubscribersHashIterator)
+    {
+        delete m_UpdateSubscribersHashIterator;
+    }
+
+    m_QueuedUnsubscriptionRequests.clear(); //they get processed/deleted in a sec when m_Subscribers is processed, but leaving em in here will cause us a segfault if we start back up again later!
+
+    {
+        QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
+        while(it.hasNext())
+        {
+            it.next();
+            AdImageSubscriberSessionInfo *sessionInfo = it.value();
+            delete sessionInfo;
+        }
+        m_Subscribers.clear();
+    }
+
+    {
+        QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_QueuedSubscriptionRequests);
+        while(it.hasNext())
+        {
+            it.next();
+            AdImageSubscriberSessionInfo *sessionInfo = it.value();
+            delete sessionInfo;
+        }
+        m_QueuedSubscriptionRequests.clear();
+    }
+}
+void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
+{
+    m_NetworkAccessManager->get(QNetworkRequest(QUrl("http://anonymousbitcoincomputing.com/getTodaysAdSlot"))); //TODOreq: maybe a shared secret url or special 'token', and definitely want SSL so no MITM lawl (even self signed cert is better than none)
 }
 void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, std::string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback)
 {
@@ -95,49 +127,6 @@ void AdImageGetAndSubscribeManager::beginStopping()
     {
         delete m_UpdateSubscribersHashIterator;
         m_UpdateSubscribersHashIterator = 0;
-    }
-}
-void AdImageGetAndSubscribeManager::finishStopping()
-{
-    if(m_CurrentAdImage)
-    {
-        delete m_CurrentAdImage;
-        m_CurrentAdImage = 0;
-    }
-    if(m_YesterdaysAdImage)
-    {
-        delete m_YesterdaysAdImage;
-        m_YesterdaysAdImage = 0;
-    }
-
-    if(m_UpdateSubscribersHashIterator)
-    {
-        delete m_UpdateSubscribersHashIterator;
-        m_UpdateSubscribersHashIterator = 0;
-    }
-
-    m_QueuedUnsubscriptionRequests.clear(); //they get processed/deleted in a sec when m_Subscribers is processed, but leaving em in here will cause us a segfault if we start back up again later!
-
-    {
-        QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_Subscribers);
-        while(it.hasNext())
-        {
-            it.next();
-            AdImageSubscriberSessionInfo *sessionInfo = it.value();
-            delete sessionInfo;
-        }
-        m_Subscribers.clear();
-    }
-
-    {
-        QHashIterator<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> it(m_QueuedSubscriptionRequests);
-        while(it.hasNext())
-        {
-            it.next();
-            AdImageSubscriberSessionInfo *sessionInfo = it.value();
-            delete sessionInfo;
-        }
-        m_QueuedSubscriptionRequests.clear();
     }
 }
 void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply *reply)

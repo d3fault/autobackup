@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1398579939
+Documents/minddump/:1398589827
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1923,6 +1923,7 @@ Documents/minddump/slfjasjdfklsdjflksjdfsdlkfjoiuewrkjsdflkjdsflkhsfouer.txt:139
 Documents/minddump/slfkjaslkfjaslfdjaslfdjksalfjksdofusldfjosduflsdjfousdflkjsflksdjf.txt:1373938250
 Documents/minddump/slfkjsadfousdlfjouwerlkjousdlfjousdfljouiwerljsf.txt:1370305833
 Documents/minddump/slfkjsalkfjlskjfsdofusadlfkjsodauflsdkjfouljourelskdfjlaskdfjasdlfk.txt:1374054252
+Documents/minddump/slfkjslkjfksjdflkjsdfosudflkjsdofusdlkfjsdlkfj.txt:1398589827
 Documents/minddump/sljdkflksjdflkjsdfouljwerodsfasdfusldfjaljsdflkjsadfouewrlkdsf.txt:1383161980
 Documents/minddump/slkdfjlkasdjfosaduflsjdfousldfjsoduflksdjfouiweoruofsd.txt:1384659158
 Documents/minddump/slkdfjslkdjfskdjfkjsdfkljsdfkljsdkfljuwiokljsfsdfkl.txt:1362494365
@@ -2132,9 +2133,9 @@ GloballySharedClasses/network/multiserverclientabstraction.cpp:1370998417
 GloballySharedClasses/network/multiserverclientabstraction.h:1370998417
 GloballySharedClasses/network/networkmagic.cpp:1361275960
 GloballySharedClasses/network/networkmagic.h:1367230309
-GloballySharedClasses/threading/:1398563419
+GloballySharedClasses/threading/:1398595622
 GloballySharedClasses/threading/boostthreadinitializationsynchronizationkit.h:1394427635
-GloballySharedClasses/threading/objectonthreadhelper.h:1398563419
+GloballySharedClasses/threading/objectonthreadhelper.h:1398595622
 GloballySharedClasses/debuggableStartableStoppableBackendAndFrontend.pri:1344898899
 GloballySharedClasses/easytree.pri:1367396791
 GloballySharedClasses/easytreehasher.pri:1379408701
@@ -2973,7 +2974,7 @@ Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/worki
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/workinginputtestbusiness.h:1359418585
 Projects/Prototypes/ObjectsSynchronizer/:1397553970
 Projects/Prototypes/ObjectsSynchronizer/src/:1397554751
-Projects/Prototypes/ObjectsSynchronizer/src/gui/:1398565297
+Projects/Prototypes/ObjectsSynchronizer/src/gui/:1398586067
 Projects/Prototypes/ObjectsSynchronizer/src/gui/ObjectsSynchronizerGui.pro:1397556924
 Projects/Prototypes/ObjectsSynchronizer/src/gui/main.cpp:1397558786
 Projects/Prototypes/ObjectsSynchronizer/src/gui/objectssynchronizerwidget.cpp:1397553960
@@ -4093,7 +4094,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1398569520
+Solutions/Anonymous Bitcoin Computing 2/src/:1398584965
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1396218440
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -4170,31 +4171,30 @@ Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firef
 Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:1397361347
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1398569833
-Solutions/hackyVideoBullshitSite/src/backend/:1398578593
-Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398247275
-Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398238558
+Solutions/hackyVideoBullshitSite/src/:1398596721
+Solutions/hackyVideoBullshitSite/src/backend/:1398596444
+Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398593487
+Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398594608
 Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.cpp:1397480873
 Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.h:1397480873
-Solutions/hackyVideoBullshitSite/src/backend/hackyvideobullshitsitebackend.cpp:1398567886
-Solutions/hackyVideoBullshitSite/src/backend/hackyvideobullshitsitebackend.h:1398564791
-Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1398578593
-Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1398564791
-Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1398562535
-Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1398562535
-Solutions/hackyVideoBullshitSite/src/frontend/:1398578982
+Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1398596062
+Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1398593687
+Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1398593165
+Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1398596444
+Solutions/hackyVideoBullshitSite/src/frontend/:1398596409
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398418095
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398417886
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1398567842
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1398564791
-Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1398578982
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1398596409
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1398596395
+Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1398594298
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1398578570
-Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1398564681
-Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1398564506
-Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1397837350
-Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsitebackendscopeddeleter.h:1398564791
+Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1398595678
+Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1398596118
+Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1398595814
 Solutions/hackyVideoBullshitSite/src/lastmodifiedtimestampsandpaths.h:1398569833
-Solutions/hackyVideoBullshitSite/src/main.cpp:1398361760
+Solutions/hackyVideoBullshitSite/src/main.cpp:1398595635
+Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.cpp:1398596293
+Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.h:1398596293
 Solutions/hackyVideoBullshitSite/tools/:1397023744
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688

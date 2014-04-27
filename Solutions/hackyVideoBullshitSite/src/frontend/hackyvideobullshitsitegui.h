@@ -22,6 +22,7 @@ public:
     static void setCopyrightText(const std::string &copyrightText);
     static void setDplLicenseText(const std::string &dplLicenseText);
     static void setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer);
+    static WApplication *hackyVideoBullshitSiteGuiEntryPoint(const WEnvironment &env);
 
     HackyVideoBullshitSiteGUI(const WEnvironment &env);
 protected:

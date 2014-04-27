@@ -111,6 +111,10 @@ void HackyVideoBullshitSiteGUI::setTimestampsAndPathsSharedAtomicPointer(QAtomic
     TimeLineWtWidget::setTimestampsAndPathsSharedAtomicPointer(lastModifiedTimestampsSharedAtomicPointer);
     TimeLineWtWidget::setTimelineInternalPath(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE); //TODOoptional: belongs elsewhere, fuck it
 }
+WApplication *HackyVideoBullshitSiteGUI::hackyVideoBullshitSiteGuiEntryPoint(const WEnvironment &env)
+{
+    return new HackyVideoBullshitSiteGUI(env);
+}
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
     , m_AdImageContainer(0)

@@ -10,6 +10,7 @@
 LastModifiedTimestampsWatcher::LastModifiedTimestampsWatcher(QObject *parent)
     : QObject(parent)
     , m_LastModifiedTimestampsFileWatcher(0)
+    , m_CurrentTimestampsAndPathsAtomicPointer(0)
     , m_DeleteInFiveMinsTimer(new QTimer(this))
     , m_TimestampsAndPathsQueuedForDelete(0)
 {
@@ -17,16 +18,36 @@ LastModifiedTimestampsWatcher::LastModifiedTimestampsWatcher(QObject *parent)
     m_DeleteInFiveMinsTimer->setInterval(5*(1000*60));
     connect(m_DeleteInFiveMinsTimer, SIGNAL(timeout()), this, SLOT(handleDeleteInFiveMinsTimerTimedOut()));
 }
+QAtomicPointer<LastModifiedTimestampsAndPaths> *LastModifiedTimestampsWatcher::getTimestampsAndPathsAtomicPointer()
+{
+    return &m_CurrentTimestampsAndPathsAtomicPointer;
+}
 LastModifiedTimestampsWatcher::~LastModifiedTimestampsWatcher()
 {
-    finishStopping();
+    if(m_TimestampsAndPathsQueuedForDelete)
+    {
+        while(!m_TimestampsAndPathsQueuedForDelete->isEmpty())
+        {
+            deleteOneTimestampAndPathQueuedForDelete();
+        }
+        delete m_TimestampsAndPathsQueuedForDelete;
+    }
+    LastModifiedTimestampsAndPaths *currentTimestampsAndPathsMaybe = m_CurrentTimestampsAndPathsAtomicPointer.fetchAndStoreOrdered(0);
+    if(currentTimestampsAndPathsMaybe)
+    {
+        delete currentTimestampsAndPathsMaybe;
+    }
+    if(m_LastModifiedTimestampsFileWatcher)
+    {
+        delete m_LastModifiedTimestampsFileWatcher;
+    }
 }
 void LastModifiedTimestampsWatcher::deleteOneTimestampAndPathQueuedForDelete()
 {
     LastModifiedTimestampsAndPaths *currentToDelete = m_TimestampsAndPathsQueuedForDelete->dequeue();
     delete currentToDelete;
 }
-void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile, QAtomicPointer<LastModifiedTimestampsAndPaths> *timestampsAndPathsSharedAtomicPointer)
+void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile)
 {
     m_LastModifiedTimestampsFile = lastModifiedTimestampsFile;
     if(!m_LastModifiedTimestampsFileWatcher)
@@ -37,30 +58,6 @@ void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(cons
     if(!m_TimestampsAndPathsQueuedForDelete)
     {
         m_TimestampsAndPathsQueuedForDelete = new QQueue<LastModifiedTimestampsAndPaths*>();
-    }
-    m_CurrentTimestampsAndPathsAtomicPointer = timestampsAndPathsSharedAtomicPointer;
-}
-//safe to call twice
-void LastModifiedTimestampsWatcher::finishStopping()
-{
-    if(m_TimestampsAndPathsQueuedForDelete)
-    {
-        while(!m_TimestampsAndPathsQueuedForDelete->isEmpty())
-        {
-            deleteOneTimestampAndPathQueuedForDelete();
-        }
-        delete m_TimestampsAndPathsQueuedForDelete;
-        m_TimestampsAndPathsQueuedForDelete = 0;
-    }
-    LastModifiedTimestampsAndPaths *currentTimestampsAndPathsMaybe = m_CurrentTimestampsAndPathsAtomicPointer->fetchAndStoreOrdered(0);
-    if(currentTimestampsAndPathsMaybe)
-    {
-        delete currentTimestampsAndPathsMaybe;
-    }
-    if(m_LastModifiedTimestampsFileWatcher)
-    {
-        delete m_LastModifiedTimestampsFileWatcher;
-        m_LastModifiedTimestampsFileWatcher = 0;
     }
 }
 void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged()
@@ -110,7 +107,7 @@ void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged()
         delete newTimestampsAndPaths; //chances are the list that they already have is better than an empty list...
         return;
     }
-    LastModifiedTimestampsAndPaths *oldTimestampsAndPaths = m_CurrentTimestampsAndPathsAtomicPointer->fetchAndStoreOrdered(newTimestampsAndPaths); //TODOoptimization: might not need ordered, idfk
+    LastModifiedTimestampsAndPaths *oldTimestampsAndPaths = m_CurrentTimestampsAndPathsAtomicPointer.fetchAndStoreOrdered(newTimestampsAndPaths); //TODOoptimization: might not need ordered, idfk
     if(!oldTimestampsAndPaths)
         return;
     bool startTimerYea = m_TimestampsAndPathsQueuedForDelete->isEmpty();
