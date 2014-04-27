@@ -8,8 +8,12 @@
 
 VideoSegmentsImporterFolderWatcher::VideoSegmentsImporterFolderWatcher(QObject *parent) :
     QObject(parent)
-    , m_DirectoryWatcher(0)
+  , m_DirectoryWatcher(0)
 { }
+VideoSegmentsImporterFolderWatcher::~VideoSegmentsImporterFolderWatcher()
+{
+    finishStopping();
+}
 void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo)
 {
     m_VideoSegmentsImporterFolderToWatchWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToWatch);
@@ -28,6 +32,14 @@ void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &video
     connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged(QString)));
     m_CurrentYearFolder = -1;
     m_CurrentDayOfYearFolder = -1;
+}
+void VideoSegmentsImporterFolderWatcher::finishStopping()
+{
+    if(m_DirectoryWatcher)
+    {
+        delete m_DirectoryWatcher;
+        m_DirectoryWatcher = 0;
+    }
 }
 //moves file added to watch directory to <year>/<day>/
 //creates both year/day folders if needed (moves file into them before moving the folder to the destination (so it's atomic))

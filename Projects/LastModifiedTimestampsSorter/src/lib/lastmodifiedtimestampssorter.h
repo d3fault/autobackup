@@ -15,23 +15,29 @@ class LastModifiedTimestampsSorter : public QObject
 public:
     explicit LastModifiedTimestampsSorter(QObject *parent = 0);
     SortedMapOfListsOfPathsPointerType *takeMapOfPathsListsSortedByModificationDate();
+
+    //sync and take
+    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount = 0);
+    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, int *itemsCount = 0);
+
     ~LastModifiedTimestampsSorter();
 private:
     SortedMapOfListsOfPathsPointerType *m_MapOfPathsListsSortedByModificationDate;
+    int m_TotalItemsCount;
 
     void newTheMapIfNeeded();
-    void clearTheMapIfNeeded();
+    void clearTheMap();
     void sortAllLastModifiedTimestampsOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice);
     void outputTheMap();
 signals:
     void d(const QString &);
 
     //async
-    void lastModifiedTimestampsSorted(SortedMapOfListsOfPathsPointerType*); //signal receivers take owenrship, i guess this is a good place for implicit sharing (i'm doing it wrong) xD. but then which of those receivers deletes the map's values ;-)??
+    void lastModifiedTimestampsSorted(SortedMapOfListsOfPathsPointerType*, int); //signal receivers take owenrship, i guess this is a good place for implicit sharing (i'm doing it wrong) xD. but then which of those receivers deletes the map's values ;-)??
 
     //sync
     void sortedLineOutput(const QString &);
-    void finishedOutputtingSortedLines();
+    void finishedOutputtingSortedLines(int totalItemsCount);
 public slots:
     //async
     void sortAndEmitLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice);

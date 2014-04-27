@@ -12,6 +12,7 @@ class VideoSegmentsImporterFolderWatcher : public QObject
     Q_OBJECT
 public:
     explicit VideoSegmentsImporterFolderWatcher(QObject *parent = 0);
+    ~VideoSegmentsImporterFolderWatcher();
 private:
     QFileSystemWatcher *m_DirectoryWatcher;
     QString m_VideoSegmentsImporterFolderToWatchWithSlashAppended;
@@ -26,6 +27,7 @@ signals:
     void d(const QString &);
 public slots:
     void initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo);
+    void finishStopping();
 private slots:
     void handleDirectoryChanged(const QString &path);
 };

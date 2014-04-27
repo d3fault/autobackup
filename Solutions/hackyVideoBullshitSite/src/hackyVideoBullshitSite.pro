@@ -18,7 +18,9 @@ SOURCES += main.cpp \
     backend/hackyvideobullshitsitebackend.cpp \
     backend/videosegmentsimporterfolderwatcher.cpp \
     frontend/directorybrowsingwtwidget.cpp \
-    frontend/timelinewtwidget.cpp
+    frontend/timelinewtwidget.cpp \
+    backend/lastmodifiedtimestampswatcher.cpp \
+    ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp
 
 HEADERS += \
     hackyvideobullshitsite.h \
@@ -32,12 +34,17 @@ HEADERS += \
     backend/videosegmentsimporterfolderwatcher.h \
     hackyvideobullshitsitebackendscopeddeleter.h \
     frontend/directorybrowsingwtwidget.h \
-    frontend/timelinewtwidget.h
+    frontend/timelinewtwidget.h \
+    backend/lastmodifiedtimestampswatcher.h \
+    ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h \
+    lastmodifiedtimestampsandpaths.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
+INCLUDEPATH += ../../../Projects/LastModifiedTimestampsSorter/src/lib/
 
 LIBS += -lwt -lwthttp -lboost_signals
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
+include(../../../GloballySharedClasses/simplifiedlastmodifiedtimestamp.pri)

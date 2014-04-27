@@ -13,6 +13,35 @@ public:
     {
         return m_TheObject;
     }
+    static void synchronouslyStopObjectOnThreadHelperIfNeeded(ObjectOnThreadHelperBase *objectOnThreadHelper)
+    {
+        if(objectOnThreadHelper)
+        {
+            if(objectOnThreadHelper->isRunning())
+                objectOnThreadHelper->quit();
+            objectOnThreadHelper->wait();
+            delete objectOnThreadHelper;
+            objectOnThreadHelper = 0;
+        }
+    }
+    static void stopThreadIfNeeded(ObjectOnThreadHelperBase *objectOnThreadHelper)
+    {
+        if(objectOnThreadHelper)
+        {
+            if(objectOnThreadHelper->isRunning())
+                objectOnThreadHelper->quit();
+        }
+    }
+    static void waitOnAndDeleteThreadIfNeeded(ObjectOnThreadHelperBase *objectOnThreadHelper)
+    {
+        if(objectOnThreadHelper)
+        {
+            //should i call stopThreadIfNeeded(); ??? depends whether or not quit() makes isRunning() false instantly or not...
+            objectOnThreadHelper->wait();
+            delete objectOnThreadHelper;
+            objectOnThreadHelper = 0;
+        }
+    }
 protected:
     QObject *m_TheObject;
     virtual void run() = 0;

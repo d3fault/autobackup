@@ -5,19 +5,36 @@
 using namespace Wt;
 
 #include <QString>
+#include <QAtomicPointer>
+
+#include "lastmodifiedtimestampsandpaths.h"
+
+namespace Wt
+{
+    class WAnchor;
+}
 
 class TimeLineWtWidget : public WContainerWidget
 {
 public:
-    TimeLineWtWidget(const QString &myOwnInternalPath, WContainerWidget *parent = 0);
+    static void setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer);
+    static void setTimelineInternalPath(const QString &timelineInternalPath);
+
+    TimeLineWtWidget(WContainerWidget *parent = 0);
     void handleInternalPathChanged(const QString &newInternalPath);
 private:
-    enum TimeLineDirection { Horizontal = 0, Vertical = 1 };
+    static QAtomicPointer<LastModifiedTimestampsAndPaths> *m_LastModifiedTimestampsAndPaths;
+    static QString m_MyOwnInternalPath;
 
-    const QString &m_MyOwnInternalPath;
-    TimeLineDirection m_CurrentDirection;
+    LastModifiedTimestampsAndPaths *m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory;
 
-    void handleDirectionRadiosCheckChanged(WRadioButton *newlyCheckedRadioButton);
+    //chronological
+    WAnchor *m_EarliestAnchor;
+    WAnchor *m_PreviousAnchor;
+    WAnchor *m_PermalinkToThisAnchor;
+    WAnchor *m_RandomAnchor;
+    WAnchor *m_NextAnchor;
+    WAnchor *m_LatestAnchor;
 };
 
 #endif // TIMELINEWTWIDGET_H

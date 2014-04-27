@@ -57,6 +57,8 @@ tshpienak[k]
 
 WikiOS (inline editable, shared nothing public dht, etc)
 
+beautifulmath
+
 
 mb, just thought up now:
 dercom -- deriveable community

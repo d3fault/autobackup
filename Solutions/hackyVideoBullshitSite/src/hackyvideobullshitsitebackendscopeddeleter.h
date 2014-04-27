@@ -4,6 +4,7 @@
 #include <Wt/WServer> //just so i don't have to use no_keywords
 
 #include <QObject>
+#include "lastmodifiedtimestampsandpaths.h"
 #include "backend/hackyvideobullshitsitebackend.h"
 
 class HackyVideoBullshitSiteBackendScopedDeleter : public QObject
@@ -12,8 +13,9 @@ class HackyVideoBullshitSiteBackendScopedDeleter : public QObject
 public:
     HackyVideoBullshitSiteBackend m_HackyVideoBullshitSiteBackend;
     QThread m_HackyVideoBullshitSiteBackendThread;
-    HackyVideoBullshitSiteBackendScopedDeleter(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo)
-            : m_HackyVideoBullshitSiteBackend(videoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderScratchSpace, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo)
+    QAtomicPointer<LastModifiedTimestampsAndPaths> m_TimestampsAndPathsSharedAtomicPointer;
+    HackyVideoBullshitSiteBackendScopedDeleter(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, const QString &lastModifiedTimestampsFile)
+            : m_HackyVideoBullshitSiteBackend(videoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderScratchSpace, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, lastModifiedTimestampsFile, &m_TimestampsAndPathsSharedAtomicPointer)
     {
         //using a style i dislike (object not instantiating on thread that 'owns' it, but oh well)
         m_HackyVideoBullshitSiteBackendThread.start();

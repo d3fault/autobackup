@@ -5,6 +5,7 @@
 #include <Wt/WApplication>
 #include <Wt/WContainerWidget>
 
+#include "../lastmodifiedtimestampsandpaths.h"
 #include "../backend/adimagegetandsubscribemanager.h"
 
 using namespace Wt;
@@ -20,6 +21,7 @@ public:
     static void setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended(const QString &myBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended);
     static void setCopyrightText(const std::string &copyrightText);
     static void setDplLicenseText(const std::string &dplLicenseText);
+    static void setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer);
 
     HackyVideoBullshitSiteGUI(const WEnvironment &env);
 protected:

@@ -30,7 +30,7 @@
 #define HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/MyBrain"
 
 #define HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE \
-    HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/TimeLine"
+    HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Timeline"
 #define HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN \
     HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Browse"
 #define HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_DOWNLOAD \
@@ -38,7 +38,7 @@
 
 #define HVBS_VIEW_MYBRAIN_STRING "View My [Archived] Brain On A Platter"
 
-#define HVBS_TIMELINE_MY_BRAIN_STRING "TimeLine"
+#define HVBS_TIMELINE_MY_BRAIN_STRING "Timeline"
 #define HVBS_BROWSE_MY_BRAIN_STRING "Browse"
 #define HVBS_DOWNLOAD_MY_BRAIN_STRING "Full download for offline viewing"
 
@@ -106,6 +106,11 @@ void HackyVideoBullshitSiteGUI::setDplLicenseText(const string &dplLicenseText)
 {
     m_DplLicenseText = "<pre>" + Wt::Utils::htmlEncode(dplLicenseText) + "</pre>";
 }
+void HackyVideoBullshitSiteGUI::setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer)
+{
+    TimeLineWtWidget::setTimestampsAndPathsSharedAtomicPointer(lastModifiedTimestampsSharedAtomicPointer);
+    TimeLineWtWidget::setTimelineInternalPath(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE); //TODOoptional: belongs elsewhere, fuck it
+}
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
     , m_AdImageContainer(0)
@@ -134,6 +139,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     //TODOreq: timestamps. timestamps everywhere
     //TODOreq: MyBrain increments(?)
+    //TODOreq: svg
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
     //TODOoptional: "random"
     //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
@@ -343,7 +349,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     if(theInternalPathCleanedQString.startsWith(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE))
     {
         if(!m_TimeLineMyBrainWidget)
-            m_TimeLineMyBrainWidget = new TimeLineWtWidget(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE, root());
+            m_TimeLineMyBrainWidget = new TimeLineWtWidget(root());
         m_TimeLineMyBrainWidget->handleInternalPathChanged(theInternalPathCleanedQString);
         return;
     }

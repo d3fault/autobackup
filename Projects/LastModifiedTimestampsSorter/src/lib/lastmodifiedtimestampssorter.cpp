@@ -22,11 +22,32 @@ SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::takeMapOfPaths
     }
     return 0;
 }
+SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount)
+{
+    newTheMapIfNeeded();
+    clearTheMap();
+    sortAllLastModifiedTimestampsOnIoDevice(lastModifiedTimestampsIoDevice);
+    if(itemsCount)
+    {
+        *itemsCount = m_TotalItemsCount;
+    }
+    return takeMapOfPathsListsSortedByModificationDate();
+}
+SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, int *itemsCount)
+{
+    QFile lastModifiedTimestampsFile(lastModifiedTimestampsFilename, this);
+    if(!lastModifiedTimestampsFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        emit d("failed to open for reading: " + lastModifiedTimestampsFilename);
+        return 0;
+    }
+    return sortLastModifiedTimestamps(&lastModifiedTimestampsFile, itemsCount);
+}
 LastModifiedTimestampsSorter::~LastModifiedTimestampsSorter()
 {
     if(m_MapOfPathsListsSortedByModificationDate)
     {
-        clearTheMapIfNeeded();
+        clearTheMap();
         delete m_MapOfPathsListsSortedByModificationDate;
     }
 }
@@ -37,7 +58,7 @@ void LastModifiedTimestampsSorter::newTheMapIfNeeded()
         m_MapOfPathsListsSortedByModificationDate = new SortedMapOfListsOfPathsPointerType();
     }
 }
-void LastModifiedTimestampsSorter::clearTheMapIfNeeded()
+void LastModifiedTimestampsSorter::clearTheMap()
 {
     QMapIterator<long long, QList<std::string>* > mapOfPathListsIterator(*m_MapOfPathsListsSortedByModificationDate);
     while(mapOfPathListsIterator.hasNext())
@@ -47,6 +68,7 @@ void LastModifiedTimestampsSorter::clearTheMapIfNeeded()
         delete listOfPaths;
     }
     m_MapOfPathsListsSortedByModificationDate->clear();
+    m_TotalItemsCount = 0;
 }
 void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice)
 {
@@ -64,9 +86,9 @@ void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsOnIoDevice(QIODe
             emit d("Invalid SimplifiedLastModifiedTimestamp: " + currentLine);
             continue; //TODOoptional: "-quitOnError" arg, just "return;" here (but also don't return 0 in main) instead of "continue;"
         }
-
+        ++m_TotalItemsCount;
         long long currentTimestamp = timestamp.lastModifiedTimestamp().toMSecsSinceEpoch()/1000;
-        if(!m_MapOfPathsListsSortedByModificationDate->contains(currentTimestamp))
+        if(!m_MapOfPathsListsSortedByModificationDate->contains(currentTimestamp)) //TODOoptization: could use "value" with a default/fallback value, but wtf is the default construction of a QList<std::string>* ?? afaik pointers not initialized to zero are undefined :(...
         {
             QList<std::string> *newListOfPaths = new QList<std::string>();
             newListOfPaths->append(timestamp.filePath().toStdString());
@@ -85,7 +107,7 @@ void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsOnIoDevice(QIODe
     {
         mapOfListsOfPathsIterator.next();
         QList<std::string> *listOfPaths = mapOfListsOfPathsIterator.value();
-        std::sort(listOfPaths->begin(), listOfPaths->end());
+        std::sort(listOfPaths->begin(), listOfPaths->end()); //for some reason this reminds me of a shimmy shuffle sort. or like that guy on the dude polishing his bowling ball
     }
 }
 void LastModifiedTimestampsSorter::outputTheMap()
@@ -106,9 +128,9 @@ void LastModifiedTimestampsSorter::outputTheMap()
 void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice)
 {
     newTheMapIfNeeded();
-    clearTheMapIfNeeded();
+    clearTheMap();
     sortAllLastModifiedTimestampsOnIoDevice(lastModifiedTimestampsIoDevice);
-    emit lastModifiedTimestampsSorted(takeMapOfPathsListsSortedByModificationDate());
+    emit lastModifiedTimestampsSorted(takeMapOfPathsListsSortedByModificationDate(), m_TotalItemsCount);
 }
 void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename)
 {
@@ -116,7 +138,7 @@ void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(const QStri
     if(!lastModifiedTimestampsFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         emit d("failed to open for reading: " + lastModifiedTimestampsFilename);
-        emit lastModifiedTimestampsSorted(0);
+        emit lastModifiedTimestampsSorted(0, 0);
         return;
     }
     sortAndEmitLastModifiedTimestamps(&lastModifiedTimestampsFile);
@@ -124,10 +146,10 @@ void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(const QStri
 void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice)
 {
     newTheMapIfNeeded();
-    clearTheMapIfNeeded();
+    clearTheMap();
     sortAllLastModifiedTimestampsOnIoDevice(lastModifiedTimestampsIoDevice);
     outputTheMap(); //"cli"/user of this should do the formatting, but w/e
-    emit finishedOutputtingSortedLines();
+    emit finishedOutputtingSortedLines(m_TotalItemsCount);
 }
 void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename)
 {
@@ -135,7 +157,7 @@ void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(const QSt
     if(!lastModifiedTimestampsFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         emit d("failed to open for reading: " + lastModifiedTimestampsFilename);
-        emit finishedOutputtingSortedLines();
+        emit finishedOutputtingSortedLines(0);
         return;
     }
     sortAndOutputLastModifiedTimestamps(&lastModifiedTimestampsFile);

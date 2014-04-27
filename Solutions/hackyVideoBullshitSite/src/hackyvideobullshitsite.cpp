@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <QThread>
 #include <QSettings>
+#include <QAtomicPointer>
 
 #include "hackyvideobullshitsitebackendscopeddeleter.h"
 #include "backend/adimagewresource.h"
@@ -16,6 +17,7 @@
 #define HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace "VideoSegmentsImporterFolderScratchSpace"
 #define HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo "AirborneVideoSegmentsBaseDir_aka_videoSegmentsImporterFolderToMoveTo"
 #define HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir "MyBrainArchiveBaseDir"
+#define HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile "LastModifiedTimestampsFile"
 
 int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int argc, char *argv[])
 {
@@ -31,6 +33,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
     QString videoSegmentsImporterFolderScratchSpace = placeholderPathForEdittingInSettings;
     QString airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = placeholderPathForEdittingInSettings;
     QString myBrainArchiveBaseDir_NoSlashAppended = placeholderPathForEdittingInSettings;
+    QString lastModifiedTimestampsFile = placeholderPathForEdittingInSettings;
 
     {
         QSettings hackyVideoBullshitSiteSettings(QSettings::IniFormat, QSettings::UserScope, "HackyVideoBullshitSiteOrganization", "HackyVideoBullshitSite"); //because too lazy to integrate with Wt args... TODOoptional yea do it because editing settings files is teh suck (especially for automation). Still, future proofing for that by passing the settings by args to child objects instead of the static "setX" way of using qsettings (commented out above)
@@ -40,7 +43,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         videoSegmentsImporterFolderToWatch = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, placeholderPathForEdittingInSettings).toString());
         if(videoSegmentsImporterFolderToWatch == placeholderPathForEdittingInSettings)
         {
-            cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch " not set" << endl;
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderToWatch);
         }
@@ -48,7 +51,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         videoSegmentsImporterFolderScratchSpace = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, placeholderPathForEdittingInSettings).toString());
         if(videoSegmentsImporterFolderScratchSpace == placeholderPathForEdittingInSettings)
         {
-            cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace " not set" << endl;
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, videoSegmentsImporterFolderScratchSpace);
         }
@@ -56,7 +59,7 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, placeholderPathForEdittingInSettings).toString());
         if(airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo == placeholderPathForEdittingInSettings)
         {
-            cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo " not set" << endl;
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
         }
@@ -64,20 +67,28 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
         myBrainArchiveBaseDir_NoSlashAppended = removeTrailingSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, placeholderPathForEdittingInSettings).toString());
         if(myBrainArchiveBaseDir_NoSlashAppended == placeholderPathForEdittingInSettings)
         {
-            cout << "error: " HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir " not set" << endl;
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, myBrainArchiveBaseDir_NoSlashAppended);
         }
 
+        lastModifiedTimestampsFile = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile, placeholderPathForEdittingInSettings).toString();
+        if(lastModifiedTimestampsFile == placeholderPathForEdittingInSettings)
+        {
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile " not set" << endl;
+            atLeastOneDidntExist = true;
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile, placeholderPathForEdittingInSettings);
+        }
+
         if(atLeastOneDidntExist)
         {
-            cout << "exitting with error because the settings in '" + hackyVideoBullshitSiteSettings.fileName().toStdString() + "' were not properly defined. look for the string '" + placeholderPathForEdittingInSettings.toStdString() + "' and fill in the proper paths. also look above for a more specific error" << endl;
+            cerr << "exitting with error because the settings in '" + hackyVideoBullshitSiteSettings.fileName().toStdString() + "' were not properly defined. look for the string '" + placeholderPathForEdittingInSettings.toStdString() + "' and fill in the proper paths. also look above for a more specific error" << endl;
             return 1;
         }
     }
 
     //start backend thread
-    HackyVideoBullshitSiteBackendScopedDeleter hackyVideoBullshitSiteBackendScopedDeleterInstance(videoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderScratchSpace, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
+    HackyVideoBullshitSiteBackendScopedDeleter hackyVideoBullshitSiteBackendScopedDeleterInstance(videoSegmentsImporterFolderToWatch, videoSegmentsImporterFolderScratchSpace, airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, lastModifiedTimestampsFile);
 
     WServer wtServer(argv[0]);
     wtServer.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
@@ -162,6 +173,8 @@ int HackyVideoBullshitSite::startHackyVideoBullshitSiteAndWaitForFinished(int ar
     HackyVideoBullshitSiteGUI::setAirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL(airborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
     HackyVideoBullshitSiteGUI::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended(myBrainArchiveBaseDir_NoSlashAppended);
     //OLD-when-atomic: similarly, instead of a pointer to a video segment file, i could point to a plugin to expand capability without shutting the server down :-P
+    //o hai atomicz <3 (*throws up*)
+    HackyVideoBullshitSiteGUI::setTimestampsAndPathsSharedAtomicPointer(&hackyVideoBullshitSiteBackendScopedDeleterInstance.m_TimestampsAndPathsSharedAtomicPointer);
 
     //start server, waitForShutdown(), invoke via BlockingQueuedConnection a 'stop' to AdImageGetAndSubscribeManager to let it finish current actions (also sets bool to not allow further), server.stop, tell AdImageGetAndSubscribeManager to quit, wait for AdImageGetAndSubscribeManager to join
 

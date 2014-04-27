@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1398433398
+Documents/minddump/:1398579939
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1261,6 +1261,7 @@ Documents/minddump/lol.this.makes.no.sense.im.just.going.to.use.tcp.txt:13257830
 Documents/minddump/lol.wat.a.modular.expandable.self.duplicatable.rig.would.be.better.txt:1323287801
 Documents/minddump/lol.well.i.wrote.this.knowing.shell.eventually.read.this.which.is.a.reference.to.my.earlier.work.of.not.having.an.audience...now.i.do.fml.txt:1345421251
 Documents/minddump/love.is.a.self.centered.thought.but.what.isnt.lol.saljkfdsljfwoeursdflkjsfdkj.txt:1342930048
+Documents/minddump/love.is.meant.for.two.asdlfjksdlkjflkjsdfouwlrkjsdflskdfj.txt:1398567252
 Documents/minddump/love.you.qt.nokia.lgpl.etc.wooooo.txt:1322082918
 Documents/minddump/lsadfjasdlfjasdlfkjaouwerlkjasfoausdflajksdfosdauflsadjfowurel.txt:1350342824
 Documents/minddump/lsadjfoualjksafouwlrjosfdualwrjowiruasofuiaksfhaskfh.txt:1343315488
@@ -1661,6 +1662,7 @@ Documents/minddump/sdflksdjflksjdlfjsdlkjfosduflkjeroulsjfosud.txt:1393195764
 Documents/minddump/sdflksdjflsdkjflskdjfouwerlouisdflkjeroiu.txt:1356245249
 Documents/minddump/sdflksdjfsdoiuflkjweourljasdfusodifujlkwejoirukljsdfousdkfu.txt:1370572542
 Documents/minddump/sdflksjadflkjasdfoulkjweroulksjfoauifdlksadjfouwlkerjoulsdfkj.txt:1379355034
+Documents/minddump/sdflksjdafljsdfjlsjdfljsdlfkjoweurlkjsdfousdlfkjsdflkjsd.txt:1398579939
 Documents/minddump/sdflksjdfjdsfoulewroiusdlkfjosduflkjweoirulskdfjoiusdrlkjoiuwe.txt:1370994716
 Documents/minddump/sdflksjdfjksdfousdlfjsdofiuslkdjfousdfwoeursfdka.txt:1384585420
 Documents/minddump/sdflksjdflkjsdfougljsoufsdlkjfaodiuoweruf.txt:1363799991
@@ -1849,6 +1851,7 @@ Documents/minddump/sfslkfdjsadlkfjsoaduflkjsdfousdlkfjsdouflkwjeroulskfjosduflks
 Documents/minddump/shame.alfjsadfouwarlkjsfdosudfaaksldjfwaeruol.txt:1344286354
 Documents/minddump/shitty.backup.operative.but.i.really.really.need.an.offsite.backup.plox.txt:1324576937
 Documents/minddump/sjfljsdfljsdlfjldksjflksjdflkjsdkfouwelrjlkjfdsjdflsdfuouwelrk.txt:1398081618
+Documents/minddump/sjfljsdlfkjslkdjflksjdflkjsdfkjsdfouljweroulsjfdsf.txt:1398556585
 Documents/minddump/skdjflskdjflskjdfouwlerkjofsdfhsfsggsiusflkjsdfouisdlfkjoiuwerljsadf.txt:1382449951
 Documents/minddump/skdjfsjflskdjfsdjfouwerjkjdsflkjsdfosuidflkjer.txt:1396823888
 Documents/minddump/skdljflksjdflkjsdflkjasldkf.txt:1396677636
@@ -2074,7 +2077,7 @@ GloballySharedClasses/distributeddatabase/:1394424681
 GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h:1394424681
 GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1394265803
 GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h:1394267313
-GloballySharedClasses/filesystem/:1398359206
+GloballySharedClasses/filesystem/:1398554554
 GloballySharedClasses/filesystem/easytree.cpp:1387286577
 GloballySharedClasses/filesystem/easytree.h:1387286619
 GloballySharedClasses/filesystem/easytreehasher.cpp:1379418062
@@ -2088,7 +2091,7 @@ GloballySharedClasses/filesystem/filemodificationdatechanger.h:1384044241
 GloballySharedClasses/filesystem/githelper.cpp:1384759637
 GloballySharedClasses/filesystem/githelper.h:1384584954
 GloballySharedClasses/filesystem/simplifiedlastmodifiedtimestamp.cpp:1398359206
-GloballySharedClasses/filesystem/simplifiedlastmodifiedtimestamp.h:1398359067
+GloballySharedClasses/filesystem/simplifiedlastmodifiedtimestamp.h:1398554554
 GloballySharedClasses/gui/:1387282127
 GloballySharedClasses/gui/labellineeditbrowsebutton.cpp:1387281116
 GloballySharedClasses/gui/labellineeditbrowsebutton.h:1387280968
@@ -2129,9 +2132,9 @@ GloballySharedClasses/network/multiserverclientabstraction.cpp:1370998417
 GloballySharedClasses/network/multiserverclientabstraction.h:1370998417
 GloballySharedClasses/network/networkmagic.cpp:1361275960
 GloballySharedClasses/network/networkmagic.h:1367230309
-GloballySharedClasses/threading/:1397558545
+GloballySharedClasses/threading/:1398563419
 GloballySharedClasses/threading/boostthreadinitializationsynchronizationkit.h:1394427635
-GloballySharedClasses/threading/objectonthreadhelper.h:1397558545
+GloballySharedClasses/threading/objectonthreadhelper.h:1398563419
 GloballySharedClasses/debuggableStartableStoppableBackendAndFrontend.pri:1344898899
 GloballySharedClasses/easytree.pri:1367396791
 GloballySharedClasses/easytreehasher.pri:1379408701
@@ -2158,7 +2161,7 @@ Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon3.svg:1348380863
 Pictures/2012-09 Tobey Family Tree Cartoon/screenshot.of.creating.it.png:1348376918
-Pictures/shirts/:1391711891
+Pictures/shirts/:1398580027
 Pictures/shirts/candy.is.to.the.tongue.what.drugs.are.to.the.brain.lasdfjasofdu.txt:1383720745
 Pictures/shirts/diff.sociopathy.courtship.intent.txt:1383710633
 Pictures/shirts/dont.let.a.perfectly.good.mind.go.to.waste.eat.mushrooms.svg:1355486883
@@ -2168,6 +2171,7 @@ Pictures/shirts/i.have.considered.your.considerations.t.shirt.sdlfjsdlkfjwoerusd
 Pictures/shirts/im.not.a.security.consultant.im.a.hacker.txt:1389320816
 Pictures/shirts/im.not.special.your.just.stupid.sdofiusaldfkjewor.txt:1382630347
 Pictures/shirts/judge.judgers.and.httpiece.of.shit.txt:1384485695
+Pictures/shirts/love.is.simply.complex.my.context.when.writing.this.is.kinda.crucial.txt:1398580027
 Pictures/shirts/patents.are.patently.illegal.weoruoiusdflkj.txt:1383687445
 Pictures/shirts/sanction.sanctioners.essentially.how.i.apply.copyleft.principles.to.everything.irl.txt:1383605321
 Pictures/shirts/sdlkjfsoadufsdlfj.dumb.txt:1384494188
@@ -2176,6 +2180,7 @@ Pictures/shirts/sucks.that.these.are.only.two.options.sdlfjslkjfsdfoiu.txt:13917
 Pictures/shirts/supple.breasts.asdlfjasoufsdlfkjsdou.mb.a.typo.in.supple.idfk.txt:1384681106
 Pictures/shirts/tolerance.obscenity.choose.one.asdfsodfuisdlkf.txt:1384665667
 Pictures/shirts/wanting.to.be.weird.is.normal.saldkfjlsdkjfouewrljodsfusdlfk.txt:1391106338
+Pictures/shirts/we.are.beautiful.math.saldfjksdkjfweourlksjdfojsdlfk.txt:1398549972
 Pictures/5meo.dmt.hydrogen.life.1.tree.hugga.ballen.sup.svg:1370470833
 Pictures/Head.Eye.i.suck.at.drawing.the.neck.looks.like.a.chin.or.anteater.mouth.lol.svg:1335462127
 Pictures/Microsoft.sitting.on.Nokias.head.i.was.gonna.add.puppet.strings.but.i.like.it.as.is.svg:1337333311
@@ -2742,14 +2747,14 @@ Projects/LastModifiedDateHeirarchyMolester/src/lib/lastmodifieddateheirarchymole
 Projects/LastModifiedDateHeirarchyMolester/src/lib/lastmodifieddateheirarchymolester.h:1385055211
 Projects/LastModifiedTimestampsSorter/:1397727653
 Projects/LastModifiedTimestampsSorter/src/:1397732403
-Projects/LastModifiedTimestampsSorter/src/cli/:1398438359
+Projects/LastModifiedTimestampsSorter/src/cli/:1398555053
 Projects/LastModifiedTimestampsSorter/src/cli/LastModifiedTimestampsSorterCli.pro:1397730827
 Projects/LastModifiedTimestampsSorter/src/cli/lastmodifiedtimestampssortercli.cpp:1397732495
 Projects/LastModifiedTimestampsSorter/src/cli/lastmodifiedtimestampssortercli.h:1397731687
 Projects/LastModifiedTimestampsSorter/src/cli/main.cpp:1397731812
-Projects/LastModifiedTimestampsSorter/src/lib/:1398430682
-Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp:1398430682
-Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h:1398430492
+Projects/LastModifiedTimestampsSorter/src/lib/:1398578725
+Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp:1398578725
+Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h:1398578662
 Projects/LifeShaper/:1371559115
 Projects/LifeShaper/LifeShaperStaticFiles/:1371704155
 Projects/LifeShaper/LifeShaperStaticFiles/src/:1383902135
@@ -2968,7 +2973,7 @@ Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/worki
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/workinginputtestbusiness.h:1359418585
 Projects/Prototypes/ObjectsSynchronizer/:1397553970
 Projects/Prototypes/ObjectsSynchronizer/src/:1397554751
-Projects/Prototypes/ObjectsSynchronizer/src/gui/:1397558919
+Projects/Prototypes/ObjectsSynchronizer/src/gui/:1398565297
 Projects/Prototypes/ObjectsSynchronizer/src/gui/ObjectsSynchronizerGui.pro:1397556924
 Projects/Prototypes/ObjectsSynchronizer/src/gui/main.cpp:1397558786
 Projects/Prototypes/ObjectsSynchronizer/src/gui/objectssynchronizerwidget.cpp:1397553960
@@ -4088,7 +4093,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1398341704
+Solutions/Anonymous Bitcoin Computing 2/src/:1398569520
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1396218440
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -4165,27 +4170,30 @@ Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firef
 Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:1397361347
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1398438355
-Solutions/hackyVideoBullshitSite/src/backend/:1398432656
+Solutions/hackyVideoBullshitSite/src/:1398569833
+Solutions/hackyVideoBullshitSite/src/backend/:1398578593
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398247275
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398238558
 Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.cpp:1397480873
 Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.h:1397480873
-Solutions/hackyVideoBullshitSite/src/backend/hackyvideobullshitsitebackend.cpp:1398237388
-Solutions/hackyVideoBullshitSite/src/backend/hackyvideobullshitsitebackend.h:1397696703
-Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1398432656
-Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1397488659
-Solutions/hackyVideoBullshitSite/src/frontend/:1398432479
+Solutions/hackyVideoBullshitSite/src/backend/hackyvideobullshitsitebackend.cpp:1398567886
+Solutions/hackyVideoBullshitSite/src/backend/hackyvideobullshitsitebackend.h:1398564791
+Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1398578593
+Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1398564791
+Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1398562535
+Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1398562535
+Solutions/hackyVideoBullshitSite/src/frontend/:1398578982
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398418095
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398417886
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1398432351
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1398423185
-Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1398432479
-Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1398424359
-Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1398423003
-Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1398432993
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1398567842
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1398564791
+Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1398578982
+Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1398578570
+Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1398564681
+Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1398564506
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1397837350
-Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsitebackendscopeddeleter.h:1398432924
+Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsitebackendscopeddeleter.h:1398564791
+Solutions/hackyVideoBullshitSite/src/lastmodifiedtimestampsandpaths.h:1398569833
 Solutions/hackyVideoBullshitSite/src/main.cpp:1398361760
 Solutions/hackyVideoBullshitSite/tools/:1397023744
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
@@ -4216,14 +4224,14 @@ Solutions/launchASEPbecauseRedAlert/index.html:1371126798
 Solutions/launchASEPbecauseRedAlert/initial.idea.explained.some.txt:1371117803
 Solutions/launchASEPbecauseRedAlert/kickstarter.etc.draft.thingo.lul.but.fun.to.write.txt:1394623878
 Solutions/launchASEPbecauseRedAlert/launchPlaceholderSvgStickFigureMeditating.svg:1371128864
-Solutions/launchASEPbecauseRedAlert/list.of.domains.to.buy.at.or.just.before.launch.txt:1398353091
+Solutions/launchASEPbecauseRedAlert/list.of.domains.to.buy.at.or.just.before.launch.txt:1398553742
 Solutions/launchASEPbecauseRedAlert/meAnalyzingTheSituationWithPoliceHelicopterJuryAimingBothGunAndNetAtMe.svg:1371125630
 Solutions/launchASEPbecauseRedAlert/meAutoGrapplingTheFuckOutOfThereBecauseRedAlert.svg:1371123108
 Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if.i.generate.book.from.script.fuggit.txt:1398073737
 Solutions/launchASEPbecauseRedAlert/pricing.breakdown.asdf.txt:1394619523
 Solutions/launchASEPbecauseRedAlert/pursuingHappiness.svg:1371126578
 Solutions/launchASEPbecauseRedAlert/restricted.access.cookie.check.idea.thingo.asdflksadflkjsadf.txt:1388735956
-Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1397702618
+Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1398553815
 Solutions/launchASEPbecauseRedAlert/todo.lol.asdflkjsdfousdfweroiu.txt:1387173891
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 VariousTreeingsDuringHugeArchivePurge/:1367600874
