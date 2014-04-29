@@ -8,68 +8,93 @@
 
 #include <QDirIterator>
 
+#include "hvbsshared.h"
+
 #define HVBS_BROWSE_MY_BRAIN_THOUGHTS_PER_PAGE 100
 
 //TODOoptional: user selectable filters, dirs, files, hidden, etc :). changing the filters goes back to page 1 i'd imagine, basically resetting everything including the stack widget...
 
 #define DBWTW_MAKE_PREVIOUS_PAGE_BUTTAN(variableName) \
 variableName = new WPushButton("Previous Page", this); \
-variableName->clicked().connect(this, &DirectoryBrowsingWtWidget::previousPageButtonClicked); \
-variableName->disable();
+variableName->clicked().connect(this, &DirectoryBrowsingWtWidget::previousPageButtonClicked);
 
 #define DBWTW_MAKE_SPINBOX(variableName) \
-m_TopPageSpinbox = new WSpinBox(this); \
-m_TopPageSpinbox->setRange(1, 99999999); /* TODOoptional: make range 1 if no other pages... or even disable it altogether...*/ \
-m_TopPageSpinbox->enterPressed().connect(this, &DirectoryBrowsingWtWidget::goToPageButtonClicked);
+variableName = new WSpinBox(this); \
+variableName->setRange(1, 99999999); /* TODOoptional: make range 1 if no other pages... or even disable it altogether...*/ \
+variableName->enterPressed().connect(this, &DirectoryBrowsingWtWidget::goToPageButtonClicked);
 
 #define DBWTW_MAKE_PAGE_SELECTION_ROW(variablePart) \
 DBWTW_MAKE_PREVIOUS_PAGE_BUTTAN(m_##variablePart##PreviousPageButton) \
 new WText(" Page: ", Wt::XHTMLUnsafeText, this); \
 DBWTW_MAKE_SPINBOX(m_##variablePart##PageSpinbox) \
 new WText(" ", Wt::XHTMLUnsafeText, this); \
-WPushButton *variablePart##goToPageButton = new WPushButton("Go", this); \
-variablePart##goToPageButton->clicked().connect(this, &DirectoryBrowsingWtWidget::goToPageButtonClicked); \
+m_##variablePart##PageGoButton = new WPushButton("Go", this); \
+m_##variablePart##PageGoButton->clicked().connect(this, &DirectoryBrowsingWtWidget::goToPageButtonClicked); \
 WText *variablePart##splaination = new WText(" of ??? pages. ", this); \
 variablePart##splaination->setToolTip("It's an optimization for the software to not know how many pages there are in total. This may be fixed in the future, but is low as fuck priority", Wt::XHTMLUnsafeText); \
 m_##variablePart##NextPageButton = new WPushButton("Next Page", this); \
-m_##variablePart##NextPageButton->clicked().connect(this, &DirectoryBrowsingWtWidget::nextPageButtonClicked); \
-m_##variablePart##NextPageButton->disable();
+m_##variablePart##NextPageButton->clicked().connect(this, &DirectoryBrowsingWtWidget::nextPageButtonClicked);
 //new WText(" ", this);
 
-DirectoryBrowsingWtWidget::DirectoryBrowsingWtWidget(const QString &absolutePathToIterate, /*int pageOfDirectoryToShow,*/ const string &theInternalPathCleanedStdString, WContainerWidget *parent)
+DirectoryBrowsingWtWidget::DirectoryBrowsingWtWidget(WContainerWidget *parent)
     : WContainerWidget(parent)
     , m_SorryNoPage(0)
-    , m_AbsolutePathToIterate(absolutePathToIterate)
-    , m_TheInternalPathCleanedStdString(theInternalPathCleanedStdString)
-    , m_DirInternalPath(WApplication::instance()->internalPath())
-    , m_DirIteratorPosition_ZeroIndexBased(0)
-    , m_DirCurrentPage_OneIndexBased(/*(pageOfDirectoryToShow > 0) ? pageOfDirectoryToShow : */ 1)
+    , m_AbsolutePathToIterate("../../") //just an unselectable default so we know to actually show the dir and that the browser "bacK" button wasn't hit. related line is at #OFIUASODIUAD
+    , m_DirIterator(0)
 {
+    m_UpOneFolderAnchor = new WAnchor(this);
+    m_UpOneFolderAnchor->setTextFormat(Wt::XHTMLUnsafeText);
+    m_UpOneFolderAnchor->setText("Go up one folder level");
+
+    new WBreak(this);
     DBWTW_MAKE_PAGE_SELECTION_ROW(Top)
 
     new WBreak(this);
     m_DirectoryPagesStack = new WStackedWidget(this);
 
-    new WBreak(this);
     DBWTW_MAKE_PAGE_SELECTION_ROW(Bottom)
+}
+void DirectoryBrowsingWtWidget::showDirectoryContents(const QString &absolutePathToIterate, const QString &theInternalPathCleanedQString)
+{
+    if(m_AbsolutePathToIterate == absolutePathToIterate) //#OFIUASODIUAD
+        return; //browser "back" button most likely pressed, so leave it at whatever page etc
 
-    createDirIterator();
+    m_DirectoryPagesOneBasedIndexHash.clear();
+    m_DirectoryPagesStack->clear();
+    m_AbsolutePathToIterate = absolutePathToIterate;
+    m_TheInternalPathCleanedStdString = theInternalPathCleanedQString.toStdString();
+    m_DirCurrentPage_OneIndexBased = (/*(pageOfDirectoryToShow > 0) ? pageOfDirectoryToShow : */ 1);
 
+    const QString upOneLevelCleaned = QDir::cleanPath(theInternalPathCleanedQString + "/../");
+    std::string upOneLevel = upOneLevelCleaned.toStdString();
+    if(upOneLevel == "/")
+    {
+        upOneLevel = HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN;
+    }
+    else if(upOneLevel == "/..")
+    {
+        upOneLevel = "/";
+    }
+    m_UpOneFolderAnchor->setLink(WLink(WLink::InternalPath, upOneLevel));
+
+    setPreviousPageButtonsDisabled(true);
+    setSpinboxesDisabled(false);
+    setNextPageButtonsDisabled(true);
+
+    resetDirIterator();
     displayCurrentPage();
 }
 DirectoryBrowsingWtWidget::~DirectoryBrowsingWtWidget()
 {
-    delete m_DirIterator;
-}
-void DirectoryBrowsingWtWidget::createDirIterator()
-{
-    //TODOreq: when ?page=>1, call a bunch of .nexts to get it in the right place -- TODOreq: if next returns false before then, 404
-    m_DirIterator = new QDirIterator(m_AbsolutePathToIterate, (QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs | QDir::Hidden));
+    delete m_UpOneFolderAnchor;
+    if(m_DirIterator)
+        delete m_DirIterator;
 }
 void DirectoryBrowsingWtWidget::resetDirIterator()
 {
-    delete m_DirIterator;
-    createDirIterator();
+    if(m_DirIterator)
+        delete m_DirIterator;
+    m_DirIterator = new QDirIterator(m_AbsolutePathToIterate, (QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs | QDir::Hidden));
     m_DirIteratorPosition_ZeroIndexBased = 0;
 }
 void DirectoryBrowsingWtWidget::displayCurrentPage()
@@ -82,7 +107,7 @@ void DirectoryBrowsingWtWidget::displayCurrentPage()
 
     //Enable/Disable Previous/Next buttons depending...
     setPreviousPageButtonsDisabled(m_DirCurrentPage_OneIndexBased == 1);
-    setPageSpinBoxValues(m_DirCurrentPage_OneIndexBased); //TODOreq: set to ?page=X, and maybe only if it exists...
+    setPageSpinBoxValues(m_DirCurrentPage_OneIndexBased);
 
     setNextPageButtonsDisabled(false);
 
@@ -153,12 +178,10 @@ void DirectoryBrowsingWtWidget::buildOnePageOf100dirEntriesAndPresentAndCacheIt_
     //rare-ish case wehre we had an exactly divisible by 100 amount of entries and they tried to view 'next page' and it's empty..
     if(shownSoFar == 0 && m_DirCurrentPage_OneIndexBased > 1) //if current page == 1, then the dir was just empty (but my git shit wouldn't have gotten it then, so that's extremely unlikely to ever happen!)...
     {
-        //not an entry on new page, set it to page=nope
-        //WApplication::instance()->setInternalPath(m_DirInternalPath + "?page=nope", false); //TODOreq: detect page=nope pasted into url bar as soon as possible and yea don't show or try to show anything
-        //TODOreq: oops sorry no page
-        //TODOreq: enable previous page button (back button will also work pretty sure)
+        //no entry on new page
         m_SorryNoPage = new WText("You've reached the end of this directory. This may seem strange, but we had no way of knowing there wasn't another page until just now. Go ahead and hit that previous button.", m_DirectoryPagesStack);
         m_DirectoryPagesStack->setCurrentWidget(m_SorryNoPage);
+
         setNextPageButtonsDisabled(true);
         delete currentPage;
         return;
@@ -171,6 +194,10 @@ void DirectoryBrowsingWtWidget::buildOnePageOf100dirEntriesAndPresentAndCacheIt_
 
         //since we didn't see how many we present per page, we know that there isn't another page (TODOoptional: maybe just leave it enabled because if they're watching my vidya shit and i add a file or a group of files, they could then press next and shit would just show up (i think, depends on qdiriterator but yea it makes sense since qdiriterator just keeps going until no more)... whereas now they'd need to hard refresh and yea~)
         setNextPageButtonsDisabled(true);
+        if(m_DirCurrentPage_OneIndexBased == 1)
+        {
+            setSpinboxesDisabled(true);
+        }
     }
 
     //at least one item on new page
@@ -227,6 +254,13 @@ void DirectoryBrowsingWtWidget::setPreviousPageButtonsDisabled(bool disabled)
 {
     m_TopPreviousPageButton->setDisabled(disabled);
     m_BottomPreviousPageButton->setDisabled(disabled);
+}
+void DirectoryBrowsingWtWidget::setSpinboxesDisabled(bool disabled)
+{
+    m_TopPageSpinbox->setDisabled(disabled);
+    m_BottomPageSpinbox->setDisabled(disabled);
+    m_TopPageGoButton->setDisabled(disabled);
+    m_BottomPageGoButton->setDisabled(disabled);
 }
 void DirectoryBrowsingWtWidget::setPageSpinBoxValues(int newValue)
 {

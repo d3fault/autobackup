@@ -30,8 +30,10 @@ private:
     std::string readFileIntoString(const char *filename);
 signals:
     void fatalErrorDetected();
+    void stopped();
 public slots:
     void initializeAndStart(int argc, char **argv);
+    void stop();
     void handleO(const QString &msg);
     void handleE(const QString &msg);
 };

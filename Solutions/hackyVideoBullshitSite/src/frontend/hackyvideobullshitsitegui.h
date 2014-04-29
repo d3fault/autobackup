@@ -4,6 +4,7 @@
 #include <Wt/WServer>
 #include <Wt/WApplication>
 #include <Wt/WContainerWidget>
+#include <Wt/WStackedWidget>
 
 #include "../lastmodifiedtimestampsandpaths.h"
 #include "../backend/adimagegetandsubscribemanager.h"
@@ -36,10 +37,12 @@ private:
 
     WContainerWidget *m_AdImagePositionPlaceholder;
     WContainerWidget *m_AdImageContainer; //such an angry image container
-    WContainerWidget *m_ContentsHeaderRow;
     WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
+    WContainerWidget *m_TimelineAndDirectoryLogicalContainer;
+    WContainerWidget *m_CookieCrumbContainerWidget;
+    WStackedWidget *m_TimelineAndDirectoryBrowsingStack;
     TimeLineWtWidget *m_TimeLineMyBrainWidget;
     DirectoryBrowsingWtWidget *m_BrowseMyBrainDirWidget;
 
@@ -49,13 +52,9 @@ private:
     void handleNextVideoClipButtonClicked();
     std::string determineLatestVideoSegmentPathOrUsePlaceholder();
 
-    void embedBasedOnMimeType(const std::string &mimeType);
-    void embedPicture(const std::string &mimeType, const QString &filename);
-    void embedVideoFile(const std::string &mimeType, const QString &filename);
-    void embedAudioFile(const std::string &mimeType, const QString &filename);
-
-    string embedBasedOnFileExtensionAndReturnMimeType(const QString &filename);
-
+    void createCookieCrumbsFromPath(/*const std::string &internalPathInclFilename*/);
+    void newTimelineIfNeededAndBringToFront();
+    void deleteTimelineAndDirectoryBrowsingStackIfNeeded();
     void hvbs404();
     void setMainContent(WWidget *contentToSet);
 };

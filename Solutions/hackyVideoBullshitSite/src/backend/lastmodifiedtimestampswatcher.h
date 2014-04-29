@@ -24,15 +24,18 @@ private:
     QFileSystemWatcher *m_LastModifiedTimestampsFileWatcher;
     QString m_LastModifiedTimestampsFile;
     QAtomicPointer<LastModifiedTimestampsAndPaths> m_CurrentTimestampsAndPathsAtomicPointer;
+    QTimer *m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer;
     QTimer *m_DeleteInFiveMinsTimer;
     QQueue<LastModifiedTimestampsAndPaths*> *m_TimestampsAndPathsQueuedForDelete;
 
     void deleteOneTimestampAndPathQueuedForDelete();
 signals:
     void e(const QString &);
+    void startedWatchingLastModifiedTimestampsFile();
 public slots:
     void startWatchingLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
 private slots:
+    void readLastModifiedTimestampsFile();
     void handleLastModifiedTimestampsChanged();
     void handleDeleteInFiveMinsTimerTimedOut();
 };

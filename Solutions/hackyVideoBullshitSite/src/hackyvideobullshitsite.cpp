@@ -98,8 +98,7 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
     m_ObjectOnThreadSynchronizer->addObjectToSynchronizer(m_WtControllerAndStdOutOwnerThread);
     m_WtControllerAndStdOutOwnerThread->start(); //yes that backend thread might start and emit readyForConnections, but 'this' thread won't process it until our constructor is finished!
 
-    //don't have any that aren't dependent on the whole being ready?, simply don't connect :).
-    connect(m_AdImageGetAndSubscribeManagerThread, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleAdImageGetAndSubscribeManagerIsReadyForConnections()));
+    //don't have any that aren't dependent on the whole being ready?, simply don't connect :). connect(m_AdImageGetAndSubscribeManagerThread, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleAdImageGetAndSubscribeManagerIsReadyForConnections()));
     m_ObjectOnThreadSynchronizer->addObjectToSynchronizer(m_AdImageGetAndSubscribeManagerThread);
     m_AdImageGetAndSubscribeManagerThread->start();
 
@@ -121,13 +120,12 @@ void HackyVideoBullshitSite::handleWtControllerAndStdOutOwnerIsReadyForConnectio
     connect(this, SIGNAL(e(QString)), wtControllerAndStdOutOwner, SLOT(handleE(QString)));
     connect(this, SIGNAL(o(QString)), wtControllerAndStdOutOwner, SLOT(handleO(QString)));
     connect(wtControllerAndStdOutOwner, SIGNAL(fatalErrorDetected()), this, SLOT(handleFatalError()));
+    connect(wtControllerAndStdOutOwner, SIGNAL(stopped()), QCoreApplication::instance(), SLOT(quit()));
 }
 void HackyVideoBullshitSite::handleVideoSegmentsImporterFolderWatcherReadyForConnections()
 {
     VideoSegmentsImporterFolderWatcher *videoSegmentsImporterFolderWatcher = m_VideoSegmentsImporterFolderWatcherThread->getObjectPointerForConnectionsOnly();
-    //connect(videoSegmentsImporterFolderWatcher, &VideoSegmentsImporterFolderWatcher::d, this, &HackyVideoBullshitSiteBackend::d); //hmm now d seems too close to d_ptr xD
     connect(videoSegmentsImporterFolderWatcher, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
-    connect(this, SIGNAL(finishStoppingRequested()), videoSegmentsImporterFolderWatcher, SLOT(finishStopping())); //TODOreq: should maybe be blocking queued, but i don't think that's necessary since i think QThread::quit is an event and that means that it won't be processed until after finishStopping... finishes. now terminate on the other hand is a different story :-P
     QMetaObject::invokeMethod(videoSegmentsImporterFolderWatcher, "initializeAndStart", Q_ARG(QString, m_VideoSegmentsImporterFolderToWatch), Q_ARG(QString, m_VideoSegmentsImporterFolderScratchSpace), Q_ARG(QString, m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo));
 }
 void HackyVideoBullshitSite::handleLastModifiedTimestampsWatcherReadyForConnections()
@@ -139,28 +137,33 @@ void HackyVideoBullshitSite::handleLastModifiedTimestampsWatcherReadyForConnecti
     WtControllerAndStdOutOwner::setTimestampsAndPathsSharedAtomicPointer(lastModifiedTimestampsWatcher->getTimestampsAndPathsAtomicPointer());
     QMetaObject::invokeMethod(lastModifiedTimestampsWatcher, "startWatchingLastModifiedTimestampsFile", Q_ARG(QString, m_LastModifiedTimestampsFile));
 }
-void HackyVideoBullshitSite::handleAdImageGetAndSubscribeManagerIsReadyForConnections()
+void HackyVideoBullshitSite::handleWatchingLastModifiedTimestampsFileStarted()
 {
-    //derp passes itself to WtControllerAndStdOutOwner, but we dunno if he's ready yet :-P (FUKKEN SOLVED FINALLY <3 <3 <3)
-
-    connect(this, SIGNAL(beginStoppingRequested()), m_AdImageGetAndSubscribeManagerThread->getObjectPointerForConnectionsOnly(), SLOT(beginStopping()));
+    QMetaObject::invokeMethod(m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly(), "initializeAndStart", Q_ARG(int, m_ArgC), Q_ARG(char **, m_ArgV));
 }
+//void HackyVideoBullshitSite::handleAdImageGetAndSubscribeManagerIsReadyForConnections()
+//{
+    //derp passes itself to WtControllerAndStdOutOwner, but we dunno if he's ready yet :-P (FUKKEN SOLVED FINALLY <3 <3 <3)
+//}
 void HackyVideoBullshitSite::handleAllBackendObjectsOnThreadsReadyForConnections()
 {
     WtControllerAndStdOutOwner::setAdImageGetAndSubscribeManager(m_AdImageGetAndSubscribeManagerThread->getObjectPointerForConnectionsOnly());
     WtControllerAndStdOutOwner::setAirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL(m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
     WtControllerAndStdOutOwner::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended(m_MyBrainArchiveBaseDir_NoSlashAppended);
 
-    QMetaObject::invokeMethod(m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly(), "initializeAndStart", Q_ARG(int, m_ArgC), Q_ARG(char **, m_ArgV));
+    LastModifiedTimestampsWatcher *lastModifiedTimestampsWatcher = m_LastModifiedTimestampsWatcherThread->getObjectPointerForConnectionsOnly();
+    connect(lastModifiedTimestampsWatcher, SIGNAL(startedWatchingLastModifiedTimestampsFile()), this, SLOT(handleWatchingLastModifiedTimestampsFileStarted()));
 
-    connect(this, SIGNAL(beginStoppingRequested()), QCoreApplication::instance(), SLOT(quit()), static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::UniqueConnection));
+    //could have done both of these connections in their respective "ready for connections" slots, but i want to give ad image manager a slight headstart. it's an optimization to do so, but not necessary
+    connect(this, SIGNAL(beginStoppingRequested()), m_AdImageGetAndSubscribeManagerThread->getObjectPointerForConnectionsOnly(), SLOT(beginStopping()));
+    connect(this, SIGNAL(beginStoppingRequested()), m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly(), SLOT(stop()));
 }
 void HackyVideoBullshitSite::handleStandardInput(const QString &line)
 {
     QString lineToLower = line.toLower();
     if(lineToLower == "h")
     {
-        emit o("eat shit");
+        emit o("Q - Quit");
         return;
     }
     if(lineToLower == "q")

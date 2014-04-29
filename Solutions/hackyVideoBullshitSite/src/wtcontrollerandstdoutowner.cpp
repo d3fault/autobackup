@@ -115,6 +115,12 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
     }
     handleO("wt server started");
 }
+void WtControllerAndStdOutOwner::stop()
+{
+    if(m_WtServer)
+        m_WtServer->stop();
+    emit stopped();
+}
 void WtControllerAndStdOutOwner::handleO(const QString &msg)
 {
     m_StdOut << msg << endl;

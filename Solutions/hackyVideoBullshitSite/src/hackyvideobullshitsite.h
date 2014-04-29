@@ -53,9 +53,10 @@ signals:
     void beginStoppingRequested();
 private slots:
     void handleWtControllerAndStdOutOwnerIsReadyForConnections();
-    void handleAdImageGetAndSubscribeManagerIsReadyForConnections();
+    //void handleAdImageGetAndSubscribeManagerIsReadyForConnections();
     void handleVideoSegmentsImporterFolderWatcherReadyForConnections();
     void handleLastModifiedTimestampsWatcherReadyForConnections();
+    void handleWatchingLastModifiedTimestampsFileStarted();
 
     void handleAllBackendObjectsOnThreadsReadyForConnections();
 

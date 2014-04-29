@@ -26,12 +26,7 @@ struct LastModifiedTimestampsAndPaths
     { }
     ~LastModifiedTimestampsAndPaths()
     {
-        QListIterator<TimestampAndPath*> sortedTimestampAndPathFlatListIterator(*SortedTimestampAndPathFlatList);
-        while(sortedTimestampAndPathFlatListIterator.hasNext())
-        {
-            TimestampAndPath *toDelete = sortedTimestampAndPathFlatListIterator.next();
-            delete toDelete;
-        }
+        qDeleteAll(SortedTimestampAndPathFlatList->begin(), SortedTimestampAndPathFlatList->end());
         delete SortedTimestampAndPathFlatList;
         delete PathsIndexIntoFlatListHash;
     }

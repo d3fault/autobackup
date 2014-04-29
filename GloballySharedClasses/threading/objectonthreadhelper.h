@@ -4,6 +4,8 @@
 #include <QThread>
 //#include <QStack> //destructor does LIFO, so i should too
 
+//TODOoptional: something like, ObjectOnThreadManager::addObjectOnThread(ObjectType, "slotToBeNotifiedWhenObjectIsReadyForConnections"); can assume that slot is on the parent of ObjectOnThreadManager, or can have that be an argument, or could do both via overloads :-P. I guess the slot would expect a QObject*, but maybe I can figure out that casting of it to the actual type for schmexiness
+
 //This base class is just a hack around MOC not playing nicely with templates
 class ObjectOnThreadHelperBase : public QThread
 {

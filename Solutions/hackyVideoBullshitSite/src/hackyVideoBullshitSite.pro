@@ -36,7 +36,8 @@ HEADERS += \
     backend/lastmodifiedtimestampswatcher.h \
     ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h \
     lastmodifiedtimestampsandpaths.h \
-    wtcontrollerandstdoutowner.h
+    wtcontrollerandstdoutowner.h \
+    frontend/hvbsshared.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/

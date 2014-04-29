@@ -4,6 +4,7 @@
 #include <QMapIterator>
 #include <QScopedPointer>
 #include <QFileSystemWatcher>
+#include <QStringList>
 
 #include "lastmodifiedtimestampssorter.h"
 
@@ -11,9 +12,14 @@ LastModifiedTimestampsWatcher::LastModifiedTimestampsWatcher(QObject *parent)
     : QObject(parent)
     , m_LastModifiedTimestampsFileWatcher(0)
     , m_CurrentTimestampsAndPathsAtomicPointer(0)
+    , m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer(new QTimer(this))
     , m_DeleteInFiveMinsTimer(new QTimer(this))
     , m_TimestampsAndPathsQueuedForDelete(0)
 {
+    m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->setSingleShot(true);
+    m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->setInterval(1000);
+    connect(m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer, SIGNAL(timeout()), this, SLOT(readLastModifiedTimestampsFile()));
+
     m_DeleteInFiveMinsTimer->setSingleShot(true);
     m_DeleteInFiveMinsTimer->setInterval(5*(1000*60));
     connect(m_DeleteInFiveMinsTimer, SIGNAL(timeout()), this, SLOT(handleDeleteInFiveMinsTimerTimedOut()));
@@ -59,14 +65,11 @@ void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(cons
     {
         m_TimestampsAndPathsQueuedForDelete = new QQueue<LastModifiedTimestampsAndPaths*>();
     }
+    handleLastModifiedTimestampsChanged(); //populate at startup
+    emit startedWatchingLastModifiedTimestampsFile();
 }
-void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged()
+void LastModifiedTimestampsWatcher::readLastModifiedTimestampsFile()
 {
-    //TO DOnereq: if i move an already finished version overwriting the old one, the old one is considered removed and will no longer be watched and needs to be re-added
-    m_LastModifiedTimestampsFileWatcher->addPath(m_LastModifiedTimestampsFile);
-    //TODOreq: we either need to ensure that the .lastModifiedTimestamps file is only ever "moved onto" (rename already finished file to it), or we can start a singleshot timer to come back in 5 seconds (and perhaps keep restarting it to 5 seconds xD? that might be expensive though (but safer)) so that the writes all finish before we begin sorting. "moving onto" method sounds easier/safer tbh
-    //TODOoptional: could check to see if our path is still being watched. if it is, we check back in 5 seconds or so. if it ISN'T, we know that a move/overwrite method was used and re-add it. best of both worlds...
-
     LastModifiedTimestampsSorter lastModifiedTimestampsSorter(this);
     int totalPathsCount = 0;
     QScopedPointer<SortedMapOfListsOfPathsPointerType> sortedMap(lastModifiedTimestampsSorter.sortLastModifiedTimestamps(m_LastModifiedTimestampsFile, &totalPathsCount)); //the values stay alive when the pointer goes out of scope, which is good :)
@@ -109,11 +112,26 @@ void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged()
     }
     LastModifiedTimestampsAndPaths *oldTimestampsAndPaths = m_CurrentTimestampsAndPathsAtomicPointer.fetchAndStoreOrdered(newTimestampsAndPaths); //TODOoptimization: might not need ordered, idfk
     if(!oldTimestampsAndPaths)
-        return;
+        return; //first time, nothing to queue for delete
     bool startTimerYea = m_TimestampsAndPathsQueuedForDelete->isEmpty();
     m_TimestampsAndPathsQueuedForDelete->enqueue(oldTimestampsAndPaths);
     if(startTimerYea) //don't double start (restart)
         m_DeleteInFiveMinsTimer->start();
+}
+void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged()
+{
+    //TO DOnereq: if i move an already finished version overwriting the old one, the old one is considered removed and will no longer be watched and needs to be re-added
+    if(!m_LastModifiedTimestampsFileWatcher->files().isEmpty())
+    {
+        //not empty means that the "move" method wasn't used, so we want to wait 1 second after the last 'change' is seen before we start reading it
+        //nvm we do want to restart it over and over: if(!m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->isActive())
+        m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->start();
+        return;
+    }
+    m_LastModifiedTimestampsFileWatcher->addPath(m_LastModifiedTimestampsFile);
+    if(m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->isActive()) //wtf? this would mean they did an append AND an overwrite/rename-onto
+        return; //just return because yea the timeout will do it
+    readLastModifiedTimestampsFile();
 }
 void LastModifiedTimestampsWatcher::handleDeleteInFiveMinsTimerTimedOut()
 {

@@ -1,15 +1,25 @@
 #include "timelinewtwidget.h"
 
 #include <Wt/WApplication>
-#include <Wt/WGroupBox>
-#include <Wt/WButtonGroup>
-#include <Wt/WRadioButton>
+#include <Wt/WPushButton>
 #include <Wt/WBreak>
 #include <Wt/WAnchor>
 #include <Wt/WLink>
 #include <Wt/WText>
+#include <Wt/WDateTime>
+#include <Wt/Utils>
+#include <Wt/WFileResource>
+#include <Wt/WAudio>
+#include <Wt/WVideo>
+#include <Wt/WImage>
 
 #include <QFileInfo>
+#include <QTextStream>
+#include <QStringList>
+
+#include "hvbsshared.h"
+
+#define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
 
 //TODOreq: renaming an item will make old links no longer valid, the system needs to not break when that happens. 404'ing is okay, but it would be even better if a nice message was presented (telling the user it wasn't their fault, there must have been a rename). this isn't that common of a case anyways (but i also don't want to tell myself not to rename just to keep urls valid -_- (but i also want to keep urls valid! fucking hell. i need a rename-aware system but that's gotta be revision-aware and yea not up for that just yet))
 
@@ -18,38 +28,27 @@
 
 //I feel guilty for enjoying coding this. It's not like I've been, you know, putting off coding it for... well over 3 years... (MusicTimeline became ...)
 QAtomicPointer<LastModifiedTimestampsAndPaths> *TimeLineWtWidget::m_LastModifiedTimestampsAndPaths = 0; //segfault if not set. performance performance performance! vroom.
-QString TimeLineWtWidget::m_MyOwnInternalPath = "";
 void TimeLineWtWidget::setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer)
 {
     m_LastModifiedTimestampsAndPaths = lastModifiedTimestampsSharedAtomicPointer;
-}
-void TimeLineWtWidget::setTimelineInternalPath(const QString &timelineInternalPath)
-{
-    m_MyOwnInternalPath = timelineInternalPath;
 }
 TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
     : WContainerWidget(parent)
     , m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory(0)
 {
-    //TODOreq: bread crumb paths lead to dir view
-    //TODOreq: dir view and timeline(item) view both in stack, so hitting back goes back to proper page of dir view
-    //TODOreq: first, last, next, previous (chronological)
     //TODOoptional: next, previous (directory alphabetical)
 
     setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
 
     m_EarliestAnchor = new WAnchor(this);
     m_EarliestAnchor->setTextFormat(Wt::PlainText);
+    m_EarliestAnchor->setDisabled(true);
     new WText(" - ", Wt::XHTMLUnsafeText, this);
     m_PreviousAnchor = new WAnchor(this);
     m_PreviousAnchor->setTextFormat(Wt::PlainText);
-    m_PreviousAnchor->setDisabled(true);
     new WText(" - ", Wt::XHTMLUnsafeText, this);
-    m_PermalinkToThisAnchor = new WAnchor(this);
-    m_PermalinkToThisAnchor->setTextFormat(Wt::PlainText);
-    new WText(" - ", Wt::XHTMLUnsafeText, this);
-    m_RandomAnchor = new WAnchor(this);
-    m_RandomAnchor->setTextFormat(Wt::PlainText);
+    WAnchor *randomAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE), "Random Point In Time", this);
+    randomAnchor->decorationStyle().setForegroundColor(WColor(0,255,0)); //bitches need visual cues because bitches is dumb as fuck n shit
     new WText(" - ", Wt::XHTMLUnsafeText, this);
     m_NextAnchor = new WAnchor(this);
     m_NextAnchor->setTextFormat(Wt::PlainText);
@@ -57,32 +56,37 @@ TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
     m_LatestAnchor = new WAnchor(this);
     m_LatestAnchor->setTextFormat(Wt::PlainText);
     m_LatestAnchor->setDisabled(true);
-    new WText(" - ", Wt::XHTMLUnsafeText, this);
+
+    new WBreak(this);
+
+    m_ContentsContainer = new WContainerWidget(this);
 }
-//if handleInternalPathChanged takes more than 5 minutes to execute (rofl), we will segfault
-void TimeLineWtWidget::handleInternalPathChanged(const QString &newInternalPath)
+//if redirectToRandomPointInTimeline takes more than 5 minutes to execute (rofl), we will segfault
+void TimeLineWtWidget::redirectToRandomPointInTimeline()
 {
-    if(newInternalPath == m_MyOwnInternalPath)
-    {
-        //not specifying == random point in time <3
-        LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = m_LastModifiedTimestampsAndPaths->loadAcquire(); //pointer only guaranteed to be valid for minimum 5 minutes after the loadAquire (rofl so ugly hack but idgaf), so never keep it around, always load again <3
-        WApplication *wApplication = WApplication::instance();
-        unsigned randomPointInTimeline = (wApplication->rawUniqueId() % sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->size()); //TODOoptiona; random_int_distribution might be warranted here, since it's so big... but it's not critical or anything so fuck it for now
+    LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = m_LastModifiedTimestampsAndPaths->loadAcquire(); //pointer only guaranteed to be valid for minimum 5 minutes after the loadAquire (rofl so ugly hack but idgaf), so never keep it around, always load again <3
+    static unsigned int randomSeed = 0; //not thread safe and VERY likely to get weird undefined values, but actually it doesn't matter at all since it's just being used for a qsrand call (all undefined results would still fall within the range of the unsigned int, and hell i could even argue that the thread unsafety actually ADDS to the randomness muahahaha), fuck the police :). this is without a doubt my favorite hack i've ever done... so ugly and yet still "safe" in an awesome way. come to think of it, i don't even need the datetime or raw unique id shit anymore...
+    WApplication *wApplication = WApplication::instance();
+    qsrand(++randomSeed);
+    //qsrand(wApplication->rawUniqueId() + static_cast<unsigned int>(WDateTime::currentDateTime().toTime_t()) + (++randomSeed)); //TODOoptimization: since q[s]rand are threadsafe, they probably use locking and so are a bottleneck. i wish i could store a boost rng in thread-specific-storage just like WApplication::instance() is. yea just decided it's worth asking on wt forums <3, would have tons of good uses aside from just this
+    unsigned randomPointInTimeline = (qrand() % sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->size()); //TODOoptiona; random_int_distribution might be warranted here, since it's so big... but it's not critical or anything so fuck it for now
 
-        wApplication->setInternalPath(sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(randomPointInTimeline)->Path, true); //TODOreq: maybe redirect instead of setInternalPath? reason = seo. but tbh idfk...
-        return;
-    }
+    wApplication->setInternalPath(sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(randomPointInTimeline)->Path, true); //TODOreq: maybe redirect instead of setInternalPath? reason = seo. but tbh idfk...
+}
+//if presentFile takes more than 5 minutes to execute (rofl), we will segfault
+void TimeLineWtWidget::presentFile(const std::string &relativePath_aka_internalPath, const QString &absolutePath /*already checked for existence on fs*/, const std::string &myBrainItemFilenameOnlyStdString)
+{
+    m_ContentsContainer->clear();
 
-    //getting the item is easy since we already have it's path (TODOreq: make sure it exists before proceeding), but we still need to find the "previous" and "next" (TODOreq: both can not exist) in our timestamp datathing
     LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = m_LastModifiedTimestampsAndPaths->loadAcquire();
-    if(!sortedLastModifiedTimestamps) //TODOreq: make sure it's ready before starting wt, blockingqueued bullshit
+    if(!sortedLastModifiedTimestamps)
     {
-        //500 internal server error
+        new WText("500 internal server error", m_ContentsContainer);
         return;
     }
     if(m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory != sortedLastModifiedTimestamps)
     {
-        m_LatestAnchor->disable(); //when shit changes, the latest anchor is stale (unless timestamp file wasn't updated properly)
+        m_LatestAnchor->disable(); //when shit changes, the latest anchor is stale (unless timestamp file wasn't updated properly). disabling it makes it get an up to date value
         m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory = sortedLastModifiedTimestamps;
     }
     //thinking out loud (typing out loud (typing my thoughts)): lol mom interrupted me and then i had lunch since writing that prefix, uhh what was i on about? oh right i need to be able to look up based on path and timestamp, so wtf data structure am i going to use?!?!? i also need to be able to access it by index so i can use the 'random' functionality. that's 3 primary keys by my count, wtfz!?!? simply doing it is easy, but doing it fast/right will require some thinkan. a QList<teimstompIeteim> would give me random and in order tiemstompz, but then looking up by path is expensive. a qhash<path> gives me fast lookups by path, but [unless i do a linked list of em (next,previous)] doesn't give me in order shiz. i either can't have my cookie and eat it too, or perhaps i should just use two lists!?!? i don't need to do anything with the path (since it is... a path) except find out previous and next. so wtf i am contradicting myself here: find by path = use an hash, but hash has no ordering so fuck. also doesn't appear that hash can be accessed index-wise so now random'ing is fucked. a hash<path,int> containing just an index into a sorted list as it's value would work, so long as both lists are gotten via the same loadAquire call (and are therefore synchronized (two back to back loadAquires wouldn't be)... and idk it's just kinda like i'm maintaining a whole nother list just to use it as a primary key. wtf was that shit i read about having something with two primary keys? there's generic containers for that i believe... *turns on internet box*... now hmm do i want boost.multiindex or boost.bimap... they sound the same to me except apparently multiindex depends on bimap... so.... *reads moar*...
@@ -93,18 +97,19 @@ void TimeLineWtWidget::handleInternalPathChanged(const QString &newInternalPath)
 
     //we've already QDir::clean'd it and established that it starts with our internal path, but the timeline internal path has not been chopped off yet...
 
+    //old (file already verified to exist on fs):
     //this is probably a faster 404 check than a fs read, but i could be wrong. i think it'll be faster only because it's not a kernel call. i'm ALREADY doing an atomic load, so that [kernel call] is free. i'd imagine that the fs cache (kernel) is a hash as well, so the speeds would be identical aside from the kernel call (which i've heard are expensive but honestly i have no clue :-P (expensive is a relative word, so relative to WHAT!?!? blah now i see why premature optimization is the biggest waste of time ever. so many nerds on the internet describing operations as "expensive", but they give little/no comparison/relativity)). i could be wrong and the fs cache check could still be faster, perhaps because it uses an algorithm more suited to directories/files (it walks the directories? idfk. but i mean a fucking hash should be "splitting" (sharding) after the very first character, so shit maybe my hash is way faster :)
-    uint indexIntoFlatSortedList;
+
     try
     {
-        indexIntoFlatSortedList = sortedLastModifiedTimestamps->PathsIndexIntoFlatListHash->at(newInternalPath.toStdString());
+        uint indexIntoFlatSortedList = sortedLastModifiedTimestamps->PathsIndexIntoFlatListHash->at(relativePath_aka_internalPath);
 
         if(indexIntoFlatSortedList > 0)
         {
             //there is a 'previous', so yea make previous and maybe make earliest
             TimestampAndPath *previousTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(indexIntoFlatSortedList-1);
             const std::string &previousPath = previousTimestampAndPath->Path;
-            QFileInfo previousPathFileInfo(QString::fromStdString(previousPath)); //TODOreq: find out if these touch the hard drive. if they do, i'll chop off the fucking filename myself!
+            QFileInfo previousPathFileInfo(QString::fromStdString(previousPath)); //TODOreq (since they are relative and current dir isn't where they live, it's very unlikely (but they might still TRY fff (had it marked as done, now removed again))): find out if these touch the hard drive. if they do, i'll chop off the fucking filename myself!
             m_PreviousAnchor->setDisabled(false);
             m_PreviousAnchor->setLink(WLink(WLink::InternalPath, previousPath));
             m_PreviousAnchor->setText(previousPathFileInfo.fileName().toStdString());
@@ -131,9 +136,6 @@ void TimeLineWtWidget::handleInternalPathChanged(const QString &newInternalPath)
             m_EarliestAnchor->setLink(WLink());
             m_EarliestAnchor->setDisabled(true);
         }
-
-        //TODOreq: present current
-
         if(indexIntoFlatSortedList < static_cast<uint>(sortedLastModifiedTimestamps->PathsIndexIntoFlatListHash->size()-1))
         {
             //there is a 'next', so [...]
@@ -168,7 +170,149 @@ void TimeLineWtWidget::handleInternalPathChanged(const QString &newInternalPath)
     }
     catch(std::out_of_range &pathNotInHashException)
     {
-        //TODOreq: 404, the file may have been renamed...
+        //the file exists on the fs, but not yet in the lastModifiedTimestamps file
+        new WText("Please wait a few moments and try your request again", m_ContentsContainer);
         return;
     }
+
+
+    //now that the previous/next/etc buttons have been enabled/disabled, time to present the item
+    WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentsContainer);
+    new WBreak(m_ContentsContainer);
+
+    const std::string &mimeType = embedBasedOnFileExtensionAndReturnMimeType(absolutePath);
+
+    WFileResource *downloadResource = new WFileResource(mimeType, absolutePath.toStdString(), downloadButton);
+    downloadResource->suggestFileName(myBrainItemFilenameOnlyStdString, WResource::Attachment);
+    downloadButton->setResource(downloadResource);
+}
+void TimeLineWtWidget::embedPicture(const string &mimeType, const QString &filename)
+{
+    const std::string &filenameStdString = filename.toStdString();
+    WAnchor *pictureAnchor = new WAnchor();
+    WFileResource *pictureResource = new WFileResource(mimeType, filenameStdString, pictureAnchor);
+    pictureAnchor->setLink(WLink(pictureResource));
+    pictureAnchor->setImage(new WImage(WLink(pictureResource), filenameStdString));
+    pictureAnchor->setTarget(TargetNewWindow);
+    setMainContent(pictureAnchor);
+}
+void TimeLineWtWidget::embedVideoFile(const string &mimeType, const QString &filename)
+{
+    WContainerWidget *videoContainer = new WContainerWidget();
+    WVideo *videoPlayer = new WVideo(videoContainer);
+    setMainContent(videoContainer);
+    WFileResource *videoFileResource = new WFileResource(mimeType, filename.toStdString(), videoPlayer);
+    videoFileResource->setDispositionType(WResource::Inline);
+    videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
+    videoPlayer->addSource(WLink(videoFileResource), mimeType);
+    videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
+}
+void TimeLineWtWidget::embedAudioFile(const string &mimeType, const QString &filename)
+{
+    WContainerWidget *audioPlayerContainer = new WContainerWidget();
+    WAudio *audioPlayer = new WAudio(audioPlayerContainer);
+    setMainContent(audioPlayerContainer);
+    audioPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
+    WFileResource *audioFileResource = new WFileResource(mimeType, filename.toStdString(), audioPlayer);
+    audioPlayer->addSource(WLink(audioFileResource), mimeType);
+    audioPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_AUDIO_OR_ERROR, Wt::XHTMLUnsafeText));
+}
+string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QString &filename)
+{
+    const QString &filenameToLower = filename.toLower();
+
+    //PICTURES
+    if(filenameToLower.endsWith(".webp"))
+    {
+        std::string webpMime = "image/webp";
+        embedPicture(webpMime, filename);
+        return webpMime;
+    }
+    if(filenameToLower.endsWith(".jpeg") || filenameToLower.endsWith(".jpg"))
+    {
+        std::string jpegMime = "image/jpeg";
+        embedPicture(jpegMime, filename);
+        return jpegMime;
+    }
+    if(filenameToLower.endsWith(".gif"))
+    {
+        std::string gifMime = "image/gif";
+        embedPicture(gifMime, filename);
+        return gifMime;
+    }
+    if(filenameToLower.endsWith(".png"))
+    {
+        std::string pngMime = "image/png";
+        embedPicture(pngMime, filename);
+        return pngMime;
+    }
+
+    //VIDEO
+    if(filenameToLower.endsWith(".webm"))
+    {
+        std::string webmMime = "video/webm";
+        embedVideoFile(webmMime, filename);
+        return webmMime;
+    }
+    if(filenameToLower.endsWith(".ogg") || filenameToLower.endsWith(".ogv"))
+    {
+        std::string oggMime = "video/ogg";
+        embedVideoFile(oggMime, filename);
+        return oggMime;
+    }
+    if(filenameToLower.endsWith(".mkv"))
+    {
+        std::string mkvMime = "video/x-matroska";
+        embedVideoFile(mkvMime, filename);
+        return mkvMime;
+    }
+    //was tempted to do avi/wmv/etc, but the chances of them even playing in a browser approaches zero...
+
+    //AUDIO
+    if(filenameToLower.endsWith(".opus"))
+    {
+        std::string opusMime = "audio/opus";
+        embedAudioFile(opusMime, filename);
+        return opusMime;
+    }
+    if(filenameToLower.endsWith(".oga"))
+    {
+        std::string ogaMime = "audio/ogg";
+        embedAudioFile(ogaMime, filename);
+        return ogaMime;
+    }
+    //ditto with the audio xD
+
+    //TEXT
+    if(filenameToLower.endsWith(".txt") || filenameToLower.endsWith(".c") || filenameToLower.endsWith(".cpp") || filenameToLower.endsWith(".h") || filenameToLower.endsWith(".html") || filenameToLower.endsWith(".php") || filenameToLower.endsWith(".phps") || filenameToLower.endsWith(".s") || filenameToLower.endsWith(".java") || filenameToLower.endsWith(".xml") || filenameToLower.endsWith(".bat") || filenameToLower.endsWith(".sh") || filenameToLower.endsWith(".ini") || filenameToLower.endsWith(".pri") || filenameToLower.endsWith(".pro"))
+    {
+        QString textFileString;
+        {
+            QFile textFile(filename);
+            if(!textFile.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                //TODOreq: 500 internal server errror
+                return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
+            }
+            QTextStream textFileStream(&textFile);
+            textFileString = textFileStream.readAll();
+        }
+        //WTextArea *textArea = new WTextArea(WString::fromUTF8((const char *)textFileString.toUtf8()));
+        //blahSetContent(textArea);
+        //textArea->setReadOnly(true);
+
+        WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8()));
+        //Wt::Utils::removeScript(htmlEncoded);
+        WText *textDoc = new WText("<pre>" + htmlEncoded + "</pre>", Wt::XHTMLUnsafeText);
+        setMainContent(textDoc);
+        return std::string("text/plain");
+    }
+    //TODOreq: zzzz
+
+    setMainContent(new WText("No web-view available for this type of file, but you can still download it", Wt::XHTMLUnsafeText));
+    return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
+}
+void TimeLineWtWidget::setMainContent(WWidget *mainContent)
+{
+    m_ContentsContainer->addWidget(mainContent);
 }

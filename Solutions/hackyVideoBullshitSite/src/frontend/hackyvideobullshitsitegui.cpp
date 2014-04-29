@@ -1,7 +1,6 @@
 #include "hackyvideobullshitsitegui.h"
 
 #include <Wt/WServer>
-#include <Wt/WAudio>
 #include <Wt/WVideo>
 #include <Wt/WImage>
 #include <Wt/WAnchor>
@@ -21,18 +20,13 @@
 #include <QDate>
 #include <QFileInfo>
 
+#include "hvbsshared.h"
 #include "timelinewtwidget.h"
 #include "directorybrowsingwtwidget.h"
 
 #define HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER "/some/placeholder/video/TODOreq.ogg" //TODOoptional: when no year/day folders are present (error imo) i could add code to present this... and it could even server as a pre-launch kind... of... countdown... thingo... (nah (ok changed my mind, yah (since it was a simple patch 'if year == 2013' xD)))
 #define HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
 
-#define HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/MyBrain"
-
-#define HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE \
-    HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Timeline"
-#define HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN \
-    HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Browse"
 #define HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_DOWNLOAD \
     HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Download"
 
@@ -44,40 +38,11 @@
 
 #define HVBS_VIEW_MYBRAIN_TOOLTIP "Point at it and laugh: \"Haha, faggot!\""
 
-#define HVBS_TIMELINE_MYBRAIN_TOOLTIP "In the beginning, there was d3fault..."
-#define HVBS_BROWSE_MYBRAIN_TOOLTIP "Traditional Directory Heirarchy"
-#define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain becomes your brain"
+#define HVBS_TIMELINE_MYBRAIN_TOOLTIP "Random point in time"
+#define HVBS_BROWSE_MYBRAIN_TOOLTIP "Traditional directory heirarchy"
+#define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain becomes your brain" // s/brain/mingles-with/
 
-#define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
 #define HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL "https://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"
-#define HVBS_NO_HTML_MEDIA_OR_ERROR(mediaType) "Either your browser is a piece of shit and doesn't support HTML5 " #mediaType " (You should use Mozilla Firefox), or there was an error establishing a connection to the " #mediaType " stream"
-#define HVBS_NO_HTML5_VIDEO_OR_ERROR HVBS_NO_HTML_MEDIA_OR_ERROR(video)
-#define HVBS_NO_HTML5_AUDIO_OR_ERROR HVBS_NO_HTML_MEDIA_OR_ERROR(audio)
-#define HVBS_DOWNLOAD_LOVE \
-    "Download " \
-    "/ Save " \
-    "/ Fukken Save " \
-    "/ Keep " \
-    "/ Steal " \
-    "/ Borrow " \
-    "/ Use " \
-    "/ Absorb " \
-    "/ Own " \
-    "/ Assimilate" \
-    "/ Incorporate " \
-    "/ Memorize " \
-    "/ Multiply " \
-    "/ Archive " \
-    "/ Persist " \
-    "/ Cache " \
-    "/ Hoard " \
-    "/ Receive " \
-    "/ Replicate " \
-    "/ Reproduce" \
-    "/ Grab " \
-    "/ Get " \
-    "/ Copy"
-//having way too much fun with this
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
@@ -109,7 +74,6 @@ void HackyVideoBullshitSiteGUI::setDplLicenseText(const string &dplLicenseText)
 void HackyVideoBullshitSiteGUI::setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer)
 {
     TimeLineWtWidget::setTimestampsAndPathsSharedAtomicPointer(lastModifiedTimestampsSharedAtomicPointer);
-    TimeLineWtWidget::setTimelineInternalPath(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE); //TODOoptional: belongs elsewhere, fuck it
 }
 WApplication *HackyVideoBullshitSiteGUI::hackyVideoBullshitSiteGuiEntryPoint(const WEnvironment &env)
 {
@@ -118,9 +82,9 @@ WApplication *HackyVideoBullshitSiteGUI::hackyVideoBullshitSiteGuiEntryPoint(con
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
     , m_AdImageContainer(0)
-    , m_ContentsHeaderRow(0)
     , m_Contents(0)
     , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
+    , m_TimelineAndDirectoryLogicalContainer(0)
     , m_TimeLineMyBrainWidget(0)
     , m_BrowseMyBrainDirWidget(0)
 {
@@ -142,7 +106,6 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOoptional: timeline view might solve this, but for browsing with qdiriterator and pagination, any entry not on page 1 [probably(?)] won't get search index'd. but honestly i expect to get censored anyways so who gives a shit..
 
     //TODOreq: timestamps. timestamps everywhere
-    //TODOreq: MyBrain increments(?)
     //TODOreq: svg
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
     //TODOoptional: "random"
@@ -184,9 +147,10 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     WAnchor *viewMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER), HVBS_VIEW_MYBRAIN_STRING, root());
     viewMyBrainAnchor->setToolTip(HVBS_VIEW_MYBRAIN_TOOLTIP);
     viewMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-    viewMyBrainAnchor->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)), Wt::Bottom);
+    //viewMyBrainAnchor->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)), Wt::Bottom);
     //browseMyBrainAnchor->setTarget(TargetNewWindow);
     //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
+    new WBreak(root());
     new WBreak(root());
 
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
@@ -215,11 +179,7 @@ void HackyVideoBullshitSiteGUI::finalize()
 }
 void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInternalPath)
 {
-    //layout defaults (empty m_ContentsHeaderRow, m_Contents pointing to zero)
-    if(m_ContentsHeaderRow)
-        delete m_ContentsHeaderRow;
-    m_ContentsHeaderRow = new WContainerWidget(root());
-
+    //layout defaults (m_Contents pointing to zero)
     if(m_Contents)
     {
         delete m_Contents;
@@ -227,36 +187,24 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     }
     //m_Contents = new WContainerWidget(root());
 
-    if(m_TimeLineMyBrainWidget) //has it's own because i _DO_ want to be able to use internal paths for navigating (and so crawlers can too)
-    {
-        const QString &newInternalPathTempQString = QString::fromStdString(newInternalPath);
-        if(!newInternalPathTempQString.startsWith(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE))
-        {
-            //navigating away from timeline, so delete it...
-            delete m_TimeLineMyBrainWidget;
-            m_TimeLineMyBrainWidget = 0;
-        }
-    }
-
-
     if(newInternalPath == "/" || newInternalPath == "" || newInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
     {
+        deleteTimelineAndDirectoryBrowsingStackIfNeeded();
+        WContainerWidget *videoContainer = new WContainerWidget();
+
         std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
         //latestVideoSegmentFilePath is either set to most recent or to placeholder
 
-        new WBreak(m_ContentsHeaderRow);
-
-        WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentsHeaderRow);
+        WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, videoContainer);
         //TODOreq: "Link to this: ", needs to chop off base dir from absolute path to make clean url...
-        new WBreak(m_ContentsHeaderRow);
+        new WBreak(videoContainer);
 
         //TODOreq: previous button
-        WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", m_ContentsHeaderRow); //if next != current; aka if new-current != current-when-started-playing
-        new WBreak(m_ContentsHeaderRow);
+        WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", videoContainer); //if next != current; aka if new-current != current-when-started-playing
+        new WBreak(videoContainer);
 
         nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
 
-        WContainerWidget *videoContainer = new WContainerWidget(); //derp alternate content is not deleted when the WVideo is
         WVideo *videoPlayer = new WVideo(videoContainer);
         setMainContent(videoContainer);
         WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
@@ -279,7 +227,9 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
     if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER) //Note: a file/dir called "MyBrain" will never be viewed xD, perhaps i should make it and explain in it
     {
-        WContainerWidget *viewMyBrainContainerWidget = new WContainerWidget(root());
+        deleteTimelineAndDirectoryBrowsingStackIfNeeded();
+
+        WContainerWidget *viewMyBrainContainerWidget = new WContainerWidget();
 
         new WText("There are 3 ways to view my [archived] brain, take your pick:",  viewMyBrainContainerWidget);
 
@@ -309,21 +259,16 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
     if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_DOWNLOAD)
     {
+        deleteTimelineAndDirectoryBrowsingStackIfNeeded();
+
         //TODOreq: host and link to the torrent files (tpb is good enough placeholder for now, fuck it)
         WContainerWidget *downloadContainer = new WContainerWidget();
-
-        WAnchor *downloadMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), HVBS_BROWSE_MY_BRAIN_STRING, downloadContainer);
-        downloadMyBrainAnchor->setToolTip(HVBS_BROWSE_MYBRAIN_TOOLTIP);
-        downloadMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-
-        new WBreak(downloadContainer);
-
-        new WBreak(downloadContainer);
         new WText("Download in full:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
         WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, "http://thepiratebay.se/torrent/9754200/My_Brain_-_Public_Files"), "My Brain - Public Files", downloadContainer);
         tpbMyBrainPublicFilesAnchor->setTarget(TargetNewWindow);
 
+        new WBreak(downloadContainer);
         new WBreak(downloadContainer);
 
         new WText("Hold onto this for me plz:", Wt::XHTMLUnsafeText, downloadContainer);
@@ -332,14 +277,13 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         tpbMyBrainPrivateFilesAnchor->setTarget(TargetNewWindow);
 
         setMainContent(downloadContainer);
-
         return;
     }
 
     std::string rewrittenInternalPath = newInternalPath;
     if(newInternalPath == HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN)
     {
-        rewrittenInternalPath = "";
+        rewrittenInternalPath = ""; //hack to be able to browse the root directory, navigable via /MyBrain/Browse
     }
 
     QString theInternalPathCleanedQString = QDir::cleanPath(QString::fromStdString(rewrittenInternalPath)); //strips trailing slash if dir
@@ -350,11 +294,25 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         return;
     }
 
-    if(theInternalPathCleanedQString.startsWith(HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE))
+    if(!m_TimelineAndDirectoryLogicalContainer)
     {
-        if(!m_TimeLineMyBrainWidget)
-            m_TimeLineMyBrainWidget = new TimeLineWtWidget(root());
-        m_TimeLineMyBrainWidget->handleInternalPathChanged(theInternalPathCleanedQString);
+        m_TimelineAndDirectoryLogicalContainer = new WContainerWidget(root());
+        m_TimelineAndDirectoryLogicalContainer->setInline(true);
+
+        new WText("You are here: ", Wt::XHTMLUnsafeText, m_TimelineAndDirectoryLogicalContainer);
+        new WAnchor(WLink(WLink::InternalPath, "/"), "d3fault.net", m_TimelineAndDirectoryLogicalContainer); //TODOoptional: customizeable domain
+        m_CookieCrumbContainerWidget = new WContainerWidget(m_TimelineAndDirectoryLogicalContainer);
+        m_CookieCrumbContainerWidget->setInline(true);
+        m_CookieCrumbContainerWidget->setContentAlignment(Wt::AlignMiddle);
+        new WBreak(m_TimelineAndDirectoryLogicalContainer);
+
+        m_TimelineAndDirectoryBrowsingStack = new WStackedWidget(m_TimelineAndDirectoryLogicalContainer);
+    }
+
+    if(theInternalPathCleanedQString == HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE) //not specifying = random point in time <3 (couldn't decide whether to start with earliest or latest... so... i didn't)
+    {
+        newTimelineIfNeededAndBringToFront();
+        m_TimeLineMyBrainWidget->redirectToRandomPointInTimeline();
         return;
     }
 
@@ -362,65 +320,47 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     if(QFile::exists(myBrainItemToPresentAbsolutePathQString))
     {
         QFileInfo myBrainItemFileInfo(myBrainItemToPresentAbsolutePathQString);
-        const std::string myBrainItemToPresentAbsolutePathStdString = myBrainItemToPresentAbsolutePathQString.toStdString();
-        const std::string &theInternalPathCleanedStdString = theInternalPathCleanedQString.toStdString();
+        if(myBrainItemFileInfo.isSymLink()) //fuck symlinks
+        {
+            hvbs404();
+            return;
+        }
         if(myBrainItemFileInfo.isFile())
         {
-            WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, m_ContentsHeaderRow);
-            new WBreak(m_ContentsHeaderRow);
-
-            new WText("Link to this: ", Wt::XHTMLUnsafeText, m_ContentsHeaderRow);
-            const std::string &filenameOnly = myBrainItemFileInfo.fileName().toStdString();
-            new WAnchor(WLink(WLink::InternalPath, theInternalPathCleanedStdString), filenameOnly, m_ContentsHeaderRow);
-            new WBreak(m_ContentsHeaderRow);
-
-            const std::string &mimeType = embedBasedOnFileExtensionAndReturnMimeType(myBrainItemToPresentAbsolutePathQString);
-
-            WFileResource *downloadResource = new WFileResource(mimeType, myBrainItemToPresentAbsolutePathStdString, downloadButton);
-            downloadResource->suggestFileName(filenameOnly, WResource::Attachment);
-            //TODoreq: maybe set filename, but maybe WFileResource does this itself. done ish but not for segments viewing
-            downloadButton->setResource(downloadResource);
+            createCookieCrumbsFromPath(/*relativePath_aka_internalPath*/);
+            newTimelineIfNeededAndBringToFront();
+            m_TimeLineMyBrainWidget->presentFile(theInternalPathCleanedQString.toStdString(), myBrainItemToPresentAbsolutePathQString, myBrainItemFileInfo.fileName().toStdString());
             return;
         }
         else if(myBrainItemFileInfo.isDir())
         {
-            //TODOoptimization: pagination of dir shitz (maybe a #page thingo to keep urls clean while still allowing page specification?). maybe QDirIterator + pagination might be what I want, even though I lose soring :-/...
-            //TODOoptimization: minddump is like 1800 entries (and growing) so uhm......... maybe a special case for it? idfk. ls->sort->ls->sort xD
-
-            std::string upOneLevel;
-
+            createCookieCrumbsFromPath(/*relativePath_aka_internalPath*/);
+            if(!m_BrowseMyBrainDirWidget)
             {
-                const QString upOneLevelCleaned = QDir::cleanPath(theInternalPathCleanedQString + "/../"); //if i ever find a solution for mybrain root dir listing, this should obviously not be shown
-                upOneLevel = upOneLevelCleaned.toStdString();
-                if(upOneLevel == "/")
-                {
-                    upOneLevel = HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN;
-                }
-                else if(upOneLevel == "/..")
-                {
-                    upOneLevel = "/";
-                }
-            }
-
-            WContainerWidget *directoryBrowsingContainerWidget = new WContainerWidget();
-            new WBreak(directoryBrowsingContainerWidget);
-            WAnchor *upOneFolderAnchor = new WAnchor(WLink(WLink::InternalPath, upOneLevel), "Go up one folder level", directoryBrowsingContainerWidget);
-            upOneFolderAnchor->decorationStyle().setForegroundColor(WColor(77, 92, 207));
-            new WBreak(directoryBrowsingContainerWidget);
-
 #if 0
-            const std::string *pageNumParam = environment().getParameter("page");
-            int pageNumToUse = 1;
-            if(pageNumParam)
-            {
-                bool convertOk = false;
-                QString numQString = QString::fromStdString(*pageNumParam);
-                int attempt = numQString.toInt(&convertOk);
-                if(convertOk)
-                    pageNumToUse = attempt;
-            }
+                const std::string *pageNumParam = environment().getParameter("page");
+                int pageNumToUse = 1;
+                if(pageNumParam)
+                {
+                    bool convertOk = false;
+                    QString numQString = QString::fromStdString(*pageNumParam);
+                    int attempt = numQString.toInt(&convertOk);
+                    if(convertOk)
+                        pageNumToUse = attempt;
+                }
 #endif
-            m_BrowseMyBrainDirWidget = new DirectoryBrowsingWtWidget(myBrainItemToPresentAbsolutePathQString, theInternalPathCleanedStdString,/*pageNumToUse,*/ directoryBrowsingContainerWidget);
+                //m_BrowseMyBrainDirWidget = new DirectoryBrowsingWtWidget(myBrainItemToPresentAbsolutePathQString, theInternalPathCleanedStdString,/*pageNumToUse,*/ m_TimelineAndDirectoryBrowsingStack);
+                m_BrowseMyBrainDirWidget = new DirectoryBrowsingWtWidget(m_TimelineAndDirectoryBrowsingStack);
+                m_TimelineAndDirectoryBrowsingStack->setCurrentWidget(m_BrowseMyBrainDirWidget);
+                m_BrowseMyBrainDirWidget->showDirectoryContents(myBrainItemToPresentAbsolutePathQString, theInternalPathCleanedQString);
+                return;
+            }
+
+            if(m_TimelineAndDirectoryBrowsingStack->currentWidget() != m_BrowseMyBrainDirWidget)
+            {
+                m_TimelineAndDirectoryBrowsingStack->setCurrentWidget(m_BrowseMyBrainDirWidget);
+            }
+            m_BrowseMyBrainDirWidget->showDirectoryContents(myBrainItemToPresentAbsolutePathQString, theInternalPathCleanedQString); //TODOreq: browser button "back" stays on page it was on
 
 #if 0 //OLD: pre-qdiriterator && paginization
             QDir myBrainFolder(myBrainItemToPresentAbsolutePathQString);
@@ -434,10 +374,8 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
                 new WBreak(directoryBrowsingContainerWidget);
             }
 #endif
-            setMainContent(directoryBrowsingContainerWidget);
             return;
         }
-        //fuck symlinks etc
     }
     hvbs404(); //Note (had:TODOforever): if adding more non-404 cases, they should end with "return;" just like the others do...
 }
@@ -542,131 +480,61 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
     //should never get here, but just in case and to make compiler stfu:
     return HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER;
 }
-void HackyVideoBullshitSiteGUI::embedPicture(const string &mimeType, const QString &filename)
+void HackyVideoBullshitSiteGUI::createCookieCrumbsFromPath(/*const string &internalPathInclFilename*/)
 {
-    const std::string &filenameStdString = filename.toStdString();
-    WAnchor *pictureAnchor = new WAnchor();
-    WFileResource *pictureResource = new WFileResource(mimeType, filenameStdString, pictureAnchor);
-    pictureAnchor->setLink(WLink(pictureResource));
-    pictureAnchor->setImage(new WImage(WLink(pictureResource), filenameStdString));
-    pictureAnchor->setTarget(TargetNewWindow);
-    setMainContent(pictureAnchor);
+    //we already know it's a file and it exists
+
+    m_CookieCrumbContainerWidget->clear();
+
+    std::string internalPathEventuallyRebuilt = "/";
+    std::string nextInternalPathPart = "";
+    while((nextInternalPathPart = internalPathNextPart(internalPathEventuallyRebuilt)) != "")
+    {
+        WText *divider = new WText("/", Wt::XHTMLUnsafeText, m_CookieCrumbContainerWidget);
+        divider->setMargin(WLength(3, WLength::Pixel), Wt::Left | Wt::Right);
+        new WAnchor(WLink(WLink::InternalPath, internalPathEventuallyRebuilt + nextInternalPathPart), nextInternalPathPart, m_CookieCrumbContainerWidget);
+        internalPathEventuallyRebuilt = internalPathEventuallyRebuilt + nextInternalPathPart + "/";
+    }
+#if 0
+    QString asQstring = QString::fromStdString(internalPathInclFilename);
+    QStringList pathParts = asQstring.split("/", QString::SkipEmptyParts, Qt::CaseSensitive);
+    if(pathParts.size() < 2)
+        return; //filename only
+    std::string internalPathEventuallyRebuilt = "/";
+    QStringList::const_iterator it = pathParts.constBegin();
+    while(it != pathParts.constEnd())
+    {
+        QString currentPathPart = *it;
+        WText *divider = new WText("/", Wt::XHTMLUnsafeText, m_CookieCrumbContainerWidget);
+        divider->setMargin(WLength(3, WLength::Pixel), Wt::Left | Wt::Right);
+        const std::string &currentPathPartStdString = currentPathPart.toStdString();
+        new WAnchor(WLink(WLink::InternalPath, internalPathEventuallyRebuilt + currentPathPartStdString), currentPathPartStdString, m_CookieCrumbContainerWidget);
+        internalPathEventuallyRebuilt = internalPathEventuallyRebuilt + currentPathPartStdString + "/";
+        ++it;
+    }
+#endif
 }
-void HackyVideoBullshitSiteGUI::embedVideoFile(const string &mimeType, const QString &filename)
+void HackyVideoBullshitSiteGUI::newTimelineIfNeededAndBringToFront()
 {
-    WContainerWidget *videoContainer = new WContainerWidget();
-    WVideo *videoPlayer = new WVideo(videoContainer);
-    setMainContent(videoContainer);
-    WFileResource *videoFileResource = new WFileResource(mimeType, filename.toStdString(), videoPlayer);
-    videoFileResource->setDispositionType(WResource::Inline);
-    videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
-    videoPlayer->addSource(WLink(videoFileResource), mimeType);
-    videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
+    if(!m_TimeLineMyBrainWidget)
+        m_TimeLineMyBrainWidget = new TimeLineWtWidget(m_TimelineAndDirectoryBrowsingStack);
+
+    if(m_TimelineAndDirectoryBrowsingStack->currentWidget() != m_TimeLineMyBrainWidget)
+    {
+        m_TimelineAndDirectoryBrowsingStack->setCurrentWidget(m_TimeLineMyBrainWidget);
+    }
 }
-void HackyVideoBullshitSiteGUI::embedAudioFile(const string &mimeType, const QString &filename)
+void HackyVideoBullshitSiteGUI::deleteTimelineAndDirectoryBrowsingStackIfNeeded()
 {
-    WContainerWidget *audioPlayerContainer = new WContainerWidget();
-    WAudio *audioPlayer = new WAudio(audioPlayerContainer);
-    setMainContent(audioPlayerContainer);
-    audioPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
-    WFileResource *audioFileResource = new WFileResource(mimeType, filename.toStdString(), audioPlayer);
-    audioPlayer->addSource(WLink(audioFileResource), mimeType);
-    audioPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_AUDIO_OR_ERROR, Wt::XHTMLUnsafeText));
-}
-string HackyVideoBullshitSiteGUI::embedBasedOnFileExtensionAndReturnMimeType(const QString &filename)
-{
-    const QString &filenameToLower = filename.toLower();
-
-    //PICTURES
-    if(filenameToLower.endsWith(".webp"))
+    if(m_TimelineAndDirectoryLogicalContainer)
     {
-        std::string webpMime = "image/webp";
-        embedPicture(webpMime, filename);
-        return webpMime;
-    }
-    if(filenameToLower.endsWith(".jpeg") || filenameToLower.endsWith(".jpg"))
-    {
-        std::string jpegMime = "image/jpeg";
-        embedPicture(jpegMime, filename);
-        return jpegMime;
-    }
-    if(filenameToLower.endsWith(".gif"))
-    {
-        std::string gifMime = "image/gif";
-        embedPicture(gifMime, filename);
-        return gifMime;
-    }
-    if(filenameToLower.endsWith(".png"))
-    {
-        std::string pngMime = "image/png";
-        embedPicture(pngMime, filename);
-        return pngMime;
+        delete m_TimelineAndDirectoryLogicalContainer; //implicitly deletes stack
+        m_TimelineAndDirectoryLogicalContainer = 0;
     }
 
-    //VIDEO
-    if(filenameToLower.endsWith(".webm"))
-    {
-        std::string webmMime = "video/webm";
-        embedVideoFile(webmMime, filename);
-        return webmMime;
-    }
-    if(filenameToLower.endsWith(".ogg") || filenameToLower.endsWith(".ogv"))
-    {
-        std::string oggMime = "video/ogg";
-        embedVideoFile(oggMime, filename);
-        return oggMime;
-    }
-    if(filenameToLower.endsWith(".mkv"))
-    {
-        std::string mkvMime = "video/x-matroska";
-        embedVideoFile(mkvMime, filename);
-        return mkvMime;
-    }
-    //was tempted to do avi/wmv/etc, but the chances of them even playing in a browser approaches zero...
-
-    //AUDIO
-    if(filenameToLower.endsWith(".opus"))
-    {
-        std::string opusMime = "audio/opus";
-        embedAudioFile(opusMime, filename);
-        return opusMime;
-    }
-    if(filenameToLower.endsWith(".oga"))
-    {
-        std::string ogaMime = "audio/ogg";
-        embedAudioFile(ogaMime, filename);
-        return ogaMime;
-    }
-    //ditto with the audio xD
-
-    //TEXT
-    if(filenameToLower.endsWith(".txt") || filenameToLower.endsWith(".c") || filenameToLower.endsWith(".cpp") || filenameToLower.endsWith(".h") || filenameToLower.endsWith(".html") || filenameToLower.endsWith(".php") || filenameToLower.endsWith(".phps") || filenameToLower.endsWith(".s") || filenameToLower.endsWith(".java") || filenameToLower.endsWith(".xml") || filenameToLower.endsWith(".bat") || filenameToLower.endsWith(".sh") || filenameToLower.endsWith(".ini") || filenameToLower.endsWith(".pri") || filenameToLower.endsWith(".pro"))
-    {
-        QString textFileString;
-        {
-            QFile textFile(filename);
-            if(!textFile.open(QIODevice::ReadOnly | QIODevice::Text))
-            {
-                //TODOreq: 500 internal server errror
-                return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
-            }
-            QTextStream textFileStream(&textFile);
-            textFileString = textFileStream.readAll();
-        }
-        //WTextArea *textArea = new WTextArea(WString::fromUTF8((const char *)textFileString.toUtf8()));
-        //blahSetContent(textArea);
-        //textArea->setReadOnly(true);
-
-        WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8()));
-        //Wt::Utils::removeScript(htmlEncoded);
-        WText *textDoc = new WText("<pre>" + htmlEncoded + "</pre>", Wt::XHTMLUnsafeText);
-        setMainContent(textDoc);
-        return std::string("text/plain");
-    }
-    //TODOreq: zzzz
-
-    setMainContent(new WText("No web-view available for this type of file, but you can still download it", Wt::XHTMLUnsafeText));
-    return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
+    //deleted implicitly because stack is parent, but still need to set to 0 for obvious reasons
+    m_TimeLineMyBrainWidget = 0;
+    m_BrowseMyBrainDirWidget = 0;
 }
 void HackyVideoBullshitSiteGUI::hvbs404()
 {

@@ -60,13 +60,7 @@ void LastModifiedTimestampsSorter::newTheMapIfNeeded()
 }
 void LastModifiedTimestampsSorter::clearTheMap()
 {
-    QMapIterator<long long, QList<std::string>* > mapOfPathListsIterator(*m_MapOfPathsListsSortedByModificationDate);
-    while(mapOfPathListsIterator.hasNext())
-    {
-        mapOfPathListsIterator.next();
-        QList<std::string> *listOfPaths = mapOfPathListsIterator.value();
-        delete listOfPaths;
-    }
+    qDeleteAll(m_MapOfPathsListsSortedByModificationDate->begin(), m_MapOfPathsListsSortedByModificationDate->end());
     m_MapOfPathsListsSortedByModificationDate->clear();
     m_TotalItemsCount = 0;
 }
