@@ -12,6 +12,9 @@
 #include <Wt/WAudio>
 #include <Wt/WVideo>
 #include <Wt/WImage>
+#include <Wt/WTable>
+#include <Wt/WTableCell>
+#include <Wt/WDateTime>
 
 #include <QFileInfo>
 #include <QTextStream>
@@ -19,6 +22,8 @@
 
 #include "hvbsshared.h"
 
+#define HVBS_TWTW_ANCHOR_ROW 1
+#define HVBS_TWTW_TIMESTAMP_ROW 2
 #define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
 
 //TODOreq: renaming an item will make old links no longer valid, the system needs to not break when that happens. 404'ing is okay, but it would be even better if a nice message was presented (telling the user it wasn't their fault, there must have been a rename). this isn't that common of a case anyways (but i also don't want to tell myself not to rename just to keep urls valid -_- (but i also want to keep urls valid! fucking hell. i need a rename-aware system but that's gotta be revision-aware and yea not up for that just yet))
@@ -36,26 +41,66 @@ TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
     : WContainerWidget(parent)
     , m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory(0)
 {
-    //TODOoptional: next, previous (directory alphabetical)
+    //TODOoptional: next, previous (directory inode order)
 
     setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
 
-    m_EarliestAnchor = new WAnchor(this);
-    m_EarliestAnchor->setTextFormat(Wt::PlainText);
-    m_EarliestAnchor->setDisabled(true);
-    new WText(" - ", Wt::XHTMLUnsafeText, this);
-    m_PreviousAnchor = new WAnchor(this);
-    m_PreviousAnchor->setTextFormat(Wt::PlainText);
-    new WText(" - ", Wt::XHTMLUnsafeText, this);
     WAnchor *randomAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE), "Random Point In Time", this);
     randomAnchor->decorationStyle().setForegroundColor(WColor(0,255,0)); //bitches need visual cues because bitches is dumb as fuck n shit
-    new WText(" - ", Wt::XHTMLUnsafeText, this);
-    m_NextAnchor = new WAnchor(this);
+    new WBreak(this);
+
+
+    //WContainerWidget *timelineControlsContainerWidget = new WContainerWidget(this);
+    //timelineControlsContainerWidget->setContentAlignment(Wt::AlignCenter);
+    /*WGridLayout *timelineControlsGridLayout = new WGridLayout(timelineControlsContainerWidget); //TO DOnereq: 1px border...
+    timelineControlsGridLayout->setHorizontalSpacing(0);
+    timelineControlsGridLayout->setVerticalSpacing(0);
+    timelineControlsGridLayout->setContentsMargins(0, 0, 0, 0);*/
+    WTable *timelineControlsTable = new WTable(this); //wtf is the difference between a grid layout and table? aside from the fact that table has a border available :)
+    timelineControlsTable->setHeaderCount(1);
+    //timelineControlsTable->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)));
+
+    timelineControlsTable->elementAt(0, 0)->addWidget(new WText("Earliest", Wt::XHTMLUnsafeText));
+    m_EarliestAnchor = new WAnchor();
+    m_EarliestAnchor->setTextFormat(Wt::PlainText);
+    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 0)->addWidget(m_EarliestAnchor);
+    m_EarliestTimestamp = new WText();
+    m_EarliestTimestamp->setTextFormat(Wt::PlainText);
+    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 0)->addWidget(m_EarliestTimestamp);
+    m_EarliestAnchor->disable();
+
+    timelineControlsTable->elementAt(0, 1)->addWidget(new WText("Previous", Wt::XHTMLUnsafeText));
+    m_PreviousAnchor = new WAnchor();
+    m_PreviousAnchor->setTextFormat(Wt::PlainText);
+    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 1)->addWidget(m_PreviousAnchor);
+    m_PreviousTimestamp = new WText();
+    m_PreviousTimestamp->setTextFormat(Wt::PlainText);
+    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 1)->addWidget(m_PreviousTimestamp);
+
+    timelineControlsTable->elementAt(0, 2)->addWidget(new WText("Current", Wt::XHTMLUnsafeText));
+    m_CurrentAnchor = new WAnchor();
+    m_CurrentAnchor->setTextFormat(Wt::PlainText);
+    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 2)->addWidget(m_CurrentAnchor);
+    m_CurrentTimestamp = new WText();
+    m_CurrentTimestamp->setTextFormat(Wt::PlainText);
+    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 2)->addWidget(m_CurrentTimestamp);
+
+    timelineControlsTable->elementAt(0, 3)->addWidget(new WText("Next", Wt::PlainText));
+    m_NextAnchor = new WAnchor();
     m_NextAnchor->setTextFormat(Wt::PlainText);
-    new WText(" - ", Wt::XHTMLUnsafeText, this);
-    m_LatestAnchor = new WAnchor(this);
+    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 3)->addWidget(m_NextAnchor);
+    m_NextTimestamp = new WText();
+    m_NextTimestamp->setTextFormat(Wt::PlainText);
+    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 3)->addWidget(m_NextTimestamp);
+
+    timelineControlsTable->elementAt(0, 4)->addWidget(new WText("Latest", Wt::PlainText));
+    m_LatestAnchor = new WAnchor();
     m_LatestAnchor->setTextFormat(Wt::PlainText);
-    m_LatestAnchor->setDisabled(true);
+    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 4)->addWidget(m_LatestAnchor);
+    m_LatestTimestamp = new WText();
+    m_LatestTimestamp->setTextFormat(Wt::PlainText);
+    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 4)->addWidget(m_LatestTimestamp);
+    m_LatestAnchor->disable();
 
     new WBreak(this);
 
@@ -113,6 +158,7 @@ void TimeLineWtWidget::presentFile(const std::string &relativePath_aka_internalP
             m_PreviousAnchor->setDisabled(false);
             m_PreviousAnchor->setLink(WLink(WLink::InternalPath, previousPath));
             m_PreviousAnchor->setText(previousPathFileInfo.fileName().toStdString());
+            m_PreviousTimestamp->setText(longLongTimestampToWString(previousTimestampAndPath->Timestamp));
 
             if(m_EarliestAnchor->isDisabled())
             {
@@ -123,6 +169,7 @@ void TimeLineWtWidget::presentFile(const std::string &relativePath_aka_internalP
                 m_EarliestAnchor->setDisabled(false);
                 m_EarliestAnchor->setLink(WLink(WLink::InternalPath, earliestPath));
                 m_EarliestAnchor->setText(earliestPathFileInfo.fileName().toStdString());
+                m_EarliestTimestamp->setText(longLongTimestampToWString(earliestTimestampAndPath->Timestamp));
             }
         }
         else
@@ -131,11 +178,18 @@ void TimeLineWtWidget::presentFile(const std::string &relativePath_aka_internalP
             m_PreviousAnchor->setText("...");
             m_PreviousAnchor->setLink(WLink());
             m_PreviousAnchor->setDisabled(true);
+            m_PreviousTimestamp->setText("...");
 
             m_EarliestAnchor->setText("No Earlier");
             m_EarliestAnchor->setLink(WLink());
             m_EarliestAnchor->setDisabled(true);
+            m_EarliestTimestamp->setText("No Earlier");
         }
+
+        m_CurrentAnchor->setLink(WLink(WLink::InternalPath, relativePath_aka_internalPath));
+        m_CurrentAnchor->setText(myBrainItemFilenameOnlyStdString);
+        m_CurrentTimestamp->setText(longLongTimestampToWString(sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(indexIntoFlatSortedList)->Timestamp));
+
         if(indexIntoFlatSortedList < static_cast<uint>(sortedLastModifiedTimestamps->PathsIndexIntoFlatListHash->size()-1))
         {
             //there is a 'next', so [...]
@@ -145,6 +199,7 @@ void TimeLineWtWidget::presentFile(const std::string &relativePath_aka_internalP
             m_NextAnchor->setDisabled(false);
             m_NextAnchor->setLink(WLink(WLink::InternalPath, nextPath));
             m_NextAnchor->setText(nextPathFileInfo.fileName().toStdString());
+            m_NextTimestamp->setText(longLongTimestampToWString(nextTimestampAndPath->Timestamp));
 
             if(m_LatestAnchor->isDisabled())
             {
@@ -154,6 +209,7 @@ void TimeLineWtWidget::presentFile(const std::string &relativePath_aka_internalP
                 m_LatestAnchor->setDisabled(false);
                 m_LatestAnchor->setLink(WLink(WLink::InternalPath, latestPath));
                 m_LatestAnchor->setText(latestPathFileInfo.fileName().toStdString());
+                m_LatestTimestamp->setText(longLongTimestampToWString(latestTimestampAndPath->Timestamp));
             }
         }
         else
@@ -162,10 +218,12 @@ void TimeLineWtWidget::presentFile(const std::string &relativePath_aka_internalP
             m_NextAnchor->setText("...");
             m_NextAnchor->setLink(WLink());
             m_NextAnchor->setDisabled(true);
+            m_NextTimestamp->setText("...");
 
             m_LatestAnchor->setText("No Later");
             m_LatestAnchor->setLink(WLink());
             m_LatestAnchor->setDisabled(true);
+            m_LatestTimestamp->setText("No Later");
         }
     }
     catch(std::out_of_range &pathNotInHashException)
@@ -228,7 +286,7 @@ string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QStrin
         embedPicture(webpMime, filename);
         return webpMime;
     }
-    if(filenameToLower.endsWith(".jpeg") || filenameToLower.endsWith(".jpg"))
+    if(filenameToLower.endsWith(".jpg") || filenameToLower.endsWith(".jpeg"))
     {
         std::string jpegMime = "image/jpeg";
         embedPicture(jpegMime, filename);
@@ -245,6 +303,12 @@ string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QStrin
         std::string pngMime = "image/png";
         embedPicture(pngMime, filename);
         return pngMime;
+    }
+    if(filenameToLower.endsWith(".svg"))
+    {
+        std::string svgMime = "image/svg+xml";
+        embedPicture(svgMime, filename);
+        return svgMime;
     }
 
     //VIDEO
@@ -315,4 +379,8 @@ string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QStrin
 void TimeLineWtWidget::setMainContent(WWidget *mainContent)
 {
     m_ContentsContainer->addWidget(mainContent);
+}
+WString TimeLineWtWidget::longLongTimestampToWString(long long timestamp)
+{
+    return WDateTime::fromTime_t(static_cast<std::time_t>(timestamp)).toString(); //TODOreq: i think my timestamps are in .lastModifiedTimestamps are AZT, but I think WDateTime thinks they are GMT. But actually maybe not since QDateTime::toMsecsSinceEpoch would be GMT (i need to digg into QuickDirtyAutoBackupHalper and find out what it uses). IDFK but tbh I want to move permanently and with every software I write to GMT. I even want to change my clocks to GMT. No offsets, no DST (shoot whoever invented it), etc. Yea yea it's silly to say "shoot whoever invented time ZONES" (they were invented before it was known they are invented), but it's still stupid we aren't all using GMT worldwide by now. Idiots fear change and it would be a religious war before MURRICA changed to Eurofag tiemzohnez...
 }

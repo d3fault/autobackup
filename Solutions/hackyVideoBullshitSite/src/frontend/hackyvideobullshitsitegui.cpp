@@ -32,13 +32,13 @@
 
 #define HVBS_VIEW_MYBRAIN_STRING "View My [Archived] Brain On A Platter"
 
-#define HVBS_TIMELINE_MY_BRAIN_STRING "Timeline"
 #define HVBS_BROWSE_MY_BRAIN_STRING "Browse"
 #define HVBS_DOWNLOAD_MY_BRAIN_STRING "Full download for offline viewing"
 
 #define HVBS_VIEW_MYBRAIN_TOOLTIP "Point at it and laugh: \"Haha, faggot!\""
 
 #define HVBS_TIMELINE_MYBRAIN_TOOLTIP "Random point in time"
+#define HVBS_TIMELINE_MY_BRAIN_STRING "Timeline" "(" HVBS_TIMELINE_MYBRAIN_TOOLTIP ")"
 #define HVBS_BROWSE_MYBRAIN_TOOLTIP "Traditional directory heirarchy"
 #define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain becomes your brain" // s/brain/mingles-with/
 
@@ -98,17 +98,13 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     styleSheet().addRule("a:link", "color: #e1e1e1;");
     styleSheet().addRule("a:visited", "color: #ffa2a2;");
     styleSheet().addRule("pre", "white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;"); //fucking hate css, not as much as js but (had:way) more than html (except when css saves the day from htmls shortcomings...). on that note, fuck the rule saying you can't use an apostrophe s unless it means "<something> is" (unless used with proper noun(?)). "htmls" looks fucking retarded. html owns the shortcomings, therefore posessive, who cares if it's not a proper noun (or is it? fuck if i know guh all subjective bullshit anyways. i'm going for clarity, suck my dick)
+    styleSheet().addRule("table, th, td", "border: 1px solid white;");
+    styleSheet().addRule("img", "background-color: white;"); //for svg images, which are transparent and [i] tend to use black font...
 
     //TODOreq: text files downloaded copies have copyright.txt at top. I'm thinking my 'master' branch has copyright.txt prepend thing always at top, and another separate branch is what I work on (script prepends and merges/pushes/whatevers into master). master because it should be the default for anyone that checks it out... but i don't want to permanently put that shit at the top of mine because it will annoy the fuck out of me (especially since i don't want the EMBED copy to have it since it is way sexier to have it in a WPanel). It could be called the allrightsreserved branch xD. Note: not that it matters, but I think I'd need to be constantly creating a temporary branch, running the prepender, committing, and then... err... i think rebasing ONTO master? idfk lol... i suck at git
     //but also collaboration and merging etc will mean i have to deal with licenses anyways. for code i don't care that much tbh, but for text files that aren't even that long.... fuuuuuuck i don't want stupid headers prepended on all of em. BUT honestly they're easy to both insert and remove via scripting so... (lol at the bug where i 'remove' the text and then it removes it from the file that i used as input to tell me what to remove (easily fixed by pulling it back out of git history (or a skip file exception) but still i'm predicting it will happen :-P)
 
-    //TODOplz: timeline view, using .lastModifiedTimestamps and similar pagination :)
-    //TODOoptional: timeline view might solve this, but for browsing with qdiriterator and pagination, any entry not on page 1 [probably(?)] won't get search index'd. but honestly i expect to get censored anyways so who gives a shit..
-
-    //TODOreq: timestamps. timestamps everywhere
-    //TODOreq: svg
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
-    //TODOoptional: "random"
     //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
     //TODOoptional: when "no web view", show list of desktop apps <--> extensions mapping
 
@@ -300,7 +296,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         m_TimelineAndDirectoryLogicalContainer->setInline(true);
 
         new WText("You are here: ", Wt::XHTMLUnsafeText, m_TimelineAndDirectoryLogicalContainer);
-        new WAnchor(WLink(WLink::InternalPath, "/"), "d3fault.net", m_TimelineAndDirectoryLogicalContainer); //TODOoptional: customizeable domain
+        new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_BROWSE_MYBRAIN), "d3fault.net", m_TimelineAndDirectoryLogicalContainer); //TODOoptional: customizeable domain
         m_CookieCrumbContainerWidget = new WContainerWidget(m_TimelineAndDirectoryLogicalContainer);
         m_CookieCrumbContainerWidget->setInline(true);
         m_CookieCrumbContainerWidget->setContentAlignment(Wt::AlignMiddle);

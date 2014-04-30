@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1398713903
+Documents/minddump/:1398894205
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1398714422
+Documents/minddump/dreams/:1398887962
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -38,6 +38,7 @@ Documents/minddump/dreams/4.dreams.in.one.katelyn.roller.coaster.ashley.swimming
 Documents/minddump/dreams/4.red.dots.on.a.string.and.an.apache.helicopter.and.yada.yada.lol.txt:1366066514
 Documents/minddump/dreams/aflkjsdflkjsdfkjsdofusdlfjksdofulskdjfosduf.txt:1385192592
 Documents/minddump/dreams/aklsdfjlakjflsakjdfouewlkrjouslkfjsoifusklfjouwerlkasdfoiuerlkjsf.txt:1382547594
+Documents/minddump/dreams/aldfjslkjfdlwerksjdflkjsdflkjsdlkjfslkjflksjfdlkjsdflwer.txt:1398887962
 Documents/minddump/dreams/alkdjflsdkajfouwerlkjdsfousdlfkjweour.txt:1353783214
 Documents/minddump/dreams/almost.lucid.real.estate.rehire.dream.asdlfkjsdalkfjsdlfkjsafd.txt:1380042105
 Documents/minddump/dreams/alsdfkjaslfjaslfdkjasldfkjsadofuasflusdfoujsafdlk.gun.battles.asldfkjaslfkjsadofu.txt:1373886198
@@ -1851,6 +1852,7 @@ Documents/minddump/sflskfjsldfjkouwrljouirwlkjoiusfslkfjwoerulkjfsadfouwerlkj.tx
 Documents/minddump/sfslkfdjsadlkfjsoaduflkjsdfousdlkfjsdouflkwjeroulskfjosduflksdoiu.txt:1371119367
 Documents/minddump/shame.alfjsadfouwarlkjsfdosudfaaksldjfwaeruol.txt:1344286354
 Documents/minddump/shitty.backup.operative.but.i.really.really.need.an.offsite.backup.plox.txt:1324576937
+Documents/minddump/shtooooped.asdfjlaskjflkjsdfousdfal.txt:1398894205
 Documents/minddump/sjfljsdfljsdlfjldksjflksjdflkjsdkfouwelrjlkjfdsjdflsdfuouwelrk.txt:1398081618
 Documents/minddump/sjfljsdlfkjslkdjflksjdflkjsdfkjsdfouljweroulsjfdsf.txt:1398556585
 Documents/minddump/skdjflskdjflskjdfouwlerkjofsdfhsfsggsiusflkjsdfouisdlfkjoiuwerljsadf.txt:1382449951
@@ -2435,7 +2437,7 @@ Projects/Hottee/src/cli/main.cpp:1395473624
 Projects/Hottee/src/lib/:1397731272
 Projects/Hottee/src/lib/hottee.cpp:1397731272
 Projects/Hottee/src/lib/hottee.h:1396460703
-Projects/Ideas/:1394440981
+Projects/Ideas/:1398887415
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -2484,6 +2486,7 @@ Projects/Ideas/2.potentiometers.one.for.x.one.for.y.pause.is.click.txt:132342151
 Projects/Ideas/3.minutes.forced.ads.live.but.never.written.to.disk.until.decryption.key.comes.and.unlocks.previously.streamed.slide.in.replacement.for.ad.block.txt:1340926274
 Projects/Ideas/360.degree.mouse.movement.interaction.yes.is.a.certain.custom.angle.txt:1321885975
 Projects/Ideas/360.degree.panorama.vision.derp.easy.but.good.would.be.handy.for.the.jungle.etc.txt:1391712350
+Projects/Ideas/3rd.person.camera.irl.for.fun.akfjslfkjslfjksladkf.txt:1398887415
 Projects/Ideas/4.objectives.of.the.most.boring.and.necessary.show.ever.txt:1334253346
 Projects/Ideas/5th.objective.insanity.caused.by.3.of.other.4.aldfkjasdflkj.txt:1339126356
 Projects/Ideas/69chan.the.best.idea.in.here.is.the.pic.of.me.69ing.myself.rofl.txt:1330086384
@@ -4173,7 +4176,7 @@ Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firef
 Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:1397361347
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1398743477
+Solutions/hackyVideoBullshitSite/src/:1398897314
 Solutions/hackyVideoBullshitSite/src/backend/:1398741729
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398593487
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398594608
@@ -4183,14 +4186,14 @@ Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1398741413
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1398593165
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1398596444
-Solutions/hackyVideoBullshitSite/src/frontend/:1398743229
+Solutions/hackyVideoBullshitSite/src/frontend/:1398897313
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1398742398
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1398897313
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1398740287
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1398728818
-Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1398742799
-Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1398740667
+Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1398896391
+Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1398896057
 Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1398722812
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1398730697
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1398730527

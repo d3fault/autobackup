@@ -31,9 +31,17 @@ private:
     WContainerWidget *m_ContentsContainer;
     LastModifiedTimestampsAndPaths *m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory;
 
-    //chronological
+    //chronological timestamps
+    WText *m_EarliestTimestamp;
+    WText *m_PreviousTimestamp;
+    WText *m_CurrentTimestamp;
+    WText *m_NextTimestamp;
+    WText *m_LatestTimestamp;
+
+    //chronological anchors
     WAnchor *m_EarliestAnchor;
     WAnchor *m_PreviousAnchor;
+    WAnchor *m_CurrentAnchor;
     WAnchor *m_NextAnchor;
     WAnchor *m_LatestAnchor;
 
@@ -45,6 +53,8 @@ private:
     string embedBasedOnFileExtensionAndReturnMimeType(const QString &filename);
 
     void setMainContent(WWidget *mainContent);
+
+    WString longLongTimestampToWString(long long timestamp);
 };
 
 #endif // TIMELINEWTWIDGET_H
