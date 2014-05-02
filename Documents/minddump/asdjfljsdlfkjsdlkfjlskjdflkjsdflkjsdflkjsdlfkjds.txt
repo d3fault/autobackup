@@ -1,0 +1,3 @@
+Re: beautiful math
+
+Was watching (and thought of the phrase multiple times before writing) "Galaxy" screensaver that ships with stock Debian Wheezy / XScreenSaver. I love the way the galaxies collide and can watch it for a pretty long time (given what it is (pixels simulating gravity)) without getting bored (better than lots of movies I watch). When one galaxy is jettison'd way out (to the point where it appears to be a line) because it hit that sweet spot in the gravitational pull of another... so... fucking... beautiful...

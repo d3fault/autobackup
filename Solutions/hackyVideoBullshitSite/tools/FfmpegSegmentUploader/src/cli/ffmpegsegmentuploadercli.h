@@ -16,6 +16,7 @@ private:
     StandardInputNotifier *m_StandardInputNotifier;
     FfmpegSegmentUploader *m_FfmpegSegmentUploader;
     QTextStream m_StdOut;
+    QTextStream m_StdErr;
 
     void cliUsage();
     void cliUserInterfaceMenu();
@@ -24,7 +25,8 @@ signals:
     void stopUploadingFfmpegSegmentsRequested();
 private slots:
     void handleStandardInputReceived(const QString &standardInputLine);
-    void handleD(const QString &msg);
+    void handleO(const QString &msg);
+    void handleE(const QString &msg);
 };
 
 #endif // FFMPEGSEGMENTUPLOADERCLI_H

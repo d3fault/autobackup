@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1399002531
+Documents/minddump/:1399059745
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -408,6 +408,7 @@ Documents/minddump/asdfoiuwkerjsofduilwjeroiusfdalj.txt:1345675042
 Documents/minddump/asdfsdfkjsdfkljoweursdfjldskfjouewrloufl.txt:1356088638
 Documents/minddump/asdfsdlkjfsdoufljkwefoulkfjsdofiulksdjfosduflkjsdfoulkoiuwer.txt:1370566879
 Documents/minddump/asdfsldffdkjdsfoulkejwroulkjfsdouflksjdfoulrekjsdfouisdfhlkg.txt:1370582348
+Documents/minddump/asdjfljsdlfkjsdlkfjlskjdflkjsdflkjsdflkjsdlfkjds.txt:1399059745
 Documents/minddump/asdjfoiurlksjafoiualsjdfsakdfhhrfualkj.txt:1344528560
 Documents/minddump/asdkfjskldjflksjdfosudfslkdjfoulsdjflskd.txt:1391728067
 Documents/minddump/asdkfljsdfouwerljsfousadf.idk.if.i.want.to.use.this.txt:1341010624
@@ -1321,6 +1322,7 @@ Documents/minddump/lsjfdlskjdflsflksjfsuidflkdsjfouiwelrkjousdflkjsdfoudslfjksdo
 Documents/minddump/lsjflsjflksjdlfkjsdfoiusdfljsdofulsdjfluiksdjf.txt:1393066372
 Documents/minddump/lsjkdflkjdsfousdflkjsdfoulkjweouirlkjsfdsdjf.txt:1359856407
 Documents/minddump/lsjkflkjsdflkajsdfjsdflkjslkdjflksjflkjsdfouwre.txt:1397083715
+Documents/minddump/lsjkflsjdflksjdflwerkjsdlfkjsdlfkjlkjwelsfkjsfljksdf.txt:1399004243
 Documents/minddump/lskaflksdfjksdfoulekrjoufsdlkjsdfouewrlkjfdoiul.txt:1358380152
 Documents/minddump/lskajfkjsdfkljsdlkfjlsdkjflkjsdfouewljrousdfljsdfouil.txt:1393253152
 Documents/minddump/lskdafjlsdkfjsdoafusdalkfjsodfulksdfjousdflkjsdfousdfljsdofuljsdfou.txt:1377207554
@@ -1856,6 +1858,7 @@ Documents/minddump/sflksjdflksjdfouwlerjousdlfkjsdoifulwekjroiulsdkfjosifudlkjds
 Documents/minddump/sflksjflksjflskdjfouwlekrjwrersafsdfwerousldfjkosduflkfgadfssjdfououiweroiusadflk.txt:1379397372
 Documents/minddump/sflskfjsldfjkouwrljouirwlkjoiusfslkfjwoerulkjfsadfouwerlkj.txt:1353409552
 Documents/minddump/sfslkfdjsadlkfjsoaduflkjsdfousdlkfjsdouflkwjeroulskfjosduflksdoiu.txt:1371119367
+Documents/minddump/sfslkfjslwersdfsdfjflkjsflkjsdlkfjlsdjflsdf.txt:1399005401
 Documents/minddump/shame.alfjsadfouwarlkjsfdosudfaaksldjfwaeruol.txt:1344286354
 Documents/minddump/shitty.backup.operative.but.i.really.really.need.an.offsite.backup.plox.txt:1324576937
 Documents/minddump/shtooooped.asdfjlaskjflkjsdfousdfal.txt:1398894205
@@ -1904,6 +1907,7 @@ Documents/minddump/sldfkjskldjfosduflkjowuierlkjoiusdflkjsdofulkjsdfouwelkrj.txt
 Documents/minddump/sldfksdjlfdskafjsourwljdfsouerkldfslk.txt:1358906326
 Documents/minddump/sldjflasjkdfsoduflsdjfousdflkjsadfoulwekjrouasldfjsadofulkjerousadlfk.txt:1380196349
 Documents/minddump/sldjflksdjflksdjfosudfljsdofusdljfosduflksjdofiu.txt:1393812324
+Documents/minddump/sldjflksjdlfkjlskdjfkljsdflkjsdflkjsdflkjsdlfjsdlkfj.txt:1399056593
 Documents/minddump/sldjflskadjfklsdjfoiuwelrkjousdflkjsdfouwerkjlkjsdfoudfslkjsdfoiulkr.txt:1381491907
 Documents/minddump/sldjflskjdflkjfthdjsadfoulwekjrousdlfkjsodfu.txt:1391380899
 Documents/minddump/sldjfsdjflsdkjflsdjkflsdkjfwerewrsdfouwerljousdflkjsdofusldf.txt:1381396095
@@ -2317,7 +2321,7 @@ Projects/BulkFileTextPrepender/src/lib/:1388244833
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.cpp:1388244833
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.h:1388239361
 Projects/ConcurrentLossyDirectoryCopier/:1396501263
-Projects/ConcurrentLossyDirectoryCopier/src/:1397196904
+Projects/ConcurrentLossyDirectoryCopier/src/:1399059838
 Projects/ConcurrentLossyDirectoryCopier/src/ConcurrentLossyDirectoryCopier.pro:1387197904
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopier.cpp:1387206600
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopier.h:1387197927
@@ -3416,7 +3420,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.cp
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.h:1348569501
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:1348566704
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
-Projects/QuickDirtyAutoBackupHalper/src/:1397729649
+Projects/QuickDirtyAutoBackupHalper/src/:1399003180
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1387287042
 Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1387287148
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.cpp:1387670588
@@ -3683,8 +3687,8 @@ Projects/RpcGenerator/design/use.case.ugly.disconnect.detected.on.server.through
 Projects/RpcGenerator/design/when.not.using.all.action.dispensers.opt.to.ignore.error.and.also.a.primitive.design.for.making.sure.all.broadcast.signals.are.being.listened.to.txt:1370575570
 Projects/SftpUploaderAndRenamerQueue/:1398991625
 Projects/SftpUploaderAndRenamerQueue/src/:1398991629
-Projects/SftpUploaderAndRenamerQueue/src/lib/:1398996464
-Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp:1398996464
+Projects/SftpUploaderAndRenamerQueue/src/lib/:1399060802
+Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp:1399060802
 Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h:1398996054
 Projects/SimplifiedHeirarchyMolester/:1387282081
 Projects/SimplifiedHeirarchyMolester/src/:1397729679
@@ -4189,7 +4193,7 @@ Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firef
 Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:1397361347
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1399002569
+Solutions/hackyVideoBullshitSite/src/:1399062956
 Solutions/hackyVideoBullshitSite/src/backend/:1399002316
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398593487
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398594608
@@ -4217,14 +4221,14 @@ Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.h:1398730263
 Solutions/hackyVideoBullshitSite/tools/:1397023744
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399002247
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399062981
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1398993069
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1397731357
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1397116399
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1398991331
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1398996403
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1398996403
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1398995842
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1399062642
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1399058029
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1399003554
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1399062899
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1399062898
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1399061678
 Solutions/launchASEPbecauseRedAlert/:1395576326
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681

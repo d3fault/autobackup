@@ -46,6 +46,10 @@ void SftpUploaderAndRenamerQueue::stopSftpProcess()
     else if(m_SftpProcess->isOpen())
     {
         m_SftpProcess->terminate(); //hmmm idk lol
+        if(!m_SftpProcess->waitForFinished(5))
+        {
+            m_SftpProcess->kill();
+        }
     }
 }
 void SftpUploaderAndRenamerQueue::startSftpUploaderAndRenamerQueue(const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath)
@@ -175,6 +179,7 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessStarted()
     //m_SftpProcess->waitForStarted(-1);
     //how the fuck do i know when the sftp session is READY? surely it isn't just when the process is started, guh
     //the only hacky solution i can think of is to see if the process DOESN'T finish in a few seconds. if auth fail or whatever, it will finish soon. lame but whatever...
+    emit o("sftp connecting (5 sec wait)...");
     if(m_SftpProcess->waitForFinished(5)) //TODOoptional: 5 second startup time unnecessarily added to my app, fuck you sftp
     {
         m_SftpIsReadyForCommands = false;
@@ -183,6 +188,7 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessStarted()
     }
     else
     {
+        emit o("sftp connected");
         m_SftpIsReadyForCommands = true;
         QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection); //might use this code path for initial connection (race condition), but if this is a reconnect, we might want to resume uploading if queue isn't empty
     }
