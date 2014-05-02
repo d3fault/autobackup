@@ -1,0 +1,3 @@
+Homosexuality is only strange because it isn't the norm. It isn't the norm because evolution requires that it isn't. A declaration against homosexuality is a declaration of stupidity. It's something like this:
+disconnect(person, SIGNAL(homosexualityIsTehBadz()), society /*or could be 'this' if you aren't into information sharing*/, SLOT(handleGenuineConcern()));
+connect(person, SIGNAL(homosexualityIsTehBadz()), society, SLOT(handleStupidPersonDetected()));

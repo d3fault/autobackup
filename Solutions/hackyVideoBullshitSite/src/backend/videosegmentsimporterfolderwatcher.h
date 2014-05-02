@@ -6,6 +6,7 @@
 #include <QDir>
 
 class QFileSystemWatcher;
+class SftpUploaderAndRenamerQueue;
 
 class VideoSegmentsImporterFolderWatcher : public QObject
 {
@@ -22,12 +23,16 @@ private:
     int m_CurrentDayOfYearFolder;
 
     inline QString appendSlashIfNeeded(QString inputString) { return inputString.endsWith("/") ? inputString : inputString.append("/"); } //always easier than a pri include
+
+    SftpUploaderAndRenamerQueue *m_SftpUploaderAndRenamerQueue;
 signals:
+    void o(const QString &);
     void e(const QString &);
 public slots:
-    void initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo);
+    void initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, const QString &neighborPropagationRemoteDestinationToUploadTo, const QString &neighborPropagationRemoteDestinationToMoveTo, const QString &neighborPropagationUserHostPathComboSftpArg, const QString &sftpProcessPath);
 private slots:
     void handleDirectoryChanged(const QString &path);
+    void handleSftpUploaderAndRenamerQueueStarted();
 };
 
 #endif // VIDEOSEGMENTSIMPORTERFOLDERWATCHER_H

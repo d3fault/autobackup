@@ -17,10 +17,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     ffmpegsegmentuploadercli.cpp \
-    ../lib/ffmpegsegmentuploader.cpp
+    ../lib/ffmpegsegmentuploader.cpp \
+    ../../../../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp
 
 HEADERS += \
     ffmpegsegmentuploadercli.h \
-    ../lib/ffmpegsegmentuploader.h
+    ../lib/ffmpegsegmentuploader.h \
+    ../../../../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h
+
+INCLUDEPATH += ../../../../../../Projects/SftpUploaderAndRenamerQueue/src/lib/
 
 include(../../../../../../GloballySharedClasses/standardinputnotifier.pri)

@@ -36,6 +36,10 @@ private:
     QString m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo;
     QString m_MyBrainArchiveBaseDir_NoSlashAppended;
     QString m_LastModifiedTimestampsFile;
+    QString m_NeighborPropagationRemoteSftpUploadScratchSpace;
+    QString m_NeighborPropagationRemoteDestinationToMoveTo;
+    QString m_NeighborPropagationUserHostPathComboSftpArg;
+    QString m_SftpProcessPath;
 
     StandardInputNotifier *m_StdIn;
 

@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     frontend/timelinewtwidget.cpp \
     backend/lastmodifiedtimestampswatcher.cpp \
     ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp \
-    wtcontrollerandstdoutowner.cpp
+    wtcontrollerandstdoutowner.cpp \
+    ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp
 
 HEADERS += \
     hackyvideobullshitsite.h \
@@ -37,12 +38,14 @@ HEADERS += \
     ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h \
     lastmodifiedtimestampsandpaths.h \
     wtcontrollerandstdoutowner.h \
-    frontend/hvbsshared.h
+    frontend/hvbsshared.h \
+    ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 INCLUDEPATH += ../../../Projects/LastModifiedTimestampsSorter/src/lib/
+INCLUDEPATH += ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/
 
 LIBS += -lwt -lwthttp -lboost_signals
 

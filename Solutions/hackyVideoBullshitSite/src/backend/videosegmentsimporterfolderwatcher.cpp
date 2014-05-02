@@ -6,26 +6,33 @@
 #include <QStringList>
 #include <QListIterator>
 
+#include "sftpuploaderandrenamerqueue.h"
+
 VideoSegmentsImporterFolderWatcher::VideoSegmentsImporterFolderWatcher(QObject *parent) :
     QObject(parent)
   , m_DirectoryWatcher(new QFileSystemWatcher(this))
   , m_CurrentYearFolder(-1)
   , m_CurrentDayOfYearFolder(-1)
+  , m_SftpUploaderAndRenamerQueue(0)
 {
     connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged(QString)));
 }
-void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo)
+void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, const QString &neighborPropagationRemoteDestinationToUploadTo, const QString &neighborPropagationRemoteDestinationToMoveTo, const QString &neighborPropagationUserHostPathComboSftpArg, const QString &sftpProcessPath)
 {
     m_VideoSegmentsImporterFolderToWatchWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToWatch);
     m_VideoSegmentsImporterFolderScratchSpace.setPath(videoSegmentsImporterFolderScratchSpace); //because using folder to watch would trigger more directory changed stuffs (already does when leaving, but that is fine. creating folders in it though would create problems), and the folders need to already have a file in them before they are put in videoSegmentsImporterFolderToMoveTo
     m_VideoSegmentsImporterFolderToMoveToWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToMoveTo);
 
-    m_DirectoryWatcher->removePaths(m_DirectoryWatcher->directories()); //clear out old stuffz
-    if(!m_DirectoryWatcher->addPath(videoSegmentsImporterFolderToWatch))
-    {
-        emit e("VideoSegmentsImporterFolderWatcher: failed to add '" + videoSegmentsImporterFolderToWatch + "' to filesystem watcher");
-        return;
-    }
+    if(m_SftpUploaderAndRenamerQueue)
+        delete m_SftpUploaderAndRenamerQueue;
+    m_SftpUploaderAndRenamerQueue = new SftpUploaderAndRenamerQueue(this); //the rename is useless in this case (but the move ISN'T), but i'm too lazy to un-over-engineer it :-P
+    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(o(QString)), this, SIGNAL(o(QString)));
+    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStarted()), this, SLOT(handleSftpUploaderAndRenamerQueueStarted()));
+    //connect(m_SftpUploaderAndRenamerQueue, SIGNAL(statusGenerated(QString)), this, SIGNAL(o(QString)));
+    //connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStopped()), this, SIGNAL(stoppedUploadingFfmpegSegments())); //TODOreq: "q"[uit] should wait for upload queue to finish, which probably means more signal synchronization in HackyVideoBullshitSite
+
+    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, videoSegmentsImporterFolderToMoveTo), Q_ARG(QString, neighborPropagationRemoteDestinationToUploadTo), Q_ARG(QString, neighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, neighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
 }
 //moves file added to watch directory to <year>/<day>/
 //creates both year/day folders if needed (moves file into them before moving the folder to the destination (so it's atomic))
@@ -38,9 +45,9 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
     {
         const QString &currentEntry = it.next();
         //move entry from watch folder to permanent folder. TODOoptimization: folder-ize videos maybe. isn't there some maximum files in directory limit?
-        const QString &filenameMinusExt = currentEntry.left(currentEntry.indexOf("."));
+        const QString &filenameMinusExt = currentEntry.left(currentEntry.lastIndexOf("."));
         bool convertOk = false;
-        long filenameMinusExtAsLong = filenameMinusExt.toLong(&convertOk);
+        long long filenameMinusExtAsLong = filenameMinusExt.toLongLong(&convertOk);
         if(!convertOk)
         {
             continue; //silently discard invalid filenames
@@ -48,7 +55,11 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
         const QDateTime &newFilenamesDateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(filenameMinusExtAsLong)*1000);
         const int newFilenamesYear = newFilenamesDateTime.date().year();
         const int newFilenamesDayOfYear = newFilenamesDateTime.date().dayOfYear();
+
         //BUG (solved): creating *second* new day folder does not have a year folder in scratch space, because it was moved to moveTo and we currently don't think one needs to be created if one exists in moveTo already
+
+        //TODOoptional: possible bug, unsure: if starting up and moveTo/year/day is already made, that doesn't necessarily mean scratchSpace/year is too (i mean it SHOULD, but not necessarily. this would be a rare crash case most likely)
+
         /*
          * PSEUDO-CODE of following
          *
@@ -75,7 +86,8 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
                 continue; //don't stop, but do tell
             }
             //make new day folder in scratch space
-            const QString &dayFolderAboutToMake = yearFolderAboutToMake + QString::number(m_CurrentDayOfYearFolder) + QDir::separator();
+            QString currentDayOfYearFolderString = QString::number(m_CurrentDayOfYearFolder);
+            const QString &dayFolderAboutToMake = yearFolderAboutToMake + currentDayOfYearFolderString + QDir::separator();
             if(!m_VideoSegmentsImporterFolderScratchSpace.mkpath(dayFolderAboutToMake))
             {
                 emit e("failed to make day directory: '" + dayFolderAboutToMake + "'");
@@ -95,6 +107,13 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
                 emit e("failed to move '" + yearFolderAboutToMake + "' to '" + moveToDestinationYearFolder + "'");
                 continue; //don't stop, but do tell
             }
+
+            //enqueue for propagation to sibling
+            SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
+            enqueuForUploadType.first = filenameMinusExt;
+            enqueuForUploadType.second = moveToDestinationYearFolder + QDir::separator() + currentDayOfYearFolderString + QDir::separator() + currentEntry;
+            QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
+
             //remake new year (since it disappeared with above move, yet we still need it for new days)
             if(!m_VideoSegmentsImporterFolderScratchSpace.mkdir(yearFolderAboutToMake))
             {
@@ -128,6 +147,13 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
                 emit e("failed to move '" + dayFolderAboutToMake + "' to '" + moveToDestinationDayFolder + "'");
                 continue; //don't stop, but do tell
             }
+
+            //enqueue for propagation to sibling
+            SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
+            enqueuForUploadType.first = filenameMinusExt;
+            enqueuForUploadType.second = moveToDestinationDayFolder + QDir::separator() + currentEntry;
+            QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
+
             //no remake of day folder that just disappeared necessary, because the rest of this days entries will skip scratch space altogether
             continue;
         }
@@ -140,8 +166,24 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
             continue; //don't stop, but do tell
         }
 
-        //TODOreq: there are 3 renames/moves above that each need to trigger a "start propagating to sibling server" [via sftp i guess]. whenever a video segment is moved into "VideoSegmentsImporterFolderToMoveTo", it should also be added to a queue to propagate it
+        //enqueue for propagation to sibling
+        SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
+        enqueuForUploadType.first = filenameMinusExt;
+        enqueuForUploadType.second = moveToDestinationFilename;
+        QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
+
+        //TO DOnereq: there are 3 renames/moves above that each need to trigger a "start propagating to sibling server" [via sftp i guess]. whenever a video segment is moved into "VideoSegmentsImporterFolderToMoveTo", it should also be added to a queue to propagate it
         //^also worth noting is that the very "last" server in the daisy chain of that shit (if not using bit-torrent but using sftp) should NOT queue the file, since nobody else needs it
         //^^this needs to be done before i can scale to 2+ servers
     }
+}
+void VideoSegmentsImporterFolderWatcher::handleSftpUploaderAndRenamerQueueStarted()
+{
+    m_DirectoryWatcher->removePaths(m_DirectoryWatcher->directories()); //clear out old stuffz
+    if(!m_DirectoryWatcher->addPath(m_VideoSegmentsImporterFolderToWatchWithSlashAppended))
+    {
+        emit e("VideoSegmentsImporterFolderWatcher: failed to add '" + m_VideoSegmentsImporterFolderToWatchWithSlashAppended + "' to filesystem watcher");
+        return;
+    }
+    emit o("VideoSegmentsImporterFolderWatcher started");
 }

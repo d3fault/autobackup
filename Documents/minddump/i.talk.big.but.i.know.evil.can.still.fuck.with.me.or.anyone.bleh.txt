@@ -1,0 +1,11 @@
+[even though I walk through] THE VALLEY OF THE SHADOW OF DEATH = definition of life itself, according to christians
+pessimistic much? negative as fuck outlook. sure there's tons of evil, but meh i don't view life as being a VALLEY OF THE SHADOW OF DEATH (oooooooh, aaaaaaaah). life is a pretty cool guy eh, isn't death and doesn't afraid of anything.
+
+thread (threadId = evil)
+while(true)
+{
+	emit evilz(QByteArray *blahBlahBlah);
+}
+
+thread (threadId = nevetS)
+disconnect(nevets, SLOT(handleEvilz())); //it doesn't solve the problem, but the problem is unsolvable. fuck it, ignore evil and enjoy life. evil is a tad more likely to leave you alone if you ignore it (much more likely to come at you bro if you come after it)

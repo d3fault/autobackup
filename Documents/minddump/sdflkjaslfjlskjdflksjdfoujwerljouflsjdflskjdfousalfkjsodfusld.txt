@@ -1,0 +1,1 @@
+Solutions are projects, projects are libs, libs are "GloballySharedClasses". I need to merge all of them into one, preferably using "git submodules"-esq referencing, and preferably again (but way more distant) using a ddb-fs + "tagging" system

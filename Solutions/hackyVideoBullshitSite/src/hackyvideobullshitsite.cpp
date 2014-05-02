@@ -13,6 +13,11 @@
 #define HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo "AirborneVideoSegmentsBaseDir_aka_videoSegmentsImporterFolderToMoveTo"
 #define HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir "MyBrainArchiveBaseDir"
 #define HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile "LastModifiedTimestampsFile"
+#define HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteSftpUploadScratchSpace "NeighborPropagationRemoteSftpUploadScratchSpace"
+#define HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteDestinationToMoveTo "NeighborPropagationRemoteDestinationToMoveTo"
+#define HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationUserHostPathComboSftpArg "NeighborPropagationUserHostPathComboSftpArg"
+#define HackyVideoBullshitSite_SETTINGS_KEY_SftpProcessPath "SftpProcessPath"
+#define HVBS_MOST_LIKELY_SFTP_PATH "/usr/bin/sftp"
 
 #define HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS "/-!-!-!-!-!-!-!-placeholder/path-!-!-!-!-!-!-!"
 
@@ -51,7 +56,7 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch " not set" << endl;
             atLeastOneDidntExist = true;
-            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, m_VideoSegmentsImporterFolderToWatch);
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
 
         m_VideoSegmentsImporterFolderScratchSpace = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString());
@@ -59,7 +64,7 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace " not set" << endl;
             atLeastOneDidntExist = true;
-            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, m_VideoSegmentsImporterFolderScratchSpace);
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
 
         m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString());
@@ -67,7 +72,7 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo " not set" << endl;
             atLeastOneDidntExist = true;
-            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
 
         m_MyBrainArchiveBaseDir_NoSlashAppended = removeTrailingSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString());
@@ -75,7 +80,7 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir " not set" << endl;
             atLeastOneDidntExist = true;
-            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, m_MyBrainArchiveBaseDir_NoSlashAppended);
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
 
         m_LastModifiedTimestampsFile = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
@@ -84,6 +89,46 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+        }
+
+        m_NeighborPropagationRemoteSftpUploadScratchSpace = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteSftpUploadScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+        if(m_NeighborPropagationRemoteSftpUploadScratchSpace == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+        {
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteSftpUploadScratchSpace " not set" << endl;
+            atLeastOneDidntExist = true;
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteSftpUploadScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+        }
+
+        m_NeighborPropagationRemoteDestinationToMoveTo = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteDestinationToMoveTo, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+        if(m_NeighborPropagationRemoteDestinationToMoveTo == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+        {
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteDestinationToMoveTo " not set" << endl;
+            atLeastOneDidntExist = true;
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteDestinationToMoveTo, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+        }
+
+        m_NeighborPropagationUserHostPathComboSftpArg = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationUserHostPathComboSftpArg, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+        if(m_NeighborPropagationUserHostPathComboSftpArg == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+        {
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationUserHostPathComboSftpArg " not set" << endl;
+            atLeastOneDidntExist = true;
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationUserHostPathComboSftpArg, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+        }
+
+        m_SftpProcessPath = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_SftpProcessPath, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+        if(m_SftpProcessPath == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+        {
+            if(QFile::exists(HVBS_MOST_LIKELY_SFTP_PATH)) //auto-configya
+            {
+                cout << "warning: using " HVBS_MOST_LIKELY_SFTP_PATH " for sftp binary. you can specify another in the settings file" << endl;
+                m_SftpProcessPath = HVBS_MOST_LIKELY_SFTP_PATH;
+            }
+            else
+            {
+                cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_SftpProcessPath " not set and sftp not found in default location" << endl;
+                atLeastOneDidntExist = true;
+            }
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_SftpProcessPath, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
 
         if(atLeastOneDidntExist)
@@ -96,7 +141,7 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
 
     connect(m_WtControllerAndStdOutOwnerThread, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleWtControllerAndStdOutOwnerIsReadyForConnections()));
     m_ObjectOnThreadSynchronizer->addObjectToSynchronizer(m_WtControllerAndStdOutOwnerThread);
-    m_WtControllerAndStdOutOwnerThread->start(); //yes that backend thread might start and emit readyForConnections, but 'this' thread won't process it until our constructor is finished!
+    m_WtControllerAndStdOutOwnerThread->start(); //yes that backend thread might start and emit readyForConnections, but 'this' thread won't process it until our constructor is finished! relevance = ObjectSynchronizer will only emit "all objects ready" after this unit of execution (typo was sex, sup nick), and the following addObjectToSynchronizer calls, are finished
 
     //don't have any that aren't dependent on the whole being ready?, simply don't connect :). connect(m_AdImageGetAndSubscribeManagerThread, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleAdImageGetAndSubscribeManagerIsReadyForConnections()));
     m_ObjectOnThreadSynchronizer->addObjectToSynchronizer(m_AdImageGetAndSubscribeManagerThread);
@@ -125,8 +170,8 @@ void HackyVideoBullshitSite::handleWtControllerAndStdOutOwnerIsReadyForConnectio
 void HackyVideoBullshitSite::handleVideoSegmentsImporterFolderWatcherReadyForConnections()
 {
     VideoSegmentsImporterFolderWatcher *videoSegmentsImporterFolderWatcher = m_VideoSegmentsImporterFolderWatcherThread->getObjectPointerForConnectionsOnly();
+    connect(videoSegmentsImporterFolderWatcher, SIGNAL(o(QString)), this, SIGNAL(o(QString)));
     connect(videoSegmentsImporterFolderWatcher, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
-    QMetaObject::invokeMethod(videoSegmentsImporterFolderWatcher, "initializeAndStart", Q_ARG(QString, m_VideoSegmentsImporterFolderToWatch), Q_ARG(QString, m_VideoSegmentsImporterFolderScratchSpace), Q_ARG(QString, m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo));
 }
 void HackyVideoBullshitSite::handleLastModifiedTimestampsWatcherReadyForConnections()
 {
@@ -135,7 +180,6 @@ void HackyVideoBullshitSite::handleLastModifiedTimestampsWatcherReadyForConnecti
     //OLD-when-atomic: similarly, instead of a pointer to a video segment file, i could point to a plugin to expand capability without shutting the server down :-P
     //o hai atomicz <3 (*throws up*)
     WtControllerAndStdOutOwner::setTimestampsAndPathsSharedAtomicPointer(lastModifiedTimestampsWatcher->getTimestampsAndPathsAtomicPointer());
-    QMetaObject::invokeMethod(lastModifiedTimestampsWatcher, "startWatchingLastModifiedTimestampsFile", Q_ARG(QString, m_LastModifiedTimestampsFile));
 }
 void HackyVideoBullshitSite::handleWatchingLastModifiedTimestampsFileStarted()
 {
@@ -157,6 +201,10 @@ void HackyVideoBullshitSite::handleAllBackendObjectsOnThreadsReadyForConnections
     //could have done both of these connections in their respective "ready for connections" slots, but i want to give ad image manager a slight headstart. it's an optimization to do so, but not necessary
     connect(this, SIGNAL(beginStoppingRequested()), m_AdImageGetAndSubscribeManagerThread->getObjectPointerForConnectionsOnly(), SLOT(beginStopping()));
     connect(this, SIGNAL(beginStoppingRequested()), m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly(), SLOT(stop()));
+
+    //these invokeMethods need to be after ALL backends are ready for connections, or at least until WtControllerAndStdOutOwner is ready for connections (since it is our e/o handler!), because by invoking them when in individual ready for connections might miss e/o signals from them
+    QMetaObject::invokeMethod(m_VideoSegmentsImporterFolderWatcherThread->getObjectPointerForConnectionsOnly(), "initializeAndStart", Q_ARG(QString, m_VideoSegmentsImporterFolderToWatch), Q_ARG(QString, m_VideoSegmentsImporterFolderScratchSpace), Q_ARG(QString, m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo), Q_ARG(QString, m_NeighborPropagationRemoteSftpUploadScratchSpace), Q_ARG(QString, m_NeighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, m_NeighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, m_SftpProcessPath));
+    QMetaObject::invokeMethod(lastModifiedTimestampsWatcher, "startWatchingLastModifiedTimestampsFile", Q_ARG(QString, m_LastModifiedTimestampsFile));
 }
 void HackyVideoBullshitSite::handleStandardInput(const QString &line)
 {
