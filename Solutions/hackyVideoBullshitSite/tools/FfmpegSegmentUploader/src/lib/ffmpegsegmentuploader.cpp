@@ -6,13 +6,15 @@
 #include <QStringList>
 #include <QProcessEnvironment>
 #include <QCoreApplication>
+#include <QDateTime>
+#include <QDir>
 
 #include "sftpuploaderandrenamerqueue.h"
 
 FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent)
     : QObject(parent)
     , m_FfmpegSegmentsEntryListFile(0)
-    , m_FfmpegSegmentsEntryListFileWatcher(0)
+    , m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher(0)
     , m_FfmpegProcess(new QProcess(this))
     , m_SftpUploaderAndRenamerQueue(0)
 {
@@ -32,62 +34,65 @@ FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent)
     connect(m_FfmpegProcess, SIGNAL(readyReadStandardError()), this, SLOT(handleFfmpegProecssStdErr()));
     connect(m_FfmpegProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleFfmpegProecssFinished(int,QProcess::ExitStatus)));
 }
-void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegAddsThemToTheSegmentsEntryList(const QString &filenameOfSegmentsEntryList, qint64 segmentLengthSeconds, const QString &ffmpegCommand, const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath)
+FfmpegSegmentUploader::~FfmpegSegmentUploader()
 {
-    if(segmentLengthSeconds < 1)
+    if(m_FfmpegProcess->isOpen())
     {
-        emit e("segment length can't be less than 1");
+        m_FfmpegProcess->terminate();
+        emit o("waiting 30 seconds for ffmpeg to finish...");
+        if(!m_FfmpegProcess->waitForFinished())
+        {
+            emit e("ffmpeg didn't finish within 30 seconds, so killing it");
+            m_FfmpegProcess->kill();
+        }
+    }
+}
+void FfmpegSegmentUploader::startFfmpegSegmentUploader(qint64 segmentLengthSeconds, const QString &ffmpegCommand, const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath)
+{
+    if(segmentLengthSeconds < 10) //this used to be "1", but idk anything less than 10 just sounds stupid... and 1 sounds... unrealistic and/or impossible
+    {
+        emit e("segment length can't be less than 10 seconds");
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
         return;
     }
     m_SegmentLengthSeconds = segmentLengthSeconds;
     m_FfmpegCommand = (ffmpegCommand.isEmpty() ? DEFAULT_ANDOR_D3FAULT_FFMPEG_COMMAND_ZOMG_ROFL_PUN_OR_WAIT_NO_IDK_JUST_LOL_THO : ffmpegCommand);
-    if(!m_FfmpegCommand.contains(FFMPEG_COMMAND_SEGMENT_LENGTH_STRING, Qt::CaseSensitive))
+    if(!m_FfmpegCommand.contains(FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_LENGTH_STRING, Qt::CaseSensitive))
     {
-        emit e("your ffmpeg command must contain the special string: " FFMPEG_COMMAND_SEGMENT_LENGTH_STRING);
+        emit e("your ffmpeg command must contain the special string: " FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_LENGTH_STRING);
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
         return;
     }
-    m_FfmpegCommand.replace(FFMPEG_COMMAND_SEGMENT_LENGTH_STRING, QString::number(segmentLengthSeconds), Qt::CaseSensitive);
-    m_FfmpegProcess->setWorkingDirectory(localPath);
-    if(filenameOfSegmentsEntryList.isEmpty())
+    m_FfmpegCommand.replace(FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_LENGTH_STRING, QString::number(segmentLengthSeconds), Qt::CaseSensitive);
+    m_FfmpegSegmentUploaderSessionPath = appendSlashIfMissing(localPath) + QString::number(QDateTime::currentMSecsSinceEpoch()/1000) + QDir::separator();
+    if(QFile::exists(m_FfmpegSegmentUploaderSessionPath))
     {
-        emit e("invalid filename of segments entry list: '" + filenameOfSegmentsEntryList + "'");
+        emit e("wtf the session folder we were about to use (" + m_FfmpegSegmentUploaderSessionPath + ") already exists... is your clock set up right?");
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
         return;
     }
-    m_FilenameOfSegmentsEntryList = filenameOfSegmentsEntryList;
-    if(!QFile::exists(m_FilenameOfSegmentsEntryList))
+    QDir whyTheFuckIsntMkPathStatic(m_FfmpegSegmentUploaderSessionPath);
+    if(!whyTheFuckIsntMkPathStatic.mkpath(m_FfmpegSegmentUploaderSessionPath))
     {
-        emit e("segment entry list file does not exist: '" + m_FilenameOfSegmentsEntryList + "'");
-        return; //TODOreq: this, and the below return, and probably otherh places, should quit cleanly/now. do more than just return (sftp may be running for example)
-    }
-    if(!m_FfmpegCommand.contains(FFMPEG_COMMAND_SEGMENT_ENTRY_LIST_FILE_REPLACEMENT_STRING, Qt::CaseSensitive))
-    {
-        emit e("your ffmpeg command must contain the special string: " FFMPEG_COMMAND_SEGMENT_ENTRY_LIST_FILE_REPLACEMENT_STRING);
+        emit e("failed to make session folder for ffmpeg [segment uploader]: " + m_FfmpegSegmentUploaderSessionPath);
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
         return;
     }
-    m_FfmpegCommand.replace(FFMPEG_COMMAND_SEGMENT_ENTRY_LIST_FILE_REPLACEMENT_STRING, "\"" + m_FilenameOfSegmentsEntryList + "\"", Qt::CaseSensitive);
-    if(m_FfmpegSegmentsEntryListFile)
-        delete m_FfmpegSegmentsEntryListFile;
-    m_FfmpegSegmentsEntryListFile = new QFile(m_FilenameOfSegmentsEntryList, this);
-    if(!m_FfmpegSegmentsEntryListFile->open(QIODevice::ReadOnly | QIODevice::Text))
+    m_FfmpegProcess->setWorkingDirectory(m_FfmpegSegmentUploaderSessionPath);
+    if(!m_FfmpegCommand.contains(FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_ENTRY_LIST_FILE_REPLACEMENT_STRING, Qt::CaseSensitive))
     {
-        emit e("failed to open file for reading: '" + m_FilenameOfSegmentsEntryList + "'");
-        delete m_FfmpegSegmentsEntryListFile;
-        m_FfmpegSegmentsEntryListFile = 0;
+        emit e("your ffmpeg command must contain the special string: " FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_ENTRY_LIST_FILE_REPLACEMENT_STRING);
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
         return;
     }
-    m_FfmpegSegmentsEntryListFileTextStream.setDevice(m_FfmpegSegmentsEntryListFile);
-    m_FfmpegSegmentsEntryListFileTextStream.seek(0);
+    m_FfmpegCommand.replace(FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_ENTRY_LIST_FILE_REPLACEMENT_STRING, "\"" FfmpegSegmentUploader_FFMPEG_SEGMENT_ENTRY_LIST_FILENAME "\"", Qt::CaseSensitive);
 
-    if(m_FfmpegSegmentsEntryListFileWatcher)
-        delete m_FfmpegSegmentsEntryListFileWatcher;
-    m_FfmpegSegmentsEntryListFileWatcher = new QFileSystemWatcher(this);
-    m_FfmpegSegmentsEntryListFileWatcher->addPath(filenameOfSegmentsEntryList);
-    connect(m_FfmpegSegmentsEntryListFileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleSegmentsEntryListFileModified()));
+    if(m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher)
+        delete m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher;
+    m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher = new QFileSystemWatcher(this);
+    connect(m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleFfmpegSessionDirChangedSoMaybeTransformIntoFileWatcher(QString)));
+    connect(m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleSegmentsEntryListFileModified()));
+    m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher->addPath(m_FfmpegSegmentUploaderSessionPath);
 
     if(m_SftpUploaderAndRenamerQueue)
         delete m_SftpUploaderAndRenamerQueue;
@@ -98,7 +103,7 @@ void FfmpegSegmentUploader::startUploadingSegmentsOnceFfmpegAddsThemToTheSegment
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(statusGenerated(QString)), this, SIGNAL(o(QString)));
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStopped()), this, SIGNAL(stoppedUploadingFfmpegSegments()));
 
-    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, localPath), Q_ARG(QString, remoteDestinationToUploadTo), Q_ARG(QString, remoteDestinationToMoveTo), Q_ARG(QString, userHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
+    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, m_FfmpegSegmentUploaderSessionPath), Q_ARG(QString, remoteDestinationToUploadTo), Q_ARG(QString, remoteDestinationToMoveTo), Q_ARG(QString, userHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
 }
 void FfmpegSegmentUploader::tellStatus()
 {
@@ -130,6 +135,32 @@ void FfmpegSegmentUploader::handleFfmpegProecssStdErr()
     QString allStdErrStr(allStdErrBA);
     emit e(allStdErrStr);
 }
+void FfmpegSegmentUploader::handleFfmpegSessionDirChangedSoMaybeTransformIntoFileWatcher(const QString &fileInDirThatChanged)
+{
+    if(fileInDirThatChanged == FfmpegSegmentUploader_FFMPEG_SEGMENT_ENTRY_LIST_FILENAME)
+    {
+        m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher->removePath(m_FfmpegSegmentUploaderSessionPath);
+        disconnect(m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher, SIGNAL(directoryChanged(QString)));
+
+        if(m_FfmpegSegmentsEntryListFile)
+            delete m_FfmpegSegmentsEntryListFile;
+        QString filenameOfSegmentsEntryList = m_FfmpegSegmentUploaderSessionPath + FfmpegSegmentUploader_FFMPEG_SEGMENT_ENTRY_LIST_FILENAME;
+        m_FfmpegSegmentsEntryListFile = new QFile(filenameOfSegmentsEntryList, this);
+        if(!m_FfmpegSegmentsEntryListFile->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            emit e("failed to open file for reading: '" + filenameOfSegmentsEntryList + "'");
+            delete m_FfmpegSegmentsEntryListFile;
+            m_FfmpegSegmentsEntryListFile = 0;
+            QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+            return;
+        }
+        m_FfmpegSegmentsEntryListFileTextStream.setDevice(m_FfmpegSegmentsEntryListFile);
+        m_FfmpegSegmentsEntryListFileTextStream.seek(0);
+
+        m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher->addPath(filenameOfSegmentsEntryList);
+        handleSegmentsEntryListFileModified(); //missed one, so...
+    }
+}
 void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
 {
     QPair<QString,QString> newPair;
@@ -144,7 +175,7 @@ void FfmpegSegmentUploader::handleFfmpegProecssFinished(int exitCode, QProcess::
 {
     if(exitCode != 0 || exitStatus != QProcess::NormalExit)
     {
-        emit e("ffmpeg process crashed or exitted with non-zero exit code: " + QString::number(exitCode));
+        emit e("ffmpeg process either crashed or exitted with non-zero exit code: " + QString::number(exitCode));
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
         return;
     }

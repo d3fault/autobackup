@@ -5,6 +5,7 @@
 [wip] - Hack together shitty video solution + webpage (it being a 'user of' abc2)
 [] - Convert svgs from "flow" to "text" on both old archive and new
 [] - Merge old archive and new (keeping binary and text separate)
+[] - Manual for Abc2 (+tools) + HackyVideoBullshitSite (+tools) configuring and running... for myself and others...
 [] - Valgrind everything
 [] - Buy hardware + move out + set up hardware
 [] - Launch via 1337/dirty h4x, leaseweb most likely (get offline backup however/hackily (use offline machine being recorded by another offline machine AND by an online machine (probably multiple vga splitters). 3 machines, 2 offline. The one you type/broadcast on does not record (might also need code testing filming solution). Same setup for your face)) (user/d3fault/data CAN contain only: sha1/md5/magnet (freenet, bittorrent), decryption key/password to it all. Will eventually actually server the data)
