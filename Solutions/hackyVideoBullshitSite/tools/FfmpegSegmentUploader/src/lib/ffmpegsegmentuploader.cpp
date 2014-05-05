@@ -31,12 +31,12 @@ FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent)
     m_FfmpegProcess->setProcessEnvironment(ffmpegProcessEnvironenment);
 
     connect(m_FfmpegProcess, SIGNAL(started()), this, SLOT(handleFfmpegProcessStarted()));
-    connect(m_FfmpegProcess, SIGNAL(readyReadStandardError()), this, SLOT(handleFfmpegProecssStdErr()));
+    connect(m_FfmpegProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(handleFfmpegProecssStdErr()));
     connect(m_FfmpegProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleFfmpegProecssFinished(int,QProcess::ExitStatus)));
 }
 FfmpegSegmentUploader::~FfmpegSegmentUploader()
 {
-    if(m_FfmpegProcess->isOpen())
+    if(m_FfmpegProcess->state() != QProcess::NotRunning)
     {
         m_FfmpegProcess->terminate();
         emit o("waiting 30 seconds for ffmpeg to finish...");
@@ -103,7 +103,7 @@ void FfmpegSegmentUploader::startFfmpegSegmentUploader(qint64 segmentLengthSecon
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(statusGenerated(QString)), this, SIGNAL(o(QString)));
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStopped()), this, SIGNAL(stoppedUploadingFfmpegSegments()));
 
-    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, m_FfmpegSegmentUploaderSessionPath), Q_ARG(QString, remoteDestinationToUploadTo), Q_ARG(QString, remoteDestinationToMoveTo), Q_ARG(QString, userHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
+    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, remoteDestinationToUploadTo), Q_ARG(QString, remoteDestinationToMoveTo), Q_ARG(QString, userHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
 }
 void FfmpegSegmentUploader::tellStatus()
 {
@@ -111,7 +111,7 @@ void FfmpegSegmentUploader::tellStatus()
 }
 void FfmpegSegmentUploader::stopUploadingFfmpegSegments()
 {
-    if(m_FfmpegProcess->isOpen())
+    if(m_FfmpegProcess->state() != QProcess::NotRunning)
     {
         m_FfmpegProcess->terminate();
     }
@@ -131,15 +131,15 @@ void FfmpegSegmentUploader::handleFfmpegProcessStarted()
 }
 void FfmpegSegmentUploader::handleFfmpegProecssStdErr()
 {
-    QByteArray allStdErrBA = m_FfmpegProcess->readAllStandardError();
+    QByteArray allStdErrBA = m_FfmpegProcess->readAllStandardOutput();
     QString allStdErrStr(allStdErrBA);
     emit e(allStdErrStr);
 }
 void FfmpegSegmentUploader::handleFfmpegSessionDirChangedSoMaybeTransformIntoFileWatcher(const QString &fileInDirThatChanged)
 {
-    if(fileInDirThatChanged == FfmpegSegmentUploader_FFMPEG_SEGMENT_ENTRY_LIST_FILENAME)
+    if(QFile::exists(m_FfmpegSegmentUploaderSessionPath + FfmpegSegmentUploader_FFMPEG_SEGMENT_ENTRY_LIST_FILENAME))
     {
-        m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher->removePath(m_FfmpegSegmentUploaderSessionPath);
+        m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher->removePath(fileInDirThatChanged);
         disconnect(m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher, SIGNAL(directoryChanged(QString)));
 
         if(m_FfmpegSegmentsEntryListFile)
@@ -163,13 +163,13 @@ void FfmpegSegmentUploader::handleFfmpegSessionDirChangedSoMaybeTransformIntoFil
 }
 void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
 {
-    QPair<QString,QString> newPair;
-    newPair.second = m_FfmpegSegmentsEntryListFileTextStream.readLine();
-    if(newPair.second.isEmpty())
+    QString newLine = m_FfmpegSegmentsEntryListFileTextStream.readLine();
+    if(newLine.isEmpty())
         return; //idk my bff jill, but i saw sftp try to upload the localPath folder because 'second' was an empty string (no recursive flag = fails/exits)
+    QPair<QString,QString> newPair;
+    newPair.second = m_FfmpegSegmentUploaderSessionPath + newLine;
     newPair.first = QString::number(QDateTime::currentDateTime().addSecs(-m_SegmentLengthSeconds).toMSecsSinceEpoch()/1000); //it's added to the segment entry list right when encoding finishes. idfk how i thought it was added right when encoding starts (thought i saw it happen (fucking saw it happen again and then stop happening one run later, WTFZ))... now gotta un-code dat shiz
     QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, newPair));
-    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "tryDequeueAndUploadSingleSegment");
 }
 void FfmpegSegmentUploader::handleFfmpegProecssFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {

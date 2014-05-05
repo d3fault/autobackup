@@ -1,0 +1,4 @@
+On power button pressed()
+{
+	sync/flush, THEN <do user action (power off, etc)>. holding for 5 sec shit should still also sync (and so long as it appears shit is still syncing, can/should be able to take longer than 5 sec (but obviously this doesn't work if there are continuous writes (but it's still good to try to sync before hard shutting down i mean wtf bro)))
+}

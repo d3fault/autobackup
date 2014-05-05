@@ -1,0 +1,1 @@
+That your software breaks in obscure unintended ways makes you have to debug and understand your software in obscure unintended ways. Most of those ways are completely useless aside from tracking down the causing bug, but they exercise the brain none the less.

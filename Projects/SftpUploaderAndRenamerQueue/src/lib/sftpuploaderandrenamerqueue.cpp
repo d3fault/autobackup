@@ -2,6 +2,7 @@
 
 #include <QTextStream>
 #include <QTimer>
+#include <QFileInfo>
 
 //at first i was amped to learn about sftp, but now after trying to use it in automation it's a freaking pain in the ass. provides very little feedback (whereas scp i'd just check return code == 0). hmm, *tries cranking up verbosity*. cool, increasing verbosity does NOTHING (except a bunch of shit i don't care about on stderr). there's no "upload complete" message... pos...
 SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueue(QObject *parent)
@@ -19,16 +20,16 @@ SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueue(QObject *parent)
 }
 SftpUploaderAndRenamerQueue::~SftpUploaderAndRenamerQueue()
 {
-    if(m_SftpProcess && m_SftpProcess->isOpen())
+    if(m_SftpProcess && m_SftpProcess->state() != QProcess::NotRunning)
     {
         if(m_SftpProcessTextStream)
         {
             stopSftpProcess();
         }
-        if(m_SftpProcess->isOpen())
+        if(m_SftpProcess->state() != QProcess::NotRunning)
         {
             m_SftpProcess->terminate();
-            if(!m_SftpProcess->waitForFinished(5))
+            if(!m_SftpProcess->waitForFinished(5000))
             {
                 m_SftpProcess->kill();
             }
@@ -43,16 +44,16 @@ void SftpUploaderAndRenamerQueue::stopSftpProcess()
     {
         *m_SftpProcessTextStream << "bye" << endl << "bye" << endl; //idfk why, but when i was testing this it needed two byes. since the second one [probably?] won't hurt, fuck it :-P. i think it's because the first bye causes a disconnect, and for some retarded reason sftp hangs there until it receives another command, at which case that command makes stfp error-out/quit (because disconnect)
     }
-    else if(m_SftpProcess->isOpen())
+    else if(m_SftpProcess->state() != QProcess::NotRunning)
     {
         m_SftpProcess->terminate(); //hmmm idk lol
-        if(!m_SftpProcess->waitForFinished(5))
+        if(!m_SftpProcess->waitForFinished(5000))
         {
             m_SftpProcess->kill();
         }
     }
 }
-void SftpUploaderAndRenamerQueue::startSftpUploaderAndRenamerQueue(const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath)
+void SftpUploaderAndRenamerQueue::startSftpUploaderAndRenamerQueue(const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath)
 {
     if(remoteDestinationToMoveTo.isEmpty() || remoteDestinationToUploadTo.isEmpty())
     {
@@ -67,12 +68,6 @@ void SftpUploaderAndRenamerQueue::startSftpUploaderAndRenamerQueue(const QString
     m_UserHostPathComboSftpArg = userHostPathComboSftpArg;
     m_RemoteDestinationToUploadToWithSlashAppended = appendSlashIfMissing(remoteDestinationToUploadTo);
     m_RemoteDestinationToMoveToWithSlashAppended = appendSlashIfMissing(remoteDestinationToMoveTo);
-    if(localPath.isEmpty())
-    {
-        emit e("can't use empty local path");
-        return;
-    }
-    m_LocalPathWithSlashAppended = appendSlashIfMissing(localPath);
     m_SftpProcessPath = sftpProcessPath;
     if(sftpProcessPath.isEmpty())
     {
@@ -96,9 +91,10 @@ void SftpUploaderAndRenamerQueue::startSftpUploaderAndRenamerQueue(const QString
 
     emit sftpUploaderAndRenamerQueueStarted();
 }
-void SftpUploaderAndRenamerQueue::enqueueFileForUploadAndRename(QPair<QString, QString> timestampAndFilenameToEnqueueForUpload)
+void SftpUploaderAndRenamerQueue::enqueueFileForUploadAndRename(SftpUploaderAndRenamerQueueTimestampAndFilenameType timestampAndFilenameToEnqueueForUpload)
 {
     m_SegmentsQueuedForUpload.enqueue(timestampAndFilenameToEnqueueForUpload);
+    tryDequeueAndUploadSingleSegment();
 }
 void SftpUploaderAndRenamerQueue::tellStatus()
 {
@@ -157,8 +153,10 @@ void SftpUploaderAndRenamerQueue::tryDequeueAndUploadSingleSegment()
     if(m_SftpIsReadyForCommands)
     {
         const QPair<QString,QString> &queuedPair = m_SegmentsQueuedForUpload.head();
-        QString remoteUploadPath = "\"" + m_RemoteDestinationToUploadToWithSlashAppended + queuedPair.second + "\"";
-        QString putCommand = "put \"" + m_LocalPathWithSlashAppended + queuedPair.second + "\" " + remoteUploadPath;
+        QFileInfo fileInfoToGetFilenamePortion(queuedPair.second);
+
+        QString remoteUploadPath = "\"" + m_RemoteDestinationToUploadToWithSlashAppended + fileInfoToGetFilenamePortion.fileName() + "\"";
+        QString putCommand = "put \"" + queuedPair.second + "\" " + remoteUploadPath;
         QString renameCommand = "rename \"" + remoteUploadPath + "\" \"" + m_RemoteDestinationToMoveToWithSlashAppended + queuedPair.first + ".ogg\"";
         //queue upload then rename to sftp
         *m_SftpProcessTextStream << putCommand << endl << renameCommand << endl;
@@ -180,7 +178,7 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessStarted()
     //how the fuck do i know when the sftp session is READY? surely it isn't just when the process is started, guh
     //the only hacky solution i can think of is to see if the process DOESN'T finish in a few seconds. if auth fail or whatever, it will finish soon. lame but whatever...
     emit o("sftp connecting (5 sec wait)...");
-    if(m_SftpProcess->waitForFinished(5)) //TODOoptional: 5 second startup time unnecessarily added to my app, fuck you sftp
+    if(m_SftpProcess->waitForFinished(5000)) //TODOoptional: 5 second startup time unnecessarily added to my app, fuck you sftp
     {
         m_SftpIsReadyForCommands = false;
         m_SftpWasToldToQuit = true; //give it permission to not retry

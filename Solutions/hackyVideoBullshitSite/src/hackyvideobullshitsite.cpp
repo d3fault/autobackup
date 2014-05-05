@@ -9,7 +9,7 @@
 #include "standardinputnotifier.h"
 
 #define HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch "VideoSegmentsImporterFolderToWatch"
-#define HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace "VideoSegmentsImporterFolderScratchSpace"
+#define HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace "VideoSegmentsImporterFolderYearDayOfYearFoldersScratchSpace"
 #define HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo "AirborneVideoSegmentsBaseDir_aka_videoSegmentsImporterFolderToMoveTo"
 #define HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir "MyBrainArchiveBaseDir"
 #define HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile "LastModifiedTimestampsFile"
@@ -234,6 +234,7 @@ void HackyVideoBullshitSite::handleAboutToQuit()
 }
 void HackyVideoBullshitSite::handleFatalError()
 {
-    QCoreApplication::exit(1);
+    QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+    //QCoreApplication::exit(1); //<-- PROOF THAT QUIT NEEDS TO BE QUEUED OR ELSE DEAD LOCK  at return qapp.exec(); (uncomment and comment above), WTF. especially wtf since i'm on gui thread. should submit patch :-P
 }
 

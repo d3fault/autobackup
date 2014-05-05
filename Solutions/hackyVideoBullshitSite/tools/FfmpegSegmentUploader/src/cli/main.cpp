@@ -9,6 +9,8 @@
 //TODOoptional: this involves more wrapping the ffmpeg call, which i'm considering doing, but after that is done i think each ffmpeg session should get it's own folder (perhaps based on start timestamp). otherwise, previous sessions will have their video files overwritten, which may be undesireable/accidental behavior
 //^related, but barely: i could do a dir watcher (but 'know' the filename (since automating ffmpeg, is easy) of the segment file ahead of time) that transforms into a file watcher, so i don't have to do the "touch" stuff below. ffmpeg would make it then, and i think it would happen after the first segment finishes
 
+//TODOreq: Q -> sftp uploader queue never empties (dc or w/e) -> segfault
+
 //1) touch segments list file (or truncate to zero). i think it might need to be initially created by ffmpeg, i'm seeing weird inconsistencies with this
 //2) launch this app (segments file must exist)
 //3) launch ffmpeg

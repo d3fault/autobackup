@@ -20,7 +20,6 @@ private:
     QQueue<SftpUploaderAndRenamerQueueTimestampAndFilenameType> m_SegmentsQueuedForUpload;
     QTimer *m_FiveSecondRetryTimer;
 
-    QString m_LocalPathWithSlashAppended;
     QString m_RemoteDestinationToUploadToWithSlashAppended;
     QString m_RemoteDestinationToMoveToWithSlashAppended;
 
@@ -48,8 +47,8 @@ signals:
     void statusGenerated(const QString &);
     void sftpUploaderAndRenamerQueueStopped();
 public slots:
-    void startSftpUploaderAndRenamerQueue(const QString &localPath, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath);
-    void enqueueFileForUploadAndRename(QPair<QString, QString> timestampAndFilenameToEnqueueForUpload);
+    void startSftpUploaderAndRenamerQueue(const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath);
+    void enqueueFileForUploadAndRename(SftpUploaderAndRenamerQueueTimestampAndFilenameType timestampAndFilenameToEnqueueForUpload);
     void tellStatus();
     void stopSftpUploaderAndRenamerQueue();
 private slots:

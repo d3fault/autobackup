@@ -19,7 +19,7 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent)
     connect(m_FfmpegSegmentUploader, SIGNAL(stoppedUploadingFfmpegSegments()), QCoreApplication::instance(), SLOT(quit()), Qt::QueuedConnection); //hmm i think a custom object with a QFutureSynchronizer and a handful of QFutures passed to it would solve the.... oh nvm i think i need QFutureWatchers with it too in order to not block
 
     QStringList arguments = QCoreApplication::arguments();
-    if(arguments.size() < 7 || arguments.size() > 8)
+    if(arguments.size() < 6 || arguments.size() > 8)
     {
         cliUsage();
         QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection); // "quitLater"? maybe i'm just doing something wrong and it's coincidence every time, but i tend to see a silent deadlock at "return app.exec()" whenever i don't make this a QueuedConnection
@@ -58,7 +58,7 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent)
 void FfmpegSegmentUploaderCli::cliUsage()
 {
     handleO("Usage:");
-    handleO("FfmpegSegmentUploaderCli ffmpegWorkingDirWhereSegmentsWillBeWritten remoteDestinationToUploadTo remoteDestinationToMoveTo userHostPathComboSftpArg segmentLengthSeconds [ffmpegCmd=\"" DEFAULT_ANDOR_D3FAULT_FFMPEG_COMMAND_ZOMG_ROFL_PUN_OR_WAIT_NO_IDK_JUST_LOL_THO "\"] [sftpProcessPath=/usr/bin/sftp]");
+    handleO("FfmpegSegmentUploaderCli ffmpegWorkingDirWhereSegmentsWillBeWritten remoteDestinationUploadScratch remoteDestinationWatchedFolderToMoveTo userHostPathComboSftpArg segmentLengthSeconds [ffmpegCmd=\"" DEFAULT_ANDOR_D3FAULT_FFMPEG_COMMAND_ZOMG_ROFL_PUN_OR_WAIT_NO_IDK_JUST_LOL_THO "\"] [sftpProcessPath=/usr/bin/sftp]");
 }
 void FfmpegSegmentUploaderCli::cliUserInterfaceMenu()
 {

@@ -32,7 +32,7 @@ void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &video
     //connect(m_SftpUploaderAndRenamerQueue, SIGNAL(statusGenerated(QString)), this, SIGNAL(o(QString)));
     //connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStopped()), this, SIGNAL(stoppedUploadingFfmpegSegments())); //TODOreq: "q"[uit] should wait for upload queue to finish, which probably means more signal synchronization in HackyVideoBullshitSite
 
-    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, videoSegmentsImporterFolderToMoveTo), Q_ARG(QString, neighborPropagationRemoteDestinationToUploadTo), Q_ARG(QString, neighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, neighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
+    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, neighborPropagationRemoteDestinationToUploadTo), Q_ARG(QString, neighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, neighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
 }
 //moves file added to watch directory to <year>/<day>/
 //creates both year/day folders if needed (moves file into them before moving the folder to the destination (so it's atomic))
@@ -59,6 +59,7 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
         //BUG (solved): creating *second* new day folder does not have a year folder in scratch space, because it was moved to moveTo and we currently don't think one needs to be created if one exists in moveTo already
 
         //TODOoptional: possible bug, unsure: if starting up and moveTo/year/day is already made, that doesn't necessarily mean scratchSpace/year is too (i mean it SHOULD, but not necessarily. this would be a rare crash case most likely)
+        //^TODOreq: the opposite holds true and is much more likely (regular shutdown -> restart). scratch/year/day is made but moveTo/year/day might not be
 
         /*
          * PSEUDO-CODE of following
@@ -179,7 +180,9 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
 }
 void VideoSegmentsImporterFolderWatcher::handleSftpUploaderAndRenamerQueueStarted()
 {
-    m_DirectoryWatcher->removePaths(m_DirectoryWatcher->directories()); //clear out old stuffz
+    QStringList oldDirectories = m_DirectoryWatcher->directories();
+    if(!oldDirectories.isEmpty())
+        m_DirectoryWatcher->removePaths(m_DirectoryWatcher->directories()); //clear out old stuffz
     if(!m_DirectoryWatcher->addPath(m_VideoSegmentsImporterFolderToWatchWithSlashAppended))
     {
         emit e("VideoSegmentsImporterFolderWatcher: failed to add '" + m_VideoSegmentsImporterFolderToWatchWithSlashAppended + "' to filesystem watcher");
