@@ -43,8 +43,6 @@ private:
 
     StandardInputNotifier *m_StdIn;
 
-    void cliUsage();
-
     inline QString appendSlashIfNeeded(const QString &inputString)
     {
         return inputString.endsWith("/") ? inputString : (inputString + "/");
@@ -66,6 +64,8 @@ private slots:
     void handleWatchingLastModifiedTimestampsFileStarted();
 
     void handleAllBackendObjectsOnThreadsReadyForConnections();
+
+    void cliUsage();
 
     void handleStandardInput(const QString &line);
     void handleAboutToQuit();

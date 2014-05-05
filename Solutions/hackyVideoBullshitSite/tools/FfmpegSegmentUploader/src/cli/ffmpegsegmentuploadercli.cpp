@@ -18,6 +18,7 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent)
     connect(this, SIGNAL(stopUploadingFfmpegSegmentsRequested()), m_FfmpegSegmentUploader, SLOT(stopUploadingFfmpegSegments()));
     connect(m_FfmpegSegmentUploader, SIGNAL(stoppedUploadingFfmpegSegments()), QCoreApplication::instance(), SLOT(quit()), Qt::QueuedConnection); //hmm i think a custom object with a QFutureSynchronizer and a handful of QFutures passed to it would solve the.... oh nvm i think i need QFutureWatchers with it too in order to not block
 
+    //TODOreq: applies to most all of my cli arg taking apps: qt/etc(desktop-env) take args too so i need to use "-flag <arg>" type shit and not depend on count (and probably not ordering). MAYBE Qt/etc strip their relevant args from argv before my app gets it, but idfk tbh
     QStringList arguments = QCoreApplication::arguments();
     if(arguments.size() < 6 || arguments.size() > 8)
     {

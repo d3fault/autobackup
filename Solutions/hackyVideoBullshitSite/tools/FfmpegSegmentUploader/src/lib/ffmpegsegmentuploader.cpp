@@ -127,7 +127,7 @@ void FfmpegSegmentUploader::handleSftpUploaderAndRenamerQueueStarted() //or i co
 }
 void FfmpegSegmentUploader::handleFfmpegProcessStarted()
 {
-    emit o("ffmpeg segment uploader started");
+    emit o("ffmpeg has started capturing");
 }
 void FfmpegSegmentUploader::handleFfmpegProecssStdErr()
 {

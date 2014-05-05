@@ -30,11 +30,6 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
     , m_VideoSegmentsImporterFolderWatcherThread(new ObjectOnThreadHelper<VideoSegmentsImporterFolderWatcher>(this))
     , m_LastModifiedTimestampsWatcherThread(new ObjectOnThreadHelper<LastModifiedTimestampsWatcher>(this))
     , m_ObjectOnThreadSynchronizer(new ObjectOnThreadSynchronizer(this))
-    , m_VideoSegmentsImporterFolderToWatch(HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
-    , m_VideoSegmentsImporterFolderScratchSpace(HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
-    , m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo(HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
-    , m_MyBrainArchiveBaseDir_NoSlashAppended(HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
-    , m_LastModifiedTimestampsFile(HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
     , m_StdIn(new StandardInputNotifier(this))
 {
     qRegisterMetaType<char **>("char **");
@@ -51,37 +46,41 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
 
         bool atLeastOneDidntExist = false;
 
-        m_VideoSegmentsImporterFolderToWatch = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString());
+        m_VideoSegmentsImporterFolderToWatch = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_VideoSegmentsImporterFolderToWatch == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
+        m_VideoSegmentsImporterFolderToWatch = appendSlashIfNeeded(m_VideoSegmentsImporterFolderToWatch);
 
-        m_VideoSegmentsImporterFolderScratchSpace = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString());
+        m_VideoSegmentsImporterFolderScratchSpace = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_VideoSegmentsImporterFolderScratchSpace == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
+        m_VideoSegmentsImporterFolderScratchSpace = appendSlashIfNeeded(m_VideoSegmentsImporterFolderScratchSpace);
 
-        m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = appendSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString());
+        m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
+        m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = appendSlashIfNeeded(m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
 
-        m_MyBrainArchiveBaseDir_NoSlashAppended = removeTrailingSlashIfNeeded(hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString());
+        m_MyBrainArchiveBaseDir_NoSlashAppended = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_MyBrainArchiveBaseDir_NoSlashAppended == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir " not set" << endl;
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
+        m_MyBrainArchiveBaseDir_NoSlashAppended = removeTrailingSlashIfNeeded(m_MyBrainArchiveBaseDir_NoSlashAppended);
 
         m_LastModifiedTimestampsFile = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_LastModifiedTimestampsFile == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
@@ -163,7 +162,7 @@ void HackyVideoBullshitSite::cliUsage()
 {
     QString cliUsageStr =   "Available Actions (H to show this again):\n"
                             " 0 - Query ffmpeg segment neighbor propagation status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
-                            " Q - Quit (waits until ffmpeg segment neighbor propagation queue gets processed)"; //TODOreq: make sure it actually waits and that the process isn't told to finish before that
+                            " Q - Quit (waits until ffmpeg segment neighbor propagation queue gets processed)"; //TODOreq: make sure it actually waits and that the process isn't told to finish before that. Confusingly, I guess we do want to allow a quit without finishing uploads if the sftp process/connection is down. Ideally that would be a "qq" option (invokable after a regular 'q' would be nice)
     emit o(cliUsageStr);
 }
 void HackyVideoBullshitSite::handleWtControllerAndStdOutOwnerIsReadyForConnections()
@@ -171,6 +170,7 @@ void HackyVideoBullshitSite::handleWtControllerAndStdOutOwnerIsReadyForConnectio
     WtControllerAndStdOutOwner *wtControllerAndStdOutOwner = m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly();
     connect(this, SIGNAL(e(QString)), wtControllerAndStdOutOwner, SLOT(handleE(QString)));
     connect(this, SIGNAL(o(QString)), wtControllerAndStdOutOwner, SLOT(handleO(QString)));
+    connect(wtControllerAndStdOutOwner, SIGNAL(started()), this, SLOT(cliUsage()));
     connect(wtControllerAndStdOutOwner, SIGNAL(fatalErrorDetected()), this, SLOT(handleFatalError()));
     connect(wtControllerAndStdOutOwner, SIGNAL(stopped()), QCoreApplication::instance(), SLOT(quit()));
 }

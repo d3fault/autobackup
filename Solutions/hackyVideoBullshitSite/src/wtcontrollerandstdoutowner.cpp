@@ -114,6 +114,7 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
         return;
     }
     handleO("wt server started");
+    emit started();
 }
 void WtControllerAndStdOutOwner::stop()
 {
