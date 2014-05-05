@@ -159,6 +159,13 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
 
     connect(m_StdIn, SIGNAL(standardInputReceivedLine(QString)), this, SLOT(handleStandardInput(QString)));
 }
+void HackyVideoBullshitSite::cliUsage()
+{
+    QString cliUsageStr =   "Available Actions (H to show this again):\n"
+                            " 0 - Query ffmpeg segment neighbor propagation status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
+                            " Q - Quit (waits until ffmpeg segment neighbor propagation queue gets processed)"; //TODOreq: make sure it actually waits and that the process isn't told to finish before that
+    emit o(cliUsageStr);
+}
 void HackyVideoBullshitSite::handleWtControllerAndStdOutOwnerIsReadyForConnections()
 {
     WtControllerAndStdOutOwner *wtControllerAndStdOutOwner = m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly();
@@ -172,6 +179,7 @@ void HackyVideoBullshitSite::handleVideoSegmentsImporterFolderWatcherReadyForCon
     VideoSegmentsImporterFolderWatcher *videoSegmentsImporterFolderWatcher = m_VideoSegmentsImporterFolderWatcherThread->getObjectPointerForConnectionsOnly();
     connect(videoSegmentsImporterFolderWatcher, SIGNAL(o(QString)), this, SIGNAL(o(QString)));
     connect(videoSegmentsImporterFolderWatcher, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+    connect(this, SIGNAL(tellVideoSegmentNeighborPropagationInformationRequested()), videoSegmentsImporterFolderWatcher, SIGNAL(tellNeighborPropagationInformationRequested())); //this seems backwards for some reason, i wonder if it'll work. if not, ez solution: make it a slot that emits the signal gg
 }
 void HackyVideoBullshitSite::handleLastModifiedTimestampsWatcherReadyForConnections()
 {
@@ -211,7 +219,12 @@ void HackyVideoBullshitSite::handleStandardInput(const QString &line)
     QString lineToLower = line.toLower();
     if(lineToLower == "h")
     {
-        emit o("Q - Quit");
+        cliUsage();
+        return;
+    }
+    if(lineToLower == "0")
+    {
+        emit tellVideoSegmentNeighborPropagationInformationRequested();
         return;
     }
     if(lineToLower == "q")
@@ -236,5 +249,5 @@ void HackyVideoBullshitSite::handleFatalError()
 {
     QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
     //QCoreApplication::exit(1); //<-- PROOF THAT QUIT NEEDS TO BE QUEUED OR ELSE DEAD LOCK  at return qapp.exec(); (uncomment and comment above), WTF. especially wtf since i'm on gui thread. should submit patch :-P
+    //^so apprently the reason is that the event loop has to already be running for exit/quit to work. dumb. there's no "return 1;" from constructor equivalent
 }
-

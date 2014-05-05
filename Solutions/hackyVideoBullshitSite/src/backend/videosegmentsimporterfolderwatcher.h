@@ -25,9 +25,12 @@ private:
     inline QString appendSlashIfNeeded(QString inputString) { return inputString.endsWith("/") ? inputString : inputString.append("/"); } //always easier than a pri include
 
     SftpUploaderAndRenamerQueue *m_SftpUploaderAndRenamerQueue;
+
+    bool jitEnsureFolderExists(const QString &absoluteFolderPathToMaybeJitCreate);
 signals:
     void o(const QString &);
     void e(const QString &);
+    void tellNeighborPropagationInformationRequested();
 public slots:
     void initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, const QString &neighborPropagationRemoteDestinationToUploadTo, const QString &neighborPropagationRemoteDestinationToMoveTo, const QString &neighborPropagationUserHostPathComboSftpArg, const QString &sftpProcessPath);
 private slots:

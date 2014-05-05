@@ -62,10 +62,11 @@ void FfmpegSegmentUploaderCli::cliUsage()
 }
 void FfmpegSegmentUploaderCli::cliUserInterfaceMenu()
 {
-    handleO("Available Actions (H to show this again):");
-    handleO(" 0 - Query ffmpeg segment status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)");
+    QString cliUsageStr =   "Available Actions (H to show this again):\n"
+                            " 0 - Query ffmpeg segment status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
+                            " Q - Quit after all segments are uploaded (you need to stop ffmpeg first)";
+    handleO(cliUsageStr);
     //TODOoptional: maybe an increase/decrease verbosity command as well
-    handleO(" Q - Quit after all segments are uploaded (you need to stop ffmpeg first)");
 }
 void FfmpegSegmentUploaderCli::handleStandardInputReceived(const QString &standardInputLine)
 {

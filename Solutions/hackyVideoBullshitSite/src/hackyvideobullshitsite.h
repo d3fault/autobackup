@@ -43,6 +43,8 @@ private:
 
     StandardInputNotifier *m_StdIn;
 
+    void cliUsage();
+
     inline QString appendSlashIfNeeded(const QString &inputString)
     {
         return inputString.endsWith("/") ? inputString : (inputString + "/");
@@ -54,6 +56,7 @@ private:
 signals:
     void o(const QString &);
     void e(const QString &);
+    void tellVideoSegmentNeighborPropagationInformationRequested();
     void beginStoppingRequested();
 private slots:
     void handleWtControllerAndStdOutOwnerIsReadyForConnections();

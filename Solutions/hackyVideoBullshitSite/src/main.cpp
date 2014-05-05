@@ -6,8 +6,6 @@
 
 //TODOreq: bugs:
 //segments not in last modified, therefore not browseable. solution to append works, but eventual memory exhaustion ffff
-//sftp connecting (wt shit) sftp connected (also ffmpeg i think)
-//year/day folders created on demand never error shit session/restart friendly
 //final sibling needs a flag to not replicate
 
 //I'd imagine lots would want to use this + abc2 themselves (yw)... so here's a note to anyone genricizing (making not-'d3fault' specific): abstract my specific stuff into some kind of "profile" loaded at runtime or whatever, that way i can pull your changes back in and spread the software further around :-P (row row fight the powa)

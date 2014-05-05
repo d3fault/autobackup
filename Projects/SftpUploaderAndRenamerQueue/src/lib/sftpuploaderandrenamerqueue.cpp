@@ -20,6 +20,7 @@ SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueue(QObject *parent)
 }
 SftpUploaderAndRenamerQueue::~SftpUploaderAndRenamerQueue()
 {
+    m_SftpWasToldToQuit = true;
     if(m_SftpProcess && m_SftpProcess->state() != QProcess::NotRunning)
     {
         if(m_SftpProcessTextStream)
@@ -40,6 +41,7 @@ SftpUploaderAndRenamerQueue::~SftpUploaderAndRenamerQueue()
 }
 void SftpUploaderAndRenamerQueue::stopSftpProcess()
 {
+    m_SftpWasToldToQuit = true;
     if(m_SftpIsReadyForCommands)
     {
         *m_SftpProcessTextStream << "bye" << endl << "bye" << endl; //idfk why, but when i was testing this it needed two byes. since the second one [probably?] won't hurt, fuck it :-P. i think it's because the first bye causes a disconnect, and for some retarded reason sftp hangs there until it receives another command, at which case that command makes stfp error-out/quit (because disconnect)
