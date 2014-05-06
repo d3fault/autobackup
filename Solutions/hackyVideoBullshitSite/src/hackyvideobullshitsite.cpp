@@ -161,8 +161,10 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
 void HackyVideoBullshitSite::cliUsage()
 {
     QString cliUsageStr =   "Available Actions (H to show this again):\n"
-                            " 0 - Query ffmpeg segment neighbor propagation status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
-                            " Q - Quit (waits until ffmpeg segment neighbor propagation queue gets processed)"; //TODOreq: make sure it actually waits and that the process isn't told to finish before that. Confusingly, I guess we do want to allow a quit without finishing uploads if the sftp process/connection is down. Ideally that would be a "qq" option (invokable after a regular 'q' would be nice)
+                            " 1   - Query ffmpeg segment neighbor propagation status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
+                            " Q   - Stop HackyVideoBullshitSite and Quit after all segments are propagated to neighbor (sftp will retry indefinitely)"
+                            " QQ  - Stop HackyVideoBullshitSite and Quit after all segments are propagated to neighbor, unless sftp connection is dead or dies beforehand"
+                            " QQQ - Stop HackyVideoBullshitSite and Quit now (use Q or QQ if you can)";
     emit o(cliUsageStr);
 }
 void HackyVideoBullshitSite::handleWtControllerAndStdOutOwnerIsReadyForConnections()
@@ -180,6 +182,12 @@ void HackyVideoBullshitSite::handleVideoSegmentsImporterFolderWatcherReadyForCon
     connect(videoSegmentsImporterFolderWatcher, SIGNAL(o(QString)), this, SIGNAL(o(QString)));
     connect(videoSegmentsImporterFolderWatcher, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     connect(this, SIGNAL(tellVideoSegmentNeighborPropagationInformationRequested()), videoSegmentsImporterFolderWatcher, SIGNAL(tellNeighborPropagationInformationRequested())); //this seems backwards for some reason, i wonder if it'll work. if not, ez solution: make it a slot that emits the signal gg
+
+    connect(this, SIGNAL(stopHackyVideoBullshitSiteCleanlyOnceVideoSegmentNeighborPropagatationFinishesRequested()), videoSegmentsImporterFolderWatcher, SLOT(stopCleanlyOnceVideoSegmentNeighborPropagatationFinishes()));
+    connect(this, SIGNAL(stopHackyVideoBullshitSiteCleanlyOnceVideoSegmentNeighborPropagatationFinishesUnlessDcRequested()), videoSegmentsImporterFolderWatcher, SLOT(stopCleanlyOnceVideoSegmentNeighborPropagatationFinishesUnlessDc()));
+    connect(this, SIGNAL(stopHackyVideoBullshitSiteNowRequested()), videoSegmentsImporterFolderWatcher, SLOT(stopNow()));
+
+    connect(videoSegmentsImporterFolderWatcher, SIGNAL(videoSegmentsImporterFolderWatcherFinishedPropagatingToNeighbors()), this, SIGNAL(videoSegmentNeighborPropagationFinishedStopContinueStoppingRequested())); //bleh good design would warrant a way to synchronize that all backends are done with beginStopping and ready for finishStopping. i overengineered this solution (it now does thread::quit shit), but also that's only a hypothetical enhancement, i don't need to wait for the backends to be ready for finish stopping (finish stopping no longer exists <3, is just destructor now)
 }
 void HackyVideoBullshitSite::handleLastModifiedTimestampsWatcherReadyForConnections()
 {
@@ -207,8 +215,8 @@ void HackyVideoBullshitSite::handleAllBackendObjectsOnThreadsReadyForConnections
     connect(lastModifiedTimestampsWatcher, SIGNAL(startedWatchingLastModifiedTimestampsFile()), this, SLOT(handleWatchingLastModifiedTimestampsFileStarted()));
 
     //could have done both of these connections in their respective "ready for connections" slots, but i want to give ad image manager a slight headstart. it's an optimization to do so, but not necessary
-    connect(this, SIGNAL(beginStoppingRequested()), m_AdImageGetAndSubscribeManagerThread->getObjectPointerForConnectionsOnly(), SLOT(beginStopping()));
-    connect(this, SIGNAL(beginStoppingRequested()), m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly(), SLOT(stop()));
+    connect(this, SIGNAL(videoSegmentNeighborPropagationFinishedStopContinueStoppingRequested()), m_AdImageGetAndSubscribeManagerThread->getObjectPointerForConnectionsOnly(), SLOT(beginStopping()));
+    connect(this, SIGNAL(videoSegmentNeighborPropagationFinishedStopContinueStoppingRequested()), m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly(), SLOT(stop()));
 
     //these invokeMethods need to be after ALL backends are ready for connections, or at least until WtControllerAndStdOutOwner is ready for connections (since it is our e/o handler!), because by invoking them when in individual ready for connections might miss e/o signals from them
     QMetaObject::invokeMethod(m_VideoSegmentsImporterFolderWatcherThread->getObjectPointerForConnectionsOnly(), "initializeAndStart", Q_ARG(QString, m_VideoSegmentsImporterFolderToWatch), Q_ARG(QString, m_VideoSegmentsImporterFolderScratchSpace), Q_ARG(QString, m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo), Q_ARG(QString, m_NeighborPropagationRemoteSftpUploadScratchSpace), Q_ARG(QString, m_NeighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, m_NeighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, m_SftpProcessPath));
@@ -222,16 +230,28 @@ void HackyVideoBullshitSite::handleStandardInput(const QString &line)
         cliUsage();
         return;
     }
-    if(lineToLower == "0")
+    if(lineToLower == "1")
     {
         emit tellVideoSegmentNeighborPropagationInformationRequested();
         return;
     }
     if(lineToLower == "q")
     {
-        emit o("starting to quit...");
+        emit o("HackyVideoBullshitSite will quit once all video segment neighbor propagation is finished (sftp will retry infinitely)");
+        emit stopHackyVideoBullshitSiteCleanlyOnceVideoSegmentNeighborPropagatationFinishesRequested();
+        return;
+    }
+    if(lineToLower == "qq") //TODOreq: i think QQ might make HackyVideoBullshitSite never quit if ffmpeg segment uploader is still running and pumping HackyVideoBullshitSite segments. i think whether or not it is an issue depends on upload speed and whether or not the queue is ever empty. maybe i can do "only propagate ones i already have" mode, or maybe this is desired behavior and i should just warn about it
+    {
+        emit o("HackyVideoBullshitSite will quit once all video segment neighbor propagation is finished (unless the sftp connection is dead or dies)");
+        emit stopHackyVideoBullshitSiteCleanlyOnceVideoSegmentNeighborPropagatationFinishesUnlessDcRequested();
+        return;
+    }
+    if(lineToLower == "qqq")
+    {
+        emit o("HackyVideoBullshitSite will quit now (neighbors will not not get latest video segments propagated to them)...");
         disconnect(m_StdIn, SIGNAL(standardInputReceivedLine(QString)));
-        emit beginStoppingRequested(); //bleh good design would warrant a way to synchronize that all backends are done with beginStopping and ready for finishStopping. i overengineered this solution (it now does thread::quit shit), but also that's only a hypothetical enhancement, i don't need to wait for the backends to be ready for finish stopping (finish stopping no longer exists <3, is just destructor now)
+        emit stopHackyVideoBullshitSiteNowRequested();
         return;
     }
 }

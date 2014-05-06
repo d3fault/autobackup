@@ -9,10 +9,8 @@
 //TODOoptional: this involves more wrapping the ffmpeg call, which i'm considering doing, but after that is done i think each ffmpeg session should get it's own folder (perhaps based on start timestamp). otherwise, previous sessions will have their video files overwritten, which may be undesireable/accidental behavior
 //^related, but barely: i could do a dir watcher (but 'know' the filename (since automating ffmpeg, is easy) of the segment file ahead of time) that transforms into a file watcher, so i don't have to do the "touch" stuff below. ffmpeg would make it then, and i think it would happen after the first segment finishes
 
-//TODOoptional: ffmpeg starts capping before sftp's hacky "5 second connection" finishes. doesn't matter too much as long as ffmpeg segments are longer than 5 seconds (and even then, hardly). still is sloppy ya know?
-
 //TODOoptional: only if segment upload is successful, queue for delete maybe 24 hours later? these aren't the master copies, but maybe needed if a server crashes before propagation. deleting after 24 hours will keep the hdd from filling up, which would require manual intervention
-//^^perhaps as a cli flag, omitted = no delete
+//^^perhaps as a cli flag, omitted = no delete. could even make this a runtime changeable param via menu shits (been a while since i read an int value from stdin)
 
 //example command: ./FfmpegSegmentUploaderCli /run/shm/ffmpegTemp /run/shm/incomingFromUploader/uploadScratch /run/shm/incomingFromUploader/watchedFolderToMoveTo user@192.168.57.10 15     ----- ffmpegTemp need not exist, but the two folders on remote destination must
 int main(int argc, char *argv[])

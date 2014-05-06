@@ -15,7 +15,10 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent)
     connect(m_FfmpegSegmentUploader, SIGNAL(o(QString)), this, SLOT(handleO(QString)));
     connect(m_FfmpegSegmentUploader, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     connect(this, SIGNAL(tellSegmentInformationsRequested()), m_FfmpegSegmentUploader, SLOT(tellStatus()));
-    connect(this, SIGNAL(stopUploadingFfmpegSegmentsRequested()), m_FfmpegSegmentUploader, SLOT(stopUploadingFfmpegSegments()));
+    connect(this, SIGNAL(stopUploadingFfmpegSegmentsCleanlyRequested()), m_FfmpegSegmentUploader, SLOT(stopUploadingFfmpegSegmentsCleanly()));
+    connect(this, SIGNAL(stopUploadingFfmpegSegmentsCleanlyUnlessDcRequested()), m_FfmpegSegmentUploader, SLOT(stopUploadingFfmpegSegmentsCleanlyUnlessDc()));
+    connect(this, SIGNAL(stopUploadingFfmpegSegmentsNowRequested()), m_FfmpegSegmentUploader, SLOT(stopUploadingFfmpegSegmentsNow()));
+    connect(m_FfmpegSegmentUploader, SIGNAL(quitRequested()), qApp, SLOT(quit()), Qt::QueuedConnection);
     connect(m_FfmpegSegmentUploader, SIGNAL(stoppedUploadingFfmpegSegments()), QCoreApplication::instance(), SLOT(quit()), Qt::QueuedConnection); //hmm i think a custom object with a QFutureSynchronizer and a handful of QFutures passed to it would solve the.... oh nvm i think i need QFutureWatchers with it too in order to not block
 
     //TODOreq: applies to most all of my cli arg taking apps: qt/etc(desktop-env) take args too so i need to use "-flag <arg>" type shit and not depend on count (and probably not ordering). MAYBE Qt/etc strip their relevant args from argv before my app gets it, but idfk tbh
@@ -64,8 +67,10 @@ void FfmpegSegmentUploaderCli::cliUsage()
 void FfmpegSegmentUploaderCli::cliUserInterfaceMenu()
 {
     QString cliUsageStr =   "Available Actions (H to show this again):\n"
-                            " 0 - Query ffmpeg segment status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
-                            " Q - Quit after all segments are uploaded (you need to stop ffmpeg first)";
+                            " 1   - Query ffmpeg segment status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
+                            " Q   - Stop recording and Quit after all segments are uploaded (sftp will retry indefinitely)"
+                            " QQ  - Stop recording and Quit after all segments are uploaded, unless sftp connection is dead or dies beforehand"
+                            " QQQ - Stop recording and Quit now (use Q or QQ if you can)";
     handleO(cliUsageStr);
     //TODOoptional: maybe an increase/decrease verbosity command as well
 }
@@ -76,14 +81,25 @@ void FfmpegSegmentUploaderCli::handleStandardInputReceived(const QString &standa
     {
         cliUserInterfaceMenu();
     }
-    else if(standardInputLineToLower == "0")
+    else if(standardInputLineToLower == "1")
     {
         emit tellSegmentInformationsRequested();
     }
-    else if(standardInputLineToLower == "q") //TODOreq: quit ffmpeg, wait for finish, wait for queue upload, then quit
+    else if(standardInputLineToLower == "q")
     {
-        handleO("ffmpeg segments uploader will finish once it's child ffmpeg process finishes and once all segments are uploaded...");
-        emit stopUploadingFfmpegSegmentsRequested();
+        handleO("ffmpeg segments uploader will quit once it's child ffmpeg process finishes and once all segments are uploaded...");
+        emit stopUploadingFfmpegSegmentsCleanlyRequested();
+    }
+    else if(standardInputLineToLower == "qq") //TODOreq: Q can become QQ, Q and QQ can become QQQ. TODOoptional: QQ can become Q
+    {
+        handleO("ffmpeg segments uploader will quit once it's child ffmpeg process finishes and once all segments are uploaded... unless the sftp connection is dead or dies beforehand");
+        emit stopUploadingFfmpegSegmentsCleanlyUnlessDcRequested();
+    }
+    else if(standardInputLineToLower == "qqq") //TODOreq: destruction/last-minute-cleanup/whatever uses this method
+    {
+        disconnect(m_StandardInputNotifier, SIGNAL(standardInputReceivedLine(QString)));
+        handleO("ffmpeg segments uploader will quit once it's child ffmpeg process finishes (pending and future uploads will be cancelled)");
+        emit stopUploadingFfmpegSegmentsNowRequested();
     }
     else
     {

@@ -6,8 +6,6 @@
 #include <QStringList>
 #include <QListIterator>
 
-#include "sftpuploaderandrenamerqueue.h"
-
 VideoSegmentsImporterFolderWatcher::VideoSegmentsImporterFolderWatcher(QObject *parent) :
     QObject(parent)
   , m_DirectoryWatcher(new QFileSystemWatcher(this))
@@ -30,6 +28,13 @@ bool VideoSegmentsImporterFolderWatcher::jitEnsureFolderExists(const QString &ab
     }
     return true;
 }
+void VideoSegmentsImporterFolderWatcher::beginStoppingVideoNeighborPropagation(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState)
+{
+    //uncomment next line if you don't want files received after Q or QQ is pressed to MAYBE have to finish before considered finished (MAYBE because if the upload bandwidth is fast enough and the queue is empty right when Q or QQ is pressed, it will still disregard newly received ones). Does not affect QQQ. If uncommenting, probably need to find a place to reconnect as well (but idk maybe not)...
+    //disconnect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)));
+
+    emit sftpUploaderAndRenamerQueueStateChangedRequested(newSftpUploaderAndRenamerQueueState);
+}
 void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, const QString &neighborPropagationRemoteDestinationToUploadTo, const QString &neighborPropagationRemoteDestinationToMoveTo, const QString &neighborPropagationUserHostPathComboSftpArg, const QString &sftpProcessPath)
 {
     m_VideoSegmentsImporterFolderToWatchWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToWatch);
@@ -44,9 +49,22 @@ void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &video
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStarted()), this, SLOT(handleSftpUploaderAndRenamerQueueStarted()));
     connect(this, SIGNAL(tellNeighborPropagationInformationRequested()), m_SftpUploaderAndRenamerQueue, SLOT(tellStatus()));
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(statusGenerated(QString)), this, SIGNAL(o(QString)));
-    //connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStopped()), this, SIGNAL(stoppedUploadingFfmpegSegments())); //TODOreq: "q"[uit] should wait for upload queue to finish, which probably means more signal synchronization in HackyVideoBullshitSite
+    connect(this, SIGNAL(sftpUploaderAndRenamerQueueStateChangedRequested(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum)), m_SftpUploaderAndRenamerQueue, SLOT(changeSftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum)));
+    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStopped()), this, SIGNAL(videoSegmentsImporterFolderWatcherFinishedPropagatingToNeighbors())); //whether waited or killed, shit is done yo
 
     QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, neighborPropagationRemoteDestinationToUploadTo), Q_ARG(QString, neighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, neighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
+}
+void VideoSegmentsImporterFolderWatcher::stopCleanlyOnceVideoSegmentNeighborPropagatationFinishes()
+{
+    beginStoppingVideoNeighborPropagation(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully);
+}
+void VideoSegmentsImporterFolderWatcher::stopCleanlyOnceVideoSegmentNeighborPropagatationFinishesUnlessDc()
+{
+    beginStoppingVideoNeighborPropagation(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfullyUnlessDc);
+}
+void VideoSegmentsImporterFolderWatcher::stopNow()
+{
+    beginStoppingVideoNeighborPropagation(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueState_StopNow);
 }
 //moves file added to watch directory to <year>/<day>/
 //creates both year/day folders if needed (moves file into them before moving the folder to the destination (so it's atomic))

@@ -7,7 +7,6 @@
 //TODOreq: bugs:
 //segments not in last modified, therefore not browseable. solution to append works, but eventual memory exhaustion ffff
 //final sibling needs a flag to not replicate (it does already safely fail, but will exhaust memory as sftp upload queue grows to infinity)
-//Q -> wait for sftp to finish (give warning if sftp not ready for commands/etc), QQ -> quit now if sftp not ready for commands or if sftp connection drops before queue flushes, QQQ -> quit now, fuck sftp queue. neither Q nor QQ disconnect stdin, since user might want to upgrade to QQQ (or just QQ if from Q)   <--- applies to ffmpeg segment uploader too ofc. basically just need to refactor the fuck out of sftp upload queue and renamer
 
 //I'd imagine lots would want to use this + abc2 themselves (yw)... so here's a note to anyone genricizing (making not-'d3fault' specific): abstract my specific stuff into some kind of "profile" loaded at runtime or whatever, that way i can pull your changes back in and spread the software further around :-P (row row fight the powa)
 int main(int argc, char* argv[])

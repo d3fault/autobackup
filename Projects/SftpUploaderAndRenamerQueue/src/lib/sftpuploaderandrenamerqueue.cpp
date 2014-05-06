@@ -7,51 +7,88 @@
 //at first i was amped to learn about sftp, but now after trying to use it in automation it's a freaking pain in the ass. provides very little feedback (whereas scp i'd just check return code == 0). hmm, *tries cranking up verbosity*. cool, increasing verbosity does NOTHING (except a bunch of shit i don't care about on stderr). there's no "upload complete" message... pos...
 SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueue(QObject *parent)
     : QObject(parent)
-    , m_FiveSecondRetryTimer(new QTimer(this))
+    , m_FiveSecondRetryDequeueAndUploadTimer(new QTimer(this))
+    , m_Sftp30secondKillerTimer(new QTimer(this))
     , m_SftpProcess(0)
     , m_SftpProcessTextStream(0)
     , m_SftpIsReadyForCommands(false)
     , m_SftpPutInProgressSoWatchForRenameCommandEcho(false)
-    , m_SftpWasToldToQuit(false)
+    , m_SftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueueState_NotYetStarted)
 {
-    m_FiveSecondRetryTimer->setInterval(5000);
-    m_FiveSecondRetryTimer->setSingleShot(true);
-    connect(m_FiveSecondRetryTimer, SIGNAL(timeout()), this, SLOT(tryDequeueAndUploadSingleSegment()));
+    m_FiveSecondRetryDequeueAndUploadTimer->setInterval(5000);
+    m_FiveSecondRetryDequeueAndUploadTimer->setSingleShot(true);
+    connect(m_FiveSecondRetryDequeueAndUploadTimer, SIGNAL(timeout()), this, SLOT(tryDequeueAndUploadSingleSegment()));
+
+    m_Sftp30secondKillerTimer->setInterval(29000);
+    m_Sftp30secondKillerTimer->setSingleShot(true);
+    connect(m_Sftp30secondKillerTimer, SIGNAL(timeout()), this, SLOT(killSftpIfStillRunning()));
 }
 SftpUploaderAndRenamerQueue::~SftpUploaderAndRenamerQueue()
 {
-    m_SftpWasToldToQuit = true;
     if(m_SftpProcess && m_SftpProcess->state() != QProcess::NotRunning)
     {
-        if(m_SftpProcessTextStream)
+        emit e("sending sftp terminate signal from SftpUploaderAndRenamerQueue destructor. bug in stop code?");
+        m_SftpProcess->terminate();
+        if(!m_SftpProcess->waitForFinished())
         {
-            stopSftpProcess();
-        }
-        if(m_SftpProcess->state() != QProcess::NotRunning)
-        {
-            m_SftpProcess->terminate();
-            if(!m_SftpProcess->waitForFinished(5000))
-            {
-                m_SftpProcess->kill();
-            }
+            emit e("killing sftp from SftpUploaderAndRenamerQueue destructor. bug in stop code?");
+            m_SftpProcess->kill();
         }
     }
     if(m_SftpProcessTextStream)
         delete m_SftpProcessTextStream;
 }
+void SftpUploaderAndRenamerQueue::setTheStateEnumValue(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState)
+{
+    //ignore
+    if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_NotYetStarted)
+        return;
+
+    //typical stop [type] requested
+    if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_Started)
+    {
+        if(newSftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_NotYetStarted/*bug, but handle it*/ || newSftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully)
+        {
+            m_SftpUploaderAndRenamerQueueState = SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully;
+            return;
+        }
+
+        m_SftpUploaderAndRenamerQueueState = newSftpUploaderAndRenamerQueueState;
+        return;
+    }
+
+    //upgrade to sooner or now
+    if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully && (newSftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfullyUnlessDc || newSftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopNow))
+    {
+        m_SftpUploaderAndRenamerQueueState = newSftpUploaderAndRenamerQueueState;
+        return;
+    }
+
+    //upgrade to now
+    if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfullyUnlessDc && newSftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopNow)
+    {
+        m_SftpUploaderAndRenamerQueueState = newSftpUploaderAndRenamerQueueState;
+        return;
+    }
+}
 void SftpUploaderAndRenamerQueue::stopSftpProcess()
 {
-    m_SftpWasToldToQuit = true;
     if(m_SftpIsReadyForCommands)
     {
+        emit o("telling sftp bye bye");
         *m_SftpProcessTextStream << "bye" << endl << "bye" << endl; //idfk why, but when i was testing this it needed two byes. since the second one [probably?] won't hurt, fuck it :-P. i think it's because the first bye causes a disconnect, and for some retarded reason sftp hangs there until it receives another command, at which case that command makes stfp error-out/quit (because disconnect)
+        if(!m_Sftp30secondKillerTimer->isActive())
+        {
+            m_Sftp30secondKillerTimer->start();
+        }
     }
     else if(m_SftpProcess->state() != QProcess::NotRunning)
     {
+        emit o("sending sftp terminate signal");
         m_SftpProcess->terminate(); //hmmm idk lol
-        if(!m_SftpProcess->waitForFinished(5000))
+        if(!m_Sftp30secondKillerTimer->isActive())
         {
-            m_SftpProcess->kill();
+            m_Sftp30secondKillerTimer->start();
         }
     }
 }
@@ -88,10 +125,7 @@ void SftpUploaderAndRenamerQueue::startSftpUploaderAndRenamerQueue(const QString
     connect(m_SftpProcess, SIGNAL(readyRead()), this, SLOT(handleSftpProcessReadyReadStandardOut()));
     m_SftpIsReadyForCommands = false;
     m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
-    m_SftpWasToldToQuit = false;
     startSftpProcessInBatchMode();
-
-    emit sftpUploaderAndRenamerQueueStarted();
 }
 void SftpUploaderAndRenamerQueue::enqueueFileForUploadAndRename(SftpUploaderAndRenamerQueueTimestampAndFilenameType timestampAndFilenameToEnqueueForUpload)
 {
@@ -105,12 +139,21 @@ void SftpUploaderAndRenamerQueue::tellStatus()
     QString segmentInformations = "==Ffmpeg Segment Uploader Status==\nSize of upload queue: " + QString::number(queueSize) + "\n'Head' of the upload queue: " + headOfUploadQueue + "\n'Tail' of upload queue: " + (queueSize > 0 ?  m_SegmentsQueuedForUpload.back().second : "") + "\nsftp connection status: " + (m_SftpIsReadyForCommands ? "" : "NOT ") + "ready for commands";
     emit statusGenerated(segmentInformations);
 }
-void SftpUploaderAndRenamerQueue::stopSftpUploaderAndRenamerQueue()
+void SftpUploaderAndRenamerQueue::changeSftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState)
 {
-    m_SftpWasToldToQuit = true;
-    if(m_SegmentsQueuedForUpload.isEmpty()) //start -> stop no segment entries seen, and also if ffmpeg was stopped a while ago
+    setTheStateEnumValue(newSftpUploaderAndRenamerQueueState);
+
+    //TODOreq: this might not be right because ffmpeg might not have finished stopping (and therefore the queue MIGHT be empty but still another one could come in the not too distant future...)
+    if(m_SegmentsQueuedForUpload.isEmpty() || m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopNow)
     {
         stopSftpProcess();
+        return;
+    }
+
+    if(!m_SftpIsReadyForCommands && m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfullyUnlessDc)
+    {
+        stopSftpProcess();
+        return;
     }
 }
 void SftpUploaderAndRenamerQueue::startSftpProcessInBatchMode()
@@ -121,11 +164,21 @@ void SftpUploaderAndRenamerQueue::startSftpProcessInBatchMode()
 }
 void SftpUploaderAndRenamerQueue::tryDequeueAndUploadSingleSegment()
 {
-    if(m_FiveSecondRetryTimer->isActive())
+    if(m_FiveSecondRetryDequeueAndUploadTimer->isActive())
     {
-        m_FiveSecondRetryTimer->stop();
+        m_FiveSecondRetryDequeueAndUploadTimer->stop();
     }
-    if(m_SegmentsQueuedForUpload.isEmpty() || m_SftpPutInProgressSoWatchForRenameCommandEcho)
+
+    if(m_SegmentsQueuedForUpload.isEmpty())
+    {
+        if (m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfullyUnlessDc || m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopNow)
+        {
+            stopSftpProcess();
+        }
+        return;
+    }
+
+    if(m_SftpPutInProgressSoWatchForRenameCommandEcho)
         return;
 #if 0 //pseudo-code
      bool uploadedOne = false;
@@ -166,14 +219,16 @@ void SftpUploaderAndRenamerQueue::tryDequeueAndUploadSingleSegment()
     }
     else
     {
-        emit e("segment queue couldn't upload because sftp is not ready for commands, trying again in 5 sec");
-        if(!m_FiveSecondRetryTimer->isActive())
+        if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_Started || m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully)
         {
-            m_FiveSecondRetryTimer->start();
+            emit e("segment queue couldn't upload because sftp is not ready for commands, trying again in 5 sec");
+            if(!m_FiveSecondRetryDequeueAndUploadTimer->isActive())
+            {
+                m_FiveSecondRetryDequeueAndUploadTimer->start();
+            }
         }
     }
 }
-
 void SftpUploaderAndRenamerQueue::handleSftpProcessStarted()
 {
     //m_SftpProcess->waitForStarted(-1);
@@ -183,8 +238,9 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessStarted()
     if(m_SftpProcess->waitForFinished(5000)) //TODOoptional: 5 second startup time unnecessarily added to my app, fuck you sftp
     {
         m_SftpIsReadyForCommands = false;
-        m_SftpWasToldToQuit = true; //give it permission to not retry
+        m_SftpUploaderAndRenamerQueueState = SftpUploaderAndRenamerQueueState_StopNow;
         emit e("sftp started and then finished pretty quickly, so auth probably failed or something?");
+        emit quitRequested();
     }
     else
     {
@@ -192,6 +248,8 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessStarted()
         m_SftpIsReadyForCommands = true;
         QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection); //might use this code path for initial connection (race condition), but if this is a reconnect, we might want to resume uploading if queue isn't empty
     }
+    m_SftpUploaderAndRenamerQueueState = SftpUploaderAndRenamerQueueState_Started;
+    emit sftpUploaderAndRenamerQueueStarted();
 }
 void SftpUploaderAndRenamerQueue::handleSftpProcessReadyReadStandardOut()
 {
@@ -217,7 +275,7 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessReadyReadStandardOut()
             {
                 m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
                 m_SegmentsQueuedForUpload.dequeue();
-                if(m_SftpWasToldToQuit && m_SegmentsQueuedForUpload.isEmpty()) //TODOoptional: the last segment PROBABLY won't be segmentLengthSeconds long, so the timestamp we calculate when it's added to the segment entry list will be early and 'pointing to a time in the previous segment'. i could solve this by keeping track of time elapsed or whatever and then only using that for the very last segment added when quitting, but i'm too lazy for now :-P
+                if(m_SegmentsQueuedForUpload.isEmpty() && m_SftpUploaderAndRenamerQueueState != SftpUploaderAndRenamerQueueState_Started) //TODOoptional: the last segment PROBABLY won't be segmentLengthSeconds long, so the timestamp we calculate when it's added to the segment entry list will be early and 'pointing to a time in the previous segment'. i could solve this by keeping track of time elapsed or whatever and then only using that for the very last segment added when quitting, but i'm too lazy for now :-P
                 {
                     emit o("FfmpegSegmentUploader now cleanly stopping since upload queue is empty...");
                     stopSftpProcess();
@@ -240,12 +298,35 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessReadyReadStandardError()
     QString allStandardErrorString(allStandardErrorBA);
     emit e("sftp's standard error wrote: "+ allStandardErrorString);
 }
+void SftpUploaderAndRenamerQueue::killSftpIfStillRunning()
+{
+    if(m_SftpProcess->state() != QProcess::NotRunning)
+    {
+        if(!m_SftpProcess->waitForFinished(1000))
+        {
+            emit e("killing sftp");
+            m_SftpProcess->kill();
+        }
+    }
+}
 void SftpUploaderAndRenamerQueue::handleSftpProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     m_SftpIsReadyForCommands = false;
     m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
 
-    if(!m_SftpWasToldToQuit) //TODOreq: should maybe rely solely on exitCode/exitStatus instead of this bool? it might be zero on a connection drop though idfk
+    if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_NotYetStarted)
+    {
+        //wtf?
+        emit e("sftp process finished, but SftpUploaderAndRenamerQueue's state is NotYetStarted. probably a bug");
+        return;
+    }
+
+    if(m_SegmentsQueuedForUpload.isEmpty() && m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully/*TODOreq: ensure that the final segment is enqueued before switching to SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully*/)
+    {
+        emit o("...SftpUploaderAndRenamerQueue has cleanly stopped");
+        emit sftpUploaderAndRenamerQueueStopped();
+    }
+    else if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_Started || m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully) //TODOreq: should maybe rely on exitCode/exitStatus additionally? it might be zero on a connection drop though idfk
     {
         //sftp -b mode will quit with exitCode == 1 any time an operation does not succeed, and I'd imagine also if/when the connection is 'lost' (?)... though perhaps that isn't noticed until an operation fails? idk lol
 
@@ -253,12 +334,18 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessFinished(int exitCode, QProce
         emit e("sftp will try to start again in 5 seconds...");
         QTimer::singleShot(5000, Qt::VeryCoarseTimer, this, SLOT(startSftpProcessInBatchMode()));
     }
-    else
+    else if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfullyUnlessDc)
     {
-        m_SftpWasToldToQuit = false;
-        emit o("...SftpUploaderAndRenamerQueue has cleanly stopped");
+        emit o("...SftpUploaderAndRenamerQueue has stopped because the sftp process finished");
         emit sftpUploaderAndRenamerQueueStopped();
     }
+    else if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopNow)
+    {
+        emit o("...SftpUploaderAndRenamerQueue has stopped");
+        emit sftpUploaderAndRenamerQueueStopped();
+    }
+
+
     if(exitCode != 0)
     {
         emit e("sftp exitted with non-zero code: " + QString::number(exitCode) + " (and is probably being restarted)");

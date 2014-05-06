@@ -55,7 +55,13 @@ signals:
     void o(const QString &);
     void e(const QString &);
     void tellVideoSegmentNeighborPropagationInformationRequested();
-    void beginStoppingRequested();
+
+    //stop video segment propagation in one of 3 ways before actually stopping
+    void stopHackyVideoBullshitSiteCleanlyOnceVideoSegmentNeighborPropagatationFinishesRequested();
+    void stopHackyVideoBullshitSiteCleanlyOnceVideoSegmentNeighborPropagatationFinishesUnlessDcRequested();
+    void stopHackyVideoBullshitSiteNowRequested();
+
+    void videoSegmentNeighborPropagationFinishedStopContinueStoppingRequested();
 private slots:
     void handleWtControllerAndStdOutOwnerIsReadyForConnections();
     //void handleAdImageGetAndSubscribeManagerIsReadyForConnections();

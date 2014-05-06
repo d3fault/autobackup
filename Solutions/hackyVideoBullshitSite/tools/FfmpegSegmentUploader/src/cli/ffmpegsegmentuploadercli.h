@@ -22,7 +22,9 @@ private:
     void cliUserInterfaceMenu();
 signals:
     void tellSegmentInformationsRequested();
-    void stopUploadingFfmpegSegmentsRequested();
+    void stopUploadingFfmpegSegmentsCleanlyRequested();
+    void stopUploadingFfmpegSegmentsCleanlyUnlessDcRequested();
+    void stopUploadingFfmpegSegmentsNowRequested();
 private slots:
     void handleStandardInputReceived(const QString &standardInputLine);
     void handleO(const QString &msg);
