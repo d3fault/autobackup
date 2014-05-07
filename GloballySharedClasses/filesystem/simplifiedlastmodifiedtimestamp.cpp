@@ -21,7 +21,7 @@ SimplifiedLastModifiedTimestamp::SimplifiedLastModifiedTimestamp(const QString &
 
     //empty filePath() is how we identify errors
 
-    m_LastModifiedTimestamp = QDateTime::fromMSecsSinceEpoch(lastModifiedTimestamp*1000);
+    m_LastModifiedTimestamp = QDateTime::fromMSecsSinceEpoch(lastModifiedTimestamp*1000).toUTC();
     m_FilePath = splitAtColons.at(0);
     m_FilePath = m_FilePath.replace(m_IllegalFilePath, m_Colon);
     detectIfFilePathIsDirectory();

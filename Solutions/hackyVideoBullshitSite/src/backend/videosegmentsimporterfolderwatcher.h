@@ -21,8 +21,8 @@ private:
     //QDir m_VideoSegmentsImporterFolderScratchSpace;
     QString m_VideoSegmentsImporterFolderToMoveToWithSlashAppended;
 
-    int m_CurrentYearFolder;
-    int m_CurrentDayOfYearFolder;
+    //int m_CurrentYearFolder;
+    //int m_CurrentDayOfYearFolder;
 
     inline QString appendSlashIfNeeded(QString inputString) { return inputString.endsWith("/") ? inputString : inputString.append("/"); } //always easier than a pri include
 
@@ -43,7 +43,7 @@ public slots:
     void stopCleanlyOnceVideoSegmentNeighborPropagatationFinishesUnlessDc();
     void stopNow();
 private slots:
-    void handleDirectoryChanged(const QString &path);
+    void handleDirectoryChanged();
     void handleSftpUploaderAndRenamerQueueStarted();
 };
 

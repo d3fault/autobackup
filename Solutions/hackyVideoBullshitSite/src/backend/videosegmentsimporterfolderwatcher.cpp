@@ -9,11 +9,11 @@
 VideoSegmentsImporterFolderWatcher::VideoSegmentsImporterFolderWatcher(QObject *parent) :
     QObject(parent)
   , m_DirectoryWatcher(new QFileSystemWatcher(this))
-  , m_CurrentYearFolder(-1)
-  , m_CurrentDayOfYearFolder(-1)
+  //, m_CurrentYearFolder(-1)
+  //, m_CurrentDayOfYearFolder(-1)
   , m_SftpUploaderAndRenamerQueue(0)
 {
-    connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged(QString)));
+    connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged()));
 }
 bool VideoSegmentsImporterFolderWatcher::jitEnsureFolderExists(const QString &absoluteFolderPathToMaybeJitCreate)
 {
@@ -69,10 +69,10 @@ void VideoSegmentsImporterFolderWatcher::stopNow()
 }
 //moves file added to watch directory to <year>/<day>/
 //creates both year/day folders if needed (moves file into them before moving the folder to the destination (so it's atomic))
-void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &path)
+void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
 {
-    QDir theDir(path);
-    const QStringList &theDirEntryList = theDir.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Name | QDir::Reversed); //could sort by time instead, but i'm naming them using unix timestamps so...
+    QDir theDir(m_VideoSegmentsImporterFolderToWatchWithSlashAppended);
+    const QStringList &theDirEntryList = theDir.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Name /* | QDir::Reversed*/); //could sort by time instead, but i'm naming them using unix timestamps so...
     QListIterator<QString> it(theDirEntryList);
     while(it.hasNext())
     {
@@ -83,9 +83,10 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &p
         long long filenameMinusExtAsLong = filenameMinusExt.toLongLong(&convertOk);
         if(!convertOk)
         {
-            continue; //silently discard invalid filenames
+            emit e("invalid filename: " + currentEntry);
+            continue;
         }
-        const QDateTime &newFilenamesDateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(filenameMinusExtAsLong)*1000);
+        const QDateTime &newFilenamesDateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(filenameMinusExtAsLong)*1000).toUTC();
         const int newFilenamesYear = newFilenamesDateTime.date().year();
         const int newFilenamesDayOfYear = newFilenamesDateTime.date().dayOfYear();
         const QString &currentEntryAbsoluteFilePath = m_VideoSegmentsImporterFolderToWatchWithSlashAppended + currentEntry;
