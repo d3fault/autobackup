@@ -25,6 +25,8 @@ public:
     explicit SftpUploaderAndRenamerQueue(QObject *parent = 0);
     ~SftpUploaderAndRenamerQueue();
 private:
+    static bool m_HaveRunConstructorOncePerApp;
+
     QQueue<SftpUploaderAndRenamerQueueTimestampAndFilenameType> m_SegmentsQueuedForUpload;
     QTimer *m_FiveSecondRetryDequeueAndUploadTimer;
     QTimer *m_Sftp30secondKillerTimer;
@@ -41,7 +43,7 @@ private:
 
     SftpUploaderAndRenamerQueueStateEnum m_SftpUploaderAndRenamerQueueState;
 
-    void setTheStateEnumValue(SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState);
+    void setTheStateEnumValueUpgradingStopSpeedOnly(SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState);
     void stopSftpProcess();
 
     static inline QString appendSlashIfMissing(QString stringInput)

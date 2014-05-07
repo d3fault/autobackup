@@ -186,10 +186,13 @@ void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
 }
 void FfmpegSegmentUploader::killFfmpegProcessIfStillRunning()
 {
-    if(!m_FfmpegProcess->waitForFinished(1000))
+    if(m_FfmpegProcess->state() != QProcess::NotRunning)
     {
-        emit e("ffmpeg didn't finish within 30 seconds, so killing it");
-        m_FfmpegProcess->kill();
+        if(!m_FfmpegProcess->waitForFinished(1000))
+        {
+            emit e("ffmpeg didn't finish within 30 seconds, so killing it");
+            m_FfmpegProcess->kill();
+        }
     }
 }
 void FfmpegSegmentUploader::handleFfmpegProecssFinished(int exitCode, QProcess::ExitStatus exitStatus)

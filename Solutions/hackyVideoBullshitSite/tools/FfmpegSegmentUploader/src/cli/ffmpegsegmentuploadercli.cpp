@@ -22,6 +22,8 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent)
     connect(m_FfmpegSegmentUploader, SIGNAL(stoppedUploadingFfmpegSegments()), QCoreApplication::instance(), SLOT(quit()), Qt::QueuedConnection); //hmm i think a custom object with a QFutureSynchronizer and a handful of QFutures passed to it would solve the.... oh nvm i think i need QFutureWatchers with it too in order to not block
 
     //TODOreq: applies to most all of my cli arg taking apps: qt/etc(desktop-env) take args too so i need to use "-flag <arg>" type shit and not depend on count (and probably not ordering). MAYBE Qt/etc strip their relevant args from argv before my app gets it, but idfk tbh
+    //^ACTUALLY the doc of cli parser hints that qt strips it's shit out of QCore::args(), which is perfect!
+
     QStringList arguments = QCoreApplication::arguments();
     if(arguments.size() < 6 || arguments.size() > 8)
     {
@@ -68,9 +70,9 @@ void FfmpegSegmentUploaderCli::cliUserInterfaceMenu()
 {
     QString cliUsageStr =   "Available Actions (H to show this again):\n"
                             " 1   - Query ffmpeg segment status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
-                            " Q   - Stop recording and Quit after all segments are uploaded (sftp will retry indefinitely)"
-                            " QQ  - Stop recording and Quit after all segments are uploaded, unless sftp connection is dead or dies beforehand"
-                            " QQQ - Stop recording and Quit now (use Q or QQ if you can)";
+                            " Q   - Stop recording and Quit after all segments are uploaded (sftp will retry indefinitely)\n"
+                            " QQ  - Stop recording and Quit after all segments are uploaded, unless sftp connection is dead or dies beforehand\n"
+                            " QQQ - Stop recording and Quit now (use Q or QQ if you can)\n";
     handleO(cliUsageStr);
     //TODOoptional: maybe an increase/decrease verbosity command as well
 }

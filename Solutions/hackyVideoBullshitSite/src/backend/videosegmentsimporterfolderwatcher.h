@@ -17,7 +17,8 @@ public:
 private:
     QFileSystemWatcher *m_DirectoryWatcher;
     QString m_VideoSegmentsImporterFolderToWatchWithSlashAppended;
-    QDir m_VideoSegmentsImporterFolderScratchSpace;
+    QString m_VideoSegmentsImporterFolderScratchSpacePathWithSlashAppended;
+    //QDir m_VideoSegmentsImporterFolderScratchSpace;
     QString m_VideoSegmentsImporterFolderToMoveToWithSlashAppended;
 
     int m_CurrentYearFolder;

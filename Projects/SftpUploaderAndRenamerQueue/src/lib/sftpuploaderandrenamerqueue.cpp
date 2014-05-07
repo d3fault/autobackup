@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <QFileInfo>
 
+bool SftpUploaderAndRenamerQueue::m_HaveRunConstructorOncePerApp = false;
+
 //at first i was amped to learn about sftp, but now after trying to use it in automation it's a freaking pain in the ass. provides very little feedback (whereas scp i'd just check return code == 0). hmm, *tries cranking up verbosity*. cool, increasing verbosity does NOTHING (except a bunch of shit i don't care about on stderr). there's no "upload complete" message... pos...
 SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueue(QObject *parent)
     : QObject(parent)
@@ -15,6 +17,13 @@ SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueue(QObject *parent)
     , m_SftpPutInProgressSoWatchForRenameCommandEcho(false)
     , m_SftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueueState_NotYetStarted)
 {
+    if(!m_HaveRunConstructorOncePerApp)
+    {
+        qRegisterMetaType<SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum>("SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum");
+        m_HaveRunConstructorOncePerApp = true;
+    }
+
+
     m_FiveSecondRetryDequeueAndUploadTimer->setInterval(5000);
     m_FiveSecondRetryDequeueAndUploadTimer->setSingleShot(true);
     connect(m_FiveSecondRetryDequeueAndUploadTimer, SIGNAL(timeout()), this, SLOT(tryDequeueAndUploadSingleSegment()));
@@ -38,10 +47,10 @@ SftpUploaderAndRenamerQueue::~SftpUploaderAndRenamerQueue()
     if(m_SftpProcessTextStream)
         delete m_SftpProcessTextStream;
 }
-void SftpUploaderAndRenamerQueue::setTheStateEnumValue(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState)
+void SftpUploaderAndRenamerQueue::setTheStateEnumValueUpgradingStopSpeedOnly(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState)
 {
     //ignore
-    if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_NotYetStarted)
+    if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_NotYetStarted || newSftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_Started)
         return;
 
     //typical stop [type] requested
@@ -141,7 +150,7 @@ void SftpUploaderAndRenamerQueue::tellStatus()
 }
 void SftpUploaderAndRenamerQueue::changeSftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState)
 {
-    setTheStateEnumValue(newSftpUploaderAndRenamerQueueState);
+    setTheStateEnumValueUpgradingStopSpeedOnly(newSftpUploaderAndRenamerQueueState);
 
     //TODOreq: this might not be right because ffmpeg might not have finished stopping (and therefore the queue MIGHT be empty but still another one could come in the not too distant future...)
     if(m_SegmentsQueuedForUpload.isEmpty() || m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopNow)

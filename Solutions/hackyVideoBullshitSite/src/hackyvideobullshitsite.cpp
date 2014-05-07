@@ -162,9 +162,9 @@ void HackyVideoBullshitSite::cliUsage()
 {
     QString cliUsageStr =   "Available Actions (H to show this again):\n"
                             " 1   - Query ffmpeg segment neighbor propagation status info, which includes:\n\t-Most recent segment entry\n\t-The size of the upload queue\n\t-The 'head' of the upload queue\n\t-The sftp connection status)\n"
-                            " Q   - Stop HackyVideoBullshitSite and Quit after all segments are propagated to neighbor (sftp will retry indefinitely)"
-                            " QQ  - Stop HackyVideoBullshitSite and Quit after all segments are propagated to neighbor, unless sftp connection is dead or dies beforehand"
-                            " QQQ - Stop HackyVideoBullshitSite and Quit now (use Q or QQ if you can)";
+                            " Q   - Stop HackyVideoBullshitSite and Quit after all segments are propagated to neighbor (sftp will retry indefinitely)\n"
+                            " QQ  - Stop HackyVideoBullshitSite and Quit after all segments are propagated to neighbor, unless sftp connection is dead or dies beforehand\n"
+                            " QQQ - Stop HackyVideoBullshitSite and Quit now (use Q or QQ if you can)\n";
     emit o(cliUsageStr);
 }
 void HackyVideoBullshitSite::handleWtControllerAndStdOutOwnerIsReadyForConnections()

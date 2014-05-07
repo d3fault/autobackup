@@ -7,6 +7,7 @@
 //TODOreq: bugs:
 //segments not in last modified, therefore not browseable. solution to append works, but eventual memory exhaustion ffff
 //final sibling needs a flag to not replicate (it does already safely fail, but will exhaust memory as sftp upload queue grows to infinity)
+//import all segments on startup (sorted by filename in correct order), since ffmpeg segment uploader could be running 24/7 and hvbs could go down/up over and over (this might cause hvbs "up" to be eh expensive ish because of needing to catch up)
 
 //I'd imagine lots would want to use this + abc2 themselves (yw)... so here's a note to anyone genricizing (making not-'d3fault' specific): abstract my specific stuff into some kind of "profile" loaded at runtime or whatever, that way i can pull your changes back in and spread the software further around :-P (row row fight the powa)
 int main(int argc, char* argv[])
