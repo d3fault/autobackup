@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <QFileInfo>
 
+//TODOoptional: take out 5 second wait thing since it's stupid and does nothing anyways (no connection = still passes). really the only way i can find out if it's connected is by seeing if an upload/rename completes. HOWEVER this is only optional because it's only visual (i mean aside from the stupid 5 second wait itself) and doesn't break anything else
+
 bool SftpUploaderAndRenamerQueue::m_HaveRunConstructorOncePerApp = false;
 
 //at first i was amped to learn about sftp, but now after trying to use it in automation it's a freaking pain in the ass. provides very little feedback (whereas scp i'd just check return code == 0). hmm, *tries cranking up verbosity*. cool, increasing verbosity does NOTHING (except a bunch of shit i don't care about on stderr). there's no "upload complete" message... pos...
@@ -134,6 +136,7 @@ void SftpUploaderAndRenamerQueue::startSftpUploaderAndRenamerQueue(const QString
     connect(m_SftpProcess, SIGNAL(readyRead()), this, SLOT(handleSftpProcessReadyReadStandardOut()));
     m_SftpIsReadyForCommands = false;
     m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
+    m_SftpUploaderAndRenamerQueueState = SftpUploaderAndRenamerQueueState_NotYetStarted;
     startSftpProcessInBatchMode();
 }
 void SftpUploaderAndRenamerQueue::enqueueFileForUploadAndRename(SftpUploaderAndRenamerQueueTimestampAndFilenameType timestampAndFilenameToEnqueueForUpload)
@@ -253,12 +256,16 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessStarted()
     }
     else
     {
-        emit o("sftp connected");
+        emit o("sftp MAYBE connected (hack/lazy)");
         m_SftpIsReadyForCommands = true;
         QMetaObject::invokeMethod(this, "tryDequeueAndUploadSingleSegment", Qt::QueuedConnection); //might use this code path for initial connection (race condition), but if this is a reconnect, we might want to resume uploading if queue isn't empty
     }
-    m_SftpUploaderAndRenamerQueueState = SftpUploaderAndRenamerQueueState_Started;
-    emit sftpUploaderAndRenamerQueueStarted();
+
+    if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_NotYetStarted) //don't re-emit signal on reconnect, and also don't change the stop type derp!
+    {
+        m_SftpUploaderAndRenamerQueueState = SftpUploaderAndRenamerQueueState_Started;
+        emit sftpUploaderAndRenamerQueueStarted();
+    }
 }
 void SftpUploaderAndRenamerQueue::handleSftpProcessReadyReadStandardOut()
 {

@@ -309,4 +309,7 @@ void VideoSegmentsImporterFolderWatcher::handleSftpUploaderAndRenamerQueueStarte
         return;
     }
     emit o("VideoSegmentsImporterFolderWatcher started");
+
+    //check for any segments that were uploaded while this app wasn't running (if ffmpeg segment uploader was started first). this isn't a big deal, just an optimization really. it would still handle all the old ones once a new one is seen
+    handleDirectoryChanged(); //comment out this line if you don't want hvbs to "catch up" right at startup (it will instead catch up when next segment is moved to watched folder)
 }
