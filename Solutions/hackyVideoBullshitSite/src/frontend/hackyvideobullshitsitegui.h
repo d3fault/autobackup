@@ -5,6 +5,7 @@
 #include <Wt/WApplication>
 #include <Wt/WContainerWidget>
 #include <Wt/WStackedWidget>
+#include <Wt/WHBoxLayout>
 
 #include "../lastmodifiedtimestampsandpaths.h"
 #include "../backend/adimagegetandsubscribemanager.h"
@@ -35,8 +36,8 @@ private:
     static std::string m_CopyrightText;
     static std::string m_DplLicenseText;
 
-    WContainerWidget *m_AdImagePositionPlaceholder;
     WContainerWidget *m_AdImageContainer; //such an angry image container
+    WContainerWidget *m_RightSideOfHBoxLayout;
     WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
@@ -57,6 +58,7 @@ private:
     void deleteTimelineAndDirectoryBrowsingStackIfNeeded();
     void hvbs404();
     void setMainContent(WWidget *contentToSet);
+    inline WContainerWidget *blahRootRedirect() { return m_RightSideOfHBoxLayout; }
 };
 
 #endif // HACKYVIDEOBULLSHITSITEGUI_H

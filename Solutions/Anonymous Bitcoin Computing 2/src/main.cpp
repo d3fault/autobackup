@@ -2,6 +2,10 @@
 
 /*
 
+==1.0 (blocker) Bugs==
+
+- View all ad images page should use a perma-cache on the hdd and serve up the tons of ad images using WFileResources. Since they can't change, saving them using the sha1 of their key in some folder works. They are lazy perma-cached on demand
+
 ==1.1 Bugs==
 
 - the all ad slot fillers pages hypothetical ddos where tons of images are still in memory and never requested. a stupid but effective way to solve this is to use wfileresource instead of a memory resource. stupid because ddb -> hdd -> serve -> delete hdd copy, but effective because don't have to worry about running out of hdd space (well, still do, but not nearly as fast as memory). other options include timeouts for keeping the resource in memory (few seconds), etc. another weird solution would be to block the resource request and to get the ddb doc on demand, though this seems grossly inefficient (i wonder, but doubt, if request continuations would help here)

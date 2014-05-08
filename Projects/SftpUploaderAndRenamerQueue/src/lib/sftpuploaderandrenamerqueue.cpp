@@ -159,6 +159,13 @@ void SftpUploaderAndRenamerQueue::changeSftpUploaderAndRenamerQueueState(SftpUpl
     if(m_SegmentsQueuedForUpload.isEmpty() || m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopNow)
     {
         stopSftpProcess();
+#if 0
+        m_Sftp30secondKillerTimer->stop();
+        if(!m_SftpProcess->waitForFinished(3000))
+        {
+            m_SftpProcess->kill();
+        }
+#endif
         return;
     }
 

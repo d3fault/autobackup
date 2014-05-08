@@ -1,0 +1,1 @@
+That java uses a virtual machine doesn't buy you any safety, because JFile::write does the same thing as QFile::write

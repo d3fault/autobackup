@@ -40,9 +40,12 @@
 
 #define HVBS_TIMELINE_MYBRAIN_TOOLTIP "In the beginning, there was d3fault..."
 #define HVBS_BROWSE_MYBRAIN_TOOLTIP "Traditional directory heirarchy"
-#define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain becomes your brain" // s/brain/mingles-with/
+#define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain becomes your brain" // s/becomes/mingles-with/
 
 #define HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL "https://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"
+
+#define HVBS_ABC2_AD_IMAGE_WIDTH 96
+#define HVBS_ABC2_AD_IMAGE_HEIGHT 576
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
@@ -65,7 +68,7 @@ void HackyVideoBullshitSiteGUI::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoS
 }
 void HackyVideoBullshitSiteGUI::setCopyrightText(const string &copyrightText)
 {
-    m_CopyrightText = "<pre>" + Wt::Utils::htmlEncode(copyrightText) + "</pre>"; //TODOoptimization: could pre-htmlEncode and even color'ify (code) the various docs beforehand, instead of on-demand like i'm doing now (well, i'm not doing the coloring at all atm)
+    m_CopyrightText = "<pre>" + Wt::Utils::htmlEncode(copyrightText) + "</pre>"; //old because only done at once startup now: TODOoptimization: could pre-htmlEncode and even color'ify (code) the various docs beforehand, instead of on-demand like i'm doing now (well, i'm not doing the coloring at all atm)
 }
 void HackyVideoBullshitSiteGUI::setDplLicenseText(const string &dplLicenseText)
 {
@@ -81,7 +84,6 @@ WApplication *HackyVideoBullshitSiteGUI::hackyVideoBullshitSiteGuiEntryPoint(con
 }
 HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
-    , m_AdImageContainer(0)
     , m_Contents(0)
     , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
     , m_TimelineAndDirectoryLogicalContainer(0)
@@ -105,6 +107,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //but also collaboration and merging etc will mean i have to deal with licenses anyways. for code i don't care that much tbh, but for text files that aren't even that long.... fuuuuuuck i don't want stupid headers prepended on all of em. BUT honestly they're easy to both insert and remove via scripting so... (lol at the bug where i 'remove' the text and then it removes it from the file that i used as input to tell me what to remove (easily fixed by pulling it back out of git history (or a skip file exception) but still i'm predicting it will happen :-P)
 
     //TODOreq: "Store" (lulu, cafepress, eventually "dvd/bd copy of archive", etc)
+    //TODOreq: no visible borders between ad and content (probably going to refactor timeline nav anyways)
 
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
     //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
@@ -112,13 +115,31 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOoptional: "live stream", link to p2p vidya instructions. optional because i want to have http streaming once i can afford it. but even then, p2p could be higher quality. don't implement yet because p2p video solutions all look shit imo (perhaps code one ;-P)...
     //TODOoptional: browse to video from dir view, hit back, video (AUDIO!) still playing at dir view
     //TODOoptional: hitting "back" after clicking "random point in time" brings you to yet another random point in time, not the "view my brain" page that the "random point in time" link lives on
+    //TODOoptional: "qqq" doesn't appear to work, at least not after a single "q" was requested (maybe OT: the sftp connection was down the whole time)
 
     //random: mfw "moving a file to overwrite another file" lets processes reading the old version continue reading. it's liek free atomicity! could/should have used that for vidya segment lookin up (a fucking "lastSegment" file = gg), am considering using it for .lastModifiedTimestamps updating... except shit when do the readers close it then? when the session ends? a bunch of sessions never ending = old copies stay around forever (not that it should matter to me, so long as they're just using hdd and not memory (err that their memory can be used for other stuffz at times i guess idk what i'm on about (but let's just say i'm glad i haven't coded anything using that yet (i also wonder if it's portable..))))
 
-    m_AdImagePositionPlaceholder = new WContainerWidget(root());
-    m_AdImagePositionPlaceholder->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
+    WHBoxLayout *menuContentsHLayout = new WHBoxLayout(root());
+    menuContentsHLayout->setContentsMargins(0, 0, 0, 0);
+    menuContentsHLayout->setSpacing(0);
 
-    WPanel *copyrightDropDown = new WPanel(root());
+    m_AdImageContainer = new WContainerWidget();
+    m_AdImageContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
+    m_AdImageContainer->setMinimumSize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT);
+    m_AdImageContainer->setPadding(0);
+    m_AdImageContainer->setMargin(0);
+
+    menuContentsHLayout->addWidget(m_AdImageContainer);
+
+    m_RightSideOfHBoxLayout = new WContainerWidget();
+    m_RightSideOfHBoxLayout->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
+    m_RightSideOfHBoxLayout->setPadding(0);
+    m_RightSideOfHBoxLayout->setMargin(0);
+    m_RightSideOfHBoxLayout->setOverflow(WContainerWidget::OverflowAuto);
+
+    menuContentsHLayout->addWidget(m_RightSideOfHBoxLayout, 1);
+
+    WPanel *copyrightDropDown = new WPanel(blahRootRedirect());
     copyrightDropDown->setCollapsible(true);
     copyrightDropDown->setCollapsed(true);
     copyrightDropDown->setTitle("Copyright (C) 2014 Steven Curtis Wieler II <http://d3fault.net/> -- All Freedoms Preserved -- Click here for more information about your right to copy");
@@ -129,7 +150,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     copyrightDropDown->setCentralWidget(copyrightText);
     //copyrightDropDown->decorationStyle().setCursor(PointingHandCursor);
 
-    WPanel *dplDropDown = new WPanel(root());
+    WPanel *dplDropDown = new WPanel(blahRootRedirect());
     dplDropDown->setCollapsible(true);
     dplDropDown->setCollapsed(true);
     dplDropDown->setTitle("d3fault public license, version 3+ -- Click here to read the legal text");
@@ -140,19 +161,19 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     dplDropDown->setCentralWidget(dplText);
     //dplDropDown->decorationStyle().setCursor(PointingHandCursor);
 
-    //new WBreak(root()); eh weird indentation without this WBreak, BUT i'll take that over an entire wasted line!
-    new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", root());
-    new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, root());
-    new WBreak(root());
+    //new WBreak(blahRootRedirect()); eh weird indentation without this WBreak, BUT i'll take that over an entire wasted line!
+    new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", blahRootRedirect());
+    new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, blahRootRedirect());
+    new WBreak(blahRootRedirect());
 
-    WAnchor *viewMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER), HVBS_VIEW_MYBRAIN_STRING, root());
+    WAnchor *viewMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER), HVBS_VIEW_MYBRAIN_STRING, blahRootRedirect());
     viewMyBrainAnchor->setToolTip(HVBS_VIEW_MYBRAIN_TOOLTIP);
     viewMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
     //viewMyBrainAnchor->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)), Wt::Bottom);
     //browseMyBrainAnchor->setTarget(TargetNewWindow);
     //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
-    new WBreak(root());
-    new WBreak(root());
+    new WBreak(blahRootRedirect());
+    new WBreak(blahRootRedirect());
 
     if(m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred) //design-wise, the setting of this to true should be inside the body of this if. fuck it
     {
@@ -300,7 +321,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
     if(!m_TimelineAndDirectoryLogicalContainer)
     {
-        m_TimelineAndDirectoryLogicalContainer = new WContainerWidget(root());
+        m_TimelineAndDirectoryLogicalContainer = new WContainerWidget(blahRootRedirect());
         m_TimelineAndDirectoryLogicalContainer->setInline(true);
 
         new WText("You are here: ", Wt::XHTMLUnsafeText, m_TimelineAndDirectoryLogicalContainer);
@@ -392,16 +413,13 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
         m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred = false;
     }
 
-    if(m_AdImageContainer)
-        delete m_AdImageContainer; //delete/replace the previous one, if there was one (TODOoptimization: maybe just setImage/setUrl/etc instead?)
-    m_AdImageContainer = new WContainerWidget(m_AdImagePositionPlaceholder);
-    m_AdImageContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
+    m_AdImageContainer->clear(); //delete/replace the previous one, if there was one (TODOoptimization: maybe just setImage/setUrl/etc instead?)
 
     if(newAdUrl == "n") //hack. both newAdImageResource and newAdAltAndHover are undefined if url is "n" (they may be 0/empty, or they may still be 'yesterdays')
     {
         //set up "no ad" placeholder
         WImage *placeholderAdImage = new WImage(WLink(WLink::Url, /*http://d3fault.net*/"/no.ad.placeholder.jpg"), "Buy this ad space for BTC 0.00001");
-        placeholderAdImage->resize(576, 96);
+        placeholderAdImage->resize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT);
         WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), placeholderAdImage, m_AdImageContainer);
         adImageAnchor->setTarget(TargetNewWindow);
         placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
@@ -416,12 +434,18 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
 
     //TODOoptional: it would be trivial to show a 'price countdown' just like on abc2 just below the image itself (and has a wow factor of over 9000), but actually UPDATING that value on new purchases would NOT be [as] trivial :-/... so fuck it
 
+    WAnchor *yourAdHere = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Your Ad Here", m_AdImageContainer);
+    yourAdHere->decorationStyle().setForegroundColor(WColor(255,0,0));
+    WFont blahFont;
+    blahFont.setSize(WFont::Small);
+    yourAdHere->decorationStyle().setFont(blahFont);
+
+    new WBreak(m_AdImageContainer);
+
     WImage *adImage = new WImage(newAdImageResource, newAdAltAndHover);
-    adImage->resize(576, 96); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date
+    adImage->resize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date
     WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, newAdUrl), adImage, m_AdImageContainer);
     adImageAnchor->setTarget(TargetNewWindow);
-    new WBreak(m_AdImageContainer);
-    new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Buy this ad space", m_AdImageContainer);
 
     //difference between these two?
     adImage->setToolTip(newAdAltAndHover);
@@ -550,5 +574,5 @@ void HackyVideoBullshitSiteGUI::setMainContent(WWidget *contentToSet)
     //m_CentralScrollArea->setWidget(contentToSet);
     //m_ContentsPlaceholder->addWidget(contentToSet);
     m_Contents = contentToSet; //bah, wtext wordwrapping text doesn't work when it's the child of a wcontainer -_-. pita..
-    root()->addWidget(contentToSet);
+    blahRootRedirect()->addWidget(contentToSet);
 }
