@@ -116,121 +116,154 @@ void TimeLineWtWidget::redirectToRandomPointInTimeline()
     //qsrand(wApplication->rawUniqueId() + static_cast<unsigned int>(WDateTime::currentDateTime().toTime_t()) + (++randomSeed)); //TODOoptimization: since q[s]rand are threadsafe, they probably use locking and so are a bottleneck. i wish i could store a boost rng in thread-specific-storage just like WApplication::instance() is. yea just decided it's worth asking on wt forums <3, would have tons of good uses aside from just this
     unsigned randomPointInTimeline = (qrand() % sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->size()); //TODOoptiona; random_int_distribution might be warranted here, since it's so big... but it's not critical or anything so fuck it for now
 
-    wApplication->setInternalPath(sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(randomPointInTimeline)->Path, true); //TODOreq: maybe redirect instead of setInternalPath? reason = seo. but tbh idfk...
+    wApplication->setInternalPath(sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(randomPointInTimeline)->Path, true); //TODOoptional: maybe redirect instead of setInternalPath? reason = seo. but tbh idfk...
+    //TODOoptional: use video segments in selection of random file
 }
 //if presentFile takes more than 5 minutes to execute (rofl), we will segfault
-void TimeLineWtWidget::presentFile(const std::string &relativePath_aka_internalPath, const QString &absolutePath /*already checked for existence on fs*/, const std::string &myBrainItemFilenameOnlyStdString)
+void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQString, const QString &absolutePath /*already checked for existence on fs*/, const std::string &myBrainItemFilenameOnlyStdString)
 {
     m_ContentsContainer->clear();
 
-    LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = m_LastModifiedTimestampsAndPaths->loadAcquire();
-    if(!sortedLastModifiedTimestamps)
+    if(relativePath_aka_internalPathQString.startsWith(HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/")) //video segment hack (because it's not in .lastModifiedTimestamps
     {
-        new WText("500 internal server error", m_ContentsContainer);
-        return;
-    }
-    if(m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory != sortedLastModifiedTimestamps)
-    {
-        m_LatestAnchor->disable(); //when shit changes, the latest anchor is stale (unless timestamp file wasn't updated properly). disabling it makes it get an up to date value
-        m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory = sortedLastModifiedTimestamps;
-    }
-    //thinking out loud (typing out loud (typing my thoughts)): lol mom interrupted me and then i had lunch since writing that prefix, uhh what was i on about? oh right i need to be able to look up based on path and timestamp, so wtf data structure am i going to use?!?!? i also need to be able to access it by index so i can use the 'random' functionality. that's 3 primary keys by my count, wtfz!?!? simply doing it is easy, but doing it fast/right will require some thinkan. a QList<teimstompIeteim> would give me random and in order tiemstompz, but then looking up by path is expensive. a qhash<path> gives me fast lookups by path, but [unless i do a linked list of em (next,previous)] doesn't give me in order shiz. i either can't have my cookie and eat it too, or perhaps i should just use two lists!?!? i don't need to do anything with the path (since it is... a path) except find out previous and next. so wtf i am contradicting myself here: find by path = use an hash, but hash has no ordering so fuck. also doesn't appear that hash can be accessed index-wise so now random'ing is fucked. a hash<path,int> containing just an index into a sorted list as it's value would work, so long as both lists are gotten via the same loadAquire call (and are therefore synchronized (two back to back loadAquires wouldn't be)... and idk it's just kinda like i'm maintaining a whole nother list just to use it as a primary key. wtf was that shit i read about having something with two primary keys? there's generic containers for that i believe... *turns on internet box*... now hmm do i want boost.multiindex or boost.bimap... they sound the same to me except apparently multiindex depends on bimap... so.... *reads moar*...
-    //seems bimap is sufficient, not entirely sure but multiindex looks overkill. still i wonder if keeping second hash<path,indexIntoList> would be FASTER (not necessarily more memory conservative), simply because bimap only does maps :(. i want a left: map, right: hash :(. maybe such thing would be dumb and/or maybe such thing is already possible, *keeps reading*
-    //fuck yea boost/bimap/unordered_set_of might be just that! *reads*
-    //shit, bimap needs unique keys, whereas i have tons of timestamp collisions :(
-    //fuck it, to KISS ima just use QList<item> (sorted by timestamp and then again by path) and QHash<path, listIndex> and just keep them synchronized myself, with a comment saying an optimization using bimap or SIMILAR is probably possible...
+        //earliest/latest left as is to be leik ahn entree pointz toin le tiemenlienen plz i guezz
 
-    //we've already QDir::clean'd it and established that it starts with our internal path, but the timeline internal path has not been chopped off yet...
+        m_PreviousAnchor->setText("TODO");
+        m_PreviousAnchor->disable();
+        m_PreviousTimestamp->setText("");
 
-    //old (file already verified to exist on fs):
-    //this is probably a faster 404 check than a fs read, but i could be wrong. i think it'll be faster only because it's not a kernel call. i'm ALREADY doing an atomic load, so that [kernel call] is free. i'd imagine that the fs cache (kernel) is a hash as well, so the speeds would be identical aside from the kernel call (which i've heard are expensive but honestly i have no clue :-P (expensive is a relative word, so relative to WHAT!?!? blah now i see why premature optimization is the biggest waste of time ever. so many nerds on the internet describing operations as "expensive", but they give little/no comparison/relativity)). i could be wrong and the fs cache check could still be faster, perhaps because it uses an algorithm more suited to directories/files (it walks the directories? idfk. but i mean a fucking hash should be "splitting" (sharding) after the very first character, so shit maybe my hash is way faster :)
+        m_NextAnchor->setText("TODO");
+        m_NextAnchor->disable();
+        m_NextTimestamp->setText("");
 
-    try
-    {
-        uint indexIntoFlatSortedList = sortedLastModifiedTimestamps->PathsIndexIntoFlatListHash->at(relativePath_aka_internalPath);
-
-        if(indexIntoFlatSortedList > 0)
-        {
-            //there is a 'previous', so yea make previous and maybe make earliest
-            TimestampAndPath *previousTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(indexIntoFlatSortedList-1);
-            const std::string &previousPath = previousTimestampAndPath->Path;
-            QFileInfo previousPathFileInfo(QString::fromStdString(previousPath)); //TODOreq (since they are relative and current dir isn't where they live, it's very unlikely (but they might still TRY fff (had it marked as done, now removed again))): find out if these touch the hard drive. if they do, i'll chop off the fucking filename myself!
-            m_PreviousAnchor->setDisabled(false);
-            m_PreviousAnchor->setLink(WLink(WLink::InternalPath, previousPath));
-            m_PreviousAnchor->setText(previousPathFileInfo.fileName().toStdString());
-            m_PreviousTimestamp->setText(longLongTimestampToWString(previousTimestampAndPath->Timestamp));
-
-            if(m_EarliestAnchor->isDisabled())
-            {
-                //TODOoptional: solve the problem of earliest being stale if i ever modify first (making it no longer earliest). for now fuck it because that's so incredibly rare (however, the same problem applies to "latest" (for latest i can just disable the anchor whenever the pointer changes (ONLY keep pointer around to detect changing, NEVER use it otherwise)...)
-                TimestampAndPath *earliestTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->first();
-                const std::string &earliestPath = earliestTimestampAndPath->Path;
-                QFileInfo earliestPathFileInfo(QString::fromStdString(earliestPath));
-                m_EarliestAnchor->setDisabled(false);
-                m_EarliestAnchor->setLink(WLink(WLink::InternalPath, earliestPath));
-                m_EarliestAnchor->setText(earliestPathFileInfo.fileName().toStdString());
-                m_EarliestTimestamp->setText(longLongTimestampToWString(earliestTimestampAndPath->Timestamp));
-            }
-        }
-        else
-        {
-            //no previous
-            m_PreviousAnchor->setText("...");
-            m_PreviousAnchor->setLink(WLink());
-            m_PreviousAnchor->setDisabled(true);
-            m_PreviousTimestamp->setText("...");
-
-            m_EarliestAnchor->setText("No Earlier");
-            m_EarliestAnchor->setLink(WLink());
-            m_EarliestAnchor->setDisabled(true);
-            m_EarliestTimestamp->setText("No Earlier");
-        }
-
-        m_CurrentAnchor->setLink(WLink(WLink::InternalPath, relativePath_aka_internalPath));
+        m_CurrentAnchor->setLink(WLink(WLink::InternalPath, relativePath_aka_internalPathQString.toStdString()));
         m_CurrentAnchor->setText(myBrainItemFilenameOnlyStdString);
-        m_CurrentTimestamp->setText(longLongTimestampToWString(sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(indexIntoFlatSortedList)->Timestamp));
-
-        if(indexIntoFlatSortedList < static_cast<uint>(sortedLastModifiedTimestamps->PathsIndexIntoFlatListHash->size()-1))
+        QFileInfo blahFileInfo(relativePath_aka_internalPathQString); //filename is timestamp, but make it human readable
+        const QString &videoSegmentFilenameOnly = blahFileInfo.fileName();
+        const QString &videoSegmentFilenameWithoutExt = videoSegmentFilenameOnly.left(videoSegmentFilenameOnly.lastIndexOf("."));
+        bool convertOk = false;
+        long long videoSegmentTimestamp = videoSegmentFilenameWithoutExt.toLongLong(&convertOk);
+        if(convertOk)
         {
-            //there is a 'next', so [...]
-            TimestampAndPath *nextTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(indexIntoFlatSortedList+1);
-            const std::string &nextPath = nextTimestampAndPath->Path;
-            QFileInfo nextPathFileInfo(QString::fromStdString(nextPath));
-            m_NextAnchor->setDisabled(false);
-            m_NextAnchor->setLink(WLink(WLink::InternalPath, nextPath));
-            m_NextAnchor->setText(nextPathFileInfo.fileName().toStdString());
-            m_NextTimestamp->setText(longLongTimestampToWString(nextTimestampAndPath->Timestamp));
-
-            if(m_LatestAnchor->isDisabled())
-            {
-                TimestampAndPath *latestTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->last();
-                const std::string &latestPath = latestTimestampAndPath->Path;
-                QFileInfo latestPathFileInfo(QString::fromStdString(latestPath));
-                m_LatestAnchor->setDisabled(false);
-                m_LatestAnchor->setLink(WLink(WLink::InternalPath, latestPath));
-                m_LatestAnchor->setText(latestPathFileInfo.fileName().toStdString());
-                m_LatestTimestamp->setText(longLongTimestampToWString(latestTimestampAndPath->Timestamp));
-            }
+            m_CurrentTimestamp->setText(longLongTimestampToWString(videoSegmentTimestamp));
         }
         else
         {
-            //no next
-            m_NextAnchor->setText("...");
-            m_NextAnchor->setLink(WLink());
-            m_NextAnchor->setDisabled(true);
-            m_NextTimestamp->setText("...");
-
-            m_LatestAnchor->setText("No Later");
-            m_LatestAnchor->setLink(WLink());
-            m_LatestAnchor->setDisabled(true);
-            m_LatestTimestamp->setText("No Later");
+            m_CurrentTimestamp->setText("error");
         }
     }
-    catch(std::out_of_range &pathNotInHashException)
+    else //not video segment hack (REGULAR)
     {
-        //the file exists on the fs, but not yet in the lastModifiedTimestamps file
-        new WText("Please wait a few moments and try your request again", m_ContentsContainer);
-        return;
+        LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = m_LastModifiedTimestampsAndPaths->loadAcquire();
+        if(!sortedLastModifiedTimestamps)
+        {
+            new WText("500 internal server error", m_ContentsContainer);
+            return;
+        }
+        if(m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory != sortedLastModifiedTimestamps)
+        {
+            m_LatestAnchor->disable(); //when shit changes, the latest anchor is stale (unless timestamp file wasn't updated properly). disabling it makes it get an up to date value
+            m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory = sortedLastModifiedTimestamps;
+        }
+        //thinking out loud (typing out loud (typing my thoughts)): lol mom interrupted me and then i had lunch since writing that prefix, uhh what was i on about? oh right i need to be able to look up based on path and timestamp, so wtf data structure am i going to use?!?!? i also need to be able to access it by index so i can use the 'random' functionality. that's 3 primary keys by my count, wtfz!?!? simply doing it is easy, but doing it fast/right will require some thinkan. a QList<teimstompIeteim> would give me random and in order tiemstompz, but then looking up by path is expensive. a qhash<path> gives me fast lookups by path, but [unless i do a linked list of em (next,previous)] doesn't give me in order shiz. i either can't have my cookie and eat it too, or perhaps i should just use two lists!?!? i don't need to do anything with the path (since it is... a path) except find out previous and next. so wtf i am contradicting myself here: find by path = use an hash, but hash has no ordering so fuck. also doesn't appear that hash can be accessed index-wise so now random'ing is fucked. a hash<path,int> containing just an index into a sorted list as it's value would work, so long as both lists are gotten via the same loadAquire call (and are therefore synchronized (two back to back loadAquires wouldn't be)... and idk it's just kinda like i'm maintaining a whole nother list just to use it as a primary key. wtf was that shit i read about having something with two primary keys? there's generic containers for that i believe... *turns on internet box*... now hmm do i want boost.multiindex or boost.bimap... they sound the same to me except apparently multiindex depends on bimap... so.... *reads moar*...
+        //seems bimap is sufficient, not entirely sure but multiindex looks overkill. still i wonder if keeping second hash<path,indexIntoList> would be FASTER (not necessarily more memory conservative), simply because bimap only does maps :(. i want a left: map, right: hash :(. maybe such thing would be dumb and/or maybe such thing is already possible, *keeps reading*
+        //fuck yea boost/bimap/unordered_set_of might be just that! *reads*
+        //shit, bimap needs unique keys, whereas i have tons of timestamp collisions :(
+        //fuck it, to KISS ima just use QList<item> (sorted by timestamp and then again by path) and QHash<path, listIndex> and just keep them synchronized myself, with a comment saying an optimization using bimap or SIMILAR is probably possible...
+
+        //we've already QDir::clean'd it and established that it starts with our internal path, but the timeline internal path has not been chopped off yet...
+
+        //old (file already verified to exist on fs):
+        //this is probably a faster 404 check than a fs read, but i could be wrong. i think it'll be faster only because it's not a kernel call. i'm ALREADY doing an atomic load, so that [kernel call] is free. i'd imagine that the fs cache (kernel) is a hash as well, so the speeds would be identical aside from the kernel call (which i've heard are expensive but honestly i have no clue :-P (expensive is a relative word, so relative to WHAT!?!? blah now i see why premature optimization is the biggest waste of time ever. so many nerds on the internet describing operations as "expensive", but they give little/no comparison/relativity)). i could be wrong and the fs cache check could still be faster, perhaps because it uses an algorithm more suited to directories/files (it walks the directories? idfk. but i mean a fucking hash should be "splitting" (sharding) after the very first character, so shit maybe my hash is way faster :)
+
+        try
+        {
+            const std::string &relativePath_aka_internalPath = relativePath_aka_internalPathQString.toStdString();
+            uint indexIntoFlatSortedList = sortedLastModifiedTimestamps->PathsIndexIntoFlatListHash->at(relativePath_aka_internalPath);
+
+            if(indexIntoFlatSortedList > 0)
+            {
+                //there is a 'previous', so yea make previous and maybe make earliest
+                TimestampAndPath *previousTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(indexIntoFlatSortedList-1);
+                const std::string &previousPath = previousTimestampAndPath->Path;
+                QFileInfo previousPathFileInfo(QString::fromStdString(previousPath)); //TODOreq (since they are relative and current dir isn't where they live, it's very unlikely (but they might still TRY fff (had it marked as done, now removed again))): find out if these touch the hard drive. if they do, i'll chop off the fucking filename myself!
+                m_PreviousAnchor->setDisabled(false);
+                m_PreviousAnchor->setLink(WLink(WLink::InternalPath, previousPath));
+                m_PreviousAnchor->setText(previousPathFileInfo.fileName().toStdString());
+                m_PreviousTimestamp->setText(longLongTimestampToWString(previousTimestampAndPath->Timestamp));
+
+                if(m_EarliestAnchor->isDisabled())
+                {
+                    //TODOoptional: solve the problem of earliest being stale if i ever modify first (making it no longer earliest). for now fuck it because that's so incredibly rare (however, the same problem applies to "latest" (for latest i can just disable the anchor whenever the pointer changes (ONLY keep pointer around to detect changing, NEVER use it otherwise)...)
+                    TimestampAndPath *earliestTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->first();
+                    const std::string &earliestPath = earliestTimestampAndPath->Path;
+                    QFileInfo earliestPathFileInfo(QString::fromStdString(earliestPath));
+                    m_EarliestAnchor->setDisabled(false);
+                    m_EarliestAnchor->setLink(WLink(WLink::InternalPath, earliestPath));
+                    m_EarliestAnchor->setText(earliestPathFileInfo.fileName().toStdString());
+                    m_EarliestTimestamp->setText(longLongTimestampToWString(earliestTimestampAndPath->Timestamp));
+                }
+            }
+            else
+            {
+                //no previous
+                m_PreviousAnchor->setText("...");
+                m_PreviousAnchor->setLink(WLink());
+                m_PreviousAnchor->setDisabled(true);
+                m_PreviousTimestamp->setText("...");
+
+                m_EarliestAnchor->setText("No Earlier");
+                m_EarliestAnchor->setLink(WLink());
+                m_EarliestAnchor->setDisabled(true);
+                m_EarliestTimestamp->setText("No Earlier");
+            }
+
+            m_CurrentAnchor->setLink(WLink(WLink::InternalPath, relativePath_aka_internalPath));
+            m_CurrentAnchor->setText(myBrainItemFilenameOnlyStdString);
+            m_CurrentTimestamp->setText(longLongTimestampToWString(sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(indexIntoFlatSortedList)->Timestamp));
+
+            if(indexIntoFlatSortedList < static_cast<uint>(sortedLastModifiedTimestamps->PathsIndexIntoFlatListHash->size()-1))
+            {
+                //there is a 'next', so [...]
+                TimestampAndPath *nextTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->at(indexIntoFlatSortedList+1);
+                const std::string &nextPath = nextTimestampAndPath->Path;
+                QFileInfo nextPathFileInfo(QString::fromStdString(nextPath));
+                m_NextAnchor->setDisabled(false);
+                m_NextAnchor->setLink(WLink(WLink::InternalPath, nextPath));
+                m_NextAnchor->setText(nextPathFileInfo.fileName().toStdString());
+                m_NextTimestamp->setText(longLongTimestampToWString(nextTimestampAndPath->Timestamp));
+
+                if(m_LatestAnchor->isDisabled())
+                {
+                    TimestampAndPath *latestTimestampAndPath = sortedLastModifiedTimestamps->SortedTimestampAndPathFlatList->last();
+                    const std::string &latestPath = latestTimestampAndPath->Path;
+                    QFileInfo latestPathFileInfo(QString::fromStdString(latestPath));
+                    m_LatestAnchor->setDisabled(false);
+                    m_LatestAnchor->setLink(WLink(WLink::InternalPath, latestPath));
+                    m_LatestAnchor->setText(latestPathFileInfo.fileName().toStdString());
+                    m_LatestTimestamp->setText(longLongTimestampToWString(latestTimestampAndPath->Timestamp));
+                }
+            }
+            else
+            {
+                //no next
+                m_NextAnchor->setText("...");
+                m_NextAnchor->setLink(WLink());
+                m_NextAnchor->setDisabled(true);
+                m_NextTimestamp->setText("...");
+
+                m_LatestAnchor->setText("No Later");
+                m_LatestAnchor->setLink(WLink());
+                m_LatestAnchor->setDisabled(true);
+                m_LatestTimestamp->setText("No Later");
+            }
+        }
+        catch(std::out_of_range &pathNotInHashException)
+        {
+            //the file exists on the fs, but not yet in the lastModifiedTimestamps file
+            new WText("Please wait a few moments and try your request again", m_ContentsContainer);
+            return;
+        }
     }
 
 

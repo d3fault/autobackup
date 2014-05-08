@@ -24,7 +24,7 @@ public:
 
     TimeLineWtWidget(WContainerWidget *parent = 0);
     void redirectToRandomPointInTimeline();
-    void presentFile(const string &relativePath_aka_internalPath, const QString &absolutePath, const std::string &myBrainItemFilenameOnlyStdString);
+    void presentFile(const QString &relativePath_aka_internalPathQString, const QString &absolutePath, const std::string &myBrainItemFilenameOnlyStdString);
 private:
     static QAtomicPointer<LastModifiedTimestampsAndPaths> *m_LastModifiedTimestampsAndPaths;
 

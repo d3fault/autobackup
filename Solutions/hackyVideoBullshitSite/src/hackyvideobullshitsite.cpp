@@ -110,6 +110,7 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
         if(m_NeighborPropagationUserHostPathComboSftpArg == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
         {
             cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationUserHostPathComboSftpArg " not set" << endl;
+            cerr << "if you use '" VideoSegmentsImporterFolderWatcher_DONT_PROPAGATE_TO_NEIGHBOR "' for the sftp host path combo arg, neighbor replication will be disabled" << endl; //TODOoptional: allow propagation enabling without bring the server down (aww shit it should have been a separate app and just used 'this app' "moveTo" as that one's "watch". over-engineered again) via cin/cout shit
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationUserHostPathComboSftpArg, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }

@@ -7,6 +7,8 @@
 
 #include "sftpuploaderandrenamerqueue.h"
 
+#define VideoSegmentsImporterFolderWatcher_DONT_PROPAGATE_TO_NEIGHBOR "null@dev.poopybutt"
+
 class QFileSystemWatcher;
 
 class VideoSegmentsImporterFolderWatcher : public QObject
@@ -19,17 +21,16 @@ private:
     QString m_VideoSegmentsImporterFolderToWatchWithSlashAppended;
     QString m_VideoSegmentsImporterFolderScratchSpacePathWithSlashAppended;
     //QDir m_VideoSegmentsImporterFolderScratchSpace;
-    QString m_VideoSegmentsImporterFolderToMoveToWithSlashAppended;
+    QString m_VideoSegmentsImporterFolderToMoveToWithSlashAppended;    
 
-    //int m_CurrentYearFolder;
-    //int m_CurrentDayOfYearFolder;
-
-    inline QString appendSlashIfNeeded(QString inputString) { return inputString.endsWith("/") ? inputString : inputString.append("/"); } //always easier than a pri include
-
+    bool m_PropagateToNeighbor;
     SftpUploaderAndRenamerQueue *m_SftpUploaderAndRenamerQueue;
 
     bool jitEnsureFolderExists(const QString &absoluteFolderPathToMaybeJitCreate);
+    void maybePropagateToNeighbor(const QString &timestampUsedInRename, const QString &localFilenameToPropagate);
     void beginStoppingVideoNeighborPropagation(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState);
+
+    inline QString appendSlashIfNeeded(QString inputString) { return inputString.endsWith("/") ? inputString : inputString.append("/"); } //always easier than a pri include
 signals:
     void o(const QString &);
     void e(const QString &);

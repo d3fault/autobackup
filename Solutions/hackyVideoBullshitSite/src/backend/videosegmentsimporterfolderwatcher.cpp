@@ -9,8 +9,7 @@
 VideoSegmentsImporterFolderWatcher::VideoSegmentsImporterFolderWatcher(QObject *parent) :
     QObject(parent)
   , m_DirectoryWatcher(new QFileSystemWatcher(this))
-  //, m_CurrentYearFolder(-1)
-  //, m_CurrentDayOfYearFolder(-1)
+  , m_PropagateToNeighbor(false)
   , m_SftpUploaderAndRenamerQueue(0)
 {
     connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged()));
@@ -28,8 +27,24 @@ bool VideoSegmentsImporterFolderWatcher::jitEnsureFolderExists(const QString &ab
     }
     return true;
 }
+void VideoSegmentsImporterFolderWatcher::maybePropagateToNeighbor(const QString &timestampUsedInRename, const QString &localFilenameToPropagate)
+{
+    if(!m_PropagateToNeighbor)
+        return;
+
+    SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
+    enqueuForUploadType.first = timestampUsedInRename;
+    enqueuForUploadType.second = localFilenameToPropagate;
+    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
+}
 void VideoSegmentsImporterFolderWatcher::beginStoppingVideoNeighborPropagation(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState)
 {
+    if(!m_PropagateToNeighbor)
+    {
+        emit videoSegmentsImporterFolderWatcherFinishedPropagatingToNeighbors(); //signal name isn't exactly accurate here, but whatever
+        return;
+    }
+
     //uncomment next line if you don't want files received after Q or QQ is pressed to MAYBE have to finish before considered finished (MAYBE because if the upload bandwidth is fast enough and the queue is empty right when Q or QQ is pressed, it will still disregard newly received ones). Does not affect QQQ. If uncommenting, probably need to find a place to reconnect as well (but idk maybe not)...
     //disconnect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)));
 
@@ -43,17 +58,30 @@ void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &video
     m_VideoSegmentsImporterFolderToMoveToWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToMoveTo);
 
     if(m_SftpUploaderAndRenamerQueue)
+    {
         delete m_SftpUploaderAndRenamerQueue;
-    m_SftpUploaderAndRenamerQueue = new SftpUploaderAndRenamerQueue(this); //the rename is useless in this case (but the move ISN'T), but i'm too lazy to un-over-engineer it :-P
-    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(o(QString)), this, SIGNAL(o(QString)));
-    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
-    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStarted()), this, SLOT(handleSftpUploaderAndRenamerQueueStarted()));
-    connect(this, SIGNAL(tellNeighborPropagationInformationRequested()), m_SftpUploaderAndRenamerQueue, SLOT(tellStatus()));
-    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(statusGenerated(QString)), this, SIGNAL(o(QString)));
-    connect(this, SIGNAL(sftpUploaderAndRenamerQueueStateChangedRequested(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum)), m_SftpUploaderAndRenamerQueue, SLOT(changeSftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum)));
-    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStopped()), this, SIGNAL(videoSegmentsImporterFolderWatcherFinishedPropagatingToNeighbors())); //whether waited or killed, shit is done yo
+        m_SftpUploaderAndRenamerQueue = 0;
+    }
 
-    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, neighborPropagationRemoteDestinationToUploadTo), Q_ARG(QString, neighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, neighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
+    m_PropagateToNeighbor = (neighborPropagationUserHostPathComboSftpArg == VideoSegmentsImporterFolderWatcher_DONT_PROPAGATE_TO_NEIGHBOR ? false : true);
+
+    if(m_PropagateToNeighbor)
+    {
+        m_SftpUploaderAndRenamerQueue = new SftpUploaderAndRenamerQueue(this); //the rename is useless in this case (but the move ISN'T), but i'm too lazy to un-over-engineer it :-P
+        connect(m_SftpUploaderAndRenamerQueue, SIGNAL(o(QString)), this, SIGNAL(o(QString)));
+        connect(m_SftpUploaderAndRenamerQueue, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+        connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStarted()), this, SLOT(handleSftpUploaderAndRenamerQueueStarted()));
+        connect(this, SIGNAL(tellNeighborPropagationInformationRequested()), m_SftpUploaderAndRenamerQueue, SLOT(tellStatus()));
+        connect(m_SftpUploaderAndRenamerQueue, SIGNAL(statusGenerated(QString)), this, SIGNAL(o(QString)));
+        connect(this, SIGNAL(sftpUploaderAndRenamerQueueStateChangedRequested(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum)), m_SftpUploaderAndRenamerQueue, SLOT(changeSftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum)));
+        connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStopped()), this, SIGNAL(videoSegmentsImporterFolderWatcherFinishedPropagatingToNeighbors())); //whether waited or killed, shit is done yo
+
+        QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "startSftpUploaderAndRenamerQueue", Q_ARG(QString, neighborPropagationRemoteDestinationToUploadTo), Q_ARG(QString, neighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, neighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, sftpProcessPath));
+    }
+    else
+    {
+        handleSftpUploaderAndRenamerQueueStarted();
+    }
 }
 void VideoSegmentsImporterFolderWatcher::stopCleanlyOnceVideoSegmentNeighborPropagatationFinishes()
 {
@@ -106,11 +134,7 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
             }
 
             //enqueue for propagation to sibling
-            SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
-            enqueuForUploadType.first = filenameMinusExt;
-            enqueuForUploadType.second = moveToDestinationFilename;
-            QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
-
+            maybePropagateToNeighbor(filenameMinusExt, moveToDestinationFilename);
             continue;
         }
 
@@ -136,11 +160,7 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
             }
 
             //enqueue for propagation to sibling
-            SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
-            enqueuForUploadType.first = filenameMinusExt;
-            enqueuForUploadType.second = dayFolderFinalDest + currentEntry;
-            QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
-
+            maybePropagateToNeighbor(filenameMinusExt, dayFolderFinalDest + currentEntry);
             continue;
         }
 
@@ -165,137 +185,8 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
         }
 
         //enqueue for propagation to sibling
-        SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
-        enqueuForUploadType.first = filenameMinusExt;
-        enqueuForUploadType.second = dayFolderFinalDest + currentEntry;
-        QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
-
+        maybePropagateToNeighbor(filenameMinusExt, dayFolderFinalDest + currentEntry);
         continue;
-
-#if 0 //depcrecated: overcomplicated and less robust (quit->restarts failed)
-        //BUG (solved): creating *second* new day folder does not have a year folder in scratch space, because it was moved to moveTo and we currently don't think one needs to be created if one exists in moveTo already
-
-        /*
-         * PSEUDO-CODE of following
-         *
-         * on(new year) -> delete last year scratch space (empty folder) -> make new year folder in scratch space -> make new day folder in scratch space -> move to new day folder -> since new year, move new year to moveTo and remake new year
-         * on(new day) -> make new day folder in scratch space -> move to new day folder -> since new day, move new day to moveTo/year
-         * on(notNewYearOrNewDay) -> move to moveTo/year/day
-         */
-
-        //on(new year)
-        if((m_CurrentYearFolder == -1) || (newFilenamesYear != m_CurrentYearFolder))
-        {
-            //delete last year's folder in scratch space if it exists. should be empty and will fail if it isn't
-            if(m_CurrentYearFolder != -1)
-                m_VideoSegmentsImporterFolderScratchSpace.remove(QString::number(m_CurrentYearFolder));
-            m_CurrentYearFolder = newFilenamesYear;
-            m_CurrentDayOfYearFolder = newFilenamesDayOfYear;
-            //make new year folder in scratch space
-            const QString &yearFolderAboutToMake = m_VideoSegmentsImporterFolderScratchSpace.absolutePath() + QDir::separator() + QString::number(m_CurrentYearFolder) + QDir::separator();
-            if(!m_VideoSegmentsImporterFolderScratchSpace.mkpath(yearFolderAboutToMake))
-            {
-                emit e("failed to make year directory: '" + yearFolderAboutToMake + "'");
-                continue; //don't stop, but do tell
-            }
-            //make new day folder in scratch space
-            QString currentDayOfYearFolderString = QString::number(m_CurrentDayOfYearFolder);
-            const QString &dayFolderAboutToMake = yearFolderAboutToMake + currentDayOfYearFolderString + QDir::separator();
-            if(!m_VideoSegmentsImporterFolderScratchSpace.mkpath(dayFolderAboutToMake))
-            {
-                emit e("failed to make day directory: '" + dayFolderAboutToMake + "'");
-                continue; //don't stop, but do tell
-            }
-            //move to new day folder
-            const QString &newFileScratchSpaceAbsoluteFilePath = dayFolderAboutToMake + currentEntry;
-            if(!QFile::rename(currentEntryAbsoluteFilePath, newFileScratchSpaceAbsoluteFilePath))
-            {
-                emit e("failed to move: '" + currentEntryAbsoluteFilePath + "' to '" + newFileScratchSpaceAbsoluteFilePath + "'");
-                continue; //don't stop, but do tell
-            }
-            //move new year to moveTo
-            const QString &moveToDestinationYearFolder = m_VideoSegmentsImporterFolderToMoveToWithSlashAppended + QString::number(m_CurrentYearFolder);
-            if(!QFile::rename(yearFolderAboutToMake, moveToDestinationYearFolder)) //jitCreateFolder not necessary since moving to root of final destination
-            {
-                emit e("failed to move '" + yearFolderAboutToMake + "' to '" + moveToDestinationYearFolder + "'");
-                continue; //don't stop, but do tell
-            }
-
-            //enqueue for propagation to sibling
-            SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
-            enqueuForUploadType.first = filenameMinusExt;
-            enqueuForUploadType.second = moveToDestinationYearFolder + QDir::separator() + currentDayOfYearFolderString + QDir::separator() + currentEntry;
-            QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
-
-            //remake new year (since it disappeared with above move, yet we still need it for new days)
-            if(!m_VideoSegmentsImporterFolderScratchSpace.mkpath(yearFolderAboutToMake))
-            {
-                emit e("failed to re-make year directory: '" + yearFolderAboutToMake + "'");
-                continue; //don't stop, but do tell
-            }
-            continue;
-        }
-        //on(new day)
-        if((m_CurrentDayOfYearFolder == -1) || (newFilenamesDayOfYear != m_CurrentDayOfYearFolder))
-        {
-            m_CurrentDayOfYearFolder = newFilenamesDayOfYear;
-            //make new day folder
-            const QString &dayFolderAboutToMake = m_VideoSegmentsImporterFolderScratchSpace.absolutePath() + QDir::separator() + QString::number(m_CurrentYearFolder) + QDir::separator() + QString::number(m_CurrentDayOfYearFolder) + QDir::separator();
-            if(!m_VideoSegmentsImporterFolderScratchSpace.mkpath(dayFolderAboutToMake))
-            {
-                emit e("failed to make day directory: '" + dayFolderAboutToMake + "'");
-                continue; //don't stop, but do tell
-            }
-            //move to new day folder
-            const QString &newFileScratchSpaceAbsoluteFilePath = dayFolderAboutToMake + currentEntry;
-            if(!QFile::rename(currentEntryAbsoluteFilePath, newFileScratchSpaceAbsoluteFilePath))
-            {
-                emit e("failed to move: '" + currentEntryAbsoluteFilePath + "' to '" + newFileScratchSpaceAbsoluteFilePath + "'");
-                continue; //don't stop, but do tell
-            }
-            //move new day to moveTo/year
-            const QString &moveToDestinationYearFolder = m_VideoSegmentsImporterFolderToMoveToWithSlashAppended + QString::number(m_CurrentYearFolder) + QDir::separator();
-            if(!jitEnsureFolderExists(moveToDestinationYearFolder))
-                continue;
-            const QString &moveToDestinationDayFolder = moveToDestinationYearFolder + QString::number(m_CurrentDayOfYearFolder);
-            if(!QFile::rename(dayFolderAboutToMake, moveToDestinationDayFolder))
-            {
-                emit e("failed to move '" + dayFolderAboutToMake + "' to '" + moveToDestinationDayFolder + "'");
-                continue; //don't stop, but do tell
-            }
-
-            //enqueue for propagation to sibling
-            SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
-            enqueuForUploadType.first = filenameMinusExt;
-            enqueuForUploadType.second = moveToDestinationDayFolder + QDir::separator() + currentEntry;
-            QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
-
-            //no remake of day folder that just disappeared necessary, because the rest of this days entries will skip scratch space altogether
-            continue;
-        }
-        //on(not new day or new year)  -- COMMON CASE
-        //move to moveTo/year/day
-
-        const QString &moveToDestinaationFolder = m_VideoSegmentsImporterFolderToMoveToWithSlashAppended + QString::number(m_CurrentYearFolder) + QDir::separator() + QString::number(m_CurrentDayOfYearFolder) + QDir::separator();
-        if(!jitEnsureFolderExists(moveToDestinaationFolder))
-            continue;
-        const QString &moveToDestinationFilename = moveToDestinaationFolder + currentEntry;
-
-        if(!QFile::rename(currentEntryAbsoluteFilePath, moveToDestinationFilename))
-        {
-            emit e("failed to move '" + currentEntryAbsoluteFilePath + "' to '" + moveToDestinationFilename + "'");
-            continue; //don't stop, but do tell
-        }
-
-        //enqueue for propagation to sibling
-        SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
-        enqueuForUploadType.first = filenameMinusExt;
-        enqueuForUploadType.second = moveToDestinationFilename;
-        QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
-#endif
-        //TO DOnereq: there are 3 renames/moves above that each need to trigger a "start propagating to sibling server" [via sftp i guess]. whenever a video segment is moved into "VideoSegmentsImporterFolderToMoveTo", it should also be added to a queue to propagate it
-        //^also worth noting is that the very "last" server in the daisy chain of that shit (if not using bit-torrent but using sftp) should NOT queue the file, since nobody else needs it
-        //^^this needs to be done before i can scale to 2+ servers
     }
 }
 void VideoSegmentsImporterFolderWatcher::handleSftpUploaderAndRenamerQueueStarted()

@@ -26,20 +26,19 @@
 #include "directorybrowsingwtwidget.h"
 
 #define HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER "/some/placeholder/video/TODOreq.ogg" //TODOoptional: when no year/day folders are present (error imo) i could add code to present this... and it could even server as a pre-launch kind... of... countdown... thingo... (nah (ok changed my mind, yah (since it was a simple patch 'if year == 2013' xD)))
-#define HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Videos/Airborne"
 
 #define HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_DOWNLOAD \
     HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Download"
 
 #define HVBS_VIEW_MYBRAIN_STRING "View My [Archived] Brain On A Platter"
 
+#define HVBS_TIMELINE_MY_BRAIN_STRING "Timeline" "(Random point in time)"
 #define HVBS_BROWSE_MY_BRAIN_STRING "Browse"
 #define HVBS_DOWNLOAD_MY_BRAIN_STRING "Full download for offline viewing"
 
 #define HVBS_VIEW_MYBRAIN_TOOLTIP "Point at it and laugh: \"Haha, faggot!\""
 
-#define HVBS_TIMELINE_MYBRAIN_TOOLTIP "Random point in time"
-#define HVBS_TIMELINE_MY_BRAIN_STRING "Timeline" "(" HVBS_TIMELINE_MYBRAIN_TOOLTIP ")"
+#define HVBS_TIMELINE_MYBRAIN_TOOLTIP "In the beginning, there was d3fault..."
 #define HVBS_BROWSE_MYBRAIN_TOOLTIP "Traditional directory heirarchy"
 #define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain becomes your brain" // s/brain/mingles-with/
 
@@ -201,6 +200,9 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         //TODOreq: previous button
         WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", videoContainer); //if next != current; aka if new-current != current-when-started-playing
+        new WText(" ", videoContainer);
+        //TODOreq: latest  button (perhaps disabled at first, noop if latest is what we're already at)
+        new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS), "Browse All Video Clips", videoContainer);
         new WBreak(videoContainer);
 
         nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
@@ -329,7 +331,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         {
             createCookieCrumbsFromPath(/*relativePath_aka_internalPath*/);
             newTimelineIfNeededAndBringToFront();
-            m_TimeLineMyBrainWidget->presentFile(theInternalPathCleanedQString.toStdString(), myBrainItemToPresentAbsolutePathQString, myBrainItemFileInfo.fileName().toStdString());
+            m_TimeLineMyBrainWidget->presentFile(theInternalPathCleanedQString, myBrainItemToPresentAbsolutePathQString, myBrainItemFileInfo.fileName().toStdString());
             return;
         }
         else if(myBrainItemFileInfo.isDir())
