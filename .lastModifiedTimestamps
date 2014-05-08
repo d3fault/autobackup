@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1399510511
+Documents/minddump/:1399576591
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1399483065
+Documents/minddump/dreams/:1399574436
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -170,6 +170,7 @@ Documents/minddump/dreams/sldjfklasjdkfsaoduflsajfosudfljsdfousdlfk.txt:13855556
 Documents/minddump/dreams/sldkfjlkasdjflksajdfsadofulkwejroulkdjfoasudflaksdfjosdfulsdkfjouwekrjoiusdflkjsdf.txt:1379234828
 Documents/minddump/dreams/sldkjflskjdflkjsdlfjsdkljfjewrjlkjdflkjsldfjoiwer.txt:1394211103
 Documents/minddump/dreams/slfkjalskjflksjdflsjdflkjsdlkfjouwerlkjosudflksjdfousdfl.easy.metaphore.for.uhh.economy.and.lots.others.txt:1397896994
+Documents/minddump/dreams/slkjdflkajsldkfjlksjdflkjsdkfjljewroulkjsdflkjdsflkwer.txt:1399574436
 Documents/minddump/dreams/small.navy.boat.addendum.werasfdsfsdfjklsjdfkljsfd.txt:1390212530
 Documents/minddump/dreams/soft.lucid.dreams.analyze.options.or.variations.and.suddenly.they.are.happening.daslfkjsdfousewrk.txt:1390921431
 Documents/minddump/dreams/suddenly.a.tiger.aldfkjsdlfjwoeurlksdfj.txt:1353157182
@@ -1586,6 +1587,7 @@ Documents/minddump/sdfljasdfkjsdofiuljsoudflsajdfujweroiusadlfkjasodfuljwerouilk
 Documents/minddump/sdfljasdfoworiusldkfjsaodfuiasfl.and.triumphs.is.a.poor.word.choice.maybe.prevails.idk.txt:1340579573
 Documents/minddump/sdfljasdlkfjoweurlkjsdfosudflkjsdfowel.txt:1355339141
 Documents/minddump/sdfljdslfkjsdofuowieuroiudfjsdlfkjsldfjlsfdkj.txt:1366535602
+Documents/minddump/sdfljkaslkdjflskdjflkjsdlfkjlksdjflksjdfkljsdf.txt:1399576591
 Documents/minddump/sdfljkskfljsdofusdlkfjosdufjlkjweorulkjsfdousdlfkjosfdulkfdjsou.txt:1371450596
 Documents/minddump/sdfljksldkfjsoduflkjsdfoulkjsdfouiwlekrjoiudfljkasfdouisdfljkouiwerkjl.txt:1370301388
 Documents/minddump/sdfljsadflkjowuerlkjsdfoulekrjoweurlkf.txt:1355311324
@@ -4220,7 +4222,7 @@ Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firef
 Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:1397361347
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1399512866
+Solutions/hackyVideoBullshitSite/src/:1399581627
 Solutions/hackyVideoBullshitSite/src/backend/:1399509384
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398593487
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398594608
@@ -4230,10 +4232,10 @@ Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1398741413
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1399509384
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1399512852
+Solutions/hackyVideoBullshitSite/src/frontend/:1399581186
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1399512852
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1399581186
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1398740287
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1399510888
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1399512169
@@ -4242,13 +4244,13 @@ Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1399512349
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1399509695
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1399349761
 Solutions/hackyVideoBullshitSite/src/lastmodifiedtimestampsandpaths.h:1398735543
-Solutions/hackyVideoBullshitSite/src/main.cpp:1399512056
+Solutions/hackyVideoBullshitSite/src/main.cpp:1399581186
 Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.cpp:1399323854
 Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.h:1399323854
-Solutions/hackyVideoBullshitSite/tools/:1399485935
+Solutions/hackyVideoBullshitSite/tools/:1399576651
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399498518
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399581130
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1398993069
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1399486271
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1399348328
@@ -4256,9 +4258,7 @@ Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:13
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1399490172
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1399490172
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1399346769
-Solutions/hackyVideoBullshitSite/tools/VideoSegmentImportFolderStructureMakers/:1399485996
-Solutions/hackyVideoBullshitSite/tools/VideoSegmentImportFolderStructureMakers/createNeighborHvbsFolderStructure.sh:1399256426
-Solutions/hackyVideoBullshitSite/tools/VideoSegmentImportFolderStructureMakers/createSegmentUploaderTargetFolderStructure.sh:1399485742
+Solutions/hackyVideoBullshitSite/tools/createHvbsVideoImportFolderStructure.sh:1399576781
 Solutions/launchASEPbecauseRedAlert/:1395576326
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681
@@ -4277,7 +4277,7 @@ Solutions/launchASEPbecauseRedAlert/index.html:1371126798
 Solutions/launchASEPbecauseRedAlert/initial.idea.explained.some.txt:1371117803
 Solutions/launchASEPbecauseRedAlert/kickstarter.etc.draft.thingo.lul.but.fun.to.write.txt:1394623878
 Solutions/launchASEPbecauseRedAlert/launchPlaceholderSvgStickFigureMeditating.svg:1371128864
-Solutions/launchASEPbecauseRedAlert/list.of.domains.to.buy.at.or.just.before.launch.txt:1398553742
+Solutions/launchASEPbecauseRedAlert/list.of.domains.to.buy.at.or.just.before.launch.txt:1399573934
 Solutions/launchASEPbecauseRedAlert/meAnalyzingTheSituationWithPoliceHelicopterJuryAimingBothGunAndNetAtMe.svg:1371125630
 Solutions/launchASEPbecauseRedAlert/meAutoGrapplingTheFuckOutOfThereBecauseRedAlert.svg:1371123108
 Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if.i.generate.book.from.script.fuggit.txt:1398073737
