@@ -4223,7 +4223,7 @@ Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firef
 Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:1397361347
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1399589186
+Solutions/hackyVideoBullshitSite/src/:1399597678
 Solutions/hackyVideoBullshitSite/src/backend/:1399509384
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398593487
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398594608
@@ -4233,11 +4233,11 @@ Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1398741413
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1399509384
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1399588971
+Solutions/hackyVideoBullshitSite/src/frontend/:1399595110
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1399588971
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1399587659
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1399595110
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1399594649
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1399510888
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1399512169
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1399510770

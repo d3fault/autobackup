@@ -5,7 +5,8 @@
 #include <Wt/WApplication>
 #include <Wt/WContainerWidget>
 #include <Wt/WStackedWidget>
-#include <Wt/WHBoxLayout>
+#include <Wt/WImage>
+#include <Wt/WAnchor>
 
 #include "../lastmodifiedtimestampsandpaths.h"
 #include "../backend/adimagegetandsubscribemanager.h"
@@ -36,7 +37,8 @@ private:
     static std::string m_CopyrightText;
     static std::string m_DplLicenseText;
 
-    WContainerWidget *m_AdImageContainer; //such an angry image container
+    WImage *m_AdImage;
+    WAnchor *m_AdImageAnchor;
     WContainerWidget *m_RightSideOfHBoxLayout;
     WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;

@@ -2,8 +2,6 @@
 
 #include <Wt/WServer>
 #include <Wt/WVideo>
-#include <Wt/WImage>
-#include <Wt/WAnchor>
 #include <Wt/WText>
 #include <Wt/WLink>
 #include <Wt/WEnvironment>
@@ -12,6 +10,8 @@
 #include <Wt/WPanel>
 #include <Wt/Utils>
 #include <Wt/WCssStyleSheet>
+#include <Wt/WVBoxLayout>
+#include <Wt/WHBoxLayout>
 
 #include <QString>
 #include <QStringList>
@@ -44,8 +44,10 @@
 
 #define HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL "https://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"
 
-#define HVBS_ABC2_AD_IMAGE_WIDTH 96
-#define HVBS_ABC2_AD_IMAGE_HEIGHT 576
+#define HVBS_ABC2_AD_IMAGE_WIDTH 576
+#define HVBS_ABC2_AD_IMAGE_HEIGHT 96
+
+#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.00001"
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
@@ -119,17 +121,55 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     //random: mfw "moving a file to overwrite another file" lets processes reading the old version continue reading. it's liek free atomicity! could/should have used that for vidya segment lookin up (a fucking "lastSegment" file = gg), am considering using it for .lastModifiedTimestamps updating... except shit when do the readers close it then? when the session ends? a bunch of sessions never ending = old copies stay around forever (not that it should matter to me, so long as they're just using hdd and not memory (err that their memory can be used for other stuffz at times i guess idk what i'm on about (but let's just say i'm glad i haven't coded anything using that yet (i also wonder if it's portable..))))
 
-    WHBoxLayout *menuContentsHLayout = new WHBoxLayout(root());
+    WVBoxLayout *menuContentsHLayout = new WVBoxLayout(root());
     menuContentsHLayout->setContentsMargins(0, 0, 0, 0);
     menuContentsHLayout->setSpacing(0);
 
-    m_AdImageContainer = new WContainerWidget();
-    m_AdImageContainer->setContentAlignment(Wt::AlignCenter | Wt::AlignTop);
-    m_AdImageContainer->setMinimumSize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT);
-    m_AdImageContainer->setPadding(0);
-    m_AdImageContainer->setMargin(0);
+    WContainerWidget *topContainer = new WContainerWidget();
+    topContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
+    topContainer->setMinimumSize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT);
+    topContainer->setPadding(0);
+    topContainer->setMargin(0);
 
-    menuContentsHLayout->addWidget(m_AdImageContainer);
+    WHBoxLayout *topHBoxLayout = new WHBoxLayout(topContainer);
+    topHBoxLayout->setContentsMargins(0, 0, 0, 0);
+    topHBoxLayout->setSpacing(0);
+
+    //TODOreq: image, same height as ad, of my sexy face
+
+    //Advertisement
+    m_AdImage = new WImage();
+    m_AdImage->resize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date
+    m_AdImage->setHiddenKeepsGeometry(true);
+    m_AdImageAnchor = new WAnchor(WLink(), m_AdImage);
+    m_AdImageAnchor->setTarget(TargetNewWindow);
+    m_AdImageAnchor->setHiddenKeepsGeometry(true);
+    m_AdImageAnchor->setPadding(0);
+    topHBoxLayout->addWidget(m_AdImageAnchor, 0, Wt::AlignLeft | Wt::AlignTop);
+
+    //Links
+    WContainerWidget *linksContainer = new WContainerWidget();
+    linksContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
+    topHBoxLayout->addWidget(linksContainer, 1, Wt::AlignLeft | Wt::AlignTop);
+
+    WAnchor *homeAnchor = new WAnchor(WLink(WLink::InternalPath, "/"), "Home", linksContainer);
+    homeAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+    new WBreak(linksContainer);
+    WAnchor *viewMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER), HVBS_VIEW_MYBRAIN_STRING, linksContainer);
+    viewMyBrainAnchor->setToolTip(HVBS_VIEW_MYBRAIN_TOOLTIP);
+    viewMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+    //viewMyBrainAnchor->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)), Wt::Bottom);
+    //browseMyBrainAnchor->setTarget(TargetNewWindow);
+    //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
+    new WBreak(linksContainer);
+    WAnchor *storeAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Store"), "Store / Donate", linksContainer);
+    storeAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+    storeAnchor->setToolTip("Buying is basically donating, since everything is already freely available...");
+    new WBreak(linksContainer);
+    WAnchor *yourAdHereAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Your Ad Here", linksContainer);
+    yourAdHereAnchor->decorationStyle().setForegroundColor(WColor(255,0,0)); //I like my [necessary] evils to be clearly marked as such
+
+    menuContentsHLayout->addWidget(topContainer);
 
     m_RightSideOfHBoxLayout = new WContainerWidget();
     m_RightSideOfHBoxLayout->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
@@ -164,14 +204,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //new WBreak(blahRootRedirect()); eh weird indentation without this WBreak, BUT i'll take that over an entire wasted line!
     new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", blahRootRedirect());
     new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, blahRootRedirect());
-    new WBreak(blahRootRedirect());
 
-    WAnchor *viewMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER), HVBS_VIEW_MYBRAIN_STRING, blahRootRedirect());
-    viewMyBrainAnchor->setToolTip(HVBS_VIEW_MYBRAIN_TOOLTIP);
-    viewMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-    //viewMyBrainAnchor->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)), Wt::Bottom);
-    //browseMyBrainAnchor->setTarget(TargetNewWindow);
-    //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
     new WBreak(blahRootRedirect());
     new WBreak(blahRootRedirect());
 
@@ -413,17 +446,20 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
         m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred = false;
     }
 
-    m_AdImageContainer->clear(); //delete/replace the previous one, if there was one (TODOoptimization: maybe just setImage/setUrl/etc instead?)
+    //set the ad that the backend gave us
 
     if(newAdUrl == "n") //hack. both newAdImageResource and newAdAltAndHover are undefined if url is "n" (they may be 0/empty, or they may still be 'yesterdays')
     {
         //set up "no ad" placeholder
-        WImage *placeholderAdImage = new WImage(WLink(WLink::Url, /*http://d3fault.net*/"/no.ad.placeholder.jpg"), "Buy this ad space for BTC 0.00001");
-        placeholderAdImage->resize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT);
-        WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), placeholderAdImage, m_AdImageContainer);
-        adImageAnchor->setTarget(TargetNewWindow);
-        placeholderAdImage->setToolTip("Buy this ad space for BTC 0.00001");
-        adImageAnchor->setToolTip("Buy this ad space for BTC 0.00001");
+        m_AdImage->setImageLink(WLink(WLink::Url, /*http://d3fault.net*/"/no.ad.placeholder.jpg"));
+        m_AdImage->setAlternateText(HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER);
+        m_AdImage->setToolTip(HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER);
+        //already set as optimization and to neutralize popping: m_AdImage->resize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT);
+
+        m_AdImageAnchor->setLink(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL));
+        m_AdImageAnchor->setToolTip(HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER);
+        //already set, would be undefined i'd imagine: m_AdImageAnchor->setImage(m_AdImage);
+
         if(!environment().ajax())
         {
             return;
@@ -434,22 +470,12 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
 
     //TODOoptional: it would be trivial to show a 'price countdown' just like on abc2 just below the image itself (and has a wow factor of over 9000), but actually UPDATING that value on new purchases would NOT be [as] trivial :-/... so fuck it
 
-    WAnchor *yourAdHere = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Your Ad Here", m_AdImageContainer);
-    yourAdHere->decorationStyle().setForegroundColor(WColor(255,0,0));
-    WFont blahFont;
-    blahFont.setSize(WFont::Small);
-    yourAdHere->decorationStyle().setFont(blahFont);
+    m_AdImage->setImageLink(WLink(newAdImageResource));
+    m_AdImage->setAlternateText(newAdAltAndHover);
+    m_AdImage->setToolTip(newAdAltAndHover);
 
-    new WBreak(m_AdImageContainer);
-
-    WImage *adImage = new WImage(newAdImageResource, newAdAltAndHover);
-    adImage->resize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT); //TODOreq: share a define with Abc2. also reminds me (though a little off topic) the mime/header of the resource and also the expiration date
-    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, newAdUrl), adImage, m_AdImageContainer);
-    adImageAnchor->setTarget(TargetNewWindow);
-
-    //difference between these two?
-    adImage->setToolTip(newAdAltAndHover);
-    adImageAnchor->setToolTip(newAdAltAndHover);
+    m_AdImageAnchor->setLink(WLink(WLink::Url, newAdUrl));
+    m_AdImageAnchor->setToolTip(newAdAltAndHover);
 
     if(!environment().ajax())
     {
