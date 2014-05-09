@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1399584857
+Documents/minddump/:1399662327
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -788,6 +788,7 @@ Documents/minddump/elephants.dream.was.fucking.awesome.dsflsdfouwelkrjouasdflkjs
 Documents/minddump/elwjklsdaflksdljsdklkjsdlkjsdfljsadlfjasldjflksdajfklasjdfjsadflk.txt:1352188521
 Documents/minddump/embrace.death.do.not.fear.it.fuck.staying.inside.you.will.die.freezing.yourself.is.but.a.glimmer.of.hope.txt:1353168744
 Documents/minddump/eoiusdofiulkfasdjflkjsdfousdflkjsdfousldfkjsdofusldfkjou.txt:1384668579
+Documents/minddump/eorulksfdsdlfkjsldfkjlsdkjflkjsdflkjsdflkjflkjsdflks.txt:1399598217
 Documents/minddump/erousflkasjflsdkfjasldkfjsldkjfsodfulsdkjfousdflkjdsfoudlsfkjosduflksdfjou.txt:1380317899
 Documents/minddump/everything.around.you.disassembles.so.taking.apart.your.celly.doesnt.secure.you.anymore.LAUNCH.PUBLIC.hundo.txt:1338993232
 Documents/minddump/ewiufslfkjsjfsdfousdlkfjosduflsdjfouwerlkjsdfoufdlkjsdfk.txt:1392546758
@@ -1723,6 +1724,7 @@ Documents/minddump/sdfsdflkfsdfkljsdlfkjsdofuisdlkjfouiwerlkjoufdsl.txt:13660681
 Documents/minddump/sdfsdflkjsdfoieuraeirasdlfkjsdflksdfoiurewklj.txt:1338983671
 Documents/minddump/sdfsdflksdjfouwelrjkousdlfkjasodfuljsdfouwlekjrouisldfkjsofiu.txt:1370675888
 Documents/minddump/sdfsdfsdflksjdfouwekjrousdflkjasodfulkjweroulskjdfosudf.txt:1370306071
+Documents/minddump/sdfsdkjflasjfdkljsdlkfjlskjdflksdjfsdfoewuirklf.txt:1399662327
 Documents/minddump/sdfsdlfkjsdlkfjoiwuerlkjsfdousdalkweo.txt:1353780368
 Documents/minddump/sdfsdlkfjlksdfuwelrkjaosuflsdkjfwoerulkjfsfouweroiusdf.txt:1363911089
 Documents/minddump/sdfsdlkfjslkdjflkjlkwejroulsdjfosdufl.txt:1396204050
@@ -3952,9 +3954,9 @@ Solutions/:1394252246
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/:1393096791
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/:1390931989
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/initial.idea.txt:1390932309
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1394269893
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/Abc2PessimisticStateMonitorAndRecoverer.pro:1394269848
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1394267360
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1399667053
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/Abc2PessimisticStateMonitorAndRecoverer.pro:1399666980
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1399667036
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.h:1394265875
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/main.cpp:1390952248
 Solutions/Abc2couchbaseKeyAndJsonDefines/:1394506179
@@ -4146,7 +4148,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1398584965
+Solutions/Anonymous Bitcoin Computing 2/src/:1399667050
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1396218440
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -4159,7 +4161,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcou
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1396218308
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1393799993
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1398267732
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1398337914
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1399665799
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1394442366
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1393361188
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.cpp:1394002206
@@ -4172,8 +4174,8 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/newadslotfiller
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/singleuseselfdeletingmemoryresource.cpp:1393449653
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/singleuseselfdeletingmemoryresource.h:1393449653
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/stupidmimefromextensionutil.h:1394152357
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.cpp:1398337914
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.h:1393448163
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.cpp:1399665798
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.h:1399665798
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/:1393884334
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.cpp:1393884334
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1393161161
@@ -4192,7 +4194,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:139826
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1396219028
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1396217132
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
-Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1399584359
+Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1399665922
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
 Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021
@@ -4255,7 +4257,7 @@ Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399581130
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1398993069
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1399486271
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1399348328
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1399498465
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1399661422
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1399490172
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1399490172
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1399346769

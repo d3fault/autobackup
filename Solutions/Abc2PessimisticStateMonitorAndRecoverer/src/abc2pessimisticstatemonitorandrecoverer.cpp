@@ -7,11 +7,14 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/random/random_device.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
+#include <boost/filesystem.hpp>
 
 #include "abc2couchbaseandjsonkeydefines.h"
 
 using namespace std;
 using namespace boost::property_tree;
+
+#define ABC2_PESSIMISTIC_STATE_MONITOR_AND_RECOVERER_STOP_FILE "/run/shm/stopPessimisticStateMonitorAndRecoverer" //have a better/portable way (my qt way is the shit :-P), i'm open to suggestions. tmpfs at least saves us a hdd hit (but so would hdd cache prolly xD)
 
 #define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK \
 SatoshiInt buyerBalance = satoshiStringToSatoshiInt(pt6.get<std::string>(JSON_USER_ACCOUNT_BALANCE)); \
@@ -67,15 +70,30 @@ Abc2PessimisticStateMonitorAndRecoverer::Abc2PessimisticStateMonitorAndRecoverer
 //TODOreq: If the driver's durability polling (replication) takes longer than one second, we'll get a lot of false positives here. Additionally, we should do a durability poll of our own for the "slot that just appeared" before we do the "100ms extra time" thing. Lastly, we should do durability polling for all of our recovery storings.
 int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRecovereringStateUntilToldToStop()
 {
+    if(boost::filesystem::exists(ABC2_PESSIMISTIC_STATE_MONITOR_AND_RECOVERER_STOP_FILE))
+    {
+        if(remove(ABC2_PESSIMISTIC_STATE_MONITOR_AND_RECOVERER_STOP_FILE) != 0)
+        {
+            cerr << "failed to remove stop file: " ABC2_PESSIMISTIC_STATE_MONITOR_AND_RECOVERER_STOP_FILE << endl;
+            return 1;
+        }
+    }
+
     if(!connectToCouchbase())
         return 1;
 
     boost::random::random_device randomNumberGenerator;
     boost::random::uniform_int_distribution<> randomNumberRange(0, 9);
-    while(true)
+    for(;;)
     {
         //TODOreq: portable way to break out of this, SIGTERM etc
         sleep(1); //fancy boost timer libs? libevent timers? nahh
+
+        if(boost::filesystem::exists(ABC2_PESSIMISTIC_STATE_MONITOR_AND_RECOVERER_STOP_FILE))
+        {
+            cout << "Abc2PessimisticStateMonitorAndRecoverer is stopping because stop file (" ABC2_PESSIMISTIC_STATE_MONITOR_AND_RECOVERER_STOP_FILE ") exists. The stop file will be deleted on next startup" << endl; //would be trivial to make it not startable if the file exists (and to delete on stopping (now))
+            return 0;
+        }
 
         if(randomNumberRange(randomNumberGenerator) == 0)
         {

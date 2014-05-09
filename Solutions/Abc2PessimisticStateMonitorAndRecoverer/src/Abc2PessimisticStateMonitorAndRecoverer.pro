@@ -19,4 +19,4 @@ HEADERS += \
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 
-LIBS += -lcouchbase -lboost_random
+LIBS += -lcouchbase -lboost_random -lboost_filesystem
