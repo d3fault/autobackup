@@ -7,7 +7,6 @@
 #   2a) <ajax-puzzle>true</ajax-puzzle>
 #   2b) <max-request-size>175</max-request-size> .... 175 kb corresponding to 576x96 24-bit uncompressed BMP ad slot filler, which comes out to 163.x kb max, but I am not sure if that includes the http headers so 175 sounds fine...
 #3) Try uncommenting the WStackedWidget's animation code, because I think it needed a css file that (1)'s resource hack thing brings in
-#4) Uncomment the 'triggered' connection in ActualLazyLoadedTabWidget (too lazy to update my devbox (whereas my test vm has it xD))
 #4) Uncomment DEPLOY VARIABLES below [and comment-out or delete TESTING VARIABLES]
 #5) Turn on auto-failover
 #5) cd into wtAppHere and `ln -s /usr/local/share/Wt/resources/ resources`

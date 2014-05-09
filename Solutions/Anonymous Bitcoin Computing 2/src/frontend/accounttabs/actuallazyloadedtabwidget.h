@@ -13,8 +13,6 @@ public:
     ActualLazyLoadedTabWidget(WContainerWidget *parent = 0);
     WMenuItem *myAddTab(IAccountTabWidgetTabBody *child, const WString& label,
               LoadPolicy loadingPolicy = LazyLoading);
-private:
-    void handleCurrentTabChanged();
 };
 
 #endif // ACTUALLAZYLOADEDTABWIDGET_H

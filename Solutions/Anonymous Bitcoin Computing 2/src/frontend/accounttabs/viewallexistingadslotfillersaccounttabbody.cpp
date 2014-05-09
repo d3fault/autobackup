@@ -11,7 +11,7 @@
 
 #include "abc2couchbaseandjsonkeydefines.h"
 
-#define VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE "/permaCache/"
+#define VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE_WITH_TRAILING_SLASH "/tmp/" //TODOportable
 #define VIEW_ALL_AD_SLOT_FILLERS_TAB_NUM_AD_SLOT_FILLERS_PER_PAGE 10
 
 //all pages are 1 index based, even though the db stuff backing it is not
@@ -132,7 +132,7 @@ void ViewAllExistingAdSlotFillersAccountTabBody::buildCurrentPageAndAddToStackAn
         const std::string &keyToCurrentAdSlotFiller = adSpaceSlotFillerKey(m_AbcApp->m_CurrentlyLoggedInUsername, boost::lexical_cast<std::string>(i));
 #if 0
         const std::string &sha1OfkeyToCurrentAdSlotFiller = Wt::Utils::sha1(keyToCurrentAdSlotFiller);
-        const std::string &permaCachePath = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE + sha1OfkeyToCurrentAdSlotFiller;
+        const std::string &permaCachePath = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE_WITH_TRAILING_SLASH + sha1OfkeyToCurrentAdSlotFiller;
         if(boost::filesystem::exists(permaCachePath)) //TODOreq: race condition if two sessions are open and the same page (set of ads) are requested simultaneously. would be racy for whether or not the file exists (so they probably need to be MOVED INTO POSITION atomically after filled for starters). by the time our db hit comes back, the file might exist (or the file might be in progress of being created (and that in progress of being created may have even failed (but eh fuck it tbh)). basically: use temp file using "sha1(key) + WApp::sessionId", and after it's filled check for existence again before moving into position (if exist, just delete that temp file we just created). TODOoptimization: fails can be periodically detected by seeing if any filenames with the sessionId (indicating temp) exist and if their last modified date was a while ago (ex: yesterday)
             //TODOoptimization: perma-cache does not save us from having to get the b64 image (but it could with db refactor), perma-cache saves us from memory exhaustion from unrequested images staying in memory indefinitely (as long as session is open (if the user tells their browser not to request images))
         {
@@ -198,13 +198,13 @@ void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGe
     std::pair<string,string> guessedExtensionAndMimeType = StupidMimeFromExtensionUtil::guessExtensionAndMimeType(pt.get<std::string>(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION));
     //SingleUseSelfDeletingMemoryResource *adImageResource = new SingleUseSelfDeletingMemoryResource(base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_IMAGEB64)), "image" + guessedExtensionAndMimeType.first, "image/" + guessedExtensionAndMimeType.second, WResource::Inline, adImageAnchorOrderingPlaceholderContainer);
 
-    const std::string &permaCacheFilenameOnly = Wt::Utils::sha1(keyToAdSlotFillerArriving);
-    const std::string permaCacheFilePath = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE + permaCacheFilenameOnly;
+    const std::string &permaCacheFilenameOnly = Wt::Utils::base64Encode(keyToAdSlotFillerArriving);
+    const std::string permaCacheFilePath = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE_WITH_TRAILING_SLASH + permaCacheFilenameOnly;
 
     //JIT perma-cachify
     if(!boost::filesystem::exists(permaCacheFilePath))
     {
-        const std::string &tempFilenameSoNotClashingWithNeighborSessions_AndAlsoForExistenceAtomicity = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE  "TEMP_" + permaCacheFilenameOnly + "_" + Wt::Utils::base64Encode(m_AbcApp->sessionId());
+        const std::string &tempFilenameSoNotClashingWithNeighborSessions_AndAlsoForExistenceAtomicity = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE_WITH_TRAILING_SLASH  "TEMP_" + permaCacheFilenameOnly + "_" + Wt::Utils::base64Encode(m_AbcApp->sessionId());
         ofstream adSlotImageTempFile;
         adSlotImageTempFile.open(tempFilenameSoNotClashingWithNeighborSessions_AndAlsoForExistenceAtomicity.c_str());
         adSlotImageTempFile << base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_IMAGEB64));
@@ -212,6 +212,7 @@ void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGe
         rename(tempFilenameSoNotClashingWithNeighborSessions_AndAlsoForExistenceAtomicity.c_str(), permaCacheFilePath.c_str()); //TODOreq: thread safe? two sessions might call it near simultaneously. rename needs to be atomic. so long as the results aren't intertwined or some such (mangled inode data? idfk. i really doubt it's a problem, and would lol at linus torvalds if it was), it doesn't matter which of the two succeed
     }
 
+    //TODOoptional: if efficiency isn't priority but saving hdd space is, can use the file resource that deletes the underlying file on destruction instead
     //TODOoptimization: custom wfileresource with 1 year expiration date
     WFileResource *adImageResource = new WFileResource("image/" + guessedExtensionAndMimeType.second, permaCacheFilePath, adImageAnchorOrderingPlaceholderContainer);
     adImageResource->suggestFileName("image" + guessedExtensionAndMimeType.first, WResource::Inline);

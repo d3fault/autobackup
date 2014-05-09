@@ -129,8 +129,8 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     WDefaultLoadingIndicator *theLoadingIndicator = new WDefaultLoadingIndicator();
     theLoadingIndicator->setMessage("Computing..."); //'Computing' just barely beat out 'Raping yer mum'
     setLoadingIndicator(theLoadingIndicator);
-    //WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
-    //m_MainStack->setTransitionAnimation(slideInFromBottom, true);
+    WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
+    m_MainStack->setTransitionAnimation(slideInFromBottom, true);
 
     setCssTheme("polished");
     styleSheet().addRule("body", "background-color: black; color: white; font-family: arial; font-size: large");
@@ -2068,6 +2068,7 @@ void AnonymousBitcoinComputingWtGUI::doLoginTasks()
     m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel = new WText(satoshiStringToJsonString(m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly), m_LogoutWidget);
     new WBreak(m_LogoutWidget);
     m_LinkToAccount = new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_LogoutWidget);
+    m_LinkToAccount->decorationStyle().setForegroundColor(WColor(0, 255, 0));
     m_LoginLogoutStackWidget->setCurrentWidget(m_LogoutWidget);
     m_LoginStatusMessagesPlaceholder->setText("");
 

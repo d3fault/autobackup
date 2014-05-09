@@ -14,7 +14,7 @@ WMenuItem *ActualLazyLoadedTabWidget::myAddTab(IAccountTabWidgetTabBody *child, 
     }
     else
     {
-        //ret->triggered().connect(child, &IAccountTabWidgetTabBody::onTabBeingShown); //TODOoptional: either disconnect after first invocation, or also connect to the firstAdd'd one and use it to like 'refresh' or whatever. It doesn't really matter if we don't disconnect it though, because inside onTabBeingShown is a bool protector anyways...
+        ret->triggered().connect(child, &IAccountTabWidgetTabBody::onTabBeingShown); //TODOoptional: either disconnect after first invocation, or also connect to the firstAdd'd one and use it to like 'refresh' or whatever. It doesn't really matter if we don't disconnect it though, because inside onTabBeingShown is a bool protector anyways...
     }
     return ret;
 }

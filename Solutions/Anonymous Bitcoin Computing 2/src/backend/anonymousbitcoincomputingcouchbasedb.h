@@ -114,7 +114,7 @@ m_##text##WtMessageQueue##n = NULL;
 
 #ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) \
-    m_##text##WtMessageQueue##n = new queue<text##CouchbaseDocumentByKeyRequest*>(); /*TODOreq: should i specify a capacity? err not even sure that's what the example means, but guessing yes. capacity probably not necessary, but if i want memory usage to stay constant[-ER(because 'variable amount of connections make that impossibru)] i should set one... */
+    m_##text##WtMessageQueue##n = new queue<text##CouchbaseDocumentByKeyRequest*>(100); /* didn't think capacity was necessary, but a runtime assert failed without it. OLD:TODOreq: should i specify a capacity? err not even sure that's what the example means, but guessing yes. capacity probably not necessary, but if i want memory usage to stay constant[-ER(because 'variable amount of connections make that impossibru)] i should set one... */
 #else
 #define ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) \
     m_##text##WtMessageQueue##n = new message_queue(create_only, ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
