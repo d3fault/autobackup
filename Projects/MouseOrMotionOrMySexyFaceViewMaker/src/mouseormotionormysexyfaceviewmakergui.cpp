@@ -13,53 +13,63 @@ MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QOb
     QStringList arguments = QCoreApplication::arguments();
     bool convertOk;
     m_ViewSize.setWidth(800);
-    if(arguments.size() > 1)
+    int argIndex = 0;
+    if(arguments.size() > ++argIndex)
     {
-        int viewWidth = arguments.at(1).toInt(&convertOk);
+        int viewWidth = arguments.at(argIndex).toInt(&convertOk);
         if(convertOk && viewWidth > 0)
         {
             m_ViewSize.setWidth(viewWidth);
         }
     }
     m_ViewSize.setHeight(600);
-    if(arguments.size() > 2)
+    if(arguments.size() > ++argIndex)
     {
-        int viewHeight = arguments.at(2).toInt(&convertOk);
+        int viewHeight = arguments.at(argIndex).toInt(&convertOk);
         if(convertOk && viewHeight > 0)
         {
             m_ViewSize.setHeight(viewHeight);
         }
     }
-    m_UpdateIntervalMs = 100;
-    if(arguments.size() > 3)
+    m_CaptureFps = 15;
+    if(arguments.size() > ++argIndex)
     {
-        int updateInterval = arguments.at(3).toInt(&convertOk);
-        if(convertOk && updateInterval > 0)
+        int captureFps = arguments.at(argIndex).toInt(&convertOk);
+        if(convertOk && captureFps > 0)
         {
-            m_UpdateIntervalMs = updateInterval;
+            m_CaptureFps = captureFps;
+        }
+    }
+    m_MotionDetectionFps = qMin(5, m_CaptureFps);
+    if(arguments.size() > ++argIndex)
+    {
+        int motionDetectionFps = arguments.at(argIndex).toInt(&convertOk);
+        if(convertOk && motionDetectionFps > 0)
+        {
+            m_MotionDetectionFps = qMin(motionDetectionFps, m_CaptureFps);
         }
     }
     m_BottomPixelRowsToIgnore = 25;
-    if(arguments.size() > 4)
+    if(arguments.size() > ++argIndex)
     {
-        int bottomPixelRowsToIgnore = arguments.at(4).toInt(&convertOk);
+        int bottomPixelRowsToIgnore = arguments.at(argIndex).toInt(&convertOk);
         if(convertOk && bottomPixelRowsToIgnore > -1) //&& < resolutionHeight
         {
             m_BottomPixelRowsToIgnore = bottomPixelRowsToIgnore;
         }
     }
     m_CameraDeviceName = "/dev/video0";
-    if(arguments.size() > 5)
+    if(arguments.size() > ++argIndex)
     {
-        QString cameraDeviceNameString = arguments.at(5).trimmed();
+        QString cameraDeviceNameString = arguments.at(argIndex).trimmed();
         if(!cameraDeviceNameString.isEmpty())
             m_CameraDeviceName = cameraDeviceNameString.toUtf8();
 
     }
     m_CameraResolution.setWidth(720);
-    if(arguments.size() > 6)
+    if(arguments.size() > ++argIndex)
     {
-        int cameraResolutionWidth = arguments.at(6).toInt(&convertOk);
+        int cameraResolutionWidth = arguments.at(argIndex).toInt(&convertOk);
         if(convertOk && cameraResolutionWidth > 0)
         {
             m_CameraResolution.setWidth(cameraResolutionWidth);
@@ -67,9 +77,9 @@ MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QOb
     }
     m_CameraResolution.setHeight(480);
     //m_CameraResolution.setHeight(452); //derp damn bug was funnily hard to hunt down xD
-    if(arguments.size() > 7)
+    if(arguments.size() > ++argIndex)
     {
-        int cameraResolutionHeight = arguments.at(7).toInt(&convertOk);
+        int cameraResolutionHeight = arguments.at(argIndex).toInt(&convertOk);
         if(convertOk && cameraResolutionHeight > 0)
         {
             m_CameraResolution.setHeight(cameraResolutionHeight);
@@ -90,7 +100,7 @@ void MouseOrMotionOrMySexyFaceViewMakerGui::handleMouseAndOrMotionViewMakerReady
     connect(business, SIGNAL(presentPixmapForViewingRequested(QPixmap)), m_Gui, SLOT(presentPixmapForViewing(QPixmap)));
 
     m_Gui->show();
-    QMetaObject::invokeMethod(business, "startMakingMouseOrMotionOrMySexyFaceViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_UpdateIntervalMs), Q_ARG(int, m_BottomPixelRowsToIgnore), Q_ARG(QString, m_CameraDeviceName), Q_ARG(QSize, m_CameraResolution));
+    QMetaObject::invokeMethod(business, "startMakingMouseOrMotionOrMySexyFaceViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_CaptureFps), Q_ARG(int, m_MotionDetectionFps), Q_ARG(int, m_BottomPixelRowsToIgnore), Q_ARG(QString, m_CameraDeviceName), Q_ARG(QSize, m_CameraResolution));
 }
 void MouseOrMotionOrMySexyFaceViewMakerGui::handleAboutToQuit()
 {

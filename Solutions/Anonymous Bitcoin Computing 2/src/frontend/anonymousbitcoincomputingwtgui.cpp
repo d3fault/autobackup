@@ -129,8 +129,10 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     WDefaultLoadingIndicator *theLoadingIndicator = new WDefaultLoadingIndicator();
     theLoadingIndicator->setMessage("Computing..."); //'Computing' just barely beat out 'Raping yer mum'
     setLoadingIndicator(theLoadingIndicator);
-    WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
-    m_MainStack->setTransitionAnimation(slideInFromBottom, true);
+
+    //Animation enabled causes segfault triggered via: "Login, go to Account, Logout.". It's something to do with the animation trying to be played on a widget already destructed(?) -- the account widget in this case. Not sure if bug in Wt or my own code..
+    //WAnimation slideInFromBottom(WAnimation::SlideInFromBottom, WAnimation::EaseOut, 250); //If this took any longer than 2 lines of code (<3 Wt), I wouldn't do it
+    //m_MainStack->setTransitionAnimation(slideInFromBottom, true);
 
     setCssTheme("polished");
     styleSheet().addRule("body", "background-color: black; color: white; font-family: arial; font-size: large");

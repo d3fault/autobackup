@@ -32,7 +32,8 @@ FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent)
     m_FfmpegProcess->setProcessEnvironment(ffmpegProcessEnvironenment);
 
     connect(m_FfmpegProcess, SIGNAL(started()), this, SLOT(handleFfmpegProcessStarted()));
-    connect(m_FfmpegProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(handleFfmpegProecssStdErr()));
+    connect(m_FfmpegProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(handleFfmpegProecssStdOut())); //forward channels not thread safe pretty sure
+    connect(m_FfmpegProcess, SIGNAL(readyReadStandardError()), this, SLOT(handleFfmpegProecssStdErr()));
     connect(m_FfmpegProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleFfmpegProecssFinished(int,QProcess::ExitStatus)));
 
     m_FfmpegProcessKiller30secTimer->setSingleShot(true);
@@ -142,9 +143,15 @@ void FfmpegSegmentUploader::handleFfmpegProcessStarted()
 {
     emit o("ffmpeg has started capturing");
 }
+void FfmpegSegmentUploader::handleFfmpegProecssStdOut()
+{
+    QByteArray allStdOutBA = m_FfmpegProcess->readAllStandardOutput();
+    QString allStdOutStr(allStdOutBA);
+    emit o(allStdOutStr);
+}
 void FfmpegSegmentUploader::handleFfmpegProecssStdErr()
 {
-    QByteArray allStdErrBA = m_FfmpegProcess->readAllStandardOutput();
+    QByteArray allStdErrBA = m_FfmpegProcess->readAllStandardError();
     QString allStdErrStr(allStdErrBA);
     emit e(allStdErrStr);
 }

@@ -9,9 +9,9 @@
 #include <QProcessEnvironment>
 #include <QStringList>
 #include <QDebug>
-#include <QTime>
+#include <QTimer>
 
-#define MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_AT_EACH_BEFORE_TOGGLING_MS 2000
+#define MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_MS_WITHOUT_MOTION_BEFORE_SHOWING_MY_FACE 2000
 #define MOUSE_OR_MOTION_OR_MY_SEXY_FACE_DIVIDE_MY_SEXY_FACE_BY_WHEN_MAKING_THUMBNAIL 4
 
 #define MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter) \
@@ -26,8 +26,16 @@ QPainter painter(&m_CurrentPixmapBeingPresented); \
 MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter) \
 emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
 
-MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *parent) :
-    QObject(parent), m_Initialized(false), m_MousePixmapToDraw(":/mouseCursor.svg"), m_HaveFrameOfMySexyFace(false), m_ShowingMySexyFace(false) /*the worst default ever*/, m_TogglingMinimumsTimerIsStarted(false)
+MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *parent)
+    : QObject(parent)
+    , m_Initialized(false)
+    , m_CaptureIntervalTimer(new QTimer(this))
+    , m_MotionDetectionIntervalTimer(new QTimer(this))
+    , m_MousePixmapToDraw(":/mouseCursor.svg")
+    , m_ThereWasMotionRecently(false)
+    , m_HaveFrameOfMySexyFace(false)
+    , m_ShowingMySexyFace(false) /*the worst default ever*/
+    , m_TogglingMinimumsTimerIsStarted(false)
 {
     m_Screen = QGuiApplication::primaryScreen();
     if(!m_Screen || (m_Screen->grabWindow(0).toImage().format() != QImage::Format_RGB32))
@@ -42,7 +50,9 @@ MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *
     m_ScreenResolutionX = screenResolution.width();
     m_ScreenResolutionY = screenResolution.height();
 
-    connect(&m_IntervalTimer, SIGNAL(timeout()), this, SLOT(intervalTimerTimedOut()));
+    connect(m_CaptureIntervalTimer, SIGNAL(timeout()), this, SLOT(captureIntervalTimerTimedOut())); //this timer just captures/draws frames
+    connect(m_MotionDetectionIntervalTimer, SIGNAL(timeout()), this, SLOT(motionDetectionIntervalTimerTimedOut())); //this timer tells the above timer what source of video to use (it relies on the captured data from above timer for analysis, but can hold onto copies to compare less often than presentation)
+    //HOWEVER, since checking mouse motion is ridiculously cheap compared to checking image motion, we still check mouse motion at every capture/present interval
 
     m_FfMpegProcess.setReadChannel(QProcess::StandardOutput);
     connect(&m_FfMpegProcess, SIGNAL(readyRead()), this, SLOT(handleFfMpegStandardOutputReadyRead()));
@@ -67,7 +77,7 @@ MouseOrMotionOrMySexyFaceViewMaker::~MouseOrMotionOrMySexyFaceViewMaker()
     }
 }
 //TODOoptional: error quit if screen dimensions < view dimensions, for now it is simply undefined. I was tempted to write that the app would be pointless if that were the case, but actually once I implement "zoom", then it would still even be handy on 640x480 (working) -> 800x600 (view) cases (though why you wouldn't use 800x600 for working is beyond me)
-QPoint MouseOrMotionOrMySexyFaceViewMaker::makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint)
+QPoint MouseOrMotionOrMySexyFaceViewMaker::makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint) //TODOreq: does this return the upper-left point of the rect instead? confused but eh methinks it works and i remember changing it to something like that
 {
     //start with a normal rectangle around the point
     QPoint ret(inputPoint.x()-(m_ViewWidth/2),
@@ -93,7 +103,7 @@ QPoint MouseOrMotionOrMySexyFaceViewMaker::makeRectAroundPointStayingWithinResol
     }
     return ret;
 }
-void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int updateInterval, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution)
+void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution)
 {
     if(!m_Initialized)
     {
@@ -103,7 +113,10 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
 
     m_ViewWidth = viewSize.width();
     m_ViewHeight = viewSize.height();
-    m_IntervalTimer.start(updateInterval);
+    m_LastPointWithMotionSeen.setX(m_ViewWidth/2);
+    m_LastPointWithMotionSeen.setY(m_ViewHeight/2);
+    m_CaptureIntervalTimer->start(1000/captureFps);
+    m_MotionDetectionIntervalTimer->start(1000/motionDetectionFps);
     m_BottomPixelRowsToIgnore = bottomPixelRowsToIgnore; //woot Xfce lets me specify this directly/easily
 
     m_CameraResolution = cameraResolution;
@@ -118,9 +131,9 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
     m_BytesNeededForOneRawRGB32frame = cameraResolution.width() * cameraResolution.height() * 32;
     m_LastReadFrameOfMySexyFace.resize(m_BytesNeededForOneRawRGB32frame);
 }
-void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
+void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
 {
-    m_CurrentPixmapForMotionDetection = QPixmap(); //memory optimization apparently
+    m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion = QPixmap(); //memory optimization apparently
 
     //see if mouse position changed as optimization
     QPoint currentCursorPosition = QCursor::pos();
@@ -141,7 +154,7 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
                                                rectWithinResolution.y(),
                                                m_ViewWidth, //my makeRect need only return topLeft point, fuck it
                                                m_ViewHeight);
-        //draw mouse cursor
+        //draw mouse cursor (TODOoptional: svg cock, bonus points if it splooges when i click)
         {
             QPainter painter(&m_CurrentPixmapBeingPresented);
             painter.drawPixmap(currentCursorPosition.x()-rectWithinResolution.x(), currentCursorPosition.y()-rectWithinResolution.y(), m_MousePixmapToDraw.width(), m_MousePixmapToDraw.height(), m_MousePixmapToDraw);
@@ -153,108 +166,106 @@ void MouseOrMotionOrMySexyFaceViewMaker::intervalTimerTimedOut()
             }
         }
         emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
-        m_PreviousPixmapForMotionDetection = QPixmap(); //motion detection requires two non-mouse-movement frames in a row. this makes our !isNull check below fail
+        m_PreviousDesktopCap_AsImage_ForMotionDetection = QImage(); //motion detection requires two non-mouse-movement frames in a row. this makes our !isNull check fail
         return;
     }
 
-    //see if there was motion
-    m_CurrentPixmapForMotionDetection = m_Screen->grabWindow(0, 0, 0, m_ScreenResolutionX, m_ScreenResolutionY); //entire desktop
-    if(!m_PreviousPixmapForMotionDetection.isNull())
-    {
-        const QImage currentImage = m_CurrentPixmapForMotionDetection.toImage();
-        const QImage previousImage = m_PreviousPixmapForMotionDetection.toImage(); //TODOreq: can optimize this re-using image from last time. should.
-        //TODOoptimization: might be an optimization to compose current over previous using the xor thingo
+    //save most recent frame for motion detector to use, regardless of whether or not we present it
+    m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion = m_Screen->grabWindow(0, 0, 0, m_ScreenResolutionX, m_ScreenResolutionY); //entire desktop
 
-        if(currentImage.size() == previousImage.size()) //don't crash/etc on resolution changes, just do nothing for now
+    //draw last motion detected area or my sexy face
+    if(m_ThereWasMotionRecently)
+    {
+        //draw rect around the last point where motion was detected
+        //use first difference seen point
+        const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(m_LastPointWithMotionSeen);
+        m_CurrentPixmapBeingPresented = m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion.copy(rectWithinResolution.x(), rectWithinResolution.y(), m_ViewWidth, m_ViewHeight); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
+        //m_PreviousPixmap = QPixmap();
+
+        //draw my sexy face thumb
+        if(m_HaveFrameOfMySexyFace)
+        {
+            QPainter painter(&m_CurrentPixmapBeingPresented);
+            MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter)
+        }
+        emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
+    }
+    else if(m_HaveFrameOfMySexyFace)
+    {
+        //draw my sexy face
+        if(!m_ShowingMySexyFace)
+        {
+            if(!m_TogglingMinimumsTimerIsStarted)
+            {
+                m_TogglingMinimumsElapsedTimer.start();
+                m_TogglingMinimumsTimerIsStarted = true;
+                REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
+                return;
+            }
+            if(m_TogglingMinimumsElapsedTimer.elapsed() >= MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_MS_WITHOUT_MOTION_BEFORE_SHOWING_MY_FACE)
+            {
+                m_ShowingMySexyFace = true;
+                m_TogglingMinimumsTimerIsStarted = false; //not necessary since mouse/motion set to false...
+            }
+            else
+            {
+                //you might think the desktop should be redrawn before the my sexy face thumbnail is, but since nothing has changed that would be pointless
+                REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
+                //not enough time elaspsed
+                return;
+            }
+        }
+
+        //present my sexy face. no desktop thumbnail for now, might change my mind on this later (pointless since it would be motionless and unreadable)
+        QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32);
+        QImage mySexyFaceImageMaybeScaled = mySexyFaceImage;
+        if(m_CameraResolution.width() != m_ViewWidth || m_CameraResolution.height() != m_ViewHeight)
+        {
+            mySexyFaceImageMaybeScaled = mySexyFaceImage.scaled(m_ViewWidth, m_ViewHeight);
+        }
+        QPixmap mySexyFacePixmap = QPixmap::fromImage(mySexyFaceImageMaybeScaled);
+        emit presentPixmapForViewingRequested(mySexyFacePixmap);
+    }
+    //else: leave whatever is already drawn (TO DOnereq: app starts up and there is no motion. nothing is drawn (who cares tbh)?)
+}
+void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
+{
+    //see if there was motion
+    const QImage currentImage = m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion.toImage(); //TODOoptimization: might be worth it to compose current over previous using the xor thingo
+    if(!m_PreviousDesktopCap_AsImage_ForMotionDetection.isNull())
+    {
+        if(currentImage.size() == m_PreviousDesktopCap_AsImage_ForMotionDetection.size()) //don't crash/etc on resolution changes, just do nothing for now
         {
             const int currentImageWidth = currentImage.width();
             const int currentImageHeight = currentImage.height();
 
-            QPoint firstDifferenceSeenPoint;
-
             //scan left right top down until difference seen. TODOoptimization: would definitely be more efficient to just center on the first difference seen, though on "window moving" we'd then see the top-left corner of the window being moved [only]. still, for typing etc it would suffice and save cpu. damnit, mfw window moves will trigger mouse movement code path anyways -_-
-            bool differenceSeen = false;
+            m_ThereWasMotionRecently = false;
             //what's easier? patching+recompiling qtcreator so that it doesn't show the line/col numbers (motion) at the top right corner (move it to bottom, or hide it altogether)... OR just scanning for motion from the bottom -> top instead of top -> bottom? ;-P.
-            for(int j = ((currentImageHeight-1)-m_BottomPixelRowsToIgnore); j > -1; --j) //TO DOneoptional: chop out the 'start bar' from motion analysis, since my clock is updated every one second and i want to keep it that way...
+            for(int j = ((currentImageHeight-1)-m_BottomPixelRowsToIgnore); j > -1; --j)
             {
                 const QRgb *currentPixelOfCurrentImage = (const QRgb*)(currentImage.constScanLine(j));
-                const QRgb *currentPixelOfPreviousImage = (const QRgb*)(previousImage.constScanLine(j));
+                const QRgb *currentPixelOfPreviousImage = (const QRgb*)(m_PreviousDesktopCap_AsImage_ForMotionDetection.constScanLine(j));
                 for(int i = 0; i < currentImageWidth; ++i)
                 {
                     if(*currentPixelOfCurrentImage != *currentPixelOfPreviousImage)
                     {
-                        firstDifferenceSeenPoint = QPoint(i, j);
-                        differenceSeen = true;
+                        m_LastPointWithMotionSeen = QPoint(i, j);
+                        m_ShowingMySexyFace = false;
+                        m_TogglingMinimumsTimerIsStarted = false;
+
+                        m_ThereWasMotionRecently = true;
                         break;
                     }
                     ++currentPixelOfCurrentImage;
                     ++currentPixelOfPreviousImage;
                 }
-                if(differenceSeen)
+                if(m_ThereWasMotionRecently)
                     break;
-            }
-
-            if(differenceSeen)
-            {
-                m_ShowingMySexyFace = false;
-                m_TogglingMinimumsTimerIsStarted = false;
-
-                //use first difference seen point
-                const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(firstDifferenceSeenPoint);
-                m_CurrentPixmapBeingPresented = m_CurrentPixmapForMotionDetection.copy(rectWithinResolution.x(), rectWithinResolution.y(), m_ViewWidth, m_ViewHeight); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
-                //m_PreviousPixmap = QPixmap();
-
-                //draw my sexy face thumb
-                if(m_HaveFrameOfMySexyFace)
-                {
-                    QPainter painter(&m_CurrentPixmapBeingPresented);
-                    MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter)
-                }
-
-                emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
-            }
-            else if(m_HaveFrameOfMySexyFace)
-            {
-                //TO DOnereq: a "minimum time with no differences seen before toggling" (and perhaps vice versa, but I'd say that one is less important (motion on desktop = jump back immediately makes sense to me)) check, so it doesn't bounce back and forth giving aneurisms. not implementing yet because it will just confuse me
-                if(!m_ShowingMySexyFace)
-                {
-                    if(!m_TogglingMinimumsTimerIsStarted)
-                    {
-                        m_TogglingMinimumsElapsedTimer.start();
-
-
-
-                        m_TogglingMinimumsTimerIsStarted = true;
-                        return;
-                    }
-                    if(m_TogglingMinimumsElapsedTimer.elapsed() >= MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_AT_EACH_BEFORE_TOGGLING_MS)
-                    {
-                        m_ShowingMySexyFace = true;
-                        m_TogglingMinimumsTimerIsStarted = false; //not necessary since mouse/motion set to false...
-                    }
-                    else
-                    {
-                        REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
-
-                        //not enough time elaspsed
-                        return;
-                    }
-                }
-
-                //present my sexy face. no desktop thumbnail for now, might change my mind on this later (pointless since it would be motionless and unreadable)
-                QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32);
-                QImage mySexyFaceImageMaybeScaled = mySexyFaceImage;
-                if(m_CameraResolution.width() != m_ViewWidth || m_CameraResolution.height() != m_ViewHeight)
-                {
-                    mySexyFaceImageMaybeScaled = mySexyFaceImage.scaled(m_ViewWidth, m_ViewHeight);
-                }
-                QPixmap mySexyFacePixmap = QPixmap::fromImage(mySexyFaceImageMaybeScaled);
-                emit presentPixmapForViewingRequested(mySexyFacePixmap);
             }
         }
     }
-    m_PreviousPixmapForMotionDetection = m_CurrentPixmapForMotionDetection;
-
+    m_PreviousDesktopCap_AsImage_ForMotionDetection = currentImage;
 }
 void MouseOrMotionOrMySexyFaceViewMaker::handleFfMpegStandardOutputReadyRead()
 {

@@ -19,7 +19,8 @@ private:
     ObjectOnThreadHelper<MouseOrMotionOrMySexyFaceViewMaker> m_BusinessThread;
     MouseOrMotionOrMySexyFaceViewMakerWidget *m_Gui;
     QSize m_ViewSize;
-    int m_UpdateIntervalMs;
+    int m_CaptureFps;
+    int m_MotionDetectionFps;
     int m_BottomPixelRowsToIgnore;
     QString m_CameraDeviceName;
     QSize m_CameraResolution;

@@ -2855,14 +2855,14 @@ Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396200558
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1396112933
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396112897
 Projects/MouseOrMotionOrMySexyFaceViewMaker/:1396501297
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1399247086
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1399699587
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1396499493
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1399246895
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1399699560
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1396477109
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.cpp:1396504283
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.h:1396503882
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakergui.cpp:1396502446
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakergui.h:1396494945
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.cpp:1399699426
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.h:1399698679
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakergui.cpp:1399695692
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakergui.h:1399695340
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakerwidget.cpp:1396477672
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakerwidget.h:1396477709
 Projects/OptionallySecureAsFuckBitcoinBankServer/:1331099023
@@ -4148,7 +4148,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1399672956
+Solutions/Anonymous Bitcoin Computing 2/src/:1399674292
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1399671510
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -4160,7 +4160,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialb
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1396218440
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1399671510
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1393799993
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1399669490
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1399674287
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1399672099
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
@@ -4181,7 +4181,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/l
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1393161161
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp:1393160674
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h:1393161161
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1399669490
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1399674287
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1396217247
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.cpp:1393117307
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.h:1393117244
@@ -4194,7 +4194,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:139967
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1396219028
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1396217132
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
-Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1399672785
+Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1399674251
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
 Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021
@@ -4225,7 +4225,7 @@ Solutions/hackyVideoBullshitSite/design/steps.to.set.up.bare.minimum.pi.to.firef
 Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:1397361347
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1399597678
+Solutions/hackyVideoBullshitSite/src/:1399693019
 Solutions/hackyVideoBullshitSite/src/backend/:1399509384
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398593487
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398594608
@@ -4253,14 +4253,14 @@ Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.h:1399323854
 Solutions/hackyVideoBullshitSite/tools/:1399576651
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399581130
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399693439
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1398993069
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1399486271
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1399348328
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1399661422
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1399490172
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1399490172
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1399346769
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1399693351
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1399693351
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1399693290
 Solutions/hackyVideoBullshitSite/tools/createHvbsVideoImportFolderStructure.sh:1399576781
 Solutions/launchASEPbecauseRedAlert/:1395576326
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424

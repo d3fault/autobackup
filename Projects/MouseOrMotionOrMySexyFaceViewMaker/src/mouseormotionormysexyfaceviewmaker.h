@@ -2,7 +2,6 @@
 #define MOUSEORMOTIONORMYSEXYFACEVIEWMAKER_H
 
 #include <QObject>
-#include <QTimer>
 #include <QPixmap>
 #include <QPoint>
 #include <QRect>
@@ -22,7 +21,8 @@ public:
 private:
     //Mouse Or Motion members
     bool m_Initialized;
-    QTimer m_IntervalTimer;
+    QTimer *m_CaptureIntervalTimer;
+    QTimer *m_MotionDetectionIntervalTimer;
     QPoint m_PreviousCursorPosition;
     QScreen *m_Screen;
     int m_ScreenResolutionX;
@@ -30,10 +30,12 @@ private:
     int m_ViewWidth;
     int m_ViewHeight;
     int m_BottomPixelRowsToIgnore;
-    QPixmap m_PreviousPixmapForMotionDetection;
-    QPixmap m_CurrentPixmapForMotionDetection;
+    QImage m_PreviousDesktopCap_AsImage_ForMotionDetection;
+    QPixmap m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion;
     QPixmap m_CurrentPixmapBeingPresented;
     QPixmap m_MousePixmapToDraw;
+    QPoint m_LastPointWithMotionSeen;
+    bool m_ThereWasMotionRecently;
 
     //ffmpeg members
     bool m_HaveFrameOfMySexyFace;
@@ -51,8 +53,9 @@ private:
 signals:
     void presentPixmapForViewingRequested(const QPixmap &);
 public slots:
-    void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int updateInterval, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution);
-    void intervalTimerTimedOut();
+    void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution);
+    void captureIntervalTimerTimedOut();
+    void motionDetectionIntervalTimerTimedOut();
 private slots:
     void handleFfMpegStandardOutputReadyRead();
     void handleFfmpegProcessError();
