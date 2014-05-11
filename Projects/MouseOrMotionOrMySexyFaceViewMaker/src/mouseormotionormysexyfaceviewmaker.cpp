@@ -216,13 +216,18 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
             }
         }
 
+        //TODOoptimization: we re-convert the last read frame of my sexy face even if it hasn't changed (ie, our app's capture fps is higher than the capture CARD fps)
+
         //present my sexy face. no desktop thumbnail for now, might change my mind on this later (pointless since it would be motionless and unreadable)
         QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32);
         QImage mySexyFaceImageMaybeScaled = mySexyFaceImage;
+
+        //COMMENT NEXT 3 LINES TO NOT SCALE 720x480 -> 800x600
         if(m_CameraResolution.width() != m_ViewWidth || m_CameraResolution.height() != m_ViewHeight)
         {
             mySexyFaceImageMaybeScaled = mySexyFaceImage.scaled(m_ViewWidth, m_ViewHeight);
         }
+
         QPixmap mySexyFacePixmap = QPixmap::fromImage(mySexyFaceImageMaybeScaled);
         emit presentPixmapForViewingRequested(mySexyFacePixmap);
     }

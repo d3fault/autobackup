@@ -1,0 +1,7 @@
+Atomically update a huge set of files without bringing a server or file availability down
+Snapshot A exists at /mainDir and wants to be atomically (all or nothing, since a file in the root has timestamps etc) updated to Snapshot B
+Snapshot B created and moved to /mainDirNext at leisure of admin
+Snapshot A MOVED (not delete because that would recurse etc) to /oldIrrelevantQueuedForDelete
+...Software INTELLIGENT and knows that if not in /mainDir, to try /mainDirNext. If not /mainDir and not /mainDirNext, try /mainDir again (somewhat common race condition). If not /mainDir that second time, total system failure and most likely the admin fucked it up
+
+...automate this obviously...

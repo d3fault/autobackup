@@ -37,7 +37,7 @@ MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QOb
         int captureFps = arguments.at(argIndex).toInt(&convertOk);
         if(convertOk && captureFps > 0)
         {
-            m_CaptureFps = captureFps;
+            m_CaptureFps = qMin(captureFps, 1000); //1000 fps max (since QTimer uses millseconds)
         }
     }
     m_MotionDetectionFps = qMin(5, m_CaptureFps);
