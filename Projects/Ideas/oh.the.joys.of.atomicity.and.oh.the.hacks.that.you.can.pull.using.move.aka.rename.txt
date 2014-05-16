@@ -5,3 +5,6 @@ Snapshot A MOVED (not delete because that would recurse etc) to /oldIrrelevantQu
 ...Software INTELLIGENT and knows that if not in /mainDir, to try /mainDirNext. If not /mainDir and not /mainDirNext, try /mainDir again (somewhat common race condition). If not /mainDir that second time, total system failure and most likely the admin fucked it up
 
 ...automate this obviously...
+
+NEVERMIND, IDEA SUCKS BECAUSE: QFile::exists (in ex /mainDirNext) might return true but the file may have moved to /mainDir before WFileResource can open it (i _THINK_ once it's open that it will stay open when moved (unsure), but that doesn't matter anyways since we can miss it on the initial open ffff)
+THE IDEA IS DECENT IF: you use qfile::open to determine if file exists (so the check/open is one atomic operation), AND the assumption that moving an open file doesn't fuck shit up is true (this might be platform dependent too idfk)

@@ -1,7 +1,7 @@
 #ifndef LASTMODIFIEDDATEHEIRARCHYMOLESTERWIDGET_H
 #define LASTMODIFIEDDATEHEIRARCHYMOLESTERWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>

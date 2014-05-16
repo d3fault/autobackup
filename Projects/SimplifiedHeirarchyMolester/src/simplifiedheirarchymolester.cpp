@@ -42,7 +42,7 @@ void SimplifiedHeirarchyMolester::molestHeirarchy(const QString &dirToMolest, co
     while(!lastModifiedTimestampsFileStream.atEnd())
     {
         currentLine = lastModifiedTimestampsFileStream.readLine();
-        if(!currentLine.trimmed().isEmpty())
+        if(!currentLine.isEmpty())
         {
             QScopedPointer<SimplifiedLastModifiedTimestamp> lastModifiedTimestampEntry(new SimplifiedLastModifiedTimestamp(currentLine));
             if(lastModifiedTimestampEntry->filePath().isEmpty())
@@ -64,6 +64,9 @@ void SimplifiedHeirarchyMolester::molestHeirarchy(const QString &dirToMolest, co
                     }
                 }
             }
+
+            //TODOreq: unsure if it matters, but to be safe: molest all files and then all dirs
+
             if(!fileModificationDateChanger.changeModificationDate(dirToMolestWithSlashAppended + lastModifiedTimestampEntry->filePath(), lastModifiedTimestampEntry->lastModifiedTimestamp()))
             {
                 emit d("failed to change modification date for an entry, so stopping");

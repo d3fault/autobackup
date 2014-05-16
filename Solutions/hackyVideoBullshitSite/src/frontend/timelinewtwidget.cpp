@@ -28,6 +28,8 @@
 
 //TODOreq: renaming an item will make old links no longer valid, the system needs to not break when that happens. 404'ing is okay, but it would be even better if a nice message was presented (telling the user it wasn't their fault, there must have been a rename). this isn't that common of a case anyways (but i also don't want to tell myself not to rename just to keep urls valid -_- (but i also want to keep urls valid! fucking hell. i need a rename-aware system but that's gotta be revision-aware and yea not up for that just yet))
 
+//TODOreq: i need to make sure that an outdated timestamp file (loaded into memory and shared via atomics) doesn't segfault if the user browses to a moved/renamed/deleted/etc file. this will happen when updating the folder using the move command hackery, since the latest/last timestamp values will still be in memory and will stay there until a 5 second timer sees that it exists (the move hackery completes) and reads the updated values from it. actually since the file is checked for actual existence before getting to the timeline widget, i think it might not even be an issue
+
 //although i started off feeling like this was a disgusting hack (i almost used it for video segment presenting, but didn't because there's no easy way to get the 'next' video after that (atomic pointer could have changed twice!)), now that i've written most of it i actually kind of like it. the chances of segfault are ridiculously low, and i can easily make them lower if the fileset ever grows so large. this is a hacky video bullshit site, but someday i'd imagine it will be replaced by something with a proper ddb etc (i just need to either find or code one that meets my standards! ffff). maybe even a public dht ;-)
 //5 minutes is so long it's like stupid long, and the memory that stays around that long is "not that big that it's significant at all but would be significant if i didn't free it every time shit changed (as in, if they were kept around)"
 
@@ -106,7 +108,7 @@ TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
 
     m_ContentsContainer = new WContainerWidget(this);
 }
-//if redirectToRandomPointInTimeline takes more than 5 minutes to execute (rofl), we will segfault
+//if redirectToRandomPointInTimeline takes more than 5 minutes to execute (rofl), we will segfault. TODOoptimization: the value 5 minutes can be shrunk to some value that is related to the average execution times (worst case scenario lookups (so... last in list? idfk)) when the server is running at maximum connection load (10k). 5 minutes is probably a ridiculously high estimate. the amount of connections needed to slow the execution down to 5 minutes is ridiculous, especially considering it would reflect the user experience of waiting 5 minutes for a page load (in which case scale horizontal is warranted)
 void TimeLineWtWidget::redirectToRandomPointInTimeline()
 {
     LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = m_LastModifiedTimestampsAndPaths->loadAcquire(); //pointer only guaranteed to be valid for minimum 5 minutes after the loadAquire (rofl so ugly hack but idgaf), so never keep it around, always load again <3
@@ -388,7 +390,7 @@ string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QStrin
             QFile textFile(filename);
             if(!textFile.open(QIODevice::ReadOnly | QIODevice::Text))
             {
-                //TODOreq: 500 internal server errror
+                setMainContent(new WText("500 Internal Server Error"));
                 return std::string(HVBS_ARBITRARY_BINARY_MIME_TYPE);
             }
             QTextStream textFileStream(&textFile);
@@ -398,7 +400,7 @@ string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QStrin
         //blahSetContent(textArea);
         //textArea->setReadOnly(true);
 
-        WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8()));
+        WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8())); //TODOoptimization: do this on the copy stored to disk (but obviously not the master copy)
         //Wt::Utils::removeScript(htmlEncoded);
         WText *textDoc = new WText("<pre>" + htmlEncoded + "</pre>", Wt::XHTMLUnsafeText);
         setMainContent(textDoc);

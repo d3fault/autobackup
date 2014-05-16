@@ -5,6 +5,7 @@
 #include <QScopedPointer>
 #include <QFileSystemWatcher>
 #include <QStringList>
+#include <QFile>
 
 #include "lastmodifiedtimestampssorter.h"
 
@@ -13,12 +14,17 @@ LastModifiedTimestampsWatcher::LastModifiedTimestampsWatcher(QObject *parent)
     , m_LastModifiedTimestampsFileWatcher(0)
     , m_CurrentTimestampsAndPathsAtomicPointer(0)
     , m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer(new QTimer(this))
+    , m_FileWasDeletedSoPollForExistenceEvery5secondsTimer(new QTimer(this))
     , m_DeleteInFiveMinsTimer(new QTimer(this))
     , m_TimestampsAndPathsQueuedForDelete(0)
 {
     m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->setSingleShot(true);
     m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->setInterval(1000);
     connect(m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer, SIGNAL(timeout()), this, SLOT(readLastModifiedTimestampsFile()));
+
+    m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->setSingleShot(true);
+    m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->setInterval(5000);
+    connect(m_FileWasDeletedSoPollForExistenceEvery5secondsTimer, SIGNAL(timeout()), this, SLOT(checkForTimestampsFileExistenceAndResumeNormalOperationsIfPresent()));
 
     m_DeleteInFiveMinsTimer->setSingleShot(true);
     m_DeleteInFiveMinsTimer->setInterval(5*(1000*60));
@@ -67,6 +73,18 @@ void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(cons
     }
     handleLastModifiedTimestampsChanged(); //populate at startup
     emit startedWatchingLastModifiedTimestampsFile();
+}
+void LastModifiedTimestampsWatcher::checkForTimestampsFileExistenceAndResumeNormalOperationsIfPresent()
+{
+    if(QFile::exists(m_LastModifiedTimestampsFile))
+    {
+        m_LastModifiedTimestampsFileWatcher->addPath(m_LastModifiedTimestampsFile);
+        readLastModifiedTimestampsFile();
+        return;
+    }
+
+    //doesn't exist, schedule to check again
+    m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->start();
 }
 void LastModifiedTimestampsWatcher::readLastModifiedTimestampsFile()
 {
@@ -126,6 +144,11 @@ void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged()
         //not empty means that the "move" method wasn't used, so we want to wait 1 second after the last 'change' is seen before we start reading it
         //nvm we do want to restart it over and over: if(!m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->isActive())
         m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->start();
+        return;
+    }
+    if(!QFile::exists(m_LastModifiedTimestampsFile))
+    {
+        m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->start();
         return;
     }
     m_LastModifiedTimestampsFileWatcher->addPath(m_LastModifiedTimestampsFile);

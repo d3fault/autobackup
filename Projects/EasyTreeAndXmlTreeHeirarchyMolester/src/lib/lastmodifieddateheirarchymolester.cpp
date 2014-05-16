@@ -1,5 +1,7 @@
 #include "lastmodifieddateheirarchymolester.h"
 
+#include <QScopedPointer>
+
 LastModifiedDateHeirarchyMolester::LastModifiedDateHeirarchyMolester(QObject *parent) :
     QObject(parent), m_FirstTimeDoingHackyOccuranceRateMerging(true)
 {
@@ -127,7 +129,7 @@ bool LastModifiedDateHeirarchyMolester::loadFromEasyTreeFile(const QString &dire
         currentLine = easyTreeFileStream.readLine();
         if(!currentLine.trimmed().isEmpty())
         {
-            EasyTreeHashItem *easyTreeItem = EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(currentLine, false, easyTreeLinesHaveCreationDate);
+            QScopedPointer<EasyTreeHashItem> easyTreeItem(EasyTreeHashItem::newEasyTreeHashItemFromLineOfText(currentLine, false, easyTreeLinesHaveCreationDate));
 
             //if age >= 18, touch them softly
             if(easyTreeItem->isDirectory())
@@ -156,7 +158,6 @@ bool LastModifiedDateHeirarchyMolester::loadFromEasyTreeFile(const QString &dire
                 return;
             }
 #endif
-            delete easyTreeItem;
         }
     }
 

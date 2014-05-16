@@ -35,14 +35,14 @@ void LastModifiedDateHeirarchyMolesterCli::handleAboutToQuit()
     if(m_Molester)
     {
         delete m_Molester;
-fail, need to use a backend thread here and wait on it (or something else, but backend thread is easiest (also costly/wasteful?)), how do we know m_Molester is not in the middle of something??
-
+    //fail, need to use a backend thread here and wait on it (or something else, but backend thread is easiest (also costly/wasteful?)), how do we know m_Molester is not in the middle of something??
+        //^^hmm i think because quit is called queued, that means quit won't be processed until whatever slot molester is in finishes (but if it uses multiple slot calls (doesn't)... yea not the case)
         m_Molester = 0;
     }
 }
 void LastModifiedDateHeirarchyMolesterCli::parseArgsAndThenMolestLastModifiedDateHeirarchy()
 {
-    QStringList args = QCoreApplication::instance()->arguments();
+    QStringList args = QCoreApplication::arguments();
     if((args.size() < 3) || args.contains("--help", Qt::CaseInsensitive) || args.contains("/?", Qt::CaseSensitive))
     {
         usage();

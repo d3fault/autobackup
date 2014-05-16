@@ -25,6 +25,7 @@ private:
     QString m_LastModifiedTimestampsFile;
     QAtomicPointer<LastModifiedTimestampsAndPaths> m_CurrentTimestampsAndPathsAtomicPointer;
     QTimer *m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer;
+    QTimer *m_FileWasDeletedSoPollForExistenceEvery5secondsTimer;
     QTimer *m_DeleteInFiveMinsTimer;
     QQueue<LastModifiedTimestampsAndPaths*> *m_TimestampsAndPathsQueuedForDelete;
 
@@ -35,6 +36,7 @@ signals:
 public slots:
     void startWatchingLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
 private slots:
+    void checkForTimestampsFileExistenceAndResumeNormalOperationsIfPresent();
     void readLastModifiedTimestampsFile();
     void handleLastModifiedTimestampsChanged();
     void handleDeleteInFiveMinsTimerTimedOut();
