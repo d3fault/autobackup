@@ -95,35 +95,16 @@ public:
         : QObject(parent)
         , m_ObjectsLeftToSynchronize(0)
     { }
-#if 0
-    ~ObjectOnThreadSynchronizer()
-    {
-        while(!m_ObjectOnThreadsToQuitWhenDestructorIsCalled.isEmpty())
-        {
-            ObjectOnThreadHelperBase *objectOnThreadHelper = m_ObjectOnThreadsToQuitWhenDestructorIsCalled.pop();
-            /*unsafe: if(objectOnThreadHelper->isRunning())
-                objectOnThreadHelper->quit();*/
-
-            //safe <3 Qt (i'm pretty sure calling quit twice (no isRunning check anymore because it isn't safe) is ok):
-            QMetaObject::invokeMethod(objectOnThreadHelper, "quit");
-        }
-        emit internalSignalUsedToMakeThreadsQuit();
-    }
-#endif
     void addObjectToSynchronizer(ObjectOnThreadHelperBase *objectOnThreadHelper)
     {
         connect(objectOnThreadHelper, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleOneObjectIsReadyForConnections()));
-        //connect(this, SIGNAL(internalSignalUsedToMakeThreadsQuit()), objectOnThreadHelper, SLOT(quit()));
         connect(this, SIGNAL(destroyed()), objectOnThreadHelper, SLOT(quit())); //now it's only not asynchronous if synchronizer isn't destroyed first, not a freaking segfault...
-        //m_ObjectOnThreadsToQuitWhenDestructorIsCalled.push(objectOnThreadHelper);
         ++m_ObjectsLeftToSynchronize;
     }
 private:
     int m_ObjectsLeftToSynchronize;
-    //QStack<ObjectOnThreadHelperBase*> m_ObjectOnThreadsToQuitWhenDestructorIsCalled; //quit but not wait :-P
 signals:
     void allObjectsOnThreadsReadyForConnections();
-    //void internalSignalUsedToMakeThreadsQuit();
 private slots:
     void handleOneObjectIsReadyForConnections()
     {
