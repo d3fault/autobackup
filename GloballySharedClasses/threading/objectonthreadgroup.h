@@ -25,7 +25,6 @@ protected:
 signals:
     void objectIsInstantiatedOnThread(QObject *objectOnThread, const char *slotOnParentsParentToInvokeWhenReadyForConnections);
 };
-
 template<class UserObjectType>
 class ObjectOnThreadGroupPrivateSingleThread : public ObjectOnThreadGroupPrivateSingleThreadBase
 {
@@ -41,7 +40,6 @@ protected:
         exec();
     }
 };
-
 //Object must derive from QObject, object must have default constructor overload
 class ObjectOnThreadGroup : public QObject
 {

@@ -1,0 +1,19 @@
+TEXT-REPO-ONLY
+outline: post-update -> "unlessBare(git reset --hard) AND doSymlinkMagicz(including-deleting-old) AND propagateViaGitPushIfNotLastRofl"
+
+HVBS needs to do one on startup (perhaps QProcess calls the same binary (or just lib ofc)?)
+
+-post-update used to trigger the stuff
+-git clone --depth=1 file:///bareRepoWithPostUpdateScript /repoAt<timestampOrIncrement>
+-ln -s /repoAt<timestampOrIncrement> /temp/currentRepo
+-mv /temp/currentRepo /
+-delete what /currentRepo used to point to (get it's symlink target and delete if exists (the symlink might not exist, nor the dir it points to))
+Result: /currentRepo symbolic link to /repoAt<timestampOrIncrement>
+
+
+OLD before finally figuring out how to mv a symlink onto a symlink without it going inside the target symlink dest:
+git clone file:///bare/that/is/pushed/To/And/Has/Post/Update/Script/That/Does/Clone/And/Triggers/SymLink/Magic /dir0
+/dir -> /dir0
+post-update: if exist(rm /dirNext); /dirNext -> /dir1
+rm /dir # smart app checks /dirNext, but if /dirNext not exist (rare but occurs if two incredibly fast pushes back to back), check /dir again. if /dir not exist (even rarer but occurs if THREE incredibly fast pushes back to back, holy shit what the fuck man i guess 404 because yea shit could go on infinitely (does that mean the design sucks or just that i need to go 2 or 3 out? basically i can ensure that either /dir or /dirNext exists at any given point, but that doesn't mean that the app won't have really bad luck and keep flip flopping back and forth indefinitely (hell i think that's the best solution, since the stream of ridiculously fast updates has to stop at some point (of course this only applies to git shit and not err eh uhm some other hypothetical data sharing mechanism. git push won't be run that often, few times a day at most (checkpoints))!)))
+/dir -> /dir1

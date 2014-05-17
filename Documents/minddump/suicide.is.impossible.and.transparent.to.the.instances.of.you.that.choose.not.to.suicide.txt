@@ -1,0 +1,12 @@
+int main()
+{
+birth:
+	{
+		Memory memory;
+		schoolAndShit(&memory);
+		if(rand() % 999999 != 0)
+			goto birth; //suicide, etc
+		liveLifeEtc(&memory); //getting here, memory only appears to have gone through school and shit exactly once, despite the odds of getting here being low/against
+		goto birth; //death
+	}
+}

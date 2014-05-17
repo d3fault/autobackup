@@ -1,0 +1,6 @@
+It gets dizzy'ing getting deep into Qt (or *insert framework/toolkit here*). The lines between operating system and framework/toolkit get blurry as hell, especially when the framework/toolkit goes on to implement operating system functionality present in some operating systems but missing in others (why even rely on the operating system functionality if you're implementing it as well (aside from the obvious: speed)).
+
+I want a Qt operating system, but I don't want to depend on *nix/win/anything.
+
+But err ehh uhmm doesn't that mean future toolkits now have to be compatible with that Qt operating system?
+I suppose with true free/open-source software that portability problems in general fade away (good riddance).
