@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1400311259
+Documents/minddump/:1400329359
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1399780628
+Documents/minddump/dreams/:1400313683
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -47,6 +47,7 @@ Documents/minddump/dreams/alsfjlksjdflkjlkjwkrljsldfkjsdlkfjsdkhfousdlfkjsdofusd
 Documents/minddump/dreams/amelia.shotgun.nude.txt:1337201061
 Documents/minddump/dreams/asdlfkjaslfkjaslfdjslfdkjsldfjksldkfjsldkjflsdkjflskdjflskdjflkjsdflkjsdflkjsfdlkjslkdfjouwelrjkoisduflskdjf.txt:1381746955
 Documents/minddump/dreams/asdlfkjsdlfjsdlfkjsdoufsdflkjsodfuljwoeulkjdofusdlfkjouwerlkdsf.txt:1380844999
+Documents/minddump/dreams/asjdfljsldkfjlskjdflksjadflksdflkjsdflkjsdlfk.txt:1400313683
 Documents/minddump/dreams/asldfjlskdfjlasjdkflksajdfosdauflksdjfoulkjouwelkrjoiulfksf.txt:1379774842
 Documents/minddump/dreams/asldfkjsldkjfkjsdlfjslkdfjslkjdfkljsdkfljsdlkfjsdkjfouwerk.txt:1394500841
 Documents/minddump/dreams/asldkfjlksadjflsdfousdflkjsdofusdfkljsdouerkljousdflksdf.txt:1393156669
@@ -1191,6 +1192,7 @@ Documents/minddump/ljdslfjlfkjsalkdfjlksdjfkljsdflkjsafljsdoewurljdfousdflk.txt:
 Documents/minddump/ljkfsldkjfksljdfkljsdlfkjsdfousdljfkosduflskjdfousldkfjsdiu.txt:1393820908
 Documents/minddump/ljksadfljksadlkfjsdouflkjewourlkjsdfouasdlfk.txt:1384946785
 Documents/minddump/ljsalkjfjslkdfsdfjsdlfkjdsfousdfkjsdfewroudsfljk.txt:1361169440
+Documents/minddump/ljsdfljsdlkjflksdjflkjsdflkjsdfouwerlkjdsouflkdjsf.txt:1400329359
 Documents/minddump/ljslkjfdkljsdflkjsdlkfjlskdjflskdjflsajdflksdjflksjdflkjsdfl.txt:1362902699
 Documents/minddump/lkadfjlksdjflkasjdflkoiuwerlkjdsfoiu.txt:1354870651
 Documents/minddump/lkadjsfldaskjfouawelrkaofusdlkfjoweurlkjfdosuewr.txt:1353175185
@@ -2515,7 +2517,7 @@ Projects/Hottee/src/cli/main.cpp:1395473624
 Projects/Hottee/src/lib/:1397731272
 Projects/Hottee/src/lib/hottee.cpp:1397731272
 Projects/Hottee/src/lib/hottee.h:1396460703
-Projects/Ideas/:1399700496
+Projects/Ideas/:1400366220
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -2808,6 +2810,7 @@ Projects/Ideas/what.to.do.with.d3fault.domain.for.the.time.being.txt:1338788716
 Projects/Ideas/why.cant.i.hold.all.these.packets.call.for.help.message.txt:1339321983
 Projects/Ideas/why.the.fuck.NOT.dont.be.a.pussy.you.pussy.txt:1341458265
 Projects/Ideas/woriuasflkjsdfowiuerlskdjfosdfiuwlekrjoiuslkweroiuflk.txt.d3fault.dht.txt:1339487879
+Projects/Ideas/wt.rewrite.static.dynamic.interleaved.notes.cow.too.but.idfk.txt:1400366220
 Projects/Ideas/yea.just.keep.passing.laws.that.will.solve.everything.sadlfjsdfusdofi.txt:1383726452
 Projects/Ideas/yes.or.no.input.and.20.questions.game.software.mode.txt:1322679432
 Projects/Ideas/you.get.timestamp.for.timeline.in.dht.when.paxos.completes.and.i.get.all.sorts.of.other.confirmations.one.invented.too.txt:1338636915
@@ -3209,15 +3212,8 @@ Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/sr
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/:1397170031
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.cpp:1397204320
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.h:1397168986
-Projects/Prototypes/WtServerPostTest/:1344095866
-Projects/Prototypes/WtServerPostTest/src/:1333034917
-Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/:1332677175
-Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/DispatchThread.C:1332677175
-Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/DispatchThread.h:1332677103
-Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/LICENSE:1287240871
-Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/README.txt:1287240871
-Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/WQApplication:1292498379
-Projects/Prototypes/WtServerPostTest/src/libqtwtcompat/WQApplication.C:1292498379
+Projects/Prototypes/WtServerPostTest/:1400372311
+Projects/Prototypes/WtServerPostTest/src/:1400372328
 Projects/Prototypes/WtServerPostTest/src/QtAwareWtApp.cpp:1333014105
 Projects/Prototypes/WtServerPostTest/src/QtAwareWtApp.h:1332677654
 Projects/Prototypes/WtServerPostTest/src/WtServerPostTest.pro:1332677771
@@ -3226,23 +3222,6 @@ Projects/Prototypes/WtServerPostTest/src/randomnumbersingleton.cpp:1332677930
 Projects/Prototypes/WtServerPostTest/src/randomnumbersingleton.h:1332677943
 Projects/Prototypes/WtServerPostTest/src/wtsessionspecificnumberwatcher.cpp:1332678176
 Projects/Prototypes/WtServerPostTest/src/wtsessionspecificnumberwatcher.h:1332678082
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/:1333009467
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/lib/:1328777622
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/lib/CMakeLists.txt:1287240871
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/lib/DispatchThread.C:1292498379
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/lib/DispatchThread.h:1292498379
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/lib/LICENSE:1287240871
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/lib/README.txt:1287240871
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/lib/WQApplication:1292498379
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/lib/WQApplication.C:1292498379
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/CMakeLists.txt:1287240871
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/HelloApplication.h:1332588792
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/LICENSE:1287240871
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/QtObject.C:1287240871
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/QtObject.h:1287240871
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/README.txt:1287240871
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/hello.C:1332589261
-Projects/Prototypes/WtServerPostTest/wtwithqtMOD2/wtwithqtMOD2.pro:1332540761
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/:1344095723
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/src/:1325630078
 Projects/Prototypes/consoleLibAvReadAviHeaderFromMemoryTest/src/consoleLibAvReadAviHeaderFromMemoryTest.pro:1325014868
@@ -4166,7 +4145,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1399674292
+Solutions/Anonymous Bitcoin Computing 2/src/:1400366882
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1399671510
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -4212,7 +4191,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:139967
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1396219028
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1396217132
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
-Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1399674251
+Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1400366844
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
 Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021
@@ -4244,7 +4223,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400229918
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1400229950
+Solutions/hackyVideoBullshitSite/src/:1400373705
 Solutions/hackyVideoBullshitSite/src/backend/:1400225230
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398593487
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398594608
@@ -4254,13 +4233,13 @@ Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1400218171
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1399509384
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1400219300
+Solutions/hackyVideoBullshitSite/src/frontend/:1400373689
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1399595110
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1400373689
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1399594649
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1399510888
-Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1400219300
+Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1400373526
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1399510770
 Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1399512349
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1399509695
@@ -4274,14 +4253,14 @@ Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/:1400305184
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/initial.idea.including.a.failed.lol.attempt.txt:1400305184
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/:1400310726
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/:1400312465
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/:1400315722
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/AtomicallyUpdateSymlinkToLatestGitCommit.pro:1400312390
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/atomicallyupdatesymlinktolatestgitcommitcli.cpp:1400312390
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/atomicallyupdatesymlinktolatestgitcommitcli.h:1400312107
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/main.cpp:1400312147
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/:1400311524
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.cpp:1400310769
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400311524
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/:1400315326
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.cpp:1400315326
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400314229
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399706220

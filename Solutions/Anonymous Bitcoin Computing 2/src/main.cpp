@@ -16,6 +16,7 @@
 ==68.9999 Optimizations==
 
 - A lot of places use delete/new WContainerWidget, instead of just WContainerWidget::clear
+- Might be possible to use 10x (N, really) identical backend/db threads (frontend would need minimal changing since it already uses N lockfree::queues). I was unsure how libevent worked at the time of writing, but now I guess I've just sat on the knowledge longer and I think unique libevent contexts in their own threads would work just fine. There was some doc somewhere on the couchbase site saying something about whether sharing couchbase instances being safe or not depending on the libevent usage (so I assumed that meant "nope not safe" (I wasn't wrong, but the solution is 1:1:1 libevent:couchbase:thread (I *think*)))
 
 */
 

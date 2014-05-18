@@ -16,7 +16,7 @@ private:
     bool atomicallyUpdateSymlinkToLatestGitCommitPrivate(const QString &cloneSrcUrl, const QString &symlinkToAtomicallyUpdate, const QString &tempDirForBothCloneDestinationsAndSymlinkPreparation);
     bool gitCloneWithDepth1(const QString &srcRepoAbsolutePath, const QString &destRepoAbsolutePath);
     bool atomicMoveOverwritingDestinationPlx(const QString &srcPath, const QString &destPath);
-    inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? (inputString + "/") : inputString; }
+    inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
 signals:
     void o(const QString &);
     void e(const QString &);

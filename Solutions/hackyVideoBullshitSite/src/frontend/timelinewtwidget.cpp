@@ -12,8 +12,7 @@
 #include <Wt/WAudio>
 #include <Wt/WVideo>
 #include <Wt/WImage>
-#include <Wt/WTable>
-#include <Wt/WTableCell>
+#include <Wt/WVBoxLayout>
 #include <Wt/WDateTime>
 
 #include <QFileInfo>
@@ -22,8 +21,6 @@
 
 #include "hvbsshared.h"
 
-#define HVBS_TWTW_ANCHOR_ROW 1
-#define HVBS_TWTW_TIMESTAMP_ROW 2
 #define HVBS_ARBITRARY_BINARY_MIME_TYPE "application/octet-stream" //supposedly for unknown types i'm supposed to let the browser guess, but yea uhh what if it's an html file with javascripts inside of it? fuck you very much, application/octet + attachment forcing ftw. (dear internet people: you suck at standards. www is a piece of shit. i can do better (i will))
 
 //TODOreq: renaming an item will make old links no longer valid, the system needs to not break when that happens. 404'ing is okay, but it would be even better if a nice message was presented (telling the user it wasn't their fault, there must have been a rename). this isn't that common of a case anyways (but i also don't want to tell myself not to rename just to keep urls valid -_- (but i also want to keep urls valid! fucking hell. i need a rename-aware system but that's gotta be revision-aware and yea not up for that just yet))
@@ -47,61 +44,75 @@ TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
 
     setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
 
+    WText *timelineControlsText = new WText("Timeline Controls - ", this);
+    WColor myYellow(255, 255, 0);
+    timelineControlsText->decorationStyle().setForegroundColor(myYellow);
     WAnchor *randomAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE), "Random Point In Time", this);
     randomAnchor->decorationStyle().setForegroundColor(WColor(0,255,0)); //bitches need visual cues because bitches is dumb as fuck n shit
     new WBreak(this);
 
+    WContainerWidget *timelineControlsContainer = new WContainerWidget(this);
+    timelineControlsContainer->setPadding(0);
+    timelineControlsContainer->setMargin(0);
+    WVBoxLayout *timelineControlsVBoxLayout = new WVBoxLayout(timelineControlsContainer);
+    timelineControlsVBoxLayout->setContentsMargins(0, 0, 0, 0);
+    timelineControlsVBoxLayout->setSpacing(0);
 
-    //WContainerWidget *timelineControlsContainerWidget = new WContainerWidget(this);
-    //timelineControlsContainerWidget->setContentAlignment(Wt::AlignCenter);
-    /*WGridLayout *timelineControlsGridLayout = new WGridLayout(timelineControlsContainerWidget); //TO DOnereq: 1px border...
-    timelineControlsGridLayout->setHorizontalSpacing(0);
-    timelineControlsGridLayout->setVerticalSpacing(0);
-    timelineControlsGridLayout->setContentsMargins(0, 0, 0, 0);*/
-    WTable *timelineControlsTable = new WTable(this); //wtf is the difference between a grid layout and table? aside from the fact that table has a border available :)
-    timelineControlsTable->setHeaderCount(1);
-    //timelineControlsTable->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)));
-
-    timelineControlsTable->elementAt(0, 0)->addWidget(new WText("Earliest", Wt::XHTMLUnsafeText));
-    m_EarliestAnchor = new WAnchor();
+    WContainerWidget *earliestContainer = new WContainerWidget();
+    earliestContainer->setContentAlignment(Wt::AlignLeft);
+    WText *earliestText = new WText("Earliest: ", Wt::XHTMLUnsafeText, earliestContainer);
+    earliestText->decorationStyle().setForegroundColor(myYellow);
+    m_EarliestAnchor = new WAnchor(earliestContainer);
     m_EarliestAnchor->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 0)->addWidget(m_EarliestAnchor);
-    m_EarliestTimestamp = new WText();
+    new WText(" ", Wt::XHTMLUnsafeText, earliestContainer);
+    m_EarliestTimestamp = new WText(earliestContainer);
     m_EarliestTimestamp->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 0)->addWidget(m_EarliestTimestamp);
     m_EarliestAnchor->disable();
+    timelineControlsVBoxLayout->addWidget(earliestContainer);
 
-    timelineControlsTable->elementAt(0, 1)->addWidget(new WText("Previous", Wt::XHTMLUnsafeText));
-    m_PreviousAnchor = new WAnchor();
+    WContainerWidget *previousContainer = new WContainerWidget();
+    previousContainer->setContentAlignment(Wt::AlignLeft);
+    WText *previousText = new WText("Previous: ", Wt::XHTMLUnsafeText, previousContainer);
+    previousText->decorationStyle().setForegroundColor(myYellow);
+    m_PreviousAnchor = new WAnchor(previousContainer);
     m_PreviousAnchor->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 1)->addWidget(m_PreviousAnchor);
-    m_PreviousTimestamp = new WText();
+    new WText(" ", Wt::XHTMLUnsafeText, previousContainer);
+    m_PreviousTimestamp = new WText(previousContainer);
     m_PreviousTimestamp->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 1)->addWidget(m_PreviousTimestamp);
+    timelineControlsVBoxLayout->addWidget(previousContainer);
 
-    timelineControlsTable->elementAt(0, 2)->addWidget(new WText("Current", Wt::XHTMLUnsafeText));
-    m_CurrentAnchor = new WAnchor();
+    WContainerWidget *currentContainer = new WContainerWidget();
+    currentContainer->setContentAlignment(Wt::AlignCenter);
+    WText *currentText = new WText("Current: ", Wt::XHTMLUnsafeText, currentContainer);
+    currentText->decorationStyle().setForegroundColor(myYellow);
+    m_CurrentAnchor = new WAnchor(currentContainer);
     m_CurrentAnchor->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 2)->addWidget(m_CurrentAnchor);
-    m_CurrentTimestamp = new WText();
+    new WText(" ", Wt::XHTMLUnsafeText, currentContainer);
+    m_CurrentTimestamp = new WText(currentContainer);
     m_CurrentTimestamp->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 2)->addWidget(m_CurrentTimestamp);
+    timelineControlsVBoxLayout->addWidget(currentContainer);
 
-    timelineControlsTable->elementAt(0, 3)->addWidget(new WText("Next", Wt::PlainText));
-    m_NextAnchor = new WAnchor();
-    m_NextAnchor->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 3)->addWidget(m_NextAnchor);
-    m_NextTimestamp = new WText();
+    WContainerWidget *nextContainer = new WContainerWidget();
+    nextContainer->setContentAlignment(Wt::AlignRight);
+    m_NextTimestamp = new WText(nextContainer);
     m_NextTimestamp->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 3)->addWidget(m_NextTimestamp);
+    new WText(" ", Wt::XHTMLUnsafeText, nextContainer);
+    m_NextAnchor = new WAnchor(nextContainer);
+    m_NextAnchor->setTextFormat(Wt::PlainText);
+    WText *nextText = new WText(" :Next", Wt::XHTMLUnsafeText, nextContainer);
+    nextText->decorationStyle().setForegroundColor(myYellow);
+    timelineControlsVBoxLayout->addWidget(nextContainer);
 
-    timelineControlsTable->elementAt(0, 4)->addWidget(new WText("Latest", Wt::PlainText));
-    m_LatestAnchor = new WAnchor();
-    m_LatestAnchor->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_ANCHOR_ROW, 4)->addWidget(m_LatestAnchor);
-    m_LatestTimestamp = new WText();
+    WContainerWidget *latestContainer = new WContainerWidget();
+    latestContainer->setContentAlignment(Wt::AlignRight);
+    m_LatestTimestamp = new WText(latestContainer);
     m_LatestTimestamp->setTextFormat(Wt::PlainText);
-    timelineControlsTable->elementAt(HVBS_TWTW_TIMESTAMP_ROW, 4)->addWidget(m_LatestTimestamp);
+    new WText(" ", Wt::XHTMLUnsafeText, latestContainer);
+    m_LatestAnchor = new WAnchor(latestContainer);
+    m_LatestAnchor->setTextFormat(Wt::PlainText);
+    WText *latestText = new WText(" :Latest", Wt::XHTMLUnsafeText, latestContainer);
+    latestText->decorationStyle().setForegroundColor(myYellow);
+    timelineControlsVBoxLayout->addWidget(latestContainer);
     m_LatestAnchor->disable();
 
     new WBreak(this);
@@ -122,7 +133,7 @@ void TimeLineWtWidget::redirectToRandomPointInTimeline()
     //TODOoptional: use video segments in selection of random file
 }
 //if presentFile takes more than 5 minutes to execute (rofl), we will segfault
-void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQString, const QString &absolutePath /*already checked for existence on fs*/, const std::string &myBrainItemFilenameOnlyStdString)
+void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQString, const QString &absolutePath /*already checked for existence on fs, but the file may have been deleted/renamed since*/, const std::string &myBrainItemFilenameOnlyStdString)
 {
     m_ContentsContainer->clear();
 
@@ -131,10 +142,12 @@ void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQ
         //earliest/latest left as is to be leik ahn entree pointz toin le tiemenlienen plz i guezz
 
         m_PreviousAnchor->setText("TODO");
+        m_PreviousAnchor->setLink(WLink());
         m_PreviousAnchor->disable();
         m_PreviousTimestamp->setText("");
 
         m_NextAnchor->setText("TODO");
+        m_NextAnchor->setLink(WLink());
         m_NextAnchor->disable();
         m_NextTimestamp->setText("");
 
@@ -212,12 +225,12 @@ void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQ
                 m_PreviousAnchor->setText("...");
                 m_PreviousAnchor->setLink(WLink());
                 m_PreviousAnchor->setDisabled(true);
-                m_PreviousTimestamp->setText("...");
+                m_PreviousTimestamp->setText("");
 
                 m_EarliestAnchor->setText("No Earlier");
                 m_EarliestAnchor->setLink(WLink());
                 m_EarliestAnchor->setDisabled(true);
-                m_EarliestTimestamp->setText("No Earlier");
+                m_EarliestTimestamp->setText("");
             }
 
             m_CurrentAnchor->setLink(WLink(WLink::InternalPath, relativePath_aka_internalPath));
@@ -252,18 +265,20 @@ void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQ
                 m_NextAnchor->setText("...");
                 m_NextAnchor->setLink(WLink());
                 m_NextAnchor->setDisabled(true);
-                m_NextTimestamp->setText("...");
+                m_NextTimestamp->setText("");
 
                 m_LatestAnchor->setText("No Later");
                 m_LatestAnchor->setLink(WLink());
                 m_LatestAnchor->setDisabled(true);
-                m_LatestTimestamp->setText("No Later");
+                m_LatestTimestamp->setText("");
             }
         }
         catch(std::out_of_range &pathNotInHashException)
         {
-            //the file exists on the fs, but not yet in the lastModifiedTimestamps file
-            new WText("Please wait a few moments and try your request again", m_ContentsContainer);
+            //the file exists on the fs, but not in the lastModifiedTimestamps file. this happens when a file is renamed/deleted (semi-OT: what's more important? SEO (consistency) or overall organization (neatness)?). it's a race condition where the file existed so we got past that check but since it's renamed and a new checkout/etc since then, it no longer exists either in that path or in the last modified timestamps
+            new WText("The file you requested may have been renamed or deleted. Try looking for it in the directory (which may also have been renamed/deleted) it used to be in: ", m_ContentsContainer);
+            QFileInfo currentItemFileInfo(relativePath_aka_internalPathQString);
+            new WAnchor(WLink(WLink::InternalPath, currentItemFileInfo.path().toStdString() + "/"), "Here", m_ContentsContainer); //TODOoptional: keep cd-up'ing until the directory exists
             return;
         }
     }

@@ -1,0 +1,8 @@
+PHP defines a path and stores minimal session variables used for routing that path, and the GUI is drawn from that alone.
+Wt/C++ stores the entire widget tree (and all associated variables (tons)) in memory for each and every connection (a COW of the widget tree could save oodles of memory I'd imagine) until their session finishes (including user (coder) defined session variables).
+
+My point is that while PHP may be a slow piece of interpretted shit, it might use significantly less memory per connection because it does not store the GUI of each connection in memory, it just follows paths and (RE-! (so yes, bandwidth efficiency Wt wins (when ajax is enabled ofc, otherwise they are the same)))-draws the GUI based on a set of session variables.
+
+A compromise in the middle is desired (fuck interpretted), and that COW idea alone would probably yield significant savings.
+
+Even in "highly dynamic applications", GUI doesn't change all that much in between *COMPILES*. The same set[s] of pre-(gzip-)compressed-and-hell-might-as-well-precompile-it-too GUI *PIECES* can be catted together interleaved with [session] variables (and specific pieces sent in place of others based on reaction routing dependent on those same session variables).

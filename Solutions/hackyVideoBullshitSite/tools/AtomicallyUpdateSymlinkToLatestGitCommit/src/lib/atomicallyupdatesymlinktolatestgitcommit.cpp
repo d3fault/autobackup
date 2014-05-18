@@ -52,11 +52,11 @@ bool AtomicallyUpdateSymlinkToLatestGitCommit::atomicallyUpdateSymlinkToLatestGi
         //TODOreq: delete the depth 1 clone that is now never going to be used (or: periodically (cron) run a script that deletes all but the newest /repoAt<timestamp>)
         return false;
     }
-    QString canonicalPath(appendSlashIfNeeded(symlinkToAtomicallyUpdateFileInfo.canonicalPath()));
-    if(!atomicMoveOverwritingDestinationPlx(tempSymbolicLink, canonicalPath))
+    QString directoryContainingSymlinkToAtomicallyUpdate(appendSlashIfNeeded(QDir::cleanPath(symlinkToAtomicallyUpdateFileInfo.absolutePath())));
+    if(!atomicMoveOverwritingDestinationPlx(tempSymbolicLink, directoryContainingSymlinkToAtomicallyUpdate))
         return false;
 
-    //delete previously linked to depth 1 clone
+    //delete previously linked-to depth 1 clone
     if(!symlinkTargetToMaybeDeleteLater.isEmpty())
     {
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)

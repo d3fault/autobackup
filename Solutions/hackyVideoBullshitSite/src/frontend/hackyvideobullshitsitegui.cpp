@@ -102,14 +102,15 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     styleSheet().addRule("a:link", "color: #e1e1e1;");
     styleSheet().addRule("a:visited", "color: #ffa2a2;");
     styleSheet().addRule("pre", "white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;"); //fucking hate css, not as much as js but (had:way) more than html (except when css saves the day from htmls shortcomings...). on that note, fuck the rule saying you can't use an apostrophe s unless it means "<something> is" (unless used with proper noun(?)). "htmls" looks fucking retarded. html owns the shortcomings, therefore posessive, who cares if it's not a proper noun (or is it? fuck if i know guh all subjective bullshit anyways. i'm going for clarity, suck my dick)
-    styleSheet().addRule("table, th, td", "border: 1px solid white;");
+    //styleSheet().addRule("table, th, td", "border: 1px solid white;");
     styleSheet().addRule("img", "background-color: white;"); //for svg images, which are transparent and [i] tend to use black font...
 
     //TODOreq: text files downloaded copies have copyright.txt at top. I'm thinking my 'master' branch has copyright.txt prepend thing always at top, and another separate branch is what I work on (script prepends and merges/pushes/whatevers into master). master because it should be the default for anyone that checks it out... but i don't want to permanently put that shit at the top of mine because it will annoy the fuck out of me (especially since i don't want the EMBED copy to have it since it is way sexier to have it in a WPanel). It could be called the allrightsreserved branch xD. Note: not that it matters, but I think I'd need to be constantly creating a temporary branch, running the prepender, committing, and then... err... i think rebasing ONTO master? idfk lol... i suck at git
     //but also collaboration and merging etc will mean i have to deal with licenses anyways. for code i don't care that much tbh, but for text files that aren't even that long.... fuuuuuuck i don't want stupid headers prepended on all of em. BUT honestly they're easy to both insert and remove via scripting so... (lol at the bug where i 'remove' the text and then it removes it from the file that i used as input to tell me what to remove (easily fixed by pulling it back out of git history (or a skip file exception) but still i'm predicting it will happen :-P)
 
     //TODOreq: "Store" (lulu, cafepress, eventually "dvd/bd copy of archive", etc)
-    //TODOreq: no visible borders between ad and content (probably going to refactor timeline nav anyways)
+    //TODOreq: airborne videos symbolic link in temp before moveOverwrite (BUT ACTUALLY, in binaries?)
+    //TODOreq: each .lastModified (binary/text) needs "/binary/" and "/text/" prefixed before put in the hash/list (but don't make it permanent ofc)
 
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
     //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
@@ -378,11 +379,6 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     if(QFile::exists(myBrainItemToPresentAbsolutePathQString))
     {
         QFileInfo myBrainItemFileInfo(myBrainItemToPresentAbsolutePathQString);
-        if(myBrainItemFileInfo.isSymLink()) //fuck symlinks
-        {
-            hvbs404();
-            return;
-        }
         if(myBrainItemFileInfo.isFile())
         {
             createCookieCrumbsFromPath(/*relativePath_aka_internalPath*/);
