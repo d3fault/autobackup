@@ -29,6 +29,7 @@ private:
     QTimer *m_DeleteInFiveMinsTimer;
     QQueue<LastModifiedTimestampsAndPaths*> *m_TimestampsAndPathsQueuedForDelete;
 
+    void resolveLastModifiedTimestampsFilePathAndWatchIt();
     void deleteOneTimestampAndPathQueuedForDelete();
 signals:
     void e(const QString &);

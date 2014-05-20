@@ -2,7 +2,8 @@
 #define ATOMICALLYUPDATESYMLINKTOLATESTGITCOMMIT_H
 
 #include <QObject>
-#include <QProcess>
+
+class QProcess;
 
 class AtomicallyUpdateSymlinkToLatestGitCommit : public QObject
 {
@@ -11,10 +12,11 @@ public:
     explicit AtomicallyUpdateSymlinkToLatestGitCommit(QObject *parent = 0);
 private:
     QString m_GitPath;
+    QString m_TarPath;
     QString m_MvPath;
-    QProcess *m_Process;
+    QProcess *m_MvProcess;
     bool atomicallyUpdateSymlinkToLatestGitCommitPrivate(const QString &cloneSrcUrl, const QString &symlinkToAtomicallyUpdate, const QString &tempDirForBothCloneDestinationsAndSymlinkPreparation);
-    bool gitCloneWithDepth1(const QString &srcRepoAbsolutePath, const QString &destRepoAbsolutePath);
+    bool gitArchiveAndUntarLatestCommit(const QString &srcRepoUrl, const QString &destArchivePath);
     bool atomicMoveOverwritingDestinationPlx(const QString &srcPath, const QString &destPath);
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
 signals:
@@ -24,6 +26,7 @@ signals:
     //void quitRequested(); eh? bool success it is!
 public slots:
     void setGitPath(const QString &gitPath);
+    void setTarPath(const QString &tarPath);
     void setMvPath(const QString &mvPath);
     void atomicallyUpdateSymlinkToLatestGitCommit(const QString &cloneSrcUrl /*Note: be sure to file:// it*/, const QString &symlinkToAtomicallyUpdate, const QString &tempDirForBothCloneDestinationsAndSymlinkPreparation);
 };

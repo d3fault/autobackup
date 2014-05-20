@@ -20,11 +20,12 @@ git --work-tree=/files --git-dir=/backup1 commit -am "Commit Message"
 to make a new backup:
 git clone --bare file:///backup1 /backup2
 to synchronize the backups, cd into /backup1 and do:
-git push /backup2 master
+git push /backup2
 
 
 ----RESTORING FROM BACKUP LATER
 backup1, backup2, etc all still exist, but you lose your /files folder from doing an OS-reinstall or whatever (hdd crash?):
+mkdir /files
 git archive --remote=file:///backup1 master | tar -x -C /files
 
 ^then of course you use it just like the "MADE CHANGES, TIME TO COMMIT" section

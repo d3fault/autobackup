@@ -1,0 +1,3 @@
+My actual repo should stay clean and checkpoint driven, but as a hacky/easy backup solution I can have a detached-git-dir that is hooked up to cron on a 5 minute basis and git-pushed to other computers on my [offline] network (was tempted to say drives in computer, but other computers is saferer). That hacky backup solution can restart (all history deleted) whenever a checkpoint is made (and pushed out (probably to same comps on network)!), so it won't come to a crawl performance-wise.
+
+I just dread the day where my hdd fails mid-checkpoint and maybe a couple hundred lines are lost (ALTHOUGH WHEN BROADCASTING, none will technically be "lost" ;-P woot)... and I don't trust raid.

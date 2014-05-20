@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1400329359
+Documents/minddump/:1400552311
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1193,6 +1193,7 @@ Documents/minddump/ljkfsldkjfksljdfkljsdlfkjsdfousdljfkosduflskjdfousldkfjsdiu.t
 Documents/minddump/ljksadfljksadlkfjsdouflkjewourlkjsdfouasdlfk.txt:1384946785
 Documents/minddump/ljsalkjfjslkdfsdfjsdlfkjdsfousdfkjsdfewroudsfljk.txt:1361169440
 Documents/minddump/ljsdfljsdlkjflksdjflkjsdflkjsdfouwerlkjdsouflkdjsf.txt:1400329359
+Documents/minddump/ljsfsakjfksldjfskljdfklsjdfkjsdflkjdfkljsdsfkj.txt:1400551185
 Documents/minddump/ljslkjfdkljsdflkjsdlkfjlskdjflskdjflsajdflksdjflksjdflkjsdfl.txt:1362902699
 Documents/minddump/lkadfjlksdjflkasjdflkoiuwerlkjdsfoiu.txt:1354870651
 Documents/minddump/lkadjsfldaskjfouawelrkaofusdlkfjoweurlkjfdosuewr.txt:1353175185
@@ -1525,6 +1526,7 @@ Documents/minddump/saldkfjsdlkfjsdlfjosduflsdkjfosdufsadflkjsdfosduflkjweroudsal
 Documents/minddump/saldkfjsdlkfjsdouflwkejrousfldkjsadofusadlkjfouwerlkjsadfoul.txt:1371533976
 Documents/minddump/saldkfjslakjflskjdflkjsdfkljsdlfksdlfkjouwerlkjsdf.txt:1393725385
 Documents/minddump/saldkflkjsdfkjsdflksdjfosdflkjdsflkjsdflkdsfjlksdfdsfouedf.txt:1361167399
+Documents/minddump/salfjasljdfsjdflkjsdlkfjsdlkjflskjflksjflkjslkfjslkkfjsdlkfjo.txt:1400552311
 Documents/minddump/salfjlsdjflksjdfkljsdfouewrljsdofusdfskldjf.txt:1396053063
 Documents/minddump/salfjsldfkjsldkjfouiwerlkjsdfouisdflk.txt:1355145501
 Documents/minddump/salfkjalskjfklsjdfoiulsdkjfoisudflkjsdofusdlkf.txt:1391830052
@@ -2221,7 +2223,7 @@ GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
 GloballySharedClasses/standardinputnotifier.pri:1397025625
-Pictures/:1391752831
+Pictures/:1400549956
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -2248,6 +2250,7 @@ Pictures/shirts/supple.breasts.asdlfjasoufsdlfkjsdou.mb.a.typo.in.supple.idfk.tx
 Pictures/shirts/tolerance.obscenity.choose.one.asdfsodfuisdlkf.txt:1384665667
 Pictures/shirts/wanting.to.be.weird.is.normal.saldkfjlsdkjfouewrljodsfusdlfk.txt:1391106338
 Pictures/shirts/we.are.beautiful.math.saldfjksdkjfweourlksjdfojsdlfk.txt:1398549972
+Pictures/2014-05-19.svg:1400550001
 Pictures/5meo.dmt.hydrogen.life.1.tree.hugga.ballen.sup.svg:1370470833
 Pictures/Head.Eye.i.suck.at.drawing.the.neck.looks.like.a.chin.or.anteater.mouth.lol.svg:1335462127
 Pictures/Microsoft.sitting.on.Nokias.head.i.was.gonna.add.puppet.strings.but.i.like.it.as.is.svg:1337333311
@@ -2517,7 +2520,7 @@ Projects/Hottee/src/cli/main.cpp:1395473624
 Projects/Hottee/src/lib/:1397731272
 Projects/Hottee/src/lib/hottee.cpp:1397731272
 Projects/Hottee/src/lib/hottee.h:1396460703
-Projects/Ideas/:1400366220
+Projects/Ideas/:1400375313
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -2647,6 +2650,7 @@ Projects/Ideas/destiny.but.dont.forget.SOFTWARE.your.true.passion.i.just.do.this
 Projects/Ideas/dflkjasdflkasjdfosiure.txt:1325385816
 Projects/Ideas/dht.responses.visualized.png:1323475908
 Projects/Ideas/dht.rules.which.are.kinda.like.defines.idfk.txt:1325723746
+Projects/Ideas/disposable.5.min.interval.hacky.git.autocommit.and.push.solution.txt:1400375313
 Projects/Ideas/distributed.searches.need.to.be.public.to.be.efficient.but.we.could.still.hide.who.queried.them.txt:1339229236
 Projects/Ideas/doorbell.text.to.speech.txt:1322766620
 Projects/Ideas/doorbell.text.to.speech.wtf.why.are.there.two.of.these.lol.when.did.txt:1326845889
@@ -4223,20 +4227,20 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400229918
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1400373705
-Solutions/hackyVideoBullshitSite/src/backend/:1400225230
+Solutions/hackyVideoBullshitSite/src/:1400560142
+Solutions/hackyVideoBullshitSite/src/backend/:1400551870
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1398593487
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1398594608
 Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.cpp:1397480873
 Solutions/hackyVideoBullshitSite/src/backend/adimagewresource.h:1397480873
-Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1400225230
-Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1400218171
+Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1400551870
+Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1400551488
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1399509384
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1400373689
+Solutions/hackyVideoBullshitSite/src/frontend/:1400380939
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1400373689
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1400380939
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1399594649
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1399510888
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1400373526
@@ -4253,14 +4257,14 @@ Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/:1400305184
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/initial.idea.including.a.failed.lol.attempt.txt:1400305184
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/:1400310726
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/:1400315722
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/:1400563243
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/AtomicallyUpdateSymlinkToLatestGitCommit.pro:1400312390
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/atomicallyupdatesymlinktolatestgitcommitcli.cpp:1400312390
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/atomicallyupdatesymlinktolatestgitcommitcli.h:1400312107
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/main.cpp:1400312147
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/:1400315326
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.cpp:1400315326
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400314229
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/:1400562807
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.cpp:1400562807
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400562770
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1399706220
@@ -4361,7 +4365,7 @@ autobackupScripts/linux/droid.backup.and.delete.only.because.flash.medium.sh.bak
 autobackupScripts/linux/droid.backup.pictures.required.and.optionally.conversation.backup.and.camtimer.pics.and.csipsimple.recordings.and.delete.all.after.too.sh:1370744088
 autobackupScripts/linux/droid.conversationBackup.pull.zip.and.shred.sh.bak:1358469443
 autobackupScripts/linux/enable.vga.only.monitor.if.connected.sh:1350618566
-autobackupScripts/linux/git.binaries.hackery.woot.txt:1387269336
+autobackupScripts/linux/git.binaries.hackery.woot.txt:1400375775
 autobackupScripts/linux/installAllRpmsInThisDir.sh:1324208617
 autobackupScripts/linux/laptop.screen.only.sh:1350618576
 autobackupScripts/linux/mount.2x.750gb.drives.sh:1350716644

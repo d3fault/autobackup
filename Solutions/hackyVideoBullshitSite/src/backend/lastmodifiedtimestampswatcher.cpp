@@ -6,13 +6,16 @@
 #include <QFileSystemWatcher>
 #include <QStringList>
 #include <QFile>
+#include <QFileInfo>
 
 #include "lastmodifiedtimestampssorter.h"
+
+//git push -> post-update -> git clone/archive -> symlinkSwap -> deleteOldLastModifiedJustToTriggerQfsWatcher (also delete rest of shit) -> [re-]resolveAndWatchSymlink/.lastModified
 
 LastModifiedTimestampsWatcher::LastModifiedTimestampsWatcher(QObject *parent)
     : QObject(parent)
     , m_LastModifiedTimestampsFileWatcher(0)
-    , m_CurrentTimestampsAndPathsAtomicPointer(0)
+    , m_CurrentTimestampsAndPathsAtomicPointer(0) //initialize to value zero (which coincidentally is a null/0 ptr address), not null/0 ptr address [of the member itself]
     , m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer(new QTimer(this))
     , m_FileWasDeletedSoPollForExistenceEvery5secondsTimer(new QTimer(this))
     , m_DeleteInFiveMinsTimer(new QTimer(this))
@@ -54,6 +57,11 @@ LastModifiedTimestampsWatcher::~LastModifiedTimestampsWatcher()
         delete m_LastModifiedTimestampsFileWatcher;
     }
 }
+void LastModifiedTimestampsWatcher::resolveLastModifiedTimestampsFilePathAndWatchIt()
+{
+    QFileInfo symlinkResolver(m_LastModifiedTimestampsFile);
+    m_LastModifiedTimestampsFileWatcher->addPath(symlinkResolver.canonicalFilePath());
+}
 void LastModifiedTimestampsWatcher::deleteOneTimestampAndPathQueuedForDelete()
 {
     LastModifiedTimestampsAndPaths *currentToDelete = m_TimestampsAndPathsQueuedForDelete->dequeue();
@@ -78,7 +86,7 @@ void LastModifiedTimestampsWatcher::checkForTimestampsFileExistenceAndResumeNorm
 {
     if(QFile::exists(m_LastModifiedTimestampsFile))
     {
-        m_LastModifiedTimestampsFileWatcher->addPath(m_LastModifiedTimestampsFile);
+        resolveLastModifiedTimestampsFilePathAndWatchIt();
         readLastModifiedTimestampsFile();
         return;
     }
@@ -151,7 +159,7 @@ void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged()
         m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->start();
         return;
     }
-    m_LastModifiedTimestampsFileWatcher->addPath(m_LastModifiedTimestampsFile);
+    resolveLastModifiedTimestampsFilePathAndWatchIt();
     if(m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->isActive()) //wtf? this would mean they did an append AND an overwrite/rename-onto
         return; //just return because yea the timeout will do it
     readLastModifiedTimestampsFile();
