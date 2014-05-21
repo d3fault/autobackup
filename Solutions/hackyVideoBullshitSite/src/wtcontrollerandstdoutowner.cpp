@@ -25,12 +25,15 @@ void WtControllerAndStdOutOwner::setTimestampsAndPathsSharedAtomicPointer(QAtomi
 WtControllerAndStdOutOwner::WtControllerAndStdOutOwner(QObject *parent)
     : QObject(parent)
     , m_WtServer(0) //still can't pass my objects on threads args guh :(
+    , m_MySexyFaceLogoResource(0)
     , m_NoAdImagePlaceholderResource(0)
     , m_StdOut(stdout)
     , m_StdErr(stderr)
 { }
 WtControllerAndStdOutOwner::~WtControllerAndStdOutOwner()
 {
+    if(m_MySexyFaceLogoResource)
+        delete m_MySexyFaceLogoResource;
     if(m_NoAdImagePlaceholderResource)
         delete m_NoAdImagePlaceholderResource;
     if(m_WtServer)
@@ -66,6 +69,11 @@ string WtControllerAndStdOutOwner::readFileIntoString(const char *filename)
 }
 void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
 {
+    if(m_MySexyFaceLogoResource)
+    {
+        delete m_MySexyFaceLogoResource;
+        m_MySexyFaceLogoResource = 0;
+    }
     if(m_NoAdImagePlaceholderResource)
     {
         delete m_NoAdImagePlaceholderResource;
@@ -80,8 +88,11 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
     m_WtServer = new WServer(argv[0]);
     m_WtServer->setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
     m_WtServer->addEntryPoint(Application, &HackyVideoBullshitSiteGUI::hackyVideoBullshitSiteGuiEntryPoint);
-    //add the no ad global/public resource
 
+    m_MySexyFaceLogoResource = new WFileResource("image/jpeg", "my.sexy.face.logo.jpg"); //TODOoptimization: 1 year expiration
+    m_WtServer->addResource(m_MySexyFaceLogoResource, "/my.sexy.face.logo.jpg");
+
+    //add the no ad global/public resource
     std::string noAdPlaceholderImageString = readFileIntoString("no.ad.placeholder.jpg");
     if(noAdPlaceholderImageString == "")
     {

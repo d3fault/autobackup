@@ -2,6 +2,7 @@
 #define WTCONTROLLERANDSTDOUTOWNER_H
 
 #include <Wt/WServer>
+#include <Wt/WFileResource>
 using namespace Wt;
 
 #include <QObject>
@@ -22,6 +23,7 @@ public:
     ~WtControllerAndStdOutOwner();
 private:
     WServer *m_WtServer;
+    WFileResource *m_MySexyFaceLogoResource;
     AdImageWResource *m_NoAdImagePlaceholderResource;
 
     QTextStream m_StdOut;

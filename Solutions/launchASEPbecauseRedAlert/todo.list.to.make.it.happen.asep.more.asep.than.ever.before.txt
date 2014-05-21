@@ -8,7 +8,7 @@
 [] - Convert svgs from "flow" to "text" on both old archive and new
 [] - Get everything in place, including support scripts to do it (upgrading MyBrain, inode-aware directory building, etc)
 [] - Valgrind everything
-[] - Test in Release mode
+[] - Test in 4.x + Release mode (try compiling everything in 4.x before beginning testing (might use 5.x))
 [] - Manual for Abc2 (+tools) + HackyVideoBullshitSite (+tools) configuring and running... for myself and others...
 [] - Buy hardware + move out + set up hardware
 [] - Launch via 1337/dirty h4x, leaseweb most likely (get offline backup however/hackily (use offline machine being recorded by another offline machine AND by an online machine (probably multiple vga splitters). 3 machines, 2 offline. The one you type/broadcast on does not record (might also need code testing filming solution). Same setup for your face)) (user/d3fault/data CAN contain only: sha1/md5/magnet (freenet, bittorrent), decryption key/password to it all. Will eventually actually server the data)

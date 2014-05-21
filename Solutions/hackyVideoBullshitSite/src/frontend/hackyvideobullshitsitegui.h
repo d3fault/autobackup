@@ -39,7 +39,7 @@ private:
 
     WImage *m_AdImage;
     WAnchor *m_AdImageAnchor;
-    WContainerWidget *m_RightSideOfHBoxLayout;
+    WContainerWidget *m_MainContentsContainer;
     WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
@@ -60,7 +60,7 @@ private:
     void deleteTimelineAndDirectoryBrowsingStackIfNeeded();
     void hvbs404();
     void setMainContent(WWidget *contentToSet);
-    inline WContainerWidget *blahRootRedirect() { return m_RightSideOfHBoxLayout; }
+    inline WContainerWidget *blahRootRedirect() { return m_MainContentsContainer; }
 };
 
 #endif // HACKYVIDEOBULLSHITSITEGUI_H

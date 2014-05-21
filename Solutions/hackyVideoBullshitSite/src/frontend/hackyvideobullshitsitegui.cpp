@@ -124,21 +124,26 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     //random: mfw "moving a file to overwrite another file" lets processes reading the old version continue reading. it's liek free atomicity! could/should have used that for vidya segment lookin up (a fucking "lastSegment" file = gg), am considering using it for .lastModifiedTimestamps updating... except shit when do the readers close it then? when the session ends? a bunch of sessions never ending = old copies stay around forever (not that it should matter to me, so long as they're just using hdd and not memory (err that their memory can be used for other stuffz at times i guess idk what i'm on about (but let's just say i'm glad i haven't coded anything using that yet (i also wonder if it's portable..))))
 
-    WVBoxLayout *menuContentsHLayout = new WVBoxLayout(root());
-    menuContentsHLayout->setContentsMargins(0, 0, 0, 0);
-    menuContentsHLayout->setSpacing(0);
+    WVBoxLayout *menuContentsVLayout = new WVBoxLayout(root());
+    menuContentsVLayout->setContentsMargins(0, 0, 0, 0);
+    menuContentsVLayout->setSpacing(0);
 
     WContainerWidget *topContainer = new WContainerWidget();
     topContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
-    topContainer->setMinimumSize(HVBS_ABC2_AD_IMAGE_WIDTH, HVBS_ABC2_AD_IMAGE_HEIGHT);
+    topContainer->setHeight(HVBS_ABC2_AD_IMAGE_HEIGHT);
     topContainer->setPadding(0);
     topContainer->setMargin(0);
 
     WHBoxLayout *topHBoxLayout = new WHBoxLayout(topContainer);
     topHBoxLayout->setContentsMargins(0, 0, 0, 0);
-    topHBoxLayout->setSpacing(0);
+    topHBoxLayout->setSpacing(3);
 
-    //TODOreq: image, same height as ad, of my sexy face
+    //My sexy face logo
+    WImage *mySexyFaceLogoImage = new WImage(WLink(WLink::Url, "/my.sexy.face.logo.jpg"), "d3fault");
+    WAnchor *homeAnchor = new WAnchor(WLink(WLink::InternalPath, "/"), mySexyFaceLogoImage);
+    homeAnchor->setToolTip("d3fault");
+    mySexyFaceLogoImage->setToolTip("d3fault");
+    topHBoxLayout->addWidget(homeAnchor);
 
     //Advertisement
     m_AdImage = new WImage();
@@ -155,8 +160,9 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     linksContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
     topHBoxLayout->addWidget(linksContainer, 1, Wt::AlignLeft | Wt::AlignTop);
 
-    WAnchor *homeAnchor = new WAnchor(WLink(WLink::InternalPath, "/"), "Home", linksContainer);
-    homeAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+    WAnchor *storeAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Store"), "Store / Donate", linksContainer);
+    storeAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+    storeAnchor->setToolTip("Buying is basically donating, since everything is already freely available...");
     new WBreak(linksContainer);
     WAnchor *viewMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER), HVBS_VIEW_MYBRAIN_STRING, linksContainer);
     viewMyBrainAnchor->setToolTip(HVBS_VIEW_MYBRAIN_TOOLTIP);
@@ -165,22 +171,18 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //browseMyBrainAnchor->setTarget(TargetNewWindow);
     //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
     new WBreak(linksContainer);
-    WAnchor *storeAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Store"), "Store / Donate", linksContainer);
-    storeAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-    storeAnchor->setToolTip("Buying is basically donating, since everything is already freely available...");
-    new WBreak(linksContainer);
     WAnchor *yourAdHereAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Your Ad Here", linksContainer);
     yourAdHereAnchor->decorationStyle().setForegroundColor(WColor(255,0,0)); //I like my [necessary] evils to be clearly marked as such
 
-    menuContentsHLayout->addWidget(topContainer);
+    menuContentsVLayout->addWidget(topContainer);
 
-    m_RightSideOfHBoxLayout = new WContainerWidget();
-    m_RightSideOfHBoxLayout->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
-    m_RightSideOfHBoxLayout->setPadding(0);
-    m_RightSideOfHBoxLayout->setMargin(0);
-    m_RightSideOfHBoxLayout->setOverflow(WContainerWidget::OverflowAuto);
+    m_MainContentsContainer = new WContainerWidget();
+    m_MainContentsContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
+    m_MainContentsContainer->setPadding(0);
+    m_MainContentsContainer->setMargin(0);
+    m_MainContentsContainer->setOverflow(WContainerWidget::OverflowAuto);
 
-    menuContentsHLayout->addWidget(m_RightSideOfHBoxLayout, 1);
+    menuContentsVLayout->addWidget(m_MainContentsContainer, 1);
 
     WPanel *copyrightDropDown = new WPanel(blahRootRedirect());
     copyrightDropDown->setCollapsible(true);

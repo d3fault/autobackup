@@ -88,6 +88,9 @@ void BulkFileTextPrepender::prependStringToBeginningOfAllTextFilesInDir(const QS
         const QFileInfo &currentFileInfo = dirIterator.fileInfo();
         if(currentFileInfo.isFile())
         {
+            if(currentFileInfo.absoluteFilePath() == filenameContainingTextToPrepend) //don't prepend onto the prepend source!
+                continue;
+
             QString filename = dirIterator.fileName();
             if(filenameExtensionsToPrependTo.isEmpty() || filenameHasOneOfTheseExtensions(filename.toLower(), filenameExtensionsToPrependTo))
             {

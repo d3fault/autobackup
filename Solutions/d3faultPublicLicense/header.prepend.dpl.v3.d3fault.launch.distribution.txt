@@ -26,4 +26,3 @@ Indemnification
 If you convey this program (or any modifications of it) and assume contractual liability for the program to recipients of it, you agree to indemnify any copyright holder, or any other party who modifies and/or conveys the program as permitted by the d3fault public license, for any liability that those contractual assumptions impose on any copyright holder, or any other party who modifies and/or conveys the program as permitted by the d3fault public license.
 
 The complete text of the d3fault public license can be found in 'license.dpl.txt' in the root directory of this distribution.
-

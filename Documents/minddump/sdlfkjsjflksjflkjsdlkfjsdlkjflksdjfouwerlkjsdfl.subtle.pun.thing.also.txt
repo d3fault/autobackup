@@ -1,0 +1,1 @@
+Balancing modular (non-specific) and functional (specific) is extremely challenging (I suck at it), except at the design (uml-esq) level.
