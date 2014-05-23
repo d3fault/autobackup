@@ -113,6 +113,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOreq: each .lastModified (binary/text) needs "/binary/" and "/text/" prepended to internal path before put in the hash/list (but don't make it permanent ofc)
     //TODOreq: text repo readonly git:// clone url in download area (down below, not part of the 3)
 
+    //TODOoptional: if the browser isn't wide enough, my links to the right of the ad aren't shown (and can't be scrolled to wtf). WNavigationBar/Panel thing has a setResponsive(true) function that can turn things like that into a vertical popup when the screen shrinks too small
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
     //TODOoptional: ad image placeholder takes up dimensions, so no "popping" and content shifting when it finally loads (shit annoys the FUCK out of me, but eh almost every desktop environment is guilty of it as well (highly considering changing to one of those tile based ones... (more likely to code one myself xD (but eh implementing freedesktop protocols sounds cumbersome))))
     //TODOoptional: when "no web view", show list of desktop apps <--> extensions mapping

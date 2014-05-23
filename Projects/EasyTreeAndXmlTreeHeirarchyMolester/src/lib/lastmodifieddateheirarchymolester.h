@@ -32,6 +32,9 @@ public:
     bool allFilePathsInCurrentTableExistAndDontHaveDateTimeGreaterThanOrEqualTo(QDateTime dateTimeToCheckAgainst);
     void removeTimestampFilesFromTablesIfTheySomehowGotInThereWtf(QList<QString> absoluteFilePathsToTimestampFilesToRemove);
     //</hack>
+
+    //A COMPLETELY UNRELATED HACK (need to molest dir based on easy tree file, but easy tree file does not have compressed (.webm,.opus,etc) filename portions)
+    void hack_AppendStringOntoFilesInInternalTablesWithAnyOfTheseExtensions(QList<QString> filenamesToAppendTextTo, const QString &stringToAppendToFilesWithMatchingExtensions);
 private:
     FileModificationDateChanger m_FileModificationDateChanger;
     QHash<QString,QDateTime> m_TimestampsByAbsoluteFilePathHash_Files;

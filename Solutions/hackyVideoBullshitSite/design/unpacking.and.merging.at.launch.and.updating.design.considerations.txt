@@ -1,7 +1,7 @@
 -Extract MyBrain (7z)
 -delete autobackupLatest.zip that was in MyBrain (or whatever it's called. redundant/stale. there might even be two of them)
 -un-prepend header (guh) of MyBrain text files (xml/svg doesn't really matter (str replace hyphens with underscores imo), and fuck bash too since extra hacks)
--Molest heirarchy (easy tree format pretty sure), delete those timestamp files. PROBLEM: Filenames of compressed don't match (.LLQ.etc), splitting binary/text needs to also split the entries in timestamps files
+-Molest heirarchy (easy tree format pretty sure), delete those timestamp files. PROBLEM: Filenames of compressed don't match (.LLQ.etc)
 -Create Simplified Last Modified Timestamps file (quickdirty-esq)
 -Extract or git-clone currentText repo
 -Molest currentText with simplified molester

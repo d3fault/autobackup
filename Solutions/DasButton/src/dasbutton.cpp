@@ -7,9 +7,17 @@
 #include <QDirIterator>
 #include <QTextStream>
 
+#include "lastmodifieddateheirarchymolester.h"
+#include "easytree.h"
+
 #define DAS_BUTTON_DEFAULT_HOME_DIR "/home/user/"
 #define DAS_BUTTON_TEMP_EXTRACT_DIR m_PrefixAkaHomeDir + "temp/extractDirDELETEMELATERFUCKITFORNOW/"
-#define DAS_BUTTON_HVBS_WEB m_PrefixAkaHomeDir + "hvbsWeb/"
+#define DAS_BUTTON_HVBS_WEB_SRC m_PrefixAkaHomeDir + "hvbsWebSrc/"
+//#define DAS_BUTTON_TEMP_EXTRACT_OLD_UNVERSIONED_ARCHIVE_EASY_TREE
+#define DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE \
+                                DAS_BUTTON_HVBS_WEB_SRC "oldUnversionedArchive"
+#define DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE \
+                                DAS_BUTTON_HVBS_WEB_SRC "semiOldSemiUnversionedArchive"
 
 #define DAS_BUTTON_DEFAULT_COPYRIGHT_HEADER_RELATIVE_PATH "../../d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt"
 
@@ -18,7 +26,7 @@ DasButton::DasButton(QObject *parent)
 {
     //copyright header un-and-re-prepending
     m_FileExtensionsWithCstyleComments << "c" << "cpp" << "h" << "java" << "cs"; //h would be included, but since not dpl yet is not
-    m_FileExtensionsWithSimpleHashStyleComments << "pro" << "asm" << "s";
+    m_FileExtensionsWithSimpleHashStyleComments << "pro" << "asm" << "s" << "sh";
     m_FileExtensionsWithPhpStyleComments << "php" << "phps";
     m_FileExtensionsWithNoComments << "txt";
     m_FileExtensionsWithXmlStyleComments << "svg";
@@ -131,33 +139,25 @@ bool DasButton::extractArchive()
     emit o("extractArchive complete");
     return true;
 }
-bool DasButton::moveSomeStuffFromExtractedArchive()
+bool DasButton::moveOldAndSemiOldArchivesFromTempExtractArea()
 {
-    QDir dumbDir(DAS_BUTTON_HVBS_WEB);
-    if(!dumbDir.mkpath(DAS_BUTTON_HVBS_WEB))
+    QDir dumbDir(DAS_BUTTON_HVBS_WEB_SRC);
+    if(!dumbDir.mkpath(DAS_BUTTON_HVBS_WEB_SRC))
     {
-        emit e("failed to make dir: " + DAS_BUTTON_HVBS_WEB);
+        emit e("failed to make dir: " + DAS_BUTTON_HVBS_WEB_SRC);
         return false;
     }
-    if(!myRename(DAS_BUTTON_TEMP_EXTRACT_DIR "data/oldUnversionedArchive", DAS_BUTTON_HVBS_WEB "oldUnversionedArchive"))
+    if(!myRename(DAS_BUTTON_TEMP_EXTRACT_DIR "data/oldUnversionedArchive", DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE))
         return false;
-
-    //TODOreq: just molest instead?
-    //if(!myRename(DAS_BUTTON_TEMP_EXTRACT_DIR "data/oldUnversionedArchiveEasyTreeHashFile.txt", DAS_BUTTON_HVBS_WEB + "oldUnversionedArchive/oldUnversionedArchiveEasyTreeHashFile.txt")) return false;
-
-    if(!myRename(DAS_BUTTON_TEMP_EXTRACT_DIR "data/semiOldSemiUnversionedArchive", DAS_BUTTON_HVBS_WEB "semiOldSemiUnversionedArchive"))
+    if(!myRename(DAS_BUTTON_TEMP_EXTRACT_DIR "data/semiOldSemiUnversionedArchive", DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE))
         return false;
-
-    //TODOreq: semiOldSemiUnversionedArchive easy tree file as well
-
-    if(!myRename(DAS_BUTTON_TEMP_EXTRACT_DIR "data/scan2013", DAS_BUTTON_HVBS_WEB "scan2013")) //TODOreq: no timestamps, need to gen i guess (fuck accuracy in this case?)
-        return false;
-
+    //if(!myRename(DAS_BUTTON_TEMP_EXTRACT_DIR "data/scan2013", DAS_BUTTON_HVBS_WEB "scan2013")) //TODOreq: no timestamps, need to gen i guess (fuck accuracy in this case?)
+        //return false;
     return true;
 }
 bool DasButton::unPrependCopyrightHeader()
 {
-    QDirIterator dirIterator(DAS_BUTTON_HVBS_WEB, (QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories);
+    QDirIterator dirIterator(DAS_BUTTON_HVBS_WEB_SRC, (QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories);
     QFileInfo copyrightHeaderFileInfo(m_FilepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater);
     const QString &copyrightHeaderFilenameOnly = copyrightHeaderFileInfo.fileName();
 
@@ -206,9 +206,54 @@ bool DasButton::unPrependCopyrightHeader()
     }
     return true;
 }
-bool DasButton::convertEasyTreeToSimplifiedLastModifiedTimestampsAndThenMolestThoseDirsAfterFixingFilenameShitz()
+bool DasButton::molestUsingEasyTreeFilesWhileAccountingForCompressedFilenameChanges()
 {
-    //cursor was here TODO LEFT OFF
+    //OT: sometimes the fastest (not easiest) way to the top of a mountain is to go straight up the side of it, ignoring any flatter/easier paths you cross in the process
+
+    if(!myHackyMolestUsingEasyTreeFile(DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE, DAS_BUTTON_TEMP_EXTRACT_DIR "data/oldUnversionedArchiveEasyTreeHashFile.txt"))
+        return false;
+    if(!myHackyMolestUsingEasyTreeFile(DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE, DAS_BUTTON_TEMP_EXTRACT_DIR "data/semiOldSemiUnversionedArchiveEasyTreeHashFile.txt"))
+        return false;
+    return true;
+}
+bool DasButton::myHackyMolestUsingEasyTreeFile(const QString &dirCorrespondingToEasyTreeFile, const QString &easyTreeFile)
+{
+    LastModifiedDateHeirarchyMolester easyTreeMolester;
+    connect(&easyTreeMolester, SIGNAL(d(QString)), this, SIGNAL(o(QString)));
+    if(!easyTreeMolester.loadFromEasyTreeFile(dirCorrespondingToEasyTreeFile, easyTreeFile, true))
+        return false;
+    easyTreeMolester.hack_AppendStringOntoFilesInInternalTablesWithAnyOfTheseExtensions(m_VideoExtensions, ".LLQ.webm");
+    easyTreeMolester.hack_AppendStringOntoFilesInInternalTablesWithAnyOfTheseExtensions(m_AudioExtensions, ".LLQ.opus");
+    easyTreeMolester.hack_AppendStringOntoFilesInInternalTablesWithAnyOfTheseExtensions(m_SpecialCaseRawAudioExtensions, ".LLQ.opus");
+    easyTreeMolester.hack_AppendStringOntoFilesInInternalTablesWithAnyOfTheseExtensions(m_ImageExtensions, ".LLQ.webp");
+    if(!easyTreeMolester.molestUsingInternalTables())
+        return false;
+    return true;
+}
+bool DasButton::makeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives()
+{
+    if(!myHackyMakeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives(DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE))
+        return false;
+    if(!myHackyMakeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives(DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE))
+        return false;
+    return true;
+}
+bool DasButton::myHackyMakeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives(const QString &absoluteFilePathToTree)
+{
+    QString absoluteFilePathToTreeWithSlashAppended = appendSlashIfNeeded(absoluteFilePathToTree);
+    EasyTree lastModifiedTimestampsFileMaker; //funny how the namings on the above molester and this tree'er are backwards!
+    QString lastModifiedTimestampsFilenameOnly(".lastModifiedTimestamps");
+    QFile lastModifiedTimestampsFile(absoluteFilePathToTreeWithSlashAppended + lastModifiedTimestampsFilenameOnly);
+    if(!lastModifiedTimestampsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+    {
+        emit e("failed to open for writing: " + absoluteFilePathToTreeWithSlashAppended + lastModifiedTimestampsFilenameOnly);
+        return false;
+    }
+    QStringList filenameIgnoreList;
+    filenameIgnoreList << lastModifiedTimestampsFilenameOnly;
+    QStringList emptyIgnoreList;
+    lastModifiedTimestampsFileMaker.generateTreeText(absoluteFilePathToTreeWithSlashAppended, &lastModifiedTimestampsFile, EasyTree::DontCalculateMd5Sums /*does this even work with new simplified format? idk lol probably yes and/or undefined ;-P*/, &emptyIgnoreList, &filenameIgnoreList, &emptyIgnoreList, &emptyIgnoreList, EasyTree::SimplifiedLastModifiedTimestamps); //this never fails ;-)
+    return true;
 }
 bool DasButton::fileExtensionIsInListOfExtensions(const QString &extension, const QStringList &extensionsList)
 {
@@ -222,7 +267,7 @@ bool DasButton::fileExtensionIsInListOfExtensions(const QString &extension, cons
 bool DasButton::replaceInFile(const QString &absoluteFilePath, const QString &stringToReplace, const QString &stringToReplaceWith)
 {
     QFile lehFile(absoluteFilePath);
-    bool ret = replaceInIOdevice(&lehFile);
+    bool ret = replaceInIOdevice(&lehFile, stringToReplace, stringToReplaceWith);
     if(!ret)
     {
         emit e("failed to replace string in file: " + absoluteFilePath);
@@ -237,7 +282,11 @@ bool DasButton::replaceInIOdevice(QIODevice *ioDeviceToReplaceStringIn, const QS
         emit e("failed to open file for reading for string replacing" /*+ absoluteFilePath*/);
         return false;
     }
-    QString fileContents = ioDeviceToReplaceStringIn->readAll();
+    QString fileContents;
+    {
+        QTextStream readTextStream(ioDeviceToReplaceStringIn);
+        fileContents = readTextStream.readAll();
+    }
     ioDeviceToReplaceStringIn->close();
 
     //replace
@@ -249,7 +298,10 @@ bool DasButton::replaceInIOdevice(QIODevice *ioDeviceToReplaceStringIn, const QS
         emit e("failed to open file for writing for string replacing" /*+ absoluteFilePath*/);
         return false;
     }
-    ioDeviceToReplaceStringIn->write(fileContents);
+    {
+        QTextStream writeTextStream(ioDeviceToReplaceStringIn);
+        writeTextStream << fileContents;
+    }
     ioDeviceToReplaceStringIn->close();
     return true;
 }
@@ -268,10 +320,19 @@ void DasButton::press(const QString &prefixAkaHomeDir, const QString &filepathOf
 
     if(!extractArchive())
         return;
-    if(!moveSomeStuffFromExtractedArchive())
+    emit o("archive extracted");
+    if(!moveOldAndSemiOldArchivesFromTempExtractArea())
         return;
+    emit o("moved old and semi-old archives out of extracted temp area");
     if(!unPrependCopyrightHeader())
         return;
-    if(!convertEasyTreeToSimplifiedLastModifiedTimestampsAndThenMolestThoseDirsAfterFixingFilenameShitz())
+    emit o("copyright header un-prepended from old and semi-old archives");
+    if(!molestUsingEasyTreeFilesWhileAccountingForCompressedFilenameChanges())
         return;
+    emit o("old and semi-old archives molested");
+    if(!makeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives())
+        return;
+    emit o("old and semi-old archives last modified timestamps files created");
+
+    //TODOreq: header prepend on text files (not binary/text split yet, so.... binaries need to be copied to "download" dir (meh only tiny bit wasteful fuck it)). applies to old/semiOld/autobackup ofc
 }

@@ -48,6 +48,7 @@ public:
     explicit ObjectOnThreadGroup(QObject *parentContainingReadyForConnectionsSlots) //TODOoptional: could allow parent to be different from notifyee, and could even support overloads for addObjectOnThread so that each object has a unique notifyee (and the overload without a notifyee just uses the "all objects ready for connections" notifyee. would be best to use the new connect overloads for compile time checking that notifyee stuff is set up correctly (would maybe even be worth littering ifdef qt > 4 etc for backward compatibility). but actually since we only know it's a qobject that might not work anyways (without templating hacks (gl;hf))
         : QObject(parentContainingReadyForConnectionsSlots)
         , m_ObjectsLeftToSynchronize(0)
+        , m_DoneAddingObjectsOnThreads(false)
     { }
     ~ObjectOnThreadGroup()
     {
@@ -66,24 +67,35 @@ public:
     {
         ObjectOnThreadGroupPrivateSingleThreadBase *singleThreadForObject = new ObjectOnThreadGroupPrivateSingleThread<ObjectType>(slotOnParentToBeNotifiedWhenObjectIsReadyForConnections, this);
         connect(singleThreadForObject, SIGNAL(objectIsInstantiatedOnThread(QObject*,const char*)), this, SLOT(handleOneObjectIsInstantiatedOnThread(QObject*,const char*)));
+        singleThreadForObject->start();
         m_ObjectOnThreadsToQuitWhenDestructorIsCalled.push(singleThreadForObject);
         ++m_ObjectsLeftToSynchronize;
-
-        singleThreadForObject->start(); //TODOoptional: right now all the ObjectTypes have to be added to thread manager in one unit of execution, otherwise allObjectsOnThreadsReadyForConnections may be emitted multiple times. i could fix that by using an optional delayed start. but perhaps delayed start (manual start) should be the default since it's safer? still starting here/now is faster/etc
+    }
+    void doneAddingObjectsOnThreads()
+    {
+        m_DoneAddingObjectsOnThreads = true;
+        emitAllObjectsOnThreadsInGroupReadyForConnectionsIfDoneAddingToGroupAndNoObjectsLeftToSynchronize();
     }
 private:
     QStack<ObjectOnThreadGroupPrivateSingleThreadBase*> m_ObjectOnThreadsToQuitWhenDestructorIsCalled; //quit but not wait :-P (async). TODOreq: perhaps an "all have finished" signal... but idk i kinda like having it all be transparent in destruction phase
     quint32 m_ObjectsLeftToSynchronize;
+    bool m_DoneAddingObjectsOnThreads;
+
+    inline void emitAllObjectsOnThreadsInGroupReadyForConnectionsIfDoneAddingToGroupAndNoObjectsLeftToSynchronize()
+    {
+        if(m_DoneAddingObjectsOnThreads && m_ObjectsLeftToSynchronize == 0)
+        {
+            emit allObjectsOnThreadsInGroupReadyForConnections();
+        }
+    }
 signals:
     void allObjectsOnThreadsInGroupReadyForConnections();
 private slots:
     void handleOneObjectIsInstantiatedOnThread(QObject *objectOnThread, const char *slotOnParentToBeNotifiedWhenObjectIsReadyForConnections)
     {
         QMetaObject::invokeMethod(parent(), slotOnParentToBeNotifiedWhenObjectIsReadyForConnections, Q_ARG(QObject*, objectOnThread));
-        if(--m_ObjectsLeftToSynchronize == 0)
-        {
-            emit allObjectsOnThreadsInGroupReadyForConnections();
-        }
+        --m_ObjectsLeftToSynchronize;
+        emitAllObjectsOnThreadsInGroupReadyForConnectionsIfDoneAddingToGroupAndNoObjectsLeftToSynchronize();
     }
 };
 

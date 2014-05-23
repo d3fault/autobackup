@@ -485,6 +485,27 @@ void LastModifiedDateHeirarchyMolester::removeTimestampFilesFromTablesIfTheySome
         m_TimestampsByAbsoluteFilePathHash_Files.remove(timestampFilePath); //don't care if it doesn't find the key
     }
 }
+void LastModifiedDateHeirarchyMolester::hack_AppendStringOntoFilesInInternalTablesWithAnyOfTheseExtensions(QList<QString> filenamesToAppendTextTo, const QString &stringToAppendToFilesWithMatchingExtensions)
+{
+    QList<QString> listOfKeysToReplace;
+    QHashIterator<QString, QDateTime> filesIterator(m_TimestampsByAbsoluteFilePathHash_Files);
+    while(filesIterator.hasNext())
+    {
+        filesIterator.next();
+        QFileInfo currentFileInfo(filesIterator.key());
+        if(filenamesToAppendTextTo.contains(currentFileInfo.suffix().toLower()))
+        {
+            listOfKeysToReplace.append(filesIterator.key());
+        }
+    }
+    QListIterator<QString> replaceIterator(listOfKeysToReplace);
+    while(replaceIterator.hasNext())
+    {
+        const QString &keyToReplace = replaceIterator.next();
+        const QDateTime &existingDateTimeToReInsert = m_TimestampsByAbsoluteFilePathHash_Files.take(keyToReplace);
+        m_TimestampsByAbsoluteFilePathHash_Files.insert(keyToReplace + stringToAppendToFilesWithMatchingExtensions, existingDateTimeToReInsert);
+    }
+}
 bool LastModifiedDateHeirarchyMolester::doSharedInitBetweenXmlAndEasyTree(const QString &directoryHeirarchyCorrespingToTimestampFile, const QString &timestampFilePath)
 {
     m_TimestampsByAbsoluteFilePathHash_Files.clear();

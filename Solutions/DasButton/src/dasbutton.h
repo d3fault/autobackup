@@ -38,9 +38,12 @@ private:
 
     bool readInCopyrightHeader();
     bool extractArchive();
-    bool moveSomeStuffFromExtractedArchive();
+    bool moveOldAndSemiOldArchivesFromTempExtractArea();
     bool unPrependCopyrightHeader();
-    bool convertEasyTreeToSimplifiedLastModifiedTimestampsAndThenMolestThoseDirsAfterFixingFilenameShitz();
+    bool molestUsingEasyTreeFilesWhileAccountingForCompressedFilenameChanges();
+    bool myHackyMolestUsingEasyTreeFile(const QString &dirCorrespondingToEasyTreeFile, const QString &easyTreeFile);
+    bool makeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives();
+    bool myHackyMakeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives(const QString &absoluteFilePathToTree);
 
     bool fileExtensionIsInListOfExtensions(const QString &extension, const QStringList &extensionsList);
     bool replaceInFile(const QString &absoluteFilePath, const QString &stringToReplace, const QString &stringToReplaceWith);
@@ -53,6 +56,7 @@ private:
             emit e("failed to rename: '" + renameSrc + "' to '" + renameDest + "'");
             return false;
         }
+        return true;
     }
 signals:
     void o(const QString &);
