@@ -2,10 +2,9 @@
 
 //#define INSERT_ON_SECOND_LINE_HACK 1
 
-BulkFileTextPrepender::BulkFileTextPrepender(QObject *parent) :
-    QObject(parent)
-{
-}
+BulkFileTextPrepender::BulkFileTextPrepender(QObject *parent)
+    : QObject(parent)
+{ }
 //"what" should already be lowercase, and so should all the extensions
 bool BulkFileTextPrepender::filenameHasOneOfTheseExtensions(const QString &filename, const QStringList &extensions)
 {
@@ -35,7 +34,11 @@ bool BulkFileTextPrepender::prependTextToIoDevice(QIODevice *ioDeviceToPrependTe
     QTextStream textStream(ioDeviceToPrependTextTo);
 #ifdef INSERT_ON_SECOND_LINE_HACK //bash and svg/xml files -- ASSUMES > 1 line
     QString firstLine = textStream.readLine();
-    textStream.seek(0);
+    if(!textStream.seek(0))
+    {
+        emit d("failed to seek to beginning of file");
+        return false;
+    }
     QString allFileData = textStream.readAll();
     QString allFileDataExceptFirstLine = allFileData.right(allFileData.length() - firstLine.length());
 
@@ -65,7 +68,6 @@ void BulkFileTextPrepender::prependStringToBeginningOfAllTextFilesInDir(const QS
 }
 void BulkFileTextPrepender::prependStringToBeginningOfAllTextFilesInDir(const QString &dir, const QString &filenameContainingTextToPrepend, const QStringList &filenameExtensionsToPrependTo, QDir::Filters dirFilters, QDirIterator::IteratorFlags dirIteratorFlags)
 {
-
     QFile textToPrependFile(filenameContainingTextToPrepend);
     if(!textToPrependFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {

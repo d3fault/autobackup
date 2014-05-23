@@ -16,10 +16,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    dasbutton.cpp
+    dasbutton.cpp \
+    dasbuttoncli.cpp
 
 HEADERS += \
-    dasbutton.h
+    dasbutton.h \
+    dasbuttoncli.h
 
 #molesting via old easy tree format
 include(../../../GloballySharedClasses/easytreehashitem.pri)

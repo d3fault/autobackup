@@ -1,0 +1,7 @@
+CTRL+SHIFT+R in Qt Creator.... on crack
+Should rename all usages in all projects in all [submodule] repositories on a developer's hard drive (or "autobackup" etc folder).
+HOWEVER, when doing the symbol rename, you should be prompted as to whether or not you want it to apply to projects linking to submodules that are pointing to earlier revisions.
+
+If they select yes, the submodule should be intelligently updated so that the only thing that changes is the symbol (the code is still FUNCTIONALLY equivalent).
+
+They should even be given the option to select whether or not to change the symbol on a per-project (rather, per-submodule-link) basis. Sometimes a lib changes drastically over a few commits so that symbol rename makes sense (but does not for the earlier commits). I guess you would have a slider selecting which revisions "before" to leave the symbol un-renamed and "after" to rename... and when you move that slider different projects (submodule-links) are visualized as "changed" or "unchanged" by the rename

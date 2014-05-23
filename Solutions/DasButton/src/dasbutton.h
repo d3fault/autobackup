@@ -31,10 +31,15 @@ private:
     QStringList m_FileExtensionsWithXmlStyleComments;
     //QStringList m_FileExtensionsWithHashStyleComments_AL <-- if just doing str replacing, regular hash style comments will do these
 
+    QStringList m_HeaderExtensions;
+    QStringList m_HeaderAllRightsReservedVariants;
+
     QStringList m_VideoExtensions;
     QStringList m_SpecialCaseRawAudioExtensions;
     QStringList m_AudioExtensions;
     QStringList m_ImageExtensions;
+
+    bool pressPrivate(const QString &prefixAkaHomeDir, const QString &filepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater);
 
     bool readInCopyrightHeader();
     bool extractArchive();
@@ -59,6 +64,7 @@ private:
         return true;
     }
 signals:
+    void pressFinished(bool pressWasSuccessful);
     void o(const QString &);
     void e(const QString &);
 public slots:

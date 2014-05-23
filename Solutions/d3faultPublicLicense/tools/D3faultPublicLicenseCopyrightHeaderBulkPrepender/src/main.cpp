@@ -1,12 +1,12 @@
 #include <QCoreApplication>
 
-#include "dasbuttoncli.h"
+#include "d3faultpubliclicensecopyrightheaderbulkprependercli.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    DasButtonCli cli;
+    D3faultPublicLicenseCopyrightHeaderBulkPrependerCli cli;
     Q_UNUSED(cli)
 
     return a.exec();

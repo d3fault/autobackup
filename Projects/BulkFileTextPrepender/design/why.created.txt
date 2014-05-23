@@ -1,3 +1,4 @@
+This is an abstract version of autobackup/Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender that allows more specification (D3faultPublicLicenseCopyrightHeaderBulkPrepender is hardcoded as fuck)
 Created to insert autobackup/Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt , in various formats, in the beginning of files of certain types:
 
 c/cxx/cpp/cs/java = c style comments

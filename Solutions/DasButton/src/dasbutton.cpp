@@ -12,12 +12,12 @@
 
 #define DAS_BUTTON_DEFAULT_HOME_DIR "/home/user/"
 #define DAS_BUTTON_TEMP_EXTRACT_DIR m_PrefixAkaHomeDir + "temp/extractDirDELETEMELATERFUCKITFORNOW/"
-#define DAS_BUTTON_HVBS_WEB_SRC m_PrefixAkaHomeDir + "hvbsWebSrc/"
+#define DAS_BUTTON_HVBS_WEB_SRC m_PrefixAkaHomeDir + "hvbs/webSrc/"
 //#define DAS_BUTTON_TEMP_EXTRACT_OLD_UNVERSIONED_ARCHIVE_EASY_TREE
 #define DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE \
-                                DAS_BUTTON_HVBS_WEB_SRC "oldUnversionedArchive"
+                                DAS_BUTTON_HVBS_WEB_SRC "oldUnversionedArchivePerm" //if changing these dirs, update postLaunch script
 #define DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE \
-                                DAS_BUTTON_HVBS_WEB_SRC "semiOldSemiUnversionedArchive"
+                                DAS_BUTTON_HVBS_WEB_SRC "semiOldSemiUnversionedArchivePerm"
 
 #define DAS_BUTTON_DEFAULT_COPYRIGHT_HEADER_RELATIVE_PATH "../../d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt"
 
@@ -30,6 +30,8 @@ DasButton::DasButton(QObject *parent)
     m_FileExtensionsWithPhpStyleComments << "php" << "phps";
     m_FileExtensionsWithNoComments << "txt";
     m_FileExtensionsWithXmlStyleComments << "svg";
+
+    m_HeaderExtensions << "h" << "hpp";
 
 
     //filenames that will not match exactly the timestamp entry :-/
@@ -65,6 +67,37 @@ DasButton::DasButton(QObject *parent)
     m_ImageExtensions.append("tif");
     m_ImageExtensions.append("tiff");
 }
+bool DasButton::pressPrivate(const QString &prefixAkaHomeDir, const QString &filepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater)
+{
+    m_PrefixAkaHomeDir = appendSlashIfNeeded(prefixAkaHomeDir);
+    if(prefixAkaHomeDir.isEmpty())
+        m_PrefixAkaHomeDir = DAS_BUTTON_DEFAULT_HOME_DIR;
+
+    m_FilepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater = filepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater;
+    if(filepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater.isEmpty())
+        m_FilepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater = DAS_BUTTON_DEFAULT_COPYRIGHT_HEADER_RELATIVE_PATH;
+
+    if(!readInCopyrightHeader())
+        return false;
+
+    if(!extractArchive())
+        return false;
+    emit o("archive extracted");
+    if(!moveOldAndSemiOldArchivesFromTempExtractArea())
+        return false;
+    emit o("moved old and semi-old archives out of extracted temp area");
+    if(!unPrependCopyrightHeader())
+        return false;
+    emit o("copyright header un-prepended from old and semi-old archives");
+    if(!molestUsingEasyTreeFilesWhileAccountingForCompressedFilenameChanges())
+        return false;
+    emit o("old and semi-old archives molested");
+    if(!makeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives())
+        return false;
+    emit o("old and semi-old archives last modified timestamps files created");
+
+    return true;
+}
 bool DasButton::readInCopyrightHeader()
 {
     {
@@ -99,6 +132,11 @@ bool DasButton::readInCopyrightHeader()
         m_CopyrightHeader_WithXmlStyleComments.replace("--", "__");
     }
     while(m_CopyrightHeader_WithXmlStyleComments != tempForComparingReplacementProgress);
+    QString temp = m_CopyrightHeader_WithXmlStyleComments;
+    m_CopyrightHeader_WithXmlStyleComments = "<!--\n" + temp + "\n-->\n\n";
+
+    m_HeaderAllRightsReservedVariants << "/*\nThis file is part of the d3fault launch distribution\nCopyright (C) 2014 Steven Curtis Wieler II\nAll Rights Reserved\n*/\n\n";
+    //way better in hindsight: TODOoptional (needs unprepend-variants-and-blah-just-busywork): m_HeaderAllRightsReservedVariants << "/*\nThis file is part of the d3fault's brain\nCopyright (C) 2014 Steven Curtis Wieler II\nAll Rights Reserved\n*/\n\n";
 
     return true;
 }
@@ -201,6 +239,15 @@ bool DasButton::unPrependCopyrightHeader()
                 return false;
             if(!replaceInFile(currentEntry.absoluteFilePath(), m_CopyrightHeader_WithXmlStyleComments, ""))
                 return false;
+            continue;
+        }
+        if(fileExtensionIsInListOfExtensions(ext, m_HeaderExtensions))
+        {
+            foreach(const QString &headerAllRightsReservedVariant, m_HeaderAllRightsReservedVariants)
+            {
+                if(!replaceInFile(currentEntry.absoluteFilePath(), headerAllRightsReservedVariant, ""))
+                    return false;
+            }
             continue;
         }
     }
@@ -307,32 +354,5 @@ bool DasButton::replaceInIOdevice(QIODevice *ioDeviceToReplaceStringIn, const QS
 }
 void DasButton::press(const QString &prefixAkaHomeDir, const QString &filepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater)
 {
-    m_PrefixAkaHomeDir = appendSlashIfNeeded(prefixAkaHomeDir);
-    if(prefixAkaHomeDir.isEmpty())
-        m_PrefixAkaHomeDir = DAS_BUTTON_DEFAULT_HOME_DIR;
-
-    m_FilepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater = filepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater;
-    if(filepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater.isEmpty())
-        m_FilepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater = DAS_BUTTON_DEFAULT_COPYRIGHT_HEADER_RELATIVE_PATH;
-
-    if(!readInCopyrightHeader())
-        return;
-
-    if(!extractArchive())
-        return;
-    emit o("archive extracted");
-    if(!moveOldAndSemiOldArchivesFromTempExtractArea())
-        return;
-    emit o("moved old and semi-old archives out of extracted temp area");
-    if(!unPrependCopyrightHeader())
-        return;
-    emit o("copyright header un-prepended from old and semi-old archives");
-    if(!molestUsingEasyTreeFilesWhileAccountingForCompressedFilenameChanges())
-        return;
-    emit o("old and semi-old archives molested");
-    if(!makeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives())
-        return;
-    emit o("old and semi-old archives last modified timestamps files created");
-
-    //TODOreq: header prepend on text files (not binary/text split yet, so.... binaries need to be copied to "download" dir (meh only tiny bit wasteful fuck it)). applies to old/semiOld/autobackup ofc
+    emit pressFinished(pressPrivate(prefixAkaHomeDir, filepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater));
 }
