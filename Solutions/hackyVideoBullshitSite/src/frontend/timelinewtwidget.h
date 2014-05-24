@@ -55,6 +55,15 @@ private:
     void setMainContent(WWidget *mainContent);
 
     WString longLongTimestampToWString(long long timestamp);
+
+    inline LastModifiedTimestampsAndPaths* myQt4and5AtomicPointerGet()
+    {
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+        return m_LastModifiedTimestampsAndPaths->loadAcquire();
+#else
+        return *m_LastModifiedTimestampsAndPaths;
+#endif
+    }
 };
 
 #endif // TIMELINEWTWIDGET_H

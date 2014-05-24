@@ -30,7 +30,6 @@ HEADERS += \
     backend/adimagewresource.h \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
     ../../../GloballySharedClasses/image/nonanimatedimagheaderchecker.h \
-    ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h \
     backend/videosegmentsimporterfolderwatcher.h \
     frontend/directorybrowsingwtwidget.h \
     frontend/timelinewtwidget.h \

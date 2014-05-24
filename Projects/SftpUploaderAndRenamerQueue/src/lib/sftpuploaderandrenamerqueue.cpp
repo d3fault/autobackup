@@ -355,7 +355,11 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessFinished(int exitCode, QProce
 
         //reconnect by starting it again
         emit e("sftp will try to start again in 5 seconds...");
-        QTimer::singleShot(5000, Qt::VeryCoarseTimer, this, SLOT(startSftpProcessInBatchMode()));
+        QTimer::singleShot(5000
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+                           , Qt::VeryCoarseTimer
+#endif
+                           , this, SLOT(startSftpProcessInBatchMode()));
     }
     else if(m_SftpUploaderAndRenamerQueueState == SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfullyUnlessDc)
     {

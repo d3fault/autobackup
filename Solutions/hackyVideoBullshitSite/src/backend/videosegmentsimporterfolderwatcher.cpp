@@ -194,11 +194,25 @@ void VideoSegmentsImporterFolderWatcher::handleSftpUploaderAndRenamerQueueStarte
     QStringList oldDirectories = m_DirectoryWatcher->directories();
     if(!oldDirectories.isEmpty())
         m_DirectoryWatcher->removePaths(m_DirectoryWatcher->directories()); //clear out old stuffz
-    if(!m_DirectoryWatcher->addPath(m_VideoSegmentsImporterFolderToWatchWithSlashAppended))
+
+//addPath returns void in 4.8, bool in 5.x
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+    if(!
+#endif
+            m_DirectoryWatcher->addPath(m_VideoSegmentsImporterFolderToWatchWithSlashAppended)
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+            )
+#else
+            ;
+#endif
+
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     {
         emit e("VideoSegmentsImporterFolderWatcher: failed to add '" + m_VideoSegmentsImporterFolderToWatchWithSlashAppended + "' to filesystem watcher");
         return;
     }
+#endif
+
     emit o("VideoSegmentsImporterFolderWatcher started");
 
     //check for any segments that were uploaded while this app wasn't running (if ffmpeg segment uploader was started first). this isn't a big deal, just an optimization really. it would still handle all the old ones once a new one is seen

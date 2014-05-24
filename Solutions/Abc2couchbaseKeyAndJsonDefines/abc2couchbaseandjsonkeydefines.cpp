@@ -1,6 +1,8 @@
 #include "abc2couchbaseandjsonkeydefines.h"
 
-#include "d3faultscouchbaseshared.h"
+#ifndef D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR
+#define D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR "_"
+#endif
 
 const std::string adSpaceCampaignKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex)
 {

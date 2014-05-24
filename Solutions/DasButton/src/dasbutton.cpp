@@ -100,6 +100,7 @@ bool DasButton::pressPrivate(const QString &prefixAkaHomeDir, const QString &fil
 }
 bool DasButton::readInCopyrightHeader()
 {
+    //TODOoptional: if ever un-prepending on autobackup (or text once merged), an exception needs to be made for the copyright header filename so it isn't unprepended (but actually, so long as plaintext has extra newlines, it won't be unprepended!)
     {
         QFile copyrightHeaderFile(m_FilepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater);
         if(!copyrightHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -150,7 +151,7 @@ bool DasButton::extractArchive()
         return false;
     }
     QStringList p7zipProcessArgs;
-    p7zipProcessArgs << "x" << ("-o" + extractDir) << "/home/rtorrentuser/containers/dist/MyBrain-PublicFiles.7z.001";
+    p7zipProcessArgs << "x" << ("-o" + extractDir) << "/home/rtorrentuser/containers/dist/MyBrain-PublicFiles/MyBrain-PublicFiles.7z.001";
     QProcess p7zipProcess;
     p7zipProcess.start("/usr/bin/7za", p7zipProcessArgs);
     if(!p7zipProcess.waitForStarted())

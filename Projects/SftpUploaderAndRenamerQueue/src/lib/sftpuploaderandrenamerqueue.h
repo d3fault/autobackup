@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQueue>
 #include <QProcess>
+#include <QPair>
 
 class QTextStream;
 class QTimer;

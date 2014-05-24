@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QListIterator>
+#include <QTextStream>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -163,7 +164,11 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
             QMetaObject::invokeMethod(this, "updateSubscribers", Qt::QueuedConnection);
         }
 
-        QTimer::singleShot(((5*60)*1000) /*5 mins*/, Qt::VeryCoarseTimer, this, SLOT(expireTimerTimedOut()));
+        QTimer::singleShot(((5*60)*1000) /*5 mins*/
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+                           , Qt::VeryCoarseTimer
+#endif
+                           , this, SLOT(expireTimerTimedOut()));
         reply->deleteLater();
         return;
     }
@@ -199,8 +204,11 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
     QMetaObject::invokeMethod(this, "updateSubscribers", Qt::QueuedConnection); //free dat stack memory from above first kthx :-P
 
     long long expireDateTimeMSecs = (m_CurrentAdExpirationDateTime*1000)-30;
-    QTimer::singleShot(static_cast<int>(expireDateTimeMSecs - QDateTime::currentMSecsSinceEpoch()), Qt::VeryCoarseTimer, this, SLOT(expireTimerTimedOut()));
-
+    QTimer::singleShot(static_cast<int>(expireDateTimeMSecs - QDateTime::currentMSecsSinceEpoch())
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+                       , Qt::VeryCoarseTimer
+#endif
+                       , this, SLOT(expireTimerTimedOut()));
     reply->deleteLater();
 }
 void AdImageGetAndSubscribeManager::updateSubscribers()
@@ -283,5 +291,9 @@ void AdImageGetAndSubscribeManager::updateTenAndScheduleA30msTimeoutUntilAllEmpt
     }
 
     //done with this 10, schedule timer calling self .3 seconds later
-    QTimer::singleShot(300, Qt::CoarseTimer, this, SLOT(updateTenAndScheduleA30msTimeoutUntilAllEmpty()));
+    QTimer::singleShot(300
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+                       , Qt::CoarseTimer
+#endif
+                       , this, SLOT(updateTenAndScheduleA30msTimeoutUntilAllEmpty()));
 }

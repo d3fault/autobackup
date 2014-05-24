@@ -122,7 +122,7 @@ TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
 //if redirectToRandomPointInTimeline takes more than 5 minutes to execute (rofl), we will segfault. TODOoptimization: the value 5 minutes can be shrunk to some value that is related to the average execution times (worst case scenario lookups (so... last in list? idfk)) when the server is running at maximum connection load (10k). 5 minutes is probably a ridiculously high estimate. the amount of connections needed to slow the execution down to 5 minutes is ridiculous, especially considering it would reflect the user experience of waiting 5 minutes for a page load (in which case scale horizontal is warranted)
 void TimeLineWtWidget::redirectToRandomPointInTimeline()
 {
-    LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = m_LastModifiedTimestampsAndPaths->loadAcquire(); //pointer only guaranteed to be valid for minimum 5 minutes after the loadAquire (rofl so ugly hack but idgaf), so never keep it around, always load again <3
+    LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = myQt4and5AtomicPointerGet(); //pointer only guaranteed to be valid for minimum 5 minutes after the loadAquire (rofl so ugly hack but idgaf), so never keep it around, always load again <3
     static unsigned int randomSeed = 0; //not thread safe and VERY likely to get weird undefined values, but actually it doesn't matter at all since it's just being used for a qsrand call (all undefined results would still fall within the range of the unsigned int, and hell i could even argue that the thread unsafety actually ADDS to the randomness muahahaha), fuck the police :). this is without a doubt my favorite hack i've ever done... so ugly and yet still "safe" in an awesome way. come to think of it, i don't even need the datetime or raw unique id shit anymore...
     WApplication *wApplication = WApplication::instance();
     qsrand(++randomSeed);
@@ -169,7 +169,7 @@ void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQ
     }
     else //not video segment hack (REGULAR)
     {
-        LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = m_LastModifiedTimestampsAndPaths->loadAcquire();
+        LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = myQt4and5AtomicPointerGet();
         if(!sortedLastModifiedTimestamps)
         {
             new WText("500 internal server error", m_ContentsContainer);
@@ -291,7 +291,7 @@ void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQ
     const std::string &mimeType = embedBasedOnFileExtensionAndReturnMimeType(absolutePath);
 
     WFileResource *downloadResource = new WFileResource(mimeType, absolutePath.toStdString(), downloadButton);
-    downloadResource->suggestFileName(myBrainItemFilenameOnlyStdString, WResource::Attachment);
+    downloadResource->suggestFileName(myBrainItemFilenameOnlyStdString, WResource::Attachment); //TODOreq: when setting up view/download differences, make an exception for AirborneVideos to still download from /view/
     downloadButton->setResource(downloadResource);
 }
 void TimeLineWtWidget::embedPicture(const string &mimeType, const QString &filename)

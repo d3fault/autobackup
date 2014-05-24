@@ -2,6 +2,7 @@
 exit 1
 
 ##asumes qt/git/7za/tmux/boost-sid/wt-compiled already installed on remote server##
+##assumes hvbs compiled and placed in /home/user/hvbs/bin/##
 
 #TODOreq:
 #-video import folder structures
@@ -17,6 +18,9 @@ hvbsWebSrc=$hvbs/webSrc
 oldUnversionedArchiveWebSrcTemp=$hvbsWebSrc/oldUnversionedArchiveTemp
 semiOldSemiUnversionedWebSrcTemp=$hvbsWebSrc/semiOldSemiUnversionedArchiveTemp
 autobackupWebSrcTemp=$hvbsWebSrc/autobackupTemp
+
+hvbsConfigDir=$userHome/.config/HackyVideoBullshitSiteOrganization
+hvbsConfigFile=$hvbsConfigDir/HackyVideoBullshitSite.ini
 
 mkdir -p $oldUnversionedArchiveWebSrcTemp/empty0/view
 ln -s $oldUnversionedArchiveWebSrcTemp/empty0/view $oldUnversionedArchiveWebSrcTemp/empty0/download
@@ -56,11 +60,29 @@ ln -s $semiOldSemiUnversionedWebSrcTemp/semiOldSemiUnversionedArchiveCurrentSyml
 ln -s $autobackupWebSrcTemp/autobackupCurrentSymlink/view $hvbsView/autobackupLatest
 ln -s $autobackupWebSrcTemp/autobackupCurrentSymlink/download $hvbsDownload/autobackupLatest
 
-#TODOreq: configure hvbs before launch
+#configure hvbs as non-propagating node
+mkdir -p $hvbs/incomingVideoScratch/upload
+mkdir $hvbs/incomingVideoScratch/watched
+mkdir -p $hvbs/incomingVideoScratch/yearDayFolderSetup
+mkdir -p $hvbs/web/view/AirborneVideos
+mkdir -p $hvbsConfigDir
+echo "[General]" > $hvbsConfigFile
+echo "AirborneVideoSegmentsBaseDir_aka_videoSegmentsImporterFolderToMoveTo=$hvbs/web/view/AirborneVideos" >> $hvbsConfigFile
+
+#TODOreq: mod hvbs to allow multiple (array in qsettings) dirs-with-timestamp-files
+echo "LastModifiedTimestampsFile=/home/user/autobackup/.lastModifiedTimestamps" >> $hvbsConfigFile
+echo "MyBrainArchiveBaseDir=/home/user/autobackup/" >> $hvbsConfigFile
+echo "NeighborPropagationRemoteDestinationToMoveTo=/dev/null" >> $hvbsConfigFile
+echo "NeighborPropagationRemoteSftpUploadScratchSpace=/dev/null" >> $hvbsConfigFile
+echo "NeighborPropagationUserHostPathComboSftpArg=null@dev.poopybutt" >> $hvbsConfigFile
+echo "SftpProcessPath=/usr/bin/sftp" >> $hvbsConfigFile
+echo "VideoSegmentsImporterFolderToWatch=/home/user/incomingVideoScratch/watched" >> $hvbsConfigFile
+echo "VideoSegmentsImporterFolderYearDayOfYearFoldersScratchSpace=/home/user/incomingVideoScratch/yearDayFolderSetup" >> $hvbsConfigFile
+
 cd $hvbs/bin
 ln -s /usr/local/share/Wt/resources/ resources
 echo "#!/bin/bash" > ./hvbsLauncher.sh
 echo "LD_LIBRARY_PATH=/usr/local/lib ./HackyVideoBullshitSite --docroot \".;/resources\" --http-address 0.0.0.0 --http-port 7777" >> ./hvbsLauncher.sh
 chmod u+x ./hvbsLauncher.sh
-tmux -d -s hvbs './hvbsLauncher.sh'
+tmux new-session -d -s hvbs './hvbsLauncher.sh'
 exit 0
