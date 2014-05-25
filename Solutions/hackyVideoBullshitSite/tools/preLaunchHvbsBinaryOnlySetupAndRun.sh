@@ -68,10 +68,10 @@ mkdir -p $hvbs/web/view/AirborneVideos
 mkdir -p $hvbsConfigDir
 echo "[General]" > $hvbsConfigFile
 echo "AirborneVideoSegmentsBaseDir_aka_videoSegmentsImporterFolderToMoveTo=$hvbs/web/view/AirborneVideos" >> $hvbsConfigFile
+echo "MyBrainArchiveBaseDir=$hvbs/web" >> $hvbsConfigFile
 
 #TODOreq: mod hvbs to allow multiple (array in qsettings) dirs-with-timestamp-files
 echo "LastModifiedTimestampsFile=/home/user/autobackup/.lastModifiedTimestamps" >> $hvbsConfigFile
-echo "MyBrainArchiveBaseDir=/home/user/autobackup/" >> $hvbsConfigFile
 echo "NeighborPropagationRemoteDestinationToMoveTo=/dev/null" >> $hvbsConfigFile
 echo "NeighborPropagationRemoteSftpUploadScratchSpace=/dev/null" >> $hvbsConfigFile
 echo "NeighborPropagationUserHostPathComboSftpArg=null@dev.poopybutt" >> $hvbsConfigFile

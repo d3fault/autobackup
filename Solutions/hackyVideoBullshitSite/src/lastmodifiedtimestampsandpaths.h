@@ -35,5 +35,4 @@ struct LastModifiedTimestampsAndPaths
     //qhash doesn't like std::string :(. QHash<std::string, int> *PathsIndexIntoFlatListHash; //TODOoptimization: a bimap would probably save memory, and might even be faster
 };
 
-
 #endif // LASTMODIFIEDTIMESTAMPSANDPATHS_H

@@ -22,15 +22,33 @@ SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::takeMapOfPaths
     }
     return 0;
 }
+SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps_ButDontSortPaths(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount)
+{
+    newTheMapIfNeeded();
+    clearTheMap();
+    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice);
+    if(itemsCount)
+        *itemsCount = m_TotalItemsCount;
+    return takeMapOfPathsListsSortedByModificationDate();
+}
+SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps_ButDontSortPaths(const QString &lastModifiedTimestampsFilename, int *itemsCount)
+{
+    QFile lastModifiedTimestampsFile(lastModifiedTimestampsFilename, this);
+    if(!lastModifiedTimestampsFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        emit d("failed to open for reading: " + lastModifiedTimestampsFilename);
+        return 0;
+    }
+    return sortLastModifiedTimestamps_ButDontSortPaths(&lastModifiedTimestampsFile, itemsCount);
+}
 SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount)
 {
     newTheMapIfNeeded();
     clearTheMap();
-    sortAllLastModifiedTimestampsOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap();
     if(itemsCount)
-    {
         *itemsCount = m_TotalItemsCount;
-    }
     return takeMapOfPathsListsSortedByModificationDate();
 }
 SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, int *itemsCount)
@@ -64,7 +82,7 @@ void LastModifiedTimestampsSorter::clearTheMap()
     m_MapOfPathsListsSortedByModificationDate->clear();
     m_TotalItemsCount = 0;
 }
-void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice)
+void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice)
 {
     QTextStream lastModifiedTimestampsTextStream(lastModifiedTimestampsIoDevice);
     //QScopedPointer<QMultiMap<long long, QString> > multiMap(new QMultiMap<long long, QString>()); //heap because it will be huge...
@@ -82,19 +100,24 @@ void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsOnIoDevice(QIODe
         }
         ++m_TotalItemsCount;
         long long currentTimestamp = timestamp.lastModifiedTimestamp().toMSecsSinceEpoch()/1000;
-        if(!m_MapOfPathsListsSortedByModificationDate->contains(currentTimestamp)) //TODOoptization: could use "value" with a default/fallback value, but wtf is the default construction of a QList<std::string>* ?? afaik pointers not initialized to zero are undefined :(...
+        QList<std::string> *listOfPaths = m_MapOfPathsListsSortedByModificationDate->value(currentTimestamp, 0);
+        if(!listOfPaths)
         {
+            //not yet in map
             QList<std::string> *newListOfPaths = new QList<std::string>();
             newListOfPaths->append(timestamp.filePath().toStdString());
             m_MapOfPathsListsSortedByModificationDate->insert(currentTimestamp, newListOfPaths);
         }
         else
         {
+            //already in map
             QList<std::string> *listOfPaths = m_MapOfPathsListsSortedByModificationDate->value(currentTimestamp);
             listOfPaths->append(timestamp.filePath().toStdString()); //TODOoptional: could make sure the path isn't already there (otherwise we'd be silently overwriting), BUT it's overkill since the generator of said list will not do that... and besides it'd be an EXACT dupe because the timestamp would be the same... so dropping it makes sense anyways (still, a warning wouldn't hurt (unless parsing stdout/stderr and well yea you get the picture :-P))
         }
     }
-
+}
+void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap()
+{
     //the keys were sorted as we added them to the map, but the values (lists of paths) still need to be sorted
     QMapIterator<long long, QList<std::string>* > mapOfListsOfPathsIterator(*m_MapOfPathsListsSortedByModificationDate);
     while(mapOfListsOfPathsIterator.hasNext())
@@ -123,7 +146,8 @@ void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(QIODevice *
 {
     newTheMapIfNeeded();
     clearTheMap();
-    sortAllLastModifiedTimestampsOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap();
     emit lastModifiedTimestampsSorted(takeMapOfPathsListsSortedByModificationDate(), m_TotalItemsCount);
 }
 void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename)
@@ -141,7 +165,8 @@ void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(QIODevice
 {
     newTheMapIfNeeded();
     clearTheMap();
-    sortAllLastModifiedTimestampsOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap();
     outputTheMap(); //"cli"/user of this should do the formatting, but w/e
     emit finishedOutputtingSortedLines(m_TotalItemsCount);
 }

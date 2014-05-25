@@ -73,6 +73,51 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
         }
         m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = appendSlashIfNeeded(m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
 
+#if 0 //NVM, only .lastModifiedTimestamps needs an array
+        QList<FoldersWithCorrespondingLastModifiedTimestampFiles> foldersWithCorrespondingLastModifiedTimestampFiles;
+        int foldersWithCorrespondingLastModifiedTimestampFilesCount = hackyVideoBullshitSiteSettings.beginReadArray("FoldersWithCorrespondingLastModifiedTimestampFiles");
+        for(int i = 0; i < foldersWithCorrespondingLastModifiedTimestampFilesCount; ++i)
+        {
+            hackyVideoBullshitSiteSettings.setArrayIndex(i);
+            FoldersWithCorrespondingLastModifiedTimestampFiles oneEntry;
+            oneEntry.AbsoluteDirectoryPath = hackyVideoBullshitSiteSettings.value("AbsoluteDirectoryPath", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+            oneEntry.AbsoluteFilePathOfLastModifiedTimestampsFile = hackyVideoBullshitSiteSettings.value("AbsoluteFilePathOfLastModifiedTimestampsFile", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+            foldersWithCorrespondingLastModifiedTimestampFiles.append(oneEntry);
+        }
+        hackyVideoBullshitSiteSettings.endArray();
+
+        if(foldersWithCorrespondingLastModifiedTimestampFiles.isEmpty()) //none? give them sample to edit
+        {
+            atLeastOneDidntExist = true;
+            cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
+            hackyVideoBullshitSiteSettings.beginWriteArray("FoldersWithCorrespondingLastModifiedTimestampFiles");
+            hackyVideoBullshitSiteSettings.setArrayIndex(0);
+            hackyVideoBullshitSiteSettings.setValue("AbsoluteDirectoryPath", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+            hackyVideoBullshitSiteSettings.setValue("AbsoluteFilePathOfLastModifiedTimestampsFile", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+            hackyVideoBullshitSiteSettings.endArray();
+        }
+        else //some? make sure all are legit
+        {
+            foldersWithCorrespondingLastModifiedTimestampFilesCount = foldersWithCorrespondingLastModifiedTimestampFiles.size();
+            for(int i = 0; i < foldersWithCorrespondingLastModifiedTimestampFilesCount; ++i)
+            {
+                if(foldersWithCorrespondingLastModifiedTimestampFiles.at(i).AbsoluteDirectoryPath == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+                {
+                    atLeastOneDidntExist = true;
+                    cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
+                    break;
+                }
+                foldersWithCorrespondingLastModifiedTimestampFiles.at(i).AbsoluteDirectoryPath = removeTrailingSlashIfNeeded(foldersWithCorrespondingLastModifiedTimestampFiles.at(i).AbsoluteDirectoryPath);
+                if(foldersWithCorrespondingLastModifiedTimestampFiles.at(i).AbsoluteFilePathOfLastModifiedTimestampsFile == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+                {
+                    atLeastOneDidntExist = true;
+                    cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
+                    break;
+                }
+            }
+        }
+#endif
+
         m_MyBrainArchiveBaseDir_NoSlashAppended = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_MyBrainArchiveBaseDir_NoSlashAppended == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
         {
@@ -89,6 +134,9 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
             atLeastOneDidntExist = true;
             hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
         }
+
+
+
 
         m_NeighborPropagationRemoteSftpUploadScratchSpace = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteSftpUploadScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_NeighborPropagationRemoteSftpUploadScratchSpace == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)

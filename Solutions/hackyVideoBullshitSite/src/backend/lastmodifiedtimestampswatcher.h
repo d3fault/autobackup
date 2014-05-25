@@ -2,13 +2,14 @@
 #define LASTMODIFIEDTIMESTAMPSWATCHER_H
 
 #include <QObject>
-#include <QList>
+#include <QStringList>
 #include <QHash>
 #include <QAtomicPointer>
 #include <QQueue>
 #include <QListIterator>
 
 #include "../lastmodifiedtimestampsandpaths.h"
+#include "lastmodifiedtimestampssorter.h"
 
 class QTimer;
 class QFileSystemWatcher;
@@ -21,25 +22,24 @@ public:
     QAtomicPointer<LastModifiedTimestampsAndPaths> *getTimestampsAndPathsAtomicPointer();
     ~LastModifiedTimestampsWatcher();
 private:
-    QFileSystemWatcher *m_LastModifiedTimestampsFileWatcher;
-    QString m_LastModifiedTimestampsFile;
+    QFileSystemWatcher *m_LastModifiedTimestampsFilesWatcher;
+    QHash<QString, SortedMapOfListsOfPathsPointerType*> m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps;
     QAtomicPointer<LastModifiedTimestampsAndPaths> m_CurrentTimestampsAndPathsAtomicPointer;
-    QTimer *m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer;
-    QTimer *m_FileWasDeletedSoPollForExistenceEvery5secondsTimer;
     QTimer *m_DeleteInFiveMinsTimer;
     QQueue<LastModifiedTimestampsAndPaths*> *m_TimestampsAndPathsQueuedForDelete;
 
-    void resolveLastModifiedTimestampsFilePathAndWatchIt();
+    bool addAndReadLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
+    void resolveLastModifiedTimestampsFilePathAndWatchIt(const QString &lastModifiedTimestampsFile);
+    void readLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
+    void combineAndPublishLastModifiedTimestampsFiles();
     void deleteOneTimestampAndPathQueuedForDelete();
 signals:
     void e(const QString &);
     void startedWatchingLastModifiedTimestampsFile();
 public slots:
-    void startWatchingLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
-private slots:
-    void checkForTimestampsFileExistenceAndResumeNormalOperationsIfPresent();
-    void readLastModifiedTimestampsFile();
-    void handleLastModifiedTimestampsChanged();
+    void startWatchingLastModifiedTimestampsFile(const QStringList &lastModifiedTimestampsFiles);
+private slots:    
+    void handleLastModifiedTimestampsChanged(const QString &lastModifiedTimestampsFileThatChanged);
     void handleDeleteInFiveMinsTimerTimedOut();
 };
 

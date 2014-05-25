@@ -7,28 +7,17 @@
 #include <QStringList>
 #include <QFile>
 #include <QFileInfo>
-
-#include "lastmodifiedtimestampssorter.h"
+#include <QHashIterator>
 
 //git push -> post-update -> git clone/archive -> symlinkSwap -> deleteOldLastModifiedJustToTriggerQfsWatcher (also delete rest of shit) -> [re-]resolveAndWatchSymlink/.lastModified
 
 LastModifiedTimestampsWatcher::LastModifiedTimestampsWatcher(QObject *parent)
     : QObject(parent)
-    , m_LastModifiedTimestampsFileWatcher(0)
+    , m_LastModifiedTimestampsFilesWatcher(0)
     , m_CurrentTimestampsAndPathsAtomicPointer(0) //initialize to value zero (which coincidentally is a null/0 ptr address), not null/0 ptr address [of the member itself]
-    , m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer(new QTimer(this))
-    , m_FileWasDeletedSoPollForExistenceEvery5secondsTimer(new QTimer(this))
     , m_DeleteInFiveMinsTimer(new QTimer(this))
     , m_TimestampsAndPathsQueuedForDelete(0)
 {
-    m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->setSingleShot(true);
-    m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->setInterval(1000);
-    connect(m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer, SIGNAL(timeout()), this, SLOT(readLastModifiedTimestampsFile()));
-
-    m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->setSingleShot(true);
-    m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->setInterval(5000);
-    connect(m_FileWasDeletedSoPollForExistenceEvery5secondsTimer, SIGNAL(timeout()), this, SLOT(checkForTimestampsFileExistenceAndResumeNormalOperationsIfPresent()));
-
     m_DeleteInFiveMinsTimer->setSingleShot(true);
     m_DeleteInFiveMinsTimer->setInterval(5*(1000*60));
     connect(m_DeleteInFiveMinsTimer, SIGNAL(timeout()), this, SLOT(handleDeleteInFiveMinsTimerTimedOut()));
@@ -52,70 +41,72 @@ LastModifiedTimestampsWatcher::~LastModifiedTimestampsWatcher()
     {
         delete currentTimestampsAndPathsMaybe;
     }
-    if(m_LastModifiedTimestampsFileWatcher)
+    if(m_LastModifiedTimestampsFilesWatcher)
     {
-        delete m_LastModifiedTimestampsFileWatcher;
+        delete m_LastModifiedTimestampsFilesWatcher;
     }
 }
-void LastModifiedTimestampsWatcher::resolveLastModifiedTimestampsFilePathAndWatchIt()
+bool LastModifiedTimestampsWatcher::addAndReadLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile)
 {
-    QFileInfo symlinkResolver(m_LastModifiedTimestampsFile);
-    m_LastModifiedTimestampsFileWatcher->addPath(symlinkResolver.canonicalFilePath());
-}
-void LastModifiedTimestampsWatcher::deleteOneTimestampAndPathQueuedForDelete()
-{
-    LastModifiedTimestampsAndPaths *currentToDelete = m_TimestampsAndPathsQueuedForDelete->dequeue();
-    delete currentToDelete;
-}
-void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile)
-{
-    m_LastModifiedTimestampsFile = lastModifiedTimestampsFile;
-    if(!m_LastModifiedTimestampsFileWatcher)
+    if(!QFile::exists(lastModifiedTimestampsFile))
     {
-        m_LastModifiedTimestampsFileWatcher = new QFileSystemWatcher(this);
-        connect(m_LastModifiedTimestampsFileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleLastModifiedTimestampsChanged()));
+        emit e("TOTAL SYSTEM FAILURE: you did not use 'move [symlink] atomics' for last modified timestamp file: " + lastModifiedTimestampsFile); //TODOoptional: error out etcz
+        return false;
     }
-    if(!m_TimestampsAndPathsQueuedForDelete)
-    {
-        m_TimestampsAndPathsQueuedForDelete = new QQueue<LastModifiedTimestampsAndPaths*>();
-    }
-    handleLastModifiedTimestampsChanged(); //populate at startup
-    emit startedWatchingLastModifiedTimestampsFile();
+    resolveLastModifiedTimestampsFilePathAndWatchIt(lastModifiedTimestampsFile);
+    readLastModifiedTimestampsFile(lastModifiedTimestampsFile);
+    return true; //TODOoptional: above two methods can return bool
 }
-void LastModifiedTimestampsWatcher::checkForTimestampsFileExistenceAndResumeNormalOperationsIfPresent()
+void LastModifiedTimestampsWatcher::resolveLastModifiedTimestampsFilePathAndWatchIt(const QString &lastModifiedTimestampsFile)
 {
-    if(QFile::exists(m_LastModifiedTimestampsFile))
-    {
-        resolveLastModifiedTimestampsFilePathAndWatchIt();
-        readLastModifiedTimestampsFile();
-        return;
-    }
-
-    //doesn't exist, schedule to check again
-    m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->start();
+    QFileInfo symlinkResolver(lastModifiedTimestampsFile);
+    m_LastModifiedTimestampsFilesWatcher->addPath(symlinkResolver.canonicalFilePath());
 }
-void LastModifiedTimestampsWatcher::readLastModifiedTimestampsFile()
+void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles()
 {
-    LastModifiedTimestampsSorter lastModifiedTimestampsSorter(this);
-    int totalPathsCount = 0;
-    QScopedPointer<SortedMapOfListsOfPathsPointerType> sortedMap(lastModifiedTimestampsSorter.sortLastModifiedTimestamps(m_LastModifiedTimestampsFile, &totalPathsCount)); //the values stay alive when the pointer goes out of scope, which is good :)
+    //combine with other maps before converting to flat list and paths index into flat list
+    QScopedPointer<SortedMapOfListsOfPathsPointerType> combinedMap(new SortedMapOfListsOfPathsPointerType());
+    QHashIterator<QString, SortedMapOfListsOfPathsPointerType*> uncombinedMapsIterator(m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps);
+    while(uncombinedMapsIterator.hasNext())
+    {
+        uncombinedMapsIterator.next();
+        QMapIterator<long long, QList<std::string>* > mapCurrentlyBeingInsertedIntoCombinedMapIterator(*uncombinedMapsIterator.value());
+        while(mapCurrentlyBeingInsertedIntoCombinedMapIterator.hasNext())
+        {
+            mapCurrentlyBeingInsertedIntoCombinedMapIterator.next();
+            QList<std::string>* maybeExistingPathsForTimestamp = combinedMap->value(mapCurrentlyBeingInsertedIntoCombinedMapIterator.key(), 0);
+            if(maybeExistingPathsForTimestamp)
+            {
+                //key already exists in combined map
+                maybeExistingPathsForTimestamp->append(*mapCurrentlyBeingInsertedIntoCombinedMapIterator.value()); //TODOreq: wtf is the memory shit of this? maybe just fuck it and let valgrind tell me :). starting to think i should have used qstring since implicitly (we now have two copies :-/) shared and simplified...
+            }
+            else
+            {
+                //key does not yet exist in combined map
+                combinedMap->insert(mapCurrentlyBeingInsertedIntoCombinedMapIterator.key(), mapCurrentlyBeingInsertedIntoCombinedMapIterator.value()); //TODOreq: ditto about memory confusion
+            }
+        }
+    }
 
     //now we convert it to two formats we want
-
     QList<TimestampAndPath*> *sortedTimestampAndPathFlatList = new QList<TimestampAndPath*>();
-    sortedTimestampAndPathFlatList->reserve(totalPathsCount);
+    //sortedTimestampAndPathFlatList->reserve(totalPathsCount); //TODOoptimization: maybe re-use these values again
     int currentIndexIntoSortedPathsFlatList = -1;
     PathsIndexIntoFlatListHashType *pathsIndexIntoFlatListHash = new PathsIndexIntoFlatListHashType();
-    pathsIndexIntoFlatListHash->reserve(totalPathsCount);
+    //pathsIndexIntoFlatListHash->reserve(totalPathsCount);
 
 
     //TO DOnereq: skip over directory entries (which may be the only entry for that timestamp), honestly i don't think they're even that necessary (although creating empty directories to indicate a project i want to start is kinda handy), maybe i should just stop keeping track of them instead...
 
-    QMapIterator<long long, QList<std::string>* > sortedMapIterator(*sortedMap.data());
-    while(sortedMapIterator.hasNext())
+    QMapIterator<long long, QList<std::string>* > combineddMapIterator(*combinedMap.data());
+    while(combineddMapIterator.hasNext())
     {
-        sortedMapIterator.next();
-        QList<std::string> *allPathsWithThisTimestamp = sortedMapIterator.value();
+        combineddMapIterator.next();
+        QList<std::string> *allPathsWithThisTimestamp = combineddMapIterator.value();
+
+        //a step we skipped earlier was that each of the paths (values of map) weren't being sorted. now that they're all combined, we sort them
+        std::sort(allPathsWithThisTimestamp->begin(), allPathsWithThisTimestamp->end());
+
         QListIterator<std::string> allPathsWithThisTimestampIterator(*allPathsWithThisTimestamp);
         while(allPathsWithThisTimestampIterator.hasNext())
         {
@@ -124,7 +115,7 @@ void LastModifiedTimestampsWatcher::readLastModifiedTimestampsFile()
             if(currentPathQString.endsWith("/") /*we don't want directories*/ || currentPathQString == "/"/*it was an empty path (error)*/)
                 continue;
 
-            TimestampAndPath *timestampAndPath = new TimestampAndPath(sortedMapIterator.key(), currentPath);
+            TimestampAndPath *timestampAndPath = new TimestampAndPath(combineddMapIterator.key(), currentPath);
             sortedTimestampAndPathFlatList->append(timestampAndPath);
             (*pathsIndexIntoFlatListHash)[currentPath] = ++currentIndexIntoSortedPathsFlatList; //funny, if i use QString then the string is doubled in size (16-bit vs. 8-bit), and yet QString also saves me half the space because of implicit sharing xD...
         }
@@ -139,30 +130,48 @@ void LastModifiedTimestampsWatcher::readLastModifiedTimestampsFile()
     LastModifiedTimestampsAndPaths *oldTimestampsAndPaths = m_CurrentTimestampsAndPathsAtomicPointer.fetchAndStoreOrdered(newTimestampsAndPaths); //TODOoptimization: might not need ordered, idfk
     if(!oldTimestampsAndPaths)
         return; //first time, nothing to queue for delete
-    bool startTimerYea = m_TimestampsAndPathsQueuedForDelete->isEmpty();
-    m_TimestampsAndPathsQueuedForDelete->enqueue(oldTimestampsAndPaths);
-    if(startTimerYea) //don't double start (restart)
+    if(m_TimestampsAndPathsQueuedForDelete->isEmpty()) //don't double start (restart)
         m_DeleteInFiveMinsTimer->start();
+    m_TimestampsAndPathsQueuedForDelete->enqueue(oldTimestampsAndPaths);
 }
-void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged()
+void LastModifiedTimestampsWatcher::deleteOneTimestampAndPathQueuedForDelete()
 {
-    //TO DOnereq: if i move an already finished version overwriting the old one, the old one is considered removed and will no longer be watched and needs to be re-added
-    if(!m_LastModifiedTimestampsFileWatcher->files().isEmpty())
+    LastModifiedTimestampsAndPaths *currentToDelete = m_TimestampsAndPathsQueuedForDelete->dequeue();
+    delete currentToDelete;
+}
+void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(const QStringList &lastModifiedTimestampsFiles)
+{
+    if(m_LastModifiedTimestampsFilesWatcher)
+        delete m_LastModifiedTimestampsFilesWatcher;
+    m_LastModifiedTimestampsFilesWatcher = new QFileSystemWatcher(this);
+    connect(m_LastModifiedTimestampsFilesWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleLastModifiedTimestampsChanged(QString)));
+    if(!m_TimestampsAndPathsQueuedForDelete)
     {
-        //not empty means that the "move" method wasn't used, so we want to wait 1 second after the last 'change' is seen before we start reading it
-        //nvm we do want to restart it over and over: if(!m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->isActive())
-        m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->start();
-        return;
+        m_TimestampsAndPathsQueuedForDelete = new QQueue<LastModifiedTimestampsAndPaths*>();
     }
-    if(!QFile::exists(m_LastModifiedTimestampsFile))
+    foreach(const QString &lastModifiedTimestampsFile, lastModifiedTimestampsFiles)
     {
-        m_FileWasDeletedSoPollForExistenceEvery5secondsTimer->start();
-        return;
+        m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps.insert(lastModifiedTimestampsFile, new SortedMapOfListsOfPathsPointerType());
+        if(!addAndReadLastModifiedTimestampsFile(lastModifiedTimestampsFile)) //populate at startup
+            return;
     }
-    resolveLastModifiedTimestampsFilePathAndWatchIt();
-    if(m_FileWasMerelyModifiedNotOverwrittenSoWaitUntil1secondWithNoWritesTimer->isActive()) //wtf? this would mean they did an append AND an overwrite/rename-onto
-        return; //just return because yea the timeout will do it
-    readLastModifiedTimestampsFile();
+    combineAndPublishLastModifiedTimestampsFiles();
+    emit startedWatchingLastModifiedTimestampsFile();
+}
+void LastModifiedTimestampsWatcher::readLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile)
+{
+    LastModifiedTimestampsSorter lastModifiedTimestampsSorter(this);
+    int totalPathsCount = 0;
+
+    SortedMapOfListsOfPathsPointerType *oldUncombinedMap = m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps.value(lastModifiedTimestampsFile);
+    delete oldUncombinedMap;
+    m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps.insert(lastModifiedTimestampsFile,lastModifiedTimestampsSorter.sortLastModifiedTimestamps_ButDontSortPaths(lastModifiedTimestampsFile, &totalPathsCount)); //dont sort the paths because it would be a waste of time to sort them before merging with the others
+}
+void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged(const QString &lastModifiedTimestampsFileThatChanged)
+{
+    if(!addAndReadLastModifiedTimestampsFile(lastModifiedTimestampsFileThatChanged))
+        return;
+    combineAndPublishLastModifiedTimestampsFiles();
 }
 void LastModifiedTimestampsWatcher::handleDeleteInFiveMinsTimerTimedOut()
 {

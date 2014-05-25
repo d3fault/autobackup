@@ -21,6 +21,12 @@ class HackyVideoBullshitSite : public QObject
 public:
     explicit HackyVideoBullshitSite(int argc, char* argv[], QObject *parent = 0);
 private:
+    /*struct FoldersWithCorrespondingLastModifiedTimestampFiles
+    {
+        QString AbsoluteDirectoryPath;
+        QString AbsoluteFilePathOfLastModifiedTimestampsFile;
+    };*/
+
     int m_ArgC;
     char **m_ArgV;
 

@@ -380,7 +380,9 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         return;
     }
 
-    const QString &myBrainItemToPresentAbsolutePathQString = m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended + theInternalPathCleanedQString;
+    //NVM: OT'ish: i'm now trying to change this shit so it can deal with multiple dirs/.lastModifiedTimestamps (just 3) ... and I think this is coincidentally future proofing me for git submdules shits :-P (hundreds/thousands). maybe not.
+
+    const QString &myBrainItemToPresentAbsolutePathQString = m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended + "/view" + theInternalPathCleanedQString;
     if(QFile::exists(myBrainItemToPresentAbsolutePathQString))
     {
         QFileInfo myBrainItemFileInfo(myBrainItemToPresentAbsolutePathQString);

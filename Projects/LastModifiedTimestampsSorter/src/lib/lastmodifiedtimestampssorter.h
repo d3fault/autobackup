@@ -17,6 +17,10 @@ public:
     SortedMapOfListsOfPathsPointerType *takeMapOfPathsListsSortedByModificationDate();
 
     //sync and take
+    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps_ButDontSortPaths(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount = 0);
+    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps_ButDontSortPaths(const QString &lastModifiedTimestampsFilename, int *itemsCount = 0);
+
+    //sync and take
     SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount = 0);
     SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, int *itemsCount = 0);
 
@@ -27,7 +31,8 @@ private:
 
     void newTheMapIfNeeded();
     void clearTheMap();
-    void sortAllLastModifiedTimestampsOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice);
+    void sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice);
+    void sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap();
     void outputTheMap();
 signals:
     void d(const QString &);
