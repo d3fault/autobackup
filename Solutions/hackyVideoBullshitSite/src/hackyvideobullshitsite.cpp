@@ -11,7 +11,7 @@
 #define HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch "VideoSegmentsImporterFolderToWatch"
 #define HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace "VideoSegmentsImporterFolderYearDayOfYearFoldersScratchSpace"
 #define HackyVideoBullshitSite_SETTINGS_KEY_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo "AirborneVideoSegmentsBaseDir_aka_videoSegmentsImporterFolderToMoveTo"
-#define HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir "MyBrainArchiveBaseDir"
+#define HackyVideoBullshitSite_SETTINGS_KEY_HvbsWebBaseDir "HvbsWebBaseDir"
 #define HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile "LastModifiedTimestampsFile"
 #define HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteSftpUploadScratchSpace "NeighborPropagationRemoteSftpUploadScratchSpace"
 #define HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteDestinationToMoveTo "NeighborPropagationRemoteDestinationToMoveTo"
@@ -73,70 +73,37 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
         }
         m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo = appendSlashIfNeeded(m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
 
-#if 0 //NVM, only .lastModifiedTimestamps needs an array
-        QList<FoldersWithCorrespondingLastModifiedTimestampFiles> foldersWithCorrespondingLastModifiedTimestampFiles;
-        int foldersWithCorrespondingLastModifiedTimestampFilesCount = hackyVideoBullshitSiteSettings.beginReadArray("FoldersWithCorrespondingLastModifiedTimestampFiles");
-        for(int i = 0; i < foldersWithCorrespondingLastModifiedTimestampFilesCount; ++i)
+        m_HvbsWebBaseDir_NoSlashAppended = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_HvbsWebBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+        if(m_HvbsWebBaseDir_NoSlashAppended == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+        {
+            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_HvbsWebBaseDir " not set" << endl;
+            atLeastOneDidntExist = true;
+            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_HvbsWebBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+        }
+        m_HvbsWebBaseDir_NoSlashAppended = removeTrailingSlashIfNeeded(m_HvbsWebBaseDir_NoSlashAppended);
+
+        int lastModifiedTimestampFilesCount = hackyVideoBullshitSiteSettings.beginReadArray("LastModifiedTimestampFiles");
+        for(int i = 0; i < lastModifiedTimestampFilesCount; ++i)
         {
             hackyVideoBullshitSiteSettings.setArrayIndex(i);
-            FoldersWithCorrespondingLastModifiedTimestampFiles oneEntry;
-            oneEntry.AbsoluteDirectoryPath = hackyVideoBullshitSiteSettings.value("AbsoluteDirectoryPath", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
-            oneEntry.AbsoluteFilePathOfLastModifiedTimestampsFile = hackyVideoBullshitSiteSettings.value("AbsoluteFilePathOfLastModifiedTimestampsFile", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
-            foldersWithCorrespondingLastModifiedTimestampFiles.append(oneEntry);
+            QString oneLastModifiedTimestampsFile = hackyVideoBullshitSiteSettings.value("AbsoluteFilePathOfLastModifiedTimestampsFile", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+            if(oneLastModifiedTimestampsFile == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+            {
+                atLeastOneDidntExist = true;
+                cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
+            }
+            m_LastModifiedTimestampsFiles.append(oneLastModifiedTimestampsFile);
         }
         hackyVideoBullshitSiteSettings.endArray();
-
-        if(foldersWithCorrespondingLastModifiedTimestampFiles.isEmpty()) //none? give them sample to edit
+        if(m_LastModifiedTimestampsFiles.isEmpty()) //none? give them one sample to edit
         {
             atLeastOneDidntExist = true;
             cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
-            hackyVideoBullshitSiteSettings.beginWriteArray("FoldersWithCorrespondingLastModifiedTimestampFiles");
+            hackyVideoBullshitSiteSettings.beginWriteArray("LastModifiedTimestampFiles");
             hackyVideoBullshitSiteSettings.setArrayIndex(0);
-            hackyVideoBullshitSiteSettings.setValue("AbsoluteDirectoryPath", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
             hackyVideoBullshitSiteSettings.setValue("AbsoluteFilePathOfLastModifiedTimestampsFile", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
             hackyVideoBullshitSiteSettings.endArray();
         }
-        else //some? make sure all are legit
-        {
-            foldersWithCorrespondingLastModifiedTimestampFilesCount = foldersWithCorrespondingLastModifiedTimestampFiles.size();
-            for(int i = 0; i < foldersWithCorrespondingLastModifiedTimestampFilesCount; ++i)
-            {
-                if(foldersWithCorrespondingLastModifiedTimestampFiles.at(i).AbsoluteDirectoryPath == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
-                {
-                    atLeastOneDidntExist = true;
-                    cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
-                    break;
-                }
-                foldersWithCorrespondingLastModifiedTimestampFiles.at(i).AbsoluteDirectoryPath = removeTrailingSlashIfNeeded(foldersWithCorrespondingLastModifiedTimestampFiles.at(i).AbsoluteDirectoryPath);
-                if(foldersWithCorrespondingLastModifiedTimestampFiles.at(i).AbsoluteFilePathOfLastModifiedTimestampsFile == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
-                {
-                    atLeastOneDidntExist = true;
-                    cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
-                    break;
-                }
-            }
-        }
-#endif
-
-        m_MyBrainArchiveBaseDir_NoSlashAppended = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
-        if(m_MyBrainArchiveBaseDir_NoSlashAppended == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
-        {
-            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir " not set" << endl;
-            atLeastOneDidntExist = true;
-            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_MyBrainArchiveBaseDir, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
-        }
-        m_MyBrainArchiveBaseDir_NoSlashAppended = removeTrailingSlashIfNeeded(m_MyBrainArchiveBaseDir_NoSlashAppended);
-
-        m_LastModifiedTimestampsFile = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
-        if(m_LastModifiedTimestampsFile == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
-        {
-            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile " not set" << endl;
-            atLeastOneDidntExist = true;
-            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_LastModifiedTimestampsFile, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
-        }
-
-
-
 
         m_NeighborPropagationRemoteSftpUploadScratchSpace = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_NeighborPropagationRemoteSftpUploadScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_NeighborPropagationRemoteSftpUploadScratchSpace == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
@@ -258,7 +225,7 @@ void HackyVideoBullshitSite::handleAllBackendObjectsOnThreadsReadyForConnections
 {
     WtControllerAndStdOutOwner::setAdImageGetAndSubscribeManager(m_AdImageGetAndSubscribeManagerThread->getObjectPointerForConnectionsOnly());
     WtControllerAndStdOutOwner::setAirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL(m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo);
-    WtControllerAndStdOutOwner::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended(m_MyBrainArchiveBaseDir_NoSlashAppended);
+    WtControllerAndStdOutOwner::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended(m_HvbsWebBaseDir_NoSlashAppended);
 
     LastModifiedTimestampsWatcher *lastModifiedTimestampsWatcher = m_LastModifiedTimestampsWatcherThread->getObjectPointerForConnectionsOnly();
     connect(lastModifiedTimestampsWatcher, SIGNAL(startedWatchingLastModifiedTimestampsFile()), this, SLOT(handleWatchingLastModifiedTimestampsFileStarted()));
@@ -269,7 +236,8 @@ void HackyVideoBullshitSite::handleAllBackendObjectsOnThreadsReadyForConnections
 
     //these invokeMethods need to be after ALL backends are ready for connections, or at least until WtControllerAndStdOutOwner is ready for connections (since it is our e/o handler!), because by invoking them when in individual ready for connections might miss e/o signals from them
     QMetaObject::invokeMethod(m_VideoSegmentsImporterFolderWatcherThread->getObjectPointerForConnectionsOnly(), "initializeAndStart", Q_ARG(QString, m_VideoSegmentsImporterFolderToWatch), Q_ARG(QString, m_VideoSegmentsImporterFolderScratchSpace), Q_ARG(QString, m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo), Q_ARG(QString, m_NeighborPropagationRemoteSftpUploadScratchSpace), Q_ARG(QString, m_NeighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, m_NeighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, m_SftpProcessPath));
-    QMetaObject::invokeMethod(lastModifiedTimestampsWatcher, "startWatchingLastModifiedTimestampsFile", Q_ARG(QString, m_LastModifiedTimestampsFile));
+    QString hvbsWebViewBaseDir = m_HvbsWebBaseDir_NoSlashAppended + "/view";
+    QMetaObject::invokeMethod(lastModifiedTimestampsWatcher, "startWatchingLastModifiedTimestampsFiles", Q_ARG(QString, hvbsWebViewBaseDir), Q_ARG(QStringList, m_LastModifiedTimestampsFiles));
 }
 void HackyVideoBullshitSite::handleStandardInput(const QString &line)
 {

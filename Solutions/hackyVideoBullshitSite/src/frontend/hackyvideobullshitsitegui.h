@@ -33,7 +33,7 @@ protected:
 private:
     static AdImageGetAndSubscribeManager* m_AdImageGetAndSubscribeManager;
     static QString m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended;
-    static QString m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended;
+    static QString m_HvbsWebBaseDirActual_NOT_CLEAN_URL_NoSlashAppended;
     static std::string m_CopyrightText;
     static std::string m_DplLicenseText;
 

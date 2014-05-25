@@ -32,9 +32,14 @@
 
 //I feel guilty for enjoying coding this. It's not like I've been, you know, putting off coding it for... well over 3 years... (MusicTimeline became ...)
 QAtomicPointer<LastModifiedTimestampsAndPaths> *TimeLineWtWidget::m_LastModifiedTimestampsAndPaths = 0; //segfault if not set. performance performance performance! vroom.
+std::string TimeLineWtWidget::m_HvbsWebBaseDirActual_NOT_CLEAN_URL = "";
 void TimeLineWtWidget::setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer)
 {
     m_LastModifiedTimestampsAndPaths = lastModifiedTimestampsSharedAtomicPointer;
+}
+void TimeLineWtWidget::setHvbsWebBaseDirActual(const QString &hvbsWebBaseDirActual)
+{
+    m_HvbsWebBaseDirActual_NOT_CLEAN_URL = hvbsWebBaseDirActual.toStdString();
 }
 TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
     : WContainerWidget(parent)
@@ -60,7 +65,7 @@ TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
 
     WContainerWidget *earliestContainer = new WContainerWidget();
     earliestContainer->setContentAlignment(Wt::AlignLeft);
-    WText *earliestText = new WText("Earliest: ", Wt::XHTMLUnsafeText, earliestContainer);
+    WText *earliestText = new WText("Earliest: ", Wt::XHTMLUnsafeText, earliestContainer); //TODOoptional: a right-aligned checkbox on this row saying "hide filenames", which just makes the anchor's text say "earliest", etc. The tooltip should probably say the filename, but perhaps the date (or both)... depending on if there's now enough room for the date once the filenames are hidden
     earliestText->decorationStyle().setForegroundColor(myYellow);
     m_EarliestAnchor = new WAnchor(earliestContainer);
     m_EarliestAnchor->setTextFormat(Wt::PlainText);
@@ -137,8 +142,10 @@ void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQ
 {
     m_ContentsContainer->clear();
 
+    std::string whereTheDownloadIs = "/download";
     if(relativePath_aka_internalPathQString.startsWith(HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/")) //video segment hack (because it's not in .lastModifiedTimestamps
     {
+        whereTheDownloadIs = "/view"; //hack, duplicates of the constantly growing video segments is where i draw the line
         //earliest/latest left as is to be leik ahn entree pointz toin le tiemenlienen plz i guezz
 
         m_PreviousAnchor->setText("TODO");
@@ -290,7 +297,7 @@ void TimeLineWtWidget::presentFile(const QString &relativePath_aka_internalPathQ
 
     const std::string &mimeType = embedBasedOnFileExtensionAndReturnMimeType(absolutePath);
 
-    WFileResource *downloadResource = new WFileResource(mimeType, absolutePath.toStdString(), downloadButton);
+    WFileResource *downloadResource = new WFileResource(mimeType, m_HvbsWebBaseDirActual_NOT_CLEAN_URL + whereTheDownloadIs + relativePath_aka_internalPathQString.toStdString(), downloadButton);
     downloadResource->suggestFileName(myBrainItemFilenameOnlyStdString, WResource::Attachment); //TODOreq: when setting up view/download differences, make an exception for AirborneVideos to still download from /view/
     downloadButton->setResource(downloadResource);
 }
@@ -327,7 +334,7 @@ void TimeLineWtWidget::embedAudioFile(const string &mimeType, const QString &fil
 }
 string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QString &filename)
 {
-    const QString &filenameToLower = filename.toLower();
+    const QString &filenameToLower = filename.toLower(); //TODOoptimization: might not be that much help, but could chop off the suffix using fileinfo
 
     //PICTURES
     if(filenameToLower.endsWith(".webp"))
@@ -398,7 +405,27 @@ string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QStrin
     //ditto with the audio xD
 
     //TEXT
-    if(filenameToLower.endsWith(".txt") || filenameToLower.endsWith(".c") || filenameToLower.endsWith(".cpp") || filenameToLower.endsWith(".h") || filenameToLower.endsWith(".html") || filenameToLower.endsWith(".php") || filenameToLower.endsWith(".phps") || filenameToLower.endsWith(".s") || filenameToLower.endsWith(".java") || filenameToLower.endsWith(".xml") || filenameToLower.endsWith(".bat") || filenameToLower.endsWith(".sh") || filenameToLower.endsWith(".ini") || filenameToLower.endsWith(".pri") || filenameToLower.endsWith(".pro"))
+    if(
+            filenameToLower.endsWith(".txt")
+            || filenameToLower.endsWith(".cpp")
+            || filenameToLower.endsWith(".h")
+            || filenameToLower.endsWith(".pro")
+            || filenameToLower.endsWith(".c")
+            || filenameToLower.endsWith(".hpp")
+            || filenameToLower.endsWith(".html")
+            || filenameToLower.endsWith(".php")
+            || filenameToLower.endsWith(".phps")
+            || filenameToLower.endsWith(".s")
+            || filenameToLower.endsWith(".asm")
+            || filenameToLower.endsWith(".java")
+            || filenameToLower.endsWith(".xml")
+            || filenameToLower.endsWith(".bat")
+            || filenameToLower.endsWith(".sh")
+            || filenameToLower.endsWith(".ini")
+            || filenameToLower.endsWith(".cs")
+            || filenameToLower.endsWith(".pri")
+            || filenameToLower.endsWith(".qml")
+    )
     {
         QString textFileString;
         {
@@ -415,7 +442,7 @@ string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QStrin
         //blahSetContent(textArea);
         //textArea->setReadOnly(true);
 
-        WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8())); //TODOoptimization: do this on the copy stored to disk (but obviously not the master copy)
+        WString htmlEncoded = Wt::Utils::htmlEncode(WString::fromUTF8((const char *)textFileString.toUtf8())); //TODOoptimization: do this on the "view" copy stored to disk (but obviously not the master copy or even the "download" copy)... and might as well include the <pre> stuff below..
         //Wt::Utils::removeScript(htmlEncoded);
         WText *textDoc = new WText("<pre>" + htmlEncoded + "</pre>", Wt::XHTMLUnsafeText);
         setMainContent(textDoc);

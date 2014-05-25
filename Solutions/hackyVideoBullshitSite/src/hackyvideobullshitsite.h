@@ -6,6 +6,7 @@
 using namespace Wt;
 
 #include <QObject>
+#include <QStringList>
 
 #include "objectonthreadhelper.h"
 #include "wtcontrollerandstdoutowner.h"
@@ -40,8 +41,8 @@ private:
     QString m_VideoSegmentsImporterFolderToWatch;
     QString m_VideoSegmentsImporterFolderScratchSpace;
     QString m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo;
-    QString m_MyBrainArchiveBaseDir_NoSlashAppended;
-    QString m_LastModifiedTimestampsFile;
+    QString m_HvbsWebBaseDir_NoSlashAppended;
+    QStringList m_LastModifiedTimestampsFiles;
     QString m_NeighborPropagationRemoteSftpUploadScratchSpace;
     QString m_NeighborPropagationRemoteDestinationToMoveTo;
     QString m_NeighborPropagationUserHostPathComboSftpArg;

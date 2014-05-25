@@ -22,16 +22,16 @@ SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::takeMapOfPaths
     }
     return 0;
 }
-SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps_ButDontSortPaths(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount)
+SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps_ButDontSortPaths(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount, const QString &optionalStringToPrefixPathsWith)
 {
     newTheMapIfNeeded();
     clearTheMap();
-    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice, optionalStringToPrefixPathsWith);
     if(itemsCount)
         *itemsCount = m_TotalItemsCount;
     return takeMapOfPathsListsSortedByModificationDate();
 }
-SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps_ButDontSortPaths(const QString &lastModifiedTimestampsFilename, int *itemsCount)
+SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps_ButDontSortPaths(const QString &lastModifiedTimestampsFilename, int *itemsCount, const QString &optionalStringToPrefixPathsWith)
 {
     QFile lastModifiedTimestampsFile(lastModifiedTimestampsFilename, this);
     if(!lastModifiedTimestampsFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -39,19 +39,19 @@ SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifi
         emit d("failed to open for reading: " + lastModifiedTimestampsFilename);
         return 0;
     }
-    return sortLastModifiedTimestamps_ButDontSortPaths(&lastModifiedTimestampsFile, itemsCount);
+    return sortLastModifiedTimestamps_ButDontSortPaths(&lastModifiedTimestampsFile, itemsCount, optionalStringToPrefixPathsWith);
 }
-SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount)
+SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount, const QString &optionalStringToPrefixPathsWith)
 {
     newTheMapIfNeeded();
     clearTheMap();
-    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice, optionalStringToPrefixPathsWith);
     sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap();
     if(itemsCount)
         *itemsCount = m_TotalItemsCount;
     return takeMapOfPathsListsSortedByModificationDate();
 }
-SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, int *itemsCount)
+SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, int *itemsCount, const QString &optionalStringToPrefixPathsWith)
 {
     QFile lastModifiedTimestampsFile(lastModifiedTimestampsFilename, this);
     if(!lastModifiedTimestampsFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -59,7 +59,7 @@ SortedMapOfListsOfPathsPointerType *LastModifiedTimestampsSorter::sortLastModifi
         emit d("failed to open for reading: " + lastModifiedTimestampsFilename);
         return 0;
     }
-    return sortLastModifiedTimestamps(&lastModifiedTimestampsFile, itemsCount);
+    return sortLastModifiedTimestamps(&lastModifiedTimestampsFile, itemsCount, optionalStringToPrefixPathsWith);
 }
 LastModifiedTimestampsSorter::~LastModifiedTimestampsSorter()
 {
@@ -82,7 +82,7 @@ void LastModifiedTimestampsSorter::clearTheMap()
     m_MapOfPathsListsSortedByModificationDate->clear();
     m_TotalItemsCount = 0;
 }
-void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice)
+void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice, const QString &optionalStringToPrefixPathsWith)
 {
     QTextStream lastModifiedTimestampsTextStream(lastModifiedTimestampsIoDevice);
     //QScopedPointer<QMultiMap<long long, QString> > multiMap(new QMultiMap<long long, QString>()); //heap because it will be huge...
@@ -92,27 +92,27 @@ void LastModifiedTimestampsSorter::sortAllLastModifiedTimestampsKeysAkaTimestamp
         QString currentLine = lastModifiedTimestampsTextStream.readLine();
         if(currentLine.isEmpty())
             continue;
-        SimplifiedLastModifiedTimestamp timestamp(currentLine);
-        if(!timestamp.isValid())
+        SimplifiedLastModifiedTimestamp timestampAndFilePath(currentLine);
+        if(!timestampAndFilePath.isValid())
         {
             emit d("Invalid SimplifiedLastModifiedTimestamp: " + currentLine);
             continue; //TODOoptional: "-quitOnError" arg, just "return;" here (but also don't return 0 in main) instead of "continue;"
         }
         ++m_TotalItemsCount;
-        long long currentTimestamp = timestamp.lastModifiedTimestamp().toMSecsSinceEpoch()/1000;
+        long long currentTimestamp = timestampAndFilePath.lastModifiedTimestamp().toMSecsSinceEpoch()/1000;
         QList<std::string> *listOfPaths = m_MapOfPathsListsSortedByModificationDate->value(currentTimestamp, 0);
         if(!listOfPaths)
         {
             //not yet in map
             QList<std::string> *newListOfPaths = new QList<std::string>();
-            newListOfPaths->append(timestamp.filePath().toStdString());
+            newListOfPaths->append(QString(optionalStringToPrefixPathsWith + timestampAndFilePath.filePath()).toStdString());
             m_MapOfPathsListsSortedByModificationDate->insert(currentTimestamp, newListOfPaths);
         }
         else
         {
             //already in map
             QList<std::string> *listOfPaths = m_MapOfPathsListsSortedByModificationDate->value(currentTimestamp);
-            listOfPaths->append(timestamp.filePath().toStdString()); //TODOoptional: could make sure the path isn't already there (otherwise we'd be silently overwriting), BUT it's overkill since the generator of said list will not do that... and besides it'd be an EXACT dupe because the timestamp would be the same... so dropping it makes sense anyways (still, a warning wouldn't hurt (unless parsing stdout/stderr and well yea you get the picture :-P))
+            listOfPaths->append(QString(optionalStringToPrefixPathsWith + timestampAndFilePath.filePath()).toStdString()); //TODOoptional: could make sure the path isn't already there (otherwise we'd be silently overwriting), BUT it's overkill since the generator of said list will not do that... and besides it'd be an EXACT dupe because the timestamp would be the same... so dropping it makes sense anyways (still, a warning wouldn't hurt (unless parsing stdout/stderr and well yea you get the picture :-P))
         }
     }
 }
@@ -142,15 +142,15 @@ void LastModifiedTimestampsSorter::outputTheMap()
         }
     }
 }
-void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice)
+void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, const QString &optionalStringToPrefixPathsWith)
 {
     newTheMapIfNeeded();
     clearTheMap();
-    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice, optionalStringToPrefixPathsWith);
     sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap();
     emit lastModifiedTimestampsSorted(takeMapOfPathsListsSortedByModificationDate(), m_TotalItemsCount);
 }
-void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename)
+void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, const QString &optionalStringToPrefixPathsWith)
 {
     QFile lastModifiedTimestampsFile(lastModifiedTimestampsFilename, this);
     if(!lastModifiedTimestampsFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -159,18 +159,18 @@ void LastModifiedTimestampsSorter::sortAndEmitLastModifiedTimestamps(const QStri
         emit lastModifiedTimestampsSorted(0, 0);
         return;
     }
-    sortAndEmitLastModifiedTimestamps(&lastModifiedTimestampsFile);
+    sortAndEmitLastModifiedTimestamps(&lastModifiedTimestampsFile, optionalStringToPrefixPathsWith);
 }
-void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice)
+void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, const QString &optionalStringToPrefixPathsWith)
 {
     newTheMapIfNeeded();
     clearTheMap();
-    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice);
+    sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(lastModifiedTimestampsIoDevice, optionalStringToPrefixPathsWith);
     sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap();
     outputTheMap(); //"cli"/user of this should do the formatting, but w/e
     emit finishedOutputtingSortedLines(m_TotalItemsCount);
 }
-void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename)
+void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, const QString &optionalStringToPrefixPathsWith)
 {
     QFile lastModifiedTimestampsFile(lastModifiedTimestampsFilename, this);
     if(!lastModifiedTimestampsFile.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -179,5 +179,5 @@ void LastModifiedTimestampsSorter::sortAndOutputLastModifiedTimestamps(const QSt
         emit finishedOutputtingSortedLines(0);
         return;
     }
-    sortAndOutputLastModifiedTimestamps(&lastModifiedTimestampsFile);
+    sortAndOutputLastModifiedTimestamps(&lastModifiedTimestampsFile, optionalStringToPrefixPathsWith);
 }

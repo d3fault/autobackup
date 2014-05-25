@@ -52,7 +52,7 @@
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
 QString HackyVideoBullshitSiteGUI::m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended = QDir::rootPath(); //root tends to have a small number of files that rarely change, so a good default for when the user forgets to specify (since it will be 'watched')
-QString HackyVideoBullshitSiteGUI::m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended = QDir::homePath(); //internal path is concatenated onto this, and already has a slash at the beginning
+QString HackyVideoBullshitSiteGUI::m_HvbsWebBaseDirActual_NOT_CLEAN_URL_NoSlashAppended = QDir::homePath(); //internal path is concatenated onto this, and already has a slash at the beginning
 std::string HackyVideoBullshitSiteGUI::m_CopyrightText = "All Rights Reserved"; //the legal default, but don't interpret this as my liking it
 std::string HackyVideoBullshitSiteGUI::m_DplLicenseText = "Geef monies and then you can express yourself without breaking the law and worrying about getting v&"; //kim dot com
 
@@ -64,9 +64,10 @@ void HackyVideoBullshitSiteGUI::setAirborneVideoSegmentsBaseDirActual_NOT_CLEAN_
 {
     m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended = airborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL;
 }
-void HackyVideoBullshitSiteGUI::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended(const QString &myBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended)
+void HackyVideoBullshitSiteGUI::setMyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended(const QString &hvbsWebBaseDirActual_NOT_CLEAN_URL_NoSlashAppended)
 {
-    m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended = myBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended;
+    m_HvbsWebBaseDirActual_NOT_CLEAN_URL_NoSlashAppended = hvbsWebBaseDirActual_NOT_CLEAN_URL_NoSlashAppended;
+    TimeLineWtWidget::setHvbsWebBaseDirActual(hvbsWebBaseDirActual_NOT_CLEAN_URL_NoSlashAppended);
 }
 void HackyVideoBullshitSiteGUI::setCopyrightText(const string &copyrightText)
 {
@@ -382,7 +383,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
     //NVM: OT'ish: i'm now trying to change this shit so it can deal with multiple dirs/.lastModifiedTimestamps (just 3) ... and I think this is coincidentally future proofing me for git submdules shits :-P (hundreds/thousands). maybe not.
 
-    const QString &myBrainItemToPresentAbsolutePathQString = m_MyBrainArchiveBaseDirActual_NOT_CLEAN_URL_NoSlashAppended + "/view" + theInternalPathCleanedQString;
+    const QString &myBrainItemToPresentAbsolutePathQString = m_HvbsWebBaseDirActual_NOT_CLEAN_URL_NoSlashAppended + "/view" + theInternalPathCleanedQString;
     if(QFile::exists(myBrainItemToPresentAbsolutePathQString))
     {
         QFileInfo myBrainItemFileInfo(myBrainItemToPresentAbsolutePathQString);

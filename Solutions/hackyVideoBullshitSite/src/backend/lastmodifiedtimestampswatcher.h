@@ -23,21 +23,23 @@ public:
     ~LastModifiedTimestampsWatcher();
 private:
     QFileSystemWatcher *m_LastModifiedTimestampsFilesWatcher;
+    QString m_AbsolutePathToBaseViewDirSoTheFoldersInBetweenThereAndLastModifiedTimestampsFilesCanBeUsedAsPrefixInCombinedSortedList;
     QHash<QString, SortedMapOfListsOfPathsPointerType*> m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps;
     QAtomicPointer<LastModifiedTimestampsAndPaths> m_CurrentTimestampsAndPathsAtomicPointer;
     QTimer *m_DeleteInFiveMinsTimer;
     QQueue<LastModifiedTimestampsAndPaths*> *m_TimestampsAndPathsQueuedForDelete;
 
     bool addAndReadLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
-    void resolveLastModifiedTimestampsFilePathAndWatchIt(const QString &lastModifiedTimestampsFile);
-    void readLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
+    QString getPathPrefixForThisLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile);
     void combineAndPublishLastModifiedTimestampsFiles();
     void deleteOneTimestampAndPathQueuedForDelete();
+
+    inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
 signals:
     void e(const QString &);
     void startedWatchingLastModifiedTimestampsFile();
 public slots:
-    void startWatchingLastModifiedTimestampsFile(const QStringList &lastModifiedTimestampsFiles);
+    void startWatchingLastModifiedTimestampsFiles(const QString &absolutePathToBaseViewDirSoTheFoldersInBetweenThereAndLastModifiedTimestampsFilesCanBeUsedAsPrefixInCombinedSortedList, const QStringList &lastModifiedTimestampsFiles);
 private slots:    
     void handleLastModifiedTimestampsChanged(const QString &lastModifiedTimestampsFileThatChanged);
     void handleDeleteInFiveMinsTimerTimedOut();

@@ -20,13 +20,14 @@ class TimeLineWtWidget : public WContainerWidget
 {
 public:
     static void setTimestampsAndPathsSharedAtomicPointer(QAtomicPointer<LastModifiedTimestampsAndPaths> *lastModifiedTimestampsSharedAtomicPointer);
-    static void setTimelineInternalPath(const QString &timelineInternalPath);
+    static void setHvbsWebBaseDirActual(const QString &hvbsWebBaseDirActual);
 
     TimeLineWtWidget(WContainerWidget *parent = 0);
     void redirectToRandomPointInTimeline();
     void presentFile(const QString &relativePath_aka_internalPathQString, const QString &absolutePath, const std::string &myBrainItemFilenameOnlyStdString);
 private:
     static QAtomicPointer<LastModifiedTimestampsAndPaths> *m_LastModifiedTimestampsAndPaths;
+    static std::string m_HvbsWebBaseDirActual_NOT_CLEAN_URL;
 
     WContainerWidget *m_ContentsContainer;
     LastModifiedTimestampsAndPaths *m_PointerToDetectWhenTheShitChangesBut_DO_NOT_USE_THIS_because_it_might_point_to_freed_memory;

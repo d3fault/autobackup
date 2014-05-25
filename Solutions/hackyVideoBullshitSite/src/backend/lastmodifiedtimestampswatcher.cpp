@@ -53,14 +53,23 @@ bool LastModifiedTimestampsWatcher::addAndReadLastModifiedTimestampsFile(const Q
         emit e("TOTAL SYSTEM FAILURE: you did not use 'move [symlink] atomics' for last modified timestamp file: " + lastModifiedTimestampsFile); //TODOoptional: error out etcz
         return false;
     }
-    resolveLastModifiedTimestampsFilePathAndWatchIt(lastModifiedTimestampsFile);
-    readLastModifiedTimestampsFile(lastModifiedTimestampsFile);
-    return true; //TODOoptional: above two methods can return bool
+    m_LastModifiedTimestampsFilesWatcher->addPath(lastModifiedTimestampsFile);
+
+    LastModifiedTimestampsSorter lastModifiedTimestampsSorter(this);
+    int totalPathsCount = 0;
+    SortedMapOfListsOfPathsPointerType *oldUncombinedMap = m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps.value(lastModifiedTimestampsFile);
+    delete oldUncombinedMap;
+    m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps.insert(lastModifiedTimestampsFile, lastModifiedTimestampsSorter.sortLastModifiedTimestamps_ButDontSortPaths(lastModifiedTimestampsFile, &totalPathsCount, getPathPrefixForThisLastModifiedTimestampsFile(lastModifiedTimestampsFile))); //dont sort the paths because it would be a waste of time to sort them before merging with the others
+
+    return true; //TODOoptional: above two ops can/should return false if fail
 }
-void LastModifiedTimestampsWatcher::resolveLastModifiedTimestampsFilePathAndWatchIt(const QString &lastModifiedTimestampsFile)
+QString LastModifiedTimestampsWatcher::getPathPrefixForThisLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile)
 {
-    QFileInfo symlinkResolver(lastModifiedTimestampsFile);
-    m_LastModifiedTimestampsFilesWatcher->addPath(symlinkResolver.canonicalFilePath());
+    //TODOoptimization: *might* be worth it to cache this parsing... but eh fuck it pretty cheap anyways...
+    QFileInfo lastModifiedTimestampsFilenameChopperOffer(lastModifiedTimestampsFile);
+    QString absolutePath = appendSlashIfNeeded(lastModifiedTimestampsFilenameChopperOffer.absolutePath());
+    absolutePath.remove(0, m_AbsolutePathToBaseViewDirSoTheFoldersInBetweenThereAndLastModifiedTimestampsFilesCanBeUsedAsPrefixInCombinedSortedList.length());
+    return absolutePath;
 }
 void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles()
 {
@@ -139,8 +148,10 @@ void LastModifiedTimestampsWatcher::deleteOneTimestampAndPathQueuedForDelete()
     LastModifiedTimestampsAndPaths *currentToDelete = m_TimestampsAndPathsQueuedForDelete->dequeue();
     delete currentToDelete;
 }
-void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(const QStringList &lastModifiedTimestampsFiles)
+//TO DOnereq: we need to keep the unresolved symlinks handy for re-adding. the key entry in QHash should probably be that symlink (since otherwise it'd be changing). HOWEVER, when qfsw tells us that a file is deleted, it is no longer the symlink. we resolved it! so i need to keep track of symlinks and resolvedz... ffff. wait a tick, i don't need to resolve it in the first place and then it's no longer a problem... why was i anyways? i guess it was just to help me with understanding...
+void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFiles(const QString &absolutePathToBaseViewDirSoTheFoldersInBetweenThereAndLastModifiedTimestampsFilesCanBeUsedAsPrefixInCombinedSortedList, const QStringList &lastModifiedTimestampsFiles)
 {
+    m_AbsolutePathToBaseViewDirSoTheFoldersInBetweenThereAndLastModifiedTimestampsFilesCanBeUsedAsPrefixInCombinedSortedList = appendSlashIfNeeded(absolutePathToBaseViewDirSoTheFoldersInBetweenThereAndLastModifiedTimestampsFilesCanBeUsedAsPrefixInCombinedSortedList);
     if(m_LastModifiedTimestampsFilesWatcher)
         delete m_LastModifiedTimestampsFilesWatcher;
     m_LastModifiedTimestampsFilesWatcher = new QFileSystemWatcher(this);
@@ -151,6 +162,11 @@ void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(cons
     }
     foreach(const QString &lastModifiedTimestampsFile, lastModifiedTimestampsFiles)
     {
+        if(!lastModifiedTimestampsFile.startsWith(m_AbsolutePathToBaseViewDirSoTheFoldersInBetweenThereAndLastModifiedTimestampsFilesCanBeUsedAsPrefixInCombinedSortedList))
+        {
+            emit e("error: '" + lastModifiedTimestampsFile + "' is not in a sub-folder of: '" + m_AbsolutePathToBaseViewDirSoTheFoldersInBetweenThereAndLastModifiedTimestampsFilesCanBeUsedAsPrefixInCombinedSortedList + "'");
+            return; //TODOoptional: this and the below return should return false, and that false should be emitted back to caller and exit cleanly etc (whereas now hvbs just.. err... stops mid-startup without the startedWatchingLastModifiedTimestampsFile signal..)
+        }
         m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps.insert(lastModifiedTimestampsFile, new SortedMapOfListsOfPathsPointerType());
         if(!addAndReadLastModifiedTimestampsFile(lastModifiedTimestampsFile)) //populate at startup
             return;
@@ -158,20 +174,11 @@ void LastModifiedTimestampsWatcher::startWatchingLastModifiedTimestampsFile(cons
     combineAndPublishLastModifiedTimestampsFiles();
     emit startedWatchingLastModifiedTimestampsFile();
 }
-void LastModifiedTimestampsWatcher::readLastModifiedTimestampsFile(const QString &lastModifiedTimestampsFile)
-{
-    LastModifiedTimestampsSorter lastModifiedTimestampsSorter(this);
-    int totalPathsCount = 0;
-
-    SortedMapOfListsOfPathsPointerType *oldUncombinedMap = m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps.value(lastModifiedTimestampsFile);
-    delete oldUncombinedMap;
-    m_LastModifiedTimestampsFilesAndPreCombinedSemiSortedTimestampsAndPathsMaps.insert(lastModifiedTimestampsFile,lastModifiedTimestampsSorter.sortLastModifiedTimestamps_ButDontSortPaths(lastModifiedTimestampsFile, &totalPathsCount)); //dont sort the paths because it would be a waste of time to sort them before merging with the others
-}
 void LastModifiedTimestampsWatcher::handleLastModifiedTimestampsChanged(const QString &lastModifiedTimestampsFileThatChanged)
 {
     if(!addAndReadLastModifiedTimestampsFile(lastModifiedTimestampsFileThatChanged))
         return;
-    combineAndPublishLastModifiedTimestampsFiles();
+    combineAndPublishLastModifiedTimestampsFiles(); //TODOoptimization: maybe another one needs reading (maybe they all changed at, or around, the same time)... so it would be an optimization to not combine yet if that were the case and, more importantly, it is detectable. perhaps clever queued combine invocation (0 length timer) hackery with some kind of boolean flag that somehow cancels it (stop the timer?). not sure if canceling a timer that has "already fired" will stop the slot... could test that though..
 }
 void LastModifiedTimestampsWatcher::handleDeleteInFiveMinsTimerTimedOut()
 {

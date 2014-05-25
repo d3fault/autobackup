@@ -17,12 +17,12 @@ public:
     SortedMapOfListsOfPathsPointerType *takeMapOfPathsListsSortedByModificationDate();
 
     //sync and take
-    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps_ButDontSortPaths(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount = 0);
-    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps_ButDontSortPaths(const QString &lastModifiedTimestampsFilename, int *itemsCount = 0);
+    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps_ButDontSortPaths(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount = 0, const QString &optionalStringToPrefixPathsWith = QString());
+    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps_ButDontSortPaths(const QString &lastModifiedTimestampsFilename, int *itemsCount = 0, const QString &optionalStringToPrefixPathsWith = QString());
 
     //sync and take
-    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount = 0);
-    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, int *itemsCount = 0);
+    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, int *itemsCount = 0, const QString &optionalStringToPrefixPathsWith = QString());
+    SortedMapOfListsOfPathsPointerType *sortLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, int *itemsCount = 0, const QString &optionalStringToPrefixPathsWith = QString());
 
     ~LastModifiedTimestampsSorter();
 private:
@@ -31,7 +31,7 @@ private:
 
     void newTheMapIfNeeded();
     void clearTheMap();
-    void sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice);
+    void sortAllLastModifiedTimestampsKeysAkaTimestampsOnlyOnIoDevice(QIODevice *lastModifiedTimestampsIoDevice, const QString &optionalStringToPrefixPathsWith = QString());
     void sortAllLastModifiedTimestampsValuesAkaPathsOnInternalMap();
     void outputTheMap();
 signals:
@@ -45,12 +45,12 @@ signals:
     void finishedOutputtingSortedLines(int totalItemsCount);
 public slots:
     //async
-    void sortAndEmitLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice);
-    void sortAndEmitLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename);
+    void sortAndEmitLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, const QString &optionalStringToPrefixPathsWith = QString());
+    void sortAndEmitLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, const QString &optionalStringToPrefixPathsWith = QString());
 
     //sync
-    void sortAndOutputLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice); //TODOoptional: specify sorting type
-    void sortAndOutputLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename);
+    void sortAndOutputLastModifiedTimestamps(QIODevice *lastModifiedTimestampsIoDevice, const QString &optionalStringToPrefixPathsWith = QString()); //TODOoptional: specify sorting type
+    void sortAndOutputLastModifiedTimestamps(const QString &lastModifiedTimestampsFilename, const QString &optionalStringToPrefixPathsWith = QString());
 };
 
 #endif // LASTMODIFIEDTIMESTAMPSSORTER_H
