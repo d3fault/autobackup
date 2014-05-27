@@ -1,0 +1,3 @@
+GIRL: would you ask me to live in silence in order to save you from embarrassment?
+if(yes)
+	fuck you very much;

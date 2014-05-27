@@ -1,8 +1,10 @@
 #include "wtcontrollerandstdoutowner.h"
 
-#include <fstream>
+#include <Wt/WMemoryResource>
 
-#include "backend/adimagewresource.h"
+#include <QFile>
+
+#include "backend/nonexpiringstringwresource.h"
 
 //this thread owns stdout because i can't (well...) tell wt to not write to stdout at any given moment...
 //i can't for the life of me figure out if this is a backend or frontend class :-P
@@ -45,26 +47,16 @@ WtControllerAndStdOutOwner::~WtControllerAndStdOutOwner()
         delete m_WtServer;
     }
 }
-string WtControllerAndStdOutOwner::readFileIntoString(const char *filename)
+string WtControllerAndStdOutOwner::readFileIntoString(const QString &filename)
 {
-    streampos fileSizeHack;
-    char *fileBuffer;
-    ifstream fileStream(filename, ios::in | ios::binary | ios::ate);
-    if(fileStream.is_open())
+    QFile theFile(filename);
+    if(!theFile.open(QIODevice::ReadOnly))
     {
-        fileSizeHack = fileStream.tellg();
-        fileStream.seekg(0,ios::beg);
-        fileBuffer = new char[fileSizeHack];
-        fileStream.read(fileBuffer, fileSizeHack);
-        fileStream.close();
-    }
-    else
-    {
-        handleE("failed to open " + QString::fromStdString(filename) + " for reading");
+        handleE("failed to open " + filename + " for reading");
         return std::string("");
     }
-    std::string ret = std::string(fileBuffer, fileSizeHack);
-    delete [] fileBuffer;
+    QString theFileString = theFile.readAll();
+    std::string ret = theFileString.toStdString();
     return ret;
 }
 void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
@@ -89,20 +81,26 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
     m_WtServer->setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
     m_WtServer->addEntryPoint(Application, &HackyVideoBullshitSiteGUI::hackyVideoBullshitSiteGuiEntryPoint);
 
-    m_MySexyFaceLogoResource = new WFileResource("image/jpeg", "my.sexy.face.logo.jpg"); //TODOoptimization: 1 year expiration
+    std::string mySexyFaceLogoString = readFileIntoString(":/my.sexy.face.logo.jpg");
+    if(mySexyFaceLogoString == "")
+    {
+        emit fatalErrorDetected();
+        return;
+    }
+    m_MySexyFaceLogoResource = new NonExpiringStringWResource(mySexyFaceLogoString, "image/jpeg", "my.sexy.face.logo.jpg", WResource::Inline);
     m_WtServer->addResource(m_MySexyFaceLogoResource, "/my.sexy.face.logo.jpg");
 
     //add the no ad global/public resource
-    std::string noAdPlaceholderImageString = readFileIntoString("no.ad.placeholder.jpg");
+    std::string noAdPlaceholderImageString = readFileIntoString(":/no.ad.placeholder.jpg");
     if(noAdPlaceholderImageString == "")
     {
         emit fatalErrorDetected();
         return;
     }
-    m_NoAdImagePlaceholderResource = new AdImageWResource(noAdPlaceholderImageString, "image/jpeg", "image.jpg", WResource::Inline);
+    m_NoAdImagePlaceholderResource = new NonExpiringStringWResource(noAdPlaceholderImageString, "image/jpeg", "image.jpg", WResource::Inline);
     m_WtServer->addResource(m_NoAdImagePlaceholderResource, "/no.ad.placeholder.jpg");
 
-    std::string copyrightText = readFileIntoString("../../../copyright.txt"); //TODOoptional: settings file, cli arg, whatever
+    std::string copyrightText = readFileIntoString(":/copyright.txt"); //TODOoptional: settings file, cli arg, whatever
     if(copyrightText == "")
     {
         emit fatalErrorDetected();
@@ -110,7 +108,7 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
     }
     HackyVideoBullshitSiteGUI::setCopyrightText(copyrightText);
 
-    std::string dplLicenseText = readFileIntoString("../../../license.dpl.txt"); //eh redundant naming, unseen code is unseen, dgaf
+    std::string dplLicenseText = readFileIntoString(":/license.dpl.txt"); //eh redundant naming, unseen code is unseen, dgaf
     if(dplLicenseText == "")
     {
         emit fatalErrorDetected();

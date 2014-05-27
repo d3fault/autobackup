@@ -9,6 +9,8 @@ int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
 
+    //TODOoptional: could embed my folder setup shell scripts (well, they're too specific to my needs atm, but later if genericized) into the binary and call them here/now if first run is detected (whether QSettings exists and/or is populated). Basically the installer and resulting executable can be one and the same...
+
     HackyVideoBullshitSite hackyVideoBullshitSite(argc, argv);
     Q_UNUSED(hackyVideoBullshitSite)
 

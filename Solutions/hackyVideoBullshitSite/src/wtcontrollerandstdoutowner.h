@@ -2,7 +2,6 @@
 #define WTCONTROLLERANDSTDOUTOWNER_H
 
 #include <Wt/WServer>
-#include <Wt/WFileResource>
 using namespace Wt;
 
 #include <QObject>
@@ -23,13 +22,13 @@ public:
     ~WtControllerAndStdOutOwner();
 private:
     WServer *m_WtServer;
-    WFileResource *m_MySexyFaceLogoResource;
-    AdImageWResource *m_NoAdImagePlaceholderResource;
+    NonExpiringStringWResource *m_MySexyFaceLogoResource;
+    NonExpiringStringWResource *m_NoAdImagePlaceholderResource;
 
     QTextStream m_StdOut;
     QTextStream m_StdErr;
 
-    std::string readFileIntoString(const char *filename);
+    std::string readFileIntoString(const QString &filenam);
 signals:
     void fatalErrorDetected();
     void started();

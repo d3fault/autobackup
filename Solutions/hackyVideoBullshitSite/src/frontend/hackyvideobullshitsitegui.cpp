@@ -113,6 +113,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOreq: airborne videos symbolic link in temp before moveOverwrite (BUT ACTUALLY, in binaries?)
     //TODOreq: each .lastModified (binary/text) needs "/binary/" and "/text/" prepended to internal path before put in the hash/list (but don't make it permanent ofc)
     //TODOreq: text repo readonly git:// clone url in download area (down below, not part of the 3)
+    //TODOreq: /licenses/ + timestamps file + missing-prefix-if-symlinking = ?
 
     //TODOoptional: if the browser isn't wide enough, my links to the right of the ad aren't shown (and can't be scrolled to wtf). WNavigationBar/Panel thing has a setResponsive(true) function that can turn things like that into a vertical popup when the screen shrinks too small
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?

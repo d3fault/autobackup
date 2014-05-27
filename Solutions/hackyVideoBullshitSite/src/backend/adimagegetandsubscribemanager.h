@@ -20,7 +20,7 @@ namespace Wt
 class WResource;
 }
 
-class AdImageWResource;
+class NonExpiringStringWResource;
 
 typedef boost::function<void (Wt::WResource* /*image*/, std::string /*url*/, std::string /*altAndHover*/)> GetAndSubscriptionUpdateCallbackType;
 
@@ -39,8 +39,8 @@ private:
         GetAndSubscriptionUpdateCallbackType GetAndSubscriptionUpdateCallback;
     };
     QHash<AdImageSubscriberIdentifier*, AdImageSubscriberSessionInfo*> m_Subscribers;
-    AdImageWResource *m_CurrentAdImage;
-    AdImageWResource *m_YesterdaysAdImage;
+    NonExpiringStringWResource *m_CurrentAdImage;
+    NonExpiringStringWResource *m_YesterdaysAdImage;
     string m_CurrentAdUrl;
     string m_CurrentAdAltAndHover;
     long long m_CurrentAdExpirationDateTime;

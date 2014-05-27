@@ -11,7 +11,7 @@
 #include <boost/property_tree/json_parser.hpp>
 
 #include "abc2couchbaseandjsonkeydefines.h"
-#include "adimagewresource.h"
+#include "nonexpiringstringwresource.h"
 #include "nonanimatedimagheaderchecker.h"
 
 using namespace Wt;
@@ -195,7 +195,7 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
         char imageHeader[2] = {imageCStr[0], imageCStr[1]};
         mimeTypeHalfAndFileExtension = NonAnimatedImageHeaderChecker::guessImageFormatFromHeaderMagic(imageHeader);
     }
-    m_CurrentAdImage = new AdImageWResource(imageStdString, "image/" + mimeTypeHalfAndFileExtension, "image." + mimeTypeHalfAndFileExtension, WResource::Inline);
+    m_CurrentAdImage = new NonExpiringStringWResource(imageStdString, "image/" + mimeTypeHalfAndFileExtension, "image." + mimeTypeHalfAndFileExtension, WResource::Inline);
 
     m_CurrentAdUrl = base64decodeStdString(pt.get<string>(JSON_SLOT_FILLER_URL));
     m_CurrentAdAltAndHover = base64decodeStdString(pt.get<string>(JSON_SLOT_FILLER_HOVERTEXT));

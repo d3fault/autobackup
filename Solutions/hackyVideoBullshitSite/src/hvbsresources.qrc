@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file alias="copyright.txt">../../../copyright.txt</file>
+    <file alias="license.dpl.txt">../../../license.dpl.txt</file>
+    <file alias="no.ad.placeholder.jpg">/home/d3fault/temp/no.ad.placeholder.jpg</file>
+    <file alias="my.sexy.face.logo.jpg">/home/d3fault/temp/my.sexy.face.logo.jpg</file>
+</qresource>
+</RCC>

@@ -1,0 +1,1 @@
+An installer with /autobackup/ relative paths that embeds those resources into itself (AND OTHERS (jpegs) THAT MUST BE SPECIFIED AT COMPILE TIME (HOW?)) when compiling. It also bundles the hvbs binary and "pre" install script and runs pre (which in turn runs hvbs binary)... of course after writing out those resources it embedded in itself

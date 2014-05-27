@@ -13,7 +13,6 @@ SOURCES += main.cpp \
     hackyvideobullshitsite.cpp \
     backend/adimagegetandsubscribemanager.cpp \
     frontend/hackyvideobullshitsitegui.cpp \
-    backend/adimagewresource.cpp \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
     backend/videosegmentsimporterfolderwatcher.cpp \
     frontend/directorybrowsingwtwidget.cpp \
@@ -21,13 +20,13 @@ SOURCES += main.cpp \
     backend/lastmodifiedtimestampswatcher.cpp \
     ../../../Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp \
     wtcontrollerandstdoutowner.cpp \
-    ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp
+    ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp \
+    backend/nonexpiringstringwresource.cpp
 
 HEADERS += \
     hackyvideobullshitsite.h \
     backend/adimagegetandsubscribemanager.h \
     frontend/hackyvideobullshitsitegui.h \
-    backend/adimagewresource.h \
     ../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
     ../../../GloballySharedClasses/image/nonanimatedimagheaderchecker.h \
     backend/videosegmentsimporterfolderwatcher.h \
@@ -38,7 +37,8 @@ HEADERS += \
     lastmodifiedtimestampsandpaths.h \
     wtcontrollerandstdoutowner.h \
     frontend/hvbsshared.h \
-    ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h
+    ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h \
+    backend/nonexpiringstringwresource.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/
@@ -51,3 +51,6 @@ LIBS += -lwt -lwthttp -lboost_signals
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../GloballySharedClasses/simplifiedlastmodifiedtimestamp.pri)
 include(../../../GloballySharedClasses/standardinputnotifier.pri)
+
+RESOURCES += \
+    hvbsresources.qrc

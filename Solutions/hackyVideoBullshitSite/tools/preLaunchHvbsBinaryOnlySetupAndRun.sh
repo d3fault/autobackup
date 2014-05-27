@@ -1,15 +1,6 @@
 #!/bin/bash
+##asumes qt/git/7za/tmux/boost-sid/wt-compiled, in addition to binary placed in /home/user/hvbs/bin/ on remote server##
 exit 1
-
-##asumes qt/git/7za/tmux/boost-sid/wt-compiled already installed on remote server##
-##assumes hvbs compiled and placed in /home/user/hvbs/bin/##
-
-#TODOreq:
-#-video import folder structures
-#-no.ad.placeholder.jpg and my.sexy.face.logo.jpg
-
-#hvbs binary-only stage
-#set up empty symlinks sources so we can update them without restarting hvbs
 
 #if changing these variables, paste the changes into postLaunch
 userHome=/home/user
@@ -67,22 +58,26 @@ mkdir -p $hvbs/incomingVideoScratch/yearDayFolderSetup
 mkdir -p $hvbs/web/view/AirborneVideos
 mkdir -p $hvbsConfigDir
 echo "[General]" > $hvbsConfigFile
+echo "HvbsWebBaseDir=$hvbs/web" >> $hvbsConfigFile
 echo "AirborneVideoSegmentsBaseDir_aka_videoSegmentsImporterFolderToMoveTo=$hvbs/web/view/AirborneVideos" >> $hvbsConfigFile
-echo "MyBrainArchiveBaseDir=$hvbs/web" >> $hvbsConfigFile
-
-#TODOreq: mod hvbs to allow multiple (array in qsettings) dirs-with-timestamp-files
-echo "LastModifiedTimestampsFile=/home/user/autobackup/.lastModifiedTimestamps" >> $hvbsConfigFile
 echo "NeighborPropagationRemoteDestinationToMoveTo=/dev/null" >> $hvbsConfigFile
 echo "NeighborPropagationRemoteSftpUploadScratchSpace=/dev/null" >> $hvbsConfigFile
 echo "NeighborPropagationUserHostPathComboSftpArg=null@dev.poopybutt" >> $hvbsConfigFile
 echo "SftpProcessPath=/usr/bin/sftp" >> $hvbsConfigFile
-echo "VideoSegmentsImporterFolderToWatch=/home/user/incomingVideoScratch/watched" >> $hvbsConfigFile
-echo "VideoSegmentsImporterFolderYearDayOfYearFoldersScratchSpace=/home/user/incomingVideoScratch/yearDayFolderSetup" >> $hvbsConfigFile
+echo "VideoSegmentsImporterFolderToWatch=$hvbs/incomingVideoScratch/watched" >> $hvbsConfigFile
+echo "VideoSegmentsImporterFolderYearDayOfYearFoldersScratchSpace=$hvbs/incomingVideoScratch/yearDayFolderSetup" >> $hvbsConfigFile
+echo "" >> $hvbsConfigFile
+echo "[LastModifiedTimestampFiles]" >> $hvbsConfigFile
+echo "1\AbsoluteFilePathOfLastModifiedTimestampsFile=$hvbsView/oldUnversionedArchive/.lastModifiedTimestamps" >> $hvbsConfigFile
+echo "2\AbsoluteFilePathOfLastModifiedTimestampsFile=$hvbsView/semiOldSemiUnversionedArchive/.lastModifiedTimestamps" >> $hvbsConfigFile
+echo "3\AbsoluteFilePathOfLastModifiedTimestampsFile=$hvbsView/autobackupLatest/.lastModifiedTimestamps" >> $hvbsConfigFile
+echo "size=3" >> $hvbsConfigFile
+
 
 cd $hvbs/bin
 ln -s /usr/local/share/Wt/resources/ resources
 echo "#!/bin/bash" > ./hvbsLauncher.sh
 echo "LD_LIBRARY_PATH=/usr/local/lib ./HackyVideoBullshitSite --docroot \".;/resources\" --http-address 0.0.0.0 --http-port 7777" >> ./hvbsLauncher.sh
 chmod u+x ./hvbsLauncher.sh
-tmux new-session -d -s hvbs './hvbsLauncher.sh'
-exit 0
+#tmux new-session -d -s hvbs './hvbsLauncher.sh'
+./hvbsLauncher.sh
