@@ -45,6 +45,7 @@ private:
     bool extractArchive();
     bool moveOldAndSemiOldArchivesFromTempExtractArea();
     bool unPrependCopyrightHeader();
+    bool recursivelyUnprependCopyrightHeaderForDir(const QString &dir);
     bool molestUsingEasyTreeFilesWhileAccountingForCompressedFilenameChanges();
     bool myHackyMolestUsingEasyTreeFile(const QString &dirCorrespondingToEasyTreeFile, const QString &easyTreeFile);
     bool makeSimplifiedLastModifiedTimestampsFileForOldAndSemiOldArchives();

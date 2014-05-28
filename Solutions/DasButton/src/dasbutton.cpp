@@ -11,13 +11,18 @@
 #include "easytree.h"
 
 #define DAS_BUTTON_DEFAULT_HOME_DIR "/home/user/"
-#define DAS_BUTTON_TEMP_EXTRACT_DIR m_PrefixAkaHomeDir + "temp/extractDirDELETEMELATERFUCKITFORNOW/"
+#define DAS_BUTTON_TEMP_EXTRACT_DIR m_PrefixAkaHomeDir + "hvbs/tempExtractDirDELETEMELATERFUCKITFORNOW/"
 #define DAS_BUTTON_HVBS_WEB_SRC m_PrefixAkaHomeDir + "hvbs/webSrc/"
 //#define DAS_BUTTON_TEMP_EXTRACT_OLD_UNVERSIONED_ARCHIVE_EASY_TREE
 #define DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE \
                                 DAS_BUTTON_HVBS_WEB_SRC "oldUnversionedArchivePerm" //if changing these dirs, update postLaunch script
 #define DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE \
                                 DAS_BUTTON_HVBS_WEB_SRC "semiOldSemiUnversionedArchivePerm"
+
+#define DAS_BUTTON_OLD_UNVERSIONED_EASY_TREE_HASH_FILE \
+                                DAS_BUTTON_TEMP_EXTRACT_DIR "data/oldUnversionedArchiveEasyTreeHashFile.txt"
+#define DAS_BUTTON_SEMI_OLD_SEMI_UNVERSIONED_EASY_TREE_HASH_FILE \
+DAS_BUTTON_TEMP_EXTRACT_DIR "data/semiOldSemiUnversionedArchiveEasyTreeHashFile.txt"
 
 #define DAS_BUTTON_DEFAULT_COPYRIGHT_HEADER_RELATIVE_PATH "../../d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt"
 
@@ -198,7 +203,23 @@ bool DasButton::moveOldAndSemiOldArchivesFromTempExtractArea()
 }
 bool DasButton::unPrependCopyrightHeader()
 {
-    QDirIterator dirIterator(DAS_BUTTON_HVBS_WEB_SRC, (QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories);
+    //recursively iterate the core directories
+    if(!recursivelyUnprependCopyrightHeaderForDir(DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE))
+        return false;
+    if(!recursivelyUnprependCopyrightHeaderForDir(DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE))
+        return false;
+
+    //hack: unprepend the headers in our easy tree timestamps files. they weren't moved out of the temp extract area because new .lastModifiedTimestamps are about to be generated for them, but we still need to unprepend otherwise the parser of them (during molestation) will segfault <3
+    if(!replaceInFile(DAS_BUTTON_OLD_UNVERSIONED_EASY_TREE_HASH_FILE, m_CopyrightHeader_WithNoComments, ""))
+        return false;
+    if(!replaceInFile(DAS_BUTTON_SEMI_OLD_SEMI_UNVERSIONED_EASY_TREE_HASH_FILE, m_CopyrightHeader_WithNoComments, ""))
+        return false;
+
+    return true;
+}
+bool DasButton::recursivelyUnprependCopyrightHeaderForDir(const QString &dir)
+{
+    QDirIterator dirIterator(dir, (QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories);
     QFileInfo copyrightHeaderFileInfo(m_FilepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater);
     const QString &copyrightHeaderFilenameOnly = copyrightHeaderFileInfo.fileName();
 
@@ -260,9 +281,9 @@ bool DasButton::molestUsingEasyTreeFilesWhileAccountingForCompressedFilenameChan
 {
     //OT: sometimes the fastest (not easiest) way to the top of a mountain is to go straight up the side of it, ignoring any flatter/easier paths you cross in the process
 
-    if(!myHackyMolestUsingEasyTreeFile(DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE, DAS_BUTTON_TEMP_EXTRACT_DIR "data/oldUnversionedArchiveEasyTreeHashFile.txt"))
+    if(!myHackyMolestUsingEasyTreeFile(DAS_BUTTON_HVBS_WEB_SRC_OLD_UNVERSIONED_ARCHIVE, DAS_BUTTON_OLD_UNVERSIONED_EASY_TREE_HASH_FILE))
         return false;
-    if(!myHackyMolestUsingEasyTreeFile(DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE, DAS_BUTTON_TEMP_EXTRACT_DIR "data/semiOldSemiUnversionedArchiveEasyTreeHashFile.txt"))
+    if(!myHackyMolestUsingEasyTreeFile(DAS_BUTTON_HVBS_WEB_SRC_SEMI_OLD_SEMI_UNVERSIONED_ARCHIVE, DAS_BUTTON_SEMI_OLD_SEMI_UNVERSIONED_EASY_TREE_HASH_FILE))
         return false;
     return true;
 }

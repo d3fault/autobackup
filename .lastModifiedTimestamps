@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1401272202
+Documents/minddump/:1401288745
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1964,6 +1964,7 @@ Documents/minddump/sldfjlskjflksjdflkjsdlfkjsdofulewkjrousdfkjsdflwerjk.metaphor
 Documents/minddump/sldfjsdjflksjdflkjsdlkfjlskdjflkjewroulkjflskdjflsdkjfs.txt:1399507523
 Documents/minddump/sldfjsdlafjsdalkfjoiuwerlkjsdfousdflk.txt:1356355477
 Documents/minddump/sldfjsldhflsjdflkjsdlfkjsdlkjfsdlkfjsdlkjfoulksdf.txt:1401269806
+Documents/minddump/sldfjsldkjflsdhfljsdflkjsdlfkjsdlfkjsdlkfj.txt:1401288745
 Documents/minddump/sldfkjalsdjflksjdflkjsdlkfjdslkjflsdjkfouwe.txt:1398999726
 Documents/minddump/sldfkjalskdjflksjdflksjdfosduflkwjerousdfjsdflkjreoi.txt:1396824015
 Documents/minddump/sldfkjalskjdflksjdflkjsldkfjlskjflaskjdflskjdfouwerl.txt:1399325635
@@ -4241,10 +4242,10 @@ Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 Solutions/DasButton/:1400808943
-Solutions/DasButton/src/:1401272752
+Solutions/DasButton/src/:1401292004
 Solutions/DasButton/src/DasButton.pro:1400834262
-Solutions/DasButton/src/dasbutton.cpp:1401272721
-Solutions/DasButton/src/dasbutton.h:1400843670
+Solutions/DasButton/src/dasbutton.cpp:1401291874
+Solutions/DasButton/src/dasbutton.h:1401291794
 Solutions/DasButton/src/dasbuttoncli.cpp:1400834927
 Solutions/DasButton/src/dasbuttoncli.h:1400834887
 Solutions/DasButton/src/main.cpp:1400844971
