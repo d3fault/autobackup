@@ -81,6 +81,7 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
     m_WtServer->setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
     m_WtServer->addEntryPoint(Application, &HackyVideoBullshitSiteGUI::hackyVideoBullshitSiteGuiEntryPoint);
 
+    //sexy face and no ad bundles don't render.. DID NOT 404 though.... wtf?
     std::string mySexyFaceLogoString = readFileIntoString(":/my.sexy.face.logo.jpg");
     if(mySexyFaceLogoString == "")
     {

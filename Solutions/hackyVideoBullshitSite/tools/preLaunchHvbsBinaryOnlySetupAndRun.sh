@@ -79,5 +79,5 @@ ln -s /usr/local/share/Wt/resources/ resources
 echo "#!/bin/bash" > ./hvbsLauncher.sh
 echo "LD_LIBRARY_PATH=/usr/local/lib ./HackyVideoBullshitSite --docroot \".;/resources\" --http-address 0.0.0.0 --http-port 7777" >> ./hvbsLauncher.sh
 chmod u+x ./hvbsLauncher.sh
-#tmux new-session -d -s hvbs './hvbsLauncher.sh'
-./hvbsLauncher.sh
+tmux new-session -d -s hvbs './hvbsLauncher.sh'
+#./hvbsLauncher.sh

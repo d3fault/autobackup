@@ -7,6 +7,8 @@
 D3faultPublicLicenseCopyrightHeaderBulkPrependerCli::D3faultPublicLicenseCopyrightHeaderBulkPrependerCli(QObject *parent)
     : QObject(parent)
     , m_D3faultPublicLicenseCopyrightHeaderBulkPrepender(new D3faultPublicLicenseCopyrightHeaderBulkPrepender(this))
+    , m_StdOut(stdout)
+    , m_StdErr(stderr)
 {
     connect(m_D3faultPublicLicenseCopyrightHeaderBulkPrepender, SIGNAL(bulkPrependD3faultPublicLicenseCopyrightHeaderFinished(bool)), this, SLOT(handleD3faultPublicLicenseCopyrightHeaderBulkPrependerFinished(bool)));
     connect(m_D3faultPublicLicenseCopyrightHeaderBulkPrepender, SIGNAL(o(QString)), this, SLOT(handleO(QString)));

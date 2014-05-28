@@ -20,7 +20,7 @@ autobackupWebSrcTemp=$hvbsWebSrc/autobackupTemp
 
 repoAtDir=$autobackupWebSrcTemp/repoAt`date +%s`
 mkdir -p $repoAtDir/view
-git archive --remote=$autobackupBareUrl master | tar -x -C $repoAtDir/view
+git archive --remote=$autobackupBareUrl master | tar -x -m -C $repoAtDir/view
 cp -a $repoAtDir/view $repoAtDir/download
 
 git clone $autobackupBareUrl $autobackupRun

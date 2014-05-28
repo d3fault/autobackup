@@ -8,7 +8,7 @@ using namespace Wt;
 class NonExpiringStringWResource : public WResource
 {
 public:
-    NonExpiringStringWResource(const std::string &resourceBytes, const std::string &resourceMimeType, const std::string &resourceSuggestedFilename, DispositionType dispositionType, WObject* parent = 0);
+    NonExpiringStringWResource(std::string resourceBytes, std::string resourceMimeType, std::string resourceSuggestedFilename, DispositionType dispositionType, WObject* parent = 0);
     void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
     ~NonExpiringStringWResource();
 private:

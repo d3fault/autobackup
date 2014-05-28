@@ -53,12 +53,23 @@ bool D3faultPublicLicenseCopyrightHeaderBulkPrepender::bulkPrependD3faultPublicL
         return false;
     }
 
+    m_CopyrightHeaderUnmodified.clear();
     QString copyrightHeaderFilePath = optionalAlternateCopyrightHeaderFilePath;
     if(optionalAlternateCopyrightHeaderFilePath.isEmpty())
         copyrightHeaderFilePath = D3faultPublicLicenseCopyrightHeaderBulkPrepender_DEFAULT_COPYRIGHT_HEADER_FILE_PATH;
-
     QFileInfo copyrightHeaderFileInfo(copyrightHeaderFilePath);
-    QString copyrightHeaderCanonicalFilePath(copyrightHeaderFileInfo.canonicalFilePath());
+    QString copyrightHeaderCanonicalFilePath(copyrightHeaderFileInfo.canonicalFilePath());    
+    QFile copyrightHeaderFile(copyrightHeaderCanonicalFilePath);
+    if(!copyrightHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        emit e("failed to open copyright header for reading: " + copyrightHeaderCanonicalFilePath);
+        return false;
+    }
+
+    {
+        QTextStream copyrightHeaderTextStream(&copyrightHeaderFile);
+        m_CopyrightHeaderUnmodified = copyrightHeaderTextStream.readAll();
+    }
 
     QDirIterator dirIterator(dirToPrependTo, (QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs | QDir::Hidden), QDirIterator::Subdirectories);
     while(dirIterator.hasNext()) //Random/OT: integrating the dynamic responsiveness with... say.. qdiriterator... sounds challenging (but possible)
@@ -73,7 +84,7 @@ bool D3faultPublicLicenseCopyrightHeaderBulkPrepender::bulkPrependD3faultPublicL
             QString suffixToLower = currentFileInfo.suffix().toLower();
 
             QHashIterator<CopyrightHeaderFileStyleEnum, QStringList> extensionsIterator(m_FileStyleExtensionsHash);
-            while(extensionsIterator.hasNext());
+            while(extensionsIterator.hasNext())
             {
                 extensionsIterator.next();
                 if(extensionsIterator.value().contains(suffixToLower))
@@ -89,7 +100,7 @@ bool D3faultPublicLicenseCopyrightHeaderBulkPrepender::bulkPrependD3faultPublicL
         }
         else if(currentFileInfo.isDir())
         {
-            emit o("copyright header insert is entering dir: " + currentFileInfo.absoluteFilePath());
+            emit o("copyright header inserter is entering dir: " + currentFileInfo.absoluteFilePath());
         }
     }
     return true;

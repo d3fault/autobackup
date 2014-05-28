@@ -5,7 +5,7 @@
 #include <Wt/WDateTime>
 
 //doesn't make sense for this to be "backend", but also doesn't NEED to be front end (abstract WResource pointer is "enough"). need to refactor my backend to not depend on anything Wt related, but don't give nearly enough of a fuck to do that now...
-NonExpiringStringWResource::NonExpiringStringWResource(const std::string &resourceBytes, const std::string &resourceMimeType, const std::string &resourceSuggestedFilename, DispositionType dispositionType, WObject *parent)
+NonExpiringStringWResource::NonExpiringStringWResource(std::string resourceBytes, std::string resourceMimeType, std::string resourceSuggestedFilename, DispositionType dispositionType, WObject *parent)
     : WResource(parent), m_ResourceBytes(resourceBytes), m_ResourceBytesLength(resourceBytes.length()), m_ResourceMimeType(resourceMimeType)
 {
     suggestFileName(resourceSuggestedFilename, dispositionType);
