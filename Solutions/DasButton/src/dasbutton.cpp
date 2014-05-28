@@ -108,7 +108,7 @@ bool DasButton::readInCopyrightHeader()
             emit e("failed to open for reading: " + m_FilepathOfCopyrightHeaderToBothUnprependAndPrependAgainLater);
             return false;
         }
-        QTextStream copyrightHeaderTextStream;
+        QTextStream copyrightHeaderTextStream(&copyrightHeaderFile);
         bool firstLine = true;
         while(!copyrightHeaderTextStream.atEnd())
         {
