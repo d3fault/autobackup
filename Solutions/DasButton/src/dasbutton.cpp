@@ -133,6 +133,7 @@ bool DasButton::readInCopyrightHeader()
         m_CopyrightHeader_WithXmlStyleComments.replace("--", "__");
     }
     while(m_CopyrightHeader_WithXmlStyleComments != tempForComparingReplacementProgress);
+    m_CopyrightHeader_WithXmlStyleComments.replace("__-", "___");
     QString temp = m_CopyrightHeader_WithXmlStyleComments;
     m_CopyrightHeader_WithXmlStyleComments = "<!--\n" + temp + "\n-->\n\n";
 
@@ -151,7 +152,8 @@ bool DasButton::extractArchive()
         return false;
     }
     QStringList p7zipProcessArgs;
-    p7zipProcessArgs << "x" << ("-o" + extractDir) << "/home/rtorrentuser/containers/dist/MyBrain-PublicFiles/MyBrain-PublicFiles.7z.001";
+    QString myBrainPasswordWoooooooooooot = "L^_t^Cw!X)gvWD0;*;d*n-R+|nOjA1dO`CO^sZ9$zcN=kLL(zG9xHKP}bQQwH+~";
+    p7zipProcessArgs << "x" << ("-o" + extractDir) << ("-p" + myBrainPasswordWoooooooooooot) << "/home/rtorrentuser/containers/dist/MyBrain-PublicFiles/MyBrain-PublicFiles.7z.001";
     QProcess p7zipProcess;
     p7zipProcess.start("/usr/bin/7za", p7zipProcessArgs);
     if(!p7zipProcess.waitForStarted())

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1401214040
+Documents/minddump/:1401272202
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1593,6 +1593,7 @@ Documents/minddump/sdfasldkfsljdflksdjflksjdfouweljsdfousdflkjsd.txt:1393807071
 Documents/minddump/sdfdslkfjslkdjfsdouflskjfosduflkjowuelrkjofiusdlfkjsaodfulsdjfouewr.txt:1370568336
 Documents/minddump/sdfjdslkfjlksjdfklsjdfousdflkjouwerhhgslkjdf.txt:1392433504
 Documents/minddump/sdfjldsjfldjlasdfjlsdjfljskdjflsadjflkweroyhgkjhdf.txt:1355210058
+Documents/minddump/sdfjlsdjflkjsdfjsldkjfklsdjflksjdfjsdfhsdlkfjlks.txt:1401272202
 Documents/minddump/sdfjsdfkjslkfjsdofusdljfosduflskdjfousdflkjsdflkj.txt:1392976687
 Documents/minddump/sdfjsjdfkjsdlfkjsdlkjflskdjflksjfouwelrjousdlfjksklfjsdf.txt:1393706954
 Documents/minddump/sdfjskdljfklsdjfouweljroudfsjdfouwelrjoudflsdjfou.txt:1392163356
@@ -1962,6 +1963,7 @@ Documents/minddump/sldfjlskjdflskjdfsdlkjfsdlkfjsdfou.maybe.maybe.not.ill.never.
 Documents/minddump/sldfjlskjflksjdflkjsdlfkjsdofulewkjrousdfkjsdflwerjk.metaphor.txt:1397191652
 Documents/minddump/sldfjsdjflksjdflkjsdlkfjlskdjflkjewroulkjflskdjflsdkjfs.txt:1399507523
 Documents/minddump/sldfjsdlafjsdalkfjoiuwerlkjsdfousdflk.txt:1356355477
+Documents/minddump/sldfjsldhflsjdflkjsdlfkjsdlkjfsdlkfjsdlkjfoulksdf.txt:1401269806
 Documents/minddump/sldfkjalsdjflksjdflkjsdlkfjdslkjflsdjkfouwe.txt:1398999726
 Documents/minddump/sldfkjalskdjflksjdflksjdfosduflkwjerousdfjsdflkjreoi.txt:1396824015
 Documents/minddump/sldfkjalskjdflksjdflkjsldkfjlskjflaskjdflskjdfouwerl.txt:1399325635
@@ -4239,9 +4241,9 @@ Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 Solutions/DasButton/:1400808943
-Solutions/DasButton/src/:1401269181
+Solutions/DasButton/src/:1401272752
 Solutions/DasButton/src/DasButton.pro:1400834262
-Solutions/DasButton/src/dasbutton.cpp:1401269181
+Solutions/DasButton/src/dasbutton.cpp:1401272721
 Solutions/DasButton/src/dasbutton.h:1400843670
 Solutions/DasButton/src/dasbuttoncli.cpp:1400834927
 Solutions/DasButton/src/dasbuttoncli.h:1400834887
@@ -4260,9 +4262,9 @@ Solutions/NothingIsKnownParadox/src/nothingisknownparadox.h:1383180866
 Solutions/d3faultPublicLicense/:1400836496
 Solutions/d3faultPublicLicense/tools/:1400836628
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/:1400842871
-Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/:1401268127
+Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/:1401271840
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/D3faultPublicLicenseCopyrightHeaderBulkPrependerCli.pro:1400836752
-Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprepender.cpp:1401268127
+Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprepender.cpp:1401271837
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprepender.h:1400843883
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprependercli.cpp:1401265657
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprependercli.h:1400842640
@@ -4279,7 +4281,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1401266694
+Solutions/hackyVideoBullshitSite/src/:1401271539
 Solutions/hackyVideoBullshitSite/src/backend/:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1401116619
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1401116218
@@ -4289,10 +4291,10 @@ Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1401
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1400919404
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1401088654
+Solutions/hackyVideoBullshitSite/src/frontend/:1401271391
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1401088654
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1401271391
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1401029270
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1400924041
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1401029359

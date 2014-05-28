@@ -78,7 +78,10 @@ bool D3faultPublicLicenseCopyrightHeaderBulkPrepender::bulkPrependD3faultPublicL
         const QFileInfo &currentFileInfo = dirIterator.fileInfo();
         if(currentFileInfo.isFile())
         {
-            if(currentFileInfo.canonicalFilePath() == copyrightHeaderCanonicalFilePath) //don't prepend onto the prepend source!
+            if(currentFileInfo.fileName() == "license.dpl.txt") //probably others...
+                continue;
+
+            if(currentFileInfo.canonicalFilePath() == copyrightHeaderCanonicalFilePath) //don't prepend onto the prepend source! this only gets the one we used, but there are other copies that should probably be manually filtered out through a relative path (copyright.txt is too generic to filter globally) TODOoptional
                 continue;
 
             QString suffixToLower = currentFileInfo.suffix().toLower();
@@ -167,6 +170,7 @@ QString D3faultPublicLicenseCopyrightHeaderBulkPrepender::formatCopyrightHeaderF
             ret.replace("--", "__");
         }
         while(ret != tempForComparingReplacementProgress);
+        ret.replace("__-", "___"); //there would be a trailing "-" if odd (or even idfk) number of hyphens :-P
         QString temp = ret;
         ret = "<!--\n" + temp + "\n-->\n\n";
         return ret;
