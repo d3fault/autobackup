@@ -3,8 +3,7 @@
 [x] - Finish Bitcoin Key Gen
 [x] - Code hacky/shitty "abc" (probably single-user to start ("dogfood"-ONLY)) to be hosted from home on business connection
 [x] - Hack together shitty video solution + webpage (it being a 'user of' abc2)
-[] - Merge old archive and new (keeping binary and text separate. binary could (instead?) be a master repo that isn't sync'd with often (since slow). HackyVideoBullshitSite expects one repo is all (I guess it doesn't have to, I could easily merge two .lastModifiedTimestamps into one timeline-ify'd one... so long as the directory contents either didn't overlap or had a /binary/ and /text/ prefix separating))
-[] - Convert timestamp format of old (and semi-old) archive to new .lastModifiedTimestamps type
+[x] - Molest timestamp format of old (and semi-old) archive. Then create new .lastModifiedTimestamps file from that
 [] - Convert svgs from "flow" to "text" on both old archive and new
 [] - Get everything in place, including support scripts to do it (upgrading MyBrain, inode-aware directory building, etc)
 [] - Valgrind everything

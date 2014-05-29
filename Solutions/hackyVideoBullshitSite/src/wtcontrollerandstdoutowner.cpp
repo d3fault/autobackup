@@ -55,8 +55,8 @@ string WtControllerAndStdOutOwner::readFileIntoString(const QString &filename)
         handleE("failed to open " + filename + " for reading");
         return std::string("");
     }
-    QString theFileString = theFile.readAll();
-    std::string ret = theFileString.toStdString();
+    QByteArray theFileBA = theFile.readAll();
+    std::string ret(theFileBA.constData(), theFileBA.length());
     return ret;
 }
 void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)

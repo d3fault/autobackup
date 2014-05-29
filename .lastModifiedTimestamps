@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1401288745
+Documents/minddump/:1401361132
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1401261227
+Documents/minddump/dreams/:1401351430
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -91,6 +91,7 @@ Documents/minddump/dreams/glenn.going.through.my.backpack.looking.at.my.black.no
 Documents/minddump/dreams/godfather.pt.2.dream.night.after.watching.txt:1344076505
 Documents/minddump/dreams/grassy.hill.snowboarding.elementary.school.classmates.txt:1344305969
 Documents/minddump/dreams/hair.dream.floating.above.head.asldfjlsdjfouwer.txt:1367217902
+Documents/minddump/dreams/hannah.cia.acid.asdflsajflsdjfksjdfkljsdf.txt:1401351430
 Documents/minddump/dreams/heidi.kiss.kaylee.judging.arby.got.their.first.rofl.txt:1340898434
 Documents/minddump/dreams/if.we.must.be.quiet.to.live.then.id.rather.be.dead.osudfsofsldfjsldfkjslfjsldfkjslkf.txt:1390647505
 Documents/minddump/dreams/illuminauti.is.watching.you.masturbate.and.another.blurry.fight.dream.txt:1380130092
@@ -1773,6 +1774,7 @@ Documents/minddump/sdfsldfkjsldkfjoiuwlerjousadlfkjosduflkjsdfoiulkjweroiulksfdj
 Documents/minddump/sdfsldkfjsdlfouwlrkjsdofusdlfkj.txt:1353779782
 Documents/minddump/sdfsldkjfouwelrkjouflkjsdofusdlkjfouiwerkjlksjdfosudflkjwoeurljsdofusdlfjk.txt:1370584649
 Documents/minddump/sdfslfdkjslfkdjouwerljodsuflskjdfouwelrjouflkjsdfoulkj.txt:1372065815
+Documents/minddump/sdfuouwerfljsdlfjslkdflsdhfljsdflkjsdlkfjsdlf.txt:1401361132
 Documents/minddump/sdfuowierulsjfdsduiflkjfosudflkjsdfousdlfkjsdflk.txt:1395389035
 Documents/minddump/sdfwerpifalksdjflkjsdflksdfousdflkjsdfjksdf.txt:1359422428
 Documents/minddump/sdfworiusaldfkjwoiruskadfhwiryskdfjwoeituaofise.txt:1342222912
@@ -4282,7 +4284,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1401271539
+Solutions/hackyVideoBullshitSite/src/:1401356167
 Solutions/hackyVideoBullshitSite/src/backend/:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1401116619
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1401116218
@@ -4292,13 +4294,13 @@ Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1401
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1400919404
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1401271391
+Solutions/hackyVideoBullshitSite/src/frontend/:1401356038
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1401271391
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1401356038
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1401029270
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1400924041
-Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1401029359
+Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1401352804
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1401029359
 Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1401116298
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1401030303
@@ -4306,7 +4308,7 @@ Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1401030044
 Solutions/hackyVideoBullshitSite/src/hvbsresources.qrc:1401115865
 Solutions/hackyVideoBullshitSite/src/lastmodifiedtimestampsandpaths.h:1401009546
 Solutions/hackyVideoBullshitSite/src/main.cpp:1401172995
-Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.cpp:1401266691
+Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.cpp:1401355279
 Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.h:1401116453
 Solutions/hackyVideoBullshitSite/tools/:1401090609
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/:1400305152
@@ -4363,7 +4365,7 @@ Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if
 Solutions/launchASEPbecauseRedAlert/pricing.breakdown.asdf.txt:1394619523
 Solutions/launchASEPbecauseRedAlert/pursuingHappiness.svg:1371126578
 Solutions/launchASEPbecauseRedAlert/restricted.access.cookie.check.idea.thingo.asdflksadflkjsadf.txt:1388735956
-Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1400653866
+Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1401361232
 Solutions/launchASEPbecauseRedAlert/todo.lol.asdflkjsdfousdfweroiu.txt:1387173891
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 VariousTreeingsDuringHugeArchivePurge/:1367600874

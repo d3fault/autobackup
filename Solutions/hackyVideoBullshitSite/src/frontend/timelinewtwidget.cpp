@@ -392,7 +392,7 @@ string TimeLineWtWidget::embedBasedOnFileExtensionAndReturnMimeType(const QStrin
     //AUDIO
     if(filenameToLower.endsWith(".opus"))
     {
-        std::string opusMime = "audio/opus";
+        std::string opusMime = "audio/ogg";
         embedAudioFile(opusMime, filename);
         return opusMime;
     }

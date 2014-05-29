@@ -111,6 +111,10 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     //TODOreq: "Store" (lulu, cafepress, eventually "dvd/bd copy of archive", etc. research floss bitcoin store software (which probably won't be horizontally scalable -_-))
     //TODOreq: text repo readonly git:// clone url in download area (down below, not part of the 3). that repo should have copyright headers prepended? methinks yesh
+    //TODOreq: "new node" script (might just use pre/post scripts as usual? except pre shouldn't launch hvbs. should wait for data to finish unpacking)
+    //TODOreq: post-update script for updating autobackupLatest
+
+    //TODOmaybe: /licenses/ is a repository? a static public resource?
 
     //TODOoptional: if the browser isn't wide enough, my links to the right of the ad aren't shown (and can't be scrolled to wtf). WNavigationBar/Panel thing has a setResponsive(true) function that can turn things like that into a vertical popup when the screen shrinks too small
     //TODOoptional: folder (recursive) saving... but how would i do that, zip on demand? more importantly, how would i limit it?
@@ -351,7 +355,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         new WText("Current version of d3fault public license: 3");
         new WBreak(licensesContainer);
         new WText("Link: ", licensesContainer);
-        WAnchor *dplAnchor = new WAnchor(WLink(WLink::InternalPath, "/autobackupLatest/license.dpl.txt"), "d3fault public license - version 3", licensesContainer);
+        new WAnchor(WLink(WLink::InternalPath, "/autobackupLatest/license.dpl.txt"), "d3fault public license - version 3", licensesContainer);
 
         setMainContent(licensesContainer);
         return;
