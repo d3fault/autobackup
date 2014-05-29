@@ -14,39 +14,10 @@
    height="1225"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="2012-09-22-Tobey-Family-Tree-Cartoon.svg">
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="2012-09-22-Tobey-Family-Tree-Cartoon2.svg">
   <defs
-     id="defs4">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 612.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="950 : 612.5 : 1"
-       inkscape:persp3d-origin="475 : 408.33333 : 1"
-       id="perspective288" />
-    <inkscape:perspective
-       id="perspective3183"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective4029"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective4103"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-  </defs>
+     id="defs4" />
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -55,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.5"
-     inkscape:cx="455.73881"
-     inkscape:cy="534.91844"
+     inkscape:cx="459.73881"
+     inkscape:cy="621.95904"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -64,7 +35,7 @@
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="1440"
-     inkscape:window-height="877"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1">
@@ -84,7 +55,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -830,20 +801,31 @@
        height="95.5"
        x="24.806566"
        y="333.46713" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot4112"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(-18.193433,-70.895051)"><flowRegion
-         id="flowRegion4114"><rect
-           id="rect4116"
-           width="186.5"
-           height="89.5"
-           x="50.5"
-           y="422.36218"
-           style="font-size:20px" /></flowRegion><flowPara
-         id="flowPara4118">Running In Circles</flowPara><flowPara
-         id="flowPara4120">WORLD RECORD</flowPara></flowRoot>    <path
+       x="32.306568"
+       y="371.41492"
+       id="text3267"><tspan
+         sodipodi:role="line"
+         x="32.306568"
+         y="371.41492"
+         id="tspan3269"><tspan
+           x="32.306568"
+           y="371.41492"
+           id="tspan3271">Running In Circles</tspan><tspan
+           dx="0"
+           x="212.30656"
+           y="371.41492"
+           id="tspan3273" /></tspan><tspan
+         sodipodi:role="line"
+         x="32.306568"
+         y="396.41492"
+         id="tspan3275"><tspan
+           x="32.306568"
+           y="396.41492"
+           id="tspan3277">WORLD RECORD</tspan></tspan></text>
+    <path
        style="fill:none;stroke:#000000;stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 413.09588,498.29846 c -75,15 -75,42.75 -75,49.5 0,6.75 67.49899,11.625 67.49899,24.75 0,13.125 -52.49899,16.125 -52.49899,27 0,10.875 37.5,14.625 37.5,25.875 0,11.25 -22.5,13.125 -22.5,18.75 0,5.625 7.5,9 7.5,9"
        id="path4122" />

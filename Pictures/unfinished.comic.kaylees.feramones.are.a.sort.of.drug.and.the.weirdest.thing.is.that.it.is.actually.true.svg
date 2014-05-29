@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="538.40112"
-   height="1046.562"
+   width="558.40112"
+   height="1059.491"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="New document 1">
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -24,17 +24,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="352.98979"
-     inkscape:cy="794.26779"
+     inkscape:zoom="0.62162861"
+     inkscape:cx="62.996036"
+     inkscape:cy="541.32097"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="848"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="10"
+     fit-margin-left="10"
+     fit-margin-right="10"
+     fit-margin-bottom="10" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -43,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -51,7 +55,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-65.159914,-99.234146)">
+     transform="translate(-55.159914,-96.305222)">
     <text
        xml:space="preserve"
        style="font-size:48px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -109,7 +113,8 @@
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 277.32143,282.98718 c 5.26785,-0.625 6.51785,-1.33929 6.51785,-1.33929"
-       id="path3614" />
+       id="path3614"
+       inkscape:connector-curvature="0" />
     <rect
        style="fill:#0000ff;fill-opacity:1;stroke:none"
        id="rect3630"
@@ -282,25 +287,73 @@
        height="210.85881"
        x="338.23062"
        y="848.59735" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3706"
-       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"><flowRegion
-         id="flowRegion3708"><rect
-           id="rect3710"
-           width="200.01021"
-           height="159.6041"
-           x="97.984795"
-           y="874.57532" /></flowRegion><flowPara
-         id="flowPara3712">Me in my room opening the jars and the air seeping out</flowPara></flowRoot>    <flowRoot
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="98"
+       y="894.4975"
+       id="text3032"><tspan
+         sodipodi:role="line"
+         x="98"
+         y="894.4975"
+         id="tspan3034"><tspan
+           x="98"
+           y="894.4975"
+           id="tspan3036">Me in my room </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="98"
+         y="919.4975"
+         id="tspan3038"><tspan
+           x="98"
+           id="tspan3040">opening the jars </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="98"
+         y="944.4975"
+         id="tspan3042"><tspan
+           x="98"
+           id="tspan3044">and the air seeping </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="98"
+         y="969.4975"
+         id="tspan3046"><tspan
+           x="98"
+           id="tspan3048">out</tspan></tspan></text>
+    <text
        xml:space="preserve"
-       id="flowRoot3714"
-       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"><flowRegion
-         id="flowRegion3716"><rect
-           id="rect3718"
-           width="232.33508"
-           height="171.72594"
-           x="350.52292"
-           y="869.5246" /></flowRegion><flowPara
-         id="flowPara3720">Me same as first pic except really wide eyes and focusing intently and lots more code on screen</flowPara></flowRoot>  </g>
+       style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="350.53125"
+       y="889.46625"
+       id="text3050"><tspan
+         sodipodi:role="line"
+         x="350.53125"
+         y="889.46625"
+         id="tspan3052"><tspan
+           x="350.53125"
+           y="889.46625"
+           id="tspan3054">Me same as first pic </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="350.53125"
+         y="914.46625"
+         id="tspan3056"><tspan
+           x="350.53125"
+           id="tspan3058">except really wide </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="350.53125"
+         y="939.46625"
+         id="tspan3060"><tspan
+           x="350.53125"
+           id="tspan3062">eyes and focusing </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="350.53125"
+         y="964.46625"
+         id="tspan3064"><tspan
+           x="350.53125"
+           id="tspan3066">intently and lots more </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="350.53125"
+         y="989.46625"
+         id="tspan3068"><tspan
+           x="350.53125"
+           id="tspan3070">code on screen</tspan></tspan></text>
+  </g>
 </svg>

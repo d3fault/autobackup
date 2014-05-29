@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="962.29407"
-   height="1536.307"
+   width="982.29407"
+   height="1556.307"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="lol.metaphor.then.and.now.rpc.generator.is.a.tractor.and.a.tangent.that.bores.me.to.death.and.is.time.consuming.BUT.will.save.time.too.svg">
   <defs
      id="defs4" />
@@ -24,19 +24,23 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="261.14014"
-     inkscape:cy="767.12483"
+     inkscape:zoom="0.41053452"
+     inkscape:cx="651.09205"
+     inkscape:cy="766.32324"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="1440"
-     inkscape:window-height="848"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="10"
+     fit-margin-left="10"
+     fit-margin-right="10"
+     fit-margin-bottom="10" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -52,7 +56,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(64.138623,-335.78788)">
+     transform="translate(74.138623,-325.78787)">
     <path
        sodipodi:type="arc"
        style="fill:#808000;fill-opacity:1;stroke:#000000;stroke-width:0.60000002;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -736,19 +740,20 @@
        sodipodi:ry="32.142857"
        d="m 374.28571,958.79077 c 0,17.75201 -14.39085,32.14286 -32.14286,32.14286 -17.75201,0 -32.14285,-14.39085 -32.14285,-32.14286 0,-17.75201 14.39084,-32.14286 32.14285,-32.14286 17.75201,0 32.14286,14.39085 32.14286,32.14286 z"
        transform="matrix(0.71111111,0,0,0.71111111,-67.559059,252.47421)" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3752"
        style="font-size:14px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(-153.54319,-3.0812204)"><flowRegion
-         id="flowRegion3754"><rect
-           id="rect3756"
-           width="105.71429"
-           height="21.428572"
-           x="312.85715"
-           y="886.64789"
-           style="font-size:14px" /></flowRegion><flowPara
-         id="flowPara3758">Rpc Generator</flowPara></flowRoot>    <path
+       x="159.30057"
+       y="897.52948"
+       id="text3272"><tspan
+         sodipodi:role="line"
+         x="159.30057"
+         y="897.52948"
+         id="tspan3274"><tspan
+           x="159.30057"
+           y="897.52948"
+           id="tspan3276">Rpc Generator</tspan></tspan></text>
+    <path
        sodipodi:type="arc"
        style="fill:#ffb380;fill-opacity:1;stroke:none"
        id="path3760"
@@ -918,19 +923,20 @@
        inkscape:randomized="0"
        d="m 717.71339,927.60836 c -3.39626,-2.87376 -6.49488,-15.52373 -4.81127,-19.64181 1.68361,-4.11808 12.75691,-10.9741 17.1937,-10.64545 4.4368,0.32865 14.3791,8.74136 15.43758,13.06256 1.05848,4.3212 -3.87015,16.37656 -7.65277,18.71856 -3.78261,2.342 -16.77097,1.37991 -20.16724,-1.49386 z"
        transform="matrix(-0.00895294,0.99995992,-0.99995992,-0.00895294,1488.6196,192.57224)" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3802"
        style="font-size:8px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(-129.8046,-9.0913729)"><flowRegion
-         id="flowRegion3804"><rect
-           id="rect3806"
-           width="145.46196"
-           height="14.142138"
-           x="660.63977"
-           y="944.27588"
-           style="font-size:8px" /></flowRegion><flowPara
-         id="flowPara3808">^If I was to not use Rpc Generator</flowPara></flowRoot>    <rect
+       x="530.82037"
+       y="943.16388"
+       id="text3278"><tspan
+         sodipodi:role="line"
+         x="530.82037"
+         y="943.16388"
+         id="tspan3280"><tspan
+           x="530.82037"
+           y="943.16388"
+           id="tspan3282">^If I was to not use Rpc Generator</tspan></tspan></text>
+    <rect
        style="fill:#e6e6e6;fill-opacity:1;stroke:#000000;stroke-opacity:1"
        id="rect3810"
        width="60"
@@ -1028,19 +1034,20 @@
        height="672.75006"
        x="-63.628162"
        y="396.78461" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3840"
        style="font-size:72px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(-48.986334,364.95944)"><flowRegion
-         id="flowRegion3842"><rect
-           id="rect3844"
-           width="204.05081"
-           height="88.893425"
-           x="313.14728"
-           y="-47.489273"
-           style="font-size:72px" /></flowRegion><flowPara
-         id="flowPara3846">NOW</flowPara></flowRoot>    <path
+       x="264.16992"
+       y="389.22537"
+       id="text3284"><tspan
+         sodipodi:role="line"
+         x="264.16992"
+         y="389.22537"
+         id="tspan3286"><tspan
+           x="264.16992"
+           y="389.22537"
+           id="tspan3288">NOW</tspan></tspan></text>
+    <path
        d="m 183.34269,514.45593 c 0,2.23157 -1.80904,4.04061 -4.04061,4.04061 -2.23157,0 -4.04061,-1.80904 -4.04061,-4.04061 0,-2.23156 1.80904,-4.04061 4.04061,-4.04061 2.23157,0 4.04061,1.80905 4.04061,4.04061 z"
        sodipodi:ry="4.0406103"
        sodipodi:rx="4.0406103"
@@ -1729,19 +1736,20 @@
        id="path4267"
        style="fill:#333333;fill-opacity:1;stroke:none"
        sodipodi:type="arc" />
-    <flowRoot
-       transform="translate(-129.70071,821.50273)"
+    <text
+       xml:space="preserve"
        style="font-size:14px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="flowRoot4269"
-       xml:space="preserve"><flowRegion
-         id="flowRegion4271"><rect
-           style="font-size:14px"
-           y="886.64789"
-           x="312.85715"
-           height="21.428572"
-           width="105.71429"
-           id="rect4273" /></flowRegion><flowPara
-         id="flowPara4275">Rpc Generator</flowPara></flowRoot>    <path
+       x="183.14304"
+       y="1722.1134"
+       id="text3290"><tspan
+         sodipodi:role="line"
+         x="183.14304"
+         y="1722.1134"
+         id="tspan3292"><tspan
+           x="183.14304"
+           y="1722.1134"
+           id="tspan3294">Rpc Generator</tspan></tspan></text>
+    <path
        sodipodi:type="arc"
        style="fill:#333333;fill-opacity:1;stroke:none"
        id="path4283"
@@ -1774,19 +1782,20 @@
        id="path4317"
        style="fill:#999999;fill-opacity:1;stroke:none"
        sodipodi:type="star" />
-    <flowRoot
-       transform="translate(-301.52245,841.20687)"
+    <text
+       xml:space="preserve"
        style="font-size:8px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="flowRoot4319"
-       xml:space="preserve"><flowRegion
-         id="flowRegion4321"><rect
-           style="font-size:8px"
-           y="944.27588"
-           x="660.63977"
-           height="14.142138"
-           width="145.46196"
-           id="rect4323" /></flowRegion><flowPara
-         id="flowPara4325">^If I was to not use Rpc Generator</flowPara></flowRoot>    <rect
+       x="359.10254"
+       y="1793.4622"
+       id="text3296"><tspan
+         sodipodi:role="line"
+         x="359.10254"
+         y="1793.4622"
+         id="tspan3298"><tspan
+           x="359.10254"
+           y="1793.4622"
+           id="tspan3300">^If I was to not use Rpc Generator</tspan></tspan></text>
+    <rect
        y="1360.6637"
        x="541.888"
        height="4.2857141"
@@ -1884,19 +1893,20 @@
        width="961.27313"
        id="rect4355"
        style="fill:none;stroke:#000000;stroke-width:1.02092052;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-    <flowRoot
-       transform="translate(-48.986334,1167.0206)"
+    <text
+       xml:space="preserve"
        style="font-size:72px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="flowRoot4357"
-       xml:space="preserve"><flowRegion
-         id="flowRegion4359"><rect
-           style="font-size:72px"
-           y="-47.489273"
-           x="313.14728"
-           height="88.893425"
-           width="204.05081"
-           id="rect4361" /></flowRegion><flowPara
-         id="flowPara4363">THEN</flowPara></flowRoot>    <rect
+       x="264.16992"
+       y="1191.2865"
+       id="text3302"><tspan
+         sodipodi:role="line"
+         x="264.16992"
+         y="1191.2865"
+         id="tspan3304"><tspan
+           x="264.16992"
+           y="1191.2865"
+           id="tspan3306">THEN</tspan></tspan></text>
+    <rect
        y="877.76605"
        x="982.94269"
        height="13.377012"

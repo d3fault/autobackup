@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="2294.7485"
-   height="2108.3416"
+   width="2314.7485"
+   height="2128.3416"
    id="svg2911"
    version="1.1"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="New document 3">
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="failed.attempt.at.solving.or.understanding.gfs.and.how.to.use.it.as.a.kv.store.svg">
   <defs
      id="defs2913" />
   <sodipodi:namedview
@@ -24,17 +24,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="532.77513"
-     inkscape:cy="160.18579"
+     inkscape:zoom="0.30009657"
+     inkscape:cx="1202.3566"
+     inkscape:cy="1058.7523"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="848"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="10"
+     fit-margin-left="10"
+     fit-margin-right="10"
+     fit-margin-bottom="10" />
   <metadata
      id="metadata2916">
     <rdf:RDF>
@@ -43,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -51,7 +55,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-18.226841,-347.73776)">
+     transform="translate(-8.226841,-337.73776)">
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -121,47 +125,61 @@
        height="151.52289"
        x="146.97369"
        y="695.19849" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3723"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(405.57275,404.8734)"><flowRegion
-         id="flowRegion3725"><rect
-           id="rect3727"
-           width="108.08632"
-           height="31.31473"
-           x="-230.31477"
-           y="348.91391" /></flowRegion><flowPara
-         id="flowPara3729">App (ABC)</flowPara></flowRoot>    <rect
+       x="175.26025"
+       y="773.7146"
+       id="text3102"><tspan
+         sodipodi:role="line"
+         x="175.26025"
+         y="773.7146"
+         id="tspan3104"><tspan
+           x="175.26025"
+           y="773.7146"
+           id="tspan3106">App (ABC)</tspan></tspan></text>
+    <rect
        style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3731"
        width="165.66502"
        height="161.6244"
        x="658.1109"
        y="690.14771" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3733"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(491.43572,338.20333)"><flowRegion
-         id="flowRegion3735"><rect
-           id="rect3737"
-           width="125.25892"
-           height="55.558392"
-           x="189.90868"
-           y="407.50275" /></flowRegion><flowPara
-         id="flowPara3739">Ddb Client (GFS Client)</flowPara></flowRoot>    <path
+       x="681.34198"
+       y="765.63831"
+       id="text3108"><tspan
+         sodipodi:role="line"
+         x="681.34198"
+         y="765.63831"
+         id="tspan3110"><tspan
+           x="681.34198"
+           y="765.63831"
+           id="tspan3112">Ddb Client </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="681.34198"
+         y="790.63831"
+         id="tspan3114"><tspan
+           x="681.34198"
+           y="790.63831"
+           id="tspan3116">(GFS Client)</tspan></tspan></text>
+    <path
        style="fill:none;stroke:#000000;stroke-width:1.2020098px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 313.17515,733.52118 344.44102,0"
-       id="path3741" />
+       id="path3741"
+       inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 657.98462,733.39491 620.16704,695.57732"
-       id="path3745" />
+       id="path3745"
+       inkscape:connector-curvature="0" />
     <path
        id="path3747"
        d="m 657.98461,733.45804 -37.81758,37.81759"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -182,66 +200,130 @@
          id="tspan3755"
          x="317.51257"
          y="743.98737">(would really be 'add'/'insert-only'/etc since username is unique)</tspan></text>
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3757"
        style="font-size:16px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(117.18695,318.59201)"><flowRegion
-         id="flowRegion3759"><rect
-           id="rect3761"
-           width="353.55338"
-           height="165.66502"
-           x="195.96959"
-           y="543.87335"
-           style="font-size:16px" /></flowRegion><flowPara
-         id="flowPara3763">According to GFS details, we should be sending a &quot;filename&quot; instead of a &quot;key&quot;. This corresponds to GFS' master/chunkserver relationship meaning that each new key 'set' will require interaction with master. Obviously inefficient, so I must be using it wrong! What the fuck am I doing?</flowPara></flowRoot>    <rect
+       x="313.1557"
+       y="878.41498"
+       id="text3118"><tspan
+         sodipodi:role="line"
+         x="313.1557"
+         y="878.41498"
+         id="tspan3120"><tspan
+           x="313.1557"
+           y="878.41498"
+           id="tspan3122">According to GFS details, we should be </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="313.1557"
+         y="898.41498"
+         id="tspan3124"><tspan
+           x="313.1557"
+           y="898.41498"
+           id="tspan3126">sending a &quot;filename&quot; instead of a &quot;key&quot;. </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="313.1557"
+         y="918.41498"
+         id="tspan3128"><tspan
+           x="313.1557"
+           y="918.41498"
+           id="tspan3130">This corresponds to GFS' master/</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="313.1557"
+         y="938.41498"
+         id="tspan3132"><tspan
+           x="313.1557"
+           y="938.41498"
+           id="tspan3134">chunkserver relationship meaning that </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="313.1557"
+         y="958.41498"
+         id="tspan3136"><tspan
+           x="313.1557"
+           y="958.41498"
+           id="tspan3138">each new key 'set' will require interaction </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="313.1557"
+         y="978.41498"
+         id="tspan3140"><tspan
+           x="313.1557"
+           y="978.41498"
+           id="tspan3142">with master. Obviously inefficient, so I must </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="313.1557"
+         y="998.41498"
+         id="tspan3144"><tspan
+           x="313.1557"
+           y="998.41498"
+           id="tspan3146">be using it wrong! What the fuck am I </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="313.1557"
+         y="1018.415"
+         id="tspan3148"><tspan
+           x="313.1557"
+           y="1018.415"
+           id="tspan3150">doing?</tspan></tspan></text>
+    <rect
        y="1192.1936"
        x="146.97369"
        height="151.52289"
        width="165.66502"
        id="rect3765"
        style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-    <flowRoot
-       transform="translate(405.57275,901.86845)"
+    <text
+       xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="flowRoot3767"
-       xml:space="preserve"><flowRegion
-         id="flowRegion3769"><rect
-           y="348.91391"
-           x="-230.31477"
-           height="31.31473"
-           width="108.08632"
-           id="rect3771" /></flowRegion><flowPara
-         id="flowPara3773">App (ABC)</flowPara></flowRoot>    <rect
+       x="175.26025"
+       y="1270.7097"
+       id="text3152"><tspan
+         sodipodi:role="line"
+         x="175.26025"
+         y="1270.7097"
+         id="tspan3154"><tspan
+           x="175.26025"
+           y="1270.7097"
+           id="tspan3156">App (ABC)</tspan></tspan></text>
+    <rect
        y="1187.1428"
        x="658.1109"
        height="161.6244"
        width="165.66502"
        id="rect3775"
        style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-    <flowRoot
-       transform="translate(491.43572,835.19838)"
+    <text
+       xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="flowRoot3777"
-       xml:space="preserve"><flowRegion
-         id="flowRegion3779"><rect
-           y="407.50275"
-           x="189.90868"
-           height="55.558392"
-           width="125.25892"
-           id="rect3781" /></flowRegion><flowPara
-         id="flowPara3783">Ddb Client (GFS Client)</flowPara></flowRoot>    <path
+       x="681.34198"
+       y="1262.6333"
+       id="text3158"><tspan
+         sodipodi:role="line"
+         x="681.34198"
+         y="1262.6333"
+         id="tspan3160"><tspan
+           x="681.34198"
+           y="1262.6333"
+           id="tspan3162">Ddb Client </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="681.34198"
+         y="1287.6333"
+         id="tspan3164"><tspan
+           x="681.34198"
+           y="1287.6333"
+           id="tspan3166">(GFS Client)</tspan></tspan></text>
+    <path
        id="path3785"
        d="m 313.17515,1230.5162 344.44102,0"
-       style="fill:none;stroke:#000000;stroke-width:1.2020098px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       style="fill:none;stroke:#000000;stroke-width:1.2020098px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
     <path
        id="path3787"
        d="m 657.98462,1230.39 -37.81758,-37.8176"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 657.98461,1230.4531 -37.81758,37.8176"
-       id="path3789" />
+       id="path3789"
+       inkscape:connector-curvature="0" />
     <text
        id="text3791"
        y="1212.3335"
@@ -256,18 +338,34 @@
          x="315.98608"
          sodipodi:role="line"
          id="tspan3799">append(sha1[0], data { sha1[remains], aJsonDocEtc })</tspan></text>
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3801"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(138.90523,260.00316)"><flowRegion
-         id="flowRegion3803"><rect
-           id="rect3805"
-           width="302.03561"
-           height="49.497475"
-           x="180.81731"
-           y="972.68311" /></flowRegion><flowPara
-         id="flowPara3807">The amount of the sha1 used in the key (and subsequently the 'remains') is dynamic and more is used in the key as nodes are added to cluster</flowPara></flowRoot>    <text
+       x="319.71774"
+       y="1244.6516"
+       id="text3168"><tspan
+         sodipodi:role="line"
+         x="319.71774"
+         y="1244.6516"
+         id="tspan3170"><tspan
+           x="319.71774"
+           y="1244.6516"
+           id="tspan3172">The amount of the sha1 used in the key (and </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="319.71774"
+         y="1259.6516"
+         id="tspan3174"><tspan
+           x="319.71774"
+           y="1259.6516"
+           id="tspan3176">subsequently the 'remains') is dynamic and more </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="319.71774"
+         y="1274.6516"
+         id="tspan3178"><tspan
+           x="319.71774"
+           y="1274.6516"
+           id="tspan3180">is used in the key as nodes are added to cluster</tspan></tspan></text>
+    <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="-291.8992"
@@ -289,7 +387,7 @@
            height="144.45181"
            x="177.78685"
            y="1101.4775" /></flowRegion><flowPara
-         id="flowPara3819"></flowPara></flowRoot>    <flowRoot
+         id="flowPara3819" /></flowRoot>    <flowRoot
        transform="translate(117.18695,827.70889)"
        style="font-size:16px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        id="flowRoot3821"
@@ -366,15 +464,18 @@
          id="flowPara3857">Primary Replica</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:1.29969525px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 1227.1585,1843.2631 -402.70032,0"
-       id="path3859" />
+       id="path3859"
+       inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 823.98813,1843.1369 37.8176,-37.8176"
-       id="path3861" />
+       id="path3861"
+       inkscape:connector-curvature="0" />
     <path
        id="path3863"
        d="m 823.98813,1843.2 37.8176,37.8176"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -456,15 +557,18 @@
          id="flowPara3901">Ddb Client (GFS Client)</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:1.2020098px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 313.17515,2177.0291 344.44102,0"
-       id="path3903" />
+       id="path3903"
+       inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 657.98462,2176.9029 -37.81758,-37.8176"
-       id="path3905" />
+       id="path3905"
+       inkscape:connector-curvature="0" />
     <path
        id="path3907"
        d="m 657.98461,2176.966 -37.81758,37.8176"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"

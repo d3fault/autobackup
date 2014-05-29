@@ -9,22 +9,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="257.58005"
-   height="191.73766"
+   width="277.58005"
+   height="211.73766"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="New document 1">
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="truth.or.desparate.attempts.of.loveless.man.to.find.comfort.in.logic.svg">
   <defs
-     id="defs4">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 526.18109 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="744.09448 : 526.18109 : 1"
-       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
-       id="perspective10" />
-  </defs>
+     id="defs4" />
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -33,16 +25,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="120.83726"
-     inkscape:cy="86.580225"
+     inkscape:cx="141.39235"
+     inkscape:cy="102.8821"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="972"
+     inkscape:window-width="1440"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="10"
+     fit-margin-left="10"
+     fit-margin-right="10"
+     fit-margin-bottom="10" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -51,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,7 +55,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-247.79935,-336.44589)">
+     transform="translate(-237.79935,-326.44589)">
     <path
        sodipodi:type="arc"
        style="fill:#ffccaa;stroke:none"
@@ -68,7 +64,7 @@
        sodipodi:cy="429.50504"
        sodipodi:rx="32.5"
        sodipodi:ry="32.5"
-       d="m 454.28571,429.50504 c 0,17.94925 -14.55075,32.5 -32.5,32.5 -17.94926,0 -32.5,-14.55075 -32.5,-32.5 0,-17.94926 14.55074,-32.5 32.5,-32.5 17.94925,0 32.5,14.55074 32.5,32.5"
+       d="m 454.28571,429.50504 c 0,17.94925 -14.55075,32.5 -32.5,32.5 -17.94926,0 -32.5,-14.55075 -32.5,-32.5 0,-17.94926 14.55074,-32.5 32.5,-32.5 17.94925,0 32.5,14.55074 32.5,32.5 z"
        transform="matrix(0.19151244,0.01055058,-0.01055058,0.19151244,388.39963,322.47473)" />
     <rect
        style="fill:#ffccaa;stroke:none"

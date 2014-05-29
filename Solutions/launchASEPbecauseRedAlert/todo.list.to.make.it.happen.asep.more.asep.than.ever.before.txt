@@ -4,8 +4,8 @@
 [x] - Code hacky/shitty "abc" (probably single-user to start ("dogfood"-ONLY)) to be hosted from home on business connection
 [x] - Hack together shitty video solution + webpage (it being a 'user of' abc2)
 [x] - Molest timestamp format of old (and semi-old) archive. Then create new .lastModifiedTimestamps file from that
-[] - Convert svgs from "flow" to "text" on both old archive and new
-[] - Get everything in place, including support scripts to do it (upgrading MyBrain, inode-aware directory building, etc)
+[x] - Convert svgs from "flow" to "text" on both old archive and new
+[x] - Get everything in place, including support scripts to do it (upgrading MyBrain, inode-aware directory building, etc)
 [] - Valgrind everything
 [] - Test in 4.x + Release mode (try compiling everything in 4.x before beginning testing (might use 5.x))
 [] - Manual for Abc2 (+tools) + HackyVideoBullshitSite (+tools) configuring and running... for myself and others...

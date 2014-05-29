@@ -13,7 +13,7 @@
    height="1225"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="2012-09-22-Tobey-Family-Tree-Cartoon3.svg"
    inkscape:export-filename="/home/d3fault/Temp/2012-09-22-Tobey-Family-Tree-Cartoon3.png"
    inkscape:export-xdpi="220.33469"
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="458.65897"
-     inkscape:cy="288.44669"
+     inkscape:zoom="0.5"
+     inkscape:cx="601.94603"
+     inkscape:cy="640.87711"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -37,7 +37,7 @@
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="1440"
-     inkscape:window-height="877"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1">
@@ -57,7 +57,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -705,20 +705,31 @@
        height="95.5"
        x="24.806566"
        y="333.46713" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot4112"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(-18.193433,-70.895051)"><flowRegion
-         id="flowRegion4114"><rect
-           id="rect4116"
-           width="186.5"
-           height="89.5"
-           x="50.5"
-           y="422.36218"
-           style="font-size:20px" /></flowRegion><flowPara
-         id="flowPara4118">Running In Circles</flowPara><flowPara
-         id="flowPara4120">WORLD RECORD</flowPara></flowRoot>    <path
+       x="32.306568"
+       y="371.41492"
+       id="text3266"><tspan
+         sodipodi:role="line"
+         x="32.306568"
+         y="371.41492"
+         id="tspan3268"><tspan
+           x="32.306568"
+           y="371.41492"
+           id="tspan3270">Running In Circles</tspan><tspan
+           dx="0"
+           x="212.30656"
+           y="371.41492"
+           id="tspan3272" /></tspan><tspan
+         sodipodi:role="line"
+         x="32.306568"
+         y="396.41492"
+         id="tspan3274"><tspan
+           x="32.306568"
+           y="396.41492"
+           id="tspan3276">WORLD RECORD</tspan></tspan></text>
+    <path
        style="fill:none;stroke:#000000;stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 413.09588,498.29846 c -75,15 -75,42.75 -75,49.5 0,6.75 67.49899,11.625 67.49899,24.75 0,13.125 -52.49899,16.125 -52.49899,27 0,10.875 37.5,14.625 37.5,25.875 0,11.25 -22.5,13.125 -22.5,18.75 0,5.625 7.5,9 7.5,9"
        id="path4122" />
@@ -1834,7 +1845,7 @@
        sodipodi:cy="125.3979"
        sodipodi:rx="3.0357144"
        sodipodi:ry="3.0357144"
-       d="m 212.49999,125.3979 a 3.0357144,3.0357144 0 1 1 -6.07143,0 3.0357144,3.0357144 0 1 1 6.07143,0 z"
+       d="m 212.49999,125.3979 c 0,1.67658 -1.35913,3.03572 -3.03571,3.03572 -1.67658,0 -3.03572,-1.35914 -3.03572,-3.03572 0,-1.67658 1.35914,-3.03571 3.03572,-3.03571 1.67658,0 3.03571,1.35913 3.03571,3.03571 z"
        transform="translate(354.88181,166.87761)" />
     <path
        transform="translate(371.48897,167.05618)"
@@ -1845,7 +1856,7 @@
        sodipodi:cy="125.3979"
        sodipodi:rx="3.0357144"
        sodipodi:ry="3.0357144"
-       d="m 212.49999,125.3979 a 3.0357144,3.0357144 0 1 1 -6.07143,0 3.0357144,3.0357144 0 1 1 6.07143,0 z" />
+       d="m 212.49999,125.3979 c 0,1.67658 -1.35913,3.03572 -3.03571,3.03572 -1.67658,0 -3.03572,-1.35914 -3.03572,-3.03572 0,-1.67658 1.35914,-3.03571 3.03572,-3.03571 1.67658,0 3.03571,1.35913 3.03571,3.03571 z" />
     <path
        id="path3121"
        d="m 559.79126,310.93588 c 12.9047,9.01561 24.2184,0.17678 24.2184,0.17678 0,0 -1.94454,7.77817 -8.3085,9.89949 -6.36396,2.12132 -15.55635,-9.72272 -15.9099,-10.07627 z"
@@ -1875,7 +1886,7 @@
        sodipodi:cy="884.70483"
        sodipodi:rx="8.485281"
        sodipodi:ry="4.4194174"
-       d="m 940.62877,884.70483 a 8.485281,4.4194174 0 1 1 -16.97056,0 8.485281,4.4194174 0 1 1 16.97056,0 z"
+       d="m 940.62877,884.70483 c 0,2.44078 -3.79899,4.41942 -8.48528,4.41942 -4.68629,0 -8.48528,-1.97864 -8.48528,-4.41942 0,-2.44077 3.79899,-4.41941 8.48528,-4.41941 4.68629,0 8.48528,1.97864 8.48528,4.41941 z"
        transform="matrix(0.79,0,0,0.79,193.96823,12.487283)" />
     <path
        sodipodi:type="arc"
@@ -1885,7 +1896,7 @@
        sodipodi:cy="885.50037"
        sodipodi:rx="3.4471455"
        sodipodi:ry="2.3864853"
-       d="m 926.13312,885.50037 a 3.4471455,2.3864853 0 1 1 -6.89429,0 3.4471455,2.3864853 0 1 1 6.89429,0 z"
+       d="m 926.13312,885.50037 c 0,1.31802 -1.54334,2.38648 -3.44715,2.38648 -1.9038,0 -3.44714,-1.06846 -3.44714,-2.38648 0,-1.31802 1.54334,-2.38649 3.44714,-2.38649 1.90381,0 3.44715,1.06847 3.44715,2.38649 z"
        transform="translate(-0.92807765,-174.80333)" />
     <rect
        style="fill:#000000;fill-opacity:1;stroke:none"
@@ -1930,7 +1941,7 @@
        sodipodi:cy="882.58356"
        sodipodi:rx="0.41984466"
        sodipodi:ry="0.44194174"
-       d="m 920.2111,882.58356 a 0.41984466,0.44194174 0 1 1 -0.83968,0 0.41984466,0.44194174 0 1 1 0.83968,0 z"
+       d="m 920.2111,882.58356 c 0,0.24407 -0.18797,0.44194 -0.41984,0.44194 -0.23187,0 -0.41984,-0.19787 -0.41984,-0.44194 0,-0.24408 0.18797,-0.44194 0.41984,-0.44194 0.23187,0 0.41984,0.19786 0.41984,0.44194 z"
        transform="translate(0.1767767,-172.7704)" />
     <path
        style="fill:#deaa87;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"

@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
+   width="760.42438"
+   height="489.83841"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="New document 1">
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="works.legality.span.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,16 +25,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="397.48913"
-     inkscape:cy="565.2528"
+     inkscape:cx="407.08303"
+     inkscape:cy="218.68383"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="848"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="10"
+     fit-margin-left="10"
+     fit-margin-right="10"
+     fit-margin-bottom="10" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -43,14 +47,15 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(7.5735931,-215.9548)">
     <rect
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect2816"
@@ -80,38 +85,68 @@
        height="60.714287"
        x="635.71429"
        y="433.79074" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3596"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(30.714286,-12.142857)"><flowRegion
-         id="flowRegion3598"><rect
-           id="rect3600"
-           width="92.85714"
-           height="70"
-           x="606.42859"
-           y="447.36218"
-           style="font-size:12px" /></flowRegion><flowPara
-         id="flowPara3602">Not acknowledging the existence of</flowPara></flowRoot>    <rect
+       x="637.15179"
+       y="447.19315"
+       id="text3030"><tspan
+         sodipodi:role="line"
+         x="637.15179"
+         y="447.19315"
+         id="tspan3032"><tspan
+           x="637.15179"
+           y="447.19315"
+           id="tspan3034">Not </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="637.15179"
+         y="462.19315"
+         id="tspan3036"><tspan
+           x="637.15179"
+           y="462.19315"
+           id="tspan3038">acknowledging </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="637.15179"
+         y="477.19315"
+         id="tspan3040"><tspan
+           x="637.15179"
+           y="477.19315"
+           id="tspan3042">the existence </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="637.15179"
+         y="492.19315"
+         id="tspan3044"><tspan
+           x="637.15179"
+           y="492.19315"
+           id="tspan3046">of</tspan></tspan></text>
+    <rect
        style="fill:#ffff00;fill-opacity:1;stroke:#000000;stroke-width:1.01626146;stroke-opacity:1"
        id="rect3604"
        width="88.555168"
        height="47.126598"
        x="542.15094"
        y="441.65601" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3606"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(75,15.714286)"><flowRegion
-         id="flowRegion3608"><rect
-           id="rect3610"
-           width="95.714287"
-           height="61.42857"
-           x="467.85715"
-           y="431.64789"
-           style="font-size:12px" /></flowRegion><flowPara
-         id="flowPara3612">Referring To (&quot;Mentioning&quot;)</flowPara></flowRoot>    <rect
+       x="542.84375"
+       y="459.33154"
+       id="text3048"><tspan
+         sodipodi:role="line"
+         x="542.84375"
+         y="459.33154"
+         id="tspan3050"><tspan
+           x="542.84375"
+           y="459.33154"
+           id="tspan3052">Referring To </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="542.84375"
+         y="474.33154"
+         id="tspan3054"><tspan
+           x="542.84375"
+           y="474.33154"
+           id="tspan3056">(&quot;Mentioning&quot;)</tspan></tspan></text>
+    <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3614"
        width="20"
@@ -136,19 +171,27 @@
        height="70.714287"
        x="425"
        y="429.50504" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3622"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(29.285714,17.857143)"><flowRegion
-         id="flowRegion3624"><rect
-           id="rect3626"
-           width="72.85714"
-           height="60.714287"
-           x="400.71429"
-           y="430.93362"
-           style="font-size:12px" /></flowRegion><flowPara
-         id="flowPara3628">Referring To (&quot;Linking&quot;)</flowPara></flowRoot>    <text
+       x="430.00446"
+       y="460.75565"
+       id="text3058"><tspan
+         sodipodi:role="line"
+         x="430.00446"
+         y="460.75565"
+         id="tspan3060"><tspan
+           x="430.00446"
+           y="460.75565"
+           id="tspan3062">Referring To </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="430.00446"
+         y="475.75565"
+         id="tspan3064"><tspan
+           x="430.00446"
+           y="475.75565"
+           id="tspan3066">(&quot;Linking&quot;)</tspan></tspan></text>
+    <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="448.57141"
@@ -175,19 +218,20 @@
        height="74.285713"
        x="165"
        y="428.07645" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3640"
        style="font-size:32px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(35.714285,10)"><flowRegion
-         id="flowRegion3642"><rect
-           id="rect3644"
-           width="242.85715"
-           height="67.85714"
-           x="142.14285"
-           y="430.93362"
-           style="font-size:32px" /></flowRegion><flowPara
-         id="flowPara3646">???Fair Use???</flowPara></flowRoot>    <text
+       x="177.87053"
+       y="472.83347"
+       id="text3068"><tspan
+         sodipodi:role="line"
+         x="177.87053"
+         y="472.83347"
+         id="tspan3070"><tspan
+           x="177.87053"
+           y="472.83347"
+           id="tspan3072">???Fair Use???</tspan></tspan></text>
+    <text
        xml:space="preserve"
        style="font-size:14px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="187.85715"
@@ -222,40 +266,79 @@
        width="81.428574"
        id="rect3660"
        style="fill:#ff00ff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    <flowRoot
-       transform="translate(-365,17.142857)"
+    <text
+       xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="flowRoot3662"
-       xml:space="preserve"><flowRegion
-         id="flowRegion3664"><rect
-           style="font-size:12px"
-           y="430.93362"
-           x="400.71429"
-           height="34.285717"
-           width="79.285713"
-           id="rect3666" /></flowRegion><flowPara
-         id="flowPara3668">Copyright Infringement</flowPara></flowRoot>    <flowRoot
+       x="35.71875"
+       y="460.04135"
+       id="text3074"><tspan
+         sodipodi:role="line"
+         x="35.71875"
+         y="460.04135"
+         id="tspan3076"><tspan
+           x="35.71875"
+           y="460.04135"
+           id="tspan3078">Copyright </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="35.71875"
+         y="475.04135"
+         id="tspan3080"><tspan
+           x="35.71875"
+           y="475.04135"
+           id="tspan3082">Infringement</tspan></tspan></text>
+    <text
        xml:space="preserve"
-       id="flowRoot3670"
        style="font-size:72px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(50.507627,54.548237)"><flowRegion
-         id="flowRegion3672"><rect
-           id="rect3674"
-           width="422.24377"
-           height="126.26907"
-           x="146.47212"
-           y="154.33656"
-           style="font-size:72px" /></flowRegion><flowPara
-         id="flowPara3676">&quot;Works&quot;</flowPara></flowRoot>    <flowRoot
+       x="196.97638"
+       y="280.65793"
+       id="text3084"><tspan
+         sodipodi:role="line"
+         x="196.97638"
+         y="280.65793"
+         id="tspan3086"><tspan
+           x="196.97638"
+           y="280.65793"
+           id="tspan3088">&quot;Works&quot;</tspan></tspan></text>
+    <text
        xml:space="preserve"
-       id="flowRoot3678"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(-4.0406102,-8.0812204)"><flowRegion
-         id="flowRegion3680"><rect
-           id="rect3682"
-           width="332.34021"
-           height="133.34015"
-           x="173.74623"
-           y="583.65143" /></flowRegion><flowPara
-         id="flowPara3684">Both of these middle items are sometimes ACTUALLY on the left side of &quot;Legal Safety&quot;, hence they are not &quot;Definitely Legally Safe&quot;.</flowPara></flowRoot>  </g>
+       x="169.7094"
+       y="595.51001"
+       id="text3090"><tspan
+         sodipodi:role="line"
+         x="169.7094"
+         y="595.51001"
+         id="tspan3092"><tspan
+           x="169.7094"
+           y="595.51001"
+           id="tspan3094">Both of these middle items are </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="169.7094"
+         y="620.51001"
+         id="tspan3096"><tspan
+           x="169.7094"
+           y="620.51001"
+           id="tspan3098">sometimes ACTUALLY on the left </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="169.7094"
+         y="645.51001"
+         id="tspan3100"><tspan
+           x="169.7094"
+           y="645.51001"
+           id="tspan3102">side of &quot;Legal Safety&quot;, hence </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="169.7094"
+         y="670.51001"
+         id="tspan3104"><tspan
+           x="169.7094"
+           y="670.51001"
+           id="tspan3106">they are not &quot;Definitely Legally </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="169.7094"
+         y="695.51001"
+         id="tspan3108"><tspan
+           x="169.7094"
+           y="695.51001"
+           id="tspan3110">Safe&quot;.</tspan></tspan></text>
+  </g>
 </svg>

@@ -13,7 +13,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="dont.let.a.perfectly.good.mind.go.to.waste.eat.mushrooms.svg">
   <defs
      id="defs4" />
@@ -25,13 +25,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="443.01087"
-     inkscape:cy="651.98299"
+     inkscape:cx="445.86801"
+     inkscape:cy="601.22397"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1440"
-     inkscape:window-height="848"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -43,7 +43,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -51,24 +51,58 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot2816"
        style="font-size:64px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(-11.428572,-377.14286)"><flowRegion
-         id="flowRegion2818"><rect
-           id="rect2820"
-           width="617.14288"
-           height="402.85715"
-           x="74.285713"
-           y="560.93359"
-           style="font-size:64px" /></flowRegion><flowPara
-         id="flowPara2822"
-         style="text-align:center;text-anchor:middle">Don't Let A Perfectly Good Mind Go To Waste</flowPara><flowPara
-         id="flowPara2840"
-         style="text-align:center;text-anchor:middle" /><flowPara
-         id="flowPara2824"
-         style="text-align:center;text-anchor:middle">Eat Mushrooms</flowPara></flowRoot>    <text
+       x="446.66293"
+       y="247.58658"
+       id="text2995"><tspan
+         sodipodi:role="line"
+         x="456.85043"
+         y="247.58658"
+         id="tspan2997"><tspan
+           x="446.66293"
+           y="247.58658"
+           style="text-align:center;text-anchor:middle"
+           id="tspan2999">Don't Let A </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="400.03793"
+         y="327.58658"
+         id="tspan3001"><tspan
+           x="389.85043"
+           y="327.58658"
+           style="text-align:center;text-anchor:middle"
+           id="tspan3003">Perfectly Good </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="340.41293"
+         y="407.58658"
+         id="tspan3005"><tspan
+           x="340.41293"
+           y="407.58658"
+           style="text-align:center;text-anchor:middle"
+           id="tspan3007">Mind Go To Waste</tspan><tspan
+           dx="0"
+           x="908.1629"
+           y="407.58658"
+           style="text-align:center;text-anchor:middle"
+           id="tspan3009" /></tspan><tspan
+         sodipodi:role="line"
+         x="446.66293"
+         y="487.58658"
+         id="tspan3011"><tspan
+           x="624.28796"
+           y="487.58658"
+           style="text-align:center;text-anchor:middle"
+           id="tspan3013" /></tspan><tspan
+         sodipodi:role="line"
+         x="377.22543"
+         y="567.58655"
+         id="tspan3015"><tspan
+           x="377.22543"
+           y="567.58655"
+           style="text-align:center;text-anchor:middle"
+           id="tspan3017">Eat Mushrooms</tspan></tspan></text>
+    <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="82.03772"

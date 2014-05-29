@@ -9,22 +9,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1177.3477"
-   height="1230.4174"
+   width="1197.3477"
+   height="1250.4174"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="5meo.dmt.hydrogen.life.1.tree.hugga.ballen.sup.svg">
   <defs
-     id="defs4">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 526.18109 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="744.09448 : 526.18109 : 1"
-       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
-       id="perspective10" />
-  </defs>
+     id="defs4" />
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -32,17 +24,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="513.56567"
-     inkscape:cy="236.01667"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="847.64717"
+     inkscape:cy="606.20504"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="972"
+     inkscape:window-width="1440"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="10"
+     fit-margin-left="10"
+     fit-margin-right="10"
+     fit-margin-bottom="10" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -51,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,7 +55,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(153.79352,38.826427)">
+     transform="translate(163.79352,48.826427)">
     <rect
        style="fill:#552200;fill-opacity:1;stroke:none"
        id="rect3652"
@@ -169,7 +165,8 @@
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 337.64349,336.16403 34.34519,0"
-       id="path3618" />
+       id="path3618"
+       inkscape:connector-curvature="0" />
     <path
        sodipodi:type="arc"
        style="fill:#000000;fill-opacity:1;stroke:none"
@@ -193,7 +190,8 @@
     <path
        style="fill:none;stroke:#000000;stroke-width:1.67279291px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 313.37211,301.22221 c 42.51212,-65.98999 82.89864,-0.75562 82.89864,-0.75562"
-       id="path3630" />
+       id="path3630"
+       inkscape:connector-curvature="0" />
     <rect
        style="fill:#ffb380;fill-opacity:1;stroke:#000000;stroke-width:0.68461263;stroke-opacity:1"
        id="rect3634"
@@ -273,7 +271,8 @@
     <path
        style="fill:none;stroke:#000000;stroke-width:0.30000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 431.33514,442.23004 c -10.6066,-40.65864 -27.7792,-31.8198 -30.05204,-54.04316 -2.27284,-22.22335 -14.39467,-29.54696 -9.84899,-42.4264 4.54569,-12.87945 6.06092,-14.39468 6.06092,-14.39468"
-       id="path3658" />
+       id="path3658"
+       inkscape:connector-curvature="0" />
     <rect
        style="fill:none;stroke:#000000;stroke-width:1.02860785;stroke-opacity:1"
        id="rect3660"
@@ -356,11 +355,13 @@
     <path
        id="path3726"
        d="m 401.79987,970.63756 c -21.57137,29.53544 -38.5789,-1.9071 -38.5789,-1.9071"
-       style="fill:none;stroke:#000000;stroke-width:0.77939308px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       style="fill:none;stroke:#000000;stroke-width:0.77939308px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 308.91147,998.92247 c 1.01015,-22.47589 11.61675,-14.39467 15.40483,-32.57742 3.78807,-18.18275 26.5165,-32.07234 34.59772,-27.02158 8.08122,5.05076 4.54569,14.89975 4.54569,14.89975"
-       id="path3728" />
+       id="path3728"
+       inkscape:connector-curvature="0" />
     <rect
        transform="matrix(0.97112476,0.23857222,-0.23857222,0.97112476,0,0)"
        y="907.23352"
@@ -549,33 +550,41 @@
        sodipodi:ry="1.0417198"
        d="m 328.29956,312.64642 c 0,0.57533 -0.46639,1.04172 -1.04172,1.04172 -0.57532,0 -1.04172,-0.46639 -1.04172,-1.04172 0,-0.57532 0.4664,-1.04172 1.04172,-1.04172 0.57533,0 1.04172,0.4664 1.04172,1.04172 z"
        transform="matrix(3.8284272,0,0,3.8284272,-698.85568,-285.13753)" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot3796"
        style="font-size:28px;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="matrix(0,-1,1,0,-312.09634,1733.1352)"
-       inkscape:transform-center-x="-100.0051"
-       inkscape:transform-center-y="-12.121831"><flowRegion
-         id="flowRegion3798"><rect
-           id="rect3800"
-           width="233.34525"
-           height="68.690376"
-           x="689.9342"
-           y="897.88031"
-           style="font-size:28px" /></flowRegion><flowPara
-         id="flowPara3802">Kaylee</flowPara></flowRoot>    <flowRoot
+       x="-926.98065"
+       y="614.69781"
+       id="text3055"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         x="-926.98065"
+         y="614.69781"
+         id="tspan3057"><tspan
+           x="-926.98065"
+           y="614.69781"
+           id="tspan3059">Kaylee</tspan></tspan></text>
+    <text
        xml:space="preserve"
-       id="flowRoot3804"
        style="font-size:12px;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       transform="translate(-21.973176,122.23727)"><flowRegion
-         id="flowRegion3806"><rect
-           id="rect3808"
-           width="135.86552"
-           height="30.557114"
-           x="555.58392"
-           y="1032.9882"
-           style="font-size:12px" /></flowRegion><flowPara
-         id="flowPara3810">(hugging (clinging), not fucking, the tree)</flowPara></flowRoot>    <text
+       x="601.23285"
+       y="1169.2186"
+       id="text3061"><tspan
+         sodipodi:role="line"
+         x="603.14301"
+         y="1169.2186"
+         id="tspan3063"><tspan
+           x="601.23285"
+           y="1169.2186"
+           id="tspan3065">(hugging (clinging), </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="596.39301"
+         y="1184.2186"
+         id="tspan3067"><tspan
+           x="596.39301"
+           y="1184.2186"
+           id="tspan3069">not fucking, the tree)</tspan></tspan></text>
+    <text
        xml:space="preserve"
        style="font-size:48px;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="359.35941"

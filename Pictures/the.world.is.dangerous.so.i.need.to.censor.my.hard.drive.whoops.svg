@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="564.6651"
-   height="1114.8087"
+   width="584.6651"
+   height="1134.8087"
    id="svg2"
    version="1.1"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="the.world.is.dangerous.so.i.need.to.censor.my.hard.drive.whoops.svg">
   <defs
      id="defs4" />
@@ -24,17 +24,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="261.68086"
-     inkscape:cy="375.95311"
+     inkscape:zoom="0.65"
+     inkscape:cx="422.09372"
+     inkscape:cy="555.95242"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="972"
+     inkscape:window-width="1440"
+     inkscape:window-height="853"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="10"
+     fit-margin-left="10"
+     fit-margin-right="10"
+     fit-margin-bottom="10" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -43,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -51,7 +55,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-88.393425,-109.38985)">
+     transform="translate(-78.393425,-99.389847)">
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -74,7 +78,7 @@
        sodipodi:cy="425.21933"
        sodipodi:rx="62.857143"
        sodipodi:ry="62.857143"
-       d="m 435.71429,425.21933 c 0,34.71504 -28.1421,62.85714 -62.85714,62.85714 -34.71504,0 -62.85715,-28.1421 -62.85715,-62.85714 0,-34.71504 28.14211,-62.85714 62.85715,-62.85714 34.71504,0 62.85714,28.1421 62.85714,62.85714"
+       d="m 435.71429,425.21933 c 0,34.71504 -28.1421,62.85714 -62.85714,62.85714 -34.71504,0 -62.85715,-28.1421 -62.85715,-62.85714 0,-34.71504 28.14211,-62.85714 62.85715,-62.85714 34.71504,0 62.85714,28.1421 62.85714,62.85714 z"
        transform="matrix(0.46448088,0,0,0.46448088,183.95784,128.42737)" />
     <rect
        style="fill:#000000;fill-opacity:1;stroke:none"
