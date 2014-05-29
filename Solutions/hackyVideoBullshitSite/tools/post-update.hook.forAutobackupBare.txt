@@ -1,0 +1,48 @@
+#!/bin/bash
+
+userHome=/home/user
+autobackupBareUrl=file://$userHome/autobackupBare
+
+#copy pasted variables from preLaunch script
+hvbs=$userHome/hvbs
+hvbsWebSrc=$hvbs/webSrc
+autobackupWebSrcTemp=$hvbsWebSrc/autobackupTemp
+symlinkToAtomicallyUpdate=$autobackupWebSrcTemp/autobackupCurrentSymlink
+
+prependerBin=$userHome/autobackupRun/Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/D3faultPublicLicenseCopyrightHeaderBulkPrependerCli
+
+if [ ! -x "$prependerBin" ]
+then
+	echo "ERROR: you need to compile prepender at $prependerBin"
+	exit 1
+fi
+
+previousExists=false
+previousResolved=0
+if [ -h "$symlinkToAtomicallyUpdate" ]
+then
+	previousExists=true
+	previousResolved=`readlink -f "$symlinkToAtomicallyUpdate"`
+fi
+
+repoAtDir=$autobackupWebSrcTemp/repoAt`date +%s`
+mkdir -p $repoAtDir/view
+git archive --remote=$autobackupBareUrl master | tar -x -m -C $repoAtDir/view
+cp -a $repoAtDir/view $repoAtDir/download
+
+#TODOoptimization: <pre> and htmlencode /view/ stuffs..
+
+copyrightHeaderToPrepend=$userHome/autobackupRun/Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt
+$prependerBin $repoAtDir/download "$copyrightHeaderToPrepend"
+
+cd $autobackupWebSrcTemp
+mkdir -p $autobackupWebSrcTemp/symlinkCreation
+ln -s $repoAtDir symlinkCreation/autobackupCurrentSymlink
+mv symlinkCreation/autobackupCurrentSymlink ./
+
+
+if $previousExists
+then
+	rm $previousResolved/view/.lastModifiedTimestamps
+	rm -rf $previousResolved
+fi

@@ -112,7 +112,6 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOreq: "Store" (lulu, cafepress, eventually "dvd/bd copy of archive", etc. research floss bitcoin store software (which probably won't be horizontally scalable -_-))
     //TODOreq: text repo readonly git:// clone url in download area (down below, not part of the 3). that repo should have copyright headers prepended? methinks yesh
     //TODOreq: "new node" script (might just use pre/post scripts as usual? except pre shouldn't launch hvbs. should wait for data to finish unpacking)
-    //TODOreq: post-update script for updating autobackupLatest
 
     //TODOmaybe: /licenses/ is a repository? a static public resource?
 
@@ -125,6 +124,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //TODOoptional: hitting "back" after clicking "random point in time" brings you to yet another random point in time, not the "view my brain" page that the "random point in time" link lives on
     //TODOoptional: "qqq" doesn't appear to work, at least not after a single "q" was requested (maybe OT: the sftp connection was down the whole time)
     //TODOoptimization: thumbnails for pictures (click or dl buttan = full)
+    //TODOoptional: allow adding/removing video propagation neighbor[s?] without stopping/restarting server (editting settings in between)
 
     //random: mfw "moving a file to overwrite another file" lets processes reading the old version continue reading. it's liek free atomicity! could/should have used that for vidya segment lookin up (a fucking "lastSegment" file = gg), am considering using it for .lastModifiedTimestamps updating... except shit when do the readers close it then? when the session ends? a bunch of sessions never ending = old copies stay around forever (not that it should matter to me, so long as they're just using hdd and not memory (err that their memory can be used for other stuffz at times i guess idk what i'm on about (but let's just say i'm glad i haven't coded anything using that yet (i also wonder if it's portable..))))
 

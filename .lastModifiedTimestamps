@@ -3764,7 +3764,7 @@ Projects/SftpUploaderAndRenamerQueue/src/lib/:1400920429
 Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp:1400920429
 Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h:1400918972
 Projects/SimplifiedHeirarchyMolester/:1387282081
-Projects/SimplifiedHeirarchyMolester/src/:1400217660
+Projects/SimplifiedHeirarchyMolester/src/:1401396662
 Projects/SimplifiedHeirarchyMolester/src/SimplifiedHeirarchyMolester.pro:1387282538
 Projects/SimplifiedHeirarchyMolester/src/main.cpp:1387279442
 Projects/SimplifiedHeirarchyMolester/src/simplifiedheirarchymolester.cpp:1400217636
@@ -4265,7 +4265,7 @@ Solutions/NothingIsKnownParadox/src/nothingisknownparadox.h:1383180866
 Solutions/d3faultPublicLicense/:1400836496
 Solutions/d3faultPublicLicense/tools/:1400836628
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/:1400842871
-Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/:1401271840
+Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/:1401398015
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/D3faultPublicLicenseCopyrightHeaderBulkPrependerCli.pro:1400836752
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprepender.cpp:1401271837
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprepender.h:1400843883
@@ -4297,7 +4297,7 @@ Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.
 Solutions/hackyVideoBullshitSite/src/frontend/:1401356038
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1401356038
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1401403152
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1401029270
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1400924041
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1401352804
@@ -4310,7 +4310,7 @@ Solutions/hackyVideoBullshitSite/src/lastmodifiedtimestampsandpaths.h:1401009546
 Solutions/hackyVideoBullshitSite/src/main.cpp:1401172995
 Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.cpp:1401355279
 Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.h:1401116453
-Solutions/hackyVideoBullshitSite/tools/:1401090609
+Solutions/hackyVideoBullshitSite/tools/:1401400769
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/:1400305152
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/:1400305184
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/initial.idea.including.a.failed.lol.attempt.txt:1400305184
@@ -4338,7 +4338,8 @@ Solutions/hackyVideoBullshitSite/tools/hvbsInstaller/design/:1401090667
 Solutions/hackyVideoBullshitSite/tools/hvbsInstaller/design/hvbs.installer.initial.idea.basically.to.make.binary.drops.easier.without.polluting.my.git.repo.with.binaries.txt:1401090667
 Solutions/hackyVideoBullshitSite/tools/createHvbsVideoImportFolderStructure.sh:1399576781
 Solutions/hackyVideoBullshitSite/tools/installHvbsDepdenciesAndMakeSidFriendlyUpgradeScript_AsRoot.sh:1400910569
-Solutions/hackyVideoBullshitSite/tools/postLaunchHvbsUpdater.sh:1401264074
+Solutions/hackyVideoBullshitSite/tools/post-update.hook.forAutobackupBare.txt:1401400748
+Solutions/hackyVideoBullshitSite/tools/postLaunchHvbsUpdater.sh:1401400610
 Solutions/hackyVideoBullshitSite/tools/preLaunchHvbsBinaryOnlySetupAndRun.sh:1401264057
 Solutions/launchASEPbecauseRedAlert/:1395576326
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424

@@ -31,9 +31,8 @@ make
 copyrightHeaderToPrepend=$autobackupRun/Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt
 ./D3faultPublicLicenseCopyrightHeaderBulkPrependerCli $repoAtDir/download "$copyrightHeaderToPrepend"
 
-#TODOreq: autobackup's downloads definitely needs "all rights reserved" prepended (perhaps to "view" as well)
 
-#symlink swap the shits (why the fuck did i code AtomicThingo, guh bash is so much faster even though I hate it's softness/syntax/etc)
+#symlink swap the shits (why the fuck did i code AtomicThingo, guh bash is so much faster even though I hate it's softness/syntax/etc. one thing AtomicThingo did that i dunno lol how to do in bash is resolving the symlink so I can cleanup old files after the symlink swap is complete. i don't doubt it's possible in bash, i just... dunno how lol)
 cd $autobackupWebSrcTemp
 mkdir -p $autobackupWebSrcTemp/symlinkCreation
 ln -s $repoAtDir symlinkCreation/autobackupCurrentSymlink
@@ -90,5 +89,5 @@ rm $semiOldSemiUnversionedWebSrcTemp/empty0/view/.lastModifiedTimestamps
 
 
 
-echo "post launch updater complete, check above for errors"
+echo "post launch updater complete, check above for errors. don't forget to install post-update into autobackupBare"
 exit 0
