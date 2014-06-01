@@ -1,4 +1,4 @@
-#include "simplifiedlastmodifiedtimestamp.h"
+#include "lastmodifiedtimestamp.h"
 
 #include <QTextStream>
 
@@ -61,7 +61,8 @@ const QDateTime &SimplifiedLastModifiedTimestamp::lastModifiedTimestamp()
 }
 QString SimplifiedLastModifiedTimestamp::toColonSeparatedLineOfText()
 {
-    QString ret = m_FilePath.replace(m_Colon, m_ColonEscaped);
+    QString ret = m_FilePath;
+    ret.replace(m_Colon, m_ColonEscaped);
     ret.append(m_Colon + QString::number(m_LastModifiedTimestamp.toMSecsSinceEpoch()/1000));
     return ret;
 }
