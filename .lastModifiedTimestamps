@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1401622325
+Documents/minddump/:1401720613
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1401351430
+Documents/minddump/dreams/:1401720984
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -148,6 +148,7 @@ Documents/minddump/dreams/sakldfjlksdjflksdjafousdlfjsodufuidsflkjsdfouilkjewrou
 Documents/minddump/dreams/sdalfkjlskdfjslkjfsldfjksfouflkjsdfljksflksdjfoulekwrjousdflkjsdf.txt:1380750843
 Documents/minddump/dreams/sdalfkjsfdlkjslfkjsdfousdlfkjsodfjlksdfhadgoiasdufsldkjewrou.txt:1380666704
 Documents/minddump/dreams/sdfkjslfkjslkdfjsoduflsdjfouewrljksdfouisfkl.txt:1391820749
+Documents/minddump/dreams/sdfljlsdakjfshdfljsldfjsdlkfhsldjflsdkjfyljouwerdf.txt:1401720984
 Documents/minddump/dreams/sdfljsldkjfsdofusldjfosudfljsdfoudfjsflksjdfsfodusldfj.txt:1392023070
 Documents/minddump/dreams/sdflkjasdflkjsadlkfjsdalkfjsdfuwoeurlkjsdfousdlfkjsdfouldfskjdfsouilk.txt:1377938455
 Documents/minddump/dreams/sdflkjslfkjskljfsdofusdlfkjouwelrkjosufsldfj.txt:1392528781
@@ -403,6 +404,7 @@ Documents/minddump/asdflkjsldfkjsalkdfjsoduflksdjfousdlkfjouwelkrjousflkjsdfouwe
 Documents/minddump/asdflkjweorusdflkjwerouwriqhwrelksjfdoaiwuerlk.txt:1342222556
 Documents/minddump/asdflkjwerualsfkjlskdfjlsdjfouwerlkj.txt:1355130251
 Documents/minddump/asdflkjwoeurlksdfjouwrjosdufwerkjous.txt:1344453518
+Documents/minddump/asdflksadfhsldkfjlskdjflksdflskdjflksdjfsdlkfj.txt:1401644585
 Documents/minddump/asdflksadjflasjdfsdofuwlerkjoujfosdufksjdfoulskdjfouiwerlkjoiudf.txt:1371891361
 Documents/minddump/asdflksdfkljsdfjkouewrlkjasdfousdflkjewr.txt:1357899233
 Documents/minddump/asdflksdjfkljsdouwerlkjdfsoudsflkewroulkjsdflkj.txt:1358804873
@@ -1830,6 +1832,7 @@ Documents/minddump/sdlfjsldfjsldjfdslkjflsdkjflsdjflwurousdlfjsodfusdlfkjsldf.tx
 Documents/minddump/sdlfjsldjflaskjdflksjdflksjdfosduiflkjsdf.txt:1392024298
 Documents/minddump/sdlfjsldjkfslkjdfousdflkjsdfousdlfjsodfusdoiufsdlkfj.txt:1392350962
 Documents/minddump/sdlfjsldkjfouljweroiudflkjsdflsdfuoiuerlk.txt:1356073877
+Documents/minddump/sdlfjslfsdhflsdjflksdjfhdslfkjouewrlkjdfsdflj.txt:1401720613
 Documents/minddump/sdlfjslkdjfskjdflksjdfouwelrjousdlfkjsdoufsdlkjfosduf.txt:1393066835
 Documents/minddump/sdlfjslkfjslkdjfsdofuslkdjfosudflksjdfoui.txt:1392024560
 Documents/minddump/sdlfjslkjfdskjdfkjsdlfkjsdlkfjlksdjflksdjflkdsjflksdf.txt:1400832212
@@ -1977,6 +1980,7 @@ Documents/minddump/sldfkjasdofuwlrkjsafdihsdfkajoruwerlksjdfourl.txt:1345058845
 Documents/minddump/sldfkjasljfsalkjdflskdjflksdjflskjdflskdjfouwelrkjosufdlksjdfosuidfl.txt:1381338846
 Documents/minddump/sldfkjlsdkfjsldkjfouwerljksodfulsdfjoufsdlkjweorulsjfd.txt:1381327973
 Documents/minddump/sldfkjsadlfkjsdlkfjsdofusdlfjsdofu.txt:1389502853
+Documents/minddump/sldfkjsdlhflasjdflksdjflkjsdlfkjsdlfkjsdhflsdfjldsk.txt:1401636747
 Documents/minddump/sldfkjsdlkfjdslfsdfoiufkjjlkafsjoiuwerkjlouisfhfdoiusdfkjwreousdflk.txt:1368517274
 Documents/minddump/sldfkjsdlkfjoiuwerlkjsdfousdlkjreoul.txt:1355649672
 Documents/minddump/sldfkjsdlkjfsoduflkwejrofiusdflkjdsofulkjweroudfslkj.txt:1371781736
@@ -2559,7 +2563,7 @@ Projects/Hottee/src/cli/:1397731280
 Projects/Hottee/src/cli/HotteeCli.pro:1395740585
 Projects/Hottee/src/cli/hotteecli.cpp:1397731255
 Projects/Hottee/src/cli/hotteecli.h:1397022328
-Projects/Hottee/src/cli/main.cpp:1395473624
+Projects/Hottee/src/cli/main.cpp:1401648691
 Projects/Hottee/src/lib/:1397731272
 Projects/Hottee/src/lib/hottee.cpp:1397731272
 Projects/Hottee/src/lib/hottee.h:1396460703
@@ -2876,7 +2880,7 @@ Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp:1
 Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h:1401024899
 Projects/LastModifiedTimestampsTools/:1401622753
 Projects/LastModifiedTimestampsTools/src/:1401629929
-Projects/LastModifiedTimestampsTools/src/cli/:1401630131
+Projects/LastModifiedTimestampsTools/src/cli/:1401631967
 Projects/LastModifiedTimestampsTools/src/cli/LastModifiedTimestampsToolsCli.pro:1401628169
 Projects/LastModifiedTimestampsTools/src/cli/lastmodifiedtimestampstoolscli.cpp:1401629996
 Projects/LastModifiedTimestampsTools/src/cli/lastmodifiedtimestampstoolscli.h:1401629655
@@ -2885,11 +2889,11 @@ Projects/LastModifiedTimestampsTools/src/gui/:1401630133
 Projects/LastModifiedTimestampsTools/src/gui/LastModifiedTimestampsToolsGui.pro:1401628209
 Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolsgui.cpp:1401629170
 Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolsgui.h:1401623257
-Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolswidget.cpp:1401629136
+Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolswidget.cpp:1401631514
 Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolswidget.h:1401629200
 Projects/LastModifiedTimestampsTools/src/gui/main.cpp:1401623257
-Projects/LastModifiedTimestampsTools/src/lib/:1401628928
-Projects/LastModifiedTimestampsTools/src/lib/lastmodifiedtimestampstools.cpp:1401628928
+Projects/LastModifiedTimestampsTools/src/lib/:1401631005
+Projects/LastModifiedTimestampsTools/src/lib/lastmodifiedtimestampstools.cpp:1401631005
 Projects/LastModifiedTimestampsTools/src/lib/lastmodifiedtimestampstools.h:1401628773
 Projects/LifeShaper/:1371559115
 Projects/LifeShaper/LifeShaperStaticFiles/:1371704155
@@ -3516,7 +3520,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
 Projects/QuickDirtyAutoBackupHalper/src/:1400804288
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1387287042
-Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1387287148
+Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1401631299
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.cpp:1387670588
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.h:1387287167
 Projects/QuickDirtyAutoBackupHalper/src/qdabh.icon.svg:1350329437
@@ -4352,7 +4356,7 @@ Solutions/hackyVideoBullshitSite/tools/installHvbsDepdenciesAndMakeSidFriendlyUp
 Solutions/hackyVideoBullshitSite/tools/post-update.hook.forAutobackupBare.txt:1401400748
 Solutions/hackyVideoBullshitSite/tools/postLaunchHvbsUpdater.sh:1401400610
 Solutions/hackyVideoBullshitSite/tools/preLaunchHvbsBinaryOnlySetupAndRun.sh:1401264057
-Solutions/launchASEPbecauseRedAlert/:1395576326
+Solutions/launchASEPbecauseRedAlert/:1401649215
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/:1387599424
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/copyright.txt:1388203681
 Solutions/launchASEPbecauseRedAlert/baseDirForDist/donate.txt:1387599799
@@ -4374,11 +4378,12 @@ Solutions/launchASEPbecauseRedAlert/list.of.domains.to.buy.at.or.just.before.lau
 Solutions/launchASEPbecauseRedAlert/meAnalyzingTheSituationWithPoliceHelicopterJuryAimingBothGunAndNetAtMe.svg:1371125630
 Solutions/launchASEPbecauseRedAlert/meAutoGrapplingTheFuckOutOfThereBecauseRedAlert.svg:1371123108
 Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if.i.generate.book.from.script.fuggit.txt:1398073737
-Solutions/launchASEPbecauseRedAlert/pricing.breakdown.asdf.txt:1394619523
+Solutions/launchASEPbecauseRedAlert/pricing.breakdown.asdf.txt:1401649169
 Solutions/launchASEPbecauseRedAlert/pursuingHappiness.svg:1371126578
 Solutions/launchASEPbecauseRedAlert/restricted.access.cookie.check.idea.thingo.asdflksadflkjsadf.txt:1388735956
 Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1401362650
 Solutions/launchASEPbecauseRedAlert/todo.lol.asdflkjsdfousdfweroiu.txt:1387173891
+Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.pro.asdflhslfjsadflkj.txt:1401649215
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 VariousTreeingsDuringHugeArchivePurge/:1367600874
 VariousTreeingsDuringHugeArchivePurge/Black1tbCalvaryAndroidAppsEasyTree.txt:1367599569
@@ -4431,7 +4436,7 @@ autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
-autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1401264136
+autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1401644923
 autobackupScripts/linux/base64theMd5SumOfAFileProperly.sh:1385203690
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665

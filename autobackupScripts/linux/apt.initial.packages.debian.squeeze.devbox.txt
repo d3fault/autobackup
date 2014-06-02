@@ -1,5 +1,5 @@
 wheezy main:
-build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind libdevmapper1.02.1 fuse-utils ntfs-3g ntfsprogs dosfstools testdisk smart-notifier arduino keepassx xul-ext-noscript mplayer gimp dia git subversion curl p7zip-full zip unzip inkscape unetbootin virtualbox-ose gv xscreensaver xscreensaver-data-extra tree strace netcat yasm sox webp opus-tools libopus-dev zlib1g-dev libtheora-dev libcrypto++-dev libcrypto++-doc libevent-dev libcurl4-openssl-dev libssl-dev
+build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind libdevmapper1.02.1 fuse-utils ntfs-3g ntfsprogs dosfstools testdisk smart-notifier arduino keepassx xul-ext-noscript mplayer gimp dia umbrello git subversion curl p7zip-full zip unzip inkscape unetbootin virtualbox-ose gv xscreensaver xscreensaver-data-extra tree strace netcat yasm sox webp opus-tools libopus-dev zlib1g-dev libtheora-dev libcrypto++-dev libcrypto++-doc libevent-dev libcurl4-openssl-dev libssl-dev
 
 wheezy non-free:
 p7zip-rar virtualbox-guest-additions

@@ -10,6 +10,8 @@
 #include "lastmodifiedtimestamp.h"
 #include "filemodificationdatechanger.h"
 
+//TODOreq: implement the filename/dir/etc filters that QuickDirty has... to skip binaries etc. also maybe sort the entries the same was as quickdirty.. but idfk
+
 LastModifiedTimestampsTools::LastModifiedTimestampsTools(QObject *parent)
     : QObject(parent)
 { }

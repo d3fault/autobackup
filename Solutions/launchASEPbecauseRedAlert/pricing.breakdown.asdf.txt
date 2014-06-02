@@ -1,18 +1,23 @@
-home/business internet is calculated using the introductory pricing, but that's fine since i should be making well above it by the time introductory pricing ends. i'm not sure how the couchbase nodes and stuff will hook together, hence the miscnetworkingutils (probably need an expensive ish router/switch/whatever/idfk-tbh-networking-isnt-my-area).
+business internet is calculated using the introductory pricing, but that's fine since i should be making well above it by the time introductory pricing ends. i'm not sure how the couchbase nodes and stuff will hook together, hence the miscnetworkingutils (probably need an expensive ish router/switch/whatever/idfk-tbh-networking-isnt-my-area).
 
 twomonthsrent=2000
 twomonthsfood=600
 twomonthselectricity=200
 twomonthsbusinessinternet=400
-twomonthshomeinternet=100
 twomonthsvideoserver=400
 pricepercouchbasedbnode=300
 numcouchbasenodes=3
-costofloadbalancer=pricepercouchbasedbnode
 costofwebappserver=pricepercouchbasedbnode
 miscnetworkingutils=500
-priceperups=100
-backupmachines,uploadmachine?,capturecardshiz?
-numups=numcouchbasenodes+2
-total=twomonthsrent+twomonthsfood+twomonthselectricity+twomonthsbusinessinternet+twomonthshomeinternet+(pricepercouchbasedbnode*numcouchbasenodes)+costofloadbalancer+miscnetworkingutils+(priceperups*numups)
+priceperbigups=100
+priceperssmallups=40
+devboxcapturemachine=300+73
+devboxcapturebackupmachines=((35+73)*2)
+uploadmachine=300
+numbigups=numcouchbasenodes+2+1+1
+numsmallups=5
+masterbackupmachine=300
+masterbackup4tbdrive=139.99
+nummasterbackup4tbdrives=3
+total=twomonthsrent+twomonthsfood+twomonthselectricity+twomonthsbusinessinternet+(pricepercouchbasedbnode*numcouchbasenodes)+costofwebappserver+miscnetworkingutils+devboxcapturemachine+devboxcapturebackupmachines+uploadmachine+masterbackupmachine+(masterbackup4tbdrive*nummasterbackup4tbdrives)+(priceperbigups*numbigups)+(pricepersmallups*numsmallups)
 total

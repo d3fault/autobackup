@@ -1,0 +1,17 @@
+$35 box with 1080p cam and 1tb drive -> $35 box with 1tb drive -> $35 box with 1tb drive; (sync early at 333gb and delete that 333gb to give staggered effect from then on. etc at 666gb on next in chain)
+|
+|
+V
+Yellow-cable 'preview' -> capture card in devbox -> MouseOrMotionOrMySexyFaceViewMaker
+							|
+							|
+							|
+							|
+						       / \ S-Video splitter
+							2x of: capture card (probably need to be desktops since they are theora encoders!)
+							1 goes to: offline storage just like first line of doc
+							1 goes to: online via ffmpeg segment uploader -> hvbs -> hvbs -> etc
+
+720x480 'online box' (tmux view of ffmpeg segment uploader box) activity capturing (i look at live monitor for no latency/etc, but the video is captured and put on top of MouseOrMotionOrMySexyFaceViewMaker for viewers). perhaps cli only and perhaps openbsd, but whatever really. can be bigger if using mouse/motion tracking (fuck that for now) ;-P
+
+LARGE/master BACKUP SOLUTION = 3x 4tb drives (139.99 each), buy 3x more at a time when filled (hopefully always pushing to... newsgroups or something (will ofc hack together bittorrent solution too (blah vp9 (patents force me to lose data during recompression which is required for sharing information))))

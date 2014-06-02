@@ -37,6 +37,8 @@ LastModifiedTimestampsToolsWidget::LastModifiedTimestampsToolsWidget(QWidget *pa
     setLayout(myLayout);
 
     connect(m_StartButton, SIGNAL(clicked()), this, SLOT(handleStartButtonClicked()));
+
+    handleD("WARNING: When used as a timestamps file GENERATOR, this app does not currently ignore .git folders and binaries etc like QuickDirty does");
 }
 void LastModifiedTimestampsToolsWidget::handleD(const QString &msg)
 {

@@ -3,6 +3,7 @@
 
 #include "quickdirtyautobackuphalper.h"
 
+//TODOreq: remove truecrypt dependency (checks for bin existence at startup and refuses to go forward). bleh probably rewriting this whole thing eventually anyways...
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
