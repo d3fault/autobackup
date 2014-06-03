@@ -1,37 +1,25 @@
 #!/bin/bash
 
-DIR_TO_SYNC="/media/IC RECORDER/VOICE/FOLDER01"
-DIR1_TO_SYNC_TO=/media/truecrypt1/sonyIC
-DIR2_TO_SYNC_TO=/media/truecrypt2/sonyIC
+DIR_TO_SYNC=/media/usb0/VOICE/FOLDER01/
+DIR_TO_SYNC_TO=/home/d3fault/binarySupplement/VoiceRecordings/
 
-read -n1 -r -p "make sure the device is mounted in: $DIR_TO_SYNC -- and that both backup drives are mounted and writeable. We will only sync the FOLDER01 folder" key
+read -n1 -r -p "Make sure the device is mounted in: $DIR_TO_SYNC and the place we will sync to is: $DIR_TO_SYNC_TO -- We will only sync the FOLDER01 folder" key
 
-if [ -d "$DIR_TO_SYNC" ]; then
-	if [ -d "$DIR1_TO_SYNC_TO" ]; then
-		if [ -d "$DIR2_TO_SYNC_TO" ]; then
-			cd "$DIR_TO_SYNC";
-			epochTime=`date +%s`
-			newDir=syncAt`echo $epochTime`
-			new750x1=`echo $DIR1_TO_SYNC_TO`/`echo $newDir`/
-			new750x2=`echo $DIR2_TO_SYNC_TO`/`echo $newDir`/
-
-			mkdir `echo $new750x1`
-			mkdir `echo $new750x2`
-
-			cp -avi ./ "$new750x1"
-			cp -avi ./ "$new750x2"
-
-			read -n1 -r -p "done copying, press any key to begin deleting (now is a good time to 'sync')" key
-
-			rm -rfv ./*
-
-			echo "Done syncing Sony IC";
-		else
-			echo "$DIR2_TO_SYNC_TO does not exist. Is it mounted?";
-		fi
-	else
-		echo "$DIR1_TO_SYNC_TO does not exist. Is it mounted?";
-	fi
-else
+if [ ! -d "$DIR_TO_SYNC" ]; then
 	echo "$DIR_TO_SYNC does not exist. Is the device plugged in and mounted?";
+	exit 1
 fi
+if [ ! -d "$DIR_TO_SYNC_TO" ]; then
+	echo "$DIR_TO_SYNC_TO does not exist. Did you clone it etc first?"
+	exit 1
+fi
+
+cd "$DIR_TO_SYNC_TO"
+epochTime=`date +%s`
+newDir="$DIR_TO_SYNC_TO/syncAt$epochTime/"
+mkdir "$newDir"
+cd "$DIR_TO_SYNC"
+cp -avi ./ "$newDir"
+read -n1 -r -p "done copying, press any key to begin deleting (now is a good time to 'sync')" key
+rm -rfv ./*
+echo "Done syncing Sony IC"

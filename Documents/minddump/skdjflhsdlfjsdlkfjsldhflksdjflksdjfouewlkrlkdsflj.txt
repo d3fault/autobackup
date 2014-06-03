@@ -1,0 +1,41 @@
+count(stupidPeople) > count(evilPeople) > count(goodPeople) > count(smartPeople)
+
+not sure if it was a typo or the original thought, but i typed out at first that good people were less than smart people. after staring at it or i guess just elaborating the thought entirely, there are definitely more good people than smart people.
+
+i'm now tempted to move good people to be more than evil people, but leaving it as is for archival reasons (i'm pretty sure good is more than evil, but good is DEFINITELY NOT more than stupid)
+
+it gets even more complex when you consider that stupid good people are accidentally evil (but if judging INTENTIONS alone, they are not evil at all (still, good stupid people can do just as much as, and even more, _HARM_, than average intelligence evil people (or hell even arguably smart evil people (it's all just [bad] luck at that point))))
+
+
+out of boredom i'm now going to list out all the pairs and try to organize by count
+
+stupid evil
+stupid good
+stupid smart <- derp
+
+evil stupid <- dupe
+evil good <- derp
+evil smart
+
+good stupid <- dupe
+good evil <- derp
+good smart
+
+smart stupid <- derp
+smart evil <- dupe
+smart good <- dupe
+
+
+so:
+[intelligence] [ethical/moral disposition]
+
+stupid evil
+stupid good
+smart evil
+smart good
+
+
+ordered attempt #0:
+stupid-good > stupid-evil > 
+
+I have no idea whether there's more smart-evil or more smart-good, end of doc

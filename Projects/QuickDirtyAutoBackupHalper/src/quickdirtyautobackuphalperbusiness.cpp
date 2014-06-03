@@ -409,13 +409,13 @@ nothing to commit (working directory clean)
     gitStatusArgs << "status";
     m_Process->setWorkingDirectory(tempHackyEnsureEndInSlashString);
     m_Process->start(m_PathToGitBinary, gitStatusArgs, QIODevice::ReadOnly | QIODevice::Text);
-    if(!m_Process->waitForStarted(999999999))
+    if(!m_Process->waitForStarted(-1))
     {
         emit d("git status failed to start");
         emit brokenStateDetected();
         return;
     }
-    if(!m_Process->waitForFinished(999999999))
+    if(!m_Process->waitForFinished(-1))
     {
         emit d("git status failed to finish");
         emit brokenStateDetected();

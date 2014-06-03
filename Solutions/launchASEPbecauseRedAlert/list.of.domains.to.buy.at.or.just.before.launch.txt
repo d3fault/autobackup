@@ -3,8 +3,6 @@ com/net/org implied
 loleth -- low level todo list processing/dispatching
 hileth -- high level [...] -- interacts with loleth intimately
 
-anonymousbitcoincomputing
-
 squirb -- squid verb. purple and web 2.0'ish, short/memorable yada. "to have your arms/tentacles in many places at once" -- multitasking huge site. d3fault-esq but private dht easier to implement "bootstrap gimmeh teh moneyz" -- all open source perhaps agpl but mb just dpl
 
 osios -- operating system independent operating system (Qt based: application (windows,etc), window manager (linux,etc), and/or operating system (blank,etc -- based on OpenBSD preferably) -- all 3 modes of operation are exactly identical and save state (by default, unless you disable it (i hate when my OS saves my state, but sometimes like when applications do...)))
