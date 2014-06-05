@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1401827921
+Documents/minddump/:1401982747
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1026,6 +1026,7 @@ Documents/minddump/heros.alsdjflkjsadlkfjsdkl.txt:1400833858
 Documents/minddump/how.do.you.EXPORT.from.hidden.os.lol.txt:1320057239
 Documents/minddump/how.to.code.and.when.to.optimize.i.am.an.idiot.sdafouwelrjosdufsldkf.txt:1390926461
 Documents/minddump/howto.use.todo.effectively.txt:1320052350
+Documents/minddump/hsdfljsdflkjsdfhlkwjerouisdlfkjdofusdlkfjsdou.txt:1401982747
 Documents/minddump/human.selection.religion.txt:1333874741
 Documents/minddump/hundred.percent.public.or.alternating.i.mean.i.gotta.at.least.go.public.some.of.the.time.but.im.afraid.i.never.will.if.i.dont.do.one.hundred.percent.txt:1338706727
 Documents/minddump/hypothetical.convo.sadlfjawerlkasjdfoiwure.lol.txt:1339229323
@@ -2570,7 +2571,7 @@ Projects/Hottee/src/cli/main.cpp:1401648691
 Projects/Hottee/src/lib/:1397731272
 Projects/Hottee/src/lib/hottee.cpp:1397731272
 Projects/Hottee/src/lib/hottee.h:1396460703
-Projects/Ideas/:1400836268
+Projects/Ideas/:1401983689
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -2720,6 +2721,7 @@ Projects/Ideas/fuck.last.fm.for.not.tagging.remixes.properly.i.need.to.supersede
 Projects/Ideas/generic.file.hosting.site.should.never.cut.off.downloading.just.slow.down.their.bandwidth.more.and.more.txt:1343648120
 Projects/Ideas/giant.monitor.and.giant.backpack.sounds.like.a.giant.back.ache.txt:1325708881
 Projects/Ideas/gifting.abc.dance.channel.to.caydon.or.to.anyone.really.costs.me.zilch.txt:1339126384
+Projects/Ideas/git.and.apt.need.moar.p2p.ness.asldfsldjflkj.txt:1401983689
 Projects/Ideas/give.me.feedback.when.i.press.ctrl.c.plx.maybe.electrocute.my.dick.txt:1393091494
 Projects/Ideas/global.diff.falskjfaourelasjdf.txt:1325705909
 Projects/Ideas/go.camping.early.on.and.enjoy.the.privacy.while.you.have.it.but.still.release.thecontent.3.days.later.when.you.get.back.txt.this.one.thing.will.prompt.them.to.fund.your.always.online.solution.whatever.it.may.be.txt:1339229501
@@ -4381,7 +4383,7 @@ Solutions/launchASEPbecauseRedAlert/list.of.domains.to.buy.at.or.just.before.lau
 Solutions/launchASEPbecauseRedAlert/meAnalyzingTheSituationWithPoliceHelicopterJuryAimingBothGunAndNetAtMe.svg:1371125630
 Solutions/launchASEPbecauseRedAlert/meAutoGrapplingTheFuckOutOfThereBecauseRedAlert.svg:1371123108
 Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if.i.generate.book.from.script.fuggit.txt:1398073737
-Solutions/launchASEPbecauseRedAlert/pricing.breakdown.asdf.txt:1401723447
+Solutions/launchASEPbecauseRedAlert/pricing.breakdown.asdf.txt:1401828198
 Solutions/launchASEPbecauseRedAlert/pursuingHappiness.svg:1371126578
 Solutions/launchASEPbecauseRedAlert/restricted.access.cookie.check.idea.thingo.asdflksadflkjsadf.txt:1388735956
 Solutions/launchASEPbecauseRedAlert/todo.list.to.make.it.happen.asep.more.asep.than.ever.before.txt:1401362650
@@ -4439,7 +4441,7 @@ autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
-autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1401644923
+autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1401986031
 autobackupScripts/linux/base64theMd5SumOfAFileProperly.sh:1385203690
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665

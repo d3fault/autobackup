@@ -2,6 +2,8 @@ business internet is calculated using the introductory pricing, but that's fine 
 
 ....Already have 2x $35 boxes, devbox, and online box...
 
+How much I have: ~$2.7k
+
 ###ABC HOSTED IN HOUSE
 twomonthsrent=1200
 twomonthsfood=400
@@ -41,6 +43,21 @@ masterbackupmachine=300
 masterbackup4tbdrive=139.99
 nummasterbackup4tbdrives=3
 total=twomonthsrent+twomonthsfood+twomonthselectricity+twomonthsbusinessinternet+devboxcapturemachine+devboxcapturebackupmachines+uploadmachine+masterbackupmachine+(masterbackup4tbdrive*nummasterbackup4tbdrives)+(priceperbigups*numbigups)+(pricepersmallups*numsmallups)
+total
+
+
+###ABC OUTSOURCED + LAUNCH AT HOME WHILE PARENTS ON VACATION (FFFFFF)
+twomonthsbusinessinternet=200
+twomonthsvideoserver=100
+priceperbigups=100
+devboxcapturemachine=300+73
+devboxcapturebackupmachines=((35+73)*2)
+uploadmachine=300
+numbigups=3
+masterbackupmachine=300
+masterbackup4tbdrive=139.99
+nummasterbackup4tbdrives=3
+total=twomonthsbusinessinternet+devboxcapturemachine+devboxcapturebackupmachines+uploadmachine+masterbackupmachine+(masterbackup4tbdrive*nummasterbackup4tbdrives)+(priceperbigups*numbigups)+(pricepersmallups*numsmallups)
 total
 
 no money left for that huge bunch of domains... :(
