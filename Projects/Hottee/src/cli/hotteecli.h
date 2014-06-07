@@ -29,6 +29,7 @@ signals:
 private slots:
     void handleD(const QString &msg);
     void stdInHasLineOfInput();
+    void handleQuitRequested();
 };
 
 #endif // HOTTEECLI_H

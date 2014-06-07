@@ -1,0 +1,10 @@
+Conspiracy: Android and Windows (and probably Mac but lol nobody in my family owns that shit) have implemented code from "them" (those against freedom of information, etc) that periodically disconnects from wireless internet if it is not "secured" via WPA2/etc. In this case, "they" don't want internet to be shared without it being paid for... and WPA2/etc does lock out most 99% of those freeloaders. Hmm now considering changing my SSID to "MYPWIS_ASDF123" or similar... to get around such conspiracy theory bug.
+
+I see my parents' android tablet saying some bullshit about the wireless SECURITY failing or some shit... but I don't have any security at all... so it's bullshit. Funny, my Cyanogenmod'd droid never had that problem [before I fucking smashed it into pieces, the fucking piece of shit (good riddance, honestly the Java OS was mentally draining... always staring at a fucking loading screen and hoping it doesn't kick me to the home screen -_-)].
+
+Would be ridiculously hard to prove that it isn't just an accidental bug (would be hard to even just prove it was a bug), especially considering they're proprietary closed source pieces of shit.
+
+I've had my SSID as CIA and wireless unsecured for years now... I think it may be time to change it to: "NSA-watching-you-masturbate;password=FuckThePolice69420666"
+
+
+Oh and it would be trivial to make the bug appear to be the in the router itself (as my dad just said a few mins ago): easy to watch for a [real] connection down/up and then "undo" that conspiracy theory bug for another day or so. It's definitely pissing me the fuck off so it's working...

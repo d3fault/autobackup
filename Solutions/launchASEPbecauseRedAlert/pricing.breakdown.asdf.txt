@@ -57,7 +57,26 @@ numbigups=3
 masterbackupmachine=300
 masterbackup4tbdrive=139.99
 nummasterbackup4tbdrives=3
-total=twomonthsbusinessinternet+devboxcapturemachine+devboxcapturebackupmachines+uploadmachine+masterbackupmachine+(masterbackup4tbdrive*nummasterbackup4tbdrives)+(priceperbigups*numbigups)+(pricepersmallups*numsmallups)
+total=twomonthsbusinessinternet+devboxcapturemachine+devboxcapturebackupmachines+uploadmachine+masterbackupmachine+(masterbackup4tbdrive*nummasterbackup4tbdrives)+(priceperbigups*numbigups)
+total
+
+
+bought 3 desktops for $270 yesterday :-P, have $2390 left
+
+###ABC OUTSOURCED + GHETTO STYLE USED HW + APARTMENT LAUNCH
+rent=500
+food=200
+electricity=100
+businessinternet=100
+server=100
+devboxcapturemachine1tbdrive=54.99
+thirtyfiveactualcost=54.38 # can buy a full desktop for this price, but the power usage will spike an order of magnitude
+devboxcapturebackupmachines=((thirtyfiveactualcost+devboxcapturemachine1tbdrive)*2)
+masterbackup4tbdrive=139.99
+nummasterbackup4tbdrives=3
+priceperbigups=100 #i refuse to buy a used ups
+numbigups=3
+total=rent+food+electricity+businessinternet+server+devboxcapturemachine1tbdrive+devboxcapturebackupmachines+(masterbackup4tbdrive*nummasterbackup4tbdrives)+(priceperbigups*numbigups)
 total
 
 no money left for that huge bunch of domains... :(

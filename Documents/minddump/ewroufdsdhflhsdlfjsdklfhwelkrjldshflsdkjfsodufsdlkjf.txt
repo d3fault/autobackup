@@ -1,0 +1,7 @@
+Me: "You can use this software commercially"
+Them: "What's the catch?"
+Me: "You'll file bugs to me and I'll fix them for free! Win/win"
+
+There's also of course the whole "if you change it you must comply with the license" catch, but I left that out intentionally. Also there's the "they'll file bug/ENHANCEMENT" plus [for me (AND THEM/OTHERS/ERRBODY)]...
+
+Dumbass company runners will interpret it as "it must be buggy software" and/or "i am (business owners are) your (steven's) beta tester". They suck at software and don't understand that proprietary software is 99% of the time 10x worse...

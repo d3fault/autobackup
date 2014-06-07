@@ -15,18 +15,3 @@ Also audio is split and goes to these 2 similarly:	1 goes to: offline storage ju
 720x480 'online box' (tmux view of ffmpeg segment uploader box) activity capturing (i look at live monitor for no latency/etc, but the video is captured and put on top of MouseOrMotionOrMySexyFaceViewMaker for viewers). perhaps cli only and perhaps openbsd, but whatever really. can be bigger if using mouse/motion tracking (fuck that for now) ;-P
 
 LARGE/master BACKUP SOLUTION = 3x 4tb drives (139.99 each), buy 3x more at a time when filled (hopefully always pushing to... newsgroups or something (will ofc hack together bittorrent solution too (blah vp9 (patents force me to lose data during recompression which is required for sharing information))))
-
-
-BOX COUNT (POWER CONSIDERATIONS (for calculating how many UPS i need)):
-$35:
-  3x video cap+backup
- +2x MouseOrMotionOrMySexyFaceViewMaker capture backup
- =5
-
-$300:
-  1x MouseOrMotionOrMySexyFaceViewMaker capture -> encode -> ffmpeg-segment-uploader -> 2x-$35-backup-boxes
- +1x MouseOrMotionOrMySexyFaceViewMaker capture -> encode -> ffmpeg-segment-uploader -> hvbs
- +1x Devbox
- +1x Online box (could be $35 box if not running X (but I do want S-Video out for 720x480 so...))
- +1x Master backup box
- =5

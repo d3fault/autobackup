@@ -9,16 +9,31 @@
 
 #define READ_CHUNK_SIZE_BYTES (32*1024) //32kb
 #define ONE_HUNDRED_MEGABYTES (1024*1024*100)
+#define HOTTEE_ONE_GIGABYTE (1024*1024*1024)
 #define EMIT_CHANGE_SOON_AT_PERCENT 80
 
 //TODOoptional: could also put each 100mb chunk through a hash for checksumming etc
-//TODOreq: no idea how i would 'stop' this endless process... since i don't even want to! the whole purpose of the app is to keep a stream going indefinitely... so an exit point doesn't even make any sense...
 Hottee::Hottee(QObject *parent) :
     QObject(parent), m_InputProcess(0), m_OutputProcess(0), m_WriteToOutputProcess(false), m_CurrentOutputFile(0), m_Current100mbChunkWriteOffset(0), m_Dest2(false), m_CurrentlyWritingToEitherDestination(false), m_StopWritingAtEndOfThisChunk(false), m_StartWritingAtBeginningOfNextChunk(false), m_QuitAfterThisChunkFinishes(false), m_100mbChunkOffsetForFilename(0), m_DestinationStoragePercentUsedLastTime(0)
 { }
 Hottee::~Hottee()
 {
     cleanupHotteeing();
+}
+bool Hottee::eitherDestinationIsLessThan1gbCapacity()
+{
+    if(filesystemIsLessThan1gbCapacity(m_Destination1endingWithSlash))
+        return true;
+    if(filesystemIsLessThan1gbCapacity(m_Destination2endingWithSlash))
+        return true;
+    return false;
+}
+bool Hottee::filesystemIsLessThan1gbCapacity(const QString &pathOfFilesystem)
+{
+    boost::filesystem::path currentPath(pathOfFilesystem.toStdString());
+    boost::filesystem::space_info currentPathSpaceInfo = boost::filesystem::space(currentPath);
+    double spaceCapacity = static_cast<double>(currentPathSpaceInfo.capacity);
+    return (spaceCapacity < HOTTEE_ONE_GIGABYTE);
 }
 void Hottee::toggleDestinations()
 {
@@ -93,7 +108,7 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
                     emit d("Hottee is cleanly quitting at end of chunk: " + m_CurrentOutputFile->fileName());
                     emit d("Wait...");
                     cleanupHotteeing(); //it isn't strictly necessary to call this here, since it's called by our destructor... but in order to make readyRead never be emitted again, it's best to call it as soon as possible (now)
-                    QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection); //TODOreq: backends should not call "quit", they should just emit "done" or "stopped" and then the listener can decide when to call quit. BECAUSE: if there are multiple backends. I think there is a way to do that "waiting for all backends to finish" thing fancily using QFuture or similar, but can't find it. QFutureSynchronizer sounds right, but has no signals wtf -_-. I _COULD_ solve that uglily by using a separate thread whose job is just to synchronously wait on all my backends to finish, and then he emits a signal. Ugly and expensive, but would work.
+                    emit quitRequested(); //TO DOnereq: backends should not call "quit", they should just emit "done" or "stopped" and then the listener can decide when to call quit. BECAUSE: if there are multiple backends. I think there is a way to do that "waiting for all backends to finish" thing fancily using QFuture or similar, but can't find it. QFutureSynchronizer sounds right, but has no signals wtf -_-. I _COULD_ solve that uglily by using a separate thread whose job is just to synchronously wait on all my backends to finish, and then he emits a signal. Ugly and expensive, but would work.
                     return true; //true/false doesn't matter here, since readyRead is never emitted again we never get to to where it would matter
                 }
 
@@ -187,9 +202,18 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
 }
 //tl;dr: inputProcess's stdout copied to outputProcess, and also either destinationDir 1 or 2 in 100mb chunks, notifying when size is about to, or has, run out (indicating human intervention necessary)
 void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2, const QString &outputProcessPathAndArgs)
-{
+{    
     m_Destination1endingWithSlash = appendSlashIfNeeded(destinationDir1);
     m_Destination2endingWithSlash = appendSlashIfNeeded(destinationDir2);
+
+    //NOTE: It is required that destinations are large enough so that when 80% boundary is crossed, there is at least another 100mb left... or else the app will segfault. The below >= 1gb check is my way of ensuring that. I calculated 500mb as the theoretical min, but made it 1gb instead because of the inexact nature of "crossing over" the 80% point
+    if(eitherDestinationIsLessThan1gbCapacity())
+    {
+        emit d("Both of your destinations need to be at least 1gb in size"); //TODOoptional: for use with smaller destinations, a smaller chunk size (100mb) could be used/specifable. The 1gb check here should probably react dynamically to that chunk size in that case...
+        emit quitRequested();
+        return;
+    }
+
     m_CurrentDestinationEndingWithSlash = m_Destination1endingWithSlash;
     m_Dest2 = false;
     m_StopWritingAtEndOfThisChunk = false;
@@ -200,6 +224,7 @@ void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QStrin
     if(!createAndOpen100mbFileAtCurrentDestination())
     {
         m_CurrentlyWritingToEitherDestination = false;
+        emit quitRequested();
         return;
     }
 

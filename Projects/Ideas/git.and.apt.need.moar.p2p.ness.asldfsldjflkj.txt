@@ -3,6 +3,7 @@ needz moar p2p'ness
 git/apt
 
 git is p2p yes indeed but what git needs is a "git-multi-push" that uses p2p during push stage. yes i know linus (had:linux) would frown at my use of git (especially since i hack in last modified timestamps), but shit man git is just so fucking easy/pro/well-tested/versatile/etc. a git-multi-push could/should be used to update a webserver cluster (hvbs currently uses daisy chaining of git pushes (or at least... WILL (i haven't tested that but i mean really it's just a matter of adding 1 more line to post-update and configuring the servers for no-pw ssh))
+edit: when the git push destinations are local (non network), the "p2p" ness of it should basically just mean "concurrent writing" (like 2 drives etc.. since usually the drive is slower than the bus)
 
 apt can/should use it for the very same reason it uses http for distributing the packages to begin with: the security checks are done later after the packages are downloaded. bleh i wouldn't be surprised at all if both of these ideas are already implemented in experimental/prototype form (apt is quite likely to have it, git not so much)
 

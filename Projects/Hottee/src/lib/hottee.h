@@ -29,6 +29,8 @@ private:
     qint64 m_100mbChunkOffsetForFilename;
     double m_DestinationStoragePercentUsedLastTime;
 
+    bool eitherDestinationIsLessThan1gbCapacity();
+    bool filesystemIsLessThan1gbCapacity(const QString &pathOfFilesystem);
     void toggleDestinations();
     bool createAndOpen100mbFileAtCurrentDestination();
     inline QString appendSlashIfNeeded(QString inputString)
@@ -41,6 +43,7 @@ private:
 signals:
     void d(const QString &);
     void o(const QString &);
+    void quitRequested();
 public slots:
     void startHotteeing(const QString &inputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2, const QString &outputProcessPathAndArgs);
     void queryChunkWriteOffsetAndStorageCapacityStuff();

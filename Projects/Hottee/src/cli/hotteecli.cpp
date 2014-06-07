@@ -10,6 +10,7 @@ HotteeCli::HotteeCli(QObject *parent) :
 
     connect(&m_Hottee, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
     connect(&m_Hottee, SIGNAL(o(QString)), this, SLOT(handleD(QString)));
+    connect(&m_Hottee, SIGNAL(quitRequested()), this, SLOT(handleQuitRequested()));
     connect(this, SIGNAL(startHotteeingRequested(QString,QString,QString,QString)), &m_Hottee, SLOT(startHotteeing(QString,QString,QString,QString)));
     connect(this, SIGNAL(queryChunkWriteOffsetAndStorageCapacityStuffRequested()), &m_Hottee, SLOT(queryChunkWriteOffsetAndStorageCapacityStuff()));
     connect(this, SIGNAL(startWritingAtNextChunkStartRequested()), &m_Hottee, SLOT(startWritingAtNextChunkStart()));
@@ -22,7 +23,7 @@ HotteeCli::HotteeCli(QObject *parent) :
     if(args.size() < 4 || args.size() > 5)
     {
         cliUsage();
-        QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
+        handleQuitRequested();
         return;
     }
 
@@ -95,4 +96,8 @@ void HotteeCli::stdInHasLineOfInput()
         cliUserInterfaceMenu();
         handleD("Invalid selection: '" + lineOfInput + "'");        
     }
+}
+void HotteeCli::handleQuitRequested()
+{
+    QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
