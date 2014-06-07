@@ -1,0 +1,3 @@
+Damn I am stupid, the content itself is sha512'd/etc(choose-overkill-but-only-just) is used as the random portion attached to a generic string "autosaver" and the timestamp.
+
+autosaver-000000001970woo-sha512goesHere.txt

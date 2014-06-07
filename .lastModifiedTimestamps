@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1402134979
+Documents/minddump/:1402137848
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -238,6 +238,7 @@ Documents/minddump/afdljasldfkjsdlkfjsodfuilkjeroulskdjfoudsflkdjsfousdflkjweoru
 Documents/minddump/afdljdfljsldfkjouiwerlkjsdfoiusdfl.txt:1353974631
 Documents/minddump/afdljsadfoualkjsaofuasflroflalsdfjkasouewrl.txt:1344286704
 Documents/minddump/afdsfeadflkjdsflkjasdlkfouerlkjdfoiu.txt:1353975635
+Documents/minddump/afhlskjdfljsdlkfhsdlkfjsdlkfjsdlkfjouerlkjsdfhsdlfkjsdlf.txt:1402137848
 Documents/minddump/aflasdkjflasdjfouwerlkjdfouaslrjoweurilkajsdfoul.txt:1353355489
 Documents/minddump/aflasjdflasfoweurasdlkfjhasifhawerkjsdofuwerlk.txt:1344286874
 Documents/minddump/aflaskdjfowuralsfkjaowurlsadjfoawurelsdfwoeruijsdflkj.txt:1344287488
@@ -1631,6 +1632,7 @@ Documents/minddump/sdflaskdfjsdlakfjouwerljksodfusldkfjouwerlkjosduflsjdfouewrlk
 Documents/minddump/sdflaskjdfosaudflsjdfousdflkjsdofuwelrkjou.txt:1390051376
 Documents/minddump/sdfldsfkjsadlkjfoisdufljsdfousldfjsdofulkjweroulksdfj.txt:1370473953
 Documents/minddump/sdfldskjfoweurlkjsdflksdjfoiuwerlkjsdf.txt:1353780197
+Documents/minddump/sdflhsdlfjsldkfjdlsjfsldhfosdfusldjfsldkjf.txt:1402136551
 Documents/minddump/sdfljasdfkjsdofiuljsoudflsajdfujweroiusadlfkjasodfuljwerouilksjdfouiwelrkj.txt:1370671398
 Documents/minddump/sdfljasdfoworiusldkfjsaodfuiasfl.and.triumphs.is.a.poor.word.choice.maybe.prevails.idk.txt:1340579573
 Documents/minddump/sdfljasdlkfjoweurlkjsdfosudflkjsdfowel.txt:1355339141
@@ -2052,6 +2054,7 @@ Documents/minddump/slkfjsdlkjfsdlkjfoiwuerlkjafdousdlfkjwoeiurlkjfoiu.txt:135793
 Documents/minddump/slkjfdlskajdfosudflsajfosuaflsjdfousfljsofusfdoulsjdfousdflk.txt:1390303637
 Documents/minddump/so.fucking.high.txt:1344456089
 Documents/minddump/so.fucking.pumped.i.can.feel.adrenaline.rushing.around.etc.nothing.to.do.with.doc.but.just.my.mood.today.wooo.txt:1350504798
+Documents/minddump/so.high.and.while.thinking.of.this.filename.i.had.it.happen.a.third.time.and.i.oforogtly.what.it.was.by.time.iw.rtoet.it.txt.and.before.this.was.a.git.push.backup.txt:1402136326
 Documents/minddump/so.i.guess.i.either.need.to.shred.except.thats.still.being.shamed.by.it.or.just.TOUGH.IT.OUT.pussy.txt:1345053664
 Documents/minddump/so.many.options.rofl.maybe.i.should.do.both.idfk.alfjasdofuwlrkja.txt:1343476580
 Documents/minddump/so.subtle.so.rare.you.will.learn.to.think.forwards.backwards.upside-down.zig.zagged.up.up.down.down.sup.hideo.txt:1400833494
@@ -2340,7 +2343,7 @@ Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-K
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
-Projects/:1401622747
+Projects/:1402135237
 Projects/AdAgency/:1333471837
 Projects/AdAgency/design/:1333472910
 Projects/AdAgency/design/Add.Funds.Request.dia:1330206440
@@ -3810,6 +3813,18 @@ Projects/SftpUploaderAndRenamerQueue/src/:1398991629
 Projects/SftpUploaderAndRenamerQueue/src/lib/:1400920429
 Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp:1400920429
 Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h:1400918972
+Projects/SimpleNotepadAutosaveWithoutOverwriting/:1402138414
+Projects/SimpleNotepadAutosaveWithoutOverwriting/design/:1402137999
+Projects/SimpleNotepadAutosaveWithoutOverwriting/design/as.you.can.see.ive.been.trying.to.figure.this.out.for.a.while.txt.oh.yea.initiail.idea.COINCIDENTALLY.mb.txt:1402137999
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/:1402144620
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/SimpleNotepadAutosaveWithoutOverwritingWidget.pro:1402143469
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/main.cpp:1402135278
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/signalemittingonkeyeventsplaintextedit.cpp:1402143926
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/signalemittingonkeyeventsplaintextedit.h:1402143846
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithoutoverwritinggui.cpp:1402138664
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithoutoverwritinggui.h:1402138612
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithoutoverwritingwidget.cpp:1402144583
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithoutoverwritingwidget.h:1402144099
 Projects/SymbolicLinksDetector/:1367836621
 Projects/SymbolicLinksDetector/src/:1371580055
 Projects/SymbolicLinksDetector/src/SymbolicLinksDetector.pro:1367837261
