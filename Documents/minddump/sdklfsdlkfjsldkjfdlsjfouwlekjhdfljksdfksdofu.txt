@@ -1,0 +1,17 @@
+A sentence is a start timestamp and stop timestamp, and an average characters-per-second for that sentence (calculated when the sentence is deemed a sentence (all future adds (even if part of same "grammatical sentence"), go into the next sentence). A global average characters per second is kept, perhaps for a specifiable previous "N" number of sentences (because averaging ALL sentences will eventually become expensive), and we use "3x that number" as our random ass formula to detect when to make a thing a sentence. Periods, semi-colons, and the <Enter> key also trigger a sentence.
+
+The "characters" of a sentence are keystrokes, so backspaced keystrokes are kept, including the backspace key itself, and the resulting text is generated when needed (but there is also a playback mode (and fuck it, might as well have a mode showing backspaced keys (and backspace key) in some "red background" where non-backspaced are shown regularly (so perhaps a simple color-"inversion" for the backspaced characters would be most portable))). The default mode is the "generated" (backspaces hidden) mode.
+
+Keystrokes + timestamps are sent across the network to two power-independent backup machines (ideally shared nothing architecture), but the timestamps are lost at sentence detection when they are only used for calculating characters per second for that sentence.
+
+
+Fuck it actually
+save timestamps of every character, but use compression on a per-sentence or per-paragraph (to be defined) basis to minimize the cost of using 64-bit timestamps.
+
+The range of the time that that sentence takes must be calculated in that case by last-keystroke-timestamp minus first-keystroke-timestamp.
+
+If it wasn't obvious already, a sentence is a unit of saving.
+
+Each keystroke should be sent across the network. Among the 3 nodes, they flush write buffers to operating system at every "sentence". The one with the keyboard tells the others when a "sentence" end has occured, but using a timeout/heartbeat ("you didn't send me keys OR a finish sentence command within X seconds")... the backup nodes will sync on their own. Perhaps 3 seconds-ISH for sentence detection, and 6 seconds-ISH for (but really it'd be calculated using some form of their average characters per second)
+
+This is all getting too complex again, and I'm pretty fucking sure I've designed this years ago -_-. Need to launch what am I doing (note:procrastinating)

@@ -5,7 +5,7 @@
 #include <QSocketNotifier>
 #include <QTextStream>
 
-#include "../lib/hottee.h"
+class Hottee;
 
 class HotteeCli : public QObject
 {
@@ -16,14 +16,15 @@ private:
     QSocketNotifier m_StdInSocketNotifier; //fucking finally. damnit nvm, apparently doesn't work on windows (fuck you bill gates)
     QTextStream m_StdIn;
     QTextStream m_StdOut;
-    Hottee m_Hottee;
+    Hottee *m_Hottee;
 
     void cliUsage();
     void cliUserInterfaceMenu();
 signals:
-    void startHotteeingRequested(const QString &inputProcessAndArgs, const QString &destination1, const QString &destination2, const QString &outputProcessAndArgs);
+    void startHotteeingRequested(const QString &inputProcessAndArgs, const QString &destination1, const QString &destination2, const QString &outputProcessAndArgs, qint64 outputProcessFilenameOffsetJoinPoint);
     void queryChunkWriteOffsetAndStorageCapacityStuffRequested();
     void startWritingAtNextChunkStartRequested();
+    void restartOutputProcessOnNextChunkStartRequested();
     void stopWritingAtEndOfThisChunkRequested();
     void quitAfterThisChunkFinishesRequested();
 private slots:

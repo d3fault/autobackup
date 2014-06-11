@@ -1,9 +1,9 @@
 #include "hottee.h"
 
-#include <QProcess>
 #include <QTextStream>
 #include <QFile>
 #include <QCoreApplication>
+#include <QDateTime>
 
 #include <boost/filesystem.hpp> //*shakes fist at Qt*
 
@@ -14,11 +14,25 @@
 
 //TODOoptional: could also put each 100mb chunk through a hash for checksumming etc
 Hottee::Hottee(QObject *parent) :
-    QObject(parent), m_InputProcess(0), m_OutputProcess(0), m_WriteToOutputProcess(false), m_CurrentOutputFile(0), m_Current100mbChunkWriteOffset(0), m_Dest2(false), m_CurrentlyWritingToEitherDestination(false), m_StopWritingAtEndOfThisChunk(false), m_StartWritingAtBeginningOfNextChunk(false), m_QuitAfterThisChunkFinishes(false), m_100mbChunkOffsetForFilename(0), m_DestinationStoragePercentUsedLastTime(0)
+    QObject(parent), m_InputProcess(0), m_OutputProcess(0), m_WriteToOutputProcess(false), m_CurrentOutputFile(0), m_Current100mbChunkWriteOffset(0), m_Dest2(false), m_CurrentlyWritingToEitherDestination(false), m_StopWritingAtEndOfThisChunk(false), m_StartWritingAtBeginningOfNextChunk(false), m_QuitAfterThisChunkFinishes(false), m_100mbChunkOffsetForFilename(0), m_DestinationStoragePercentUsedLastTime(0), m_LastTimestampOfSyncInMS(0), m_RestartOutputProcessOnNextChunkStart(false)
 { }
 Hottee::~Hottee()
 {
     cleanupHotteeing();
+}
+bool Hottee::startOutputProcess()
+{
+    if(m_OutputProcess)
+        delete m_OutputProcess;
+    m_OutputProcess = new QProcess(this);
+    m_OutputProcess->start(m_OutputProcessPathAndArgs, QIODevice::WriteOnly);
+    if(!m_OutputProcess->waitForStarted(-1))
+    {
+        emit e("output process failed to start");
+        return false;
+    }
+    connect(m_OutputProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleOutputProcessFinished(int,QProcess::ExitStatus)));
+    return true;
 }
 bool Hottee::eitherDestinationIsLessThan1gbCapacity()
 {
@@ -50,6 +64,7 @@ void Hottee::toggleDestinations()
 }
 bool Hottee::createAndOpen100mbFileAtCurrentDestination()
 {
+    m_LastTimestampOfSyncInMS = QDateTime::currentMSecsSinceEpoch();
     if(!m_CurrentOutputFile)
     {
         m_CurrentOutputFile = new QFile(this);
@@ -78,6 +93,11 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
             //spot right here indicates a ONE_HUNDRED_MEGABYTES 'SYNC' point
             ++m_100mbChunkOffsetForFilename;
             m_Current100mbChunkWriteOffset = 0;
+            if(m_RestartOutputProcessOnNextChunkStart)
+            {
+                startOutputProcess();
+                m_RestartOutputProcessOnNextChunkStart = false;
+            }
 
             if(m_StartWritingAtBeginningOfNextChunk)
             {
@@ -200,8 +220,37 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
         bytesAvailable -= actualReadChunkSize;
     }
 }
+qint64 Hottee::getPercentOf100mbChunkUsedPerMinute()
+{
+    //qint64 percentOfCurrentChunkWritten = (m_Current100mbChunkWriteOffset/ONE_HUNDRED_MEGABYTES);
+
+    qint64 bytesPerMinute = ((m_Current100mbChunkWriteOffset/(QDateTime::currentMSecsSinceEpoch()-m_LastTimestampOfSyncInMS))*(1000*60));
+    //since 100 is the max percent and also our chunk size, no further calculation/conversion is needed aside from converting to a 0-100% based ranged for returning
+    qint64 percentBytesPerMinute = bytesPerMinute*100;
+    return percentBytesPerMinute;
+
+#if 0
+
+    //duration of 100mb chunk
+    qint64 durationOf100mbChunkInMs = ((lastSyncTimestamp-currentTimestamp)*);
+
+
+    QList<qint64> previousTimestampsForAveraging;
+    qint64 runningTotalOfPreviousTimestamps = 0;
+    QListIterator<qint64> previousTimestampsForAveragingIterator(previousTimestampsForAveraging);
+    while(previousTimestampsForAveragingIterator.hasNext())
+    {
+        runningTotalOfPreviousTimestamps += previousTimestampsForAveragingIterator.next();
+    }
+    qint64 averageOfPreviousTimestamps = 0;
+    if(!previousTimestampsForAveraging.isEmpty())
+    {
+        averageOfPreviousTimestamps = (runningTotalOfPreviousTimestamps / previousTimestampsForAveraging.size());
+    }
+#endif
+}
 //tl;dr: inputProcess's stdout copied to outputProcess, and also either destinationDir 1 or 2 in 100mb chunks, notifying when size is about to, or has, run out (indicating human intervention necessary)
-void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2, const QString &outputProcessPathAndArgs)
+void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2, const QString &outputProcessPathAndArgs, qint64 outputProcessFilenameOffsetJoinPoint)
 {    
     m_Destination1endingWithSlash = appendSlashIfNeeded(destinationDir1);
     m_Destination2endingWithSlash = appendSlashIfNeeded(destinationDir2);
@@ -219,8 +268,9 @@ void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QStrin
     m_StopWritingAtEndOfThisChunk = false;
     m_StartWritingAtBeginningOfNextChunk = false;
     m_QuitAfterThisChunkFinishes = false;
+    m_RestartOutputProcessOnNextChunkStart = false;
 
-    m_100mbChunkOffsetForFilename = 0;
+    m_100mbChunkOffsetForFilename = outputProcessFilenameOffsetJoinPoint;
     if(!createAndOpen100mbFileAtCurrentDestination())
     {
         m_CurrentlyWritingToEitherDestination = false;
@@ -231,15 +281,15 @@ void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QStrin
     m_CurrentlyWritingToEitherDestination = true;
 
     m_WriteToOutputProcess = !outputProcessPathAndArgs.isEmpty();
+    m_OutputProcessPathAndArgs = outputProcessPathAndArgs;
 
     if(m_WriteToOutputProcess)
     {
         //output process
-        if(m_OutputProcess)
-            delete m_OutputProcess;
-        m_OutputProcess = new QProcess(this);
-        m_OutputProcess->start(outputProcessPathAndArgs, QIODevice::WriteOnly);
-        m_OutputProcess->waitForStarted();
+        if(!startOutputProcess())
+        {
+            return;
+        }
     }
 
     //input process
@@ -273,11 +323,17 @@ void Hottee::queryChunkWriteOffsetAndStorageCapacityStuff()
         double dest2spaceUsed = dest2spaceCapacity-dest2spaceAvailable;
         double dest2percentUsed = ((dest2spaceUsed/dest2spaceCapacity)*100);
 
+        qint64 percentOf100mbChunkUsedPerMinute = getPercentOf100mbChunkUsedPerMinute();
+
         QTextStream retStream(&ret, QIODevice::WriteOnly | QIODevice::Text);
         retStream   << "==Information==" << endl
                     << "Currently Writing: " << (m_CurrentlyWritingToEitherDestination ? "YES :-D" : "no") << endl
                     << "Currently pointing at Destination " << (m_Dest2 ? ("2 (" + m_Destination2endingWithSlash + ")") : ("1 (" + m_Destination1endingWithSlash + ")")) << endl
-                    << "Current 100mb chunk write offset: " << m_Current100mbChunkWriteOffset << endl
+                    << "Current 100mb chunk write offset: "
+                    << m_Current100mbChunkWriteOffset << " ("
+                    << QString::number(((m_Current100mbChunkWriteOffset/ONE_HUNDRED_MEGABYTES)*100), 'f', 2) << "% @ "
+                    << QString::number(percentOf100mbChunkUsedPerMinute, 'f', 6) << " %/minute)" << endl
+                    << "Current 100mb chunk filename offset: " << m_100mbChunkOffsetForFilename << endl
                     << "Percent Full, Destination 1 (" + m_Destination1endingWithSlash + "): " << dest1percentUsed << endl
                     << "Percent Full, Destination 2 (" + m_Destination2endingWithSlash + "): " << dest2percentUsed;
     }
@@ -292,6 +348,10 @@ void Hottee::startWritingAtNextChunkStart()
         return;
     }
     m_StartWritingAtBeginningOfNextChunk = true;
+}
+void Hottee::restartOutputProcessOnNextChunkStart()
+{
+    m_RestartOutputProcessOnNextChunkStart = true;
 }
 void Hottee::stopWritingAtEndOfThisChunk()
 {
@@ -352,4 +412,20 @@ void Hottee::handleInputStdErr()
     QByteArray allStdErrBA = m_InputProcess->readAllStandardError();
     QString allStdErrString(allStdErrBA);
     emit d("input process wrote to stderr: " + allStdErrString);
+}
+void Hottee::handleOutputProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    if(exitCode != 0)
+    {
+        emit e("Hottee's output process didn't exit with code zero: " + QString::number(exitCode));
+    }
+    if(exitStatus != QProcess::NormalExit)
+    {
+        emit e("Hottee's output process didn't exit normally" + QString::number(exitStatus));
+    }
+
+    if(!m_WriteToOutputProcess) //implied but whatever
+        return;
+
+    emit o("Hottee's output process stopped during 100mb segment # " + QString::number(m_100mbChunkOffsetForFilename));
 }

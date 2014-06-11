@@ -2,8 +2,8 @@
 #define HOTTEE_H
 
 #include <QObject>
+#include <QProcess>
 
-class QProcess;
 class QFile;
 
 class Hottee : public QObject
@@ -16,6 +16,7 @@ private:
     QProcess *m_InputProcess;
     QProcess *m_OutputProcess;
     bool m_WriteToOutputProcess;
+    QString m_OutputProcessPathAndArgs;
     QFile *m_CurrentOutputFile;
     QString m_CurrentDestinationEndingWithSlash;
     qint64 m_Current100mbChunkWriteOffset;
@@ -29,6 +30,10 @@ private:
     qint64 m_100mbChunkOffsetForFilename;
     double m_DestinationStoragePercentUsedLastTime;
 
+    qint64 m_LastTimestampOfSyncInMS;
+    bool m_RestartOutputProcessOnNextChunkStart;
+
+    bool startOutputProcess();
     bool eitherDestinationIsLessThan1gbCapacity();
     bool filesystemIsLessThan1gbCapacity(const QString &pathOfFilesystem);
     void toggleDestinations();
@@ -40,20 +45,24 @@ private:
         return inputString;
     }
     bool readInputProcessesStdOutAndWriteAccordingly();
+    qint64 getPercentOf100mbChunkUsedPerMinute();
 signals:
+    void e(const QString &);
     void d(const QString &);
     void o(const QString &);
     void quitRequested();
 public slots:
-    void startHotteeing(const QString &inputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2, const QString &outputProcessPathAndArgs);
+    void startHotteeing(const QString &inputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2, const QString &outputProcessPathAndArgs = QString(), qint64 outputProcessFilenameOffsetJoinPoint = 0);
     void queryChunkWriteOffsetAndStorageCapacityStuff();
     void startWritingAtNextChunkStart();
+    void restartOutputProcessOnNextChunkStart();
     void stopWritingAtEndOfThisChunk();
     void quitAfterThisChunkFinishes();
     void cleanupHotteeing();
 private slots:
     void handleInputProcessReadyReadStandardOutput();
     void handleInputStdErr();
+    void handleOutputProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
 };
 
 #endif // HOTTEE_H
