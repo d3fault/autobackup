@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1401720984
+Documents/minddump/dreams/:1402862755
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -117,6 +117,7 @@ Documents/minddump/dreams/lksdjflkjsdlkfjwoeurlkjsdfousdflkjsdofulekrjousdf.txt:
 Documents/minddump/dreams/lksjdflkasdfouwelkrjoiudsflkjsdoiufkljwouerlkjoudsflkjsoduif.txt:1383331274
 Documents/minddump/dreams/lsajdflsjflkjsdlkfjslkjfklsdjflksjdfousdfjofdusdkjfewroiu.txt:1394232550
 Documents/minddump/dreams/lsdfjlkasjdfkjsdlkfjksdfjjdsfljsdlfkjlkjewroufdl.txt:1398714422
+Documents/minddump/dreams/lsdhflsdjflkdsjfodsuflkjweofuslkdfjosidufsdlkf.txt:1402862755
 Documents/minddump/dreams/lsdkajflsdkjfoduwerljsdowererufalsdjfosuflsdfoiuew.txt:1391095454
 Documents/minddump/dreams/lsdkfjlsdkjfouslkjreworuljfsoduflsdjfouwerl.txt:1366067544
 Documents/minddump/dreams/lsjflkasjdflkjwleruoisudflkjasldkfjsdfklwekruosdflk.txt:1396203681
@@ -3871,9 +3872,11 @@ Projects/WhenStackTraceFails/src/spaceactivatedspecialplaintextedit.h:1398242785
 Projects/WhenStackTraceFails/src/whenstacktracefailswidget.cpp:1398243503
 Projects/WhenStackTraceFails/src/whenstacktracefailswidget.h:1398242746
 Projects/WorlDb/:1402810043
-Projects/WorlDb/design/:1402810047
-Projects/WorlDb/design/uml/:1402816499
-Projects/WorlDb/design/uml/WorlDb.xmi:1402816499
+Projects/WorlDb/design/:1402817363
+Projects/WorlDb/design/text/:1402818131
+Projects/WorlDb/design/text/initial.idea.txt:1402818529
+Projects/WorlDb/design/uml/:1402817079
+Projects/WorlDb/design/uml/WorlDb.xmi:1402817079
 Projects/d3fault/:1363389963
 Projects/d3fault/Input-Only-Output-Only-Security-Diagram-applies-to-d3fault-and-go-outside-or-everything-idfk.dia:1349072396
 Projects/d3fault/a.good.prng.seed.if.you.need.it.aslfdkjasdlfkjaworujflkj.txt:1348986108
@@ -4010,7 +4013,7 @@ Projects/keyValueSharedNothingGfsClone/:1360760155
 Projects/keyValueSharedNothingGfsClone/design/:1363145735
 Projects/keyValueSharedNothingGfsClone/design/can.delete.old.snapshots.but.should.lazy.delete.them.only.during.file.rewrites.txt:1363145735
 Projects/keyValueSharedNothingGfsClone/design/fsync.on.replica.fail.detection.idea.txt.oh.and.of.course.we.also.set.up.another.replica.duh.txt:1361984279
-Projects/keyValueSharedNothingGfsClone/design/gfs.as.keyvalue.map.solved.and.also.lots.of.considerations.incl.fileformat.for.file.aka.chunk.svg:1360760201
+Projects/keyValueSharedNothingGfsClone/design/gfs.as.keyvalue.map.solved.and.also.lots.of.considerations.incl.fileformat.for.file.aka.chunk.svg:1402817222
 Projects/keyValueSharedNothingGfsClone/design/hdt.sdlfkjsdflkjsdouewlrjdfoiufsdlkj.txt:1360828755
 Projects/keyValueSharedNothingGfsClone/design/not.using.64.mb.chunks.using.variable.paxos.agreed.upon.partition.mapping.txt:1361530692
 Projects/layoutAppendTriggersGuiUpdate/:1344095576

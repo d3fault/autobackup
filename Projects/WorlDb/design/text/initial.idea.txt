@@ -1,0 +1,22 @@
+That WorlDb.xmi was a pretty fail attempt, the initial idea was to somehow synchronize db users on the other side of the planet via timestamps and ultra-time-sychronized shared nothing nodes. basically each request should wait "average latency to that node times 2 (or 3 or X)" before confirming the set. If another entry is made before then, the ultra-accurate timestamps are compared and the 2nd one in can beat the 1st one in if it has a sooner timestamp. This yes is private dht not public dht, otherwise it could be gamed. The 2nd one in still has to wait until the timeout (that the 1st one triggered) for 3rd/4th/etc entries with possibly earlier timestamps that may win the setValue.
+
+Actually I think it should be maxLatencyOfAllNodes*2(or3orX) for the timeout, to account for worst case scenario of being directly on other side fo planet.
+
+The sets have hella latency (1 second sounds like a low guess), but the overall throughput (it is asynchronous) should make up for that.
+
+One operation goes to one data center and 3 nodes within it. Each of those 3 nodes needs independent power + internets (so each data center needs 3 internet links). The operation is recorded in memory on those 3 LAN'd nodes before the timeout before (anticipating earlier timestamps) responding is started.
+
+The operation is replicated to 2 other data centers as soon as it is the timeout happens and the value is accepted (9 copies in total).
+
+The LibSmartClient tries the 2 backup internet connections to that data center on timeout before timing out to the caller.
+
+Something like CryptoScript (in the failed uml design) is used to scatter the data across the globe (and CryptoScript used again within data a single center too probably)
+
+It is impossible and a contradiction to do: low-latency _AND_ globe-aware-where-CHRONOLOGICALLY-FIRST-wins
+...so this is a high latency solution
+
+
+I also wanted to try to design in "session" and user-action-re-picking-up[from-a-brand-new-WEBSERVER-node-if-needed], but eh that's a project all on it's own
+
+
+PERHAPS: before the timeout ends, we are at least responded to that the operation has been accepted into the cluster and will be responded to (win/lose) shortly -- which could be use as a session/op-ticket (op-tickets need to be stored alongside user account and need to be state friendly (logging in should pick up where left off?? perhaps ask? perhaps a user-action-queue so they can do it at leisure (with re-ordering of (oh blah i am fucking lost))))
