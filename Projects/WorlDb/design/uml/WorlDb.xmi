@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMI verified="false" xmi.version="1.2" timestamp="2014-06-15T00:14:59" xmlns:UML="http://schema.omg.org/spec/UML/1.3">
+ <XMI.header>
+  <XMI.documentation>
+   <XMI.exporter>umbrello uml modeller http://uml.sf.net</XMI.exporter>
+   <XMI.exporterVersion>1.5.8</XMI.exporterVersion>
+   <XMI.exporterEncoding>UnicodeUTF8</XMI.exporterEncoding>
+  </XMI.documentation>
+  <XMI.metamodel xmi.version="1.3" href="UML.xml" xmi.name="UML"/>
+ </XMI.header>
+ <XMI.content>
+  <UML:Model isSpecification="false" isAbstract="false" isLeaf="false" xmi.id="m1" isRoot="false" name="UML Model">
+   <UML:Namespace.ownedElement>
+    <UML:Stereotype visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="folder" name="folder"/>
+    <UML:Stereotype visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="datatype" name="datatype"/>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Logical View" name="Logical View">
+     <UML:Namespace.ownedElement>
+      <UML:Package stereotype="folder" visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Datatypes" name="Datatypes">
+       <UML:Namespace.ownedElement>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="fTdZidadQb8V" name="int"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="HB6UurgojRhc" name="char"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="wAvbQp75Jid1" name="bool"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="LBdjkjD1uJTp" name="float"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="A9dsaIUUSN6s" name="double"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="CBwVtXVDg8wQ" name="short"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="r7PjRsYZ29Ra" name="long"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Pt3sG7iRIcw9" name="unsigned int"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="9RMnXHBOOa8p" name="unsigned short"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="ReNRmm1Be21u" name="unsigned long"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="9kJRMGZUfvHD" name="string"/>
+       </UML:Namespace.ownedElement>
+      </UML:Package>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Q7TdWw05U53z" name="WorlDb">
+       <UML:Classifier.feature>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="dZxLf5FFzxpr" type="oAZK2YxjCndl" name="m_PermutationLog"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="kIOCNRCZGtSs" name="set"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="7S6gHjLhpoKJ" name="get"/>
+        <UML:Operation visibility="private" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="ywJACsksdrmF" name="fromCryptoScriptSelectNodeAtRandomAndSendToTopMostInScriptButWeHaveTwoBackupsReady_Returns0ifNoError">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="RWSj1Dlkud9e" type="fTdZidadQb8V"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="private" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="cZEYHCvPJNlZ" name="setAcrossNetworkBegin">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="DrkYRziemRYu" type="eznauo3tvzjD" value="" name="CryptoScriptEntryId"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="yze4VwD5UQdl" type="qfSJ8qeCCyWB" value="" name="timestamp-sha512ofContent"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="jeqvaM6YLico" type="cX8tssSiXu1d" value="" name="content"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="private" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="mmrfbD0OGywi" name="replicateToNode">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="VPxGwDO6qbuf" type="eznauo3tvzjD" value="" name="CryptoScriptEntryId"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="MCTms9ndvcIV" type="qfSJ8qeCCyWB" value="" name="timestamp-sha512ofContent"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="qIr4HnnkBiy7" type="cX8tssSiXu1d" value="" name="content"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="private" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="dPM5WhXWBI24" name="enqueueOperationForCrytpoScriptEntryUsage"/>
+        <UML:Operation visibility="private" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="xwZCzuAJYRZN" name="dequeueCryptoScriptEntryIdOperationIfQueueHaveCryptoScriptEntriesToFullFillItWith"/>
+        <UML:Operation visibility="private" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="avlAuikE5Mji" name="dequeueCryptoScriptEntryIdOperation"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="kXIMDRSSkmZa" name="signal: setAttemptFinished">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" kind="out" xmi.id="BaEI9e1PkU4k" type="fTdZidadQb8V" value="" name="errorCode"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+       </UML:Classifier.feature>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="0V7HVACR4TbF" name="CryptoScriptPaxosAgreedUponOccassionally">
+       <UML:Classifier.feature>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="le6k9N68Qbag" type="AY0YsA4uoFEi" initialValue="Empty" name="CurrentCrytpoCryptState"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="MRTMb5nKjt5r" name="get1000butOnlyIfHaveLessThan750Left">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" kind="out" xmi.id="G9zglZKt5KRx" type="AY0YsA4uoFEi" value="" name="sha512forSeedDerivedFromCurrentCryptoState"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="private" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="QFmrdCt6PDGT" name="setGetting">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="gmy0KVv2uw5U" type="wAvbQp75Jid1" value="false" name="getting"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="tNDjw6OIIq2A" name="signal: hereIs1000moreCryptoScriptEntryIds">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" kind="out" xmi.id="04KBkGGddTMX" type="zolsQ4NEKEJZ" value="" name="cryptoScriptEntryIds"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+       </UML:Classifier.feature>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="AY0YsA4uoFEi" name="sha512"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="qfSJ8qeCCyWB" name="key"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="cX8tssSiXu1d" name="value"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="oAZK2YxjCndl" name="WorlDbPermutationLog">
+       <UML:Classifier.feature>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="KFWsDVOlSdTA" name="recordReplicateAndQueueForPersistPermutation">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="mF51QeR2dCcV" type="eznauo3tvzjD" value="" name="CryptoScriptEntryId"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="oIgEu7MQ0MSe" type="" value="" name="QDatatStream &lt;&lt; key &lt;&lt; sizeof(value) &lt;&lt; value"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="private" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="YrWYDyDpQ6Ip" name="recordInInMemoryKeyValueHash"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="jNLtI4FInwkI" name="signal: secondReplicaHasRecordedCryptoScriptEntryId"/>
+       </UML:Classifier.feature>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="n4p66gEhPJ01" name="new_class"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="eznauo3tvzjD" name="int64"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="zolsQ4NEKEJZ" name="QList&lt;int64>"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="P8EXzrknnluP" name="CryptoScriptEntry">
+       <UML:Classifier.feature>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="ZrLh8kRliJdy" type="eznauo3tvzjD" name="EntryId"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="YeHpycWMkltk" type="9kJRMGZUfvHD" name="PrimaryMasterId"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="abVNNPmuF5aN" type="9kJRMGZUfvHD" name="Backup0MasterId"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="nz6VJjUrMjeI" type="9kJRMGZUfvHD" name="Backup1MasterId"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="J9e2sVkS7FqS" type="9kJRMGZUfvHD" name="PrimaryReplica0Id"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="daKseuDRuJvD" type="9kJRMGZUfvHD" name="PrimaryReplica1Id"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="1N2L4gdMpIOf" type="9kJRMGZUfvHD" name="Backup0Replica0Id"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="n68sJyKwWfmA" type="9kJRMGZUfvHD" name="Backup0Replica1Id"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="ZzaRHTeIoebs" type="9kJRMGZUfvHD" name="Backup1Replica0"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="LEC8UaoGeu8y" type="9kJRMGZUfvHD" name="Backup1Replica1"/>
+       </UML:Classifier.feature>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="vZfaRoWHFOeL" name="WorldDbPermutationLogEntry"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="37yeA1Vgjdy5" name="WorlDbPermutationLogPersistQueue">
+       <UML:Classifier.feature>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="9RkMpMhrTeVd" name="enqueueForPersist"/>
+       </UML:Classifier.feature>
+      </UML:Class>
+     </UML:Namespace.ownedElement>
+     <XMI.extension xmi.extender="umbrello">
+      <diagrams>
+       <diagram showopsig="1" linecolor="#ff0000" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="class diagram" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" canvasheight="677" canvaswidth="1963" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#000000" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#ffff00" zoom="100" xmi.id="tsltuXVLhFwV" documentation="" showscope="1" snapgrid="0" showatts="1" type="1">
+        <widgets>
+         <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" showoperations="1" usesdiagramusefillcolor="0" showpubliconly="0" showpackage="1" x="174" showattsigs="601" showstereotype="1" y="10" showattributes="1" font="DejaVu Sans,9,-1,0,75,0,0,0,0,0" width="743" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="Q7TdWw05U53z" showscope="1" height="154" showopsigs="601"/>
+         <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" showoperations="1" usesdiagramusefillcolor="0" showpubliconly="0" showpackage="1" x="289" showattsigs="601" showstereotype="1" y="204" showattributes="1" font="DejaVu Sans,9,-1,0,75,0,0,0,0,0" width="636" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="0V7HVACR4TbF" showscope="1" height="70" showopsigs="601"/>
+         <notewidget width="260" showstereotype="1" x="13" noteType="0" usesdiagramusefillcolor="1" y="187" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="440" linecolor="none" xmi.id="KM7xBrBcNdKM" usefillcolor="1" linewidth="none" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" text="that it is agreed upon occassionally is only helpful/useful given a &quot;private dht&quot; infrastructure where all nodes are trusted, otherwise the functionality could be gamed&#xa;&#xa;each should keep track of the others' calculated requests-per-second (with math that does not have rounding errors so they all get the same thing) and the average of all such numbers should be used to calculate the paxos agreement period (agree every X). Aiming for a paxos agreement every 100-operations-per-second-on-average will give hopefully plenty of time for each node to refill its 100 once it drops below 750 out of it's original thousand. Larger numbers can be chosen for the 100-1000-750, but the ratio should stay the same/similar&#xa;&#xa;every node participates in the crypto script paxos, regardless of whether or not they need more crypto script entries"/>
+         <notewidget width="116" showstereotype="1" x="47" noteType="0" usesdiagramusefillcolor="1" y="14" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="69" linecolor="none" xmi.id="Z5eeWFtqZyml" usefillcolor="1" linewidth="none" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" text="worldb node api access (shared nothing?)"/>
+         <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" showoperations="1" usesdiagramusefillcolor="0" showpubliconly="0" showpackage="1" x="559" showattsigs="601" showstereotype="1" y="406" showattributes="1" font="DejaVu Sans,9,-1,0,75,0,0,0,0,0" width="184" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="P8EXzrknnluP" showscope="1" height="161" showopsigs="601"/>
+         <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" showoperations="1" usesdiagramusefillcolor="0" showpubliconly="0" showpackage="1" x="1156" showattsigs="601" showstereotype="1" y="92" showattributes="1" font="DejaVu Sans,9,-1,0,75,0,0,0,0,0" width="803" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="oAZK2YxjCndl" showscope="1" height="63" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="1181" showattsigs="601" showstereotype="1" y="201" showattributes="1" font="DejaVu Sans,9,-1,0,75,0,0,0,0,0" width="214" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="vZfaRoWHFOeL" showscope="1" height="28" showopsigs="601"/>
+        </widgets>
+        <messages/>
+        <associations>
+         <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="oAZK2YxjCndl" linewidth="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="Q7TdWw05U53z" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="dZxLf5FFzxpr" changeabilityB="900" type="510">
+          <linepath>
+           <startpoint startx="917" starty="108"/>
+           <endpoint endx="1156" endy="108"/>
+          </linepath>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="1033" showstereotype="1" y="110" text="m_PermutationLog" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="125" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="G6Vh0wRlNR65" height="18"/>
+         </assocwidget>
+        </associations>
+       </diagram>
+       <diagram showopsig="1" linecolor="#ff0000" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="worldb::set" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" canvasheight="1385" canvaswidth="4579" localid="L8iGTTgN1LvS" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#ffff00" zoom="100" xmi.id="kPg4w5zQwUDV" documentation="" showscope="1" snapgrid="0" showatts="1" type="3">
+        <widgets>
+         <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" usesdiagramusefillcolor="1" x="0" decon="0" showstereotype="1" y="21" font="DejaVu Sans,9,-1,0,50,0,1,0,0,0" localid="leyf898lRy4o" width="53" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="bvsBuEzddghY" height="59" drawasactor="1"/>
+         <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" usesdiagramusefillcolor="0" x="380" decon="0" showstereotype="1" y="48" font="DejaVu Sans,9,-1,0,50,0,1,0,0,0" localid="DphvdjIt00XO" width="65" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="Q7TdWw05U53z" height="24" drawasactor="0"/>
+         <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" usesdiagramusefillcolor="1" x="1086" decon="0" showstereotype="1" y="48" font="DejaVu Sans,9,-1,0,50,0,1,0,0,0" localid="TUqFj4v3TOQ2" width="287" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="0V7HVACR4TbF" height="24" drawasactor="0"/>
+         <notewidget width="126" showstereotype="1" x="1314" noteType="0" usesdiagramusefillcolor="1" y="366" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="30" linecolor="none" xmi.id="9ddfvsRxP13P" usefillcolor="1" linewidth="none" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" text="true"/>
+         <notewidget width="148" showstereotype="1" x="1225" noteType="0" usesdiagramusefillcolor="1" y="199" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="30" linecolor="none" xmi.id="zrQwSTC6F84Y" usefillcolor="1" linewidth="none" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" text="if(getting) return;"/>
+         <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" usesdiagramusefillcolor="1" x="1719" decon="0" showstereotype="1" y="48" font="DejaVu Sans,9,-1,0,50,0,1,0,0,0" localid="dzYXtez2Fcf8" width="65" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="Q7TdWw05U53z" height="24" drawasactor="0"/>
+         <notewidget width="97" showstereotype="1" x="1616" noteType="0" usesdiagramusefillcolor="1" y="36" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="141" linecolor="none" xmi.id="6OMM01ST6WKB" usefillcolor="1" linewidth="none" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" text="worldb node2node network access, which node was read out of the cryptoscript"/>
+         <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" usesdiagramusefillcolor="1" x="2559" decon="0" showstereotype="1" y="48" font="DejaVu Sans,9,-1,0,50,0,1,0,0,0" localid="AhJTQuG1i88w" width="160" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="oAZK2YxjCndl" height="24" drawasactor="0"/>
+         <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" usesdiagramusefillcolor="1" x="3256" decon="0" showstereotype="1" y="48" font="DejaVu Sans,9,-1,0,50,0,1,0,0,0" localid="zn3pU8qARgDq" width="65" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="Q7TdWw05U53z" height="24" drawasactor="0"/>
+         <notewidget width="134" showstereotype="1" x="3107" noteType="0" usesdiagramusefillcolor="1" y="37" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="186" linecolor="none" xmi.id="ydPtc65qvpMM" usefillcolor="1" linewidth="none" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" text="Replication Node 0, who was chosen via crypto script. The node is already expecting the CryptoScriptEntryId and already knows Replication Node 1"/>
+         <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" usesdiagramusefillcolor="1" x="4063" decon="0" showstereotype="1" y="48" font="DejaVu Sans,9,-1,0,50,0,1,0,0,0" localid="8457AxKlKgpr" width="160" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="oAZK2YxjCndl" height="24" drawasactor="0"/>
+         <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" usesdiagramusefillcolor="1" x="4335" decon="0" showstereotype="1" y="48" font="DejaVu Sans,9,-1,0,50,0,1,0,0,0" localid="L8iGTTgN1LvS" width="240" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="37yeA1Vgjdy5" height="24" drawasactor="0"/>
+         <notewidget width="60" showstereotype="1" x="4272" noteType="0" usesdiagramusefillcolor="1" y="31" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="50" linecolor="none" xmi.id="f0HObFRxL7Dn" usefillcolor="1" linewidth="none" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" text="write thread"/>
+         <notewidget width="162" showstereotype="1" x="2472" noteType="0" usesdiagramusefillcolor="1" y="992" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="179" linecolor="none" xmi.id="TQJ5tJHajPaF" usefillcolor="1" linewidth="none" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" text="this should be right after recordInMemory [on second replica] as an optimization (the return logic changes: all 3 copies do enqueue for persist still), but putting here for easy understanding"/>
+        </widgets>
+        <messages>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="DphvdjIt00XO" textid="lseagytOEGba" operation="kIOCNRCZGtSs" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="27" showstereotype="1" y="136" widgetaid="leyf898lRy4o" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="384" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="kIOCNRCZGtSs" height="8" sequencemessagetype="1001">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="32" showstereotype="1" y="118" text=": set()" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="44" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="lseagytOEGba" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="DphvdjIt00XO" textid="jisRkPOVH03v" operation="ywJACsksdrmF" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="410" showstereotype="1" y="645" widgetaid="DphvdjIt00XO" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="50" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="ywJACsksdrmF" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="415" showstereotype="1" y="627" text=": fromCryptoScriptSelectNodeAtRandomAndSendToTopMostInScriptButWeHaveTwoBackupsReady_Returns0ifNoError() : int" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="705" width="740" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="jisRkPOVH03v" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="TUqFj4v3TOQ2" textid="ZJ9ceZY53OKk" operation="MRTMb5nKjt5r" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="413" showstereotype="1" y="185" widgetaid="DphvdjIt00XO" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="815" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="MRTMb5nKjt5r" height="8" sequencemessagetype="1001">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="418" showstereotype="1" y="167" text=": get1000butOnlyIfHaveLessThan750Left(out sha512forSeedDerivedFromCurrentCryptoState : sha512)" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="627" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="ZJ9ceZY53OKk" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="TUqFj4v3TOQ2" textid="iQ15cFYBVJFm" operation="QFmrdCt6PDGT" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="1227" showstereotype="1" y="391" widgetaid="TUqFj4v3TOQ2" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="50" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="QFmrdCt6PDGT" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="1232" showstereotype="1" y="373" text=": setGetting(getting : bool = false)" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="705" width="214" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="iQ15cFYBVJFm" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="dzYXtez2Fcf8" textid="89ROHVwtSSOL" operation="cZEYHCvPJNlZ" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="413" showstereotype="1" y="713" widgetaid="DphvdjIt00XO" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="1337" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="cZEYHCvPJNlZ" height="8" sequencemessagetype="1001">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="418" showstereotype="1" y="695" text=": setAcrossNetworkBegin(CryptoScriptEntryId : int64, timestamp-sha512ofContent : key, content : value)" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="638" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="89ROHVwtSSOL" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="AhJTQuG1i88w" textid="9C5rVxmIESW8" operation="YrWYDyDpQ6Ip" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="2637" showstereotype="1" y="768" widgetaid="AhJTQuG1i88w" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="50" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="YrWYDyDpQ6Ip" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="2642" showstereotype="1" y="750" text=": recordInInMemoryKeyValueHash()" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="705" width="219" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="9C5rVxmIESW8" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="zn3pU8qARgDq" textid="CfCornJoQgh3" operation="mmrfbD0OGywi" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="2640" showstereotype="1" y="839" widgetaid="AhJTQuG1i88w" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="647" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="mmrfbD0OGywi" height="8" sequencemessagetype="1001">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="2690" showstereotype="1" y="821" text=": replicateToNode(CryptoScriptEntryId : int64, timestamp-sha512ofContent : key, content : value)" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="593" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="CfCornJoQgh3" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="TUqFj4v3TOQ2" textid="w5zYpLZa5og1" operation="tNDjw6OIIq2A" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="412" showstereotype="1" y="507" widgetaid="DphvdjIt00XO" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="825" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="tNDjw6OIIq2A" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="417" showstereotype="1" y="489" text=": signal: hereIs1000moreCryptoScriptEntryIds(out cryptoScriptEntryIds : QList&lt;int64>)" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="530" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="w5zYpLZa5og1" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="DphvdjIt00XO" textid="KgHHoNjlSjHF" operation="dPM5WhXWBI24" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="410" showstereotype="1" y="365" widgetaid="DphvdjIt00XO" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="50" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="dPM5WhXWBI24" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="415" showstereotype="1" y="347" text=": enqueueOperationForCrytpoScriptEntryUsage()" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="705" width="301" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="KgHHoNjlSjHF" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="DphvdjIt00XO" textid="jGlVDXZBU7LT" operation="xwZCzuAJYRZN" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="410" showstereotype="1" y="411" widgetaid="DphvdjIt00XO" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="50" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="xwZCzuAJYRZN" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="415" showstereotype="1" y="393" text=": dequeueCryptoScriptEntryIdOperationIfQueueHaveCryptoScriptEntriesToFullFillItWith()" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="705" width="534" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="jGlVDXZBU7LT" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="DphvdjIt00XO" textid="KPeWflLMz6sD" operation="avlAuikE5Mji" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="410" showstereotype="1" y="569" widgetaid="DphvdjIt00XO" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="50" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="avlAuikE5Mji" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="415" showstereotype="1" y="551" text=": dequeueCryptoScriptEntryIdOperation()" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="705" width="255" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="KPeWflLMz6sD" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="AhJTQuG1i88w" textid="05M5R3oX7tfF" operation="KFWsDVOlSdTA" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="1752" showstereotype="1" y="749" widgetaid="dzYXtez2Fcf8" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="886" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="KFWsDVOlSdTA" height="8" sequencemessagetype="1001">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="1757" showstereotype="1" y="731" text=": recordReplicateAndQueueForPersistPermutation(CryptoScriptEntryId : int64, QDatatStream &lt;&lt; key &lt;&lt; sizeof(value) &lt;&lt; value : )" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="795" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="05M5R3oX7tfF" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="8457AxKlKgpr" textid="d0utIE1JHMMj" operation="KFWsDVOlSdTA" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="3289" showstereotype="1" y="877" widgetaid="zn3pU8qARgDq" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="853" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="KFWsDVOlSdTA" height="8" sequencemessagetype="1001">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="3294" showstereotype="1" y="859" text=": recordReplicateAndQueueForPersistPermutation(CryptoScriptEntryId : int64, QDatatStream &lt;&lt; key &lt;&lt; sizeof(value) &lt;&lt; value : )" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="795" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="d0utIE1JHMMj" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="L8iGTTgN1LvS" textid="8M8b0dCecT0D" operation="9RkMpMhrTeVd" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="2640" showstereotype="1" y="919" widgetaid="AhJTQuG1i88w" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="1814" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="9RkMpMhrTeVd" height="8" sequencemessagetype="1001">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="2722" showstereotype="1" y="901" text=": enqueueForPersist()" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="137" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="8M8b0dCecT0D" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="AhJTQuG1i88w" textid="0lhSXMjeisFh" operation="if(!secondReplica) return;" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="2637" showstereotype="1" y="995" widgetaid="AhJTQuG1i88w" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="50" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="gQ82XKp8BxiM" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="2642" showstereotype="1" y="977" text=": if(!secondReplica) return;" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="705" width="168" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="0lhSXMjeisFh" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="AhJTQuG1i88w" textid="xKWbszUZ4Dp4" operation="jNLtI4FInwkI" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="412" showstereotype="1" y="1243" widgetaid="DphvdjIt00XO" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="2235" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="jNLtI4FInwkI" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="417" showstereotype="1" y="1225" text=": signal: secondReplicaHasRecordedCryptoScriptEntryId()" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="351" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="xKWbszUZ4Dp4" height="18"/>
+         </messagewidget>
+         <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="DphvdjIt00XO" textid="HeMJrCNZhduu" operation="kXIMDRSSkmZa" linewidth="none" seqnum="" usesdiagramusefillcolor="1" x="26" showstereotype="1" y="1329" widgetaid="leyf898lRy4o" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" width="394" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="kXIMDRSSkmZa" height="32" sequencemessagetype="1000">
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" usesdiagramusefillcolor="1" x="31" showstereotype="1" y="1311" text=": signal: setAttemptFinished(out errorCode : int)" font="DejaVu Sans,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="296" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="HeMJrCNZhduu" height="18"/>
+         </messagewidget>
+        </messages>
+        <associations/>
+       </diagram>
+      </diagrams>
+     </XMI.extension>
+    </UML:Model>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Use Case View" name="Use Case View">
+     <UML:Namespace.ownedElement>
+      <UML:Actor visibility="public" isSpecification="false" namespace="Use Case View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="bvsBuEzddghY" name="actor"/>
+     </UML:Namespace.ownedElement>
+    </UML:Model>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Component View" name="Component View">
+     <UML:Namespace.ownedElement/>
+    </UML:Model>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Deployment View" name="Deployment View">
+     <UML:Namespace.ownedElement/>
+    </UML:Model>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Entity Relationship Model" name="Entity Relationship Model">
+     <UML:Namespace.ownedElement/>
+    </UML:Model>
+   </UML:Namespace.ownedElement>
+  </UML:Model>
+ </XMI.content>
+ <XMI.extensions xmi.extender="umbrello">
+  <docsettings viewid="kPg4w5zQwUDV" uniqueid="BaEI9e1PkU4k" documentation=""/>
+  <listview>
+   <listitem open="1" type="800" id="Views">
+    <listitem open="1" type="821" id="Component View"/>
+    <listitem open="1" type="827" id="Deployment View"/>
+    <listitem open="1" type="836" id="Entity Relationship Model"/>
+    <listitem open="1" type="801" id="Logical View">
+     <listitem open="0" type="807" id="tsltuXVLhFwV" label="class diagram"/>
+     <listitem open="1" type="813" id="P8EXzrknnluP">
+      <listitem open="0" type="814" id="abVNNPmuF5aN"/>
+      <listitem open="0" type="814" id="1N2L4gdMpIOf"/>
+      <listitem open="0" type="814" id="n68sJyKwWfmA"/>
+      <listitem open="0" type="814" id="nz6VJjUrMjeI"/>
+      <listitem open="0" type="814" id="ZzaRHTeIoebs"/>
+      <listitem open="0" type="814" id="LEC8UaoGeu8y"/>
+      <listitem open="0" type="814" id="ZrLh8kRliJdy"/>
+      <listitem open="0" type="814" id="YeHpycWMkltk"/>
+      <listitem open="0" type="814" id="J9e2sVkS7FqS"/>
+      <listitem open="0" type="814" id="daKseuDRuJvD"/>
+     </listitem>
+     <listitem open="1" type="813" id="0V7HVACR4TbF">
+      <listitem open="0" type="814" id="le6k9N68Qbag"/>
+      <listitem open="0" type="815" id="MRTMb5nKjt5r"/>
+      <listitem open="0" type="815" id="QFmrdCt6PDGT"/>
+      <listitem open="0" type="815" id="tNDjw6OIIq2A"/>
+     </listitem>
+     <listitem open="0" type="830" id="Datatypes">
+      <listitem open="1" type="829" id="wAvbQp75Jid1"/>
+      <listitem open="1" type="829" id="HB6UurgojRhc"/>
+      <listitem open="1" type="829" id="A9dsaIUUSN6s"/>
+      <listitem open="1" type="829" id="LBdjkjD1uJTp"/>
+      <listitem open="1" type="829" id="fTdZidadQb8V"/>
+      <listitem open="1" type="829" id="r7PjRsYZ29Ra"/>
+      <listitem open="1" type="829" id="CBwVtXVDg8wQ"/>
+      <listitem open="1" type="829" id="9kJRMGZUfvHD"/>
+      <listitem open="1" type="829" id="Pt3sG7iRIcw9"/>
+      <listitem open="1" type="829" id="ReNRmm1Be21u"/>
+      <listitem open="1" type="829" id="9RMnXHBOOa8p"/>
+     </listitem>
+     <listitem open="1" type="813" id="eznauo3tvzjD"/>
+     <listitem open="1" type="813" id="qfSJ8qeCCyWB"/>
+     <listitem open="1" type="813" id="n4p66gEhPJ01"/>
+     <listitem open="1" type="813" id="zolsQ4NEKEJZ"/>
+     <listitem open="1" type="813" id="AY0YsA4uoFEi"/>
+     <listitem open="1" type="813" id="cX8tssSiXu1d"/>
+     <listitem open="1" type="813" id="Q7TdWw05U53z">
+      <listitem open="0" type="815" id="avlAuikE5Mji"/>
+      <listitem open="0" type="815" id="xwZCzuAJYRZN"/>
+      <listitem open="0" type="815" id="dPM5WhXWBI24"/>
+      <listitem open="0" type="815" id="ywJACsksdrmF"/>
+      <listitem open="0" type="815" id="7S6gHjLhpoKJ"/>
+      <listitem open="0" type="814" id="dZxLf5FFzxpr"/>
+      <listitem open="0" type="815" id="mmrfbD0OGywi"/>
+      <listitem open="0" type="815" id="kIOCNRCZGtSs"/>
+      <listitem open="0" type="815" id="cZEYHCvPJNlZ"/>
+      <listitem open="0" type="815" id="kXIMDRSSkmZa"/>
+     </listitem>
+     <listitem open="0" type="810" id="kPg4w5zQwUDV" label="worldb::set"/>
+     <listitem open="1" type="813" id="oAZK2YxjCndl">
+      <listitem open="0" type="815" id="YrWYDyDpQ6Ip"/>
+      <listitem open="0" type="815" id="KFWsDVOlSdTA"/>
+      <listitem open="0" type="815" id="jNLtI4FInwkI"/>
+     </listitem>
+     <listitem open="1" type="813" id="37yeA1Vgjdy5">
+      <listitem open="0" type="815" id="9RkMpMhrTeVd"/>
+     </listitem>
+     <listitem open="1" type="813" id="vZfaRoWHFOeL"/>
+    </listitem>
+    <listitem open="1" type="802" id="Use Case View">
+     <listitem open="1" type="811" id="bvsBuEzddghY"/>
+    </listitem>
+   </listitem>
+  </listview>
+  <codegeneration>
+   <codegenerator language="C++"/>
+  </codegeneration>
+ </XMI.extensions>
+</XMI>
