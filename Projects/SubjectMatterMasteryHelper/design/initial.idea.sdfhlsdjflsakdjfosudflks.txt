@@ -1,0 +1,10 @@
+Set of questions, set of answers
+Asks you them in random order, remembers which ones you got wrong, re-asks those after current set (in new random order). Repeat until every question answered right at least once, then do it again with the full set so it is reinforced further.
+
+word answers (case-insensitive by default), multiple choice, true/false, fill-in-the-blank (case insensitive by default also) modes
+
+questions answered wrong should be put towards the end of the next iteration, to force the brain to consider other material before going back to the piece they're struggling with the most
+
+if they get all of them right on the very first try, the "second time" is of course optional/pointless
+
+there could be two sub-modes: a) answering a question wrong tells you the answer, b) answering a question wrong lets you guess again [x times?]. it would be incredibly stupid to NOT tell you the answer [at some point] when you get it wrong :-P
