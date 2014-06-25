@@ -16,6 +16,8 @@ OsiosMainWindow::OsiosMainWindow(QWidget *parent, Qt::WindowFlags flags)
     //TODOoptimization: queued/deferred gui might be worthwhile just here for this mainwindow-with-tons-of-tab-children
 
     setUpdatesEnabled(false);
+    setWindowTitle("OSiOS"); // osIos, Osios, OSIOS, OsIos
+
     //TODOreq: "user profile" drop down, or perhaps user profile tabs! either one works, one is just more memory conservative (TODOoptimiation: lazy load all ui/widget stuff and it would help a lot (like, additionally, just don't deserialize all of their session blob until needed) if using user profile tabs). TODOreq: "new user", "delete user" (undoable). It makes sense to me that there's an "all users" tab (everyone on DHT would be swell, but everyone on local machine would be a better default) and then when you click on a user, a new neighbor tab opens and all of that user's session goes in their
 
     QTabWidget *tabWidget = new QTabWidget();
@@ -27,7 +29,7 @@ OsiosMainWindow::OsiosMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
     //Messages
     QTabWidget *osiosMessagesWidget = new QTabWidget(); //had this as a qwidget with a hasA qtabwidget, but i can always convert back to that WHEN I NEED TO (if ever)
-    tabWidget->addTab(new QTabWidget(osiosMessagesWidget), tr("Messages"));
+    tabWidget->addTab(osiosMessagesWidget, tr("Messages"));
 
     //Messages sub-tabs
     osiosMessagesWidget->addTab(new OsiosMessagesContactsWidget(), tr("Contacts"));

@@ -4,8 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui webkit
+QT       += core gui
 
+lessThan(QT_MAJOR_VERSION, 5): QT += webkit
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 TARGET = OsiosGui

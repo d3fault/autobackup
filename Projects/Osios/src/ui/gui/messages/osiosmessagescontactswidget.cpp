@@ -8,7 +8,7 @@
 OsiosMessagesContactsWidget::OsiosMessagesContactsWidget(QWidget *parent)
     : QWidget(parent)
 {
-    QVBoxLayout *myLayout = new QVBoxLayout(this);
+    QVBoxLayout *myLayout = new QVBoxLayout();
 
     QHBoxLayout *toolsRow = new QHBoxLayout();
     QPushButton *newContactButton = new QPushButton(tr("New Contact"));
@@ -25,4 +25,6 @@ OsiosMessagesContactsWidget::OsiosMessagesContactsWidget(QWidget *parent)
 
     myLayout->addLayout(toolsRow);
     myLayout->addWidget(contactsListView, 1);
+
+    setLayout(myLayout);
 }

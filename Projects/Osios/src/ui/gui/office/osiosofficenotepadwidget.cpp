@@ -12,7 +12,7 @@
 OsiosOfficeNotepadWidget::OsiosOfficeNotepadWidget(QWidget *parent)
     : QWidget(parent)
 {
-    QVBoxLayout *myLayout = new QVBoxLayout(this);
+    QVBoxLayout *myLayout = new QVBoxLayout();
 
     QHBoxLayout *toolsRow = new QHBoxLayout();
     QPushButton *newButton = new QPushButton(tr("New"));
@@ -30,8 +30,10 @@ OsiosOfficeNotepadWidget::OsiosOfficeNotepadWidget(QWidget *parent)
     toolsRow->addWidget(newButton);
     toolsRow->addWidget(closeButton);
     toolsRow->addWidget(sendToContactButton);
-    toolsRow->addWidget(switchToOfficeSuiteButton, 0, Qt::AlignRight);
+    toolsRow->addWidget(switchToOfficeSuiteButton);
 
     myLayout->addLayout(toolsRow);
     myLayout->addWidget(osiosOfficeNotepadTabWidget, 1);
+
+    setLayout(myLayout);
 }

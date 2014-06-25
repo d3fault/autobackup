@@ -9,14 +9,14 @@
 OsiosFileBrowserWidget::OsiosFileBrowserWidget(QWidget *parent)
     : QWidget(parent)
 {
-    QVBoxLayout *myLayout = new QVBoxLayout(this);
+    QVBoxLayout *myLayout = new QVBoxLayout();
 
     //TODOreq: tons of tools on a row above. SENDING [to contact], sorting, cut, copy/paste, blah blah blah
 
     //COMMENTED OUT fileSystemModel usage BECAUSE OF "TODOreq?" at top of file. Will probably need custom model
     //QFileSystemModel *fileSystemModel = new QFileSystemModel(this);
     //fileSystemModel->setRootPath(""); //TODOreq: root of 'files' directory on first launch, save/restore last view on exit/relaunch
-    QTreeView *treeView = new QTreeView(this);
+    QTreeView *treeView = new QTreeView();
     //treeView->setModel(fileSystemModel);
 
     treeView->setAnimated(false);
@@ -24,4 +24,6 @@ OsiosFileBrowserWidget::OsiosFileBrowserWidget(QWidget *parent)
     treeView->setSortingEnabled(true);
 
     myLayout->addWidget(treeView, 1);
+
+    setLayout(myLayout);
 }

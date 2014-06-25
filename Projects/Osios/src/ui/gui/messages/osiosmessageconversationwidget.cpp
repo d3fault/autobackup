@@ -10,7 +10,7 @@
 OsiosMessageConversationWidget::OsiosMessageConversationWidget(QWidget *parent)
     : QWidget(parent)
 {
-    QVBoxLayout *myLayout = new QVBoxLayout(this);
+    QVBoxLayout *myLayout = new QVBoxLayout();
     QPlainTextEdit *messageHistoryPlainTextEdit = new QPlainTextEdit();
     messageHistoryPlainTextEdit->setReadOnly(true);
     messageHistoryPlainTextEdit->setMaximumBlockCount(6900); //memory optimization only, has nothing to do with what is persisted (all messages of all conversations). TODOreq: "see older messages", perhaps just a link to timeline view presented horizontally at that position. //TODOoptionial: allow number to be specifiable in some option [in gui]
@@ -23,4 +23,6 @@ OsiosMessageConversationWidget::OsiosMessageConversationWidget(QWidget *parent)
 
     myLayout->addWidget(messageHistoryPlainTextEdit, 1);
     myLayout->addLayout(sendMessageRow);
+
+    setLayout(myLayout);
 }

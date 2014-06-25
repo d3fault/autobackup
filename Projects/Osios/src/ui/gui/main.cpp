@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     OsiosMainWindow w; //TODOoptional: I'm only defining the widgets and layouts for now, but ideally they will bind to backend/abstracted objects and the entire app can have an identical Cli counter-part. Might prove difficult though (lynx is gpl btw fml), since this is largely a GUI-centric app. If abstracted properly, a website version could be done with ease (ad supported) could be done too (but then the concept of "local machine" vanishes :-/ (unless i use those local storage javascript shits, bleh)))
-    w.show();
+    w.show(); //TODOreq: showmaximized/fullscreen/etc/whatever if that's in session/settings
 
     return a.exec();
 }
