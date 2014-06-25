@@ -1,0 +1,5 @@
+OSIOS: Operating System Independent Operating System
+*BSD, *nix, Windows, and Android all suck, so I decided to write my own "operating system" that runs on top of each of those, relying heavily on Qt (or other external libs where appropriate) to do the heavy lifting.
+
+
+p.s. OpenBSD is pro as fuck and perfect FOR ME and other enthusiests (which is why it will be my primary target base), but not easy enough for yes/no junkies
