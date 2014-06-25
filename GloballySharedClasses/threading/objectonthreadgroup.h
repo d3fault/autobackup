@@ -71,7 +71,7 @@ public:
         m_ObjectOnThreadsToQuitWhenDestructorIsCalled.push(singleThreadForObject);
         ++m_ObjectsLeftToSynchronize;
     }
-    void doneAddingObjectsOnThreads()
+    void doneAddingObjectsOnThreads() //allObjectsOnThreadsInGroupReadyForConnections will not be emitted until after this method is called
     {
         m_DoneAddingObjectsOnThreads = true;
         emitAllObjectsOnThreadsInGroupReadyForConnectionsIfDoneAddingToGroupAndNoObjectsLeftToSynchronize();

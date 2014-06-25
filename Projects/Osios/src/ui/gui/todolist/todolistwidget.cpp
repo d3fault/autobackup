@@ -19,7 +19,7 @@ TodoListWidget::TodoListWidget(QWidget *parent)
     QVBoxLayout *myLayout = new QVBoxLayout();
 
     QHBoxLayout *newTodoItemRow = new QHBoxLayout();
-    QLineEdit *newTodoItemLineEdit = new QLineEdit();
+    m_NewTodoItemLineEdit = new QLineEdit();
     //TODOreq:
     //QRadioButton *asapRadio = new QRadioButton(tr("ASAP")); //First/Head
     //QRadioButton *laterButSoonerThanDeferred = new QRadioButton(tr("A little later")); //After any that were a) inserted using "first", b) "re-ordered" up to be within any that were inserted using "first", OR c) others that were also inserted using "A little later"
@@ -29,7 +29,7 @@ TodoListWidget::TodoListWidget(QWidget *parent)
     //TODOreq: "Do by [fill in a qdatetime widget]", with "N" warnings each at it's own N.x time before that chosen qdatetime (JOB MODE)
     QPushButton *newTodoItemButton = new QPushButton(tr("Add Todo"));
 
-    newTodoItemRow->addWidget(newTodoItemLineEdit, 1);
+    newTodoItemRow->addWidget(m_NewTodoItemLineEdit, 1);
     //TODOreq: radios above
     newTodoItemRow->addWidget(newTodoItemButton);
 
@@ -37,4 +37,18 @@ TodoListWidget::TodoListWidget(QWidget *parent)
     myLayout->addWidget(new QListView(), 1);
 
     setLayout(myLayout);
+
+    connect(m_NewTodoItemLineEdit, SIGNAL(returnPressed()), this, SLOT(addNewTodoItem()));
+    connect(newTodoItemButton, SIGNAL(clicked()), this, SLOT(addNewTodoItem()));
+}
+void TodoListWidget::addNewTodoItem()
+{
+    //see this is what i mean by separating gui/core. i really should turn the new todo item into a todo item object and send it to my backend, my backend should then decide, based on my previously reported "view" (scrollbar positions in this example), whether or not to send it back for presenting. it would be trivial to add it to the qlistview right here/now though (wouldn't be persisted so meh)
+
+    //at the very least, we definitely want to clear the todo item afterwards (perhaps, though, we want to wait until the backend confirms that he saved it [on 3x local/networked/offline machines] before clearing the data TODOreq yes and for all data types in app imo. LOCK GUI UNTIL BACKEND CONFIRMS THAT (regardless of if the newly created item will even be shown/visualized (in this todo list example, if we added it to the end of the list and the end was really far down from where our scroll bars are, we wouldn't be showing/visualizing it (more correctly: we won't have it in memory until we scroll down closer to it)))). --- a lot of this extra decoupling depends on whether or not i even give a shit about the cli/web version... which i've still not yet decided
+    //m_NewTodoItemLineEdit->clear();
+
+    //I'm now considering splitting all the tabs into standalone applications and making the backend/core a daemon communicated with via QLocalSocket
+    //^con: no longer "flush" user experience. you need to put things right in peoples' face, otherwise they will never see/use it
+    //^^still the lazy loaded daemon (gui,cli,web can all load it when they start up (they ideally share one if two front-ends are launched simultaneously, but that leads to solveable synchronicity issues)) isn't a bad idea
 }

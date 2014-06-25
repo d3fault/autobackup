@@ -16,7 +16,7 @@ OsiosMainWindow::OsiosMainWindow(QWidget *parent, Qt::WindowFlags flags)
     //TODOoptimization: queued/deferred gui might be worthwhile just here for this mainwindow-with-tons-of-tab-children
 
     setUpdatesEnabled(false);
-    setWindowTitle("OSiOS"); // osIos, Osios, OSIOS, OsIos
+    setWindowTitle("OSiOS"); // osIos, Osios, OSIOS, OsIos, oSiOs, oSioS, OsiOs, OsioS
 
     //TODOreq: "user profile" drop down, or perhaps user profile tabs! either one works, one is just more memory conservative (TODOoptimiation: lazy load all ui/widget stuff and it would help a lot (like, additionally, just don't deserialize all of their session blob until needed) if using user profile tabs). TODOreq: "new user", "delete user" (undoable). It makes sense to me that there's an "all users" tab (everyone on DHT would be swell, but everyone on local machine would be a better default) and then when you click on a user, a new neighbor tab opens and all of that user's session goes in their
 
@@ -35,7 +35,7 @@ OsiosMainWindow::OsiosMainWindow(QWidget *parent, Qt::WindowFlags flags)
     osiosMessagesWidget->addTab(new OsiosMessagesContactsWidget(), tr("Contacts"));
     QTabWidget *osiosMessagesConversationsWidget = new QTabWidget(); //individual conversations make up the tabs, can convert to qwidget that hasA tabWidget with ease if needed
     osiosMessagesWidget->addTab(osiosMessagesConversationsWidget, tr("Conversations")); //TODOreq: make all tabs have tabwidget as parent. not huge deal i don't think
-    osiosMessagesConversationsWidget->addTab(new QLabel(tr("Go to the Contacts tab to begin a conversation")), tr("No Conversations Yet")); //TODOreq: deletes when either [first] message is received or [first] message to be sent is about to start being written ("Send Message" action on contacts widget). reappears if all messages "hidden" (nothing deleteable, so I guess archive is correct wording?)
+    osiosMessagesConversationsWidget->addTab(new QLabel(tr("Go to the Contacts tab to start a conversation")), tr("No Conversations Yet")); //TODOreq: deletes when either [first] message is received or [first] message to be sent is about to start being written ("Send Message" action on contacts widget). reappears if all messages "hidden" (nothing deleteable, so I guess archive is correct wording?)
 
     tabWidget->addTab(new OsiosWebBrowserWidget(), tr("Web Browser"));
     tabWidget->addTab(new OsiosOfficeNotepadWidget(), tr("Writer"));

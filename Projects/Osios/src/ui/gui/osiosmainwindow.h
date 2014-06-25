@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "../iosiosui.h"
+
 class OsiosMainWindow : public QMainWindow
 {
     Q_OBJECT
