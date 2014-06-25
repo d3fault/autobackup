@@ -1,0 +1,18 @@
+The "maintain 3 copies locally [networked together]" _AND_ "maintain 3 copies on a dht that i am a part of" is gameable (the dht [...]), but at least it's tons safer than nothing at all. under MOST circumstances, when the time comes for you to request your data, it is there.
+
+right now we have nothing at all. I'll take something functional+insecure over nothing at all when it comes to attempting to improve the world's data survival rates. i know of way too many people who lose data all the time (or worse, they just delete it because they think they need to) because of operating system failures. every operating system is a piece of shit. backup solutions all need to be transparent, which means the backup solution needs to be integrated/designed into the operating system itself.
+
+openbsd + qt, make compile on windows (linux implied but hell might as well leave it to someone else). compile only on windows, fuck testing (someone else will for me for free no doubt)
+
+
+
+LATER ON, i should try to design/rewrite it securely. probably live-human-on-video-stream acking combined with crypto keys, as i've written hundreds of times before
+
+
+for insecure version: NEVER trust the dht, kiss the ground and praise whatever god you believe in when you are forced to rely on the dht and your data is still there!
+
+
+even the human live on video ("secure") version is gameable. it relies on the majority of it's participants to not lie during their acks.
+
+
+what i was getting at was that the FUNCTIONAL backup solution (make it updateable too (don't lie about it and you're set)) should be MORE OR LESS an operating system [utilizing qt and it's deps for the heavy lifting]. there really aren't that many components to an operating system, and what you need (steve jobs understood this at least) is a flush and "1" and integrated and KISS and possibly even "themed" (or i guess you could just say re-use the user interface patters throughout (better TODOoptimization:abstract them(qt already does, what am i on about?))) solution. email, http-html-browser (the js prompt on first run should not be simply answerable via "yes" or "no". force them to be "insecure", and explain to them that most sites won't work without being in the "insecure" mode), office productivity suite compatible with you-know-whos (i don't think there's a liblibreoffice, at least not sure if it's license compatible if there even is one (*checks*)), maybe some other bullshit like idfk a media player etc (optional whether or not this integrates with fingers/etc later), and lastly/as-a-bonus/but-perhaps-a-biggy: an app store. and of course whatever the fuck else i myself code, duh (though slightly off topic, i'm talking about the basics and not talking about targetting MYSELF [primarily] (though also am because i don't have a good backup solution myself (mine is manual/bleh)))

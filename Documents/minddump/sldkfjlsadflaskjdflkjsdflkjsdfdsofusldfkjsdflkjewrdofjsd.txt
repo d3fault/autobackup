@@ -1,0 +1,7 @@
+The DPL has one more freedom than [L]GPL: the freedom to be linked-to (compiler terminology) by anyone and anything. i don't care what you are, and linking to me does not make you me. controlling my software does not make you a part of my software
+
+Fact: I can distribute proprietary software on the same medium as a gpl piece of software with my proprietary software "calling" (process calling, rather than class/method/function calling), so long as I release the source code to the gpl software being called.
+
+same.fucking.thing. (both are "controlling" the my (the dpl'd or [l]gpl'd) software)
+
+being able to link-to a library only dramatically reduces coding effort and bugs in existence (had:'worldwide' after existence), both things i am for regardless of whether or not they are making money off of it (i just won't use your software if it is proprietary)

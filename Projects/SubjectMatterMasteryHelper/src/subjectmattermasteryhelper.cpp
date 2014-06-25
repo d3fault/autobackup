@@ -14,6 +14,8 @@ SubjectMatterMasteryHelper::SubjectMatterMasteryHelper(QObject *parent)
 SubjectMatterMasteryHelper::~SubjectMatterMasteryHelper()
 {
     maybeCleanup();
+    if(m_SubjectMatterQuestionsAndAnswersIterator)
+        delete m_SubjectMatterQuestionsAndAnswersIterator;
 }
 void SubjectMatterMasteryHelper::readAllQuestionsFromSubjectMatterIoDeviceAndScrambleTheirOrdering()
 {

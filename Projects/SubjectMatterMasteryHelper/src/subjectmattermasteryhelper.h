@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QPair>
+#include <QScopedPointer>
 
 class QIODevice;
 

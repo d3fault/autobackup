@@ -1,0 +1,3 @@
+I love that API isn't copyrightable. Rewriting Qt would be a breeze (though still extremely time consuming because of it's size). To give you an analogy: It's like playing KNetWalk with all the terminals already in the correct position. Placing the cables in the correct position becomes very fucking easy.
+
+Btw my high score on VeryHard mode in KNetWalk as of writing is 1:10/152 O_O!!! Obviously no mistake moves, I restart as soon as I detect one. Fucking game is so addicting and I even hacked it out of boredom to use color coded teleport borders. Way less strain on the eyes now...

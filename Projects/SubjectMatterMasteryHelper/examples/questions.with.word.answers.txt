@@ -8,8 +8,8 @@ Does your mom go to college?
 Yes
 Are you alive?
 Yes
-Are you a robot?
-No
+Are you a computer?
+Yes
 How many legs does a spider have?
 8
 What shape is the earth?

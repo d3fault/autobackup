@@ -1,0 +1,45 @@
+BitTorrent Javascript
+The problem is that WebSockets can only do outgoing connections. Once connected, they can both send and receive data no problem.
+HTTP users easily make up the overwhelming vast majority of bandwidth, so we want to both satisfy the serving of data to them, while simultaneously solving utilizing their upload bandwidth for the overall distributed network.
+
+It goes without saying that I'm willing to shit all over the BitTorrent spec, since I can c0d3 C++ (and since Qt has support for WebSockets :-P)...
+
+So I mean I didn't come up with MUCH, but I do think it's worth writing about because it is still scalable MORE THAN regular old http client-server model... and that's the key point.
+
+tl;dr: non-http nodes are 'server' proxies for 2x http 'clients' to communicate with each other
+Yes it's wasteful (2x wasted bandwidth), but it's still better than relying on ONE fucking http server to server EVERY client.
+In the documentation or description or whatever, you simply blame the HTTP spec itself as the source of the waste. It is, after all, the source (you fucking idiots, kill yourselves).
+
+Elaborating because I'm bored and drunk and I know there's tons of idiots out there: WebSocket client 1 wants data X, connects to non-WebSocket client 2.
+
+Wait a tick
+
+Wait a tick
+
+
+Wait a fucking second here
+
+
+Long standing tcp
+Long standing http
+Comet
+
+Server push
+
+No, nevermind
+
+That helps none.
+Except for notifying client 3 to connect to client 2 and sending it the data. Client 2 proxies the data to client 1. Btw, the "notifying" is done by a central "http" server, just like a tracker I suppose. 1-hop proxy ain't so bad in the age of 7-hop tor... sure sure it provides anonymity etc but yea it at least overly proves it's still possible :-P.
+
+
+I admit this is both a good and shitty idea simultaneously. It's a hack and wasteful at that, but it's still DISTRIUBUTED-AS-FUCK compared to http's client-server model.
+
+
+For my own content, the incentive to download/install the non-http client (which can accept incoming connections (hopefully using that NAT punching stuff I don't even understand (too bad it doesn't work with http :-/))) is that advertisements won't be shown anymore. That will be the entire hook->line->sinker. "Want to hide the ads? Click here to install the local browser thingo" (obviously the wording would be slightly different). If it's just as difficult as installing adblock, it should work.
+
+There's a huge "pro" or "incentive" or something I can't quite put into wording that applies to me and my content and not very many other peoples': INSTALLING/RUNNING SAID INCOMING-CONNECTION-ACCEPTING HACKED-BITTORRENT-PROTOCOL CLIENT IS FUCKING LEGAL SINCE EVERYTHING IS COPYLEFT. Fuck ISPs and nigger faggots who say BitTorrent is all illegal and shit. Zeus (had:God), I want to stab some people in the fucking eye.
+
+
+I could even, although it may be frowned upon by some (suck my dick), trick them into downloading the incoming-connection-accepting client under the [VERY REAL] guise of "now you get the hd version". I mean yea it's not THAT much of a trick (ok I lied, it still is) if I am not offering the hd version via http client-server (which I probably won't anytime soon (but who knows, maybe abc2 will overfloweth)). It ultimately depends on the wording I use when offering the download: "Want the hd version of this stream and to also help out with distributing the data? Click here to install niggerfaggot.v1.exe" -- if worded improperly, it's a trick. I mean seriously though and this is just a general observation of humans themselves: most people only read the first part of the sentence... so the second half might as well say "and we will rape yer mum" and they'd still fucking click/install it. Do I... rather... should I... feel guilty for exploiting that human behaviour? Considering everything is arbitrary and nothing matters at all.... I'm leaning towards nope. Especially since I'm truthful to those who actually read things.
+
+Edit: in such downloaded client, if their incoming port is not open, I should show in bold/red/etc "click here to forward your ports" some link to tutorial/etc just like lots of bt clients do. Maybe and this is haha as fuck: if they don't forward their port, the ad is still shown xD (easily gamed, but most will be too stupid/lazy)
