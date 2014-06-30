@@ -17,5 +17,9 @@ public:
     QString Name;
     QList<DesignEqualsImplementationClassMethodArgument*> Arguments;
 };
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal &signal);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal &signal);
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal *&signal);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal *&signal);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSSIGNAL_H

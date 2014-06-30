@@ -19,9 +19,14 @@ public:
     //TODOoptional: private + getter/setter blah
     QString Name;
     QList<DesignEqualsImplementationClassProperty*> Properties;
+    QList<DesignEqualsImplementationClass*> PrivateMembers;
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSlot*> Slots;
     QList<DesignEqualsImplementationClassSignal*> Signals;
 };
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass &designEqualsImplementationClass);
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass *&designEqualsImplementationClass);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&designEqualsImplementationClass);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASS_H

@@ -16,5 +16,9 @@ public:
     bool NotifiesOnChange;
     //TODOoptional: a few others, such as "reset" (which should be combined with "default"/initial-value imo)
 };
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassProperty &designEqualsImplementationClassProperty);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassProperty &designEqualsImplementationClassProperty);
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassProperty *&designEqualsImplementationClassProperty);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassProperty *&designEqualsImplementationClassProperty);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSPROPERTY_H

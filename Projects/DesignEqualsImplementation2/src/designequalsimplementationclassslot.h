@@ -19,5 +19,9 @@ public:
 
     //TODOoptional: return type
 };
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot &slot);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot &slot);
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot *&slot);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot *&slot);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSSLOT_H

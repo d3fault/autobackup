@@ -18,5 +18,9 @@ public:
     QString ReturnType;
     QList<DesignEqualsImplementationClassMethodArgument*> Arguments;
 };
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod);
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassPrivateMethod *&designEqualsImplementationClassPrivateMethod);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassPrivateMethod *&designEqualsImplementationClassPrivateMethod);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSPRIVATEMETHOD_H
