@@ -21,6 +21,9 @@ public:
         UseCaseSignalSlotEventType,
         UseCaseExitSignalEventType
     };
+
+    //TODOoptional: private + getter/setter blah
+    QString Name;
     QList<QPair<UseCaseEventTypeEnum, QObject*> > OrderedUseCaseEvents;
     DesignEqualsImplementationClassSignal *ExitSignal;
 
@@ -28,9 +31,8 @@ public:
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
     void setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
+    bool generateSourceCode(const QString &destinationDirectoryPath);
     ~DesignEqualsImplementationUseCase();
-
-    //TODOoptional: private + getter/setter blah
 private:
     void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event);
 };

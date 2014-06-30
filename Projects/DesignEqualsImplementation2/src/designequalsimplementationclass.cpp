@@ -4,7 +4,7 @@
 
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
 qds direction designEqualsImplementationClass.Properties; \
-qbs direction designEqualsImplementationClass.PrivateMembers; \
+qds direction designEqualsImplementationClass.PrivateMembers; \
 qds direction designEqualsImplementationClass.PrivateMethods; \
 qds direction designEqualsImplementationClass.Slots; \
 qds direction designEqualsImplementationClass.Signals; \

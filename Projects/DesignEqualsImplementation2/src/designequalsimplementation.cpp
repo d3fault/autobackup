@@ -121,6 +121,7 @@ void DesignEqualsImplementation::newEmptyProject()
 #endif
 
     DesignEqualsImplementationUseCase *testUseCase = new DesignEqualsImplementationUseCase(testProject);
+    testUseCase->Name = "SimpleAsyncSlotInvokeAndSignalResponse";
 
     testUseCase->addEvent(fooSlot);
 
@@ -162,7 +163,7 @@ void DesignEqualsImplementation::newEmptyProject()
     testUseCase->setExitSignal(fooSignal);
 
     testProject->UseCases.append(testUseCase);
-
+    //TODOreq: either make single use case default use case in project during generation, or require specifying it here. In the final GUI we'd ask the user ofc
 
     //generate source
     connect(testProject, SIGNAL(sourceCodeGenerated(bool)), this, SLOT(handlesourceCodeGenerated(bool)));
