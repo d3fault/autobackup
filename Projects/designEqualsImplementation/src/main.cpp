@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "Gui/mainwindow.h"
 
 #include "StateMachine/modesingleton.h"

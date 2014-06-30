@@ -6,7 +6,8 @@
 [x] - Molest timestamp format of old (and semi-old) archive. Then create new .lastModifiedTimestamps file from that
 [x] - Convert svgs from "flow" to "text" on both old archive and new
 [x] - Get everything in place, including support scripts to do it (upgrading MyBrain, inode-aware directory building, etc)
-[] - Valgrind everything
+[] - Abc2/hvbs: install and run from stock wheezy, write down every step (scriptify if applicable). After performing and writing down each step, write down all variant steps. Keep non-variant version separate, it is "install/run" guide. The version with all variants, when included with regular steps, makes up STD which is processed and added to later
+[] - Valgrind everything while processing STD (so valgrind checks all corner cases)
 [] - Test in 4.x + Release mode (try compiling everything in 4.x before beginning testing (might use 5.x))
 [] - Manual for Abc2 (+tools) + HackyVideoBullshitSite (+tools) configuring and running... for myself and others...
 [] - Prep book, chronological order, perhaps 2 books (one with everything, one with just dreams)

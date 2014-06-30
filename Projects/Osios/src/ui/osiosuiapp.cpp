@@ -45,6 +45,9 @@ void OsiosUiApp::handleOsiosReadyForConnections(QObject *osiosAsQObject)
 
     IOsiosUi *ui = m_UiFactory->newIOsiosUi(this);
     connect(osios, SIGNAL(oisiosLocalServerReadyForIOsiosUiLocalSocketConnection(QString)), ui, SLOT(handleOisiosLocalServerReadyForIOsiosUiLocalSocketConnection(QString)));
+
+
+
     connect(osios, SIGNAL(quitRequestedBecauseNoMoreUiClientsConnected()), qApp, SLOT(quit()));
     connect(osios, SIGNAL(e(QString)), ui, SLOT(handleE(QString)));
     QMetaObject::invokeMethod(osios, "initializeAndStartOsios");

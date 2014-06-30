@@ -68,6 +68,7 @@ void MainWindow::handleNewUseCaseAction()
 {
     //TODOreq: adds a new use case (and switches to use case view mode for the new use case) to the current project
 }
+//TODOreq: fuck the tab widget. top half of left pane should contain current-view-specific drag-drop items (new class always shown (new class added in use case view automatically adds that class to class diagram view), "actor" only shown on use case view, etc) that change as project sub-view is changed ("class diagram" vs. "use case"), buttom half of left pane should contain project-specific drag-drop items (ex: in use case view, it would contain a list of classes in class diagram view. idk what it would contain in class diagram view, perhaps it just disappears)
 void MainWindow::createLeftPane()
 {
     //TODOreq: a vbox layout. the upper half has a two-tabbed thingy. one tab = class diagram mode diagrams, the other = use case mode diagrams. toggling between the two changes the graphics view currently open to non-editable(grayed out) if the modes don't match. respecitvely, changing the tabs from "overview mode" to any of the use cases that are currently open (or if opened from the bottom half of THIS vbox layout) changes the tab to it's corresponding mode.

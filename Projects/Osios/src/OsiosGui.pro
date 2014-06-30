@@ -39,6 +39,7 @@ HEADERS  += \
     ui/iosiosui.h \
     ui/iosiosuifactory.h \
     ui/gui/iosiosguifactory.h \
-    ui/osiosuiapp.h
+    ui/osiosuiapp.h \
+    office/iosiosofficenotepadui.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

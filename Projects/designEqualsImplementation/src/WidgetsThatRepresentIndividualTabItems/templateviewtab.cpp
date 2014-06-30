@@ -4,7 +4,7 @@ TemplateViewTab::TemplateViewTab(DesignProjectTemplates::DesignProjectViewType v
     m_ViewType(viewType)
 {
     m_TabLabel = DesignProjectTemplates::getDesignProjectViewTypeAsString(viewType);
-    m_ButtonGroup = new QButtonGroup();
+    m_ButtonGroup = new QButtonGroup(this);
     m_ButtonGroup->setExclusive(false);
 }
 

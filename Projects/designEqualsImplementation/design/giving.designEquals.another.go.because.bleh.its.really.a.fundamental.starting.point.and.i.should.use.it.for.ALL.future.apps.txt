@@ -1,0 +1,5 @@
+It is difficult (mindfuck), but certainly not impossible, to design a C++ application for designing C++ applications. The two contexts of both "design" and "C++ application" are the most difficult things to keep separate in my mind.
+
+When I think about what I want from a high level (close my eyes and imagine myself using the app), it's so simple... but if I try to formally design what I just envisioned (or if I'm ballsy enough to jump straight into code like I did before xD (I can't understand most of what I wrote)), I confuse the shit out of myself by using the word "design" in class names all over the place etc. Designing a designer.
+
+I think really I need an ad-hoc system to differentiate between the contexts (I had one apparently, but I vaguely remember even writing any of the code)

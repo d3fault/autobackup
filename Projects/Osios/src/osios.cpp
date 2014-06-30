@@ -12,6 +12,7 @@
 #define OSIOS_DAEMON_KEY "OsiosDaemon"
 
 //TODOreq: if the connection fails, we should loop the "are other instances open?" logic so that the race condition where our shared memory create check fails but we don't connect before the daemon itself closes is accounted for. in that case, we become the daemon. also TODOreq related to that, we need to be completely finished with disk i/o (persistence) before stopping listening, and we should stop listening before detaching from the shared memory also
+//TODOreq: osios at-least-two abstract client<-->server "save"/persist/whatever
 Osios::Osios(QObject *parent)
     : QObject(parent)
     , m_SerializedActionReceiver(0)
@@ -38,6 +39,7 @@ void Osios::initializeAndStartOsios()
         //first instance on this machine, start local server
         m_SerializedActionReceiver = new QLocalServer(this);
         connect(m_SerializedActionReceiver, SIGNAL(newConnection()), this, SLOT(handleNewOsiosUiClientConnected()));
+        QLocalServer::removeServer(OSIOS_DAEMON_KEY); //maybe a crashed exit left it open. since we CREATE'd the QSharedMemory segment, we are definitely in charge of doing the server listen, so we definitely have permission to call removeServer here/now (most times, it will do nothing)
         if(!m_SerializedActionReceiver->listen(OSIOS_DAEMON_KEY))
         {
             emit e("failed to listen to localserver on: " OSIOS_DAEMON_KEY);
@@ -51,6 +53,7 @@ void Osios::initializeAndStartOsios()
     {
         //not first instance, which means the ui will connect to the already existing one via qlocalsocket
         //so we tell our process to clean up this [unused] instance of osios
+        emit thisInstanceOfOsiosIsNotTheFirstOnThisMachine();
     }
     else
     {
@@ -75,7 +78,7 @@ void Osios::initializeAndStartOsios()
 void Osios::handleOsiosUiClientDisconnected(OsiosUiClientConnection *osiosUiClient)
 {
     m_CurrentlyConnectedOsiosUiClients.remove(osiosUiClient);
-    delete osiosUiClient;
+    osiosUiClient->deleteLater();
 
     if(m_CurrentlyConnectedOsiosUiClients.isEmpty())
     {
@@ -88,7 +91,6 @@ void Osios::handleNewOsiosUiClientConnected()
     while(m_SerializedActionReceiver->hasPendingConnections())
     {
         m_CurrentlyConnectedOsiosUiClients.insert(new OsiosUiClientConnection(m_SerializedActionReceiver->nextPendingConnection(), this));
-
     }
 }
 OsiosUiClientConnection::OsiosUiClientConnection(QLocalSocket *clientActual, Osios *serverAndParent)
