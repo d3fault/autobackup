@@ -2,6 +2,8 @@
 
 #include <QDataStream>
 
+#include "designequalsimplementationslotinvocationstatement.h"
+
 typedef QPair<DesignEqualsImplementationUseCase::UseCaseEventTypeEnum, QObject*> EventAndTypeTypedef;
 
 #define DesignEqualsImplementationUseCase_QDS(direction, qds, useCase) \
@@ -14,12 +16,13 @@ qds direction hasExitSignal;
 //TODOreq: since it doesn't have much else use, use this->Name in the comments of the generated source code. the use case entry point slot should say the use case name for readability i suppose. also, if verbose logging is on, then each time a use case entry point is crossed we could output the name...
 DesignEqualsImplementationUseCase::DesignEqualsImplementationUseCase(QObject *parent)
     : QObject(parent)
+    , SlotWithCurrentContext(0)
     , ExitSignal(0)
 { }
 //Overload: Use Case entry point and also normal slot invocation from within another slot
-void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot)
+void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const QList<QString> &orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments)
 {
-    addEventPrivate(UseCaseSlotEventType, designEqualsImplementationClassSlot);
+    addEventPrivate(UseCaseSlotEventType, designEqualsImplementationClassSlot, orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments);
 }
 //Overload: Signals with no listeners in this use case
 void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal)
@@ -37,6 +40,7 @@ void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementation
 }
 bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destinationDirectoryPath)
 {
+#if 0
     bool firstUseCaseEvent = true;
     Q_FOREACH(EventAndTypeTypedef *orderedUseCaseEvent, OrderedUseCaseEvents)
     {
@@ -77,6 +81,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
     {
         //TODOreq
     }
+#endif
     return true;
 }
 DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
@@ -89,9 +94,61 @@ DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
     if(ExitSignal)
         delete ExitSignal;
 }
-void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event)
+void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const QList<QString> &SLOT_ONLY_orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments)
 {
+    bool firstUseCaseEventAdded = OrderedUseCaseEvents.isEmpty();
+
+    //Add it (mainly used for saving/opening ([de-]serialization))
     OrderedUseCaseEvents.append(qMakePair(useCaseEventType, event));
+
+    //Code generation and context setup
+    switch(useCaseEventType)
+    {
+    case UseCaseSlotEventType: //changes context of next use case event
+    {
+        DesignEqualsImplementationClassSlot *slotUseCaseEvent = static_cast<DesignEqualsImplementationClassSlot*>(event);
+        if(firstUseCaseEventAdded) //first event add = use case entry point (TODOreq: ui sanitization so that a non-slot can never be made first (TODOoptional: file load sanitization so that we don't crash if it does happen (fuckit)))
+        {
+            //we have no context, but want the first slot to be our context! TODOreq: there is still ui/cli context to consider, in which case we would have a context already at this point. if this project is generating in lib mode, we don't
+            //generate slot context/empty-impl from current use case event, then set that slot/context/empty-impl as current context
+
+            if(SlotWithCurrentContext)
+            {
+                //TODOreq: ui already gave us context, so do nameless-signal/invokeMethod on ui to get to this slot, then just change the context as if we were in lib gen mode (fuck. we aren't even generating right now so..... wtf?)
+            }
+            else
+            {
+                SlotWithCurrentContext = slotUseCaseEvent;
+            }
+        }
+        else
+        {
+            //generate slot context/empty-impl from current use case event, then in current context do nameless-signal or invokeMethod to the slot/context/empty-impl, then set that slot/context/empty-impl as current context
+
+            SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, SLOT_ONLY_orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments));
+            SlotWithCurrentContext = slotUseCaseEvent;
+        }
+    }
+        break;
+    case UseCaseSignalEventType: //does not change context of next use case event
+    {
+        DesignEqualsImplementationClassSignal *signalUseCaseEvent = static_cast<DesignEqualsImplementationClassSignal*>(event);
+        //in current context, emit the signal
+    }
+        break;
+    case UseCaseSignalSlotEventType: //changes context of next use case event. the only difference from UseCaseSignalSlotEventType and UseCaseSlotEventType is that the signal is a named part of the design for UseCaseSignalSlotEventType, whereas UseCaseSlotEventType either uses an autogenerated nameless signal or invokeMethod (doesn't matter which i choose)
+    {
+        SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent = static_cast<SignalSlotCombinedEventHolder*>(event);
+
+    }
+        break;
+    case UseCaseExitSignalEventType:
+    {
+        DesignEqualsImplementationClassSignal *exitSignalUseCaseEvent = static_cast<DesignEqualsImplementationClassSignal*>(event);
+        //basically the same as regular signal, but saved/persisted differently so the arrow in the gui is connected to the actor
+    }
+        break;
+    }
 }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase)
 {

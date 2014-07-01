@@ -9,6 +9,7 @@ return qds;
 
 DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(QObject *parent)
     : QObject(parent)
+    , IDesignEqualsImplementationHaveOrderedListOfStatements()
 { }
 DesignEqualsImplementationClassSlot::~DesignEqualsImplementationClassSlot()
 {

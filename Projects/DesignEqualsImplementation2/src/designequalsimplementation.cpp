@@ -39,6 +39,7 @@ void DesignEqualsImplementation::newEmptyProject()
     fooSlotCuntArgument->Type = "const QString &"; //TODOidfk: do I need the concept of a value? or is that only necessary at run-time?
     fooSlot->Arguments.append(fooSlotCuntArgument);
     fooClass->Slots.append(fooSlot); //TODOreq: can also be implicitly added via use case creation, but either method does the same thing (non-referenced classes are only taken out of the binary if the C++ compiler decides to do so)
+    fooSlot->ParentClass = fooClass;
 
     testProject->Classes.append(fooClass); //Bar gets added implicitly, not explicitly, to the project, by being added to the PrivateMembers of Foo itself. Foo hasA Bar
 
@@ -52,6 +53,7 @@ void DesignEqualsImplementation::newEmptyProject()
     barSlotCuntArgument->Type = "const QString &";
     barSlot->Arguments.append(barSlotCuntArgument);
     barClass->Slots.append(barSlot);
+    barSlot->ParentClass = barClass;
 
     fooClass->PrivateMembers.append(barClass);
 
@@ -131,7 +133,26 @@ void DesignEqualsImplementation::newEmptyProject()
 
     testUseCase->addEvent(diagnosticSignalX);
 
-    testUseCase->addEvent(barSlot);
+    /*
+    OnUserConnectedArrowsFromFooSlotToBarSlot:
+    {
+        //system notices that we already have context, which means that "assigning" (or they could be QStringLiterals hardcoded idgaf TODOreq) of the barSlot parameters given current variables in context is mandatory. this happens all in UI before addEvent(barSlot) below
+
+        //populate stringlist of variables in current context (0 = testUseCase->SlotWithCurrentContext->Arguments , 1 = testUseCase->SlotWithCurrentContext->ParentClass->allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString(); TODOreq: de-serialization doesn't set up parent class again =o, but can/must , 2 = testUseCase->SlotWithCurrentContext->allMyAvailableLocalVariablesGivenCurrentPositionInOrderedListOfStatements_AsString()) -- TODOreq: only show compatible types (implicit conversion makes this a bitch, so fuck it for now. errors will only be seen at compile time lololol)
+        //present stringlist of variables to user in modal widget
+        //user selects fooSlot(__cunt__) to satify barSlot(__cunt__)
+    }
+    */
+    QString nameOfVariableWithinCurrentContextsScopeToUseForBarSlotCunt = "cunt"; //same name = irrelevant coincidence. see pseudo-code directly above to understand how this string was magically populated
+    QList<QString> barSlotArgs;
+    barSlotArgs << nameOfVariableWithinCurrentContextsScopeToUseForBarSlotCunt; //etc
+    testUseCase->addEvent(barSlot, barSlotArgs); //TODOreq: indication by user that fooSlot's "cunt" arg is used as barSlot "cunt" (that the args have the same name is coincidence). Somehow we need a list of variables accessible at the current context (members (including private) and current-slot-arguments are the main ones), and to specify one when addEvent(slot) is called. I'm not entirely sure said list needs to be available to "the programmer" after hitting a "." or typing a "->", but the use case is different: the user clicks-n-drags an arrow from Foo (fooSlot) to Bar (barSlot), and then AFTERWARDS they are presented a "slot argument population" wizard that has at it's disposal (even if just in "string" form (we are code GENERATOR, so strings are perfecto [even if that means the design is hacked])) all the variables right where the barSlot invocation was placed inside fooSlot
+    //^It really boils down to a slot to be able to simply cough up it's own arguments, in addition to the members of the class it belongs to. There is also of course local context (1 or N lines above barSlot invocation), which will probably prove to be a bitch (*especially* if the lines above are hand-coded C++ (not even sure I'm allowing that so..)). As long as the local variables aren't hand-coded, keeping a list of local variables won't be that hard.
+    //tl;dr:
+    //0) current slot arguments
+    //1) current slot's class's members
+    //2) local variables of applicable list entries in Slot::OrderedListOfStatements that came before current slot invocation
+    //...I'm going to start pseudo-coding above testUseCase->addEvent(barSlot); now, but know that all comments between here and there came first
 
     //barSignal and handleBarSignal
     DesignEqualsImplementationClassSignal *barSignal = new DesignEqualsImplementationClassSignal(barClass);
@@ -142,12 +163,13 @@ void DesignEqualsImplementation::newEmptyProject()
     barSignal->Arguments.append(barSignalSuccessArgument);
     barClass->Signals.append(barSignal);
     DesignEqualsImplementationClassSlot *handleBarSignal = new DesignEqualsImplementationClassSlot(fooClass);
-    handleBarSignal->Name = "handleBarSignal";
+    handleBarSignal->Name = "handleBarSignal"; //TODOreq: generate name not already in use (this first one is most likely fine)
     DesignEqualsImplementationClassMethodArgument *handleBarSignalSuccessArgument = new DesignEqualsImplementationClassMethodArgument(handleBarSignal);
     handleBarSignalSuccessArgument->Name = "success";
     handleBarSignalSuccessArgument->Type = "bool";
     handleBarSignal->Arguments.append(handleBarSignalSuccessArgument);
     fooClass->Slots.append(handleBarSignal);
+    handleBarSignal->ParentClass = fooClass;
 
     testUseCase->addEvent(barSignal, handleBarSignal);
 

@@ -58,7 +58,6 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(const QString 
         return false;
     }
 
-#if 0
     Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, Classes)
     {
         if(!designEqualsImplementationClass->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
@@ -67,7 +66,6 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(const QString 
             return false;
         }
     }
-#endif
 
     //Q_FOREACH -- modifying use cases modifies the associated classes implicitly, so in theory there is no source to generate for use cases. HOWEVER, as of now the use cases are more focused on and contain the "full references" of the project as a whole, so generating (rather, trying to generate :-P) THAT should implicitly generate all classes (and more importantly, all parts of the class referenced in a use case)
 
@@ -75,6 +73,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(const QString 
 
     //TODOreq: just like a use case needed an initial slot, so too does a project need an initial use case. It makes sense that if there is only 1x use case, that it is the "default" when invoked via CLI. If, for example, there are 2+ use cases, then the CLI wouldn't know which to use as the default (we could opt towards using the "first added", but that is dumb imo and i think actually that a "project::setDefaultUseCase" (already added) makes sense. Without setting said default, the CLI version should do NOTHING [unless cli arg switches indicate a use case], and the GUI version has the option of doing none or all. (two line edits, two push buttons, one shared qlineedit for output OR SOMETHING)
 
+#if 0
     Q_FOREACH(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, UseCases)
     {
         if(!designEqualsImplementationUseCase->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
@@ -83,6 +82,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(const QString 
             return false;
         }
     }
+#endif
 
     return true;
 }

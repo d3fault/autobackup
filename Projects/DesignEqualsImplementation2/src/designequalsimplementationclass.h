@@ -19,10 +19,14 @@ public:
     //TODOoptional: private + getter/setter blah
     QString Name;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    QList<DesignEqualsImplementationClass*> PrivateMembers;
+    QList<DesignEqualsImplementationClass*> PrivateMembers; //TODOreq: POD
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSlot*> Slots;
     QList<DesignEqualsImplementationClassSignal*> Signals;
+
+    QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
+signals:
+    void e(const QString &);
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass &designEqualsImplementationClass);

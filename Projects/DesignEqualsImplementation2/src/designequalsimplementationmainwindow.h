@@ -6,7 +6,6 @@
 class DesignEqualsImplementationMainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     DesignEqualsImplementationMainWindow(QWidget *parent = 0);
     ~DesignEqualsImplementationMainWindow();

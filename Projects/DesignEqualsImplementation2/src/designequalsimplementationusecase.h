@@ -25,16 +25,17 @@ public:
     //TODOoptional: private + getter/setter blah
     QString Name;
     QList<QPair<UseCaseEventTypeEnum, QObject*> > OrderedUseCaseEvents;
+    DesignEqualsImplementationClassSlot *SlotWithCurrentContext;
     DesignEqualsImplementationClassSignal *ExitSignal;
 
-    void addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
+    void addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const QList<QString> &orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments = QList<QString>());
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
     void setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
     bool generateSourceCode(const QString &destinationDirectoryPath);
     ~DesignEqualsImplementationUseCase();
 private:
-    void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event);
+    void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const QList<QString> &SLOT_ONLY_orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments = QList<QString>());
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);

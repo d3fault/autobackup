@@ -1,17 +1,19 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASSPRIVATEMETHOD_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASSPRIVATEMETHOD_H
 
+#include "idesignequalsimplementationhaveorderedlistofstatements.h"
+
 #include <QObject>
 #include <QList>
 
 #include "designequalsimplementationclassmethodargument.h"
 
-class DesignEqualsImplementationClassPrivateMethod : public QObject
+class DesignEqualsImplementationClassPrivateMethod : public QObject, public IDesignEqualsImplementationHaveOrderedListOfStatements
 {
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassPrivateMethod(QObject *parent = 0);
-    ~DesignEqualsImplementationClassPrivateMethod();
+    virtual ~DesignEqualsImplementationClassPrivateMethod();
 
     //TODOoptional: private + getter/setter blah
     QString Name;

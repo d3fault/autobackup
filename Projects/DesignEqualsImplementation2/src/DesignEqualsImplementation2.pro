@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     designequalsimplementationclassprivatemethod.cpp \
     designequalsimplementationclassproperty.cpp \
     designequalsimplementationclasssignal.cpp \
-    designequalsimplementationusecase.cpp
+    designequalsimplementationusecase.cpp \
+    designequalsimplementationslotinvocationstatement.cpp
 
 HEADERS  += designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -36,6 +37,9 @@ HEADERS  += designequalsimplementationmainwindow.h \
     designequalsimplementationclassprivatemethod.h \
     designequalsimplementationclassproperty.h \
     designequalsimplementationclasssignal.h \
-    designequalsimplementationusecase.h
+    designequalsimplementationusecase.h \
+    idesignequalsimplementationstatement.h \
+    designequalsimplementationslotinvocationstatement.h \
+    idesignequalsimplementationhaveorderedlistofstatements.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

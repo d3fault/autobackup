@@ -10,6 +10,7 @@ return qds;
 
 DesignEqualsImplementationClassPrivateMethod::DesignEqualsImplementationClassPrivateMethod(QObject *parent)
     : QObject(parent)
+    , IDesignEqualsImplementationHaveOrderedListOfStatements()
 { }
 DesignEqualsImplementationClassPrivateMethod::~DesignEqualsImplementationClassPrivateMethod()
 {
