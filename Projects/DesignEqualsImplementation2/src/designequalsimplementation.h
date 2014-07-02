@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QMutex>
 
 //#define DesignEqualsImplementation_TEST_MODE 1
 
@@ -14,10 +15,11 @@ class DesignEqualsImplementation : public QObject
 public:
     explicit DesignEqualsImplementation(QObject *parent = 0);
     ~DesignEqualsImplementation();
+    static QMutex BackendMutex;
 private:
     QList<DesignEqualsImplementationProject*> m_CurrentlyOpenedDesignEqualsImplementationProjects;
 signals:
-    void projectOpened(DesignEqualsImplementationProject *project, const QString &projectName);
+    void projectOpened(DesignEqualsImplementationProject *project);
     void e(const QString &);
 public slots:
     void newProject();

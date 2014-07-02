@@ -40,11 +40,16 @@ private:
 
     void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
     void addEventPrivateWithoutUpdatingExitSignal(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
+signals:
+    void eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase *&useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *&useCase);
+
+Q_DECLARE_METATYPE(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum)
+Q_DECLARE_METATYPE(SignalEmissionOrSlotInvocationContextVariables)
 
 class SignalSlotCombinedEventHolder : public QObject
 {

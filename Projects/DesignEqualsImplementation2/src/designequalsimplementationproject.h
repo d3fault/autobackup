@@ -31,10 +31,13 @@ private:
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
 signals:
+    void useCaseAdded(DesignEqualsImplementationUseCase*);
+    void classAdded(DesignEqualsImplementationClass*);
     void saved(bool);
     void sourceCodeGenerated(bool);
     void e(const QString &);
 public slots:
+    void emitAllClassesAndUseCasesInProject();
     void save(const QString &projectFilePath);
     void generateSourceCode(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };

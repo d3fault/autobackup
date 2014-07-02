@@ -173,6 +173,10 @@ QString DesignEqualsImplementationClass::headerFilenameOnly()
 {
     return ClassName.toLower() + ".h";
 }
+void DesignEqualsImplementationClass::emitAllClassDetails()
+{
+    //TODOreq
+}
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass)
 {
     DesignEqualsImplementationClass_QDS(out, <<, designEqualsImplementationClass);

@@ -1,5 +1,7 @@
 #include "designequalsimplementation.h"
 
+#include <QMutex>
+
 #include "designequalsimplementationproject.h"
 
 #ifdef DesignEqualsImplementation_TEST_MODE
@@ -7,11 +9,14 @@
 #include <QCoreApplication>
 #include <QList>
 #include <QDateTime>
+#include <QMutexLocker>
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclassmethodargument.h"
 #include "designequalsimplementationusecase.h"
 #endif
+
+QMutex DesignEqualsImplementation::BackendMutex;
 
 //TODOreq: random as fuck ish kinda OT, but actually not at all (despite my coming up with is idea while CODING THIS APP ITSELF): auto async/sync generation. you define a "slot" with a "bool" (generally 'success') return type, but the auto-generated async version uses a slot (the call) and signal (the 'return type') to satisfy it. however, the async call is backed/powered by a sync version, which uses a traditional public method and bool return variable. My point is this: when "designing", there is no difference between the two classes. However, upon code generation/etc, whether or not the objects are on the same thread (which is ultimately the deciding factor for whether or not async/sync is used anyways (is how Qt::AutoConnection behaves)) is what decides which of those two async/sync objects are used. I have not even begun to contemplate multiple uses of the same object by for example an object on the same thread AND an object on a different thread (when in doubt, async?).
 //OT: :( I'm using a binary save format (QDataStream), but I still feel like these serialized designs belong in my /text/ repo. Could of course do XML/json/etc with ease ;-P
@@ -24,6 +29,8 @@ DesignEqualsImplementation::~DesignEqualsImplementation()
 }
 void DesignEqualsImplementation::newProject()
 {
+    QMutexLocker scopedLock(&BackendMutex); //TODOoptimization: GUI will be more responsive if I convert to all my backend objects to implicitly shared instead. I'm just lazy and also hesitant the [de-]serialization stuff might be hard (for me, a noob) to do
+
 #ifdef DesignEqualsImplementation_TEST_MODE
     //We have no GUI yet, so simulate GUI activity for development purposes (designEquals 1 started with GUI, designEquals 2 (this) is starting with backend)
 
@@ -216,20 +223,22 @@ void DesignEqualsImplementation::newProject()
     connect(this, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     testProject->generateSourceCode(DesignEqualsImplementationProject::Library, "/run/shm/designEqualsImplementation-GeneratedAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()));
 
-    emit projectOpened(testProject, testProject->Name);
+    emit projectOpened(testProject);
 #else
     DesignEqualsImplementationProject *newProject = new DesignEqualsImplementationProject(this);
+    newProject->Name = "New Project 1"; //TODOreq: auto-increment
     connect(newProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(newProject);
-    emit projectOpened(testProject, newProject->Name);
+    emit projectOpened(newProject);
 #endif
 }
 void DesignEqualsImplementation::openExistingProject(const QString &existingProjectFilePath)
 {
+    QMutexLocker scopedLock(&BackendMutex);
     DesignEqualsImplementationProject *existingProject = new DesignEqualsImplementationProject(existingProjectFilePath, this);
     connect(existingProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(existingProject);
-    emit projectOpened(existingProject, existingProject->Name);
+    emit projectOpened(existingProject);
 }
 #ifdef DesignEqualsImplementation_TEST_MODE
 void DesignEqualsImplementation::handlesourceCodeGenerated(bool success)

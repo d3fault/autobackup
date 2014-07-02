@@ -33,7 +33,14 @@ public:
 
     QString headerFilenameOnly();
 signals:
+    void propertyAdded(DesignEqualsImplementationClassProperty*);
+    void hasAPrivateMemberClassAdded(HasA_PrivateMemberClasses_ListEntryType); //declare meta type?
+    void privateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
+    void slotAdded(DesignEqualsImplementationClassSlot*);
+    void signalAdded(DesignEqualsImplementationClassSignal*);
     void e(const QString &);
+public slots:
+    void emitAllClassDetails();
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass &designEqualsImplementationClass);

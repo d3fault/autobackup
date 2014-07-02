@@ -1,15 +1,23 @@
 #include "designequalsimplementationmainwindow.h"
 
+#include <QMenuBar>
 #include <QMenu>
 #include <QToolBar>
 #include <QDockWidget>
 #include <QTabWidget>
 #include <QAction>
+#include <QMutexLocker>
 
+#include "../../designequalsimplementation.h"
 #include "../../designequalsimplementationproject.h"
+#include "umlitemswidget.h"
 #include "designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h"
 
 #define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME "Design = Implementation" //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod)
+
+//fucking QWidget::addActions didn't do what I expected... and I don't even get how QToolBar/Menu are using a NON-VIRTUAL method with identical name "addAction"
+//#define DesignEqualsImplementationMainWindow_ADD_MY_ACTIONS(menuOrToolBarWithAddActionMethod)
+
 
 //TODOreq: a toolbar that changes based on which kind of project view tab is open. ALWAYS have the "move" (mouse icon) button on far left regardless of toolbar's other contents. in class diagram view, some other buttons are inheritence arrows. in use case view, some other buttons are "signal/slot connection activation" arrows. when in any "arrow" mode, pressing the mouse "move" thing is your way of cancelling out (like tons of apps do)
 //TODOreq: zooming in and out should only shrink/enlarge the objects ("class" uml object, for example). arrow width (or really any object's width tbh) and font size should always stay the same (but text can re-wrap/whatever based on new object size)
@@ -31,35 +39,37 @@ DesignEqualsImplementationMainWindow::~DesignEqualsImplementationMainWindow()
 void DesignEqualsImplementationMainWindow::createActions()
 {
     //Project Operations
-    QAction *newProjectAction = new QAction(tr("&New Project"), this);
-    QAction *openProjectAction = new QAction(tr("&Open Open"), this);
-    QAction *newUseCaseAction = new QAction(tr("&New Use Case"), this);
-    connect(newProjectAction, SIGNAL(triggered()), this, SIGNAL(newProjectRequested()));
-    connect(openProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
-    connect(newUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseActionTriggered()));
-    m_ProjectOperationsActions.append(newProjectAction);
-    m_ProjectOperationsActions.append(openProjectAction);
-    m_ProjectOperationsActions.append(newUseCaseAction);
+    m_NewProjectAction = new QAction(tr("&New Project"), this);
+    m_OpenProjectAction = new QAction(tr("&Open Open"), this);
+    m_NewUseCaseAction = new QAction(tr("&New Use Case"), this);
+    connect(m_NewProjectAction, SIGNAL(triggered()), this, SIGNAL(newProjectRequested()));
+    connect(m_OpenProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
+    connect(m_NewUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseActionTriggered()));
 
     //Main Toolbar Actions
-    QAction *moveMousePointerDefaultAction = new QAction(tr("&Move Mode"), this);
-    QAction *drawSignalSlotConnectionActivationArrowsAction = new QAction(tr("&Signals/Slots Connection Activation Arrows Mode"), this);
-    connect(moveMousePointerDefaultAction, SIGNAL(triggered()), this, SLOT(handleMoveMousePointerDefaultActionTriggered()));
-    connect(drawSignalSlotConnectionActivationArrowsAction, SIGNAL(triggered()), this, SLOT(handleDrawSignalSlotConnectionActivationArrowsActionTriggered()));
-    m_MainToolbarActions.append(moveMousePointerDefaultAction);
-    m_MainToolbarActions.append(drawSignalSlotConnectionActivationArrowsAction);
+    m_MoveMousePointerDefaultAction = new QAction(tr("&Move Mode"), this);
+    m_DrawSignalSlotConnectionActivationArrowsAction = new QAction(tr("&Signals/Slots Connection Activation Arrows Mode"), this);
+    connect(m_MoveMousePointerDefaultAction, SIGNAL(triggered()), this, SLOT(handleMoveMousePointerDefaultActionTriggered()));
+    connect(m_DrawSignalSlotConnectionActivationArrowsAction, SIGNAL(triggered()), this, SLOT(handleDrawSignalSlotConnectionActivationArrowsActionTriggered()));
 }
 void DesignEqualsImplementationMainWindow::createMenu()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addActions(m_ProjectOperationsActions);
+    QMenu *fileNew = fileMenu->addMenu(tr("&New"));
+    fileNew->addAction(m_NewProjectAction);
+    fileNew->addAction(m_NewUseCaseAction);
+    fileMenu->addAction(m_OpenProjectAction);
 }
 void DesignEqualsImplementationMainWindow::createToolbar()
 {
     QToolBar *fileNewMenuEquivalentToolbar = addToolBar(DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME " Project Operations Toolbar");
-    fileNewMenuEquivalentToolbar->addActions(m_ProjectOperationsActions);
+    fileNewMenuEquivalentToolbar->addAction(m_NewProjectAction);
+    fileNewMenuEquivalentToolbar->addAction(m_OpenProjectAction);
+    fileNewMenuEquivalentToolbar->addAction(m_NewUseCaseAction);
+
     QToolBar *mainToolbar = addToolBar(DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME " Main Toolbar");
-    mainToolbar->addActions(m_MainToolbarActions);
+    mainToolbar->addAction(m_MoveMousePointerDefaultAction);
+    mainToolbar->addAction(m_DrawSignalSlotConnectionActivationArrowsAction);
 }
 void DesignEqualsImplementationMainWindow::createDockWidgets()
 {
@@ -69,9 +79,10 @@ void DesignEqualsImplementationMainWindow::createDockWidgets()
     addDockWidget(Qt::LeftDockWidgetArea, umlDockWidget, Qt::Vertical);
 }
 //TODOreq: [backend] project is not thread safe to access directly, so check the source to make sure it's used properly (or i could mutex protect the DesignEqualsImplementationProject itself to KISS, undecided as of now)
-void DesignEqualsImplementationMainWindow::handleProjectOpened(DesignEqualsImplementationProject *project, const QString &projectName)
+void DesignEqualsImplementationMainWindow::handleProjectOpened(DesignEqualsImplementationProject *project)
 {
-    m_OpenProjectsTabWidget->addTab(new DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(project, m_OpenProjectsTabWidget), projectName);
+    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+    m_OpenProjectsTabWidget->addTab(new DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(project, m_OpenProjectsTabWidget), project->Name);
 }
 void DesignEqualsImplementationMainWindow::handleOpenProjectActionTriggered()
 {

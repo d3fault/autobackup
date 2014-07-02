@@ -27,7 +27,7 @@ void DesignEqualsImplementationGui::handleDesignEqualsImplementationReadyForConn
 
     connect(m_Gui, SIGNAL(newProjectRequested()), designEqualsImplementation, SLOT(newProject()));
     connect(m_Gui, SIGNAL(openExistingProjectRequested(QString)), designEqualsImplementation, SLOT(openExistingProject(QString)));
-    connect(designEqualsImplementation, SIGNAL(projectOpened(DesignEqualsImplementationProject*,QString)), m_Gui, SLOT(handleProjectOpened(DesignEqualsImplementationProject*,QString)));
+    connect(designEqualsImplementation, SIGNAL(projectOpened(DesignEqualsImplementationProject*)), m_Gui, SLOT(handleProjectOpened(DesignEqualsImplementationProject*)));
 
     QStringList argz = QCoreApplication::arguments();
     if(argz.size() > 1)

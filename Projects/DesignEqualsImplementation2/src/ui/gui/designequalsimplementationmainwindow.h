@@ -19,8 +19,12 @@ private:
     QTabWidget *m_OpenProjectsTabWidget;
 
     //Actions
-    QList<QAction*> m_ProjectOperationsActions;
-    QList<QAction*> m_MainToolbarActions;
+    QAction *m_NewProjectAction;
+    QAction *m_OpenProjectAction;
+    QAction *m_NewUseCaseAction;
+    //More actions
+    QAction *m_MoveMousePointerDefaultAction;
+    QAction *m_DrawSignalSlotConnectionActivationArrowsAction;
 
     void createActions();
     void createMenu();
@@ -30,7 +34,7 @@ signals:
     void newProjectRequested();
     void openExistingProjectRequested(const QString &projectFilePath);
 public slots:
-    void handleProjectOpened(DesignEqualsImplementationProject *project, const QString &projectName);
+    void handleProjectOpened(DesignEqualsImplementationProject *project);
 private slots:
     void handleOpenProjectActionTriggered();
 };

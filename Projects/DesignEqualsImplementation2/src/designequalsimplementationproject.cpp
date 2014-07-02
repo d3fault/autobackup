@@ -34,6 +34,7 @@ void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass
 {
     connect(newClass, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     m_Classes.append(newClass);
+    emit classAdded(newClass);
 }
 QList<DesignEqualsImplementationClass *> DesignEqualsImplementationProject::classes()
 {
@@ -195,6 +196,12 @@ void SimpleAsyncLibrarySlotInvokeAndSignalResponseCli::handleFooSignal(bool succ
 #endif
 
 return true;
+}
+void DesignEqualsImplementationProject::emitAllClassesAndUseCasesInProject()
+{
+    //TODOreq: the signals will be emitted twice when LOADING a file (once when each individual deserialized 'thing' is added, and once again now). i'm not sure if 'some' of the later ones in the first batch might in fact be received, or if all of the first batch are definitely discarded (ui not listening yet)
+    void useCaseAdded(DesignEqualsImplementationUseCase*);
+    void classAdded(DesignEqualsImplementationClass*);
 }
 void DesignEqualsImplementationProject::save(const QString &projectFilePath)
 {

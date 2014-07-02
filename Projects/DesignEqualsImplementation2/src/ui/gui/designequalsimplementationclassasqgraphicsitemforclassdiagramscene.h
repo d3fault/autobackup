@@ -1,0 +1,23 @@
+#ifndef DESIGNEQUALSIMPLEMENTATIONCLASSASQGRAPHICSITEMFORCLASSDIAGRAMSCENE_H
+#define DESIGNEQUALSIMPLEMENTATIONCLASSASQGRAPHICSITEMFORCLASSDIAGRAMSCENE_H
+
+#include <QGraphicsWidget>
+
+#include "../../designequalsimplementationclass.h"
+
+class DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene : public QGraphicsWidget
+{
+    Q_OBJECT
+public:
+    explicit DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *parent = 0, Qt::WindowFlags wFlags = 0);
+    virtual QRectF boundingRect() const;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+public slots:
+    void handlePropertyAdded(DesignEqualsImplementationClassProperty*);
+    void handleHasAPrivateMemberClassAdded(HasA_PrivateMemberClasses_ListEntryType);
+    void handlePrivateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
+    void handleSlotAdded(DesignEqualsImplementationClassSlot*);
+    void handleSignalAdded(DesignEqualsImplementationClassSignal*);
+};
+
+#endif // DESIGNEQUALSIMPLEMENTATIONCLASSASQGRAPHICSITEMFORCLASSDIAGRAMSCENE_H
