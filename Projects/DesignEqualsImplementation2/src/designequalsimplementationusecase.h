@@ -7,7 +7,7 @@
 
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclasssignal.h"
-#include "slotinvocationcontextvariables.h"
+#include "signalemissionorslotinvocationcontextvariables.h"
 
 class DesignEqualsImplementationUseCase : public QObject
 {
@@ -29,14 +29,14 @@ public:
     DesignEqualsImplementationClassSlot *SlotWithCurrentContext;
     DesignEqualsImplementationClassSignal *ExitSignal;
 
-    void addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SlotInvocationContextVariables &slotInvocationContextVariables = SlotInvocationContextVariables());
+    void addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables = SignalEmissionOrSlotInvocationContextVariables());
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
     void setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
     bool generateSourceCode(const QString &destinationDirectoryPath);
     ~DesignEqualsImplementationUseCase();
 private:
-    void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SlotInvocationContextVariables &SLOT_ONLY_slotInvocationContextVariables = SlotInvocationContextVariables());
+    void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &SLOT_ONLY_slotInvocationContextVariables = SignalEmissionOrSlotInvocationContextVariables());
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);
