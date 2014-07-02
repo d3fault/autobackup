@@ -4,7 +4,7 @@
 
 Foo::Foo(QObject *parent)
     : QObject(parent)
-    , m_Bar(new Bar(this))
+    , m_Bar(new Bar(this)) //TODOoptional: when first written, Bar was a constructor local variable (pointer still) that went out of scope when constructor ended (used QObject parenting for deletion). That design might be better so as not to clutter Foo's member namespace, however it REQUIRES the "nameless signal" scheme instead of invokeMethod for calling barSlot from fooSlot. The UML GUI could ask the user when the "barSlot" arrow is drawn from Foo to Bar if they want Foo and Bar to be neighbors, Foo hasA _named_ Bar, or if Foo hasA anonymous Bar. It of course is not asked if it's already been chosen/specified earlier
 {
     //connect(this, SIGNAL(barSlotRequested(QString)), m_Bar, SLOT(barSlot(QString)));
     //TODOoptimization: connect(bar, SIGNAL(barSignal(bool)), this, SIGNAL(fooSignal(bool))); -- this should be an opt-in (or ask on first occurance) application setting, but then again maybe not because who says that a signal is emitted next (if a slot is invoked next, we could instead connect it directly to that as the optimization instead!). if there are 20 signals chained together, the code could maybe skip 18 of the middle ones. but SHOULD IT? those 18 signals might be useful later (at this point it depends if coder is modifying the C++ by hand or is using DesignEquals (because if using DesignEquals, hooking into any of those 18 middle signals would make the optimization not doable [to 18 anymore]

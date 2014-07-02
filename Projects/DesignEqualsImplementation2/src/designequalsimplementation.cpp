@@ -211,7 +211,7 @@ void DesignEqualsImplementation::newEmptyProject()
     connect(testProject, SIGNAL(sourceCodeGenerated(bool)), this, SLOT(handlesourceCodeGenerated(bool)));
     connect(testProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     connect(this, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
-    testProject->generateSourceCode("/run/shm/designEqualsImplementation-GeneratedAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()));
+    testProject->generateSourceCode(DesignEqualsImplementationProject::Library, "/run/shm/designEqualsImplementation-GeneratedAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()));
 
 #else
     DesignEqualsImplementationProject *newProject = new DesignEqualsImplementationProject(this);

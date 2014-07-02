@@ -153,7 +153,7 @@ void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementati
 
     DesignEqualsImplementationClassSlot *contextToMoveExitSignalTo = 0;
 
-    if(ExitSignal && SlotWithCurrentContext)
+    if(ExitSignal && SlotWithCurrentContext) //TODOreq: ExitSignal might be added FIRST (so SlotWithCurrentContext might be zero, but ExitSignal is already in Ordered Statement List (or hey, maybe it just segfaults idfk). needs to be moved but won't!). For now, just disable that ability in the GUI. Present them with an error and say they have to add a slot call first. Still, I kinda get why someone would add an ExitSignal first... so I want to fix that behaviour. I _THINK_ the proper solution to this might involve binding the ExitSignal with a class instead of a slot
     {
         //UseCaseSlotEventType and UseCaseSignalSlotEventType (before check)
         if((useCaseEventType == UseCaseSlotEventType || useCaseEventType == UseCaseSignalSlotEventType) && SlotWithCurrentContext->ParentClass == m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements->ParentClass)

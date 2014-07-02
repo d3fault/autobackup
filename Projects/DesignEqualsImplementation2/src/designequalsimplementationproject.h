@@ -11,6 +11,7 @@ class DesignEqualsImplementationProject : public QObject
 {
     Q_OBJECT
 public:
+    enum ProjectGenerationMode { Library, CliApplication, GuiApplication /* WebApplication */ };
     explicit DesignEqualsImplementationProject(QObject *parent = 0);
     explicit DesignEqualsImplementationProject(const QString &existingProjectFilePath, QObject *parent = 0);
     ~DesignEqualsImplementationProject();
@@ -26,7 +27,7 @@ public:
     QList<DesignEqualsImplementationClass*> m_Classes;
 private:
     bool savePrivate(const QString &projectFilePath);
-    bool generateSourceCodePrivate(const QString &destinationDirectoryPath);
+    bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
 signals:
@@ -35,7 +36,7 @@ signals:
     void e(const QString &);
 public slots:
     void save(const QString &projectFilePath);
-    void generateSourceCode(const QString &destinationDirectoryPath);
+    void generateSourceCode(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationProject &project);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationProject &project);
