@@ -4,9 +4,9 @@
 #include <QObject>
 #include <QList>
 
-#include "designequalsimplementationproject.h"
+//#define DesignEqualsImplementation_TEST_MODE 1
 
-#define DesignEqualsImplementation_TEST_MODE 1
+class DesignEqualsImplementationProject;
 
 class DesignEqualsImplementation : public QObject
 {
@@ -17,10 +17,11 @@ public:
 private:
     QList<DesignEqualsImplementationProject*> m_CurrentlyOpenedDesignEqualsImplementationProjects;
 signals:
+    void projectOpened(DesignEqualsImplementationProject *project, const QString &projectName);
     void e(const QString &);
 public slots:
-    void newEmptyProject();
-    void loadProjectFromFilePath(const QString &existingProjectFilePath);
+    void newProject();
+    void openExistingProject(const QString &existingProjectFilePath);
 #ifdef DesignEqualsImplementation_TEST_MODE
 private slots:
     void handlesourceCodeGenerated(bool success);

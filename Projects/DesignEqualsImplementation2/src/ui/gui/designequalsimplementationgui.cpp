@@ -9,31 +9,33 @@
 
 DesignEqualsImplementationGui::DesignEqualsImplementationGui(QObject *parent)
     : QObject(parent)
-    , m_Gui(0)
 {
     ObjectOnThreadGroup *objectOnThreadGroup = new ObjectOnThreadGroup(this);
     objectOnThreadGroup->addObjectOnThread<DesignEqualsImplementation>("handleDesignEqualsImplementationReadyForConnections");
     objectOnThreadGroup->doneAddingObjectsOnThreads();
+    m_Gui = new DesignEqualsImplementationMainWindow();
 }
 DesignEqualsImplementationGui::~DesignEqualsImplementationGui()
 {
-    if(m_Gui)
-        delete m_Gui;
+    delete m_Gui;
 }
 void DesignEqualsImplementationGui::handleDesignEqualsImplementationReadyForConnections(QObject *designEqualsImplementationAsQObject)
 {
     DesignEqualsImplementation *designEqualsImplementation = static_cast<DesignEqualsImplementation*>(designEqualsImplementationAsQObject);
 
+    m_Gui->show();
+
+    connect(m_Gui, SIGNAL(newProjectRequested()), designEqualsImplementation, SLOT(newProject()));
+    connect(m_Gui, SIGNAL(openExistingProjectRequested(QString)), designEqualsImplementation, SLOT(openExistingProject(QString)));
+    connect(designEqualsImplementation, SIGNAL(projectOpened(DesignEqualsImplementationProject*,QString)), m_Gui, SLOT(handleProjectOpened(DesignEqualsImplementationProject*,QString)));
+
     QStringList argz = QCoreApplication::arguments();
     if(argz.size() > 1)
     {
-        QMetaObject::invokeMethod(designEqualsImplementation, "loadProjectFromFilePath", Q_ARG(QString, argz.at(1)));
+        QMetaObject::invokeMethod(designEqualsImplementation, "openExistingProject", Q_ARG(QString, argz.at(1)));
     }
     else
     {
-        QMetaObject::invokeMethod(designEqualsImplementation, "newEmptyProject");
+        QMetaObject::invokeMethod(designEqualsImplementation, "newProject");
     }
-
-    m_Gui = new DesignEqualsImplementationMainWindow();
-    m_Gui->show();
 }

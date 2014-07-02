@@ -8,13 +8,13 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = DesignEqualsImplementation2
+TARGET = DesignEqualsImplementation
 TEMPLATE = app
 
-SOURCES += main.cpp\
-        designequalsimplementationmainwindow.cpp \
+SOURCES += ui/gui/main.cpp\
+        ui/gui/designequalsimplementationmainwindow.cpp \
     designequalsimplementation.cpp \
-    designequalsimplementationgui.cpp \
+    ui/gui/designequalsimplementationgui.cpp \
     designequalsimplementationproject.cpp \
     designequalsimplementationclass.cpp \
     designequalsimplementationclassslot.cpp \
@@ -25,11 +25,13 @@ SOURCES += main.cpp\
     designequalsimplementationusecase.cpp \
     designequalsimplementationslotinvocationstatement.cpp \
     idesignequalsimplementationmethod.cpp \
-    designequalsimplementationsignalemissionstatement.cpp
+    designequalsimplementationsignalemissionstatement.cpp \
+    ui/gui/umlitemswidget.cpp \
+    ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.cpp
 
-HEADERS  += designequalsimplementationmainwindow.h \
+HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
-    designequalsimplementationgui.h \
+    ui/gui/designequalsimplementationgui.h \
     designequalsimplementationproject.h \
     designequalsimplementationclass.h \
     designequalsimplementationclassslot.h \
@@ -44,6 +46,8 @@ HEADERS  += designequalsimplementationmainwindow.h \
     designequalsimplementationcommon.h \
     idesignequalsimplementationmethod.h \
     designequalsimplementationsignalemissionstatement.h \
-    signalemissionorslotinvocationcontextvariables.h
+    signalemissionorslotinvocationcontextvariables.h \
+    ui/gui/umlitemswidget.h \
+    ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

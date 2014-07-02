@@ -1,0 +1,1 @@
+the cli should take two arguments. 1 = project file path, 2 = source generation mode (arg is optional, defaults to... SOMETHING (gui? lib? cli?). idfk which to choose hahaha, maybe make it mandatory then xD)
