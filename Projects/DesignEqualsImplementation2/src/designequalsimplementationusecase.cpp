@@ -43,12 +43,12 @@ void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementation
     if(ExitSignal)
     {
         //remove it from old context
-        IDesignEqualsImplementationStatement *oldExitSignalStatement = m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements->OrderedListOfStatements.takeAt(m_ExitSignalsIndexIntoOrderedListOfStatements); //TODOreq: any time from now on that m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements adds a statement, we need to remove the exit signal before that, append it back on after the new statement is added, then update m_ExitSignalsIndexIntoOrderedListOfStatements to reflect that. Basically hacky synchronization xD. There's gotta be a better way, but I can't think of it because there is no UseCase context as of now in Class::generateSourceCode
+        IDesignEqualsImplementationStatement *oldExitSignalStatement = m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements->OrderedListOfStatements.takeAt(m_ExitSignalsIndexIntoOrderedListOfStatements); //TODOreq: any time from now on that m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements adds a statement, we need to remove the exit signal before that, append it back on after the new statement is added, then update m_ExitSignalsIndexIntoOrderedListOfStatements to reflect that. Basically hacky synchronization xD. There's gotta be a better way, but I can't think of it because there is no UseCase context as of now in Class::generateSourceCode
         //TODOreq: if m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements is deleted in the UML gui, we need to set ExitSignal to zero too (it's implied that all of his children (statements too) are deleted, BUT that implication does include ZERO'ing out ExitSignal (and must))
         delete oldExitSignalStatement;
     }
     //Add to current context (TODOreq: what if it's the first event? does that even make sense? methinks not, but it might segfault if yes)
-    m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements = SlotWithCurrentContext;
+    m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements = SlotWithCurrentContext;
     m_ExitSignalsIndexIntoOrderedListOfStatements = SlotWithCurrentContext->OrderedListOfStatements.size();
 
     addEventPrivateWithoutUpdatingExitSignal(UseCaseSignalEventType, designEqualsImplementationClassSignal, exitSignalEmissionContextVariables);
@@ -148,43 +148,46 @@ void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementati
     }
 #endif
 
+    //TODOreq: UML ExitSignal added before any other event, relates to next line kinda
+    //TO DOnereq: first event added has no context, so dereferencing current context (TO DOnereq: ExitSignal (m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements implicitly) may also be 0, so check ExitSignal != 0 before doing any deeper checks) leads to segfault
+
     DesignEqualsImplementationClassSlot *contextToMoveExitSignalTo = 0;
 
-    //UseCaseSlotEventType and UseCaseSignalSlotEventType (before check)
-    if((useCaseEventType == UseCaseSlotEventType || useCaseEventType == UseCaseSignalSlotEventType) && SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
+    if(ExitSignal && SlotWithCurrentContext)
     {
-        contextToMoveExitSignalTo = SlotWithCurrentContext;
+        //UseCaseSlotEventType and UseCaseSignalSlotEventType (before check)
+        if((useCaseEventType == UseCaseSlotEventType || useCaseEventType == UseCaseSignalSlotEventType) && SlotWithCurrentContext->ParentClass == m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements->ParentClass)
+        {
+            contextToMoveExitSignalTo = SlotWithCurrentContext;
+        }
     }
 
-    //UseCaseSignalSlotEventType (before check)
-    if(useCaseEventType == UseCaseSignalSlotEventType && SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
-    {
-        contextToMoveExitSignalTo = SlotWithCurrentContext;
-    }
-
-    /////////////////////
+    /////////////////////BEFORE/////////////////////
     addEventPrivateWithoutUpdatingExitSignal(useCaseEventType, event, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
-    /////////////////////
+    /////////////////////AFTER//////////////////////
 
-    //UseCaseSlotEventType and UseCaseSignalSlotEventType (after check. the "!contextToMoveExitSignalTo" part of the if is to account for, and not overwrite, the before check
-    if((useCaseEventType == UseCaseSlotEventType || useCaseEventType == UseCaseSignalSlotEventType) && !contextToMoveExitSignalTo && SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
+    if(ExitSignal && SlotWithCurrentContext)
     {
-        contextToMoveExitSignalTo = SlotWithCurrentContext;
-    }
+        //UseCaseSlotEventType and UseCaseSignalSlotEventType (after check. the "!contextToMoveExitSignalTo" part of the if is to account for, and not overwrite, the before check
+        if((useCaseEventType == UseCaseSlotEventType || useCaseEventType == UseCaseSignalSlotEventType) && !contextToMoveExitSignalTo && SlotWithCurrentContext->ParentClass == m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements->ParentClass)
+        {
+            contextToMoveExitSignalTo = SlotWithCurrentContext;
+        }
 
-    //UseCaseSignalEventType
-    if(useCaseEventType == UseCaseSignalEventType && SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
-    {
-        contextToMoveExitSignalTo = SlotWithCurrentContext;
-    }
+        //UseCaseSignalEventType
+        if(useCaseEventType == UseCaseSignalEventType && SlotWithCurrentContext->ParentClass == m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements->ParentClass)
+        {
+            contextToMoveExitSignalTo = SlotWithCurrentContext;
+        }
 
 
-    if(contextToMoveExitSignalTo)
-    {
-        IDesignEqualsImplementationStatement *exitSignalBeingMoved = m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements->OrderedListOfStatements.takeAt(m_ExitSignalsIndexIntoOrderedListOfStatements);
-        m_ExitSignalsIndexIntoOrderedListOfStatements = contextToMoveExitSignalTo->OrderedListOfStatements.size();
-        contextToMoveExitSignalTo->OrderedListOfStatements.append(exitSignalBeingMoved);
-        m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements = contextToMoveExitSignalTo; //I get the feeling this won't actually change... which means my remembering of the context 'before' was pointless (i was using both a bool flag "moveContext" in addition to contextToMoveExitSignalTo, but then factored out the moveContext bool). Bleh fuck it, I just want it to work
+        if(contextToMoveExitSignalTo)
+        {
+            IDesignEqualsImplementationStatement *exitSignalBeingMoved = m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements->OrderedListOfStatements.takeAt(m_ExitSignalsIndexIntoOrderedListOfStatements);
+            m_ExitSignalsIndexIntoOrderedListOfStatements = contextToMoveExitSignalTo->OrderedListOfStatements.size();
+            contextToMoveExitSignalTo->OrderedListOfStatements.append(exitSignalBeingMoved);
+            m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements = contextToMoveExitSignalTo; //I get the feeling this won't actually change... which means my remembering of the context 'before' was pointless (i was using both a bool flag "moveContext" in addition to contextToMoveExitSignalTo, but then factored out the moveContext bool). Bleh fuck it, I just want it to work
+        }
     }
 }
 void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)

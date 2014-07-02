@@ -197,6 +197,13 @@ void DesignEqualsImplementation::newEmptyProject()
     exitSignalEmissionArguments.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments.append("success");
     testUseCase->setExitSignal(fooSignal, exitSignalEmissionArguments);
 
+    //To test ExitSignal auto-moving for UseCaseSignalEventType, uncomment this line AND comment out the identical line up above
+    //testUseCase->addEvent(diagnosticSignalX);
+
+    //To test ExitSignal auto-moving for UseCaseSlotEventType and UseCaseSignalSlotEventType simultaneously, uncomment these next two lines AND comment out their identical lines up above
+    //testUseCase->addEvent(barSlot, barSlotInvocationContextVariables);
+    //testUseCase->addEvent(barSignal, handleBarSignal, barSignalEmissionArguments);
+
     testProject->UseCases.append(testUseCase);
     //TODOreq: either make single use case default use case in project during generation, or require specifying it here. In the final GUI we'd ask the user ofc
 
