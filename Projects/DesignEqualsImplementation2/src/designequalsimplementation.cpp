@@ -153,7 +153,7 @@ void DesignEqualsImplementation::newEmptyProject()
     //The name of Bar within Foo ("m_Bar") needs to be noted somewhere, but it can't be within Bar itself since other pointers to the same object owned by other classes might use a different name for it. Basically I need to refactor so that the "use case event" is a slot invocation on a PrivateMember of Foo, not just a "slot that exists in a class" (but I do still want to be able to add a "slot that exists in a class", because that's what the use case entry point will always be. confusing refactor)
     SignalEmissionOrSlotInvocationContextVariables barSlotInvocationContextVariables;
     barSlotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = userChosenVariableNameForFoosInstanceOfBar; //TODOreq: UI selects (or JIT adds/creates) this when/right-after arrow is drawn from Foo
-    barSlotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments = barSlotArgs;
+    barSlotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments = barSlotArgs;
     testUseCase->addEvent(barSlot, barSlotInvocationContextVariables); //TODOreq: indication by user that fooSlot's "cunt" arg is used as barSlot "cunt" (that the args have the same name is coincidence). Somehow we need a list of variables accessible at the current context (members (including private) and current-slot-arguments are the main ones), and to specify one when addEvent(slot) is called. I'm not entirely sure said list needs to be available to "the programmer" after hitting a "." or typing a "->", but the use case is different: the user clicks-n-drags an arrow from Foo (fooSlot) to Bar (barSlot), and then AFTERWARDS they are presented a "slot argument population" wizard that has at it's disposal (even if just in "string" form (we are code GENERATOR, so strings are perfecto [even if that means the design is hacked])) all the variables right where the barSlot invocation was placed inside fooSlot
     //^It really boils down to a slot to be able to simply cough up it's own arguments, in addition to the members of the class it belongs to. There is also of course local context (1 or N lines above barSlot invocation), which will probably prove to be a bitch (*especially* if the lines above are hand-coded C++ (not even sure I'm allowing that so..)). As long as the local variables aren't hand-coded, keeping a list of local variables won't be that hard.
     //tl;dr:
@@ -179,7 +179,10 @@ void DesignEqualsImplementation::newEmptyProject()
     fooClass->Slots.append(handleBarSignal);
     handleBarSignal->ParentClass = fooClass;
 
-    testUseCase->addEvent(barSignal, handleBarSignal);
+    //TODOreq: Until there is C++ drop-down mode, we have to at least let the user type in a variable name for the signal emission. It's similar to the slot invocation in that it's asked right after the arrow is drawn. TODOreq: C++ core types (true, any number, etc) don't create classes in class diagram on the fly obviously
+    SignalEmissionOrSlotInvocationContextVariables barSignalEmissionArguments;
+    barSignalEmissionArguments.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments.append("true");
+    testUseCase->addEvent(barSignal, handleBarSignal, barSignalEmissionArguments);
 
     //fooSignal
     DesignEqualsImplementationClassSignal *fooSignal = new DesignEqualsImplementationClassSignal(fooClass);
@@ -190,7 +193,9 @@ void DesignEqualsImplementation::newEmptyProject()
     fooSignal->Arguments.append(fooSignalSuccessArgument);
     fooClass->Signals.append(fooSignal);
 
-    testUseCase->setExitSignal(fooSignal);
+    SignalEmissionOrSlotInvocationContextVariables exitSignalEmissionArguments;
+    exitSignalEmissionArguments.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments.append("success");
+    testUseCase->setExitSignal(fooSignal, exitSignalEmissionArguments);
 
     testProject->UseCases.append(testUseCase);
     //TODOreq: either make single use case default use case in project during generation, or require specifying it here. In the final GUI we'd ask the user ofc

@@ -16,7 +16,7 @@ QString DesignEqualsImplementationSlotInvocationStatement::toRawCppWithoutEnding
     int currentArgumentIndex = 0;
     int maxArgs = m_SlotToInvoke->Arguments.size();
     QString argumentsString;
-    Q_FOREACH(const QString &currentArgumentName, m_SlotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments)
+    Q_FOREACH(const QString &currentArgumentName, m_SlotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments)
     {
         argumentsString.append(", Q_ARG(" + m_SlotToInvoke->Arguments.at(currentArgumentIndex)->Type + ", " + currentArgumentName + ")");
         ++currentArgumentIndex;

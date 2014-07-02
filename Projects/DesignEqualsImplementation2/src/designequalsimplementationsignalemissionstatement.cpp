@@ -11,7 +11,7 @@ QString DesignEqualsImplementationSignalEmissionStatement::toRawCppWithoutEnding
 {
     QString ret("emit " + m_SignalToEmit->Name + "(");
     bool firstArg = true;
-    Q_FOREACH(const QString &currentArgVarName, m_SignalEmissionContextVariablesForSignalArguments.OrderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments)
+    Q_FOREACH(const QString &currentArgVarName, m_SignalEmissionContextVariablesForSignalArguments.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments)
     {
         if(!firstArg)
             ret.append(", ");

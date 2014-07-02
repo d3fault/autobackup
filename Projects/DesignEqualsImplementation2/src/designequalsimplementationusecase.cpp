@@ -31,12 +31,27 @@ void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClass
     addEventPrivate(UseCaseSignalEventType, designEqualsImplementationClassSignal);
 }
 //Overload: Signal emitted during normal slot execution, slot handler for that signal is relevant to use case
-void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot)
+void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
 {
-    addEventPrivate(UseCaseSignalSlotEventType, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot));
+    addEventPrivate(UseCaseSignalSlotEventType, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), signalEmissionContextVariables);
 }
-void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal)
+//TODOreq: haven't implemented regular signal/slot event deletion, but still worth noting that ExitSignal deletion needs to be handled differently
+//TODOreq: again, somewhat off-topic though. should deleting a signal emission or slot invocation mean that it's existence in the class diagram perspective is also deleted? reference counting might be nice, but auto deletion might piss me off too! maybe on deletion, a reference counter is used to ask the user if they want to delete it's existence in the class too (when reference count drops to zero), and/or of course all kinds of "remember this choice" customizations
+void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables)
 {
+    if(ExitSignal)
+    {
+        //remove it from old context
+        IDesignEqualsImplementationStatement *oldExitSignalStatement = m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements->OrderedListOfStatements.takeAt(m_ExitSignalsIndexIntoOrderedListOfStatements); //TODOreq: any time from now on that m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements adds a statement, we need to remove the exit signal before that, append it back on after the new statement is added, then update m_ExitSignalsIndexIntoOrderedListOfStatements to reflect that. Basically hacky synchronization xD. There's gotta be a better way, but I can't think of it because there is no UseCase context as of now in Class::generateSourceCode
+        //TODOreq: if m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements is deleted in the UML gui, we need to set ExitSignal to zero too (it's implied that all of his children (statements too) are deleted, BUT that implication does include ZERO'ing out ExitSignal (and must))
+        delete oldExitSignalStatement;
+    }
+    //Add to current context (TODOreq: what if it's the first event? does that even make sense? methinks not, but it might segfault if yes)
+    m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements = SlotWithCurrentContext;
+    m_ExitSignalsIndexIntoOrderedListOfStatements = SlotWithCurrentContext->OrderedListOfStatements.size();
+
+    addEventPrivateWithoutUpdatingExitSignal(UseCaseSignalEventType, designEqualsImplementationClassSignal, exitSignalEmissionContextVariables);
+
     ExitSignal = designEqualsImplementationClassSignal;
 }
 bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destinationDirectoryPath)
@@ -101,6 +116,21 @@ DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
 }
 void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
 {
+    if(SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements) //TODOreq: when it's a signal+slot event, we need to check both the signal and the slot, then remove/re-add accordingly. The context may have changed to m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements after addEventPrivateWithoutUpdatingExitSignal was called, so I think we need to check for removal either again or then/later (unsure).
+    {
+        TODO LEFT OFF
+        //TODOreq: remove ExitSignal
+    }
+
+    addEventPrivateWithoutUpdatingExitSignal(useCaseEventType, event, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
+
+    if(SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
+    {
+        //TODOreq: re-add ExitSignal
+    }
+}
+void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
+{
     bool firstUseCaseEventAdded = OrderedUseCaseEvents.isEmpty();
 
     //Add it (mainly used for saving/opening ([de-]serialization))
@@ -135,7 +165,6 @@ void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementati
         }
     }
         break;
-    case UseCaseExitSignalEventType: //basically the same as regular signal, but saved/persisted differently so the arrow in the gui is connected to the actor
     case UseCaseSignalEventType: //does not change context of next use case event
     {
         DesignEqualsImplementationClassSignal *signalUseCaseEvent = static_cast<DesignEqualsImplementationClassSignal*>(event);
@@ -144,10 +173,13 @@ void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementati
         SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
     }
         break;
-    case UseCaseSignalSlotEventType: //changes context of next use case event. the only difference from UseCaseSignalSlotEventType and UseCaseSlotEventType is that the signal is a named part of the design for UseCaseSignalSlotEventType, whereas UseCaseSlotEventType either uses an autogenerated nameless signal or invokeMethod (doesn't matter which i choose)
+    case UseCaseSignalSlotEventType: //changes context of next use case event. the only difference from UseCaseSignalSlotEventType and UseCaseSlotEventType is that the signal is a named part of the design for UseCaseSignalSlotEventType, whereas UseCaseSlotEventType either uses invokeMethod (could have been an autogenerated nameless signal, but doesn't matter which)
     {
+        //TODOreq: right now is when we need to make a note that the signal would be connected in the slot, and optimally resolving where that connection will be made is going to be a bitch :-P
         SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent = static_cast<SignalSlotCombinedEventHolder*>(event);
-
+        SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+        SlotWithCurrentContext = signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot;
+        //TO DOnemb (NOPE BECAUSE [de-]serialization): can maybe delete the SignalSlotCombinedEventHolder here/now, since I think I don't need it anymore
     }
         break;
     }
@@ -169,7 +201,6 @@ QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCas
         case DesignEqualsImplementationUseCase::UseCaseSlotEventType:
             out << *(static_cast<DesignEqualsImplementationClassSlot*>(eventAndType.second));
             break;
-        case DesignEqualsImplementationUseCase::UseCaseExitSignalEventType: //already handled
         case DesignEqualsImplementationUseCase::UseCaseSignalEventType:
             out << *(static_cast<DesignEqualsImplementationClassSignal*>(eventAndType.second));
             break;
@@ -205,7 +236,6 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useC
                 useCase.OrderedUseCaseEvents.append(qMakePair(useCaseEventType, designEqualsImplementationClassSlot));
             }
             break;
-        case DesignEqualsImplementationUseCase::UseCaseExitSignalEventType: //already handled
         case DesignEqualsImplementationUseCase::UseCaseSignalEventType:
             {
                 DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal = new DesignEqualsImplementationClassSignal(&useCase);
