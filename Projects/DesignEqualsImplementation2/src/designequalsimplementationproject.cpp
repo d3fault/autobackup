@@ -12,7 +12,7 @@
 #define DesignEqualsImplementationProject_QDS(direction, qds, project) \
 qds direction serializationVersion; \
 qds direction project.Name; \
-qds direction project.Classes; \
+qds direction project.m_Classes; \
 qds direction project.UseCases;
 
 //new
@@ -23,12 +23,21 @@ DesignEqualsImplementationProject::DesignEqualsImplementationProject(QObject *pa
 DesignEqualsImplementationProject::DesignEqualsImplementationProject(const QString &existingProjectFilePath, QObject *parent)
     : QObject(parent)
 {
-    //TODOreq
+    //TODOreq: ACTUALLY DO _NOT_ use a load constructor, because then there's no way to connect to the "e" signal!!!
 }
 DesignEqualsImplementationProject::~DesignEqualsImplementationProject()
 {
-    qDeleteAll(Classes);
+    qDeleteAll(m_Classes);
     qDeleteAll(UseCases);
+}
+void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass *newClass)
+{
+    connect(newClass, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+    m_Classes.append(newClass);
+}
+QList<DesignEqualsImplementationClass *> DesignEqualsImplementationProject::classes()
+{
+    return m_Classes;
 }
 bool DesignEqualsImplementationProject::savePrivate(const QString &projectFilePath)
 {
@@ -60,11 +69,11 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(const QString 
         return false;
     }
 
-    Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, Classes)
+    Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, m_Classes)
     {
         if(!designEqualsImplementationClass->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
         {
-            emit e("failed to generate source for: " + designEqualsImplementationClass->ClassName);
+            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + designEqualsImplementationClass->ClassName);
             return false;
         }
     }

@@ -9,7 +9,9 @@
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclasssignal.h"
 
-typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> PrivateMemberType;
+#define DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX "failed to generate source for: "
+
+typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_PrivateMemberClasses_ListEntryType;
 
 class DesignEqualsImplementationClass : public QObject
 {
@@ -22,12 +24,14 @@ public:
     //TODOoptional: private + getter/setter blah
     QString ClassName;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    QList<PrivateMemberType> PrivateMembers; //TODOreq: POD
+    QList<HasA_PrivateMemberClasses_ListEntryType> HasA_PrivateMemberClasses; //TODOreq: POD
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSlot*> Slots;
     QList<DesignEqualsImplementationClassSignal*> Signals;
 
     QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
+
+    QString headerFilenameOnly();
 signals:
     void e(const QString &);
 };

@@ -16,12 +16,15 @@ public:
     ~DesignEqualsImplementation();
 private:
     QList<DesignEqualsImplementationProject*> m_CurrentlyOpenedDesignEqualsImplementationProjects;
+signals:
+    void e(const QString &);
 public slots:
     void newEmptyProject();
     void loadProjectFromFilePath(const QString &existingProjectFilePath);
 #ifdef DesignEqualsImplementation_TEST_MODE
 private slots:
     void handlesourceCodeGenerated(bool success);
+    void handleE(const QString &msg);
 #endif
 };
 

@@ -41,7 +41,8 @@ void DesignEqualsImplementation::newEmptyProject()
     fooClass->Slots.append(fooSlot); //TODOreq: can also be implicitly added via use case creation, but either method does the same thing (non-referenced classes are only taken out of the binary if the C++ compiler decides to do so)
     fooSlot->ParentClass = fooClass;
 
-    testProject->Classes.append(fooClass); //Bar gets added implicitly, not explicitly, to the project, by being added to the PrivateMembers of Foo itself. Foo hasA Bar
+    //TODOmb: a templated, paramter-less, addClass could be used to simplify memory management... but we should then return a pointer to the class for customizing etc (or those could be parameters, or both)
+    testProject->addClass(fooClass); //Bar gets added implicitly, not explicitly, to the project, by being added to the PrivateMembers of Foo itself. Foo hasA Bar. TODOreq: Bar should have Foo as parent, and be deleted in Foo's constructor, since Foo hasA Bar. It's confusing that I'm talking about both memory management and UML design "parent" (ParentClass)
 
     //Bar
     DesignEqualsImplementationClass *barClass = new DesignEqualsImplementationClass(testProject);
@@ -57,7 +58,7 @@ void DesignEqualsImplementation::newEmptyProject()
 
     //TODOreq: gui responsible for asking user for variable NAME (default to "m_Bar", unless already exists (ensure not dupe, etc))
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");
-    fooClass->PrivateMembers.append(qMakePair(userChosenVariableNameForFoosInstanceOfBar, barClass));
+    fooClass->HasA_PrivateMemberClasses.append(qMakePair(userChosenVariableNameForFoosInstanceOfBar, barClass));
 
     //...bleh could continue defining the rest of the signals/slots just like above, BUT that really solves _NOTHING_ in terms of figuring the use case stuff out (the hardest part)...
 
@@ -195,18 +196,30 @@ void DesignEqualsImplementation::newEmptyProject()
 
     //generate source
     connect(testProject, SIGNAL(sourceCodeGenerated(bool)), this, SLOT(handlesourceCodeGenerated(bool)));
+    connect(testProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+    connect(this, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     testProject->generateSourceCode("/run/shm/designEqualsImplementation-GeneratedAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()));
 
 #else
-    m_CurrentlyOpenedDesignEqualsImplementationProjects.append(new DesignEqualsImplementationProject(this));
+    DesignEqualsImplementationProject *newProject = new DesignEqualsImplementationProject(this);
+    connect(newProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+    m_CurrentlyOpenedDesignEqualsImplementationProjects.append(newProject);
 #endif
 }
 void DesignEqualsImplementation::loadProjectFromFilePath(const QString &existingProjectFilePath)
 {
-    m_CurrentlyOpenedDesignEqualsImplementationProjects.append(new DesignEqualsImplementationProject(existingProjectFilePath, this));
+    DesignEqualsImplementationProject *existingProject = new DesignEqualsImplementationProject(existingProjectFilePath, this);
+    connect(existingProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+    m_CurrentlyOpenedDesignEqualsImplementationProjects.append(existingProject);
 }
+#ifdef DesignEqualsImplementation_TEST_MODE
 void DesignEqualsImplementation::handlesourceCodeGenerated(bool success)
 {
     qDebug() << "Source code generated successfully: " << success;
     QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
+void DesignEqualsImplementation::handleE(const QString &msg)
+{
+    qDebug() << msg;
+}
+#endif
