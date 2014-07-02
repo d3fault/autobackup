@@ -37,6 +37,7 @@ void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClass
 }
 //TODOreq: haven't implemented regular signal/slot event deletion, but still worth noting that ExitSignal deletion needs to be handled differently
 //TODOreq: again, somewhat off-topic though. should deleting a signal emission or slot invocation mean that it's existence in the class diagram perspective is also deleted? reference counting might be nice, but auto deletion might piss me off too! maybe on deletion, a reference counter is used to ask the user if they want to delete it's existence in the class too (when reference count drops to zero), and/or of course all kinds of "remember this choice" customizations
+//TODOreq: in the UML gui, exit signal should always be visually at the bottom-left of the class emitting it, and the bottom-right of the actor
 void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables)
 {
     if(ExitSignal)
@@ -116,17 +117,74 @@ DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
 }
 void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
 {
+    /*
+        BEFORE/AFTER below refers to the addEventPrivateWithoutUpdatingExitSignal call
+
+        UseCaseSlotEventType:
+            context BEFORE == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements, takeAt + append AFTER, but to BEFORE's context
+            context AFTER == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements, takeAt + append [after implied]
+
+        UseCaseSignalEventType:
+            context BEFORE-or-AFTER (no context change) == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements, takeAt + append [after implied, so check after]
+
+        UseCaseSignalSlotEventType:
+            context BEFORE == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements, takeAt + append AFTER, but to BEFORE's context
+            context AFTER == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements, takeAt + append [after implied]
+
+
+
+        OLD: (note: doing both sides of '&&' would waste cpu cycles, but ultimately do nothing. can be guarded against, but KISS TODOoptional)
+
+        TODOreq: signal/slot both on same object (useful as fuck design strat. "hooks"). hell, that req should be noted just for the UML/GUI design of such signal/slot on same object (arched 180 degree arrow pointing to self, auto-generation of "handle*" slot)
+
+        any time append mentioned, index recorded
+    */
+
+#if 0
     if(SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements) //TODOreq: when it's a signal+slot event, we need to check both the signal and the slot, then remove/re-add accordingly. The context may have changed to m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements after addEventPrivateWithoutUpdatingExitSignal was called, so I think we need to check for removal either again or then/later (unsure).
     {
-        TODO LEFT OFF
+        //TODO LEFT OFF
         //TODOreq: remove ExitSignal
     }
+#endif
 
-    addEventPrivateWithoutUpdatingExitSignal(useCaseEventType, event, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
+    DesignEqualsImplementationClassSlot *contextToMoveExitSignalTo = 0;
 
-    if(SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
+    //UseCaseSlotEventType and UseCaseSignalSlotEventType (before check)
+    if((useCaseEventType == UseCaseSlotEventType || useCaseEventType == UseCaseSignalSlotEventType) && SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
     {
-        //TODOreq: re-add ExitSignal
+        contextToMoveExitSignalTo = SlotWithCurrentContext;
+    }
+
+    //UseCaseSignalSlotEventType (before check)
+    if(useCaseEventType == UseCaseSignalSlotEventType && SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
+    {
+        contextToMoveExitSignalTo = SlotWithCurrentContext;
+    }
+
+    /////////////////////
+    addEventPrivateWithoutUpdatingExitSignal(useCaseEventType, event, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
+    /////////////////////
+
+    //UseCaseSlotEventType and UseCaseSignalSlotEventType (after check. the "!contextToMoveExitSignalTo" part of the if is to account for, and not overwrite, the before check
+    if((useCaseEventType == UseCaseSlotEventType || useCaseEventType == UseCaseSignalSlotEventType) && !contextToMoveExitSignalTo && SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
+    {
+        contextToMoveExitSignalTo = SlotWithCurrentContext;
+    }
+
+    //UseCaseSignalEventType
+    if(useCaseEventType == UseCaseSignalEventType && SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements)
+    {
+        contextToMoveExitSignalTo = SlotWithCurrentContext;
+    }
+
+
+    if(contextToMoveExitSignalTo)
+    {
+        IDesignEqualsImplementationStatement *exitSignalBeingMoved = m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements->OrderedListOfStatements.takeAt(m_ExitSignalsIndexIntoOrderedListOfStatements);
+        m_ExitSignalsIndexIntoOrderedListOfStatements = contextToMoveExitSignalTo->OrderedListOfStatements.size();
+        contextToMoveExitSignalTo->OrderedListOfStatements.append(exitSignalBeingMoved);
+        m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements = contextToMoveExitSignalTo; //I get the feeling this won't actually change... which means my remembering of the context 'before' was pointless (i was using both a bool flag "moveContext" in addition to contextToMoveExitSignalTo, but then factored out the moveContext bool). Bleh fuck it, I just want it to work
     }
 }
 void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
