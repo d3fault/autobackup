@@ -27,11 +27,11 @@ void DesignEqualsImplementation::newEmptyProject()
     //TODOoptional: for most/all of these class instantiations (including the use case ones below), we can mandate associate with a parent to ease coding. Example, instead of "Class *foo = new Class", I could do Class *foo = project->newClass();
 
     DesignEqualsImplementationProject *testProject = new DesignEqualsImplementationProject(this);
-    testProject->Name = "SimpleAsyncSlotInvokeAndSignalResponse";
+    testProject->Name = "SimpleAsyncSlotInvokeAndSignalResponseProject";
 
     //Foo
     DesignEqualsImplementationClass *fooClass = new DesignEqualsImplementationClass(testProject);
-    fooClass->Name = "Foo";
+    fooClass->ClassName = "Foo";
     DesignEqualsImplementationClassSlot *fooSlot = new DesignEqualsImplementationClassSlot(fooClass);
     fooSlot->Name = "fooSlot";
     DesignEqualsImplementationClassMethodArgument *fooSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(fooSlot);
@@ -45,7 +45,7 @@ void DesignEqualsImplementation::newEmptyProject()
 
     //Bar
     DesignEqualsImplementationClass *barClass = new DesignEqualsImplementationClass(testProject);
-    barClass->Name = "Bar";
+    barClass->ClassName = "Bar";
     DesignEqualsImplementationClassSlot *barSlot = new DesignEqualsImplementationClassSlot(barClass);
     barSlot->Name = "barSlot";
     DesignEqualsImplementationClassMethodArgument *barSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(barSlot);
@@ -55,7 +55,9 @@ void DesignEqualsImplementation::newEmptyProject()
     barClass->Slots.append(barSlot);
     barSlot->ParentClass = barClass;
 
-    fooClass->PrivateMembers.append(barClass);
+    //TODOreq: gui responsible for asking user for variable NAME (default to "m_Bar", unless already exists (ensure not dupe, etc))
+    QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");
+    fooClass->PrivateMembers.append(qMakePair(userChosenVariableNameForFoosInstanceOfBar, barClass));
 
     //...bleh could continue defining the rest of the signals/slots just like above, BUT that really solves _NOTHING_ in terms of figuring the use case stuff out (the hardest part)...
 
@@ -123,7 +125,7 @@ void DesignEqualsImplementation::newEmptyProject()
 #endif
 
     DesignEqualsImplementationUseCase *testUseCase = new DesignEqualsImplementationUseCase(testProject);
-    testUseCase->Name = "SimpleAsyncSlotInvokeAndSignalResponse";
+    testUseCase->Name = "SimpleAsyncSlotInvokeAndSignalResponseUseCase";
 
     testUseCase->addEvent(fooSlot);
 
@@ -136,7 +138,7 @@ void DesignEqualsImplementation::newEmptyProject()
     /*
     OnUserConnectedArrowsFromFooSlotToBarSlot:
     {
-        //system notices that we already have context, which means that "assigning" (or they could be QStringLiterals hardcoded idgaf TODOreq) of the barSlot parameters given current variables in context is mandatory. this happens all in UI before addEvent(barSlot) below
+        //system notices that we already have context, which means that "assigning" (or they could be QStringLiterals hardcoded idgaf TODOreq) of the barSlot parameters given current variables in context is mandatory. this happens all in UI before addEvent(barSlot) below <-- ACTUALLY we have to ask the user which slot/signal/etc to use for the arrow anyways, so the variable name entering/selecting should go just below that. TODOreq: entering a variable TYPE (name too) that does not exist in the design should create that type in the class diagram via a "create in class diagram opt-out check box" [that is grayed out when class already exists]
 
         //populate stringlist of variables in current context (0 = testUseCase->SlotWithCurrentContext->Arguments , 1 = testUseCase->SlotWithCurrentContext->ParentClass->allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString(); TODOreq: de-serialization doesn't set up parent class again =o, but can/must , 2 = testUseCase->SlotWithCurrentContext->allMyAvailableLocalVariablesGivenCurrentPositionInOrderedListOfStatements_AsString()) -- TODOreq: only show compatible types (implicit conversion makes this a bitch, so fuck it for now. errors will only be seen at compile time lololol)
         //present stringlist of variables to user in modal widget
@@ -146,7 +148,11 @@ void DesignEqualsImplementation::newEmptyProject()
     QString nameOfVariableWithinCurrentContextsScopeToUseForBarSlotCunt = "cunt"; //same name = irrelevant coincidence. see pseudo-code directly above to understand how this string was magically populated
     QList<QString> barSlotArgs;
     barSlotArgs << nameOfVariableWithinCurrentContextsScopeToUseForBarSlotCunt; //etc
-    testUseCase->addEvent(barSlot, barSlotArgs); //TODOreq: indication by user that fooSlot's "cunt" arg is used as barSlot "cunt" (that the args have the same name is coincidence). Somehow we need a list of variables accessible at the current context (members (including private) and current-slot-arguments are the main ones), and to specify one when addEvent(slot) is called. I'm not entirely sure said list needs to be available to "the programmer" after hitting a "." or typing a "->", but the use case is different: the user clicks-n-drags an arrow from Foo (fooSlot) to Bar (barSlot), and then AFTERWARDS they are presented a "slot argument population" wizard that has at it's disposal (even if just in "string" form (we are code GENERATOR, so strings are perfecto [even if that means the design is hacked])) all the variables right where the barSlot invocation was placed inside fooSlot
+    //The name of Bar within Foo ("m_Bar") needs to be noted somewhere, but it can't be within Bar itself since other pointers to the same object owned by other classes might use a different name for it. Basically I need to refactor so that the "use case event" is a slot invocation on a PrivateMember of Foo, not just a "slot that exists in a class" (but I do still want to be able to add a "slot that exists in a class", because that's what the use case entry point will always be. confusing refactor)
+    SlotInvocationContextVariables barSlotInvocationContextVariables;
+    barSlotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = userChosenVariableNameForFoosInstanceOfBar; //TODOreq: UI selects (or JIT adds/creates) this when/right-after arrow is drawn from Foo
+    barSlotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments = barSlotArgs;
+    testUseCase->addEvent(barSlot, barSlotInvocationContextVariables); //TODOreq: indication by user that fooSlot's "cunt" arg is used as barSlot "cunt" (that the args have the same name is coincidence). Somehow we need a list of variables accessible at the current context (members (including private) and current-slot-arguments are the main ones), and to specify one when addEvent(slot) is called. I'm not entirely sure said list needs to be available to "the programmer" after hitting a "." or typing a "->", but the use case is different: the user clicks-n-drags an arrow from Foo (fooSlot) to Bar (barSlot), and then AFTERWARDS they are presented a "slot argument population" wizard that has at it's disposal (even if just in "string" form (we are code GENERATOR, so strings are perfecto [even if that means the design is hacked])) all the variables right where the barSlot invocation was placed inside fooSlot
     //^It really boils down to a slot to be able to simply cough up it's own arguments, in addition to the members of the class it belongs to. There is also of course local context (1 or N lines above barSlot invocation), which will probably prove to be a bitch (*especially* if the lines above are hand-coded C++ (not even sure I'm allowing that so..)). As long as the local variables aren't hand-coded, keeping a list of local variables won't be that hard.
     //tl;dr:
     //0) current slot arguments

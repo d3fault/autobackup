@@ -2,11 +2,14 @@
 #define DESIGNEQUALSIMPLEMENTATIONCLASS_H
 
 #include <QObject>
+#include <QPair>
 
 #include "designequalsimplementationclassproperty.h"
 #include "designequalsimplementationclassprivatemethod.h"
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclasssignal.h"
+
+typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> PrivateMemberType;
 
 class DesignEqualsImplementationClass : public QObject
 {
@@ -17,9 +20,9 @@ public:
     ~DesignEqualsImplementationClass();
 
     //TODOoptional: private + getter/setter blah
-    QString Name;
+    QString ClassName;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    QList<DesignEqualsImplementationClass*> PrivateMembers; //TODOreq: POD
+    QList<PrivateMemberType> PrivateMembers; //TODOreq: POD
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSlot*> Slots;
     QList<DesignEqualsImplementationClassSignal*> Signals;

@@ -5,6 +5,8 @@
 #include <QTextStream>
 #include <QDataStream>
 
+#include "designequalsimplementationcommon.h"
+
 #define DesignEqualsImplementationProject_SERIALIZATION_VERSION 1
 
 #define DesignEqualsImplementationProject_QDS(direction, qds, project) \
@@ -62,7 +64,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(const QString 
     {
         if(!designEqualsImplementationClass->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
         {
-            emit e("failed to generate source for: " + designEqualsImplementationClass->Name);
+            emit e("failed to generate source for: " + designEqualsImplementationClass->ClassName);
             return false;
         }
     }
@@ -134,7 +136,7 @@ bool DesignEqualsImplementationProject::tempGenerateHardcodedUiFiles(const QStri
     cliHTextStream << "public:" << endl;
     cliHTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << cliClassName << "(QObject *parent = 0);" << endl;
     cliHTextStream << "private:" << endl;
-    cliHTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "QTextStream m_StdOut;";
+    cliHTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "QTextStream m_StdOut;" << endl;
 
     //TODOreq: generic cli class
     //private slots:
@@ -154,7 +156,7 @@ bool DesignEqualsImplementationProject::tempGenerateHardcodedUiFiles(const QStri
     }
     QTextStream cliCppTextStream(&cliCppFile);
 
-#if 0 //TODOreq: oops, seems *cli.h/cpp aren't as static as I thought. I think when generating I need to generate the least dependent class first
+#if 0 //TODOreq: oops, seems *cli.h/cpp aren't as static as I thought. I think when generating I need to generate the least dependent class first. Should I do dependency resolution (Bar depends on (is a child of) Foo, but Foo depends on nobody, therefore Foo goes in this Cli class), or should I just choose whatever class+slot is used as the [default] entry point (which, at the time of writing, is simply the first added use case event)? The latter is obviously easier, BUT I think I'm going to need to do some kind of dependency resolution anyways to determine the optimal (read: "latest as possible" (but not doing "jit instantiation" for now)) position for Bar to be instantiated (Foo's constructor in this case, BUT the app would work the exact fucking same if Foo/Bar were neighbors (and in that case, Bar would need to be in this Cli class's constructor)
 #include "simpleasynclibraryslotinvokeandsignalresponsecli.h"
 
 #include <QCoreApplication>

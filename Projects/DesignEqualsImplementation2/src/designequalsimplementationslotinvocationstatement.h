@@ -6,17 +6,19 @@
 #include <QString>
 #include <QList>
 
+#include "slotinvocationcontextvariables.h"
+
 class DesignEqualsImplementationClassSlot;
 
 class DesignEqualsImplementationSlotInvocationStatement : public IDesignEqualsImplementationStatement
 {
 public:
-    explicit DesignEqualsImplementationSlotInvocationStatement(DesignEqualsImplementationClassSlot *slotToInvoke, const QList<QString> &orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments = QList<QString>());
+    explicit DesignEqualsImplementationSlotInvocationStatement(DesignEqualsImplementationClassSlot *slotToInvoke, const SlotInvocationContextVariables &slotInvocationContextVariables);
     virtual ~DesignEqualsImplementationSlotInvocationStatement();
     virtual QString toRawCppWithoutEndingSemicolon();
 private:
     DesignEqualsImplementationClassSlot *m_SlotToInvoke;
-    QList<QString> m_OrderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments;
+    SlotInvocationContextVariables m_SlotInvocationContextVariables;
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONSLOTINVOCATIONSTATEMENT_H

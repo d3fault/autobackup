@@ -7,6 +7,7 @@
 
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclasssignal.h"
+#include "slotinvocationcontextvariables.h"
 
 class DesignEqualsImplementationUseCase : public QObject
 {
@@ -28,14 +29,14 @@ public:
     DesignEqualsImplementationClassSlot *SlotWithCurrentContext;
     DesignEqualsImplementationClassSignal *ExitSignal;
 
-    void addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const QList<QString> &orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments = QList<QString>());
+    void addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SlotInvocationContextVariables &slotInvocationContextVariables = SlotInvocationContextVariables());
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
     void setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
     bool generateSourceCode(const QString &destinationDirectoryPath);
     ~DesignEqualsImplementationUseCase();
 private:
-    void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const QList<QString> &SLOT_ONLY_orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments = QList<QString>());
+    void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SlotInvocationContextVariables &SLOT_ONLY_slotInvocationContextVariables = SlotInvocationContextVariables());
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);
@@ -52,7 +53,7 @@ public:
         , m_DesignEqualsImplementationClassSignal(designEqualsImplementationClassSignal)
         , m_DesignEqualsImplementationClassSlot(designEqualsImplementationClassSlot)
     { }
-    ~SignalSlotCombinedEventHolder() { delete m_DesignEqualsImplementationClassSignal; delete m_DesignEqualsImplementationClassSlot; }
+    ~SignalSlotCombinedEventHolder() { /*these two combined children are deleted by class diagram perspective: delete m_DesignEqualsImplementationClassSignal; delete m_DesignEqualsImplementationClassSlot;*/ }
     DesignEqualsImplementationClassSignal *m_DesignEqualsImplementationClassSignal;
     DesignEqualsImplementationClassSlot *m_DesignEqualsImplementationClassSlot;
 };

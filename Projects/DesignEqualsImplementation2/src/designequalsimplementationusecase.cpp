@@ -20,9 +20,9 @@ DesignEqualsImplementationUseCase::DesignEqualsImplementationUseCase(QObject *pa
     , ExitSignal(0)
 { }
 //Overload: Use Case entry point and also normal slot invocation from within another slot
-void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const QList<QString> &orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments)
+void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SlotInvocationContextVariables &slotInvocationContextVariables)
 {
-    addEventPrivate(UseCaseSlotEventType, designEqualsImplementationClassSlot, orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments);
+    addEventPrivate(UseCaseSlotEventType, designEqualsImplementationClassSlot, slotInvocationContextVariables);
 }
 //Overload: Signals with no listeners in this use case
 void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal)
@@ -89,12 +89,16 @@ DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
     //TODOreq: probably don't need to delete here AND in class diagram perspective, but probably doesn't hurt also
     Q_FOREACH(EventAndTypeTypedef eventAndType, OrderedUseCaseEvents)
     {
-        delete eventAndType.second;
+        //delete eventAndType.second;
+        if(eventAndType.first == UseCaseSignalSlotEventType) //all other kinds are deleted via class diagram perspective
+        {
+            delete eventAndType.second;
+        }
     }
-    if(ExitSignal)
-        delete ExitSignal;
+    /*if(ExitSignal)
+        delete ExitSignal;*/
 }
-void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const QList<QString> &SLOT_ONLY_orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments)
+void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SlotInvocationContextVariables &SLOT_ONLY_slotInvocationContextVariables)
 {
     bool firstUseCaseEventAdded = OrderedUseCaseEvents.isEmpty();
 
@@ -125,7 +129,7 @@ void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementati
         {
             //generate slot context/empty-impl from current use case event, then in current context do nameless-signal or invokeMethod to the slot/context/empty-impl, then set that slot/context/empty-impl as current context
 
-            SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, SLOT_ONLY_orderedListOfNamesOfVariablesWithinScopeWhenSlotInvocationOccurred_ToUseForSlotInvocationArguments));
+            SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, SLOT_ONLY_slotInvocationContextVariables));
             SlotWithCurrentContext = slotUseCaseEvent;
         }
     }

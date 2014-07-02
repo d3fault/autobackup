@@ -11,8 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = DesignEqualsImplementation2
 TEMPLATE = app
 
-DEFINES += DESIGNEQUALSIMPLEMENTATION_TAB "TabMotherfucker" #or 5 spaces if you're a faggot
-
 SOURCES += main.cpp\
         designequalsimplementationmainwindow.cpp \
     designequalsimplementation.cpp \
@@ -40,6 +38,8 @@ HEADERS  += designequalsimplementationmainwindow.h \
     designequalsimplementationusecase.h \
     idesignequalsimplementationstatement.h \
     designequalsimplementationslotinvocationstatement.h \
-    idesignequalsimplementationhaveorderedlistofstatements.h
+    idesignequalsimplementationhaveorderedlistofstatements.h \
+    designequalsimplementationcommon.h \
+    slotinvocationcontextvariables.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

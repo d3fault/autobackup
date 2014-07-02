@@ -4,6 +4,8 @@
 #include <QDataStream>
 #include <QTextStream>
 
+#include "designequalsimplementationcommon.h"
+
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
 qds direction designEqualsImplementationClass.Properties; \
 qds direction designEqualsImplementationClass.PrivateMembers; \
@@ -17,7 +19,7 @@ DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent
 { }
 bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinationDirectoryPath)
 {
-    const QString &myNameToLower = Name.toLower();
+    const QString &myNameToLower = ClassName.toLower();
     //Header
     QString headerFilenameOnly = myNameToLower + ".h";
     QString headerFilePath = destinationDirectoryPath + headerFilenameOnly;
@@ -29,17 +31,17 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     }
     QTextStream headerFileTextStream(&headerFile);
     //Header's header (wat) + constructor
-    QString myNameHeaderGuard = Name.toUpper() + "_H";
+    QString myNameHeaderGuard = ClassName.toUpper() + "_H";
     headerFileTextStream    << "#ifndef " << myNameHeaderGuard << endl
                             << "#define " << myNameHeaderGuard << endl
                             << endl
                             << "#include <QObject>" << endl //TODOoptional: non-QObject classes? hmm nah because signals/slots based
                             << endl
-                            << "class " << Name << " : public QObject" << endl
+                            << "class " << ClassName << " : public QObject" << endl
                             << "{" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_OBJECT" << endl
                             << "public:" << endl
-                            << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << Name << "(QObject *parent = 0);" << endl;
+                            << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << ClassName << "(QObject *parent = 0);" << endl;
                             //<< DESIGNEQUALSIMPLEMENTATION_TAB << "~" << Name << "();" << endl;
 
     //Source
@@ -54,7 +56,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     //Source's header+constructor (the top bits, not the ".h" counter-part)
     sourceFileTextStream    << "#include \"" << headerFilenameOnly << "\"" << endl
                             << endl
-                            << Name << "::" << Name << "(QObject *parent)" << endl
+                            << ClassName << "::" << ClassName << "(QObject *parent)" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl
                             << "{ }" << endl;
 
@@ -81,7 +83,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
         //Declare slot
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlotSignatureWithoutReturnTypeOrEndingSemicolon << ";" << endl;
         //Define slot
-        sourceFileTextStream    << "void " << Name << "::" << currentSlotSignatureWithoutReturnTypeOrEndingSemicolon << endl
+        sourceFileTextStream    << "void " << ClassName << "::" << currentSlotSignatureWithoutReturnTypeOrEndingSemicolon << endl
                                 << "{" << endl;
         Q_FOREACH(IDesignEqualsImplementationStatement *currentSlotCurrentStatement, currentSlot->OrderedListOfStatements)
         {
@@ -89,12 +91,20 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
         }
         sourceFileTextStream    << "}" << endl;
     }
+
+    //Header's footer
+    headerFileTextStream    << "};" << endl
+                            << endl
+                            << "#endif // " << myNameHeaderGuard << endl;
     return true;
 }
 DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
 {
     qDeleteAll(Properties);
-    qDeleteAll(PrivateMembers);
+    Q_FOREACH(PrivateMemberType currentMember, PrivateMembers)
+    {
+        delete currentMember.second;
+    }
     qDeleteAll(PrivateMethods);
     qDeleteAll(Slots);
     qDeleteAll(Signals);
@@ -104,11 +114,11 @@ QList<QString> DesignEqualsImplementationClass::allMyAvailableMemberGettersWhenI
     //Properties and PrivateMembers
     QList<QString> ret;
 
-    //TODOreq: properties. i'm not too familiar with Q_PROPERTY, even though obviously i want to support it. see just below about refactor before proceeding
+    //TODOreq: properties. i'm not too familiar with Q_PROPERTY, even though obviously i want to support it. i'm not sure, but i think i want the "read" part of the property here...
 
-    Q_FOREACH(DesignEqualsImplementationClass *currentMember, PrivateMembers)
+    Q_FOREACH(PrivateMemberType currentMember, PrivateMembers)
     {
-        ret.append("m_" + currentMember->Name); //TODOreq: un-hack the shit out of this, requires refactoring
+        ret.append(currentMember.first);
     }
     return ret;
 }
