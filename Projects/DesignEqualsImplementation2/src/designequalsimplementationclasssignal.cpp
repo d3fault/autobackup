@@ -9,11 +9,10 @@ return qds;
 
 DesignEqualsImplementationClassSignal::DesignEqualsImplementationClassSignal(QObject *parent)
     : QObject(parent)
+    , IDesignEqualsImplementationMethod()
 { }
 DesignEqualsImplementationClassSignal::~DesignEqualsImplementationClassSignal()
-{
-    qDeleteAll(Arguments);
-}
+{ }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal &signal)
 {
     DesignEqualsImplementationClassSignal_QDS(out, <<, signal)

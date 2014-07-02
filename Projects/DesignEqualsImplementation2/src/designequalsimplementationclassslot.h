@@ -2,6 +2,7 @@
 #define DESIGNEQUALSIMPLEMENTATIONCLASSSLOT_H
 
 #include "idesignequalsimplementationhaveorderedlistofstatements.h"
+#include "idesignequalsimplementationmethod.h"
 
 #include <QObject>
 #include <QList>
@@ -10,7 +11,7 @@
 
 class DesignEqualsImplementationClass;
 
-class DesignEqualsImplementationClassSlot : public QObject, public IDesignEqualsImplementationHaveOrderedListOfStatements
+class DesignEqualsImplementationClassSlot : public QObject, public IDesignEqualsImplementationHaveOrderedListOfStatements, public IDesignEqualsImplementationMethod
 {
     Q_OBJECT
 public:
@@ -18,11 +19,7 @@ public:
     virtual ~DesignEqualsImplementationClassSlot();
 
     //TODOoptional: private + getter/setter blah
-    QString Name;
-    QList<DesignEqualsImplementationClassMethodArgument*> Arguments;
-
     //TODOoptional: return type
-
     DesignEqualsImplementationClass *ParentClass; //TODOreq: [de-]serialization
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot &slot);

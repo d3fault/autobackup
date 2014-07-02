@@ -1,21 +1,19 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASSSIGNAL_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASSSIGNAL_H
 
+#include "idesignequalsimplementationmethod.h"
+
 #include <QObject>
 #include <QList>
 
 #include "designequalsimplementationclassmethodargument.h"
 
-class DesignEqualsImplementationClassSignal : public QObject
+class DesignEqualsImplementationClassSignal : public QObject, public IDesignEqualsImplementationMethod
 {
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassSignal(QObject *parent = 0);
-    ~DesignEqualsImplementationClassSignal();
-
-    //TODOoptional: private + getter/setter blah
-    QString Name;
-    QList<DesignEqualsImplementationClassMethodArgument*> Arguments;
+    virtual ~DesignEqualsImplementationClassSignal();
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal &signal);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal &signal);

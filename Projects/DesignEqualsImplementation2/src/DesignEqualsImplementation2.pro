@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     designequalsimplementationclassproperty.cpp \
     designequalsimplementationclasssignal.cpp \
     designequalsimplementationusecase.cpp \
-    designequalsimplementationslotinvocationstatement.cpp
+    designequalsimplementationslotinvocationstatement.cpp \
+    idesignequalsimplementationmethod.cpp
 
 HEADERS  += designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -40,6 +41,7 @@ HEADERS  += designequalsimplementationmainwindow.h \
     designequalsimplementationslotinvocationstatement.h \
     idesignequalsimplementationhaveorderedlistofstatements.h \
     designequalsimplementationcommon.h \
-    slotinvocationcontextvariables.h
+    slotinvocationcontextvariables.h \
+    idesignequalsimplementationmethod.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

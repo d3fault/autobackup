@@ -132,6 +132,7 @@ void DesignEqualsImplementation::newEmptyProject()
 
     //diagnosticSignalX (no listeners)
     DesignEqualsImplementationClassSignal *diagnosticSignalX = new DesignEqualsImplementationClassSignal(fooClass);
+    diagnosticSignalX->Name = "diagnosticSignalX";
     fooClass->Signals.append(diagnosticSignalX);
 
     testUseCase->addEvent(diagnosticSignalX);

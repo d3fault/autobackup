@@ -102,29 +102,24 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     }
     sourceFileTextStream    << "{ }" << endl;
 
+    //Signals
+    if(!Signals.isEmpty())
+        headerFileTextStream << "signals:" << endl;
+    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, Signals)
+    {
+        //void fooSignal();
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSignal->methodSignatureWithoutReturnType() << ";" << endl;
+    }
+
     //Slots
-    bool firstSlot = true;
+    if(!Slots.isEmpty())
+        headerFileTextStream << "public slots:" << endl;
     Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, Slots)
     {
-        if(firstSlot)
-        {
-            headerFileTextStream << "public slots:" << endl;
-            firstSlot = false;
-        }
-        QString currentSlotArgString;
-        bool firstSlotArg = true;
-        Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentSlotCurrentArgument, currentSlot->Arguments)
-        {
-            if(!firstSlotArg)
-                currentSlotArgString.append(", ");
-            currentSlotArgString.append(currentSlotCurrentArgument->Type + " " + currentSlotCurrentArgument->Name); //TODOoptional: if argType ends with *, &, etc, then don't put that space in between type and name (just visual shit, but i r perfectionist)
-            firstSlotArg = false;
-        }
-        QString currentSlotSignatureWithoutReturnTypeOrEndingSemicolon = currentSlot->Name + "(" + currentSlotArgString + ")";
         //Declare slot
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlotSignatureWithoutReturnTypeOrEndingSemicolon << ";" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlot->methodSignatureWithoutReturnType() << ";" << endl;
         //Define slot
-        sourceFileTextStream    << "void " << ClassName << "::" << currentSlotSignatureWithoutReturnTypeOrEndingSemicolon << endl
+        sourceFileTextStream    << "void " << ClassName << "::" << currentSlot->methodSignatureWithoutReturnType() << endl
                                 << "{" << endl;
         Q_FOREACH(IDesignEqualsImplementationStatement *currentSlotCurrentStatement, currentSlot->OrderedListOfStatements)
         {

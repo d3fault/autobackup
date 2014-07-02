@@ -10,11 +10,10 @@ return qds;
 DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(QObject *parent)
     : QObject(parent)
     , IDesignEqualsImplementationHaveOrderedListOfStatements()
+    , IDesignEqualsImplementationMethod()
 { }
 DesignEqualsImplementationClassSlot::~DesignEqualsImplementationClassSlot()
-{
-    qDeleteAll(Arguments);
-}
+{ }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot &slot)
 {
     DesignEqualsImplementationClassSlot_QDS(out, <<, slot)
