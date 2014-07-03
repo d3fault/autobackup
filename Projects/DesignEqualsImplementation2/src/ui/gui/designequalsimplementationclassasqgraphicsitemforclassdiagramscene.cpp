@@ -69,7 +69,8 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     roundedRect.setHeight(roundedRect.height()+(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
     painter->drawRoundedRect(roundedRect, 5, 5);
 
-    //Draw lines in between each line-of-text
+
+    //Calculate line spacing in between each line-of-text
     qreal vertialSpaceBetweenEachLineDrawn = resizeBoundingRectTo.height() / static_cast<qreal>(numLinesOfText);
     QPointF leftPointOfLine;
     leftPointOfLine.setX(resizeBoundingRectTo.left()-(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT-1));
@@ -79,18 +80,47 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     rightPointOfLine.setY(resizeBoundingRectTo.top()+vertialSpaceBetweenEachLineDrawn);
     bool drawingFirstLine = true; //Line between class name and rest should be same as border width
     --numLinesOfText; //This might look like an off by one, but I decided not to draw the very last/bottom line because it looks retarded
+
+    //Only draw lines between class sub-types (signals/slots/private-methods/etc)
+    QList<int> indexesInto_i_inForLoopToActuallyDrawLinesFor; //we still need to know the position of all lines for proper spacing
+    //int runningIforMarkingLinesToDrawSynchronizedWithLinesDeterminedForSpacing = 0;
+    //indexesInto_i_inForLoopToActuallyDrawLinesFor.append(runningIforMarkingLinesToDrawSynchronizedWithLinesDeterminedForSpacing++);
+    indexesInto_i_inForLoopToActuallyDrawLinesFor.append(0); //first line after class name
+    if(!m_DesignEqualsImplementationClass->Properties.isEmpty())
+    {
+        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->Properties.size());
+    }
+    if(!m_DesignEqualsImplementationClass->HasA_PrivateMemberClasses.isEmpty())
+    {
+        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->HasA_PrivateMemberClasses.size());
+    }
+    if(!m_DesignEqualsImplementationClass->PrivateMethods.isEmpty())
+    {
+        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->PrivateMethods.size());
+    }
+    if(!m_DesignEqualsImplementationClass->Signals.isEmpty())
+    {
+        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->Signals.size());
+    }
+    if(!m_DesignEqualsImplementationClass->Slots.isEmpty())
+    {
+        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->Slots.size());
+    }
+
+
     for(int i = 0; i < numLinesOfText; ++i)
     {
-        painter->drawLine(leftPointOfLine, rightPointOfLine);
+        if(indexesInto_i_inForLoopToActuallyDrawLinesFor.contains(i))
+            painter->drawLine(leftPointOfLine, rightPointOfLine);
         leftPointOfLine.setY(leftPointOfLine.y()+vertialSpaceBetweenEachLineDrawn);
         rightPointOfLine.setY(leftPointOfLine.y()); //they are even
-
         if(drawingFirstLine)
         {
             painter->setPen(m_LinesInBetweenLinesOfTextPen);;
             drawingFirstLine = false;
         }
     }
+
 
     m_BoundingRect = resizeBoundingRectTo;
     painter->restore();
