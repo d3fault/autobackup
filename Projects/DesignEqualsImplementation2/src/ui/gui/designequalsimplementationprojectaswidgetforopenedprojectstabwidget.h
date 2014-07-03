@@ -1,13 +1,14 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONPROJECTASWIDGETFOROPENEDPROJECTSTABWIDGET_H
 #define DESIGNEQUALSIMPLEMENTATIONPROJECTASWIDGETFOROPENEDPROJECTSTABWIDGET_H
 
-#include <QTabWidget>
+#include <QWidget>
 
+class QTabWidget;
 
 class DesignEqualsImplementationProject;
 class DesignEqualsImplementationUseCase;
 
-class DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget : public QTabWidget
+class DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget : public QWidget
 {
     Q_OBJECT
 public:

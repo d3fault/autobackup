@@ -15,6 +15,9 @@
 #include "designequalsimplementationclassmethodargument.h"
 #include "designequalsimplementationusecase.h"
 #endif
+#ifdef DesignEqualsImplementation_TEST_GUI_MODE
+
+#endif
 
 QMutex DesignEqualsImplementation::BackendMutex;
 
@@ -223,6 +226,38 @@ void DesignEqualsImplementation::newProject()
     connect(this, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     testProject->generateSourceCode(DesignEqualsImplementationProject::Library, "/run/shm/designEqualsImplementation-GeneratedAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()));
 
+    emit projectOpened(testProject);
+#elif defined DesignEqualsImplementation_TEST_GUI_MODE
+    DesignEqualsImplementationProject *testProject = new DesignEqualsImplementationProject(this);
+    testProject->Name = "SimpleAsyncSlotInvokeAndSignalResponseProject";
+
+    //Foo
+    DesignEqualsImplementationClass *fooClass = new DesignEqualsImplementationClass(testProject);
+    fooClass->ClassName = "Foo";
+    DesignEqualsImplementationClassSlot *fooSlot = new DesignEqualsImplementationClassSlot(fooClass);
+    fooSlot->Name = "fooSlot";
+    DesignEqualsImplementationClassMethodArgument *fooSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(fooSlot);
+    fooSlotCuntArgument->Name = "cunt";
+    fooSlotCuntArgument->Type = "const QString &";
+    fooSlot->Arguments.append(fooSlotCuntArgument);
+    fooClass->Slots.append(fooSlot);
+    fooSlot->ParentClass = fooClass;
+
+    DesignEqualsImplementationClassSignal *diagnosticSignalX = new DesignEqualsImplementationClassSignal(fooClass);
+    diagnosticSignalX->Name = "diagnosticSignalX";
+    fooClass->Signals.append(diagnosticSignalX);
+
+    //fooSignal
+    DesignEqualsImplementationClassSignal *fooSignal = new DesignEqualsImplementationClassSignal(fooClass);
+    fooSignal->Name = "fooSignal";
+    DesignEqualsImplementationClassMethodArgument *fooSignalSuccessArgument = new DesignEqualsImplementationClassMethodArgument(fooSignal);
+    fooSignalSuccessArgument->Name = "success";
+    fooSignalSuccessArgument->Type = "bool";
+    fooSignal->Arguments.append(fooSignalSuccessArgument);
+    fooClass->Signals.append(fooSignal);
+    testProject->addClass(fooClass);
+
+    m_CurrentlyOpenedDesignEqualsImplementationProjects.append(testProject);
     emit projectOpened(testProject);
 #else
     DesignEqualsImplementationProject *newProject = new DesignEqualsImplementationProject(this);

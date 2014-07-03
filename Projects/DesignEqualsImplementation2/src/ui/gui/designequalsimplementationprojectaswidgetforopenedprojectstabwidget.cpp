@@ -1,5 +1,7 @@
 #include "designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h"
 
+#include <QVBoxLayout>
+#include <QTabWidget>
 #include <QMutexLocker>
 
 #include "../../designequalsimplementation.h"
@@ -9,10 +11,12 @@
 
 //This name might seem overly verbose, but I recall vividly in designEquals1 my confusion when naming it "ProjectTabWidget" (the tabwidget, or the widget in the tab!?!?... dun dun dun)... and now to add to the confusioin, it "isA" TabWidget as well as a widget used for a tab!!! rofl
 DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(DesignEqualsImplementationProject *designEqualsImplementationProject, QWidget *parent)
-    : QTabWidget(parent)
-    , m_ClassDiagramAndUseCasesTabWidget(new QTabWidget(this))
+    : QWidget(parent)
+    , m_ClassDiagramAndUseCasesTabWidget(new QTabWidget())
 {
-    DesignEqualsImplementationClassDiagramAsWidgetForTab *designEqualsImplementationClassDiagramAsWidgetForTab = new DesignEqualsImplementationClassDiagramAsWidgetForTab(designEqualsImplementationProject, m_ClassDiagramAndUseCasesTabWidget);
+    QVBoxLayout *myLayout = new QVBoxLayout();
+
+    DesignEqualsImplementationClassDiagramAsWidgetForTab *designEqualsImplementationClassDiagramAsWidgetForTab = new DesignEqualsImplementationClassDiagramAsWidgetForTab(designEqualsImplementationProject);
     m_ClassDiagramAndUseCasesTabWidget->addTab(designEqualsImplementationClassDiagramAsWidgetForTab, tr("Class Diagram")); //TODOreq: class diagram tab uncloseable
 
     //connect(designEqualsImplementationProject, SIGNAL(classAdded)); //JUST REALIZED/UNDERSTOOD I NEED IMPLICIT SHARING TO BE THREAD SAFE BETTAR MUAHAHAHA, otherwise this classAdded signal here would have to had converted all my *class, *slot, *signal, *args, etc types (and there are LISTS of them to tell the GUI about!) to something the GUI would understand (QStrings, LISTS of QStrings, hahahahaha)
@@ -26,11 +30,14 @@ DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::DesignEqual
     QMetaObject::invokeMethod(designEqualsImplementationProject, "emitAllClassesAndUseCasesInProject"); //When a class (both pointer and "Name" is received via signal, the same thing is done for the Signals/Slots/Properties etc... so on and so forth until the Class Diagram is populated)
 
     //Actually I'm wrong, I _CAN_ (should) use reactor pattern with implicit sharing, but for now I'm going to emulate it hackily with mutex (lazy)
+
+    myLayout->addWidget(m_ClassDiagramAndUseCasesTabWidget, 1);
+    setLayout(myLayout);
 }
-void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::handleUseCaseAdded(DesignEqualsImplementationUseCase *useCase)
+void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::handleUseCaseAdded(DesignEqualsImplementationUseCase *useCase) //TODOreq: use case OPENED instead? or i guess right here could just add it to our list of use cases
 {
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-    DesignEqualsImplementationUseCaseAsWidgetForTab *designEqualsImplementationUseCaseAsWidgetForTab = new DesignEqualsImplementationUseCaseAsWidgetForTab(useCase, m_ClassDiagramAndUseCasesTabWidget);
+    DesignEqualsImplementationUseCaseAsWidgetForTab *designEqualsImplementationUseCaseAsWidgetForTab = new DesignEqualsImplementationUseCaseAsWidgetForTab(useCase);
     m_ClassDiagramAndUseCasesTabWidget->addTab(designEqualsImplementationUseCaseAsWidgetForTab, useCase->Name);
 
     connect(useCase, SIGNAL(eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)), designEqualsImplementationUseCaseAsWidgetForTab, SLOT(handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)));

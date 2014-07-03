@@ -23,7 +23,7 @@ void DesignEqualsImplementationGui::handleDesignEqualsImplementationReadyForConn
 {
     DesignEqualsImplementation *designEqualsImplementation = static_cast<DesignEqualsImplementation*>(designEqualsImplementationAsQObject);
 
-    m_Gui->show();
+    m_Gui->showMaximized(); //TODOreq: show() keeps hiding my title bar above the screen, no clue why
 
     connect(m_Gui, SIGNAL(newProjectRequested()), designEqualsImplementation, SLOT(newProject()));
     connect(m_Gui, SIGNAL(openExistingProjectRequested(QString)), designEqualsImplementation, SLOT(openExistingProject(QString)));

@@ -29,8 +29,9 @@ DesignEqualsImplementationMainWindow::DesignEqualsImplementationMainWindow(QWidg
     : QMainWindow(parent)
 {
     setWindowTitle(DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME);
+    createActions();
     createMenu(); //File
-    createToolbar(); //Move/"Arrow" mode
+    createToolbars(); //Move/"Arrow" mode
     createDockWidgets(); //TODOreq: UML drag-drop objects, list of drag-drop objects when in use case view, list of use cases for opening their tab
     setCentralWidget(m_OpenProjectsTabWidget = new QTabWidget());
 }
@@ -60,12 +61,14 @@ void DesignEqualsImplementationMainWindow::createMenu()
     fileNew->addAction(m_NewUseCaseAction);
     fileMenu->addAction(m_OpenProjectAction);
 }
-void DesignEqualsImplementationMainWindow::createToolbar()
+void DesignEqualsImplementationMainWindow::createToolbars()
 {
     QToolBar *fileNewMenuEquivalentToolbar = addToolBar(DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME " Project Operations Toolbar");
     fileNewMenuEquivalentToolbar->addAction(m_NewProjectAction);
     fileNewMenuEquivalentToolbar->addAction(m_OpenProjectAction);
     fileNewMenuEquivalentToolbar->addAction(m_NewUseCaseAction);
+
+    addToolBarBreak();
 
     QToolBar *mainToolbar = addToolBar(DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME " Main Toolbar");
     mainToolbar->addAction(m_MoveMousePointerDefaultAction);

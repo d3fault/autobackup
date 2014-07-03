@@ -12,6 +12,9 @@ public:
     explicit DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *parent = 0, Qt::WindowFlags wFlags = 0);
     virtual QRectF boundingRect() const;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+private:
+    DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
+    QRectF m_BoundingRect;
 public slots:
     void handlePropertyAdded(DesignEqualsImplementationClassProperty*);
     void handleHasAPrivateMemberClassAdded(HasA_PrivateMemberClasses_ListEntryType);

@@ -1,5 +1,6 @@
 #include "designequalsimplementationclassdiagramaswidgetfortab.h"
 
+#include <QVBoxLayout>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMutexLocker>
@@ -12,7 +13,9 @@ DesignEqualsImplementationClassDiagramAsWidgetForTab::DesignEqualsImplementation
     : QWidget(parent)
     , m_ClassDiagramScene(new QGraphicsScene(this))
 {
-    new QGraphicsView(m_ClassDiagramScene, this); //TODOoptional: gl widget opt in at compile time, but if it ends up looking like shit then fuck it (perhaps a run-time switch that is only available if open gl was available at compile time)
+    QVBoxLayout *myLayout = new QVBoxLayout();
+    myLayout->addWidget(new QGraphicsView(m_ClassDiagramScene), 1); //TODOoptional: gl widget opt in at compile time, but if it ends up looking like shit then fuck it (perhaps a run-time switch that is only available if open gl was available at compile time)
+    setLayout(myLayout);
 }
 void DesignEqualsImplementationClassDiagramAsWidgetForTab::handleClassAdded(DesignEqualsImplementationClass *classAdded)
 {

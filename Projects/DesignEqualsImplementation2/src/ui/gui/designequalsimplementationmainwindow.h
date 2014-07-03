@@ -28,7 +28,7 @@ private:
 
     void createActions();
     void createMenu();
-    void createToolbar();
+    void createToolbars();
     void createDockWidgets();
 signals:
     void newProjectRequested();

@@ -42,7 +42,6 @@ QList<DesignEqualsImplementationClass *> DesignEqualsImplementationProject::clas
 }
 bool DesignEqualsImplementationProject::savePrivate(const QString &projectFilePath)
 {
-
     return true;
 }
 //TODOreq: atomic project source generation. if it fails, no files are written/modified
@@ -200,8 +199,14 @@ return true;
 void DesignEqualsImplementationProject::emitAllClassesAndUseCasesInProject()
 {
     //TODOreq: the signals will be emitted twice when LOADING a file (once when each individual deserialized 'thing' is added, and once again now). i'm not sure if 'some' of the later ones in the first batch might in fact be received, or if all of the first batch are definitely discarded (ui not listening yet)
-    void useCaseAdded(DesignEqualsImplementationUseCase*);
-    void classAdded(DesignEqualsImplementationClass*);
+    Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, UseCases)
+    {
+        emit useCaseAdded(currentUseCase);
+    }
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, classes())
+    {
+        emit classAdded(currentClass);
+    }
 }
 void DesignEqualsImplementationProject::save(const QString &projectFilePath)
 {
