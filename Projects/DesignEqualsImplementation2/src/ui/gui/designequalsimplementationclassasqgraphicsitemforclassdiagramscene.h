@@ -2,6 +2,7 @@
 #define DESIGNEQUALSIMPLEMENTATIONCLASSASQGRAPHICSITEMFORCLASSDIAGRAMSCENE_H
 
 #include <QGraphicsWidget>
+#include <QPen>
 
 #include "../../designequalsimplementationclass.h"
 
@@ -15,6 +16,8 @@ public:
 private:
     DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
     QRectF m_BoundingRect;
+    QPen m_ClassBorderPen;
+    QPen m_LinesInBetweenLinesOfTextPen;
 public slots:
     void handlePropertyAdded(DesignEqualsImplementationClassProperty*);
     void handleHasAPrivateMemberClassAdded(HasA_PrivateMemberClasses_ListEntryType);

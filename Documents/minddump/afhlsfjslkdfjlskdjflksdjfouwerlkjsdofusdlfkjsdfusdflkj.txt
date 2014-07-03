@@ -1,0 +1,1 @@
+Just switched to "rsync -av --update ./* /testVmDest/" from "scp -r ./* /testVmDest/". Quality of life significantly improved (recompiling takes a fraction of the time now because only modified files are recompiled)

@@ -1,9 +1,12 @@
 #include "designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h"
 
 #include <QPainter>
+#include <QPointF>
 #include <QMutexLocker>
 
 #include "../../designequalsimplementation.h"
+
+#define DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT 5
 
 DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *parent, Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags)
@@ -11,6 +14,8 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
 {
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
+    m_ClassBorderPen.setWidth(2);
+    m_LinesInBetweenLinesOfTextPen.setWidth(0);
     //setFlag(QGraphicsItem::ItemSendsGeometryChanges, true); //for redrawing arrows when the item moves
 }
 QRectF DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::boundingRect() const
@@ -20,52 +25,73 @@ QRectF DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::bound
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    //TODOreq: this scopedLock must be commented out for click drag to work AT ALL hahahaha... I need a better synchronization solution. Right now it's not thread safe (but eh idc for now)
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex); //rofl. of all places that should use a faster method (implicit sharing, or even manual synchronization :-P)
 
     painter->save();
     painter->setBrush(Qt::transparent); //would do white, but i have to draw text first in order to get my bounding rect starting point guh, so a white fill on the rounded rect afterwards covers the words! fml
-    QPen myPen;
-    myPen.setWidth(2);
-    painter->setPen(myPen);
+    painter->setPen(m_ClassBorderPen);
     Q_UNUSED(option)
     Q_UNUSED(widget)
     QString classContentsString(m_DesignEqualsImplementationClass->ClassName);
+    int numLinesOfText = 1;
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_DesignEqualsImplementationClass->Properties)
     {
         classContentsString.append("\no  " + currentProperty->Name);
+        ++numLinesOfText;
     }
     Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType currentHasA_PrivateMemberClasses_ListEntryType, m_DesignEqualsImplementationClass->HasA_PrivateMemberClasses)
     {
         classContentsString.append("\n-  " + currentHasA_PrivateMemberClasses_ListEntryType.second->ClassName + " *" + currentHasA_PrivateMemberClasses_ListEntryType.first);
+        ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_DesignEqualsImplementationClass->PrivateMethods)
     {
         classContentsString.append("\n-  " + currentPrivateMethod->Name); //TODOreq: methodSignature
+        ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, m_DesignEqualsImplementationClass->Signals)
     {
         classContentsString.append("\n)) " + currentSignal->methodSignatureWithoutReturnType());
+        ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_DesignEqualsImplementationClass->Slots)
     {
         classContentsString.append("\n+  " + currentSlot->methodSignatureWithoutReturnType());
+        ++numLinesOfText;
     }
     QRectF resizeBoundingRectTo;
     painter->drawText(boundingRect(), (Qt::AlignVCenter /*| Qt::TextDontClip*/), classContentsString, &resizeBoundingRectTo);
-    /*QRectF boundingRectWithCorrectHeightAfterOneLineOfTextDrawn = resizeBoundingRectTo;
-    boundingRectWithCorrectHeightAfterOneLineOfTextDrawn.setTop(resizeBoundingRectTo.height());
-    painter->drawText(boundingRectWithCorrectHeightAfterOneLineOfTextDrawn, 0, "you", resizeBoundingRectTo);*/
-    //resizeBoundingRectTo.setHeight(resizeBoundingRectTo.height()+(10));
-    //resizeBoundingRectTo.setWidth(resizeBoundingRectTo.height()+(10));
-    //resizeBoundingRectTo.setLeft(resizeBoundingRectTo.left()-10);
-    painter->drawRoundedRect(resizeBoundingRectTo, 5, 5);
-    //resizeBoundingRectTo.setHeight(resizeBoundingRectTo.height()+5);
-    //resizeBoundingRectTo.setWidth(resizeBoundingRectTo.width()+5);
-    //resizeBoundingRectTo.translate(-2.5, -2.5);
-    //if(boundingRect() != resizeBoundingRectTo)
-        //resize(resizeBoundingRectTo.size());
-    //setGeometry(resizeBoundingRectTo);
-    //QGraphicsWidget::paint(painter, option, widget);
+    QRectF roundedRect = resizeBoundingRectTo;
+    roundedRect.setLeft(roundedRect.left()-(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
+    roundedRect.setTop(roundedRect.top()-(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
+    roundedRect.setWidth(roundedRect.width()+(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
+    roundedRect.setHeight(roundedRect.height()+(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
+    painter->drawRoundedRect(roundedRect, 5, 5);
+
+    //Draw lines in between each line-of-text
+    qreal vertialSpaceBetweenEachLineDrawn = resizeBoundingRectTo.height() / static_cast<qreal>(numLinesOfText);
+    QPointF leftPointOfLine;
+    leftPointOfLine.setX(resizeBoundingRectTo.left()-(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT-1));
+    leftPointOfLine.setY(resizeBoundingRectTo.top()+vertialSpaceBetweenEachLineDrawn);
+    QPointF rightPointOfLine;
+    rightPointOfLine.setX(resizeBoundingRectTo.right()+(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT-1));
+    rightPointOfLine.setY(resizeBoundingRectTo.top()+vertialSpaceBetweenEachLineDrawn);
+    bool drawingFirstLine = true; //Line between class name and rest should be same as border width
+    --numLinesOfText; //This might look like an off by one, but I decided not to draw the very last/bottom line because it looks retarded
+    for(int i = 0; i < numLinesOfText; ++i)
+    {
+        painter->drawLine(leftPointOfLine, rightPointOfLine);
+        leftPointOfLine.setY(leftPointOfLine.y()+vertialSpaceBetweenEachLineDrawn);
+        rightPointOfLine.setY(leftPointOfLine.y()); //they are even
+
+        if(drawingFirstLine)
+        {
+            painter->setPen(m_LinesInBetweenLinesOfTextPen);;
+            drawingFirstLine = false;
+        }
+    }
+
     m_BoundingRect = resizeBoundingRectTo;
     painter->restore();
 }

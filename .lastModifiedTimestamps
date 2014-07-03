@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1404297425
+Documents/minddump/:1404350457
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -243,6 +243,7 @@ Documents/minddump/afdljasldfkjsdlkfjsodfuilkjeroulskdjfoudsflkdjsfousdflkjweoru
 Documents/minddump/afdljdfljsldfkjouiwerlkjsdfoiusdfl.txt:1353974631
 Documents/minddump/afdljsadfoualkjsaofuasflroflalsdfjkasouewrl.txt:1344286704
 Documents/minddump/afdsfeadflkjdsflkjasdlkfouerlkjdfoiu.txt:1353975635
+Documents/minddump/afhlsfjslkdfjlskdjflksdjfouwerlkjsdofusdlfkjsdfusdflkj.txt:1404350457
 Documents/minddump/afhlskjdfljsdlkfhsdlkfjsdlkfjsdlkfjouerlkjsdfhsdlfkjsdlf.txt:1402137848
 Documents/minddump/aflasdkjflasdjfouwerlkjdfouaslrjoweurilkajsdfoul.txt:1353355489
 Documents/minddump/aflasjdflasfoweurasdlkfjhasifhawerkjsdofuwerlk.txt:1344286874
@@ -2506,13 +2507,13 @@ Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRele
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfileswidget.h:1379253035
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/main.cpp:1379408785
 Projects/DesignEqualsImplementation2/:1404320705
-Projects/DesignEqualsImplementation2/src/:1404347505
+Projects/DesignEqualsImplementation2/src/:1404350485
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1404347413
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.cpp:1404347413
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h:1404344286
+Projects/DesignEqualsImplementation2/src/ui/gui/:1404350338
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.cpp:1404350337
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h:1404349457
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassdiagramaswidgetfortab.cpp:1404339135
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassdiagramaswidgetfortab.h:1404321255
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.cpp:1404341227
@@ -4089,7 +4090,7 @@ Projects/designEqualsImplementation/design/two.arrows.modes.but.i.should.definit
 Projects/designEqualsImplementation/design/two.objects.should.be.able.to.communicate.even.if.one.is.stream.based.and.other.is.message.based.txt:1379236962
 Projects/designEqualsImplementation/design/verbatim.video.mode.kinda.like.justin.tv.except.entirely.more.awesome.txt:1323574132
 Projects/designEqualsImplementation/design/where.to.go.from.here.is.entirely.up.to.me.pretty.early.on.still.lol.txt:1323495446
-Projects/designEqualsImplementation/src/:1404347501
+Projects/designEqualsImplementation/src/:1404347683
 Projects/designEqualsImplementation/src/ClassesThatRepresentProjectBeingCreated/:1323787135
 Projects/designEqualsImplementation/src/ClassesThatRepresentProjectBeingCreated/designproject.cpp:1323779476
 Projects/designEqualsImplementation/src/ClassesThatRepresentProjectBeingCreated/designproject.h:1323775345
