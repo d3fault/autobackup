@@ -8,6 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+contains(QT_CONFIG, opengl): QT += opengl
+
 TARGET = DesignEqualsImplementation
 TEMPLATE = app
 
@@ -54,6 +56,7 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h \
     ui/gui/designequalsimplementationclassdiagramaswidgetfortab.h \
     ui/gui/designequalsimplementationusecaseaswidgetfortab.h \
-    ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h
+    ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h \
+    ui/gui/designequalsimplementationguicommon.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

@@ -23,6 +23,7 @@ signals:
     void projectOpened(DesignEqualsImplementationProject *project);
     void e(const QString &);
 public slots:
+    void initializeDesignEqualsImplementationInGuiMode();
     void newProject();
     void openExistingProject(const QString &existingProjectFilePath);
 #ifdef DesignEqualsImplementation_TEST_MODE

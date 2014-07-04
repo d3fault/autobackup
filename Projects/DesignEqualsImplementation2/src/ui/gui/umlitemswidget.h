@@ -1,16 +1,15 @@
 #ifndef UMLITEMSWIDGET_H
 #define UMLITEMSWIDGET_H
 
-#include <QWidget>
-#include <QBoxLayout>
+#include <QListWidget>
 
-class UmlItemsWidget : public QWidget
+class UmlItemsWidget : public QListWidget
 {
     Q_OBJECT
 public:
-    explicit UmlItemsWidget(QWidget *parent = 0, QBoxLayout::Direction direction = QBoxLayout::TopToBottom, int columnsIfVertical_RowsIfHorizontal = 2);
-private:
-    QBoxLayout *m_Layout;
+    explicit UmlItemsWidget(QWidget *parent = 0);
+protected:
+    virtual void startDrag(Qt::DropActions supportedActions);
 };
 
 #endif // UMLITEMSWIDGET_H

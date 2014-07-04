@@ -1,12 +1,45 @@
 #include "umlitemswidget.h"
 
-#include <QBoxLayout>
-#include <QList>
+#include <QListWidgetItem>
+#include <QDataStream>
+#include <QMimeData>
+#include <QDrag>
 
-UmlItemsWidget::UmlItemsWidget(QWidget *parent, QBoxLayout::Direction direction, int columnsIfVertical_RowsIfHorizontal)
-    : QWidget(parent)
-    , m_Layout(new QBoxLayout(direction))
+#include "designequalsimplementationguicommon.h"
+
+UmlItemsWidget::UmlItemsWidget(QWidget *parent)
+    : QListWidget(parent)
 {
     //TODOreq: wondering how closely the backend/frontend objects can/should relate (can/should they be one?)
-    setLayout(m_Layout);
+
+    setDragEnabled(true);
+    setViewMode(QListView::IconMode); //TODOoptional: icon + static mode !?!?
+    //setIconSize
+    setSpacing(5);
+
+    QListWidgetItem *umlClass = new QListWidgetItem(tr("Class"), this);
+    umlClass->setData(Qt::UserRole, QVariant(static_cast<UmlItemsType>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS)));
+    //umlClass->setIcon(QIcon(pixmap));
+    umlClass->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+
+    QListWidgetItem *umlClassInterface = new QListWidgetItem(tr("Abstract Class (Interface)"), this);
+    umlClassInterface->setData(Qt::UserRole, QVariant(static_cast<UmlItemsType>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE)));
+    //umlClass->setIcon(QIcon(pixmap));
+    umlClassInterface->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+}
+void UmlItemsWidget::startDrag(Qt::DropActions supportedActions)
+{
+    QListWidgetItem *item = currentItem();
+
+    QByteArray itemData;
+    QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+    UmlItemsType umlItemType = qvariant_cast<UmlItemsType>(item->data(Qt::UserRole));
+    dataStream << umlItemType;
+    QMimeData *mimeData = new QMimeData();
+    mimeData->setData(DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_CLASS_DIAGRAM_OBJECT, itemData);
+    QDrag *drag = new QDrag(this);
+    drag->setMimeData(mimeData);
+    //drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
+    //drag->setPixmap(pixmap);
+    drag->exec(Qt::LinkAction, Qt::LinkAction);
 }

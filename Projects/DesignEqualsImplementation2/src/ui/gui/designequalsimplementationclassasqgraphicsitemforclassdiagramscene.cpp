@@ -25,15 +25,16 @@ QRectF DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::bound
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
     //TODOreq: this scopedLock must be commented out for click drag to work AT ALL hahahaha... I need a better synchronization solution. Right now it's not thread safe (but eh idc for now)
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex); //rofl. of all places that should use a faster method (implicit sharing, or even manual synchronization :-P)
 
     painter->save();
-    painter->setRenderHint(QPainter::Antialiasing, true); //TODOoptimization: maybe i can specify this somewhere else so i don't have to keep re-specifying it. also noticed noticeable slowdown when enabled lolol, BUT the level of sexiness hit maximum too. run-time option obviously makes a lot of sense
+    //painter->setRenderHint(QPainter::Antialiasing, true); //TO DOneoptimization: maybe i can specify this somewhere else so i don't have to keep re-specifying it. also noticed noticeable slowdown when enabled lolol, BUT the level of sexiness hit maximum too. //TODOoptional: run-time option obviously makes a lot of sense
     painter->setBrush(Qt::transparent); //would do white, but i have to draw text first in order to get my bounding rect starting point guh, so a white fill on the rounded rect afterwards covers the words! fml
     painter->setPen(m_ClassBorderPen);
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
     QString classContentsString(m_DesignEqualsImplementationClass->ClassName);
     int numLinesOfText = 1;
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_DesignEqualsImplementationClass->Properties)
