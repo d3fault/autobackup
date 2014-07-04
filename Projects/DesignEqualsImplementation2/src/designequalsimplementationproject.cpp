@@ -5,8 +5,6 @@
 #include <QTextStream>
 #include <QDataStream>
 
-#include "designequalsimplementationcommon.h"
-
 #define DesignEqualsImplementationProject_SERIALIZATION_VERSION 1
 
 #define DesignEqualsImplementationProject_QDS(direction, qds, project) \
@@ -206,6 +204,25 @@ void DesignEqualsImplementationProject::emitAllClassesAndUseCasesInProject()
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, classes())
     {
         emit classAdded(currentClass);
+    }
+}
+void DesignEqualsImplementationProject::handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position)
+{
+    switch(umlItemType)
+    {
+    case DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS:
+    {
+        DesignEqualsImplementationClass *newClass = new DesignEqualsImplementationClass(this);
+        newClass->ClassName = "New Class 1"; //TODOreq: auto incrementing (but they'll likely change it anyways)
+        newClass->Position = position;
+        addClass(newClass);
+    }
+        break;
+    case DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE:
+    {
+        //TODOreq
+    }
+        break;
     }
 }
 void DesignEqualsImplementationProject::save(const QString &projectFilePath)

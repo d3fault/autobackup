@@ -25,12 +25,10 @@ void DesignEqualsImplementationGui::handleDesignEqualsImplementationReadyForConn
 
     m_Gui->showMaximized(); //TODOreq: show() keeps hiding my title bar above the screen, no clue why
 
-    connect(designEqualsImplementation, SIGNAL(umlItemFactoryAdded(UmlItemFactory*)), m_Gui->umlItemWidget(), SLOT(handleumlItemFactoryAdded(UmlItemFactory*)));
     connect(m_Gui, SIGNAL(newProjectRequested()), designEqualsImplementation, SLOT(newProject()));
     connect(m_Gui, SIGNAL(openExistingProjectRequested(QString)), designEqualsImplementation, SLOT(openExistingProject(QString)));
     connect(designEqualsImplementation, SIGNAL(projectOpened(DesignEqualsImplementationProject*)), m_Gui, SLOT(handleProjectOpened(DesignEqualsImplementationProject*)));
 
-    QMetaObject::invokeMethod(designEqualsImplementation, "initializeDesignEqualsImplementationInGuiMode");
     QStringList argz = QCoreApplication::arguments();
     if(argz.size() > 1)
     {

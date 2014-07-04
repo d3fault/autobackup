@@ -3,21 +3,19 @@
 
 #include <QWidget>
 
-class QGraphicsScene;
-class QDropEvent;
+#include "../../designequalsimplementationcommon.h"
 
 class DesignEqualsImplementationProject;
 class DesignEqualsImplementationClass;
+class ClassDiagramGraphicsScene;
 
 class DesignEqualsImplementationClassDiagramAsWidgetForTab : public QWidget
 {
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassDiagramAsWidgetForTab(DesignEqualsImplementationProject *designEqualsImplementationProject, QWidget *parent = 0);
-protected:
-    virtual void dropEvent(QDropEvent *event);
 private:
-    QGraphicsScene *m_ClassDiagramScene;
+    ClassDiagramGraphicsScene *m_ClassDiagramScene;
 public slots:
     void handleClassAdded(DesignEqualsImplementationClass *classAdded);
 };

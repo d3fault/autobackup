@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 
+#include "designequalsimplementationcommon.h"
 #include "designequalsimplementationclass.h" //TODOoptional: forward declare in this + tons of similar classes
 #include "designequalsimplementationusecase.h"
 
@@ -38,6 +39,7 @@ signals:
     void e(const QString &);
 public slots:
     void emitAllClassesAndUseCasesInProject();
+    void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
     void save(const QString &projectFilePath);
     void generateSourceCode(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };

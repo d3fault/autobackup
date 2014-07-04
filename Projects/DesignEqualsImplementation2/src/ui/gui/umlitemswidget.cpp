@@ -5,6 +5,7 @@
 #include <QMimeData>
 #include <QDrag>
 
+#include "../../designequalsimplementationcommon.h"
 #include "designequalsimplementationguicommon.h"
 
 UmlItemsWidget::UmlItemsWidget(QWidget *parent)
@@ -16,24 +17,25 @@ UmlItemsWidget::UmlItemsWidget(QWidget *parent)
     setViewMode(QListView::IconMode); //TODOoptional: icon + static mode !?!?
     //setIconSize
     setSpacing(5);
+    setDropIndicatorShown(true);
 
     QListWidgetItem *umlClass = new QListWidgetItem(tr("Class"), this);
-    umlClass->setData(Qt::UserRole, QVariant(static_cast<UmlItemsType>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS)));
+    umlClass->setData(Qt::UserRole, QVariant(static_cast<UmlItemsTypedef>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS)));
     //umlClass->setIcon(QIcon(pixmap));
     umlClass->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
 
     QListWidgetItem *umlClassInterface = new QListWidgetItem(tr("Abstract Class (Interface)"), this);
-    umlClassInterface->setData(Qt::UserRole, QVariant(static_cast<UmlItemsType>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE)));
+    umlClassInterface->setData(Qt::UserRole, QVariant(static_cast<UmlItemsTypedef>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE)));
     //umlClass->setIcon(QIcon(pixmap));
     umlClassInterface->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
 }
 void UmlItemsWidget::startDrag(Qt::DropActions supportedActions)
 {
+    Q_UNUSED(supportedActions)
     QListWidgetItem *item = currentItem();
-
     QByteArray itemData;
     QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-    UmlItemsType umlItemType = qvariant_cast<UmlItemsType>(item->data(Qt::UserRole));
+    UmlItemsTypedef umlItemType = qvariant_cast<UmlItemsTypedef>(item->data(Qt::UserRole));
     dataStream << umlItemType;
     QMimeData *mimeData = new QMimeData();
     mimeData->setData(DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_CLASS_DIAGRAM_OBJECT, itemData);

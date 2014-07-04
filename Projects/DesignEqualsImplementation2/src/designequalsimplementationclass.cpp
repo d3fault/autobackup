@@ -16,6 +16,7 @@ return qds;
 
 DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent)
     : QObject(parent)
+    , IDesignEqualsImplementationVisuallyRepresentedItem()
 { }
 bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinationDirectoryPath)
 {

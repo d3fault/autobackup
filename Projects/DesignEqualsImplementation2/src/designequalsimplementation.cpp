@@ -26,20 +26,12 @@ QMutex DesignEqualsImplementation::BackendMutex;
 //TODOreq: thought about this while drifting around in between sleep/awake: a use case can have a [connected-to-NOTHING(auxilarySignalX)-during-previously-designed-use-case] signal as it's "entry point", but it isn't the same as the "first slot" entry point (and i'm glad, since that would require a bit of refactoring). it is more of a symbolic entry point (sort of like the ExitSignal) and not really a part of the "use case events". there isn't much more to write about, but there will likely be confusion when trying to implement that because of the two occurances of "entry points". one is "what triggers the use case" (actor or signal), and one is "the first use case event". OT'ish: deleting a signal in class diagram perspective used to trigger a use case needs to be handled properly, and i'm not sure how. perhaps the app keeps track of the use cases that are "invalid" (not triggered by either a signal or actor), and source can't be generated until it's fixed. or deleting triggering signal deletes that use case, BUT i'm not liking that idea much (best solution: ask right when/after signal is deleted what they want to do)
 DesignEqualsImplementation::DesignEqualsImplementation(QObject *parent)
     : QObject(parent)
-{ }
+{
+    qRegisterMetaType<UmlItemsTypedef>("UmlItemsTypedef"); //TODOoptional: a static bool to protect this from double registering, if there are ever two instances of 'this' class ever instantiated at the same time
+}
 DesignEqualsImplementation::~DesignEqualsImplementation()
 {
     qDeleteAll(m_CurrentlyOpenedDesignEqualsImplementationProjects);
-}
-void DesignEqualsImplementation::initializeDesignEqualsImplementationInGuiMode()
-{
-    //Creates the uml item factories, then emits them to the GUI. This does not need to be done in lib/cli (automation) mode TODOreq
-
-    emit umlItemFactoryAdded(new ClassUmlItemFactory(this)); //TODOoptional: safer to pass by value and use implicit sharing, BUT since gui emits them back to us and we own them, we have a pretty strong guarantee the points will still be valid (just not as strong as implicit sharing provides)
-    //TODOreq: emit umlItemFactoryAdded(new ClassInterfaceUmlItemFactory(this));
-    //etc
-
-    //bleh this idea to pass a factory to frontend is stupid because the frontend still needs to draw each uml item differently, and drawing stuffs doesn't belong in backend so blah I'm just overoptimizing now
 }
 void DesignEqualsImplementation::newProject()
 {
@@ -240,7 +232,7 @@ void DesignEqualsImplementation::newProject()
     emit projectOpened(testProject);
 #elif defined DesignEqualsImplementation_TEST_GUI_MODE
     DesignEqualsImplementationProject *testProject = new DesignEqualsImplementationProject(this);
-    testProject->Name = "SimpleAsyncSlotInvokeAndSignalResponseProject";
+    testProject->Name = "TestProject";
 
     //Foo
     DesignEqualsImplementationClass *fooClass = new DesignEqualsImplementationClass(testProject);

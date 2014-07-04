@@ -2,6 +2,8 @@
 #define DESIGNEQUALSIMPLEMENTATIONCLASS_H
 
 #include <QObject>
+#include "idesignequalsimplementationvisuallyrepresenteditem.h"
+
 #include <QPair>
 
 #include "designequalsimplementationclassproperty.h"
@@ -13,13 +15,13 @@
 
 typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_PrivateMemberClasses_ListEntryType;
 
-class DesignEqualsImplementationClass : public QObject
+class DesignEqualsImplementationClass : public QObject, public IDesignEqualsImplementationVisuallyRepresentedItem
 {
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClass(QObject *parent = 0);
     bool generateSourceCode(const QString &destinationDirectoryPath);
-    ~DesignEqualsImplementationClass();
+    virtual ~DesignEqualsImplementationClass();
 
     //TODOoptional: private + getter/setter blah
     QString ClassName;

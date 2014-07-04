@@ -32,7 +32,8 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.cpp \
     ui/gui/designequalsimplementationclassdiagramaswidgetfortab.cpp \
     ui/gui/designequalsimplementationusecaseaswidgetfortab.cpp \
-    ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.cpp
+    ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.cpp \
+    ui/gui/classdiagramgraphicsscene.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -57,6 +58,8 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/designequalsimplementationclassdiagramaswidgetfortab.h \
     ui/gui/designequalsimplementationusecaseaswidgetfortab.h \
     ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h \
-    ui/gui/designequalsimplementationguicommon.h
+    ui/gui/designequalsimplementationguicommon.h \
+    idesignequalsimplementationvisuallyrepresenteditem.h \
+    ui/gui/classdiagramgraphicsscene.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)
