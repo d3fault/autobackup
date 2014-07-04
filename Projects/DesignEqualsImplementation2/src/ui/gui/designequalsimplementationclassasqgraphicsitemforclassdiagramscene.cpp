@@ -6,7 +6,7 @@
 
 #include "../../designequalsimplementation.h"
 
-#define DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT 5
+#define DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT 3
 
 DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *parent, Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags)

@@ -1,4 +1,4 @@
-#include "umlitemswidget.h"
+#include "classdiagramumlitemswidget.h"
 
 #include <QListWidgetItem>
 #include <QDataStream>
@@ -8,7 +8,7 @@
 #include "../../designequalsimplementationcommon.h"
 #include "designequalsimplementationguicommon.h"
 
-UmlItemsWidget::UmlItemsWidget(QWidget *parent)
+ClassDiagramUmlItemsWidget::ClassDiagramUmlItemsWidget(QWidget *parent)
     : QListWidget(parent)
 {
     //TODOreq: wondering how closely the backend/frontend objects can/should relate (can/should they be one?)
@@ -29,7 +29,7 @@ UmlItemsWidget::UmlItemsWidget(QWidget *parent)
     //umlClass->setIcon(QIcon(pixmap));
     umlClassInterface->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
 }
-void UmlItemsWidget::startDrag(Qt::DropActions supportedActions)
+void ClassDiagramUmlItemsWidget::startDrag(Qt::DropActions supportedActions)
 {
     Q_UNUSED(supportedActions)
     QListWidgetItem *item = currentItem();

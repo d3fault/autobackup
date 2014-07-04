@@ -24,6 +24,7 @@ QMutex DesignEqualsImplementation::BackendMutex;
 //TODOreq: random as fuck ish kinda OT, but actually not at all (despite my coming up with is idea while CODING THIS APP ITSELF): auto async/sync generation. you define a "slot" with a "bool" (generally 'success') return type, but the auto-generated async version uses a slot (the call) and signal (the 'return type') to satisfy it. however, the async call is backed/powered by a sync version, which uses a traditional public method and bool return variable. My point is this: when "designing", there is no difference between the two classes. However, upon code generation/etc, whether or not the objects are on the same thread (which is ultimately the deciding factor for whether or not async/sync is used anyways (is how Qt::AutoConnection behaves)) is what decides which of those two async/sync objects are used. I have not even begun to contemplate multiple uses of the same object by for example an object on the same thread AND an object on a different thread (when in doubt, async?).
 //OT: :( I'm using a binary save format (QDataStream), but I still feel like these serialized designs belong in my /text/ repo. Could of course do XML/json/etc with ease ;-P
 //TODOreq: thought about this while drifting around in between sleep/awake: a use case can have a [connected-to-NOTHING(auxilarySignalX)-during-previously-designed-use-case] signal as it's "entry point", but it isn't the same as the "first slot" entry point (and i'm glad, since that would require a bit of refactoring). it is more of a symbolic entry point (sort of like the ExitSignal) and not really a part of the "use case events". there isn't much more to write about, but there will likely be confusion when trying to implement that because of the two occurances of "entry points". one is "what triggers the use case" (actor or signal), and one is "the first use case event". OT'ish: deleting a signal in class diagram perspective used to trigger a use case needs to be handled properly, and i'm not sure how. perhaps the app keeps track of the use cases that are "invalid" (not triggered by either a signal or actor), and source can't be generated until it's fixed. or deleting triggering signal deletes that use case, BUT i'm not liking that idea much (best solution: ask right when/after signal is deleted what they want to do)
+//TODOoptional: On a rainy day, templatify the source generation. It's definitely more powerful/flexible/etc, but I've learned from experience that whenever I do templates I get slowed down so much from the tediousness of it that I ragequit out of boredom
 DesignEqualsImplementation::DesignEqualsImplementation(QObject *parent)
     : QObject(parent)
 {
@@ -220,7 +221,7 @@ void DesignEqualsImplementation::newProject()
     //testUseCase->addEvent(barSlot, barSlotInvocationContextVariables);
     //testUseCase->addEvent(barSignal, handleBarSignal, barSignalEmissionArguments);
 
-    testProject->UseCases.append(testUseCase);
+    testProject->addUseCase(testUseCase);
     //TODOreq: either make single use case default use case in project during generation, or require specifying it here. In the final GUI we'd ask the user ofc
 
     //generate source

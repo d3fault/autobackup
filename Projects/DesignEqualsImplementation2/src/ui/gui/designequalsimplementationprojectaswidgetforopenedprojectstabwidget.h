@@ -13,10 +13,14 @@ class DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget : publ
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(DesignEqualsImplementationProject *designEqualsImplementationProject, QWidget *parent = 0);
+    QTabWidget *classDiagramAndUseCasesTabWidget();
 private:
     QTabWidget *m_ClassDiagramAndUseCasesTabWidget;
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
+signals:
+    void newUseCaseRequested();
 private slots:
+    void requestNewUseCase();
     void handleUseCaseAdded(DesignEqualsImplementationUseCase *useCase);
 };
 

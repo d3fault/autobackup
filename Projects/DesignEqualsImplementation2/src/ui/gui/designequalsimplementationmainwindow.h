@@ -6,8 +6,11 @@
 
 class QTabWidget;
 class QAction;
+class QStackedWidget;
 
 class DesignEqualsImplementationProject;
+class ClassDiagramUmlItemsWidget;
+class UseCaseUmlItemsWidget;
 
 class DesignEqualsImplementationMainWindow : public QMainWindow
 {
@@ -26,17 +29,28 @@ private:
     QAction *m_MoveMousePointerDefaultAction;
     QAction *m_DrawSignalSlotConnectionActivationArrowsAction;
 
+    //Left dock widget
+    QStackedWidget *m_UmlStackedDockWidget;
+    ClassDiagramUmlItemsWidget *m_ClassDiagramUmlItemsWidget;
+    UseCaseUmlItemsWidget *m_UseCaseUmlItemsWidget;
+
     void createActions();
     void createMenu();
     void createToolbars();
     void createDockWidgets();
+
+    void setClassDiagramToolsDisabled(bool disabled);
+    void setUseCaseToolsDisabled(bool disabled);
 signals:
     void newProjectRequested();
     void openExistingProjectRequested(const QString &projectFilePath);
+    void newUseCaseRequested();
 public slots:
     void handleProjectOpened(DesignEqualsImplementationProject *project);
 private slots:
     void handleOpenProjectActionTriggered();
+    void handleNewUseCaseActionTriggered();
+    void handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged();
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONMAINWINDOW_H

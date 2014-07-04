@@ -1,24 +1,21 @@
 #ifndef CLASSDIAGRAMGRAPHICSSCENE_H
 #define CLASSDIAGRAMGRAPHICSSCENE_H
 
-#include <QGraphicsScene>
-
+#include "idesignequalsimplementationgraphicsscene.h"
 #include "../../designequalsimplementationcommon.h"
 
-class ClassDiagramGraphicsScene : public QGraphicsScene
+class ClassDiagramGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
     Q_OBJECT
 public:
-    ClassDiagramGraphicsScene(QObject *parent = 0);
-    ClassDiagramGraphicsScene(const QRectF &sceneRect, QObject *parent = 0);
-    ClassDiagramGraphicsScene(qreal x, qreal y, qreal width, qreal height, QObject *parent = 0);
+    ClassDiagramGraphicsScene();
+    ClassDiagramGraphicsScene(const QRectF &sceneRect);
+    ClassDiagramGraphicsScene(qreal x, qreal y, qreal width, qreal height);
     virtual ~ClassDiagramGraphicsScene();
-private:
-    bool wantDragEvent(QGraphicsSceneDragDropEvent *event);
 protected:
-    virtual void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
-    virtual void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
-    virtual void dropEvent(QGraphicsSceneDragDropEvent *event);
+    virtual void handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *event);
+private:
+    virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void addUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
 };

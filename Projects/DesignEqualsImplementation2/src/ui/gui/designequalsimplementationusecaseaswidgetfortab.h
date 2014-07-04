@@ -3,9 +3,10 @@
 
 #include <QWidget>
 
+#include "ihaveagraphicsviewandscene.h"
 #include "../../designequalsimplementationusecase.h"
 
-class DesignEqualsImplementationUseCaseAsWidgetForTab : public QWidget
+class DesignEqualsImplementationUseCaseAsWidgetForTab : public IHaveAGraphicsViewAndScene
 {
     Q_OBJECT
 public:

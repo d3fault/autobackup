@@ -28,12 +28,16 @@ SOURCES += ui/gui/main.cpp\
     designequalsimplementationslotinvocationstatement.cpp \
     idesignequalsimplementationmethod.cpp \
     designequalsimplementationsignalemissionstatement.cpp \
-    ui/gui/umlitemswidget.cpp \
     ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.cpp \
     ui/gui/designequalsimplementationclassdiagramaswidgetfortab.cpp \
     ui/gui/designequalsimplementationusecaseaswidgetfortab.cpp \
     ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.cpp \
-    ui/gui/classdiagramgraphicsscene.cpp
+    ui/gui/classdiagramgraphicsscene.cpp \
+    ui/gui/ihaveagraphicsviewandscene.cpp \
+    ui/gui/usecasegraphicsscene.cpp \
+    ui/gui/idesignequalsimplementationgraphicsscene.cpp \
+    ui/gui/usecaseumlitemswidget.cpp \
+    ui/gui/classdiagramumlitemswidget.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -53,13 +57,17 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     idesignequalsimplementationmethod.h \
     designequalsimplementationsignalemissionstatement.h \
     signalemissionorslotinvocationcontextvariables.h \
-    ui/gui/umlitemswidget.h \
     ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h \
     ui/gui/designequalsimplementationclassdiagramaswidgetfortab.h \
     ui/gui/designequalsimplementationusecaseaswidgetfortab.h \
     ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h \
     ui/gui/designequalsimplementationguicommon.h \
     idesignequalsimplementationvisuallyrepresenteditem.h \
-    ui/gui/classdiagramgraphicsscene.h
+    ui/gui/classdiagramgraphicsscene.h \
+    ui/gui/ihaveagraphicsviewandscene.h \
+    ui/gui/usecasegraphicsscene.h \
+    ui/gui/idesignequalsimplementationgraphicsscene.h \
+    ui/gui/usecaseumlitemswidget.h \
+    ui/gui/classdiagramumlitemswidget.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

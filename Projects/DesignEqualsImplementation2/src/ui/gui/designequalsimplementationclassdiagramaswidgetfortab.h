@@ -3,19 +3,18 @@
 
 #include <QWidget>
 
+#include "ihaveagraphicsviewandscene.h"
+#include "classdiagramgraphicsscene.h"
 #include "../../designequalsimplementationcommon.h"
 
 class DesignEqualsImplementationProject;
 class DesignEqualsImplementationClass;
-class ClassDiagramGraphicsScene;
 
-class DesignEqualsImplementationClassDiagramAsWidgetForTab : public QWidget
+class DesignEqualsImplementationClassDiagramAsWidgetForTab : public IHaveAGraphicsViewAndScene
 {
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassDiagramAsWidgetForTab(DesignEqualsImplementationProject *designEqualsImplementationProject, QWidget *parent = 0);
-private:
-    ClassDiagramGraphicsScene *m_ClassDiagramScene;
 public slots:
     void handleClassAdded(DesignEqualsImplementationClass *classAdded);
 };

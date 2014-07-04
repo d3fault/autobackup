@@ -19,13 +19,16 @@ public:
 
     //TODOoptional: private + getter/setter blah
     QString Name;
-    QList<DesignEqualsImplementationUseCase*> UseCases;
 
     void addClass(DesignEqualsImplementationClass* newClass);
     QList<DesignEqualsImplementationClass*> classes();
 
+    void addUseCase(DesignEqualsImplementationUseCase *newUseCase);
+    QList<DesignEqualsImplementationUseCase*> useCases();
+
     //TODOreq: m_Classes should be private, but I had issues getting the getters/setters to play nicely with QDataStream. Maybe a simple "friend QDataStream;" would fix it (or similar), but I can't be fucked to even play around with it right now. STILL, after coding for a while you should check that all usages of m_Classes are only from within the getter/setters (more important is the setter, but still in principle the getter too)
     QList<DesignEqualsImplementationClass*> m_Classes;
+    QList<DesignEqualsImplementationUseCase*> m_UseCases;
 private:
     bool savePrivate(const QString &projectFilePath);
     bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
@@ -40,6 +43,7 @@ signals:
 public slots:
     void emitAllClassesAndUseCasesInProject();
     void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
+    void handleNewUseCaseRequested();
     void save(const QString &projectFilePath);
     void generateSourceCode(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };

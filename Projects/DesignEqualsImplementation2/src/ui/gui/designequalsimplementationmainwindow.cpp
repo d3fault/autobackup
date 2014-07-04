@@ -4,14 +4,17 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QDockWidget>
+#include <QStackedWidget>
 #include <QTabWidget>
 #include <QAction>
 #include <QMutexLocker>
 
 #include "../../designequalsimplementation.h"
 #include "../../designequalsimplementationproject.h"
-#include "umlitemswidget.h"
+#include "classdiagramumlitemswidget.h"
+#include "usecaseumlitemswidget.h"
 #include "designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h"
+#include "designequalsimplementationguicommon.h"
 
 #define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME "Design = Implementation" //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod)
 
@@ -35,6 +38,8 @@ DesignEqualsImplementationMainWindow::DesignEqualsImplementationMainWindow(QWidg
     createToolbars(); //Move/"Arrow" mode
     createDockWidgets(); //TODOreq: UML drag-drop objects, list of drag-drop objects when in use case view, list of use cases for opening their tab
     setCentralWidget(m_OpenProjectsTabWidget = new QTabWidget());
+
+    connect(m_OpenProjectsTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged()));
 }
 DesignEqualsImplementationMainWindow::~DesignEqualsImplementationMainWindow()
 { }
@@ -77,19 +82,73 @@ void DesignEqualsImplementationMainWindow::createToolbars()
 }
 void DesignEqualsImplementationMainWindow::createDockWidgets()
 {
-    QDockWidget *umlDockWidget = new QDockWidget(tr("UML Items"), this);
-    umlDockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-    umlDockWidget->setWidget(new UmlItemsWidget(umlDockWidget));
-    addDockWidget(Qt::LeftDockWidgetArea, umlDockWidget, Qt::Vertical);
+    QDockWidget *dockWidget = new QDockWidget(tr("Available Items"), this);
+    dockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+
+    m_UmlStackedDockWidget = new QStackedWidget();
+    m_ClassDiagramUmlItemsWidget = new ClassDiagramUmlItemsWidget();
+    m_UseCaseUmlItemsWidget = new UseCaseUmlItemsWidget();
+    m_UmlStackedDockWidget->addWidget(m_ClassDiagramUmlItemsWidget);
+    m_UmlStackedDockWidget->addWidget(m_UseCaseUmlItemsWidget);
+
+    dockWidget->setWidget(m_UmlStackedDockWidget);
+    addDockWidget(Qt::LeftDockWidgetArea, dockWidget, Qt::Vertical);
+
+    //defaults
+    setClassDiagramToolsDisabled(false);
+    setClassDiagramToolsDisabled(true);
+}
+void DesignEqualsImplementationMainWindow::setClassDiagramToolsDisabled(bool disabled)
+{
+    //an inheritence arrow drawer (that same association should also be specifiable in the "class editor" widget... makes no difference)
+}
+void DesignEqualsImplementationMainWindow::setUseCaseToolsDisabled(bool disabled)
+{
+    //TODOoptional: a run-time option/setting could be whether or not to setDisabled or setHidden for all these toolbars/actions... but the default should be setDisabled
+    m_DrawSignalSlotConnectionActivationArrowsAction->setDisabled(disabled);
 }
 //TODOreq: [backend] project is not thread safe to access directly, so check the source to make sure it's used properly (or i could mutex protect the DesignEqualsImplementationProject itself to KISS, undecided as of now)
 void DesignEqualsImplementationMainWindow::handleProjectOpened(DesignEqualsImplementationProject *project)
 {
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-    m_OpenProjectsTabWidget->addTab(new DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(project, m_OpenProjectsTabWidget), project->Name);
+    DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget = new DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(project);
+    int tabIndex = m_OpenProjectsTabWidget->addTab(designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget, project->Name);
+    connect(designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget->classDiagramAndUseCasesTabWidget(), SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged()));
+    m_OpenProjectsTabWidget->setCurrentIndex(tabIndex);
 }
 void DesignEqualsImplementationMainWindow::handleOpenProjectActionTriggered()
 {
     //TODOreq: file dialog and then
     emit openExistingProjectRequested(QString());
+}
+void DesignEqualsImplementationMainWindow::handleNewUseCaseActionTriggered()
+{
+    DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *currentProjectTab = static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget());
+    QMetaObject::invokeMethod(currentProjectTab, "requestNewUseCase");
+}
+void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged()
+{
+    //NOTE: the reason we don't use the "new tab index" arg from the emitting signalS is because both the "project tabs" changing and the "uml and use cases tabs" changing trigger this slot. not a huge deal since all we're doing is determining which set of tools to present (class diagram vs. use case).
+
+    //TODOreq: don't 'double show'. as in, don't change tools if the correct ones are already being shown
+
+    //If I ever allow tab re-ordering and class diagram doesn't doesn't have tab index == 0, i can still easily check what kind of tab is the new current by doing a qobject_cast ;-P
+    if(static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget())->classDiagramAndUseCasesTabWidget()->currentIndex() == 0)
+    {
+        //show class diagram tools
+        setClassDiagramToolsDisabled(false);
+        setUseCaseToolsDisabled(false);
+        m_UmlStackedDockWidget->setCurrentWidget(m_ClassDiagramUmlItemsWidget);
+    }
+    else
+    {
+        //show use case tools
+        //To delete, to hide, or (???), that is the question. decided to setDisabled(true), since fuck yea Qt is smart enough to disable all the gui variants when disabling an action <3 <3. TODOoptional: hide them visually, but idk i kinda like that they stay in the GUI and just get grayed out. Keeps the end user more "in the loop" and they are more likely to recognize that tools are being enabled/disabled as they change tabs (when a button is replaced and the new one takes the old position exactly, it's difficult for even coders to notice the change)
+        //TODOreq: There's still the dockwidget stuff that needs to change guh, in that case i think i do want to hide it visually (since it takes so much space, and since the changing is easily noticeable)
+        setClassDiagramToolsDisabled(true);
+        setUseCaseToolsDisabled(false);
+        m_UmlStackedDockWidget->setCurrentWidget(m_UseCaseUmlItemsWidget);
+    }
+
+    //TODOreq: when the PROJECT tab changes, we also need to change the "available use cases" (when in class diagram view (double clicking opens it in tab)) and "available classes" (when in use case view (for dragging onto use case))
 }

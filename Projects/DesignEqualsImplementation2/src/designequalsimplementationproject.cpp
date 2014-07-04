@@ -11,7 +11,7 @@
 qds direction serializationVersion; \
 qds direction project.Name; \
 qds direction project.m_Classes; \
-qds direction project.UseCases;
+qds direction project.m_UseCases;
 
 //new
 DesignEqualsImplementationProject::DesignEqualsImplementationProject(QObject *parent)
@@ -26,7 +26,7 @@ DesignEqualsImplementationProject::DesignEqualsImplementationProject(const QStri
 DesignEqualsImplementationProject::~DesignEqualsImplementationProject()
 {
     qDeleteAll(m_Classes);
-    qDeleteAll(UseCases);
+    qDeleteAll(m_UseCases);
 }
 void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass *newClass)
 {
@@ -37,6 +37,16 @@ void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass
 QList<DesignEqualsImplementationClass *> DesignEqualsImplementationProject::classes()
 {
     return m_Classes;
+}
+void DesignEqualsImplementationProject::addUseCase(DesignEqualsImplementationUseCase *newUseCase)
+{
+    //connect(newUseCase, SIGNAL(e);
+    m_UseCases.append(newUseCase);
+    emit useCaseAdded(newUseCase);
+}
+QList<DesignEqualsImplementationUseCase *> DesignEqualsImplementationProject::useCases()
+{
+    return m_UseCases;
 }
 bool DesignEqualsImplementationProject::savePrivate(const QString &projectFilePath)
 {
@@ -197,7 +207,7 @@ return true;
 void DesignEqualsImplementationProject::emitAllClassesAndUseCasesInProject()
 {
     //TODOreq: the signals will be emitted twice when LOADING a file (once when each individual deserialized 'thing' is added, and once again now). i'm not sure if 'some' of the later ones in the first batch might in fact be received, or if all of the first batch are definitely discarded (ui not listening yet)
-    Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, UseCases)
+    Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, m_UseCases)
     {
         emit useCaseAdded(currentUseCase);
     }
@@ -224,6 +234,12 @@ void DesignEqualsImplementationProject::handleAddUmlItemRequested(UmlItemsTypede
     }
         break;
     }
+}
+void DesignEqualsImplementationProject::handleNewUseCaseRequested()
+{
+    DesignEqualsImplementationUseCase *useCase = new DesignEqualsImplementationUseCase(this);
+    useCase->Name = Name + " - Use Case 1"; //TODOreq: auto incrementing
+    addUseCase(useCase);
 }
 void DesignEqualsImplementationProject::save(const QString &projectFilePath)
 {
