@@ -3,6 +3,8 @@
 
 #include "idesignequalsimplementationgraphicsscene.h"
 
+class DesignEqualsImplementationClass;
+
 class UseCaseGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
     Q_OBJECT
@@ -15,6 +17,9 @@ protected:
     virtual void handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *event);
 private:
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
+signals:
+    void addActorToUseCaseRequsted(QPointF position);
+    void addClassToUseCaseRequested(DesignEqualsImplementationClass *classToAdd, QPointF position);
 };
 
 #endif // USECASEGRAPHICSSCENE_H

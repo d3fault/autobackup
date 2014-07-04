@@ -50,4 +50,6 @@ public slots:
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationProject &project);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationProject &project);
 
+Q_DECLARE_METATYPE(DesignEqualsImplementationProject*)
+
 #endif // DESIGNEQUALSIMPLEMENTATIONPROJECT_H

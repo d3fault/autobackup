@@ -4,6 +4,9 @@
 #include <QDataStream>
 #include <QTextStream>
 
+#include <QMutexLocker>
+#include "designequalsimplementation.h"
+
 #include "designequalsimplementationcommon.h"
 
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
@@ -176,6 +179,7 @@ QString DesignEqualsImplementationClass::headerFilenameOnly()
 }
 void DesignEqualsImplementationClass::emitAllClassDetails()
 {
+    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     //TODOreq
 }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass)

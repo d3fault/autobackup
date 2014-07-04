@@ -12,8 +12,9 @@ class DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget : publ
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(DesignEqualsImplementationProject *designEqualsImplementationProject, QWidget *parent = 0);
+    explicit DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(DesignEqualsImplementationProject *project, QWidget *parent = 0);
     QTabWidget *classDiagramAndUseCasesTabWidget();
+    DesignEqualsImplementationProject *designEqualsImplementationProject();
 private:
     QTabWidget *m_ClassDiagramAndUseCasesTabWidget;
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;

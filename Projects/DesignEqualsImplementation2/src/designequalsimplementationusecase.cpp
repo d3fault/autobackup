@@ -245,6 +245,18 @@ void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal
         break;
     }
 }
+void DesignEqualsImplementationUseCase::addActorToUseCase(QPointF position)
+{
+    //TODOreq: either actor or signal-entry point, but not both (error)
+}
+void DesignEqualsImplementationUseCase::addClassToUseCase(DesignEqualsImplementationClass *classToAddToUseCase, QPointF position) //TODOreq: serialize position
+{
+    //TODOreq
+    //Weird just realized I haven't even designed "classes" into use cases [yet], as of now use case events point directly to their slots/etc!! But eh the concept of lifelines is derp easy, and the arrows source/destination stuff is really just used in populating which of those signals/slots to use for the already-design (;-D) use-case-event (slot/signal-slot/etc)... but i mean sure there's still a boat load of visual work that needs to be done right about now :-P
+
+    //Temp:
+    emit classAdded(classToAddToUseCase, position);
+}
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase)
 {
     qint32 numOrderedUseCaseEvents = useCase.OrderedUseCaseEvents.size();

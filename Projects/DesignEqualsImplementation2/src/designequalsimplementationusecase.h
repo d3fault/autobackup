@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QPair>
+#include <QPointF>
 
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclasssignal.h"
@@ -41,7 +42,12 @@ private:
     void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
     void addEventPrivateWithoutUpdatingExitSignal(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
 signals:
+    void actorAdded(QPointF position);
+    void classAdded(DesignEqualsImplementationClass *newClass, QPointF position);
     void eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
+public slots:
+    void addActorToUseCase(QPointF position);
+    void addClassToUseCase(DesignEqualsImplementationClass *classToAddToUseCase, QPointF position);
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);

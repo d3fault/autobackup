@@ -8,12 +8,13 @@
 #include "../../designequalsimplementationcommon.h"
 #include "designequalsimplementationguicommon.h"
 
+//TODOreq: double-clicking a class adds it to the far right (?). maybe this idea sucks. maybe double clicking brings to already added one if there and nothing else? or combination of these two ideas, or none! double clicking a class (ANYWHERE) should bring up class editor rarararara! (lol at umbrello having random ass color config editor in some views when double clicking a class -_-)
 ClassDiagramUmlItemsWidget::ClassDiagramUmlItemsWidget(QWidget *parent)
     : QListWidget(parent)
 {
     //TODOreq: wondering how closely the backend/frontend objects can/should relate (can/should they be one?)
 
-    setDragEnabled(true);
+    setDragEnabled(true); //TODOreq: OT: all use cases click-n-drag onto any graphics scene = open that use case in tab
     setViewMode(QListView::IconMode); //TODOoptional: icon + static mode !?!?
     //setIconSize
     setSpacing(5);
@@ -22,12 +23,12 @@ ClassDiagramUmlItemsWidget::ClassDiagramUmlItemsWidget(QWidget *parent)
     QListWidgetItem *umlClass = new QListWidgetItem(tr("Class"), this);
     umlClass->setData(Qt::UserRole, QVariant(static_cast<UmlItemsTypedef>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS)));
     //umlClass->setIcon(QIcon(pixmap));
-    umlClass->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+    umlClass->setFlags(DESIGNEQUALSIMPLEMENTATION_GUI_DRAG_DROP_LIST_WIDGET_ITEM_FLAGS);
 
     QListWidgetItem *umlClassInterface = new QListWidgetItem(tr("Abstract Class (Interface)"), this);
     umlClassInterface->setData(Qt::UserRole, QVariant(static_cast<UmlItemsTypedef>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE)));
     //umlClass->setIcon(QIcon(pixmap));
-    umlClassInterface->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled);
+    umlClassInterface->setFlags(DESIGNEQUALSIMPLEMENTATION_GUI_DRAG_DROP_LIST_WIDGET_ITEM_FLAGS);
 }
 void ClassDiagramUmlItemsWidget::startDrag(Qt::DropActions supportedActions)
 {

@@ -7,8 +7,11 @@
 class QTabWidget;
 class QAction;
 class QStackedWidget;
+class QListWidget;
+class QListWidgetItem;
 
 class DesignEqualsImplementationProject;
+class DesignEqualsImplementationUseCase;
 class ClassDiagramUmlItemsWidget;
 class UseCaseUmlItemsWidget;
 
@@ -29,10 +32,14 @@ private:
     QAction *m_MoveMousePointerDefaultAction;
     QAction *m_DrawSignalSlotConnectionActivationArrowsAction;
 
-    //Left dock widget
+    //Top-Left uml stacked widget
     QStackedWidget *m_UmlStackedDockWidget;
     ClassDiagramUmlItemsWidget *m_ClassDiagramUmlItemsWidget;
     UseCaseUmlItemsWidget *m_UseCaseUmlItemsWidget;
+    //Bottom-Left all use cases list widget
+    QListWidget *m_AllUseCasesListWidget;
+
+    int m_CurrentProjectTabIndex;
 
     void createActions();
     void createMenu();
@@ -41,6 +48,8 @@ private:
 
     void setClassDiagramToolsDisabled(bool disabled);
     void setUseCaseToolsDisabled(bool disabled);
+
+    void addUseCaseToAllUseCasesListWidget(DesignEqualsImplementationUseCase *newUseCase);
 signals:
     void newProjectRequested();
     void openExistingProjectRequested(const QString &projectFilePath);
@@ -51,6 +60,8 @@ private slots:
     void handleOpenProjectActionTriggered();
     void handleNewUseCaseActionTriggered();
     void handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged();
+    void handleUseCaseAdded(DesignEqualsImplementationUseCase *newUseCase);
+    void handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem *doubleClickedListWidgetItem);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONMAINWINDOW_H

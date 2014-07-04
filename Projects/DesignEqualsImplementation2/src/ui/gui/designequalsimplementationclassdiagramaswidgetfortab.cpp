@@ -14,6 +14,7 @@ DesignEqualsImplementationClassDiagramAsWidgetForTab::DesignEqualsImplementation
 {
     connect(static_cast<ClassDiagramGraphicsScene*>(m_GraphicsScene), SIGNAL(addUmlItemRequested(UmlItemsTypedef,QPointF)), designEqualsImplementationProject, SLOT(handleAddUmlItemRequested(UmlItemsTypedef,QPointF)));
 
+    //TODOoptional: makes only design difference, but the following signal can go directly to the graphics scene. also applies to the use case equivalent of this class
     connect(designEqualsImplementationProject, SIGNAL(classAdded(DesignEqualsImplementationClass*)), this, SLOT(handleClassAdded(DesignEqualsImplementationClass*))); //TODOreq: deleting a part of a class in class diagram might completely invalidate a use case, so either that should trigger the entire deletion of said use case (after warning), or force them into going and fixing the use case, or similar
 }
 void DesignEqualsImplementationClassDiagramAsWidgetForTab::handleClassAdded(DesignEqualsImplementationClass *classAdded)
@@ -22,6 +23,7 @@ void DesignEqualsImplementationClassDiagramAsWidgetForTab::handleClassAdded(Desi
 
     DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene *designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene = new DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(classAdded); //scene takes ownership at addItem
     designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene->setPos(classAdded->Position);
+    //TODOreq: listen to move signals so the backend serializes later click-drag-rearranges from user
 
     connect(classAdded, SIGNAL(propertyAdded(DesignEqualsImplementationClassProperty*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handlePropertyAdded(DesignEqualsImplementationClassProperty*)));
     connect(classAdded, SIGNAL(hasAPrivateMemberClassAdded(HasA_PrivateMemberClasses_ListEntryType)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleHasAPrivateMemberClassAdded(HasA_PrivateMemberClasses_ListEntryType)));

@@ -37,7 +37,8 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/usecasegraphicsscene.cpp \
     ui/gui/idesignequalsimplementationgraphicsscene.cpp \
     ui/gui/usecaseumlitemswidget.cpp \
-    ui/gui/classdiagramumlitemswidget.cpp
+    ui/gui/classdiagramumlitemswidget.cpp \
+    ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -68,6 +69,7 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/usecasegraphicsscene.h \
     ui/gui/idesignequalsimplementationgraphicsscene.h \
     ui/gui/usecaseumlitemswidget.h \
-    ui/gui/classdiagramumlitemswidget.h
+    ui/gui/classdiagramumlitemswidget.h \
+    ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

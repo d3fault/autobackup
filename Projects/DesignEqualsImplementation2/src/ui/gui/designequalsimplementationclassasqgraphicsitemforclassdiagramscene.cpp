@@ -2,12 +2,13 @@
 
 #include <QPainter>
 #include <QPointF>
-#include <QMutexLocker>
 
+#include <QMutexLocker>
 #include "../../designequalsimplementation.h"
 
-#define DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT 3
+#include "designequalsimplementationguicommon.h"
 
+//TODOmb: considering changing this to a qpixmap in a graphics scene instead, where teh pixmap is drawn only when the class changes, update called once, then it's simply provided to qgraphicsview (svg might be more optimized?)... i'm going to wait on making a decision until i try to reuse the code for getting the "uml class" drag drop thingo to use the same shape (in designEquals1, i rendered to pixmap for that). i do know one thing, what i'm doing now is hella laggy (but works so fuck it)
 DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *parent, Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags)
     , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
@@ -65,20 +66,20 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     QRectF resizeBoundingRectTo;
     painter->drawText(boundingRect(), (Qt::AlignVCenter /*| Qt::TextDontClip*/), classContentsString, &resizeBoundingRectTo);
     QRectF roundedRect = resizeBoundingRectTo;
-    roundedRect.setLeft(roundedRect.left()-(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
-    roundedRect.setTop(roundedRect.top()-(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
-    roundedRect.setWidth(roundedRect.width()+(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
-    roundedRect.setHeight(roundedRect.height()+(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
-    painter->drawRoundedRect(roundedRect, 5, 5);
+    roundedRect.setLeft(roundedRect.left()-(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
+    roundedRect.setTop(roundedRect.top()-(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
+    roundedRect.setWidth(roundedRect.width()+(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
+    roundedRect.setHeight(roundedRect.height()+(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
+    painter->drawRoundedRect(roundedRect, DESIGNEQUALSIMPLEMENTATION_GUI_CLASS_GRAPHICS_ITEM_ROUNDED_RECTANGLE_RADIUS, DESIGNEQUALSIMPLEMENTATION_GUI_CLASS_GRAPHICS_ITEM_ROUNDED_RECTANGLE_RADIUS);
 
 
     //Calculate line spacing in between each line-of-text
     qreal vertialSpaceBetweenEachLineDrawn = resizeBoundingRectTo.height() / static_cast<qreal>(numLinesOfText);
     QPointF leftPointOfLine;
-    leftPointOfLine.setX(resizeBoundingRectTo.left()-(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT-1));
+    leftPointOfLine.setX(resizeBoundingRectTo.left()-(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT-1));
     leftPointOfLine.setY(resizeBoundingRectTo.top()+vertialSpaceBetweenEachLineDrawn);
     QPointF rightPointOfLine;
-    rightPointOfLine.setX(resizeBoundingRectTo.right()+(DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT-1));
+    rightPointOfLine.setX(resizeBoundingRectTo.right()+(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT-1));
     rightPointOfLine.setY(resizeBoundingRectTo.top()+vertialSpaceBetweenEachLineDrawn);
     bool drawingFirstLine = true; //Line between class name and rest should be same as border width
     --numLinesOfText; //This might look like an off by one, but I decided not to draw the very last/bottom line because it looks retarded

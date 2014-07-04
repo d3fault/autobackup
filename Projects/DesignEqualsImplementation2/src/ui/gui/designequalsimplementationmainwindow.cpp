@@ -1,5 +1,6 @@
 #include "designequalsimplementationmainwindow.h"
 
+#include <QVBoxLayout>
 #include <QMenuBar>
 #include <QMenu>
 #include <QToolBar>
@@ -7,6 +8,7 @@
 #include <QStackedWidget>
 #include <QTabWidget>
 #include <QAction>
+#include <QListWidget>
 #include <QMutexLocker>
 
 #include "../../designequalsimplementation.h"
@@ -17,6 +19,8 @@
 #include "designequalsimplementationguicommon.h"
 
 #define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME "Design = Implementation" //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod)
+
+#define DesignEqualsImplementationMainWindow_DOCK_WIDGET_FEATURES (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable)
 
 //fucking QWidget::addActions didn't do what I expected... and I don't even get how QToolBar/Menu are using a NON-VIRTUAL method with identical name "addAction"
 //#define DesignEqualsImplementationMainWindow_ADD_MY_ACTIONS(menuOrToolBarWithAddActionMethod)
@@ -31,6 +35,7 @@
 //TODOoptional: a first run wizard teaching them how to design + execute hello world (or something more interesting). ex: "click and drag one of these classes here" (class creation), <insert class population instructions>, "ok now add a use case", "ok now draw line from here to here". should ideally be all visual and shit pointing to what the user needs to do next
 DesignEqualsImplementationMainWindow::DesignEqualsImplementationMainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , m_CurrentProjectTabIndex(0)
 {
     setWindowTitle(DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME);
     createActions();
@@ -40,20 +45,21 @@ DesignEqualsImplementationMainWindow::DesignEqualsImplementationMainWindow(QWidg
     setCentralWidget(m_OpenProjectsTabWidget = new QTabWidget());
 
     connect(m_OpenProjectsTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged()));
+    connect(m_AllUseCasesListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem*)));
 }
 DesignEqualsImplementationMainWindow::~DesignEqualsImplementationMainWindow()
 { }
 void DesignEqualsImplementationMainWindow::createActions()
 {
     //Project Operations
-    m_NewProjectAction = new QAction(tr("&New Project"), this);
+    m_NewProjectAction = new QAction(tr("&New Project"), this); //TODOreq: lots of these ampersand things have collisions lewl
     m_OpenProjectAction = new QAction(tr("&Open Open"), this);
     m_NewUseCaseAction = new QAction(tr("&New Use Case"), this);
     connect(m_NewProjectAction, SIGNAL(triggered()), this, SIGNAL(newProjectRequested()));
     connect(m_OpenProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
     connect(m_NewUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseActionTriggered()));
 
-    //Main Toolbar Actions
+    //Main Toolbar Actions -- TODOreq the 'modes' need to be 'one at a time' exclusive or whatever (like radio boxen)
     m_MoveMousePointerDefaultAction = new QAction(tr("&Move Mode"), this);
     m_DrawSignalSlotConnectionActivationArrowsAction = new QAction(tr("&Signals/Slots Connection Activation Arrows Mode"), this);
     connect(m_MoveMousePointerDefaultAction, SIGNAL(triggered()), this, SLOT(handleMoveMousePointerDefaultActionTriggered()));
@@ -66,6 +72,10 @@ void DesignEqualsImplementationMainWindow::createMenu()
     fileNew->addAction(m_NewProjectAction);
     fileNew->addAction(m_NewUseCaseAction);
     fileMenu->addAction(m_OpenProjectAction);
+
+    QMenu *modeMenu = menuBar()->addMenu(tr("&Mode"));
+    modeMenu->addAction(m_MoveMousePointerDefaultAction);
+    modeMenu->addAction(m_DrawSignalSlotConnectionActivationArrowsAction);
 }
 void DesignEqualsImplementationMainWindow::createToolbars()
 {
@@ -82,8 +92,11 @@ void DesignEqualsImplementationMainWindow::createToolbars()
 }
 void DesignEqualsImplementationMainWindow::createDockWidgets()
 {
+    setCorner(Qt::TopLeftCorner, Qt::TopDockWidgetArea);
+    setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks);
+
     QDockWidget *dockWidget = new QDockWidget(tr("Available Items"), this);
-    dockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+    dockWidget->setFeatures(DesignEqualsImplementationMainWindow_DOCK_WIDGET_FEATURES);
 
     m_UmlStackedDockWidget = new QStackedWidget();
     m_ClassDiagramUmlItemsWidget = new ClassDiagramUmlItemsWidget();
@@ -93,6 +106,12 @@ void DesignEqualsImplementationMainWindow::createDockWidgets()
 
     dockWidget->setWidget(m_UmlStackedDockWidget);
     addDockWidget(Qt::LeftDockWidgetArea, dockWidget, Qt::Vertical);
+
+    m_AllUseCasesListWidget = new QListWidget(); //TODOoptional: right-click -> new use case (TODOoptional: semi-OT: class diagram scene right-click -> new class)
+    QDockWidget *allUseCasesDockWidget = new QDockWidget("All Use Cases", this);
+    allUseCasesDockWidget->setFeatures(DesignEqualsImplementationMainWindow_DOCK_WIDGET_FEATURES);
+    allUseCasesDockWidget->setWidget(m_AllUseCasesListWidget);
+    addDockWidget(Qt::LeftDockWidgetArea, allUseCasesDockWidget, Qt::Vertical);
 
     //defaults
     setClassDiagramToolsDisabled(false);
@@ -107,12 +126,20 @@ void DesignEqualsImplementationMainWindow::setUseCaseToolsDisabled(bool disabled
     //TODOoptional: a run-time option/setting could be whether or not to setDisabled or setHidden for all these toolbars/actions... but the default should be setDisabled
     m_DrawSignalSlotConnectionActivationArrowsAction->setDisabled(disabled);
 }
+void DesignEqualsImplementationMainWindow::addUseCaseToAllUseCasesListWidget(DesignEqualsImplementationUseCase *newUseCase)
+{
+    QListWidgetItem *newUseCaseListWidgetItem = new QListWidgetItem(newUseCase->Name);
+    newUseCaseListWidgetItem->setData(Qt::UserRole, QVariant::fromValue<DesignEqualsImplementationUseCase*>(newUseCase));
+    m_AllUseCasesListWidget->addItem(newUseCaseListWidgetItem);
+}
 //TODOreq: [backend] project is not thread safe to access directly, so check the source to make sure it's used properly (or i could mutex protect the DesignEqualsImplementationProject itself to KISS, undecided as of now)
 void DesignEqualsImplementationMainWindow::handleProjectOpened(DesignEqualsImplementationProject *project)
 {
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget = new DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(project);
     int tabIndex = m_OpenProjectsTabWidget->addTab(designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget, project->Name);
+    connect(project, SIGNAL(classAdded(DesignEqualsImplementationClass*)), m_UseCaseUmlItemsWidget, SLOT(handleClassAdded(DesignEqualsImplementationClass*))); //Impulsively I feel the need to sever these connections when project tabs change, but since the backend project can't add a class when it's not current tab, there is little need (memory optimization? idfk)
+    connect(project, SIGNAL(useCaseAdded(DesignEqualsImplementationUseCase*)), this, SLOT(handleUseCaseAdded(DesignEqualsImplementationUseCase*)));
     connect(designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget->classDiagramAndUseCasesTabWidget(), SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged()));
     m_OpenProjectsTabWidget->setCurrentIndex(tabIndex);
 }
@@ -130,14 +157,58 @@ void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramA
 {
     //NOTE: the reason we don't use the "new tab index" arg from the emitting signalS is because both the "project tabs" changing and the "uml and use cases tabs" changing trigger this slot. not a huge deal since all we're doing is determining which set of tools to present (class diagram vs. use case).
 
+    int newProjectTabIndexMaybe = m_OpenProjectsTabWidget->currentIndex(); //maybe because it may not have changed
+    DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget = static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->widget(newProjectTabIndexMaybe));
+    int projectTabSubIndex = designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget->classDiagramAndUseCasesTabWidget()->currentIndex();
+
+    if(m_CurrentProjectTabIndex == newProjectTabIndexMaybe)
+    {
+        if(projectTabSubIndex == 0)
+        {
+            //current project simply changed to class diagram tab (do nothing, rasing it to the stack widget is handled below... and it's contents are already correct)
+        }
+        else
+        {
+            //current project changed to use case tab (do nothing?)
+        }
+    }
+    else
+    {
+        //project tab changed! definitely need to update uml items
+
+        //[re-]populate all use cases list
+        m_AllUseCasesListWidget->clear();
+        QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+        //Q_FOREACH()
+        //TODOreq: invokeMethod(project, "emitAllUseCases") vs. lock+iterate. BOTH require locking anyways haha, so ok I'm going to answer the question AS IF I ALREADY HAD IMPLICIT SHARING IMPLEMENTED. *thinks about a hypothetical situation that does not yet exist* (all hypothetical situations do exist, if they are possible, because there is infinite time (depends how you define 'exist'... does it mean: 'known to exist in this [known] universe and has happend (has existed) sometime in between the big bang and now'? or: 'has ever existed'? I would argue the latter, therefore everything exists (if you restrict what can be a thing to anything possible in the realm of physics)))
+        //back on track, implicit sharing: hmm yea i'd iterate that list like a fucking baller
+        DesignEqualsImplementationProject *project = designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget->designEqualsImplementationProject();
+        Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, project->useCases())
+        {
+            addUseCaseToAllUseCasesListWidget(currentUseCase);
+        }
+
+        //[re-]populate all classes in "use case uml items widget"
+        QMetaObject::invokeMethod(m_UseCaseUmlItemsWidget, "handleNowShowingProject", Q_ARG(DesignEqualsImplementationProject*, project)); //TODOoptional: sexy signal instead? fuckit. maybe i should separate the tab changed listens after all...
+
+        if(projectTabSubIndex == 0)
+        {
+            //project tab is/was on class diagram tab
+        }
+        else
+        {
+            //project tab is/was on a use case tab
+        }
+    }
+
     //TODOreq: don't 'double show'. as in, don't change tools if the correct ones are already being shown
 
     //If I ever allow tab re-ordering and class diagram doesn't doesn't have tab index == 0, i can still easily check what kind of tab is the new current by doing a qobject_cast ;-P
-    if(static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget())->classDiagramAndUseCasesTabWidget()->currentIndex() == 0)
+    if(projectTabSubIndex == 0)
     {
         //show class diagram tools
         setClassDiagramToolsDisabled(false);
-        setUseCaseToolsDisabled(false);
+        setUseCaseToolsDisabled(true);
         m_UmlStackedDockWidget->setCurrentWidget(m_ClassDiagramUmlItemsWidget);
     }
     else
@@ -151,4 +222,16 @@ void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramA
     }
 
     //TODOreq: when the PROJECT tab changes, we also need to change the "available use cases" (when in class diagram view (double clicking opens it in tab)) and "available classes" (when in use case view (for dragging onto use case))
+
+    m_CurrentProjectTabIndex = newProjectTabIndexMaybe;
+}
+void DesignEqualsImplementationMainWindow::handleUseCaseAdded(DesignEqualsImplementationUseCase *newUseCase)
+{
+    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+    addUseCaseToAllUseCasesListWidget(newUseCase);
+}
+void DesignEqualsImplementationMainWindow::handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem *doubleClickedListWidgetItem)
+{
+    //TODOreq: don't double open (use case already open (do switch to it's tab))
+    //TODOreq: don't double show (current tab == double clicked item)
 }

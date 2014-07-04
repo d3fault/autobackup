@@ -1,0 +1,1 @@
+I could write a high level kernel in like two minutes flat... but you couldn't pay me enough money to write a low level (OS) kernel. Thanks Torvalds/etc :-) for doing all the tedious low level shit I don't give a fuck about <3 <3

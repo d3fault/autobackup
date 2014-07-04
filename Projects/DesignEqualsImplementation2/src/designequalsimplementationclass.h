@@ -49,4 +49,6 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass &design
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass *&designEqualsImplementationClass);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&designEqualsImplementationClass);
 
+Q_DECLARE_METATYPE(DesignEqualsImplementationClass*)
+
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASS_H

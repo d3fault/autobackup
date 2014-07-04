@@ -11,7 +11,9 @@ class DesignEqualsImplementationUseCaseAsWidgetForTab : public IHaveAGraphicsVie
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationUseCaseAsWidgetForTab(DesignEqualsImplementationUseCase *useCase, QWidget *parent = 0);
-public slots:
+private slots:
+    void handleActorAdded(QPointF position);
+    void handleClassAdded(DesignEqualsImplementationClass *newClass,QPointF position);
     void handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventTypeEnum, QObject* event, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionOrSlotInvocationContextVariables);
 };
 

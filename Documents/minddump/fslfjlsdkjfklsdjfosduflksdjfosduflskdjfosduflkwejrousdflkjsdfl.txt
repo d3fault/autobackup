@@ -1,0 +1,1 @@
+Sometimes I get done writing a chunk of code and I have no idea what I just wrote (I forget during the compiling stage). Fuck it, I sned to my VM and press play to test without giving a shit :-P. If I was to run it on my devbox directly, I'd cringe [at not remembering] and study the shit out of the code before pressing play
