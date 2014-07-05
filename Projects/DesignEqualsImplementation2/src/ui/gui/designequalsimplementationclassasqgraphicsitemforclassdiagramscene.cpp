@@ -145,7 +145,9 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleP
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleSlotAdded(DesignEqualsImplementationClassSlot*)
 {
-
+    //TODOprobably (same as the other handles, so really they can all be merged...):
+    //myPaint(); //does draw incl mutex lock
+    //update(); //paint works on static item (pixmap?)
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleSignalAdded(DesignEqualsImplementationClassSignal *)
 {

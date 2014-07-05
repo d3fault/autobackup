@@ -4,10 +4,11 @@
 
 #include "designequalsimplementationguicommon.h"
 #include "../../designequalsimplementationclass.h"
+#include "../../designequalsimplementationclasslifeline.h"
 
-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *parent, Qt::WindowFlags wFlags)
+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, QGraphicsItem *parent, Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags)
-    , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
+    , m_DesignEqualsImplementationClassLifeLine(classLifeLine)
 {
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -27,7 +28,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::paint(Q
     painter->setBrush(Qt::transparent);
     painter->setPen(m_ClassBorderPen);
     QRectF resizeBoundingRectTo;
-    painter->drawText(boundingRect(), (Qt::AlignVCenter /*| Qt::TextDontClip*/), m_DesignEqualsImplementationClass->ClassName, &resizeBoundingRectTo); //TODOreq: unsafe pointer usage :)
+    painter->drawText(boundingRect(), (Qt::AlignVCenter /*| Qt::TextDontClip*/), m_DesignEqualsImplementationClassLifeLine->designEqualsImplementationClass()->ClassName, &resizeBoundingRectTo); //TODOreq: unsafe pointer usage :)
     QRectF roundedRect = resizeBoundingRectTo;
     roundedRect.setLeft(roundedRect.left()-(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
     roundedRect.setTop(roundedRect.top()-(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));

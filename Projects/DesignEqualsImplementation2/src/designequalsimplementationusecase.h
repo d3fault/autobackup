@@ -10,6 +10,8 @@
 #include "designequalsimplementationclasssignal.h"
 #include "signalemissionorslotinvocationcontextvariables.h"
 
+class DesignEqualsImplementationClassLifeLine;
+
 class DesignEqualsImplementationUseCase : public QObject
 {
     Q_OBJECT
@@ -39,11 +41,13 @@ private:
     DesignEqualsImplementationClassSlot *m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements;
     int m_ExitSignalsIndexIntoOrderedListOfStatements;
 
+    QList<DesignEqualsImplementationClassLifeLine*> m_ClassLifeLines;
+
     void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
     void addEventPrivateWithoutUpdatingExitSignal(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
 signals:
     void actorAdded(QPointF position);
-    void classAdded(DesignEqualsImplementationClass *newClass, QPointF position);
+    void classLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);
     void eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
 public slots:
     void addActorToUseCase(QPointF position);

@@ -4,20 +4,26 @@
 #include "idesignequalsimplementationgraphicsscene.h"
 #include "../../designequalsimplementationcommon.h"
 
+class DesignEqualsImplementationProject;
+class DesignEqualsImplementationClass;
+
 class ClassDiagramGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
     Q_OBJECT
 public:
-    ClassDiagramGraphicsScene();
-    ClassDiagramGraphicsScene(const QRectF &sceneRect);
-    ClassDiagramGraphicsScene(qreal x, qreal y, qreal width, qreal height);
+    ClassDiagramGraphicsScene(DesignEqualsImplementationProject *designEqualsImplementationProject);
+    ClassDiagramGraphicsScene(DesignEqualsImplementationProject *designEqualsImplementationProject, const QRectF &sceneRect);
+    ClassDiagramGraphicsScene(DesignEqualsImplementationProject *designEqualsImplementationProject, qreal x, qreal y, qreal width, qreal height);
     virtual ~ClassDiagramGraphicsScene();
 protected:
     virtual void handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *event);
 private:
+    void privateConstructor(DesignEqualsImplementationProject *designEqualsImplementationProject);
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void addUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
+private slots:
+    void handleClassAdded(DesignEqualsImplementationClass *classAdded);
 };
 
 #endif // CLASSDIAGRAMGRAPHICSSCENE_H
