@@ -9,14 +9,15 @@
 #include <QTabWidget>
 #include <QAction>
 #include <QListWidget>
-#include <QMutexLocker>
+#include <QActionGroup> //and to think i wasted to much time with qbuttongroup/groupbox/etc in other projects!
 
+#include <QMutexLocker>
 #include "../../designequalsimplementation.h"
+
 #include "../../designequalsimplementationproject.h"
 #include "classdiagramumlitemswidget.h"
 #include "usecaseumlitemswidget.h"
 #include "designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h"
-#include "designequalsimplementationguicommon.h"
 
 #define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME "Design = Implementation" //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod)
 
@@ -33,6 +34,7 @@
 //TODOreq: in use case view, the lifeline/object that your mouse is nearest to shows a red dot for where the next "statement" will go should you draw a line on it. It is useful to know if a signal emission/slot invocation will go before/after a different one. If there is only one slot invocation line connecting ('from the left') to your lifeline/object, that red dot is ALWAYS 'just below' the slot invocation that brought you to your current context (since it can't go below it). Such "red dots" are VECTOR and snappy, it should be instantly clear whether or not an arrow drawn will come before/after other ones. TODOreq: lines (statements ("signal/slot connection activations")) are moveable ofc
 //TODOreq: "left" and "right" direction arrows that remember previous projects/use-cases+class-diagrams viewed, JUST LIKE Qt Creator :-P
 //TODOoptional: a first run wizard teaching them how to design + execute hello world (or something more interesting). ex: "click and drag one of these classes here" (class creation), <insert class population instructions>, "ok now add a use case", "ok now draw line from here to here". should ideally be all visual and shit pointing to what the user needs to do next
+//TODOreq: holding ctrl should put the mouse mode into arrow mode until it's released (if already in arrow mode, do nothing (and don't change out of it when ctrl released))
 DesignEqualsImplementationMainWindow::DesignEqualsImplementationMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_CurrentProjectTabIndex(0)
@@ -59,11 +61,17 @@ void DesignEqualsImplementationMainWindow::createActions()
     connect(m_OpenProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
     connect(m_NewUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseActionTriggered()));
 
-    //Main Toolbar Actions -- TODOreq the 'modes' need to be 'one at a time' exclusive or whatever (like radio boxen)
+    //Main Toolbar Actions
+    QActionGroup *mouseModeActionGroup = new QActionGroup(this);
     m_MoveMousePointerDefaultAction = new QAction(tr("&Move Mode"), this);
+    m_MoveMousePointerDefaultAction->setCheckable(true);
     m_DrawSignalSlotConnectionActivationArrowsAction = new QAction(tr("&Signals/Slots Connection Activation Arrows Mode"), this);
-    connect(m_MoveMousePointerDefaultAction, SIGNAL(triggered()), this, SLOT(handleMoveMousePointerDefaultActionTriggered()));
-    connect(m_DrawSignalSlotConnectionActivationArrowsAction, SIGNAL(triggered()), this, SLOT(handleDrawSignalSlotConnectionActivationArrowsActionTriggered()));
+    m_DrawSignalSlotConnectionActivationArrowsAction->setCheckable(true);
+    mouseModeActionGroup->addAction(m_MoveMousePointerDefaultAction);
+    mouseModeActionGroup->addAction(m_DrawSignalSlotConnectionActivationArrowsAction);
+    connect(m_MoveMousePointerDefaultAction, SIGNAL(triggered()), this, SLOT(doMouseModeChange()));
+    connect(m_DrawSignalSlotConnectionActivationArrowsAction, SIGNAL(triggered()), this, SLOT(doMouseModeChange()));
+    m_MoveMousePointerDefaultAction->setChecked(true);
 }
 void DesignEqualsImplementationMainWindow::createMenu()
 {
@@ -73,7 +81,7 @@ void DesignEqualsImplementationMainWindow::createMenu()
     fileNew->addAction(m_NewUseCaseAction);
     fileMenu->addAction(m_OpenProjectAction);
 
-    QMenu *modeMenu = menuBar()->addMenu(tr("&Mode"));
+    QMenu *modeMenu = menuBar()->addMenu(tr("&Mouse Mode"));
     modeMenu->addAction(m_MoveMousePointerDefaultAction);
     modeMenu->addAction(m_DrawSignalSlotConnectionActivationArrowsAction);
 }
@@ -124,6 +132,9 @@ void DesignEqualsImplementationMainWindow::setClassDiagramToolsDisabled(bool dis
 void DesignEqualsImplementationMainWindow::setUseCaseToolsDisabled(bool disabled)
 {
     //TODOoptional: a run-time option/setting could be whether or not to setDisabled or setHidden for all these toolbars/actions... but the default should be setDisabled
+
+    if(disabled && m_DrawSignalSlotConnectionActivationArrowsAction->isChecked())
+        m_MoveMousePointerDefaultAction->setChecked(true);
     m_DrawSignalSlotConnectionActivationArrowsAction->setDisabled(disabled);
 }
 void DesignEqualsImplementationMainWindow::addUseCaseToAllUseCasesListWidget(DesignEqualsImplementationUseCase *newUseCase)
@@ -137,6 +148,7 @@ void DesignEqualsImplementationMainWindow::handleProjectOpened(DesignEqualsImple
 {
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget = new DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(project);
+    connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum))); //shouldn't the setCurrentIndex trigger the tab changed slot, which re-does this? OH the reason I didn't see it is because m_CurrentProjectTabIndex starts at 0 and the first added is also 0. BUT i tried changing m_CurrentProjectTabIndex to -1 in this constructor, but then I saw 2x "Foo" instead of Actor + Foo, so I'm leik wat and fuck it this is good enough...
     int tabIndex = m_OpenProjectsTabWidget->addTab(designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget, project->Name);
     connect(project, SIGNAL(classAdded(DesignEqualsImplementationClass*)), m_UseCaseUmlItemsWidget, SLOT(handleClassAdded(DesignEqualsImplementationClass*))); //Impulsively I feel the need to sever these connections when project tabs change, but since the backend project can't add a class when it's not current tab, there is little need (memory optimization? idfk)
     connect(project, SIGNAL(useCaseAdded(DesignEqualsImplementationUseCase*)), this, SLOT(handleUseCaseAdded(DesignEqualsImplementationUseCase*)));
@@ -175,6 +187,10 @@ void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramA
     else
     {
         //project tab changed! definitely need to update uml items
+
+        disconnect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
+        connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
+        doMouseModeChange(); //update possibly stale values
 
         //[re-]populate all use cases list
         m_AllUseCasesListWidget->clear();
@@ -234,4 +250,15 @@ void DesignEqualsImplementationMainWindow::handleAllUseCasesListWidgetItemDouble
 {
     //TODOreq: don't double open (use case already open (do switch to it's tab))
     //TODOreq: don't double show (current tab == double clicked item)
+}
+void DesignEqualsImplementationMainWindow::doMouseModeChange()
+{
+    if(m_MoveMousePointerDefaultAction->isChecked())
+    {
+        emit mouseModeChanged(DesignEqualsImplementationMouseMoveMode);
+    }
+    else if(m_DrawSignalSlotConnectionActivationArrowsAction->isChecked())
+    {
+        emit mouseModeChanged(DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode);
+    }
 }

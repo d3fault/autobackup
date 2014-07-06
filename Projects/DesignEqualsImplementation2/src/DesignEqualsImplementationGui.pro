@@ -39,7 +39,12 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/usecaseumlitemswidget.cpp \
     ui/gui/classdiagramumlitemswidget.cpp \
     ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.cpp \
-    designequalsimplementationclasslifeline.cpp
+    designequalsimplementationclasslifeline.cpp \
+    designequalsimplementationclasslifelineunitofexecution.cpp \
+    ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.cpp \
+    ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.cpp \
+    designequalsimplementationactor.cpp \
+    ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -72,6 +77,11 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/usecaseumlitemswidget.h \
     ui/gui/classdiagramumlitemswidget.h \
     ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.h \
-    designequalsimplementationclasslifeline.h
+    designequalsimplementationclasslifeline.h \
+    designequalsimplementationclasslifelineunitofexecution.h \
+    ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h \
+    ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.h \
+    designequalsimplementationactor.h \
+    ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

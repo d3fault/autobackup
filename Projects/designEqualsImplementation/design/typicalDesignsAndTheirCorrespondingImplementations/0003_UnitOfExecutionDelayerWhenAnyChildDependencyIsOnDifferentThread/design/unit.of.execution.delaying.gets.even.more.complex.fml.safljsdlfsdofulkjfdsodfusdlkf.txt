@@ -1,0 +1,18 @@
+Zop
+{
+	Foo
+	{
+		ThreadGroup<Bar, Boob>
+		ThreadGroup<Asdf>
+		Jkl
+		{
+			ThreadGroup<Mno>
+		}
+	}
+	ThreadGroup<Pqr>
+	Pod
+}
+
+use-case-0: zopSlot0 -> fooSlot0 -> barSlot0 -> asdfSlot0 -> Foo::handleAsdfSignal0 -> jklSlot0 -> mnoSlot0 -> Zop::handleMnoSignal0; //TODOreq: we still have to keep following use case events checking for children that need initializing even after first cross thread call is seen, because thread might come back and then go to another thread. BUT actually that is different unit of execution after first thread comes back, so it would use IT'S OWN unit of execution delaying code (mid use case!). specifically, Foo::handleAsdfSignal0 has to make sure Mno is initialized before "actually" doing handleAsdfSignal0. To KISS I might just iterate ALL use case children and make sure ALL of them are initialized, but it does make sense that there can be different points within the use case where we do unit of execution delaying
+
+//TODOreq: it isn't necessarily 'CHILDREN' (hasA) that must be checked recursively for cross thread calls, but it is basically anything in the "ordered use case events" (Zop and Foo may be neighbors and Zop would still need to recursively check Foo)

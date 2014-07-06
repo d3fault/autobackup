@@ -11,8 +11,6 @@
 #include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
 
-#define UseCaseUmlItemsWidget_ACTOR_STRING "Actor"
-
 //TODOreq: while valgrinding (sloooow), I saw 2 copies of Foo in this widget. I did new project -> new use case (so there were two projects open, accounting for the two Foos). is race condition methinks
 UseCaseUmlItemsWidget::UseCaseUmlItemsWidget(QWidget *parent)
     : QListWidget(parent)
@@ -45,7 +43,7 @@ void UseCaseUmlItemsWidget::startDrag(Qt::DropActions supportedActions)
     }
     else
     {
-        mimeData->setText(UseCaseUmlItemsWidget_ACTOR_STRING);
+        mimeData->setText(DESIGN_EQUALS_IMPLEMENTATION_ACTOR_STRING);
     }
 
     mimeData->setData(DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_USE_CASE_OBJECT, itemData);
@@ -57,7 +55,7 @@ void UseCaseUmlItemsWidget::startDrag(Qt::DropActions supportedActions)
 }
 void UseCaseUmlItemsWidget::addActor()
 {
-    QListWidgetItem *actor = new QListWidgetItem(tr(UseCaseUmlItemsWidget_ACTOR_STRING), this);
+    QListWidgetItem *actor = new QListWidgetItem(tr(DESIGN_EQUALS_IMPLEMENTATION_ACTOR_STRING), this);
     actor->setData(Qt::UserRole, QVariant(true)); //TODOreq: false indicates that UserRole+1 contains a pointer to a class
     //umlClass->setIcon(QIcon(pixmap));
     actor->setFlags(DESIGNEQUALSIMPLEMENTATION_GUI_DRAG_DROP_LIST_WIDGET_ITEM_FLAGS);

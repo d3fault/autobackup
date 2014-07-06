@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QList>
 
+#include "designequalsimplementationguicommon.h"
+
 class QTabWidget;
 class QAction;
 class QStackedWidget;
@@ -54,6 +56,7 @@ signals:
     void newProjectRequested();
     void openExistingProjectRequested(const QString &projectFilePath);
     void newUseCaseRequested();
+    void mouseModeChanged(DesignEqualsImplementationMouseModeEnum newMouseMode);
 public slots:
     void handleProjectOpened(DesignEqualsImplementationProject *project);
 private slots:
@@ -62,6 +65,7 @@ private slots:
     void handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged();
     void handleUseCaseAdded(DesignEqualsImplementationUseCase *newUseCase);
     void handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem *doubleClickedListWidgetItem);
+    void doMouseModeChange();
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONMAINWINDOW_H

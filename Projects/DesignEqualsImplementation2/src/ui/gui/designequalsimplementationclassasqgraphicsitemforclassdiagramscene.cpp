@@ -18,6 +18,7 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
     m_ClassBorderPen.setWidth(2);
     m_LinesInBetweenLinesOfTextPen.setWidth(0);
     //setFlag(QGraphicsItem::ItemSendsGeometryChanges, true); //for redrawing arrows when the item moves
+    //setCacheMode(QGraphicsItem::DeviceCoordinateCache, QSize(500, 500));
 }
 QRectF DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::boundingRect() const
 {
@@ -123,7 +124,6 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
             drawingFirstLine = false;
         }
     }
-
 
     m_BoundingRect = resizeBoundingRectTo;
     painter->restore();

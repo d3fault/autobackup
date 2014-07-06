@@ -6,4 +6,6 @@
 //TODOoptional: the list of classes (user designed/defined (had:de[s|f]igned)) that can be dragged n dropped should have a text filter for easy finding (class count may grow huge in a project)
 DesignEqualsImplementationUseCaseAsWidgetForTab::DesignEqualsImplementationUseCaseAsWidgetForTab(DesignEqualsImplementationUseCase *useCase, QWidget *parent)
     : IHaveAGraphicsViewAndScene(new UseCaseGraphicsScene(useCase), parent)
-{ }
+{
+    connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), static_cast<UseCaseGraphicsScene*>(m_GraphicsScene), SLOT(setMouseMode(DesignEqualsImplementationMouseModeEnum)));
+}

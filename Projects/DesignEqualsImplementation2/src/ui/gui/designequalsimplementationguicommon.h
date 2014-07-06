@@ -5,7 +5,13 @@
 #define DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT 3
 #define DESIGNEQUALSIMPLEMENTATION_GUI_CLASS_GRAPHICS_ITEM_ROUNDED_RECTANGLE_RADIUS 5
 
+#include <QMetaType>
+enum DesignEqualsImplementationMouseModeEnum { DesignEqualsImplementationMouseMoveMode, DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode };
+Q_DECLARE_METATYPE(DesignEqualsImplementationMouseModeEnum)
+
 #define DESIGNEQUALSIMPLEMENTATION_GUI_DRAG_DROP_LIST_WIDGET_ITEM_FLAGS (Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled)
+
+#define DESIGN_EQUALS_IMPLEMENTATION_ACTOR_STRING "Actor"
 
 #define DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_PREFIX "uml/design-equals-implementation-"
 

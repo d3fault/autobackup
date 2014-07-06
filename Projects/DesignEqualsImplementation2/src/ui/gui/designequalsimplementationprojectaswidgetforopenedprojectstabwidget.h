@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "designequalsimplementationguicommon.h"
+
 class QTabWidget;
 
 class DesignEqualsImplementationProject;
@@ -20,6 +22,7 @@ private:
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
 signals:
     void newUseCaseRequested();
+    void mouseModeChanged(DesignEqualsImplementationMouseModeEnum newMouseMode);
 private slots:
     void requestNewUseCase();
     void handleUseCaseAdded(DesignEqualsImplementationUseCase *useCase);

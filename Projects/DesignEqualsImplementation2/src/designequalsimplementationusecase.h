@@ -10,6 +10,7 @@
 #include "designequalsimplementationclasssignal.h"
 #include "signalemissionorslotinvocationcontextvariables.h"
 
+class DesignEqualsImplementationActor;
 class DesignEqualsImplementationClassLifeLine;
 
 class DesignEqualsImplementationUseCase : public QObject
@@ -46,7 +47,7 @@ private:
     void addEventPrivate(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
     void addEventPrivateWithoutUpdatingExitSignal(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
 signals:
-    void actorAdded(QPointF position);
+    void actorAdded(DesignEqualsImplementationActor *actor);
     void classLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);
     void eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
 public slots:

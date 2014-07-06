@@ -1,5 +1,6 @@
 #include "zop.h"
 
+#include <QDebug>
 #include <QCoreApplication>
 
 #include "foo.h"
@@ -9,6 +10,7 @@ Zop::Zop(QObject *parent)
     : QObject(parent)
     , m_Foo(new Foo(this))
     , m_AllRecursiveChildrenOnOtherThreadsAreInitialized(false)
+    , m_ZopSlotCalled(false)
 {
     connect(m_Foo, SIGNAL(allChildrenOnDifferentThreadsInitialized()), this, SLOT(handleAllFoosChildrenOnDifferentThreadsInitialized()));
     connect(m_Foo, SIGNAL(fooSignal(bool)), this, SLOT(handleFooSignal(bool)));
@@ -40,6 +42,7 @@ void Zop::handleAllFoosChildrenOnDifferentThreadsInitialized()
 }
 void Zop::handleFooSignal(bool success)
 {
+    qDebug() << success;
     emit zopSignal(success);
     QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }

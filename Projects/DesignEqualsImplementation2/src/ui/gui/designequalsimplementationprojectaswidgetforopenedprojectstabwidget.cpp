@@ -56,6 +56,7 @@ void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::handle
 {
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationUseCaseAsWidgetForTab *designEqualsImplementationUseCaseAsWidgetForTab = new DesignEqualsImplementationUseCaseAsWidgetForTab(useCase);
+    connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), designEqualsImplementationUseCaseAsWidgetForTab, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
     int tabIndex = m_ClassDiagramAndUseCasesTabWidget->addTab(designEqualsImplementationUseCaseAsWidgetForTab, useCase->Name);
     m_ClassDiagramAndUseCasesTabWidget->setCurrentIndex(tabIndex);
 }

@@ -13,6 +13,7 @@
 #include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
 
+//TODOoptional: in the class editor, as well as having your traditional "add parameter" [to operation] drill downs like every other UML with separate easily distinguishable line edits, experimentally (AND USING libclang hopefully <3 <3) i should allow an operation to be quickly typed just as if it were C++. it is parsed before they exit the wizard, and they can confirm/modify the results. ex: typing "void someFuck(int sex, bool cuntNugget)" would be easily parsable by a fucking compiler library i would hope.... the hardest part will be trying to use libclang lol, but i bet if i joined their irc and asked "how to parse/separate a single function/method" I'd be pointed to exactly what I want :). There's really no limit to how much this app can interface with libclang, I'm spoiled by it
 ClassDiagramGraphicsScene::ClassDiagramGraphicsScene(DesignEqualsImplementationProject *designEqualsImplementationProject)
     : IDesignEqualsImplementationGraphicsScene()
 {

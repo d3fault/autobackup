@@ -15,9 +15,6 @@
 #include "designequalsimplementationclassmethodargument.h"
 #include "designequalsimplementationusecase.h"
 #endif
-#ifdef DesignEqualsImplementation_TEST_GUI_MODE
-
-#endif
 
 QMutex DesignEqualsImplementation::BackendMutex(QMutex::Recursive);
 
@@ -25,6 +22,8 @@ QMutex DesignEqualsImplementation::BackendMutex(QMutex::Recursive);
 //OT: :( I'm using a binary save format (QDataStream), but I still feel like these serialized designs belong in my /text/ repo. Could of course do XML/json/etc with ease ;-P
 //TODOreq: thought about this while drifting around in between sleep/awake: a use case can have a [connected-to-NOTHING(auxilarySignalX)-during-previously-designed-use-case] signal as it's "entry point", but it isn't the same as the "first slot" entry point (and i'm glad, since that would require a bit of refactoring). it is more of a symbolic entry point (sort of like the ExitSignal) and not really a part of the "use case events". there isn't much more to write about, but there will likely be confusion when trying to implement that because of the two occurances of "entry points". one is "what triggers the use case" (actor or signal), and one is "the first use case event". OT'ish: deleting a signal in class diagram perspective used to trigger a use case needs to be handled properly, and i'm not sure how. perhaps the app keeps track of the use cases that are "invalid" (not triggered by either a signal or actor), and source can't be generated until it's fixed. or deleting triggering signal deletes that use case, BUT i'm not liking that idea much (best solution: ask right when/after signal is deleted what they want to do)
 //TODOoptional: On a rainy day, templatify the source generation. It's definitely more powerful/flexible/etc, but I've learned from experience that whenever I do templates I get slowed down so much from the tediousness of it that I ragequit out of boredom
+//TODOoptimization: when listening to our own signal and reacting to it, it would be a slight optimization (probably not worth this comment (unless you combine all the usages in all existence, then maybe)) to simply call the slot directly and then emit the signal (not actually connecting to it)
+//honestly, graphical UML designers that don't generate functional use case code.... are fucking useless (haha pun but seriously). so simple, dia/umbrello suck
 DesignEqualsImplementation::DesignEqualsImplementation(QObject *parent)
     : QObject(parent)
 {

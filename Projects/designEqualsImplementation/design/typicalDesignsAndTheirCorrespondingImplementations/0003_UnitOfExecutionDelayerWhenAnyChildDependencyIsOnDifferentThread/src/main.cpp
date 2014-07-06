@@ -7,7 +7,8 @@ int main(int argc, char* argv[])
     QCoreApplication a(argc, argv);
 
     Zop z;
-    Q_UNUSED(z)
+    QString yoloStr("yolo");
+    QMetaObject::invokeMethod(&z, "zopSlot", Q_ARG(QString, yoloStr));
 
     return a.exec();
 }

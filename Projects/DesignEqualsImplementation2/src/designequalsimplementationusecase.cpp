@@ -2,6 +2,7 @@
 
 #include <QDataStream>
 
+#include "designequalsimplementationactor.h"
 #include "designequalsimplementationclasslifeline.h"
 #include "designequalsimplementationslotinvocationstatement.h"
 #include "designequalsimplementationsignalemissionstatement.h"
@@ -249,6 +250,12 @@ void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal
 void DesignEqualsImplementationUseCase::addActorToUseCase(QPointF position)
 {
     //TODOreq: either actor or signal-entry point, but not both (error)
+
+    DesignEqualsImplementationActor *actor = new DesignEqualsImplementationActor(position, this);
+
+    //TODOreq: this->setActor or something
+
+    emit actorAdded(actor);
 }
 void DesignEqualsImplementationUseCase::addClassToUseCase(DesignEqualsImplementationClass *classToAddToUseCase, QPointF position) //TODOreq: serialize position
 {
@@ -256,7 +263,7 @@ void DesignEqualsImplementationUseCase::addClassToUseCase(DesignEqualsImplementa
     //Weird just realized I haven't even designed "classes" into use cases [yet], as of now use case events point directly to their slots/etc!! But eh the concept of lifelines is derp easy, and the arrows source/destination stuff is really just used in populating which of those signals/slots to use for the already-design (;-D) use-case-event (slot/signal-slot/etc)... but i mean sure there's still a boat load of visual work that needs to be done right about now :-P
     //TODOreq: not sure if front-end or backend should enforce it (or both), but class lifelines should all share the same QPointF::top... just like in Umbrello (Umbrello does some things right, Dia others (like not crashing especially guh allmyrage)). Actor should also utilize that top line, though be slighly below it... AND right above the first lifeline but mb horizontally in between the actor and that first lifeline should go the "Use Case Name" in an oval :-P (but actually ovals take up a ton of space, mb rounded rect (different radius than classes) instead)
 
-    DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase = new DesignEqualsImplementationClassLifeLine(classToAddToUseCase, position);
+    DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase = new DesignEqualsImplementationClassLifeLine(classToAddToUseCase, position, this);
 
     m_ClassLifeLines.append(classLifeLineToAddToUseCase);
 
