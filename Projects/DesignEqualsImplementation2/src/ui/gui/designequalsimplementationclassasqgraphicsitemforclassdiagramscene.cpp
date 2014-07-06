@@ -44,9 +44,9 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
         classContentsString.append("\no  " + currentProperty->Name);
         ++numLinesOfText;
     }
-    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType currentHasA_PrivateMemberClasses_ListEntryType, m_DesignEqualsImplementationClass->HasA_PrivateMemberClasses)
+    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentHasA_PrivateMemberClasses_ListEntryType, m_DesignEqualsImplementationClass->HasA_PrivateMemberClasses)
     {
-        classContentsString.append("\n-  " + currentHasA_PrivateMemberClasses_ListEntryType.second->ClassName + " *" + currentHasA_PrivateMemberClasses_ListEntryType.first);
+        classContentsString.append("\n-  " + currentHasA_PrivateMemberClasses_ListEntryType->preferredTextualRepresentation());
         ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_DesignEqualsImplementationClass->PrivateMethods)

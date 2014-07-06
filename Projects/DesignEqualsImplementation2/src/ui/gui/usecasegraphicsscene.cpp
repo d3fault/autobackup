@@ -97,7 +97,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 }
 void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    //TODOreq: right now it's just Actor -> Class::slot
+    //TODOreq: right now it's just slot invocation
     if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
     {
         QList<QGraphicsItem*> itemsUnderMouse = items(event->scenePos());
@@ -115,9 +115,20 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             //TODOoptional: a "drop down" widget thingo embedded right in the graphics scene would be better than a dialog imo, and while I'm on the subject allowing inline editting of classes without a dialog would be nice too!
             //TODOoptional: for now I'm going to KISS and use a modal dialog, but in the future I want to use modeless
 
-            //TODOreq: determine that source is Actor before deciding to use SlotInvocationDialog
+            //TODOreq: determine that source is Actor before deciding to use SlotInvocationDialog (can still use SlotInvocationDialog if not actor, but that means the slot args must be filled in before the dialog can be accepted)
             QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-            SlotInvocationDialog slotInvocationDialog(static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemsUnderMouse.first())->unitOfExecution()); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+            bool sourceIsActor;
+            if(m_UseCase->SlotWithCurrentContext)
+            {
+                //have context
+                sourceIsActor = false;
+            }
+            else
+            {
+                //no context. for now i'm going to use this to tell me that it's the actor->firstSlotInvoke, but TODOreq: if they add two classes and no actor, that won't necessarily be true (we could have the GUI yell at them and force them to add an actor->slotInvoke first, BUT ideally the code would just be smarter and be able to handle it correctly)
+                sourceIsActor = true;
+            }
+            SlotInvocationDialog slotInvocationDialog(static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemsUnderMouse.first())->unitOfExecution(), sourceIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
             if(slotInvocationDialog.exec() == QDialog::Accepted)
             {
                 //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
@@ -142,6 +153,7 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 }
 void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase *useCase)
 {
+    m_UseCase = useCase;
     m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = 0;
 
     //requests

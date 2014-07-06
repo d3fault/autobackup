@@ -21,7 +21,7 @@ QString IDesignEqualsImplementationMethod::argumentsToCommaSeparatedString()
     {
         if(!firstArg)
             argString.append(", ");
-        argString.append(currentArgument->Type + " " + currentArgument->Name); //TODOoptional: if argType ends with *, &, etc, then don't put that space in between type and name (just visual shit, but i r perfectionist)
+        argString.append(currentArgument->preferredTextualRepresentation());
         firstArg = false;
     }
     return argString;

@@ -25,6 +25,7 @@ protected:
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 private:
+    DesignEqualsImplementationUseCase *m_UseCase;
     DesignEqualsImplementationMouseModeEnum m_MouseMode;
     SignalSlotConnectionActivationArrowForGraphicsScene *m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
 

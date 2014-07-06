@@ -84,6 +84,7 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.h \
     designequalsimplementationactor.h \
     ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h \
-    ui/gui/slotinvocationdialog.h
+    ui/gui/slotinvocationdialog.h \
+    ihavetypeandvariablenameandpreferredtextualrepresentation.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

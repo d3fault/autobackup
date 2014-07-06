@@ -13,7 +13,9 @@
 
 #define DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX "failed to generate source for: "
 
-typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_PrivateMemberClasses_ListEntryType;
+//typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_PrivateMemberClasses_ListEntryType;
+
+class HasA_PrivateMemberClasses_ListEntryType;
 
 class DesignEqualsImplementationClass : public QObject, public IDesignEqualsImplementationVisuallyRepresentedItem
 {
@@ -26,12 +28,12 @@ public:
     //TODOoptional: private + getter/setter blah
     QString ClassName;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    QList<HasA_PrivateMemberClasses_ListEntryType> HasA_PrivateMemberClasses; //TODOreq: POD
+    QList<HasA_PrivateMemberClasses_ListEntryType*> HasA_PrivateMemberClasses; //TODOreq: POD
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSlot*> Slots;
     QList<DesignEqualsImplementationClassSignal*> Signals;
 
-    QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
+    //QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
 
     QString headerFilenameOnly();
 signals:
@@ -50,5 +52,23 @@ QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass 
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&designEqualsImplementationClass);
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClass*)
+
+class HasA_PrivateMemberClasses_ListEntryType : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
+{
+public:
+    explicit HasA_PrivateMemberClasses_ListEntryType() : IHaveTypeAndVariableNameAndPreferredTextualRepresentation() { }
+    explicit HasA_PrivateMemberClasses_ListEntryType(DesignEqualsImplementationClass *designEqualsImplementationClass, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_DesignEqualsImplementationClass(designEqualsImplementationClass) { }
+    virtual ~HasA_PrivateMemberClasses_ListEntryType() { }
+    virtual QString typeString()
+    {
+        return m_DesignEqualsImplementationClass->ClassName + " *";
+    }
+
+    DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
+};
+QDataStream &operator<<(QDataStream &out, const HasA_PrivateMemberClasses_ListEntryType &hasA_PrivateMemberClasses_ListEntryType);
+QDataStream &operator>>(QDataStream &in, HasA_PrivateMemberClasses_ListEntryType &hasA_PrivateMemberClasses_ListEntryType);
+QDataStream &operator<<(QDataStream &out, const HasA_PrivateMemberClasses_ListEntryType *&hasA_PrivateMemberClasses_ListEntryType);
+QDataStream &operator>>(QDataStream &in, HasA_PrivateMemberClasses_ListEntryType *&hasA_PrivateMemberClasses_ListEntryType);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASS_H

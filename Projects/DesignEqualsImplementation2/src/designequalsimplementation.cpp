@@ -159,9 +159,15 @@ void DesignEqualsImplementation::newProject()
     /*
     OnUserConnectedArrowsFromFooSlotToBarSlot:
     {
-        //system notices that we already have context, which means that "assigning" (or they could be QStringLiterals hardcoded idgaf TODOreq) of the barSlot parameters given current variables in context is mandatory. this happens all in UI before addEvent(barSlot) below <-- ACTUALLY we have to ask the user which slot/signal/etc to use for the arrow anyways, so the variable name entering/selecting should go just below that. TODOreq: entering a variable TYPE (name too) that does not exist in the design should create that type in the class diagram via a "create in class diagram opt-out check box" [that is grayed out when class already exists]
+        //system notices that we already have context, which means that "assigning" (or they could be QStringLiterals hardcoded idgaf TODOreq) of the barSlot parameters given current variables in context is mandatory. this happens all in UI before addEvent(barSlot) below <-- ACTUALLY we have to ask the user which slot/signal/etc to use for the arrow anyways, so the variable name entering/selecting should go just below that. TODOreq: entering a variable TYPE (name too) that does not exist in the design should create that type in the class diagram via a "create in class diagram opt-out check box" [that is grayed out when class already exists or if the type is a C++ built-in]
 
-        //populate stringlist of variables in current context (0 = testUseCase->SlotWithCurrentContext->Arguments , 1 = testUseCase->SlotWithCurrentContext->ParentClass->allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString(); TODOreq: de-serialization doesn't set up parent class again =o, but can/must , 2 = testUseCase->SlotWithCurrentContext->allMyAvailableLocalVariablesGivenCurrentPositionInOrderedListOfStatements_AsString()) -- TODOreq: only show compatible types (implicit conversion makes this a bitch, so fuck it for now. errors will only be seen at compile time lololol)
+        //populate stringlist of variables in current context, consisting of:
+            0 = testUseCase->SlotWithCurrentContext->Arguments
+            1 = testUseCase->SlotWithCurrentContext->ParentClass->allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString(); TODOreq: de-serialization doesn't set up parent class again =o, but can/must
+            2 = testUseCase->SlotWithCurrentContext->allMyAvailableLocalVariablesGivenCurrentPositionInOrderedListOfStatements_AsString()) -- TODOreq: only show compatible types (implicit conversion makes this a bitch, so fuck it for now. errors will only be seen at compile time lololol)
+
+            TODOreq (disregard end of comment): need to decide if the fooSlot args are still available from within handleBarSignal, since they are the same unit of execution (since same thread)!!! design-wise, it makes sense. But it also makes sense that they not exist! I don't know! Perhaps I am being stupid by defining a unit of execution as anything not crossing thread boundary. Yes it is true, BUT .... but what? unit of executions don't make any guarantees about contexts... so wtf are you on about? Basically what led me here is that it feels weird to type currentUnitOfExecution->currentLifeLine,,,,, wait what? where does the slot come in (obviously I'm trying to get Foo's arg list...)... OH RIGHT the entire graphics scene is specific to that use case (which gives us access to slot with current context), i don't need to climb up the unit of execution chain, disregard this comment (although some of the beginning of it was relevant)
+
         //present stringlist of variables to user in modal widget
         //user selects fooSlot(__cunt__) to satify barSlot(__cunt__)
     }
@@ -243,7 +249,7 @@ void DesignEqualsImplementation::newProject()
     DesignEqualsImplementationClassSlot *fooSlot = new DesignEqualsImplementationClassSlot(fooClass);
     fooSlot->Name = "fooSlot";
     DesignEqualsImplementationClassMethodArgument *fooSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(fooSlot);
-    fooSlotCuntArgument->Name = "cunt";
+    fooSlotCuntArgument->VariableName = "cunt";
     fooSlotCuntArgument->Type = "const QString &";
     fooSlot->Arguments.append(fooSlotCuntArgument);
     fooClass->Slots.append(fooSlot);
@@ -257,7 +263,7 @@ void DesignEqualsImplementation::newProject()
     DesignEqualsImplementationClassSignal *fooSignal = new DesignEqualsImplementationClassSignal(fooClass);
     fooSignal->Name = "fooSignal";
     DesignEqualsImplementationClassMethodArgument *fooSignalSuccessArgument = new DesignEqualsImplementationClassMethodArgument(fooSignal);
-    fooSignalSuccessArgument->Name = "success";
+    fooSignalSuccessArgument->VariableName = "success";
     fooSignalSuccessArgument->Type = "bool";
     fooSignal->Arguments.append(fooSignalSuccessArgument);
     fooClass->Signals.append(fooSignal);
@@ -268,11 +274,14 @@ void DesignEqualsImplementation::newProject()
     DesignEqualsImplementationClassSlot *barSlot = new DesignEqualsImplementationClassSlot(barClass);
     barSlot->Name = "barSlot";
     DesignEqualsImplementationClassMethodArgument *barSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(barSlot);
-    barSlotCuntArgument->Name = "cunt";
+    barSlotCuntArgument->VariableName = "cunt";
     barSlotCuntArgument->Type = "const QString &";
     barSlot->Arguments.append(barSlotCuntArgument);
     barClass->Slots.append(barSlot);
     barSlot->ParentClass = barClass;
+
+    QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");
+    fooClass->HasA_PrivateMemberClasses.append(new HasA_PrivateMemberClasses_ListEntryType(barClass, userChosenVariableNameForFoosInstanceOfBar));
 
     testProject->addClass(fooClass);
     testProject->addClass(barClass);
