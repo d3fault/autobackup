@@ -32,7 +32,6 @@ public:
     DesignEqualsImplementationClassSlot *SlotWithCurrentContext;
     DesignEqualsImplementationClassSignal *ExitSignal;
 
-    void addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables = SignalEmissionOrSlotInvocationContextVariables());
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal);
     void addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables = SignalEmissionOrSlotInvocationContextVariables());
     void setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables = SignalEmissionOrSlotInvocationContextVariables());
@@ -53,6 +52,7 @@ signals:
 public slots:
     void addActorToUseCase(QPointF position);
     void addClassToUseCase(DesignEqualsImplementationClass *classToAddToUseCase, QPointF position);
+    void addSlotInvocationEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables = SignalEmissionOrSlotInvocationContextVariables());
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);
@@ -60,7 +60,6 @@ QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCas
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *&useCase);
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum)
-Q_DECLARE_METATYPE(SignalEmissionOrSlotInvocationContextVariables)
 
 class SignalSlotCombinedEventHolder : public QObject
 {

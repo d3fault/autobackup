@@ -3,11 +3,16 @@
 
 #include <QObject>
 
+class DesignEqualsImplementationClassLifeLine;
+
 class DesignEqualsImplementationClassLifeLineUnitOfExecution : public QObject
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationClassLifeLineUnitOfExecution(QObject *parent = 0);
+    explicit DesignEqualsImplementationClassLifeLineUnitOfExecution(DesignEqualsImplementationClassLifeLine *designEqualsImplementationClassLifeLine, QObject *parent = 0);
+    DesignEqualsImplementationClassLifeLine *designEqualsImplementationClassLifeLine() const;
+private:
+    DesignEqualsImplementationClassLifeLine *m_DesignEqualsImplementationClassLifeLine;
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTION_H

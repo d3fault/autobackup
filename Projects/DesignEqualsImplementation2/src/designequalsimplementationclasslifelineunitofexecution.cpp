@@ -1,5 +1,10 @@
 #include "designequalsimplementationclasslifelineunitofexecution.h"
 
-DesignEqualsImplementationClassLifeLineUnitOfExecution::DesignEqualsImplementationClassLifeLineUnitOfExecution(QObject *parent)
+DesignEqualsImplementationClassLifeLineUnitOfExecution::DesignEqualsImplementationClassLifeLineUnitOfExecution(DesignEqualsImplementationClassLifeLine *designEqualsImplementationClassLifeLine, QObject *parent)
     : QObject(parent)
+    , m_DesignEqualsImplementationClassLifeLine(designEqualsImplementationClassLifeLine)
 { }
+DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationClassLifeLineUnitOfExecution::designEqualsImplementationClassLifeLine() const
+{
+    return m_DesignEqualsImplementationClassLifeLine;
+}

@@ -12,7 +12,7 @@ class DesignEqualsImplementationProject : public QObject
 {
     Q_OBJECT
 public:
-    enum ProjectGenerationMode { Library, CliApplication, GuiApplication /* WebApplication */ };
+    enum ProjectGenerationMode { Library, CliApplication, GuiApplication /*, WebApplication */ };
     explicit DesignEqualsImplementationProject(QObject *parent = 0);
     explicit DesignEqualsImplementationProject(const QString &existingProjectFilePath, QObject *parent = 0);
     ~DesignEqualsImplementationProject();
@@ -45,7 +45,7 @@ public slots:
     void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
     void handleNewUseCaseRequested();
     void save(const QString &projectFilePath);
-    void generateSourceCode(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
+    void generateSourceCode(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationProject &project);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationProject &project);

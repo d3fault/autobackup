@@ -11,11 +11,14 @@
 #include "designequalsimplementationactorgraphicsitemforusecasescene.h"
 #include "designequalsimplementationclasslifelinegraphicsitemforusecasescene.h"
 #include "signalslotconnectionactivationarrowforgraphicsscene.h"
+#include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
+#include "slotinvocationdialog.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationactor.h"
 #include "../../designequalsimplementationclasslifeline.h"
 
 //TODOreq: if I put 2x Foos in the scene, and connected one to the other, wouldn't that be an infinite loop? Don't allow that if yes
+//TODOreq: moving an item should make arrows move with it
 UseCaseGraphicsScene::UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase)
     : IDesignEqualsImplementationGraphicsScene()
 {
@@ -94,22 +97,40 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 }
 void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    //TODOreq: right now it's just Actor -> Class::slot
     if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
     {
         QList<QGraphicsItem*> itemsUnderMouse = items(event->scenePos());
         if(!itemsUnderMouse.isEmpty() && itemsUnderMouse.first() == m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
             itemsUnderMouse.removeFirst();
-        //TODOreq: filter out other existing arrows
+        //TODOreq: filter out other existing arrows. TODOreq: if they put the destination arrow over the class NAME instead of a unit of execution (or even the thin life line thing), I should connect to a unit of execution that makes the most sense -- what that is right now I have no idea :-P
+        //TODOreq: filter out source (just delete the arrow)
         if(!itemsUnderMouse.isEmpty())
         {
-            //TODOreq: fix arrow so that it goes to the nearest edge, not the center, of the source/dest items
+            //TODOreq: fix arrow so that it goes to the nearest edge, not the click+release points, of the source/dest items
             QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
             m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine); //TODOreq: should probably wait until the backend approves the connection as per reactor pattern... which probably means we delete/renew it... but idfk
-            emit addUseCaseEventRequested(sourceItem->underlyingItem(), destItem->underlyingItem()); //or perhaps i emit the line's underlying item (a use case event) itself??
-            TODO LEFT OFF
+
+            //I'm wondering if the GUI should do more handling (be smart) here or if we should just pass what we know to the backend and let him do all the decidering. I'm actually leaning towards the front-end, because for example we need to ask the user in a dialog if they want to do a simple slot invoke, or a named signal/slot activation (the signal could be created on the fly), or a simple signal-with-no-listeners-at-time-of-design emit. We need to ask the user in a dialog what the fuck they want to do (more specifically)! It's kind of worth noting (for me right now), but not always true, that it could be the first actor->slotInvocation (and in the future, signal-entry-point->slotInvocation), so in that case we need to limit what is presented to user (no named signals [created on the fly], for example). Since we have an object underneath the destination, we know it isn't a signal-with-no-listeners-at-time-of-design; those are handled below/differently
+            //TODOoptional: a "drop down" widget thingo embedded right in the graphics scene would be better than a dialog imo, and while I'm on the subject allowing inline editting of classes without a dialog would be nice too!
+            //TODOoptional: for now I'm going to KISS and use a modal dialog, but in the future I want to use modeless
+
+            //TODOreq: determine that source is Actor before deciding to use SlotInvocationDialog
+            QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+            SlotInvocationDialog slotInvocationDialog(static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemsUnderMouse.first())->unitOfExecution()); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+            if(slotInvocationDialog.exec() == QDialog::Accepted)
+            {
+                //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
+                emit addSlotInvocationUseCaseEventRequested(slotInvocationDialog.slotToInvoke(), slotInvocationDialog.slotInvocationContextVariables()); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
+            }
+            else
+            {
+                delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
+            }
         }
         else
         {
+            //TODOreq: signals with no listeners at time of design
             delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
         }
         m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = 0;
@@ -126,6 +147,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     //requests
     connect(this, SIGNAL(addActorToUseCaseRequsted(QPointF)), useCase, SLOT(addActorToUseCase(QPointF)));
     connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,QPointF)), useCase, SLOT(addClassToUseCase(DesignEqualsImplementationClass*,QPointF)));
+    connect(this, SIGNAL(addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSlotInvocationEvent(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     //TODOreq: scene, add use case event requested, use case, addUseCaseEvent
 
     //responses

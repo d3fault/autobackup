@@ -27,7 +27,10 @@ QMutex DesignEqualsImplementation::BackendMutex(QMutex::Recursive);
 DesignEqualsImplementation::DesignEqualsImplementation(QObject *parent)
     : QObject(parent)
 {
-    qRegisterMetaType<UmlItemsTypedef>("UmlItemsTypedef"); //TODOoptional: a static bool to protect this from double registering, if there are ever two instances of 'this' class ever instantiated at the same time
+    //TODOoptional: a static bool to protect these from double registering, if there are ever two instances of 'this' class ever instantiated at the same time
+    qRegisterMetaType<UmlItemsTypedef>("UmlItemsTypedef");
+    qRegisterMetaType<SignalEmissionOrSlotInvocationContextVariables>("SignalEmissionOrSlotInvocationContextVariables");
+    qRegisterMetaType<DesignEqualsImplementationProject::ProjectGenerationMode>("DesignEqualsImplementationProject::ProjectGenerationMode");
 }
 DesignEqualsImplementation::~DesignEqualsImplementation()
 {
@@ -258,7 +261,21 @@ void DesignEqualsImplementation::newProject()
     fooSignalSuccessArgument->Type = "bool";
     fooSignal->Arguments.append(fooSignalSuccessArgument);
     fooClass->Signals.append(fooSignal);
+
+    //Bar
+    DesignEqualsImplementationClass *barClass = new DesignEqualsImplementationClass(testProject);
+    barClass->ClassName = "Bar";
+    DesignEqualsImplementationClassSlot *barSlot = new DesignEqualsImplementationClassSlot(barClass);
+    barSlot->Name = "barSlot";
+    DesignEqualsImplementationClassMethodArgument *barSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(barSlot);
+    barSlotCuntArgument->Name = "cunt";
+    barSlotCuntArgument->Type = "const QString &";
+    barSlot->Arguments.append(barSlotCuntArgument);
+    barClass->Slots.append(barSlot);
+    barSlot->ParentClass = barClass;
+
     testProject->addClass(fooClass);
+    testProject->addClass(barClass);
 
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(testProject);
     emit projectOpened(testProject);

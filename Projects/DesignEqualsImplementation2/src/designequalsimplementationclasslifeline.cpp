@@ -9,7 +9,7 @@ DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine
     , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
     , m_Position(position) //Could just keep one qreal "horizontalPosition"
 {
-    m_UnitsOfExecution.append(new DesignEqualsImplementationClassLifeLineUnitOfExecution(this)); //every lifeline has at least one unit of execution. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
+    m_UnitsOfExecution.append(new DesignEqualsImplementationClassLifeLineUnitOfExecution(this, this)); //every lifeline has at least one unit of execution. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
 }
 QPointF DesignEqualsImplementationClassLifeLine::position() const
 {

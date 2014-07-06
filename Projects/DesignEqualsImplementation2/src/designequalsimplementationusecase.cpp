@@ -22,11 +22,6 @@ DesignEqualsImplementationUseCase::DesignEqualsImplementationUseCase(QObject *pa
     , SlotWithCurrentContext(0)
     , ExitSignal(0)
 { }
-//Overload: Use Case first-slot entry point and also normal slot invocation from within another slot
-void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables)
-{
-    addEventPrivate(UseCaseSlotEventType, designEqualsImplementationClassSlot, slotInvocationContextVariables);
-}
 //Overload: Signals with no listeners in this use case
 void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal)
 {
@@ -269,6 +264,11 @@ void DesignEqualsImplementationUseCase::addClassToUseCase(DesignEqualsImplementa
 
     //Temp:
     emit classLifeLineAdded(classLifeLineToAddToUseCase);
+}
+//Use Case first-slot entry point and also normal slot invocation from within another slot
+void DesignEqualsImplementationUseCase::addSlotInvocationEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables)
+{
+    addEventPrivate(UseCaseSlotEventType, designEqualsImplementationClassSlot, slotInvocationContextVariables);
 }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase)
 {

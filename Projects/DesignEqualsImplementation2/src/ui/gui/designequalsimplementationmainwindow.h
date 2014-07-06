@@ -30,6 +30,7 @@ private:
     QAction *m_NewProjectAction;
     QAction *m_OpenProjectAction;
     QAction *m_NewUseCaseAction;
+    QAction *m_GenerateSourceCodeAction;
     //More actions
     QAction *m_MoveMousePointerDefaultAction;
     QAction *m_DrawSignalSlotConnectionActivationArrowsAction;
@@ -66,6 +67,7 @@ private slots:
     void handleUseCaseAdded(DesignEqualsImplementationUseCase *newUseCase);
     void handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem *doubleClickedListWidgetItem);
     void doMouseModeChange();
+    void handleGenerateSourceCodeActionTriggered();
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONMAINWINDOW_H

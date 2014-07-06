@@ -14,3 +14,7 @@ DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScen
     : QGraphicsRectItem(x, y, w, h, parent)
     , m_UnitOfExecution(unitOfExecution)
 { }
+DesignEqualsImplementationClassLifeLineUnitOfExecution *DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::unitOfExecution() const
+{
+    return m_UnitOfExecution;
+}

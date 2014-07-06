@@ -33,6 +33,7 @@ private:
 signals:
     void addActorToUseCaseRequsted(QPointF position);
     void addClassToUseCaseRequested(DesignEqualsImplementationClass *classToAdd, QPointF position);
+    void addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*slot,SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables);
 private slots:
     void handleActorAdded(DesignEqualsImplementationActor *actor);
     void handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);

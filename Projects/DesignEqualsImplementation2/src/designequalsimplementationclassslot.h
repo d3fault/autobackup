@@ -27,4 +27,6 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot &sl
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot *&slot);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot *&slot);
 
+Q_DECLARE_METATYPE(DesignEqualsImplementationClassSlot*)
+
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSSLOT_H

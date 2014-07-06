@@ -11,6 +11,8 @@
 #include <QListWidget>
 #include <QActionGroup> //and to think i wasted to much time with qbuttongroup/groupbox/etc in other projects!
 
+#include <QDateTime> //temp/debug
+
 #include <QMutexLocker>
 #include "../../designequalsimplementation.h"
 
@@ -57,9 +59,11 @@ void DesignEqualsImplementationMainWindow::createActions()
     m_NewProjectAction = new QAction(tr("&New Project"), this); //TODOreq: lots of these ampersand things have collisions lewl
     m_OpenProjectAction = new QAction(tr("&Open Open"), this);
     m_NewUseCaseAction = new QAction(tr("&New Use Case"), this);
+    m_GenerateSourceCodeAction = new QAction(tr("&Generate Source Code"), this);
     connect(m_NewProjectAction, SIGNAL(triggered()), this, SIGNAL(newProjectRequested()));
     connect(m_OpenProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
     connect(m_NewUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseActionTriggered()));
+    connect(m_GenerateSourceCodeAction, SIGNAL(triggered()), this, SLOT(handleGenerateSourceCodeActionTriggered()));
 
     //Main Toolbar Actions
     QActionGroup *mouseModeActionGroup = new QActionGroup(this);
@@ -80,6 +84,7 @@ void DesignEqualsImplementationMainWindow::createMenu()
     fileNew->addAction(m_NewProjectAction);
     fileNew->addAction(m_NewUseCaseAction);
     fileMenu->addAction(m_OpenProjectAction);
+    fileMenu->addAction(m_GenerateSourceCodeAction);
 
     QMenu *modeMenu = menuBar()->addMenu(tr("&Mouse Mode"));
     modeMenu->addAction(m_MoveMousePointerDefaultAction);
@@ -91,6 +96,7 @@ void DesignEqualsImplementationMainWindow::createToolbars()
     fileNewMenuEquivalentToolbar->addAction(m_NewProjectAction);
     fileNewMenuEquivalentToolbar->addAction(m_OpenProjectAction);
     fileNewMenuEquivalentToolbar->addAction(m_NewUseCaseAction);
+    fileNewMenuEquivalentToolbar->addAction(m_GenerateSourceCodeAction);
 
     addToolBarBreak();
 
@@ -190,7 +196,6 @@ void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramA
 
         disconnect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
         connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
-        doMouseModeChange(); //update possibly stale values
 
         //[re-]populate all use cases list
         m_AllUseCasesListWidget->clear();
@@ -240,6 +245,7 @@ void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramA
     //TODOreq: when the PROJECT tab changes, we also need to change the "available use cases" (when in class diagram view (double clicking opens it in tab)) and "available classes" (when in use case view (for dragging onto use case))
 
     m_CurrentProjectTabIndex = newProjectTabIndexMaybe;
+    doMouseModeChange(); //update possibly stale values
 }
 void DesignEqualsImplementationMainWindow::handleUseCaseAdded(DesignEqualsImplementationUseCase *newUseCase)
 {
@@ -261,4 +267,12 @@ void DesignEqualsImplementationMainWindow::doMouseModeChange()
     {
         emit mouseModeChanged(DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode);
     }
+}
+void DesignEqualsImplementationMainWindow::handleGenerateSourceCodeActionTriggered()
+{
+    //TODOreq: dialog asking them what kind of source to generate, plus a destination folder
+
+    //hack/temp
+    QString dest("/run/shm/designEqualsImplementation-GeneratedAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()));
+    QMetaObject::invokeMethod(static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget())->designEqualsImplementationProject(), "generateSourceCode", Q_ARG(DesignEqualsImplementationProject::ProjectGenerationMode, DesignEqualsImplementationProject::Library), Q_ARG(QString,dest));
 }
