@@ -27,13 +27,13 @@ SlotInvocationDialog::SlotInvocationDialog(DesignEqualsImplementationClassLifeLi
     {
         m_SlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
     }
-    connect(m_SlotsComboBox, SIGNAL(activated(int)), this, SLOT(handleSlotsComboBoxItemActivated(int)));
+    connect(m_SlotsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleSlotsComboBoxICurrentIndexChanged(int)));
 
     QHBoxLayout *cancelOkRow = new QHBoxLayout();
 
-    m_OkButton = new QPushButton(tr("Ok"), this);
+    m_OkButton = new QPushButton(tr("Ok"), this); //TODOreq: button stays below arg filling in
     m_OkButton->setDefault(true);
-    m_OkButton->setDisabled(true); //TODOreq: only ever enabled when dialog contents are (had:selected and) valid
+    m_OkButton->setDisabled(true);
 
     connect(m_OkButton, SIGNAL(clicked()), this, SLOT(accept()));
 
@@ -65,22 +65,44 @@ DesignEqualsImplementationClassSlot *SlotInvocationDialog::slotToInvoke() const
 }
 SignalEmissionOrSlotInvocationContextVariables SlotInvocationDialog::slotInvocationContextVariables() const
 {
-    return m_SlotInvocationContextVariables;
+    //Doesn't do validation checking. The dialog returning Accepted does though
+    SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables;
+    Q_FOREACH(QComboBox *currentArg, m_AllArgSatisfiers)
+    {
+        slotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments.append(qvariant_cast<IHaveTypeAndVariableNameAndPreferredTextualRepresentation*>(currentArg->currentData())->VariableName);
+    }
+    return slotInvocationContextVariables;
 }
 void SlotInvocationDialog::showSlotArgFillingIn()
 {
     if(m_SourceIsActor)
+    {
+        m_OkButton->setDisabled(false);
         return;
+    }
 
+    if(m_ArgsFillingInWidget)
+    {
+        m_AllArgSatisfiers.clear();
+        delete m_ArgsFillingInWidget;
+        m_ArgsFillingInWidget = 0;
+    }
+    if(m_SlotToInvoke->Arguments.isEmpty())
+    {
+        m_OkButton->setDisabled(false);
+        return;
+    }
     m_ArgsFillingInWidget = new QWidget();
-    QVBoxLayout *argsFillingInLayout = new QVBoxLayout();
+    QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
     argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SlotToInvoke->Name), 0, Qt::AlignLeft);
     Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SlotToInvoke->Arguments)
     {
         QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
         currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentation()));
-        QComboBox *currentArgSatisfiersComboBox = new QComboBox();
-        currentArgSatisfiersComboBox->addItem(tr("Select argument satisfier..."));
+        QComboBox *currentArgSatisfiersComboBox = new QComboBox(); //instead of listening to signals, i should just manually validate the dialog when ok is pressed (keep a list of combo boxes, ensure all indexes aren't zero)... only downside to that is that the ok button now can't be disabled :(... fffff. i guess whole dialog validation on ANY combo box signal change is a hacky/easy/unoptimal/functional solution TODOoptimization proper dat shit
+        connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleArgSatisfierChosen()));
+        currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
+        m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
         Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
         {
             currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentation(), QVariant::fromValue(currentArgSatisfier));
@@ -90,6 +112,7 @@ void SlotInvocationDialog::showSlotArgFillingIn()
     }
     m_ArgsFillingInWidget->setLayout(argsFillingInLayout);
     m_Layout->addWidget(m_ArgsFillingInWidget);
+    m_OkButton->setDisabled(true);
 }
 void SlotInvocationDialog::collapseSlotArgFillingIn()
 {
@@ -98,11 +121,21 @@ void SlotInvocationDialog::collapseSlotArgFillingIn()
 
     if(m_ArgsFillingInWidget)
     {
+        m_AllArgSatisfiers.clear();
         delete m_ArgsFillingInWidget;
         m_ArgsFillingInWidget = 0;
     }
 }
-void SlotInvocationDialog::handleSlotsComboBoxItemActivated(int newIndex)
+bool SlotInvocationDialog::allArgSatisfiersAreValid()
+{
+    Q_FOREACH(QComboBox *currentComboBox, m_AllArgSatisfiers)
+    {
+        if(currentComboBox->currentIndex() == 0)
+            return false;
+    }
+    return true;
+}
+void SlotInvocationDialog::handleSlotsComboBoxICurrentIndexChanged(int newIndex)
 {
     if(newIndex == 0)
     {
@@ -111,9 +144,20 @@ void SlotInvocationDialog::handleSlotsComboBoxItemActivated(int newIndex)
         return;
     }
 
-    m_OkButton->setDisabled(false);
     m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_SlotsComboBox->itemData(newIndex));
 
     //TODOreq: present selectable context variables for the slot args. This is required before OK is enabled, but not when it's the first/actor->slotInvoke (grayed out in that case)
     showSlotArgFillingIn();
+}
+void SlotInvocationDialog::handleArgSatisfierChosen()
+{
+    //validate them all, enable disable ok button accordingly
+    if(allArgSatisfiersAreValid())
+    {
+        m_OkButton->setDisabled(false);
+    }
+    else
+    {
+        m_OkButton->setDisabled(true);
+    }
 }

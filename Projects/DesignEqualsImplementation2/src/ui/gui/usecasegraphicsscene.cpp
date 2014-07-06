@@ -131,8 +131,10 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             SlotInvocationDialog slotInvocationDialog(static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemsUnderMouse.first())->unitOfExecution(), sourceIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
             if(slotInvocationDialog.exec() == QDialog::Accepted)
             {
+                SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables = slotInvocationDialog.slotInvocationContextVariables();
+                slotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = "TODOreq";
                 //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
-                emit addSlotInvocationUseCaseEventRequested(slotInvocationDialog.slotToInvoke(), slotInvocationDialog.slotInvocationContextVariables()); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
+                emit addSlotInvocationUseCaseEventRequested(slotInvocationDialog.slotToInvoke(), slotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
             }
             else
             {

@@ -25,17 +25,20 @@ private:
     QVBoxLayout *m_Layout;
     QComboBox *m_SlotsComboBox;
     DesignEqualsImplementationClassSlot *m_SlotToInvoke;
-    SignalEmissionOrSlotInvocationContextVariables m_SlotInvocationContextVariables;
     QPushButton *m_OkButton;
     bool m_SourceIsActor;
     //DesignEqualsImplementationClassSlot *m_SlotWithCurrentContext_OrZeroIfSourceIsActor;
     QList<IHaveTypeAndVariableNameAndPreferredTextualRepresentation*> m_VariablesAvailableToSatisfyArgs;
+    QList<QComboBox*> m_AllArgSatisfiers;
     QWidget *m_ArgsFillingInWidget;
 
     void showSlotArgFillingIn();
     void collapseSlotArgFillingIn();
+
+    bool allArgSatisfiersAreValid();
 private slots:
-    void handleSlotsComboBoxItemActivated(int newIndex);
+    void handleSlotsComboBoxICurrentIndexChanged(int newIndex);
+    void handleArgSatisfierChosen();
 };
 
 #endif // SLOTINVOCATIONDIALOG_H
