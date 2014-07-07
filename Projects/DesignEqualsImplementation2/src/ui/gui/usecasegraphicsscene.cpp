@@ -3,6 +3,7 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QMimeData>
 #include <QList>
+#include <QScopedPointer>
 
 #include <QMutexLocker>
 #include "../../designequalsimplementation.h"
@@ -21,6 +22,7 @@
 
 //TODOreq: if I put 2x Foos in the scene, and connected one to the other, wouldn't that be an infinite loop? Don't allow that if yes
 //TODOreq: moving an item should make arrows move with it
+// this struct calls "myCustomDeallocator" to delete the pointer
 UseCaseGraphicsScene::UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase)
     : IDesignEqualsImplementationGraphicsScene()
 {
@@ -124,7 +126,7 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+    if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn) //holy shit a variable pun
     {
         QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
         m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine);
@@ -134,16 +136,34 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 }
 void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    //TODOreq: right now it's just slot invocation
+    //TODOreq: right now it's just slot invocation //these are the reqs we are looking for
+
+    //QScopedPointer<SignalSlotConnectionActivationArrowForGraphicsScene*> autLineDeletionScopedDeleter(*m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn); //It has to be "taken" before end of this method which signifies a valid signal,signal-slot,or slotInvoke, nvm the custom deleter can't zero it out so...
     if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
     {
         QList<QGraphicsItem*> itemsUnderMouse = items(event->scenePos());
         if(!itemsUnderMouse.isEmpty() && itemsUnderMouse.first() == m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
             itemsUnderMouse.removeFirst();
-        //TODOreq: filter out other existing arrows. TODOreq: if they put the destination arrow over the class NAME instead of a unit of execution (or even the thin life line thing), I should connect to a unit of execution that makes the most sense -- what that is right now I have no idea :-P
+        DesignEqualsImplementationUseCase::UseCaseEventTypeEnum dialogMode = DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType; //SignalSlotMode;
+        if(itemsUnderMouse.isEmpty())
+            dialogMode = DesignEqualsImplementationUseCase::UseCaseSignalEventType; //SignalWithNoListerersInThisUseCaseMode;
+        QGraphicsItem *topMostItemIWant = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(itemsUnderMouse); //returns zero if no items determined wanted
+        if(topMostItemIWant)
+        {
+#if 0
+        while(thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwant())
+        {
+            atLeastOneItemIWantUnderMouse = true;
+            processOneItemUnderMouse();
+        }
+#endif
+
+#if 0
+        //TODOreq: filter out other existing arrows. TODOreq: if they put the destination arrow over the class NAME instead of a unit of execution (or even the thin life line thing), I should connect to a unit of execution that makes the most sense -- what that is right now? 1, since 1 is all I require right now. I almost put "1" at err IN the first unit of execution. Now you also see why 1 is all I require.
         //TODOreq: filter out source (just delete the arrow)
         if(!itemsUnderMouse.isEmpty())
         {
+#endif
             //TODOreq: fix arrow so that it goes to the nearest edge, not the click+release points, of the source/dest items
             QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
             m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine); //TODOreq: should probably wait until the backend approves the connection as per reactor pattern... which probably means we delete/renew it... but idfk
@@ -155,38 +175,53 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             //TODOreq: determine that source is Actor before deciding to use SlotInvocationDialog (can still use SlotInvocationDialog if not actor, but that means the slot args must be filled in before the dialog can be accepted)
             QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
             bool sourceIsActor;
-            if(m_UseCase->SlotWithCurrentContext)
+            //if(m_UseCase->SlotWithCurrentContext)
+            QList<QGraphicsItem*> itemsUnderSource = items(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1());
+            if(!itemsUnderSource.isEmpty() && itemsUnderSource.first() == m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+                itemsUnderSource.removeFirst();
+            QGraphicsItem *topMostItemIWantInSource = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(itemsUnderSource); //returns zero if no items determined wanted
+            if(topMostItemIWantInSource)
             {
-                //have context
-                sourceIsActor = false;
-            }
-            else
-            {
-                //no context. for now i'm going to use this to tell me that it's the actor->firstSlotInvoke, but TODOreq: if they add two classes and no actor, that won't necessarily be true (we could have the GUI yell at them and force them to add an actor->slotInvoke first, BUT ideally the code would just be smarter and be able to handle it correctly)
-                sourceIsActor = true;
-            }
-            DesignEqualsImplementationClassLifeLineUnitOfExecution *targetUnitOfExecution = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemsUnderMouse.first())->unitOfExecution();
-            SlotInvocationDialog slotInvocationDialog(targetUnitOfExecution, sourceIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
-            if(slotInvocationDialog.exec() == QDialog::Accepted)
-            {
-                SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables = slotInvocationDialog.slotInvocationContextVariables();
-                if(targetUnitOfExecution->designEqualsImplementationClassLifeLine()->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
+                if(topMostItemIWantInSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
                 {
-                    slotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = targetUnitOfExecution->designEqualsImplementationClassLifeLine()->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
+                    //source is actor
+                    //no context. for now i'm going to use this to tell me that it's the actor->firstSlotInvoke, but TODOreq: if they add two classes and no actor, that won't necessarily be true (we could have the GUI yell at them and force them to add an actor->slotInvoke first, BUT ideally the code would just be smarter and be able to handle it correctly)
+                    sourceIsActor = true;
                 }
-                //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
-                emit addSlotInvocationUseCaseEventRequested(slotInvocationDialog.slotToInvoke(), slotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
+                else
+                {
+                    //we have context
+                    sourceIsActor = false;
+                }
+                DesignEqualsImplementationClassLifeLineUnitOfExecution *targetUnitOfExecution = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemsUnderMouse.first())->unitOfExecution();
+                SlotInvocationDialog slotInvocationDialog(dialogMode, targetUnitOfExecution, sourceIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+                if(slotInvocationDialog.exec() == QDialog::Accepted)
+                {
+                    SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables = slotInvocationDialog.slotInvocationContextVariables();
+                    if(targetUnitOfExecution->designEqualsImplementationClassLifeLine()->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
+                    {
+                        slotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = targetUnitOfExecution->designEqualsImplementationClassLifeLine()->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
+                    }
+                    //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
+                    emit addSlotInvocationUseCaseEventRequested(slotInvocationDialog.slotToInvoke(), slotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
+                }
+                else
+                {
+                    delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
+                }
             }
             else
             {
-                delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
+                //TODOreq: uhh the create an actor or signal on the fly one (depending on if they populate signal)
             }
         }
+#if 0
         else
         {
             //TODOreq: signals with no listeners at time of design
             delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
         }
+#endif
         m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = 0;
     }
     else
@@ -209,6 +244,22 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(useCase, SIGNAL(actorAdded(DesignEqualsImplementationActor*)), this, SLOT(handleActorAdded(DesignEqualsImplementationActor*)));
     connect(useCase, SIGNAL(classLifeLineAdded(DesignEqualsImplementationClassLifeLine*)), this, SLOT(handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine*)));
     connect(useCase, SIGNAL(eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)), this, SLOT(handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)));
+}
+QGraphicsItem* UseCaseGraphicsScene::thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(QList<QGraphicsItem*> listToCheck)
+{
+    QListIterator<QGraphicsItem*> it(listToCheck);
+    while(it.hasNext())
+    {
+        QGraphicsItem *currentGraphicsItemUnderMouse = it.next();
+        if(currentGraphicsItemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID || currentGraphicsItemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID || currentGraphicsItemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+            return currentGraphicsItemUnderMouse; //TODOreq: when the user clicks or releases for the name up top of the class lifeline (the class name itself), find most natural use case unit class lifeline of execution for the arrow connection
+        //TODOreq: etc
+    }
+    return 0;
+}
+void UseCaseGraphicsScene::processOneItemUnderMouse()
+{
+
 }
 bool UseCaseGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *event)
 {

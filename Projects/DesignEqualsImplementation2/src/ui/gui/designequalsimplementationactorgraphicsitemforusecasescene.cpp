@@ -23,6 +23,10 @@ DesignEqualsImplementationActorGraphicsItemForUseCaseScene::DesignEqualsImplemen
 {
     privateConstructor(actor);
 }
+int DesignEqualsImplementationActorGraphicsItemForUseCaseScene::type() const
+{
+    return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID;
+}
 #if 0
 void DesignEqualsImplementationActorGraphicsItemForUseCaseScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {

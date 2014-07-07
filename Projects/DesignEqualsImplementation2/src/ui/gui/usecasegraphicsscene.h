@@ -31,6 +31,8 @@ private:
     SignalSlotConnectionActivationArrowForGraphicsScene *m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
 
     void privateConstructor(DesignEqualsImplementationUseCase *useCase);
+    QGraphicsItem *thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(QList<QGraphicsItem *> listToCheck);
+    void processOneItemUnderMouse();
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void addActorToUseCaseRequsted(QPointF position);

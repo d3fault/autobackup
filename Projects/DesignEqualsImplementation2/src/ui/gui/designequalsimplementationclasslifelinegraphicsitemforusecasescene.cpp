@@ -33,6 +33,10 @@ DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEquals
 {
     privateConstructor(classLifeLine);
 }
+int DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::type() const
+{
+    return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID;
+}
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine)
 {
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);

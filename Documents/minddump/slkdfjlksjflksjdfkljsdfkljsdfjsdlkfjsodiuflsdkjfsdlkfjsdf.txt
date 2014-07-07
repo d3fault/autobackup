@@ -1,0 +1,1 @@
+I was staring at the "barSignal -> handleBarSignal" (right to left in the uml) "piece" and then kept asking myself "what is the question what is the question?" and then I realized "there is no question, just code it". Piece of fucking cake. Proper design turns code into a piece of fucking cake.

@@ -1,0 +1,18 @@
+same gui, two modes
+
+signalSlotMode-and-slotInvoke
+{
+	//TODOreq: handle drawing a line to a unit of execution with no source (neither actor nor other unit of execution), you can create an entire class on the fly by just specifying a signal name. that however is just a bool flag in mousePressEvent that is handled at the. depending on if you choose slot invoke (the default) or signalSlotInvoke is what determines whether or not you're using an actor or a signal for the use case entry TRIGGER (previously had written "point", but I now see that's wrong (some usages of it were right of course. woot ambiguity)) beginning of mouseReleaseEvent and handled differently than the bulk of this doc at the beginning of mouseReleaseEvent
+	[signal:] [grayed out but opt-in checkbox-with-line-edit-for-signal-name] (double clicking the grayed out "Signal name..." also opts in)
+	slot: [keyboard has focus here ("Slot name..." (dest slot that is)). enter closes dialog
+
+	[list of existing slots on dest combo box ("Choose existing slot...")]
+
+}
+signal-with-no-listerers-in-this-use-case-Mode
+{
+	signal: keyboard has focus here ("Signal name..."). enter closes dialog
+	list of existing signals on source (now adding "on dest" to above mode)
+
+	[grayed out sameshit as the above lines of this mode but for slots, all in one opt-in checkbox that toggles grayed-out this entire squarebracket line]
+}

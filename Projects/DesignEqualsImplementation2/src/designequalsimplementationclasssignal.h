@@ -20,4 +20,6 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal &
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal *&signal);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal *&signal);
 
+Q_DECLARE_METATYPE(DesignEqualsImplementationClassSignal*)
+
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSSIGNAL_H

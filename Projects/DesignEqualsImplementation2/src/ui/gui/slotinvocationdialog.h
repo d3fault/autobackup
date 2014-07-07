@@ -3,6 +3,7 @@
 
 #include <QDialog>
 
+#include "../../designequalsimplementationusecase.h"
 #include "../../signalemissionorslotinvocationcontextvariables.h"
 
 class QVBoxLayout;
@@ -17,12 +18,13 @@ class SlotInvocationDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SlotInvocationDialog(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke, bool sourceIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit SlotInvocationDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum slotInvocationDialogMode , DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke, bool sourceIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent = 0, Qt::WindowFlags f = 0);
     DesignEqualsImplementationClassSlot *slotToInvoke() const;
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables() const;
 private:
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecutionContainingSlotToInvoke;
     QVBoxLayout *m_Layout;
+    QComboBox *m_ExistingSignalsComboBox;
     QComboBox *m_SlotsComboBox;
     DesignEqualsImplementationClassSlot *m_SlotToInvoke;
     QPushButton *m_OkButton;

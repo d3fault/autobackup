@@ -22,7 +22,7 @@ public:
     explicit DesignEqualsImplementationUseCase(QObject *parent = 0);
     explicit DesignEqualsImplementationUseCase(DesignEqualsImplementationProject *project, QObject *parent = 0);
 
-    enum UseCaseEventTypeEnum
+    enum UseCaseEventTypeEnum //TODOoptional: move to guicommon, since also used as dialog mode
     {
         UseCaseSlotEventType,
         UseCaseSignalEventType,

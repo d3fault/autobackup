@@ -5,13 +5,15 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QLabel>
+#include <QCheckBox>
+#include <QLineEdit>
 
 #include "../../designequalsimplementationclassslot.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
 
-SlotInvocationDialog::SlotInvocationDialog(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke, bool sourceIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
+SlotInvocationDialog::SlotInvocationDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum slotInvocationDialogMode, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke, bool sourceIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
     , m_Layout(new QVBoxLayout())
@@ -19,15 +21,82 @@ SlotInvocationDialog::SlotInvocationDialog(DesignEqualsImplementationClassLifeLi
     , m_SourceIsActor(sourceIsActor)
     , m_ArgsFillingInWidget(0)
 {
-    //TODOoptional: combo box can be editable, but after thinking about it briefly I think adding a new slot like that would require that libclang interaction.. so for now KISS and just do existing slots (or add new slot with different line edits for args etc)
+    //Note: our use of the dialogMode excludes UseCaseSlotEventType altogether (it is used in the backend)
 
+    //TODOoptional: combo boxes can be editable, but after thinking about it briefly I think adding a new slot like that would require that libclang interaction.. so for now KISS and just do existing slots (or add new slot with different
+
+    //Signals
+    QHBoxLayout *signalHLayout = new QHBoxLayout();
+    QCheckBox *signalCheckbox = new QCheckBox(tr("Signals")); //TODOreq: the signal checkbox is itself disabled when in UseCaseSignalSlotEventType, forcing the signals to be enabled. TODOreq: checkbox hovertext when disabled should explain why disabled
+    signalCheckbox->setChecked(slotInvocationDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalEventType);
+    signalCheckbox->setDisabled(slotInvocationDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalEventType);
+    signalHLayout->addWidget(signalCheckbox);
+
+    QWidget *newSignalAndExistingSignalsWidget = new QWidget();
+    newSignalAndExistingSignalsWidget->setDisabled(slotInvocationDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType);
+    QVBoxLayout *signalsLayout = new QVBoxLayout();
+
+    //new signal
+    QLineEdit *autoParsedSignalNameWithAutoCompleteForExistingSignals = new QLineEdit(); //TODOreq
+    //existing signal
+    m_ExistingSignalsComboBox = new QComboBox();
+    if(slotInvocationDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType)
+        m_ExistingSignalsComboBox->setDisabled(true);
+    m_ExistingSignalsComboBox->addItem(tr("Select signal...")); //TODOreq: for both signals and slots, make the NAME of it bold (args are less important). This should be anywhere the signature is seen
+    if(!sourceIsActor)
+    {
+        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->Signals)
+        {
+            m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
+        }
+    }
+    signalsLayout->addWidget(autoParsedSignalNameWithAutoCompleteForExistingSignals);
+    signalsLayout->addWidget(m_ExistingSignalsComboBox);
+
+    signalHLayout->addWidget(newSignalAndExistingSignalsWidget);
+    newSignalAndExistingSignalsWidget->setLayout(signalsLayout);
+    m_Layout->addLayout(signalHLayout);
+
+
+
+    if(slotInvocationDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalEventType)
+        m_Layout->addWidget(new QWidget(), 1); //TODOreq: spacer inserted to space slots and space away from each other when in signal mode, verify it worked
+
+
+
+    //Slots
+    QHBoxLayout *slotHLayout = new QHBoxLayout();
+    QCheckBox *slotCheckbox = new QCheckBox(tr("Slots"));
+    slotCheckbox->setChecked(slotInvocationDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType);
+    slotHLayout->addWidget(slotCheckbox);
+
+    QWidget *newSlotAndExistingSlotsWidget = new QWidget();
+    QVBoxLayout *slotsLayout = new QVBoxLayout();
+
+    //new slot
+    QLineEdit *autoParsedSlotNameWithAutoCompleteForExistingSignals = new QLineEdit(); //TODOreq
+    //existing slot
     m_SlotsComboBox = new QComboBox();
     m_SlotsComboBox->addItem(tr("Select slot...")); //TODOreq: qlistwidget only takes one click insead of two (precious seconds when you're trying to keep a complicated design in your head)... but the trade off is that it takes up more space (not really though, once the combo box is expanded...)
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, unitOfExecutionContainingSlotToInvoke->designEqualsImplementationClassLifeLine()->designEqualsImplementationClass()->Slots)
+    if(slotInvocationDialogMode != DesignEqualsImplementationUseCase::UseCaseSignalEventType)
     {
-        m_SlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, unitOfExecutionContainingSlotToInvoke->designEqualsImplementationClassLifeLine()->designEqualsImplementationClass()->Slots)
+        {
+            m_SlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
+        }
+    }
+    else
+    {
+        //no destination context, so they'd have to select an object/lifeline/unit-of-exectution or create one on the fly TODOreq
     }
     connect(m_SlotsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleSlotsComboBoxICurrentIndexChanged(int)));
+    newSlotAndExistingSlotsWidget->setDisabled(slotInvocationDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalEventType);
+    slotsLayout->addWidget(autoParsedSlotNameWithAutoCompleteForExistingSignals);
+    slotsLayout->addWidget(m_SlotsComboBox);
+
+    slotHLayout->addWidget(newSlotAndExistingSlotsWidget);
+    newSlotAndExistingSlotsWidget->setLayout(slotsLayout);
+    m_Layout->addLayout(slotHLayout);
 
     QHBoxLayout *cancelOkRow = new QHBoxLayout();
 
@@ -39,9 +108,7 @@ SlotInvocationDialog::SlotInvocationDialog(DesignEqualsImplementationClassLifeLi
 
     cancelOkRow->addWidget(m_OkButton);
 
-    m_Layout->addWidget(m_SlotsComboBox);
     m_Layout->addLayout(cancelOkRow);
-
     setLayout(m_Layout);
 
     if(!sourceIsActor)

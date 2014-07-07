@@ -1198,7 +1198,7 @@ There isn't, but could be, a similar
 "barSlotRequested" auto-generated when barSlot
 is "connected" from Foo to Bar, however such
 signal is of no use design-wise, whereas
-handleBarSignal is of tremendous design value#</dia:string>
+handleBarSignal has tremendous design value#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="monospace" style="0" name="Courier"/>

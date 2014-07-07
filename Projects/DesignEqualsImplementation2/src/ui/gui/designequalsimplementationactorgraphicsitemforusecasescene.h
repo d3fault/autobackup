@@ -13,6 +13,7 @@ public:
     explicit DesignEqualsImplementationActorGraphicsItemForUseCaseScene(DesignEqualsImplementationActor *actor, QGraphicsItem *parent = 0);
     explicit DesignEqualsImplementationActorGraphicsItemForUseCaseScene(DesignEqualsImplementationActor *actor, const QRectF &rect, QGraphicsItem *parent = 0);
     explicit DesignEqualsImplementationActorGraphicsItemForUseCaseScene(DesignEqualsImplementationActor *actor, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
+    virtual int type() const;
 protected:
     //virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
 private:

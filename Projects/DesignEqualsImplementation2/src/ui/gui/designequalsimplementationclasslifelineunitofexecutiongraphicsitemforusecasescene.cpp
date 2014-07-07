@@ -1,5 +1,6 @@
 #include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
 
+#include "designequalsimplementationguicommon.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
 
 DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, QGraphicsItem *parent)
@@ -17,4 +18,8 @@ DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScen
 DesignEqualsImplementationClassLifeLineUnitOfExecution *DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::unitOfExecution() const
 {
     return m_UnitOfExecution;
+}
+int DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::type() const
+{
+    return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID;
 }
