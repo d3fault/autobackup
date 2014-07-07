@@ -13,9 +13,11 @@
 #include "signalslotconnectionactivationarrowforgraphicsscene.h"
 #include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
 #include "slotinvocationdialog.h"
+#include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationactor.h"
 #include "../../designequalsimplementationclasslifeline.h"
+#include "../../designequalsimplementationclasslifelineunitofexecution.h"
 
 //TODOreq: if I put 2x Foos in the scene, and connected one to the other, wouldn't that be an infinite loop? Don't allow that if yes
 //TODOreq: moving an item should make arrows move with it
@@ -51,7 +53,42 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
         quintptr classBeingAddedAsQuintPtr;
         dataStream >> classBeingAddedAsQuintPtr;
         DesignEqualsImplementationClass *classBeingAdded = reinterpret_cast<DesignEqualsImplementationClass*>(classBeingAddedAsQuintPtr);
-        emit addClassToUseCaseRequested(classBeingAdded, event->scenePos()); //TODOmb: since I'm uglily serializing a pointer, one way to ensure it's valid would be to invokeMethod on classBeingAdded. That would let/allow/make/harness/whatever Qt to do the safety checking for me :-P. Of course it'd ruin my design a tad if I went THROUGH class in order to add class to a use case...
+
+        HasA_PrivateMemberClasses_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject = 0;
+        //TODOreq: I either need to now iterate through all the classes to figure out who has me, OR determine that before being added to the use case uml items (in which case there could now be multiple Bars (Foo::m_Bar and Other::m_Bar2 (different instances (but not necessarily (oh god my brain))). I could still handle the multiple Bars scenario if I did the iterating-here-and-now method, I'd just ask the user if there was any ambiguity. It's easy to know that Foo hasA Bar once the connection is being drawn from Foo to Bar, BUT right now we're just adding Bar to the use case... so we can't know that it has anything to do with Foo just yet
+        //I also need a way to specify that it's a top level object.... perhaps I can do that hackily by just saying it's the first non-actor class being added. (of course, that isn't true if it's a signal-slot-invoke-for-use-case-entry-point)
+
+        //tempted to just do iteration method, but afraid I'll have to refactor later.... guh...
+        //*checks what umbrello does for sequence diagrams*
+        //lol they don't do anything even close. Bar is on the diagram nameless (just as Bar), and it's slot invocation is just the name of the slot (no args, and no m_Bar variable name like I'm trying to do)
+
+        //I've decided that since they both sound so similar and yet the here/now one doesn't clutter up my uml items window, I'll do it here/now :-P
+        QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+        QList<HasA_PrivateMemberClasses_ListEntryType*> potentialExistencesInParents; //my father was a whore
+        //was tempted momentarily to only iterate classes already in the use case, but nah
+        Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_UseCase->designEqualsImplementationProject()->classes())
+        {
+            Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentClassCurrentHasA /*wat*/, currentClass->HasA_PrivateMemberClasses)
+            {
+                if(currentClassCurrentHasA->m_DesignEqualsImplementationClass == classBeingAdded)
+                {
+                    potentialExistencesInParents.append(currentClassCurrentHasA);
+                }
+            }
+        }
+        if(!potentialExistencesInParents.isEmpty())
+        {
+            if(potentialExistencesInParents.size() > 1)
+            {
+                //TODOreq: modal dialog to choose which instance (TODOoptional: I could sort them by classes already added to use case before classes not added to use case :-P)
+            }
+            else
+            {
+                myInstanceInClassThatHasMe_OrZeroIfTopLevelObject = potentialExistencesInParents.first();
+            }
+        }
+
+        emit addClassToUseCaseRequested(classBeingAdded, myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, event->scenePos()); //TODOmb: since I'm uglily serializing a pointer, one way to ensure it's valid would be to invokeMethod on classBeingAdded. That would let/allow/make/harness/whatever Qt to do the safety checking for me :-P. Of course it'd ruin my design a tad if I went THROUGH class in order to add class to a use case...
     }
     else
     {
@@ -128,11 +165,15 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 //no context. for now i'm going to use this to tell me that it's the actor->firstSlotInvoke, but TODOreq: if they add two classes and no actor, that won't necessarily be true (we could have the GUI yell at them and force them to add an actor->slotInvoke first, BUT ideally the code would just be smarter and be able to handle it correctly)
                 sourceIsActor = true;
             }
-            SlotInvocationDialog slotInvocationDialog(static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemsUnderMouse.first())->unitOfExecution(), sourceIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+            DesignEqualsImplementationClassLifeLineUnitOfExecution *targetUnitOfExecution = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemsUnderMouse.first())->unitOfExecution();
+            SlotInvocationDialog slotInvocationDialog(targetUnitOfExecution, sourceIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
             if(slotInvocationDialog.exec() == QDialog::Accepted)
             {
                 SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables = slotInvocationDialog.slotInvocationContextVariables();
-                slotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = "TODOreq";
+                if(targetUnitOfExecution->designEqualsImplementationClassLifeLine()->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
+                {
+                    slotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = targetUnitOfExecution->designEqualsImplementationClassLifeLine()->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
+                }
                 //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
                 emit addSlotInvocationUseCaseEventRequested(slotInvocationDialog.slotToInvoke(), slotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
             }
@@ -160,7 +201,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
 
     //requests
     connect(this, SIGNAL(addActorToUseCaseRequsted(QPointF)), useCase, SLOT(addActorToUseCase(QPointF)));
-    connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,QPointF)), useCase, SLOT(addClassToUseCase(DesignEqualsImplementationClass*,QPointF)));
+    connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,HasA_PrivateMemberClasses_ListEntryType*,QPointF)), useCase, SLOT(addClassToUseCase(DesignEqualsImplementationClass*,HasA_PrivateMemberClasses_ListEntryType*,QPointF)));
     connect(this, SIGNAL(addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSlotInvocationEvent(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     //TODOreq: scene, add use case event requested, use case, addUseCaseEvent
 

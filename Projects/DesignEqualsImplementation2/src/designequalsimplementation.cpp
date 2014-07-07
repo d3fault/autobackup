@@ -83,7 +83,7 @@ void DesignEqualsImplementation::newProject()
 
 #if 0
     //USE CASE ATTEMPT 0:
-    DesignEqualsImplementationUseCase *testUseCase = new DesignEqualsImplementationUseCase(testProject);
+    DesignEqualsImplementationUseCase *testUseCase = new DesignEqualsImplementationUseCase(testProject, testProject);
     DesignEqualsImplementationUseCaseEvent *testUseCaseEvent = new DesignEqualsImplementationUseCaseEvent(testUseCase);
     testUseCaseEvent->Sender = "Actor"; //hhhhhhmmmmmmmmmmmmmmmmmmmmm
     testUseCaseEvent->Receiver = testSlot;
@@ -144,7 +144,7 @@ void DesignEqualsImplementation::newProject()
     useCase5.addExitEvent(fooSignal);
 #endif
 
-    DesignEqualsImplementationUseCase *testUseCase = new DesignEqualsImplementationUseCase(testProject);
+    DesignEqualsImplementationUseCase *testUseCase = new DesignEqualsImplementationUseCase(testProject, testProject);
     testUseCase->Name = "SimpleAsyncSlotInvokeAndSignalResponseUseCase";
 
     testUseCase->addEvent(fooSlot);
@@ -281,10 +281,26 @@ void DesignEqualsImplementation::newProject()
     barSlot->ParentClass = barClass;
 
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");
-    fooClass->HasA_PrivateMemberClasses.append(new HasA_PrivateMemberClasses_ListEntryType(barClass, userChosenVariableNameForFoosInstanceOfBar));
+    fooClass->HasA_PrivateMemberClasses.append(new HasA_PrivateMemberClasses_ListEntryType(barClass, fooClass, userChosenVariableNameForFoosInstanceOfBar));
+
+    //Zed
+    DesignEqualsImplementationClass *zedClass = new DesignEqualsImplementationClass(testProject);
+    zedClass->ClassName = "Zed"; //Zed's dead baby
+    DesignEqualsImplementationClassSlot *zedSlot = new DesignEqualsImplementationClassSlot(zedClass);
+    zedSlot->Name = "zedSlot";
+    DesignEqualsImplementationClassMethodArgument *zedSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(zedSlot);
+    zedSlotCuntArgument->VariableName = "cunt";
+    zedSlotCuntArgument->Type = "const QString &";
+    zedSlot->Arguments.append(zedSlotCuntArgument);
+    zedClass->Slots.append(zedSlot);
+    zedSlot->ParentClass = zedClass;
+
+    QString userChosenVariableNameForBarsInstanceOfZed("m_Zed");
+    barClass->HasA_PrivateMemberClasses.append(new HasA_PrivateMemberClasses_ListEntryType(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
 
     testProject->addClass(fooClass);
     testProject->addClass(barClass);
+    testProject->addClass(zedClass);
 
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(testProject);
     emit projectOpened(testProject);

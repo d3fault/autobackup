@@ -243,7 +243,7 @@ void DesignEqualsImplementationProject::handleAddUmlItemRequested(UmlItemsTypede
 void DesignEqualsImplementationProject::handleNewUseCaseRequested()
 {
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-    DesignEqualsImplementationUseCase *useCase = new DesignEqualsImplementationUseCase(this);
+    DesignEqualsImplementationUseCase *useCase = new DesignEqualsImplementationUseCase(this, this);
     useCase->Name = Name + " - Use Case 1"; //TODOreq: auto incrementing
     addUseCase(useCase);
 }

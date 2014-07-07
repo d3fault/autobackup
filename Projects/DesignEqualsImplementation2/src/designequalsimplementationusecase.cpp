@@ -19,9 +19,18 @@ qds direction hasExitSignal;
 //TODOreq: since it doesn't have much else use, use this->Name in the comments of the generated source code. the use case entry point slot should say the use case name for readability i suppose. also, if verbose logging is on, then each time a use case entry point is crossed we could output the name...
 DesignEqualsImplementationUseCase::DesignEqualsImplementationUseCase(QObject *parent)
     : QObject(parent)
-    , SlotWithCurrentContext(0)
-    , ExitSignal(0)
-{ }
+{
+    privateConstructor(0); //TODOreq: this constructor was made just for deserializing. make sure project isn't used without first being checked (however, this bug would only ever occur when opening a saved file (and I've already made a note to manually set the project))
+}
+DesignEqualsImplementationUseCase::DesignEqualsImplementationUseCase(DesignEqualsImplementationProject *project, QObject *parent)
+    : QObject(parent)
+{
+    privateConstructor(project);
+}
+DesignEqualsImplementationProject *DesignEqualsImplementationUseCase::designEqualsImplementationProject() const
+{
+    return m_DesignEqualsImplementationProject;
+}
 //Overload: Signals with no listeners in this use case
 void DesignEqualsImplementationUseCase::addEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal)
 {
@@ -111,6 +120,12 @@ DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
     }
     /*if(ExitSignal)
         delete ExitSignal;*/
+}
+void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplementationProject *project)
+{
+    SlotWithCurrentContext = 0;
+    ExitSignal = 0;
+    m_DesignEqualsImplementationProject = project;
 }
 void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
 {
@@ -255,13 +270,15 @@ void DesignEqualsImplementationUseCase::addActorToUseCase(QPointF position)
 //So apparently a life line is a ....... wait no that's not ENTIRELY correct because points can be shared...... named variable [in a different lifeline/class]. So Bar needs to show up as "Bar* Foo::m_Bar", not just "Bar". Because I need the variable name "m_Bar" when adding the slot invocation use case event. I think that Bar can be shared is mostly irrelevant (and I sure hope it is, because it'd require a huge refactor otherwise :-/). The m_Bar variable name is what is relevant to this specific use case.... it is how Foo knows Bar. That other objects in other use cases can have different names for Bar (retrieved however) is irrelevant (except to those use cases/classes ;-P). Foo doesn't just haveA _pointer_ to Bar. Foo hasA Bar itself (that it is a pointer is an implementation detail)
 //Foo has no such parent that owns him, so this slot needs to adapt for both! I'm liking the wording "top level object" (Foo is, Bar isn't)
 //TODOreq: Additionally, when adding Bar when he's not a member of Foo, I should perhaps query the user and ask them who they want to own Bar. I _THINK_ only the use-case-entry-point-first-slot ParentClass can be a top level object, but I might be wrong here.... that particular statement might only apply to Actor->slotInvoke-as-first-use-case-entry-point use cases.... and not to signal->slot-as-first-use-case-entry-point use cases. I've not thought it through enough, and conceptualizing it is teh difficultz. In any case, Foo still needs to know a name of Bar if Foo only has an initialized-some-time-before-use-case pointer to Bar... if Foo wishes to invoke Bar.
-void DesignEqualsImplementationUseCase::addClassToUseCase(DesignEqualsImplementationClass *classToAddToUseCase, QPointF position) //TODOreq: serialize position
+void DesignEqualsImplementationUseCase::addClassToUseCase(DesignEqualsImplementationClass *classToAddToUseCase, HasA_PrivateMemberClasses_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position) //TODOreq: serialize position
 {
+    //classThatHasMe_OrZeroIfTopLevelObject contains a pointer to classToAddToUseCase in his HasA_PrivateMemberClasses, but we couldn't just pass in a HasA_PrivateMemberClasse because then we couldn't do top level objects (such as the first class invoked in a use case, Foo)
+
     //TODOreq
     //Weird just realized I haven't even designed "classes" into use cases [yet], as of now use case events point directly to their slots/etc!! But eh the concept of lifelines is derp easy, and the arrows source/destination stuff is really just used in populating which of those signals/slots to use for the already-design (;-D) use-case-event (slot/signal-slot/etc)... but i mean sure there's still a boat load of visual work that needs to be done right about now :-P
     //TODOreq: not sure if front-end or backend should enforce it (or both), but class lifelines should all share the same QPointF::top... just like in Umbrello (Umbrello does some things right, Dia others (like not crashing especially guh allmyrage)). Actor should also utilize that top line, though be slighly below it... AND right above the first lifeline but mb horizontally in between the actor and that first lifeline should go the "Use Case Name" in an oval :-P (but actually ovals take up a ton of space, mb rounded rect (different radius than classes) instead)
 
-    DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase = new DesignEqualsImplementationClassLifeLine(classToAddToUseCase, position, this);
+    DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase = new DesignEqualsImplementationClassLifeLine(classToAddToUseCase, myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, position, this);
 
     m_ClassLifeLines.append(classLifeLineToAddToUseCase);
 
@@ -349,7 +366,7 @@ QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCas
 }
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *&useCase)
 {
-    useCase = new DesignEqualsImplementationUseCase(); //TODOreq: no parent at this context
+    useCase = new DesignEqualsImplementationUseCase(); //TODOreq: no parent at this context (just memory related), also losing project we belong to (but since one project per serialized file, that will be easy to fix)
     return in >> *useCase;
 }
 QDataStream &operator<<(QDataStream &out, const SignalSlotCombinedEventHolder &useCase)

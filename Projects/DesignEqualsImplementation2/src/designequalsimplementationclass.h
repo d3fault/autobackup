@@ -57,7 +57,7 @@ class HasA_PrivateMemberClasses_ListEntryType : public IHaveTypeAndVariableNameA
 {
 public:
     explicit HasA_PrivateMemberClasses_ListEntryType() : IHaveTypeAndVariableNameAndPreferredTextualRepresentation() { }
-    explicit HasA_PrivateMemberClasses_ListEntryType(DesignEqualsImplementationClass *designEqualsImplementationClass, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_DesignEqualsImplementationClass(designEqualsImplementationClass) { }
+    explicit HasA_PrivateMemberClasses_ListEntryType(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClass *designEqualsImplementationClassThatHasMe, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_DesignEqualsImplementationClass(designEqualsImplementationClass), m_DesignEqualsImplementationClassThatHasMe(designEqualsImplementationClassThatHasMe) { }
     virtual ~HasA_PrivateMemberClasses_ListEntryType() { }
     virtual QString typeString()
     {
@@ -65,6 +65,7 @@ public:
     }
 
     DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
+    DesignEqualsImplementationClass *m_DesignEqualsImplementationClassThatHasMe;
 };
 QDataStream &operator<<(QDataStream &out, const HasA_PrivateMemberClasses_ListEntryType &hasA_PrivateMemberClasses_ListEntryType);
 QDataStream &operator>>(QDataStream &in, HasA_PrivateMemberClasses_ListEntryType &hasA_PrivateMemberClasses_ListEntryType);

@@ -42,7 +42,16 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     //setFlag(QGraphicsItem::ItemIsSelectable, true);
     m_ClassBorderPen.setWidth(2);
 
-    QGraphicsTextItem *classNameTextItem = new QGraphicsTextItem(classLifeLine->designEqualsImplementationClass()->ClassName, this);
+    QString lifeLineTitleText;
+    if(classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
+    {
+        lifeLineTitleText = classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_DesignEqualsImplementationClass->ClassName + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_DesignEqualsImplementationClassThatHasMe->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
+    }
+    else
+    {
+        lifeLineTitleText = classLifeLine->designEqualsImplementationClass()->ClassName;
+    }
+    QGraphicsTextItem *classNameTextItem = new QGraphicsTextItem(lifeLineTitleText, this);
     setRect(classNameTextItem->boundingRect());
 
     QPointF topOfLifeLine, bottomOfLifeLine;

@@ -7,6 +7,7 @@
 #include "../../designequalsimplementationusecase.h"
 
 class DesignEqualsImplementationClass;
+class HasA_PrivateMemberClasses_ListEntryType;
 class DesignEqualsImplementationClassLifeLine;
 class SignalSlotConnectionActivationArrowForGraphicsScene;
 
@@ -33,7 +34,7 @@ private:
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void addActorToUseCaseRequsted(QPointF position);
-    void addClassToUseCaseRequested(DesignEqualsImplementationClass *classToAdd, QPointF position);
+    void addClassToUseCaseRequested(DesignEqualsImplementationClass *classToAdd, HasA_PrivateMemberClasses_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position);
     void addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*slot,SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables);
 private slots:
     void handleActorAdded(DesignEqualsImplementationActor *actor);
