@@ -141,6 +141,20 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     //QScopedPointer<SignalSlotConnectionActivationArrowForGraphicsScene*> autLineDeletionScopedDeleter(*m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn); //It has to be "taken" before end of this method which signifies a valid signal,signal-slot,or slotInvoke, nvm the custom deleter can't zero it out so...
     if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
     {
+
+        //if(bothSourceAndDestDontHaveAnythingUnderThem)
+        {
+            return;
+        }
+        //if(destIsActorAndThereIsNoSource)
+        {
+            return;
+        }
+
+        //if we get here,either the source or dest have an item under them, and there has to be a source if it's an actor dest (honestly though i could allow the creation of the source on the fly)
+
+
+
         QList<QGraphicsItem*> itemsUnderMouse = items(event->scenePos());
         if(!itemsUnderMouse.isEmpty() && itemsUnderMouse.first() == m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
             itemsUnderMouse.removeFirst();
