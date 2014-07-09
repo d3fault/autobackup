@@ -7,6 +7,7 @@
 #include "../../signalemissionorslotinvocationcontextvariables.h"
 
 class QVBoxLayout;
+class QCheckBox;
 class QComboBox;
 class QPushButton;
 
@@ -25,6 +26,8 @@ public:
 private:
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecutionContainingSlotToInvoke;
     QVBoxLayout *m_Layout;
+    QCheckBox *m_SignalsCheckbox;
+    QCheckBox *m_SlotsCheckbox;
     QComboBox *m_ExistingSignalsComboBox;
     QComboBox *m_ExistingSlotsComboBox;
     DesignEqualsImplementationClassSignal *m_SignalToEmit;
@@ -34,7 +37,8 @@ private:
     //DesignEqualsImplementationClassSlot *m_SlotWithCurrentContext_OrZeroIfSourceIsActor;
     QList<IHaveTypeAndVariableNameAndPreferredTextualRepresentation*> m_VariablesAvailableToSatisfyArgs;
     QList<QComboBox*> m_AllArgSatisfiers;
-    QWidget *m_ArgsFillingInWidget;
+    QWidget *m_SignalArgsFillingInWidget;
+    QWidget *m_SlotArgsFillingInWidget;
 
     void showSignalArgFillingIn();
     void collapseSignalArgFillingIn();
@@ -43,12 +47,13 @@ private:
     void collapseSlotArgFillingIn();
 
     bool allArgSatisfiersAreValid();
+    //bool allSlotsArgsMatchedUpWithSignalArgsIfSlotEvenChecked();
 private slots:
     void handleSignalCheckboxToggled(bool checked);
     void handleSlotCheckboxToggled(bool checked);
     void handleExistingSignalComboBoxIndexChanged(int newIndex);
-    void handleExistingSlotsComboBoxICurrentIndexChanged(int newIndex);
-    void handleArgSatisfierChosen();
+    void handleExistingSlotsComboBoxCurrentIndexChanged(int newIndex);
+    void tryValidatingDialog();
 };
 
 #endif // SIGNALSLOTMESSAGEDIALOG_H

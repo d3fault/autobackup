@@ -24,6 +24,7 @@ QMutex DesignEqualsImplementation::BackendMutex(QMutex::Recursive);
 //TODOoptional: On a rainy day, templatify the source generation. It's definitely more powerful/flexible/etc, but I've learned from experience that whenever I do templates I get slowed down so much from the tediousness of it that I ragequit out of boredom
 //TODOoptimization: when listening to our own signal and reacting to it, it would be a slight optimization (probably not worth this comment (unless you combine all the usages in all existence, then maybe)) to simply call the slot directly and then emit the signal (not actually connecting to it)
 //honestly, graphical UML designers that don't generate functional use case code.... are fucking useless (haha pun but seriously). so simple, dia/umbrello suck
+//TODOreq: a signal emit statement that uses a private method's return value for a signal argument would be extremely valuable
 DesignEqualsImplementation::DesignEqualsImplementation(QObject *parent)
     : QObject(parent)
 {
@@ -279,6 +280,15 @@ void DesignEqualsImplementation::newProject()
     barSlot->Arguments.append(barSlotCuntArgument);
     barClass->Slots.append(barSlot);
     barSlot->ParentClass = barClass;
+
+    //barSignal
+    DesignEqualsImplementationClassSignal *barSignal = new DesignEqualsImplementationClassSignal(barClass);
+    barSignal->Name = "barSignal";
+    DesignEqualsImplementationClassMethodArgument *barSignalSuccessArgument = new DesignEqualsImplementationClassMethodArgument(barSignal);
+    barSignalSuccessArgument->VariableName = "success";
+    barSignalSuccessArgument->Type = "bool";
+    barSignal->Arguments.append(barSignalSuccessArgument);
+    barClass->Signals.append(barSignal);
 
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");
     fooClass->HasA_PrivateMemberClasses.append(new HasA_PrivateMemberClasses_ListEntryType(barClass, fooClass, userChosenVariableNameForFoosInstanceOfBar));

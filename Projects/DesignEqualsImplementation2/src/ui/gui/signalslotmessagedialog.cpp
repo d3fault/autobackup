@@ -22,8 +22,10 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     , m_SignalToEmit(0)
     , m_SlotToInvoke(0)
     , m_SourceIsActor(sourceIsActor)
-    , m_ArgsFillingInWidget(0)
+    , m_SignalArgsFillingInWidget(0)
+    , m_SlotArgsFillingInWidget(0)
 {
+    setWindowTitle(tr("Signal/Slot Message"));
     //Note: our use of the dialogMode excludes UseCaseSlotEventType altogether (it is used in the backend)
 
     //TODOoptional: combo boxes can be editable, but after thinking about it briefly I think adding a new slot like that would require that libclang interaction.. so for now KISS and just do existing slots (or add new slot with different
@@ -33,15 +35,15 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     //Signals
     QHBoxLayout *signalHLayout = new QHBoxLayout();
-    QCheckBox *signalCheckbox = new QCheckBox(tr("Signals")); //TODOreq: the signal checkbox is itself disabled when in UseCaseSignalSlotEventType, forcing the signals to be enabled. TODOreq: checkbox hovertext when disabled should explain why disabled
+    m_SignalsCheckbox = new QCheckBox(tr("Signals")); //TODOreq: the signal checkbox is itself disabled when in UseCaseSignalSlotEventType, forcing the signals to be enabled. TODOreq: checkbox hovertext when disabled should explain why disabled
 
-    signalHLayout->addWidget(signalCheckbox);
+    signalHLayout->addWidget(m_SignalsCheckbox);
 
     QWidget *newSignalAndExistingSignalsWidget = new QWidget();
     QVBoxLayout *signalsLayout = new QVBoxLayout();
 
     //new signal
-    QLineEdit *autoParsedSignalNameWithAutoCompleteForExistingSignals = new QLineEdit(); //TODOreq
+    QLineEdit *autoParsedSignalNameWithAutoCompleteForExistingSignals = new QLineEdit(); //TODOreq. TODOreq: "create handler in slot" (checks Slot checkbox if needed). ex: "handleFooSignal"
     //existing signal
     m_ExistingSignalsComboBox = new QComboBox();
     m_ExistingSignalsComboBox->addItem(tr("Select signal...")); //TODOreq: for both signals and slots, make the NAME of it bold (args are less important). This should be anywhere the signature is seen
@@ -57,9 +59,9 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     //Slots
     QHBoxLayout *slotHLayout = new QHBoxLayout();
-    QCheckBox *slotCheckbox = new QCheckBox(tr("Slots"));
-    slotCheckbox->setChecked(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType);
-    slotHLayout->addWidget(slotCheckbox);
+    m_SlotsCheckbox = new QCheckBox(tr("Slots"));
+    m_SlotsCheckbox->setChecked(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType);
+    slotHLayout->addWidget(m_SlotsCheckbox);
 
     QWidget *newSlotAndExistingSlotsWidget = new QWidget();
     QVBoxLayout *slotsLayout = new QVBoxLayout();
@@ -94,14 +96,18 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     {
         //no destination context, so they'd have to select an object/lifeline/unit-of-exectution or create one on the fly TODOreq
         newSlotAndExistingSlotsWidget->setDisabled(true);
-        signalCheckbox->setChecked(true);
-        newSignalAndExistingSignalsWidget->setDisabled(true);
-        signalCheckbox->setToolTip(tr("You can't NOT have a signal when you don't have a destination"));
+        m_SignalsCheckbox->setChecked(true);
+        newSignalAndExistingSignalsWidget->setDisabled(false);
+        m_SignalsCheckbox->setToolTip(tr("You can't NOT have a signal when you don't have a destination"));
+        m_SlotsCheckbox->setDisabled(true);
+        m_SlotsCheckbox->setToolTip(tr("You can't have a slot when you don't have a destination")); //TODOreq: create destination+slot on the fly
     }
     else
     {
         newSignalAndExistingSignalsWidget->setDisabled(true);
-        slotCheckbox->setChecked(true);
+        m_SlotsCheckbox->setChecked(true);
+        m_SlotsCheckbox->setDisabled(true);
+        m_SlotsCheckbox->setToolTip(tr("You have a destination object, therefore you must have a slot")); //TODOreq: actor as destination breaks rule bleh
         newSlotAndExistingSlotsWidget->setDisabled(false);
         if(unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest) //I think this is impied != 0 when not UseCaseSignalEventType, however I'm not sure of it and the check is cheap and prevents segfault lolol
         {
@@ -114,9 +120,9 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     if(sourceIsActor)
     {
-        signalCheckbox->setChecked(false);
-        signalCheckbox->setDisabled(true);
-        signalCheckbox->setToolTip(tr("You can't have a signal when the source is actor")); //For now. In the future we'll be able to convert
+        m_SignalsCheckbox->setChecked(false);
+        m_SignalsCheckbox->setDisabled(true);
+        m_SignalsCheckbox->setToolTip(tr("You can't have a signal when the source is actor")); //For now. In the future we'll be able to convert
     }
     else
     {
@@ -143,13 +149,13 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     if(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType)
     {
         //Can't disable signals in other mode, so no point in listening
-        connect(signalCheckbox, SIGNAL(toggled(bool)), newSignalAndExistingSignalsWidget, SLOT(setEnabled(bool)));
-        connect(signalCheckbox, SIGNAL(toggled(bool)), this, SLOT(handleSignalCheckboxToggled(bool)));
+        connect(m_SignalsCheckbox, SIGNAL(toggled(bool)), newSignalAndExistingSignalsWidget, SLOT(setEnabled(bool)));
+        connect(m_SignalsCheckbox, SIGNAL(toggled(bool)), this, SLOT(handleSignalCheckboxToggled(bool)));
 
         //No slot in other mode, so no point in listening
-        connect(slotCheckbox, SIGNAL(toggled(bool)), newSlotAndExistingSlotsWidget, SLOT(setEnabled(bool)));
-        connect(slotCheckbox, SIGNAL(toggled(bool)), this, SLOT(handleSlotCheckboxToggled(bool)));
-        connect(m_ExistingSlotsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSlotsComboBoxICurrentIndexChanged(int)));
+        connect(m_SlotsCheckbox, SIGNAL(toggled(bool)), newSlotAndExistingSlotsWidget, SLOT(setEnabled(bool)));
+        connect(m_SlotsCheckbox, SIGNAL(toggled(bool)), this, SLOT(handleSlotCheckboxToggled(bool)));
+        connect(m_ExistingSlotsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSlotsComboBoxCurrentIndexChanged(int)));
     }
 
     connect(m_ExistingSignalsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSignalComboBoxIndexChanged(int)));
@@ -178,39 +184,35 @@ SignalEmissionOrSlotInvocationContextVariables SignalSlotMessageDialog::slotInvo
 void SignalSlotMessageDialog::showSignalArgFillingIn()
 {
     //TODOreq
-}
-void SignalSlotMessageDialog::collapseSignalArgFillingIn()
-{
-    //TODOreq
-}
-void SignalSlotMessageDialog::showSlotArgFillingIn()
-{
-    if(m_SourceIsActor)
+
+    if(m_SlotArgsFillingInWidget)
     {
-        m_OkButton->setDisabled(false);
+        m_AllArgSatisfiers.clear();
+        delete m_SlotArgsFillingInWidget;
+        m_SlotArgsFillingInWidget = 0;
+    }
+    if(m_SignalArgsFillingInWidget)
+    {
+        m_AllArgSatisfiers.clear();
+        delete m_SignalArgsFillingInWidget;
+        m_SignalArgsFillingInWidget = 0;
+    }
+    if(m_SignalToEmit->Arguments.isEmpty())
+    {
+        if(!m_SlotToInvoke)
+            m_OkButton->setDisabled(false); //signal emit with no listeners
         return;
     }
 
-    if(m_ArgsFillingInWidget)
-    {
-        m_AllArgSatisfiers.clear();
-        delete m_ArgsFillingInWidget;
-        m_ArgsFillingInWidget = 0;
-    }
-    if(m_SlotToInvoke->Arguments.isEmpty())
-    {
-        m_OkButton->setDisabled(false);
-        return;
-    }
-    m_ArgsFillingInWidget = new QWidget();
+    m_SignalArgsFillingInWidget = new QWidget();
     QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
-    argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SlotToInvoke->Name), 0, Qt::AlignLeft);
-    Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SlotToInvoke->Arguments)
+    argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SignalToEmit->Name), 0, Qt::AlignLeft);
+    Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SignalToEmit->Arguments)
     {
-        QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
+        QHBoxLayout *currentArgRow = new QHBoxLayout();
         currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentation()));
-        QComboBox *currentArgSatisfiersComboBox = new QComboBox(); //instead of listening to signals, i should just manually validate the dialog when ok is pressed (keep a list of combo boxes, ensure all indexes aren't zero)... only downside to that is that the ok button now can't be disabled :(... fffff. i guess whole dialog validation on ANY combo box signal change is a hacky/easy/unoptimal/functional solution TODOoptimization proper dat shit
-        connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleArgSatisfierChosen()));
+        QComboBox *currentArgSatisfiersComboBox = new QComboBox();
+        connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
         currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
         m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
         Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
@@ -220,31 +222,124 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
         currentArgRow->addWidget(currentArgSatisfiersComboBox);
         argsFillingInLayout->addLayout(currentArgRow);
     }
-    m_ArgsFillingInWidget->setLayout(argsFillingInLayout);
-    m_Layout->addWidget(m_ArgsFillingInWidget);
+    m_SignalArgsFillingInWidget->setLayout(argsFillingInLayout);
+    m_Layout->addWidget(m_SignalArgsFillingInWidget);
     m_OkButton->setDisabled(true);
+
+    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0)
+    {
+        showSlotArgFillingIn();
+    }
+}
+void SignalSlotMessageDialog::collapseSignalArgFillingIn()
+{
+    if(m_SignalArgsFillingInWidget)
+    {
+        m_AllArgSatisfiers.clear();
+        delete m_SignalArgsFillingInWidget;
+        m_SignalArgsFillingInWidget = 0;
+    }
+    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0)
+    {
+        showSlotArgFillingIn(); //what was "slot arg match up with signal arg" becomes "choose context variables to satisfy slot args"
+    }
+}
+void SignalSlotMessageDialog::showSlotArgFillingIn()
+{
+    if(m_SourceIsActor)
+    {
+        return;
+    }
+
+    if(m_SlotArgsFillingInWidget)
+    {
+        m_AllArgSatisfiers.clear();
+        delete m_SlotArgsFillingInWidget;
+        m_SlotArgsFillingInWidget = 0;
+    }
+    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0 && m_SlotToInvoke->Arguments.isEmpty())
+    {
+        return;
+    }
+
+    if(!m_SignalsCheckbox->isChecked())
+    {
+        m_SlotArgsFillingInWidget = new QWidget();
+        QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
+        argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SlotToInvoke->Name), 0, Qt::AlignLeft);
+        Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SlotToInvoke->Arguments)
+        {
+            QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
+            currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentation()));
+            QComboBox *currentArgSatisfiersComboBox = new QComboBox(); //instead of listening to signals, i should just manually validate the dialog when ok is pressed (keep a list of combo boxes, ensure all indexes aren't zero)... only downside to that is that the ok button now can't be disabled :(... fffff. i guess whole dialog validation on ANY combo box signal change is a hacky/easy/unoptimal/functional solution TODOoptimization proper dat shit
+            connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
+            currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
+            m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
+            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
+            {
+                currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentation(), QVariant::fromValue(currentArgSatisfier));
+            }
+            currentArgRow->addWidget(currentArgSatisfiersComboBox);
+            argsFillingInLayout->addLayout(currentArgRow);
+        }
+        m_SlotArgsFillingInWidget->setLayout(argsFillingInLayout);
+        m_Layout->addWidget(m_SlotArgsFillingInWidget);
+    }
 }
 void SignalSlotMessageDialog::collapseSlotArgFillingIn()
 {
     if(m_SourceIsActor)
         return;
 
-    if(m_ArgsFillingInWidget)
+    if(m_SlotArgsFillingInWidget)
     {
-        m_AllArgSatisfiers.clear();
-        delete m_ArgsFillingInWidget;
-        m_ArgsFillingInWidget = 0;
+        if(!m_SignalArgsFillingInWidget)
+            m_AllArgSatisfiers.clear();
+        delete m_SlotArgsFillingInWidget;
+        m_SlotArgsFillingInWidget = 0;
     }
 }
 bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
 {
     Q_FOREACH(QComboBox *currentComboBox, m_AllArgSatisfiers)
     {
-        if(currentComboBox->currentIndex() == 0)
+        if(currentComboBox->currentIndex() == 0) //TODOlater: type checking before even putting it in combo box of selectable items (inheritence means this is a bitch)
             return false;
+    }
+    if(m_SignalsCheckbox->isChecked() && m_SlotsCheckbox->isChecked())
+    {
+        if(m_ExistingSignalsComboBox->currentIndex() != 0 && m_ExistingSlotsComboBox->currentIndex() != 0)
+        {
+            //TODOreq: verify signal/slot arg compatibility, return true if checks out (TODOoptional: highlight in red the slot so they know it's not the arg satisfiers)
+            if(m_SignalToEmit->Arguments.size() < m_SlotToInvoke->Arguments.size())
+                return false;
+            int currentArgIndex = 0;
+            Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentSlotArgument, m_SlotToInvoke->Arguments)
+            {
+                if(QMetaObject::normalizedType(currentSlotArgument->typeString().toStdString().c_str()) != QMetaObject::normalizedType(m_SignalToEmit->Arguments.at(currentArgIndex++)->typeString().toStdString().c_str()))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     return true;
 }
+#if 0
+bool SignalSlotMessageDialog::allSlotsArgsMatchedUpWithSignalArgsIfSlotEvenChecked()
+{
+    //returns true if slots not even checked
+    if(m_SlotsCheckbox->isChecked())
+        return true;
+
+    //TODOreq: QComboBox for each slot arg, populated with signal arg. Wait wtf is the point of this? QObject::connect() argument type/position editting is more a class diagram perspective thing
+    //Still, the signal types should satisfy the slot types (take out const and "&" when comparing), AND there must be at least as many signal arguments as there are slot args (no default values for now) TODOreq... and for now you have to choose a different slot before teh ok button is enabled (future versions have in-line editting of the slot to make it work)
+    if(m_ExistingSlotsComboBox->currentIndex() == 0)
+        return false;
+}
+#endif
 void SignalSlotMessageDialog::handleSignalCheckboxToggled(bool checked)
 {
     if(!checked)
@@ -259,28 +354,33 @@ void SignalSlotMessageDialog::handleExistingSignalComboBoxIndexChanged(int newIn
 {
     if(newIndex == 0)
     {
-        collapseSlotArgFillingIn();
-        return;
+        collapseSignalArgFillingIn();
     }
-    m_SignalToEmit = qvariant_cast<DesignEqualsImplementationClassSignal*>(m_ExistingSignalsComboBox->itemData(newIndex));
-    showSignalArgFillingIn();
+    else
+    {
+        m_SignalToEmit = qvariant_cast<DesignEqualsImplementationClassSignal*>(m_ExistingSignalsComboBox->itemData(newIndex));
+        showSignalArgFillingIn();
+    }
+    tryValidatingDialog();
 }
-void SignalSlotMessageDialog::handleExistingSlotsComboBoxICurrentIndexChanged(int newIndex)
+void SignalSlotMessageDialog::handleExistingSlotsComboBoxCurrentIndexChanged(int newIndex)
 {
     if(newIndex == 0)
     {
         collapseSlotArgFillingIn();
-        m_OkButton->setDisabled(true);
-        return;
     }
-    m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(newIndex));
-    //TODOreq: present selectable context variables for the slot args. This is required before OK is enabled, but not when it's the first/actor->slotInvoke (grayed out in that case)
-    showSlotArgFillingIn();
+    else
+    {
+        m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(newIndex));
+        //TODOreq: present selectable context variables for the slot args. This is required before OK is enabled, but not when it's the first/actor->slotInvoke (grayed out in that case)
+        showSlotArgFillingIn();
+    }
+    tryValidatingDialog();
 }
-void SignalSlotMessageDialog::handleArgSatisfierChosen()
+void SignalSlotMessageDialog::tryValidatingDialog()
 {
     //validate them all, enable disable ok button accordingly
-    if(allArgSatisfiersAreValid())
+    if(allArgSatisfiersAreValid()/* && allSlotsArgsMatchedUpWithSignalArgsIfSlotEvenChecked()*/)
     {
         m_OkButton->setDisabled(false);
     }
