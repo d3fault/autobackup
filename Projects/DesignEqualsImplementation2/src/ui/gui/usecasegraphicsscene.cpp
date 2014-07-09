@@ -237,15 +237,15 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         emit addSlotInvocationUseCaseEventRequested(userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
         return true;
     }
+    if(destinationIsActor && userChosenSignal_OrZeroIfNone)
+    {
+        emit setExitSignalRequested(userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
+        return true;
+    }
     if(!userChosenSlot_OrZeroIfNone && userChosenSignal_OrZeroIfNone)
     {
         //Signal with no listeners at time of design emit
         emit addSignalEmissionUseCaseEventRequested(userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
-        return true;
-    }
-    if(destinationIsActor && userChosenSignal_OrZeroIfNone)
-    {
-        emit setExitSignalRequested(userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
         return true;
     }
     emit e("Error: Message editor dialog didn't give us anything we could work with");
