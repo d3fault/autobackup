@@ -31,13 +31,18 @@ private:
     SignalSlotConnectionActivationArrowForGraphicsScene *m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
 
     void privateConstructor(DesignEqualsImplementationUseCase *useCase);
-    QGraphicsItem *thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(QList<QGraphicsItem *> listToCheck);
+    bool keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    QGraphicsItem *thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(QPointF pointToLookForItemsWeWant);
     void processOneItemUnderMouse();
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void addActorToUseCaseRequsted(QPointF position);
     void addClassToUseCaseRequested(DesignEqualsImplementationClass *classToAdd, HasA_PrivateMemberClasses_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position);
-    void addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*slot,SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables);
+    void addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*slot,SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables);
+    void addSignalSlotActivationUseCaseEventRequested(DesignEqualsImplementationClassSignal *signal, DesignEqualsImplementationClassSlot *slot, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
+    void addSignalEmissionUseCaseEventRequested(DesignEqualsImplementationClassSignal *signal, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
+
+    void e(const QString &msg);
 private slots:
     void handleActorAdded(DesignEqualsImplementationActor *actor);
     void handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);
