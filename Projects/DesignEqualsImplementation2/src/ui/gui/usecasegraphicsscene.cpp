@@ -165,6 +165,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(this, SIGNAL(addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSlotInvocationEvent(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(addSignalSlotActivationUseCaseEventRequested(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSignalSlotActivationEvent(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(addSignalEmissionUseCaseEventRequested(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSignalEmitEvent(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
+    connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
 
     //responses
     connect(useCase, SIGNAL(actorAdded(DesignEqualsImplementationActor*)), this, SLOT(handleActorAdded(DesignEqualsImplementationActor*)));
@@ -177,12 +178,12 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     QGraphicsItem *topMostItemIWantUnderSource = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1()); //returns zero if no items determined wanted
     if(!topMostItemIWantUnderSource)
         return false; //for now, we require a source
-    QGraphicsItem *topMostItemIWantUnderDestOrZeroIfActorIsSource = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(event->scenePos());
-    if(!topMostItemIWantUnderDestOrZeroIfActorIsSource && topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
-        return false; //dest is optional, UNLESS source is actor (FOR NOW KISS)
+    QGraphicsItem *topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(event->scenePos());
+    if(!topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor && topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+        return false;
 
     //Dialog mode is based entirely on whether or not there is a dest, in which case we always want to choose a slot on the dest (signal can be opted in to)
-    DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode = (topMostItemIWantUnderDestOrZeroIfActorIsSource == 0) ? DesignEqualsImplementationUseCase::UseCaseSignalEventType : DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType;
+    DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode = (topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor == 0) ? DesignEqualsImplementationUseCase::UseCaseSignalEventType : DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType;
 
     //TODOreq: if they put the destination arrow over the class NAME instead of a unit of execution (or even the thin life line thing), I should connect to a unit of execution that makes the most sense -- what that is right now? 1, since 1 is all I require right now. I almost put "1" at err IN the first unit of execution. Now you also see why 1 is all I require.
 
@@ -198,12 +199,19 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     //TODOreq: determine that source is Actor before deciding to use SlotInvocationDialog (can still use SlotInvocationDialog if not actor, but that means the slot args must be filled in before the dialog can be accepted)
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationClassLifeLineUnitOfExecution *targetUnitOfExecution_OrZeroIfNoDest = 0;
-    if(topMostItemIWantUnderDestOrZeroIfActorIsSource && topMostItemIWantUnderDestOrZeroIfActorIsSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID) //for now only units of executions can be dests (or nothing)
+    if(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor && topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID) //for now only units of executions can be dests (or nothing)
     {
-        targetUnitOfExecution_OrZeroIfNoDest = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestOrZeroIfActorIsSource)->unitOfExecution();
+        targetUnitOfExecution_OrZeroIfNoDest = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor)->unitOfExecution();
     }
 
-    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, targetUnitOfExecution_OrZeroIfNoDest, (topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID), m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+    bool sourceIsActor = (topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
+    bool destinationIsActor = false;
+    if(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor && topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+    {
+        destinationIsActor = true;
+    }
+
+    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, targetUnitOfExecution_OrZeroIfNoDest, sourceIsActor, destinationIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
         return false;
 
@@ -233,6 +241,11 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     {
         //Signal with no listeners at time of design emit
         emit addSignalEmissionUseCaseEventRequested(userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
+        return true;
+    }
+    if(destinationIsActor && userChosenSignal_OrZeroIfNone)
+    {
+        emit setExitSignalRequested(userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
         return true;
     }
     emit e("Error: Message editor dialog didn't give us anything we could work with");

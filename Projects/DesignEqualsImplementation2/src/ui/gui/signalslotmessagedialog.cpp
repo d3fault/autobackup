@@ -16,13 +16,14 @@
 //TODOreq: SignalSlotMessageEditorDialog (creation + editting-later-on using same widget) would be best
 //TODOreq: signal/slot mode, slot args populated by signal args, can have less than signal arg count, but arg-ordering and arg-type matter
 //TODOreq: if Foo hasA Bar, we cannot invoke handleFooSignal DIRECTLY from within barSlot. Bar needs either barSignal to be connected to handleFooSignal in the UML/Design (easy), or a pointer to Foo must be somehow communicated to Bar (during construction works). As of right now, trying to INVOKE (directly) handleBarSignal from barSlot gives an invalid slot invocation statement (there is no variable name of Foo, so it looks like this: "invokeMethod(, "handleBarSignal);, obviously not valid. Ideally we could support both variations, but until then the GUI should at least not allow direct invocation on anything that doesn't have a name to refer to the target by
-SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
+SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
     , m_Layout(new QVBoxLayout())
     , m_SignalToEmit(0)
     , m_SlotToInvoke(0)
     , m_SourceIsActor(sourceIsActor)
+    , m_DestinationIsActor(destinationIsActor)
     , m_SignalArgsFillingInWidget(0)
     , m_SlotArgsFillingInWidget(0)
 {
@@ -149,6 +150,13 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         }
     }
 
+    if(destinationIsActor)
+    {
+        m_SlotsCheckbox->setChecked(false);
+        m_SlotsCheckbox->setDisabled(true);
+        newSlotAndExistingSlotsWidget->setDisabled(true);
+        m_SlotsCheckbox->setToolTip(tr("You can't choose a slot when the destination is actor"));
+    }
 
     //Connections
     if(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType)

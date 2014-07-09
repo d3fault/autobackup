@@ -19,7 +19,7 @@ class SignalSlotMessageDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode , DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode , DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor,  bool destinationIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent = 0, Qt::WindowFlags f = 0);
     DesignEqualsImplementationClassSignal *signalToEmit_OrZeroIfNone() const;
     DesignEqualsImplementationClassSlot *slotToInvoke_OrZeroIfNone() const;
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables() const;
@@ -34,6 +34,7 @@ private:
     DesignEqualsImplementationClassSlot *m_SlotToInvoke;
     QPushButton *m_OkButton;
     bool m_SourceIsActor;
+    bool m_DestinationIsActor;
     //DesignEqualsImplementationClassSlot *m_SlotWithCurrentContext_OrZeroIfSourceIsActor;
     QList<IHaveTypeAndVariableNameAndPreferredTextualRepresentation*> m_VariablesAvailableToSatisfyArgs;
     QList<QComboBox*> m_AllArgSatisfiers;

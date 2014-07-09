@@ -41,6 +41,7 @@ signals:
     void addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*slot,SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables);
     void addSignalSlotActivationUseCaseEventRequested(DesignEqualsImplementationClassSignal *signal, DesignEqualsImplementationClassSlot *slot, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
     void addSignalEmissionUseCaseEventRequested(DesignEqualsImplementationClassSignal *signal, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
+    void setExitSignalRequested(DesignEqualsImplementationClassSignal *signal, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
 
     void e(const QString &msg);
 private slots:
