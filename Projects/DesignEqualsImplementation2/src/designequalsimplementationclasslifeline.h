@@ -6,21 +6,21 @@
 #include <QList>
 
 class DesignEqualsImplementationClass;
-class HasA_PrivateMemberClasses_ListEntryType;
+class HasA_Private_Classes_Members_ListEntryType;
 class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 
 class DesignEqualsImplementationClassLifeLine : public QObject
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, HasA_PrivateMemberClasses_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent = 0);
+    explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent = 0);
     QPointF position() const;
     DesignEqualsImplementationClass *designEqualsImplementationClass() const;
-    HasA_PrivateMemberClasses_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject() const;
+    HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject() const;
     QList<DesignEqualsImplementationClassLifeLineUnitOfExecution *> unitsOfExecution() const;
 private:
     DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
-    HasA_PrivateMemberClasses_ListEntryType *m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
+    HasA_Private_Classes_Members_ListEntryType *m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
     QPointF m_Position;
     QList<DesignEqualsImplementationClassLifeLineUnitOfExecution*> m_UnitsOfExecution;
 };

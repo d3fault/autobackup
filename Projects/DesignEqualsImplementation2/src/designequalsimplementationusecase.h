@@ -11,7 +11,7 @@
 #include "signalemissionorslotinvocationcontextvariables.h"
 
 class DesignEqualsImplementationProject;
-class HasA_PrivateMemberClasses_ListEntryType;
+class HasA_Private_Classes_Members_ListEntryType;
 class DesignEqualsImplementationActor;
 class DesignEqualsImplementationClassLifeLine;
 
@@ -57,7 +57,7 @@ signals:
     void eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
 public slots:
     void addActorToUseCase(QPointF position);
-    void addClassToUseCase(DesignEqualsImplementationClass *classToAddToUseCase, HasA_PrivateMemberClasses_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position);
+    void addClassToUseCase(DesignEqualsImplementationClass *classToAddToUseCase, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position);
     void addSlotInvocationEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables);
     void addSignalSlotActivationEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables);
     void addSignalEmitEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables);

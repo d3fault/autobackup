@@ -11,15 +11,21 @@
 
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
 qds direction designEqualsImplementationClass.Properties; \
-qds direction designEqualsImplementationClass.HasA_PrivateMemberClasses; \
+qds direction designEqualsImplementationClass.HasA_Private_Classes_Members; \
+qds direction designEqualsImplementationClass.HasA_Private_PODorNonDesignedCpp_Members; \
 qds direction designEqualsImplementationClass.PrivateMethods; \
 qds direction designEqualsImplementationClass.Slots; \
 qds direction designEqualsImplementationClass.Signals; \
 return qds;
 
-#define HasA_PrivateMemberClasses_ListEntryType_QDS(qds, direction, hasA_PrivateMemberClasses_ListEntryType) \
-qds direction hasA_PrivateMemberClasses_ListEntryType.VariableName; \
-qds direction *hasA_PrivateMemberClasses_ListEntryType.m_DesignEqualsImplementationClass; \
+#define HasA_Private_Classes_Members_ListEntryType_QDS(qds, direction, hasA_Private_Classes_Members_ListEntryType) \
+qds direction hasA_Private_Classes_Members_ListEntryType.VariableName; \
+qds direction *hasA_Private_Classes_Members_ListEntryType.m_DesignEqualsImplementationClass; \
+return qds;
+
+#define HasA_Private_PODorNonDesignedCpp_Members_ListEntryType_QDS(qds, direction, hasA_Private_PODorNonDesignedCpp_Members_ListEntryType) \
+qds direction hasA_Private_PODorNonDesignedCpp_Members_ListEntryType.VariableName; \
+qds direction hasA_Private_PODorNonDesignedCpp_Members_ListEntryType.Type; \
 return qds;
 
 DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent)
@@ -67,8 +73,8 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
                             << "#include <QObject>" << endl //TODOoptional: non-QObject classes? hmm nah because signals/slots based
                             << endl;
     //Header's header's forward declares
-    bool atLeastOneHasAPrivateMemberClass = !HasA_PrivateMemberClasses.isEmpty(); //spacing
-    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentPrivateMember, HasA_PrivateMemberClasses)
+    bool atLeastOneHasAPrivateMemberClass = !HasA_Private_Classes_Members.isEmpty(); //spacing
+    Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentPrivateMember, HasA_Private_Classes_Members)
     {
         //class Bar;
         headerFileTextStream << "class " << currentPrivateMember->m_DesignEqualsImplementationClass->ClassName << ";" << endl;
@@ -84,7 +90,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     //Header's hasAPrivateMemberClass declarations
     if(atLeastOneHasAPrivateMemberClass)
         headerFileTextStream << "private:" << endl;
-    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentPrivateMember, HasA_PrivateMemberClasses)
+    Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentPrivateMember, HasA_Private_Classes_Members)
     {
         //Bar *m_Bar;
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentPrivateMember->preferredTextualRepresentation() << ";" << endl;
@@ -94,7 +100,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     sourceFileTextStream    << "#include \"" << headerFilenameOnly() << "\"" << endl
                             << endl;
     //Source's header PrivateMemberClasses includes
-    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentPrivateMember, HasA_PrivateMemberClasses)
+    Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentPrivateMember, HasA_Private_Classes_Members)
     {
         //#include "bar.h"
         sourceFileTextStream << "#include \"" << currentPrivateMember->m_DesignEqualsImplementationClass->headerFilenameOnly() << "\"" << endl;
@@ -104,7 +110,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     sourceFileTextStream    << ClassName << "::" << ClassName << "(QObject *parent)" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;
     //Source's header PrivateMemberClasses constructor initializers
-    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentPrivateMember, HasA_PrivateMemberClasses)
+    Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentPrivateMember, HasA_Private_Classes_Members)
     {
         //, m_Bar(new Bar(this))
         sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentPrivateMember->VariableName << "(new " << currentPrivateMember->m_DesignEqualsImplementationClass->ClassName << "(this))" << endl; //TODOreq: for now all my objects need a QObject *parent=0 constructor, but since that's also a [fixable] requirement for my ObjectOnThreadGroup, no biggy. Still, would be nice to solve the threading issue and to allow constructor args here (RAII = pro)
@@ -143,7 +149,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
                             << "#endif // " << myNameHeaderGuard << endl;
 
     //Recursively generate source for all children HasA_PrivateMemberClasses
-    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentPrivateMember, HasA_PrivateMemberClasses)
+    Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentPrivateMember, HasA_Private_Classes_Members)
     {
         if(!currentPrivateMember->m_DesignEqualsImplementationClass->generateSourceCode(destinationDirectoryPath))
         {
@@ -157,11 +163,12 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
 DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
 {
     qDeleteAll(Properties);
-    //Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentMember, HasA_PrivateMemberClasses)
+    //Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentMember, HasA_PrivateMemberClasses)
     //{
     //    delete currentMember->m_DesignEqualsImplementationClass;
     //}
-    qDeleteAll(HasA_PrivateMemberClasses);
+    qDeleteAll(HasA_Private_Classes_Members);
+    qDeleteAll(HasA_Private_PODorNonDesignedCpp_Members);
     qDeleteAll(PrivateMethods);
     qDeleteAll(Slots);
     qDeleteAll(Signals);
@@ -175,7 +182,7 @@ QList<QString> DesignEqualsImplementationClass::allMyAvailableMemberGettersWhenI
 
     //TODOreq: properties. i'm not too familiar with Q_PROPERTY, even though obviously i want to support it. i'm not sure, but i think i want the "read" part of the property here...
 
-    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType currentMember, HasA_PrivateMemberClasses)
+    Q_FOREACH(HasA_Private_Classes_Members_ListEntryType currentMember, HasA_PrivateMemberClasses)
     {
         ret.append(currentMember.VariableName);
     }
@@ -208,20 +215,37 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&desig
     designEqualsImplementationClass = new DesignEqualsImplementationClass();
     return in >> *designEqualsImplementationClass;
 }
-QDataStream &operator<<(QDataStream &out, const HasA_PrivateMemberClasses_ListEntryType &hasA_PrivateMemberClasses_ListEntryType)
+QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Members_ListEntryType &hasA_Private_Classes_Members_ListEntryType)
 {
-    HasA_PrivateMemberClasses_ListEntryType_QDS(out, <<, hasA_PrivateMemberClasses_ListEntryType)
+    HasA_Private_Classes_Members_ListEntryType_QDS(out, <<, hasA_Private_Classes_Members_ListEntryType)
 }
-QDataStream &operator>>(QDataStream &in, HasA_PrivateMemberClasses_ListEntryType &hasA_PrivateMemberClasses_ListEntryType)
+QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Members_ListEntryType &hasA_Private_Classes_Members_ListEntryType)
 {
-    HasA_PrivateMemberClasses_ListEntryType_QDS(in, >>, hasA_PrivateMemberClasses_ListEntryType)
+    HasA_Private_Classes_Members_ListEntryType_QDS(in, >>, hasA_Private_Classes_Members_ListEntryType)
 }
-QDataStream &operator<<(QDataStream &out, const HasA_PrivateMemberClasses_ListEntryType *&hasA_PrivateMemberClasses_ListEntryType)
+QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Members_ListEntryType *&hasA_Private_Classes_Members_ListEntryType)
 {
-    return out << *hasA_PrivateMemberClasses_ListEntryType;
+    return out << *hasA_Private_Classes_Members_ListEntryType;
 }
-QDataStream &operator>>(QDataStream &in, HasA_PrivateMemberClasses_ListEntryType *&hasA_PrivateMemberClasses_ListEntryType)
+QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Members_ListEntryType *&hasA_Private_Classes_Members_ListEntryType)
 {
-    hasA_PrivateMemberClasses_ListEntryType = new HasA_PrivateMemberClasses_ListEntryType();
-    return in >> *hasA_PrivateMemberClasses_ListEntryType;
+    hasA_Private_Classes_Members_ListEntryType = new HasA_Private_Classes_Members_ListEntryType();
+    return in >> *hasA_Private_Classes_Members_ListEntryType;
+}
+QDataStream &operator<<(QDataStream &out, const HasA_Private_PODorNonDesignedCpp_Members_ListEntryType &hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
+{
+    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType_QDS(out, <<, hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
+}
+QDataStream &operator>>(QDataStream &in, HasA_Private_PODorNonDesignedCpp_Members_ListEntryType &hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
+{
+    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType_QDS(in, >>, hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
+}
+QDataStream &operator<<(QDataStream &out, const HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *&hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
+{
+    return out << *hasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
+}
+QDataStream &operator>>(QDataStream &in, HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *&hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
+{
+    hasA_Private_PODorNonDesignedCpp_Members_ListEntryType = new HasA_Private_PODorNonDesignedCpp_Members_ListEntryType();
+    return in >> *hasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
 }

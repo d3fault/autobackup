@@ -66,11 +66,11 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     QLineF lineAboveUnitOfExecution(topOfLifeLine, bottomOfLifeLine);
     Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecution *currentUnitOfExecution, classLifeLine->unitsOfExecution())
     {
-        QGraphicsLineItem *lineAboveUnitOfExecutionGraphicsItem = new QGraphicsLineItem(lineAboveUnitOfExecution, this);
+        new QGraphicsLineItem(lineAboveUnitOfExecution, this);
         QPointF topLeftOfUnitOfExecutionRect(bottomOfLifeLine.x()-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y());
         QPointF bottomRightOfUnitOfExecutionRect(bottomOfLifeLine.x()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE);
         QRectF unitOfExecutionRect(topLeftOfUnitOfExecutionRect, bottomRightOfUnitOfExecutionRect);
-        DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene *unitOfExecutionGraphicsItem = new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, unitOfExecutionRect, this);
+        new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, unitOfExecutionRect, this);
 
         //get next line in place, even if there aren't any more units of execution
         topOfLifeLine.setY(unitOfExecutionRect.bottom());

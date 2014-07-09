@@ -44,9 +44,9 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
         classContentsString.append("\no  " + currentProperty->Name);
         ++numLinesOfText;
     }
-    Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentHasA_PrivateMemberClasses_ListEntryType, m_DesignEqualsImplementationClass->HasA_PrivateMemberClasses)
+    Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentHasA_Private_Classes_Members_ListEntryType, m_DesignEqualsImplementationClass->HasA_Private_Classes_Members)
     {
-        classContentsString.append("\n-  " + currentHasA_PrivateMemberClasses_ListEntryType->preferredTextualRepresentation());
+        classContentsString.append("\n-  " + currentHasA_Private_Classes_Members_ListEntryType->preferredTextualRepresentation());
         ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_DesignEqualsImplementationClass->PrivateMethods)
@@ -94,9 +94,9 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     {
         indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->Properties.size());
     }
-    if(!m_DesignEqualsImplementationClass->HasA_PrivateMemberClasses.isEmpty())
+    if(!m_DesignEqualsImplementationClass->HasA_Private_Classes_Members.isEmpty())
     {
-        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->HasA_PrivateMemberClasses.size());
+        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->HasA_Private_Classes_Members.size());
     }
     if(!m_DesignEqualsImplementationClass->PrivateMethods.isEmpty())
     {
@@ -135,7 +135,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleP
     //TODOoptmization: when "opening" a file, tons (hundreds, possibly thousands, depending on the project) of these handle* slots will be invoked, each one triggering a repaint. I'm not sure, but actually I think that the calls to update CAN be (and are) combined. If _NOT_, I should probably do that combining myself/hackily!!
     update(boundingRect()); //TODOoptimization: if our 'thing' (property here) is added at the BOTTOM of the uml/widget, we can supply a smaller rect to update!
 }
-void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleHasAPrivateMemberClassAdded(HasA_PrivateMemberClasses_ListEntryType)
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Members_ListEntryType)
 {
     //TODOreq: eh i think the 'second' is already going to be added to the class diagram, so although we do want to draw it, we don't connect to it's signals (or maybe we DO because that is reactor pattern at it's finest??)
 }

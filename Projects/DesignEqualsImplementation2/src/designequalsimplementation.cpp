@@ -15,6 +15,9 @@
 #include "designequalsimplementationclassmethodargument.h"
 #include "designequalsimplementationusecase.h"
 #endif
+#ifdef DesignEqualsImplementation_TEST_GUI_MODE
+#include "designequalsimplementationclass.h"
+#endif
 
 QMutex DesignEqualsImplementation::BackendMutex(QMutex::Recursive);
 
@@ -269,6 +272,16 @@ void DesignEqualsImplementation::newProject()
     fooSignal->Arguments.append(fooSignalSuccessArgument);
     fooClass->Signals.append(fooSignal);
 
+    //handleBarSignal -- would be auto-generated ideally, but for now I just want to be able to test with it already there
+    DesignEqualsImplementationClassSlot *handleBarSignal = new DesignEqualsImplementationClassSlot(fooClass);
+    handleBarSignal->Name = "handleBarSignal";
+    DesignEqualsImplementationClassMethodArgument *handleBarSignalSuccessArgument = new DesignEqualsImplementationClassMethodArgument(handleBarSignal);
+    handleBarSignalSuccessArgument->VariableName = "success";
+    handleBarSignalSuccessArgument->Type = "bool";
+    handleBarSignal->Arguments.append(handleBarSignalSuccessArgument);
+    fooClass->Slots.append(handleBarSignal);
+    handleBarSignal->ParentClass = fooClass;
+
     //Bar
     DesignEqualsImplementationClass *barClass = new DesignEqualsImplementationClass(testProject);
     barClass->ClassName = "Bar";
@@ -281,6 +294,10 @@ void DesignEqualsImplementation::newProject()
     barClass->Slots.append(barSlot);
     barSlot->ParentClass = barClass;
 
+    //bool Bar::m_Success -- HACK'ish: need something to satisfy barSignal's success arg
+    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *successPodMember = new HasA_Private_PODorNonDesignedCpp_Members_ListEntryType("bool", "m_Success");
+    barClass->HasA_Private_PODorNonDesignedCpp_Members.append(successPodMember);
+
     //barSignal
     DesignEqualsImplementationClassSignal *barSignal = new DesignEqualsImplementationClassSignal(barClass);
     barSignal->Name = "barSignal";
@@ -291,7 +308,7 @@ void DesignEqualsImplementation::newProject()
     barClass->Signals.append(barSignal);
 
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");
-    fooClass->HasA_PrivateMemberClasses.append(new HasA_PrivateMemberClasses_ListEntryType(barClass, fooClass, userChosenVariableNameForFoosInstanceOfBar));
+    fooClass->HasA_Private_Classes_Members.append(new HasA_Private_Classes_Members_ListEntryType(barClass, fooClass, userChosenVariableNameForFoosInstanceOfBar));
 
     //Zed
     DesignEqualsImplementationClass *zedClass = new DesignEqualsImplementationClass(testProject);
@@ -306,7 +323,7 @@ void DesignEqualsImplementation::newProject()
     zedSlot->ParentClass = zedClass;
 
     QString userChosenVariableNameForBarsInstanceOfZed("m_Zed");
-    barClass->HasA_PrivateMemberClasses.append(new HasA_PrivateMemberClasses_ListEntryType(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
+    barClass->HasA_Private_Classes_Members.append(new HasA_Private_Classes_Members_ListEntryType(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
 
     testProject->addClass(fooClass);
     testProject->addClass(barClass);

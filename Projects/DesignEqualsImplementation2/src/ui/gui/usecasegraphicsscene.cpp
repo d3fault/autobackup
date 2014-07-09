@@ -57,7 +57,7 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
         dataStream >> classBeingAddedAsQuintPtr;
         DesignEqualsImplementationClass *classBeingAdded = reinterpret_cast<DesignEqualsImplementationClass*>(classBeingAddedAsQuintPtr);
 
-        HasA_PrivateMemberClasses_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject = 0;
+        HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject = 0;
         //TODOreq: I either need to now iterate through all the classes to figure out who has me, OR determine that before being added to the use case uml items (in which case there could now be multiple Bars (Foo::m_Bar and Other::m_Bar2 (different instances (but not necessarily (oh god my brain))). I could still handle the multiple Bars scenario if I did the iterating-here-and-now method, I'd just ask the user if there was any ambiguity. It's easy to know that Foo hasA Bar once the connection is being drawn from Foo to Bar, BUT right now we're just adding Bar to the use case... so we can't know that it has anything to do with Foo just yet
         //I also need a way to specify that it's a top level object.... perhaps I can do that hackily by just saying it's the first non-actor class being added. (of course, that isn't true if it's a signal-slot-invoke-for-use-case-entry-point)
 
@@ -67,11 +67,11 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
 
         //I've decided that since they both sound so similar and yet the here/now one doesn't clutter up my uml items window, I'll do it here/now :-P
         QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-        QList<HasA_PrivateMemberClasses_ListEntryType*> potentialExistencesInParents; //my father was a whore
+        QList<HasA_Private_Classes_Members_ListEntryType*> potentialExistencesInParents; //my father was a whore
         //was tempted momentarily to only iterate classes already in the use case, but nah
         Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_UseCase->designEqualsImplementationProject()->classes())
         {
-            Q_FOREACH(HasA_PrivateMemberClasses_ListEntryType *currentClassCurrentHasA /*wat*/, currentClass->HasA_PrivateMemberClasses)
+            Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentClassCurrentHasA /*wat*/, currentClass->HasA_Private_Classes_Members)
             {
                 if(currentClassCurrentHasA->m_DesignEqualsImplementationClass == classBeingAdded)
                 {
@@ -161,7 +161,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
 
     //requests
     connect(this, SIGNAL(addActorToUseCaseRequsted(QPointF)), useCase, SLOT(addActorToUseCase(QPointF)));
-    connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,HasA_PrivateMemberClasses_ListEntryType*,QPointF)), useCase, SLOT(addClassToUseCase(DesignEqualsImplementationClass*,HasA_PrivateMemberClasses_ListEntryType*,QPointF)));
+    connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,HasA_Private_Classes_Members_ListEntryType*,QPointF)), useCase, SLOT(addClassToUseCase(DesignEqualsImplementationClass*,HasA_Private_Classes_Members_ListEntryType*,QPointF)));
     connect(this, SIGNAL(addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSlotInvocationEvent(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(addSignalSlotActivationUseCaseEventRequested(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSignalSlotActivationEvent(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(addSignalEmissionUseCaseEventRequested(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSignalEmitEvent(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
