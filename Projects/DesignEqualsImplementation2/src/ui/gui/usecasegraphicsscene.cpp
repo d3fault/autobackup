@@ -236,6 +236,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             destinationIsActor = true;
         }
 
+#if 0
         //create unit of execution in destination (unless it's actor)
         if(!destinationIsActor)
         {
@@ -255,6 +256,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             DesignEqualsImplementationClassLifeLine *classLifeline = lifelineGraphicsItem->classLifeLine();
             classLifeline->unitsOfExecution().append(new DesignEqualsImplementationClassLifeLineUnitOfExecution(classLifeline, classLifeline)); //TODOreq: not sure if this would COW the units of execution list or not -_-
         }
+#endif
     }
 
     bool sourceIsActor = (topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);

@@ -108,6 +108,9 @@ It's impossible to separate a slot body from a unit of execution when you're usi
 
 So basically the use cases do nothing more than specify the "MODULAR units of execution" as they interact with each other in semi-ordered-with-program-flow "left to right and down" UML. The connection code is easy to generate when everything's top-level, and the rest is just simple as fuck UML editor stuff (class editor)
 
+
+BUT WHAT OF THE SIGNAL-WITH-NO-LISTENERS-AT-TIME-OF-DESIGN? Is that part of the class or the use case? Arguably use case, arguably both. Does it remain if the signal owner is removed from the use case (I mean that both ways: remain in the use case and remain in the class now no longer in the use case)? Man that's a thinker
+
 */
 DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent)
     : QObject(parent)
