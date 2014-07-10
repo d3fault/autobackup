@@ -111,7 +111,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         newSignalAndExistingSignalsWidget->setDisabled(true);
         m_SlotsCheckbox->setChecked(true);
         m_SlotsCheckbox->setDisabled(true);
-        m_SlotsCheckbox->setToolTip(tr("You have a destination object, therefore you must have a slot")); //TODOreq: actor as destination breaks rule bleh
+        m_SlotsCheckbox->setToolTip(tr("You have a destination object, therefore you must have a slot")); //TODOreq: actor as destination breaks rule bleh (don't think it matters because actor uses UseCaseSignalEventType?)
         newSlotAndExistingSlotsWidget->setDisabled(false);
         if(unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest) //I think this is impied != 0 when not UseCaseSignalEventType, however I'm not sure of it and the check is cheap and prevents segfault lolol
         {

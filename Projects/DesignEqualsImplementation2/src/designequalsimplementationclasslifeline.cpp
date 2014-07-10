@@ -85,8 +85,8 @@ class UnitOfExecution
 ... and slot keeps the list of statements?
 I want to say yes but I worry that from within slot/statements, we may want context and lack it (unit of execution could pass himself in at time of generate/or-something).
 
-Any arrow pointing to another class lifeline starts a new unit of execution on the class lifeline it points to (one exception: actor)
-Any arrow's source (mandatory atm) that isn't an actor simply appends(inserts) the slotInvoke/signal-slot-activation to the source's already-existing unit of execution
+Any arrow pointing to another class lifeline starts a new unit of execution on the class lifeline it points to (one exception: actor). No destination under arrow = signal-with-no-listener so don't worry about unit of execution
+Any arrow's source (mandatory atm) that isn't an actor simply appends(inserts) the slotInvoke/signal-slot-activation to the source's already-existing unit of execution "list of statements"
 
 What's so hard about that? O, rite, the refactor involved :(
 

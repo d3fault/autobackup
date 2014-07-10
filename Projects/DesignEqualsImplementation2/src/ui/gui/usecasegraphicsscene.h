@@ -32,8 +32,7 @@ private:
 
     void privateConstructor(DesignEqualsImplementationUseCase *useCase);
     bool keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    QGraphicsItem *thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(QPointF pointToLookForItemsWeWant);
-    void processOneItemUnderMouse();
+    QGraphicsItem *giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(QPointF pointToLookForItemsWeWant);
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void addActorToUseCaseRequsted(QPointF position);

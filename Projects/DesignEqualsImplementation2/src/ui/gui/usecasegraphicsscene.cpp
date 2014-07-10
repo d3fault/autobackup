@@ -109,7 +109,7 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             //TODOreq: right clicking even in mouse mode should allow maybe something like "edit class" (if class (might be actor))
             return;
         }
-        QGraphicsItem *itemUnderMouse = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(event->scenePos());
+        QGraphicsItem *itemUnderMouse = giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(event->scenePos());
         if(itemUnderMouse) //for now i don't care what the item is (so long as it isn't existing arrow), i'll determine the source/dest on mouse release
         {
             //begin arrow drawing shit (yes, i am drunk). if you don't think i see the value of design= _BY ITSELF_, you're a fool. man i'm so.[
@@ -200,7 +200,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     QGraphicsItem *topMostItemIWantUnderSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem(); //it was already set to zero if no items determined wanted
     if(!topMostItemIWantUnderSource)
         return false; //for now, we require a source
-    QGraphicsItem *topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(event->scenePos());
+    QGraphicsItem *topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor = giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(event->scenePos());
     if(!topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor && topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
         return false;
 
@@ -221,17 +221,25 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     //TODOreq: determine that source is Actor before deciding to use SlotInvocationDialog (can still use SlotInvocationDialog if not actor, but that means the slot args must be filled in before the dialog can be accepted)
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationClassLifeLineUnitOfExecution *targetUnitOfExecution_OrZeroIfNoDest = 0;
-    if(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor && topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID) //for now only units of executions can be dests (or nothing)
+    bool destinationIsActor = false;
+    if(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor) //for now only units of executions can be dests (or nothing)
     {
-        targetUnitOfExecution_OrZeroIfNoDest = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor)->unitOfExecution();
+        int topMostItemType = topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor->type();
+
+        if(topMostItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID)
+        {
+            targetUnitOfExecution_OrZeroIfNoDest = qgraphicsitem_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor)->unitOfExecution();
+        }
+
+        if(topMostItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+        {
+            destinationIsActor = true;
+        }
     }
 
     bool sourceIsActor = (topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
-    bool destinationIsActor = false;
-    if(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor && topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
-    {
-        destinationIsActor = true;
-    }
+    if(sourceIsActor && destinationIsActor)
+        return false;
 
     SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, targetUnitOfExecution_OrZeroIfNoDest, sourceIsActor, destinationIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
@@ -309,7 +317,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 //}
 //returns 0 if no item, assumes m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn is not zero
 #endif
-QGraphicsItem* UseCaseGraphicsScene::thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(QPointF pointToLookForItemsWeWant)
+QGraphicsItem* UseCaseGraphicsScene::giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(QPointF pointToLookForItemsWeWant)
 {
     QList<QGraphicsItem*> itemsUnderPoint = items(pointToLookForItemsWeWant);
     if(!itemsUnderPoint.isEmpty() && itemsUnderPoint.first() == m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
@@ -318,15 +326,12 @@ QGraphicsItem* UseCaseGraphicsScene::thereIsAtLeastOneItemLeftInMyListOfItemsUnd
     while(it.hasNext())
     {
         QGraphicsItem *currentGraphicsItemUnderMouse = it.next();
-        if(currentGraphicsItemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID || currentGraphicsItemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID || currentGraphicsItemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+        int itemType = currentGraphicsItemUnderMouse->type();
+        if(itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID || itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID || itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
             return currentGraphicsItemUnderMouse; //TODOreq: when the user clicks or releases for the name up top of the class lifeline (the class name itself), find most natural use case unit class lifeline of execution for the arrow connection
         //TODOreq: etc
     }
     return 0;
-}
-void UseCaseGraphicsScene::processOneItemUnderMouse()
-{
-
 }
 bool UseCaseGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *event)
 {
