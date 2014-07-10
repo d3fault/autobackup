@@ -90,6 +90,24 @@ Any arrow's source (mandatory atm) that isn't an actor simply appends(inserts) t
 
 What's so hard about that? O, rite, the refactor involved :(
 
+
+The same unit of execution can make multiple appearances in the same project (in different use cases). In most of it's appearances, it is a slot invoked and signal responded and nothing more. In just one appearance, it is the use case entry point. It is NOT (and can not be!) the first unit of execution, except when it is the entry point to that use case. Every unit of execution CAN (but not should) represent a use case. TODOoptional: double clicking a "unit of execution appearance" opens the use case tab for that unit of execution (slot). A slot is the same thing as a unit of execution when you make the "object state guarantee" that slot will have the object ready for any event next in it's queue. They don't HAVE to be though (a slot might break that promise), but should for thread safety.
+
+Use cases should have a pluggable "use case entry point slot". The use case might stay, but the first slot change. So to say a unit of execution is the same as a slot depends entirely on what happens when I do that unplug-plugin-new-impl-as-use-case-entry-point. Does the use case vanish since it's top level object was deleted, or is the top level object merely swapped out? SEE RIGHT THERE I'VE EXPLAINED IT PERFECTLY: are the statements part of the use case (which has units of execution) or slot (which is LIKE a unit of execution)? I actually flip flop both ways because yea you are designing Foo when you draw lines to his children, but then actually no you are designing a use case that just so happens to use Foo right now. Perhaps Foo implements a specific interface and you are really working on that interface (but at the time, Foo was what you chose to implement it). Both cases make perfect sense.
+
+The concept of children should not exist (except for memory management), everything should be a top level object.
+Objects should never know of the insides of one another (no hasA), and should communicate exlusively through application code (connections like a rube goldberg machine, with one or some invokeMethods to get the shebang started). The use cases do not define the slots themselves, only the signal/slot connections. invokeMethod should not be used because it makes one object know of the internals of another.
+It simplifies connections, initialization, and differentiating between "use case code" and "slot body code". Slot body code (which can contain N signals ofc) can also contain private methods, and that is where the real C++ guts of the slot body actually lives. Perhaps I can manage a "drop down RIGHT into the C++ body of the slot" by using a before/after magic string to ease parsing, in which case the guts can go right in the guts.
+The downside of not using invokeMethod is the bloat of auto-generated "requested" signals, but class modularity might make that worth it
+
+^^When seen like that, a unit of execution points to a slot as it's entry point, yes, but it's a top level connection between Foo and Bar that makes Foo invoke barSlot.
+
+TODOoptional: top level objects doesn't mean i can't let the user specify which ones should be created-first/destroyed-last. i only mean top level objects mainly to ease connections between objects
+
+It's impossible to separate a slot body from a unit of execution when you're using Foo hasA Bar type stuff in the UML design. Once Foo and Bar become top level objects, Foo can be swapped out of that unit-of-execution/use-case and Bar can stay in place
+
+So basically the use cases do nothing more than specify the "MODULAR units of execution" as they interact with each other in semi-ordered-with-program-flow "left to right and down" UML. The connection code is easy to generate when everything's top-level, and the rest is just simple as fuck UML editor stuff (class editor)
+
 */
 DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent)
     : QObject(parent)
@@ -113,5 +131,5 @@ HasA_Private_Classes_Members_ListEntryType *DesignEqualsImplementationClassLifeL
 }
 QList<DesignEqualsImplementationClassLifeLineUnitOfExecution*> DesignEqualsImplementationClassLifeLine::unitsOfExecution() const
 {
-    return m_UnitsOfExecution;
+    return m_UnitsOfExecution; //The ordering is mostly undefined, but should basically be however the user designs it (moving them in the design could (should?) move them in the list)
 }

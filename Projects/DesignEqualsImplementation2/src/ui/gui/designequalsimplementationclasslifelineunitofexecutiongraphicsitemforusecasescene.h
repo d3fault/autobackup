@@ -3,18 +3,21 @@
 
 #include <QGraphicsRectItem>
 
+class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene;
 class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 
 class DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene : public QGraphicsRectItem
 {
 public:
-    explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, QGraphicsItem *parent = 0);
-    explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, const QRectF &rect, QGraphicsItem *parent = 0);
-    explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
+    explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, QGraphicsItem *parent = 0);
+    explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, const QRectF &rect, QGraphicsItem *parent = 0);
+    explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
     DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution() const;
+    DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline() const;
     virtual int type() const;
 private:
     DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecution;
+    DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *m_ParentClassLifeline;
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTIONGRAPHICSITEMFORUSECASESCENE_H

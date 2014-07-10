@@ -1,0 +1,1 @@
+Dear procedural coders afraid to make the jump to object oriented: you aren't missing out on much. Object oriented programming only helps you understand your code better. Aside from that, there is nothing magical going on any different from procedural code. It's worth noting that object oriented code can help modularity (it can also hurt it).

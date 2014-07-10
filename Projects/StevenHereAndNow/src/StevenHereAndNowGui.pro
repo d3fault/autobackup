@@ -14,7 +14,15 @@ TEMPLATE = app
 
 SOURCES += ui/gui/main.cpp\
         ui/gui/stevenhereandnowwidget.cpp \
-    stevenhereandnow.cpp
+    stevenhereandnow.cpp \
+    bases/ievolvedmonkey.cpp \
+    bases/ilawsofphysics.cpp \
+    ui/gui/stevenhereandnowgui.cpp
 
 HEADERS  += ui/gui/stevenhereandnowwidget.h \
-    stevenhereandnow.h
+    stevenhereandnow.h \
+    bases/ievolvedmonkey.h \
+    bases/ilawsofphysics.h \
+    ui/gui/stevenhereandnowgui.h
+
+include(../../../GloballySharedClasses/objectonthreadgroup.pri)

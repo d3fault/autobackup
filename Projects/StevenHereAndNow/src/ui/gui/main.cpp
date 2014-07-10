@@ -1,11 +1,12 @@
-#include "stevenhereandnowwidget.h"
+#include "stevenhereandnowgui.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    StevenHereAndNowWidget w;
-    w.show();
+
+    StevenHereAndNowGui gui;
+    Q_UNUSED(gui)
 
     return a.exec();
 }

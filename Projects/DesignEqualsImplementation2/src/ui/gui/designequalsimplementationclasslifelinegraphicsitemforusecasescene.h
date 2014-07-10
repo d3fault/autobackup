@@ -13,6 +13,7 @@ public:
     explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, const QRectF &rect, QGraphicsItem *parent = 0);
     explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
 
+    DesignEqualsImplementationClassLifeLine *classLifeLine() const;
     //virtual QRectF boundingRect() const;
     //virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     virtual int type() const;

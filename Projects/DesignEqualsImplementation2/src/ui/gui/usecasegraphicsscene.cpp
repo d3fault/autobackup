@@ -235,6 +235,26 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         {
             destinationIsActor = true;
         }
+
+        //create unit of execution in destination (unless it's actor)
+        if(!destinationIsActor)
+        {
+            DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *lifelineGraphicsItem;
+            if(topMostItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID)
+            {
+                lifelineGraphicsItem = qgraphicsitem_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor)->parentClassLifeline();
+            }
+            else if(topMostItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
+            {
+                lifelineGraphicsItem = qgraphicsitem_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor);
+            }
+            else
+                return false;
+
+            //TODOreq: nothing should happen until AFTER the dialog is accepted
+            DesignEqualsImplementationClassLifeLine *classLifeline = lifelineGraphicsItem->classLifeLine();
+            classLifeline->unitsOfExecution().append(new DesignEqualsImplementationClassLifeLineUnitOfExecution(classLifeline, classLifeline)); //TODOreq: not sure if this would COW the units of execution list or not -_-
+        }
     }
 
     bool sourceIsActor = (topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);

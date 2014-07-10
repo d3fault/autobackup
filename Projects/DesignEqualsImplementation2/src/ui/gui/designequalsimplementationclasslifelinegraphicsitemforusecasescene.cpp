@@ -33,6 +33,10 @@ DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEquals
 {
     privateConstructor(classLifeLine);
 }
+DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::classLifeLine() const
+{
+    return m_DesignEqualsImplementationClassLifeLine;
+}
 int DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::type() const
 {
     return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID;
@@ -70,7 +74,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
         QPointF topLeftOfUnitOfExecutionRect(bottomOfLifeLine.x()-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y());
         QPointF bottomRightOfUnitOfExecutionRect(bottomOfLifeLine.x()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE);
         QRectF unitOfExecutionRect(topLeftOfUnitOfExecutionRect, bottomRightOfUnitOfExecutionRect);
-        new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, unitOfExecutionRect, this);
+        new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, this, unitOfExecutionRect, this);
 
         //get next line in place, even if there aren't any more units of execution
         topOfLifeLine.setY(unitOfExecutionRect.bottom());
