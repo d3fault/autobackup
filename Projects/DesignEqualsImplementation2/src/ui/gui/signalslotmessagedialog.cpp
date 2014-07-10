@@ -83,10 +83,12 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     QHBoxLayout *cancelOkRow = new QHBoxLayout();
 
+    QPushButton *cancelButton = new QPushButton(tr("Cancel"), this);
     m_OkButton = new QPushButton(tr("Ok"), this); //TODOreq: button stays below arg filling in
     m_OkButton->setDefault(true);
     m_OkButton->setDisabled(true);
 
+    cancelOkRow->addWidget(cancelButton);
     cancelOkRow->addWidget(m_OkButton);
 
     m_Layout->addLayout(cancelOkRow);
@@ -172,6 +174,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     }
 
     connect(m_ExistingSignalsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSignalComboBoxIndexChanged(int)));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
     connect(m_OkButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     setLayout(m_Layout);
@@ -314,11 +317,21 @@ void SignalSlotMessageDialog::collapseSlotArgFillingIn()
 }
 bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
 {
+    //Check arg satisfiers validity (for either signal or slot)
     Q_FOREACH(QComboBox *currentComboBox, m_AllArgSatisfiers)
     {
         if(currentComboBox->currentIndex() == 0) //TODOlater: type checking before even putting it in combo box of selectable items (inheritence means this is a bitch)
             return false;
+#if 0
+        if(m_SignalsCheckbox->isChecked())
+        {
+            if(m_ExistingSignalsComboBox->currentIndex() == 0)
+                return false;
+        }
+#endif
     }
+
+    //Check signal arg count >= slot arg count, and check signal arg types match slot arg types
     if(m_SignalsCheckbox->isChecked() && m_SlotsCheckbox->isChecked())
     {
         if(m_ExistingSignalsComboBox->currentIndex() != 0 && m_ExistingSlotsComboBox->currentIndex() != 0)
@@ -329,7 +342,9 @@ bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
             int currentArgIndex = 0;
             Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentSlotArgument, m_SlotToInvoke->Arguments)
             {
-                if(QMetaObject::normalizedType(currentSlotArgument->typeString().toStdString().c_str()) != QMetaObject::normalizedType(m_SignalToEmit->Arguments.at(currentArgIndex++)->typeString().toStdString().c_str()))
+                const QByteArray &slotArgTypeCstr = currentSlotArgument->typeString().toUtf8();
+                const QByteArray &signalArgTypeCstr = m_SignalToEmit->Arguments.at(currentArgIndex++)->typeString().toUtf8();
+                if(QMetaObject::normalizedType(slotArgTypeCstr.constData()) != QMetaObject::normalizedType(signalArgTypeCstr.constData())) //TODOoptional: maybe QMetaObject::checkConnectArgs handles inheritence stuff for me? I might need to register the to-be-generated types at runtime for it to work?
                 {
                     return false;
                 }

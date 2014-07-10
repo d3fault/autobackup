@@ -35,6 +35,7 @@ DesignEqualsImplementation::DesignEqualsImplementation(QObject *parent)
     qRegisterMetaType<UmlItemsTypedef>("UmlItemsTypedef");
     qRegisterMetaType<SignalEmissionOrSlotInvocationContextVariables>("SignalEmissionOrSlotInvocationContextVariables");
     qRegisterMetaType<DesignEqualsImplementationProject::ProjectGenerationMode>("DesignEqualsImplementationProject::ProjectGenerationMode");
+    qRegisterMetaType<UseCaseEventListEntryType>("UseCaseEventListEntryType");
 }
 DesignEqualsImplementation::~DesignEqualsImplementation()
 {
@@ -270,6 +271,7 @@ void DesignEqualsImplementation::newProject()
     fooSignalSuccessArgument->VariableName = "success";
     fooSignalSuccessArgument->Type = "bool";
     fooSignal->Arguments.append(fooSignalSuccessArgument);
+    fooSignal->ParentClass = fooClass;
     fooClass->Signals.append(fooSignal);
 
     //handleBarSignal -- would be auto-generated ideally, but for now I just want to be able to test with it already there
@@ -305,6 +307,7 @@ void DesignEqualsImplementation::newProject()
     barSignalSuccessArgument->VariableName = "success";
     barSignalSuccessArgument->Type = "bool";
     barSignal->Arguments.append(barSignalSuccessArgument);
+    barSignal->ParentClass = barClass;
     barClass->Signals.append(barSignal);
 
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");

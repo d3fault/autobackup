@@ -2,6 +2,7 @@
 
 #include <QDataStream>
 
+#include "designequalsimplementationclass.h"
 #include "designequalsimplementationactor.h"
 #include "designequalsimplementationclasslifeline.h"
 #include "designequalsimplementationslotinvocationstatement.h"
@@ -19,6 +20,7 @@ qds direction hasExitSignal;
 //TODOreq: since it doesn't have much else use, use this->Name in the comments of the generated source code. the use case entry point slot should say the use case name for readability i suppose. also, if verbose logging is on, then each time a use case entry point is crossed we could output the name...
 //TODOreq: right now my use case events only function in "append" mode. Obviously I need to be able to insert at arbitrary points. If I am unable to pro that solution, I could always "replay" the appending of use case events, this time now appending the to-be-inserted use case event at the proper time... and then discarding the old order list of use case events
 //The concept of unit of execution does make sense in UML when dealing with the C++ non-designed types. UML use cases are still useful for dealing with those, and they make no thread safety guarantees. It almost sounds like I'm talking about two apps, or two modes of the same app at least. They are all direct function calls so they do make a unit of execution guarantee. See? two MODES of "UML Use Case Designing", wtf
+//TODOoptional: generic async waiters, "wait for this signal from this object and that signal from that object (N of such signals/objects), THEN do this slot". A QList of bools or something. The main thing is that the async operations are started right when they are added, but that might mandate a (transparent/auto-generated?) "doneAddingAsyncShits" call just like in ObjectOnThreadGroup
 DesignEqualsImplementationUseCase::DesignEqualsImplementationUseCase(QObject *parent)
     : QObject(parent)
 {
@@ -224,7 +226,28 @@ void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal
         SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent = static_cast<SignalSlotCombinedEventHolder*>(event);
         SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
         SlotWithCurrentContext = signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot;
-        //TO DOnemb (NOPE BECAUSE [de-]serialization): can maybe delete the SignalSlotCombinedEventHolder here/now, since I think I don't need it anymore
+        //TODOreq: QObject::connect line generation. Multiple use cases can use the same connections, so this use case just puts a "dependency" on a connection, that any other use case can also put +1 on. Removing the connection activation in a use case puts subtracts 1 from that dependency. Any connection with > 0 dependencies gets put in the constructor (had: "and serialized for next time", but I'm not sure that's a good elimination criteria). The connect statements should go in whichever of the two (signal or source) is closer to the topmost parent
+        //Hmm, does it really make sense for different use cases to use the same connection as another use case? I'm not so sure about that claim... because then the use cases would merge (or something)...
+#if 0 //fuck this shit, waiting for proper which uses the class lifeline to get VariableName
+        /*
+        in the simplest (hacked in) case:
+        if(slot.ClassParent is not in signal.ClassParent's HasA_Private_Classes_Members, and slot.ClassParent hasA exactly one of Signal.ClassParent in it's HasA_Private_Classes_Members)
+        {
+            the "connect" statements go in slot.ClassParent' constructor
+        }
+        */
+        //Above implemented:
+        if(!signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal->ParentClass->HasA_Private_Classes_Members.contains(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass))
+        {
+            if(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->HasA_Private_Classes_Members.count(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal->ParentClass) == 1)
+            {
+                //the "connect" statements go in slot.ClassParent' constructor
+                //TODOreq: proper this shit
+                HasA_Private_Classes_Members_ListEntryType *signalParentClassAsMemberType = signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->HasA_Private_Classes_Members;
+                //signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->addInitializeStatement(new ConnectStatement)
+            }
+        }
+#endif
     }
         break;
     }

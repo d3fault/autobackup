@@ -28,6 +28,7 @@ qds direction hasA_Private_PODorNonDesignedCpp_Members_ListEntryType.VariableNam
 qds direction hasA_Private_PODorNonDesignedCpp_Members_ListEntryType.Type; \
 return qds;
 
+//TODOoptional: auto-pimpl, since pimpl is cheap/awesome (and gives us implicit sharing when done properly) and increases source/binary compatibility. MAYBE it should be opt-in, but probably opt-out instead?
 DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent)
     : QObject(parent)
     , IDesignEqualsImplementationVisuallyRepresentedItem()

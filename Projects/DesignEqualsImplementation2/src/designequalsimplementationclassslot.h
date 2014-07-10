@@ -20,7 +20,6 @@ public:
 
     //TODOoptional: private + getter/setter blah
     //TODOoptional: return type
-    DesignEqualsImplementationClass *ParentClass; //TODOreq: [de-]serialization
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot &slot);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot &slot);

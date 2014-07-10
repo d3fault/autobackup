@@ -33,7 +33,7 @@ public:
 
     //TODOoptional: private + getter/setter blah
     QString Name;
-    QList<QPair<UseCaseEventTypeEnum, QObject*> > OrderedUseCaseEvents;
+    QList<QPair<DesignEqualsImplementationUseCase::UseCaseEventTypeEnum, QObject*> > OrderedUseCaseEvents;
     DesignEqualsImplementationClassSlot *SlotWithCurrentContext;
     DesignEqualsImplementationClassSignal *ExitSignal;
 
@@ -67,7 +67,8 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useC
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase *&useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *&useCase);
 
-Q_DECLARE_METATYPE(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum)
+typedef QPair<DesignEqualsImplementationUseCase::UseCaseEventTypeEnum, QObject*> UseCaseEventListEntryType; //OrderedUseCaseEvents has a copy/paste of this type, because I couldn't forward declare it or whatever (wtf)
+
 
 class SignalSlotCombinedEventHolder : public QObject
 {

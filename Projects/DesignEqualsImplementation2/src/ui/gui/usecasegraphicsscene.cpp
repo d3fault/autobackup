@@ -4,6 +4,7 @@
 #include <QMimeData>
 #include <QList>
 #include <QScopedPointer>
+#include <QGraphicsItem>
 
 #include <QMutexLocker>
 #include "../../designequalsimplementation.h"
@@ -24,6 +25,7 @@
 //TODOreq: moving an item should make arrows move with it
 // this struct calls "myCustomDeallocator" to delete the pointer
 //OT: slotInvoke is used when a signal isn't warranted design-wise. The designer could be wrong or change their mind later and convert it to a signal/slot use case event, perhaps and probably after asking/prying from other developers. Still, pure slotInvokes help keep the API to a minimum (invoker not littered with corresponding [auto-generated] signals)
+//TODOoptional: if dest hasA source (example: Foo hasA Bar), then we could perhaps have an "auto-generate handler (handleBarSignal) on dest" checkbox pre-checked" (there is no pushbutton, only this checkbox)... BECAUSE it is impossible (well, in this case at least) for Bar to invokeMethod whatever foo slot they choose. We KNOW they're going to want a slot, because that handler is now part of the use case / design
 UseCaseGraphicsScene::UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase)
     : IDesignEqualsImplementationGraphicsScene()
 {
@@ -107,16 +109,14 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             //TODOreq: right clicking even in mouse mode should allow maybe something like "edit class" (if class (might be actor))
             return;
         }
-        QTransform uselessTransform;
-        QGraphicsItem *itemUnderMouse = itemAt(event->scenePos(), uselessTransform);
-        //TODOreq: filter out other existing arrows
+        QGraphicsItem *itemUnderMouse = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(event->scenePos());
         if(itemUnderMouse) //for now i don't care what the item is (so long as it isn't existing arrow), i'll determine the source/dest on mouse release
         {
             //begin arrow drawing shit (yes, i am drunk). if you don't think i see the value of design= _BY ITSELF_, you're a fool. man i'm so.[
             //that advertising shit was boring
             //i can abstract multi threading concepts from software design, but i'll be damned if i can convince a girl to have a one night stand with me [without paying her money]
             //1-06-Gorillaz-Gorillaz-Man Research (Clapper).mp3 "ya ya ya ya ya ya" are teh best lyrics in gorillaz. the way he says it.
-            m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(QLineF(event->scenePos(), event->scenePos()));
+            m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(itemUnderMouse, QLineF(event->scenePos(), event->scenePos()));
             addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn);
         }
     }
@@ -129,7 +129,29 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn) //holy shit a variable pun
     {
-        QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
+        //TODOreq: find "nearest point on source to current event scenepos", update line accordingly. TODOoptional: animation, but don't do any of those fancy curves that slow down or speed up at the beginning/end. only use the animation to smooth it out, nothing more. it should still be so fast that the user doesn't notice a different between having it turned off in terms of them waiting on it so they can continue designing (they are waiting for the animation before they release their mouse == bad scenario, go faster [or diable anims]!)
+
+#if 0 //source position is locked in by now (wasn't working perfectly anyways), owned
+         //TODOreq: i like it slippery with 1 pixel precision like it is now, but the "snapping" i refer to should just be like a "range that lights up". I'm ditching the orb idea because couldn't decide whether to put it on left or right side or both (but i want it to represent the entire row)
+        QPointF mousePos = event->scenePos();
+        QGraphicsItem *sourceGraphicsItem = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem();
+        const QPointF &sourcePosInScene = sourceGraphicsItem->scenePos();
+        const QRectF &sourceBoundingRect = sourceGraphicsItem->sceneBoundingRect();
+        qreal widthDiv2 = (sourceBoundingRect.width()/2);
+        qreal heightDiv2 = (sourceBoundingRect.height()/2);
+        qreal sourceLeftInScene = sourcePosInScene.x() - widthDiv2;
+        qreal sourceRightInScene = sourcePosInScene.x() + widthDiv2;
+        qreal sourceTopInScene = sourcePosInScene.y() - heightDiv2;
+        qreal sourceBottomInScene = sourcePosInScene.y() + heightDiv2;
+        QPointF nearestPoint(
+                    //X:
+                    qMin(qMax(mousePos.x(), sourceLeftInScene), sourceRightInScene),
+                    //Y:
+                    qMin(qMax(mousePos.y(), sourceTopInScene), sourceBottomInScene)
+                    );
+        QLineF newLine(nearestPoint, event->scenePos()); //TODOreq: snap the source before click and destination when mouse down pre-release (OLD: wanted to say both, but i'm not sure that's possible :-/) to points on the unit of execution, available positions visually seen as carved-out/empty meteor craters. used/non-available positions glowing red/orange and like an orb inside the meteor crater. RADIO BOXES use similar technique
+#endif
+        QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem()->scenePos(), event->scenePos());
         m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine);
     }
     else
@@ -175,7 +197,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
 bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     //first things first, get the topmost items [that we want] underneath the source and dest points
-    QGraphicsItem *topMostItemIWantUnderSource = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1()); //returns zero if no items determined wanted
+    QGraphicsItem *topMostItemIWantUnderSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem(); //it was already set to zero if no items determined wanted
     if(!topMostItemIWantUnderSource)
         return false; //for now, we require a source
     QGraphicsItem *topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor = thereIsAtLeastOneItemLeftInMyListOfItemsUnderTheMouseReleasePointThatIwantInArrowMouseMode(event->scenePos());

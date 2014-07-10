@@ -6,11 +6,15 @@
 class SignalSlotConnectionActivationArrowForGraphicsScene : public QGraphicsLineItem
 {
 public:
-    explicit SignalSlotConnectionActivationArrowForGraphicsScene(QGraphicsItem *parent = 0);
-    explicit SignalSlotConnectionActivationArrowForGraphicsScene(const QLineF &line, QGraphicsItem *parent = 0);
-    explicit SignalSlotConnectionActivationArrowForGraphicsScene(qreal x1, qreal y1, qreal x2, qreal y2, QGraphicsItem *parent = 0);
+    explicit SignalSlotConnectionActivationArrowForGraphicsScene(QGraphicsItem *sourceGraphicsItem, QGraphicsItem *parent = 0);
+    explicit SignalSlotConnectionActivationArrowForGraphicsScene(QGraphicsItem *sourceGraphicsItem, const QLineF &line, QGraphicsItem *parent = 0);
+    explicit SignalSlotConnectionActivationArrowForGraphicsScene(QGraphicsItem *sourceGraphicsItem, qreal x1, qreal y1, qreal x2, qreal y2, QGraphicsItem *parent = 0);
+
+    QGraphicsItem *sourceGraphicsItem() const;
 private:
-    void myConstructor();
+    QGraphicsItem *m_SourceGraphicsItem;
+
+    void myConstructor(QGraphicsItem *sourceGraphicsItem);
 };
 
 #endif // SIGNALSLOTCONNECTIONACTIVATIONARROWFORGRAPHICSSCENE_H

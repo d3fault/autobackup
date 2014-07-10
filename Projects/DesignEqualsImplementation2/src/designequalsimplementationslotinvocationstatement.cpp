@@ -1,5 +1,7 @@
 #include "designequalsimplementationslotinvocationstatement.h"
 
+#include <QMetaObject>
+
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclass.h"
 
@@ -18,7 +20,8 @@ QString DesignEqualsImplementationSlotInvocationStatement::toRawCppWithoutEnding
     QString argumentsString;
     Q_FOREACH(const QString &currentArgumentName, m_SlotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments)
     {
-        argumentsString.append(", Q_ARG(" + m_SlotToInvoke->Arguments.at(currentArgumentIndex)->Type + ", " + currentArgumentName + ")");
+        const QByteArray &argTypeCstr = m_SlotToInvoke->Arguments.at(currentArgumentIndex)->Type.toUtf8();
+        argumentsString.append(", Q_ARG(" + QMetaObject::normalizedType(argTypeCstr.constData()) + ", " + currentArgumentName + ")");
         ++currentArgumentIndex;
         if(currentArgumentIndex == maxArgs)
             break; //prevent potential out of bounds 3 lines up: Arguments.at -- TODOoptional: sanitize ui so they can't provide more arguments than the slot will take (TODOoptional: sanitize deserialization for same thing)
