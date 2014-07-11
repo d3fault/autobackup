@@ -5,6 +5,8 @@
 #include <QList>
 #include <QScopedPointer>
 #include <QGraphicsItem>
+#include <QMap>
+#include <QtMath>
 
 #include <QMutexLocker>
 #include "../../designequalsimplementation.h"
@@ -20,6 +22,8 @@
 #include "../../designequalsimplementationactor.h"
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
+
+#define UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH 50
 
 //TODOreq: if I put 2x Foos in the scene, and connected one to the other, wouldn't that be an infinite loop? Don't allow that if yes
 //TODOreq: moving an item should make arrows move with it
@@ -127,8 +131,34 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if(!m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+    {
+        //TODOreq: snapping on source
+        //TODOptimization: since "items" might be expensive, I could give it a 30ms/etc max poll frequency
+
+        QPointF eventScenePos = event->scenePos();
+        QPointF topLeft(eventScenePos.x()-(UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH/2), eventScenePos.y()-(UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH/2));
+        QPointF bottomRight(eventScenePos.x()+(UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH/2), eventScenePos.y()+(UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH/2));
+        QList<QGraphicsItem*> itemsNearMouse = itemsIWantIntersectingRect(QRectF(topLeft, bottomRight));
+        if(!itemsNearMouse.isEmpty())
+        {
+            //Find closest -- TODOreq: if another thing was being highlighted for snapping but now wouldn't be, unhighlight it derp
+            QGraphicsItem *itemWithEdgeNearestToPoint = findNearestPointOnItemBoundingRectFromPoint(itemsNearMouse, eventScenePos);
+
+            //Make sure it's a unit of execution graphics item type //TODOoptional: "items i want" uses a list (because sometimes i want class name box, and sometimes (like now) i don't)
+            if(itemWithEdgeNearestToPoint->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID)
+            {
+                //Unit of execution graphics item
+                DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene *unitOfExecutionGraphicsItem = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
+                unitOfExecutionGraphicsItem->showSnappingHelperForMousePoint(eventScenePos);
+            }
+        }
+    }
+
     if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn) //holy shit a variable pun
     {
+        //TODOreq: snapping on dest
+
         //TODOreq: find "nearest point on source to current event scenepos", update line accordingly. TODOoptional: animation, but don't do any of those fancy curves that slow down or speed up at the beginning/end. only use the animation to smooth it out, nothing more. it should still be so fast that the user doesn't notice a different between having it turned off in terms of them waiting on it so they can continue designing (they are waiting for the animation before they release their mouse == bad scenario, go faster [or diable anims]!)
 
 #if 0 //source position is locked in by now (wasn't working perfectly anyways), owned
@@ -154,7 +184,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
         m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine);
     }
-    else
+    //else
         QGraphicsScene::mouseMoveEvent(event);
 }
 //TODOreq: I keep refactoring-while-writing mouseReleaseEvent because I keep changing my mind on what arrows connected to what (or none) objects should be allowed in the app. I pretty much will allow everything (class creation on the fly), but for now I'm going to just do the 3 modes that are vital do the design (signals, signal/slots, and invokeMethods). It's not that I don't want the others, but I'm having a bitch of a time focusing on what needs to be coded when I consider ALL the possible combinations together
@@ -167,7 +197,7 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         if(!keepArrowForThisMouseReleaseEvent(event))
         {
-            delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
+            delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn; //TODOreq: either always delete, or pass to backend to at least "add"/update for reactor pattern. Backend creates new units of execution (whenever target is slot) that the arrow must point to, but the unit of execution to point to doesn't exist until the backend tells us via signal
         }
         m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = 0;
     }
@@ -336,6 +366,14 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     emit e("Error: Message editor dialog didn't give us anything we could work with");
     return false;
 }
+bool UseCaseGraphicsScene::wantItemInArrowMouseMode(QGraphicsItem *itemToCheckIfWant)
+{
+    int itemType = itemToCheckIfWant->type();
+    if(itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID || itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID || itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+        return true; //TODOreq: when the user clicks or releases for the name up top of the class lifeline (the class name itself), find most natural use case unit class lifeline of execution for the arrow connection
+    //TODOreq: etc
+    return false;
+}
 #if 0
     //if(m_UseCase->SlotWithCurrentContext)
 #if 0
@@ -374,19 +412,65 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 #endif
 QGraphicsItem* UseCaseGraphicsScene::giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(QPointF pointToLookForItemsWeWant)
 {
-    QList<QGraphicsItem*> itemsUnderPoint = items(pointToLookForItemsWeWant);
-    if(!itemsUnderPoint.isEmpty() && itemsUnderPoint.first() == m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
-        itemsUnderPoint.removeFirst();
-    QListIterator<QGraphicsItem*> it(itemsUnderPoint);
-    while(it.hasNext())
+    const QList<QGraphicsItem*> &itemsUnderPoint = items(pointToLookForItemsWeWant);
+    Q_FOREACH(QGraphicsItem *currentItem, itemsUnderPoint)
     {
-        QGraphicsItem *currentGraphicsItemUnderMouse = it.next();
-        int itemType = currentGraphicsItemUnderMouse->type();
-        if(itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID || itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID || itemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
-            return currentGraphicsItemUnderMouse; //TODOreq: when the user clicks or releases for the name up top of the class lifeline (the class name itself), find most natural use case unit class lifeline of execution for the arrow connection
-        //TODOreq: etc
+        if(wantItemInArrowMouseMode(currentItem))
+            return currentItem;
     }
     return 0;
+}
+QList<QGraphicsItem *> UseCaseGraphicsScene::itemsIWantIntersectingRect(QRectF rectWithinWhichToLookForItemsWeWant)
+{
+    const QList<QGraphicsItem*> &itemsUnderPoint = items(rectWithinWhichToLookForItemsWeWant);
+    QList<QGraphicsItem*> ret;
+    Q_FOREACH(QGraphicsItem *currentItemWithinRect, itemsUnderPoint)
+    {
+        if(wantItemInArrowMouseMode(currentItemWithinRect))
+        {
+            ret << currentItemWithinRect;
+        }
+    }
+    return ret;
+}
+//Assumes not empty list
+QGraphicsItem *UseCaseGraphicsScene::findNearestPointOnItemBoundingRectFromPoint(const QList<QGraphicsItem*> &itemsToCheck, QPointF pointToFindNearestEdge)
+{
+    QMap<qreal, QGraphicsItem*> distanceSorter;
+    Q_FOREACH(QGraphicsItem *currentItem, itemsToCheck)
+    {
+        distanceSorter.insert(calculateDistanceFromPointToNearestPointOnBoundingRect(pointToFindNearestEdge, currentItem), currentItem);
+    }
+    return distanceSorter.first();
+}
+qreal UseCaseGraphicsScene::calculateDistanceFromPointToNearestPointOnBoundingRect(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item)
+{
+    QPointF nearestPointOnBoundingRectToSuppliedPoint = calculateNearestPointOnBoundingRectToArbitraryPoint(pointCalculateNearestEdgeTo, item);
+    //Been a while since I used pythagoreom theorem
+    qreal a = pointCalculateNearestEdgeTo.x() - nearestPointOnBoundingRectToSuppliedPoint.x();
+    qreal b = pointCalculateNearestEdgeTo.y() - nearestPointOnBoundingRectToSuppliedPoint.y();
+    qreal aSquared = a*a;
+    qreal bSquared = b*b;
+    qreal cSquared = aSquared+bSquared;
+    return qSqrt(qAbs(cSquared));
+}
+QPointF UseCaseGraphicsScene::calculateNearestPointOnBoundingRectToArbitraryPoint(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item)
+{
+    const QRectF &itemBoundingRect = item->sceneBoundingRect();
+    QPointF itemPos = item->scenePos();
+    qreal widthDiv2 = (itemBoundingRect.width()/2);
+    qreal heightDiv2 = (itemBoundingRect.height()/2);
+    qreal itemLeftInScene = itemPos.x() - widthDiv2;
+    qreal itemRightInScene = itemPos.x() + widthDiv2;
+    qreal itemTopInScene = itemPos.y() - heightDiv2;
+    qreal itemBottomInScene = itemPos.y() + heightDiv2;
+    QPointF nearestPoint(
+                //X:
+                qMin(qMax(pointCalculateNearestEdgeTo.x(), itemLeftInScene), itemRightInScene),
+                //Y:
+                qMin(qMax(pointCalculateNearestEdgeTo.y(), itemTopInScene), itemBottomInScene)
+                );
+    return nearestPoint;
 }
 bool UseCaseGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *event)
 {

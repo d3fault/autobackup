@@ -14,10 +14,9 @@
 #include "../../designequalsimplementationclasslifeline.h"
 
 #define DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP 15
-#define DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH 7
-#define DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE 50
 
 //TODOreq: if a slot invoked on another thread (to the right) invokes us (via signal or whatever) by drawing an arrow back to that same unit of execution, a new unit of execution is auto-created right then and there for it
+//TODOmb: right-click -> new unit of execution (would be nameless, just like the very first one added)
 DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
     : QObject(qobjectParent)
     , QGraphicsRectItem(graphicsItemParent)
@@ -53,17 +52,24 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     //setFlag(QGraphicsItem::ItemIsSelectable, true);
     m_ClassBorderPen.setWidth(2);
 
-    QString lifeLineTitleText;
+    QString lifeLineTitleHtml("<b>"); //TODOreq: only the ClassName/Type should be bold
     if(classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
     {
-        lifeLineTitleText = classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_DesignEqualsImplementationClass->ClassName + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_DesignEqualsImplementationClassThatHasMe->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
+        lifeLineTitleHtml += classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_DesignEqualsImplementationClass->ClassName + "</b>" + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_DesignEqualsImplementationClassThatHasMe->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
     }
     else
     {
-        lifeLineTitleText = classLifeLine->designEqualsImplementationClass()->ClassName;
+        lifeLineTitleHtml += classLifeLine->designEqualsImplementationClass()->ClassName + "</b>";
     }
-    QGraphicsTextItem *classNameTextItem = new QGraphicsTextItem(lifeLineTitleText, this);
-    setRect(classNameTextItem->boundingRect());
+    QGraphicsTextItem *classNameTextItem = new QGraphicsTextItem(this);
+    classNameTextItem->setHtml(lifeLineTitleHtml);
+
+    QRectF childrenBoundingRectStartingPoint = childrenBoundingRect();
+    QPointF myTopLeft(-(childrenBoundingRectStartingPoint.width()/2), -(childrenBoundingRectStartingPoint.height()/2));
+    QPointF myBottomRight(childrenBoundingRectStartingPoint.width()/2, childrenBoundingRectStartingPoint.height()/2);
+    setRect(QRectF(myTopLeft, myBottomRight));
+
+    classNameTextItem->setPos(mapToParent(0, 0));
 
     int currentIndex = 0;
     Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecution *currentUnitOfExecution, classLifeLine->unitsOfExecution())
@@ -82,7 +88,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::insertU
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::repositionUnitsOfExecution() //TODOoptimization: an append would be much easier/faster, but I should get the essentials out of the way first
 {
     QPen dashedPen;
-    dashedPen.setStyle(Qt::DashLine);
+    dashedPen.setStyle(Qt::DotLine);
     while(m_LinesJustAboveEachUnitOfExecution.size() < m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution.size())
     {
         QGraphicsLineItem *newLineItem = new QGraphicsLineItem(this);
@@ -104,7 +110,9 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
         QPointF bottomRightOfUnitOfExecutionRect(bottomOfLifeLine.x()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE);
         QRectF unitOfExecutionRect(topLeftOfUnitOfExecutionRect, bottomRightOfUnitOfExecutionRect);
 
-        currentUnitOfExecutionGraphicsItem->setRect(unitOfExecutionRect);
+        //currentUnitOfExecutionGraphicsItem->setRect(unitOfExecutionRect); //or don't I mean setPos, since I am the parent and he manages his size?
+        QPointF topMiddlePos(0, bottomOfLifeLine.y());
+        currentUnitOfExecutionGraphicsItem->setPos(topMiddlePos);
 
         //get next line in place, even if there aren't any more units of execution
         topOfLifeLine.setY(unitOfExecutionRect.bottom());

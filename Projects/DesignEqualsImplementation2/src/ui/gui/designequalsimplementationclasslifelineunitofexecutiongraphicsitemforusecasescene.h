@@ -13,12 +13,17 @@ public:
     explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, QGraphicsItem *parent = 0);
     explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, const QRectF &rect, QGraphicsItem *parent = 0);
     explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
+
+    void showSnappingHelperForMousePoint(QPointF mouseScenePos);
+
     DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution() const;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline() const;
     virtual int type() const;
 private:
     DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecution;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *m_ParentClassLifeline;
+
+    void privateConstructor();
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTIONGRAPHICSITEMFORUSECASESCENE_H

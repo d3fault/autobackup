@@ -32,7 +32,13 @@ private:
 
     void privateConstructor(DesignEqualsImplementationUseCase *useCase);
     bool keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    bool wantItemInArrowMouseMode(QGraphicsItem *itemToCheckIfWant);
     QGraphicsItem *giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(QPointF pointToLookForItemsWeWant);
+    QList<QGraphicsItem *> itemsIWantIntersectingRect(QRectF rectWithinWhichToLookForItemsWeWant);
+    QGraphicsItem *findNearestPointOnItemBoundingRectFromPoint(const QList<QGraphicsItem*> &itemsToCheck, QPointF pointToFindNearestEdge);
+    qreal calculateDistanceFromPointToNearestPointOnBoundingRect(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item);
+    QPointF calculateNearestPointOnBoundingRectToArbitraryPoint(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item);
+
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void addActorToUseCaseRequsted(QPointF position);
