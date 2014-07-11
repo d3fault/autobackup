@@ -18,18 +18,21 @@
 #define DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE 50
 
 //TODOreq: if a slot invoked on another thread (to the right) invokes us (via signal or whatever) by drawing an arrow back to that same unit of execution, a new unit of execution is auto-created right then and there for it
-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, QGraphicsItem *parent)
-    : QGraphicsRectItem(parent)
+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
+    : QObject(qobjectParent)
+    , QGraphicsRectItem(graphicsItemParent)
 {
     privateConstructor(classLifeLine);
 }
-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, const QRectF &rect, QGraphicsItem *parent)
-    : QGraphicsRectItem(rect, parent)
+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, const QRectF &rect, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
+    : QObject(qobjectParent)
+    , QGraphicsRectItem(rect, graphicsItemParent)
 {
     privateConstructor(classLifeLine);
 }
-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent)
-    : QGraphicsRectItem(x, y, w, h, parent)
+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, qreal x, qreal y, qreal w, qreal h, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
+    : QObject(qobjectParent)
+    , QGraphicsRectItem(x, y, w, h, graphicsItemParent)
 {
     privateConstructor(classLifeLine);
 }
@@ -62,25 +65,58 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     QGraphicsTextItem *classNameTextItem = new QGraphicsTextItem(lifeLineTitleText, this);
     setRect(classNameTextItem->boundingRect());
 
+    int currentIndex = 0;
+    Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecution *currentUnitOfExecution, classLifeLine->unitsOfExecution())
+    {
+        insertUnitOfExecutionGraphicsItem(currentIndex++, currentUnitOfExecution);
+        //new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, this, unitOfExecutionRect, this);
+    }
+    repositionUnitsOfExecution();
+    connect(classLifeLine, SIGNAL(unitOfExecutionInserted(int,DesignEqualsImplementationClassLifeLineUnitOfExecution*)), this, SLOT(handleUnitOfExecutionInserted(int,DesignEqualsImplementationClassLifeLineUnitOfExecution*)));
+}
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::insertUnitOfExecutionGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution)
+{
+    m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution.insert(indexInsertedInto, new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(unitOfExecution, this, this));
+}
+//TODOreq: in the future the "lines in between" lengths should be user stretchable and serializable, but for now to KISS they'll be fixed length (primarily, the unit of execution rect itself will auto-move (which will indirectly lengthen the line above it) or stretch, but it does make sense for the user to put it right where they want it vertically
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::repositionUnitsOfExecution() //TODOoptimization: an append would be much easier/faster, but I should get the essentials out of the way first
+{
+    QPen dashedPen;
+    dashedPen.setStyle(Qt::DashLine);
+    while(m_LinesJustAboveEachUnitOfExecution.size() < m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution.size())
+    {
+        QGraphicsLineItem *newLineItem = new QGraphicsLineItem(this);
+        m_LinesJustAboveEachUnitOfExecution.append(newLineItem);
+        newLineItem->setPen(dashedPen);
+    }
+
     QPointF topOfLifeLine, bottomOfLifeLine;
     topOfLifeLine.setX((rect().right()-rect().left())/2);
     bottomOfLifeLine.setX(topOfLifeLine.x());
     topOfLifeLine.setY(rect().bottom());
     bottomOfLifeLine.setY(topOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP);
     QLineF lineAboveUnitOfExecution(topOfLifeLine, bottomOfLifeLine);
-    Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecution *currentUnitOfExecution, classLifeLine->unitsOfExecution())
+    int currentLineIndex = 0;
+    Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene *currentUnitOfExecutionGraphicsItem, m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution)
     {
-        new QGraphicsLineItem(lineAboveUnitOfExecution, this);
+        m_LinesJustAboveEachUnitOfExecution.at(currentLineIndex++)->setLine(lineAboveUnitOfExecution); //TODOreq: drawing arrow to these dashed lines should behave just like drawing arrow to the class name box
         QPointF topLeftOfUnitOfExecutionRect(bottomOfLifeLine.x()-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y());
         QPointF bottomRightOfUnitOfExecutionRect(bottomOfLifeLine.x()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE);
         QRectF unitOfExecutionRect(topLeftOfUnitOfExecutionRect, bottomRightOfUnitOfExecutionRect);
-        new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, this, unitOfExecutionRect, this);
+
+        currentUnitOfExecutionGraphicsItem->setRect(unitOfExecutionRect);
 
         //get next line in place, even if there aren't any more units of execution
         topOfLifeLine.setY(unitOfExecutionRect.bottom());
         bottomOfLifeLine.setY(topOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP);
         lineAboveUnitOfExecution.setPoints(topOfLifeLine, bottomOfLifeLine);
     }
+}
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleUnitOfExecutionInserted(int indexInsertedInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution)
+{
+    //make the graphics item, add it as child, and reposition (NOPE: for now just append, but i might need layouts or something in order to do inserts)
+    insertUnitOfExecutionGraphicsItem(indexInsertedInto, unitOfExecution);
+    repositionUnitsOfExecution();
 }
 #if 0
 QRectF DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::boundingRect() const

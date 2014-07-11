@@ -22,6 +22,7 @@ qds direction numOrderedUseCaseEvents;
 //TODOreq: right now my use case events only function in "append" mode. Obviously I need to be able to insert at arbitrary points. If I am unable to pro that solution, I could always "replay" the appending of use case events, this time now appending the to-be-inserted use case event at the proper time... and then discarding the old order list of use case events
 //The concept of unit of execution does make sense in UML when dealing with the C++ non-designed types. UML use cases are still useful for dealing with those, and they make no thread safety guarantees. It almost sounds like I'm talking about two apps, or two modes of the same app at least. They are all direct function calls so they do make a unit of execution guarantee. See? two MODES of "UML Use Case Designing", wtf
 //TODOoptional: generic async waiters, "wait for this signal from this object and that signal from that object (N of such signals/objects), THEN do this slot". A QList of bools or something. The main thing is that the async operations are started right when they are added, but that might mandate a (transparent/auto-generated?) "doneAddingAsyncShits" call just like in ObjectOnThreadGroup
+//TODOreq: if fooSlot tries to invoke barSlot, but Foo doesn't have a Bar and Bar hasn't previously been set as "top level object", a dialog asks when the slot invoke arrow is drawn if you want to add Bar to Foo or to make Bar a top level object for the project. PROJECTS (collections of use cases) also maintain list of top level objects. TODOreq: multiple instances of the same type, so top level objects have names? They either must or signals must be used. Sometimes Foo hasApointerTo Bar, and Bar is a top level object. Etc
 DesignEqualsImplementationUseCase::DesignEqualsImplementationUseCase(QObject *parent)
     : QObject(parent)
 {
@@ -143,9 +144,18 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
             }
 
             //TODOreq: the dest unit of execution gets "named" (has entry point now, but it already existed prior to drawing the arrow) and is more or less a slot now (which can become (and possibly already is) a use case entry point). In C++ mode it is SEEN differently, but I think functions mostly the same
-            if(destinationUnitOfExecution_OrZeroIfDestIsActor && !destinationUnitOfExecution_OrZeroIfDestIsActor->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution) //hack to detect whether or not it's set/named
+            if(destinationUnitOfExecution_OrZeroIfDestIsActor)
             {
-                destinationUnitOfExecution_OrZeroIfDestIsActor->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution = slotUseCaseEvent; //by setting the pointer, we are making the use case and slot basically one
+                if(!destinationUnitOfExecution_OrZeroIfDestIsActor->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution) //hack to detect whether or not it's set/named
+                {
+                    destinationUnitOfExecution_OrZeroIfDestIsActor->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution = slotUseCaseEvent; //by setting the pointer, we are making the use case and slot basically one
+                }
+                else
+                {
+                    //hack: if the unit of execution is already "named", then we need to create a new unit of execution
+                    DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = insertNewNamedUnitOfExecutionIntoUseCase(destinationUnitOfExecution_OrZeroIfDestIsActor, slotUseCaseEvent);
+                    emit slotInvokeEventAdded(newUnitOfExecution, slotUseCaseEvent);
+                }
             }
 
             //TODOreq: additionally, the connection as noted in use case should probably have a backend model
@@ -166,6 +176,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
         if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
         {
             sourceOrderedListOfStatements_OrZeroIfSourceIsActor->OrderedListOfStatements.insert(indexToInsertEventAt, new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+            emit signalEmitEventAdded(signalUseCaseEvent);
         }
         //OLD
         //SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
@@ -182,7 +193,13 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
             sourceOrderedListOfStatements_OrZeroIfSourceIsActor->OrderedListOfStatements.insert(indexToInsertEventAt, new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
         }
 
-        //TODOreq: dest
+        //TODOreq: the dest gets new unit of execution ("named" right away (gui just got name from user)). This needs to happen both in the backend and frontend, ideally the frontend merely reacts to the backend changing
+        if(destinationUnitOfExecution_OrZeroIfDestIsActor)
+        {
+            DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = insertNewNamedUnitOfExecutionIntoUseCase(destinationUnitOfExecution_OrZeroIfDestIsActor, signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot);
+            emit signalSlotEventAdded(newUnitOfExecution, signalSlotCombinedUseCaseEvent);
+        }
+
 
         //OLD
         //SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
@@ -286,6 +303,18 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
         }
     }
 #endif
+}
+DesignEqualsImplementationClassLifeLineUnitOfExecution *DesignEqualsImplementationUseCase::insertNewNamedUnitOfExecutionIntoUseCase(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionToAddToThisUseCase, DesignEqualsImplementationClassSlot *slotEntryPointThatKindaSortaMakesItNamed)
+{
+    DesignEqualsImplementationClassLifeLine *classLifeline = unitOfExecutionToAddToThisUseCase->designEqualsImplementationClassLifeLine();
+    DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = new DesignEqualsImplementationClassLifeLineUnitOfExecution(classLifeline, classLifeline);
+    int indexInsertedInto = classLifeline->unitsOfExecution().size(); //TODOreq: proper insert support, seems my backend and frontend items share similarly ordered lists (one is model, one is graphics item)
+    classLifeline->insertUnitOfExecution(classLifeline->unitsOfExecution().size(), newUnitOfExecution);
+    newUnitOfExecution->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution = slotEntryPointThatKindaSortaMakesItNamed;
+
+    //TODOreq: not sure exactly when to do this, but the arrow needs to be updated to be pointing to the new unit of execution. Or perhaps arrow is simply deleted by front end and he draws another when we tell him that this event add succeeded (it needs a different graphic than JUST slot invoke or JUST signal anyways)
+    m_UnitsOfExecutionMakingApperanceInUseCase.insert(indexInsertedInto, newUnitOfExecution);
+    return newUnitOfExecution;
 }
 #if 0
 void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)

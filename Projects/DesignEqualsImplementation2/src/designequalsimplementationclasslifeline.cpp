@@ -118,7 +118,7 @@ DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine
     , m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject(myInstanceInClassThatHasMe_OrZeroIfTopLevelObject) //Top level object, in this context, I guess really just means "not instantiated in this use case"... or maybe it means "not instantiated by any of the designed classes"... but I'm leaning more towards the first one
     , m_Position(position) //Could just keep one qreal "horizontalPosition"
 {
-    m_UnitsOfExecution.append(new DesignEqualsImplementationClassLifeLineUnitOfExecution(this, this)); //every lifeline has at least one unit of execution. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
+    insertUnitOfExecution(m_UnitsOfExecution.size(), new DesignEqualsImplementationClassLifeLineUnitOfExecution(this, this)); //every lifeline has at least one unit of execution. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
 }
 QPointF DesignEqualsImplementationClassLifeLine::position() const
 {
@@ -131,6 +131,12 @@ DesignEqualsImplementationClass *DesignEqualsImplementationClassLifeLine::design
 HasA_Private_Classes_Members_ListEntryType *DesignEqualsImplementationClassLifeLine::myInstanceInClassThatHasMe_OrZeroIfTopLevelObject() const
 {
     return m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
+}
+void DesignEqualsImplementationClassLifeLine::insertUnitOfExecution(int indexToInsertInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution)
+{
+    int indexActuallyInsertedTo = qMax(0, qMin(indexToInsertInto, m_UnitsOfExecution.size())); //bounds checking. even though qt does it internally, i still want to know the actual index for the emit
+    m_UnitsOfExecution.insert(indexActuallyInsertedTo, newUnitOfExecution);
+    emit unitOfExecutionInserted(indexActuallyInsertedTo, newUnitOfExecution);
 }
 QList<DesignEqualsImplementationClassLifeLineUnitOfExecution*> DesignEqualsImplementationClassLifeLine::unitsOfExecution() const
 {

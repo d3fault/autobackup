@@ -17,12 +17,15 @@ public:
     QPointF position() const;
     DesignEqualsImplementationClass *designEqualsImplementationClass() const;
     HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject() const;
+    void insertUnitOfExecution(int indexToInsertInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution);
     QList<DesignEqualsImplementationClassLifeLineUnitOfExecution *> unitsOfExecution() const;
 private:
     DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
     HasA_Private_Classes_Members_ListEntryType *m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
     QPointF m_Position;
     QList<DesignEqualsImplementationClassLifeLineUnitOfExecution*> m_UnitsOfExecution;
+signals:
+    void unitOfExecutionInserted(int indexInsertedInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINE_H
