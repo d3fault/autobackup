@@ -4,6 +4,8 @@
 #include <QString>
 #include <QList>
 
+#include "designequalsimplementationclassmethodargument.h"
+
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassMethodArgument;
 

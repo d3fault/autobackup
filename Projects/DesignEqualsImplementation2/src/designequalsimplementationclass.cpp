@@ -8,6 +8,7 @@
 #include "designequalsimplementation.h"
 
 #include "designequalsimplementationcommon.h"
+#include "designequalsimplementationsignalemissionstatement.h"
 
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
 qds direction designEqualsImplementationClass.Properties; \
@@ -118,9 +119,13 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     }
     sourceFileTextStream    << "{ }" << endl;
 
+    bool signalsAccessSpecifierWritten = false;
     //Signals
     if(!Signals.isEmpty())
+    {
         headerFileTextStream << "signals:" << endl;
+        signalsAccessSpecifierWritten = true;
+    }
     Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, Signals)
     {
         //void fooSignal();
@@ -128,6 +133,20 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     }
 
     //Slots
+    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, Slots)
+    {
+        //slot finished/exit signal
+        //each slot/unit-of-execution/ has the opportunity of supplying (by connecting to actor) a finished/exit signal
+        if(currentSlot->finishedOrExitSignal())
+        {
+            if(!signalsAccessSpecifierWritten)
+            {
+                headerFileTextStream << "signals:" << endl;
+                signalsAccessSpecifierWritten = true;
+            }
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlot->finishedOrExitSignal()->methodSignatureWithoutReturnType() << ";" << endl;
+        }
+    }
     if(!Slots.isEmpty())
         headerFileTextStream << "public slots:" << endl;
     Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, Slots)
@@ -140,6 +159,11 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
         Q_FOREACH(IDesignEqualsImplementationStatement *currentSlotCurrentStatement, currentSlot->OrderedListOfStatements)
         {
             sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentSlotCurrentStatement->toRawCppWithEndingSemicolon() << endl;
+        }
+        if(currentSlot->finishedOrExitSignal())
+        {
+            DesignEqualsImplementationSignalEmissionStatement finishedOrExitSignalEmitStatement(currentSlot->finishedOrExitSignal(), currentSlot->finishedOrExitSignalEmissionContextVariables());
+            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << finishedOrExitSignalEmitStatement.toRawCppWithEndingSemicolon() << endl;
         }
         sourceFileTextStream    << "}" << endl;
     }

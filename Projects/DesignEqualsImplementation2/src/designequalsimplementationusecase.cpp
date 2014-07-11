@@ -5,6 +5,7 @@
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationactor.h"
 #include "designequalsimplementationclasslifeline.h"
+#include "designequalsimplementationclasslifelineunitofexecution.h"
 #include "designequalsimplementationslotinvocationstatement.h"
 #include "designequalsimplementationsignalemissionstatement.h"
 
@@ -12,8 +13,8 @@ typedef QPair<DesignEqualsImplementationUseCase::UseCaseEventTypeEnum, QObject*>
 
 #define DesignEqualsImplementationUseCase_QDS(direction, qds, useCase) \
 qds direction useCase.Name; \
-qds direction numOrderedUseCaseEvents; \
-qds direction hasExitSignal;
+qds direction numOrderedUseCaseEvents;
+//qds direction hasExitSignal;
 
 //TODOreq: by far the most difficult class to design/[de-]serialize/generate-from. the rest are just busywork by comparison
 //TODOoptimization: class diagram serialized first (although use cases must be factored into that!), serves as a simple library or whatever so that use cases only later have to refer to a signal by id/etc rather than redefine/reserialize the signal/slot/etc every time it is referenced
@@ -84,7 +85,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
 DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
 {
     //TODOreq: probably don't need to delete here AND in class diagram perspective, but probably doesn't hurt also
-    Q_FOREACH(EventAndTypeTypedef eventAndType, OrderedUseCaseEvents)
+    Q_FOREACH(EventAndTypeTypedef eventAndType, SemiOrderedUseCaseEvents)
     {
         //delete eventAndType.second;
         if(eventAndType.first == UseCaseSignalSlotEventType) //all other kinds are deleted via class diagram perspective
@@ -97,12 +98,121 @@ DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
 }
 void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplementationProject *project)
 {
-    SlotWithCurrentContext = 0;
-    ExitSignal = 0;
+    //SlotWithCurrentContext = 0;
+    //ExitSignal = 0;
     m_DesignEqualsImplementationProject = project;
 }
-void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
+void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLineUnitOfExecution *destinationUnitOfExecution_OrZeroIfDestIsActor, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
 {
+    //bool firstUseCaseEventAdded = OrderedUseCaseEvents.isEmpty();
+
+    //Add it (mainly used for saving/opening ([de-]serialization))
+    SemiOrderedUseCaseEvents.append(qMakePair(useCaseEventType, event));
+
+    //Code generation and context setup
+    switch(useCaseEventType)
+    {
+    case UseCaseSlotEventType: //changes context of next use case event
+    {
+        DesignEqualsImplementationClassSlot *slotUseCaseEvent = static_cast<DesignEqualsImplementationClassSlot*>(event);
+        //if(firstUseCaseEventAdded) //first event add = use case entry point (TODOreq: ui sanitization so that a non-slot can never be made first (TODOoptional: file load sanitization so that we don't crash if it does happen (fuckit)))
+        //{
+            //we have no context, but want the first slot to be our context! TODOreq: there is still ui/cli context to consider, in which case we would have a context already at this point. if this project is generating in lib mode, we don't
+            //generate slot context/empty-impl from current use case event, then set that slot/context/empty-impl as current context
+#if 0
+            if(SlotWithCurrentContext)
+            {
+                //TODOreq: ui already gave us context, so do nameless-signal/invokeMethod on ui to get to this slot, then just change the context as if we were in lib gen mode (fuck. we aren't even generating right now so..... wtf?)
+            }
+            else
+            {
+                SlotWithCurrentContext = slotUseCaseEvent;
+            }
+#endif
+        //}
+        //else
+        //{
+            //generate slot context/empty-impl from current use case event, then in current context do nameless-signal or invokeMethod to the slot/context/empty-impl, then set that slot/context/empty-impl as current context
+
+            //TODOreq: source unit of execution gets the new statement, dest gets entire new unit of execution if in thread-safe mode, but just it's own set of statements (or just the referring to a set of statements) if not. Either way, the dest gets the "receive" message slot/method (depending which mode). What to name the "request" (if thread-safe-mode) and the "requestHandler" in either mode is asked right at/when/after arrow is drawn. If the slot-or-method has already been implemented in another use case, it should appear empty aside from all the signals it emits in it's use case and a finished/exit-signal in case you only want to know when it's done. Double clicking on that already implemented slot-or-private-method (both VISUALLY represented by something along the same lines as "unit of execution" rectangles (but hopefully differentiable with extreme prejudice) should to start off with open the use case it was defined in in a new tab, but in the future it would be awesome if it could inline expand into your current use case. Keeping with that train of thought, An application is just a 3d amusement park of electricity going to various places of heirarchial mountains. A specific use case is the zooming in of just one of those "electricity christmas strands of light" and putting the concept of an actor around (folding around you) both your start and exit points. What I'm trying to get at and what I'm not even sure is possible, is that somehow using 3d representation, use cases can link to each other in a "one definition" environment (the program could really be visualized like that)
+            //The source has to determine where to insert the statement, but the dest always puts the statement as the first entry. When in C++/not-thread-safe mode, the order is retained so in that case a method call (dest!) might not be the first statement after all
+            //TODOreq: etc for all switch types
+            if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
+            {
+                sourceOrderedListOfStatements_OrZeroIfSourceIsActor->OrderedListOfStatements.insert(indexToInsertEventAt, new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+            }
+
+            //TODOreq: the dest unit of execution gets "named" (has entry point now, but it already existed prior to drawing the arrow) and is more or less a slot now (which can become (and possibly already is) a use case entry point). In C++ mode it is SEEN differently, but I think functions mostly the same
+            if(destinationUnitOfExecution_OrZeroIfDestIsActor && !destinationUnitOfExecution_OrZeroIfDestIsActor->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution) //hack to detect whether or not it's set/named
+            {
+                destinationUnitOfExecution_OrZeroIfDestIsActor->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution = slotUseCaseEvent; //by setting the pointer, we are making the use case and slot basically one
+            }
+
+            //TODOreq: additionally, the connection as noted in use case should probably have a backend model
+
+#if 0
+            //OLD
+            SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+            SlotWithCurrentContext = slotUseCaseEvent;
+#endif
+        //}
+    }
+        break;
+    case UseCaseSignalEventType: //does not change context of next use case event
+    {
+        DesignEqualsImplementationClassSignal *signalUseCaseEvent = static_cast<DesignEqualsImplementationClassSignal*>(event);
+        //in current context, emit the signal
+
+        if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
+        {
+            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->OrderedListOfStatements.insert(indexToInsertEventAt, new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+        }
+        //OLD
+        //SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+    }
+        break;
+    case UseCaseSignalSlotEventType: //changes context of next use case event. the only difference from UseCaseSignalSlotEventType and UseCaseSlotEventType is that the signal is a named part of the design for UseCaseSignalSlotEventType, whereas UseCaseSlotEventType either uses invokeMethod (could have been an autogenerated nameless signal, but doesn't matter which)
+    {
+        //TODOreq: right now is when we need to make a note that the signal would be connected in the slot, and optimally resolving where that connection will be made is going to be a bitch :-P
+
+        SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent = static_cast<SignalSlotCombinedEventHolder*>(event);
+
+        if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
+        {
+            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->OrderedListOfStatements.insert(indexToInsertEventAt, new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+        }
+
+        //TODOreq: dest
+
+        //OLD
+        //SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+        //SlotWithCurrentContext = signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot;
+        //TODOreq: QObject::connect line generation. Multiple use cases can use the same connections, so this use case just puts a "dependency" on a connection, that any other use case can also put +1 on. Removing the connection activation in a use case puts subtracts 1 from that dependency. Any connection with > 0 dependencies gets put in the constructor (had: "and serialized for next time", but I'm not sure that's a good elimination criteria). The connect statements should go in whichever of the two (signal or source) is closer to the topmost parent
+        //Hmm, does it really make sense for different use cases to use the same connection as another use case? I'm not so sure about that claim... because then the use cases would merge (or something)...
+#if 0 //fuck this shit, waiting for proper which uses the class lifeline to get VariableName
+        /*
+        in the simplest (hacked in) case:
+        if(slot.ClassParent is not in signal.ClassParent's HasA_Private_Classes_Members, and slot.ClassParent hasA exactly one of Signal.ClassParent in it's HasA_Private_Classes_Members)
+        {
+            the "connect" statements go in slot.ClassParent' constructor
+        }
+        */
+        //Above implemented:
+        if(!signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal->ParentClass->HasA_Private_Classes_Members.contains(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass))
+        {
+            if(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->HasA_Private_Classes_Members.count(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal->ParentClass) == 1)
+            {
+                //the "connect" statements go in slot.ClassParent' constructor
+                //TODOreq: proper this shit
+                HasA_Private_Classes_Members_ListEntryType *signalParentClassAsMemberType = signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->HasA_Private_Classes_Members;
+                //signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->addInitializeStatement(new ConnectStatement)
+            }
+        }
+#endif
+    }
+        break;
+    }
+#if 0
     /*
         BEFORE/AFTER below refers to the addEventPrivateWithoutUpdatingExitSignal call
 
@@ -175,83 +285,12 @@ void DesignEqualsImplementationUseCase::addEventPrivate(DesignEqualsImplementati
             m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements = contextToMoveExitSignalTo; //I get the feeling this won't actually change... which means my remembering of the context 'before' was pointless (i was using both a bool flag "moveContext" in addition to contextToMoveExitSignalTo, but then factored out the moveContext bool). Bleh fuck it, I just want it to work
         }
     }
-}
-void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
-{
-    bool firstUseCaseEventAdded = OrderedUseCaseEvents.isEmpty();
-
-    //Add it (mainly used for saving/opening ([de-]serialization))
-    OrderedUseCaseEvents.append(qMakePair(useCaseEventType, event));
-
-    //Code generation and context setup
-    switch(useCaseEventType)
-    {
-    case UseCaseSlotEventType: //changes context of next use case event
-    {
-        DesignEqualsImplementationClassSlot *slotUseCaseEvent = static_cast<DesignEqualsImplementationClassSlot*>(event);
-        if(firstUseCaseEventAdded) //first event add = use case entry point (TODOreq: ui sanitization so that a non-slot can never be made first (TODOoptional: file load sanitization so that we don't crash if it does happen (fuckit)))
-        {
-            //we have no context, but want the first slot to be our context! TODOreq: there is still ui/cli context to consider, in which case we would have a context already at this point. if this project is generating in lib mode, we don't
-            //generate slot context/empty-impl from current use case event, then set that slot/context/empty-impl as current context
-
-            if(SlotWithCurrentContext)
-            {
-                //TODOreq: ui already gave us context, so do nameless-signal/invokeMethod on ui to get to this slot, then just change the context as if we were in lib gen mode (fuck. we aren't even generating right now so..... wtf?)
-            }
-            else
-            {
-                SlotWithCurrentContext = slotUseCaseEvent;
-            }
-        }
-        else
-        {
-            //generate slot context/empty-impl from current use case event, then in current context do nameless-signal or invokeMethod to the slot/context/empty-impl, then set that slot/context/empty-impl as current context
-
-            SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
-            SlotWithCurrentContext = slotUseCaseEvent;
-        }
-    }
-        break;
-    case UseCaseSignalEventType: //does not change context of next use case event
-    {
-        DesignEqualsImplementationClassSignal *signalUseCaseEvent = static_cast<DesignEqualsImplementationClassSignal*>(event);
-        //in current context, emit the signal
-
-        SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
-    }
-        break;
-    case UseCaseSignalSlotEventType: //changes context of next use case event. the only difference from UseCaseSignalSlotEventType and UseCaseSlotEventType is that the signal is a named part of the design for UseCaseSignalSlotEventType, whereas UseCaseSlotEventType either uses invokeMethod (could have been an autogenerated nameless signal, but doesn't matter which)
-    {
-        //TODOreq: right now is when we need to make a note that the signal would be connected in the slot, and optimally resolving where that connection will be made is going to be a bitch :-P
-        SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent = static_cast<SignalSlotCombinedEventHolder*>(event);
-        SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
-        SlotWithCurrentContext = signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot;
-        //TODOreq: QObject::connect line generation. Multiple use cases can use the same connections, so this use case just puts a "dependency" on a connection, that any other use case can also put +1 on. Removing the connection activation in a use case puts subtracts 1 from that dependency. Any connection with > 0 dependencies gets put in the constructor (had: "and serialized for next time", but I'm not sure that's a good elimination criteria). The connect statements should go in whichever of the two (signal or source) is closer to the topmost parent
-        //Hmm, does it really make sense for different use cases to use the same connection as another use case? I'm not so sure about that claim... because then the use cases would merge (or something)...
-#if 0 //fuck this shit, waiting for proper which uses the class lifeline to get VariableName
-        /*
-        in the simplest (hacked in) case:
-        if(slot.ClassParent is not in signal.ClassParent's HasA_Private_Classes_Members, and slot.ClassParent hasA exactly one of Signal.ClassParent in it's HasA_Private_Classes_Members)
-        {
-            the "connect" statements go in slot.ClassParent' constructor
-        }
-        */
-        //Above implemented:
-        if(!signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal->ParentClass->HasA_Private_Classes_Members.contains(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass))
-        {
-            if(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->HasA_Private_Classes_Members.count(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal->ParentClass) == 1)
-            {
-                //the "connect" statements go in slot.ClassParent' constructor
-                //TODOreq: proper this shit
-                HasA_Private_Classes_Members_ListEntryType *signalParentClassAsMemberType = signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->HasA_Private_Classes_Members;
-                //signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot->ParentClass->addInitializeStatement(new ConnectStatement)
-            }
-        }
 #endif
-    }
-        break;
-    }
 }
+#if 0
+void DesignEqualsImplementationUseCase::addEventPrivateWithoutUpdatingExitSignal(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
+{ }
+#endif
 void DesignEqualsImplementationUseCase::addActorToUseCase(QPointF position)
 {
     //TODOreq: either actor or signal-entry point, but not both (error)
@@ -281,25 +320,37 @@ void DesignEqualsImplementationUseCase::addClassToUseCase(DesignEqualsImplementa
     emit classLifeLineAdded(classLifeLineToAddToUseCase);
 }
 //Use Case first-slot entry point and also normal slot invocation from within another slot
-void DesignEqualsImplementationUseCase::addSlotInvocationEvent(DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables)
+void DesignEqualsImplementationUseCase::insertSlotInvocationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLineUnitOfExecution *destinationUnitOfExecution_OrZeroIfDestIsActor, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables)
 {
-    addEventPrivate(UseCaseSlotEventType, designEqualsImplementationClassSlot, slotInvocationContextVariables);
+    insertEventPrivate(UseCaseSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, destinationUnitOfExecution_OrZeroIfDestIsActor, designEqualsImplementationClassSlot, slotInvocationContextVariables);
 }
 //Signal emitted during normal slot execution, slot handler for that signal is relevant to use case
-void DesignEqualsImplementationUseCase::addSignalSlotActivationEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
+void DesignEqualsImplementationUseCase::insertSignalSlotActivationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLineUnitOfExecution *destinationUnitOfExecution_OrZeroIfDestIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
 {
-    addEventPrivate(UseCaseSignalSlotEventType, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), signalEmissionContextVariables);
+    insertEventPrivate(UseCaseSignalSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, destinationUnitOfExecution_OrZeroIfDestIsActor, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), signalEmissionContextVariables);
 }
 //Signals with no listeners in this use case
-void DesignEqualsImplementationUseCase::addSignalEmitEvent(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
+void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLineUnitOfExecution *destinationUnitOfExecution_OrZeroIfDestIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
 {
-    addEventPrivate(UseCaseSignalEventType, designEqualsImplementationClassSignal, signalEmissionContextVariables);
+    insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, destinationUnitOfExecution_OrZeroIfDestIsActor, designEqualsImplementationClassSignal, signalEmissionContextVariables);
 }
 //TODOreq: haven't implemented regular signal/slot event deletion, but still worth noting that ExitSignal deletion needs to be handled differently
 //TODOreq: again, somewhat off-topic though. should deleting a signal emission or slot invocation mean that it's existence in the class diagram perspective is also deleted? reference counting might be nice, but auto deletion might piss me off too! maybe on deletion, a reference counter is used to ask the user if they want to delete it's existence in the class too (when reference count drops to zero), and/or of course all kinds of "remember this choice" customizations
 //TODOreq: in the UML gui, exit signal should always be visually at the bottom-left of the class emitting it, and the bottom-right of the actor
-void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables)
+//TODOreq: a finished or exit signal can be emitted right in the middle of a slot/use-case, why not? However now I shouldn't move it to the "last()" unit of execution whenever more are added (the user would still see that happen and 'approve' it, so maybe it is ok). Right now the exit signal is "the last statement in first slot (the first unit of execution, even though a design might have a gap in class lifeline and show a second unit of execution for that same class (handling a response from a child qobject)
+void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementationClassLifeLineUnitOfExecution *sourceUnitOfExecution, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables)
 {
+    //TODOreq: finished/exit signals don't apply to C++/non-thread-safe mode? for now static (had:dynamic, but shit isn't working yo) casting... so we'll segfault if it isn'tlewl
+    if(sourceUnitOfExecution) //should have already filtered out "no signal" and "actor as signal", but just in case....
+    {
+        DesignEqualsImplementationClassSlot *slotAkaUnitOfExecutionThatWasSourceOfArrow = static_cast<DesignEqualsImplementationClassSlot*>(sourceUnitOfExecution->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution);
+        if(slotAkaUnitOfExecutionThatWasSourceOfArrow)
+        {
+            slotAkaUnitOfExecutionThatWasSourceOfArrow->setFinishedOrExitSignal(designEqualsImplementationClassSignal, exitSignalEmissionContextVariables);
+        }
+    }
+
+#if 0
     if(ExitSignal)
     {
         //remove it from old context
@@ -314,17 +365,18 @@ void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementation
     addEventPrivateWithoutUpdatingExitSignal(UseCaseSignalEventType, designEqualsImplementationClassSignal, exitSignalEmissionContextVariables);
 
     ExitSignal = designEqualsImplementationClassSignal;
+#endif
 }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase)
 {
-    qint32 numOrderedUseCaseEvents = useCase.OrderedUseCaseEvents.size();
-    bool hasExitSignal = useCase.ExitSignal != 0;
+    qint32 numOrderedUseCaseEvents = useCase.SemiOrderedUseCaseEvents.size();
+    //bool hasExitSignal = useCase.ExitSignal != 0; TODOreq: serialize it now in slot
     DesignEqualsImplementationUseCase_QDS(<<, out, useCase)
-    if(hasExitSignal)
-        out << *useCase.ExitSignal;
+    //if(hasExitSignal)
+    //    out << *useCase.ExitSignal;
     for(qint32 i = 0; i < numOrderedUseCaseEvents; ++i)
     {
-        EventAndTypeTypedef eventAndType = useCase.OrderedUseCaseEvents.at(i);
+        EventAndTypeTypedef eventAndType = useCase.SemiOrderedUseCaseEvents.at(i);
         DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType = eventAndType.first;
         out << static_cast<quint8>(useCaseEventType);
         switch(useCaseEventType)
@@ -345,14 +397,14 @@ QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCas
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase)
 {
     qint32 numOrderedUseCaseEvents;
-    bool hasExitSignal;
+    //bool hasExitSignal;
     DesignEqualsImplementationUseCase_QDS(>>, in, useCase)
-    if(hasExitSignal)
+    /*if(hasExitSignal)
     {
         DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal = new DesignEqualsImplementationClassSignal(&useCase);
         in >> *designEqualsImplementationClassSignal;
         useCase.ExitSignal = designEqualsImplementationClassSignal;
-    }
+    }*/
     for(qint32 i = 0; i < numOrderedUseCaseEvents; ++i)
     {
         quint8 useCaseEventTypeAsQuint8;
@@ -364,21 +416,21 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useC
             {
                 DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = new DesignEqualsImplementationClassSlot(&useCase); //TODOreq: weird parenting here and below instantiations also. not class for parent as usual
                 in >> *designEqualsImplementationClassSlot;
-                useCase.OrderedUseCaseEvents.append(qMakePair(useCaseEventType, designEqualsImplementationClassSlot));
+                useCase.SemiOrderedUseCaseEvents.append(qMakePair(useCaseEventType, designEqualsImplementationClassSlot));
             }
             break;
         case DesignEqualsImplementationUseCase::UseCaseSignalEventType:
             {
                 DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal = new DesignEqualsImplementationClassSignal(&useCase);
                 in >> *designEqualsImplementationClassSignal;
-                useCase.OrderedUseCaseEvents.append(qMakePair(useCaseEventType, designEqualsImplementationClassSignal));
+                useCase.SemiOrderedUseCaseEvents.append(qMakePair(useCaseEventType, designEqualsImplementationClassSignal));
             }
             break;
         case DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType:
             {
                 SignalSlotCombinedEventHolder *signalSlotCombinedEventHolder = new SignalSlotCombinedEventHolder(&useCase);
                 in >> *signalSlotCombinedEventHolder;
-                useCase.OrderedUseCaseEvents.append(qMakePair(useCaseEventType, signalSlotCombinedEventHolder));
+                useCase.SemiOrderedUseCaseEvents.append(qMakePair(useCaseEventType, signalSlotCombinedEventHolder));
             }
             break;
         }

@@ -1,0 +1,9 @@
+eliminate "slot with current context"
+
+Ordered List Of Use Case Events becomes: semi-ordered signals and slots activation statements that also demands QObject::connect between the class lifelines, but/and/transparently working on interfaces but not visibly splitting them until user requests. Deleting an implementation from a use case asks you if you want to leave behind an interface (should be semi-transparent for sex effect). A use case should be able to be created entirely using interfaces. Generating source for that is somewhat equivalent to trying to compile without implementing a pure virtual method.
+
+If two or more top level objects (say Foo and Bar) and in library mode, a parent hasA class is generated that has both of those objects (AutoGen hasA Foo and Bar). It can be thrown away immediately if not needed (or perhaps opted out of in a wizard). If just one top level object, that object (Foo hasA Bar) only thing generated, no glue needed/warranted/generated
+
+Multiple views of the same scene, class diagrams just a boxed in area of 3d space
+
+A signal can be connected to a USE CASE, and it's the same thing as if it were connected to a slot (except visually)... the small difference being that the slot is ALSO a use case entry point (designers deems it worth of title)

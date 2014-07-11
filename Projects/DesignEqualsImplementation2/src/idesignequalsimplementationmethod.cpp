@@ -1,7 +1,5 @@
 #include "idesignequalsimplementationmethod.h"
 
-#include "designequalsimplementationclassmethodargument.h"
-
 IDesignEqualsImplementationMethod::IDesignEqualsImplementationMethod()
 { }
 IDesignEqualsImplementationMethod::~IDesignEqualsImplementationMethod()

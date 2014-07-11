@@ -5,6 +5,7 @@
 
 class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene;
 class DesignEqualsImplementationClassLifeLineUnitOfExecution;
+class IDesignEqualsImplementationHaveOrderedListOfStatements;
 
 class DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene : public QGraphicsRectItem
 {

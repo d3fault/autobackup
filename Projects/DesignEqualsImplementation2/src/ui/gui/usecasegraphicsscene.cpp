@@ -151,7 +151,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                     );
         QLineF newLine(nearestPoint, event->scenePos()); //TODOreq: snap the source before click and destination when mouse down pre-release (OLD: wanted to say both, but i'm not sure that's possible :-/) to points on the unit of execution, available positions visually seen as carved-out/empty meteor craters. used/non-available positions glowing red/orange and like an orb inside the meteor crater. RADIO BOXES use similar technique
 #endif
-        QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem()->scenePos(), event->scenePos());
+        QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
         m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine);
     }
     else
@@ -184,10 +184,10 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     //requests
     connect(this, SIGNAL(addActorToUseCaseRequsted(QPointF)), useCase, SLOT(addActorToUseCase(QPointF)));
     connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,HasA_Private_Classes_Members_ListEntryType*,QPointF)), useCase, SLOT(addClassToUseCase(DesignEqualsImplementationClass*,HasA_Private_Classes_Members_ListEntryType*,QPointF)));
-    connect(this, SIGNAL(addSlotInvocationUseCaseEventRequested(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSlotInvocationEvent(DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
-    connect(this, SIGNAL(addSignalSlotActivationUseCaseEventRequested(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSignalSlotActivationEvent(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
-    connect(this, SIGNAL(addSignalEmissionUseCaseEventRequested(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(addSignalEmitEvent(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
-    connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
+    connect(this, SIGNAL(insertSlotInvocationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLineUnitOfExecution*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSlotInvocationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLineUnitOfExecution*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
+    connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLineUnitOfExecution*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSignalSlotActivationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLineUnitOfExecution*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
+    connect(this, SIGNAL(insertSignalEmissionUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLineUnitOfExecution*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSignalEmitEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLineUnitOfExecution*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
+    connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassLifeLineUnitOfExecution*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassLifeLineUnitOfExecution*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
 
     //responses
     connect(useCase, SIGNAL(actorAdded(DesignEqualsImplementationActor*)), this, SLOT(handleActorAdded(DesignEqualsImplementationActor*)));
@@ -201,7 +201,8 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(!topMostItemIWantUnderSource)
         return false; //for now, we require a source
     QGraphicsItem *topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor = giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(event->scenePos());
-    if(!topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor && topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+    int sourceGraphicsItemType = topMostItemIWantUnderSource->type();
+    if(!topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor && sourceGraphicsItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
         return false;
 
     //Dialog mode is based entirely on whether or not there is a dest, in which case we always want to choose a slot on the dest (signal can be opted in to)
@@ -228,7 +229,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
         if(topMostItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID)
         {
-            targetUnitOfExecution_OrZeroIfNoDest = qgraphicsitem_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor)->unitOfExecution();
+            targetUnitOfExecution_OrZeroIfNoDest = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor)->unitOfExecution();
         }
 
         if(topMostItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
@@ -259,11 +260,42 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 #endif
     }
 
-    bool sourceIsActor = (topMostItemIWantUnderSource->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
+    bool sourceIsActor = (sourceGraphicsItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
     if(sourceIsActor && destinationIsActor)
         return false;
 
-    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, targetUnitOfExecution_OrZeroIfNoDest, sourceIsActor, destinationIsActor, m_UseCase->SlotWithCurrentContext); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+    //DesignEqualsImplementationClass *sourceClass = 0;
+    IDesignEqualsImplementationHaveOrderedListOfStatements *sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor = 0;
+    DesignEqualsImplementationClassLifeLineUnitOfExecution *sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = 0;
+    if(!sourceIsActor)
+    {
+        if(sourceGraphicsItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID)
+        {
+            DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene * sourceClassLifeLineUnitOfExecutionGraphicsItem = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderSource);
+            sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = sourceClassLifeLineUnitOfExecutionGraphicsItem->unitOfExecution();
+            sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor = sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution;
+            //sourceClass = sourceClassLifeLineUnitOfExecutionGraphicsItem->parentClassLifeline()->classLifeLine()->designEqualsImplementationClass();
+        }
+        else if(sourceGraphicsItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
+        {
+            //If they click-drag an arrow from the "class name" graphics item, the last unit of execution is selected for the statement append. This may prove to be undesireable behavior, but honestly I like the idea of just drawing lines from the class names back and forth knowing each one is APPENDED to unit of execution etc, without having to scroll down etc to see it all
+            DesignEqualsImplementationClassLifeLine *classLifeLine = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(topMostItemIWantUnderSource)->classLifeLine();
+            if(!classLifeLine->unitsOfExecution().isEmpty())
+            {
+                sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->unitsOfExecution().last();
+                sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor = sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution;
+            }
+            //sourceClass = classLifeLine->designEqualsImplementationClass();
+        }
+    }
+
+    //TODOreq: by/at-around now, we know which index in the source the statement should be inserted at. We don't have to give it to the dialog, but we do need to emit it to the backend after dialog is accepted
+    int indexToInsertStatementAt = 420;
+
+    DesignEqualsImplementationClassSlot *sourceThatHasOrderedListOfStatementsAsSlot_OrZeroIfSourceIsActorOrIfSourceIsNotSlotButPrivateMethod = 0;
+    if(!sourceIsActor)
+        sourceThatHasOrderedListOfStatementsAsSlot_OrZeroIfSourceIsActorOrIfSourceIsNotSlotButPrivateMethod = static_cast<DesignEqualsImplementationClassSlot*>(sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor);
+    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, targetUnitOfExecution_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceThatHasOrderedListOfStatementsAsSlot_OrZeroIfSourceIsActorOrIfSourceIsNotSlotButPrivateMethod); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
         return false;
 
@@ -279,25 +311,26 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(userChosenSlot_OrZeroIfNone && userChosenSignal_OrZeroIfNone)
     {
         //Signal/slot activation
-        emit addSignalSlotActivationUseCaseEventRequested(userChosenSignal_OrZeroIfNone, userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
+        emit insertSignalSlotActivationUseCaseEventRequested(indexToInsertStatementAt, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSignal_OrZeroIfNone, userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
         return true;
     }
     if(!userChosenSignal_OrZeroIfNone && userChosenSlot_OrZeroIfNone)
     {
         //Slot invocation
         //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
-        emit addSlotInvocationUseCaseEventRequested(userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
+        emit insertSlotInvocationUseCaseEventRequested(indexToInsertStatementAt, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
         return true;
     }
     if(destinationIsActor && userChosenSignal_OrZeroIfNone)
     {
-        emit setExitSignalRequested(userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
+        if(topMostItemIWantUnderSource)
+        emit setExitSignalRequested(sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType, userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
         return true;
     }
     if(!userChosenSlot_OrZeroIfNone && userChosenSignal_OrZeroIfNone)
     {
         //Signal with no listeners at time of design emit
-        emit addSignalEmissionUseCaseEventRequested(userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
+        emit insertSignalEmissionUseCaseEventRequested(indexToInsertStatementAt, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
         return true;
     }
     emit e("Error: Message editor dialog didn't give us anything we could work with");

@@ -13,9 +13,23 @@ DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(QObject
     : QObject(parent)
     , IDesignEqualsImplementationHaveOrderedListOfStatements()
     , IDesignEqualsImplementationMethod()
+    , m_FinishedOrExitSignal(0)
 { }
 DesignEqualsImplementationClassSlot::~DesignEqualsImplementationClassSlot()
 { }
+void DesignEqualsImplementationClassSlot::setFinishedOrExitSignal(DesignEqualsImplementationClassSignal *finishedOrExitSignal, SignalEmissionOrSlotInvocationContextVariables exitSignalEmissionContextVariables)
+{
+    m_FinishedOrExitSignal = finishedOrExitSignal;
+    m_ExitSignalEmissionContextVariables = exitSignalEmissionContextVariables;
+}
+DesignEqualsImplementationClassSignal *DesignEqualsImplementationClassSlot::finishedOrExitSignal() const
+{
+    return m_FinishedOrExitSignal;
+}
+SignalEmissionOrSlotInvocationContextVariables DesignEqualsImplementationClassSlot::finishedOrExitSignalEmissionContextVariables() const
+{
+    return m_ExitSignalEmissionContextVariables;
+}
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot &slot)
 {
     DesignEqualsImplementationClassSlot_QDS(out, <<, slot)
