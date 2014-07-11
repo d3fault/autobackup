@@ -4,6 +4,7 @@
 #include "../../stevenhereandnow.h"
 #include "stevenhereandnowwidget.h"
 
+//ExistenceHereAndNowGui, where Steven is just a list entry in list of humans?
 StevenHereAndNowGui::StevenHereAndNowGui(QObject *parent)
     : QObject(parent)
 {

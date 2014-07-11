@@ -4,16 +4,23 @@
 #include <QObject>
 #include "bases/ievolvedmonkey.h"
 
-class StevenHereAndNow : public QObject, public IEvolvedMonkey /*because the general dna is mostly the same (not to imply there isn't a huge difference between every single person). we are a clone function after all*/
+class StevenHereAndNow : public QObject, public IEvolvedMonkey
 {
     Q_OBJECT
 public:
     explicit StevenHereAndNow(QObject *parent = 0);
 protected:
     virtual ILawsOfPhysics *implementation();
+private:
+    //QList<ILawsOfPhysics*> m_Files;
+    TagCloud<ILawsOfPhysics*> m_Files;
 signals:
+    //void encryptedFileAdded(ILawsOfPhysics *encryptedFile);
+    void fileAdded(ILawsOfPhysics *file);
     void o(const QString &msg);
 public slots:
+    //void addFileEncrypted(ILawsOfPhysics *decryptedInputFile);
+    void addFile(ILawsOfPhysics *inputFile);
     void handleSayRequested(const QString &whatWasRequestedToBeSaid);
 };
 
