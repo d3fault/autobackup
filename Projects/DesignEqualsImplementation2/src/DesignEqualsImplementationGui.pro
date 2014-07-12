@@ -45,7 +45,9 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.cpp \
     designequalsimplementationactor.cpp \
     ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp \
-    ui/gui/signalslotmessagedialog.cpp
+    ui/gui/signalslotmessagedialog.cpp \
+    ui/gui/snappingindicationvisualrepresentation.cpp \
+    idesignequalsimplementationhaveorderedlistofstatements.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -85,6 +87,7 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementationactor.h \
     ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h \
     ihavetypeandvariablenameandpreferredtextualrepresentation.h \
-    ui/gui/signalslotmessagedialog.h
+    ui/gui/signalslotmessagedialog.h \
+    ui/gui/snappingindicationvisualrepresentation.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

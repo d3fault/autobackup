@@ -1,0 +1,3 @@
+I want to merge "unit of execution" and "slot" (private method could just introduce a "type" pure virtual), but a slot always has a name whereas a "unit of execution" might not yet (no arrows drawn to it).
+
+I feel like I'm mimicking the design of "slot" in "unit of execution". Just added "statementInserted" signal and ick it feels like the same thing. Maybe I am meant to just daisy chain the signals when the unit of execution becomes named.

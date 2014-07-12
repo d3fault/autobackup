@@ -1,0 +1,1 @@
+Keep your types long and your variables short (but never use acronyms or abbrieviations).

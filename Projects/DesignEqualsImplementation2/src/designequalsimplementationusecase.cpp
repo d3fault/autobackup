@@ -140,15 +140,15 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
             //TODOreq: etc for all switch types
             if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
             {
-                sourceOrderedListOfStatements_OrZeroIfSourceIsActor->OrderedListOfStatements.insert(indexToInsertEventAt, new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+                sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertEventAt, new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
             }
 
             //TODOreq: the dest unit of execution gets "named" (has entry point now, but it already existed prior to drawing the arrow) and is more or less a slot now (which can become (and possibly already is) a use case entry point). In C++ mode it is SEEN differently, but I think functions mostly the same
             if(destinationUnitOfExecution_OrZeroIfDestIsActor)
             {
-                if(!destinationUnitOfExecution_OrZeroIfDestIsActor->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution) //hack to detect whether or not it's set/named
+                if(!destinationUnitOfExecution_OrZeroIfDestIsActor->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution()) //hack to detect whether or not it's set/named
                 {
-                    destinationUnitOfExecution_OrZeroIfDestIsActor->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution = slotUseCaseEvent; //by setting the pointer, we are making the use case and slot basically one
+                    destinationUnitOfExecution_OrZeroIfDestIsActor->setMethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution(slotUseCaseEvent); //by setting the pointer, we are making the use case and slot basically one
                 }
                 else
                 {
@@ -175,7 +175,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
 
         if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
         {
-            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->OrderedListOfStatements.insert(indexToInsertEventAt, new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertEventAt, new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
             emit signalEmitEventAdded(signalUseCaseEvent);
         }
         //OLD
@@ -190,7 +190,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
 
         if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
         {
-            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->OrderedListOfStatements.insert(indexToInsertEventAt, new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertEventAt, new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
         }
 
         //TODOreq: the dest gets new unit of execution ("named" right away (gui just got name from user)). This needs to happen both in the backend and frontend, ideally the frontend merely reacts to the backend changing
@@ -310,7 +310,7 @@ DesignEqualsImplementationClassLifeLineUnitOfExecution *DesignEqualsImplementati
     DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = new DesignEqualsImplementationClassLifeLineUnitOfExecution(classLifeline, classLifeline);
     int indexInsertedInto = classLifeline->unitsOfExecution().size(); //TODOreq: proper insert support, seems my backend and frontend items share similarly ordered lists (one is model, one is graphics item)
     classLifeline->insertUnitOfExecution(classLifeline->unitsOfExecution().size(), newUnitOfExecution);
-    newUnitOfExecution->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution = slotEntryPointThatKindaSortaMakesItNamed;
+    newUnitOfExecution->setMethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution(slotEntryPointThatKindaSortaMakesItNamed);
 
     //TODOreq: not sure exactly when to do this, but the arrow needs to be updated to be pointing to the new unit of execution. Or perhaps arrow is simply deleted by front end and he draws another when we tell him that this event add succeeded (it needs a different graphic than JUST slot invoke or JUST signal anyways)
     m_UnitsOfExecutionMakingApperanceInUseCase.insert(indexInsertedInto, newUnitOfExecution);
@@ -372,7 +372,7 @@ void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementation
     //TODOreq: finished/exit signals don't apply to C++/non-thread-safe mode? for now static (had:dynamic, but shit isn't working yo) casting... so we'll segfault if it isn'tlewl
     if(sourceUnitOfExecution) //should have already filtered out "no signal" and "actor as signal", but just in case....
     {
-        DesignEqualsImplementationClassSlot *slotAkaUnitOfExecutionThatWasSourceOfArrow = static_cast<DesignEqualsImplementationClassSlot*>(sourceUnitOfExecution->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution);
+        DesignEqualsImplementationClassSlot *slotAkaUnitOfExecutionThatWasSourceOfArrow = static_cast<DesignEqualsImplementationClassSlot*>(sourceUnitOfExecution->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution());
         if(slotAkaUnitOfExecutionThatWasSourceOfArrow)
         {
             slotAkaUnitOfExecutionThatWasSourceOfArrow->setFinishedOrExitSignal(designEqualsImplementationClassSignal, exitSignalEmissionContextVariables);

@@ -303,7 +303,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         {
             DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene * sourceClassLifeLineUnitOfExecutionGraphicsItem = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderSource);
             sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = sourceClassLifeLineUnitOfExecutionGraphicsItem->unitOfExecution();
-            sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor = sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution;
+            sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor = sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution();
             //sourceClass = sourceClassLifeLineUnitOfExecutionGraphicsItem->parentClassLifeline()->classLifeLine()->designEqualsImplementationClass();
         }
         else if(sourceGraphicsItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
@@ -313,7 +313,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             if(!classLifeLine->unitsOfExecution().isEmpty())
             {
                 sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->unitsOfExecution().last();
-                sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor = sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType->MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution;
+                sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor = sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution();
             }
             //sourceClass = classLifeLine->designEqualsImplementationClass();
         }

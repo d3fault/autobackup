@@ -19,6 +19,8 @@ public:
     QString Name;
     QString ReturnType;
     QList<DesignEqualsImplementationClassMethodArgument*> Arguments;
+signals:
+    void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod);
