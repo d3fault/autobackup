@@ -1,0 +1,5 @@
+Javascript and Java are targetted because they are portable (js arguably MORESO since practically every already has a browser installed), but I think that's stupid. C89 is more portable than both of them!
+
+In the torn up landscape of vendor lock-in, defective-by-design devices, and similar business tactics, C89 became/becomes non-portable because everybody develops (in a grand clusterfuck of everybody reinventing the wheel) extensions on top of C89 (arguably, both js and java are said extensions after a bit of continuous evolution).
+
+C -> OS -> OS API -> C++ toolkit -> JS/Java -> C-esq API [re-]written in js/java

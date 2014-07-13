@@ -15,7 +15,7 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecution::setMethodWithOrdere
     m_MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution = methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution;
 
     //TODOreq: before the connect: disconnect all old listeners to the first signal? disconnect all listeners to second signal? (daisy chaining)
-    connect(dynamic_cast<QObject*>(methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution), SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)), this, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)));
+    connect(((QObject*)(methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution)), SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)), this, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)));
 }
 IDesignEqualsImplementationHaveOrderedListOfStatements *DesignEqualsImplementationClassLifeLineUnitOfExecution::methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution() const
 {

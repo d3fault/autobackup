@@ -115,16 +115,25 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     if(m_UnitOfExecution->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution()) //named? should be by now, but just to avoid a segfault...
     {
         newRectHeightMaybe += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_STATEMENT_MARGIN_TO_EDGE; //accounting for the y margin added at top
-        Q_FOREACH(ExistingStatementListEntryTypedef existingStatementListEntry, m_ExistingStatements)
+
+        int numStatementOrSnapPositions = (m_ExistingStatements.size()*2)+1;
+        //Q_FOREACH(ExistingStatementListEntryTypedef existingStatementListEntry, m_ExistingStatements)
+        bool even = true;
+        for(int i = 0; i < numStatementOrSnapPositions; ++i)
         {
             //no mutex needed since it's our [copy of] the list and we don't need to access the "second" of the pair (underlying statement)
-            if((currentVerticalOddEvenIndex++) % 2 == 1) //Every odd amount of pixels, put the current statement graphic
+            if(!even) //Odd amount of pixels, put the current statement graphic
             {
+                even = true;
+
                 //new QGraphicsLineItem(this);(QLineF(leftOfLine, rightOfLine), this); //setPos? so confused about the difference...
+                TODO LEFT OFF
+
                 existingStatementListEntry.first->setPos(QPointF(0, newRectHeightMaybe)); //TODOreq: bring this halfway closer to rightOfLine
             }
-            else //Every even amount of pixels, mark it internally as a snapping point
+            else //Even amount of pixels, mark it internally as a snapping point
             {
+                even = false;
                 m_VerticalPositionsOfSnapPoints.append(newRectHeightMaybe);
             }
             newRectHeightMaybe += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
