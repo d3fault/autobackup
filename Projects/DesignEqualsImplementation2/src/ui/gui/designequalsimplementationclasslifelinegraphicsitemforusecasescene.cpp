@@ -112,9 +112,8 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
     QLineF lineAboveUnitOfExecution(topOfLifeLine, bottomOfLifeLine);
 #endif
     QPointF currentTopMiddlePointOfDottedLineAboveUnitOfExecution;
-    QRectF blahStartingRect = childrenBoundingRect();
-    currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setX(blahStartingRect.width()/2);
-    currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(blahStartingRect.bottom());
+    currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setX(rect().width()/2);
+    currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(rect().bottom());
     int currentLineIndex = 0;
     Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene *currentUnitOfExecutionGraphicsItem, m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution)
     {
@@ -139,7 +138,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
         currentUnitOfExecutionGraphicsItem->setPos(centerPointOfUnitOfExecution);
 
 
-        //get next dotted line in place, even if there aren't any more units of execution
+        //calcuate next dotted line topMiddle position, even if there aren't any more units of execution (which means there aren't any more dotted lines)
         currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(centerPointOfUnitOfExecution.y() + halfUnitOfExecutionHeight);
 #if 0
         topOfLifeLine.setY(unitOfExecutionRect.bottom());

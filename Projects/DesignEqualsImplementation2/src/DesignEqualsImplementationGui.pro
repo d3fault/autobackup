@@ -8,7 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-contains(QT_CONFIG, opengl): QT += opengl
+#contains(QT_CONFIG, opengl): QT += opengl
+DEFINES += QT_NO_OPENGL #comment this out and uncomment above line for OpenGL
 
 TARGET = DesignEqualsImplementation
 TEMPLATE = app

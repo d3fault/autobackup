@@ -133,7 +133,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if(!m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
     {
-        //TODOreq: snapping on source
+        //TODOreq: snapping on source with < 1 existing statements
         //TODOptimization: since "items" might be expensive, I could give it a 30ms/etc max poll frequency
 
         QPointF eventScenePos = event->scenePos();

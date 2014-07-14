@@ -7,6 +7,7 @@
 
 #include "designequalsimplementationguicommon.h"
 #include "snappingindicationvisualrepresentation.h"
+#include "designequalsimplementationclasslifelinegraphicsitemforusecasescene.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
 #include "../../idesignequalsimplementationstatement.h"
 
@@ -41,12 +42,12 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     bool left = mouseItemPos.x() < 0;
 
     //NOPE BECAUSE STILL DON'T KNOW "nearest", would be inaccurate between final two: An easy way to find the nearest is to just start the odd/even loop, then see if the vertical distance is growing or shrinking. If growing, stop and use the last one. If shrinking, continue until
-    QPointF myItemMousePos = mapFromParent(mouseItemPos);
+    //QPointF myItemMousePos = mapFromParent(mouseItemPos);
 
     QMap<qreal, qreal> distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter;
     Q_FOREACH(qreal currentVerticalPositionOfSnapPoint, m_VerticalPositionsOfSnapPoints)
     {
-        distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - myItemMousePos.y()), currentVerticalPositionOfSnapPoint);
+        distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), currentVerticalPositionOfSnapPoint);
     }
     if(!distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.isEmpty())
     {
@@ -112,13 +113,10 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
 {
     //TODOoptimization: "append"/etc doesn't reposition ALL of them
 
-    int numVerticalDistancesInUnitOfExecution = ((m_ExistingStatements.size()*2)+1); //Times two accounts for all our snap/insert positions, First plus one accounts for "insert before and insert after", Second plus one at the end accounts for the "top or bottom side" (2 existing statemetns + 3 snap points = 5, BUT +1 it and you get the total height desired (since we don't want snap points to be on the edges, but away from them a little)). Had to hold my fingers outs and look at them
+    int numStatementsOrSnapPointsInUnitOfExecution = ((m_ExistingStatements.size()*2)+1); //Times two accounts for all our snap/insert positions, First plus one accounts for "insert before and insert after"
 
-    qreal maybeRectHeight = ((numVerticalDistancesInUnitOfExecution+1)*DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
-    qreal myRectHeight = qMax(
-                                minRect().height(),
-                maybeRectHeight
-                );
+    qreal maybeRectHeight = ((numStatementsOrSnapPointsInUnitOfExecution+1)*DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
+    qreal myRectHeight = qMax(minRect().height(), maybeRectHeight);
 
     QRectF myRect = minRect();
     myRect.setHeight(myRectHeight);
@@ -133,7 +131,7 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
         bool even = true;
         //int loopEnd = (numVerticalDistancesInUnitOfExecution+1);  //don't start at zero because we don't care about edges (loop end accounts for this with the +1)
         int existingStatementsIndex = 0;
-        for(int i = 0; i < numVerticalDistancesInUnitOfExecution; ++i)
+        for(int i = 0; i < numStatementsOrSnapPointsInUnitOfExecution; ++i)
         {
             //qreal currentY = static_cast<qreal>(i) * static_cast<qreal>(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
             if(even)
@@ -220,4 +218,5 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     insertStatement(indexInsertedInto, statementInserted);
     repositionExistingStatementsAndSnapPoints();
+    parentClassLifeline()->repositionUnitsOfExecution(); //TODOoptioinal: friend unit of execution from within class lifeline (??? idfk whether or not i should, so i won't (using that logic, every method should be public (wait nvm)))
 }
