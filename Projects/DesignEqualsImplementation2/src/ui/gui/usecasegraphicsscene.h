@@ -10,6 +10,7 @@ class DesignEqualsImplementationClass;
 class HasA_Private_Classes_Members_ListEntryType;
 class DesignEqualsImplementationClassLifeLine;
 class SignalSlotConnectionActivationArrowForGraphicsScene;
+class SnappingIndicationVisualRepresentation;
 
 class UseCaseGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
@@ -29,6 +30,7 @@ private:
     DesignEqualsImplementationUseCase *m_UseCase;
     DesignEqualsImplementationMouseModeEnum m_MouseMode;
     SignalSlotConnectionActivationArrowForGraphicsScene *m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
+    SnappingIndicationVisualRepresentation *m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone;
 
     void privateConstructor(DesignEqualsImplementationUseCase *useCase);
     bool keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event);

@@ -35,7 +35,22 @@ DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScen
 {
     privateConstructor();
 }
-void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::showSnappingHelperForMousePoint(QPointF mouseScenePos)
+int DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::getInsertIndexForMouseScenePos(QPointF mouseEventScenePos)
+{
+    //some copy/pasta from makeSnappingHelperForMousePoint
+    QPointF mouseItemPos = mapFromScene(mouseEventScenePos);
+    QMap<qreal, int> distancesFromMousePointAndTheirCorrespondingIndexesInOurInternalList_Sorter;
+    Q_FOREACH(qreal currentVerticalPositionOfSnapPoint, m_VerticalPositionsOfSnapPoints)
+    {
+        distancesFromMousePointAndTheirCorrespondingIndexesInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), currentVerticalPositionOfSnapPoint);
+    }
+    if(!distancesFromMousePointAndTheirCorrespondingIndexesInOurInternalList_Sorter.isEmpty())
+    {
+        return distancesFromMousePointAndTheirCorrespondingIndexesInOurInternalList_Sorter.first();
+    }
+    return 0;
+}
+QGraphicsItem *DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF mouseScenePos)
 {
     //Find nearest BEFORE, BETWEEN, or AFTER position, and tell using visuals that it snaps
     QPointF mouseItemPos = mapFromScene(mouseScenePos);
@@ -44,14 +59,15 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     //NOPE BECAUSE STILL DON'T KNOW "nearest", would be inaccurate between final two: An easy way to find the nearest is to just start the odd/even loop, then see if the vertical distance is growing or shrinking. If growing, stop and use the last one. If shrinking, continue until
     //QPointF myItemMousePos = mapFromParent(mouseItemPos);
 
-    QMap<qreal, qreal> distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter;
+    QMap<qreal /*distance*/, QPair<qreal /*vertical height*/, int /*index into vertical height array*/> > distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter;
+    int currentIndex = 0;
     Q_FOREACH(qreal currentVerticalPositionOfSnapPoint, m_VerticalPositionsOfSnapPoints)
     {
-        distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), currentVerticalPositionOfSnapPoint);
+        distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), qMakePair(currentVerticalPositionOfSnapPoint, currentIndex++));
     }
     if(!distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.isEmpty())
     {
-        qreal closestSnappingPointsYValue = distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first();
+        qreal closestSnappingPointsYValue = distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().first;
 
         //TODOreq: how to manage the snapping visual item's lifetime
         //if(currentSnappingVisualIsAlreadyUsingA_Y_ValueOf(closestSnappingPointsYValue))
@@ -59,9 +75,11 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
 
         //reposition instead? who owns the snapping indication visual (line at the time of writing), me or the graphics scene?
 
-        QGraphicsItem *snappingIndicationVisualRepresentation = new SnappingIndicationVisualRepresentation(this);
+        QGraphicsItem *snappingIndicationVisualRepresentation = new SnappingIndicationVisualRepresentation(this, distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().second, this);
         snappingIndicationVisualRepresentation->setPos((left ? rect().left() : rect().right()), closestSnappingPointsYValue);
+        return snappingIndicationVisualRepresentation;
     }
+    return 0;
 }
 DesignEqualsImplementationClassLifeLineUnitOfExecution *DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::unitOfExecution() const
 {

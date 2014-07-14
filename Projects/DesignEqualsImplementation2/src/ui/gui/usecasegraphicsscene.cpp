@@ -17,6 +17,7 @@
 #include "signalslotconnectionactivationarrowforgraphicsscene.h"
 #include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
 #include "signalslotmessagedialog.h"
+#include "snappingindicationvisualrepresentation.h"
 #include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationactor.h"
@@ -106,28 +107,48 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
 }
 void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode)
+    if(event->button() == Qt::LeftButton) //TODOreq: right clicking even in mouse mode should allow maybe something like "edit class" (if class (might be actor))
     {
-        if(event->button() != Qt::LeftButton)
+        if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode)
         {
-            //TODOreq: right clicking even in mouse mode should allow maybe something like "edit class" (if class (might be actor))
+            QPointF mouseEventScenePos = event->scenePos();
+
+            if(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone)
+            {
+                m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->itemProxyingFor(), m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->insertIndex(), QLineF(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->scenePos(), event->scenePos())); //TODOoptional: the line should start on the item that it's snapping to, not the current mouse position
+                addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn);
+                delete m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+                m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
+            }
+            else
+            {
+                QGraphicsItem *itemUnderMouse = giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(mouseEventScenePos);
+                if(itemUnderMouse) //for now i don't care what the item is (so long as it isn't existing arrow), i'll determine the source/dest on mouse release
+                {
+                    //begin arrow drawing shit (yes, i am drunk). if you don't think i see the value of design= _BY ITSELF_, you're a fool. man i'm so.[
+                    //that advertising shit was boring
+                    //i can abstract multi threading concepts from software design, but i'll be damned if i can convince a girl to have a one night stand with me [without paying her money]
+                    //1-06-Gorillaz-Gorillaz-Man Research (Clapper).mp3 "ya ya ya ya ya ya" are teh best lyrics in gorillaz. the way he says it.
+                    //TODOreq: find insert point even when item is directly under mouse
+                    int indexToInsertInto = 0;
+                    if(itemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID)
+                    {
+                        indexToInsertInto = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemUnderMouse)->getInsertIndexForMouseScenePos(mouseEventScenePos);
+                    }
+                    m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(itemUnderMouse, indexToInsertInto, QLineF(mouseEventScenePos, mouseEventScenePos));
+                    addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn);
+
+                    /*if(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone) //There was a snap active, but we didn't use it
+                    {
+                        delete m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+                        m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
+                    }*/
+                }
+            }
             return;
         }
-        QGraphicsItem *itemUnderMouse = giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(event->scenePos());
-        if(itemUnderMouse) //for now i don't care what the item is (so long as it isn't existing arrow), i'll determine the source/dest on mouse release
-        {
-            //begin arrow drawing shit (yes, i am drunk). if you don't think i see the value of design= _BY ITSELF_, you're a fool. man i'm so.[
-            //that advertising shit was boring
-            //i can abstract multi threading concepts from software design, but i'll be damned if i can convince a girl to have a one night stand with me [without paying her money]
-            //1-06-Gorillaz-Gorillaz-Man Research (Clapper).mp3 "ya ya ya ya ya ya" are teh best lyrics in gorillaz. the way he says it.
-            m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(itemUnderMouse, QLineF(event->scenePos(), event->scenePos()));
-            addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn);
-        }
     }
-    else
-    {
-        QGraphicsScene::mousePressEvent(event);
-    }
+    QGraphicsScene::mousePressEvent(event);
 }
 void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -150,8 +171,15 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             {
                 //Unit of execution graphics item
                 DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene *unitOfExecutionGraphicsItem = static_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
-                unitOfExecutionGraphicsItem->showSnappingHelperForMousePoint(eventScenePos);
+                if(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone)
+                    delete m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+                m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone = static_cast<SnappingIndicationVisualRepresentation*>(unitOfExecutionGraphicsItem->makeSnappingHelperForMousePoint(eventScenePos));
             }
+        }
+        else if(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone)
+        {
+            delete m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+            m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
         }
     }
 
@@ -210,6 +238,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
 {
     m_UseCase = useCase;
     m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = 0;
+    m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
 
     //requests
     connect(this, SIGNAL(addActorToUseCaseRequsted(QPointF)), useCase, SLOT(addActorToUseCase(QPointF)));

@@ -18,7 +18,8 @@ public:
     explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, const QRectF &rect, QGraphicsItem *parent = 0);
     explicit DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
 
-    void showSnappingHelperForMousePoint(QPointF mouseScenePos);
+    int getInsertIndexForMouseScenePos(QPointF mouseEventScenePos);
+    QGraphicsItem *makeSnappingHelperForMousePoint(QPointF mouseScenePos);
 
     DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution() const;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline() const;

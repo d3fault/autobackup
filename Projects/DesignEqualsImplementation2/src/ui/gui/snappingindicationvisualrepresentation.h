@@ -6,7 +6,13 @@
 class SnappingIndicationVisualRepresentation : public QGraphicsLineItem
 {
 public:
-    explicit SnappingIndicationVisualRepresentation(QGraphicsItem *parent = 0);
+    explicit SnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndex, QGraphicsItem *parent = 0);
+
+    QGraphicsItem *itemProxyingFor() const;
+    int insertIndex() const;
+private:
+    QGraphicsItem *m_ItemProxyingFor;
+    int m_InsertIndex;
 };
 
 #endif // SNAPPINGINDICATIONVISUALREPRESENTATION_H
