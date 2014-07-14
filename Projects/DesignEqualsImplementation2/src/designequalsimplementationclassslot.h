@@ -24,6 +24,8 @@ public:
     DesignEqualsImplementationClassSignal *finishedOrExitSignal() const;
     SignalEmissionOrSlotInvocationContextVariables finishedOrExitSignalEmissionContextVariables() const;
     //TODOoptional: return type
+
+    virtual QObject *asQObject();
 private:
     DesignEqualsImplementationClassSignal *m_FinishedOrExitSignal;
     SignalEmissionOrSlotInvocationContextVariables m_ExitSignalEmissionContextVariables;

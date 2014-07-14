@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1405328663
+Documents/minddump/:1405335668
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1690,6 +1690,7 @@ Documents/minddump/sdfljsdfljsdfwerljflsjdflsdufoiu.txt:1355829202
 Documents/minddump/sdfljsdflkjowiuerlkjsdfousdlfjweourl.txt:1355472804
 Documents/minddump/sdfljsdflkjsdfouwerljdfousdflkjeroudsflkjewrou.txt:1357061407
 Documents/minddump/sdfljsdflkjsdklfjsdofusldfjosudfljsdfoulkuosufd.txt:1392548244
+Documents/minddump/sdfljsdflkjsdlfkjsdfkljsdlkfjsdlkhfoweurljsdlfjsdkfjsdlkafjsdklf.txt:1405335668
 Documents/minddump/sdfljsdflkjsdofuljroulkjwerouilksjdfosdiufljwoeurilkjsdfousdfljk.txt:1370676442
 Documents/minddump/sdfljsdlfjuweoruoudfljksdfoiuwerlj.txt:1355797634
 Documents/minddump/sdfljsdlfkjsdfouweljoulfjdoukrwedfl.txt:1356156353
@@ -2376,7 +2377,7 @@ Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon3.svg:1348380863
 Pictures/2012-09 Tobey Family Tree Cartoon/screenshot.of.creating.it.png:1348376918
-Pictures/shirts/:1405232583
+Pictures/shirts/:1405337750
 Pictures/shirts/candy.is.to.the.tongue.what.drugs.are.to.the.brain.lasdfjasofdu.txt:1383720745
 Pictures/shirts/diff.sociopathy.courtship.intent.txt:1383710633
 Pictures/shirts/dont.let.a.perfectly.good.mind.go.to.waste.eat.mushrooms.svg:1355486883
@@ -2391,6 +2392,7 @@ Pictures/shirts/im.not.special.your.just.stupid.sdofiusaldfkjewor.txt:1382630347
 Pictures/shirts/implications.asldfjlsdjflsdkjfowuerlkjsfoiusdflkjsdflj.txt:1404642919
 Pictures/shirts/judge.judgers.and.httpiece.of.shit.txt:1384485695
 Pictures/shirts/love.is.simply.complex.my.context.when.writing.this.is.kinda.crucial.txt:1398580027
+Pictures/shirts/particularly.particularlizing.or.is.it.particularly.particulious.actually.i.think.its.particulary.particular.yea.use.this.last.one.txt:1405337750
 Pictures/shirts/patents.are.patently.illegal.weoruoiusdflkj.txt:1383687445
 Pictures/shirts/sanction.sanctioners.essentially.how.i.apply.copyleft.principles.to.everything.irl.txt:1383605321
 Pictures/shirts/sdlkjfsoadufsdlfj.dumb.txt:1384494188
@@ -2555,11 +2557,11 @@ Projects/DesignEqualsImplementation2/design/sdfsldfjlksdfjlksdjfklsdjfouewrlkjdf
 Projects/DesignEqualsImplementation2/design/snapping.mockup.to.slot.aka.unit.of.execution.aka.list.of.statements.svg:1405099555
 Projects/DesignEqualsImplementation2/design/some.threading.notes.id.like.to.implement.basically.both.sync.and.async.initialization.and.other.stuff.txt:1404886628
 Projects/DesignEqualsImplementation2/design/units.of.executions.and.slots.and.private.methods.all.have.tons.of.overlap.sdfouwerljsdfsdklfj.txt:1405166122
-Projects/DesignEqualsImplementation2/src/:1405245561
+Projects/DesignEqualsImplementation2/src/:1405338665
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1405240001
+Projects/DesignEqualsImplementation2/src/ui/gui/:1405336978
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1404902351
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1404542044
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2572,7 +2574,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassd
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassdiagramaswidgetfortab.h:1404542087
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.cpp:1405240000
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.h:1405086862
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.cpp:1405239695
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.cpp:1405336978
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h:1405172958
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.cpp:1404483559
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.h:1404132891
@@ -2607,18 +2609,18 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.cpp:140
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1404904173
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.cpp:1405084530
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.h:1405084469
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.cpp:1405175573
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.cpp:1405338441
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.h:1405166496
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassmethodargument.cpp:1404680761
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassmethodargument.h:1404678411
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclassprivatemethod.cpp:1404180073
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclassprivatemethod.h:1405172532
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclassprivatemethod.cpp:1405338371
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclassprivatemethod.h:1405338363
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassproperty.cpp:1404164084
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassproperty.h:1404163293
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasssignal.cpp:1404284516
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasssignal.h:1404710870
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.cpp:1405044619
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.h:1405172490
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.cpp:1405338333
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.h:1405338333
 Projects/DesignEqualsImplementation2/src/designequalsimplementationcommon.h:1404463822
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1404691793
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1404672962
@@ -2629,7 +2631,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationslotinvocatio
 Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.cpp:1405172937
 Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.h:1405089711
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationhaveorderedlistofstatements.cpp:1405173773
-Projects/DesignEqualsImplementation2/src/idesignequalsimplementationhaveorderedlistofstatements.h:1405174461
+Projects/DesignEqualsImplementation2/src/idesignequalsimplementationhaveorderedlistofstatements.h:1405338288
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationmethod.cpp:1405044715
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationmethod.h:1405044715
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationstatement.h:1404180203

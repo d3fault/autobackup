@@ -19,6 +19,8 @@ public:
     QString Name;
     QString ReturnType;
     QList<DesignEqualsImplementationClassMethodArgument*> Arguments;
+
+    virtual QObject *asQObject();
 signals:
     void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
 };

@@ -30,6 +30,10 @@ SignalEmissionOrSlotInvocationContextVariables DesignEqualsImplementationClassSl
 {
     return m_ExitSignalEmissionContextVariables;
 }
+QObject *DesignEqualsImplementationClassSlot::asQObject()
+{
+    return this;
+}
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot &slot)
 {
     DesignEqualsImplementationClassSlot_QDS(out, <<, slot)

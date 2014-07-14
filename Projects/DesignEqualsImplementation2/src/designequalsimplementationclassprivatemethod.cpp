@@ -16,6 +16,10 @@ DesignEqualsImplementationClassPrivateMethod::~DesignEqualsImplementationClassPr
 {
     qDeleteAll(Arguments);
 }
+QObject *DesignEqualsImplementationClassPrivateMethod::asQObject()
+{
+    return this;
+}
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod)
 {
     DesignEqualsImplementationClassPrivateMethod_QDS(out, <<, designEqualsImplementationClassPrivateMethod);

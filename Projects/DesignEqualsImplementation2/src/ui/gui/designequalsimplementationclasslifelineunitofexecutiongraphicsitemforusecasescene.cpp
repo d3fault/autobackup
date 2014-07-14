@@ -94,6 +94,10 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
         }
         repositionExistingStatementsAndSnapPoints();
     }
+    else //not named, therefore empty. so set minRect as rect
+    {
+        setRect(minRect());
+    }
 }
 void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::insertStatement(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
@@ -129,7 +133,7 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
                 //new QGraphicsLineItem(this);(QLineF(leftOfLine, rightOfLine), this); //setPos? so confused about the difference...
 
                 m_ExistingStatements.at(existintStatementIndex).first->setPos(QPointF(0, newRectHeightMaybe)); //TODOreq: bring this halfway closer to rightOfLine
-                m_ExistingStatements.at(existintStatementIndex).first->setLine(QLineF(leftOfLine, rightOfLine));
+                //m_ExistingStatements.at(existintStatementIndex).first->setLine(QLineF(leftOfLine, rightOfLine));
             }
             else //Even amount of pixels, mark it internally as a snapping point
             {
