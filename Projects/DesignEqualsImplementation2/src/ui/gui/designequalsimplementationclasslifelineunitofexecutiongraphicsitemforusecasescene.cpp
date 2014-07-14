@@ -110,7 +110,6 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     QRectF myRect = minRect();
     qreal newRectHeightMaybe = 0; //visauls included
     //QPointF runningStatementCenterPosition(0, 0); //statement/snap model only
-    int currentVerticalOddEvenIndex = 0;
     m_VerticalPositionsOfSnapPoints.clear(); //might be handy when factoring in inserts (these points need recalculating)
     if(m_UnitOfExecution->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution()) //named? should be by now, but just to avoid a segfault...
     {
@@ -119,6 +118,7 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
         int numStatementOrSnapPositions = (m_ExistingStatements.size()*2)+1;
         //Q_FOREACH(ExistingStatementListEntryTypedef existingStatementListEntry, m_ExistingStatements)
         bool even = true;
+        int existintStatementIndex = 0;
         for(int i = 0; i < numStatementOrSnapPositions; ++i)
         {
             //no mutex needed since it's our [copy of] the list and we don't need to access the "second" of the pair (underlying statement)
@@ -127,9 +127,9 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
                 even = true;
 
                 //new QGraphicsLineItem(this);(QLineF(leftOfLine, rightOfLine), this); //setPos? so confused about the difference...
-                TODO LEFT OFF
 
-                existingStatementListEntry.first->setPos(QPointF(0, newRectHeightMaybe)); //TODOreq: bring this halfway closer to rightOfLine
+                m_ExistingStatements.at(existintStatementIndex).first->setPos(QPointF(0, newRectHeightMaybe)); //TODOreq: bring this halfway closer to rightOfLine
+                m_ExistingStatements.at(existintStatementIndex).first->setLine(QLineF(leftOfLine, rightOfLine));
             }
             else //Even amount of pixels, mark it internally as a snapping point
             {
