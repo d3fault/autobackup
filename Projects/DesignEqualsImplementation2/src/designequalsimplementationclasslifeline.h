@@ -20,6 +20,7 @@ public:
     void insertUnitOfExecution(int indexToInsertInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution);
     QList<DesignEqualsImplementationClassLifeLineUnitOfExecution *> unitsOfExecution() const;
 private:
+    //friend class DesignEqualsImplementationClassLifeLineUnitOfExecution;
     DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
     HasA_Private_Classes_Members_ListEntryType *m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
     QPointF m_Position;

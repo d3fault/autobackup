@@ -1,0 +1,2 @@
+I have abstracted C++.
+But, just like all classes in the end can be serialized to POD, so too do all application design ultimately depend on C++. You can do A LOT with just UML/Objects (design), but there tends to be a need to do nitty gritty procedural C++ in some of the underlying implementations of those UML/Objects (designs). C++ drop down mode is pro and easy. I already know it will work. It's the level of customization that's tbd.

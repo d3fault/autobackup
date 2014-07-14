@@ -24,6 +24,10 @@ QGraphicsItem *SignalSlotConnectionActivationArrowForGraphicsScene::sourceGraphi
 {
     return m_SourceGraphicsItem;
 }
+int SignalSlotConnectionActivationArrowForGraphicsScene::statementInsertIndex() const
+{
+    return m_StatementInsertIndex;
+}
 void SignalSlotConnectionActivationArrowForGraphicsScene::myConstructor(QGraphicsItem *sourceGraphicsItem, int statementInsertIndex)
 {
     m_SourceGraphicsItem = sourceGraphicsItem;

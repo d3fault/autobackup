@@ -296,6 +296,15 @@ void DesignEqualsImplementation::newProject()
     barClass->Slots.append(barSlot);
     barSlot->ParentClass = barClass;
 
+    DesignEqualsImplementationClassSlot *barSlot1 = new DesignEqualsImplementationClassSlot(barClass);
+    barSlot1->Name = "barSlot1";
+    barClass->Slots.append(barSlot1);
+    barSlot1->ParentClass = barClass;
+    DesignEqualsImplementationClassSlot *barSlot2 = new DesignEqualsImplementationClassSlot(barClass);
+    barSlot2->Name = "barSlot2";
+    barClass->Slots.append(barSlot2);
+    barSlot2->ParentClass = barClass;
+
     //bool Bar::m_Success -- HACK'ish: need something to satisfy barSignal's success arg
     HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *successPodMember = new HasA_Private_PODorNonDesignedCpp_Members_ListEntryType("bool", "m_Success");
     barClass->HasA_Private_PODorNonDesignedCpp_Members.append(successPodMember);

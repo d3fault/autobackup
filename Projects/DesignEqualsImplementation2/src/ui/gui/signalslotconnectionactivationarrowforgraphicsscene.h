@@ -11,6 +11,7 @@ public:
     explicit SignalSlotConnectionActivationArrowForGraphicsScene(QGraphicsItem *sourceGraphicsItem, int statementInsertIndex, qreal x1, qreal y1, qreal x2, qreal y2, QGraphicsItem *parent = 0);
 
     QGraphicsItem *sourceGraphicsItem() const;
+    int statementInsertIndex() const;
 private:
     QGraphicsItem *m_SourceGraphicsItem;
     int m_StatementInsertIndex;

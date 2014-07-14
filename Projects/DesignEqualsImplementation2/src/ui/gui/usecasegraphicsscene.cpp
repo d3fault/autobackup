@@ -115,7 +115,7 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
             if(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone)
             {
-                m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->itemProxyingFor(), m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->insertIndex(), QLineF(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->scenePos(), event->scenePos())); //TODOoptional: the line should start on the item that it's snapping to, not the current mouse position
+                m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->itemProxyingFor(), m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->insertIndex(), QLineF(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone->scenePos(), event->scenePos()));
                 addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn);
                 delete m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone;
                 m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
@@ -129,7 +129,6 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                     //that advertising shit was boring
                     //i can abstract multi threading concepts from software design, but i'll be damned if i can convince a girl to have a one night stand with me [without paying her money]
                     //1-06-Gorillaz-Gorillaz-Man Research (Clapper).mp3 "ya ya ya ya ya ya" are teh best lyrics in gorillaz. the way he says it.
-                    //TODOreq: find insert point even when item is directly under mouse
                     int indexToInsertInto = 0;
                     if(itemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID)
                     {
@@ -341,7 +340,8 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             DesignEqualsImplementationClassLifeLine *classLifeLine = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(topMostItemIWantUnderSource)->classLifeLine();
             if(!classLifeLine->unitsOfExecution().isEmpty())
             {
-                sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->unitsOfExecution().last();
+                sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->unitsOfExecution().last(); //TODOreq: last() can't be right
+                //sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt();
                 sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor = sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution();
             }
             //sourceClass = classLifeLine->designEqualsImplementationClass();
@@ -349,7 +349,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     }
 
     //TODOreq: by/at-around now, we know which index in the source the statement should be inserted at. We don't have to give it to the dialog, but we do need to emit it to the backend after dialog is accepted
-    int indexToInsertStatementAt = 420;
+    int indexToInsertStatementAt_IntoSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->statementInsertIndex();
 
     DesignEqualsImplementationClassSlot *sourceThatHasOrderedListOfStatementsAsSlot_OrZeroIfSourceIsActorOrIfSourceIsNotSlotButPrivateMethod = 0;
     if(!sourceIsActor)
@@ -370,14 +370,14 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(userChosenSlot_OrZeroIfNone && userChosenSignal_OrZeroIfNone)
     {
         //Signal/slot activation
-        emit insertSignalSlotActivationUseCaseEventRequested(indexToInsertStatementAt, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSignal_OrZeroIfNone, userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
+        emit insertSignalSlotActivationUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSignal_OrZeroIfNone, userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
         return true;
     }
     if(!userChosenSignal_OrZeroIfNone && userChosenSlot_OrZeroIfNone)
     {
         //Slot invocation
         //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
-        emit insertSlotInvocationUseCaseEventRequested(indexToInsertStatementAt, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
+        emit insertSlotInvocationUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
         return true;
     }
     if(destinationIsActor && userChosenSignal_OrZeroIfNone)
@@ -389,7 +389,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(!userChosenSlot_OrZeroIfNone && userChosenSignal_OrZeroIfNone)
     {
         //Signal with no listeners at time of design emit
-        emit insertSignalEmissionUseCaseEventRequested(indexToInsertStatementAt, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
+        emit insertSignalEmissionUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceThatHasOrderedListOfStatements_OrZeroIfSourceIsActor, targetUnitOfExecution_OrZeroIfNoDest, userChosenSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
         return true;
     }
     emit e("Error: Message editor dialog didn't give us anything we could work with");
@@ -501,6 +501,15 @@ QPointF UseCaseGraphicsScene::calculateNearestPointOnBoundingRectToArbitraryPoin
                 );
     return nearestPoint;
 }
+#if 0
+DesignEqualsImplementationClassLifeLineUnitOfExecution* UseCaseGraphicsScene::targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt(DesignEqualsImplementationClassLifeLine *classLifeline)
+{
+    Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecution *currentUnitOfExecution, classLifeline->m_UnitsOfExecution)
+    {
+
+    }
+}
+#endif
 bool UseCaseGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *event)
 {
     return (event->dropAction() == Qt::LinkAction && event->mimeData()->hasFormat(DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_USE_CASE_OBJECT));
