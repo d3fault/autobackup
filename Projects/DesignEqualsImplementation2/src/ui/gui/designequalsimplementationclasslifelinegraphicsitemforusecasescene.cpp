@@ -88,6 +88,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::insertU
     m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution.insert(indexInsertedInto, new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(unitOfExecution, this, this));
 }
 //TODOreq: in the future the "lines in between" lengths should be user stretchable and serializable, but for now to KISS they'll be fixed length (primarily, the unit of execution rect itself will auto-move (which will indirectly lengthen the line above it) or stretch, but it does make sense for the user to put it right where they want it vertically
+//TODOreq: unit of executions changing (insert/remove) ultimately triggers repositionUnitsOfExecution, because their positions depend on their sizes
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::repositionUnitsOfExecution() //TODOoptimization: an append would be much easier/faster, but I should get the essentials out of the way first
 {
     //TODOreq: we don't control the unit of execution's SIZE, but we still want to position it based on it's rect's top y value.. but we can't just simply moveTop because that would mess up the dynamic sizing stuff within
@@ -110,10 +111,10 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
     bottomOfLifeLine.setY(topOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP);
     QLineF lineAboveUnitOfExecution(topOfLifeLine, bottomOfLifeLine);
 #endif
-    QPointF bottomMiddleOfClassNameRect;
+    QPointF currentTopMiddlePointOfDottedLineAboveUnitOfExecution;
     QRectF blahStartingRect = childrenBoundingRect();
-    bottomMiddleOfClassNameRect.setX(blahStartingRect.width()/2);
-    bottomMiddleOfClassNameRect.setY(blahStartingRect.bottom());
+    currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setX(blahStartingRect.width()/2);
+    currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(blahStartingRect.bottom());
     int currentLineIndex = 0;
     Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene *currentUnitOfExecutionGraphicsItem, m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution)
     {
@@ -122,7 +123,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
         //qreal dottedLineHalfHeight = (m_DottedLinesJustAboveEachUnitOfExecution.at(currentLineIndex)->line().length()/2);
         //dottedLinePos.setY(dottedLinePos.y() + dottedLineHalfHeight);
         QGraphicsItem *currentLineItem = m_DottedLinesJustAboveEachUnitOfExecution.at(currentLineIndex++);
-        currentLineItem->setPos(bottomMiddleOfClassNameRect);
+        currentLineItem->setPos(currentTopMiddlePointOfDottedLineAboveUnitOfExecution);
 
         /*QPointF topLeftOfUnitOfExecutionRect(bottomOfLifeLine.x()-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y());
         QPointF bottomRightOfUnitOfExecutionRect(bottomOfLifeLine.x()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE);
@@ -130,15 +131,17 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
 
         //currentUnitOfExecutionGraphicsItem->setRect(unitOfExecutionRect); //or don't I mean setPos, since I am the parent and he manages his size?
         //QPointF topMiddlePos(rect().width()/2, bottomOfLifeLine.y());
-        qreal dottedLineHeight = currentLineItem->boundingRect().height();
-        QPointF bottomOfDottedLine = bottomMiddleOfClassNameRect;
-        bottomOfDottedLine.setY(bottomOfDottedLine.y() + currentLineItem->boundingRect().height());
-        bottomOfDottedLine.setY(bottomOfDottedLine.y() + (currentUnitOfExecutionGraphicsItem->boundingRect().height()/2));
+        QPointF centerPointOfUnitOfExecution = currentTopMiddlePointOfDottedLineAboveUnitOfExecution;
+        centerPointOfUnitOfExecution.setY(centerPointOfUnitOfExecution.y() + currentLineItem->boundingRect().height());
+        qreal halfUnitOfExecutionHeight = (currentUnitOfExecutionGraphicsItem->boundingRect().height()/2);
+        centerPointOfUnitOfExecution.setY(centerPointOfUnitOfExecution.y() + halfUnitOfExecutionHeight);
         //bottomOfDottedLine.setY(bottomOfDottedLine.y() + dottedLineHalfHeight);
-        currentUnitOfExecutionGraphicsItem->setPos(bottomOfDottedLine);
+        currentUnitOfExecutionGraphicsItem->setPos(centerPointOfUnitOfExecution);
 
+
+        //get next dotted line in place, even if there aren't any more units of execution
+        currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(centerPointOfUnitOfExecution.y() + halfUnitOfExecutionHeight);
 #if 0
-        //get next line in place, even if there aren't any more units of execution
         topOfLifeLine.setY(unitOfExecutionRect.bottom());
         bottomOfLifeLine.setY(topOfLifeLine.y()+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP);
         lineAboveUnitOfExecution.setPoints(topOfLifeLine, bottomOfLifeLine);

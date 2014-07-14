@@ -104,7 +104,7 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
 {
     QGraphicsLineItem *newGraphicsLineItemForVisualRepresentation = new QGraphicsLineItem(this);
     qreal statementHalfLength /*width sorta*/ = (minRect().width()-(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_STATEMENT_MARGIN_TO_EDGE*2))/2; //the times two accounts for the margins on both left and right sides
-    newGraphicsLineItemForVisualRepresentation->setLine(QLineF(QPointF(0, -statementHalfLength), QPointF(0, statementHalfLength)));
+    newGraphicsLineItemForVisualRepresentation->setLine(QLineF(QPointF(-statementHalfLength, 0), QPointF(statementHalfLength, 0)));
     //TODOreq: newGraphicsLineItemForVisualRepresentation->setLine( <- just make it go left and right along y=0, using whatever width to determine the two x points
     m_ExistingStatements.insert(indexInsertedInto, qMakePair(newGraphicsLineItemForVisualRepresentation, statementInserted));
 }
@@ -112,6 +112,52 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
 {
     //TODOoptimization: "append"/etc doesn't reposition ALL of them
 
+    int numVerticalDistancesInUnitOfExecution = ((m_ExistingStatements.size()*2)+1); //Times two accounts for all our snap/insert positions, First plus one accounts for "insert before and insert after", Second plus one at the end accounts for the "top or bottom side" (2 existing statemetns + 3 snap points = 5, BUT +1 it and you get the total height desired (since we don't want snap points to be on the edges, but away from them a little)). Had to hold my fingers outs and look at them
+
+    qreal maybeRectHeight = ((numVerticalDistancesInUnitOfExecution+1)*DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
+    qreal myRectHeight = qMax(
+                                minRect().height(),
+                maybeRectHeight
+                );
+
+    QRectF myRect = minRect();
+    myRect.setHeight(myRectHeight);
+    myRect.moveTop(-myRect.height()/2);
+    myRect.moveLeft(-myRect.width()/2);
+    setRect(myRect);
+
+    qreal currentVerticalPos = myRect.top() + DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
+
+    if(m_UnitOfExecution->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution()) //named? should be by now, but just to avoid a segfault...
+    {
+        bool even = true;
+        //int loopEnd = (numVerticalDistancesInUnitOfExecution+1);  //don't start at zero because we don't care about edges (loop end accounts for this with the +1)
+        int existingStatementsIndex = 0;
+        for(int i = 0; i < numVerticalDistancesInUnitOfExecution; ++i)
+        {
+            //qreal currentY = static_cast<qreal>(i) * static_cast<qreal>(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
+            if(even)
+            {
+                //even
+
+                m_VerticalPositionsOfSnapPoints.append(currentVerticalPos);
+
+                even = false;
+            }
+            else
+            {
+                //odd
+
+                m_ExistingStatements.at(existingStatementsIndex++).first->setPos(0, currentVerticalPos);
+
+                even = true;
+            }
+
+            currentVerticalPos += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
+        }
+    }
+
+#if 0
     QRectF myRect = minRect();
     qreal newRectHeightMaybe = 0; //visauls included
     //QPointF runningStatementCenterPosition(0, 0); //statement/snap model only
@@ -167,9 +213,11 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     }
     //myRect.setTop(0);
     setRect(myRect);
+#endif
 }
 void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
+    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     insertStatement(indexInsertedInto, statementInserted);
     repositionExistingStatementsAndSnapPoints();
 }
