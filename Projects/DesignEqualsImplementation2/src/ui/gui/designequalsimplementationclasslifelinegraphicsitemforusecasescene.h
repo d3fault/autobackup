@@ -24,7 +24,7 @@ public:
     virtual int type() const;
 private:
     QList<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*> m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution;
-    QList<QGraphicsLineItem*> m_LinesJustAboveEachUnitOfExecution;
+    QList<QGraphicsLineItem*> m_DottedLinesJustAboveEachUnitOfExecution;
     DesignEqualsImplementationClassLifeLine *m_DesignEqualsImplementationClassLifeLine;
     QRectF m_BoundingRect;
     QPen m_ClassBorderPen;

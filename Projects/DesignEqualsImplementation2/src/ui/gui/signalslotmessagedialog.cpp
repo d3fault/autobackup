@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QLineEdit>
+#include <QMessageBox>
 
 #include "../../designequalsimplementationclassslot.h"
 #include "../../designequalsimplementationclass.h"
@@ -130,6 +131,12 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     }
     else
     {
+        if(!slotWithCurrentContext_OrZeroIfSourceIsActor) //hack that i put this here, it's where a segfault occured :)
+        {
+            QMessageBox::information(this, tr("Error"), tr("Source must be connected/named/entered first")); //TODOreq: temp, i guess the source could be [defined as] just an "interface"
+            QMetaObject::invokeMethod(this, "reject", Qt::QueuedConnection);
+            return;
+        }
         Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->Signals)
         {
             m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));

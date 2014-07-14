@@ -50,7 +50,7 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     }
     if(!distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.isEmpty())
     {
-        qreal closestSnappingPointsYValue = distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.firstKey();
+        qreal closestSnappingPointsYValue = distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first();
 
         //TODOreq: how to manage the snapping visual item's lifetime
         //if(currentSnappingVisualIsAlreadyUsingA_Y_ValueOf(closestSnappingPointsYValue))
@@ -84,6 +84,7 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     //Draw existing (serialized) statements, or at least make the vertical space for them and know they exist (as of writing, "arrows" are unfinished)
     //I think for now I'm not going to have any visual representation of the "amount of statements", I'll just use a simple odd/even strategy for "statements" vs. "snapping points"
     QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+        connect(m_UnitOfExecution, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)), this, SLOT(handleStatementInserted(int,IDesignEqualsImplementationStatement*)));
 
     if(m_UnitOfExecution->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution()) //named?
     {
@@ -163,13 +164,9 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
         QPointF topLeft(-(childrenRectStartingPoint.width()/2), -(childrenRectStartingPoint.height()/2));
         QPointF bottomRight((childrenRectStartingPoint.width()/2), (childrenRectStartingPoint.height()/2));
         QRectF myRect(topLeft, bottomRight);
-
-        setRect(myRect);
     }
-    else
-    {
-        setRect(myRect);
-    }
+    //myRect.setTop(0);
+    setRect(myRect);
 }
 void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
