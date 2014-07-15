@@ -112,13 +112,24 @@ So basically the use cases do nothing more than specify the "MODULAR units of ex
 BUT WHAT OF THE SIGNAL-WITH-NO-LISTENERS-AT-TIME-OF-DESIGN? Is that part of the class or the use case? Arguably use case, arguably both. Does it remain if the signal owner is removed from the use case (I mean that both ways: remain in the use case and remain in the class now no longer in the use case)? Man that's a thinker
 
 */
+
+//A class lifeline is a per-use-case thing that merely stores which "slots on the object it represents" the use case uses. It is of little design use EXCEPT WHEN determining if we have the target as a child as a hasA attiribute, in which case we rely on it explicitly (and it shines). A class lifeline represents a class instantiation. When you click and drag a class onto the use case scene, a modal dialog asks you which of the available instances (class lifelines) you want to use. Your options are existing top level class lifelines from other use cases, new top level class lifeline, existing children of other classes, or we can even add ourself as a child (hasA) to another class on the fly
+//^If we don't have any variable name for the target, we are restricted to signal-slot activation (but i could see hacks allowing variable name pass in on the fly xD (there are too many customzations/hacks in this app to keep track of))
 DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent)
     : QObject(parent)
     , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
     , m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject(myInstanceInClassThatHasMe_OrZeroIfTopLevelObject) //Top level object, in this context, I guess really just means "not instantiated in this use case"... or maybe it means "not instantiated by any of the designed classes"... but I'm leaning more towards the first one
     , m_Position(position) //Could just keep one qreal "horizontalPosition"
 {
-    insertUnitOfExecution(m_UnitsOfExecution.size(), new DesignEqualsImplementationClassLifeLineUnitOfExecution(this, this)); //every lifeline has at least one unit of execution. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
+    insertSlot(0, new DesignEqualsImplementationClassSlot(this, this)); //every lifeline has at least one slot. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
+}
+DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *firstSlot, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent)
+    : QObject(parent)
+    , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
+    , m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject(myInstanceInClassThatHasMe_OrZeroIfTopLevelObject)
+    , m_Position(position)
+{
+    insertSlot(0, firstSlot);
 }
 QPointF DesignEqualsImplementationClassLifeLine::position() const
 {
@@ -132,13 +143,21 @@ HasA_Private_Classes_Members_ListEntryType *DesignEqualsImplementationClassLifeL
 {
     return m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
 }
-void DesignEqualsImplementationClassLifeLine::insertUnitOfExecution(int indexToInsertInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution)
+void DesignEqualsImplementationClassLifeLine::insertSlot(int indexToInsertInto, DesignEqualsImplementationClassSlot *newSlot)
 {
-    int indexActuallyInsertedTo = qMax(0, qMin(indexToInsertInto, m_UnitsOfExecution.size())); //bounds checking. even though qt does it internally, i still want to know the actual index for the emit
-    m_UnitsOfExecution.insert(indexActuallyInsertedTo, newUnitOfExecution);
-    emit unitOfExecutionInserted(indexActuallyInsertedTo, newUnitOfExecution);
+    int indexActuallyInsertedTo = qMax(0, qMin(indexToInsertInto, m_MySlots.size())); //bounds checking. even though qt does it internally, i still want to know the actual index for the emit
+    m_MySlots.insert(indexActuallyInsertedTo, newSlot);
+    emit slotInserted(indexActuallyInsertedTo, newSlot);
 }
-QList<DesignEqualsImplementationClassLifeLineUnitOfExecution*> DesignEqualsImplementationClassLifeLine::unitsOfExecution() const
+#if 0
+void DesignEqualsImplementationClassLifeLine::replaceSlot(int indexToReplace, DesignEqualsImplementationClassSlot *slotToReplaceItWith)
 {
-    return m_UnitsOfExecution; //The ordering is mostly undefined, but should basically be however the user designs it (moving them in the design could (should?) move them in the list)
+    DesignEqualsImplementationClassSlot *firstAutoGeneratedSlotProbably = m_MySlots.at(indexToReplace);
+    m_MySlots.replace(indexToReplace, slotToReplaceItWith);
+    delete firstAutoGeneratedSlotProbably; //TODOreq: make sure we've copied out anything valuable it may have contained, including merging if necessary
+}
+#endif
+QList<DesignEqualsImplementationClassSlot*> DesignEqualsImplementationClassLifeLine::mySlots() const
+{
+    return m_MySlots; //The ordering is mostly undefined, but should basically be however the user designs it (moving them in the design could (should?) move them in the list)
 }

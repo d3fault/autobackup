@@ -7,35 +7,37 @@
 
 #include "designequalsimplementationguicommon.h"
 #include "snappingindicationvisualrepresentation.h"
-#include "designequalsimplementationclasslifelinegraphicsitemforusecasescene.h"
-#include "../../designequalsimplementationclasslifelineunitofexecution.h"
+#include "../../designequalsimplementationclassslot.h"
 #include "../../idesignequalsimplementationstatement.h"
 
 #define DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE 25
 #define DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_STATEMENT_MARGIN_TO_EDGE 10 //For the side opposite the arrow comes out
 
-DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, QGraphicsItem *parent)
+DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSlot *slot, QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
-    , m_UnitOfExecution(unitOfExecution)
-    , m_ParentClassLifeline(parentClassLifeline)
+    , m_Slot(slot)
+    //, m_UnitOfExecution(unitOfExecution)
+    //, m_ParentClassLifeline(parentClassLifeline)
 {
     privateConstructor();
 }
-DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, const QRectF &rect, QGraphicsItem *parent)
+DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSlot *slot, const QRectF &rect, QGraphicsItem *parent)
     : QGraphicsRectItem(rect, parent)
-    , m_UnitOfExecution(unitOfExecution)
-    , m_ParentClassLifeline(parentClassLifeline)
+    , m_Slot(slot)
+    //, m_UnitOfExecution(slot)
+    //, m_ParentClassLifeline(parentClassLifeline)
 {
     privateConstructor();
 }
-DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeline, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent)
+DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSlot *slot, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent)
     : QGraphicsRectItem(x, y, w, h, parent)
-    , m_UnitOfExecution(unitOfExecution)
-    , m_ParentClassLifeline(parentClassLifeline)
+    , m_Slot(slot)
+    //, m_UnitOfExecution(slot)
+    //, m_ParentClassLifeline(parentClassLifeline)
 {
     privateConstructor();
 }
-int DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::getInsertIndexForMouseScenePos(QPointF mouseEventScenePos)
+int DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::getInsertIndexForMouseScenePos(QPointF mouseEventScenePos)
 {
     //some copy/pasta from makeSnappingHelperForMousePoint
     QPointF mouseItemPos = mapFromScene(mouseEventScenePos);
@@ -50,7 +52,7 @@ int DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCase
     }
     return 0;
 }
-QGraphicsItem *DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF mouseScenePos)
+QGraphicsItem *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF mouseScenePos)
 {
     //Find nearest BEFORE, BETWEEN, or AFTER position, and tell using visuals that it snaps
     QPointF mouseItemPos = mapFromScene(mouseScenePos);
@@ -81,45 +83,41 @@ QGraphicsItem *DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsIte
     }
     return 0;
 }
-DesignEqualsImplementationClassLifeLineUnitOfExecution *DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::unitOfExecution() const
+DesignEqualsImplementationClassSlot *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::underlyingSlot() const
 {
-    return m_UnitOfExecution;
+    return m_Slot;
 }
-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::parentClassLifeline() const
+int DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::type() const
 {
-    return m_ParentClassLifeline;
+    return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID;
 }
-int DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::type() const
-{
-    return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID;
-}
-const QRectF DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::minRect()
+const QRectF DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::minRect()
 {
     static const QRect minRect(-(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH), -(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE/2), (DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH*2), DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE);
     return minRect;
 }
-void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::privateConstructor()
+void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstructor()
 {
     //Draw existing (serialized) statements, or at least make the vertical space for them and know they exist (as of writing, "arrows" are unfinished)
     //I think for now I'm not going to have any visual representation of the "amount of statements", I'll just use a simple odd/even strategy for "statements" vs. "snapping points"
-    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-        connect(m_UnitOfExecution, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)), this, SLOT(handleStatementInserted(int,IDesignEqualsImplementationStatement*)));
+    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+    connect(m_Slot, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)), this, SLOT(handleStatementInserted(int,IDesignEqualsImplementationStatement*)));
 
-    if(m_UnitOfExecution->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution()) //named?
+    if(!m_Slot->orderedListOfStatements().isEmpty())
     {
         int currentStatemendIndex = 0;
-        Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, m_UnitOfExecution->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution()->orderedListOfStatements())
+        Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, m_Slot->orderedListOfStatements())
         {
-            insertStatement(currentStatemendIndex, currentStatement);
+            insertStatementGraphicsItem(currentStatemendIndex++, currentStatement);
         }
         repositionExistingStatementsAndSnapPoints();
     }
-    else //not named, therefore empty. so set minRect as rect
+    else //no statements, so use minRect as rect
     {
         setRect(minRect());
     }
 }
-void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::insertStatement(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
+void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
     QGraphicsLineItem *newGraphicsLineItemForVisualRepresentation = new QGraphicsLineItem(this);
     qreal statementHalfLength /*width sorta*/ = (minRect().width()-(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_STATEMENT_MARGIN_TO_EDGE*2))/2; //the times two accounts for the margins on both left and right sides
@@ -127,7 +125,7 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     //TODOreq: newGraphicsLineItemForVisualRepresentation->setLine( <- just make it go left and right along y=0, using whatever width to determine the two x points
     m_ExistingStatements.insert(indexInsertedInto, qMakePair(newGraphicsLineItemForVisualRepresentation, statementInserted));
 }
-void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::repositionExistingStatementsAndSnapPoints()
+void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::repositionExistingStatementsAndSnapPoints()
 {
     //TODOoptimization: "append"/etc doesn't reposition ALL of them
 
@@ -145,35 +143,31 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     qreal currentVerticalPos = myRect.top() + DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
 
     m_VerticalPositionsOfSnapPoints.clear();
-    if(m_UnitOfExecution->methodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution()) //named? should be by now, but just to avoid a segfault...
+    bool even = true;
+    //int loopEnd = (numVerticalDistancesInUnitOfExecution+1);  //don't start at zero because we don't care about edges (loop end accounts for this with the +1)
+    int existingStatementsIndex = 0;
+    for(int i = 0; i < numStatementsOrSnapPointsInUnitOfExecution; ++i)
     {
-        bool even = true;
-        //int loopEnd = (numVerticalDistancesInUnitOfExecution+1);  //don't start at zero because we don't care about edges (loop end accounts for this with the +1)
-        int existingStatementsIndex = 0;
-        for(int i = 0; i < numStatementsOrSnapPointsInUnitOfExecution; ++i)
+        //qreal currentY = static_cast<qreal>(i) * static_cast<qreal>(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
+        if(even)
         {
-            //qreal currentY = static_cast<qreal>(i) * static_cast<qreal>(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
-            if(even)
-            {
-                //even
+            //even
 
-                m_VerticalPositionsOfSnapPoints.append(currentVerticalPos);
+            m_VerticalPositionsOfSnapPoints.append(currentVerticalPos);
 
-                even = false;
-            }
-            else
-            {
-                //odd
-
-                m_ExistingStatements.at(existingStatementsIndex++).first->setPos(0, currentVerticalPos);
-
-                even = true;
-            }
-
-            currentVerticalPos += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
+            even = false;
         }
-    }
+        else
+        {
+            //odd
 
+            m_ExistingStatements.at(existingStatementsIndex++).first->setPos(0, currentVerticalPos);
+
+            even = true;
+        }
+
+        currentVerticalPos += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
+    }
 #if 0
     QRectF myRect = minRect();
     qreal newRectHeightMaybe = 0; //visauls included
@@ -232,10 +226,11 @@ void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCas
     setRect(myRect);
 #endif
 }
-void DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene::handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
+void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
-    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-    insertStatement(indexInsertedInto, statementInserted);
+    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+    insertStatementGraphicsItem(indexInsertedInto, statementInserted);
     repositionExistingStatementsAndSnapPoints();
-    parentClassLifeline()->repositionUnitsOfExecution(); //TODOoptioinal: friend unit of execution from within class lifeline (??? idfk whether or not i should, so i won't (using that logic, every method should be public (wait nvm)))
+    emit geometryChanged(); //parent class lifeline listens to this and repositions Units Of Execution
+    //parentClassLifeline()->repositionUnitsOfExecution(); //TODOoptioinal: friend unit of execution from within class lifeline (??? idfk whether or not i should, so i won't (using that logic, every method should be public (wait nvm)))
 }

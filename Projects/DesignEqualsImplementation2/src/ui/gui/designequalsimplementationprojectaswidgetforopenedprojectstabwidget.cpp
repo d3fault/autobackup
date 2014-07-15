@@ -54,7 +54,7 @@ void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::reques
 }
 void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::handleUseCaseAdded(DesignEqualsImplementationUseCase *useCase) //TODOreq: use case OPENED instead? or i guess right here could just add it to our list of use cases
 {
-    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationUseCaseAsWidgetForTab *designEqualsImplementationUseCaseAsWidgetForTab = new DesignEqualsImplementationUseCaseAsWidgetForTab(useCase);
     connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), designEqualsImplementationUseCaseAsWidgetForTab, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
     int tabIndex = m_ClassDiagramAndUseCasesTabWidget->addTab(designEqualsImplementationUseCaseAsWidgetForTab, useCase->Name);

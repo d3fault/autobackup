@@ -220,7 +220,7 @@ QString DesignEqualsImplementationClass::headerFilenameOnly()
 }
 void DesignEqualsImplementationClass::emitAllClassDetails()
 {
-    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     //TODOreq
 }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass)

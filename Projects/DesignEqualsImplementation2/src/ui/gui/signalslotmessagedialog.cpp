@@ -17,7 +17,7 @@
 //TODOreq: SignalSlotMessageEditorDialog (creation + editting-later-on using same widget) would be best
 //TODOreq: signal/slot mode, slot args populated by signal args, can have less than signal arg count, but arg-ordering and arg-type matter
 //TODOreq: if Foo hasA Bar, we cannot invoke handleFooSignal DIRECTLY from within barSlot. Bar needs either barSignal to be connected to handleFooSignal in the UML/Design (easy), or a pointer to Foo must be somehow communicated to Bar (during construction works). As of right now, trying to INVOKE (directly) handleBarSignal from barSlot gives an invalid slot invocation statement (there is no variable name of Foo, so it looks like this: "invokeMethod(, "handleBarSignal);, obviously not valid. Ideally we could support both variations, but until then the GUI should at least not allow direct invocation on anything that doesn't have a name to refer to the target by
-SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
+SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
     , m_Layout(new QVBoxLayout())
@@ -114,9 +114,9 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         m_SlotsCheckbox->setDisabled(true);
         m_SlotsCheckbox->setToolTip(tr("You have a destination object, therefore you must have a slot")); //TODOreq: actor as destination breaks rule bleh (don't think it matters because actor uses UseCaseSignalEventType?)
         newSlotAndExistingSlotsWidget->setDisabled(false);
-        if(unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest) //I think this is impied != 0 when not UseCaseSignalEventType, however I'm not sure of it and the check is cheap and prevents segfault lolol
+        if(destinationSlotToInvoke_OrZeroIfNoDest) //I think this is impied != 0 when not UseCaseSignalEventType, however I'm not sure of it and the check is cheap and prevents segfault lolol
         {
-            Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, unitOfExecutionContainingSlotToInvoke_OrZeroIfNoDest->designEqualsImplementationClassLifeLine()->designEqualsImplementationClass()->Slots)
+            Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, destinationSlotToInvoke_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()->designEqualsImplementationClass()->Slots)
             {
                 m_ExistingSlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
             }
@@ -133,7 +133,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     {
         if(!slotWithCurrentContext_OrZeroIfSourceIsActor) //hack that i put this here, it's where a segfault occured :)
         {
-            QMessageBox::information(this, tr("Error"), tr("Source must be connected/named/entered first")); //TODOreq: temp, i guess the source could be [defined as] just an "interface"
+            QMessageBox::information(this, tr("Error"), tr("Source must be connected/named/entered first")); //TODOreq: the source should be [defined as] just an unnamed-as-of-yet  "interface invocation" (the interface and the invocation upon it can both be nameless at any time, except when generating code (an auto-namer util could be used for those who can't be fucked TODOoptional))
             QMetaObject::invokeMethod(this, "reject", Qt::QueuedConnection);
             return;
         }

@@ -11,15 +11,19 @@
 
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassSignal;
+class DesignEqualsImplementationClassLifeLine;
 
 class DesignEqualsImplementationClassSlot : public QObject, public IDesignEqualsImplementationHaveOrderedListOfStatements, public IDesignEqualsImplementationMethod
 {
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassSlot(QObject *parent = 0);
+    explicit DesignEqualsImplementationClassSlot(DesignEqualsImplementationClassLifeLine *parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject, QObject *parent /*parent explicit only to remove ambiguity*/);
     virtual ~DesignEqualsImplementationClassSlot();
 
     //TODOoptional: private + getter/setter blah
+    void setParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject(DesignEqualsImplementationClassLifeLine *parentClassLifeLine);
+    DesignEqualsImplementationClassLifeLine* parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject() const;
     void setFinishedOrExitSignal(DesignEqualsImplementationClassSignal *finishedOrExitSignal, SignalEmissionOrSlotInvocationContextVariables finishedOrExitSignalEmissionContextVariables);
     DesignEqualsImplementationClassSignal *finishedOrExitSignal() const;
     SignalEmissionOrSlotInvocationContextVariables finishedOrExitSignalEmissionContextVariables() const;
@@ -27,6 +31,7 @@ public:
 
     virtual QObject *asQObject();
 private:
+    DesignEqualsImplementationClassLifeLine *m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView;
     DesignEqualsImplementationClassSignal *m_FinishedOrExitSignal;
     SignalEmissionOrSlotInvocationContextVariables m_ExitSignalEmissionContextVariables;
 signals:

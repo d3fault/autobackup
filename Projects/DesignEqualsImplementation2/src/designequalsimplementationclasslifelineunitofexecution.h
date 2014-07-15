@@ -1,6 +1,7 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTION_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTION_H
 
+#if 0
 #include <QObject>
 
 #include "designequalsimplementationusecase.h"
@@ -25,5 +26,6 @@ private:
 signals:
     void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
 };
+#endif
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTION_H

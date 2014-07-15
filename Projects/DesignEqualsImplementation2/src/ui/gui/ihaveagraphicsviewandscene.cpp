@@ -16,7 +16,7 @@ IHaveAGraphicsViewAndScene::IHaveAGraphicsViewAndScene(QGraphicsScene *graphicsS
     QVBoxLayout *myLayout = new QVBoxLayout();
     myLayout->setContentsMargins(DESIGNEQUALSIMPLEMENTATION_GUI_LAYOUT_CONTENT_MARGINS, DESIGNEQUALSIMPLEMENTATION_GUI_LAYOUT_CONTENT_MARGINS, DESIGNEQUALSIMPLEMENTATION_GUI_LAYOUT_CONTENT_MARGINS, DESIGNEQUALSIMPLEMENTATION_GUI_LAYOUT_CONTENT_MARGINS);
     m_GraphicsScene->setParent(this);
-    m_GraphicsScene->setSceneRect(QRectF(0, 0, 5000, 5000));
+    //m_GraphicsScene->setSceneRect(QRectF(0, 0, 5000, 5000));
     QGraphicsView *graphicsView = new QGraphicsView(m_GraphicsScene);
 #ifndef QT_NO_OPENGL //TODOoptional: perhaps a run-time switch for gl that is only available if open gl was available at compile time
     graphicsView->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));

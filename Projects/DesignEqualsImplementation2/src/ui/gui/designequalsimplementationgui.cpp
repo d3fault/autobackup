@@ -10,10 +10,14 @@
 DesignEqualsImplementationGui::DesignEqualsImplementationGui(QObject *parent)
     : QObject(parent)
 {
-    ObjectOnThreadGroup *objectOnThreadGroup = new ObjectOnThreadGroup(this);
+    /*ObjectOnThreadGroup *objectOnThreadGroup = new ObjectOnThreadGroup(this);
     objectOnThreadGroup->addObjectOnThread<DesignEqualsImplementation>("handleDesignEqualsImplementationReadyForConnections");
-    objectOnThreadGroup->doneAddingObjectsOnThreads();
+    objectOnThreadGroup->doneAddingObjectsOnThreads();*/
+
     m_Gui = new DesignEqualsImplementationMainWindow();
+
+    DesignEqualsImplementation *designEqualsImplementation = new DesignEqualsImplementation(this);
+    handleDesignEqualsImplementationReadyForConnections(designEqualsImplementation); //threading ended up making it dangerous until COW/etc is implemented. i got lazy with the mutexes and forgot a bunch of places i think
 }
 DesignEqualsImplementationGui::~DesignEqualsImplementationGui()
 {

@@ -1,6 +1,8 @@
 #include "designequalsimplementationclasslifelineunitofexecution.h"
 
 //Units of execution are the building blocks of use cases. Every use case has at least one unit of execution. I am now working on a UML Design mode where signals/slots are used exclusively, and every time a slot is invoked via invokeMethod or signal/slot, a new unit of execution is started (not necessarily, but we must assume so in order to be thread safe). In the future the UML designer could be "simple objects based" where "invoke a method" does not begin a unit of execution. That UML design mode would be completely independent of Qt, it would generate plain C/C++ objects, method calls, properties, etc. The two modes must be intertwined, noticed, and differentiable. For now though this higher level Qt-signals-slots code generator is still pretty valuable. The plain C++ object stuff is usually procedural by comparison (each slot makes is pretty much a single procedural "process"), so it wouldn't hurt too much to have to do it all in drop-down C++ mode (since it would probably require that anyways)
+
+#if 0 //Decided that a unit of execution is a slot, and that while a private method is also a unit of execution (usually less than one, but never more than one unless you're doing threading manually in C++ lol), it's UML design mode should be a different tab altogether
 DesignEqualsImplementationClassLifeLineUnitOfExecution::DesignEqualsImplementationClassLifeLineUnitOfExecution(DesignEqualsImplementationClassLifeLine *designEqualsImplementationClassLifeLine, QObject *parent)
     : QObject(parent)
     , m_MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution(0)
@@ -21,3 +23,4 @@ IDesignEqualsImplementationHaveOrderedListOfStatements *DesignEqualsImplementati
 {
     return m_MethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution;
 }
+#endif

@@ -1,0 +1,11 @@
+A signal-slot-activation is recorded in a use case because neither the signal nor slot know/care about the connection.
+vs.
+A slot invocation is recorded in the slot invoker because the slot invoker knows the object owning the slot being invoked.
+
+Finding a common ground for abstracting is proving to be challenging, but that is precisely why!
+
+
+The slot invoking another slot should still be shown in a use case, and was probably designed in one. In that case it will be a child dependency resolver that adds the object with the slot being invoked (not the entry point one) to the use case as a "child" (for now) of the object doing the invoking. Seems weird that I wouldn't be storing that info in the use case, especially since it provides a unit of execution thread safety guarantee just like the rest. I guess they are ultimately two pieces of the same puzzle. Different pieces, different shape, both needed and weirdly similar in a way I can't abstract from (yet?).
+
+
+Does then, the barSlot also have a signalslotinterface transparently generated when the Bar class lifeline is deleted from the... use case (could you see it otherwise?)?

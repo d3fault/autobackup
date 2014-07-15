@@ -10,7 +10,7 @@ class IDesignEqualsImplementationHaveOrderedListOfStatements
 {
 public:
     explicit IDesignEqualsImplementationHaveOrderedListOfStatements() { }
-    virtual ~IDesignEqualsImplementationHaveOrderedListOfStatements() { qDeleteAll(m_OrderedListOfStatements); }
+    virtual ~IDesignEqualsImplementationHaveOrderedListOfStatements() { /*TODOreq: ordered list of statements is copied from slot to slot, so need different memory management strategy qDeleteAll(m_OrderedListOfStatements);*/ }
 
     //TODOreq: getter/setter (signal emit)
     void insertStatementIntoOrderedListOfStatements(int indexToInsertInto_WhereZeroComesBeforeTheFirstEntryAndOneMeansAfterTheFirstEntryAndSoOn, IDesignEqualsImplementationStatement *statementToInsert);

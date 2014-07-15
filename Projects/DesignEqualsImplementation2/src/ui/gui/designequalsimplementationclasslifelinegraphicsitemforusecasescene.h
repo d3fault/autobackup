@@ -7,8 +7,9 @@
 #include <QPen>
 
 class DesignEqualsImplementationClassLifeLine;
-class DesignEqualsImplementationClassLifeLineUnitOfExecution;
-class DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene;
+class DesignEqualsImplementationClassSlot;
+//class DesignEqualsImplementationClassLifeLineUnitOfExecution;
+class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene;
 
 class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene : public QObject, public QGraphicsRectItem
 {
@@ -18,23 +19,24 @@ public:
     explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, const QRectF &rect, QObject *qobjectParent = 0, QGraphicsItem *graphicsItemParent = 0);
     explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, qreal x, qreal y, qreal w, qreal h, QObject *qobjectParent = 0, QGraphicsItem *graphicsItemParent = 0);
 
-    void repositionUnitsOfExecution();
+    void repositionSlotsBecauseOneSlotSizeChanged();
 
     DesignEqualsImplementationClassLifeLine *classLifeLine() const;
     //virtual QRectF boundingRect() const;
     //virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     virtual int type() const;
 private:
-    QList<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*> m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution;
-    QList<QGraphicsLineItem*> m_DottedLinesJustAboveEachUnitOfExecution;
+    QList<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*> m_SlotsInThisUseCase;
+    QList<QGraphicsLineItem*> m_DottedLinesJustAboveEachSlot;
     DesignEqualsImplementationClassLifeLine *m_DesignEqualsImplementationClassLifeLine;
     QRectF m_BoundingRect;
     QPen m_ClassBorderPen;
 
     void privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine);
-    void insertUnitOfExecutionGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution);
+    void insertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
 private slots:
-    void handleUnitOfExecutionInserted(int indexInsertedInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution);
+    void handleSlotInserted(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
+    void handleSlotGeometryChanged();
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEGRAPHICSITEMFORUSECASESCENE_H

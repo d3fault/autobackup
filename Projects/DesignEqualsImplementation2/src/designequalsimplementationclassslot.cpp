@@ -2,6 +2,8 @@
 
 #include <QDataStream>
 
+#include "designequalsimplementationclasslifeline.h"
+
 #define DesignEqualsImplementationClassSlot_QDS(qds, direction, slot) \
 qds direction slot.Name; \
 qds direction slot.Arguments; \
@@ -13,10 +15,31 @@ DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(QObject
     : QObject(parent)
     , IDesignEqualsImplementationHaveOrderedListOfStatements()
     , IDesignEqualsImplementationMethod()
+    , m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView(0)
     , m_FinishedOrExitSignal(0)
 { }
+DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(DesignEqualsImplementationClassLifeLine *parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView, QObject *parent)
+    : QObject(parent)
+    , IDesignEqualsImplementationHaveOrderedListOfStatements()
+    , IDesignEqualsImplementationMethod()
+    , m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView(parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView) //class lifeline tells us our variable name should we need it (as seen, we do). it also can/will tell us if we are a top level object or if we have a parent object that hasA us
+    , m_FinishedOrExitSignal(0)
+{
+    if(parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView)
+    {
+        ParentClass = parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView->designEqualsImplementationClass();
+    }
+}
 DesignEqualsImplementationClassSlot::~DesignEqualsImplementationClassSlot()
 { }
+void DesignEqualsImplementationClassSlot::setParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject(DesignEqualsImplementationClassLifeLine *parentClassLifeLine)
+{
+    m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView = parentClassLifeLine;
+}
+DesignEqualsImplementationClassLifeLine* DesignEqualsImplementationClassSlot::parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject() const
+{
+    return m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView;
+}
 void DesignEqualsImplementationClassSlot::setFinishedOrExitSignal(DesignEqualsImplementationClassSignal *finishedOrExitSignal, SignalEmissionOrSlotInvocationContextVariables exitSignalEmissionContextVariables)
 {
     m_FinishedOrExitSignal = finishedOrExitSignal;

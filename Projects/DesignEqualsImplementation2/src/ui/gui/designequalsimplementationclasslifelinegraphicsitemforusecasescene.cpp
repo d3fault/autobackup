@@ -45,7 +45,7 @@ int DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::type() c
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine)
 {
-    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
 
     m_DesignEqualsImplementationClassLifeLine = classLifeLine;
     setFlag(QGraphicsItem::ItemIsMovable, true);
@@ -75,31 +75,33 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     //classNameTextItem->setPos();
 
     int currentIndex = 0;
-    Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecution *currentUnitOfExecution, classLifeLine->unitsOfExecution())
+    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, classLifeLine->mySlots())
     {
-        insertUnitOfExecutionGraphicsItem(currentIndex++, currentUnitOfExecution);
+        insertSlotGraphicsItem(currentIndex++, currentSlot);
         //new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, this, unitOfExecutionRect, this);
     }
-    repositionUnitsOfExecution();
-    connect(classLifeLine, SIGNAL(unitOfExecutionInserted(int,DesignEqualsImplementationClassLifeLineUnitOfExecution*)), this, SLOT(handleUnitOfExecutionInserted(int,DesignEqualsImplementationClassLifeLineUnitOfExecution*)));
+    repositionSlotsBecauseOneSlotSizeChanged();
+    connect(classLifeLine, SIGNAL(slotInserted(int,DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotInserted(int,DesignEqualsImplementationClassSlot*)));
 }
-void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::insertUnitOfExecutionGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution)
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::insertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
-    m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution.insert(indexInsertedInto, new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(unitOfExecution, this, this));
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = new DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(slot, this);
+    connect(slotGraphicsItem, SIGNAL(geometryChanged()), this, SLOT(handleSlotGeometryChanged()));
+    m_SlotsInThisUseCase.insert(indexInsertedInto, slotGraphicsItem);
 }
 //TODOreq: in the future the "lines in between" lengths should be user stretchable and serializable, but for now to KISS they'll be fixed length (primarily, the unit of execution rect itself will auto-move (which will indirectly lengthen the line above it) or stretch, but it does make sense for the user to put it right where they want it vertically
 //TODOreq: unit of executions changing (insert/remove) ultimately triggers repositionUnitsOfExecution, because their positions depend on their sizes
-void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::repositionUnitsOfExecution() //TODOoptimization: an append would be much easier/faster, but I should get the essentials out of the way first
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::repositionSlotsBecauseOneSlotSizeChanged() //TODOoptimization: an append would be much easier/faster, but I should get the essentials out of the way first
 {
     //TODOreq: we don't control the unit of execution's SIZE, but we still want to position it based on it's rect's top y value.. but we can't just simply moveTop because that would mess up the dynamic sizing stuff within
 
     QPen dashedPen;
     dashedPen.setStyle(Qt::DotLine);
-    while(m_DottedLinesJustAboveEachUnitOfExecution.size() < m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution.size())
+    while(m_DottedLinesJustAboveEachSlot.size() < m_SlotsInThisUseCase.size())
     {
         QGraphicsLineItem *newLineItem = new QGraphicsLineItem(this);
         newLineItem->setLine(0, 0, 0, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP);
-        m_DottedLinesJustAboveEachUnitOfExecution.append(newLineItem);
+        m_DottedLinesJustAboveEachSlot.append(newLineItem);
         newLineItem->setPen(dashedPen);
     }
 
@@ -115,13 +117,13 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
     currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setX(rect().width()/2);
     currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(rect().bottom());
     int currentLineIndex = 0;
-    Q_FOREACH(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene *currentUnitOfExecutionGraphicsItem, m_DesignedOrderedButOnlySemiFlowOrderedUnitsOfExecution)
+    Q_FOREACH(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *currentUnitOfExecutionGraphicsItem, m_SlotsInThisUseCase)
     {
         //m_DottedLinesJustAboveEachUnitOfExecution.at(currentLineIndex++)->setLine(lineAboveUnitOfExecution); //TODOreq: drawing arrow to these dashed lines should behave just like drawing arrow to the class name box
         //QPointF dottedLinePos = bottomMiddleOfClassNameRect;
         //qreal dottedLineHalfHeight = (m_DottedLinesJustAboveEachUnitOfExecution.at(currentLineIndex)->line().length()/2);
         //dottedLinePos.setY(dottedLinePos.y() + dottedLineHalfHeight);
-        QGraphicsItem *currentLineItem = m_DottedLinesJustAboveEachUnitOfExecution.at(currentLineIndex++);
+        QGraphicsItem *currentLineItem = m_DottedLinesJustAboveEachSlot.at(currentLineIndex++);
         currentLineItem->setPos(currentTopMiddlePointOfDottedLineAboveUnitOfExecution);
 
         /*QPointF topLeftOfUnitOfExecutionRect(bottomOfLifeLine.x()-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, bottomOfLifeLine.y());
@@ -147,11 +149,15 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
 #endif
     }
 }
-void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleUnitOfExecutionInserted(int indexInsertedInto, DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution)
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotInserted(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
     //make the graphics item, add it as child, and reposition (NOPE: for now just append, but i might need layouts or something in order to do inserts)
-    insertUnitOfExecutionGraphicsItem(indexInsertedInto, unitOfExecution);
-    repositionUnitsOfExecution();
+    insertSlotGraphicsItem(indexInsertedInto, slot);
+    repositionSlotsBecauseOneSlotSizeChanged();
+}
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotGeometryChanged()
+{
+    repositionSlotsBecauseOneSlotSizeChanged();
 }
 #if 0
 QRectF DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::boundingRect() const

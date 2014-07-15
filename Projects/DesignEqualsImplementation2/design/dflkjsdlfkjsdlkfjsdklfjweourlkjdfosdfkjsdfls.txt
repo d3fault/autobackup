@@ -1,0 +1,16 @@
+1) Classes, aside from normal stuff, implement interfaces that they implicitly define when build + used in use cases
+
+2) use cases record a series of signal-slot-activations (any of the 3) and "lifetime + connection" of the objects involved. they do it using an interface "this use case needs a slot-entry-point with a type QVideoFrame signal that emits a type QVideoFrame (the names are irrelevant to signals/slots). It' signal (the interface should steal the implementation's signal name since it's what is usually being defined at the same time! it can be genericized later) is used as the slot-entry-point for a slot on another object that accepts a QVideoFrame. Both classes use the auto interface generation, allowing either of them to be removed from the use case without the use case itself ceasing to exist
+
+3) projects contain use cases and supplies each use case with a set of interface implementations (the ones the use case requires (compilation error if none can be found (*cough* service framework *cough*)))
+
+
+An interface is generated per unit of execution (ex: per slot invoke (the entire body of it) and if he emits a signal or invokes a slot, that would be a new unit of execution and therefore a new interface). The interfaces COULD be combined so that classes try to come together to form less interfaces (unrelated use cases happen to use the same classes), BUT my instincts tell me that that is dumb and I should stick with interfaces-everywhere. Interfaces should be cheap/throw-away, but never throw-away-able to the point where they can't be regenerated perfectly again. That is to say, their very existence is transparent to the user, EXCEPT WHEN the user is explicitly using an interface (since they are of great design value).
+
+NOPE'ish: The two differing uses of interfaces in the above paragraph do exist, but both uses of them use interfaces in the proper/correct/regular way, so for that reason they don't need actual differentiating... they'll just be referenced from 2 entirely unrelated places in code. 1 = a regular interface for a class. an abstract class. 2 = the remnants of a deleted class lifeline in a unit of execution (transparent ghostly, perhaps somehow emphasizing the arg TYPES instead of names). As you see, the second usage is different. The class that was deleted is not providing it's full interface (should it implement one (fuck yea multiple inheritence btw)) in it's transparent-ghostly-remains after being deleted from the use case. ONLY it's involved signals + slots is used to generate an interface (yes the names are jacked, but the types are the most important because it's not a REAL pure virtual implement (oh shit then they ARE NOT regular interfaces after all!!!)
+
+The transparent-ghostly-auto-generated-interfaces can't use pure virtuals because because it's only the slot/signal count and TYPE-MATCHING that matters, not the slot/signal NAMES as pure virtuals require. So I should make up a new name for those different kind of interfaces. ISignalSlotInterface (making THAT a real interface just sounds too confusing...)
+...SignalSlotInterface
+...TypeImportantSignalSlotInterface
+
+It's worth noting that like pure virtuals (though designEquals app enforced), the signal slot interface must be fully populated before code can be generated.

@@ -1,0 +1,14 @@
+Arrows
+
+3 kinds:
+a) signal emit [with no listener at time of design]
+b) slot invoke (invoker must have variable-name/instance(ptr-works) of target. parent/child relationship typically)
+c) signal-emit->slot-invoke (invoker needn't have variable-name/instance of target. sibling or modular(+er?) design typically)
+
+slot invoke is used when target info can be determined (but signal can be easily generatable at the same time), signal emission FORCED when target info can not be determined (unless a ptr to the target is JIT-transparently-designed-in when the user attempts that I suppose (a dialog asking (and telling of the changes) would be best))
+
+(c) also functions as a pseudo-single-line. figuring out it's internal representation is key to the design. a slot invoke is part of the class that owns the slot. a signal emit likewise [belongs to the body of a slot]. but a signal-slot connection and activation is recorded in a use case only
+
+a use case does in effect show the bodies of slots quasi-linearly and how they are communicating with each other in that use case. there is overlap in that when taking the use case out of the equation, you could still look at the "use case entry point slot" (by looking at the class it belongs to) and see a lot of the same thing. The difference is that signals would simply be emitted in the class-diagram/slot view, whereas the use case will show the signal->slot connectionActivation. (because it will have defined them). Still what I am getting at is the underlying "statement" type is the main element in both views. The use case view is just able to link units of executions (thread safe (if used properly) independent chunks of code)
+
+^Actually I'm not so sure I want to be able to show a slot by itself when viewing a class's contents. Instead, I should show a list of use cases that the slot is associated in. I could OPTIONALLY/additionally show the slot by itself, but that should come later because it's more work

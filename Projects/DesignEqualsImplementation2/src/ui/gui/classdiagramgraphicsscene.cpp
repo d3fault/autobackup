@@ -53,7 +53,7 @@ bool ClassDiagramGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *e
 }
 void ClassDiagramGraphicsScene::handleClassAdded(DesignEqualsImplementationClass *classAdded)
 {
-    QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
+    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
 
     DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene *designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene = new DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(classAdded); //scene takes ownership at addItem
     designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene->setPos(classAdded->Position);
