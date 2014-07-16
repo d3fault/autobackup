@@ -1,0 +1,1 @@
+find where the class lifeline is created. ensure that an instance or zero really is specified. also make sure use case has proper list of class lifelines

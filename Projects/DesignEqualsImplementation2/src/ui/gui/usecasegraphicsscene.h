@@ -7,7 +7,7 @@
 #include "../../designequalsimplementationusecase.h"
 
 class DesignEqualsImplementationClass;
-class HasA_Private_Classes_Members_ListEntryType;
+class DesignEqualsImplementationClassInstance;
 class DesignEqualsImplementationClassLifeLine;
 class SignalSlotConnectionActivationArrowForGraphicsScene;
 class SnappingIndicationVisualRepresentation;
@@ -45,7 +45,7 @@ private:
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void addActorToUseCaseRequsted(QPointF position);
-    void addClassToUseCaseRequested(DesignEqualsImplementationClass *classToAdd, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position);
+    void addClassToUseCaseRequested(DesignEqualsImplementationClass *classToAdd, DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position);
     void insertSlotInvocationUseCaseEventRequested(int indexToInsertStatementAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *slot, SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables);
     void insertSignalSlotActivationUseCaseEventRequested(int indexToInsertStatementAt, DesignEqualsImplementationClassSlot *sourceSlotToPutEmitStatementIn_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *signal, DesignEqualsImplementationClassSlot *destinationSlot, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
     void insertSignalEmissionUseCaseEventRequested(int indexToInsertStatementAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *signal, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);

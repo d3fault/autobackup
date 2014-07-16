@@ -1,0 +1,1 @@
+Class lifeline is the use case's entry point to all classes, because it defines a class instance and a class.

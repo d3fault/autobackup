@@ -20,7 +20,7 @@ private:
     QPen m_LinesInBetweenLinesOfTextPen;
 public slots:
     void handlePropertyAdded(DesignEqualsImplementationClassProperty*);
-    void handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Members_ListEntryType);
+    void handleHasAPrivateMemberClassAdded(DesignEqualsImplementationClassInstance);
     void handlePrivateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void handleSlotAdded(DesignEqualsImplementationClassSlot*);
     void handleSignalAdded(DesignEqualsImplementationClassSignal*);

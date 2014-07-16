@@ -1,0 +1,8 @@
+Use case keeps track of list of class lifelines (and implicitly their parent/child heirarchies (hasA etc)), and additionally an entry point slot, which is on one of those class lifelines.
+Class lifelines are class instances project wide, but there is one per use case whenever > 0 slots on the class show up in a use case.
+Class lifelines don't know it, but they contain use cases. The use case contains a pointer to a slot-entry-point that is referenced in the class lifeline like any other, and from there the slot's statements are simply iterated like normal.
+A signal-slot-activation is stored in a use case: it's a pointer to a class lifeline, then a pointer to a slot appearing in that class lifeline, then an index into the ordered list of statements -- which, btw, must be a signal emit. Finally, it records the slot(s?) to invoke.
+
+I think I might be making it more confusing than it should be by getting class lifeline involved: maybe class lifelines are just a visual thing generated on demand and nothing more. Still, need to store "instance" information (such as VariableName) somewhere! O rite I'm storing it right in slot now xD.. except that doesn't scale for shit -_-
+
+I need to figure out the memory representation of use cases before trying to code any further

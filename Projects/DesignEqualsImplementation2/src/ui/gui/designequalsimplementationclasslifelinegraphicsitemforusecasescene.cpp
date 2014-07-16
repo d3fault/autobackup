@@ -54,9 +54,9 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     m_ClassBorderPen.setWidth(2);
 
     QString lifeLineTitleHtml("<b>"); //TODOreq: only the ClassName/Type should be bold
-    if(classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
+    if(classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_ParentClassThatHasMe_OrZeroIfTopLevelObject)
     {
-        lifeLineTitleHtml += classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_DesignEqualsImplementationClass->ClassName + "</b>" + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_DesignEqualsImplementationClassThatHasMe->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
+        lifeLineTitleHtml += classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_MyClass->ClassName + "</b>" + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_ParentClassThatHasMe_OrZeroIfTopLevelObject->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
     }
     else
     {
@@ -80,13 +80,14 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     while(slotsReferenceCountIterator.hasNext())
     {
         slotsReferenceCountIterator.next();
-        insertSlotGraphicsItem(currentIndex++, slotsReferenceCountIterator.key());
+        createAndInsertSlotGraphicsItem(currentIndex++, slotsReferenceCountIterator.key());
         //new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, this, unitOfExecutionRect, this);
     }
-    repositionSlotsBecauseOneSlotSizeChanged();
+    repositionSlotsBecauseOneSlotsChanged();
     connect(classLifeLine, SIGNAL(slotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotReferencedInClassLifeLine(int,DesignEqualsImplementationClassSlot*)));
+    connect(classLifeLine, SIGNAL(slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)));
 }
-void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::insertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = new DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(slot, this);
     connect(slotGraphicsItem, SIGNAL(geometryChanged()), this, SLOT(handleSlotGeometryChanged()));
@@ -94,7 +95,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::insertS
 }
 //TODOreq: in the future the "lines in between" lengths should be user stretchable and serializable, but for now to KISS they'll be fixed length (primarily, the unit of execution rect itself will auto-move (which will indirectly lengthen the line above it) or stretch, but it does make sense for the user to put it right where they want it vertically
 //TODOreq: unit of executions changing (insert/remove) ultimately triggers repositionUnitsOfExecution, because their positions depend on their sizes
-void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::repositionSlotsBecauseOneSlotSizeChanged() //TODOoptimization: an append would be much easier/faster, but I should get the essentials out of the way first
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::repositionSlotsBecauseOneSlotsChanged() //TODOoptimization: an append would be much easier/faster, but I should get the essentials out of the way first
 {
     //TODOreq: we don't control the unit of execution's SIZE, but we still want to position it based on it's rect's top y value.. but we can't just simply moveTop because that would mess up the dynamic sizing stuff within
 
@@ -154,13 +155,26 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot *slot)
 {
-    //make the graphics item, add it as child, and reposition (NOPE: for now just append, but i might need layouts or something in order to do inserts)
-    insertSlotGraphicsItem(m_SlotsInThisClassLifeLine.size(), slot);
-    repositionSlotsBecauseOneSlotSizeChanged();
+    //make the graphics item, add it as child, and reposition
+    createAndInsertSlotGraphicsItem(m_SlotsInThisClassLifeLine.size(), slot);
+    repositionSlotsBecauseOneSlotsChanged();
+}
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved)
+{
+    QMutableListIterator<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*> slotGraphicsItemIterator(m_SlotsInThisClassLifeLine);
+    while(slotGraphicsItemIterator.hasNext())
+    {
+        DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = slotGraphicsItemIterator.next();
+        if(slotGraphicsItem->underlyingSlot() == slotRemoved)
+        {
+            slotGraphicsItemIterator.remove();
+            delete slotGraphicsItem;
+        }
+    }
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotGeometryChanged()
 {
-    repositionSlotsBecauseOneSlotSizeChanged();
+    repositionSlotsBecauseOneSlotsChanged();
 }
 #if 0
 QRectF DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::boundingRect() const

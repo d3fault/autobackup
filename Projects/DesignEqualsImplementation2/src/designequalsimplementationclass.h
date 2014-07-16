@@ -15,7 +15,7 @@
 
 //typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_Private_Classes_Members_ListEntryType;
 
-class HasA_Private_Classes_Members_ListEntryType;
+class DesignEqualsImplementationClassInstance;
 class HasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
 
 class DesignEqualsImplementationClass : public QObject, public IDesignEqualsImplementationVisuallyRepresentedItem
@@ -29,7 +29,7 @@ public:
     //TODOoptional: private + getter/setter blah
     QString ClassName;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    QList<HasA_Private_Classes_Members_ListEntryType*> HasA_Private_Classes_Members;
+    QList<DesignEqualsImplementationClassInstance*> HasA_Private_Classes_Members;
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> HasA_Private_PODorNonDesignedCpp_Members;
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSlot*> Slots;
@@ -40,7 +40,7 @@ public:
     QString headerFilenameOnly();
 signals:
     void propertyAdded(DesignEqualsImplementationClassProperty*);
-    void hasAPrivateMemberClassAdded(HasA_Private_Classes_Members_ListEntryType); //declare meta type?
+    void hasAPrivateMemberClassAdded(DesignEqualsImplementationClassInstance); //declare meta type?
     void privateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void slotAdded(DesignEqualsImplementationClassSlot*);
     void signalAdded(DesignEqualsImplementationClassSignal*);
@@ -55,24 +55,26 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&desig
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClass*)
 
-class HasA_Private_Classes_Members_ListEntryType : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
+class DesignEqualsImplementationClassInstance : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
 {
 public:
-    explicit HasA_Private_Classes_Members_ListEntryType() : IHaveTypeAndVariableNameAndPreferredTextualRepresentation() { }
-    explicit HasA_Private_Classes_Members_ListEntryType(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClass *designEqualsImplementationClassThatHasMe, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_DesignEqualsImplementationClass(designEqualsImplementationClass), m_DesignEqualsImplementationClassThatHasMe(designEqualsImplementationClassThatHasMe) { }
-    virtual ~HasA_Private_Classes_Members_ListEntryType() { }
+    explicit DesignEqualsImplementationClassInstance() : IHaveTypeAndVariableNameAndPreferredTextualRepresentation() { }
+    explicit DesignEqualsImplementationClassInstance(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClass *parentClassThatHasMe, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_MyClass(designEqualsImplementationClass), m_ParentClassThatHasMe_OrZeroIfTopLevelObject(parentClassThatHasMe) { }
+    virtual ~DesignEqualsImplementationClassInstance() { }
     virtual QString typeString()
     {
-        return m_DesignEqualsImplementationClass->ClassName + " *";
+        return m_MyClass->ClassName + " *";
     }
 
-    DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
-    DesignEqualsImplementationClass *m_DesignEqualsImplementationClassThatHasMe;
+    DesignEqualsImplementationClass *m_MyClass;
+    DesignEqualsImplementationClass *m_ParentClassThatHasMe_OrZeroIfTopLevelObject;
 };
-QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Members_ListEntryType &hasA_Private_Classes_Members_ListEntryType);
-QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Members_ListEntryType &hasA_Private_Classes_Members_ListEntryType);
-QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Members_ListEntryType *&hasA_Private_Classes_Members_ListEntryType);
-QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Members_ListEntryType *&hasA_Private_Classes_Members_ListEntryType);
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassInstance &hasA_Private_Classes_Members_ListEntryType);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassInstance &hasA_Private_Classes_Members_ListEntryType);
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassInstance *&hasA_Private_Classes_Members_ListEntryType);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassInstance *&hasA_Private_Classes_Members_ListEntryType);
+
+Q_DECLARE_METATYPE(DesignEqualsImplementationClassInstance*)
 
 class HasA_Private_PODorNonDesignedCpp_Members_ListEntryType : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
 {

@@ -19,7 +19,7 @@ public:
     explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, const QRectF &rect, QObject *qobjectParent = 0, QGraphicsItem *graphicsItemParent = 0);
     explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, qreal x, qreal y, qreal w, qreal h, QObject *qobjectParent = 0, QGraphicsItem *graphicsItemParent = 0);
 
-    void repositionSlotsBecauseOneSlotSizeChanged();
+    void repositionSlotsBecauseOneSlotsChanged();
 
     DesignEqualsImplementationClassLifeLine *classLifeLine() const;
     //virtual QRectF boundingRect() const;
@@ -33,9 +33,10 @@ private:
     QPen m_ClassBorderPen;
 
     void privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine);
-    void insertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
+    void createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
 private slots:
     void handleSlotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot *slot);
+    void handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
     void handleSlotGeometryChanged();
 };
 

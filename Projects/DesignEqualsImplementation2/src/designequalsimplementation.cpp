@@ -284,6 +284,8 @@ void DesignEqualsImplementation::newProject()
     fooClass->Slots.append(handleBarSignal);
     handleBarSignal->ParentClass = fooClass;
 
+    DesignEqualsImplementationClassInstance *fooClassInstance = testProject->createTopLevelClassInstances(fooClass);
+
     //Bar
     DesignEqualsImplementationClass *barClass = new DesignEqualsImplementationClass(testProject);
     barClass->ClassName = "Bar";
@@ -320,7 +322,7 @@ void DesignEqualsImplementation::newProject()
     barClass->Signals.append(barSignal);
 
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");
-    fooClass->HasA_Private_Classes_Members.append(new HasA_Private_Classes_Members_ListEntryType(barClass, fooClass, userChosenVariableNameForFoosInstanceOfBar));
+    fooClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(barClass, fooClass/*fooClassInstance*/, userChosenVariableNameForFoosInstanceOfBar));
 
     //Zed
     DesignEqualsImplementationClass *zedClass = new DesignEqualsImplementationClass(testProject);
@@ -335,7 +337,7 @@ void DesignEqualsImplementation::newProject()
     zedSlot->ParentClass = zedClass;
 
     QString userChosenVariableNameForBarsInstanceOfZed("m_Zed");
-    barClass->HasA_Private_Classes_Members.append(new HasA_Private_Classes_Members_ListEntryType(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
+    barClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
 
     testProject->addClass(fooClass);
     testProject->addClass(barClass);

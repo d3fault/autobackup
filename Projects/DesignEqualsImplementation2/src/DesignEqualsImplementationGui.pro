@@ -49,7 +49,8 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/signalslotmessagedialog.cpp \
     ui/gui/snappingindicationvisualrepresentation.cpp \
     idesignequalsimplementationhaveorderedlistofstatements.cpp \
-    designequalsimplementationsignalslotinterface.cpp
+    designequalsimplementationsignalslotinterface.cpp \
+    ui/gui/classinstancechooserdialog.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -91,6 +92,7 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ihavetypeandvariablenameandpreferredtextualrepresentation.h \
     ui/gui/signalslotmessagedialog.h \
     ui/gui/snappingindicationvisualrepresentation.h \
-    designequalsimplementationsignalslotinterface.h
+    designequalsimplementationsignalslotinterface.h \
+    ui/gui/classinstancechooserdialog.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)
