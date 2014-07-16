@@ -249,103 +249,51 @@ void DesignEqualsImplementation::newProject()
     testProject->Name = "TestProject";
 
     //Foo
-    DesignEqualsImplementationClass *fooClass = new DesignEqualsImplementationClass(testProject);
-    fooClass->ClassName = "Foo";
-    DesignEqualsImplementationClassSlot *fooSlot = new DesignEqualsImplementationClassSlot(fooClass);
-    fooSlot->Name = "fooSlot";
-    DesignEqualsImplementationClassMethodArgument *fooSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(fooSlot);
-    fooSlotCuntArgument->VariableName = "cunt";
-    fooSlotCuntArgument->Type = "const QString &";
-    fooSlot->Arguments.append(fooSlotCuntArgument);
-    fooClass->Slots.append(fooSlot);
-    fooSlot->ParentClass = fooClass;
+    DesignEqualsImplementationClass *fooClass = testProject->createNewClass("Foo");
+    DesignEqualsImplementationClassSlot *fooSlot = fooClass->createwNewSlot("fooSlot");
+    DesignEqualsImplementationClassMethodArgument *fooSlotCuntArgument = fooSlot->createNewArgument("const QString &", "cunt");
 
-    DesignEqualsImplementationClassSignal *diagnosticSignalX = new DesignEqualsImplementationClassSignal(fooClass);
-    diagnosticSignalX->Name = "diagnosticSignalX";
-    fooClass->Signals.append(diagnosticSignalX);
+    DesignEqualsImplementationClassSignal *diagnosticSignalX = fooClass->createNewSignal("diagnosticSignalX");
 
     //fooSignal
-    DesignEqualsImplementationClassSignal *fooSignal = new DesignEqualsImplementationClassSignal(fooClass);
-    fooSignal->Name = "fooSignal";
-    DesignEqualsImplementationClassMethodArgument *fooSignalSuccessArgument = new DesignEqualsImplementationClassMethodArgument(fooSignal);
-    fooSignalSuccessArgument->VariableName = "success";
-    fooSignalSuccessArgument->Type = "bool";
-    fooSignal->Arguments.append(fooSignalSuccessArgument);
-    fooSignal->ParentClass = fooClass;
-    fooClass->Signals.append(fooSignal);
+    DesignEqualsImplementationClassSignal *fooSignal = fooClass->createNewSignal("fooSignal");
+    DesignEqualsImplementationClassMethodArgument *fooSignalSuccessArgument = fooSignal->createNewArgument("bool", "success");
 
     //handleBarSignal -- would be auto-generated ideally, but for now I just want to be able to test with it already there
-    DesignEqualsImplementationClassSlot *handleBarSignal = new DesignEqualsImplementationClassSlot(fooClass);
-    handleBarSignal->Name = "handleBarSignal";
-    DesignEqualsImplementationClassMethodArgument *handleBarSignalSuccessArgument = new DesignEqualsImplementationClassMethodArgument(handleBarSignal);
-    handleBarSignalSuccessArgument->VariableName = "success";
-    handleBarSignalSuccessArgument->Type = "bool";
-    handleBarSignal->Arguments.append(handleBarSignalSuccessArgument);
-    fooClass->Slots.append(handleBarSignal);
-    handleBarSignal->ParentClass = fooClass;
+    DesignEqualsImplementationClassSlot *handleBarSignal = fooClass->createwNewSlot("handleBarSignal");
+    DesignEqualsImplementationClassMethodArgument *handleBarSignalSuccessArgument = handleBarSignal->createNewArgument("bool", "success");
 
     //DesignEqualsImplementationClassInstance *fooClassInstance = testProject->createTopLevelClassInstances(fooClass);
 
     //Bar
-    DesignEqualsImplementationClass *barClass = new DesignEqualsImplementationClass(testProject);
-    barClass->ClassName = "Bar";
-    DesignEqualsImplementationClassSlot *barSlot = new DesignEqualsImplementationClassSlot(barClass);
-    barSlot->Name = "barSlot";
-    DesignEqualsImplementationClassMethodArgument *barSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(barSlot);
-    barSlotCuntArgument->VariableName = "cunt";
-    barSlotCuntArgument->Type = "const QString &";
-    barSlot->Arguments.append(barSlotCuntArgument);
-    barClass->Slots.append(barSlot);
-    barSlot->ParentClass = barClass;
+    DesignEqualsImplementationClass *barClass = testProject->createNewClass("Bar");
+    DesignEqualsImplementationClassSlot *barSlot = barClass->createwNewSlot("barSlot");
+    DesignEqualsImplementationClassMethodArgument *barSlotCuntArgument = barSlot->createNewArgument("const QString &", "cunt");
 
-    DesignEqualsImplementationClassSlot *barSlot1 = new DesignEqualsImplementationClassSlot(barClass);
-    barSlot1->Name = "barSlot1";
-    barClass->Slots.append(barSlot1);
-    barSlot1->ParentClass = barClass;
-    DesignEqualsImplementationClassSlot *barSlot2 = new DesignEqualsImplementationClassSlot(barClass);
-    barSlot2->Name = "barSlot2";
-    barClass->Slots.append(barSlot2);
-    barSlot2->ParentClass = barClass;
+    DesignEqualsImplementationClassSlot *barSlot1 = barClass->createwNewSlot("barSlot1");
+    DesignEqualsImplementationClassSlot *barSlot2 = barClass->createwNewSlot("barSlot2");
 
     //bool Bar::m_Success -- HACK'ish: need something to satisfy barSignal's success arg
-    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *successPodMember = new HasA_Private_PODorNonDesignedCpp_Members_ListEntryType("bool", "m_Success");
-    barClass->HasA_Private_PODorNonDesignedCpp_Members.append(successPodMember);
+    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *successPodMember = barClass->createNewHasAPrivate_PODorNonDesignedCpp_Member("bool", "m_Success");
 
     //barSignal
-    DesignEqualsImplementationClassSignal *barSignal = new DesignEqualsImplementationClassSignal(barClass);
-    barSignal->Name = "barSignal";
-    DesignEqualsImplementationClassMethodArgument *barSignalSuccessArgument = new DesignEqualsImplementationClassMethodArgument(barSignal);
-    barSignalSuccessArgument->VariableName = "success";
-    barSignalSuccessArgument->Type = "bool";
-    barSignal->Arguments.append(barSignalSuccessArgument);
-    barSignal->ParentClass = barClass;
-    barClass->Signals.append(barSignal);
+    DesignEqualsImplementationClassSignal *barSignal = barClass->createNewSignal("barSignal");
+    DesignEqualsImplementationClassMethodArgument *barSignalSuccessArgument = barSignal->createNewArgument("bool", "success");
 
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar"); //TODOreq: i imagine these are set elsewhere (maybe i response to a user event. as in, they name it (imagine that))
-    fooClass->addHasA_Private_Classes_Member(barClass, userChosenVariableNameForFoosInstanceOfBar);
+    fooClass->createHasA_Private_Classes_Member(barClass, userChosenVariableNameForFoosInstanceOfBar);
     //fooClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(barClass, fooClass/*fooClassInstance*/, userChosenVariableNameForFoosInstanceOfBar));
 
     //Zed
-    DesignEqualsImplementationClass *zedClass = new DesignEqualsImplementationClass(testProject);
-    zedClass->ClassName = "Zed"; //Zed's dead baby
-    DesignEqualsImplementationClassSlot *zedSlot = new DesignEqualsImplementationClassSlot(zedClass);
-    zedSlot->Name = "zedSlot";
-    DesignEqualsImplementationClassMethodArgument *zedSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(zedSlot);
-    zedSlotCuntArgument->VariableName = "cunt";
-    zedSlotCuntArgument->Type = "const QString &";
-    zedSlot->Arguments.append(zedSlotCuntArgument);
-    zedClass->Slots.append(zedSlot);
-    zedSlot->ParentClass = zedClass;
+    DesignEqualsImplementationClass *zedClass = testProject->createNewClass("Zed");
+    DesignEqualsImplementationClassSlot *zedSlot = zedClass->createwNewSlot("zedSlot");
+    DesignEqualsImplementationClassMethodArgument *zedSlotCuntArgument = zedSlot->createNewArgument("const QString &", "cunt");
 
     QString userChosenVariableNameForBarsInstanceOfZed("m_Zed");
-    barClass->addHasA_Private_Classes_Member(zedClass, userChosenVariableNameForBarsInstanceOfZed);
+    barClass->createHasA_Private_Classes_Member(zedClass, userChosenVariableNameForBarsInstanceOfZed);
     //barClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
 
-    testProject->addClass(fooClass);
-    testProject->addClass(barClass);
-    testProject->addClass(zedClass);
-
-    m_CurrentlyOpenedDesignEqualsImplementationProjects.append(testProject);
+    m_CurrentlyOpenedDesignEqualsImplementationProjects.append(testProject); //could do this->createProject, but then wouldn't be able to populate it before emitting it as opened lawl (or i guess i could)
     emit projectOpened(testProject);
 #else
     DesignEqualsImplementationProject *newProject = new DesignEqualsImplementationProject(this);

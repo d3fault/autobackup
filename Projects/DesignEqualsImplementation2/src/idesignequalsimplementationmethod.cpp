@@ -4,7 +4,19 @@ IDesignEqualsImplementationMethod::IDesignEqualsImplementationMethod()
 { }
 IDesignEqualsImplementationMethod::~IDesignEqualsImplementationMethod()
 {
-    qDeleteAll(Arguments);
+    qDeleteAll(m_Arguments);
+}
+DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::createNewArgument(const QString &argumentType, const QString &argumentVariableName)
+{
+    DesignEqualsImplementationClassMethodArgument *newArgument = new DesignEqualsImplementationClassMethodArgument(); //TODOreq: can't set parent because i'm not a qobject even though all inheriters are
+    newArgument->Type = argumentType;
+    newArgument->VariableName = argumentVariableName;
+    m_Arguments.append(newArgument);
+    return newArgument;
+}
+QList<DesignEqualsImplementationClassMethodArgument *> IDesignEqualsImplementationMethod::arguments()
+{
+    return m_Arguments;
 }
 QString IDesignEqualsImplementationMethod::methodSignatureWithoutReturnType()
 {
@@ -15,7 +27,7 @@ QString IDesignEqualsImplementationMethod::argumentsToCommaSeparatedString()
 {
     QString argString;
     bool firstArg = true;
-    Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentArgument, Arguments)
+    Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentArgument, arguments())
     {
         if(!firstArg)
             argString.append(", ");

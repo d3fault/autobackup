@@ -116,7 +116,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         newSlotAndExistingSlotsWidget->setDisabled(false);
         if(destinationSlotToInvoke_OrZeroIfNoDest) //I think this is impied != 0 when not UseCaseSignalEventType, however I'm not sure of it and the check is cheap and prevents segfault lolol
         {
-            Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, destinationSlotToInvoke_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()->designEqualsImplementationClass()->Slots)
+            Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, destinationSlotToInvoke_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()->designEqualsImplementationClass()->mySlots())
             {
                 m_ExistingSlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
             }
@@ -137,14 +137,14 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
             QMetaObject::invokeMethod(this, "reject", Qt::QueuedConnection);
             return;
         }
-        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, sourceSlot_OrZeroIfSourceIsActor->ParentClass->Signals)
+        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, sourceSlot_OrZeroIfSourceIsActor->ParentClass->mySignals())
         {
             m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
         }
 
         //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments
         //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->Arguments)
+        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->arguments())
         {
             m_VariablesAvailableToSatisfyArgs.append(currentArg);
         }
@@ -153,7 +153,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         {
             m_VariablesAvailableToSatisfyArgs.append(currentHasAClass);
         }
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAPod, sourceSlot_OrZeroIfSourceIsActor->ParentClass->HasA_Private_PODorNonDesignedCpp_Members)
+        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAPod, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_PODorNonDesignedCpp_Members())
         {
             m_VariablesAvailableToSatisfyArgs.append(currentHasAPod);
         }
@@ -220,7 +220,7 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
         delete m_SignalArgsFillingInWidget;
         m_SignalArgsFillingInWidget = 0;
     }
-    if(m_SignalToEmit->Arguments.isEmpty())
+    if(m_SignalToEmit->arguments().isEmpty())
     {
         if(!m_SlotToInvoke)
             m_OkButton->setDisabled(false); //signal emit with no listeners
@@ -230,7 +230,7 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
     m_SignalArgsFillingInWidget = new QWidget();
     QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
     argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SignalToEmit->Name), 0, Qt::AlignLeft);
-    Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SignalToEmit->Arguments)
+    Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SignalToEmit->arguments())
     {
         QHBoxLayout *currentArgRow = new QHBoxLayout();
         currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentation()));
@@ -280,7 +280,7 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
         delete m_SlotArgsFillingInWidget;
         m_SlotArgsFillingInWidget = 0;
     }
-    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0 && m_SlotToInvoke->Arguments.isEmpty())
+    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0 && m_SlotToInvoke->arguments().isEmpty())
     {
         return;
     }
@@ -290,7 +290,7 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
         m_SlotArgsFillingInWidget = new QWidget();
         QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
         argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SlotToInvoke->Name), 0, Qt::AlignLeft);
-        Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SlotToInvoke->Arguments)
+        Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SlotToInvoke->arguments())
         {
             QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
             currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentation()));
@@ -344,13 +344,13 @@ bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
         if(m_ExistingSignalsComboBox->currentIndex() != 0 && m_ExistingSlotsComboBox->currentIndex() != 0)
         {
             //TODOreq: verify signal/slot arg compatibility, return true if checks out (TODOoptional: highlight in red the slot so they know it's not the arg satisfiers)
-            if(m_SignalToEmit->Arguments.size() < m_SlotToInvoke->Arguments.size())
+            if(m_SignalToEmit->arguments().size() < m_SlotToInvoke->arguments().size())
                 return false;
             int currentArgIndex = 0;
-            Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentSlotArgument, m_SlotToInvoke->Arguments)
+            Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentSlotArgument, m_SlotToInvoke->arguments())
             {
                 const QByteArray &slotArgTypeCstr = currentSlotArgument->typeString().toUtf8();
-                const QByteArray &signalArgTypeCstr = m_SignalToEmit->Arguments.at(currentArgIndex++)->typeString().toUtf8();
+                const QByteArray &signalArgTypeCstr = m_SignalToEmit->arguments().at(currentArgIndex++)->typeString().toUtf8();
                 if(QMetaObject::normalizedType(slotArgTypeCstr.constData()) != QMetaObject::normalizedType(signalArgTypeCstr.constData())) //TODOoptional: maybe QMetaObject::checkConnectArgs handles inheritence stuff for me? I might need to register the to-be-generated types at runtime for it to work?
                 {
                     return false;

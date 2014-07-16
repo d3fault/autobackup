@@ -28,15 +28,22 @@ public:
     bool generateSourceCode(const QString &destinationDirectoryPath);
     virtual ~DesignEqualsImplementationClass();
 
+    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *createNewHasAPrivate_PODorNonDesignedCpp_Member(const QString &typeString = QString(), const QString &variableName = QString());
+
+    DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString());
+
+    DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString());
+    void addSlot(DesignEqualsImplementationClassSlot *slotToAdd);
+
     //TODOoptional: private + getter/setter blah
     QString ClassName;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    DesignEqualsImplementationClassInstance* addHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);
+    DesignEqualsImplementationClassInstance* createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);
     QList<DesignEqualsImplementationClassInstance*> hasA_Private_Classes_Members();
-    QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> HasA_Private_PODorNonDesignedCpp_Members;
+    QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> hasA_Private_PODorNonDesignedCpp_Members();
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
-    QList<DesignEqualsImplementationClassSlot*> Slots;
-    QList<DesignEqualsImplementationClassSignal*> Signals;
+    QList<DesignEqualsImplementationClassSignal*> mySignals();
+    QList<DesignEqualsImplementationClassSlot*> mySlots();
 
     //QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
 
@@ -45,6 +52,9 @@ public:
 
     //TODOoptional: should be private
     QList<DesignEqualsImplementationClassInstance*> m_HasA_Private_Classes_Members;
+    QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> m_HasA_Private_PODorNonDesignedCpp_Members;
+    QList<DesignEqualsImplementationClassSignal*> m_MySignals;
+    QList<DesignEqualsImplementationClassSlot*> m_MySlots;
 signals:
     void propertyAdded(DesignEqualsImplementationClassProperty*);
     void hasAPrivateMemberClassAdded(DesignEqualsImplementationClassInstance); //declare meta type?

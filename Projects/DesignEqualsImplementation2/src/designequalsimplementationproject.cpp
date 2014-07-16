@@ -31,6 +31,13 @@ DesignEqualsImplementationProject::~DesignEqualsImplementationProject()
     qDeleteAll(m_Classes);
     qDeleteAll(m_UseCases);
 }
+DesignEqualsImplementationClass *DesignEqualsImplementationProject::createNewClass(const QString &newClassName)
+{
+    DesignEqualsImplementationClass *newClass = new DesignEqualsImplementationClass(this);
+    newClass->ClassName = newClassName;
+    addClass(newClass);
+    return newClass;
+}
 void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass *newClass)
 {
     connect(newClass, SIGNAL(e(QString)), this, SIGNAL(e(QString)));

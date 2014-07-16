@@ -17,6 +17,8 @@ public:
     explicit DesignEqualsImplementationProject(const QString &existingProjectFilePath, QObject *parent = 0);
     ~DesignEqualsImplementationProject();
 
+    DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString());
+
     //TODOoptional: private + getter/setter blah
     QString Name;
 

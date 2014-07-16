@@ -4,7 +4,7 @@
 
 #define DesignEqualsImplementationClassSignal_QDS(qds, direction, signal) \
 qds direction signal.Name; \
-qds direction signal.Arguments; \
+qds direction signal.m_Arguments; \
 return qds;
 
 DesignEqualsImplementationClassSignal::DesignEqualsImplementationClassSignal(QObject *parent)

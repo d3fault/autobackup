@@ -15,13 +15,18 @@ public:
     explicit IDesignEqualsImplementationMethod();
     virtual ~IDesignEqualsImplementationMethod();
 
+    DesignEqualsImplementationClassMethodArgument *createNewArgument(const QString &argumentType = QString(), const QString &argumentVariableName = QString());
+
     //TODOoptional: private + getter/setter blah
     QString Name;
-    QList<DesignEqualsImplementationClassMethodArgument*> Arguments;
+    QList<DesignEqualsImplementationClassMethodArgument*> arguments();
     DesignEqualsImplementationClass *ParentClass; //TODOreq: [de-]serialization
 
     QString methodSignatureWithoutReturnType();
     QString argumentsToCommaSeparatedString();
+
+    //TODOoptional: should be private:
+    QList<DesignEqualsImplementationClassMethodArgument*> m_Arguments;
 };
 
 #endif // IDESIGNEQUALSIMPLEMENTATIONMETHOD_H

@@ -13,10 +13,10 @@
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
 qds direction designEqualsImplementationClass.Properties; \
 qds direction designEqualsImplementationClass.m_HasA_Private_Classes_Members; \
-qds direction designEqualsImplementationClass.HasA_Private_PODorNonDesignedCpp_Members; \
+qds direction designEqualsImplementationClass.m_HasA_Private_PODorNonDesignedCpp_Members; \
 qds direction designEqualsImplementationClass.PrivateMethods; \
-qds direction designEqualsImplementationClass.Slots; \
-qds direction designEqualsImplementationClass.Signals; \
+qds direction designEqualsImplementationClass.m_MySlots; \
+qds direction designEqualsImplementationClass.m_MySignals; \
 return qds;
 
 #define HasA_Private_Classes_Members_ListEntryType_QDS(qds, direction, hasA_Private_Classes_Members_ListEntryType) \
@@ -127,19 +127,19 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
 
     bool signalsAccessSpecifierWritten = false;
     //Signals
-    if(!Signals.isEmpty())
+    if(!mySignals().isEmpty())
     {
         headerFileTextStream << "signals:" << endl;
         signalsAccessSpecifierWritten = true;
     }
-    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, Signals)
+    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, mySignals())
     {
         //void fooSignal();
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSignal->methodSignatureWithoutReturnType() << ";" << endl;
     }
 
     //Slots
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, Slots)
+    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, mySlots())
     {
         //slot finished/exit signal
         //each slot/unit-of-execution/ has the opportunity of supplying (by connecting to actor) a finished/exit signal
@@ -153,9 +153,9 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
             headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlot->finishedOrExitSignal()->methodSignatureWithoutReturnType() << ";" << endl;
         }
     }
-    if(!Slots.isEmpty())
+    if(!mySlots().isEmpty())
         headerFileTextStream << "public slots:" << endl;
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, Slots)
+    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, mySlots())
     {
         //Declare slot
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlot->methodSignatureWithoutReturnType() << ";" << endl;
@@ -199,12 +199,41 @@ DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
     //    delete currentMember->m_DesignEqualsImplementationClass;
     //}
     qDeleteAll(m_HasA_Private_Classes_Members);
-    qDeleteAll(HasA_Private_PODorNonDesignedCpp_Members);
+    qDeleteAll(m_HasA_Private_PODorNonDesignedCpp_Members);
     qDeleteAll(PrivateMethods);
-    qDeleteAll(Slots);
-    qDeleteAll(Signals);
+    qDeleteAll(m_MySlots);
+    qDeleteAll(m_MySignals);
 }
-DesignEqualsImplementationClassInstance* DesignEqualsImplementationClass::addHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName)
+HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *DesignEqualsImplementationClass::createNewHasAPrivate_PODorNonDesignedCpp_Member(const QString &typeString, const QString &variableName)
+{
+    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *newHasA_Private_PODorNonDesignedCpp_Members_ListEntryType = new HasA_Private_PODorNonDesignedCpp_Members_ListEntryType(typeString, variableName);
+    m_HasA_Private_PODorNonDesignedCpp_Members.append(newHasA_Private_PODorNonDesignedCpp_Members_ListEntryType);
+    return newHasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
+}
+DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNewSignal(const QString &newSignalName)
+{
+    DesignEqualsImplementationClassSignal *newSignal = new DesignEqualsImplementationClassSignal(this);
+    newSignal->Name = newSignalName;
+    newSignal->ParentClass = this;
+    m_MySignals.append(newSignal);
+    emit signalAdded(newSignal);
+    return newSignal;
+}
+DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNewSlot(const QString &newSlotName)
+{
+    DesignEqualsImplementationClassSlot *newSlot = new DesignEqualsImplementationClassSlot(this);
+    newSlot->Name = newSlotName;
+    addSlot(newSlot);
+    return newSlot;
+}
+void DesignEqualsImplementationClass::addSlot(DesignEqualsImplementationClassSlot *slotToAdd)
+{
+    //connect(slotToAdd, SIGNAL(e(QString)))
+    m_MySlots.append(slotToAdd);
+    slotToAdd->ParentClass = this;
+    emit slotAdded(slotToAdd);
+}
+DesignEqualsImplementationClassInstance* DesignEqualsImplementationClass::createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName)
 {
     //TODOreq: ensure all callers haven't already done the "new"
 
@@ -217,6 +246,18 @@ DesignEqualsImplementationClassInstance* DesignEqualsImplementationClass::addHas
 QList<DesignEqualsImplementationClassInstance *> DesignEqualsImplementationClass::hasA_Private_Classes_Members()
 {
     return m_HasA_Private_Classes_Members;
+}
+QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *> DesignEqualsImplementationClass::hasA_Private_PODorNonDesignedCpp_Members()
+{
+    return m_HasA_Private_PODorNonDesignedCpp_Members;
+}
+QList<DesignEqualsImplementationClassSignal *> DesignEqualsImplementationClass::mySignals()
+{
+    return m_MySignals;
+}
+QList<DesignEqualsImplementationClassSlot*> DesignEqualsImplementationClass::mySlots()
+{
+    return m_MySlots;
 }
 //Hmm now that I come to actually using this, why lose the pointers and resort to strings :)? Only thing though is that I need to refactor so that hasAClasses, properties, and localVariables(undefined-atm) all derive from some shared base "variable" xD. And shit local variables won't be introduced until C++ drop down mode is implemented (or at least designed), and even then they still might not ever show up in a slot-unit-of-execution-thingo.
 #if 0

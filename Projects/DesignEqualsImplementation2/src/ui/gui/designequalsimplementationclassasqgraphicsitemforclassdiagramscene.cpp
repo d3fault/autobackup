@@ -102,12 +102,12 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
         classContentsString.append("<br />-  " + currentPrivateMethod->Name); //TODOreq: methodSignature
         ++numLinesOfText;
     }
-    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, m_DesignEqualsImplementationClass->Signals)
+    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, m_DesignEqualsImplementationClass->mySignals())
     {
         classContentsString.append("<br />)) " + currentSignal->methodSignatureWithoutReturnType());
         ++numLinesOfText;
     }
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_DesignEqualsImplementationClass->Slots)
+    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_DesignEqualsImplementationClass->mySlots())
     {
         classContentsString.append("<br />+  " + currentSlot->methodSignatureWithoutReturnType());
         ++numLinesOfText;

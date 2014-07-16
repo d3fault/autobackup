@@ -16,11 +16,11 @@ DesignEqualsImplementationSlotInvocationStatement::~DesignEqualsImplementationSl
 QString DesignEqualsImplementationSlotInvocationStatement::toRawCppWithoutEndingSemicolon()
 {
     int currentArgumentIndex = 0;
-    int maxArgs = m_SlotToInvoke->Arguments.size();
+    int maxArgs = m_SlotToInvoke->arguments().size();
     QString argumentsString;
     Q_FOREACH(const QString &currentArgumentName, m_SlotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments)
     {
-        const QByteArray &argTypeCstr = m_SlotToInvoke->Arguments.at(currentArgumentIndex)->Type.toUtf8();
+        const QByteArray &argTypeCstr = m_SlotToInvoke->arguments().at(currentArgumentIndex)->Type.toUtf8();
         argumentsString.append(", Q_ARG(" + QMetaObject::normalizedType(argTypeCstr.constData()) + ", " + currentArgumentName + ")");
         ++currentArgumentIndex;
         if(currentArgumentIndex == maxArgs)
