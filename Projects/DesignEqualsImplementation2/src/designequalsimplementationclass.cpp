@@ -30,6 +30,12 @@ qds direction hasA_Private_PODorNonDesignedCpp_Members_ListEntryType.Type; \
 return qds;
 
 //TODOoptional: auto-pimpl, since pimpl is cheap/awesome (and gives us implicit sharing when done properly) and increases source/binary compatibility. MAYBE it should be opt-in, but probably opt-out instead?
+#if 0
+DesignEqualsImplementationClassInstance *DesignEqualsImplementationClass::createClassInstance(DesignEqualsImplementationClassInstance *parent, const QString &optionalVariableName) //top-level objects don't need a variable name if there's only one use case being generated in lib mode, for example
+{
+    return new DesignEqualsImplementationClassInstance(this, parent, optionalVariableName);
+}
+#endif
 DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent)
     : QObject(parent)
     , IDesignEqualsImplementationVisuallyRepresentedItem()
@@ -198,13 +204,14 @@ DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
     qDeleteAll(Slots);
     qDeleteAll(Signals);
 }
-DesignEqualsImplementationClassInstance* DesignEqualsImplementationClass::createHasA_Private_Classes_Members(DesignEqualsImplementationClass *classToInstantiate, const QString &variableName)
+DesignEqualsImplementationClassInstance* DesignEqualsImplementationClass::addHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName)
 {
     //TODOreq: ensure all callers haven't already done the "new"
 
+    int newInex = m_HasA_Private_Classes_Members.size();
+    DesignEqualsImplementationClassInstance *newInstance = new DesignEqualsImplementationClassInstance(hasA_Private_Class_Member, this, newInex, variableName);
+    m_HasA_Private_Classes_Members.append(newInstance); //TODOreq: re-ordering needs to resynchronize
 
-    DesignEqualsImplementationClassInstance *newInstance = new DesignEqualsImplementationClassInstance(classToInstantiate, this, variableName);
-    m_HasA_Private_Classes_Members.append(newInstance);
     return newInstance;
 }
 QList<DesignEqualsImplementationClassInstance *> DesignEqualsImplementationClass::hasA_Private_Classes_Members()

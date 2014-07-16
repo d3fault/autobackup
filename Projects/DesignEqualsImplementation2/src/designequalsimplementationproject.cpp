@@ -41,9 +41,9 @@ QList<DesignEqualsImplementationClass *> DesignEqualsImplementationProject::clas
 {
     return m_Classes;
 }
-DesignEqualsImplementationClassInstance* DesignEqualsImplementationProject::createTopLevelClassInstances(DesignEqualsImplementationClass *classToMakeTopLevelInstanceOf)
+DesignEqualsImplementationClassInstance* DesignEqualsImplementationProject::createTopLevelClassInstance(DesignEqualsImplementationClass *classToMakeTopLevelInstanceOf)
 {
-    DesignEqualsImplementationClassInstance *classInstance = new DesignEqualsImplementationClassInstance(classToMakeTopLevelInstanceOf, 0, "TopLevel_" + classToMakeTopLevelInstanceOf->ClassName); //TODOreq: auto increment for top level auto vars
+    DesignEqualsImplementationClassInstance *classInstance = new DesignEqualsImplementationClassInstance(classToMakeTopLevelInstanceOf, 0, 0, "TopLevel_" + classToMakeTopLevelInstanceOf->ClassName); //TODOreq: auto increment for top level auto vars
     m_TopLevelClassInstances.append(classInstance);
     return classInstance;
 }

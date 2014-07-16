@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QList>
+#include <QStack>
 
 class QListWidget;
 
@@ -22,9 +23,12 @@ private:
     DesignEqualsImplementationClass *m_ClassBeingAdded;
     bool m_NewTopLevelInstanceChosen;
     DesignEqualsImplementationClassInstance *m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
+    //QList<QPair<QString /*absolute variable specifier */, DesignEqualsImplementationClassInstance* /*classInstance*/> > m_
+    QStack<QString> m_AbsoluteVariableNameSpecifierCurrentDepthStack;
 
-    void addInstanceToListWidget(DesignEqualsImplementationClassInstance *currentInstance);
+    void addInstanceToListWidget(const QString &absoluteVariableName, DesignEqualsImplementationClassInstance *currentInstance);
     void addAllChildrensChildrenClassInstancesToPassedInList(DesignEqualsImplementationClassInstance *currentChildInstance/*, QList<DesignEqualsImplementationClassInstance*> *runningListOfExistingInstances*/);
+    QString makeAbsoluteVariableNameSpecifierForInstance(DesignEqualsImplementationClassInstance *instanceToFinalizeTheVariableName);
 private slots:
     void handleCurrentRowChanged(int newRow);
 };

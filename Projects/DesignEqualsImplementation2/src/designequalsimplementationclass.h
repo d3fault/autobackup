@@ -22,6 +22,8 @@ class DesignEqualsImplementationClass : public QObject, public IDesignEqualsImpl
 {
     Q_OBJECT
 public:
+    //static DesignEqualsImplementationClassInstance *createClassInstance(DesignEqualsImplementationClassInstance *parent = 0, const QString &optionalVariableName = QString());
+
     explicit DesignEqualsImplementationClass(QObject *parent = 0);
     bool generateSourceCode(const QString &destinationDirectoryPath);
     virtual ~DesignEqualsImplementationClass();
@@ -29,7 +31,7 @@ public:
     //TODOoptional: private + getter/setter blah
     QString ClassName;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    DesignEqualsImplementationClassInstance* createHasA_Private_Classes_Members(DesignEqualsImplementationClass *classToInstantiate, const QString &variableName);
+    DesignEqualsImplementationClassInstance* addHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);
     QList<DesignEqualsImplementationClassInstance*> hasA_Private_Classes_Members();
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> HasA_Private_PODorNonDesignedCpp_Members;
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
@@ -64,15 +66,36 @@ class DesignEqualsImplementationClassInstance : public IHaveTypeAndVariableNameA
 {
 public:
     explicit DesignEqualsImplementationClassInstance() : IHaveTypeAndVariableNameAndPreferredTextualRepresentation() { }
-    explicit DesignEqualsImplementationClassInstance(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClass *parentClassThatHasMe, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_MyClass(designEqualsImplementationClass), m_ParentClassThatHasMe_OrZeroIfTopLevelObject(parentClassThatHasMe) { }
-    virtual ~DesignEqualsImplementationClassInstance() { }
+    explicit DesignEqualsImplementationClassInstance(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClass *parentClassThatHasMe_OrZeroIfTopLevelObject, int myIndexIntoParentHasAThatIsMe, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_MyClass(designEqualsImplementationClass)
+    {
+        m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first = parentClassThatHasMe_OrZeroIfTopLevelObject;
+        m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.second = myIndexIntoParentHasAThatIsMe;
+#if 0
+        if(m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first)
+        {
+            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->m_ChildInstances.removeAll(this);
+            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->m_ChildInstances.append(this);
+        }
+#endif
+    }
+    virtual ~DesignEqualsImplementationClassInstance()
+    {
+        qDeleteAll(m_ChildInstances);
+#if 0
+        if(m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first)
+        {
+            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->m_ChildInstances.removeAll(this);
+        }
+#endif
+    }
     virtual QString typeString()
     {
         return m_MyClass->ClassName + " *";
     }
 
     DesignEqualsImplementationClass *m_MyClass;
-    DesignEqualsImplementationClass *m_ParentClassThatHasMe_OrZeroIfTopLevelObject;
+    QPair<DesignEqualsImplementationClass*, int> m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject;
+    QList<DesignEqualsImplementationClassInstance*> m_ChildInstances;
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassInstance &hasA_Private_Classes_Members_ListEntryType);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassInstance &hasA_Private_Classes_Members_ListEntryType);

@@ -322,7 +322,7 @@ void DesignEqualsImplementation::newProject()
     barClass->Signals.append(barSignal);
 
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar"); //TODOreq: i imagine these are set elsewhere (maybe i response to a user event. as in, they name it (imagine that))
-    fooClass->createHasA_Private_Classes_Members(barClass, userChosenVariableNameForFoosInstanceOfBar);
+    fooClass->addHasA_Private_Classes_Member(barClass, userChosenVariableNameForFoosInstanceOfBar);
     //fooClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(barClass, fooClass/*fooClassInstance*/, userChosenVariableNameForFoosInstanceOfBar));
 
     //Zed
@@ -338,7 +338,7 @@ void DesignEqualsImplementation::newProject()
     zedSlot->ParentClass = zedClass;
 
     QString userChosenVariableNameForBarsInstanceOfZed("m_Zed");
-    barClass->createHasA_Private_Classes_Members(zedClass, userChosenVariableNameForBarsInstanceOfZed);
+    barClass->addHasA_Private_Classes_Member(zedClass, userChosenVariableNameForBarsInstanceOfZed);
     //barClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
 
     testProject->addClass(fooClass);

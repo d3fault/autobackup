@@ -5,7 +5,7 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QPushButton>
-#include <QStack>
+#include <QVectorIterator>
 
 #include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
@@ -34,8 +34,8 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     Q_FOREACH(DesignEqualsImplementationClassInstance* currentTopLevelClassInstanceEntryType, useCaseClassIsBeingAddedTo->designEqualsImplementationProject()->topLevelClassInstances()) //Top level objects + heirarchies?
     {
         //potentialExistencesInParents.append(currentTopLevelClassInstanceEntryType);
-        if(classBeingAdded == currentTopLevelClassInstanceEntryType->m_MyClass)
-            addInstanceToListWidget(currentTopLevelClassInstanceEntryType);
+        //if(classBeingAdded == currentTopLevelClassInstanceEntryType->m_MyClass)
+        //    addInstanceToListWidget(currentTopLevelClassInstanceEntryType);
 
 #if 0 //only the children of the top level objects will have it != 0 (TODOreq: ensure "0" validity stays synchronized... somewhere (the setters?))
         if(currentclassInstanceEntryType.first == 0)
@@ -73,19 +73,32 @@ DesignEqualsImplementationClassInstance *ClassInstanceChooserDialog::myInstanceI
 {
     return m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
 }
-void ClassInstanceChooserDialog::addInstanceToListWidget(DesignEqualsImplementationClassInstance *currentInstance)
+void ClassInstanceChooserDialog::addInstanceToListWidget(const QString &absoluteVariableName, DesignEqualsImplementationClassInstance *currentInstance)
 {
-    QListWidgetItem *potentialClassInstanceListWidgetItem = new QListWidgetItem(currentInstance->VariableName /*TODOreq: full recursive scope specification extraction so user can see it in the dialog*/);
-#if 0 //attempt semi-fail (taking a simpler direction)
+    QListWidgetItem *potentialClassInstanceListWidgetItem = new QListWidgetItem(absoluteVariableName);
+
+#if 0
     QString fullScopeVariableName;
     QStack<QString> parentStack;
-    DesignEqualsImplementationClassInstance *currentParent = currentInstance;
+    DesignEqualsImplementationClassInstance *currentInstanceToStackNameOf = currentInstance;
     for(;;)
     {
-        parentStack.push(currentParent->VariableName); //TODOreq: the very last "type" should go at the very beginning of the global thing, like this: "Bar *Foo::TopLevel_Foo0::Zed::m_Zed m_Bar".. but idk that's kinda clunky looking already... (and I was trying to say Foo hasA Zed hasA Bar::m_Bar)
-        currentParent = currentParent->m_ParentClassThatHasMe_OrZeroIfTopLevelObject;
-        if(!currentParent)
+        parentStack.push(currentInstanceToStackNameOf->VariableName);
+        parentStack.push(currentInstanceToStackNameOf->typeString());
+        currentInstanceToStackNameOf = currentInstanceToStackNameOf->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->hasA_Private_Classes_Members().at(currentInstanceToStackNameOf->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.second);
+        if(!currentInstanceToStackNameOf)
             break;
+    }
+#endif
+
+#if 0
+    for(;;)
+    {
+        parentStack.push(currentInstanceToStackNameOf->VariableName); //TODOreq: the very last "type" should go at the very beginning of the global thing, like this: "Bar *Foo::TopLevel_Foo0::Zed::m_Zed m_Bar".. but idk that's kinda clunky looking already... (and I was trying to say Foo hasA Zed hasA Bar::m_Bar)
+        parentStack.push(currentInstanceToStackNameOf->typeString());
+        if(!currentInstanceToStackNameOf->m_ParentClassInstanceThatHasMe_OrZeroIfTopLevelObject)
+            break;
+
     }
     while(parentStack.isEmpty())
     {
@@ -98,15 +111,61 @@ void ClassInstanceChooserDialog::addInstanceToListWidget(DesignEqualsImplementat
 }
 void ClassInstanceChooserDialog::addAllChildrensChildrenClassInstancesToPassedInList(DesignEqualsImplementationClassInstance *currentChildInstance/*, QList<DesignEqualsImplementationClassInstance*> *runningListOfExistingInstances*/)
 {
+    if(m_ClassBeingAdded == currentChildInstance->m_MyClass)
+    {
+        QString absoluteVariableName = makeAbsoluteVariableNameSpecifierForInstance(currentChildInstance);
+        addInstanceToListWidget(absoluteVariableName, currentChildInstance);
+    }
+    m_AbsoluteVariableNameSpecifierCurrentDepthStack.push(currentChildInstance->typeString());
+    m_AbsoluteVariableNameSpecifierCurrentDepthStack.push(currentChildInstance->VariableName);
     Q_FOREACH(DesignEqualsImplementationClassInstance *currentSubChildInstance, currentChildInstance->m_MyClass->hasA_Private_Classes_Members())
     {
         //runningListOfExistingInstances->append(currentSubChildInstance);
-        if(m_ClassBeingAdded == currentSubChildInstance->m_MyClass)
-            addInstanceToListWidget(currentSubChildInstance);
+        //if(m_ClassBeingAdded == currentSubChildInstance->m_MyClass)
+        //    addInstanceToListWidget(currentSubChildInstance);
 
         //recursion <3
         addAllChildrensChildrenClassInstancesToPassedInList(currentSubChildInstance);
     }
+    m_AbsoluteVariableNameSpecifierCurrentDepthStack.pop();
+    m_AbsoluteVariableNameSpecifierCurrentDepthStack.pop();
+}
+QString ClassInstanceChooserDialog::makeAbsoluteVariableNameSpecifierForInstance(DesignEqualsImplementationClassInstance *instanceToFinalizeTheVariableName)
+{
+    QVectorIterator<QString> scopeStackIterator(m_AbsoluteVariableNameSpecifierCurrentDepthStack);
+    QString ret;
+    bool firstEntry = true;
+    while(scopeStackIterator.hasNext())
+    {
+        QString currentVariableSpecifierPart = scopeStackIterator.next();
+        if(firstEntry)
+        {
+            ret += currentVariableSpecifierPart;
+            firstEntry = false;
+            continue;
+        }
+        ret += "::" + currentVariableSpecifierPart;
+    }
+    if(!m_AbsoluteVariableNameSpecifierCurrentDepthStack.isEmpty())
+        ret += " ---    "; //*<b>*/ +
+    ret += instanceToFinalizeTheVariableName->preferredTextualRepresentation(); // + "</b>";
+#if 0
+    QString ret(instanceToFinalizeTheVariableName->typeString() + " ");
+    bool firstEntry = true;
+    while(scopeStackIterator.hasNext())
+    {
+        QString currentVariableSpecifierPart = scopeStackIterator.next();
+        if(firstEntry)
+        {
+            ret += currentVariableSpecifierPart;
+            firstEntry = false;
+            continue;
+        }
+        ret += "::" + currentVariableSpecifierPart;
+    }
+    ret += " " + instanceToFinalizeTheVariableName->VariableName;
+#endif
+    return ret;
 }
 void ClassInstanceChooserDialog::handleCurrentRowChanged(int newRow)
 {

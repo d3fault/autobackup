@@ -83,7 +83,7 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
         if(classInstanceChooserDialog.newTopLevelInstanceChosen())
         {
             //TODOreq: hack: JIT create the top level object. not that hacky, but observer pattern should be used
-            myInstanceInClassThatHasMe = m_UseCase->designEqualsImplementationProject()->createTopLevelClassInstances(classBeingAdded);
+            myInstanceInClassThatHasMe = m_UseCase->designEqualsImplementationProject()->createTopLevelClassInstance(classBeingAdded);
         }
 
 #if 0
