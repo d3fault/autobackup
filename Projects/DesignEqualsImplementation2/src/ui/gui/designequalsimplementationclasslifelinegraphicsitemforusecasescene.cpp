@@ -4,7 +4,7 @@
 #include <QLineF>
 #include <QGraphicsTextItem>
 #include <QGraphicsLineItem>
-#include <QMapIterator>
+#include <QListIterator>
 
 #include <QMutexLocker>
 #include "../../designequalsimplementation.h"
@@ -76,11 +76,10 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     //classNameTextItem->setPos();
 
     int currentIndex = 0;
-    QMapIterator<DesignEqualsImplementationClassSlot*, int> slotsReferenceCountIterator(classLifeLine->mySlots());
+    QListIterator<DesignEqualsImplementationClassSlot*> slotsReferenceCountIterator(classLifeLine->mySlotsAppearingInClassLifeLine());
     while(slotsReferenceCountIterator.hasNext())
     {
-        slotsReferenceCountIterator.next();
-        createAndInsertSlotGraphicsItem(currentIndex++, slotsReferenceCountIterator.key());
+        createAndInsertSlotGraphicsItem(currentIndex++, slotsReferenceCountIterator.next());
         //new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, this, unitOfExecutionRect, this);
     }
     repositionSlotsBecauseOneSlotsChanged();
@@ -89,9 +88,9 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
-    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = new DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(slot, this);
-    connect(slotGraphicsItem, SIGNAL(geometryChanged()), this, SLOT(handleSlotGeometryChanged()));
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = new DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(this, slot, this);
     m_SlotsInThisClassLifeLine.insert(indexInsertedInto, slotGraphicsItem);
+    connect(slotGraphicsItem, SIGNAL(geometryChanged()), this, SLOT(handleSlotGeometryChanged()));
 }
 //TODOreq: in the future the "lines in between" lengths should be user stretchable and serializable, but for now to KISS they'll be fixed length (primarily, the unit of execution rect itself will auto-move (which will indirectly lengthen the line above it) or stretch, but it does make sense for the user to put it right where they want it vertically
 //TODOreq: unit of executions changing (insert/remove) ultimately triggers repositionUnitsOfExecution, because their positions depend on their sizes

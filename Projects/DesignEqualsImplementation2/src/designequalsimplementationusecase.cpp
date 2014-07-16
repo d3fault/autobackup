@@ -1,7 +1,7 @@
 #include "designequalsimplementationusecase.h"
 
 #include <QDataStream>
-#include <QMapIterator>
+#include <QList>
 
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationclassslot.h"
@@ -43,17 +43,52 @@ DesignEqualsImplementationProject *DesignEqualsImplementationUseCase::designEqua
 }
 bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destinationDirectoryPath)
 {
-    QMapIterator<DesignEqualsImplementationClassLifeLine*, int> classLifelinesInUseCaseIterator(m_ClassLifeLinesAppearingInThisUseCase_ReferenceCountedBecauseClassLifelinesWillOccurInMultipleUseCases);
+#if 0
+    QListIterator<SignalSlotConnectionActivationTypeStruct> signalSlotConnectionActivationIterator(m_SignalSlotConnectionActivationsInThisUseCase);
+    while(signalSlotConnectionActivationIterator.hasNext())
+    {
+        SignalSlotConnectionActivationTypeStruct currentSignalSlotConnectionActivation = signalSlotConnectionActivationIterator.next();
+        //TODOreq: resolve where to put connect() code
+        //Ex:
+        //  1) if both objects are top level objects, put connect code in the top level glue
+        //  2) if the signal class hasA the slot class, put in signal class constructor-ish
+        //  3) if the slot class hasA the signal class, put in slot constructor-ish
+        //  4) if signal and slot owner's instances are the same, put in constructor
+        //  5) if signal and slot owner's types are the same but instances differ, do not put in constructor but somewhere higher
+    }
+#endif
+#if 0
+    int indexInto_m_ClassLifeLines = m_UseCaseSlotEntryPoint_OrNegativeOneIfNoneConnectedFromActorYetctorYet.first;
+    if(indexInto_m_ClassLifeLines > -1 && indexInto_m_ClassLifeLines < (m_ClassLifeLines.size()+1))
+    {
+        DesignEqualsImplementationClassLifeLine *classLifeline = m_ClassLifeLines.at(indexInto_m_ClassLifeLines);
+
+        QList<DesignEqualsImplementationClassSlot*> slotsInClassLifeLine = classLifeline->mySlotsAppearingInClassLifeLine();
+        if(slotsInClassLifeLine.contains(m_UseCaseSlotEntryPoint_OrNegativeOneIfNoneConnectedFromActorYetctorYet.second))
+        {
+            DesignEqualsImplementationClassSlot *slotEntryPoint = m_UseCaseSlotEntryPoint_OrNegativeOneIfNoneConnectedFromActorYetctorYet.second;
+            //TODOreq: Make note of the dependency to the instance. Project keeps track of instances at this point using a temporary reference count (counted here, utilized in class's genereate source code)
+        }
+        else
+        {
+            //TODOreq: synchro error
+            emit e("ERROR slfjsdlfkjdsflkjsdfl");
+        }
+    }
+#endif
+#if 0
+    QListIterator<DesignEqualsImplementationClassLifeLine*, int> classLifelinesInUseCaseIterator(m_ClassLifeLinesAppearingInThisUseCase);
     while(classLifelinesInUseCaseIterator.hasNext())
     {
-        classLifelinesInUseCaseIterator.next();
-        if(classLifelinesInUseCaseIterator.value() < 1)
-            continue;
-        DesignEqualsImplementationClassLifeLine *classLifeline = classLifelinesInUseCaseIterator.key();
+        DesignEqualsImplementationClassLifeLine *currentClassLifeline = classLifelinesInUseCaseIterator.next();
+
         //classLifeline->jitTempRegenerateInitializationCodeForClassInstanceInProject(); //Only modifies the upcoming recursive DesignEqualsImplementationClass::generateSourceCode call, it's changes not serialized into the Class
 
         //TODOreq: do something with m_A_SIGNAL_SLOT_ACTIVATION_IN_THIS_USE_CASE, like jitTempRegenerate the connection code as well
-    }
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlotInCurrentLifeLine, currentClassLifeline->mySlots())
+        {
+        }
+#endif
 
 #if 0 //OLD AS FUCK:
     bool firstUseCaseEvent = true;
@@ -122,7 +157,7 @@ void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplement
     //SlotWithCurrentContext = 0;
     //ExitSignal = 0;
     m_DesignEqualsImplementationProject = project;
-    m_UseCaseSlotEntryPoint_OrZeroIfNoneConnectedFromActorYet = 0;
+    m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.first = -1;
 }
 void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
 {
@@ -208,10 +243,6 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
             }
             insertAlreadyFilledOutSlotIntoUseCase(slotUseCaseEvent);
             emit slotInvokeEventAdded(slotUseCaseEvent);
-
-
-            //TODOreq: additionally, the connection as noted in use case should probably have a backend model
-
 #if 0
             //OLD
             SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
@@ -372,9 +403,10 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
 }
 void DesignEqualsImplementationUseCase::insertAlreadyFilledOutSlotIntoUseCase(DesignEqualsImplementationClassSlot *slotEntryPointThatKindaSortaMakesItNamed)
 {
-    DesignEqualsImplementationClassLifeLine *classLifeline = slotEntryPointThatKindaSortaMakesItNamed->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject();
+#if 0 //shouldn't the class lifeline hear about it through reactor pattern?
+    DesignEqualsImplementationClassLifeLine *classLifeline; // = slotEntryPointThatKindaSortaMakesItNamed->parentBlah(); //TODOreq: frontend needs to pass class lifeline as well
 
-    classLifeline->insertSlotReference(slotEntryPointThatKindaSortaMakesItNamed);
+    classLifeline->insertSlotToClassLifeLine(classLifeline->mySlotsAppearingInClassLifeLine().size(), slotEntryPointThatKindaSortaMakesItNamed); //TODOreq: proper insert
 
 #if 0
     //JIT create the class lifeline
@@ -396,14 +428,12 @@ void DesignEqualsImplementationUseCase::insertAlreadyFilledOutSlotIntoUseCase(De
 
     //TODOreq: not sure exactly when to do this, but the arrow needs to be updated to be pointing to the new unit of execution. Or perhaps arrow is simply deleted by front end and he draws another when we tell him that this event add succeeded (it needs a different graphic than JUST slot invoke or JUST signal anyways)
 
-    int currentReferenceCount = m_ClassLifeLinesAppearingInThisUseCase_ReferenceCountedBecauseClassLifelinesWillOccurInMultipleUseCases.value(classLifeline, 0);
-    //if(currentReferenceCount > 0)
-    //{
-    m_ClassLifeLinesAppearingInThisUseCase_ReferenceCountedBecauseClassLifelinesWillOccurInMultipleUseCases.insert(classLifeline, ++currentReferenceCount);
-    //}
+    m_ClassLifeLines.append(classLifeline);
+    //m_ClassLifeLinesAppearingInThisUseCase.insert(classLifeline, ++currentReferenceCount);
 
     //m_SlotsMakingApperanceInUseCase.append(slotEntryPointThatKindaSortaMakesItNamed); //TODOreq: merge this with class lifelines (have a list of class lifelines, which have a list of slots)?
     //return newUnitOfExecution;
+#endif
 }
 void DesignEqualsImplementationUseCase::addClassLifeLineToUseCase(DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase)
 {
@@ -454,9 +484,10 @@ void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertE
 {
     insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, 0, designEqualsImplementationClassSignal, signalEmissionContextVariables);
 }
-void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint)
+void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(int classLifeLinesIndex, DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint)
 {
-    m_UseCaseSlotEntryPoint_OrZeroIfNoneConnectedFromActorYet = useCaseSlotEntryPoint; //TODOreq: handle deleting this arrow sets it back to zero i guess
+    m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.first = classLifeLinesIndex;
+    m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.second = useCaseSlotEntryPoint; //TODOreq: handle deleting this arrow sets it back to zero i guess
 }
 //TODOreq: haven't implemented regular signal/slot event deletion, but still worth noting that ExitSignal deletion needs to be handled differently
 //TODOreq: again, somewhat off-topic though. should deleting a signal emission or slot invocation mean that it's existence in the class diagram perspective is also deleted? reference counting might be nice, but auto deletion might piss me off too! maybe on deletion, a reference counter is used to ask the user if they want to delete it's existence in the class too (when reference count drops to zero), and/or of course all kinds of "remember this choice" customizations

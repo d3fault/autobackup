@@ -11,7 +11,7 @@ class DesignEqualsImplementationClassInstance;
 class DesignEqualsImplementationClassSlot;
 //class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 
-typedef QMap<DesignEqualsImplementationClassSlot*, int> MySlotsAppearingInClassLifeLineRefcountTypedef;
+typedef QList<DesignEqualsImplementationClassSlot*> MySlotsAppearingInClassLifeLine_List;
 
 class DesignEqualsImplementationClassLifeLine : public QObject
 {
@@ -23,20 +23,18 @@ public:
     DesignEqualsImplementationClass *designEqualsImplementationClass() const;
     void setMyInstanceInClassThatHasMe_OrZeroIfTopLevelObject(DesignEqualsImplementationClassInstance *hasA_Private_Classes_Members_ListEntryType);
     DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject() const;
-    void insertSlotReference(DesignEqualsImplementationClassSlot *newSlot);
-    void removeSlotReference(DesignEqualsImplementationClassSlot *slot);
-    void clearMySlotReferences();
+    void insertSlotToClassLifeLine(int indexToInsertInto, DesignEqualsImplementationClassSlot *newSlot);
     //void replaceSlot(int indexToReplace, DesignEqualsImplementationClassSlot *slotToReplaceItWith);
-    MySlotsAppearingInClassLifeLineRefcountTypedef mySlots() const;
+    MySlotsAppearingInClassLifeLine_List mySlotsAppearingInClassLifeLine() const;
 private:
     //friend class DesignEqualsImplementationClassLifeLineUnitOfExecution;
     DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
     DesignEqualsImplementationClassInstance *m_MyInstanceInClassThatHasMe;
     QPointF m_Position;
-    MySlotsAppearingInClassLifeLineRefcountTypedef m_MySlotsAppearingInClassLifeLine_References;
+    MySlotsAppearingInClassLifeLine_List m_MySlotsAppearingInClassLifeLine;
 signals:
-    void slotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot *slot);
-    void slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
+    void slotInsertedIntoClassLifeLine(int insertIndex, DesignEqualsImplementationClassSlot *slot);
+    //void slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINE_H

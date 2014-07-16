@@ -302,21 +302,27 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     //TODOreq: determine that source is Actor before deciding to use SlotInvocationDialog (can still use SlotInvocationDialog if not actor, but that means the slot args must be filled in before the dialog can be accepted)
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationClassSlot *destinationSlotIsProbablyNameless_OrZeroIfNoDest = 0;
+    DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest = 0;
     bool destinationIsActor = false;
     if(destinationItem_CanBeZeroUnlessSourceIsActor) //for now only units of executions can be dests (or nothing)
     {
         int destinationItemType = destinationItem_CanBeZeroUnlessSourceIsActor->type();
 
+        if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
+        {
+            destinationClassLifeLine_OrZeroIfNoDest = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor)->classLifeLine();
+        }
         if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID)
         {
-            destinationSlotIsProbablyNameless_OrZeroIfNoDest = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor)->underlyingSlot();
+            DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *destinationSlotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor);
+            destinationSlotIsProbablyNameless_OrZeroIfNoDest = destinationSlotGraphicsItem->underlyingSlot();
+            destinationClassLifeLine_OrZeroIfNoDest = destinationSlotGraphicsItem->parentClassLifelineGraphicsItem()->classLifeLine();
         }
 
         if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
         {
             destinationIsActor = true;
         }
-
 #if 0
         //create unit of execution in destination (unless it's actor)
         if(!destinationIsActor)
@@ -346,24 +352,24 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
     //DesignEqualsImplementationClass *sourceClass = 0;
     DesignEqualsImplementationClassSlot *sourceSlotForStatementInsertion_OrZeroIfSourceIsActor = 0;
+    DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor = 0;
     if(!sourceIsActor)
     {
         if(sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID)
         {
-            DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *sourceClassLifeLineUnitOfExecutionGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(sourceItem);
-            sourceSlotForStatementInsertion_OrZeroIfSourceIsActor = sourceClassLifeLineUnitOfExecutionGraphicsItem->underlyingSlot();
-            //sourceClass = sourceClassLifeLineUnitOfExecutionGraphicsItem->parentClassLifeline()->classLifeLine()->designEqualsImplementationClass();
+            DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *sourceSlotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(sourceItem);
+            sourceSlotForStatementInsertion_OrZeroIfSourceIsActor = sourceSlotGraphicsItem->underlyingSlot();
+            sourceClassLifeLine_OrZeroIfSourceIsActor = sourceSlotGraphicsItem->parentClassLifelineGraphicsItem()->classLifeLine();
         }
         else if(sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
         {
             //If they click-drag an arrow from the "class name" graphics item, the last unit of execution is selected for the statement append. This may prove to be undesireable behavior, but honestly I like the idea of just drawing lines from the class names back and forth knowing each one is APPENDED to unit of execution etc, without having to scroll down etc to see it all
-            DesignEqualsImplementationClassLifeLine *classLifeLine = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(sourceItem)->classLifeLine();
-            if(!classLifeLine->mySlots().isEmpty())
+            sourceClassLifeLine_OrZeroIfSourceIsActor = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(sourceItem)->classLifeLine();
+            if(!sourceClassLifeLine_OrZeroIfSourceIsActor->mySlotsAppearingInClassLifeLine().isEmpty())
             {
-                sourceSlotForStatementInsertion_OrZeroIfSourceIsActor = classLifeLine->mySlots().lastKey(); //TODOreq: last() can't be right (but i have no context atm (wrote the code a while ago) so idfk)
+                sourceSlotForStatementInsertion_OrZeroIfSourceIsActor = sourceClassLifeLine_OrZeroIfSourceIsActor->mySlotsAppearingInClassLifeLine().last(); //TODOreq: last() can't be right (but i have no context atm (wrote the code a while ago) so idfk). The context is: arrow release on class name box (not slot), so "last()" is decent solution, but i can do better i know "last UNNAMED" is better, but whatever
                 //sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt();
             }
-            //sourceClass = classLifeLine->designEqualsImplementationClass();
         }
     }
 
@@ -373,21 +379,24 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, destinationSlotIsProbablyNameless_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
         return false;
-
     SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables = signalSlotMessageCreatorDialog.slotInvocationContextVariables();
-    if(destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject() && destinationSlotIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
+
+    //Retrieved specified variable name when slot invoke
+    if(destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
     {
-        signalEmissionOrSlotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = destinationSlotIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName; //If we don't have a target unit of execution, we are simple signal emit, and the backend knows that VariableName is of no use in that case
+        signalEmissionOrSlotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = destinationClassLifeLine_OrZeroIfNoDest->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName; //If we don't have a target unit of execution, we are simple signal emit, and the backend knows that VariableName is of no use in that case
     }
 
     //TODOreq: we need to find out if the slotInvocation dialog was used as slotInvoke, signal/slot connection activation, or signal emit only
     DesignEqualsImplementationClassSignal *userChosenSourceSignal_OrZeroIfNone = signalSlotMessageCreatorDialog.signalToEmit_OrZeroIfNone();
     DesignEqualsImplementationClassSlot *userChosenDestinationSlot_OrZeroIfNone = signalSlotMessageCreatorDialog.slotToInvoke_OrZeroIfNone();
 
+#if 0
     if(userChosenDestinationSlot_OrZeroIfNone)
     {
         userChosenDestinationSlot_OrZeroIfNone->setParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject(destinationSlotIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()); //TODOreq: should probably be "addClassParentLifeLineRef"
     }
+#endif
 
     if(destinationSlotIsProbablyNameless_OrZeroIfNoDest)
     {
@@ -410,21 +419,27 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             //userChosenDestinationSlot_OrZeroIfNone = targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest;
             //targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest = userChosenDestinationSlot_OrZeroIfNone;
             //targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->Name = userChosenDestinationSlot_OrZeroIfNone
-            DesignEqualsImplementationClassLifeLine *destinationSlotParentClassLifeLine = destinationSlotIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject();
-            if(destinationSlotParentClassLifeLine->mySlots().size() == 1)
+
+            if(destinationClassLifeLine_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest->mySlotsAppearingInClassLifeLine().size() == 1) //TODOreq: need much better slot strategy, since it apparently happens every time...
             {
-                DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = destinationSlotParentClassLifeLine->mySlots().firstKey();
+                DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = destinationClassLifeLine_OrZeroIfNoDest->mySlotsAppearingInClassLifeLine().first();
                 if(defaultSlotInClassLifeLine->Name == "")
                 {
                     //destinationSlotParentClassLifeLine->removeSlotReference(defaultSlotInClassLifeLine);
                     //destinationSlotParentClassLifeLine->insertSlotReference(userChosenDestinationSlot_OrZeroIfNone);
                 }
+
             }
         }
         else
         {
-            //TODOreq: since the target slot is already named, we need to create a new slot, or perhaps just put a slot reference in a class lifeline? i want a new visual slot!
-            userChosenDestinationSlot_OrZeroIfNone->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()->insertSlotReference(userChosenDestinationSlot_OrZeroIfNone);
+#if 0
+            if(destinationClassLifeLine_OrZeroIfNoDest)
+            {
+                //TODOreq: since the target slot is already named, we need to create a new slot, or perhaps just put a slot reference in a class lifeline? i want a new visual slot!
+                destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(420 /*TODOreq*/, userChosenDestinationSlot_OrZeroIfNone);
+            }
+#endif
         }
     }
 

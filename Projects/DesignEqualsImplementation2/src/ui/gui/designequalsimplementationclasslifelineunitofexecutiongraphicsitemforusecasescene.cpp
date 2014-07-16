@@ -13,27 +13,27 @@
 #define DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE 25
 #define DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_STATEMENT_MARGIN_TO_EDGE 10 //For the side opposite the arrow comes out
 
-DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSlot *slot, QGraphicsItem *parent)
+DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
+    , m_ParentClassLifeline(parentClassLifeLine)
     , m_Slot(slot)
     //, m_UnitOfExecution(unitOfExecution)
-    //, m_ParentClassLifeline(parentClassLifeline)
 {
     privateConstructor();
 }
-DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSlot *slot, const QRectF &rect, QGraphicsItem *parent)
+DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, const QRectF &rect, QGraphicsItem *parent)
     : QGraphicsRectItem(rect, parent)
+    , m_ParentClassLifeline(parentClassLifeLine)
     , m_Slot(slot)
     //, m_UnitOfExecution(slot)
-    //, m_ParentClassLifeline(parentClassLifeline)
 {
     privateConstructor();
 }
-DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSlot *slot, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent)
+DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent)
     : QGraphicsRectItem(x, y, w, h, parent)
+    , m_ParentClassLifeline(parentClassLifeLine)
     , m_Slot(slot)
     //, m_UnitOfExecution(slot)
-    //, m_ParentClassLifeline(parentClassLifeline)
 {
     privateConstructor();
 }
@@ -82,6 +82,10 @@ QGraphicsItem *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::makeSn
         return snappingIndicationVisualRepresentation;
     }
     return 0;
+}
+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::parentClassLifelineGraphicsItem() const
+{
+    return m_ParentClassLifeline;
 }
 DesignEqualsImplementationClassSlot *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::underlyingSlot() const
 {
