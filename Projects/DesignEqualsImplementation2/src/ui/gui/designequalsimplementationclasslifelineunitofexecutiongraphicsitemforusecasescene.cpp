@@ -110,12 +110,12 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstruct
         {
             insertStatementGraphicsItem(currentStatemendIndex++, currentStatement);
         }
-        repositionExistingStatementsAndSnapPoints();
     }
     else //no statements, so use minRect as rect
     {
         setRect(minRect());
     }
+    repositionExistingStatementsAndSnapPoints(); //regardless of any statements, we always want at least 1 snap point to be positioned
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
@@ -167,6 +167,11 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::repositionExisti
         }
 
         currentVerticalPos += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
+    }
+    if(m_VerticalPositionsOfSnapPoints.isEmpty())
+    {
+        //Minimum 1 snap point at all times
+        m_VerticalPositionsOfSnapPoints.append(myRectHeight/2);
     }
 #if 0
     QRectF myRect = minRect();

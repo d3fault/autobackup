@@ -4,6 +4,7 @@
 #include <QLineF>
 #include <QGraphicsTextItem>
 #include <QGraphicsLineItem>
+#include <QMapIterator>
 
 #include <QMutexLocker>
 #include "../../designequalsimplementation.h"
@@ -75,19 +76,21 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     //classNameTextItem->setPos();
 
     int currentIndex = 0;
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, classLifeLine->mySlots())
+    QMapIterator<DesignEqualsImplementationClassSlot*, int> slotsReferenceCountIterator(classLifeLine->mySlots());
+    while(slotsReferenceCountIterator.hasNext())
     {
-        insertSlotGraphicsItem(currentIndex++, currentSlot);
+        slotsReferenceCountIterator.next();
+        insertSlotGraphicsItem(currentIndex++, slotsReferenceCountIterator.key());
         //new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, this, unitOfExecutionRect, this);
     }
     repositionSlotsBecauseOneSlotSizeChanged();
-    connect(classLifeLine, SIGNAL(slotInserted(int,DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotInserted(int,DesignEqualsImplementationClassSlot*)));
+    connect(classLifeLine, SIGNAL(slotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotReferencedInClassLifeLine(int,DesignEqualsImplementationClassSlot*)));
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::insertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = new DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(slot, this);
     connect(slotGraphicsItem, SIGNAL(geometryChanged()), this, SLOT(handleSlotGeometryChanged()));
-    m_SlotsInThisUseCase.insert(indexInsertedInto, slotGraphicsItem);
+    m_SlotsInThisClassLifeLine.insert(indexInsertedInto, slotGraphicsItem);
 }
 //TODOreq: in the future the "lines in between" lengths should be user stretchable and serializable, but for now to KISS they'll be fixed length (primarily, the unit of execution rect itself will auto-move (which will indirectly lengthen the line above it) or stretch, but it does make sense for the user to put it right where they want it vertically
 //TODOreq: unit of executions changing (insert/remove) ultimately triggers repositionUnitsOfExecution, because their positions depend on their sizes
@@ -97,7 +100,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
 
     QPen dashedPen;
     dashedPen.setStyle(Qt::DotLine);
-    while(m_DottedLinesJustAboveEachSlot.size() < m_SlotsInThisUseCase.size())
+    while(m_DottedLinesJustAboveEachSlot.size() < m_SlotsInThisClassLifeLine.size())
     {
         QGraphicsLineItem *newLineItem = new QGraphicsLineItem(this);
         newLineItem->setLine(0, 0, 0, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP);
@@ -117,7 +120,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
     currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setX(rect().width()/2);
     currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(rect().bottom());
     int currentLineIndex = 0;
-    Q_FOREACH(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *currentUnitOfExecutionGraphicsItem, m_SlotsInThisUseCase)
+    Q_FOREACH(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *currentUnitOfExecutionGraphicsItem, m_SlotsInThisClassLifeLine)
     {
         //m_DottedLinesJustAboveEachUnitOfExecution.at(currentLineIndex++)->setLine(lineAboveUnitOfExecution); //TODOreq: drawing arrow to these dashed lines should behave just like drawing arrow to the class name box
         //QPointF dottedLinePos = bottomMiddleOfClassNameRect;
@@ -149,10 +152,10 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
 #endif
     }
 }
-void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotInserted(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot *slot)
 {
     //make the graphics item, add it as child, and reposition (NOPE: for now just append, but i might need layouts or something in order to do inserts)
-    insertSlotGraphicsItem(indexInsertedInto, slot);
+    insertSlotGraphicsItem(m_SlotsInThisClassLifeLine.size(), slot);
     repositionSlotsBecauseOneSlotSizeChanged();
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotGeometryChanged()

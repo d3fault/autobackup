@@ -85,6 +85,15 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
         }
     }
 
+    Q_FOREACH(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, useCases())
+    {
+        if(!designEqualsImplementationUseCase->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
+        {
+            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + designEqualsImplementationUseCase->Name);
+            return false;
+        }
+    }
+
     Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, m_Classes)
     {
         //TODOreq: use case's exit signals should just be serialized/remembered. they are of design use, but of zero use when it comes to code generation (the signal is simply emitted). i was tempted to say "use case exit signals should generate temporary copies of the classes here, now with the exit signals inserted (temporary copies used to generate source code)", BUT as you can see that's wrong
@@ -100,17 +109,6 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
     //TODOreq: proper design just jumped out at me: iterate the use cases at source generation time (NOW), but have the use cases do nothing more than populate the class diagram (ok ok, this is actually something that should happen any time class diagram view is lookeded at (or anything in the project changes if you don't do lazy loading)), THEN after use case iteratinos have spun class diagrams, outputting the classes by themselves is a breeze. however for now i'm going to try to just stick with focusing on use cases specifically, because i can't figure out where in a "Class" the "Ordered Use Case Events" would go
 
     //TODOreq: just like a use case needed an initial slot, so too does a project need an initial use case. It makes sense that if there is only 1x use case, that it is the "default" when invoked via CLI. If, for example, there are 2+ use cases, then the CLI wouldn't know which to use as the default (we could opt towards using the "first added", but that is dumb imo and i think actually that a "project::setDefaultUseCase" (already added) makes sense. Without setting said default, the CLI version should do NOTHING [unless cli arg switches indicate a use case], and the GUI version has the option of doing none or all. (two line edits, two push buttons, one shared qlineedit for output OR SOMETHING)
-
-#if 0
-    Q_FOREACH(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, UseCases)
-    {
-        if(!designEqualsImplementationUseCase->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
-        {
-            emit e("failed to generate source for: " + designEqualsImplementationUseCase->Name);
-            return false;
-        }
-    }
-#endif
 
     return true;
 }

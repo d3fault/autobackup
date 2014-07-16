@@ -17,7 +17,7 @@
 //TODOreq: SignalSlotMessageEditorDialog (creation + editting-later-on using same widget) would be best
 //TODOreq: signal/slot mode, slot args populated by signal args, can have less than signal arg count, but arg-ordering and arg-type matter
 //TODOreq: if Foo hasA Bar, we cannot invoke handleFooSignal DIRECTLY from within barSlot. Bar needs either barSignal to be connected to handleFooSignal in the UML/Design (easy), or a pointer to Foo must be somehow communicated to Bar (during construction works). As of right now, trying to INVOKE (directly) handleBarSignal from barSlot gives an invalid slot invocation statement (there is no variable name of Foo, so it looks like this: "invokeMethod(, "handleBarSignal);, obviously not valid. Ideally we could support both variations, but until then the GUI should at least not allow direct invocation on anything that doesn't have a name to refer to the target by
-SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassSlot *slotWithCurrentContext_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
+SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
     , m_Layout(new QVBoxLayout())
@@ -131,29 +131,29 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     }
     else
     {
-        if(!slotWithCurrentContext_OrZeroIfSourceIsActor) //hack that i put this here, it's where a segfault occured :)
+        if(!sourceSlot_OrZeroIfSourceIsActor) //hack that i put this here, it's where a segfault occured :)
         {
             QMessageBox::information(this, tr("Error"), tr("Source must be connected/named/entered first")); //TODOreq: the source should be [defined as] just an unnamed-as-of-yet  "interface invocation" (the interface and the invocation upon it can both be nameless at any time, except when generating code (an auto-namer util could be used for those who can't be fucked TODOoptional))
             QMetaObject::invokeMethod(this, "reject", Qt::QueuedConnection);
             return;
         }
-        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->Signals)
+        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, sourceSlot_OrZeroIfSourceIsActor->ParentClass->Signals)
         {
             m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
         }
 
         //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments
         //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments)
+        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->Arguments)
         {
             m_VariablesAvailableToSatisfyArgs.append(currentArg);
         }
         //m_VariablesAvailableToSatisfyArgs.append(*slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_PrivateMemberClasses);
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAClass, slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_Private_Classes_Members)
+        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAClass, sourceSlot_OrZeroIfSourceIsActor->ParentClass->HasA_Private_Classes_Members)
         {
             m_VariablesAvailableToSatisfyArgs.append(currentHasAClass);
         }
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAPod, slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_Private_PODorNonDesignedCpp_Members)
+        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAPod, sourceSlot_OrZeroIfSourceIsActor->ParentClass->HasA_Private_PODorNonDesignedCpp_Members)
         {
             m_VariablesAvailableToSatisfyArgs.append(currentHasAPod);
         }

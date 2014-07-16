@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QMap>
 #include <QHash>
 #include <QPair>
 #include <QPointF>
@@ -46,6 +47,7 @@ public:
     ~DesignEqualsImplementationUseCase();
 private:
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
+    DesignEqualsImplementationClassSlot *m_UseCaseSlotEntryPoint_OrZeroIfNoneConnectedFromActorYet;
     DesignEqualsImplementationClassSlot *m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements;
     int m_ExitSignalsIndexIntoOrderedListOfStatements;
 
@@ -57,7 +59,8 @@ private:
 
     //Implementations (any kind of relationship you desire ("bundled" with impl, generated-when-needed, etc) with interface, including none (project could supply them to use cases, who only ever know of interfaces)):
     QList<DesignEqualsImplementationClassLifeLine*> m_ClassLifeLines;
-    QList<DesignEqualsImplementationClassSlot*> m_SlotsMakingApperanceInUseCase; //design ordered top down apperances. will probably use two PointFs in the future for more accurate serializing
+    //QList<DesignEqualsImplementationClassSlot*> m_SlotsMakingApperanceInUseCase; //design ordered top down apperances. will probably use two PointFs in the future for more accurate serializing
+    QMap<DesignEqualsImplementationClassLifeLine*, int> m_ClassLifeLinesAppearingInThisUseCase_ReferenceCountedBecauseClassLifelinesWillOccurInMultipleUseCases;
 
     void privateConstructor(DesignEqualsImplementationProject *project);
 
@@ -80,6 +83,8 @@ public slots:
     void insertSlotInvocationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables);
     void insertSignalSlotActivationEvent(int indexToInsertEventAt, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables);
     void insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables);
+
+    void setUseCaseSlotEntryPoint(DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint);
     void setExitSignal(DesignEqualsImplementationClassSlot *sourceSlot, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables);
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase);

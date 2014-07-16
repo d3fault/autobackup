@@ -152,7 +152,7 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(!m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+    if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode && !m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
     {
         //TODOreq: snapping on source with < 1 existing statements
         //TODOptimization: since "items" might be expensive, I could give it a 30ms/etc max poll frequency
@@ -246,6 +246,8 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(this, SIGNAL(insertSlotInvocationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSlotInvocationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(insertSignalEmissionUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSignalEmitEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
+
+    connect(this, SIGNAL(setUseCaseSlotEntryPointRequested(DesignEqualsImplementationClassSlot*)), useCase, SLOT(setUseCaseSlotEntryPoint(DesignEqualsImplementationClassSlot*)));
     connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
 
     //responses
@@ -341,7 +343,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             DesignEqualsImplementationClassLifeLine *classLifeLine = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(topMostItemIWantUnderSource)->classLifeLine();
             if(!classLifeLine->mySlots().isEmpty())
             {
-                sourceSlot_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->mySlots().last(); //TODOreq: last() can't be right (but i have no context atm (wrote the code a while ago) so idfk)
+                sourceSlot_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->mySlots().lastKey(); //TODOreq: last() can't be right (but i have no context atm (wrote the code a while ago) so idfk)
                 //sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt();
                 sourceSlotForSignalEmitStatement_OrZeroIfSourceIsActor = sourceSlot_OrZeroIfSourceIsActorOrNotWantedType;
             }
@@ -374,20 +376,44 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         userChosenDestinationSlot_OrZeroIfNone->setParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject(targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()); //TODOreq: should probably be "addClassParentLifeLineRef"
     }
 
-    if(targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest && targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->Name == "")
+    if(targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest)
     {
-        //TODOreq: bring all existing statements over to the userChosenDestinationSlot_OrZeroIfNone, modal dialog asking for merge strategy if userChosenDestinationSlot_OrZeroIfNone already has existing statements and targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest does too
-        if(!userChosenDestinationSlot_OrZeroIfNone->orderedListOfStatements().isEmpty() && !targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty())
+        if(targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->Name == "")
         {
-            QMessageBox::information(0, tr("Error"), tr("Error: need to implement merging because the slot you decided to invoke already has statements"));
-            return false;
+            //TODOreq: bring all existing statements over to the userChosenDestinationSlot_OrZeroIfNone, modal dialog asking for merge strategy if userChosenDestinationSlot_OrZeroIfNone already has existing statements and targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest does too
+            if(!userChosenDestinationSlot_OrZeroIfNone->orderedListOfStatements().isEmpty() && !targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty())
+            {
+                QMessageBox::information(0, tr("Error"), tr("Error: need to implement merging because the slot you decided to invoke already has statements"));
+                return false;
+            }
+            int currentStatementIndex = 0;
+            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements())
+            {
+                userChosenDestinationSlot_OrZeroIfNone->insertStatementIntoOrderedListOfStatements(currentStatementIndex++, currentStatement);
+            }
+            //TODOreq: delete targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest under some circumstances?
+            //delete targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest;
+
+            //userChosenDestinationSlot_OrZeroIfNone = targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest;
+            //targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest = userChosenDestinationSlot_OrZeroIfNone;
+            //targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->Name = userChosenDestinationSlot_OrZeroIfNone
+            DesignEqualsImplementationClassLifeLine *parentClassLifeLine = targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject();
+            if(parentClassLifeLine->mySlots().size() == 1)
+            {
+                DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = parentClassLifeLine->mySlots().keys().first();
+                if(defaultSlotInClassLifeLine->Name == "")
+                {
+                    parentClassLifeLine->clearMySlotReferences();
+                    parentClassLifeLine->insertSlotReference(userChosenDestinationSlot_OrZeroIfNone);
+                    delete defaultSlotInClassLifeLine;
+                }
+            }
         }
-        int currentStatementIndex = 0;
-        Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements())
+        else
         {
-            userChosenDestinationSlot_OrZeroIfNone->insertStatementIntoOrderedListOfStatements(currentStatementIndex++, currentStatement);
+            //TODOreq: since the target slot is already named, we need to create a new slot, or perhaps just put a slot reference in a class lifeline? i want a new visual slot!
+            targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()->insertSlotReference(targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest);
         }
-        //TODOreq: delete targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest under some circumstances?
     }
 
     if(userChosenDestinationSlot_OrZeroIfNone && userChosenSourceSignal_OrZeroIfNone)
@@ -400,6 +426,14 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     {
         //Slot invocation
         //TODOreq: is more in line with reactor pattern to delete/redraw line once backend adds the use case event. in any case:
+
+        if(sourceIsActor)
+        {
+            //emit useCaseSlotEntryPointChosenOrNamedSameshit_Requested(sourceSlotForSignalEmitStatement_OrZeroIfSourceIsActor, userChosenDestinationSlot_OrZeroIfNone);
+            emit setUseCaseSlotEntryPointRequested(userChosenDestinationSlot_OrZeroIfNone);
+            return true;
+        }
+
         emit insertSlotInvocationUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForSignalEmitStatement_OrZeroIfSourceIsActor, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
         return true;
     }

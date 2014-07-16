@@ -1,6 +1,7 @@
 #include "designequalsimplementationusecase.h"
 
 #include <QDataStream>
+#include <QMapIterator>
 
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationclassslot.h"
@@ -42,7 +43,19 @@ DesignEqualsImplementationProject *DesignEqualsImplementationUseCase::designEqua
 }
 bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destinationDirectoryPath)
 {
-#if 0
+    QMapIterator<DesignEqualsImplementationClassLifeLine*, int> classLifelinesInUseCaseIterator(m_ClassLifeLinesAppearingInThisUseCase_ReferenceCountedBecauseClassLifelinesWillOccurInMultipleUseCases);
+    while(classLifelinesInUseCaseIterator.hasNext())
+    {
+        classLifelinesInUseCaseIterator.next();
+        if(classLifelinesInUseCaseIterator.value() < 1)
+            continue;
+        DesignEqualsImplementationClassLifeLine *classLifeline = classLifelinesInUseCaseIterator.key();
+        //classLifeline->jitTempRegenerateInitializationCodeForClassInstanceInProject(); //Only modifies the upcoming recursive DesignEqualsImplementationClass::generateSourceCode call, it's changes not serialized into the Class
+
+        //TODOreq: do something with m_A_SIGNAL_SLOT_ACTIVATION_IN_THIS_USE_CASE, like jitTempRegenerate the connection code as well
+    }
+
+#if 0 //OLD AS FUCK:
     bool firstUseCaseEvent = true;
     Q_FOREACH(EventAndTypeTypedef *orderedUseCaseEvent, OrderedUseCaseEvents)
     {
@@ -109,6 +122,7 @@ void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplement
     //SlotWithCurrentContext = 0;
     //ExitSignal = 0;
     m_DesignEqualsImplementationProject = project;
+    m_UseCaseSlotEntryPoint_OrZeroIfNoneConnectedFromActorYet = 0;
 }
 void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
 {
@@ -360,6 +374,8 @@ void DesignEqualsImplementationUseCase::insertAlreadyFilledOutSlotIntoUseCase(De
 {
     DesignEqualsImplementationClassLifeLine *classLifeline = slotEntryPointThatKindaSortaMakesItNamed->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject();
 
+    classLifeline->insertSlotReference(slotEntryPointThatKindaSortaMakesItNamed);
+
 #if 0
     //JIT create the class lifeline
     if(!classLifeline)
@@ -370,15 +386,23 @@ void DesignEqualsImplementationUseCase::insertAlreadyFilledOutSlotIntoUseCase(De
         //classLifeline->replaceSlot();
     }
 #endif
-    addClassLifeLineToUseCase(classLifeline);
+    //addClassLifeLineToUseCase(classLifeline);
 
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = new DesignEqualsImplementationClassLifeLineUnitOfExecution(classLifeline, classLifeline);
-    int indexInsertedInto = classLifeline->mySlots().size(); //TODOreq: proper insert support, seems my backend and frontend items share similarly ordered lists (one is model, one is graphics item)
-    classLifeline->insertSlot(indexInsertedInto, slotEntryPointThatKindaSortaMakesItNamed);
+    //int indexInsertedInto = classLifeline->mySlots().size(); //TODOreq: proper insert support, seems my backend and frontend items share similarly ordered lists (one is model, one is graphics item)
+    //classLifeline->insertSlot(indexInsertedInto, slotEntryPointThatKindaSortaMakesItNamed);
+
     //newUnitOfExecution->setMethodWithOrderedListOfStatements_Aka_EntryPointToUnitOfExecution(slotEntryPointThatKindaSortaMakesItNamed);
 
     //TODOreq: not sure exactly when to do this, but the arrow needs to be updated to be pointing to the new unit of execution. Or perhaps arrow is simply deleted by front end and he draws another when we tell him that this event add succeeded (it needs a different graphic than JUST slot invoke or JUST signal anyways)
-    m_SlotsMakingApperanceInUseCase.insert(indexInsertedInto, slotEntryPointThatKindaSortaMakesItNamed); //TODOreq: merge this with class lifelines (have a list of class lifelines, which have a list of slots)?
+
+    int currentReferenceCount = m_ClassLifeLinesAppearingInThisUseCase_ReferenceCountedBecauseClassLifelinesWillOccurInMultipleUseCases.value(classLifeline, 0);
+    //if(currentReferenceCount > 0)
+    //{
+    m_ClassLifeLinesAppearingInThisUseCase_ReferenceCountedBecauseClassLifelinesWillOccurInMultipleUseCases.insert(classLifeline, ++currentReferenceCount);
+    //}
+
+    //m_SlotsMakingApperanceInUseCase.append(slotEntryPointThatKindaSortaMakesItNamed); //TODOreq: merge this with class lifelines (have a list of class lifelines, which have a list of slots)?
     //return newUnitOfExecution;
 }
 void DesignEqualsImplementationUseCase::addClassLifeLineToUseCase(DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase)
@@ -429,6 +453,10 @@ void DesignEqualsImplementationUseCase::insertSignalSlotActivationEvent(int inde
 void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
 {
     insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, 0, designEqualsImplementationClassSignal, signalEmissionContextVariables);
+}
+void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint)
+{
+    m_UseCaseSlotEntryPoint_OrZeroIfNoneConnectedFromActorYet = useCaseSlotEntryPoint; //TODOreq: handle deleting this arrow sets it back to zero i guess
 }
 //TODOreq: haven't implemented regular signal/slot event deletion, but still worth noting that ExitSignal deletion needs to be handled differently
 //TODOreq: again, somewhat off-topic though. should deleting a signal emission or slot invocation mean that it's existence in the class diagram perspective is also deleted? reference counting might be nice, but auto deletion might piss me off too! maybe on deletion, a reference counter is used to ask the user if they want to delete it's existence in the class too (when reference count drops to zero), and/or of course all kinds of "remember this choice" customizations
