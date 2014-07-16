@@ -12,7 +12,7 @@
 
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
 qds direction designEqualsImplementationClass.Properties; \
-qds direction designEqualsImplementationClass.HasA_Private_Classes_Members; \
+qds direction designEqualsImplementationClass.m_HasA_Private_Classes_Members; \
 qds direction designEqualsImplementationClass.HasA_Private_PODorNonDesignedCpp_Members; \
 qds direction designEqualsImplementationClass.PrivateMethods; \
 qds direction designEqualsImplementationClass.Slots; \
@@ -75,8 +75,8 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
                             << "#include <QObject>" << endl //TODOoptional: non-QObject classes? hmm nah because signals/slots based
                             << endl;
     //Header's header's forward declares
-    bool atLeastOneHasAPrivateMemberClass = !HasA_Private_Classes_Members.isEmpty(); //spacing
-    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, HasA_Private_Classes_Members)
+    bool atLeastOneHasAPrivateMemberClass = !hasA_Private_Classes_Members().isEmpty(); //spacing
+    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, hasA_Private_Classes_Members())
     {
         //class Bar;
         headerFileTextStream << "class " << currentPrivateMember->m_MyClass->ClassName << ";" << endl;
@@ -92,7 +92,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     //Header's hasAPrivateMemberClass declarations
     if(atLeastOneHasAPrivateMemberClass)
         headerFileTextStream << "private:" << endl;
-    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, HasA_Private_Classes_Members)
+    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, hasA_Private_Classes_Members())
     {
         //Bar *m_Bar;
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentPrivateMember->preferredTextualRepresentation() << ";" << endl;
@@ -102,7 +102,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     sourceFileTextStream    << "#include \"" << headerFilenameOnly() << "\"" << endl
                             << endl;
     //Source's header PrivateMemberClasses includes
-    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, HasA_Private_Classes_Members)
+    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, hasA_Private_Classes_Members())
     {
         //#include "bar.h"
         sourceFileTextStream << "#include \"" << currentPrivateMember->m_MyClass->headerFilenameOnly() << "\"" << endl;
@@ -112,7 +112,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     sourceFileTextStream    << ClassName << "::" << ClassName << "(QObject *parent)" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;
     //Source's header PrivateMemberClasses constructor initializers
-    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, HasA_Private_Classes_Members)
+    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, hasA_Private_Classes_Members())
     {
         //, m_Bar(new Bar(this))
         sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentPrivateMember->VariableName << "(new " << currentPrivateMember->m_MyClass->ClassName << "(this))" << endl; //TODOreq: for now all my objects need a QObject *parent=0 constructor, but since that's also a [fixable] requirement for my ObjectOnThreadGroup, no biggy. Still, would be nice to solve the threading issue and to allow constructor args here (RAII = pro)
@@ -174,7 +174,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
                             << "#endif // " << myNameHeaderGuard << endl;
 
     //Recursively generate source for all children HasA_PrivateMemberClasses
-    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, HasA_Private_Classes_Members)
+    Q_FOREACH(DesignEqualsImplementationClassInstance *currentPrivateMember, hasA_Private_Classes_Members())
     {
         if(!currentPrivateMember->m_MyClass->generateSourceCode(destinationDirectoryPath))
         {
@@ -192,11 +192,24 @@ DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
     //{
     //    delete currentMember->m_DesignEqualsImplementationClass;
     //}
-    qDeleteAll(HasA_Private_Classes_Members);
+    qDeleteAll(m_HasA_Private_Classes_Members);
     qDeleteAll(HasA_Private_PODorNonDesignedCpp_Members);
     qDeleteAll(PrivateMethods);
     qDeleteAll(Slots);
     qDeleteAll(Signals);
+}
+DesignEqualsImplementationClassInstance* DesignEqualsImplementationClass::createHasA_Private_Classes_Members(DesignEqualsImplementationClass *classToInstantiate, const QString &variableName)
+{
+    //TODOreq: ensure all callers haven't already done the "new"
+
+
+    DesignEqualsImplementationClassInstance *newInstance = new DesignEqualsImplementationClassInstance(classToInstantiate, this, variableName);
+    m_HasA_Private_Classes_Members.append(newInstance);
+    return newInstance;
+}
+QList<DesignEqualsImplementationClassInstance *> DesignEqualsImplementationClass::hasA_Private_Classes_Members()
+{
+    return m_HasA_Private_Classes_Members;
 }
 //Hmm now that I come to actually using this, why lose the pointers and resort to strings :)? Only thing though is that I need to refactor so that hasAClasses, properties, and localVariables(undefined-atm) all derive from some shared base "variable" xD. And shit local variables won't be introduced until C++ drop down mode is implemented (or at least designed), and even then they still might not ever show up in a slot-unit-of-execution-thingo.
 #if 0

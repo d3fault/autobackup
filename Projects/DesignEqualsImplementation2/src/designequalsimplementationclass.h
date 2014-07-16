@@ -29,7 +29,8 @@ public:
     //TODOoptional: private + getter/setter blah
     QString ClassName;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    QList<DesignEqualsImplementationClassInstance*> HasA_Private_Classes_Members;
+    DesignEqualsImplementationClassInstance* createHasA_Private_Classes_Members(DesignEqualsImplementationClass *classToInstantiate, const QString &variableName);
+    QList<DesignEqualsImplementationClassInstance*> hasA_Private_Classes_Members();
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> HasA_Private_PODorNonDesignedCpp_Members;
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSlot*> Slots;
@@ -38,6 +39,10 @@ public:
     //QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
 
     QString headerFilenameOnly();
+
+
+    //TODOoptional: should be private
+    QList<DesignEqualsImplementationClassInstance*> m_HasA_Private_Classes_Members;
 signals:
     void propertyAdded(DesignEqualsImplementationClassProperty*);
     void hasAPrivateMemberClassAdded(DesignEqualsImplementationClassInstance); //declare meta type?

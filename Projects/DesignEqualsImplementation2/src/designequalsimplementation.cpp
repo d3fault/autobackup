@@ -284,7 +284,7 @@ void DesignEqualsImplementation::newProject()
     fooClass->Slots.append(handleBarSignal);
     handleBarSignal->ParentClass = fooClass;
 
-    DesignEqualsImplementationClassInstance *fooClassInstance = testProject->createTopLevelClassInstances(fooClass);
+    //DesignEqualsImplementationClassInstance *fooClassInstance = testProject->createTopLevelClassInstances(fooClass);
 
     //Bar
     DesignEqualsImplementationClass *barClass = new DesignEqualsImplementationClass(testProject);
@@ -321,8 +321,9 @@ void DesignEqualsImplementation::newProject()
     barSignal->ParentClass = barClass;
     barClass->Signals.append(barSignal);
 
-    QString userChosenVariableNameForFoosInstanceOfBar("m_Bar");
-    fooClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(barClass, fooClass/*fooClassInstance*/, userChosenVariableNameForFoosInstanceOfBar));
+    QString userChosenVariableNameForFoosInstanceOfBar("m_Bar"); //TODOreq: i imagine these are set elsewhere (maybe i response to a user event. as in, they name it (imagine that))
+    fooClass->createHasA_Private_Classes_Members(barClass, userChosenVariableNameForFoosInstanceOfBar);
+    //fooClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(barClass, fooClass/*fooClassInstance*/, userChosenVariableNameForFoosInstanceOfBar));
 
     //Zed
     DesignEqualsImplementationClass *zedClass = new DesignEqualsImplementationClass(testProject);
@@ -337,7 +338,8 @@ void DesignEqualsImplementation::newProject()
     zedSlot->ParentClass = zedClass;
 
     QString userChosenVariableNameForBarsInstanceOfZed("m_Zed");
-    barClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
+    barClass->createHasA_Private_Classes_Members(zedClass, userChosenVariableNameForBarsInstanceOfZed);
+    //barClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
 
     testProject->addClass(fooClass);
     testProject->addClass(barClass);

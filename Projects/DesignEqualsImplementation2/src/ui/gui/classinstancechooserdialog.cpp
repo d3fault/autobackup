@@ -98,7 +98,7 @@ void ClassInstanceChooserDialog::addInstanceToListWidget(DesignEqualsImplementat
 }
 void ClassInstanceChooserDialog::addAllChildrensChildrenClassInstancesToPassedInList(DesignEqualsImplementationClassInstance *currentChildInstance/*, QList<DesignEqualsImplementationClassInstance*> *runningListOfExistingInstances*/)
 {
-    Q_FOREACH(DesignEqualsImplementationClassInstance *currentSubChildInstance, currentChildInstance->m_MyClass->HasA_Private_Classes_Members)
+    Q_FOREACH(DesignEqualsImplementationClassInstance *currentSubChildInstance, currentChildInstance->m_MyClass->hasA_Private_Classes_Members())
     {
         //runningListOfExistingInstances->append(currentSubChildInstance);
         if(m_ClassBeingAdded == currentSubChildInstance->m_MyClass)

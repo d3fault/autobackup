@@ -86,7 +86,6 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
             myInstanceInClassThatHasMe = m_UseCase->designEqualsImplementationProject()->createTopLevelClassInstances(classBeingAdded);
         }
 
-
 #if 0
 
         QList<DesignEqualsImplementationClassInstance*> potentialExistencesInParents; //my father was a whore

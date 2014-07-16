@@ -92,7 +92,7 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
         classContentsString.append("<br />o  " + currentProperty->Name);
         ++numLinesOfText;
     }
-    Q_FOREACH(DesignEqualsImplementationClassInstance *currentHasA_Private_Classes_Members_ListEntryType, m_DesignEqualsImplementationClass->HasA_Private_Classes_Members)
+    Q_FOREACH(DesignEqualsImplementationClassInstance *currentHasA_Private_Classes_Members_ListEntryType, m_DesignEqualsImplementationClass->hasA_Private_Classes_Members())
     {
         classContentsString.append("<br />-  " + currentHasA_Private_Classes_Members_ListEntryType->preferredTextualRepresentation());
         ++numLinesOfText;

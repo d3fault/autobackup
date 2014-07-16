@@ -149,7 +149,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
             m_VariablesAvailableToSatisfyArgs.append(currentArg);
         }
         //m_VariablesAvailableToSatisfyArgs.append(*slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_PrivateMemberClasses);
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAClass, sourceSlot_OrZeroIfSourceIsActor->ParentClass->HasA_Private_Classes_Members)
+        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAClass, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_Classes_Members())
         {
             m_VariablesAvailableToSatisfyArgs.append(currentHasAClass);
         }
