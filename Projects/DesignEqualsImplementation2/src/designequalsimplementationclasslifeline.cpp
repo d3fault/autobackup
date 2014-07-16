@@ -157,6 +157,11 @@ void DesignEqualsImplementationClassLifeLine::insertSlotToClassLifeLine(int inde
     m_MySlotsAppearingInClassLifeLine.insert(actualIndex, newSlot);
     emit slotInsertedIntoClassLifeLine(actualIndex, newSlot);
 }
+void DesignEqualsImplementationClassLifeLine::removeSlotFromClassLifeLine(DesignEqualsImplementationClassSlot *slotToRemove)
+{
+    m_MySlotsAppearingInClassLifeLine.removeAll(slotToRemove); //TODOreq: does it make sense for a slot to be on the same class lifeline more than once in a single use case? recursion = yes? if that's the case, i need to specify an index instead of removeAll here
+    emit slotRemovedFromClassLifeLine(slotToRemove);
+}
 #if 0
 void DesignEqualsImplementationClassLifeLine::replaceSlot(int indexToReplace, DesignEqualsImplementationClassSlot *slotToReplaceItWith)
 {

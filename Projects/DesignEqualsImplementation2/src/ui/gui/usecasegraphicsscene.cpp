@@ -303,6 +303,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationClassSlot *destinationSlotIsProbablyNameless_OrZeroIfNoDest = 0;
     DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest = 0;
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *destinationSlotGraphicsItem_OrZeroIfNoDest;
     bool destinationIsActor = false;
     if(destinationItem_CanBeZeroUnlessSourceIsActor) //for now only units of executions can be dests (or nothing)
     {
@@ -314,9 +315,9 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         }
         if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID)
         {
-            DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *destinationSlotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor);
-            destinationSlotIsProbablyNameless_OrZeroIfNoDest = destinationSlotGraphicsItem->underlyingSlot();
-            destinationClassLifeLine_OrZeroIfNoDest = destinationSlotGraphicsItem->parentClassLifelineGraphicsItem()->classLifeLine();
+            destinationSlotGraphicsItem_OrZeroIfNoDest = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor);
+            destinationSlotIsProbablyNameless_OrZeroIfNoDest = destinationSlotGraphicsItem_OrZeroIfNoDest->underlyingSlot();
+            destinationClassLifeLine_OrZeroIfNoDest = destinationSlotGraphicsItem_OrZeroIfNoDest->parentClassLifelineGraphicsItem()->classLifeLine();
         }
 
         if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
@@ -375,6 +376,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
     //TODOreq: by/at-around now, we know which index in the source the statement should be inserted at. We don't have to give it to the dialog, but we do need to emit it to the backend after dialog is accepted
     int indexToInsertStatementAt_IntoSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->statementInsertIndex();
+    int indexToInsertStatementAt_IntoDestination = 420; //eh just 1 but still
 
     SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, destinationSlotIsProbablyNameless_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
@@ -400,6 +402,19 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
     if(destinationSlotIsProbablyNameless_OrZeroIfNoDest)
     {
+
+        //HACK to delete target slot if unnamed and empty
+        if(userChosenDestinationSlot_OrZeroIfNone != destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty() && destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name.isEmpty() && destinationClassLifeLine_OrZeroIfNoDest)
+        {
+            destinationClassLifeLine_OrZeroIfNoDest->removeSlotFromClassLifeLine(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
+            destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(indexToInsertStatementAt_IntoDestination, userChosenDestinationSlot_OrZeroIfNone);
+            //destinationSlotGraphicsItem_OrZeroIfNoDest->setSlot(userChosenDestinationSlot_OrZeroIfNone);
+            delete destinationSlotIsProbablyNameless_OrZeroIfNoDest;
+            destinationSlotIsProbablyNameless_OrZeroIfNoDest = userChosenDestinationSlot_OrZeroIfNone;
+        }
+
+
+
         if(destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name == "")
         {
             //TODOreq: bring all existing statements over to the userChosenDestinationSlot_OrZeroIfNone, modal dialog asking for merge strategy if userChosenDestinationSlot_OrZeroIfNone already has existing statements and targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest does too

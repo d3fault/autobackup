@@ -83,7 +83,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
         //new DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene(currentUnitOfExecution, this, unitOfExecutionRect, this);
     }
     repositionSlotsBecauseOneSlotsChanged();
-    connect(classLifeLine, SIGNAL(slotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotReferencedInClassLifeLine(int,DesignEqualsImplementationClassSlot*)));
+    connect(classLifeLine, SIGNAL(slotInsertedIntoClassLifeLine(int,DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotInsertedIntoClassLifeLine(int, DesignEqualsImplementationClassSlot*)));
     connect(classLifeLine, SIGNAL(slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)));
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
@@ -152,10 +152,10 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
 #endif
     }
 }
-void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot *slot)
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotInsertedIntoClassLifeLine(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
     //make the graphics item, add it as child, and reposition
-    createAndInsertSlotGraphicsItem(m_SlotsInThisClassLifeLine.size(), slot);
+    createAndInsertSlotGraphicsItem(indexInsertedInto, slot);
     repositionSlotsBecauseOneSlotsChanged();
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved)

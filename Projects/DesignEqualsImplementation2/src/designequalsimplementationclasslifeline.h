@@ -24,6 +24,7 @@ public:
     void setMyInstanceInClassThatHasMe_OrZeroIfTopLevelObject(DesignEqualsImplementationClassInstance *hasA_Private_Classes_Members_ListEntryType);
     DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject() const;
     void insertSlotToClassLifeLine(int indexToInsertInto, DesignEqualsImplementationClassSlot *newSlot);
+    void removeSlotFromClassLifeLine(DesignEqualsImplementationClassSlot *slotToRemove);
     //void replaceSlot(int indexToReplace, DesignEqualsImplementationClassSlot *slotToReplaceItWith);
     MySlotsAppearingInClassLifeLine_List mySlotsAppearingInClassLifeLine() const;
 private:
@@ -34,7 +35,7 @@ private:
     MySlotsAppearingInClassLifeLine_List m_MySlotsAppearingInClassLifeLine;
 signals:
     void slotInsertedIntoClassLifeLine(int insertIndex, DesignEqualsImplementationClassSlot *slot);
-    //void slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
+    void slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINE_H

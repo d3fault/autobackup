@@ -35,7 +35,7 @@ private:
     void privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine);
     void createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
 private slots:
-    void handleSlotReferencedInClassLifeLine(DesignEqualsImplementationClassSlot *slot);
+    void handleSlotInsertedIntoClassLifeLine(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
     void handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
     void handleSlotGeometryChanged();
 };

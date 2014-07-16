@@ -1,0 +1,24 @@
+//set when implementing:
+plugin->setProperty("iimplementinterface.imediaplayer", QVariant(static_cast<bool>(true)));
+
+//query when gathering/testing:
+QVariant imediaplayerVariant = plugin->property("iimplementinterface.imediaplayer");
+if(!imediaplayerVariant.isValid())
+return;
+bool imediaplayer = imediaplayerVariant.toBool();
+if(!imediaplayer)
+return; //plugin that was found and auto-checked now discarded if no interfaces of interest
+
+QVariant frameParserSlot = plugin->property("iimplementinterface.imediaplayer.frameparserslot");
+QVariant frameParserSignal = plugin->property("iimplementinterface.imediaplayer.frameparsersignal");
+QVariant frameDecoder = plugin->property("iimplementinterface.imediaplayer.framedecoder"); //etc
+
+if(!frameParserSignal.isValid() || !frameParserSlot.isValid() || frameDecoder.isValid())
+return;
+
+bool ok = false;
+int frameParserSlotIndex = frameParserSlot.toInt(&ok);
+if(!ok || frameParserSlotIndex < 0 || frameParserSlotIndex > plugin->metaObject()->methodCount())
+return;
+
+QObject::connect(this, this->metaObject()->method(this->metaObject()->indexOfSignal(QMetaObject::normalizedSignature("frameParseRequested(QVideoFrame)"))), plugin, plugin->metaObject()->method(frameParserSlotIndex));
