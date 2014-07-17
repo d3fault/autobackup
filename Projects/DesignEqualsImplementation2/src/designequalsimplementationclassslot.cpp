@@ -2,6 +2,7 @@
 
 #include <QDataStream>
 
+#include "designequalsimplementationclass.h"
 #include "designequalsimplementationclasslifeline.h"
 
 #define DesignEqualsImplementationClassSlot_QDS(qds, direction, slot) \
@@ -31,7 +32,10 @@ DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(DesignE
     }
 }
 DesignEqualsImplementationClassSlot::~DesignEqualsImplementationClassSlot()
-{ }
+{
+    if(ParentClass)
+        ParentClass->removeSlot(this);
+}
 #if 0
 void DesignEqualsImplementationClassSlot::setParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject(DesignEqualsImplementationClassLifeLine *parentClassLifeLine)
 {

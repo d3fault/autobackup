@@ -237,6 +237,12 @@ void DesignEqualsImplementationClass::addSlot(DesignEqualsImplementationClassSlo
     slotToAdd->ParentClass = this;
     emit slotAdded(slotToAdd);
 }
+void DesignEqualsImplementationClass::removeSlot(DesignEqualsImplementationClassSlot *slotToRemove)
+{
+    m_MySlots.removeOne(slotToRemove);
+    slotToRemove->ParentClass = 0; //TODOreq: a slot without a parent is undefined
+    //emit slotRemoved(slotToRemove);
+}
 DesignEqualsImplementationClassInstance* DesignEqualsImplementationClass::createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName)
 {
     //TODOreq: ensure all callers haven't already done the "new"

@@ -1,0 +1,1 @@
+Finally determined the source of the double delete: I delete/remake the slot graphics item, who is the graphics scene parent of the snapping visual indicator. When I go to delete the snapping visual indicator because of a mouse move etc, it is a dangling pointer

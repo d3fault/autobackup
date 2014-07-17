@@ -34,6 +34,7 @@ public:
 
     DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString());
     void addSlot(DesignEqualsImplementationClassSlot *slotToAdd);
+    void removeSlot(DesignEqualsImplementationClassSlot *slotToRemove);
 
     //TODOoptional: private + getter/setter blah
     QString ClassName;

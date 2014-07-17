@@ -228,7 +228,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 return;
 
             DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
-            if(!m_ArrowDestinationSnapper_OrZeroIfNone)
+            if(m_ArrowDestinationSnapper_OrZeroIfNone)
                 delete m_ArrowDestinationSnapper_OrZeroIfNone;
             m_ArrowDestinationSnapper_OrZeroIfNone = slotGraphicsItem->makeSnappingHelperForSlotEntryPoint(eventScenePos);
         }
@@ -453,6 +453,9 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         {
             //TODOoptimization: could sneak the slot in without deleting the graphics item and recreating it, but as of now it is done transparently via reactor pattern through two below calls. Btw I'm putting business logic in the gui but fuck it this is deserving and idgaf anymore (TODOimplicitsharing: request here that the next two statements are performed in the backend... but wtf it needs to be finished before i delete it 3 lines down so idfk)
             destinationClassLifeLine_OrZeroIfNoDest->removeSlotFromClassLifeLine(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
+            DesignEqualsImplementationClass *parentClass = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass;
+            parentClass->removeSlot(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
+            //parentClass->addSlot();
             destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(0 /*TODOreq: is this good enough? will it always want to be 0?*/, userChosenDestinationSlot_OrZeroIfNone);
 
             delete destinationSlotIsProbablyNameless_OrZeroIfNoDest;
