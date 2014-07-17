@@ -445,6 +445,12 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     }
 #endif
 
+    if(m_ArrowDestinationSnapper_OrZeroIfNone)
+    {
+        delete m_ArrowDestinationSnapper_OrZeroIfNone;
+        m_ArrowDestinationSnapper_OrZeroIfNone = 0;
+    }
+
     if(destinationSlotIsProbablyNameless_OrZeroIfNoDest)
     {
 
@@ -452,6 +458,15 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         if(userChosenDestinationSlot_OrZeroIfNone != destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty() && destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name.isEmpty() && destinationClassLifeLine_OrZeroIfNoDest)
         {
             //TODOoptimization: could sneak the slot in without deleting the graphics item and recreating it, but as of now it is done transparently via reactor pattern through two below calls. Btw I'm putting business logic in the gui but fuck it this is deserving and idgaf anymore (TODOimplicitsharing: request here that the next two statements are performed in the backend... but wtf it needs to be finished before i delete it 3 lines down so idfk)
+
+#if 0
+            if(m_ArrowDestinationSnapper_OrZeroIfNone) //Hack within a hack: when the slot graphics item is deleted, it deletes the snapping visual indicator implicitly, which is m_ArrowDestinationSnapper_OrZeroIfNone also has a pointer to. if the graphics item implicitly deletes it, m_ArrowDestinationSnapper_OrZeroIfNone has a dangling pointer. i can probably move this code "upward" a bit and out of this hack itself and it would be equally safe. since we are mouse release it makes sense
+            {
+                delete m_ArrowDestinationSnapper_OrZeroIfNone;
+                m_ArrowDestinationSnapper_OrZeroIfNone = 0;
+            }
+#endif
+
             destinationClassLifeLine_OrZeroIfNoDest->removeSlotFromClassLifeLine(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
             DesignEqualsImplementationClass *parentClass = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass;
             parentClass->removeSlot(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
