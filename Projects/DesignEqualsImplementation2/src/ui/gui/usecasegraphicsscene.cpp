@@ -347,8 +347,11 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         destinationItem_CanBeZeroUnlessSourceIsActor = giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(event->scenePos());
     }
     int sourceItemType = sourceItem->type();
-    if(!destinationItem_CanBeZeroUnlessSourceIsActor && sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+    bool sourceIsActor = (sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
+    if(!destinationItem_CanBeZeroUnlessSourceIsActor && sourceIsActor)
         return false;
+
+    //TODOreq: JIT create the target slot if target slot is already named
 
     //Dialog mode is based entirely on whether or not there is a dest, in which case we always want to choose a slot on the dest (signal can be opted in to)
     DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode = (destinationItem_CanBeZeroUnlessSourceIsActor == 0) ? DesignEqualsImplementationUseCase::UseCaseSignalEventType : DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType;
@@ -374,6 +377,10 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     {
         int destinationItemType = destinationItem_CanBeZeroUnlessSourceIsActor->type();
 
+        if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
+        {
+            destinationIsActor = true;
+        }
         if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
         {
             destinationClassLifeLine_OrZeroIfNoDest = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor)->classLifeLine();
@@ -385,20 +392,27 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             destinationClassLifeLine_OrZeroIfNoDest = destinationSlotGraphicsItem_OrZeroIfNoDest->parentClassLifelineGraphicsItem()->classLifeLine();
         }
 
-        if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
-        {
-            destinationIsActor = true;
-        }
-#if 0
-        //create unit of execution in destination (unless it's actor)
         if(!destinationIsActor)
         {
+            if(destinationSlotGraphicsItem_OrZeroIfNoDest && (destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name != UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING || !destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty())) //TODOreq: skipping slot entry point connecting (ie: Foo::unnamedFirstSlot -> Bar::fooSlot -> Bar::barSignal -> Foo::handleBarSignal) should not now name that first Foo::unnamedFirstSlot, because if it did then it would be an infinite loop. We need to see that since unnamedFirstSlot referenced us "later on", that our NAMING him would be an infinite loop. To KISS initially, I should just always create a new slot whenever the dest's statement list isn't empty (adding that to this if now)
+            {
+                //jit create slot on class lifeline in destination (unless it's actor)
+                DesignEqualsImplementationClassSlot *newSlot = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING);
+                if(destinationClassLifeLine_OrZeroIfNoDest)
+                {
+                    destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(destinationClassLifeLine_OrZeroIfNoDest->mySlotsAppearingInClassLifeLine().size(), newSlot);
+                }
+                destinationSlotIsProbablyNameless_OrZeroIfNoDest = newSlot;
+                //TODOreq: destinationSlotGraphicsItem_OrZeroIfNoDest is now invalid, not sure it matters
+            }
+        }
+#if 0
             DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *lifelineGraphicsItem;
-            if(topMostItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLineUnitOfExecution_GRAPHICS_TYPE_ID)
+            if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID)
             {
                 lifelineGraphicsItem = qgraphicsitem_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor)->parentClassLifeline();
             }
-            else if(topMostItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
+            else if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
             {
                 lifelineGraphicsItem = qgraphicsitem_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor);
             }
@@ -412,7 +426,6 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 #endif
     }
 
-    bool sourceIsActor = (sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
     if(sourceIsActor && destinationIsActor)
         return false;
 
@@ -438,6 +451,9 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             }
         }
     }
+
+    if(sourceSlotForStatementInsertion_OrZeroIfSourceIsActor == destinationSlotIsProbablyNameless_OrZeroIfNoDest)
+        return false; //Drag arrow onto self = unsupported for now. TODOoptional: call private methods this way (with arch arrow)?
 
     //TODOreq: by/at-around now, we know which index in the source the statement should be inserted at. We don't have to give it to the dialog, but we do need to emit it to the backend after dialog is accepted
     int indexToInsertStatementAt_IntoSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->statementInsertIndex();
@@ -468,7 +484,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     {
 
         //HACK to delete target slot if unnamed and empty
-        if(userChosenDestinationSlot_OrZeroIfNone != destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty() && destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name.isEmpty() && destinationClassLifeLine_OrZeroIfNoDest)
+        if(userChosenDestinationSlot_OrZeroIfNone != destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty() && destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING && destinationClassLifeLine_OrZeroIfNoDest)
         {
             //TODOoptimization: could sneak the slot in without deleting the graphics item and recreating it, but as of now it is done transparently via reactor pattern through two below calls. Btw I'm putting business logic in the gui but fuck it this is deserving and idgaf anymore (TODOimplicitsharing: request here that the next two statements are performed in the backend... but wtf it needs to be finished before i delete it 3 lines down so idfk)
 

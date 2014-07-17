@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 
+#include "../../designequalsimplementationcommon.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclasslifeline.h"
@@ -118,6 +119,8 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         {
             Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->mySlots()) //List the slots on the target slot, derp
             {
+                if(currentSlot->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING)
+                    continue;
                 m_ExistingSlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
             }
         }

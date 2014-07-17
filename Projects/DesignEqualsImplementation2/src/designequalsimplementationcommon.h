@@ -11,4 +11,6 @@ typedef quint16 UmlItemsTypedef;
 #define DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS 0
 #define DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE 1
 
+#define UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING "class;osdfu())(;;;ssowq90123930sodifuwe39032--class--" //TODOreq: use illegal characters and sanitize the UI so that it can only ever be used internally :)
+
 #endif // DESIGNEQUALSIMPLEMENTATIONCOMMON_H

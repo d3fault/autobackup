@@ -2572,11 +2572,11 @@ Projects/DesignEqualsImplementation2/design/the.design.should.be.simple.but.ive.
 Projects/DesignEqualsImplementation2/design/this.bug.almost.made.me.revert.lolol.and.now.to.try.to.fix.it.sdlfjsldkfjlskdjfsldkf.txt:1405634218
 Projects/DesignEqualsImplementation2/design/units.of.executions.and.slots.and.private.methods.all.have.tons.of.overlap.sdfouwerljsdfsdklfj.txt:1405166122
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1405635700
+Projects/DesignEqualsImplementation2/src/:1405638613
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1405635668
+Projects/DesignEqualsImplementation2/src/ui/gui/:1405638492
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1405502076
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1404542044
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2595,7 +2595,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassl
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h:1405612585
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.cpp:1405432952
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.h:1404132891
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationguicommon.h:1405439887
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationguicommon.h:1405638136
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.cpp:1405455827
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.h:1404671681
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.cpp:1405455825
@@ -2611,13 +2611,13 @@ Projects/DesignEqualsImplementation2/src/ui/gui/ihaveagraphicsviewandscene.h:140
 Projects/DesignEqualsImplementation2/src/ui/gui/main.cpp:1405432210
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp:1405367716
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h:1405367700
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1405535277
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1405638492
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1405454430
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.cpp:1405630076
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.h:1405630057
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.cpp:1405628574
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.h:1405612585
-Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1405635668
+Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1405638339
 Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:1405628873
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.cpp:1405455825
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.h:1404489887
@@ -2628,7 +2628,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.cpp:140
 Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.h:1404574889
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.cpp:1405633122
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1405633066
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.cpp:1405602474
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.cpp:1405638169
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.h:1405552094
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.cpp:1405431299
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.h:1405431311
@@ -2642,7 +2642,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationclasssignal.c
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasssignal.h:1404710870
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.cpp:1405633355
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.h:1405630211
-Projects/DesignEqualsImplementation2/src/designequalsimplementationcommon.h:1404463822
+Projects/DesignEqualsImplementation2/src/designequalsimplementationcommon.h:1405638136
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1405527657
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1405525395
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.cpp:1404288018

@@ -1,5 +1,6 @@
 #include "designequalsimplementationclasslifeline.h"
 
+#include "designequalsimplementationcommon.h"
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationclasslifelineunitofexecution.h"
 
@@ -121,7 +122,7 @@ DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine
     , m_MyInstanceInClassThatHasMe(myInstanceInClassThatHasMe_OrZeroIfTopLevelObject) //Top level object, in this context, I guess really just means "not instantiated in this use case"... or maybe it means "not instantiated by any of the designed classes"... but I'm leaning more towards the first one
     , m_Position(position) //Could just keep one qreal "horizontalPosition"
 {
-    DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = m_DesignEqualsImplementationClass->createwNewSlot(); //new DesignEqualsImplementationClassSlot(this, this);
+    DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = m_DesignEqualsImplementationClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING); //new DesignEqualsImplementationClassSlot(this, this);
     //defaultSlotInClassLifeLine->ParentClass = designEqualsImplementationClass;
     insertSlotToClassLifeLine(0, defaultSlotInClassLifeLine); //every lifeline has at least one slot. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
 }
