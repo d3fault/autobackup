@@ -326,6 +326,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(useCase, SIGNAL(classLifeLineAdded(DesignEqualsImplementationClassLifeLine*)), this, SLOT(handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine*)));
     connect(useCase, SIGNAL(eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)), this, SLOT(handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)));
 }
+//TODOreq: if new slot jit created and shown behind message editor, the arrow's p2 should be updated to reflect that. HOWEVER I'm considering using ghosting techniques to already show what will happen should the user release the mouse button, so those considerations need to be considered
 bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     //first things first, get the topmost items [that we want] underneath the source and dest points
@@ -500,7 +501,23 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             DesignEqualsImplementationClass *parentClass = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass;
             parentClass->removeSlot(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
             //parentClass->addSlot();
-            destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(0 /*TODOreq: is this good enough? will it always want to be 0?*/, userChosenDestinationSlot_OrZeroIfNone);
+            int slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted = 0;
+            if(destinationSlotGraphicsItem_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest)
+            {
+                //use what they targeted + 1
+                QList<DesignEqualsImplementationClassSlot*> slotsAppearingOnClassLifeLine = destinationSlotGraphicsItem_OrZeroIfNoDest->parentClassLifelineGraphicsItem()->classLifeLine()->mySlotsAppearingInClassLifeLine();
+                slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted = slotsAppearingOnClassLifeLine.indexOf(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
+                if(slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted < 0)
+                {
+                    slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted = slotsAppearingOnClassLifeLine.size();
+                }
+            }
+            else if(destinationClassLifeLine_OrZeroIfNoDest)
+            {
+                //use 'last'
+                slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted = destinationClassLifeLine_OrZeroIfNoDest->mySlotsAppearingInClassLifeLine().size();
+            }
+            destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted, userChosenDestinationSlot_OrZeroIfNone);
 
             delete destinationSlotIsProbablyNameless_OrZeroIfNoDest;
             destinationSlotIsProbablyNameless_OrZeroIfNoDest = userChosenDestinationSlot_OrZeroIfNone;
