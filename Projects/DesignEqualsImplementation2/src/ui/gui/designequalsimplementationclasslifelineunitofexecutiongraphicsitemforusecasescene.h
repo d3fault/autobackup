@@ -7,6 +7,7 @@ class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene;
 class DesignEqualsImplementationClassSlot;
 class IDesignEqualsImplementationHaveOrderedListOfStatements;
 class IDesignEqualsImplementationStatement;
+class ISnappingIndicationVisualRepresentation;
 
 typedef QPair<QGraphicsLineItem* /*visual representation*/, IDesignEqualsImplementationStatement* /*underlyingStatement*/> ExistingStatementListEntryTypedef;
 
@@ -19,7 +20,8 @@ public:
     explicit DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
 
     int getInsertIndexForMouseScenePos(QPointF mouseEventScenePos);
-    QGraphicsItem *makeSnappingHelperForMousePoint(QPointF mouseScenePos);
+    ISnappingIndicationVisualRepresentation *makeSnappingHelperForSlotEntryPoint(QPointF mouseScenePosForDeterminingRightOrLeftOnly);
+    ISnappingIndicationVisualRepresentation *makeSnappingHelperForMousePoint(QPointF mouseScenePos);
 
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution() const;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifelineGraphicsItem() const;

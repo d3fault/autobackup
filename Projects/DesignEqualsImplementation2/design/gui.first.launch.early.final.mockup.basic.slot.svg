@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="828.85333"
-   height="902.26654"
+   width="917.13361"
+   height="1007.0634"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
@@ -25,8 +25,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.70710678"
-     inkscape:cx="206.71025"
-     inkscape:cy="487.13347"
+     inkscape:cx="242.45736"
+     inkscape:cy="528.95726"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -49,7 +49,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -57,7 +57,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(69.848009,-111.3945)">
+     transform="translate(158.12828,-6.5976512)">
     <rect
        style="fill:none;stroke:#000000;stroke-opacity:1"
        id="rect2985"
@@ -67,7 +67,7 @@
        y="258.07648" />
     <g
        id="g4081"
-       transform="translate(0,158.06081)">
+       transform="matrix(0.03898054,0,0,1,461.83555,39.166365)">
       <text
          sodipodi:linespacing="125%"
          id="text4083"
@@ -183,21 +183,21 @@
        xml:space="preserve"
        style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
        x="473.25647"
-       y="342.73001"
+       y="345.03152"
        id="text3777"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3779"
          x="473.25647"
-         y="342.73001">-</tspan></text>
+         y="345.03152">-</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3785"
-       y="500.81888"
+       y="419.96606"
        x="473.25647"
        style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
        xml:space="preserve"><tspan
-         y="500.81888"
+         y="419.96606"
          x="473.25647"
          id="tspan3787"
          sodipodi:role="line">-</tspan></text>
@@ -205,24 +205,13 @@
        xml:space="preserve"
        style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
        x="473.25647"
-       y="658.40265"
+       y="495.83054"
        id="text3809"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3811"
          x="473.25647"
-         y="658.40265">-</tspan></text>
-    <text
-       sodipodi:linespacing="125%"
-       id="text3813"
-       y="658.40265"
-       x="473.25647"
-       style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
-       xml:space="preserve"><tspan
-         y="658.40265"
-         x="473.25647"
-         id="tspan3815"
-         sodipodi:role="line">-</tspan></text>
+         y="495.83054">-</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot3823"
@@ -234,7 +223,7 @@
            x="37.375645"
            y="375.55997"
            style="fill:#ffffff" /></flowRegion><flowPara
-         id="flowPara3829"></flowPara></flowRoot>    <flowRoot
+         id="flowPara3829" /></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3831"
        style="font-size:64px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"><flowRegion
@@ -249,33 +238,37 @@
        xml:space="preserve"
        id="flowRoot3847"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(-95,-31.428571)"><flowRegion
+       transform="translate(-186.85282,-45.842785)"><flowRegion
          id="flowRegion3849"><rect
            id="rect3851"
-           width="172.85715"
-           height="282.14282"
+           width="253.90361"
+           height="300.73718"
            x="47.857143"
            y="335.93362" /></flowRegion><flowPara
          id="flowPara3853"
-         style="font-size:12px">You must ensure that the object lifeline of the slot being invoked is an atomic change. That is to say, between the O and the X you must have restored the state of the class to a point where any of it's slots can be called. Queues work best, and Qt handles queues transparently for you via signals/slots. .If all your slots ensure that between O and X the state of the class is restored, they are thread safe.</flowPara></flowRoot>    <rect
-       style="fill:none;stroke:#000000;stroke-width:1.12459099;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         style="font-size:12px">You must ensure that the slot invoke changes the object it lives on atomically. That is to say, between the O and the X you must have restored the state of the class to a point where any of it's slots can be called. Queues work best, and Qt uses queues internally for you via signals/slots. If all your slots for a given object ensure that between O and X the state of the object is restored, all proper invocations of all slots for that object are guaranteed to be thread safe.</flowPara><flowPara
+         style="font-size:12px"
+         id="flowPara3131" /><flowPara
+         style="font-size:12px"
+         id="flowPara3133">Warning, pressing OK will turn off the red snapping indicators unless your mouse is near a snap point. To enable the red snapping visual indicators at all times, press the        button in the toolbar</flowPara></flowRoot>    <rect
+       style="fill:none;stroke:#000000;stroke-width:1.34393549;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3865"
-       width="187.14285"
-       height="319.78961"
-       x="-59.285713"
-       y="299.50504" />
+       width="270.24487"
+       height="316.2626"
+       x="-147.45631"
+       y="286.50504" />
     <rect
        style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3867"
        width="65"
        height="27.142857"
-       x="-2.1428566"
-       y="555.2193" />
+       x="-57.642857"
+       y="569.85535" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot3869"
        style="font-size:14px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(-68.571429,-24.285714)"><flowRegion
+       transform="translate(-124.07143,-9.6496752)"><flowRegion
          id="flowRegion3871"><rect
            id="rect3873"
            width="23.571432"
@@ -358,8 +351,8 @@
        id="rect3995"
        width="95.493431"
        height="120.02847"
-       x="381.854"
-       y="122.14235" />
+       x="334.854"
+       y="89.142349" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot3997"
@@ -371,11 +364,11 @@
            height="15.278557"
            x="479.94873"
            y="64.493988" /></flowRegion><flowPara
-         id="flowPara4003"></flowPara></flowRoot>    <flowRoot
+         id="flowPara4003" /></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot4005"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(-74.93456,56.923763)"><flowRegion
+       transform="translate(-121.93456,23.923763)"><flowRegion
          id="flowRegion4007"><rect
            id="rect4009"
            width="59.598999"
@@ -389,10 +382,11 @@
        id="rect4017"
        width="15.026019"
        height="15.404826"
-       x="387.99133"
-       y="154.07829" />
+       x="340.99133"
+       y="121.07829" />
     <g
-       id="g4063">
+       id="g4063"
+       transform="translate(0,-37.325902)">
       <text
          xml:space="preserve"
          style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -486,7 +480,7 @@
        xml:space="preserve"
        id="flowRoot4047"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(-57.169331,113.97707)"><flowRegion
+       transform="translate(-57.169331,76.651168)"><flowRegion
          id="flowRegion4049"><rect
            id="rect4051"
            width="130"
@@ -498,20 +492,20 @@
          id="flowPara4061">TODOoptional: private methods</flowPara></flowRoot>    <text
        xml:space="preserve"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="407.67902"
-       y="164.161"
+       x="360.67902"
+       y="131.16101"
        id="text4115"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4117"
-         x="407.67902"
-         y="164.161"
+         x="360.67902"
+         y="131.16101"
          style="font-size:8px">=</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot4119"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(-92.445981,66.110947)"><flowRegion
+       transform="translate(-139.44598,33.110947)"><flowRegion
          id="flowRegion4121"><rect
            id="rect4123"
            width="24.75"
@@ -521,8 +515,8 @@
          id="flowPara4125">Existing</flowPara><flowPara
          id="flowPara4127">Statements</flowPara><flowPara
          id="flowPara4129">of the Slot</flowPara></flowRoot>    <rect
-       y="178.20329"
-       x="387.99133"
+       y="145.20329"
+       x="340.99133"
        height="15.404826"
        width="15.026019"
        id="rect4133"
@@ -530,17 +524,17 @@
     <text
        sodipodi:linespacing="125%"
        id="text4135"
-       y="188.286"
-       x="407.67902"
+       y="155.286"
+       x="360.67902"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        xml:space="preserve"><tspan
          style="font-size:8px"
-         y="188.286"
-         x="407.67902"
+         y="155.286"
+         x="360.67902"
          id="tspan4137"
          sodipodi:role="line">=</tspan></text>
     <flowRoot
-       transform="translate(-93.570981,90.11095)"
+       transform="translate(-140.57098,57.11095)"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        id="flowRoot4139"
        xml:space="preserve"><flowRegion
@@ -552,7 +546,8 @@
            id="rect4143" /></flowRegion><flowPara
          id="flowPara4149">Statement</flowPara><flowPara
          id="flowPara4156">Insert Points (hover only by default, but with a giant red graphical-ish- button in the toolbar: </flowPara></flowRoot>    <g
-       id="g4234">
+       id="g4234"
+       transform="translate(-47,-33)">
       <path
          inkscape:connector-curvature="0"
          id="path4202"
@@ -600,7 +595,7 @@
        xml:space="preserve"
        id="flowRoot4226"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(-59.857593,95.546607)"><flowRegion
+       transform="translate(-106.85759,62.546607)"><flowRegion
          id="flowRegion4228"><rect
            id="rect4230"
            width="26.701902"
@@ -609,7 +604,7 @@
            y="111.17505" /></flowRegion><flowPara
          id="flowPara4232">(^my hover says &quot;toggle snap helpers permanently on&quot;)</flowPara></flowRoot>    <g
        id="g4245"
-       transform="translate(-469.16536,395.44947)">
+       transform="matrix(1.4856661,0,0,1.4856661,-734.39141,252.55279)">
       <path
          style="fill:none;stroke:#ff0000;stroke-width:0.59242004px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="m 447.46693,202.33908 4.5625,0"
@@ -645,25 +640,342 @@
        xml:space="preserve"
        id="flowRoot4265"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(-79.632088,97.419005)"><flowRegion
+       transform="translate(-74.882088,60.91901)"><flowRegion
          id="flowRegion4267"><rect
            id="rect4269"
            width="96.520073"
            height="19.798996"
            x="76.367531"
            y="497.19284" /></flowRegion><flowPara
-         id="flowPara4271">toggles snap indicators always on or always off</flowPara><flowPara
-         id="flowPara4277">(always on by default, but when turned off goes into &quot;normal&quot; snapping mode with hover)</flowPara></flowRoot>    <text
+         id="flowPara4277" /></flowRoot>    <g
+       transform="matrix(1.4856661,0,0,1.4856661,-446.38819,-272.43319)"
+       id="g3135">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3137"
+         d="m 447.46693,202.33908 4.5625,0"
+         style="fill:none;stroke:#ff0000;stroke-width:0.59242004px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <flowRoot
+         transform="translate(-58.936787,86.734541)"
+         style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
+         id="flowRoot3139"
+         xml:space="preserve"><flowRegion
+           id="flowRegion3141"><rect
+             style="fill:#ff0000"
+             y="111.80005"
+             x="500.375"
+             height="9.75"
+             width="26.125"
+             id="rect3143" /></flowRegion><flowPara
+           id="flowPara3145"><flowSpan
+             id="flowSpan3147"
+             style="font-size:6px;fill:#ff0000">O</flowSpan><flowSpan
+             id="flowSpan3149"
+             style="fill:#000000">,   ,</flowSpan><flowSpan
+             id="flowSpan3151"
+             style="font-size:6px;fill:#ff0000">X</flowSpan></flowPara></flowRoot>      <rect
+         y="198.786"
+         x="440.05402"
+         height="6.84375"
+         width="17.53125"
+         id="rect3153"
+         style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
+    <flowRoot
        xml:space="preserve"
+       id="flowRoot3155"
        style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-10.247235"
-       y="599.11969"
-       id="text4273"
+       transform="translate(-232.34801,126.3945)"><flowRegion
+         id="flowRegion3157"><rect
+           id="rect3159"
+           width="57.5"
+           height="21"
+           x="380.5"
+           y="-116.23346" /></flowRegion><flowPara
+         id="flowPara3161"
+         style="font-size:6px">File Edit Help Etc</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3163"
+       style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(-257.09801,105.1445)"><flowRegion
+         id="flowRegion3165"><rect
+           id="rect3167"
+           width="125"
+           height="43.5"
+           x="466.5"
+           y="-69.733459" /></flowRegion><flowPara
+         id="flowPara3169">^impressed/checked on first launch until &quot;OK&quot; is pressed, then unchecked (and QSettings persisted that not first launch). Toggles red snapping visual indicators permanently on or off. The other snapping options shoulld go in a proper editor dialog so that the red'ness is unique to the gui area [whenever the mouse isn't near a snap point]</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="226.65297"
+       y="342.42694"
+       id="text3171"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4275"
-         x="-10.247235"
-         y="599.11969"
-         style="font-size:6px">=</tspan></text>
+         id="tspan3173"
+         x="226.65297"
+         y="342.42694">-</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3175"
+       y="291.71732"
+       x="439.29449"
+       style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="291.71732"
+         x="439.29449"
+         id="tspan3177"
+         sodipodi:role="line">o</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3179"
+       y="695.63629"
+       x="441.08368"
+       style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="695.63629"
+         x="441.08368"
+         id="tspan3181"
+         sodipodi:role="line">x</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3183"
+       style="font-size:4px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(-194.62828,-39.902349)"><flowRegion
+         id="flowRegion3185"><rect
+           id="rect3187"
+           width="189.25"
+           height="354.75"
+           x="710"
+           y="680.06342" /></flowRegion><flowPara
+         id="flowPara3189"
+         style="font-size:8px">I didn't (unltil solved at the bottom) like this X here because it will be hit accidentally when trying to do a new statement. I am inclined to say only the bottom-left has a snap point for exit statement (X), but I don't like saying &quot;left to right is necessary&quot; either! The &quot;O&quot; on the right hand side [as well as left] looks weird and everything looks cluttered now compared to the previous revision</flowPara><flowPara
+         style="font-size:8px"
+         id="flowPara3191" /><flowPara
+         style="font-size:8px"
+         id="flowPara3193">A finished signal knows it's a finished signal right on mouse down, but a use case exit signal doesn't know it's a use case exit signal until mouse release when it notices the dest is an actor.</flowPara><flowPara
+         style="font-size:8px"
+         id="flowPara3195" /><flowPara
+         style="font-size:8px"
+         id="flowPara3197">Do all use case exit signals have to be slot finished signals? (guess: NO (some use case specific exit signals might not want to associate the result with the slot (and shouldn't something be generated to account for that TODOoptional)))</flowPara><flowPara
+         style="font-size:8px"
+         id="flowPara3215" /><flowPara
+         style="font-size:8px"
+         id="flowPara3209">Solution: space between last statement and X. The O being over the on the right only happens when destination snapping anyways (when mouse is held down (perhaps it is only ever visual when mouse is down (and we are in arrows mode and we have a source) when the &quot;show visual helpers permanently&quot; button is pressed), the difference being the O is shown as a &quot;now potential snapping point&quot; (the X and - red snapping points now not visible (or eligible to be visible)).</flowPara><flowPara
+         style="font-size:8px"
+         id="flowPara3219" /><flowPara
+         style="font-size:8px"
+         id="flowPara3221">TODOoptional: when snapping points are always enabled, there should still be an ADDITIONAL snapping mechanism when the mouse is near</flowPara><flowPara
+         style="font-size:8px"
+         id="flowPara3211" /><flowPara
+         style="font-size:8px"
+         id="flowPara3213" /><flowPara
+         style="font-size:8px"
+         id="flowPara3217" /></flowRoot>    <g
+       transform="matrix(0.46252465,0,0,1,-78.684076,39.166365)"
+       id="g3223">
+      <text
+         xml:space="preserve"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="473.25647"
+         y="417.48129"
+         id="text3225"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3227"
+           x="473.25647"
+           y="417.48129">-</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3229"
+         y="417.48129"
+         x="506.94284"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="417.48129"
+           x="506.94284"
+           id="tspan3231"
+           sodipodi:role="line">-</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3233"
+         y="417.48129"
+         x="540.63147"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="417.48129"
+           x="540.63147"
+           id="tspan3235"
+           sodipodi:role="line">-</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="574.31781"
+         y="417.48129"
+         id="text3237"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3239"
+           x="574.31781"
+           y="417.48129">-</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3241"
+         y="417.48129"
+         x="608.00647"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="417.48129"
+           x="608.00647"
+           id="tspan3243"
+           sodipodi:role="line">-</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="641.69281"
+         y="417.48129"
+         id="text3245"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3247"
+           x="641.69281"
+           y="417.48129">-</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="675.38147"
+         y="417.48129"
+         id="text3249"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3251"
+           x="675.38147"
+           y="417.48129">-</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3253"
+         y="417.48129"
+         x="709.06781"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="417.48129"
+           x="709.06781"
+           id="tspan3255"
+           sodipodi:role="line">-</tspan></text>
+    </g>
+    <g
+       transform="matrix(0.03898054,0,0,1,237.42134,-37.333635)"
+       id="g3257">
+      <text
+         xml:space="preserve"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="473.25647"
+         y="417.48129"
+         id="text3259"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3261"
+           x="473.25647"
+           y="417.48129">-</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3263"
+         y="417.48129"
+         x="506.94284"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="417.48129"
+           x="506.94284"
+           id="tspan3265"
+           sodipodi:role="line">-</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3267"
+         y="417.48129"
+         x="540.63147"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="417.48129"
+           x="540.63147"
+           id="tspan3269"
+           sodipodi:role="line">-</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="574.31781"
+         y="417.48129"
+         id="text3271"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3273"
+           x="574.31781"
+           y="417.48129">-</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3275"
+         y="417.48129"
+         x="608.00647"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="417.48129"
+           x="608.00647"
+           id="tspan3277"
+           sodipodi:role="line">-</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="641.69281"
+         y="417.48129"
+         id="text3279"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3281"
+           x="641.69281"
+           y="417.48129">-</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="675.38147"
+         y="417.48129"
+         id="text3283"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3285"
+           x="675.38147"
+           y="417.48129">-</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3287"
+         y="417.48129"
+         x="709.06781"
+         style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="417.48129"
+           x="709.06781"
+           id="tspan3289"
+           sodipodi:role="line">-</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="226.25647"
+       y="419.96606"
+       id="text3291"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3293"
+         x="226.25647"
+         y="419.96606">-</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3295"
+       y="495.83054"
+       x="226.61002"
+       style="font-size:128px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="495.83054"
+         x="226.61002"
+         id="tspan3297"
+         sodipodi:role="line">-</tspan></text>
   </g>
 </svg>

@@ -10,7 +10,7 @@ class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassInstance;
 class DesignEqualsImplementationClassLifeLine;
 class SignalSlotConnectionActivationArrowForGraphicsScene;
-class SnappingIndicationVisualRepresentation;
+class ISnappingIndicationVisualRepresentation;
 
 class UseCaseGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
@@ -30,16 +30,25 @@ private:
     DesignEqualsImplementationUseCase *m_UseCase;
     DesignEqualsImplementationMouseModeEnum m_MouseMode;
     SignalSlotConnectionActivationArrowForGraphicsScene *m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
-    SnappingIndicationVisualRepresentation *m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+    ISnappingIndicationVisualRepresentation *m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+    ISnappingIndicationVisualRepresentation *m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+
+    //Types of interest for various modes
+    //ARROW MOUSE PRESS OR RELEASE MODE
+    QList<int> m_ListOfItemTypesForArrowPressOrReleaseMode;
+    //SNAPPING
+    QList<int> m_ListOfItemTypesIWant_SnapSource;
+    QList<int> m_ListOfItemTypesIWant_SnapDestination;
 
     void privateConstructor(DesignEqualsImplementationUseCase *useCase);
     bool keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    bool wantItemInArrowMouseMode(QGraphicsItem *itemToCheckIfWant);
+    bool itemIsWantedType(QGraphicsItem *itemToCheckIfWant, const QList<int> &m_ListOfItemTypesForArrowPressOrReleaseMode);
     QGraphicsItem *giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(QPointF pointToLookForItemsWeWant);
-    QList<QGraphicsItem *> itemsIWantIntersectingRect(QRectF rectWithinWhichToLookForItemsWeWant);
+    QList<QGraphicsItem *> itemsIWantIntersectingRect(QRectF rectWithinWhichToLookForItemsWeWant, const QList<int> &m_ListOfItemTypesForArrowPressOrReleaseMode);
     QGraphicsItem *findNearestPointOnItemBoundingRectFromPoint(const QList<QGraphicsItem*> &itemsToCheck, QPointF pointToFindNearestEdge);
     qreal calculateDistanceFromPointToNearestPointOnBoundingRect(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item);
     QPointF calculateNearestPointOnBoundingRectToArbitraryPoint(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item);
+    static QRectF mouseSnappingRect(QPointF mousePoint);
 
     //static DesignEqualsImplementationClassLifeLineUnitOfExecution* targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt(DesignEqualsImplementationClassLifeLine *classLifeline);
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);

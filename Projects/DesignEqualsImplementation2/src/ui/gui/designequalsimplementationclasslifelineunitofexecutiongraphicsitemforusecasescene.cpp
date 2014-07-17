@@ -6,7 +6,8 @@
 #include "../../designequalsimplementation.h"
 
 #include "designequalsimplementationguicommon.h"
-#include "snappingindicationvisualrepresentation.h"
+#include "sourceslotsnappingindicationvisualrepresentation.h"
+#include "destinationslotsnappingindicationvisualrepresentation.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../idesignequalsimplementationstatement.h"
 
@@ -52,7 +53,25 @@ int DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::getInsertIndexFor
     }
     return 0;
 }
-QGraphicsItem *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF mouseScenePos)
+ISnappingIndicationVisualRepresentation *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::makeSnappingHelperForSlotEntryPoint(QPointF mouseScenePosForDeterminingRightOrLeftOnly)
+{
+    QPointF mouseItemPos = mapFromScene(mouseScenePosForDeterminingRightOrLeftOnly);
+    bool left = mouseItemPos.x() < 0;
+    qreal x;
+    if(left)
+    {
+        x = rect().left();
+    }
+    else
+    {
+        x = rect().right();
+    }
+    qreal y = rect().top();
+    ISnappingIndicationVisualRepresentation *snappingIndicationVisualRepresentation = new DestinationSlotSnappingIndicationVisualRepresentation(this, 0, this);
+    snappingIndicationVisualRepresentation->visualRepresentation()->setPos(x, y);
+    return snappingIndicationVisualRepresentation;
+}
+ISnappingIndicationVisualRepresentation *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF mouseScenePos)
 {
     //Find nearest BEFORE, BETWEEN, or AFTER position, and tell using visuals that it snaps
     QPointF mouseItemPos = mapFromScene(mouseScenePos);
@@ -77,9 +96,9 @@ QGraphicsItem *DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::makeSn
 
         //reposition instead? who owns the snapping indication visual (line at the time of writing), me or the graphics scene?
 
-        QGraphicsItem *snappingIndicationVisualRepresentation = new SnappingIndicationVisualRepresentation(this, distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().second, this);
-        snappingIndicationVisualRepresentation->setPos((left ? rect().left() : rect().right()), closestSnappingPointsYValue);
-        return snappingIndicationVisualRepresentation;
+        ISnappingIndicationVisualRepresentation *sourceSnappingIndicationVisualRepresentation = new SourceSlotSnappingIndicationVisualRepresentation(this, distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().second, this);
+        sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos((left ? rect().left() : rect().right()), closestSnappingPointsYValue);
+        return sourceSnappingIndicationVisualRepresentation;
     }
     return 0;
 }

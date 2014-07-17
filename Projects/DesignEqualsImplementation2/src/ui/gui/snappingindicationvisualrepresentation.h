@@ -1,15 +1,22 @@
 #ifndef SNAPPINGINDICATIONVISUALREPRESENTATION_H
 #define SNAPPINGINDICATIONVISUALREPRESENTATION_H
 
-#include <QGraphicsLineItem>
+#include <QGraphicsItem>
 
-class SnappingIndicationVisualRepresentation : public QGraphicsLineItem
+class ISnappingIndicationVisualRepresentation
 {
 public:
-    explicit SnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndex, QGraphicsItem *parent = 0);
+    explicit ISnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndexForProxyItem, QGraphicsItem *visualRepresentationParent = 0);
+    virtual ~ISnappingIndicationVisualRepresentation();
+
+    QGraphicsItem *visualRepresentation();
 
     QGraphicsItem *itemProxyingFor() const;
-    int insertIndex() const;
+    int insertIndexForProxyItem() const;
+protected:
+    QGraphicsItem *m_VisualRepresentationParent;
+    QGraphicsItem *m_VisualRepresentation;
+    virtual QGraphicsItem *myVisualRepresentation(QGraphicsItem *parent)=0;
 private:
     QGraphicsItem *m_ItemProxyingFor;
     int m_InsertIndex;

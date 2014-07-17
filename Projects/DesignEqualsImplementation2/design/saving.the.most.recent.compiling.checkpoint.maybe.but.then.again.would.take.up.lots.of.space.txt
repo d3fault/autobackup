@@ -1,0 +1,1 @@
+Two (actually N) kinds of saves: compiling save point or uncompiling save point. The latter used as checkpoint for the former. Eventually, there are also opt-in "test", "release", etc types of saves that are differentiated and yet all stored in the same binary (unles I switch to text) representing a project (or perhaps a set of projects, unsure yet).
