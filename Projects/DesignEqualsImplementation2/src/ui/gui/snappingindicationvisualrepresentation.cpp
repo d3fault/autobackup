@@ -1,26 +1,27 @@
 #include "snappingindicationvisualrepresentation.h"
 
-ISnappingIndicationVisualRepresentation::ISnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndex, QGraphicsItem *visualRepresentationParent)
+IRepresentSnapGraphicsItemAndProxyGraphicsItem::IRepresentSnapGraphicsItemAndProxyGraphicsItem(QGraphicsItem *itemProxyingFor, int insertIndex, QGraphicsItem *visualRepresentationParent)
     : m_VisualRepresentationParent(visualRepresentationParent)
     , m_VisualRepresentation(0)
     , m_ItemProxyingFor(itemProxyingFor)
     , m_InsertIndex(insertIndex)
 { }
-ISnappingIndicationVisualRepresentation::~ISnappingIndicationVisualRepresentation()
+IRepresentSnapGraphicsItemAndProxyGraphicsItem::~IRepresentSnapGraphicsItemAndProxyGraphicsItem()
 {
-    delete m_VisualRepresentation;
+    if(m_VisualRepresentation)
+        delete m_VisualRepresentation;
 }
-QGraphicsItem *ISnappingIndicationVisualRepresentation::visualRepresentation()
+QGraphicsItem *IRepresentSnapGraphicsItemAndProxyGraphicsItem::visualRepresentation()
 {
     if(!m_VisualRepresentation)
         m_VisualRepresentation = myVisualRepresentation(m_VisualRepresentationParent);
     return m_VisualRepresentation;
 }
-QGraphicsItem *ISnappingIndicationVisualRepresentation::itemProxyingFor() const
+QGraphicsItem *IRepresentSnapGraphicsItemAndProxyGraphicsItem::itemProxyingFor() const
 {
     return m_ItemProxyingFor;
 }
-int ISnappingIndicationVisualRepresentation::insertIndexForProxyItem() const
+int IRepresentSnapGraphicsItemAndProxyGraphicsItem::insertIndexForProxyItem() const
 {
     return m_InsertIndex;
 }

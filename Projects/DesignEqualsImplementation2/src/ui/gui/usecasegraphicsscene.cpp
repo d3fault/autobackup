@@ -194,7 +194,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
             if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
                 delete m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
-            m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = static_cast<ISnappingIndicationVisualRepresentation*>(slotGraphicsItem->makeSnappingHelperForMousePoint(eventScenePos));
+            m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = static_cast<IRepresentSnapGraphicsItemAndProxyGraphicsItem*>(slotGraphicsItem->makeSnappingHelperForMousePoint(eventScenePos));
         }
         else if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
         {
@@ -205,11 +205,15 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn) //holy shit a variable pun
     {
+        QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
+        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine);
+
         //Destination snapping
 
         //TODOoptional: only allow the left OR right side to be allowed for destination snapping ("O"), depending on which direction the source is relative to us
 
-        //TODOreq: don't snap to source
+        //TODOreq: dest snap PROXYing actually works (just need the mouse release code half)
+        //TODOreq: message editor dialog ok/cancel clears dest snap
         //TODOreq: mouse release clears dest snap
 
         QPointF eventScenePos = event->scenePos();
@@ -220,15 +224,13 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             //Find closet
             QGraphicsItem *itemWithEdgeNearestToPoint = findNearestPointOnItemBoundingRectFromPoint(itemsNearMouse, eventScenePos);
 
+            if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem() == itemWithEdgeNearestToPoint)
+                return;
+
             DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
-            if(m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone)
-                delete m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone;
-            m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone = static_cast<ISnappingIndicationVisualRepresentation*>(slotGraphicsItem->makeSnappingHelperForSlotEntryPoint(eventScenePos));
-        }
-        else if(m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone)
-        {
-            delete m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone;
-            m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
+            if(m_ArrowDestinationSnapper_OrZeroIfNone)
+                delete m_ArrowDestinationSnapper_OrZeroIfNone;
+            m_ArrowDestinationSnapper_OrZeroIfNone = static_cast<IRepresentSnapGraphicsItemAndProxyGraphicsItem*>(slotGraphicsItem->makeSnappingHelperForSlotEntryPoint(eventScenePos));
         }
 
         //TODOoptional: animation, but don't do any of those fancy curves that slow down or speed up at the beginning/end. only use the animation to smooth it out, nothing more. it should still be so fast that the user doesn't notice a different between having it turned off in terms of them waiting on it so they can continue designing (they are waiting for the animation before they release their mouse == bad scenario, go faster [or diable anims]!)
@@ -253,8 +255,6 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                     );
         QLineF newLine(nearestPoint, event->scenePos()); //TODOreq: snap the source before click and destination when mouse down pre-release (OLD: wanted to say both, but i'm not sure that's possible :-/) to points on the unit of execution, available positions visually seen as carved-out/empty meteor craters. used/non-available positions glowing red/orange and like an orb inside the meteor crater. RADIO BOXES use similar technique
 #endif
-        QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
-        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine);
     }
     QGraphicsScene::mouseMoveEvent(event);
 }
@@ -276,13 +276,20 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         QGraphicsScene::mouseReleaseEvent(event);
     }
+
+    //Dest snapping stops on mouse release
+    /*if(m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone)
+    {
+        delete m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+        m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
+    }*/
 }
 void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase *useCase)
 {
     m_UseCase = useCase;
     m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = 0;
     m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
-    m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
+    m_ArrowDestinationSnapper_OrZeroIfNone = 0;
 
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID);

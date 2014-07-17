@@ -5,7 +5,7 @@
 
 class QGraphicsItem;
 
-class SourceSlotSnappingIndicationVisualRepresentation : public ISnappingIndicationVisualRepresentation
+class SourceSlotSnappingIndicationVisualRepresentation : public IRepresentSnapGraphicsItemAndProxyGraphicsItem
 {
 public:
     explicit SourceSlotSnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndexForProxyItem, QGraphicsItem *parentGraphicsItem);

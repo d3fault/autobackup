@@ -63,6 +63,7 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     setLayout(myLayout);
 
     connect(m_PotentialInstancesListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(handleCurrentRowChanged(int)));
+    connect(m_PotentialInstancesListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
 }
 bool ClassInstanceChooserDialog::newTopLevelInstanceChosen()

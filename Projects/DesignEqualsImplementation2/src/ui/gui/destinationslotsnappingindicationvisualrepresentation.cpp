@@ -7,7 +7,7 @@
 #define DestinationSlotSnappingIndicationVisualRepresentation_ELLIPSE_WIDTH 15
 
 DestinationSlotSnappingIndicationVisualRepresentation::DestinationSlotSnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndex, QGraphicsItem *parentGraphicsItem)
-    : ISnappingIndicationVisualRepresentation(itemProxyingFor, insertIndex, parentGraphicsItem)
+    : IRepresentSnapGraphicsItemAndProxyGraphicsItem(itemProxyingFor, insertIndex, parentGraphicsItem)
 {
     m_VisualRepresentation = myVisualRepresentation(parentGraphicsItem);
 }

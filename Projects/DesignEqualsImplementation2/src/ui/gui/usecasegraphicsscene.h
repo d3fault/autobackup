@@ -10,7 +10,7 @@ class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassInstance;
 class DesignEqualsImplementationClassLifeLine;
 class SignalSlotConnectionActivationArrowForGraphicsScene;
-class ISnappingIndicationVisualRepresentation;
+class IRepresentSnapGraphicsItemAndProxyGraphicsItem;
 
 class UseCaseGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
@@ -30,8 +30,8 @@ private:
     DesignEqualsImplementationUseCase *m_UseCase;
     DesignEqualsImplementationMouseModeEnum m_MouseMode;
     SignalSlotConnectionActivationArrowForGraphicsScene *m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn;
-    ISnappingIndicationVisualRepresentation *m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
-    ISnappingIndicationVisualRepresentation *m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+    IRepresentSnapGraphicsItemAndProxyGraphicsItem *m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+    IRepresentSnapGraphicsItemAndProxyGraphicsItem *m_ArrowDestinationSnapper_OrZeroIfNone;
 
     //Types of interest for various modes
     //ARROW MOUSE PRESS OR RELEASE MODE

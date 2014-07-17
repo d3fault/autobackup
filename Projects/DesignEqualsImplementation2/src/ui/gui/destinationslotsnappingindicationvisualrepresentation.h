@@ -3,7 +3,7 @@
 
 #include "snappingindicationvisualrepresentation.h"
 
-class DestinationSlotSnappingIndicationVisualRepresentation : public ISnappingIndicationVisualRepresentation, public QGraphicsLineItem
+class DestinationSlotSnappingIndicationVisualRepresentation : public IRepresentSnapGraphicsItemAndProxyGraphicsItem, public QGraphicsLineItem
 {
 public:
     explicit DestinationSlotSnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndexForProxyItem, QGraphicsItem *parentGraphicsItem = 0);

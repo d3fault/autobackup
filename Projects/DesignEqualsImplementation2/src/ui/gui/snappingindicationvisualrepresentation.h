@@ -3,11 +3,11 @@
 
 #include <QGraphicsItem>
 
-class ISnappingIndicationVisualRepresentation
+class IRepresentSnapGraphicsItemAndProxyGraphicsItem
 {
 public:
-    explicit ISnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndexForProxyItem, QGraphicsItem *visualRepresentationParent = 0);
-    virtual ~ISnappingIndicationVisualRepresentation();
+    explicit IRepresentSnapGraphicsItemAndProxyGraphicsItem(QGraphicsItem *itemProxyingFor, int insertIndexForProxyItem, QGraphicsItem *visualRepresentationParent = 0);
+    virtual ~IRepresentSnapGraphicsItemAndProxyGraphicsItem();
 
     QGraphicsItem *visualRepresentation();
 
