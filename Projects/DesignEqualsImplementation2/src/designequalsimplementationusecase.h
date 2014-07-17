@@ -35,6 +35,7 @@ public:
     };
 
     DesignEqualsImplementationProject *designEqualsImplementationProject() const;
+    QList<DesignEqualsImplementationClassLifeLine*> classLifeLines() const;
 
     //TODOoptional: private + getter/setter blah
     QString Name;

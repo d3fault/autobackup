@@ -228,9 +228,9 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 return;
 
             DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
-            if(m_ArrowDestinationSnapper_OrZeroIfNone)
+            if(!m_ArrowDestinationSnapper_OrZeroIfNone)
                 delete m_ArrowDestinationSnapper_OrZeroIfNone;
-            m_ArrowDestinationSnapper_OrZeroIfNone = static_cast<IRepresentSnapGraphicsItemAndProxyGraphicsItem*>(slotGraphicsItem->makeSnappingHelperForSlotEntryPoint(eventScenePos));
+            m_ArrowDestinationSnapper_OrZeroIfNone = slotGraphicsItem->makeSnappingHelperForSlotEntryPoint(eventScenePos);
         }
 
         //TODOoptional: animation, but don't do any of those fancy curves that slow down or speed up at the beginning/end. only use the animation to smooth it out, nothing more. it should still be so fast that the user doesn't notice a different between having it turned off in terms of them waiting on it so they can continue designing (they are waiting for the animation before they release their mouse == bad scenario, go faster [or diable anims]!)
@@ -517,7 +517,8 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
         if(sourceIsActor)
         {
-            emit setUseCaseSlotEntryPointRequested(userChosenDestinationSlot_OrZeroIfNone);
+            int classLifeLineIndexIntoUseCasesListOfClassLifeLines = m_UseCase->classLifeLines().indexOf(sourceClassLifeLine_OrZeroIfSourceIsActor);
+            //TODOreq: emit setUseCaseSlotEntryPointRequested(sourceClassLifeLine_OrZeroIfSourceIsActor, userChosenDestinationSlot_OrZeroIfNone);
             return true;
         }
 

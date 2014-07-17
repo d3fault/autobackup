@@ -19,7 +19,7 @@ protected:
     virtual QGraphicsItem *myVisualRepresentation(QGraphicsItem *parent)=0;
 private:
     QGraphicsItem *m_ItemProxyingFor;
-    int m_InsertIndex;
+    int m_InsertIndexForProxyItem;
 };
 
 #endif // SNAPPINGINDICATIONVISUALREPRESENTATION_H

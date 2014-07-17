@@ -1,10 +1,10 @@
 #include "snappingindicationvisualrepresentation.h"
 
-IRepresentSnapGraphicsItemAndProxyGraphicsItem::IRepresentSnapGraphicsItemAndProxyGraphicsItem(QGraphicsItem *itemProxyingFor, int insertIndex, QGraphicsItem *visualRepresentationParent)
+IRepresentSnapGraphicsItemAndProxyGraphicsItem::IRepresentSnapGraphicsItemAndProxyGraphicsItem(QGraphicsItem *itemProxyingFor, int insertIndexForProxyItem, QGraphicsItem *visualRepresentationParent)
     : m_VisualRepresentationParent(visualRepresentationParent)
     , m_VisualRepresentation(0)
     , m_ItemProxyingFor(itemProxyingFor)
-    , m_InsertIndex(insertIndex)
+    , m_InsertIndexForProxyItem(insertIndexForProxyItem)
 { }
 IRepresentSnapGraphicsItemAndProxyGraphicsItem::~IRepresentSnapGraphicsItemAndProxyGraphicsItem()
 {
@@ -23,5 +23,5 @@ QGraphicsItem *IRepresentSnapGraphicsItemAndProxyGraphicsItem::itemProxyingFor()
 }
 int IRepresentSnapGraphicsItemAndProxyGraphicsItem::insertIndexForProxyItem() const
 {
-    return m_InsertIndex;
+    return m_InsertIndexForProxyItem;
 }

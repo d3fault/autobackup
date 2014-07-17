@@ -24,8 +24,8 @@ public:
     //TODOoptional: private + getter/setter blah
     //void setParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject(DesignEqualsImplementationClassLifeLine *parentClassLifeLine);
     //DesignEqualsImplementationClassLifeLine* parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject() const;
-    void setFinishedOrExitSignal(DesignEqualsImplementationClassSignal *finishedOrExitSignal, SignalEmissionOrSlotInvocationContextVariables finishedOrExitSignalEmissionContextVariables);
-    DesignEqualsImplementationClassSignal *finishedOrExitSignal() const;
+    void setFinishedOrExitSignal(DesignEqualsImplementationClassSignal *finishedOrExitSignal_OrZeroIfNone, SignalEmissionOrSlotInvocationContextVariables finishedOrExitSignalEmissionContextVariables);
+    DesignEqualsImplementationClassSignal *finishedOrExitSignal_OrZeroIfNone() const;
     SignalEmissionOrSlotInvocationContextVariables finishedOrExitSignalEmissionContextVariables() const;
     //TODOoptional: return type
 

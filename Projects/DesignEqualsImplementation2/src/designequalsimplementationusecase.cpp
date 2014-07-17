@@ -41,6 +41,10 @@ DesignEqualsImplementationProject *DesignEqualsImplementationUseCase::designEqua
 {
     return m_DesignEqualsImplementationProject;
 }
+QList<DesignEqualsImplementationClassLifeLine *> DesignEqualsImplementationUseCase::classLifeLines() const
+{
+    return m_ClassLifeLines;
+}
 bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destinationDirectoryPath)
 {
 #if 0
@@ -488,6 +492,7 @@ void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(int classLifeLi
 {
     m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.first = classLifeLinesIndex;
     m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.second = useCaseSlotEntryPoint; //TODOreq: handle deleting this arrow sets it back to zero i guess
+    //TODOreq: emit useCaseSlotEntryPointSet(m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet);
 }
 //TODOreq: haven't implemented regular signal/slot event deletion, but still worth noting that ExitSignal deletion needs to be handled differently
 //TODOreq: again, somewhat off-topic though. should deleting a signal emission or slot invocation mean that it's existence in the class diagram perspective is also deleted? reference counting might be nice, but auto deletion might piss me off too! maybe on deletion, a reference counter is used to ask the user if they want to delete it's existence in the class too (when reference count drops to zero), and/or of course all kinds of "remember this choice" customizations

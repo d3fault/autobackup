@@ -6,7 +6,7 @@
 SourceSlotSnappingIndicationVisualRepresentation::SourceSlotSnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndex, QGraphicsItem *parentGraphicsItem)
     : IRepresentSnapGraphicsItemAndProxyGraphicsItem(itemProxyingFor, insertIndex, parentGraphicsItem)
 {
-    m_VisualRepresentation = myVisualRepresentation(parentGraphicsItem);
+    visualRepresentation();
 }
 SourceSlotSnappingIndicationVisualRepresentation::~SourceSlotSnappingIndicationVisualRepresentation()
 { }

@@ -47,7 +47,7 @@ void DesignEqualsImplementationClassSlot::setFinishedOrExitSignal(DesignEqualsIm
     m_FinishedOrExitSignal = finishedOrExitSignal;
     m_ExitSignalEmissionContextVariables = exitSignalEmissionContextVariables;
 }
-DesignEqualsImplementationClassSignal *DesignEqualsImplementationClassSlot::finishedOrExitSignal() const
+DesignEqualsImplementationClassSignal *DesignEqualsImplementationClassSlot::finishedOrExitSignal_OrZeroIfNone() const
 {
     return m_FinishedOrExitSignal;
 }

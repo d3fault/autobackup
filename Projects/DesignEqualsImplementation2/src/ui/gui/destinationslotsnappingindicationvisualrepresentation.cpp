@@ -9,7 +9,7 @@
 DestinationSlotSnappingIndicationVisualRepresentation::DestinationSlotSnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndex, QGraphicsItem *parentGraphicsItem)
     : IRepresentSnapGraphicsItemAndProxyGraphicsItem(itemProxyingFor, insertIndex, parentGraphicsItem)
 {
-    m_VisualRepresentation = myVisualRepresentation(parentGraphicsItem);
+    visualRepresentation();
 }
 DestinationSlotSnappingIndicationVisualRepresentation::~DestinationSlotSnappingIndicationVisualRepresentation()
 { }

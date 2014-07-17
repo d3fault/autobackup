@@ -143,14 +143,18 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     {
         //slot finished/exit signal
         //each slot/unit-of-execution/ has the opportunity of supplying (by connecting to actor) a finished/exit signal
-        if(currentSlot->finishedOrExitSignal())
+        if(currentSlot->finishedOrExitSignal_OrZeroIfNone())
         {
             if(!signalsAccessSpecifierWritten)
             {
                 headerFileTextStream << "signals:" << endl;
                 signalsAccessSpecifierWritten = true;
             }
-            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlot->finishedOrExitSignal()->methodSignatureWithoutReturnType() << ";" << endl;
+            DesignEqualsImplementationClassSignal *finishedOrExitSignal_OrZeroIfNone = currentSlot->finishedOrExitSignal_OrZeroIfNone();
+            if(finishedOrExitSignal_OrZeroIfNone)
+            {
+                headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << finishedOrExitSignal_OrZeroIfNone->methodSignatureWithoutReturnType() << ";" << endl;
+            }
         }
     }
     if(!mySlots().isEmpty())
@@ -166,9 +170,9 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
         {
             sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentSlotCurrentStatement->toRawCppWithEndingSemicolon() << endl;
         }
-        if(currentSlot->finishedOrExitSignal())
+        if(currentSlot->finishedOrExitSignal_OrZeroIfNone())
         {
-            DesignEqualsImplementationSignalEmissionStatement finishedOrExitSignalEmitStatement(currentSlot->finishedOrExitSignal(), currentSlot->finishedOrExitSignalEmissionContextVariables());
+            DesignEqualsImplementationSignalEmissionStatement finishedOrExitSignalEmitStatement(currentSlot->finishedOrExitSignal_OrZeroIfNone(), currentSlot->finishedOrExitSignalEmissionContextVariables());
             sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << finishedOrExitSignalEmitStatement.toRawCppWithEndingSemicolon() << endl;
         }
         sourceFileTextStream    << "}" << endl;
