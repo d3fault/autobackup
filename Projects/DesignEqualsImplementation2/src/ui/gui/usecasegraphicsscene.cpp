@@ -212,7 +212,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         //TODOoptional: only allow the left OR right side to be allowed for destination snapping ("O"), depending on which direction the source is relative to us
 
-        //TODOreq: dest snap PROXYing actually works (just need the mouse release code half)
+        //TODOreq: arrow p2 drawn to snap pos on mouse release
         //TODOreq: message editor dialog ok/cancel clears dest snap
         //TODOreq: mouse release clears dest snap
 
@@ -231,6 +231,11 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             if(m_ArrowDestinationSnapper_OrZeroIfNone)
                 delete m_ArrowDestinationSnapper_OrZeroIfNone;
             m_ArrowDestinationSnapper_OrZeroIfNone = slotGraphicsItem->makeSnappingHelperForSlotEntryPoint(eventScenePos);
+        }
+        else if(m_ArrowDestinationSnapper_OrZeroIfNone)
+        {
+            delete m_ArrowDestinationSnapper_OrZeroIfNone;
+            m_ArrowDestinationSnapper_OrZeroIfNone = 0;
         }
 
         //TODOoptional: animation, but don't do any of those fancy curves that slow down or speed up at the beginning/end. only use the animation to smooth it out, nothing more. it should still be so fast that the user doesn't notice a different between having it turned off in terms of them waiting on it so they can continue designing (they are waiting for the animation before they release their mouse == bad scenario, go faster [or diable anims]!)
@@ -255,6 +260,11 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                     );
         QLineF newLine(nearestPoint, event->scenePos()); //TODOreq: snap the source before click and destination when mouse down pre-release (OLD: wanted to say both, but i'm not sure that's possible :-/) to points on the unit of execution, available positions visually seen as carved-out/empty meteor craters. used/non-available positions glowing red/orange and like an orb inside the meteor crater. RADIO BOXES use similar technique
 #endif
+    }
+    else if(m_ArrowDestinationSnapper_OrZeroIfNone)
+    {
+        delete m_ArrowDestinationSnapper_OrZeroIfNone;
+        m_ArrowDestinationSnapper_OrZeroIfNone = 0;
     }
     QGraphicsScene::mouseMoveEvent(event);
 }
@@ -326,7 +336,17 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     QGraphicsItem *sourceItem = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem(); //it was already set to zero if no items determined wanted
     if(!sourceItem)
         return false; //for now, we require a source
-    QGraphicsItem *destinationItem_CanBeZeroUnlessSourceIsActor = giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(event->scenePos());
+    QGraphicsItem *destinationItem_CanBeZeroUnlessSourceIsActor = 0;
+    if(m_ArrowDestinationSnapper_OrZeroIfNone)
+    {
+        destinationItem_CanBeZeroUnlessSourceIsActor = m_ArrowDestinationSnapper_OrZeroIfNone->itemProxyingFor();
+        delete m_ArrowDestinationSnapper_OrZeroIfNone;
+        m_ArrowDestinationSnapper_OrZeroIfNone = 0;
+    }
+    else
+    {
+        destinationItem_CanBeZeroUnlessSourceIsActor = giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(event->scenePos());
+    }
     int sourceItemType = sourceItem->type();
     if(!destinationItem_CanBeZeroUnlessSourceIsActor && sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID)
         return false;
@@ -444,12 +464,6 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         userChosenDestinationSlot_OrZeroIfNone->setParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject(destinationSlotIsProbablyNameless_OrZeroIfNoDest->parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView_OrZeroWhenFirstTimeSlotIsUsedInAnyUseCaseInTheProject()); //TODOreq: should probably be "addClassParentLifeLineRef"
     }
 #endif
-
-    if(m_ArrowDestinationSnapper_OrZeroIfNone)
-    {
-        delete m_ArrowDestinationSnapper_OrZeroIfNone;
-        m_ArrowDestinationSnapper_OrZeroIfNone = 0;
-    }
 
     if(destinationSlotIsProbablyNameless_OrZeroIfNoDest)
     {
