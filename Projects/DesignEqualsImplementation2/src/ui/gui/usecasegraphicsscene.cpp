@@ -212,10 +212,6 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         //TODOoptional: only allow the left OR right side to be allowed for destination snapping ("O"), depending on which direction the source is relative to us
 
-        //TODOreq: arrow p2 drawn to snap pos on mouse release
-        //TODOreq: message editor dialog ok/cancel clears dest snap
-        //TODOreq: mouse release clears dest snap
-
         QPointF eventScenePos = event->scenePos();
         QRectF myMouseSnappingRect = mouseSnappingRect(event->scenePos());
         QList<QGraphicsItem*> itemsNearMouse = itemsIWantIntersectingRect(myMouseSnappingRect, m_ListOfItemTypesIWant_SnapDestination);
@@ -340,6 +336,9 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(m_ArrowDestinationSnapper_OrZeroIfNone)
     {
         destinationItem_CanBeZeroUnlessSourceIsActor = m_ArrowDestinationSnapper_OrZeroIfNone->itemProxyingFor();
+        QLineF existingLine = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line();
+        existingLine.setP2(m_ArrowDestinationSnapper_OrZeroIfNone->visualRepresentation()->scenePos());
+        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(existingLine);
         delete m_ArrowDestinationSnapper_OrZeroIfNone;
         m_ArrowDestinationSnapper_OrZeroIfNone = 0;
     }
