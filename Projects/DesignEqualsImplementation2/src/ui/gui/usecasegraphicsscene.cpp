@@ -373,6 +373,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationClassSlot *destinationSlotIsProbablyNameless_OrZeroIfNoDest = 0;
     DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest = 0;
+    DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *destinationClassLifeLineGraphicsItem_OrZeroIfNoDest = 0;
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *destinationSlotGraphicsItem_OrZeroIfNoDest;
     bool destinationIsActor = false;
     if(destinationItem_CanBeZeroUnlessSourceIsActor) //for now only units of executions can be dests (or nothing)
@@ -385,13 +386,15 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
         }
         if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
         {
-            destinationClassLifeLine_OrZeroIfNoDest = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor)->classLifeLine();
+            destinationClassLifeLineGraphicsItem_OrZeroIfNoDest = static_cast<DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor);
+            destinationClassLifeLine_OrZeroIfNoDest = destinationClassLifeLineGraphicsItem_OrZeroIfNoDest->classLifeLine();
         }
         if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID)
         {
             destinationSlotGraphicsItem_OrZeroIfNoDest = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(destinationItem_CanBeZeroUnlessSourceIsActor);
             destinationSlotIsProbablyNameless_OrZeroIfNoDest = destinationSlotGraphicsItem_OrZeroIfNoDest->underlyingSlot();
-            destinationClassLifeLine_OrZeroIfNoDest = destinationSlotGraphicsItem_OrZeroIfNoDest->parentClassLifelineGraphicsItem()->classLifeLine();
+            destinationClassLifeLineGraphicsItem_OrZeroIfNoDest = destinationSlotGraphicsItem_OrZeroIfNoDest->parentClassLifelineGraphicsItem();
+            destinationClassLifeLine_OrZeroIfNoDest = destinationClassLifeLineGraphicsItem_OrZeroIfNoDest->classLifeLine();
         }
 
         if(!destinationIsActor)
@@ -419,7 +422,9 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
                         destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(destinationClassLifeLine_OrZeroIfNoDest->mySlotsAppearingInClassLifeLine().size(), newSlot);
                     }
                     destinationSlotIsProbablyNameless_OrZeroIfNoDest = newSlot;
-                    //TODOreq: destinationSlotGraphicsItem_OrZeroIfNoDest is now invalid, not sure it matters
+                    destinationSlotGraphicsItem_OrZeroIfNoDest = 0;
+                    //destinationSlotGraphicsItem_OrZeroIfNoDest is now invalid, but it isn't referenced anymore so whatever..
+                    //TODOreq: reposition arrow p2 to the NEW destination slot graphics item, except we have to wait for it to be added guh
                 }
             }
         }
@@ -523,10 +528,10 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             parentClass->removeSlot(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
             //parentClass->addSlot();
             int slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted = 0;
-            if(destinationSlotGraphicsItem_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest)
+            if(destinationClassLifeLineGraphicsItem_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest)
             {
                 //use what they targeted + 1
-                QList<DesignEqualsImplementationClassSlot*> slotsAppearingOnClassLifeLine = destinationSlotGraphicsItem_OrZeroIfNoDest->parentClassLifelineGraphicsItem()->classLifeLine()->mySlotsAppearingInClassLifeLine();
+                QList<DesignEqualsImplementationClassSlot*> slotsAppearingOnClassLifeLine = destinationClassLifeLineGraphicsItem_OrZeroIfNoDest->classLifeLine()->mySlotsAppearingInClassLifeLine();
                 slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted = slotsAppearingOnClassLifeLine.indexOf(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
                 if(slotIndexOnClassLifeline_TriesToChooseIndexAfterWhatTheyTargetted < 0)
                 {
