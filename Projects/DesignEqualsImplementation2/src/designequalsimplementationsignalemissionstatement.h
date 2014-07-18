@@ -12,6 +12,8 @@ public:
     explicit DesignEqualsImplementationSignalEmissionStatement(DesignEqualsImplementationClassSignal *signalToEmit, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariablesForSignalArguments);
     virtual ~DesignEqualsImplementationSignalEmissionStatement();
     virtual QString toRawCppWithoutEndingSemicolon();
+    virtual bool isSignalEmit() { return true; }
+    DesignEqualsImplementationClassSignal *signalToEmit() const;
 private:
     DesignEqualsImplementationClassSignal *m_SignalToEmit;
     SignalEmissionOrSlotInvocationContextVariables m_SignalEmissionContextVariablesForSignalArguments;

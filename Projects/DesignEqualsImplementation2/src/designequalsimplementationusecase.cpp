@@ -73,12 +73,57 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
         DesignEqualsImplementationClassInstance *classInstance = classLifeline->myInstanceInClassThatHasMe();
         if(!classInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first)
         {
-            //Top level instance
-
+            //Use case entry point (must be top level instance (for now))
             //Foo *foo = new Foo();
             m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode(classInstance->preferredTextualRepresentation() + " = new " + classInstance->m_MyClass->ClassName + "();");
+            //Now iterate that use case entry point's statements and follow any slot invokes (and signal emits ar special too :-P)
+            int currentStatementIndex = -1;
+            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.second->orderedListOfStatements())
+            {
+                ++currentStatementIndex;
+
+                if(currentStatement->isSignalEmit())
+                {
+                    //TODOreq: signal -> slot, just "continue;" if no slot attached
+                    DesignEqualsImplementationSignalEmissionStatement *signalEmitStatement = static_cast<DesignEqualsImplementationSignalEmissionStatement*>(currentStatement);
+
+                    //Signal/slot connection activation
+                    Q_FOREACH(const SignalSlotConnectionActivationTypeStruct &currentSignalSlotConnectionActivation, m_SignalSlotConnectionActivationsInThisUseCase)//TODOreq: ensure all these "key checks" are properly synchronized throughout app lifetime. getters and setters fuck yea~
+                    {
+                        if(currentSignalSlotConnectionActivation.SignalStatement_Key0_IndexInto_m_ClassLifeLines == indexInto_m_ClassLifeLines) //signal key 0 check
+                        {
+                            if(currentSignalSlotConnectionActivation.SignalStatement_Key1_SourceSlotItself == m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.second) //signal key 1 check
+                            {
+                                if(currentSignalSlotConnectionActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements == currentStatementIndex) //signal key 2 check
+                                {
+                                    //Getting here means the signal is connected to a slot
+
+                                    DesignEqualsImplementationClassLifeLine *destinationSlotClassLifeline = m_ClassLifeLines.at(currentSignalSlotConnectionActivation.SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines); //slot key 0
+                                    DesignEqualsImplementationClassSlot *destinationSlot = currentSignalSlotConnectionActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself; //slot key 1
+
+                                    //Also helpful:
+                                    DesignEqualsImplementationClassInstance *signalParentClassInstance = classInstance;
+                                    DesignEqualsImplementationClassInstance *slotsParentClassInstance = destinationSlotClassLifeline->myInstanceInClassThatHasMe();
+
+                                    //TODOoptional: signal daisy chaining. i dunno how it would work in the GUI though
+
+                                    //connect(m_Bar, SIGNAL(barSignal(bool)), this, SLOT(handleBarSignal(bool))); -- def need some kind of parent/child resolution
+                                    m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode("connect(" + signalParentClassInstance->VariableName + ", SIGNAL(" + signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType() + "), " + slotsParentClassInstance->VariableName + ", SLOT(" + currentSignalSlotConnectionActivation.SignalStatement_Key1_SourceSlotItself->methodSignatureWithoutReturnType() + "));");
+
+                                }
+                            }
+                        }
+                    }
+                }
+                else if(currentStatement->isSlotInvoke())
+                {
+                    //TODOreq: record dependency on the slot's class INSTANCE (however, idk wtf to do since Bar is a child of Foo). perhaps this entire dependency recording thing is not needed [for instantiation] (might still be needed for connections)
+                    //TODOreq: queue destination slot for iterating/recursing just like we're already doing
+                    DesignEqualsImplementationSlotInvocationStatement *slotInvocationStatement = static_cast<DesignEqualsImplementationSlotInvocationStatement*>(currentStatement);
+                }
+            }
         }
-        else
+        else //TODOreq: non-use-case-entry-point top level objects? it kind of makes sense that all objects MUST be referenced by at least one use case in order to be generated... so maybe don't do non-use-case-entry-point top level objects...
         {
 #if 0
             //Child instance -- TODOoptional: seems to make more sense that this is created more permanently when the class adds a hasA. in fact wait i think i already have this done...

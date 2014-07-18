@@ -21,3 +21,7 @@ QString DesignEqualsImplementationSignalEmissionStatement::toRawCppWithoutEnding
     ret.append(")");
     return ret;
 }
+DesignEqualsImplementationClassSignal *DesignEqualsImplementationSignalEmissionStatement::signalToEmit() const
+{
+    return m_SignalToEmit;
+}
