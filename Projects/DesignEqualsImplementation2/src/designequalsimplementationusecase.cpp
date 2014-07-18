@@ -3,6 +3,7 @@
 #include <QDataStream>
 #include <QList>
 
+#include "designequalsimplementationproject.h"
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationactor.h"
@@ -61,16 +62,38 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
         //  5) if signal and slot owner's types are the same but instances differ, do not put in constructor but somewhere higher
     }
 #endif
-#if 0
-    int indexInto_m_ClassLifeLines = m_UseCaseSlotEntryPoint_OrNegativeOneIfNoneConnectedFromActorYetctorYet.first;
-    if(indexInto_m_ClassLifeLines > -1 && indexInto_m_ClassLifeLines < (m_ClassLifeLines.size()+1))
+#if 1
+
+    //m_DesignEqualsImplementationProject->clearTemporaryInstanceData(); //TODOreq: undoes everything about to be done, so we know we have a clean slate. needs to go in project itself before any calls to use case
+
+    int indexInto_m_ClassLifeLines = m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.first;
+    if(indexInto_m_ClassLifeLines > -1 && indexInto_m_ClassLifeLines < m_ClassLifeLines.size())
     {
         DesignEqualsImplementationClassLifeLine *classLifeline = m_ClassLifeLines.at(indexInto_m_ClassLifeLines);
+        DesignEqualsImplementationClassInstance *classInstance = classLifeline->myInstanceInClassThatHasMe();
+        if(!classInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first)
+        {
+            //Top level instance
 
+            //Foo *foo = new Foo();
+            m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode(classInstance->preferredTextualRepresentation() + " = new " + classInstance->m_MyClass->ClassName + "();");
+        }
+        else
+        {
+#if 0
+            //Child instance -- TODOoptional: seems to make more sense that this is created more permanently when the class adds a hasA. in fact wait i think i already have this done...
+            //In Foo's constructor:
+            //Bar *bar = new Bar(this);
+            classInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first->appendLineToClassConstructorTemporarily(classInstance->preferredTextualRepresentation() + " = new " + classInstance->m_MyClass->ClassName + "(this);");
+#endif
+        }
+    }
+#endif
+#if 0
         QList<DesignEqualsImplementationClassSlot*> slotsInClassLifeLine = classLifeline->mySlotsAppearingInClassLifeLine();
         if(slotsInClassLifeLine.contains(m_UseCaseSlotEntryPoint_OrNegativeOneIfNoneConnectedFromActorYetctorYet.second))
         {
-            DesignEqualsImplementationClassSlot *slotEntryPoint = m_UseCaseSlotEntryPoint_OrNegativeOneIfNoneConnectedFromActorYetctorYet.second;
+            DesignEqualsImplementationClassSlot *slotEntryPoint = m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.second;
             //TODOreq: Make note of the dependency to the instance. Project keeps track of instances at this point using a temporary reference count (counted here, utilized in class's genereate source code)
         }
         else
@@ -93,7 +116,6 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
         {
         }
 #endif
-
 #if 0 //OLD AS FUCK:
     bool firstUseCaseEvent = true;
     Q_FOREACH(EventAndTypeTypedef *orderedUseCaseEvent, OrderedUseCaseEvents)

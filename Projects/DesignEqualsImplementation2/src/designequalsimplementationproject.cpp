@@ -50,7 +50,7 @@ QList<DesignEqualsImplementationClass *> DesignEqualsImplementationProject::clas
 }
 DesignEqualsImplementationClassInstance* DesignEqualsImplementationProject::createTopLevelClassInstance(DesignEqualsImplementationClass *classToMakeTopLevelInstanceOf)
 {
-    DesignEqualsImplementationClassInstance *classInstance = new DesignEqualsImplementationClassInstance(classToMakeTopLevelInstanceOf, 0, 0, "TopLevel_" + classToMakeTopLevelInstanceOf->ClassName); //TODOreq: auto increment for top level auto vars
+    DesignEqualsImplementationClassInstance *classInstance = new DesignEqualsImplementationClassInstance(classToMakeTopLevelInstanceOf, 0, 0, "topLevel_" + classToMakeTopLevelInstanceOf->ClassName); //TODOreq: auto increment for top level auto vars
     m_TopLevelClassInstances.append(classInstance);
     return classInstance;
 }
@@ -67,6 +67,67 @@ void DesignEqualsImplementationProject::addUseCase(DesignEqualsImplementationUse
 QList<DesignEqualsImplementationUseCase *> DesignEqualsImplementationProject::useCases()
 {
     return m_UseCases;
+}
+void DesignEqualsImplementationProject::appendLineToTemporaryProjectGlueCode(const QString &line)
+{
+    m_TemporaryProjectGlueCodeLines.append(line);
+}
+bool DesignEqualsImplementationProject::writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath)
+{
+    QString autoGlue = "AutoGlue_";
+    QString autoGlueProjectName = autoGlue + Name;
+
+    QString filenameToLowerWithoutExtension = autoGlue + Name;
+    filenameToLowerWithoutExtension = filenameToLowerWithoutExtension.toLower();
+
+    //autoglue_projectname.h
+    QString projectGlueFilenameOnlyToLower = filenameToLowerWithoutExtension;
+    QString projectGlueHeaderFilenameOnly = projectGlueFilenameOnlyToLower + ".h";
+    QString projectGlueHeaderFilename = destinationDirectoryPath + projectGlueHeaderFilenameOnly;
+    QFile projectGlueHeaderFile(projectGlueHeaderFilename);
+    if(!projectGlueHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        emit e("failed to open for writing: " + projectGlueHeaderFilename);
+        return false;
+    }
+    QTextStream projectGlueHeaderTextStream(&projectGlueHeaderFile);
+    QString projectGlueHeadderGuard = Name.toUpper() + "_H";
+    projectGlueHeaderTextStream << "#ifndef " << projectGlueHeadderGuard << endl;
+    projectGlueHeaderTextStream << "#define " << projectGlueHeadderGuard << endl;
+    projectGlueHeaderTextStream << endl;
+    projectGlueHeaderTextStream << "#include <QObject>" << endl;
+    projectGlueHeaderTextStream << endl;
+    projectGlueHeaderTextStream << "class " << autoGlueProjectName << " : public QObject" << endl;
+    projectGlueHeaderTextStream << "{" << endl;
+    projectGlueHeaderTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_OBJECT" << endl;
+    projectGlueHeaderTextStream << "public:" << endl;
+    projectGlueHeaderTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << autoGlueProjectName << "(QObject *parent = 0);" << endl;
+    projectGlueHeaderTextStream << "};" << endl;
+    projectGlueHeaderTextStream << endl;
+    projectGlueHeaderTextStream << "#endif // " << projectGlueHeadderGuard << endl;
+
+    //autoglue_projectname.cpp
+    QString projectGlueSourceFileName = filenameToLowerWithoutExtension + ".cpp";
+    QFile projectGlueSourceFile(destinationDirectoryPath + projectGlueSourceFileName);
+    if(!projectGlueSourceFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        emit e("failed to open for writing: " + projectGlueSourceFileName);
+        return false;
+    }
+    QTextStream projectGlueSourceTextStream(&projectGlueSourceFile);
+    projectGlueSourceTextStream << "#include \"" << projectGlueHeaderFilenameOnly << "\"" << endl;
+    projectGlueSourceTextStream << endl;
+    projectGlueSourceTextStream << autoGlueProjectName << "::" << autoGlueProjectName << "(QObject *parent)" << endl;
+    projectGlueSourceTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;
+    projectGlueSourceTextStream << "{" << endl;
+    //  Foo *foo = new Foo(this);"
+    Q_FOREACH(const QString &currentTempGlueLine, m_TemporaryProjectGlueCodeLines)
+    {
+        projectGlueSourceTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentTempGlueLine << endl; //TODOoptional: IStatement type shiz
+    }
+    projectGlueSourceTextStream << "}" << endl;
+
+    return true;
 }
 bool DesignEqualsImplementationProject::savePrivate(const QString &projectFilePath)
 {
@@ -102,6 +163,8 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
         }
     }
 
+    m_TemporaryProjectGlueCodeLines.clear(); //TODOoptional: cleaner and unified "clear", but perhaps a "project writer" type class is warranted. for now: h4x and kiss
+
     Q_FOREACH(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, useCases())
     {
         if(!designEqualsImplementationUseCase->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
@@ -109,6 +172,12 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
             emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + designEqualsImplementationUseCase->Name);
             return false;
         }
+    }
+
+    if(!writeTemporaryGlueCodeLines(destinationDirectoryPath))
+    {
+        emit e("Failed to write temporary glue code for project. Check above for errors");
+        return false;
     }
 
     Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, m_Classes)

@@ -16,6 +16,8 @@
 #include "designequalsimplementationusecase.h"
 #endif
 #ifdef DesignEqualsImplementation_TEST_GUI_MODE
+#include <QDebug>
+#include <QCoreApplication>
 #include "designequalsimplementationclass.h"
 #endif
 
@@ -294,6 +296,8 @@ void DesignEqualsImplementation::newProject()
     //barClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
 
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(testProject); //could do this->createProject, but then wouldn't be able to populate it before emitting it as opened lawl (or i guess i could)
+    connect(testProject, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
+    connect(testProject, SIGNAL(sourceCodeGenerated(bool)), this, SLOT(handlesourceCodeGenerated(bool)));
     emit projectOpened(testProject);
 #else
     DesignEqualsImplementationProject *newProject = new DesignEqualsImplementationProject(this);
@@ -311,11 +315,11 @@ void DesignEqualsImplementation::openExistingProject(const QString &existingProj
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(existingProject);
     emit projectOpened(existingProject);
 }
-#ifdef DesignEqualsImplementation_TEST_MODE
+#ifdef DesignEqualsImplementation_TEST_GUI_MODE
 void DesignEqualsImplementation::handlesourceCodeGenerated(bool success)
 {
     qDebug() << "Source code generated successfully: " << success;
-    QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+    //QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
 void DesignEqualsImplementation::handleE(const QString &msg)
 {

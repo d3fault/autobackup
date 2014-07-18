@@ -17,12 +17,12 @@ class DesignEqualsImplementationClassLifeLine : public QObject
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent = 0);
+    explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe, QPointF position, QObject *parent = 0);
     //explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *firstSlot, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent = 0);
     QPointF position() const;
     DesignEqualsImplementationClass *designEqualsImplementationClass() const;
     void setMyInstanceInClassThatHasMe_OrZeroIfTopLevelObject(DesignEqualsImplementationClassInstance *hasA_Private_Classes_Members_ListEntryType);
-    DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject() const;
+    DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe() const;
     void insertSlotToClassLifeLine(int indexToInsertInto, DesignEqualsImplementationClassSlot *newSlot);
     void removeSlotFromClassLifeLine(DesignEqualsImplementationClassSlot *slotToRemove);
     //void replaceSlot(int indexToReplace, DesignEqualsImplementationClassSlot *slotToReplaceItWith);

@@ -318,7 +318,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(insertSignalEmissionUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSignalEmitEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
 
-    connect(this, SIGNAL(setUseCaseSlotEntryPointRequested(DesignEqualsImplementationClassSlot*)), useCase, SLOT(setUseCaseSlotEntryPoint(DesignEqualsImplementationClassSlot*)));
+    connect(this, SIGNAL(setUseCaseSlotEntryPointRequested(int,DesignEqualsImplementationClassSlot*)), useCase, SLOT(setUseCaseSlotEntryPoint(int,DesignEqualsImplementationClassSlot*)));
     connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
 
     //responses
@@ -486,9 +486,9 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables = signalSlotMessageCreatorDialog.slotInvocationContextVariables();
 
     //Retrieved specified variable name when slot invoke
-    if(destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject())
+    if(destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest->myInstanceInClassThatHasMe())
     {
-        signalEmissionOrSlotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = destinationClassLifeLine_OrZeroIfNoDest->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName; //If we don't have a target unit of execution, we are simple signal emit, and the backend knows that VariableName is of no use in that case
+        signalEmissionOrSlotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = destinationClassLifeLine_OrZeroIfNoDest->myInstanceInClassThatHasMe()->VariableName; //If we don't have a target unit of execution, we are simple signal emit, and the backend knows that VariableName is of no use in that case
     }
 
     //TODOreq: we need to find out if the slotInvocation dialog was used as slotInvoke, signal/slot connection activation, or signal emit only
@@ -596,8 +596,8 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
         if(sourceIsActor)
         {
-            int classLifeLineIndexIntoUseCasesListOfClassLifeLines = m_UseCase->classLifeLines().indexOf(sourceClassLifeLine_OrZeroIfSourceIsActor);
-            //TODOreq: emit setUseCaseSlotEntryPointRequested(sourceClassLifeLine_OrZeroIfSourceIsActor, userChosenDestinationSlot_OrZeroIfNone);
+            int classLifeLineIndexIntoUseCasesListOfClassLifeLines = m_UseCase->classLifeLines().indexOf(destinationClassLifeLine_OrZeroIfNoDest);
+            emit setUseCaseSlotEntryPointRequested(classLifeLineIndexIntoUseCasesListOfClassLifeLines, userChosenDestinationSlot_OrZeroIfNone);
             return true;
         }
 

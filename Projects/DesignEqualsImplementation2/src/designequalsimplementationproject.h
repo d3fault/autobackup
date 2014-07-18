@@ -35,11 +35,18 @@ public:
     QList<DesignEqualsImplementationClass*> m_Classes;
     QList<DesignEqualsImplementationClassInstance*> m_TopLevelClassInstances;
     QList<DesignEqualsImplementationUseCase*> m_UseCases;
+
+    //Temporary for code gen:
+    void appendLineToTemporaryProjectGlueCode(const QString &line);
+    bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);
 private:
     bool savePrivate(const QString &projectFilePath);
     bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
+
+    //Temporary for code gen:
+    QList<QString> m_TemporaryProjectGlueCodeLines;
 signals:
     void useCaseAdded(DesignEqualsImplementationUseCase*);
     void classAdded(DesignEqualsImplementationClass*);

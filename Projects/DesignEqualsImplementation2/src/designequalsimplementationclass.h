@@ -56,6 +56,11 @@ public:
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> m_HasA_Private_PODorNonDesignedCpp_Members;
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;
     QList<DesignEqualsImplementationClassSlot*> m_MySlots;
+
+    //Temporary for code gen
+    //void appendLineToClassConstructorTemporarily(const QString &line);
+private:
+    //QList<QString> m_TemporaryClassConstructorLines;
 signals:
     void propertyAdded(DesignEqualsImplementationClassProperty*);
     void hasAPrivateMemberClassAdded(DesignEqualsImplementationClassInstance); //declare meta type?
@@ -79,8 +84,8 @@ public:
     explicit DesignEqualsImplementationClassInstance() : IHaveTypeAndVariableNameAndPreferredTextualRepresentation() { }
     explicit DesignEqualsImplementationClassInstance(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClass *parentClassThatHasMe_OrZeroIfTopLevelObject, int myIndexIntoParentHasAThatIsMe, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_MyClass(designEqualsImplementationClass)
     {
-        m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first = parentClassThatHasMe_OrZeroIfTopLevelObject;
-        m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.second = myIndexIntoParentHasAThatIsMe;
+        m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first = parentClassThatHasMe_OrZeroIfTopLevelObject;
+        m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.second = myIndexIntoParentHasAThatIsMe;
 #if 0
         if(m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first)
         {
@@ -105,7 +110,7 @@ public:
     }
 
     DesignEqualsImplementationClass *m_MyClass;
-    QPair<DesignEqualsImplementationClass*, int> m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject;
+    QPair<DesignEqualsImplementationClass*, int> m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject;
     QList<DesignEqualsImplementationClassInstance*> m_ChildInstances;
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassInstance &hasA_Private_Classes_Members_ListEntryType);

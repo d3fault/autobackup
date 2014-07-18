@@ -60,7 +60,7 @@ signals:
     void insertSignalSlotActivationUseCaseEventRequested(int indexToInsertStatementAt, DesignEqualsImplementationClassSlot *sourceSlotToPutEmitStatementIn_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *signal, DesignEqualsImplementationClassSlot *destinationSlot, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
     void insertSignalEmissionUseCaseEventRequested(int indexToInsertStatementAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *signal, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
 
-    void setUseCaseSlotEntryPointRequested(DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint);
+    void setUseCaseSlotEntryPointRequested(int classLifeLinesIndex, DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint);
     void setExitSignalRequested(DesignEqualsImplementationClassSlot *sourceSlot, DesignEqualsImplementationClassSignal *signal, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariables);
 
     void e(const QString &msg);

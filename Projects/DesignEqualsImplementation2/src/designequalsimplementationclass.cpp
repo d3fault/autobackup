@@ -289,6 +289,10 @@ QString DesignEqualsImplementationClass::headerFilenameOnly()
 {
     return ClassName.toLower() + ".h";
 }
+/*void DesignEqualsImplementationClass::appendLineToClassConstructorTemporarily(const QString &line)
+{
+    m_TemporaryClassConstructorLines.append(line);
+}*/
 void DesignEqualsImplementationClass::emitAllClassDetails()
 {
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);

@@ -25,7 +25,7 @@ signals:
 public slots:
     void newProject();
     void openExistingProject(const QString &existingProjectFilePath);
-#ifdef DesignEqualsImplementation_TEST_MODE
+#ifdef DesignEqualsImplementation_TEST_GUI_MODE
 private slots:
     void handlesourceCodeGenerated(bool success);
     void handleE(const QString &msg);

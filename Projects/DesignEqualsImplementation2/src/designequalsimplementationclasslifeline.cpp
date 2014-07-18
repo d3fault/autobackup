@@ -146,7 +146,7 @@ void DesignEqualsImplementationClassLifeLine::setMyInstanceInClassThatHasMe_OrZe
 {
     m_MyInstanceInClassThatHasMe = hasA_Private_Classes_Members_ListEntryType;
 }
-DesignEqualsImplementationClassInstance *DesignEqualsImplementationClassLifeLine::myInstanceInClassThatHasMe_OrZeroIfTopLevelObject() const
+DesignEqualsImplementationClassInstance *DesignEqualsImplementationClassLifeLine::myInstanceInClassThatHasMe() const
 {
     return m_MyInstanceInClassThatHasMe;
 }

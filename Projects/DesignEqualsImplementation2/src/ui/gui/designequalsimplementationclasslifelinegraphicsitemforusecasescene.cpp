@@ -54,9 +54,9 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     m_ClassBorderPen.setWidth(2);
 
     QString lifeLineTitleHtml("<b>"); //TODOreq: only the ClassName/Type should be bold
-    if(classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first)
+    if(classLifeLine->myInstanceInClassThatHasMe()->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first)
     {
-        lifeLineTitleHtml += classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_MyClass->ClassName + "</b>" + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe_OrZeroIfTopLevelObject()->VariableName;
+        lifeLineTitleHtml += classLifeLine->myInstanceInClassThatHasMe()->m_MyClass->ClassName + "</b>" + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe()->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe()->VariableName;
     }
     else
     {
