@@ -1,0 +1,21 @@
+Unix kinda has it backwards imo. Don't be quiet on success. HOWEVER, their reasoning is somewhat sound: tons of successes is unreadable/etc. So: an aggregator.
+
+Basically an app that runs tons of other apps and controls them via stdin and listens to responses via stdout (could be signals/slots instead/too w/e). You specify success statements (before starting or as running, qsettings persisted ofc)... and it should well... aggregate 5000 "process success" stdout calls into 1x: "app x said 'process success 5000 times'" in the aggregator app.
+
+Errors, if sent on stderr especially (as in, they are easier to filter), freaking yell at you and scream at you and shit, blink icons or fuck who knows whatever the environment warrants.
+
+So yea you basically specify a timeout period, say 30s, and it aggregates all similar (*cough*regex*cough*) calls into one... so you can monitor a cluster of servers in one window.
+
+
+The problem with silence: your app could have exitted and you might just be looking at a hung terminal/window/etc (wow what a coincidence, a hung terminal/window/etc is also silent!)
+
+
+"return 0;" counts as being loud btw... loud enough i suppose... so apps that use that just aggregate the "return 0" calls (assuming you run the app lots)
+
+
+While I'm on the subject, I want stderr and stdout to be visually split from each other. 2x QPlainTextEdits in 1x QHBoxLayout (so next to each other)
+
+
+If your app can't prove that it worked (SUCCESS!), it didn't.
+
+Amateur programmers everywhere are raging "derp i can't just cross my fingers since it compiled and worked once?"

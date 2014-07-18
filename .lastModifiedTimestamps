@@ -2574,11 +2574,11 @@ Projects/DesignEqualsImplementation2/design/the.design.should.be.simple.but.ive.
 Projects/DesignEqualsImplementation2/design/this.bug.almost.made.me.revert.lolol.and.now.to.try.to.fix.it.sdlfjsldkfjlskdjfsldkf.txt:1405634218
 Projects/DesignEqualsImplementation2/design/units.of.executions.and.slots.and.private.methods.all.have.tons.of.overlap.sdfouwerljsdfsdklfj.txt:1405166122
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1405675602
+Projects/DesignEqualsImplementation2/src/:1405678130
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1405664217
+Projects/DesignEqualsImplementation2/src/ui/gui/:1405678027
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1405502076
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1404542044
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2619,7 +2619,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresen
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.h:1405630057
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.cpp:1405628574
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.h:1405612585
-Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1405664217
+Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1405678027
 Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:1405660914
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.cpp:1405455825
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.h:1404489887
@@ -2653,8 +2653,8 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalslotint
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalslotinterface.h:1405443828
 Projects/DesignEqualsImplementation2/src/designequalsimplementationslotinvocationstatement.cpp:1405528005
 Projects/DesignEqualsImplementation2/src/designequalsimplementationslotinvocationstatement.h:1405670131
-Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.cpp:1405675577
-Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.h:1405618520
+Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.cpp:1405677676
+Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.h:1405677005
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationhaveorderedlistofstatements.cpp:1405442620
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationhaveorderedlistofstatements.h:1405442620
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationmethod.cpp:1405528101
@@ -2789,7 +2789,7 @@ Projects/Hottee/src/cli/main.cpp:1402472001
 Projects/Hottee/src/lib/:1402473271
 Projects/Hottee/src/lib/hottee.cpp:1402473270
 Projects/Hottee/src/lib/hottee.h:1402473271
-Projects/Ideas/:1405547055
+Projects/Ideas/:1405676304
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -2869,6 +2869,7 @@ Projects/Ideas/all.we.have.movie.2.murders.1.framed.judge.perspective.txt:135820
 Projects/Ideas/alphabet.electronic.confirmations.through.arduino.per.letter.txt:1328219880
 Projects/Ideas/also.probably.maybe.the.default.bytestream.by.as.in.written.by.d3fault.but.maybe.also.some.sort.of.special.d3fault.code.thingo.txt:1344735578
 Projects/Ideas/anonymity.requests.and.responses.there.is.a.visual.png.that.goes.with.it.txt:1323476151
+Projects/Ideas/app.output.aggregator.very.basic.idea.asfjslfkjsdlkfjsdlkfjsldkjfoweurlskjdfs.txt:1405676304
 Projects/Ideas/arduino.enabled.offline.write.only.hack.proof.airgap.automated.backup.system.txt:1340617799
 Projects/Ideas/asdlkfjweaoriusdflkjawoiusdfsakfhjsadfjoweirl.txt:1339229095
 Projects/Ideas/ask.questions.about.a.previous.agreed.value.for.presence.verification.except.only.in.that.it.exists.at.least.once.txt:1360825837
