@@ -327,6 +327,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(useCase, SIGNAL(eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)), this, SLOT(handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)));
 }
 //TODOreq: if new slot jit created and shown behind message editor, the arrow's p2 should be updated to reflect that. HOWEVER I'm considering using ghosting techniques to already show what will happen should the user release the mouse button, so those considerations need to be considered
+//TODOreq: certain actions occuring right around the message editor dialog, such as jit slot creation, should be undone if the dialog is cancelled xD
 bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     //first things first, get the topmost items [that we want] underneath the source and dest points
@@ -395,22 +396,37 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
         if(!destinationIsActor)
         {
-            if(destinationSlotGraphicsItem_OrZeroIfNoDest && (destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name != UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING || !destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty())) //TODOreq: skipping slot entry point connecting (ie: Foo::unnamedFirstSlot -> Bar::fooSlot -> Bar::barSignal -> Foo::handleBarSignal) should not now name that first Foo::unnamedFirstSlot, because if it did then it would be an infinite loop. We need to see that since unnamedFirstSlot referenced us "later on", that our NAMING him would be an infinite loop. To KISS initially, I should just always create a new slot whenever the dest's statement list isn't empty (adding that to this if now)
+            if(destinationSlotGraphicsItem_OrZeroIfNoDest) //TODOreq: skipping slot entry point connecting (ie: Foo::unnamedFirstSlot -> Bar::fooSlot -> Bar::barSignal -> Foo::handleBarSignal) should not now name that first Foo::unnamedFirstSlot, because if it did then it would be an infinite loop. We need to see that since unnamedFirstSlot referenced us "later on", that our NAMING him would be an infinite loop. To KISS initially, I should just always create a new slot whenever the dest's statement list isn't empty (adding that to this if now)
             {
-                //jit create slot on class lifeline in destination (unless it's actor)
-                DesignEqualsImplementationClassSlot *newSlot = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING);
-                if(destinationClassLifeLine_OrZeroIfNoDest)
+                bool jitCreate = true;
+                if(destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING)
                 {
-                    destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(destinationClassLifeLine_OrZeroIfNoDest->mySlotsAppearingInClassLifeLine().size(), newSlot);
+                    jitCreate = false;
                 }
-                destinationSlotIsProbablyNameless_OrZeroIfNoDest = newSlot;
-                //TODOreq: destinationSlotGraphicsItem_OrZeroIfNoDest is now invalid, not sure it matters
+#if 0
+                if(!destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty())
+                {
+                    //for now always jit create when the statement list isn't empty
+                }
+#endif
+
+                if(jitCreate)
+                {
+                    //jit create slot on class lifeline in destination (unless it's actor)
+                    DesignEqualsImplementationClassSlot *newSlot = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING);
+                    if(destinationClassLifeLine_OrZeroIfNoDest)
+                    {
+                        destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(destinationClassLifeLine_OrZeroIfNoDest->mySlotsAppearingInClassLifeLine().size(), newSlot);
+                    }
+                    destinationSlotIsProbablyNameless_OrZeroIfNoDest = newSlot;
+                    //TODOreq: destinationSlotGraphicsItem_OrZeroIfNoDest is now invalid, not sure it matters
+                }
             }
         }
 #if 0
-            DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *lifelineGraphicsItem;
-            if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID)
-            {
+        DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *lifelineGraphicsItem;
+        if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID)
+        {
                 lifelineGraphicsItem = qgraphicsitem_cast<DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene*>(topMostItemIWantUnderDestination_CanBeZeroUnlessSourceIsActor)->parentClassLifeline();
             }
             else if(destinationItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID)
@@ -485,17 +501,22 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     {
 
         //HACK to delete target slot if unnamed and empty
-        if(userChosenDestinationSlot_OrZeroIfNone != destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty() && destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING && destinationClassLifeLine_OrZeroIfNoDest)
+        if(userChosenDestinationSlot_OrZeroIfNone != destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING && destinationClassLifeLine_OrZeroIfNoDest)
         {
             //TODOoptimization: could sneak the slot in without deleting the graphics item and recreating it, but as of now it is done transparently via reactor pattern through two below calls. Btw I'm putting business logic in the gui but fuck it this is deserving and idgaf anymore (TODOimplicitsharing: request here that the next two statements are performed in the backend... but wtf it needs to be finished before i delete it 3 lines down so idfk)
 
-#if 0
-            if(m_ArrowDestinationSnapper_OrZeroIfNone) //Hack within a hack: when the slot graphics item is deleted, it deletes the snapping visual indicator implicitly, which is m_ArrowDestinationSnapper_OrZeroIfNone also has a pointer to. if the graphics item implicitly deletes it, m_ArrowDestinationSnapper_OrZeroIfNone has a dangling pointer. i can probably move this code "upward" a bit and out of this hack itself and it would be equally safe. since we are mouse release it makes sense
+            //TODOreq: bring all existing statements over to the userChosenDestinationSlot_OrZeroIfNone, modal dialog asking for merge strategy if userChosenDestinationSlot_OrZeroIfNone already has existing statements and targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest does too
+            if(!userChosenDestinationSlot_OrZeroIfNone->orderedListOfStatements().isEmpty() && !destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty())
             {
-                delete m_ArrowDestinationSnapper_OrZeroIfNone;
-                m_ArrowDestinationSnapper_OrZeroIfNone = 0;
+                QMessageBox::information(0, tr("Error"), tr("Error: need to implement merging because the slot you decided to invoke already has statements"));
+                return false;
             }
-#endif
+            //We're definitely going to delete the slot, but let's copy it's statements (if any) to the actual dest
+            int currentStatementIndex = 0;
+            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements())
+            {
+                userChosenDestinationSlot_OrZeroIfNone->insertStatementIntoOrderedListOfStatements(currentStatementIndex++, currentStatement);
+            }
 
             destinationClassLifeLine_OrZeroIfNoDest->removeSlotFromClassLifeLine(destinationSlotIsProbablyNameless_OrZeroIfNoDest);
             DesignEqualsImplementationClass *parentClass = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass;
@@ -526,17 +547,6 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 #if 0
         if(destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name == "")
         {
-            //TODOreq: bring all existing statements over to the userChosenDestinationSlot_OrZeroIfNone, modal dialog asking for merge strategy if userChosenDestinationSlot_OrZeroIfNone already has existing statements and targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest does too
-            if(!userChosenDestinationSlot_OrZeroIfNone->orderedListOfStatements().isEmpty() && !destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements().isEmpty())
-            {
-                QMessageBox::information(0, tr("Error"), tr("Error: need to implement merging because the slot you decided to invoke already has statements"));
-                return false;
-            }
-            int currentStatementIndex = 0;
-            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements())
-            {
-                userChosenDestinationSlot_OrZeroIfNone->insertStatementIntoOrderedListOfStatements(currentStatementIndex++, currentStatement);
-            }
             //TODOreq: delete targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest under some circumstances?
             //delete targetSlotUnderGraphicsItemIsProbablyNameless_OrZeroIfNoDest;
 
