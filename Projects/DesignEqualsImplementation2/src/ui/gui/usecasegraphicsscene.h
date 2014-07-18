@@ -11,6 +11,7 @@ class DesignEqualsImplementationClassInstance;
 class DesignEqualsImplementationClassLifeLine;
 class SignalSlotConnectionActivationArrowForGraphicsScene;
 class IRepresentSnapGraphicsItemAndProxyGraphicsItem;
+class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene;
 
 class UseCaseGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
@@ -67,6 +68,7 @@ private slots:
     void handleActorAdded(DesignEqualsImplementationActor *actor);
     void handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);
     void handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventTypeEnum, QObject* event, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionOrSlotInvocationContextVariables);
+    void handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem);
 public slots:
     void setMouseMode(DesignEqualsImplementationMouseModeEnum newMouseMode);
 };

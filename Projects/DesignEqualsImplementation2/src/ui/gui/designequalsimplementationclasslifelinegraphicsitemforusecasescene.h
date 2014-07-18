@@ -33,7 +33,9 @@ private:
     QPen m_ClassBorderPen;
 
     void privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine);
-    void createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
+signals:
+    void slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem);
 private slots:
     void handleSlotInsertedIntoClassLifeLine(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
     void handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);

@@ -86,11 +86,12 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     connect(classLifeLine, SIGNAL(slotInsertedIntoClassLifeLine(int,DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotInsertedIntoClassLifeLine(int, DesignEqualsImplementationClassSlot*)));
     connect(classLifeLine, SIGNAL(slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)));
 }
-void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
+DesignEqualsImplementationSlotGraphicsItemForUseCaseScene* DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = new DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(this, slot, this);
     m_SlotsInThisClassLifeLine.insert(indexInsertedInto, slotGraphicsItem);
     connect(slotGraphicsItem, SIGNAL(geometryChanged()), this, SLOT(handleSlotGeometryChanged()));
+    return slotGraphicsItem;
 }
 //TODOreq: in the future the "lines in between" lengths should be user stretchable and serializable, but for now to KISS they'll be fixed length (primarily, the unit of execution rect itself will auto-move (which will indirectly lengthen the line above it) or stretch, but it does make sense for the user to put it right where they want it vertically
 //TODOreq: unit of executions changing (insert/remove) ultimately triggers repositionUnitsOfExecution, because their positions depend on their sizes
@@ -155,8 +156,11 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotInsertedIntoClassLifeLine(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
     //make the graphics item, add it as child, and reposition
-    createAndInsertSlotGraphicsItem(indexInsertedInto, slot);
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = createAndInsertSlotGraphicsItem(indexInsertedInto, slot);
     repositionSlotsBecauseOneSlotsChanged();
+
+    //emit signal that use case graphics scene is listening to. he updates arrow position if exists
+    emit slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(slotGraphicsItem);
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved)
 {

@@ -763,6 +763,7 @@ void UseCaseGraphicsScene::handleClassLifeLineAdded(DesignEqualsImplementationCl
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
 
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene = new DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(newClassLifeLine); //TODOreq: right-click -> change thread (main/gui thread (default), new thread X, existing thread Y). they should somehow visually indicate their thread. i was thinking a shared "filled-background" (color), but even if just the colors of the lifelines are the same that would be sufficient
+    connect(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene, SIGNAL(slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*)), this, SLOT(handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*)));
 
     designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene->setPos(newClassLifeLine->position()); //TODOreq: listen for moves
 
@@ -772,6 +773,20 @@ void UseCaseGraphicsScene::handleEventAdded(DesignEqualsImplementationUseCase::U
 {
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     //TODOreq: draw the fucking use case event blah
+}
+void UseCaseGraphicsScene::handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem)
+{
+    if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode && m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+    {
+        QLineF existingLine = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line();
+        QPointF slotJustAddedPos = slotGraphicsItem->scenePos();
+        QPointF topLeftOfSlotJustAdded;
+        QRectF boundingRectOfSlotJustAdded = slotGraphicsItem->boundingRect();
+        topLeftOfSlotJustAdded.setX(slotJustAddedPos.x()-(boundingRectOfSlotJustAdded.width()/2));
+        topLeftOfSlotJustAdded.setY(slotJustAddedPos.y()-(boundingRectOfSlotJustAdded.height()/2));
+        existingLine.setP2(topLeftOfSlotJustAdded); //TODOreq: topRight when relevant
+        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(existingLine);
+    }
 }
 void UseCaseGraphicsScene::setMouseMode(DesignEqualsImplementationMouseModeEnum newMouseMode)
 {

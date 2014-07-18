@@ -2572,11 +2572,11 @@ Projects/DesignEqualsImplementation2/design/the.design.should.be.simple.but.ive.
 Projects/DesignEqualsImplementation2/design/this.bug.almost.made.me.revert.lolol.and.now.to.try.to.fix.it.sdlfjsldkfjlskdjfsldkf.txt:1405634218
 Projects/DesignEqualsImplementation2/design/units.of.executions.and.slots.and.private.methods.all.have.tons.of.overlap.sdfouwerljsdfsdklfj.txt:1405166122
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1405643713
+Projects/DesignEqualsImplementation2/src/:1405645171
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1405643535
+Projects/DesignEqualsImplementation2/src/ui/gui/:1405645102
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1405502076
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1404542044
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2589,8 +2589,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassa
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h:1405502076
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassdiagramaswidgetfortab.cpp:1404542092
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassdiagramaswidgetfortab.h:1404542087
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.cpp:1405552979
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.h:1405639531
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.cpp:1405644063
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.h:1405644156
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.cpp:1405612590
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h:1405612585
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.cpp:1405432952
@@ -2617,8 +2617,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresen
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.h:1405630057
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.cpp:1405628574
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.h:1405612585
-Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1405643535
-Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:1405628873
+Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1405645102
+Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:1405644435
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.cpp:1405455825
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.h:1404489887
 Projects/DesignEqualsImplementation2/src/DesignEqualsImplementationGui.pro:1405606121
