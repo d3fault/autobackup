@@ -47,7 +47,7 @@ QList<DesignEqualsImplementationClassLifeLine *> DesignEqualsImplementationUseCa
 }
 bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destinationDirectoryPath)
 {
-#if 0
+#if 0 //TODOreq: class instance a.0 signal -> class instance b.3 slot should use the 'put a project-wide dependency' tactic, because some use cases will "redefine"/re-use/reference-again (and it's up to us to merge at compile time) a connection. I think the same connection will only ever show up TWICE in a project if you are referencing an "already existing and defined slot" [in another use case] type thing (double clicking opens tab)... like that entire use case becomes a small part of the use case you're defining. There might be other times when a connection is defined twice [but we only want it to occur actually once]
     QListIterator<SignalSlotConnectionActivationTypeStruct> signalSlotConnectionActivationIterator(m_SignalSlotConnectionActivationsInThisUseCase);
     while(signalSlotConnectionActivationIterator.hasNext())
     {
