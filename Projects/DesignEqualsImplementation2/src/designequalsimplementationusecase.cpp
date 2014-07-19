@@ -108,8 +108,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
                                     //TODOoptional: signal daisy chaining. i dunno how it would work in the GUI though
 
                                     //connect(m_Bar, SIGNAL(barSignal(bool)), this, SLOT(handleBarSignal(bool))); -- def need some kind of parent/child resolution
-                                    m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode("connect(" + signalParentClassInstance->VariableName + ", SIGNAL(" + signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType() + "), " + slotsParentClassInstance->VariableName + ", SLOT(" + currentSignalSlotConnectionActivation.SignalStatement_Key1_SourceSlotItself->methodSignatureWithoutReturnType() + "));");
-
+                                    m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode("connect(" + signalParentClassInstance->VariableName + ", SIGNAL(" + signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType() + "), " + slotsParentClassInstance->VariableName + ", SLOT(" + currentSignalSlotConnectionActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->methodSignatureWithoutReturnType() + "));");
                                 }
                             }
                         }
@@ -230,7 +229,7 @@ void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplement
     m_DesignEqualsImplementationProject = project;
     m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet.first = -1;
 }
-void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot)
+void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot)
 {
     //bool firstUseCaseEventAdded = OrderedUseCaseEvents.isEmpty();
 
@@ -340,13 +339,14 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
     {
         //TODOreq: right now is when we need to make a note that the signal would be connected in the slot, and optimally resolving where that connection will be made is going to be a bitch :-P
 
-        SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent = static_cast<SignalSlotCombinedEventHolder*>(event);
-
-        //TODOreq: the dest gets new unit of execution ("named" right away (gui just got name from user)). This needs to happen both in the backend and frontend, ideally the frontend merely reacts to the backend changing
-        if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
+        if(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal == -1 || signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot == -1)
         {
-            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertStatementInto, new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+            qFatal("class lifeline index into use case was -1 for either signal or slot");
+            delete event; //TODOreq: unrelated this qFatal, but lots of nested ifs in this entire method where elses should be deleting event. A scoped pointer (and a call to take() when using) might be warranted
+            return;
         }
+
+        SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent = static_cast<SignalSlotCombinedEventHolder*>(event);
 
         if(destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal) //TODOreq: shouldn't this have already been checked? if it fails, don't we still want to emit it because the slot statement was already inserted a few lines up? at the very least there is probably sync issues here. or shit, maybe it's just segfault protection i honestly dunno. we should probably NOT add the above signal-emission-statement if the slot invoke statement fails and the emit will never happen
         {
@@ -358,7 +358,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
                 SignalSlotConnectionActivationTypeStruct newSignalSlotConnectionActivationTypeStruct;
 
                 //signal key 0
-                //TODOreq
+                newSignalSlotConnectionActivationTypeStruct.SignalStatement_Key0_IndexInto_m_ClassLifeLines = signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal;
 
                 //signal key 1
                 newSignalSlotConnectionActivationTypeStruct.SignalStatement_Key1_SourceSlotItself = static_cast<DesignEqualsImplementationClassSlot*>(sourceOrderedListOfStatements_OrZeroIfSourceIsActor);
@@ -368,21 +368,25 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
 
 
                 //slot key 0
-                //TODOreq
+                newSignalSlotConnectionActivationTypeStruct.SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines = signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot;
 
                 //slot key 1
                 newSignalSlotConnectionActivationTypeStruct.SlotInvokedThroughConnection_Key1_DestinationSlotItself = destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal;
 
 
                 m_SignalSlotConnectionActivationsInThisUseCase.append(newSignalSlotConnectionActivationTypeStruct); //TODOreq: inserts, etc. applies to all of these keys actually. TODOoptional: connection activation added signal (keep/transform arrow in gui?)
+
+                //TODOreq: the dest gets new unit of execution ("named" right away (gui just got name from user)). This needs to happen both in the backend and frontend, ideally the frontend merely reacts to the backend changing
+
+                sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertStatementInto, new DesignEqualsImplementationSignalEmissionStatement(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+
+                //TODOreq: if dest has statements and the ui provided slotUseCaseEvent does too, modal dialog with merge strategies... reject the naming/merging as the default action
+
+                //TODOreq: the signal emit statement is still part of a class/slot INSTANCE that was implicitly defined by a use case where that signal emit WAS explicitly connected. In both cases we still want the emit statement
+
+                /*DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = */insertAlreadyFilledOutSlotIntoUseCase(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot); //TODOreq: the slot will already exist, we are simply finally giving it a name (and possibly a parent class name)
+                 emit signalSlotEventAdded(signalSlotCombinedUseCaseEvent);
             }
-
-            //TODOreq: if dest has statements and the ui provided slotUseCaseEvent does too, modal dialog with merge strategies... reject the naming/merging as the default action
-
-            //TODOreq: the signal emit statement is still part of a class/slot INSTANCE that was implicitly defined by a use case where that signal emit WAS explicitly connected. In both cases we still want the emit statement
-
-            /*DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = */insertAlreadyFilledOutSlotIntoUseCase(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot); //TODOreq: the slot will already exist, we are simply finally giving it a name (and possibly a parent class name)
-             emit signalSlotEventAdded(signalSlotCombinedUseCaseEvent);
         }
 
 
@@ -563,9 +567,9 @@ void DesignEqualsImplementationUseCase::insertSlotInvocationEvent(int indexToIns
     insertEventPrivate(UseCaseSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, designEqualsImplementationClassSlot, slotInvocationContextVariables);
 }
 //Signal emitted during normal slot execution, slot handler for that signal is relevant to use case
-void DesignEqualsImplementationUseCase::insertSignalSlotActivationEvent(int indexToInsertEventAt, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
+void DesignEqualsImplementationUseCase::insertSignalSlotActivationEvent(int indexToInsertEventAt, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, int indexInto_m_ClassLifeLines_OfSignal, int indexInto_m_ClassLifeLines_OfSlot)
 {
-    insertEventPrivate(UseCaseSignalSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), signalEmissionContextVariables);
+    insertEventPrivate(UseCaseSignalSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), signalEmissionContextVariables, indexInto_m_ClassLifeLines_OfSignal, indexInto_m_ClassLifeLines_OfSlot);
 }
 //Signals with no listeners in this use case
 void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)

@@ -1,0 +1,1 @@
+C++11 finally added variadic macros? Bah. Being a code gen means I can do variadic macros in C++98, suckers ;-P

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1405671309
+Documents/minddump/:1405678748
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1376,6 +1376,7 @@ Documents/minddump/lsdjflkjsdflkewrulkjdsfldfjoulsdjfsdfuosd.txt:1398082376
 Documents/minddump/lsdjflkjsdflkjsdfoiuwljkfosdiuflsdkjfosidufl.gross.sdfsdfoulj.txt:1393157263
 Documents/minddump/lsdjflkjsdflkjsdfouilkjwerouslfkjsdfoulsdfkjouwerlkjsfdoiu.txt:1367587558
 Documents/minddump/lsdjflksdjflkjsalkfjslkjdfsdjfkljsdkjfwerujsdfusdklfj.txt:1396515274
+Documents/minddump/lsdjflsdjflksjdlkfjsdkljfsdlkjfoiwherljsdflkjsdfl.txt:1405678628
 Documents/minddump/lsdjflsjadflkjskdlfjsdlkfjsdofusdlkfjsoduflsdjfljkewrousdf.txt:1393796085
 Documents/minddump/lsdjkflskajdfkjsdlfkjlwkejroulsdkjflksjdflksdfjouewlrkjousdfls.txt:1400127929
 Documents/minddump/lsdkfjlskdjfsdoiuwerlkjdfsousdflkjweroulkjdfs.txt:1355290132
@@ -2065,6 +2066,7 @@ Documents/minddump/sldfjlskjflksjdflkjsdlfkjsdofulewkjrousdfkjsdflwerjk.metaphor
 Documents/minddump/sldfjsdjflksjdflkjsdlkfjlskdjflkjewroulkjflskdjflsdkjfs.txt:1399507523
 Documents/minddump/sldfjsdlafjsdalkfjoiuwerlkjsdfousdflk.txt:1356355477
 Documents/minddump/sldfjsldhflsjdflkjsdlfkjsdlkjfsdlkfjsdlkjfoulksdf.txt:1401269806
+Documents/minddump/sldfjsldjflksdjflkjsdkfljsdkljflkoiweurlsjdfosduflsdjfosduflk.txt:1405678748
 Documents/minddump/sldfjsldkjflsdhfljsdflkjsdlfkjsdlfkjsdlkfj.txt:1401288745
 Documents/minddump/sldfjsljdflsjdfhdlskfjsldkjfouewlrjhfldksdf.txt:1402002158
 Documents/minddump/sldfkjalsdjflksjdflkjsdlkfjdslkjflsdjkfouwe.txt:1398999726
@@ -2558,13 +2560,15 @@ Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRele
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfileswidget.h:1379253035
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/main.cpp:1379408785
 Projects/DesignEqualsImplementation2/:1405089905
-Projects/DesignEqualsImplementation2/design/:1405634218
+Projects/DesignEqualsImplementation2/design/:1405767449
 Projects/DesignEqualsImplementation2/design/arrows.saldfjsldfjlsjfwoeurljsdfosduflsdkjfosdfsldfjsldf.txt:1405420969
 Projects/DesignEqualsImplementation2/design/dfjsldfjsdjflsdkjflksdjflkjsdflkjsdfowuerlkjsdofusdfkjsdlfk.txt:1405506032
 Projects/DesignEqualsImplementation2/design/dflkjsdlfkjsdlkfjsdklfjweourlkjdfosdfkjsdfls.txt:1405423408
 Projects/DesignEqualsImplementation2/design/dlfkjsldkfjlskdjflkjsdflkjsdfouewrlkdf.txt:1405499683
 Projects/DesignEqualsImplementation2/design/dsklfjsdkjflkajsdfklsjdflksdjfosdhfsdflsdjflksdjflksdjf.finally.txt:1405360704
 Projects/DesignEqualsImplementation2/design/gui.first.launch.early.final.mockup.basic.slot.svg:1405601936
+Projects/DesignEqualsImplementation2/design/is.a.qt5.public.method.a.slot.i.mean.does.it.show.up.as.a.slot.in.the.meta.object.sfldeuwlkjsfdlksjdf.txt:1405763553
+Projects/DesignEqualsImplementation2/design/lol.variadic.macros.ez.etcetc.safjslfdkjsdfouwerlkjsdflsdk.txt:1405767449
 Projects/DesignEqualsImplementation2/design/saving.the.most.recent.compiling.checkpoint.maybe.but.then.again.would.take.up.lots.of.space.txt:1405599604
 Projects/DesignEqualsImplementation2/design/sdfjlsadkfjklsjdflkjsdkfljskdlfjksldjflksdjfklsdjflksdjf.txt:1405046627
 Projects/DesignEqualsImplementation2/design/sdfsldfjlksdfjlksdjfklsdjfouewrlkjdfousdfsldkfjldkfjsdf.txt:1405033655
@@ -2574,11 +2578,11 @@ Projects/DesignEqualsImplementation2/design/the.design.should.be.simple.but.ive.
 Projects/DesignEqualsImplementation2/design/this.bug.almost.made.me.revert.lolol.and.now.to.try.to.fix.it.sdlfjsldkfjlskdjfsldkf.txt:1405634218
 Projects/DesignEqualsImplementation2/design/units.of.executions.and.slots.and.private.methods.all.have.tons.of.overlap.sdfouwerljsdfsdklfj.txt:1405166122
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1405678130
+Projects/DesignEqualsImplementation2/src/:1405768811
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1405678027
+Projects/DesignEqualsImplementation2/src/ui/gui/:1405767851
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1405502076
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1404542044
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2619,8 +2623,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresen
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.h:1405630057
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.cpp:1405628574
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.h:1405612585
-Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1405678027
-Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:1405660914
+Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1405767851
+Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:1405767344
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.cpp:1405455825
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.h:1404489887
 Projects/DesignEqualsImplementation2/src/DesignEqualsImplementationGui.pro:1405606121
@@ -2653,8 +2657,8 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalslotint
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalslotinterface.h:1405443828
 Projects/DesignEqualsImplementation2/src/designequalsimplementationslotinvocationstatement.cpp:1405528005
 Projects/DesignEqualsImplementation2/src/designequalsimplementationslotinvocationstatement.h:1405670131
-Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.cpp:1405677676
-Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.h:1405677005
+Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.cpp:1405768810
+Projects/DesignEqualsImplementation2/src/designequalsimplementationusecase.h:1405767255
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationhaveorderedlistofstatements.cpp:1405442620
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationhaveorderedlistofstatements.h:1405442620
 Projects/DesignEqualsImplementation2/src/idesignequalsimplementationmethod.cpp:1405528101

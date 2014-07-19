@@ -1,0 +1,1 @@
+This is why coding (first person) is harder than design (birds eye): you begin abstracting abstractions from abstractions and have no idea what the fuck you're even thinking about
