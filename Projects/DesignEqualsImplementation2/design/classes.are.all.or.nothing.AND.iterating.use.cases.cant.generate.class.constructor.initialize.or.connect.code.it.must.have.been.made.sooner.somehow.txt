@@ -1,0 +1,9 @@
+classes are all or nothing (incl. OTHER projects), but iterating use case entry points is the way to determine which classes are relevant to the gen/app
+
+I was planning on only generating the parts of the classes relevant to the app/use-cases-in-that-app, but after thinking about it further I realize that's 'wrong [if I want the generated source code to be modular/reusable/etc (if I don't, then yes I don't need to generate unused methods)]. But I do want my generated classes to be usable by other projects, I don't mind sharing. If EVERYTHING was in designEquals, then it'd be different and the same class could be re-generated transparently whenever a method/member is used.
+
+Assuming I somehow organize all the classes into some global "library of classes", ALL use cases of ALL projects must be considered when generating a class. The class itself might be used by other projects, and it would be incredibly stupid to have two versions of the same class be generated (one version for one use-cast/project, another for another use-case/project). It decreases modularity [for anyone wanting to use the lib in regular C++ mode/projects (importing my work)].
+
+So basically I do iterate the use case entry points to find the classes in a project, BUT I can't use the current method of "generating initialize/connect code during that use case iteration" (because then we'd be lacking initialization/connect code for use cases not in the app (and the class would be missing shit and incomplete).
+
+I'm kinda going slow at the point I'm at right now and making sure every step it more or less correct. I'm at a vital part in the code and if I take the wrong path it'll be a lot of backtracking (and as you can see, I almost did).

@@ -1,0 +1,10 @@
+Regardless of whether I:
+a) iterate all top level objects and generate all their source
+b) follow the "use case entry point" and generate sources for dependencies only
+
+...there can still be multiple top level objects generated. Let's say Foo and Bar are top level objects. Foo::fooSlot is use case entry point, so we see that and start iterating it's statements. It invokes Bar::barSlot, which is also a top-level object. It's at that point that I have to mark a "dependency" on _THAT_ instance of Bar (a top level object), and continue doing the same thing to his children.
+
+I was just confused because I thought taking the use case entry point route meant that I'd only ever be able to have one top level object: not so
+
+
+It should be noted that the use case entry point MUST be a top level object (for now. might change in future when allowing signals to 'trigger' use cases xD)
