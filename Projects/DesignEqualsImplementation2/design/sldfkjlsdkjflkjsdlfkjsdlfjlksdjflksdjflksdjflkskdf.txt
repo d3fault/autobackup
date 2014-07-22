@@ -1,0 +1,3 @@
+It boils down to this: top level object connections are "generated when the app wants them (because a use case wants them)", but connections between a class and his child are MORE permanent (they should still not be 'hardcoded' so that they can be moved should the child be unchilded).
+
+It's difficult to focus on both "one project mode", the logical starting point, and to also make sure I don't do anything I'll have to undo later for "multi project mode"

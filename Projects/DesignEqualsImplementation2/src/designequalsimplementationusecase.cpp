@@ -103,12 +103,39 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
 
                                     //Also helpful:
                                     DesignEqualsImplementationClassInstance *signalParentClassInstance = classInstance;
-                                    DesignEqualsImplementationClassInstance *slotsParentClassInstance = destinationSlotClassLifeline->myInstanceInClassThatHasMe();
+                                    DesignEqualsImplementationClassInstance *slotParentClassInstance = destinationSlotClassLifeline->myInstanceInClassThatHasMe();
 
                                     //TODOoptional: signal daisy chaining. i dunno how it would work in the GUI though
 
+                                    QString signalVariableNameInConnectStatement;
+
+                                    //TODOoptional: clean up so that whether or not it's top level object isn't determined TWICE
+                                    if(slotParentClassInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first) //HACK maybe, idk i just think this might need to go somewhere else (earlier, so that multi project mode still generates it)
+                                    {
+                                        //slot is NOT top level object, so signal variable name is 'this'
+                                        signalVariableNameInConnectStatement = "this";
+                                    }
+                                    else
+                                    {
+                                        //slot is top level object, so use actual variable name
+                                        signalVariableNameInConnectStatement = signalParentClassInstance->VariableName;
+                                    }
+
+                                    //build connect statement
                                     //connect(m_Bar, SIGNAL(barSignal(bool)), this, SLOT(handleBarSignal(bool))); -- def need some kind of parent/child resolution
-                                    m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode("connect(" + signalParentClassInstance->VariableName + ", SIGNAL(" + signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType() + "), " + slotsParentClassInstance->VariableName + ", SLOT(" + currentSignalSlotConnectionActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->methodSignatureWithoutReturnType() + "));");
+                                    QString connectStatement = "connect(" + signalVariableNameInConnectStatement + ", SIGNAL(" + signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType() + "), " + slotParentClassInstance->VariableName + ", SLOT(" + destinationSlot->methodSignatureWithoutReturnType() + "));";
+
+
+                                    if(slotParentClassInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first)
+                                    {
+                                        //slot not top level object, put connect statement in signal parent constructor
+                                        signalParentClassInstance->m_MyClass->appendLineToClassConstructorTemporarily(connectStatement);
+                                    }
+                                    else
+                                    {
+                                        //slot is top level object, put connect statement in glue code
+                                        m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode(connectStatement);
+                                    }
                                 }
                             }
                         }
@@ -527,6 +554,7 @@ void DesignEqualsImplementationUseCase::insertAlreadyFilledOutSlotIntoUseCase(De
     //return newUnitOfExecution;
 #endif
 }
+//TODOoptional: insert instead of append. left-most should be index zero, incremementing as we go right. re-ordering obviously needs to update the recorded "signal slot activations keys" (since the class lifeline index is one of the keys)
 void DesignEqualsImplementationUseCase::addClassLifeLineToUseCase(DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase)
 {
     m_ClassLifeLines.append(classLifeLineToAddToUseCase);

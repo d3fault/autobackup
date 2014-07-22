@@ -1,0 +1,19 @@
+As if I needed more proof that shell scripts are fucking stupid:
+
+#!/bin/bash
+xrandr --output DVI-0 --primary --auto --output VGA-0 --auto --right-of DVI-0
+
+...errors our and doesn't work (both my monitors went blank. luckily i had the command to fix it memorized)
+
+whereas:
+
+#!/bin/sh
+xrandr --output DVI-0 --primary --auto --output VGA-0 --auto --right-of DVI-0
+
+...works as expected
+
+
+
+ffffffff wtf?
+
+sh doesn't work sometimes, bash doesn't work sometimes, give me some fucking consistency!!!!!!! (<3 Qt)

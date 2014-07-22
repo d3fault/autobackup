@@ -58,9 +58,10 @@ public:
     QList<DesignEqualsImplementationClassSlot*> m_MySlots;
 
     //Temporary for code gen
-    //void appendLineToClassConstructorTemporarily(const QString &line);
+    void cleanupJitGeneratedLinesFromAPreviousGenerate();
+    void appendLineToClassConstructorTemporarily(const QString &line);
 private:
-    //QList<QString> m_TemporaryClassConstructorLines;
+    QList<QString> m_TemporaryClassConstructorLines;
 signals:
     void propertyAdded(DesignEqualsImplementationClassProperty*);
     void hasAPrivateMemberClassAdded(DesignEqualsImplementationClassInstance); //declare meta type?

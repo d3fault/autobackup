@@ -163,7 +163,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
         }
     }
 
-    m_TemporaryProjectGlueCodeLines.clear(); //TODOoptional: cleaner and unified "clear", but perhaps a "project writer" type class is warranted. for now: h4x and kiss
+    cleanupJitGeneratedLinesFromAPreviousGenerate(); //TODOoptional: perhaps a "project writer" type class is warranted. for now: h4x and kiss
 
     Q_FOREACH(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, useCases())
     {
@@ -291,6 +291,14 @@ void SimpleAsyncLibrarySlotInvokeAndSignalResponseCli::handleFooSignal(bool succ
 #endif
 
 return true;
+}
+void DesignEqualsImplementationProject::cleanupJitGeneratedLinesFromAPreviousGenerate()
+{
+    m_TemporaryProjectGlueCodeLines.clear();
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_Classes)
+    {
+        currentClass->cleanupJitGeneratedLinesFromAPreviousGenerate();
+    }
 }
 void DesignEqualsImplementationProject::emitAllClassesAndUseCasesInProject()
 {

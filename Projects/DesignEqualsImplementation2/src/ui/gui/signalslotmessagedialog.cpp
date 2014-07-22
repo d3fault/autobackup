@@ -146,7 +146,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
             m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
         }
 
-        //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments
+        //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments. TODOreq: prefix the "source" of the arg satisfier, and perhaps sort them by that too. "my-method-arguments", "my-class-members", etc)
         //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
         Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->arguments())
         {

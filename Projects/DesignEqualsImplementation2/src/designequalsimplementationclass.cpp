@@ -123,7 +123,21 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
         //, m_Bar(new Bar(this))
         sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentPrivateMember->VariableName << "(new " << currentPrivateMember->m_MyClass->ClassName << "(this))" << endl; //TODOreq: for now all my objects need a QObject *parent=0 constructor, but since that's also a [fixable] requirement for my ObjectOnThreadGroup, no biggy. Still, would be nice to solve the threading issue and to allow constructor args here (RAII = pro)
     }
-    sourceFileTextStream    << "{ }" << endl;
+
+    //Source constructor -- children connection statements (or just constructor statements, but as of writing they are only connect statements)
+    if(m_TemporaryClassConstructorLines.isEmpty())
+    {
+        sourceFileTextStream    << "{ }" << endl;
+    }
+    else
+    {
+        sourceFileTextStream << "{" << endl;
+        Q_FOREACH(const QString &currentLine, m_TemporaryClassConstructorLines)
+        {
+            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentLine << endl;
+        }
+        sourceFileTextStream << "}" << endl;
+    }
 
     bool signalsAccessSpecifierWritten = false;
     //Signals
@@ -289,10 +303,14 @@ QString DesignEqualsImplementationClass::headerFilenameOnly()
 {
     return ClassName.toLower() + ".h";
 }
-/*void DesignEqualsImplementationClass::appendLineToClassConstructorTemporarily(const QString &line)
+void DesignEqualsImplementationClass::cleanupJitGeneratedLinesFromAPreviousGenerate()
+{
+    m_TemporaryClassConstructorLines.clear();
+}
+void DesignEqualsImplementationClass::appendLineToClassConstructorTemporarily(const QString &line)
 {
     m_TemporaryClassConstructorLines.append(line);
-}*/
+}
 void DesignEqualsImplementationClass::emitAllClassDetails()
 {
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);

@@ -46,6 +46,7 @@ private:
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
 
     //Temporary for code gen:
+    void cleanupJitGeneratedLinesFromAPreviousGenerate();
     QList<QString> m_TemporaryProjectGlueCodeLines;
 signals:
     void useCaseAdded(DesignEqualsImplementationUseCase*);
