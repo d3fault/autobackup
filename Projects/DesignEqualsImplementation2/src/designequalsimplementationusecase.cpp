@@ -112,7 +112,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
                                     //TODOoptional: clean up so that whether or not it's top level object isn't determined TWICE
                                     if(slotParentClassInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first) //HACK maybe, idk i just think this might need to go somewhere else (earlier, so that multi project mode still generates it)
                                     {
-                                        //slot is NOT top level object, so signal variable name is 'this'
+                                        //slot is NOT top level object, so signal variable name is 'this'. TODOreq: oops, the 'this' might be the slot parent instead of signal parent (as in the example/comment below 'build connect statement'). needz moar dynamism
                                         signalVariableNameInConnectStatement = "this";
                                     }
                                     else
@@ -122,7 +122,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
                                     }
 
                                     //build connect statement
-                                    //connect(m_Bar, SIGNAL(barSignal(bool)), this, SLOT(handleBarSignal(bool))); -- def need some kind of parent/child resolution
+                                    //connect(m_Bar, SIGNAL(barSignal(bool)), this, SLOT(handleBarSignal(bool)));
                                     QString connectStatement = "connect(" + signalVariableNameInConnectStatement + ", SIGNAL(" + signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType() + "), " + slotParentClassInstance->VariableName + ", SLOT(" + destinationSlot->methodSignatureWithoutReturnType() + "));";
 
 
@@ -141,7 +141,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
                         }
                     }
                 }
-                else if(currentStatement->isSlotInvoke())
+                else if(currentStatement->isSlotInvoke()) //slot invoke = slot parent MUST be child/member (or at least have pointer to invoked instance) of invoker
                 {
                     //TODOreq: record dependency on the slot's class INSTANCE (however, idk wtf to do since Bar is a child of Foo). perhaps this entire dependency recording thing is not needed [for instantiation] (might still be needed for connections)
                     //TODOreq: queue destination slot for iterating/recursing just like we're already doing

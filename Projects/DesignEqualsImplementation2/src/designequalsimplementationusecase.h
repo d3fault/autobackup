@@ -18,7 +18,7 @@ class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationClassSlot;
 //class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 
-typedef QPair<int /*index into class lifelines*/, DesignEqualsImplementationClassSlot*/*keyAndValueDerpIntoClassLifelines*/> UseCaseEntryPointTypedef;
+typedef QPair<int /*index into class lifelines*/, DesignEqualsImplementationClassSlot*/*the slot entry point*/> UseCaseEntryPointTypedef;
 
 class DesignEqualsImplementationUseCase : public QObject
 {
