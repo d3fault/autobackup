@@ -1,0 +1,36 @@
+class MediaDecoder has two instances in a project "audio and video file player" (plays audio file and plays video file, 2 files (irl the streams are muxed, but i need an example where they are separate)).
+
+The use-case-entry-point/slot "decode audio file" refers to it's parent class MediaDecoder as a top level object (now starting to think "this" or "root object" is more fitting).
+The use-case-entry-point/slot "decode video file" also refers to it's parent class MediaDecoder as a top level object
+
+MediaDecoder can only take file paths via it's constructor, therefore we NEED two instances of MediaDecoder... and yet in both use cases they were defined as using "topLevelObject0" (now you see more clearly why 'top level object' should probably really mean 'this')
+
+I think the realm of what I'm trying to describe is project generation, and perhaps I should KISS and keep the first version limited to just library generation (but in that case, do i want to generate glue code? the problem still exists (however when NOT generating glue code, the user is responsible for instantiating the two instances anyways)). EVEN WITH GLUE CODE: how do I differentiate between the two? How do they express in the GUI that they NEED two instances of MediaDecoder? Is that a use-case/uml thing or am I way off track?
+
+Instancing is honestly something that is usually not done in UML/use-cases (IS THIS STATEMENT CORRECT?)
+...or every project ultimately has a "*Cli" or "*Gui" class. Etc. "Project Controller" or "Spine of Modules". Clearly I am expressing interest in design equals being able to utilize a spine of modules (btw spine of modules has nothing to do with cli or gui (except that gui has 2 threads and cli has 1)), but is it relevant to the code generation I'm working on right now (use cases and instancing and glue code). Should I just scratch the glue code altogether for now? If I did, then I'd probably turn towards coding a Cli/Gui project gen glue code and still be stuck in the same boat. I want to finish/polish what I'm working on NOW, and THEN go onto project level instancing and organization. But perhaps I'm in a circular dependency and need to figure out this instancing stuff before I can proceed with use-case/slot code generation. Clearly since I'm having trouble progressing, the two can be related (and I'm starting to think very much are).
+
+Do I need a new tab type?
+
+NO
+
+NO I DO NOT
+
+Every object-oriented project (the goal of this code generator) consists of at least one object. So in the Class Diagram UML editor is where the user himself will set up the instances. They will all have to be children of that one top-level object. In that project class is where two instances of MediaDecoder will be placed as members: m_AudioDecoder and m_VideoDecoder.
+
+Multiple top-level objects? Obviously allowing them is causing me problems. Having just one somehow manages to simplify and erradicate the problem, but it's funny I can't quite put my finger on how/why.
+
+
+So basically I have not designed/created a project class (from 'WITHIN' the app) that has a Foo.
+
+In the use case, Foo should refer to himself as 'this' (although atm it's coded to call itself top level object, tisk).
+
+WITHOUT the "project class" (members m_VideoDecoder and m_AudioDecoder), I am only ever defining a library, AND/SO GLUE CODE IS ACTUALLY QUITE STUPID IN THE CONTEXT OF LIBRARY GENERATION!!!!
+
+
+If you want to keep coding the "project" aspect of designEquals, move onto Cli/Gui code generation, which is actually a worthwhile effort. For library mode, simply do not worry about instances at all. I think that means I need to refactor "top level objects" out of the equation.
+
+
+The primary problem with multiple top level objects is the connections between them. They would now only be in the "project class" (or glue code) and not in a modular/portable class. Just like what reflects my traditional coding habits, there should only be one top level object, and it is simply the name of the project. But actually I didn't define a project so meh yea I'm getting off track I need to KISS and refactor multiple top level objects out of the equation and basically the use case entry point (slot) of a use case can/DOES refer to itself as "this" always. The other instances to the right must always be named-by/known-to the first/'this' instance.
+
+The problem was that I was calling them top level objects and then generating them as child objects of a glue object, thus confusing the shit out of myself (they weren't really top level objects :-P).
