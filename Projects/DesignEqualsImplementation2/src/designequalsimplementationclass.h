@@ -81,18 +81,6 @@ Q_DECLARE_METATYPE(DesignEqualsImplementationClass*)
 
 class DesignEqualsImplementationClassInstance : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
 {
-private:
-    enum DesignEqualsImplementationClassInstanceTypeEnum
-    {
-        //a) no instance chosen
-        NoInstanceChosen
-
-        //b) use case's root class lifeline/instance
-        , UseCasesRootClassLifeline
-
-        //c) child of some other class lifeline/instance
-        , ChildMemberOfOtherClassLifeline //denotes m_ParentInstance is valid
-    };
 public:
     explicit DesignEqualsImplementationClassInstance()
         : IHaveTypeAndVariableNameAndPreferredTextualRepresentation()
@@ -126,6 +114,18 @@ public:
     {
         return m_MyClass->ClassName + " *";
     }
+
+    enum DesignEqualsImplementationClassInstanceTypeEnum
+    {
+        //a) no instance chosen
+        NoInstanceChosen
+
+        //b) use case's root class lifeline/instance
+        , UseCasesRootClassLifeline
+
+        //c) child of some other class lifeline/instance
+        , ChildMemberOfOtherClassLifeline //denotes m_ParentInstance is valid
+    };
 
     DesignEqualsImplementationClass *m_MyClass;
     //QPair<DesignEqualsImplementationClass*, int> m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline;

@@ -79,7 +79,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
 
     DesignEqualsImplementationClassLifeLine *classLifeline = m_ClassLifeLines.at(indexInto_m_ClassLifeLines);
     DesignEqualsImplementationClassInstance *classInstance = classLifeline->myInstanceInClassThatHasMe();
-    if(!classInstance->m_InstanceType.first)
+    if(classInstance->m_InstanceType == DesignEqualsImplementationClassInstance::UseCasesRootClassLifeline)
     {
         //Use case entry point (must be top level instance (for now))
         //Foo *foo = new Foo();
@@ -118,7 +118,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
                                 QString signalVariableNameInConnectStatement;
 
                                 //TODOoptional: clean up so that whether or not it's top level object isn't determined TWICE
-                                if(slotParentClassInstance->m_InstanceType.first) //HACK maybe, idk i just think this might need to go somewhere else (earlier, so that multi project mode still generates it)
+                                if(slotParentClassInstance->m_InstanceType == DesignEqualsImplementationClassInstance::ChildMemberOfOtherClassLifeline) //HACK maybe, idk i just think this might need to go somewhere else (earlier, so that multi project mode still generates it)
                                 {
                                     //slot is NOT top level object, so signal variable name is 'this'. TODOreq: oops, the 'this' might be the slot parent instead of signal parent (as in the example/comment below 'build connect statement'). needz moar dynamism
                                     signalVariableNameInConnectStatement = "this";
@@ -134,7 +134,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
                                 QString connectStatement = "connect(" + signalVariableNameInConnectStatement + ", SIGNAL(" + signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType() + "), " + slotParentClassInstance->VariableName + ", SLOT(" + destinationSlot->methodSignatureWithoutReturnType() + "));";
 
 
-                                if(slotParentClassInstance->m_InstanceType.first)
+                                if(slotParentClassInstance->m_InstanceType == DesignEqualsImplementationClassInstance::ChildMemberOfOtherClassLifeline)
                                 {
                                     //slot not top level object, put connect statement in signal parent constructor
                                     signalParentClassInstance->m_MyClass->appendLineToClassConstructorTemporarily(connectStatement);
@@ -478,7 +478,6 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
 #if 0
     if(SlotWithCurrentContext == m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements) //TODOreq: when it's a signal+slot event, we need to check both the signal and the slot, then remove/re-add accordingly. The context may have changed to m_ObjectCurrentyWithExitSignalInItsOrderedListOfStatements after addEventPrivateWithoutUpdatingExitSignal was called, so I think we need to check for removal either again or then/later (unsure).
     {
-        //TODO LEFT OFF
         //TODOreq: remove ExitSignal
     }
 #endif
