@@ -113,7 +113,7 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
             }
             else
             {
-                myInstanceInClassThatHasMe_OrZeroIfTopLevelObject = potentialExistencesInParents.first();
+                myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline = potentialExistencesInParents.first();
             }
         }
 #endif

@@ -17,7 +17,7 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     , m_PotentialInstancesListWidget(new QListWidget())
     , m_ClassBeingAdded(classBeingAdded)
     , m_NewTopLevelInstanceChosen(false)
-    , m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject(0)
+    , m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline(0)
 {
     setWindowTitle(tr("Class Instance Chooser"));
     if(!classBeingAdded)
@@ -72,7 +72,7 @@ bool ClassInstanceChooserDialog::newTopLevelInstanceChosen()
 }
 DesignEqualsImplementationClassInstance *ClassInstanceChooserDialog::myInstanceInClassThatHasMe() const
 {
-    return m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
+    return m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline;
 }
 void ClassInstanceChooserDialog::addInstanceToListWidget(const QString &absoluteVariableName, DesignEqualsImplementationClassInstance *currentInstance)
 {
@@ -86,7 +86,7 @@ void ClassInstanceChooserDialog::addInstanceToListWidget(const QString &absolute
     {
         parentStack.push(currentInstanceToStackNameOf->VariableName);
         parentStack.push(currentInstanceToStackNameOf->typeString());
-        currentInstanceToStackNameOf = currentInstanceToStackNameOf->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->hasA_Private_Classes_Members().at(currentInstanceToStackNameOf->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.second);
+        currentInstanceToStackNameOf = currentInstanceToStackNameOf->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first->hasA_Private_Classes_Members().at(currentInstanceToStackNameOf->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.second);
         if(!currentInstanceToStackNameOf)
             break;
     }
@@ -173,11 +173,11 @@ void ClassInstanceChooserDialog::handleCurrentRowChanged(int newRow)
     if(newRow == 0)
     {
         m_NewTopLevelInstanceChosen = true;
-        m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject = 0;
+        m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline = 0;
     }
     else
     {
         m_NewTopLevelInstanceChosen = false;
-        m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject = qvariant_cast<DesignEqualsImplementationClassInstance*>(m_PotentialInstancesListWidget->item(newRow)->data(Qt::UserRole));
+        m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline = qvariant_cast<DesignEqualsImplementationClassInstance*>(m_PotentialInstancesListWidget->item(newRow)->data(Qt::UserRole));
     }
 }

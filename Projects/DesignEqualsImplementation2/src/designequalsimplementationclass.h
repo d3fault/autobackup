@@ -81,27 +81,44 @@ Q_DECLARE_METATYPE(DesignEqualsImplementationClass*)
 
 class DesignEqualsImplementationClassInstance : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
 {
-public:
-    explicit DesignEqualsImplementationClassInstance() : IHaveTypeAndVariableNameAndPreferredTextualRepresentation() { }
-    explicit DesignEqualsImplementationClassInstance(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClass *parentClassThatHasMe_OrZeroIfTopLevelObject, int myIndexIntoParentHasAThatIsMe, const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), m_MyClass(designEqualsImplementationClass)
+private:
+    enum DesignEqualsImplementationClassInstanceTypeEnum
     {
-        m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.first = parentClassThatHasMe_OrZeroIfTopLevelObject;
-        m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject.second = myIndexIntoParentHasAThatIsMe;
+        //a) no instance chosen
+        NoInstanceChosen
+
+        //b) use case's root class lifeline/instance
+        , UseCasesRootClassLifeline
+
+        //c) child of some other class lifeline/instance
+        , ChildMemberOfOtherClassLifeline //denotes m_ParentInstance is valid
+    };
+public:
+    explicit DesignEqualsImplementationClassInstance()
+        : IHaveTypeAndVariableNameAndPreferredTextualRepresentation()
+        , m_InstanceType(NoInstanceChosen)
+        , m_ParentClassInstanceThatHasMe_OrZeroIfNoInstanceChosenOrUseCasesRootClassLifeline(0) { }
+    explicit DesignEqualsImplementationClassInstance(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClass *parentClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, const QString &variableName)
+        : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName)
+        , m_MyClass(designEqualsImplementationClass)
+        , m_InstanceType(parentClassThatHasMe_OrZeroIfUseCasesRootClassLifeline ? ChildMemberOfOtherClassLifeline : UseCasesRootClassLifeline)
+        , m_ParentClassInstanceThatHasMe_OrZeroIfNoInstanceChosenOrUseCasesRootClassLifeline(parentClassThatHasMe_OrZeroIfUseCasesRootClassLifeline)
+    {
+        //m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.second = myIndexIntoParentHasAThatIsMe;
 #if 0
-        if(m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first)
+        if(m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first)
         {
-            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->m_ChildInstances.removeAll(this);
-            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->m_ChildInstances.append(this);
+            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first->m_ChildInstances.removeAll(this);
+            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first->m_ChildInstances.append(this);
         }
 #endif
     }
     virtual ~DesignEqualsImplementationClassInstance()
     {
-        qDeleteAll(m_ChildInstances);
 #if 0
-        if(m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first)
+        if(m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first)
         {
-            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrZeroIfTopLevelObject.first->m_ChildInstances.removeAll(this);
+            m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first->m_ChildInstances.removeAll(this);
         }
 #endif
     }
@@ -111,8 +128,9 @@ public:
     }
 
     DesignEqualsImplementationClass *m_MyClass;
-    QPair<DesignEqualsImplementationClass*, int> m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfTopLevelObject;
-    QList<DesignEqualsImplementationClassInstance*> m_ChildInstances;
+    //QPair<DesignEqualsImplementationClass*, int> m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline;
+    DesignEqualsImplementationClassInstanceTypeEnum m_InstanceType;
+    DesignEqualsImplementationClass *m_ParentClassInstanceThatHasMe_OrZeroIfNoInstanceChosenOrUseCasesRootClassLifeline;
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassInstance &hasA_Private_Classes_Members_ListEntryType);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassInstance &hasA_Private_Classes_Members_ListEntryType);

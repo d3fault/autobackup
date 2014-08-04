@@ -48,13 +48,15 @@ QList<DesignEqualsImplementationClass *> DesignEqualsImplementationProject::clas
 {
     return m_Classes;
 }
+#if 0
 DesignEqualsImplementationClassInstance* DesignEqualsImplementationProject::createTopLevelClassInstance(DesignEqualsImplementationClass *classToMakeTopLevelInstanceOf)
 {
     DesignEqualsImplementationClassInstance *classInstance = new DesignEqualsImplementationClassInstance(classToMakeTopLevelInstanceOf, 0, 0, "topLevel_" + classToMakeTopLevelInstanceOf->ClassName); //TODOreq: auto increment for top level auto vars
     m_TopLevelClassInstances.append(classInstance);
     return classInstance;
 }
-QList<DesignEqualsImplementationClassInstance*> DesignEqualsImplementationProject::topLevelClassInstances()
+#endif
+QList<DesignEqualsImplementationClassInstance*> DesignEqualsImplementationProject::topLevelClassInstances() //TODOreq: delete? maintain only list of use cases? it used to be a list of instances btw, before the refactor to 'this'/use-cases-root-class-lifeline
 {
     return m_TopLevelClassInstances;
 }
@@ -154,6 +156,9 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
 
     if(projectGenerationMode != Library)
     {
+        emit e("TODOreq: can only generate library for now");
+        return false;
+
         //TODOreq: proper these hardcoded UI hacks
         //hardcoded main.cpp and *cli.h/cpp
         if(!tempGenerateHardcodedUiFiles(destinationDirectoryPath))

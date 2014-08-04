@@ -267,8 +267,6 @@ void DesignEqualsImplementation::newProject()
     DesignEqualsImplementationClassSlot *handleBarSignal = fooClass->createwNewSlot("handleBarSignal");
     DesignEqualsImplementationClassMethodArgument *handleBarSignalSuccessArgument = handleBarSignal->createNewArgument("bool", "success");
 
-    //DesignEqualsImplementationClassInstance *fooClassInstance = testProject->createTopLevelClassInstances(fooClass);
-
     //Bar
     DesignEqualsImplementationClass *barClass = testProject->createNewClass("Bar");
     DesignEqualsImplementationClassSlot *barSlot = barClass->createwNewSlot("barSlot");

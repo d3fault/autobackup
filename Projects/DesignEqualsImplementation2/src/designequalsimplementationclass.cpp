@@ -261,8 +261,7 @@ DesignEqualsImplementationClassInstance* DesignEqualsImplementationClass::create
 {
     //TODOreq: ensure all callers haven't already done the "new"
 
-    int newInex = m_HasA_Private_Classes_Members.size();
-    DesignEqualsImplementationClassInstance *newInstance = new DesignEqualsImplementationClassInstance(hasA_Private_Class_Member, this, newInex, variableName);
+    DesignEqualsImplementationClassInstance *newInstance = new DesignEqualsImplementationClassInstance(hasA_Private_Class_Member, this, variableName);
     m_HasA_Private_Classes_Members.append(newInstance); //TODOreq: re-ordering needs to resynchronize
 
     return newInstance;

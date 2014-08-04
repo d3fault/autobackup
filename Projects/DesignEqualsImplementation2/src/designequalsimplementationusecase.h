@@ -18,7 +18,7 @@ class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationClassSlot;
 //class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 
-typedef QPair<int /*index into class lifelines*/, DesignEqualsImplementationClassSlot*/*the slot entry point*/> UseCaseEntryPointTypedef;
+typedef QPair<int /*index into class lifelines. (NOPE, the list is connection/instance apathetic: shouldn't this always be zero? why do we even have the class lifeline indexes? don't we just need the first and from there we can recurse/iterate?)*/, DesignEqualsImplementationClassSlot*/*the slot entry point*/> UseCaseEntryPointTypedef;
 
 class DesignEqualsImplementationUseCase : public QObject
 {
@@ -60,7 +60,7 @@ private:
     };
 
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
-    UseCaseEntryPointTypedef m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet;
+    UseCaseEntryPointTypedef m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsNegativeOneIfNoneConnectedFromActorYet;
     DesignEqualsImplementationClassSlot *m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements;
     int m_ExitSignalsIndexIntoOrderedListOfStatements;
 
@@ -95,7 +95,7 @@ signals:
     void e(const QString &);
 public slots:
     void addActorToUseCase(QPointF position);
-    void addClassInstanceToUseCaseAsClassLifeLine(DesignEqualsImplementationClass *classToAddToUseCase, DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position);
+    void addClassInstanceToUseCaseAsClassLifeLine(DesignEqualsImplementationClass *classToAddToUseCase, DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, QPointF position);
     void insertSlotInvocationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables);
     void insertSignalSlotActivationEvent(int indexToInsertEventAt, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, int indexInto_m_ClassLifeLines_OfSignal, int indexInto_m_ClassLifeLines_OfSlot);
     void insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables);

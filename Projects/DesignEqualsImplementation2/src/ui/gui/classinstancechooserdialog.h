@@ -22,7 +22,7 @@ private:
     QListWidget *m_PotentialInstancesListWidget;
     DesignEqualsImplementationClass *m_ClassBeingAdded;
     bool m_NewTopLevelInstanceChosen;
-    DesignEqualsImplementationClassInstance *m_MyInstanceInClassThatHasMe_OrZeroIfTopLevelObject;
+    DesignEqualsImplementationClassInstance *m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline;
     //QList<QPair<QString /*absolute variable specifier */, DesignEqualsImplementationClassInstance* /*classInstance*/> > m_
     QStack<QString> m_AbsoluteVariableNameSpecifierCurrentDepthStack;
 

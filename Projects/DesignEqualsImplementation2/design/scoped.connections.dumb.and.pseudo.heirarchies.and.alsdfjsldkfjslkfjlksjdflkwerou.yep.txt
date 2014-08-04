@@ -1,0 +1,64 @@
+Instancing (stack or heap) not tied to connections. Connections sometimes part of class design, sometimes only part of project design. All-in-main pseudo heirarchy?
+
+^Had the above typed out as a reference to what I'd continue writing now. It was written before/around the last few dreams I wrote a few days ago.
+
+
+Connections do not depend on a variable being within scope. Not even a [permanent] pointer being available when the connection is being activated. The object need only be "available" (actual or pointer) when the connection is made, and the object need only be alive when the connection is activated.
+
+I want to decouple classes as much as possible, but no more ;-). Some connection code DOES belong in the class [constructor], e.g. child members are connected to the parent in his constructor. Yes and yes and KISS and this is what my currently-unfinished refactor is attempting to do... BUT I realized while implementing it that saying "an object (parent) may only create connections between himself and children or children and children" is kinda dumb. Yes it _IS_ KISS so I am going to continue down that path for the time being, but ultimately is far too restricting on the connections in general.
+
+a) Parent/Children/Scoped Connections, part of the [parent] class, go in parent constructor, are permanent
+b) Use Case connections: are not permanent. Are connections between two unrelated objects that just so happen to be used in the use case.
+
+Yes I can say that "a project is a class" and that "project" is the "parent" of the "modules" (classes), so the project level/class gets the use case specific connections, but: something. Idk it's just ugly I suppose; it decreases modularity.
+
+
+Pseudo-heirarchy. Since designEquals already handles the "design" and OO stuff, the generated code technically needn't even utilize it (in the same way that all OO becomes procedural). The generated code does not need to do object HEIRARCHIES. The reason I'm mentioning this is for this:
+
+A hasA B hasA C
+D hasA E hasA F
+
+...now let's say I want to connect some F signal to C. Since they aren't in the same object heirarchies, this is not possible without changing SOMETHING. There are a few ways to solve it, one of which is having E pass a pointer-to-F to D, who passes the pointer-to-F to A, to B, then B does the connection (the same could go in reverse, passing a pointer-to-C over to E). BUT NOW E, D, A, and B, are too tightly coupled with F. When I say psuedo-heirarchy, I mean that the heirarchy is very real in the design stage but non-existent in the generated code. It would look like this:
+
+int main()
+{
+
+QApp a;
+
+A a;
+B b;
+b.setParent(&a);
+C c;
+c.setParent(&b);
+D d;
+E e;
+e.setParent(&d);
+F f;
+f.setParent(&e);
+
+return a.exec();
+
+}
+
+
+...What does this accomplish? It allows F and C to be connected directly to each other (no signal daisy chaining either (a solution I didn't mention (and "auto-daisy chaining" came to mind as well))) without changing the other unrelated classes.
+
+And now I wonder if perhaps I've abstracted too far. It feels weird as though I'm mucking about with paradigms and the like. Feels close to the making-new-language area, but I'm not really sure of that. I remember that all programming languages are arbitrary and made up and must translate to ones and zeros. For now I definitely want to lean heavily on Qt/C++. It just saves me time.
+
+
+The pseudo-heirarchy has a drawback: the generated code is less readable and therefore not as easily incorporated into other projects (their non-designEquals projects). I want a real heirarchy to address that, but bleh it's pissing me off that I can't connect C to F without making the classes in between more tightly coupled than I want.
+
+This project is clearly blowing up in my face, but I kinda like it... so many possibilities... and it feels like crucial groundwork for practically everything I want to make here on out. I want to re-attempt Rpc Generator in designEquals (IIRC, the design is finished :-P)... and likewise building on top of that for a GFS-clone DHT.
+
+I feel like I'm reinventing C++ language and that I'm wasting my time. And indeed I am to an extent: BUT WHAT I AM GAINING IS READABILITY/UNDERSTANDABILITY... which has temendous value in codan/design.
+
+Instead of reinventing the C++ wheel TOO much, I should lean on the "C++ drop down mode" heavily.
+
+I want a a project ("class") to be modular in the same way that QWidget attains it's modularity: widgets can be full windows or just a part of a window. A project is a series of use cases, and defined sharing of declared instances between those use cases.
+
+
+Blah back to what really interests me aside from this rambling: how to solve the C<-->F connection issue. Other dumb ideas I've had were "every generated class emits itself as QObject to some other class in charge of the use-case (or project?) connections after being instantiated". It's ugly but does at least deal with decoupling. NOPE: (Still, the parent would need to do the emitting (at leastand that means it's not )). The constructor can [queued?] invokeMethod some singleton connection establisher, sending 'this' as the arg, and perhaps the class type as a string (or use sender() and casting), or a slot just for that class type (instance actually?). Now that connection establisher sounds difficult to re-use. What is a good solution to this. Should I just keep going forward with scoped-required connections for now?
+
+I may be overthinking this, but I am pretty damn sure I'm UNDER thinking it. I stand at a delta in the road.... so many options and such a crucial decision.
+
+Fuck it, for now a project is a class (no distinction except to the designers brain). *goes back to doing the supporting refactor*

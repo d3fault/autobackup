@@ -1,0 +1,18 @@
+Delayed instancing. At the exact moment a class lifeline is placed into the graphics scene, we don't know it's instance (currently, we are presented a dialog to choose one). It might be a "use cases root class lifeline ('this')", or it might be a [sub-]child of that root class lifeline/instance.
+
+I can place a Foo and not choose whether it's a "root class lifeline ('this')" or a child of one to be created/added later! The use case creation should NOT require that it be created in a left to right manner.
+
+Detecting when to present "use cases root class lifeline ('this')" is simple: if there isn't already one set.
+
+For children, we can present the following in the instances dialog (which should be mode-LESS/optional/perhaps-a-dockwidget-at-the-bottom):
+1) list all instances of that type in any other class currently present in the use case
+2) offer to create new instance in any other class currently present in the use case
+
+
+
+Obviously, when generate source code is pressed, you either get an error or no code generated at all if one of your class lifelines are not connected (the not connected lifeline does not get generated). Assigning instance right when the object is CREATED/placed is too much to demand, however (clearly, since I'm not even requiring the class to have a name yet!).
+
+
+connecting Foo to Bar when Foo has not been associated with an instance (neither has Bar) results in Bar becoming a child member of Foo. The invoker/emitter becomes the parent if there is no relationship established. Foo is still instanceless, but Bar became a child of Foo out of necessity and JIT/automatically.
+
+Similarly, connecting Actor to Foo makes Foo automatically the use cases root class lifeline.

@@ -25,8 +25,8 @@ public:
     void addClass(DesignEqualsImplementationClass* newClass);
     QList<DesignEqualsImplementationClass*> classes();
 
-    DesignEqualsImplementationClassInstance *createTopLevelClassInstance(DesignEqualsImplementationClass* classToMakeTopLevelInstanceOf);
-    QList<DesignEqualsImplementationClassInstance*> topLevelClassInstances();
+    //DesignEqualsImplementationClassInstance *createTopLevelClassInstance(DesignEqualsImplementationClass* classToMakeTopLevelInstanceOf);
+    QList<DesignEqualsImplementationClassInstance *> topLevelClassInstances();
 
     void addUseCase(DesignEqualsImplementationUseCase *newUseCase);
     QList<DesignEqualsImplementationUseCase*> useCases();

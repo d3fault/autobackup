@@ -18,10 +18,10 @@ class DesignEqualsImplementationClassLifeLine : public QObject
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe, QPointF position, QObject *parent = 0);
-    //explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *firstSlot, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfTopLevelObject, QPointF position, QObject *parent = 0);
+    //explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *firstSlot, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, QPointF position, QObject *parent = 0);
     QPointF position() const;
     DesignEqualsImplementationClass *designEqualsImplementationClass() const;
-    void setMyInstanceInClassThatHasMe_OrZeroIfTopLevelObject(DesignEqualsImplementationClassInstance *hasA_Private_Classes_Members_ListEntryType);
+    void setmyInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline(DesignEqualsImplementationClassInstance *hasA_Private_Classes_Members_ListEntryType);
     DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe() const;
     void insertSlotToClassLifeLine(int indexToInsertInto, DesignEqualsImplementationClassSlot *newSlot);
     void removeSlotFromClassLifeLine(DesignEqualsImplementationClassSlot *slotToRemove);
