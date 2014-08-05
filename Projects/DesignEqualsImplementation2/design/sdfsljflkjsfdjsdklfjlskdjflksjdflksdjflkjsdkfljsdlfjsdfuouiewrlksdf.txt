@@ -1,0 +1,1 @@
+If project is a series of use cases AND a class, and a use case is a slot (not entirely, but that is the "head"-of/pointer-to it), then a project is just a series of slots (including the object/lib/class/module they live on). What is my point? Idfk, but integrating design equals with the concept of a project (enough, and not too much) is on my mind lately.

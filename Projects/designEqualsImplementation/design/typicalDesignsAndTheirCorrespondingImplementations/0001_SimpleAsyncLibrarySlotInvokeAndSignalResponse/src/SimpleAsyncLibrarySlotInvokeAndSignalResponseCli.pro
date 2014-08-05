@@ -21,4 +21,5 @@ SOURCES += ui/cli/main.cpp \
 HEADERS += \
     foo.h \
     bar.h \
-    ui/cli/simpleasynclibraryslotinvokeandsignalresponsecli.h
+    ui/cli/simpleasynclibraryslotinvokeandsignalresponsecli.h \
+    ui/isimpleasynclibraryslotinvokeandsignalresponseui.h

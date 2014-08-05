@@ -12,7 +12,7 @@ DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivationCli::Dire
     connect(benchmarker, SIGNAL(o(QString)), this, SLOT(handleO(QString)));
     connect(benchmarker, SIGNAL(quitRequested()), qApp, SLOT(quit()), Qt::QueuedConnection);
 
-    QMetaObject::invokeMethod(benchmarker, "runBenchmark", Q_ARG(quint64, 5000));
+    QMetaObject::invokeMethod(benchmarker, "runBenchmark", Q_ARG(quint64, 1000000));
 }
 void DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivationCli::handleO(const QString &msg)
 {
