@@ -140,6 +140,12 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
 {
     //rambling: so basically our "Classes" member contains only the CORE classes of the project/design, but when we generate the source code we are still going to need to generate glue classes that own/instantiate/connect those core classes
 
+    if(!allClassLifelinesInAllUseCasesInProjectHaveBeenAssignedInstances())
+    {
+        emit e("at least one class lifeline out of all your use cases in the project has not been assigned an instance"); //TODOoptional: tell them which one. TODOoptional: allow them to jump to it
+        return false;
+    }
+
     if(QFile::exists(destinationDirectoryPath))
     {
         emit e("destination directory must not exist: " + destinationDirectoryPath); //temp (very safe) fuck it for nows
@@ -172,7 +178,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
 
     Q_FOREACH(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, useCases())
     {
-        if(!designEqualsImplementationUseCase->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
+        if(!designEqualsImplementationUseCase->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't [easily (code generator *cough* could do it)] be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
         {
             emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + designEqualsImplementationUseCase->Name);
             return false;
@@ -296,6 +302,18 @@ void SimpleAsyncLibrarySlotInvokeAndSignalResponseCli::handleFooSignal(bool succ
 #endif
 
 return true;
+}
+bool DesignEqualsImplementationProject::allClassLifelinesInAllUseCasesInProjectHaveBeenAssignedInstances()
+{
+    Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, useCases())
+    {
+        if(!currentUseCase->allClassLifelinesInUseCaseHaveBeenAssignedInstances())
+        {
+            emit e("a class class lifeline in use case '" + currentUseCase->Name + "' was not assigned an instance");
+            return false;
+        }
+    }
+    return true;
 }
 void DesignEqualsImplementationProject::cleanupJitGeneratedLinesFromAPreviousGenerate()
 {

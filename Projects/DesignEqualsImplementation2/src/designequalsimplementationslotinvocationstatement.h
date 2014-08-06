@@ -17,6 +17,8 @@ public:
     virtual ~DesignEqualsImplementationSlotInvocationStatement();
     virtual QString toRawCppWithoutEndingSemicolon();
     virtual bool isSlotInvoke() { return true; }
+    const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables();
+    DesignEqualsImplementationClassSlot *slotToInvoke();
 private:
     DesignEqualsImplementationClassSlot *m_SlotToInvoke;
     SignalEmissionOrSlotInvocationContextVariables m_SlotInvocationContextVariables;

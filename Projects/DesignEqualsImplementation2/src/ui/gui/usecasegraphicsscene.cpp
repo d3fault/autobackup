@@ -317,10 +317,10 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,/*TODOinstancing: DesignEqualsImplementationClassInstance*,*/QPointF)), useCase, SLOT(addClassInstanceToUseCaseAsClassLifeLine(DesignEqualsImplementationClass*,/*TODOinstancing: DesignEqualsImplementationClassInstance*,*/QPointF)));
 
     connect(this, SIGNAL(insertSlotInvocationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSlotInvocationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
-    connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,int,int)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,int,int)));
+    connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)));
     connect(this, SIGNAL(insertSignalEmissionUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSignalEmitEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
 
-    connect(this, SIGNAL(setUseCaseSlotEntryPointRequested(int,DesignEqualsImplementationClassSlot*)), useCase, SLOT(setUseCaseSlotEntryPoint(int,DesignEqualsImplementationClassSlot*)));
+    connect(this, SIGNAL(setUseCaseSlotEntryPointRequested(DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*)), useCase, SLOT(setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*)));
     connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
 
     //responses
@@ -486,6 +486,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
         return false;
     SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables = signalSlotMessageCreatorDialog.slotInvocationContextVariables();
+    signalEmissionOrSlotInvocationContextVariables.ClassLifelineWhoseSlotIsAboutToBeInvoked = destinationClassLifeLine_OrZeroIfNoDest;
 
     //Retrieved specified variable name when slot invoke
 #if 0 //TODOinstancing
@@ -594,12 +595,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(userChosenDestinationSlot_OrZeroIfNone && userChosenSourceSignal_OrZeroIfNone)
     {
         //Signal/slot activation
-
-        int classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfSourceSignal = -1;
-        if(sourceClassLifeLine_OrZeroIfSourceIsActor)
-            classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfSourceSignal = m_UseCase->classLifeLines().indexOf(sourceClassLifeLine_OrZeroIfSourceIsActor);
-
-        emit insertSignalSlotActivationUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables, classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfSourceSignal, classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfDestinationSlot);
+        emit insertSignalSlotActivationUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables, sourceClassLifeLine_OrZeroIfSourceIsActor, classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfDestinationSlot);
         return true;
     }
     if(!userChosenSourceSignal_OrZeroIfNone && userChosenDestinationSlot_OrZeroIfNone)
@@ -609,7 +605,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
         if(sourceIsActor)
         {
-            emit setUseCaseSlotEntryPointRequested(classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfDestinationSlot, userChosenDestinationSlot_OrZeroIfNone);
+            emit setUseCaseSlotEntryPointRequested(destinationClassLifeLine_OrZeroIfNoDest, userChosenDestinationSlot_OrZeroIfNone);
             return true;
         }
 

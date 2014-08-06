@@ -43,6 +43,7 @@ private:
     bool savePrivate(const QString &projectFilePath);
     bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
+    bool allClassLifelinesInAllUseCasesInProjectHaveBeenAssignedInstances();
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
 
     //Temporary for code gen:

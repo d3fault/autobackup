@@ -118,13 +118,16 @@ BUT WHAT OF THE SIGNAL-WITH-NO-LISTENERS-AT-TIME-OF-DESIGN? Is that part of the 
 //^If we don't have any variable name for the target, we are restricted to signal-slot activation (but i could see hacks allowing variable name pass in on the fly xD (there are too many customzations/hacks in this app to keep track of))
 DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */QPointF position, QObject *parent)
     : QObject(parent)
-    , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
-    //TODOinstancing: , m_MyInstanceInClassThatHasMe(myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline) //Top level object, in this context, I guess really just means "not instantiated in this use case"... or maybe it means "not instantiated by any of the designed classes"... but I'm leaning more towards the first one
-    , m_Position(position) //Could just keep one qreal "horizontalPosition"
+    , m_InstanceType(NoInstanceChosen)
 {
-    DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = m_DesignEqualsImplementationClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING); //new DesignEqualsImplementationClassSlot(this, this);
-    //defaultSlotInClassLifeLine->ParentClass = designEqualsImplementationClass;
-    insertSlotToClassLifeLine(0, defaultSlotInClassLifeLine); //every lifeline has at least one slot. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
+    privateConstructor(designEqualsImplementationClass, position);
+}
+DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(const QString &instanceVariableName, DesignEqualsImplementationClass *designEqualsImplementationClass, QPointF position, QObject *parent)
+    : QObject(parent)
+    , m_InstanceType(ChildMemberOfOtherClassLifeline)
+    , m_InstanceVariableName(instanceVariableName)
+{
+    privateConstructor(designEqualsImplementationClass, position);
 }
 /*DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *firstSlot, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, QPointF position, QObject *parent)
     : QObject(parent)
@@ -176,4 +179,33 @@ void DesignEqualsImplementationClassLifeLine::replaceSlot(int indexToReplace, De
 MySlotsAppearingInClassLifeLine_List DesignEqualsImplementationClassLifeLine::mySlotsAppearingInClassLifeLine() const
 {
     return m_MySlotsAppearingInClassLifeLine; //The ordering is mostly undefined, but should basically be however the user designs it (moving them in the design could (should?) move them in the list)
+}
+bool DesignEqualsImplementationClassLifeLine::hasBeenAssignedInstance()
+{
+    if(m_InstanceType != NoInstanceChosen)
+        return true;
+    return false;
+}
+void DesignEqualsImplementationClassLifeLine::setInstanceType(DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassInstanceTypeEnum instanceType)
+{
+    m_InstanceType = instanceType;
+}
+QString DesignEqualsImplementationClassLifeLine::instanceVariableName() const
+{
+    return m_InstanceVariableName;
+}
+void DesignEqualsImplementationClassLifeLine::setInstanceVariableName(const QString &instanceVariableName)
+{
+    //TODOreq: variable must already be a "pointer" since it is used in connect statements. Basically just prepend an "&" if it's a value type
+    m_InstanceVariableName = instanceVariableName;
+}
+void DesignEqualsImplementationClassLifeLine::privateConstructor(DesignEqualsImplementationClass *designEqualsImplementationClass, QPointF position)
+{
+    m_DesignEqualsImplementationClass = designEqualsImplementationClass;
+    //TODOinstancing: , m_MyInstanceInClassThatHasMe(myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline) //Top level object, in this context, I guess really just means "not instantiated in this use case"... or maybe it means "not instantiated by any of the designed classes"... but I'm leaning more towards the first one
+    m_Position = position; //Could just keep one qreal "horizontalPosition"
+
+    DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = m_DesignEqualsImplementationClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING); //new DesignEqualsImplementationClassSlot(this, this);
+    //defaultSlotInClassLifeLine->ParentClass = designEqualsImplementationClass;
+    insertSlotToClassLifeLine(0, defaultSlotInClassLifeLine); //every lifeline has at least one slot. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
 }
