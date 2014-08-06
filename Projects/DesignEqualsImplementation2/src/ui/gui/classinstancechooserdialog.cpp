@@ -1,5 +1,7 @@
 #include "classinstancechooserdialog.h"
 
+#if 0 //TODOinstancing
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QListWidget>
@@ -181,3 +183,4 @@ void ClassInstanceChooserDialog::handleCurrentRowChanged(int newRow)
         m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline = qvariant_cast<DesignEqualsImplementationClassInstance*>(m_PotentialInstancesListWidget->item(newRow)->data(Qt::UserRole));
     }
 }
+#endif

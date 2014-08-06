@@ -1,6 +1,8 @@
 #ifndef CLASSINSTANCECHOOSERDIALOG_H
 #define CLASSINSTANCECHOOSERDIALOG_H
 
+#if 0 //TODOinstancing
+
 #include <QDialog>
 #include <QList>
 #include <QStack>
@@ -32,5 +34,7 @@ private:
 private slots:
     void handleCurrentRowChanged(int newRow);
 };
+
+#endif
 
 #endif // CLASSINSTANCECHOOSERDIALOG_H

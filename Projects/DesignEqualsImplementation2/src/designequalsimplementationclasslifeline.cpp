@@ -116,10 +116,10 @@ BUT WHAT OF THE SIGNAL-WITH-NO-LISTENERS-AT-TIME-OF-DESIGN? Is that part of the 
 
 //A class lifeline is a per-use-case thing that merely stores which "slots on the object it represents" the use case uses. It is of little design use EXCEPT WHEN determining if we have the target as a child as a hasA attiribute, in which case we rely on it explicitly (and it shines). A class lifeline represents a class instantiation. When you click and drag a class onto the use case scene, a modal dialog asks you which of the available instances (class lifelines) you want to use. Your options are existing top level class lifelines from other use cases, new top level class lifeline, existing children of other classes, or we can even add ourself as a child (hasA) to another class on the fly
 //^If we don't have any variable name for the target, we are restricted to signal-slot activation (but i could see hacks allowing variable name pass in on the fly xD (there are too many customzations/hacks in this app to keep track of))
-DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, QPointF position, QObject *parent)
+DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */QPointF position, QObject *parent)
     : QObject(parent)
     , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
-    , m_MyInstanceInClassThatHasMe(myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline) //Top level object, in this context, I guess really just means "not instantiated in this use case"... or maybe it means "not instantiated by any of the designed classes"... but I'm leaning more towards the first one
+    //TODOinstancing: , m_MyInstanceInClassThatHasMe(myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline) //Top level object, in this context, I guess really just means "not instantiated in this use case"... or maybe it means "not instantiated by any of the designed classes"... but I'm leaning more towards the first one
     , m_Position(position) //Could just keep one qreal "horizontalPosition"
 {
     DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = m_DesignEqualsImplementationClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING); //new DesignEqualsImplementationClassSlot(this, this);
@@ -142,6 +142,7 @@ DesignEqualsImplementationClass *DesignEqualsImplementationClassLifeLine::design
 {
     return m_DesignEqualsImplementationClass;
 }
+#if 0 //TODOinstancing
 void DesignEqualsImplementationClassLifeLine::setmyInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline(DesignEqualsImplementationClassInstance *hasA_Private_Classes_Members_ListEntryType)
 {
     m_MyInstanceInClassThatHasMe = hasA_Private_Classes_Members_ListEntryType;
@@ -150,6 +151,7 @@ DesignEqualsImplementationClassInstance *DesignEqualsImplementationClassLifeLine
 {
     return m_MyInstanceInClassThatHasMe;
 }
+#endif
 void DesignEqualsImplementationClassLifeLine::insertSlotToClassLifeLine(int indexToInsertInto, DesignEqualsImplementationClassSlot *newSlot)
 {
     //int indexActuallyInsertedTo = qMax(0, qMin(indexToInsertInto, m_MySlotsAppearingInClassLifeLine.size())); //bounds checking. even though qt does it internally, i still want to know the actual index for the emit

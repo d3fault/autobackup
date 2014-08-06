@@ -76,16 +76,17 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
         //I've decided that since they both sound so similar and yet the here/now one doesn't clutter up my uml items window, I'll do it here/now :-P
         //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
 
+#if 0 //TODOinstancing
         ClassInstanceChooserDialog classInstanceChooserDialog(classBeingAdded, m_UseCase);
         if(classInstanceChooserDialog.exec() != QDialog::Accepted)
             return;
-
         DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe = classInstanceChooserDialog.myInstanceInClassThatHasMe();
         if(classInstanceChooserDialog.newTopLevelInstanceChosen())
         {
             //TODOreq: hack: JIT create the top level object. not that hacky, but observer pattern should be used
             myInstanceInClassThatHasMe = m_UseCase->designEqualsImplementationProject()->createTopLevelClassInstance(classBeingAdded);
         }
+#endif
 
 #if 0
 
@@ -118,7 +119,7 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
         }
 #endif
 
-        emit addClassToUseCaseRequested(classBeingAdded, myInstanceInClassThatHasMe, event->scenePos()); //TODOmb: since I'm uglily serializing a pointer, one way to ensure it's valid would be to invokeMethod on classBeingAdded. That would let/allow/make/harness/whatever Qt to do the safety checking for me :-P. Of course it'd ruin my design a tad if I went THROUGH class in order to add class to a use case...
+        emit addClassToUseCaseRequested(classBeingAdded, /*TODOinstancing: myInstanceInClassThatHasMe, */event->scenePos()); //TODOmb: since I'm uglily serializing a pointer, one way to ensure it's valid would be to invokeMethod on classBeingAdded. That would let/allow/make/harness/whatever Qt to do the safety checking for me :-P. Of course it'd ruin my design a tad if I went THROUGH class in order to add class to a use case...
     }
     else
     {
@@ -313,7 +314,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
 
     //requests
     connect(this, SIGNAL(addActorToUseCaseRequsted(QPointF)), useCase, SLOT(addActorToUseCase(QPointF)));
-    connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClassInstance*,QPointF)), useCase, SLOT(addClassInstanceToUseCaseAsClassLifeLine(DesignEqualsImplementationClass*,DesignEqualsImplementationClassInstance*,QPointF)));
+    connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,/*TODOinstancing: DesignEqualsImplementationClassInstance*,*/QPointF)), useCase, SLOT(addClassInstanceToUseCaseAsClassLifeLine(DesignEqualsImplementationClass*,/*TODOinstancing: DesignEqualsImplementationClassInstance*,*/QPointF)));
 
     connect(this, SIGNAL(insertSlotInvocationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSlotInvocationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,int,int)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,int,int)));
@@ -487,10 +488,12 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables = signalSlotMessageCreatorDialog.slotInvocationContextVariables();
 
     //Retrieved specified variable name when slot invoke
+#if 0 //TODOinstancing
     if(destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest->myInstanceInClassThatHasMe())
     {
         signalEmissionOrSlotInvocationContextVariables.VariableNameOfObjectInCurrentContextWhoseSlotIsAboutToBeInvoked = destinationClassLifeLine_OrZeroIfNoDest->myInstanceInClassThatHasMe()->VariableName; //If we don't have a target unit of execution, we are simple signal emit, and the backend knows that VariableName is of no use in that case
     }
+#endif
 
     //TODOreq: we need to find out if the slotInvocation dialog was used as slotInvoke, signal/slot connection activation, or signal emit only
     DesignEqualsImplementationClassSignal *userChosenSourceSignal_OrZeroIfNone = signalSlotMessageCreatorDialog.signalToEmit_OrZeroIfNone();

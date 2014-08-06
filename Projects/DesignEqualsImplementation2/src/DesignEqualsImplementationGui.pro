@@ -52,7 +52,8 @@ SOURCES += ui/gui/main.cpp\
     designequalsimplementationsignalslotinterface.cpp \
     ui/gui/classinstancechooserdialog.cpp \
     ui/gui/sourceslotsnappingindicationvisualrepresentation.cpp \
-    ui/gui/destinationslotsnappingindicationvisualrepresentation.cpp
+    ui/gui/destinationslotsnappingindicationvisualrepresentation.cpp \
+    hasa_private_classes_member.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -97,6 +98,7 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementationsignalslotinterface.h \
     ui/gui/classinstancechooserdialog.h \
     ui/gui/sourceslotsnappingindicationvisualrepresentation.h \
-    ui/gui/destinationslotsnappingindicationvisualrepresentation.h
+    ui/gui/destinationslotsnappingindicationvisualrepresentation.h \
+    hasa_private_classes_member.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

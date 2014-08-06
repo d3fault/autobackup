@@ -54,6 +54,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     m_ClassBorderPen.setWidth(2);
 
     QString lifeLineTitleHtml("<b>"); //TODOreq: only the ClassName/Type should be bold
+#if 0 //TODOinstancing
     if(classLifeLine->myInstanceInClassThatHasMe()->m_InstanceType.first)
     {
         lifeLineTitleHtml += classLifeLine->myInstanceInClassThatHasMe()->m_MyClass->ClassName + "</b>" + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe()->m_InstanceType.first->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe()->VariableName;
@@ -62,6 +63,10 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     {
         lifeLineTitleHtml += classLifeLine->designEqualsImplementationClass()->ClassName + "</b>";
     }
+#else
+    lifeLineTitleHtml += classLifeLine->designEqualsImplementationClass()->ClassName + "</b>";
+#endif
+
     QGraphicsTextItem *classNameTextItem = new QGraphicsTextItem(this);
     classNameTextItem->setHtml(lifeLineTitleHtml);
 

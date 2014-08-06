@@ -10,12 +10,13 @@
 #include "designequalsimplementationclassprivatemethod.h"
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclasssignal.h"
+#include "hasa_private_classes_member.h"
 
 #define DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX "failed to generate source for: "
 
 //typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_Private_Classes_Members_ListEntryType;
 
-class DesignEqualsImplementationClassInstance;
+//TODOinstancing: class DesignEqualsImplementationClassInstance;
 class HasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
 
 class DesignEqualsImplementationClass : public QObject, public IDesignEqualsImplementationVisuallyRepresentedItem
@@ -39,8 +40,8 @@ public:
     //TODOoptional: private + getter/setter blah
     QString ClassName;
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    DesignEqualsImplementationClassInstance* createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);
-    QList<DesignEqualsImplementationClassInstance*> hasA_Private_Classes_Members();
+    HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);
+    QList<HasA_Private_Classes_Member *> hasA_Private_Classes_Members();
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> hasA_Private_PODorNonDesignedCpp_Members();
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSignal*> mySignals();
@@ -52,7 +53,7 @@ public:
 
 
     //TODOoptional: should be private
-    QList<DesignEqualsImplementationClassInstance*> m_HasA_Private_Classes_Members;
+    QList<HasA_Private_Classes_Member*> m_HasA_Private_Classes_Members;
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> m_HasA_Private_PODorNonDesignedCpp_Members;
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;
     QList<DesignEqualsImplementationClassSlot*> m_MySlots;
@@ -64,7 +65,7 @@ private:
     QList<QString> m_TemporaryClassConstructorLines;
 signals:
     void propertyAdded(DesignEqualsImplementationClassProperty*);
-    void hasAPrivateMemberClassAdded(DesignEqualsImplementationClassInstance); //declare meta type?
+    void hasAPrivateMemberClassAdded(HasA_Private_Classes_Member*); //declare meta type?
     void privateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void slotAdded(DesignEqualsImplementationClassSlot*);
     void signalAdded(DesignEqualsImplementationClassSignal*);
@@ -79,6 +80,7 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&desig
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClass*)
 
+#if 0 //TODOinstancing
 class DesignEqualsImplementationClassInstance : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
 {
 public:
@@ -138,6 +140,7 @@ QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassI
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassInstance *&hasA_Private_Classes_Members_ListEntryType);
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClassInstance*)
+#endif
 
 class HasA_Private_PODorNonDesignedCpp_Members_ListEntryType : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
 {
