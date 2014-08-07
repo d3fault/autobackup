@@ -1,0 +1,5 @@
+right click class lifeline -> instance ->
+						//this (grayed out once one is set (only one per use case. the one connected to actor))
+						new instance (modal dialog, shows places instance can be created (child member of other classes (not instances of those classes) in use case). take code from instance chooser dialog)
+						choose instance ->
+									list of instances (take code from instance chooser dialog). check mark next to current instance

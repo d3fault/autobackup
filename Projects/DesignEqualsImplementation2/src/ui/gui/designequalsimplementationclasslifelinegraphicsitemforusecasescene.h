@@ -6,10 +6,13 @@
 
 #include <QPen>
 
+class QGraphicsSceneContextMenuEvent;
+
+class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationClassSlot;
-//class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene;
+class HasA_Private_Classes_Member;
 
 class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene : public QObject, public QGraphicsRectItem
 {
@@ -25,6 +28,8 @@ public:
     //virtual QRectF boundingRect() const;
     //virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     virtual int type() const;
+protected:
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
     QList<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*> m_SlotsInThisClassLifeLine;
     QList<QGraphicsLineItem*> m_DottedLinesJustAboveEachSlot;
@@ -36,6 +41,8 @@ private:
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
 signals:
     void slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem);
+    void createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember, DesignEqualsImplementationClass *typeOfNewPrivateHasAMember, const QString &nameOfNewPrivateHasAMember);
+    void assignPrivateMemberAsClassLifelineInstanceRequested(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member);
 private slots:
     void handleSlotInsertedIntoClassLifeLine(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
     void handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);

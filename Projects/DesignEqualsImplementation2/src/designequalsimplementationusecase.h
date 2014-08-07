@@ -61,7 +61,7 @@ private:
     };
 
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
-    UseCaseEntryPointTypedef m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroNoneConnectedFromActorYet;
+    UseCaseEntryPointTypedef m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet;
     DesignEqualsImplementationClassSlot *m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements;
     int m_ExitSignalsIndexIntoOrderedListOfStatements;
 

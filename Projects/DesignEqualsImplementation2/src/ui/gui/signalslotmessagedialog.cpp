@@ -40,7 +40,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     //Signals
     QHBoxLayout *signalHLayout = new QHBoxLayout();
-    m_SignalsCheckbox = new QCheckBox(tr("Signals")); //TODOreq: the signal checkbox is itself disabled when in UseCaseSignalSlotEventType, forcing the signals to be enabled. TODOreq: checkbox hovertext when disabled should explain why disabled
+    m_SignalsCheckbox = new QCheckBox(tr("Signal")); //TODOreq: the signal checkbox is itself disabled when in UseCaseSignalSlotEventType, forcing the signals to be enabled. TODOreq: checkbox hovertext when disabled should explain why disabled
 
     signalHLayout->addWidget(m_SignalsCheckbox);
 
@@ -64,7 +64,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     //Slots
     QHBoxLayout *slotHLayout = new QHBoxLayout();
-    m_SlotsCheckbox = new QCheckBox(tr("Slots"));
+    m_SlotsCheckbox = new QCheckBox(tr("Slot"));
     m_SlotsCheckbox->setChecked(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType);
     slotHLayout->addWidget(m_SlotsCheckbox);
 

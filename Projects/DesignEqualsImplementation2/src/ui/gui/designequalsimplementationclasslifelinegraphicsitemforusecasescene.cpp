@@ -5,12 +5,16 @@
 #include <QGraphicsTextItem>
 #include <QGraphicsLineItem>
 #include <QListIterator>
+#include <QMenu>
+#include <QAction>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include <QMutexLocker>
 #include "../../designequalsimplementation.h"
 
 #include "designequalsimplementationguicommon.h"
 #include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
+#include "classinstancechooserdialog.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclasslifeline.h"
 
@@ -43,6 +47,36 @@ DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationClassLifeLine
 int DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::type() const
 {
     return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID;
+}
+//TODOreq: right-clicking a slot graphics item also brings up context menu
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QMenu menu;
+    QAction *chooseInstanceAction = menu.addAction("Choose Instance");
+    QAction *deleteAction = menu.addAction("Delete");
+    QAction *selectedAction = menu.exec(event->screenPos());
+    if(!selectedAction)
+        return;
+    if(selectedAction == chooseInstanceAction)
+    {
+        ClassInstanceChooserDialog classInstanceChooserDialog(classLifeLine()->designEqualsImplementationClass(), classLifeLine()->parentUseCase());
+        if(classInstanceChooserDialog.exec() != QDialog::Accepted)
+            return;
+
+        if(classInstanceChooserDialog.newInstanceChosen())
+        {
+            emit createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(classInstanceChooserDialog.parentClassChosenToGetNewHasAprivateMember(), classLifeLine()->designEqualsImplementationClass(), classInstanceChooserDialog.nameOfNewPrivateHasAMember());
+        }
+        else
+        {
+            emit assignPrivateMemberAsClassLifelineInstanceRequested(classInstanceChooserDialog.chosenExistingHasA_Private_Classes_Member());
+        }
+        return;
+    }
+    else if(selectedAction == deleteAction) //etc
+    {
+        //TODOreq
+    }
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine)
 {

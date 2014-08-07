@@ -116,19 +116,21 @@ BUT WHAT OF THE SIGNAL-WITH-NO-LISTENERS-AT-TIME-OF-DESIGN? Is that part of the 
 
 //A class lifeline is a per-use-case thing that merely stores which "slots on the object it represents" the use case uses. It is of little design use EXCEPT WHEN determining if we have the target as a child as a hasA attiribute, in which case we rely on it explicitly (and it shines). A class lifeline represents a class instantiation. When you click and drag a class onto the use case scene, a modal dialog asks you which of the available instances (class lifelines) you want to use. Your options are existing top level class lifelines from other use cases, new top level class lifeline, existing children of other classes, or we can even add ourself as a child (hasA) to another class on the fly
 //^If we don't have any variable name for the target, we are restricted to signal-slot activation (but i could see hacks allowing variable name pass in on the fly xD (there are too many customzations/hacks in this app to keep track of))
-DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */QPointF position, QObject *parent)
+DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationUseCase *parentUseCase, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */QPointF position, QObject *parent)
     : QObject(parent)
     , m_InstanceType(NoInstanceChosen)
 {
-    privateConstructor(designEqualsImplementationClass, position);
+    privateConstructor(designEqualsImplementationClass, parentUseCase, position);
 }
-DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(const QString &instanceVariableName, DesignEqualsImplementationClass *designEqualsImplementationClass, QPointF position, QObject *parent)
+#if 0
+DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(const QString &instanceVariableName, DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationUseCase *parentUseCase, QPointF position, QObject *parent)
     : QObject(parent)
     , m_InstanceType(ChildMemberOfOtherClassLifeline)
-    , m_InstanceVariableName(instanceVariableName)
+    , m_InstanceInOtherClassIfApplicable(instanceVariableName)
 {
-    privateConstructor(designEqualsImplementationClass, position);
+    privateConstructor(designEqualsImplementationClass, parentUseCase, position);
 }
+#endif
 /*DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *firstSlot, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, QPointF position, QObject *parent)
     : QObject(parent)
     , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
@@ -144,6 +146,10 @@ QPointF DesignEqualsImplementationClassLifeLine::position() const
 DesignEqualsImplementationClass *DesignEqualsImplementationClassLifeLine::designEqualsImplementationClass() const
 {
     return m_DesignEqualsImplementationClass;
+}
+DesignEqualsImplementationUseCase *DesignEqualsImplementationClassLifeLine::parentUseCase() const
+{
+    return m_ParentUseCase;
 }
 #if 0 //TODOinstancing
 void DesignEqualsImplementationClassLifeLine::setmyInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline(DesignEqualsImplementationClassInstance *hasA_Private_Classes_Members_ListEntryType)
@@ -190,22 +196,40 @@ void DesignEqualsImplementationClassLifeLine::setInstanceType(DesignEqualsImplem
 {
     m_InstanceType = instanceType;
 }
-QString DesignEqualsImplementationClassLifeLine::instanceVariableName() const
+HasA_Private_Classes_Member *DesignEqualsImplementationClassLifeLine::instanceInOtherClassIfApplicable() const
 {
-    return m_InstanceVariableName;
+    return m_InstanceInOtherClassIfApplicable;
 }
-void DesignEqualsImplementationClassLifeLine::setInstanceVariableName(const QString &instanceVariableName)
+void DesignEqualsImplementationClassLifeLine::setInstanceInOtherClassIfApplicable(HasA_Private_Classes_Member *instanceInOtherClassIfApplicable)
 {
-    //TODOreq: variable must already be a "pointer" since it is used in connect statements. Basically just prepend an "&" if it's a value type
-    m_InstanceVariableName = instanceVariableName;
+    m_InstanceType = ChildMemberOfOtherClassLifeline;
+    m_InstanceInOtherClassIfApplicable = instanceInOtherClassIfApplicable;
 }
-void DesignEqualsImplementationClassLifeLine::privateConstructor(DesignEqualsImplementationClass *designEqualsImplementationClass, QPointF position)
+QString DesignEqualsImplementationClassLifeLine::instanceVariableName()
+{
+    QString ret = "";
+    if(m_InstanceType == UseCasesRootClassLifeline)
+        ret = "this";
+    else if(m_InstanceType == ChildMemberOfOtherClassLifeline)
+        ret = m_InstanceInOtherClassIfApplicable->VariableName;
+    return ret;
+}
+void DesignEqualsImplementationClassLifeLine::privateConstructor(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationUseCase *parentUseCase, QPointF position)
 {
     m_DesignEqualsImplementationClass = designEqualsImplementationClass;
+    m_ParentUseCase = parentUseCase;
     //TODOinstancing: , m_MyInstanceInClassThatHasMe(myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline) //Top level object, in this context, I guess really just means "not instantiated in this use case"... or maybe it means "not instantiated by any of the designed classes"... but I'm leaning more towards the first one
     m_Position = position; //Could just keep one qreal "horizontalPosition"
 
     DesignEqualsImplementationClassSlot *defaultSlotInClassLifeLine = m_DesignEqualsImplementationClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING); //new DesignEqualsImplementationClassSlot(this, this);
     //defaultSlotInClassLifeLine->ParentClass = designEqualsImplementationClass;
     insertSlotToClassLifeLine(0, defaultSlotInClassLifeLine); //every lifeline has at least one slot. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
+}
+void DesignEqualsImplementationClassLifeLine::createNewHasAPrivateMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember, DesignEqualsImplementationClass *typeOfNewPrivateHasAMember, const QString &nameOfNewPrivateHasAMember)
+{
+    assignPrivateMemberAsClassLifelineInstance(parentClassChosenToGetNewHasAprivateMember->createHasA_Private_Classes_Member(typeOfNewPrivateHasAMember, nameOfNewPrivateHasAMember));
+}
+void DesignEqualsImplementationClassLifeLine::assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member)
+{
+    setInstanceInOtherClassIfApplicable(chosenExistingHasA_Private_Classes_Member);
 }

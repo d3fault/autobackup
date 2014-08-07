@@ -68,23 +68,24 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
         SignalSlotConnectionActivationTypeStruct currentSignalSlotConnectionActivation = signalSlotConnectionActivationIterator.next();
         //TODOreq: resolve where to put connect() code
         //Ex:
-        //  1) if both objects are top level objects, put connect code in the top level glue
+        //  1) if both objects are private hasA members of the same parent object, put connect code in parent constructor-ish
         //  2) if the signal class hasA the slot class, put in signal class constructor-ish
         //  3) if the slot class hasA the signal class, put in slot constructor-ish
-        //  4) if signal and slot owner's instances are the same, put in constructor
-        //  5) if signal and slot owner's types are the same but instances differ, do not put in constructor but somewhere higher
+        //  4) if signal and slot owner's types are the same but instances differ, do not put in constructor but somewhere higher. the owner of said instances (common ancestor?)
+
+        //man i don't want to pollute "parent" classes but at the same time do want project to be a "class" for the first KISS refactor. blah i go back and forth on whether to KISS or to change up my game plan. the "common ancestor" scheme is the one that has the ability to pollute lots of "in between" classes that should not give a damn. object instances have uuids for their objectName and i use the findChild method?
     }
 #endif
 #if 1    
 
-    DesignEqualsImplementationClassLifeLine *rootClassLifeline = m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroNoneConnectedFromActorYet.first;
+    DesignEqualsImplementationClassLifeLine *rootClassLifeline = m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.first;
     if(!rootClassLifeline)
     {
         emit e(QObject::tr("You must connect an actor in use case '") + this->Name + QObject::tr("' before you can generate source code"));
         return false;
     }
 
-    recursivelyWalkSlotAndAllAdditionalSlotsRelevantToThisUseCase(rootClassLifeline, m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroNoneConnectedFromActorYet.second);
+    recursivelyWalkSlotAndAllAdditionalSlotsRelevantToThisUseCase(rootClassLifeline, m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second);
 
 #if 0 //TODOinstancing
     DesignEqualsImplementationClassInstance *classInstance = classLifeline->myInstanceInClassThatHasMe();
@@ -202,7 +203,7 @@ void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplement
     //SlotWithCurrentContext = 0;
     //ExitSignal = 0;
     m_DesignEqualsImplementationProject = project;
-    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroNoneConnectedFromActorYet.first = 0;
+    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.first = 0;
 }
 void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, DesignEqualsImplementationClassLifeLine *signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot)
 {
@@ -509,6 +510,8 @@ void DesignEqualsImplementationUseCase::addClassLifeLineToUseCase(DesignEqualsIm
 //TODOreq: recursively walking any slot on a class generates all slots for that class. we are only walking the ones in the use case to do connection statement generation. connection statement need not be done for slots that aren't in use case (or project), but the slots themselves still need to be generated
 void DesignEqualsImplementationUseCase::recursivelyWalkSlotAndAllAdditionalSlotsRelevantToThisUseCase(DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk)
 {
+    //NOTE: all class lifelines in the use case (for every use case in the project) have been assigned instances if/when we get here
+
     //Now iterate that use case entry point's statements and follow any slot invokes (and signal emits ar special too :-P)
     int currentStatementIndex = -1;
     Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, slotToWalk->orderedListOfStatements())
@@ -610,7 +613,7 @@ void DesignEqualsImplementationUseCase::addClassInstanceToUseCaseAsClassLifeLine
     //Weird just realized I haven't even designed "classes" into use cases [yet], as of now use case events point directly to their slots/etc!! But eh the concept of lifelines is derp easy, and the arrows source/destination stuff is really just used in populating which of those signals/slots to use for the already-design (;-D) use-case-event (slot/signal-slot/etc)... but i mean sure there's still a boat load of visual work that needs to be done right about now :-P
     //TODOreq: not sure if front-end or backend should enforce it (or both), but class lifelines should all share the same QPointF::top... just like in Umbrello (Umbrello does some things right, Dia others (like not crashing especially guh allmyrage)). Actor should also utilize that top line, though be slighly below it... AND right above the first lifeline but mb horizontally in between the actor and that first lifeline should go the "Use Case Name" in an oval :-P (but actually ovals take up a ton of space, mb rounded rect (different radius than classes) instead)
 
-    DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase = new DesignEqualsImplementationClassLifeLine(classToAddToUseCase, /*TODOinstancing:  myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */position, this);
+    DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase = new DesignEqualsImplementationClassLifeLine(classToAddToUseCase, /*TODOinstancing:  myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */this, position, this);
 
     addClassLifeLineToUseCase(classLifeLineToAddToUseCase);
 }
@@ -631,8 +634,8 @@ void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertE
 }
 void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint)
 {
-    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroNoneConnectedFromActorYet.first = rootClassLifeline;
-    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroNoneConnectedFromActorYet.second = useCaseSlotEntryPoint; //TODOreq: handle deleting this arrow sets it back to zero i guess
+    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.first = rootClassLifeline;
+    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second = useCaseSlotEntryPoint; //TODOreq: handle deleting this arrow sets it back to zero i guess
     rootClassLifeline->setInstanceType(DesignEqualsImplementationClassLifeLine::UseCasesRootClassLifeline);
     //TODOreq: emit useCaseSlotEntryPointSet(m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet);
 }

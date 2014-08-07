@@ -12,4 +12,6 @@ protected:
     virtual QString typeString();
 };
 
+Q_DECLARE_METATYPE(HasA_Private_Classes_Member*)
+
 #endif // HASA_PRIVATE_CLASSES_MEMBER_H

@@ -56,10 +56,12 @@ DesignEqualsImplementationClassInstance* DesignEqualsImplementationProject::crea
     return classInstance;
 }
 #endif
+#if 0 //TODOinstancing
 QList<DesignEqualsImplementationClassInstance*> DesignEqualsImplementationProject::topLevelClassInstances() //TODOreq: delete? maintain only list of use cases? it used to be a list of instances btw, before the refactor to 'this'/use-cases-root-class-lifeline
 {
     return m_TopLevelClassInstances;
 }
+#endif
 void DesignEqualsImplementationProject::addUseCase(DesignEqualsImplementationUseCase *newUseCase)
 {
     //connect(newUseCase, SIGNAL(e);
