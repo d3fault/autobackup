@@ -36,6 +36,10 @@ DesignEqualsImplementationClassInstance *DesignEqualsImplementationClass::create
     return new DesignEqualsImplementationClassInstance(this, parent, optionalVariableName);
 }
 #endif
+QString DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(const QString &signalObjectVariableName, const QString &signalNameIncludingNormalizedArgs, const QString &slotObjectVariableName, const QString &slotNameIncludingNormalizedArgs)
+{
+    return QString("connect(" + signalObjectVariableName + ", SIGNAL(" + signalNameIncludingNormalizedArgs + "), " +  slotObjectVariableName + ", SLOT(" + slotNameIncludingNormalizedArgs + "));");
+}
 DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent)
     : QObject(parent)
     , IDesignEqualsImplementationVisuallyRepresentedItem()

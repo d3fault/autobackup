@@ -18,12 +18,12 @@ QList<DesignEqualsImplementationClassMethodArgument *> IDesignEqualsImplementati
 {
     return m_Arguments;
 }
-QString IDesignEqualsImplementationMethod::methodSignatureWithoutReturnType()
+QString IDesignEqualsImplementationMethod::methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum)
 {
-    return Name + "(" + argumentsToCommaSeparatedString() + ")";
+    return Name + "(" + argumentsToCommaSeparatedString(methodSignatureFlagsEnum) + ")";
 }
 //TODOmb: default variables for slots (only in header obviously), BUT not compatible with Qt5's new connect syntax anyways so.... (so don't use default variables i guess)
-QString IDesignEqualsImplementationMethod::argumentsToCommaSeparatedString()
+QString IDesignEqualsImplementationMethod::argumentsToCommaSeparatedString(MethodSignatureFlagsEnum methodSignatureFlagsEnum)
 {
     QString argString;
     bool firstArg = true;
@@ -31,7 +31,18 @@ QString IDesignEqualsImplementationMethod::argumentsToCommaSeparatedString()
     {
         if(!firstArg)
             argString.append(", ");
-        argString.append(currentArgument->preferredTextualRepresentationOfTypeAndVariableTogether());
+
+        if(methodSignatureFlagsEnum == MethodSignatureForVisualAppearanceContainsArgumentVariableNames)
+        {
+            argString.append(currentArgument->preferredTextualRepresentationOfTypeAndVariableTogether());
+        }
+        else if(methodSignatureFlagsEnum == MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)
+        {
+            const QByteArray &argTypeCstr = currentArgument->typeString().toUtf8();
+            argString.append(QMetaObject::normalizedType(argTypeCstr.constData()));
+        }
+
+
         firstArg = false;
     }
     return argString;

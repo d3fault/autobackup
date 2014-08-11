@@ -24,6 +24,7 @@ class DesignEqualsImplementationClass : public QObject, public IDesignEqualsImpl
     Q_OBJECT
 public:
     //static DesignEqualsImplementationClassInstance *createClassInstance(DesignEqualsImplementationClassInstance *parent = 0, const QString &optionalVariableName = QString());
+    static QString generateRawConnectStatementWithEndingSemicolon(const QString &signalObjectVariableName, const QString &signalNameIncludingNormalizedArgs, const QString &slotObjectVariableName, const QString &slotNameIncludingNormalizedArgs);
 
     explicit DesignEqualsImplementationClass(QObject *parent = 0);
     bool generateSourceCode(const QString &destinationDirectoryPath);

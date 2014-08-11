@@ -288,11 +288,15 @@ void DesignEqualsImplementation::newProject()
 
     //Zed
     DesignEqualsImplementationClass *zedClass = testProject->createNewClass("Zed");
+
+    //zedSignal
+    zedClass->createNewSignal("zedSignal");
+
     DesignEqualsImplementationClassSlot *zedSlot = zedClass->createwNewSlot("zedSlot");
     DesignEqualsImplementationClassMethodArgument *zedSlotCuntArgument = zedSlot->createNewArgument("const QString &", "cunt");
 
-    QString userChosenVariableNameForBarsInstanceOfZed("m_Zed");
-    barClass->createHasA_Private_Classes_Member(zedClass, userChosenVariableNameForBarsInstanceOfZed);
+    fooClass->createHasA_Private_Classes_Member(zedClass, "m_FoosCopyOfZed");
+    barClass->createHasA_Private_Classes_Member(zedClass, "m_BarsCopyOfZed");
     //barClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(zedClass, barClass, userChosenVariableNameForBarsInstanceOfZed));
 
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(testProject); //could do this->createProject, but then wouldn't be able to populate it before emitting it as opened lawl (or i guess i could)

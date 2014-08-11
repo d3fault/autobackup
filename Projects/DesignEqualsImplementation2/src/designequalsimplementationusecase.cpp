@@ -68,10 +68,10 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
         SignalSlotConnectionActivationTypeStruct currentSignalSlotConnectionActivation = signalSlotConnectionActivationIterator.next();
         //TODOreq: resolve where to put connect() code
         //Ex:
-        //  1[x]) if both objects are private hasA members of the same parent object, put connect code in parent constructor-ish
-        //  2[]) if the signal class hasA the slot class, put in signal class constructor-ish
-        //  3[]) if the slot class hasA the signal class, put in slot constructor-ish
-        //  4[]) if signal and slot owner's types are the same but instances differ, do not put in constructor but somewhere higher. the owner of said instances (common ancestor?)
+        //  0[x]) if both objects are private hasA members of the same parent object, put connect code in parent constructor-ish
+        //  1[x]) if the signal class hasA the slot class, put in signal class constructor-ish
+        //  2[?]) if the slot class hasA the signal class, put in slot constructor-ish
+        //  3[]) if signal and slot owner's types are the same but instances differ, do not put in constructor but somewhere higher. the owner of said instances (common ancestor?)
 
         //man i don't want to pollute "parent" classes but at the same time do want project to be a "class" for the first KISS refactor. blah i go back and forth on whether to KISS or to change up my game plan. the "common ancestor" scheme is the one that has the ability to pollute lots of "in between" classes that should not give a damn. object instances have uuids for their objectName and i use the findChild method?
     }
@@ -537,18 +537,45 @@ void DesignEqualsImplementationUseCase::recursivelyWalkSlotAndAllAdditionalSlots
                             DesignEqualsImplementationClassLifeLine *destinationSlotClassLifeline = m_ClassLifeLines.at(currentSignalSlotConnectionActivation.SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines); //slot key 0
                             DesignEqualsImplementationClassSlot *destinationSlot = currentSignalSlotConnectionActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself; //slot key 1
 
+                            //0
                             //Check if they are both members of the same parent, the simplest connection resolving case and number 0 on my list
-                            if(destinationSlotClassLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline && classLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
+                            if(destinationSlotClassLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline && classLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline) //precondition that they both have a parent
                             {
-                                //precondition that they both have a parent
                                 if(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass() == classLifeline->instanceInOtherClassIfApplicable()->parentClass())
                                 {
                                     DesignEqualsImplementationClass *sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish = destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass();
-                                    sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish->appendLineToClassConstructorTemporarily("connect(" + classLifeline->instanceInOtherClassIfApplicable()->VariableName + ", SIGNAL(" + currentStatement->toRawCppWithoutEndingSemicolon() + "), " +  destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName + ", SLOT(" + destinationSlot->methodSignatureWithoutReturnType() + "));");
+                                    sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish->appendLineToClassConstructorTemporarily(DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
                                 }
                             }
 
                             //TODOreq: 1, 2, 3 etc on taht list
+
+                            //1
+                            //if the signal class hasA the slot class, put in signal class constructor-ish
+                            if(destinationSlotClassLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline) //precondition that slot has a parent
+                            {
+                                //if(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass()->hasA_Private_Classes_Members().contains())
+                                if(classLifeline->designEqualsImplementationClass()->hasA_Private_Classes_Members().contains(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()))
+                                {
+                                    //the class with the signal hasA the class with the slot
+                                    //so the signal's constructor gets the connect statement
+                                    //classLifeline->designEqualsImplementationClass()->appendLineToClassConstructorTemporarily(DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, currentStatement->toRawCppWithoutEndingSemicolon(), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType()));
+                                    classLifeline->designEqualsImplementationClass()->appendLineToClassConstructorTemporarily(DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(QString("this"), signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+                                }
+
+                            }
+
+                            //2
+                            //if the slot class hasA the signal class, put in slot constructor-ish
+                            if(classLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline) //precondition that signal has a parent
+                            {
+                                if(destinationSlotClassLifeline->designEqualsImplementationClass()->hasA_Private_Classes_Members().contains(classLifeline->instanceInOtherClassIfApplicable()))
+                                {
+                                    //the class with the slot hasA the class with the signal
+                                    //so the slot's constructor gets the connect statement
+                                    destinationSlotClassLifeline->designEqualsImplementationClass()->appendLineToClassConstructorTemporarily(DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), QString("this"), destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+                                }
+                            }
 
 #if 0 //needs refactoring
 

@@ -12,6 +12,12 @@ class DesignEqualsImplementationClassMethodArgument;
 class IDesignEqualsImplementationMethod
 {
 public:
+    enum MethodSignatureFlagsEnum
+    {
+        MethodSignatureForVisualAppearanceContainsArgumentVariableNames
+        , MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames
+    };
+
     explicit IDesignEqualsImplementationMethod();
     virtual ~IDesignEqualsImplementationMethod();
 
@@ -22,8 +28,8 @@ public:
     QList<DesignEqualsImplementationClassMethodArgument*> arguments();
     DesignEqualsImplementationClass *ParentClass; //TODOreq: [de-]serialization
 
-    QString methodSignatureWithoutReturnType();
-    QString argumentsToCommaSeparatedString();
+    QString methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);
+    QString argumentsToCommaSeparatedString(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);
 
     //TODOoptional: should be private:
     QList<DesignEqualsImplementationClassMethodArgument*> m_Arguments;
