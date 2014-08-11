@@ -353,9 +353,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     int sourceItemType = sourceItem->type();
     bool sourceIsActor = (sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
     if(!destinationItem_CanBeZeroUnlessSourceIsActor && sourceIsActor)
-        return false;
-
-    //TODOreq: JIT create the target slot if target slot is already named
+        return false;    
 
     //Dialog mode is based entirely on whether or not there is a dest, in which case we always want to choose a slot on the dest (signal can be opted in to)
     DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode = (destinationItem_CanBeZeroUnlessSourceIsActor == 0) ? DesignEqualsImplementationUseCase::UseCaseSignalEventType : DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType;
@@ -482,7 +480,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     //TODOreq: by/at-around now, we know which index in the source the statement should be inserted at. We don't have to give it to the dialog, but we do need to emit it to the backend after dialog is accepted
     int indexToInsertStatementAt_IntoSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->statementInsertIndex();
 
-    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, destinationSlotIsProbablyNameless_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, destinationSlotIsProbablyNameless_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceClassLifeLine_OrZeroIfSourceIsActor, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
         return false;
     SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables = signalSlotMessageCreatorDialog.slotInvocationContextVariables();

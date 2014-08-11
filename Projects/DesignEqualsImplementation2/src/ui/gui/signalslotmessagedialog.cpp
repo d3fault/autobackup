@@ -20,7 +20,7 @@
 //TODOreq: if Foo hasA Bar, we cannot invoke handleFooSignal DIRECTLY from within barSlot. Bar needs either barSignal to be connected to handleFooSignal in the UML/Design (easy), or a pointer to Foo must be somehow communicated to Bar (during construction works). As of right now, trying to INVOKE (directly) handleBarSignal from barSlot gives an invalid slot invocation statement (there is no variable name of Foo, so it looks like this: "invokeMethod(, "handleBarSignal);, obviously not valid. Ideally we could support both variations, but until then the GUI should at least not allow direct invocation on anything that doesn't have a name to refer to the target by
 //TODOreq: Possibly disallow selecting target slots already existing on the current class lifeline, because I'm not sure that makes any sense. However, my instincts tell me it's ok to target an already-on-this-class-lifeline slot when it occurs on a different lifeline. Recursion might mean that putting the same slot on one class lifeline multiple times is fine and dandy, but I'm having a hard time wrapping my head around how that would work
 //TODOoptional: if instanceType isn't set for the destination slot, we can provide a optional "express" button to give it the signal's object as it's parent. it streamlines the left to right flow and helps minimize necessary clicks. there could be other options such as making them share a parent, or the reverse where the signal object becomes the child. as you can see there are lots of options, but the first one mentioned is the most common (followed by second mentioned) and the "saved clicks" value is what makes it the most beneficiail. by far. obviously, if the instanceType indicates one is already chosen, the button is not shown at all and only the regular "ok" is shown. perhaps the express button, when present, should be the "default" button (pressing enter blindly at dialog)
-SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
+SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
     , m_Layout(new QVBoxLayout())
@@ -115,10 +115,47 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         newSignalAndExistingSignalsWidget->setDisabled(true);
         m_SlotsCheckbox->setChecked(true);
         m_SlotsCheckbox->setDisabled(true);
-        m_SlotsCheckbox->setToolTip(tr("You have a destination object, therefore you must have a slot")); //TODOreq: actor as destination breaks rule bleh (don't think it matters because actor uses UseCaseSignalEventType?)
+        m_SlotsCheckbox->setToolTip(tr("You have a destination object, so you must have a slot")); //TODOreq: actor as destination breaks rule bleh (don't think it matters because actor uses UseCaseSignalEventType?)
         newSlotAndExistingSlotsWidget->setDisabled(false);
         if(destinationSlotToInvoke_OrZeroIfNoDest) //I think this is impied != 0 when not UseCaseSignalEventType, however I'm not sure of it and the check is cheap and prevents segfault lolol
         {
+            if(sourceSlot_OrZeroIfSourceIsActor && (!sourceIsActor))
+            {
+
+                if(sourceClassLifeLine_OrZeroIfSourceIsActor && sourceClassLifeLine_OrZeroIfSourceIsActor->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
+                {
+#if 0
+                if(sourceClassLifeLine_OrZeroIfSourceIsActor && sourceClassLifeLine_OrZeroIfSourceIsActor->instanceType() != DesignEqualsImplementationClassLifeLine::NoInstanceChosen)
+                {
+                    //either root or child of some other, we know at least that our instance is chosen, which means we are capable of having children. we have a list of children to check against that we know is valid (but perhaps empty)
+#endif
+                    if(sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()->parentClass() == destinationSlotToInvoke_OrZeroIfNoDest->ParentClass)
+                    {
+                        //when the connection-activatation-line _destination_(slot) is parent (hasA relationship) of the _source_(signal), a signal is mandatory in the signal/slot message dialog before the dialog can be accepted. a slot is also mandatory since there is a destination, but that is already implemenented
+                        m_SignalsCheckbox->setChecked(true);
+                        m_SignalsCheckbox->setDisabled(true);
+                        newSignalAndExistingSignalsWidget->setDisabled(false);
+                        m_SignalsCheckbox->setToolTip(tr("When the destination-object hasA the source-object, a signal is mandatory"));
+                    }
+                }
+#if 0
+
+                if(destinationClassLifeLine_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline )//precondition that it dest is a child at all
+                {
+                    //if(dest)
+                }
+
+                Q_FOREACH(HasA_Private_Classes_Member *currentHasA_Private_Classes_Member, destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->hasA_Private_Classes_Members())
+                {
+
+                }
+
+                //if(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->containsHasA_Private_Classes_Members().contains())
+#endif
+
+            }
+
+
             Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->mySlots()) //List the slots on the target slot, derp
             {
                 if(currentSlot->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING)

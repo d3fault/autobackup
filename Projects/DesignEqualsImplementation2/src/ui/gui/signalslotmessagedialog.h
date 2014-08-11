@@ -12,6 +12,7 @@ class QComboBox;
 class QPushButton;
 
 class DesignEqualsImplementationClassSlot;
+class DesignEqualsImplementationClassLifeLine;
 //class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 class IHaveTypeAndVariableNameAndPreferredTextualRepresentation;
 
@@ -19,7 +20,7 @@ class SignalSlotMessageDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode , DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor,  bool destinationIsActor, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode , DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor,  bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent = 0, Qt::WindowFlags f = 0);
     DesignEqualsImplementationClassSignal *signalToEmit_OrZeroIfNone() const;
     DesignEqualsImplementationClassSlot *slotToInvoke_OrZeroIfNone() const;
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables() const;

@@ -1,0 +1,3 @@
+0) two foosignals in header. problem is in generator code pretty sure, may be in invoking logic
+1) bar is completely wrong. instance needs to be chosen is part of the problem. still a case that the gui should not allow, handleBarSignal was invoked using invoke method and "this" was used to refer to foo (from within bar!)
+2) "signal checkbox tooltip": "to be able to invoke without a signal, make the destination a a property on the source. it should have a source-Signal-sender-object hasA dest-Slot-receiver-object relationship". then when they have that relationship, we allow and default to invokeMethod. the signal is simply unchecked, but it is still checkeable.
