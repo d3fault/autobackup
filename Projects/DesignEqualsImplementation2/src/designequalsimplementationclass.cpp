@@ -101,7 +101,7 @@ bool DesignEqualsImplementationClass::generateSourceCode(const QString &destinat
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, hasA_Private_Classes_Members())
     {
         //Bar *m_Bar;
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentPrivateMember->preferredTextualRepresentation() << ";" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentPrivateMember->preferredTextualRepresentationOfTypeAndVariableTogether() << ";" << endl;
     }
 
     //Source's header+constructor (the top bits, not the ".h" counter-part)
@@ -263,9 +263,10 @@ HasA_Private_Classes_Member *DesignEqualsImplementationClass::createHasA_Private
 
     //TODOinstancing: DesignEqualsImplementationClassInstance *newInstance = new DesignEqualsImplementationClassInstance(hasA_Private_Class_Member, this, variableName);
     //m_HasA_Private_Classes_Members.append(newInstance);
-    HasA_Private_Classes_Member *newMember = new HasA_Private_Classes_Member();
+    HasA_Private_Classes_Member *newMember = new HasA_Private_Classes_Member(); //TODOoptional: all these properties should maybe be required as constructor args
     newMember->m_MyClass = hasA_Private_Class_Member;
     newMember->VariableName = variableName;
+    newMember->setParentClass(this);
     m_HasA_Private_Classes_Members.append(newMember); //TODOreq: re-ordering needs to resynchronize
 
     return newMember;

@@ -94,7 +94,7 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
     }
     Q_FOREACH(HasA_Private_Classes_Member *currentHasA_Private_Classes_Members_ListEntryType, m_DesignEqualsImplementationClass->hasA_Private_Classes_Members())
     {
-        classContentsString.append("<br />-  " + currentHasA_Private_Classes_Members_ListEntryType->preferredTextualRepresentation());
+        classContentsString.append("<br />-  " + currentHasA_Private_Classes_Members_ListEntryType->preferredTextualRepresentationOfTypeAndVariableTogether());
         ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_DesignEqualsImplementationClass->PrivateMethods)

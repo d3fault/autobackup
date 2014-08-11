@@ -31,7 +31,7 @@ QString IDesignEqualsImplementationMethod::argumentsToCommaSeparatedString()
     {
         if(!firstArg)
             argString.append(", ");
-        argString.append(currentArgument->preferredTextualRepresentation());
+        argString.append(currentArgument->preferredTextualRepresentationOfTypeAndVariableTogether());
         firstArg = false;
     }
     return argString;

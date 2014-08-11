@@ -192,6 +192,10 @@ bool DesignEqualsImplementationClassLifeLine::hasBeenAssignedInstance()
         return true;
     return false;
 }
+DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassInstanceTypeEnum DesignEqualsImplementationClassLifeLine::instanceType() const
+{
+    return m_InstanceType;
+}
 void DesignEqualsImplementationClassLifeLine::setInstanceType(DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassInstanceTypeEnum instanceType)
 {
     m_InstanceType = instanceType;

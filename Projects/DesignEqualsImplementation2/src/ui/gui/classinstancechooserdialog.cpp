@@ -44,11 +44,17 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     boldFont.setBold(true);
     m_NewInstanceRadioButton->setFont(boldFont);
     QLabel *newChildMemberLabel = new QLabel(tr("Child member of:"));
+    bool firstClassAdded = true;
     Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeline, useCaseClassIsBeingAddedTo->classLifeLines())
     {
         DesignEqualsImplementationClass *currentClass = currentClassLifeline->designEqualsImplementationClass();
         if(currentClass == classBeingAdded)
             continue; //don't add ourself to ourself (but actually sometimes this is useful so... :-/)
+        if(firstClassAdded)
+        {
+            m_ExistingClassToUseAsParentForNewInstance = currentClass;
+            firstClassAdded = false;
+        }
         m_ClassesInUseCaseAvailableForUseAsParentOfNewInstance->addItem(currentClass->ClassName, QVariant::fromValue(currentClass));
     }
     m_NewInstanceNameLineEdit->setPlaceholderText(tr("Member Name")); //TODOoptional: m_Bar0, m_Bar1, etc auto-generated-but-editable-obviously

@@ -8,6 +8,11 @@ class HasA_Private_Classes_Member : public IHaveTypeAndVariableNameAndPreferredT
 {
 public:
     DesignEqualsImplementationClass *m_MyClass;
+
+    DesignEqualsImplementationClass *parentClass() const;
+    void setParentClass(DesignEqualsImplementationClass *parentClass);
+private:
+    DesignEqualsImplementationClass *m_ParentClass;
 protected:
     virtual QString typeString();
 };

@@ -1,0 +1,7 @@
+1) 
+a) a design should be functional (as fun and endless as theory is, compilable/executable/tangible code is better than a design alone)
+b) a design should be properly designed (and a secure application is properly designed, it being dependent on whether or not it is properly designed dictating whether or not it is secure)
+c) the design (had:it) should be asynchronous and thread safe (Qt::AutoConnection). everything asynchronous can be made synchronous with ease. the reverse is not true (hence by choosing asynchronous, you get both async and sync).
+
+
+2) I don't give a fuck what you do, as long as you don't fuck with me. The free market forces us to fuck with each other. It is quite possible that the free market is the most major cause of violence in modern days. The stupid get controlled by the slightly less stupid, and it's encouraged(had:incouraged) and jolly good fun.

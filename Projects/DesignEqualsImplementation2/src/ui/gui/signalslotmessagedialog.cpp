@@ -237,14 +237,14 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
     Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SignalToEmit->arguments())
     {
         QHBoxLayout *currentArgRow = new QHBoxLayout();
-        currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentation()));
+        currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentationOfTypeAndVariableTogether()));
         QComboBox *currentArgSatisfiersComboBox = new QComboBox();
         connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
         currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
         m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
         Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
         {
-            currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentation(), QVariant::fromValue(currentArgSatisfier));
+            currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentationOfTypeAndVariableTogether(), QVariant::fromValue(currentArgSatisfier));
         }
         currentArgRow->addWidget(currentArgSatisfiersComboBox);
         argsFillingInLayout->addLayout(currentArgRow);
@@ -297,14 +297,14 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
         Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SlotToInvoke->arguments())
         {
             QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
-            currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentation()));
+            currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentationOfTypeAndVariableTogether()));
             QComboBox *currentArgSatisfiersComboBox = new QComboBox(); //instead of listening to signals, i should just manually validate the dialog when ok is pressed (keep a list of combo boxes, ensure all indexes aren't zero)... only downside to that is that the ok button now can't be disabled :(... fffff. i guess whole dialog validation on ANY combo box signal change is a hacky/easy/unoptimal/functional solution TODOoptimization proper dat shit
             connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
             currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
             m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
             Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
             {
-                currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentation(), QVariant::fromValue(currentArgSatisfier));
+                currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentationOfTypeAndVariableTogether(), QVariant::fromValue(currentArgSatisfier));
             }
             currentArgRow->addWidget(currentArgSatisfiersComboBox);
             argsFillingInLayout->addLayout(currentArgRow);

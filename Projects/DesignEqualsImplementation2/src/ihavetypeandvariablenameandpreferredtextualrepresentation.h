@@ -14,7 +14,7 @@ public:
     //TODOoptional: private + getter/setter blah
     QString VariableName;
     virtual QString typeString()=0;
-    QString preferredTextualRepresentation()
+    QString preferredTextualRepresentationOfTypeAndVariableTogether()
     {
         QString ret(typeString());
         if(ret.endsWith("&") || ret.endsWith("*")) //etc

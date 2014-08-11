@@ -44,6 +44,7 @@ public:
     //void replaceSlot(int indexToReplace, DesignEqualsImplementationClassSlot *slotToReplaceItWith);
     MySlotsAppearingInClassLifeLine_List mySlotsAppearingInClassLifeLine() const;
     bool hasBeenAssignedInstance();
+    DesignEqualsImplementationClassInstanceTypeEnum instanceType() const;
     void setInstanceType(DesignEqualsImplementationClassInstanceTypeEnum instanceType);
     HasA_Private_Classes_Member *instanceInOtherClassIfApplicable() const;
     void setInstanceInOtherClassIfApplicable(HasA_Private_Classes_Member *instanceInOtherClassIfApplicable);
