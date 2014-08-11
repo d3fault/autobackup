@@ -58,12 +58,8 @@ public:
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> m_HasA_Private_PODorNonDesignedCpp_Members;
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;
     QList<DesignEqualsImplementationClassSlot*> m_MySlots;
-
-    //Temporary for code gen
-    void cleanupJitGeneratedLinesFromAPreviousGenerate();
-    void appendLineToClassConstructorTemporarily(const QString &line);
 private:
-    QList<QString> m_TemporaryClassConstructorLines;
+    friend class DesignEqualsImplementationProjectGenerator;
 signals:
     void propertyAdded(DesignEqualsImplementationClassProperty*);
     void hasAPrivateMemberClassAdded(HasA_Private_Classes_Member*); //declare meta type?

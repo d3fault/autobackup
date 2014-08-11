@@ -46,9 +46,11 @@ private:
     bool allClassLifelinesInAllUseCasesInProjectHaveBeenAssignedInstances();
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
 
+#if 0
     //Temporary for code gen:
     void cleanupJitGeneratedLinesFromAPreviousGenerate();
     QList<QString> m_TemporaryProjectGlueCodeLines;
+#endif
 signals:
     void useCaseAdded(DesignEqualsImplementationUseCase*);
     void classAdded(DesignEqualsImplementationClass*);

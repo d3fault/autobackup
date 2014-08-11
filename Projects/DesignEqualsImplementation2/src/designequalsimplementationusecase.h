@@ -45,9 +45,9 @@ public:
     //DesignEqualsImplementationClassSignal *ExitSignal;
 
     bool allClassLifelinesInUseCaseHaveBeenAssignedInstances();
-    bool generateSourceCode(const QString &destinationDirectoryPath);
     ~DesignEqualsImplementationUseCase();
 private:
+    friend class DesignEqualsImplementationProjectGenerator;
     struct SignalSlotConnectionActivationTypeStruct
     {
         //Signal
@@ -83,7 +83,6 @@ private:
     //void addEventPrivateWithoutUpdatingExitSignal(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
     void insertAlreadyFilledOutSlotIntoUseCase(DesignEqualsImplementationClassSlot *slotEntryPointThatKindaSortaMakesItNamed);
     void addClassLifeLineToUseCase(DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase);
-    void recursivelyWalkSlotAndAllAdditionalSlotsRelevantToThisUseCase(DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
 signals:
     void actorAdded(DesignEqualsImplementationActor *actor);
     void classLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);

@@ -254,6 +254,7 @@ void DesignEqualsImplementation::newProject()
     //Foo
     DesignEqualsImplementationClass *fooClass = testProject->createNewClass("Foo");
     DesignEqualsImplementationClassSlot *fooSlot = fooClass->createwNewSlot("fooSlot");
+    fooClass->createwNewSlot("blahFooSlot");
     DesignEqualsImplementationClassMethodArgument *fooSlotCuntArgument = fooSlot->createNewArgument("const QString &", "cunt");
 
     DesignEqualsImplementationClassSignal *diagnosticSignalX = fooClass->createNewSignal("diagnosticSignalX");
@@ -270,6 +271,7 @@ void DesignEqualsImplementation::newProject()
     //Bar
     DesignEqualsImplementationClass *barClass = testProject->createNewClass("Bar");
     DesignEqualsImplementationClassSlot *barSlot = barClass->createwNewSlot("barSlot");
+    barClass->createwNewSlot("blahBarSlot");
     DesignEqualsImplementationClassMethodArgument *barSlotCuntArgument = barSlot->createNewArgument("const QString &", "cunt");
 
     DesignEqualsImplementationClassSlot *barSlot1 = barClass->createwNewSlot("barSlot1");
@@ -288,6 +290,8 @@ void DesignEqualsImplementation::newProject()
 
     //Zed
     DesignEqualsImplementationClass *zedClass = testProject->createNewClass("Zed");
+
+    zedClass->createwNewSlot("blahZedSlot");
 
     //zedSignal
     zedClass->createNewSignal("zedSignal");

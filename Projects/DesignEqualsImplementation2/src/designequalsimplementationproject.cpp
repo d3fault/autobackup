@@ -7,6 +7,7 @@
 
 #include <QMutexLocker>
 #include "designequalsimplementation.h"
+#include "designequalsimplementationprojectgenerator.h"
 
 #define DesignEqualsImplementationProject_SERIALIZATION_VERSION 1
 
@@ -72,10 +73,12 @@ QList<DesignEqualsImplementationUseCase *> DesignEqualsImplementationProject::us
 {
     return m_UseCases;
 }
+#if 0
 void DesignEqualsImplementationProject::appendLineToTemporaryProjectGlueCode(const QString &line)
 {
     m_TemporaryProjectGlueCodeLines.append(line);
 }
+#endif
 bool DesignEqualsImplementationProject::writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath)
 {
     QString autoGlue = "AutoGlue_";
@@ -125,10 +128,12 @@ bool DesignEqualsImplementationProject::writeTemporaryGlueCodeLines(const QStrin
     projectGlueSourceTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;
     projectGlueSourceTextStream << "{" << endl;
     //  Foo *foo = new Foo(this);"
+#if 0
     Q_FOREACH(const QString &currentTempGlueLine, m_TemporaryProjectGlueCodeLines)
     {
         projectGlueSourceTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentTempGlueLine << endl; //TODOoptional: IStatement type shiz
     }
+#endif
     projectGlueSourceTextStream << "}" << endl;
 
     return true;
@@ -162,6 +167,9 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
 
     //TODOreq: should library generation include a .pro file? a .pri file? both? better solution in qbs? all of the above (default to which?)?
 
+    DesignEqualsImplementationProjectGenerator projectGenerator(projectGenerationMode, destinationDirectoryPath);
+
+#if 0 //TODOreq: merge with project generator
     if(projectGenerationMode != Library)
     {
         emit e("TODOreq: can only generate library for now");
@@ -175,32 +183,51 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
             return false;
         }
     }
+#endif
 
-    cleanupJitGeneratedLinesFromAPreviousGenerate(); //TODOoptional: perhaps a "project writer" type class is warranted. for now: h4x and kiss
+    //cleanupJitGeneratedLinesFromAPreviousGenerate();
 
+    //two steps because use cases append connect statements to class constructors before writing
+    Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, m_Classes)
+    {
+        if(!projectGenerator.processClassStep0declaringClassInProject(designEqualsImplementationClass))
+        {
+            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX ", class step 0, " + designEqualsImplementationClass->ClassName);
+            return false;
+        }
+    }
     Q_FOREACH(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, useCases())
     {
-        if(!designEqualsImplementationUseCase->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't [easily (code generator *cough* could do it)] be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
+        if(!projectGenerator.processUseCase(designEqualsImplementationUseCase)) //bleh, async model breaks down here. can't [easily (code generator *cough* could do it)] be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
         {
-            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + designEqualsImplementationUseCase->Name);
+            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX ", use case: " + designEqualsImplementationUseCase->Name);
             return false;
         }
     }
 
+#if 0 //TODOreq maybe use this somewhere else or again later idfk
     if(!writeTemporaryGlueCodeLines(destinationDirectoryPath))
     {
         emit e("Failed to write temporary glue code for project. Check above for errors");
         return false;
     }
+#endif
 
+#if 0
     Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, m_Classes)
     {
         //TODOreq: use case's exit signals should just be serialized/remembered. they are of design use, but of zero use when it comes to code generation (the signal is simply emitted). i was tempted to say "use case exit signals should generate temporary copies of the classes here, now with the exit signals inserted (temporary copies used to generate source code)", BUT as you can see that's wrong
-        if(!designEqualsImplementationClass->generateSourceCode(destinationDirectoryPath)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
+        if(!projectGenerator.processClassStep1writingTheFile(designEqualsImplementationClass)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
         {
-            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + designEqualsImplementationClass->ClassName);
+            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + ", class step 1, " + designEqualsImplementationClass->ClassName);
             return false;
         }
+    }
+#endif
+    if(!projectGenerator.writeClassesToDisk())
+    {
+        emit e("failed to write project files to disk");
+        return false;
     }
 
     //Q_FOREACH -- modifying use cases modifies the associated classes implicitly, so in theory there is no source to generate for use cases. HOWEVER, as of now the use cases are more focused on and contain the "full references" of the project as a whole, so generating (rather, trying to generate :-P) THAT should implicitly generate all classes (and more importantly, all parts of the class referenced in a use case)
@@ -317,6 +344,7 @@ bool DesignEqualsImplementationProject::allClassLifelinesInAllUseCasesInProjectH
     }
     return true;
 }
+#if 0
 void DesignEqualsImplementationProject::cleanupJitGeneratedLinesFromAPreviousGenerate()
 {
     m_TemporaryProjectGlueCodeLines.clear();
@@ -325,6 +353,7 @@ void DesignEqualsImplementationProject::cleanupJitGeneratedLinesFromAPreviousGen
         currentClass->cleanupJitGeneratedLinesFromAPreviousGenerate();
     }
 }
+#endif
 void DesignEqualsImplementationProject::emitAllClassesAndUseCasesInProject()
 {
     //TODOreq: the signals will be emitted twice when LOADING a file (once when each individual deserialized 'thing' is added, and once again now). i'm not sure if 'some' of the later ones in the first batch might in fact be received, or if all of the first batch are definitely discarded (ui not listening yet)
