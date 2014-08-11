@@ -431,11 +431,13 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                 headerFileTextStream << "signals:" << endl;
                 signalsAccessSpecifierWritten = true;
             }
+#if 0 //exit signal is just a regular signal when it comes to generation
             DesignEqualsImplementationClassSignal *finishedOrExitSignal_OrZeroIfNone = currentSlot->finishedOrExitSignal_OrZeroIfNone();
             if(finishedOrExitSignal_OrZeroIfNone)
             {
                 headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << finishedOrExitSignal_OrZeroIfNone->methodSignatureWithoutReturnType() << ";" << endl;
             }
+#endif
         }
     }
     if(!currentClass->mySlots().isEmpty())
