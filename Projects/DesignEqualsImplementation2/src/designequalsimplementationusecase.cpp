@@ -70,7 +70,7 @@ bool DesignEqualsImplementationUseCase::generateSourceCode(const QString &destin
         //Ex:
         //  0[x]) if both objects are private hasA members of the same parent object, put connect code in parent constructor-ish
         //  1[x]) if the signal class hasA the slot class, put in signal class constructor-ish
-        //  2[?]) if the slot class hasA the signal class, put in slot constructor-ish
+        //  2[x]) if the slot class hasA the signal class, put in slot constructor-ish
         //  3[]) if signal and slot owner's types are the same but instances differ, do not put in constructor but somewhere higher. the owner of said instances (common ancestor?)
 
         //man i don't want to pollute "parent" classes but at the same time do want project to be a "class" for the first KISS refactor. blah i go back and forth on whether to KISS or to change up my game plan. the "common ancestor" scheme is the one that has the ability to pollute lots of "in between" classes that should not give a damn. object instances have uuids for their objectName and i use the findChild method?
@@ -611,7 +611,7 @@ void DesignEqualsImplementationUseCase::recursivelyWalkSlotAndAllAdditionalSlots
                                 m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode(connectStatement);
                             }
 #endif
-                            //recursivelyWalkSlotAndAllAdditionalSlotsRelevantToThisUseCase(destinationSlotClassLifeline, destinationSlot);
+                            recursivelyWalkSlotAndAllAdditionalSlotsRelevantToThisUseCase(destinationSlotClassLifeline, destinationSlot);
                         }
                     }
                 }
