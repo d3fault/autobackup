@@ -15,6 +15,7 @@
 #include "designequalsimplementationguicommon.h"
 #include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
 #include "classinstancechooserdialog.h"
+#include "classeditordialog.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclasslifeline.h"
 
@@ -52,8 +53,9 @@ int DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::type() c
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
-    QAction *chooseInstanceAction = menu.addAction("Choose Instance");
-    QAction *deleteAction = menu.addAction("Delete");
+    QAction *chooseInstanceAction = menu.addAction(tr("Choose Instance"));
+    QAction *classEditorAction = menu.addAction(tr("Class Editor"));
+    QAction *removeClassLifelineFromUseCaseAction = menu.addAction(tr("Remove Class Lifeline from Use Case"));
     QAction *selectedAction = menu.exec(event->screenPos());
     if(!selectedAction)
         return;
@@ -73,7 +75,13 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::context
         }
         return;
     }
-    else if(selectedAction == deleteAction) //etc
+    else if(selectedAction == classEditorAction)
+    {
+        ClassEditorDialog classEditorDialog(classLifeLine()->designEqualsImplementationClass());
+        if(classEditorDialog.exec() != QDialog::Accepted)
+            return;
+    }
+    else if(selectedAction == removeClassLifelineFromUseCaseAction) //etc
     {
         //TODOreq
     }

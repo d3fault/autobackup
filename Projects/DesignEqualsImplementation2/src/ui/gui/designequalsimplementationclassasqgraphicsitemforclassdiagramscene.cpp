@@ -3,11 +3,15 @@
 
 #include <QGraphicsTextItem>
 #include <QPointF>
+#include <QMenu>
+#include <QAction>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include <QMutexLocker>
 #include "../../designequalsimplementation.h"
 
 #include "designequalsimplementationguicommon.h"
+#include"classeditordialog.h"
 
 //TODOmb: considering changing this to a qpixmap in a graphics scene instead, where teh pixmap is drawn only when the class changes, update called once, then it's simply provided to qgraphicsview (svg might be more optimized?)... i'm going to wait on making a decision until i try to reuse the code for getting the "uml class" drag drop thingo to use the same shape (in designEquals1, i rendered to pixmap for that). i do know one thing, what i'm doing now is hella laggy (but works so fuck it)
 DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *graphicsParent, QObject *qobjectParent)
@@ -116,6 +120,32 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
     QGraphicsTextItem *classContentsGraphicsTextItem = new QGraphicsTextItem(this);
     classContentsGraphicsTextItem->setHtml(classContentsString);
     setRect(childrenBoundingRect());
+}
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QMenu menu;
+    QAction *classEditorAction = menu.addAction(tr("Class Editor"));
+    QAction *removeClassFromProjectAction = menu.addAction(tr("Remove Class From Project"));
+    QAction *selectedAction = menu.exec(event->screenPos());
+    if(!selectedAction)
+        return;
+    if(selectedAction == classEditorAction)
+    {
+        ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass);
+        if(classEditorDialog.exec() != QDialog::Accepted)
+            return;
+    }
+    else if(selectedAction == removeClassFromProjectAction) //etc
+    {
+        //TODOreq
+    }
+}
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    Q_UNUSED(event)
+    ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass);
+    if(classEditorDialog.exec() != QDialog::Accepted)
+        return;
 }
 #if 0
 QRectF DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::boundingRect() const

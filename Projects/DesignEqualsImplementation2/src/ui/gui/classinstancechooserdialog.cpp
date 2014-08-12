@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QGroupBox>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QPushButton>
@@ -16,6 +17,8 @@
 #include "../../designequalsimplementationusecase.h"
 
 //TODOoptional: instead of a modal dialog, a qlistwidget below the uml class items listing the entries, defaulting to "new top level widget". Just less clicks is all. Also right click -> change instance being used?
+//TODOoptional: radio mode grays out opposite mode
+//TODOreq: introducing qgoupbox made the radio buttons in different groups (and so not mutually exclusive), fix that
 ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementationClass *classBeingAdded, DesignEqualsImplementationUseCase *useCaseClassIsBeingAddedTo, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_NewInstanceRadioButton(new QRadioButton(tr("New Instance")))
@@ -35,9 +38,11 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
         return;
     }
 
-    QLabel *currentClassBeingAssignedInstanceLabel = new QLabel(tr("Choose instance for: ") + classBeingAdded->ClassName);
+    QLabel *currentClassBeingAssignedInstanceLabel = new QLabel(tr("Choose instance for object of type: ") + classBeingAdded->ClassName);
 
     //new instance
+    QGroupBox *newInstanceGroupBox = new QGroupBox();
+    QVBoxLayout *newInstanceLayout = new QVBoxLayout();
     m_NewInstanceRadioButton->setChecked(true);
     QHBoxLayout *newInstanceRow = new QHBoxLayout();
     QFont boldFont;
@@ -63,6 +68,8 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     newInstanceRow->addWidget(m_NewInstanceNameLineEdit);
 
     //existing instances
+    QGroupBox *existingInstanceGroupBox = new QGroupBox();
+    QVBoxLayout *existingInstancesLayout = new QVBoxLayout();
     QRadioButton *existingInstancesRadioButton = new QRadioButton(tr("Existing Instances"));
     existingInstancesRadioButton->setFont(boldFont);
 
@@ -111,12 +118,18 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     okCancelRow->addWidget(cancelButton);
     okCancelRow->addWidget(okButton);
 
+    newInstanceLayout->addWidget(m_NewInstanceRadioButton);
+    newInstanceLayout->addLayout(newInstanceRow);
+    newInstanceGroupBox->setLayout(newInstanceLayout);
+
+    existingInstancesLayout->addWidget(existingInstancesRadioButton);
+    existingInstancesLayout->addWidget(m_ExistingInstancesListWidget);
+    existingInstanceGroupBox->setLayout(existingInstancesLayout);
+
     QVBoxLayout *myLayout = new QVBoxLayout();
     myLayout->addWidget(currentClassBeingAssignedInstanceLabel);
-    myLayout->addWidget(m_NewInstanceRadioButton);
-    myLayout->addLayout(newInstanceRow);
-    myLayout->addWidget(existingInstancesRadioButton);
-    myLayout->addWidget(m_ExistingInstancesListWidget);
+    myLayout->addWidget(newInstanceGroupBox);
+    myLayout->addWidget(existingInstanceGroupBox);
     myLayout->addLayout(okCancelRow);
     setLayout(myLayout);
 

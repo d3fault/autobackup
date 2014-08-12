@@ -2,6 +2,7 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QGroupBox>
 #include <QComboBox>
 #include <QPushButton>
 #include <QLabel>
@@ -22,6 +23,7 @@
 //TODOoptional: if instanceType isn't set for the destination slot, we can provide a optional "express" button to give it the signal's object as it's parent. it streamlines the left to right flow and helps minimize necessary clicks. there could be other options such as making them share a parent, or the reverse where the signal object becomes the child. as you can see there are lots of options, but the first one mentioned is the most common (followed by second mentioned) and the "saved clicks" value is what makes it the most beneficiail. by far. obviously, if the instanceType indicates one is already chosen, the button is not shown at all and only the regular "ok" is shown. perhaps the express button, when present, should be the "default" button (pressing enter blindly at dialog)
 //^ a) when the source hasA member of type dest, and when dest has no instanceType, the express button offers to use the existing member
 //  b) otherwise, we allow the CREATION (and corresponding assignation) of a member on the fly for the express button
+//TODOoptional: setDisabled on checkbox grays out the checkbox label. i want the label to stay colored but the checkbox to gray out. could split into checkbox and label ez, or perhaps setReadOnly is my friend?
 SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
@@ -38,12 +40,16 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     //TODOoptional: combo boxes can be editable, but after thinking about it briefly I think adding a new slot like that would require that libclang interaction.. so for now KISS and just do existing slots (or add new slot with different
 
+    QFont boldFont;
+    boldFont.setBold(true);
 
     //Layout placement
 
     //Signals
+    QGroupBox *signalGroupBox = new QGroupBox();
     QHBoxLayout *signalHLayout = new QHBoxLayout();
     m_SignalsCheckbox = new QCheckBox(tr("Signal")); //TODOreq: the signal checkbox is itself disabled when in UseCaseSignalSlotEventType, forcing the signals to be enabled. TODOreq: checkbox hovertext when disabled should explain why disabled
+    m_SignalsCheckbox->setFont(boldFont);
 
     signalHLayout->addWidget(m_SignalsCheckbox);
 
@@ -60,14 +66,17 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     signalHLayout->addWidget(newSignalAndExistingSignalsWidget);
     newSignalAndExistingSignalsWidget->setLayout(signalsLayout);
-    m_Layout->addLayout(signalHLayout);
+    signalGroupBox->setLayout(signalHLayout);
+    m_Layout->addWidget(signalGroupBox);
 
     if(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalEventType)
         m_Layout->addWidget(new QWidget(), 1); //TODOreq: spacer inserted to space slots and space away from each other when in signal mode, verify it worked
 
     //Slots
+    QGroupBox *slotGroupBox = new QGroupBox();
     QHBoxLayout *slotHLayout = new QHBoxLayout();
     m_SlotsCheckbox = new QCheckBox(tr("Slot"));
+    m_SlotsCheckbox->setFont(boldFont);
     m_SlotsCheckbox->setChecked(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType);
     slotHLayout->addWidget(m_SlotsCheckbox);
 
@@ -75,17 +84,18 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     QVBoxLayout *slotsLayout = new QVBoxLayout();
 
     //new slot
-    QLineEdit *autoParsedSlotNameWithAutoCompleteForExistingSignals = new QLineEdit(); //TODOreq
+    QLineEdit *autoParsedSlotNameWithAutoCompleteForExistingSlots = new QLineEdit(); //TODOreq
     //existing slot
     m_ExistingSlotsComboBox = new QComboBox();
     m_ExistingSlotsComboBox->addItem(tr("Select slot...")); //TODOreq: qlistwidget only takes one click insead of two (precious seconds when you're trying to keep a complicated design in your head)... but the trade off is that it takes up more space (not really though, once the combo box is expanded...)
 
-    slotsLayout->addWidget(autoParsedSlotNameWithAutoCompleteForExistingSignals);
+    slotsLayout->addWidget(autoParsedSlotNameWithAutoCompleteForExistingSlots);
     slotsLayout->addWidget(m_ExistingSlotsComboBox);
 
     slotHLayout->addWidget(newSlotAndExistingSlotsWidget);
     newSlotAndExistingSlotsWidget->setLayout(slotsLayout);
-    m_Layout->addLayout(slotHLayout);
+    slotGroupBox->setLayout(slotHLayout);
+    m_Layout->addWidget(slotGroupBox);
 
     QHBoxLayout *cancelOkRow = new QHBoxLayout();
 
