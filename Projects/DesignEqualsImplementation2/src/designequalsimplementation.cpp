@@ -284,6 +284,9 @@ void DesignEqualsImplementation::newProject()
     DesignEqualsImplementationClassSignal *barSignal = barClass->createNewSignal("barSignal");
     DesignEqualsImplementationClassMethodArgument *barSignalSuccessArgument = barSignal->createNewArgument("bool", "success");
 
+    barClass->createNewSignal("barSignalBlah0");
+    barClass->createNewSignal("barSignalBlah1");
+
     QString userChosenVariableNameForFoosInstanceOfBar("m_Bar"); //TODOreq: i imagine these are set elsewhere (maybe i response to a user event. as in, they name it (imagine that))
     fooClass->createHasA_Private_Classes_Member(barClass, userChosenVariableNameForFoosInstanceOfBar);
     //fooClass->HasA_Private_Classes_Members.append(new DesignEqualsImplementationClassInstance(barClass, fooClass/*fooClassInstance*/, userChosenVariableNameForFoosInstanceOfBar));

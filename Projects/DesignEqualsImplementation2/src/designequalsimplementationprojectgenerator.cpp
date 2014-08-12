@@ -35,12 +35,12 @@ bool DesignEqualsImplementationProjectGenerator::processUseCase(DesignEqualsImpl
         //  0[x]) if both objects are private hasA members of the same parent object, put connect code in parent constructor-ish
         //  1[x]) if the signal class hasA the slot class, put in signal class constructor-ish
         //  2[x]) if the slot class hasA the signal class, put in slot constructor-ish
-        //  3[]) if signal and slot owner's types are the same but instances differ, do not put in constructor but somewhere higher. the owner of said instances (common ancestor?)
+        //  3[]) TODOoptional: allow a class lifeline to draw a line to itself. it should be arch back in some way back to itself. it is a signal-slot or perhaps a slot invoke. this might all be solved implicitly when i implement multiple slots for a single signal emit. OLD(not wrong but thinking about it backwards): if signal-object and slot-object types are the same but instances differ, do not put in constructor but somewhere higher. the owner of said instances (common ancestor? i have a feeling some cases may require autogenerating signals in unrelated-but-in-between classes. i could be wrong)
+        //
 
         //man i don't want to pollute "parent" classes but at the same time do want project to be a "class" for the first KISS refactor. blah i go back and forth on whether to KISS or to change up my game plan. the "common ancestor" scheme is the one that has the ability to pollute lots of "in between" classes that should not give a damn. object instances have uuids for their objectName and i use the findChild method?
     }
 #endif
-#if 1
 
     DesignEqualsImplementationClassLifeLine *rootClassLifeline = designEqualsImplementationUseCase->m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.first;
     if(!rootClassLifeline)
@@ -49,7 +49,7 @@ bool DesignEqualsImplementationProjectGenerator::processUseCase(DesignEqualsImpl
         return false;
     }
 
-    if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSLotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, rootClassLifeline, designEqualsImplementationUseCase->m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second))
+    if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, rootClassLifeline, designEqualsImplementationUseCase->m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second))
     {
         emit e("failed recursive walk kdlfjasldkf");
         return false;
@@ -75,7 +75,6 @@ bool DesignEqualsImplementationProjectGenerator::processUseCase(DesignEqualsImpl
         classInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first->appendLineToClassConstructorTemporarily(classInstance->preferredTextualRepresentation() + " = new " + classInstance->m_MyClass->ClassName + "(this);");
 #endif
     }
-#endif
 #endif
 #if 0
     QList<DesignEqualsImplementationClassSlot*> slotsInClassLifeLine = classLifeline->mySlotsAppearingInClassLifeLine();
@@ -179,7 +178,9 @@ void DesignEqualsImplementationProjectGenerator::setDestinationDirectoryPath(con
 {
     m_DestinationDirectoryPath = DestinationDirectoryPath;
 }
-bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSLotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk)
+//use case mode meaning we are (at the time of writing) only resolving where to put connect statements. we could use this time to resolve what classes get generated, but we instead rely on a project member (list) to keep track of which objects to generate. this allows objects of pure uml with no use cases to still be generated (perhaps they want to code all logic themselves but still want a class generator)
+//^i think it is undefined right now if i enter the use case mode of slot iterating (below) without first adding all relevant classes to the project, but it would be easy to fix that anyways with proper access guards to the "declaring" of a connect statement in an [jit-declared] object (whose type was just recently made known to use through the iterating of some slot-invocation heirarchy)
+bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk)
 {
     //NOTE: all class lifelines in the use case (for every use case in the project) have been assigned instances if/when we get here
 
@@ -208,14 +209,25 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                             DesignEqualsImplementationClassLifeLine *destinationSlotClassLifeline = designEqualsImplementationUseCase->m_ClassLifeLines.at(currentSignalSlotConnectionActivation.SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines); //slot key 0
                             DesignEqualsImplementationClassSlot *destinationSlot = currentSignalSlotConnectionActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself; //slot key 1
 
-                            //0
+                            //0a
                             //Check if they are both members of the same parent, the simplest connection resolving case and number 0 on my list
                             if(destinationSlotClassLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline && classLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline) //precondition that they both have a parent
                             {
                                 if(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass() == classLifeline->instanceInOtherClassIfApplicable()->parentClass())
                                 {
                                     DesignEqualsImplementationClass *sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish = destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass();
-                                    appendConnectStatementToClassInitializationSequence(sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish, DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+
+#if 0
+                                    //3
+                                    if(destinationSlotClassLifeline->instanceInOtherClassIfApplicable() != classLifeline->instanceInOtherClassIfApplicable()-> && sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish)
+                                    {
+
+                                    }
+                                    else //0b
+                                    {
+#endif
+                                        appendConnectStatementToClassInitializationSequence(sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish, DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+//                                    }
                                 }
                             }
 
@@ -282,7 +294,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                 m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode(connectStatement);
                             }
 #endif
-                            if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSLotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, destinationSlotClassLifeline, destinationSlot))
+                            if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, destinationSlotClassLifeline, destinationSlot))
                             {
                                 emit e("failed recursive walk sdlfjsdlkfjdslfj");
                                 return false;
@@ -297,7 +309,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
             //TODOreq: record dependency on the slot's class INSTANCE (however, idk wtf to do since Bar is a child of Foo). perhaps this entire dependency recording thing is not needed [for instantiation] (might still be needed for connections)
             //TODOreq: queue destination slot for iterating/recursing just like we're already doing
             DesignEqualsImplementationSlotInvocationStatement *nextSlotInvocationStatement = static_cast<DesignEqualsImplementationSlotInvocationStatement*>(currentStatement);
-            if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSLotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, nextSlotInvocationStatement->slotInvocationContextVariables().ClassLifelineWhoseSlotIsAboutToBeInvoked, nextSlotInvocationStatement->slotToInvoke()))
+            if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, nextSlotInvocationStatement->slotInvocationContextVariables().ClassLifelineWhoseSlotIsAboutToBeInvoked, nextSlotInvocationStatement->slotToInvoke()))
             {
                 emit e("failed recursive walk werweurjdfkljsldkfj");
                 return false;

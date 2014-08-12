@@ -1,0 +1,3 @@
+drawing a signal off of a second yet-uninstanced copy of bar, more specifically the name of the object (text) at the top of the class lifeline = segfault
+
+TODOreq: multiple slots for single signal emit

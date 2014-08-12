@@ -20,7 +20,9 @@
 //TODOreq: if Foo hasA Bar, we cannot invoke handleFooSignal DIRECTLY from within barSlot. Bar needs either barSignal to be connected to handleFooSignal in the UML/Design (easy), or a pointer to Foo must be somehow communicated to Bar (during construction works). As of right now, trying to INVOKE (directly) handleBarSignal from barSlot gives an invalid slot invocation statement (there is no variable name of Foo, so it looks like this: "invokeMethod(, "handleBarSignal);, obviously not valid. Ideally we could support both variations, but until then the GUI should at least not allow direct invocation on anything that doesn't have a name to refer to the target by
 //TODOreq: Possibly disallow selecting target slots already existing on the current class lifeline, because I'm not sure that makes any sense. However, my instincts tell me it's ok to target an already-on-this-class-lifeline slot when it occurs on a different lifeline. Recursion might mean that putting the same slot on one class lifeline multiple times is fine and dandy, but I'm having a hard time wrapping my head around how that would work
 //TODOoptional: if instanceType isn't set for the destination slot, we can provide a optional "express" button to give it the signal's object as it's parent. it streamlines the left to right flow and helps minimize necessary clicks. there could be other options such as making them share a parent, or the reverse where the signal object becomes the child. as you can see there are lots of options, but the first one mentioned is the most common (followed by second mentioned) and the "saved clicks" value is what makes it the most beneficiail. by far. obviously, if the instanceType indicates one is already chosen, the button is not shown at all and only the regular "ok" is shown. perhaps the express button, when present, should be the "default" button (pressing enter blindly at dialog)
-SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
+//^ a) when the source hasA member of type dest, and when dest has no instanceType, the express button offers to use the existing member
+//  b) otherwise, we allow the CREATION (and corresponding assignation) of a member on the fly for the express button
+SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
     , m_Layout(new QVBoxLayout())
@@ -121,7 +123,6 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         {
             if(sourceSlot_OrZeroIfSourceIsActor && (!sourceIsActor))
             {
-
                 if(sourceClassLifeLine_OrZeroIfSourceIsActor && sourceClassLifeLine_OrZeroIfSourceIsActor->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
                 {
 #if 0
@@ -136,6 +137,21 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
                         m_SignalsCheckbox->setDisabled(true);
                         newSignalAndExistingSignalsWidget->setDisabled(false);
                         m_SignalsCheckbox->setToolTip(tr("When the destination-object hasA the source-object, a signal is mandatory"));
+                    }
+
+                    //if two copies of bar have the same parent (foo), connecting a line between the two bars requires a signal
+                    if(
+                            destinationClassLifeLine_OrZeroIfNoDest && !destinationIsActor && destinationClassLifeLine_OrZeroIfNoDest->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline //precondition
+
+                            && destinationClassLifeLine_OrZeroIfNoDest->designEqualsImplementationClass() == sourceClassLifeLine_OrZeroIfSourceIsActor->designEqualsImplementationClass() //type (two copies of bar)
+
+                            && destinationClassLifeLine_OrZeroIfNoDest->instanceInOtherClassIfApplicable()->parentClass() == sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()->parentClass() //instance (same parent)
+                       )
+                    {
+                        m_SignalsCheckbox->setChecked(true);
+                        m_SignalsCheckbox->setDisabled(true);
+                        newSignalAndExistingSignalsWidget->setDisabled(false);
+                        m_SignalsCheckbox->setToolTip(tr("When connecting two members of the same type, the connection statement must go in the owner of said two members. Hence, a signal is required for one member to communicate with the other")); //TODOreq: slot required to, but that is implied already since there is a dest
                     }
                 }
 #if 0

@@ -2,7 +2,6 @@
 
 #include "designequalsimplementationclass.h"
 
-
 DesignEqualsImplementationClass *HasA_Private_Classes_Member::parentClass() const
 {
     return m_ParentClass;

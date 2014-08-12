@@ -314,7 +314,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
 
     //requests
     connect(this, SIGNAL(addActorToUseCaseRequsted(QPointF)), useCase, SLOT(addActorToUseCase(QPointF)));
-    connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,/*TODOinstancing: DesignEqualsImplementationClassInstance*,*/QPointF)), useCase, SLOT(addClassInstanceToUseCaseAsClassLifeLine(DesignEqualsImplementationClass*,/*TODOinstancing: DesignEqualsImplementationClassInstance*,*/QPointF)));
+    connect(this, SIGNAL(addClassToUseCaseRequested(DesignEqualsImplementationClass*,/*TODOinstancing: DesignEqualsImplementationClassInstance*,*/QPointF)), useCase, SLOT(createClassLifelineInUseCase(DesignEqualsImplementationClass*,/*TODOinstancing: DesignEqualsImplementationClassInstance*,*/QPointF)));
 
     connect(this, SIGNAL(insertSlotInvocationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSlotInvocationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)));
@@ -396,6 +396,8 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             destinationClassLifeLineGraphicsItem_OrZeroIfNoDest = destinationSlotGraphicsItem_OrZeroIfNoDest->parentClassLifelineGraphicsItem();
             destinationClassLifeLine_OrZeroIfNoDest = destinationClassLifeLineGraphicsItem_OrZeroIfNoDest->classLifeLine();
         }
+
+        //if(destinationSlotIsProbablyNameless_OrZeroIfNoDest && sourceSlotForStatementInsertion_OrZeroIfSourceIsActor && destinationSlotIsProbablyNameless_OrZeroIfNoDest == )
 
         if(!destinationIsActor)
         {
@@ -480,7 +482,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     //TODOreq: by/at-around now, we know which index in the source the statement should be inserted at. We don't have to give it to the dialog, but we do need to emit it to the backend after dialog is accepted
     int indexToInsertStatementAt_IntoSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->statementInsertIndex();
 
-    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, destinationSlotIsProbablyNameless_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceClassLifeLine_OrZeroIfSourceIsActor, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, destinationSlotIsProbablyNameless_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceClassLifeLine_OrZeroIfSourceIsActor, destinationClassLifeLine_OrZeroIfNoDest, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
         return false;
     SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables = signalSlotMessageCreatorDialog.slotInvocationContextVariables();
