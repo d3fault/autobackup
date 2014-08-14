@@ -3,14 +3,23 @@
 #include <QDataStream>
 
 #define DesignEqualsImplementationClassProperty_QDS(qds, direction, designEqualsImplementationClassProperty) \
-qds direction designEqualsImplementationClassProperty.Name; \
 qds direction designEqualsImplementationClassProperty.Type; \
+qds direction designEqualsImplementationClassProperty.Name; \
 qds direction designEqualsImplementationClassProperty.ReadOnly; \
 qds direction designEqualsImplementationClassProperty.NotifiesOnChange; \
 return qds;
 
 DesignEqualsImplementationClassProperty::DesignEqualsImplementationClassProperty(QObject *parent)
     : QObject(parent)
+    , ReadOnly(false)
+    , NotifiesOnChange(false)
+{ }
+DesignEqualsImplementationClassProperty::DesignEqualsImplementationClassProperty(const QString &propertyType, const QString &propertyName, bool readOnly, bool notifiesOnChange, QObject *parent)
+    : QObject(parent)
+    , Type(propertyType)
+    , Name(propertyName)
+    , ReadOnly(readOnly)
+    , NotifiesOnChange(notifiesOnChange)
 { }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassProperty &designEqualsImplementationClassProperty)
 {

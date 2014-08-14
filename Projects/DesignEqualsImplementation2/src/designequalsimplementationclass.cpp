@@ -92,6 +92,17 @@ void DesignEqualsImplementationClass::removeSlot(DesignEqualsImplementationClass
     slotToRemove->ParentClass = 0; //TODOreq: a slot without a parent is undefined
     //emit slotRemoved(slotToRemove);
 }
+DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(const QString &propertyType, const QString &propertyName, bool readOnly, bool notifiesOnChange)
+{
+    DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, propertyName, readOnly, notifiesOnChange, this);
+    addProperty(newProperty);
+    return newProperty;
+}
+void DesignEqualsImplementationClass::addProperty(DesignEqualsImplementationClassProperty *propertyToAdd)
+{
+    Properties.append(propertyToAdd);
+    emit propertyAdded(propertyToAdd);
+}
 HasA_Private_Classes_Member *DesignEqualsImplementationClass::createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName)
 {
     //TODOreq: ensure all callers haven't already done the "new"

@@ -369,13 +369,62 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         headerFileTextStream << endl; //OCD <3
     headerFileTextStream    << "class " << currentClass->ClassName << " : public QObject" << endl
                             << "{" << endl
-                            << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_OBJECT" << endl
-                            << "public:" << endl
+                            << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_OBJECT" << endl;
+
+    //Header's Q_PROPERTY declarations
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    {
+        //Q_PROPERTY..
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_PROPERTY(" + currentProperty->Type << " " << firstCharacterToLower(currentProperty->Name) << " READ " << getterNameForProperty(currentProperty->Name); //here marks the first time i've ever actually used the Q_PROPERTY macro <3. i'm always just too lazy and don't see the benefit... but since code generator, the cost becomes/became zero xD
+        if(!currentProperty->ReadOnly)
+            headerFileTextStream << " WRITE " << setterNameForProperty(currentProperty->Name);
+        if(currentProperty->NotifiesOnChange)
+            headerFileTextStream << " NOTIFY " << changedSignalForProperty(currentProperty->Name);
+        headerFileTextStream << ")" << endl;
+    }
+
+    headerFileTextStream << "public:" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << currentClass->ClassName << "(QObject *parent = 0);" << endl;
-    //<< DESIGNEQUALSIMPLEMENTATION_TAB << "~" << Name << "();" << endl;
-    //Header's hasAPrivateMemberClass declarations
-    if(atLeastOneHasAPrivateMemberClass)
+    headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "virtual ~" << currentClass->ClassName << "();" << endl;
+
+    //Header's property getters and setters declarations
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    {
+        //Property getter
+        //int x() const;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->Type << " " << getterNameForProperty(currentProperty->Name) << "() const;" << endl;
+
+        //Property setter
+        if(!currentProperty->ReadOnly)
+        {
+            //void setX(int newX);
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << setterNameForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" << firstCharacterToUpper(currentProperty->Name) << ");" << endl;
+        }
+    }
+
+    bool privateAccessSpecifierWritten = false;
+    if(!currentClass->Properties.isEmpty())
+    {
         headerFileTextStream << "private:" << endl;
+        privateAccessSpecifierWritten = true;
+    }
+
+    //Header's property member declarations
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    {
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->Type << " " << memberNameForProperty(currentProperty->Name) << ";" << endl;
+    }
+    if(!currentClass->Properties.isEmpty())
+    {
+        headerFileTextStream << endl;
+    }
+
+    //Header's hasAPrivateMemberClass declarations
+    if(atLeastOneHasAPrivateMemberClass && !privateAccessSpecifierWritten)
+    {
+        headerFileTextStream << "private:" << endl;
+        privateAccessSpecifierWritten = true;
+    }
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
     {
         //Bar *m_Bar;
@@ -418,6 +467,35 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         sourceFileTextStream << "}" << endl;
     }
 
+    //Source properties getters and setters definitions
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    {
+        //int Class::x() const
+        //{
+        //  return m_X;
+        //}
+        sourceFileTextStream << currentProperty->Type << " " << currentClass->ClassName << "::" << getterNameForProperty(currentProperty->Name) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << memberNameForProperty(currentProperty->Name) << ";" << endl << "}" << endl;
+
+        if(!currentProperty->ReadOnly)
+        {
+            //void Class::setX(int newX)
+            //{
+            //  if(newX != m_X)
+            //  {
+            //    m_X = newX;
+            //    emit xChanged(m_X);
+            //  }
+            //}
+            const QString &newSetPropertyVariableName = "new" + firstCharacterToUpper(currentProperty->Name);
+            sourceFileTextStream << "void " << currentClass->ClassName << "::" << setterNameForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" << firstCharacterToUpper(currentProperty->Name) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << memberNameForProperty(currentProperty->Name) << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << memberNameForProperty(currentProperty->Name) << " = " << newSetPropertyVariableName << ";" << endl;
+            if(currentProperty->NotifiesOnChange)
+            {
+                sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << "emit " << changedSignalForProperty(currentProperty->Name) << "(" << memberNameForProperty(currentProperty->Name) << ");" << endl;
+            }
+            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "}" << endl << "}" << endl;
+        }
+    }
+
     bool signalsAccessSpecifierWritten = false;
     //Signals
     if(!currentClass->mySignals().isEmpty())
@@ -431,27 +509,23 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSignal->methodSignatureWithoutReturnType() << ";" << endl;
     }
 
-    //Slots
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
+    //Property change notification signals
+    if(signalsAccessSpecifierWritten)
+        headerFileTextStream << endl;
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
     {
-        //slot finished/exit signal
-        //each slot/unit-of-execution/ has the opportunity of supplying (by connecting to actor) a finished/exit signal
-        if(currentSlot->finishedOrExitSignal_OrZeroIfNone())
+        if(currentProperty->NotifiesOnChange)
         {
             if(!signalsAccessSpecifierWritten)
             {
                 headerFileTextStream << "signals:" << endl;
                 signalsAccessSpecifierWritten = true;
             }
-#if 0 //exit signal is just a regular signal when it comes to generation
-            DesignEqualsImplementationClassSignal *finishedOrExitSignal_OrZeroIfNone = currentSlot->finishedOrExitSignal_OrZeroIfNone();
-            if(finishedOrExitSignal_OrZeroIfNone)
-            {
-                headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << finishedOrExitSignal_OrZeroIfNone->methodSignatureWithoutReturnType() << ";" << endl;
-            }
-#endif
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << changedSignalForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" + firstCharacterToUpper(currentProperty->Name) << ");" << endl;
         }
     }
+
+    //Slots
     if(!currentClass->mySlots().isEmpty())
         headerFileTextStream << "public slots:" << endl;
     Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())

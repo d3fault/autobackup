@@ -1,7 +1,8 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASSASQGRAPHICSITEMFORCLASSDIAGRAMSCENE_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASSASQGRAPHICSITEMFORCLASSDIAGRAMSCENE_H
 
-#include <QGraphicsWidget>
+#include <QGraphicsRectItem>
+#include <QObject>
 #include <QPen>
 
 #include "../../designequalsimplementationclass.h"
@@ -20,12 +21,16 @@ protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 private:
+    QGraphicsTextItem *m_ClassContentsGraphicsTextItem;
     DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
     QRectF m_BoundingRect;
     QPen m_ClassBorderPen;
     QPen m_LinesInBetweenLinesOfTextPen;
+
+    QString classDetailsAsHtmlString();
+    void updateClassContentsGraphicsTextItem();
 public slots:
-    void handlePropertyAdded(DesignEqualsImplementationClassProperty*);
+    void handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded);
     void handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member*);
     void handlePrivateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void handleSlotAdded(DesignEqualsImplementationClassSlot*);

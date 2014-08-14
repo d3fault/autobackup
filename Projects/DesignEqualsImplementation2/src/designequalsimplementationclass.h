@@ -40,7 +40,10 @@ public:
 
     //TODOoptional: private + getter/setter blah
     QString ClassName;
-    QList<DesignEqualsImplementationClassProperty*> Properties;
+
+    DesignEqualsImplementationClassProperty *createNewProperty(const QString &propertyType, const QString &propertyName, bool readOnly, bool notifiesOnChange);
+    void addProperty(DesignEqualsImplementationClassProperty *propertyToAdd);
+
     HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);
     QList<HasA_Private_Classes_Member *> hasA_Private_Classes_Members();
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> hasA_Private_PODorNonDesignedCpp_Members();
@@ -54,6 +57,7 @@ public:
 
 
     //TODOoptional: should be private
+    QList<DesignEqualsImplementationClassProperty*> Properties;
     QList<HasA_Private_Classes_Member*> m_HasA_Private_Classes_Members;
     QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> m_HasA_Private_PODorNonDesignedCpp_Members;
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;

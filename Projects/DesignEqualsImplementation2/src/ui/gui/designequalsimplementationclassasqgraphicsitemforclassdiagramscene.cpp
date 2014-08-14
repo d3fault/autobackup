@@ -34,6 +34,37 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
 
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
 
+    m_ClassContentsGraphicsTextItem = new QGraphicsTextItem(this);
+    updateClassContentsGraphicsTextItem();
+}
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QMenu menu;
+    QAction *classEditorAction = menu.addAction(tr("Class Editor"));
+    QAction *removeClassFromProjectAction = menu.addAction(tr("Remove Class From Project"));
+    QAction *selectedAction = menu.exec(event->screenPos());
+    if(!selectedAction)
+        return;
+    if(selectedAction == classEditorAction)
+    {
+        ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass);
+        if(classEditorDialog.exec() != QDialog::Accepted)
+            return;
+    }
+    else if(selectedAction == removeClassFromProjectAction) //etc
+    {
+        //TODOreq
+    }
+}
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    Q_UNUSED(event)
+    ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass);
+    if(classEditorDialog.exec() != QDialog::Accepted)
+        return;
+}
+QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::classDetailsAsHtmlString()
+{
     QString classContentsString("<b>" + m_DesignEqualsImplementationClass->ClassName + "</b>"); //TODOoptional: figure out out how to center this in addition to bolding it (<center> didn't work)
     int numLinesOfText = 1;
 
@@ -93,7 +124,7 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
 #endif
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_DesignEqualsImplementationClass->Properties)
     {
-        classContentsString.append("<br />o  " + currentProperty->Name);
+        classContentsString.append("<br />o  " + currentProperty->Type + ": " + currentProperty->Name);
         ++numLinesOfText;
     }
     Q_FOREACH(HasA_Private_Classes_Member *currentHasA_Private_Classes_Members_ListEntryType, m_DesignEqualsImplementationClass->hasA_Private_Classes_Members())
@@ -116,36 +147,12 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
         classContentsString.append("<br />+  " + currentSlot->methodSignatureWithoutReturnType());
         ++numLinesOfText;
     }
-
-    QGraphicsTextItem *classContentsGraphicsTextItem = new QGraphicsTextItem(this);
-    classContentsGraphicsTextItem->setHtml(classContentsString);
+    return classContentsString;
+}
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::updateClassContentsGraphicsTextItem()
+{
+    m_ClassContentsGraphicsTextItem->setHtml(classDetailsAsHtmlString());
     setRect(childrenBoundingRect());
-}
-void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
-{
-    QMenu menu;
-    QAction *classEditorAction = menu.addAction(tr("Class Editor"));
-    QAction *removeClassFromProjectAction = menu.addAction(tr("Remove Class From Project"));
-    QAction *selectedAction = menu.exec(event->screenPos());
-    if(!selectedAction)
-        return;
-    if(selectedAction == classEditorAction)
-    {
-        ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass);
-        if(classEditorDialog.exec() != QDialog::Accepted)
-            return;
-    }
-    else if(selectedAction == removeClassFromProjectAction) //etc
-    {
-        //TODOreq
-    }
-}
-void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-    Q_UNUSED(event)
-    ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass);
-    if(classEditorDialog.exec() != QDialog::Accepted)
-        return;
 }
 #if 0
 QRectF DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::boundingRect() const
@@ -257,12 +264,16 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     painter->restore();
 }
 #endif
-void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handlePropertyAdded(DesignEqualsImplementationClassProperty *)
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded)
 {
+    Q_UNUSED(propertyAdded)
+
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     //TODOreq: re-paint with new property
     //TODOoptmization: when "opening" a file, tons (hundreds, possibly thousands, depending on the project) of these handle* slots will be invoked, each one triggering a repaint. I'm not sure, but actually I think that the calls to update CAN be (and are) combined. If _NOT_, I should probably do that combining myself/hackily!!
     //update(boundingRect()); //TODOoptimization: if our 'thing' (property here) is added at the BOTTOM of the uml/widget, we can supply a smaller rect to update!
+
+    updateClassContentsGraphicsTextItem(); //TODOoptimization: don't update EVERYTHING, just append the new property
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member *)
 {
