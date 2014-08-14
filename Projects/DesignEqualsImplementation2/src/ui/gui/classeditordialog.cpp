@@ -24,13 +24,23 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     classNameRow->addWidget(classNameLabel);
     classNameRow->addWidget(m_ClassNameLineEdit);
 
+    QHBoxLayout *validStateNameRow = new QHBoxLayout();
+    QLabel *validStateNameLabel = new QLabel(tr("Optional state name: ")); //TODOreq: use for RAII constructor, a better name for the "initialized" signal, and the async initialize slot itself (RAII constructor calls said slot directly)
+    QString validStateTooltip("Choose an arbitrary name for when this class/object is valid (open, ready, etc). \"is\" (ex: isReady) will be prepended to it:");
+    validStateNameLabel->setToolTip(validStateTooltip);
+    QLineEdit *m_ValidStateNameLineEdit = new QLineEdit();
+    m_ValidStateNameLineEdit->setToolTip(validStateTooltip);
+    validStateNameLabel->setBuddy(m_ValidStateNameLineEdit);
+    validStateNameRow->addWidget(validStateNameLabel);
+    validStateNameRow->addWidget(m_ValidStateNameLineEdit);
+
     QGroupBox *quickMemberAddGroupBox = new QGroupBox(tr("&Quick Add"));
     QHBoxLayout *quickMemberAddRow = new QHBoxLayout();
     QLineEdit *m_QuickMemberAddLineEdit = new QLineEdit();
     m_QuickMemberAddLineEdit->setPlaceholderText(tr("New member signature..."));
-    QPushButton *quickAddNewPropertyButton = new QPushButton(tr("&Property"));
-    QPushButton *quickAddNewSignalButton = new QPushButton(tr("S&ignal"));
-    QPushButton *quickAddNewSlotButton = new QPushButton(tr("S&lot"));
+    QPushButton *quickAddNewPropertyButton = new QPushButton(tr("Property"));
+    QPushButton *quickAddNewSignalButton = new QPushButton(tr("Signal"));
+    QPushButton *quickAddNewSlotButton = new QPushButton(tr("Slot"));
     quickMemberAddRow->addWidget(m_QuickMemberAddLineEdit);
     quickMemberAddRow->addWidget(quickAddNewPropertyButton);
     quickMemberAddRow->addWidget(quickAddNewSignalButton);
@@ -38,6 +48,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     quickMemberAddGroupBox->setLayout(quickMemberAddRow);
 
     myLayout->addLayout(classNameRow);
+    myLayout->addLayout(validStateNameRow);
     myLayout->addWidget(quickMemberAddGroupBox);
 
     setLayout(myLayout);

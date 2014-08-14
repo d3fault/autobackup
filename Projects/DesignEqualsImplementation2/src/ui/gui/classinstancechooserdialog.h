@@ -11,7 +11,7 @@ class QLineEdit;
 class QListWidget;
 
 class DesignEqualsImplementationClass;
-class DesignEqualsImplementationClassInstance;
+class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationUseCase;
 class HasA_Private_Classes_Member;
 
@@ -19,7 +19,7 @@ class ClassInstanceChooserDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ClassInstanceChooserDialog(DesignEqualsImplementationClass *classBeingAdded, DesignEqualsImplementationUseCase *useCaseClassIsBeingAddedTo, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    explicit ClassInstanceChooserDialog(DesignEqualsImplementationClassLifeLine *classLifelineForWhichAnInstanceIsBeingChosen, QWidget *parent = 0, Qt::WindowFlags f = 0);
     bool newInstanceChosen();
     DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember() const;
     QString nameOfNewPrivateHasAMember() const;
@@ -36,7 +36,7 @@ private:
     QComboBox *m_ClassesInUseCaseAvailableForUseAsParentOfNewInstance;
     QLineEdit *m_NewInstanceNameLineEdit;
     QListWidget *m_ExistingInstancesListWidget;
-    DesignEqualsImplementationClass *m_ClassBeingAdded;
+    DesignEqualsImplementationClassLifeLine *m_ClassLifelineForWhichAnInstanceIsBeingChosen;
     DesignEqualsImplementationClass *m_ExistingClassToUseAsParentForNewInstance;
     QString m_NameOfNewPrivateHasAMember;
 
@@ -53,11 +53,15 @@ private:
     void addAllChildrensChildrenClassInstancesToPassedInList(DesignEqualsImplementationClassInstance *currentChildInstance/*, QList<DesignEqualsImplementationClassInstance*> *runningListOfExistingInstances*/);
     QString makeAbsoluteVariableNameSpecifierForInstance(DesignEqualsImplementationClassInstance *instanceToFinalizeTheVariableName);
 #endif
+signals:
+    void createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember, DesignEqualsImplementationClass *typeOfNewPrivateHasAMember, const QString &nameOfNewPrivateHasAMember);
+    void assignPrivateMemberAsClassLifelineInstanceRequested(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member);
 private slots:
     void handleNewInstancesRadioButtonToggled(bool checked);
     void handleClassesInUseCaseAvailableForUseAsParentOfNewInstanceCurrentIndexChanged(int newIndex);
     void handleNewInstanceNameLineEditTextChanged(const QString &newText);
     void handleExistingInstancesCurrentRowChanged(int newRow);
+    void handleDialogAccepted();
 };
 
 #endif // CLASSINSTANCECHOOSERDIALOG_H

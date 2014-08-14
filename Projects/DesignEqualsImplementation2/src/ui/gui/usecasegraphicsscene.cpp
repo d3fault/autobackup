@@ -772,8 +772,6 @@ void UseCaseGraphicsScene::handleClassLifeLineAdded(DesignEqualsImplementationCl
 
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene = new DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(newClassLifeLine); //TODOreq: right-click -> change thread (main/gui thread (default), new thread X, existing thread Y). they should somehow visually indicate their thread. i was thinking a shared "filled-background" (color), but even if just the colors of the lifelines are the same that would be sufficient
     connect(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene, SIGNAL(slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*)), this, SLOT(handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*)));
-    connect(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene, SIGNAL(createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)), newClassLifeLine, SLOT(createNewHasAPrivateMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)));
-    connect(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene, SIGNAL(assignPrivateMemberAsClassLifelineInstanceRequested(HasA_Private_Classes_Member*)), newClassLifeLine, SLOT(assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member*)));
 
     designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene->setPos(newClassLifeLine->position()); //TODOreq: listen for moves
 

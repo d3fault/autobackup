@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 
+#include "classinstancechooserdialog.h"
 #include "../../designequalsimplementationcommon.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../designequalsimplementationclass.h"
@@ -66,7 +67,9 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     signalHLayout->addWidget(newSignalAndExistingSignalsWidget);
     newSignalAndExistingSignalsWidget->setLayout(signalsLayout);
-    signalGroupBox->setLayout(signalHLayout);
+    QVBoxLayout *signalVLayout = new QVBoxLayout();
+    signalVLayout->addLayout(signalHLayout);
+    signalGroupBox->setLayout(signalVLayout);
     m_Layout->addWidget(signalGroupBox);
 
     if(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalEventType)
@@ -133,37 +136,61 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         {
             if(sourceSlot_OrZeroIfSourceIsActor && (!sourceIsActor))
             {
-                if(sourceClassLifeLine_OrZeroIfSourceIsActor && sourceClassLifeLine_OrZeroIfSourceIsActor->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
+                if(sourceClassLifeLine_OrZeroIfSourceIsActor)
                 {
+                    if(sourceClassLifeLine_OrZeroIfSourceIsActor->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
+                    {
 #if 0
-                if(sourceClassLifeLine_OrZeroIfSourceIsActor && sourceClassLifeLine_OrZeroIfSourceIsActor->instanceType() != DesignEqualsImplementationClassLifeLine::NoInstanceChosen)
-                {
-                    //either root or child of some other, we know at least that our instance is chosen, which means we are capable of having children. we have a list of children to check against that we know is valid (but perhaps empty)
+                        if(sourceClassLifeLine_OrZeroIfSourceIsActor && sourceClassLifeLine_OrZeroIfSourceIsActor->instanceType() != DesignEqualsImplementationClassLifeLine::NoInstanceChosen)
+                        {
+                            //either root or child of some other, we know at least that our instance is chosen, which means we are capable of having children. we have a list of children to check against that we know is valid (but perhaps empty)
 #endif
-                    if(sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()->parentClass() == destinationSlotToInvoke_OrZeroIfNoDest->ParentClass)
-                    {
-                        //when the connection-activatation-line _destination_(slot) is parent (hasA relationship) of the _source_(signal), a signal is mandatory in the signal/slot message dialog before the dialog can be accepted. a slot is also mandatory since there is a destination, but that is already implemenented
-                        m_SignalsCheckbox->setChecked(true);
-                        m_SignalsCheckbox->setDisabled(true);
-                        newSignalAndExistingSignalsWidget->setDisabled(false);
-                        m_SignalsCheckbox->setToolTip(tr("When the destination-object hasA the source-object, a signal is mandatory"));
+                            if(sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()->parentClass() == destinationSlotToInvoke_OrZeroIfNoDest->ParentClass)
+                            {
+                                //when the connection-activatation-line _destination_(slot) is parent (hasA relationship) of the _source_(signal), a signal is mandatory in the signal/slot message dialog before the dialog can be accepted. a slot is also mandatory since there is a destination, but that is already implemenented
+                                m_SignalsCheckbox->setChecked(true);
+                                m_SignalsCheckbox->setDisabled(true);
+                                newSignalAndExistingSignalsWidget->setDisabled(false);
+                                m_SignalsCheckbox->setToolTip(tr("When the destination-object hasA the source-object, a signal is mandatory"));
+                            }
+
+                            //if two copies of bar have the same parent (foo), connecting a line between the two bars requires a signal
+                            if(
+                                    destinationClassLifeLine_OrZeroIfNoDest && !destinationIsActor && destinationClassLifeLine_OrZeroIfNoDest->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline //precondition
+
+                                    && destinationClassLifeLine_OrZeroIfNoDest->designEqualsImplementationClass() == sourceClassLifeLine_OrZeroIfSourceIsActor->designEqualsImplementationClass() //type (two copies of bar)
+
+                                    && destinationClassLifeLine_OrZeroIfNoDest->instanceInOtherClassIfApplicable()->parentClass() == sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()->parentClass() //instance (same parent)
+                                    )
+                            {
+                                m_SignalsCheckbox->setChecked(true);
+                                m_SignalsCheckbox->setDisabled(true);
+                                newSignalAndExistingSignalsWidget->setDisabled(false);
+                                m_SignalsCheckbox->setToolTip(tr("When connecting two members of the same type, the connection statement must go in the owner of said two members. Hence, a signal is required for one member to communicate with the other")); //TODOreq: slot required to, but that is implied already since there is a dest
+                            }
+                        }
+                        else if(sourceClassLifeLine_OrZeroIfSourceIsActor->instanceType() == DesignEqualsImplementationClassLifeLine::NoInstanceChosen)
+                        {
+                            //source does not have instance, so warn them that if they don't select a signal (they only select slot invoke), dest must be made a child of source before source can be generated
+                            m_SignalsCheckbox->setChecked(true);
+                            newSignalAndExistingSignalsWidget->setDisabled(false);
+                            m_SignalsCheckbox->setText(m_SignalsCheckbox->text() + "*");
+
+                            QHBoxLayout *warningRow = new QHBoxLayout();
+                            QLabel *warningLabel = new QLabel(tr("* = WARNING: Your source class lifeline has not been assigned an instance, so it is highly recommended that you use a signal and do not use a plain slot invoke. If you do choose slot invoke without a signal, know that you must make the destination class lifeline a child of the source class lifeline (source must hasA dest as it's member). Failing to do this will lead to undefined results"));
+                            warningLabel->setWordWrap(true);
+                            warningRow->addWidget(warningLabel); //TODOoptional: only show the warning when the signal checkbox is unchecked. Hide it again when signal checkbox is re-checked
+
+                            QPushButton *chooseSourceInstanceButton = new QPushButton(tr("Choose Source Instance"));
+                            warningRow->addWidget(chooseSourceInstanceButton);
+                            signalVLayout->addLayout(warningRow);
+
+                            connect(chooseSourceInstanceButton, SIGNAL(clicked()), this, SLOT(handleChooseSourceInstanceButtonClicked()));
+
+                            m_SourceClassLifeline_OrZeroIfSourceIsActor = sourceClassLifeLine_OrZeroIfSourceIsActor;
+                        }
                     }
 
-                    //if two copies of bar have the same parent (foo), connecting a line between the two bars requires a signal
-                    if(
-                            destinationClassLifeLine_OrZeroIfNoDest && !destinationIsActor && destinationClassLifeLine_OrZeroIfNoDest->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline //precondition
-
-                            && destinationClassLifeLine_OrZeroIfNoDest->designEqualsImplementationClass() == sourceClassLifeLine_OrZeroIfSourceIsActor->designEqualsImplementationClass() //type (two copies of bar)
-
-                            && destinationClassLifeLine_OrZeroIfNoDest->instanceInOtherClassIfApplicable()->parentClass() == sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()->parentClass() //instance (same parent)
-                       )
-                    {
-                        m_SignalsCheckbox->setChecked(true);
-                        m_SignalsCheckbox->setDisabled(true);
-                        newSignalAndExistingSignalsWidget->setDisabled(false);
-                        m_SignalsCheckbox->setToolTip(tr("When connecting two members of the same type, the connection statement must go in the owner of said two members. Hence, a signal is required for one member to communicate with the other")); //TODOreq: slot required to, but that is implied already since there is a dest
-                    }
-                }
 #if 0
 
                 if(destinationClassLifeLine_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline )//precondition that it dest is a child at all
@@ -490,5 +517,15 @@ void SignalSlotMessageDialog::tryValidatingDialog()
     else
     {
         m_OkButton->setDisabled(true);
+    }
+}
+void SignalSlotMessageDialog::handleChooseSourceInstanceButtonClicked() //corner-case
+{
+    ClassInstanceChooserDialog classInstanceChooserDialog(m_SourceClassLifeline_OrZeroIfSourceIsActor); //m_SourceClassLifeline_OrZeroIfSourceIsActor is already known to be valid or else we'd never get here
+    if(classInstanceChooserDialog.exec() == QDialog::Accepted)
+    {
+        //TODOreq: re-do the visualization stuff (for example, the warning/button that brought is here would probably now be hidden since they've chosen an instance). i suppose i need "reset" and "setupVisuals" methods
+
+        //TODOoptional: pre-Generate-source-code sanitization. I am only hesitant to do that stage of sanitization because eventually there hopefully won't be the requirement of objects being children of each other in order to communicate (the source would still need a pointer to dest, even if he doesn't own dest)
     }
 }

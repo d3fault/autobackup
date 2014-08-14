@@ -61,18 +61,8 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::context
         return;
     if(selectedAction == chooseInstanceAction)
     {
-        ClassInstanceChooserDialog classInstanceChooserDialog(classLifeLine()->designEqualsImplementationClass(), classLifeLine()->parentUseCase());
-        if(classInstanceChooserDialog.exec() != QDialog::Accepted)
-            return;
-
-        if(classInstanceChooserDialog.newInstanceChosen())
-        {
-            emit createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(classInstanceChooserDialog.parentClassChosenToGetNewHasAprivateMember(), classLifeLine()->designEqualsImplementationClass(), classInstanceChooserDialog.nameOfNewPrivateHasAMember());
-        }
-        else
-        {
-            emit assignPrivateMemberAsClassLifelineInstanceRequested(classInstanceChooserDialog.chosenExistingHasA_Private_Classes_Member());
-        }
+        ClassInstanceChooserDialog classInstanceChooserDialog(classLifeLine());
+        classInstanceChooserDialog.exec();
         return;
     }
     else if(selectedAction == classEditorAction)

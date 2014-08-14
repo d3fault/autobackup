@@ -42,6 +42,8 @@ private:
     QWidget *m_SignalArgsFillingInWidget;
     QWidget *m_SlotArgsFillingInWidget;
 
+    DesignEqualsImplementationClassLifeLine *m_SourceClassLifeline_OrZeroIfSourceIsActor;
+
     void showSignalArgFillingIn();
     void collapseSignalArgFillingIn();
 
@@ -56,6 +58,8 @@ private slots:
     void handleExistingSignalComboBoxIndexChanged(int newIndex);
     void handleExistingSlotsComboBoxCurrentIndexChanged(int newIndex);
     void tryValidatingDialog();
+
+    void handleChooseSourceInstanceButtonClicked();
 };
 
 #endif // SIGNALSLOTMESSAGEDIALOG_H

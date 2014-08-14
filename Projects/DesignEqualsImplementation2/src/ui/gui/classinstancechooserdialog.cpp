@@ -19,26 +19,26 @@
 //TODOoptional: instead of a modal dialog, a qlistwidget below the uml class items listing the entries, defaulting to "new top level widget". Just less clicks is all. Also right click -> change instance being used?
 //TODOoptional: radio mode grays out opposite mode
 //TODOreq: introducing qgoupbox made the radio buttons in different groups (and so not mutually exclusive), fix that
-ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementationClass *classBeingAdded, DesignEqualsImplementationUseCase *useCaseClassIsBeingAddedTo, QWidget *parent, Qt::WindowFlags f)
+ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementationClassLifeLine *classLifelineForWhichAnInstanceIsBeingChosen, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_NewInstanceRadioButton(new QRadioButton(tr("New Instance")))
     , m_NewInstanceChosen(true)
     , m_ClassesInUseCaseAvailableForUseAsParentOfNewInstance(new QComboBox())
     , m_NewInstanceNameLineEdit(new QLineEdit())
     , m_ExistingInstancesListWidget(new QListWidget())
-    , m_ClassBeingAdded(classBeingAdded)
+    , m_ClassLifelineForWhichAnInstanceIsBeingChosen(classLifelineForWhichAnInstanceIsBeingChosen)
     //TODOinstancing: , m_NewTopLevelInstanceChosen(false)
     //TODOinstancing: , m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline(0)
 {
     setWindowTitle(tr("Class Instance Creator/Chooser"));
-    if(!classBeingAdded)
+    if(!classLifelineForWhichAnInstanceIsBeingChosen)
     {
         //TODOreq: emit e
         QMetaObject::invokeMethod(this, "reject", Qt::QueuedConnection);
         return;
     }
 
-    QLabel *currentClassBeingAssignedInstanceLabel = new QLabel(tr("Choose instance for object of type: ") + classBeingAdded->ClassName);
+    QLabel *currentClassBeingAssignedInstanceLabel = new QLabel(tr("Choose instance for object of type: ") + classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass()->ClassName);
 
     //new instance
     QGroupBox *newInstanceGroupBox = new QGroupBox();
@@ -50,10 +50,10 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     m_NewInstanceRadioButton->setFont(boldFont);
     QLabel *newChildMemberLabel = new QLabel(tr("Child member of:"));
     bool firstClassAdded = true;
-    Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeline, useCaseClassIsBeingAddedTo->classLifeLines())
+    Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeline, classLifelineForWhichAnInstanceIsBeingChosen->parentUseCase()->classLifeLines())
     {
         DesignEqualsImplementationClass *currentClass = currentClassLifeline->designEqualsImplementationClass();
-        if(currentClass == classBeingAdded)
+        if(currentClass == classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass())
             continue; //don't add ourself to ourself (but actually sometimes this is useful so... :-/)
         if(firstClassAdded)
         {
@@ -73,15 +73,15 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     QRadioButton *existingInstancesRadioButton = new QRadioButton(tr("Existing Instances"));
     existingInstancesRadioButton->setFont(boldFont);
 
-    Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeline, useCaseClassIsBeingAddedTo->classLifeLines())
+    Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeline, classLifelineForWhichAnInstanceIsBeingChosen->parentUseCase()->classLifeLines())
     {
         DesignEqualsImplementationClass *currentClass = currentClassLifeline->designEqualsImplementationClass();
-        if(currentClass == classBeingAdded)
+        if(currentClass == classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass())
             continue;
 
         //TODOreq: two instances of same type (allowed in use case) should only be added once. just keep track of the classes already added and make sure it's not already added, simple
 
-        addAllPrivateHasAMembersThatAreOfAcertainTypeToExistingInstancesListWidget(currentClass, classBeingAdded);
+        addAllPrivateHasAMembersThatAreOfAcertainTypeToExistingInstancesListWidget(currentClass, classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass());
     }
 
 #if 0 // OLD, needs refactoring
@@ -140,6 +140,11 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
     connect(m_ExistingInstancesListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
+
+    connect(this, SIGNAL(accepted()), this, SLOT(handleDialogAccepted()));
+
+    connect(this, SIGNAL(createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)), classLifelineForWhichAnInstanceIsBeingChosen, SLOT(createNewHasAPrivateMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)));
+    connect(this, SIGNAL(assignPrivateMemberAsClassLifelineInstanceRequested(HasA_Private_Classes_Member*)), classLifelineForWhichAnInstanceIsBeingChosen, SLOT(assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member*)));
 }
 bool ClassInstanceChooserDialog::newInstanceChosen()
 {
@@ -289,4 +294,15 @@ void ClassInstanceChooserDialog::handleNewInstanceNameLineEditTextChanged(const 
 void ClassInstanceChooserDialog::handleExistingInstancesCurrentRowChanged(int newRow)
 {
     m_ExistingInstanceHasAPrivateClassesMember = qvariant_cast<HasA_Private_Classes_Member*>(m_ExistingInstancesListWidget->item(newRow)->data(Qt::UserRole));
+}
+void ClassInstanceChooserDialog::handleDialogAccepted()
+{
+    if(newInstanceChosen())
+    {
+        emit createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(parentClassChosenToGetNewHasAprivateMember(), m_ClassLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass(), nameOfNewPrivateHasAMember());
+    }
+    else
+    {
+        emit assignPrivateMemberAsClassLifelineInstanceRequested(chosenExistingHasA_Private_Classes_Member());
+    }
 }
