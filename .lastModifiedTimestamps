@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1407993010
+Documents/minddump/:1408258030
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1406931334
+Documents/minddump/dreams/:1408257545
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -127,6 +127,7 @@ Documents/minddump/dreams/lskdfjlaksjfdlsdkjfosudflsjkdfouslfdjsdfououer.txt:138
 Documents/minddump/dreams/lskdjflksjdflksjdfouflkjsdofusdlfjsoduflkjweroiujsdf.txt:1377721281
 Documents/minddump/dreams/lskdjflsjadfosuadflsdofusdlfjouwerlkjsdofuisadlfk.txt:1389041042
 Documents/minddump/dreams/lskjdflkjsdfouewljrousdflkjsdofulewkjroiuasfkdjlsdjkfsdofulekjroiudsflkjsdf.txt:1382820797
+Documents/minddump/dreams/lskjdflkjsdlkfjskldjfklsjdklfjsdkljfkljekwlrjousdlfkjsdlf.txt:1408257545
 Documents/minddump/dreams/lskjflksjflksjdfosduflsdkjfosudflkjsdofusdlkfjsdouflskdjf.txt:1379861608
 Documents/minddump/dreams/lucid.dream.infinite.mirrors.sadfljsadflsjfdouiwerkjosdfiuasldkfjoiur.txt:1376826749
 Documents/minddump/dreams/lucid.for.a.few.moments.but.wasted.because.unable.to.be.confident.in.assessment.txt:1392696783
@@ -1245,6 +1246,7 @@ Documents/minddump/ljadsfasdufawjrojsafasjflksdajfsdakfhsdaf.txt:1345423549
 Documents/minddump/ljasdjasdhskdjhfjldkjfldsjfsodufweurouiljdfsdfouilkjewr.txt:1366536435
 Documents/minddump/ljasdlkjfsdofulskjdfousldkfjsoduflkjouwerlkjsdfou.txt:1384047167
 Documents/minddump/ljdsfaosdfusaofiyasoifhwaefkjasdfousdaflkasjdf.txt:1329121594
+Documents/minddump/ljdsfljsdfljsdlkfjklsdjfksdjfjsdlkfjsdlkjfklsjdflkjsdfkljdslkfjsdlkjflksdjflksdjf.yep.drunk.txt:1408185776
 Documents/minddump/ljdslfjlfkjsalkdfjlksdjfkljsdflkjsafljsdoewurljdfousdflk.txt:1398357147
 Documents/minddump/ljkfsldkjfksljdfkljsdlfkjsdfousdljfkosduflskjdfousldkfjsdiu.txt:1393820908
 Documents/minddump/ljksadfljksadlkfjsdouflkjewourlkjsdfouasdlfk.txt:1384946785
@@ -1397,6 +1399,7 @@ Documents/minddump/lsdkjflkasjfosudiflkjsdfoulkwejrouiljfsdoufdslk.txt:136699364
 Documents/minddump/lsdkjflkjsadfousadfljsdofuldjfosewrweudflsjdfosudfljewro.txt:1384430443
 Documents/minddump/lsdkjflkjsdflskdjflksjdfljksflkjsfdsouewrlk.txt:1361424874
 Documents/minddump/lsdkjflkjsflkjaslkjdfasdofuosduflsdjfosudflsjdfousdfljsdfljk.txt:1393712491
+Documents/minddump/lsdkjflksdjflksdjflksjdfouwerljsodfsdlfhsldfjdslfjdsfsdofulk.txt:1408258030
 Documents/minddump/lsdkjflksdjfouierlkjfousidfk.txt:1355188053
 Documents/minddump/lsdkjflsjdfljksdflkjsdfljksdflkjsdflksdfjlksdjfosdufljewroulkjdfsdf.txt:1382108761
 Documents/minddump/lsdkjflsjdflksjdfosduflsdjfousdflkjeorulkfjsdfiusdflkj.txt:1380541237
@@ -2578,7 +2581,8 @@ Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRele
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfileswidget.h:1379253035
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/main.cpp:1379408785
 Projects/DesignEqualsImplementation2/:1405089905
-Projects/DesignEqualsImplementation2/design/:1407811567
+Projects/DesignEqualsImplementation2/design/:1408253349
+Projects/DesignEqualsImplementation2/design/2.types.of.classes.maybe.action.class.and.pod.class.but.idfk.txt:1408253349
 Projects/DesignEqualsImplementation2/design/arrows.saldfjsldfjlsjfwoeurljsdfosduflsdkjfosdfsldfjsldf.txt:1405420969
 Projects/DesignEqualsImplementation2/design/both.of.these.appear.to.be.fixed.and.or.implemented.so.sdfljsldfjaslkdjfslkdjfousdflksdjfklsdjf.txt:1407764134
 Projects/DesignEqualsImplementation2/design/classes.are.all.or.nothing.AND.iterating.use.cases.cant.generate.class.constructor.initialize.or.connect.code.it.must.have.been.made.sooner.somehow.txt:1405964014
@@ -2613,12 +2617,13 @@ Projects/DesignEqualsImplementation2/design/the.reason.i.cant.conceptualize.proj
 Projects/DesignEqualsImplementation2/design/this.bug.almost.made.me.revert.lolol.and.now.to.try.to.fix.it.sdlfjsldkfjlskdjfsldkf.txt:1405634218
 Projects/DesignEqualsImplementation2/design/units.of.executions.and.slots.and.private.methods.all.have.tons.of.overlap.sdfouwerljsdfsdklfj.txt:1405166122
 Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.definitions.or.slot.references.and.yes.they.can.be.mixed.at.any.ratio.txt:1407283362
+Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1408004926
+Projects/DesignEqualsImplementation2/src/:1408258072
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1408004264
+Projects/DesignEqualsImplementation2/src/ui/gui/:1408254950
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1407283493
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1404542044
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2652,11 +2657,11 @@ Projects/DesignEqualsImplementation2/src/ui/gui/idesignequalsimplementationgraph
 Projects/DesignEqualsImplementation2/src/ui/gui/idesignequalsimplementationgraphicsscene.h:1404472428
 Projects/DesignEqualsImplementation2/src/ui/gui/ihaveagraphicsviewandscene.cpp:1405446054
 Projects/DesignEqualsImplementation2/src/ui/gui/ihaveagraphicsviewandscene.h:1404470507
-Projects/DesignEqualsImplementation2/src/ui/gui/main.cpp:1405432210
+Projects/DesignEqualsImplementation2/src/ui/gui/main.cpp:1408253460
 Projects/DesignEqualsImplementation2/src/ui/gui/reference.class.lifeline.unit.of.execution.aka.slot.as.in.it.is.defined.in.another.use.case.double.clicking.door.opens.that.use.case.tab.svg:1407279778
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp:1405367716
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h:1405367700
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1407996169
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1408254950
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1407995196
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.cpp:1405630076
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.h:1405630057
@@ -2690,7 +2695,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.h:1
 Projects/DesignEqualsImplementation2/src/designequalsimplementationcommon.h:1405638136
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1407754003
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1407753924
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1408004825
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1408255831
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1408004343
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.cpp:1405674759
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.h:1405674746
@@ -2836,7 +2841,7 @@ Projects/Hottee/src/cli/main.cpp:1402472001
 Projects/Hottee/src/lib/:1402473271
 Projects/Hottee/src/lib/hottee.cpp:1402473270
 Projects/Hottee/src/lib/hottee.h:1402473271
-Projects/Ideas/:1405676304
+Projects/Ideas/:1408254295
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -3101,6 +3106,7 @@ Projects/Ideas/seed.hash.chaining.alsdfjasdfoiuwerlakjsdfoasudflk.txt:1337989129
 Projects/Ideas/sell.cs.tag.as.an.ad.slot.lol.asldfjsaldfjsoiusdf.txt:1332971365
 Projects/Ideas/selling.books.is.basically.being.paid.to.create.a.backup.im.down.rofl.txt:1340901921
 Projects/Ideas/serial.qcode.over.video.out.txt:1324818896
+Projects/Ideas/serializing.to.binary.xml.or.json.could.be.done.without.changing.the.serialization.code.sldfjsladfjsdalkfkl.txt:1408254295
 Projects/Ideas/social.networking.friend.feed.and.outreach.feed.for.when.youre.bored.of.your.own.friends.but.not.bored.enough.to.wander.txt:1331350249
 Projects/Ideas/social.networking.is.nothing.special.just.a.small.part.of.a.larger.thing.txt:1322772117
 Projects/Ideas/soudclong.txt:1322063311

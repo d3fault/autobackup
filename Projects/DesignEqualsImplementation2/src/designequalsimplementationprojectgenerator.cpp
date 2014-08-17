@@ -10,6 +10,7 @@
 #include "designequalsimplementationslotinvocationstatement.h"
 
 //one instance = one generation
+//TODOreq: sanitize that all slots in all use cases are 'named' before doing generation. hold off on this for now since "slot naming" might get refactored
 DesignEqualsImplementationProjectGenerator::DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, QObject *parent)
     : QObject(parent)
     , m_ProjectGenerationMode(projectGenerationMode)
@@ -510,8 +511,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     }
 
     //Property change notification signals
-    if(signalsAccessSpecifierWritten)
-        headerFileTextStream << endl;
+    bool gapBetweenRegularSignalsAndPropertyChangeSignalsWritten = false;
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
     {
         if(currentProperty->NotifiesOnChange)
@@ -520,7 +520,14 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
             {
                 headerFileTextStream << "signals:" << endl;
                 signalsAccessSpecifierWritten = true;
+                gapBetweenRegularSignalsAndPropertyChangeSignalsWritten = true; //we don't want the gap because there are no regular signals!
             }
+            else if(!gapBetweenRegularSignalsAndPropertyChangeSignalsWritten)
+            {
+                headerFileTextStream << endl;
+                gapBetweenRegularSignalsAndPropertyChangeSignalsWritten = true;
+            }
+
             headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << changedSignalForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" + firstCharacterToUpper(currentProperty->Name) << ");" << endl;
         }
     }

@@ -25,6 +25,7 @@
 //^ a) when the source hasA member of type dest, and when dest has no instanceType, the express button offers to use the existing member
 //  b) otherwise, we allow the CREATION (and corresponding assignation) of a member on the fly for the express button
 //TODOoptional: setDisabled on checkbox grays out the checkbox label. i want the label to stay colored but the checkbox to gray out. could split into checkbox and label ez, or perhaps setReadOnly is my friend?
+//TODOreq: dialog should never validate when neither signal nor slot is checked
 SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
@@ -118,12 +119,13 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     if(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalEventType)
     {
         //no destination context, so they'd have to select an object/lifeline/unit-of-exectution or create one on the fly TODOreq
-        newSlotAndExistingSlotsWidget->setDisabled(true);
         m_SignalsCheckbox->setChecked(true);
+        m_SignalsCheckbox->setDisabled(true);
         newSignalAndExistingSignalsWidget->setDisabled(false);
         m_SignalsCheckbox->setToolTip(tr("You can't NOT have a signal when you don't have a destination"));
         m_SlotsCheckbox->setDisabled(true);
         m_SlotsCheckbox->setToolTip(tr("You can't have a slot when you don't have a destination")); //TODOreq: create destination+slot on the fly
+        newSlotAndExistingSlotsWidget->setDisabled(true);
     }
     else
     {
