@@ -14,6 +14,7 @@
 //TODOreq: the dummy pre-named slot stuff might need to be refactored, for example if two dummy slots are on a single class lifeline (or maybe even just class), they might collide? I think really allowing empty string named slots and referring to them by pointer is what I should do
 //TODOreq: C++ statement, including C++ IDE integration (spit out, suck in)
 //TODOreq: do not allow the same instance of class [lifeline] to be in the same use case. attempting to do so should give an appropriate error message (or perhaps the already-used-instance should be unselectable (BUT i still think there should be some visual cue notifying them of why they can't select it. without said visual cue, one might go crazy trying to select an instance and have no clue why it isn't showing up in the list)
+//TODOreq: perhaps "DesignEqualsImplementationType" (wherever a type is mentioned), with two "modes" selectable via enum: InternallyDesignedType, QtOrCppBuiltinOrOtherKnownByStringType. HOWEVER, how would I use an internally-designed type as a method argument as const/ref/ptr???
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

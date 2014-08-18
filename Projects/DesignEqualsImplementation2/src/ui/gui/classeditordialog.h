@@ -5,9 +5,13 @@
 
 class QLineEdit;
 class QCheckBox;
+class QVBoxLayout;
 
+class MethodSingleArgumentWidget;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassProperty;
+class IDesignEqualsImplementationMethod;
+class DesignEqualsImplementationClassSlot;
 
 class ClassEditorDialog : public QDialog
 {
@@ -23,7 +27,14 @@ private:
     QCheckBox *m_AddPropertyReadOnlyCheckbox;
     QCheckBox *m_AddPropertyNotifiesOnChangeCheckbox;
 
+    //Add Slot
+    QLineEdit *m_AddSlotNameLineEdit;
+    QVBoxLayout *m_AddSlotArgumentsVLayout;
+
+    void addArgToSlotBeingCreated();
+    static void addAllArgsInLayoutToMethod(IDesignEqualsImplementationMethod* methodToAddArgumentsTo, QLayout *layoutContainingOneArgPerChild);
     bool addPropertyFieldsAreSane();
+    bool addSlotFieldsAreSane();
 signals:
     void e(const QString &);
 private slots:
@@ -33,8 +44,16 @@ private slots:
 
     void handleAddPropertyButtonClicked();
 
+    void handleAddSlotAddArgButtonClicked();
+    void handleTabPressedInArgNameLineEdit_SoMakeNewArgIfThatWasTheLastOne_OtherwiseManuallyChangeFocusSinceTheTabWasEaten();
+    void handleMoveArgumentUpRequested(MethodSingleArgumentWidget *argumentRequestingToBeMovedUp);
+    void handleMoveArgumentDownRequested(MethodSingleArgumentWidget *argumentRequestingToBeMovedDown);
+    void handleDeleteArgumentRequested(MethodSingleArgumentWidget *argumentRequestingToBeDeleted);
+    void handleAddSlotButtonClicked();
+
     //reactor pattern slots
     void handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded);
+    void handleSlotAdded(DesignEqualsImplementationClassSlot* slotAdded);
 };
 
 #endif // CLASSEDITORDIALOG_H

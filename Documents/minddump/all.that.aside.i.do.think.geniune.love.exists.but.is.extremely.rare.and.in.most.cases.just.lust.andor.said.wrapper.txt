@@ -1,0 +1,26 @@
+Love is a[n illusive (an illusion that seems real (such as maybe all of existence, but also love) is real)] wrapper around prostitution (the male perspective) and provider/protection (the female perspective). Of course, subconsciously both genders just want to pass on their genetic code... which is stupid for the following reason:
+
+Imagine I made a C++ class whose sole purpose was to create itself. What value would it have?
+
+class Blah
+{
+public:
+	static Blah* createBlah() { return new Blah(); }
+private:
+	Blah();
+};
+
+
+I was thinking about this for fun I suppose (while taking a piss), but realized it suffers from chicken and egg problem. Technically, createBlah shouldn't be static... but then you wouldn't be able to make the first instance xD. Our evolution is a bit more complex than this simple C++ design, so fuck who cares that it falls apart.
+
+I probably wouldn't have written any of this doc if I didn't stumble into that chicken/egg problem and find it mildly interesting.
+
+So post-bootstrap, our human class looks like this:
+
+class Human
+{
+public:
+	Human *sexyTiem(const Human &other); //or: static Human *sexyTiem(const Human &male, const Human &female); //best use of const-correctness (although TECHNICALLY incorrect because I am modified as my ejaculate leaves me (but just like atomics and mutexes, THEY WANT TO MODIFY))
+private:
+	Human();
+};

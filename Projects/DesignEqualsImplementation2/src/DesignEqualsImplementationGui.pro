@@ -55,7 +55,9 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/destinationslotsnappingindicationvisualrepresentation.cpp \
     hasa_private_classes_member.cpp \
     designequalsimplementationprojectgenerator.cpp \
-    ui/gui/classeditordialog.cpp
+    ui/gui/classeditordialog.cpp \
+    ui/gui/methodsingleargumentwidget.cpp \
+    ui/gui/tabemittinglineedit.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -103,6 +105,8 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/destinationslotsnappingindicationvisualrepresentation.h \
     hasa_private_classes_member.h \
     designequalsimplementationprojectgenerator.h \
-    ui/gui/classeditordialog.h
+    ui/gui/classeditordialog.h \
+    ui/gui/methodsingleargumentwidget.h \
+    ui/gui/tabemittinglineedit.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)

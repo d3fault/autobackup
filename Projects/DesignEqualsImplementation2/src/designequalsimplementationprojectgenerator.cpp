@@ -11,6 +11,7 @@
 
 //one instance = one generation
 //TODOreq: sanitize that all slots in all use cases are 'named' before doing generation. hold off on this for now since "slot naming" might get refactored
+//TODOoptional: any time curly braces don't have anything inside them, they should be on a single line with a space in between (like i already do for constructors). i can/should do the same for slots... it just saves vertical real estate
 DesignEqualsImplementationProjectGenerator::DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, QObject *parent)
     : QObject(parent)
     , m_ProjectGenerationMode(projectGenerationMode)

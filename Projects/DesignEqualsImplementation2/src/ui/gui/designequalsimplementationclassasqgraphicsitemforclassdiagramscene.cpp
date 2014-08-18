@@ -273,7 +273,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleP
     //TODOoptmization: when "opening" a file, tons (hundreds, possibly thousands, depending on the project) of these handle* slots will be invoked, each one triggering a repaint. I'm not sure, but actually I think that the calls to update CAN be (and are) combined. If _NOT_, I should probably do that combining myself/hackily!!
     //update(boundingRect()); //TODOoptimization: if our 'thing' (property here) is added at the BOTTOM of the uml/widget, we can supply a smaller rect to update!
 
-    updateClassContentsGraphicsTextItem(); //TODOoptimization: don't update EVERYTHING, just append the new property
+    updateClassContentsGraphicsTextItem(); //TODOoptimization: don't update EVERYTHING, just append the new property, ditto for slots/signals/etc
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member *)
 {
@@ -283,11 +283,12 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleP
 {
     //hmm starting to think i should have just emitted the lists themselves, since i'm now thinking i am going to store them in lists also xD
 }
-void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleSlotAdded(DesignEqualsImplementationClassSlot*)
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleSlotAdded(DesignEqualsImplementationClassSlot*slotAdded)
 {
     //TODOprobably (same as the other handles, so really they can all be merged...):
     //myPaint(); //does draw incl mutex lock
     //update(); //paint works on static item (pixmap?)
+    updateClassContentsGraphicsTextItem();
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleSignalAdded(DesignEqualsImplementationClassSignal *)
 {

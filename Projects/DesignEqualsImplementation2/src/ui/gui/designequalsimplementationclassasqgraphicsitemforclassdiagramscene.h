@@ -33,7 +33,7 @@ public slots:
     void handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded);
     void handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member*);
     void handlePrivateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
-    void handleSlotAdded(DesignEqualsImplementationClassSlot*);
+    void handleSlotAdded(DesignEqualsImplementationClassSlot *slotAdded);
     void handleSignalAdded(DesignEqualsImplementationClassSignal*);
 };
 
