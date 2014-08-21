@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1408338443
+Documents/minddump/:1408535443
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1140,6 +1140,8 @@ Documents/minddump/jksdflkjdslkfjsadouwreoiuafjlsdflkj.txt:1354049859
 Documents/minddump/jladsfkjdslfkjasdfoiuwerkljasfdiusalfj.txt:1335804567
 Documents/minddump/jlsakjfdlksjdflkjsdlkfjsjdfljsdofulsdjflkjouwerlkjsoduflksdfj.txt:1398267831
 Documents/minddump/jsdafljsadofiuasfousaoeriujwearoausdpfuawrljwlkfsdoiufsalkfj.txt:1327710139
+Documents/minddump/jsdfljsdlfjlskdjflksdjfkljdkfjsdklfjsdlkfjlksdjfklsdjfklhsdflksdhflksdhfljsdlkf.txt:1408535443
+Documents/minddump/jsldfjlksdjflksdjlfkjsdlkfjsldkjflksdjflksdjflksdjf.txt:1408535280
 Documents/minddump/kaylee.ask.out.method.retrospect.lmfao.god.goddess.txt:1340099810
 Documents/minddump/kaylee.thinks.im.pathetic.which.is.understandable.because.i.am.open.squre.bracket.so.far.close.square.bracket.txt:1333874327
 Documents/minddump/kaylee.wat.r.u.doin.to.meeeeeeeeeeeeeee.txt:1322518878
@@ -2582,14 +2584,16 @@ Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRele
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfileswidget.h:1379253035
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/main.cpp:1379408785
 Projects/DesignEqualsImplementation2/:1405089905
-Projects/DesignEqualsImplementation2/design/:1408253349
+Projects/DesignEqualsImplementation2/design/:1408603536
 Projects/DesignEqualsImplementation2/design/2.types.of.classes.maybe.action.class.and.pod.class.but.idfk.txt:1408253349
 Projects/DesignEqualsImplementation2/design/arrows.saldfjsldfjlsjfwoeurljsdfosduflsdkjfosdfsldfjsldf.txt:1405420969
 Projects/DesignEqualsImplementation2/design/both.of.these.appear.to.be.fixed.and.or.implemented.so.sdfljsldfjaslkdjfslkdjfousdflksdjfklsdjf.txt:1407764134
 Projects/DesignEqualsImplementation2/design/classes.are.all.or.nothing.AND.iterating.use.cases.cant.generate.class.constructor.initialize.or.connect.code.it.must.have.been.made.sooner.somehow.txt:1405964014
+Projects/DesignEqualsImplementation2/design/cpp11.now.required.to.compile.damn.i.mean.unless.a.cpp98.app.can.link.to.a.cpp11.lib.but.idk.and.doubt.it.txt:1408603536
 Projects/DesignEqualsImplementation2/design/delayed.instancing.and.other.rambling.asdfljslfkjsdofuwerlkjsdflkjsdflskd.txt:1406702932
 Projects/DesignEqualsImplementation2/design/dfjsldfjsdjflsdkjflksdjflkjsdflkjsdfowuerlkjsdofusdfkjsdlfk.txt:1405506032
 Projects/DesignEqualsImplementation2/design/dflkjsdlfkjsdlkfjsdklfjweourlkjdfosdfkjsdfls.txt:1405423408
+Projects/DesignEqualsImplementation2/design/differentiating.internally.designed.classes.from.defined.elsewhere.classes.txt:1408447061
 Projects/DesignEqualsImplementation2/design/dlfkjsldkfjlskdjflkjsdflkjsdfouewrlkdf.txt:1405499683
 Projects/DesignEqualsImplementation2/design/dsfljsdljflksdjfkljsdlkfjlskdjfskdljflksdjflksdfj.txt:1407811567
 Projects/DesignEqualsImplementation2/design/dsklfjsdkjflkajsdfklsjdflksdjfosdhfsdflsdjflksdjflksdjf.finally.txt:1405360704
@@ -2601,7 +2605,9 @@ Projects/DesignEqualsImplementation2/design/kiss.self.pep.talk.sdlfkjasldfjsldjf
 Projects/DesignEqualsImplementation2/design/lol.variadic.macros.ez.etcetc.safjslfdkjsdfouwerlkjsdflsdk.txt:1405767449
 Projects/DesignEqualsImplementation2/design/lsdjflsjfljsdfjslkfjsldkjflksjdflkjsdflkjsdfjsldkjfsdlkjfsd.txt:1406687463
 Projects/DesignEqualsImplementation2/design/multiple.top.level.objects.blah.boring.dont.read.adfljslfjasdlfkjsalkdfjsd.txt:1405769244
+Projects/DesignEqualsImplementation2/design/nvm.sdfjlsdjflksdjlfkjsdklfjksdljfsjdflkjweorulsdjflksdjflkjsdfk.txt:1408535988
 Projects/DesignEqualsImplementation2/design/qobject.children.can.be.found.without.modifying.the.parents.in.between.as.a.way.to.connect.distant.objects.directly.txt:1407134590
+Projects/DesignEqualsImplementation2/design/quick.add.coming.soon.and.strategy.for.when.clang.encounters.unknown.types.outlined.txt:1408603171
 Projects/DesignEqualsImplementation2/design/saving.the.most.recent.compiling.checkpoint.maybe.but.then.again.would.take.up.lots.of.space.txt:1405599604
 Projects/DesignEqualsImplementation2/design/scoped.connections.dumb.and.pseudo.heirarchies.and.alsdfjsldkfjslkfjlksjdflkwerou.yep.txt:1407132140
 Projects/DesignEqualsImplementation2/design/sdfjlsadkfjklsjdflkjsdkfljskdlfjksldjflksdjfklsdjflksdjf.txt:1405046627
@@ -4890,7 +4896,7 @@ autobackupScripts/linux/LiveCDinstallAndConfigExtra/vagalume-config.xml:13378812
 autobackupScripts/linux/aptOfflinePackageManagement/:1366495827
 autobackupScripts/linux/aptOfflinePackageManagement/genInstallAndDepsDebUrls.sh:1378373315
 autobackupScripts/linux/aptOfflinePackageManagement/genUpgradeDebUrls.sh:1378373179
-autobackupScripts/linux/aptOfflinePackageManagement/how2offlineAptPackageManagement.txt:1378373813
+autobackupScripts/linux/aptOfflinePackageManagement/how2offlineAptPackageManagement.txt:1408536575
 autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944

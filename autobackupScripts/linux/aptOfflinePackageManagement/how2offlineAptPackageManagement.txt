@@ -10,7 +10,7 @@ If your "apt-get update" (gencaches) is already up to date, skip to step 5
 
 2) copy i think everything from /var/lib/apt/lists/ , which is the result of the apt-get update (but in non-cached form). The "lock" file and the "partial" folder in "lists" can be ignored and/or deleted
 
-3) remove the portable drive from the online machine and plug it into the offline machine. copy the "lists" back into /etc/lib/apt/lists on the offline box using: "cd /thumb/drive/lists/folder/; cp -avi --no-preserve=all ./ /var/lib/apt/lists/
+3) remove the portable drive from the online machine and plug it into the offline machine. copy the "lists" back into /etc/lib/apt/lists on the offline box using: "cp -v --no-preserve=all /media/usb0/apt/debian/amd64/lists/* /var/lib/apt/lists/"
 
 4) run "apt-cache gencaches" to populate the apt cache with the new lists (this is normally done at the end of apt-get update, but that specific command requires internet whereas gencaches does not)
 
