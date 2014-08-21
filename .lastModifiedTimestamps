@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1408535443
+Documents/minddump/:1408603860
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1777,6 +1777,7 @@ Documents/minddump/sdflkjsdlfkjsdlkfjsdouflkjewroulfkjsdflkj.txt:1358504357
 Documents/minddump/sdflkjsdlfkjsdlkjfsoduflsdjfouelkrjoiusdflksjdfoiusdoufdljsd.txt:1393516648
 Documents/minddump/sdflkjsdlfkjsldkjfsdoufsdljfosduflskjdfousdfljsofdulksdf.txt:1391543411
 Documents/minddump/sdflkjsdlfkjslkdjflksdjoiur.txt:1354515758
+Documents/minddump/sdflkjsdlkfjkldsjflksjdflkjsdflkrwerwerjsdfkljsdlfkjsd.txt:1408603860
 Documents/minddump/sdflkjsdlkfjlsdkjflkjsdflkjweorulkjsflkjsf.txt:1397164814
 Documents/minddump/sdflkjsdlkfjouwerlkjosduflkjsdfouasdflkt.txt:1384429977
 Documents/minddump/sdflkjsdlkfjsdfjoiuwerlkjsdfoulkjrwerousdflk.txt:1358805363
@@ -3302,7 +3303,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1397553945
+Projects/Prototypes/:1408606756
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1390331620
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1390584039
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -3381,6 +3382,17 @@ Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:139024293
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/setvaluebykeyrequestfromwt.h:1389720128
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389777479
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389777895
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/:1408610152
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/:1408612775
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/FunctionDecomposerWithNewTypeDetectorGui.pro:1408612138
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/functiondecomposerwithnewtypedetector.cpp:1408612729
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/functiondecomposerwithnewtypedetector.h:1408609539
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/functiondecomposerwithnewtypedetectorgui.cpp:1408609965
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/functiondecomposerwithnewtypedetectorgui.h:1408609792
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/functiondecomposerwithnewtypedetectorwidget.cpp:1408610161
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/functiondecomposerwithnewtypedetectorwidget.h:1408609891
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/libclangpch.h:1408611746
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/main.cpp:1408609664
 Projects/Prototypes/GenericAcker/:1350049497
 Projects/Prototypes/GenericAcker/design/:1350050661
 Projects/Prototypes/GenericAcker/design/initial.design.simple.sendMessage.got.lost.towards.the.end.not.sure.this.is.what.i.want.dia:1350049517
