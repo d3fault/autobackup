@@ -18,6 +18,8 @@ public:
 protected:
     virtual void handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *event);
 private:
+    DesignEqualsImplementationProject *m_CurrentProject;
+
     void privateConstructor(DesignEqualsImplementationProject *designEqualsImplementationProject);
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
 signals:

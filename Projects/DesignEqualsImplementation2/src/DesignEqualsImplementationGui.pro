@@ -57,7 +57,9 @@ SOURCES += ui/gui/main.cpp\
     designequalsimplementationprojectgenerator.cpp \
     ui/gui/classeditordialog.cpp \
     ui/gui/methodsingleargumentwidget.cpp \
-    ui/gui/tabemittinglineedit.cpp
+    ui/gui/tabemittinglineedit.cpp \
+    designequalsimplementationfunctiondeclarationparser.cpp \
+    ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -107,6 +109,19 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementationprojectgenerator.h \
     ui/gui/classeditordialog.h \
     ui/gui/methodsingleargumentwidget.h \
-    ui/gui/tabemittinglineedit.h
+    ui/gui/tabemittinglineedit.h \
+    designequalsimplementationfunctiondeclarationparser.h \
+    ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h
 
 include(../../../GloballySharedClasses/objectonthreadgroup.pri)
+
+#libclang stuff
+CONFIG += precompile_header
+PRECOMPILED_HEADER = libclangpch.h
+DEFINES += NDEBUG
+DEFINES += _GNU_SOURCE
+DEFINES += __STDC_CONSTANT_MACROS
+DEFINES += __STDC_FORMAT_MACROS
+DEFINES += __STDC_LIMIT_MACROS
+INCLUDEPATH += "/usr/lib/llvm-3.4/include"
+LIBS += -L/usr/lib/llvm-3.4/lib -lclangTooling -lclangDriver -lclangFrontend -lclangParse -lclangSema -lclangEdit -lclangAnalysis -lclangLex -lclangSerialization -lclangAST -lclangBasic -lclang

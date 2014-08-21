@@ -31,13 +31,16 @@ public:
     void addUseCase(DesignEqualsImplementationUseCase *newUseCase);
     QList<DesignEqualsImplementationUseCase*> useCases();
 
+    void noteDefinedElsewhereType(const QString &definedElsewhereType);
+    QList<QString> definedElsewhereTypes() const;
+
     //TODOreq: m_Classes should be private, but I had issues getting the getters/setters to play nicely with QDataStream. Maybe a simple "friend QDataStream;" would fix it (or similar), but I can't be fucked to even play around with it right now. STILL, after coding for a while you should check that all usages of m_Classes are only from within the getter/setters (more important is the setter, but still in principle the getter too)
     QList<DesignEqualsImplementationClass*> m_Classes;
     QList<DesignEqualsImplementationClassInstance*> m_TopLevelClassInstances;
     QList<DesignEqualsImplementationUseCase*> m_UseCases;
+    QList<QString> m_DefinedElsewhereTypes;
 
     //Temporary for code gen:
-    void appendLineToTemporaryProjectGlueCode(const QString &line);
     bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);
 private:
     bool savePrivate(const QString &projectFilePath);

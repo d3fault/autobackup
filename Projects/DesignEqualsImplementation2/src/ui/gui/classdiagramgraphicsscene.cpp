@@ -41,6 +41,8 @@ void ClassDiagramGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEv
 }
 void ClassDiagramGraphicsScene::privateConstructor(DesignEqualsImplementationProject *designEqualsImplementationProject)
 {
+    m_CurrentProject = designEqualsImplementationProject;
+
     //requests
     connect(this, SIGNAL(addUmlItemRequested(UmlItemsTypedef,QPointF)), designEqualsImplementationProject, SLOT(handleAddUmlItemRequested(UmlItemsTypedef,QPointF)));
 
@@ -55,7 +57,7 @@ void ClassDiagramGraphicsScene::handleClassAdded(DesignEqualsImplementationClass
 {
     //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
 
-    DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene *designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene = new DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(classAdded); //scene takes ownership at addItem
+    DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene *designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene = new DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(classAdded, m_CurrentProject); //scene takes ownership at addItem
     designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene->setPos(classAdded->Position);
     //TODOreq: listen to move signals so the backend serializes later click-drag-rearranges from user
 

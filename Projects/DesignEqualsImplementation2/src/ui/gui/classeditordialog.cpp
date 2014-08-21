@@ -7,16 +7,21 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QCheckBox>
-
+#include <QMessageBox>
 
 #include "methodsingleargumentwidget.h"
+#include "newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h"
+#include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
+#include "../../designequalsimplementationfunctiondeclarationparser.h"
 
 //modeless yet still cancelable would be best, but for now i'll settle for modal and cancelable. actually fuck that shit, the editor is going to modify the backend object directly for now (fuck the police)
 //TODOoptional: "types" can be either internal/designed types (sup) or "Qt/C++ built-ins (or basically ANY type, but similarly simply referred to by string). If you choose a "string" type but later convert it to an internal type, the app could ask you if you want to scan for other uses of that string type to convert them to the internal types as well, saving time/effort/etcS
-ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, QWidget *parent, Qt::WindowFlags f)
+//TODOoptional: auto-completion when typing in the quick add line edit for already existing types (and the C[++] types) would be nice, but probably pretty difficult. Much easier would be a read-only combo-box containing those types so that by just selecting one in the drop-down, it is pasted into the line edit wherever the cursor is (err does the cursos stay when I click the combo box? i guess append at end is decent enough)
+ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_ClassBeingEditted(classToEdit)
+    , m_CurrentProject(currentProject)
 {
     setWindowTitle(tr("Class Editor"));
 
@@ -30,8 +35,8 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     classNameRow->addWidget(m_ClassNameLineEdit);
 
     QHBoxLayout *validStateNameRow = new QHBoxLayout();
-    QLabel *validStateNameLabel = new QLabel(tr("Optional state name: ")); //TODOreq: use for RAII constructor, a better name for the "initialized" signal, and the async initialize slot itself (RAII constructor calls said slot directly)
-    QString validStateTooltip("Choose an arbitrary name for when this class/object is valid (open, ready, etc). \"is\" (ex: isReady) will be prepended to it:");
+    QLabel *validStateNameLabel = new QLabel(tr("Optional 'ready' state name:")); //TODOreq: use for RAII constructor, a better name for the "initialized" signal, and the async initialize slot itself (RAII constructor calls said slot directly)
+    QString validStateTooltip("Choose an arbitrary name for when this class/object is valid (open, ready, etc). \"is\" (ex: isReady) will be prepended to it");
     validStateNameLabel->setToolTip(validStateTooltip);
     QLineEdit *m_ValidStateNameLineEdit = new QLineEdit();
     m_ValidStateNameLineEdit->setToolTip(validStateTooltip);
@@ -41,9 +46,13 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
 
     //Quick add
     QGroupBox *quickMemberAddGroupBox = new QGroupBox(tr("&Quick Add"));
+    QFont boldFont = quickMemberAddGroupBox->font();
+    boldFont.setBold(true);
+    quickMemberAddGroupBox->setFont(boldFont);
     QHBoxLayout *quickMemberAddRow = new QHBoxLayout();
-    QLineEdit *m_QuickMemberAddLineEdit = new QLineEdit();
+    m_QuickMemberAddLineEdit = new QLineEdit();
     m_QuickMemberAddLineEdit->setPlaceholderText(tr("New member signature..."));
+    m_QuickMemberAddLineEdit->setToolTip(tr("Signals and Slots _MUST_ have a void return type"));
     QPushButton *quickAddNewPropertyButton = new QPushButton(tr("Property"));
     QPushButton *quickAddNewSignalButton = new QPushButton(tr("Signal"));
     QPushButton *quickAddNewSlotButton = new QPushButton(tr("Slot"));
@@ -78,6 +87,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     //Add slot -- TODOoptional: perhaps make this it's own [inline/embedded-here] widget so that I can re-use it in the signal/slot message editor [for slot creation on the fly]
     //***TODOreq***: 'tab' when in the arg name field adds a new arg and switches focus to the next arg type field (tab in type field simply moves to name field). Enter in arg name field adds the slot to the class (clears the form). Enter in slot name field also adds the slot to the class (such as when there are no args). Both of these abilities are explained in tooltips for "Add Arg" and "Add Slot" buttons respectively. Additionally, empty arg type/name fields (accidental tab press) are safely ignored (but if only one or the other is empty, we give the user an error). If the argument is not the very last argument, then pressing tab in arg name field does not add a new argument, but just functions normally and changes focus to the next arg type field
     //TODOreq: perhaps when add slot is pressed, the types are checked against internal/designed types and associated with them (otherwise, just string type). However this fucking fails when considering all the various ways to refer to a type in C++ (ptr, ref, const, etc)
+    //TODOreq: since idk how to make clang parse a "type only", I'll just use this old version to compose a function/method/slot signature, then use the quick add logic to parse it again muahahaha. refactor required but whatever. It's also better to have one code path for the signal/slot/property creation stuff instead of two.
     QGroupBox *addSlotGroupBox = new QGroupBox(tr("New Slot"));
     QHBoxLayout *addSlotRow = new QHBoxLayout();
     m_AddSlotNameLineEdit = new QLineEdit();
@@ -189,7 +199,42 @@ void ClassEditorDialog::handleQuickAddNewSignalButtonClicked()
 }
 void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
 {
-    //TODOoptional: parse the method definition. i looked into using libclang, but was unable to get any of the examples working :-/. i could write a primitive basic parser, but also feel it might not be worth the effort since i'm definitely reinventing a wheel (and i know it would be limited in use and break easy)
+    QList<QString> allKnownTypes;
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_CurrentProject->classes())
+    {
+        allKnownTypes.append(currentClass->ClassName);
+    }
+    Q_FOREACH(const QString &currentDefinedElsewhereType, m_CurrentProject->definedElsewhereTypes())
+    {
+        allKnownTypes.append(currentDefinedElsewhereType);
+    }
+    DesignEqualsImplementationFunctionDeclarationParser functionDeclarationParser(m_QuickMemberAddLineEdit->text(), allKnownTypes);
+    if(functionDeclarationParser.hasUnrecoverableSyntaxError())
+    {
+        QMessageBox::critical(this, tr("Syntax Error"), tr("There was a syntax error in your slot declaration. Check stderr for the details")); //TODOreq: show the details in-app in a qplaintextedit
+        return;
+    }
+
+    //first we account for any new param type that is unknown to us
+    if(!functionDeclarationParser.newTypesSeenInFunctionDeclaration().isEmpty())
+    {
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(functionDeclarationParser.newTypesSeenInFunctionDeclaration()); //intuitive naming ;-P
+        if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
+            return;
+        Q_FOREACH(const QString &currentNewDesignEqualsClass, newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.typesDecidedToBeDesignEqualsImplementationClass())
+        {
+            m_CurrentProject->createNewClass(currentNewDesignEqualsClass);
+        }
+        Q_FOREACH(const QString &currentNewDefinedElsewhereType, newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.typesDecidedToBeDefinedElsewhere())
+        {
+            m_CurrentProject->noteDefinedElsewhereType(currentNewDefinedElsewhereType);
+        }
+    }
+
+    //now create the new slot itself
+    m_ClassBeingEditted->createwNewSlot(functionDeclarationParser.parsedFunctionName());
+
+    //TODOreq: add the args to the new slot, i think i need to refactor some though... because the argument types can be either internally designed classes or defined elsewhere types... and additionally they can have modifiers such as "references", "pointers", "consts", etc... that we want to KEEP for the slot declaration. so i guess i'll just stop coding and sit here staring at the blinking cursor comatose until i figure out what to do
 }
 void ClassEditorDialog::handleAddPropertyButtonClicked()
 {

@@ -12,7 +12,7 @@ TARGET = FunctionDecomposerWithNewTypeDetectorGui
 TEMPLATE = app
 CONFIG += precompile_header
 
-PRECOMPILED_HEADER = libclangpch.h #not only do i want faster compiles, but i want to not see the thousands of llvm/clang warnings... so i can see the ones relevant to my app. damn, it doesn't work. but i think compile time did speed up a tiny bit
+PRECOMPILED_HEADER = libclangpch.h #not only do i want faster compiles, but i want to not see the thousands of llvm/clang warnings... so i can see the ones relevant to my app. appears to work if the file using the precompiled header doesn't change <3
 
 SOURCES += main.cpp\
         functiondecomposerwithnewtypedetectorwidget.cpp \
@@ -29,4 +29,4 @@ DEFINES += __STDC_CONSTANT_MACROS
 DEFINES += __STDC_FORMAT_MACROS
 DEFINES += __STDC_LIMIT_MACROS
 INCLUDEPATH += "/usr/lib/llvm-3.4/include"
-LIBS += -L/usr/lib/llvm-3.4/lib -lpthread -lffi -ltinfo -ldl -lm -lclangTooling -lclangDriver -lclangFrontend -lclangParse -lclangSema -lclangEdit -lclangAnalysis -lclangLex -lclangSerialization -lclangAST -lclangBasic -lclang
+LIBS += -L/usr/lib/llvm-3.4/lib -lclangTooling -lclangDriver -lclangFrontend -lclangParse -lclangSema -lclangEdit -lclangAnalysis -lclangLex -lclangSerialization -lclangAST -lclangBasic -lclang

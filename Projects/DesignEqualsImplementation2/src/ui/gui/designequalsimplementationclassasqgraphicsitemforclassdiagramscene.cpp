@@ -14,10 +14,11 @@
 #include"classeditordialog.h"
 
 //TODOmb: considering changing this to a qpixmap in a graphics scene instead, where teh pixmap is drawn only when the class changes, update called once, then it's simply provided to qgraphicsview (svg might be more optimized?)... i'm going to wait on making a decision until i try to reuse the code for getting the "uml class" drag drop thingo to use the same shape (in designEquals1, i rendered to pixmap for that). i do know one thing, what i'm doing now is hella laggy (but works so fuck it)
-DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *graphicsParent, QObject *qobjectParent)
+DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent, QObject *qobjectParent)
     : QObject(qobjectParent)
     , QGraphicsRectItem(graphicsParent)
     , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
+    , m_CurrentProject(currentProject)
 {
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -47,7 +48,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::context
         return;
     if(selectedAction == classEditorAction)
     {
-        ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass);
+        ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass, m_CurrentProject);
         if(classEditorDialog.exec() != QDialog::Accepted)
             return;
     }
@@ -59,7 +60,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::context
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass);
+    ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass, m_CurrentProject);
     if(classEditorDialog.exec() != QDialog::Accepted)
         return;
 }

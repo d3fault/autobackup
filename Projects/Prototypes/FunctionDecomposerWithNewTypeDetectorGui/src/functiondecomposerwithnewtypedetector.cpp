@@ -1,13 +1,6 @@
 #include "functiondecomposerwithnewtypedetector.h"
 
-#include "clang/AST/ASTConsumer.h"
-#include "clang/AST/ASTContext.h"
-#include "clang/AST/RecursiveASTVisitor.h"
-#include "clang/Frontend/CompilerInstance.h"
-#include "clang/Frontend/FrontendAction.h"
-#include "clang/Tooling/Tooling.h"
-#include "clang/Parse/ParseDiagnostic.h"
-#include "clang/Sema/SemaDiagnostic.h"
+#include "libclangpch.h"
 
 using namespace clang;
 
@@ -22,7 +15,7 @@ public:
     {
         if(FunctionDecl *functionDecl = dyn_cast<FunctionDecl>(declaration))
         {
-            //TODOreq: should i config a DesignEqualsImplementationMethod (rename to function?) or should i pass around the clang internal types? I'm leaning towards "depend on clang as little as possible (especially if i want to have a compile time switch to not even use it)", even though admittedly I'll be reinventing the wheel here and there (like I already am/have :-P). I'm still iffy on how I'm going to handle a variable "how the user typed it" (const SomeClass &blah -- etc) vs "underlying type" (SomeClass)... but I'm damn glad clang has allowed me to DETERMINE the underlying class :)
+            //TO DOnereq(can't instantiate internal clang types eaisly): should i config a DesignEqualsImplementationMethod (rename to function?) or should i pass around the clang internal types? I'm leaning towards "depend on clang as little as possible (especially if i want to have a compile time switch to not even use it)", even though admittedly I'll be reinventing the wheel here and there (like I already am/have :-P). I'm still iffy on how I'm going to handle a variable "how the user typed it" (const SomeClass &blah -- etc) vs "underlying type" (SomeClass)... but I'm damn glad clang has allowed me to DETERMINE the underlying class :)
         }
         return true;
     }
@@ -109,7 +102,7 @@ void FunctionDecomposerWithNewTypeDetector::parseFunctionDeclaration(const QStri
             emit syntaxErrorDetected();
             return;
         }
-        functionDeclarationTemp.prepend("typedef int " + m_UnknownTypesDetectedThisIteration.at(0) + "; "); //just one at a time, since the next one might be the same unknown type
+        functionDeclarationTemp.prepend("typedef int " + m_UnknownTypesDetectedThisIteration.at(0) + "; "); //just one at a time, since the next one might be the same unknown type. TODOreq: in DesignEqualsImplementation2, all previously designed/defined classes would have been prepended before even the first runToolOnCode call
         m_TypesToBeCreated.append(m_UnknownTypesDetectedThisIteration.at(0));
         m_UnknownTypesDetectedThisIteration.clear();
         functionDeclarationStdString = functionDeclarationTemp.toStdString();

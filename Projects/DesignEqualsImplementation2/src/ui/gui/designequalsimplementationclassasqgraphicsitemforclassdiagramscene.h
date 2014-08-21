@@ -10,11 +10,13 @@
 class QGraphicsSceneContextMenuEvent;
 class QGraphicsSceneMouseEvent;
 
+class DesignEqualsImplementationProject;
+
 class DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, QGraphicsItem *graphicsParent = 0, QObject *qobjectParent = 0);
+    explicit DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent = 0, QObject *qobjectParent = 0);
     //virtual QRectF boundingRect() const;
     //virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 protected:
@@ -23,6 +25,7 @@ protected:
 private:
     QGraphicsTextItem *m_ClassContentsGraphicsTextItem;
     DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
+    DesignEqualsImplementationProject *m_CurrentProject;
     QRectF m_BoundingRect;
     QPen m_ClassBorderPen;
     QPen m_LinesInBetweenLinesOfTextPen;

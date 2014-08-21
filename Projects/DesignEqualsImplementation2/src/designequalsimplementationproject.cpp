@@ -73,6 +73,14 @@ QList<DesignEqualsImplementationUseCase *> DesignEqualsImplementationProject::us
 {
     return m_UseCases;
 }
+void DesignEqualsImplementationProject::noteDefinedElsewhereType(const QString &definedElsewhereType)
+{
+    m_DefinedElsewhereTypes.append(definedElsewhereType); //TODOreq: [de-]serialize
+}
+QList<QString> DesignEqualsImplementationProject::definedElsewhereTypes() const
+{
+    return m_DefinedElsewhereTypes;
+}
 #if 0
 void DesignEqualsImplementationProject::appendLineToTemporaryProjectGlueCode(const QString &line)
 {

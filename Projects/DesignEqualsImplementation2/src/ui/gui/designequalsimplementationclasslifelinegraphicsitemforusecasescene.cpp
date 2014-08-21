@@ -17,6 +17,7 @@
 #include "classinstancechooserdialog.h"
 #include "classeditordialog.h"
 #include "../../designequalsimplementationclass.h"
+#include "../../designequalsimplementationusecase.h"
 #include "../../designequalsimplementationclasslifeline.h"
 
 #define DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP 15
@@ -67,7 +68,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::context
     }
     else if(selectedAction == classEditorAction)
     {
-        ClassEditorDialog classEditorDialog(classLifeLine()->designEqualsImplementationClass());
+        ClassEditorDialog classEditorDialog(classLifeLine()->designEqualsImplementationClass(), m_DesignEqualsImplementationClassLifeLine->parentUseCase()->designEqualsImplementationProject());
         if(classEditorDialog.exec() != QDialog::Accepted)
             return;
     }

@@ -7,6 +7,7 @@ class QLineEdit;
 class QCheckBox;
 class QVBoxLayout;
 
+class DesignEqualsImplementationProject;
 class MethodSingleArgumentWidget;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassProperty;
@@ -17,9 +18,12 @@ class ClassEditorDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent = 0, Qt::WindowFlags f = 0);
 private:
     DesignEqualsImplementationClass *m_ClassBeingEditted;
+    DesignEqualsImplementationProject *m_CurrentProject;
+
+    QLineEdit *m_QuickMemberAddLineEdit;
 
     //Add Property
     QLineEdit *m_AddPropertyTypeLineEdit;
