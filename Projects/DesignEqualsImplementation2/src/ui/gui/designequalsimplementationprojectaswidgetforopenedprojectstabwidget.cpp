@@ -2,14 +2,12 @@
 
 #include <QVBoxLayout>
 #include <QTabWidget>
-#include <QMutexLocker>
 #include <QGraphicsScene>
 
-#include "../../designequalsimplementation.h"
-#include "../../designequalsimplementationproject.h"
 #include "designequalsimplementationclassdiagramaswidgetfortab.h"
 #include "designequalsimplementationusecaseaswidgetfortab.h"
 #include "designequalsimplementationguicommon.h"
+#include "../../designequalsimplementationproject.h"
 
 //This name might seem overly verbose, but I recall vividly in designEquals1 my confusion when naming it "ProjectTabWidget" (the tabwidget, or the widget in the tab!?!?... dun dun dun)... and now to add to the confusioin, it "isA" TabWidget as well as a widget used for a tab!!! rofl
 DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(DesignEqualsImplementationProject *project, QWidget *parent)
@@ -54,7 +52,6 @@ void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::reques
 }
 void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::handleUseCaseAdded(DesignEqualsImplementationUseCase *useCase) //TODOreq: use case OPENED instead? or i guess right here could just add it to our list of use cases
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationUseCaseAsWidgetForTab *designEqualsImplementationUseCaseAsWidgetForTab = new DesignEqualsImplementationUseCaseAsWidgetForTab(useCase);
     connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), designEqualsImplementationUseCaseAsWidgetForTab, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
     int tabIndex = m_ClassDiagramAndUseCasesTabWidget->addTab(designEqualsImplementationUseCaseAsWidgetForTab, useCase->Name);

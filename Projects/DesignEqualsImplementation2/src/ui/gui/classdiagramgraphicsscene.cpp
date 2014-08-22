@@ -5,9 +5,6 @@
 #include <QMimeData>
 #include <QDataStream>
 
-#include <QMutexLocker>
-#include "../../designequalsimplementation.h"
-
 #include "designequalsimplementationguicommon.h"
 #include "designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h"
 #include "../../designequalsimplementationproject.h"
@@ -55,8 +52,6 @@ bool ClassDiagramGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *e
 }
 void ClassDiagramGraphicsScene::handleClassAdded(DesignEqualsImplementationClass *classAdded)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-
     DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene *designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene = new DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(classAdded, m_CurrentProject); //scene takes ownership at addItem
     designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene->setPos(classAdded->Position);
     //TODOreq: listen to move signals so the backend serializes later click-drag-rearranges from user

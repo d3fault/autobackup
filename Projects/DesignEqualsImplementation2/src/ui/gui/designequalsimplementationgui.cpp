@@ -3,21 +3,16 @@
 #include <QCoreApplication>
 #include <QStringList>
 
-#include "objectonthreadgroup.h"
 #include "designequalsimplementation.h"
 #include "designequalsimplementationmainwindow.h"
 
 DesignEqualsImplementationGui::DesignEqualsImplementationGui(QObject *parent)
     : QObject(parent)
 {
-    /*ObjectOnThreadGroup *objectOnThreadGroup = new ObjectOnThreadGroup(this);
-    objectOnThreadGroup->addObjectOnThread<DesignEqualsImplementation>("handleDesignEqualsImplementationReadyForConnections");
-    objectOnThreadGroup->doneAddingObjectsOnThreads();*/
-
     m_Gui = new DesignEqualsImplementationMainWindow();
 
     DesignEqualsImplementation *designEqualsImplementation = new DesignEqualsImplementation(this);
-    handleDesignEqualsImplementationReadyForConnections(designEqualsImplementation); //threading ended up making it dangerous until COW/etc is implemented. i got lazy with the mutexes and forgot a bunch of places i think
+    handleDesignEqualsImplementationReadyForConnections(designEqualsImplementation); //threading ended up making it dangerous until COW/etc is implemented. i got lazy with the mutexes and forgot a bunch of places i think. the bulk of the app doesn't need to be multi-threaded anyways. i could maybe justify the source code generation step... but even then only for really large projects (isn't qfile async already so nvm? idk)
 }
 DesignEqualsImplementationGui::~DesignEqualsImplementationGui()
 {

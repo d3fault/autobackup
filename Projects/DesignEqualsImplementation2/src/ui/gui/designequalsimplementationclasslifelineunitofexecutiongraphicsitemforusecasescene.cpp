@@ -2,9 +2,6 @@
 
 #include <QLineF>
 
-#include <QMutexLocker>
-#include "../../designequalsimplementation.h"
-
 #include "designequalsimplementationguicommon.h"
 #include "sourceslotsnappingindicationvisualrepresentation.h"
 #include "destinationslotsnappingindicationvisualrepresentation.h"
@@ -123,7 +120,6 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstruct
 {
     //Draw existing (serialized) statements, or at least make the vertical space for them and know they exist (as of writing, "arrows" are unfinished)
     //I think for now I'm not going to have any visual representation of the "amount of statements", I'll just use a simple odd/even strategy for "statements" vs. "snapping points"
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     connect(m_Slot, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)), this, SLOT(handleStatementInserted(int,IDesignEqualsImplementationStatement*)));
 
     if(!m_Slot->orderedListOfStatements().isEmpty())
@@ -256,7 +252,6 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::repositionExisti
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     insertStatementGraphicsItem(indexInsertedInto, statementInserted);
     repositionExistingStatementsAndSnapPoints();
     emit geometryChanged(); //parent class lifeline listens to this and repositions Units Of Execution

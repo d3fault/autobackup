@@ -36,7 +36,7 @@ private:
     QVBoxLayout *m_AddSlotArgumentsVLayout;
 
     void addArgToSlotBeingCreated();
-    static void addAllArgsInLayoutToMethod(IDesignEqualsImplementationMethod* methodToAddArgumentsTo, QLayout *layoutContainingOneArgPerChild);
+    //static void addAllArgsInLayoutToMethod(IDesignEqualsImplementationMethod* methodToAddArgumentsTo, QLayout *layoutContainingOneArgPerChild);
     bool addPropertyFieldsAreSane();
     bool addSlotFieldsAreSane();
 signals:

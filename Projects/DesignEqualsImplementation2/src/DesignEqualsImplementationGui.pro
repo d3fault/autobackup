@@ -113,8 +113,6 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementationfunctiondeclarationparser.h \
     ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h
 
-include(../../../GloballySharedClasses/objectonthreadgroup.pri)
-
 #libclang stuff
 CONFIG += precompile_header
 PRECOMPILED_HEADER = libclangpch.h

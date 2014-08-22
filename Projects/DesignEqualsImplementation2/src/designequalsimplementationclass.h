@@ -14,6 +14,7 @@
 
 #define DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX "failed to generate source for: "
 
+typedef QPair<QString /*type*/, QString /*name*/> MethodArgumentTypedef; //derp defined like twenty different places...
 //typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_Private_Classes_Members_ListEntryType;
 
 //TODOinstancing: class DesignEqualsImplementationClassInstance;
@@ -34,7 +35,7 @@ public:
 
     DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString());
 
-    DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString());
+    DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString(), const QList<MethodArgumentTypedef> &newSlotArgs = QList<MethodArgumentTypedef>());
     void addSlot(DesignEqualsImplementationClassSlot *slotToAdd);
     void removeSlot(DesignEqualsImplementationClassSlot *slotToRemove);
 

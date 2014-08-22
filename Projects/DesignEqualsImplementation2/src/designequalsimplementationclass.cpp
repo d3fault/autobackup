@@ -4,9 +4,6 @@
 #include <QDataStream>
 #include <QTextStream>
 
-#include <QMutexLocker>
-#include "designequalsimplementation.h"
-
 #include "designequalsimplementationcommon.h"
 #include "designequalsimplementationsignalemissionstatement.h"
 
@@ -72,10 +69,14 @@ DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNe
     emit signalAdded(newSignal);
     return newSignal;
 }
-DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNewSlot(const QString &newSlotName)
+DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNewSlot(const QString &newSlotName, const QList<MethodArgumentTypedef> &newSlotArgs)
 {
     DesignEqualsImplementationClassSlot *newSlot = new DesignEqualsImplementationClassSlot(this);
     newSlot->Name = newSlotName;
+    Q_FOREACH(const MethodArgumentTypedef &currentMethodArgument, newSlotArgs)
+    {
+        newSlot->createNewArgument(currentMethodArgument.first, currentMethodArgument.second);
+    }
     addSlot(newSlot);
     return newSlot;
 }
@@ -155,7 +156,6 @@ QString DesignEqualsImplementationClass::headerFilenameOnly()
 }
 void DesignEqualsImplementationClass::emitAllClassDetails()
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     //TODOreq
 }
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass)

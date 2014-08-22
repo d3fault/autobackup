@@ -9,9 +9,6 @@
 #include <QtMath>
 #include <QMessageBox>
 
-#include <QMutexLocker>
-#include "../../designequalsimplementation.h"
-
 #include "designequalsimplementationguicommon.h"
 #include "designequalsimplementationactorgraphicsitemforusecasescene.h"
 #include "designequalsimplementationclasslifelinegraphicsitemforusecasescene.h"
@@ -74,7 +71,6 @@ void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *
         //lol they don't do anything even close. Bar is on the diagram nameless (just as Bar), and it's slot invocation is just the name of the slot (no args, and no m_Bar variable name like I'm trying to do)
 
         //I've decided that since they both sound so similar and yet the here/now one doesn't clutter up my uml items window, I'll do it here/now :-P
-        //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
 
 #if 0 //TODOinstancing
         ClassInstanceChooserDialog classInstanceChooserDialog(classBeingAdded, m_UseCase);
@@ -370,7 +366,6 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     //TODOoptional: for now I'm going to KISS and use a modal dialog, but in the future I want to use modeless
 
     //TODOreq: determine that source is Actor before deciding to use SlotInvocationDialog (can still use SlotInvocationDialog if not actor, but that means the slot args must be filled in before the dialog can be accepted)
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     DesignEqualsImplementationClassSlot *destinationSlotIsProbablyNameless_OrZeroIfNoDest = 0;
     DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest = 0;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *destinationClassLifeLineGraphicsItem_OrZeroIfNoDest = 0;
@@ -758,7 +753,6 @@ bool UseCaseGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *event)
 }
 void UseCaseGraphicsScene::handleActorAdded(DesignEqualsImplementationActor *actor)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     //TODOreq
     //TODOreq: don't add more than 1 actor (it can be deleted and re-added however)
 
@@ -768,8 +762,6 @@ void UseCaseGraphicsScene::handleActorAdded(DesignEqualsImplementationActor *act
 }
 void UseCaseGraphicsScene::handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene = new DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(newClassLifeLine); //TODOreq: right-click -> change thread (main/gui thread (default), new thread X, existing thread Y). they should somehow visually indicate their thread. i was thinking a shared "filled-background" (color), but even if just the colors of the lifelines are the same that would be sufficient
     connect(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene, SIGNAL(slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*)), this, SLOT(handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*)));
 
@@ -779,8 +771,7 @@ void UseCaseGraphicsScene::handleClassLifeLineAdded(DesignEqualsImplementationCl
 }
 void UseCaseGraphicsScene::handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventTypeEnum, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionOrSlotInvocationContextVariables)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-    //TODOreq: draw the fucking use case event blah
+    //TODOreq: draw the fucking use case event blah, make the arrows permanent i guess... maybe even change their shape if signal/slot... and let sender/receiver each be able to reference the arrow (but maybe that part is done in backend)
 }
 void UseCaseGraphicsScene::handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem)
 {

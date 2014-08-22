@@ -4,9 +4,6 @@
 #include <QMimeData>
 #include <QDrag>
 
-#include <QMutexLocker>
-#include "../../designequalsimplementation.h"
-
 #include "designequalsimplementationguicommon.h"
 #include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
@@ -38,7 +35,6 @@ void UseCaseUmlItemsWidget::startDrag(Qt::DropActions supportedActions)
     {
         DesignEqualsImplementationClass *classBeingAddedToUseCase = qvariant_cast<DesignEqualsImplementationClass*>(item->data(Qt::UserRole+1));
         dataStream << reinterpret_cast<quintptr>(classBeingAddedToUseCase); //TODOreq: ugly (but works). I don't think implicit sharing would help here, but really the fucking class name would be sufficient (would require refactor in backend, BUT even there class name is fine for identification (C++ spec demands that ;-P)
-        //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
         mimeData->setText(classBeingAddedToUseCase->ClassName);
     }
     else
@@ -73,7 +69,6 @@ void UseCaseUmlItemsWidget::addClass(DesignEqualsImplementationClass *designEqua
 void UseCaseUmlItemsWidget::handleNowShowingProject(DesignEqualsImplementationProject *project)
 {
     clear();
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, project->classes())
     {
         addClass(currentClass);
@@ -81,6 +76,5 @@ void UseCaseUmlItemsWidget::handleNowShowingProject(DesignEqualsImplementationPr
 }
 void UseCaseUmlItemsWidget::handleClassAdded(DesignEqualsImplementationClass *designEqualsImplementationClass)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     addClass(designEqualsImplementationClass);
 }

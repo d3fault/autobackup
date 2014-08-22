@@ -13,9 +13,6 @@
 
 #include <QDateTime> //temp/debug
 
-#include <QMutexLocker>
-#include "../../designequalsimplementation.h"
-
 #include "../../designequalsimplementationproject.h"
 #include "classdiagramumlitemswidget.h"
 #include "usecaseumlitemswidget.h"
@@ -152,7 +149,6 @@ void DesignEqualsImplementationMainWindow::addUseCaseToAllUseCasesListWidget(Des
 //TODOreq: [backend] project is not thread safe to access directly, so check the source to make sure it's used properly (or i could mutex protect the DesignEqualsImplementationProject itself to KISS, undecided as of now)
 void DesignEqualsImplementationMainWindow::handleProjectOpened(DesignEqualsImplementationProject *project)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     connect(project, SIGNAL(classAdded(DesignEqualsImplementationClass*)), m_UseCaseUmlItemsWidget, SLOT(handleClassAdded(DesignEqualsImplementationClass*))); //Impulsively I feel the need to sever these connections when project tabs change, but since the backend project can't add a class when it's not current tab, there is little need (memory optimization? idfk)
     connect(project, SIGNAL(useCaseAdded(DesignEqualsImplementationUseCase*)), this, SLOT(handleUseCaseAdded(DesignEqualsImplementationUseCase*)));
     DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget = new DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(project);
@@ -199,7 +195,6 @@ void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramA
 
         //[re-]populate all use cases list
         m_AllUseCasesListWidget->clear();
-        //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
         //Q_FOREACH()
         //TODOreq: invokeMethod(project, "emitAllUseCases") vs. lock+iterate. BOTH require locking anyways haha, so ok I'm going to answer the question AS IF I ALREADY HAD IMPLICIT SHARING IMPLEMENTED. *thinks about a hypothetical situation that does not yet exist* (all hypothetical situations do exist, if they are possible, because there is infinite time (depends how you define 'exist'... does it mean: 'known to exist in this [known] universe and has happend (has existed) sometime in between the big bang and now'? or: 'has ever existed'? I would argue the latter, therefore everything exists (if you restrict what can be a thing to anything possible in the realm of physics)))
         //back on track, implicit sharing: hmm yea i'd iterate that list like a fucking baller
@@ -249,7 +244,6 @@ void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramA
 }
 void DesignEqualsImplementationMainWindow::handleUseCaseAdded(DesignEqualsImplementationUseCase *newUseCase)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     addUseCaseToAllUseCasesListWidget(newUseCase);
 }
 void DesignEqualsImplementationMainWindow::handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem *doubleClickedListWidgetItem)

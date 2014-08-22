@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QList>
-#include <QMutex>
 
 //#define DesignEqualsImplementation_TEST_MODE 1
 #define DesignEqualsImplementation_TEST_GUI_MODE 1
@@ -16,7 +15,6 @@ class DesignEqualsImplementation : public QObject
 public:
     explicit DesignEqualsImplementation(QObject *parent = 0);
     ~DesignEqualsImplementation();
-    static QMutex BackendMutex;
 private:
     QList<DesignEqualsImplementationProject*> m_CurrentlyOpenedDesignEqualsImplementationProjects;
 signals:

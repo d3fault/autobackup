@@ -34,6 +34,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     classNameRow->addWidget(classNameLabel);
     classNameRow->addWidget(m_ClassNameLineEdit);
 
+#if 0 //TODOoptional
     QHBoxLayout *validStateNameRow = new QHBoxLayout();
     QLabel *validStateNameLabel = new QLabel(tr("Optional 'ready' state name:")); //TODOreq: use for RAII constructor, a better name for the "initialized" signal, and the async initialize slot itself (RAII constructor calls said slot directly)
     QString validStateTooltip("Choose an arbitrary name for when this class/object is valid (open, ready, etc). \"is\" (ex: isReady) will be prepended to it");
@@ -43,12 +44,13 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     validStateNameLabel->setBuddy(m_ValidStateNameLineEdit);
     validStateNameRow->addWidget(validStateNameLabel);
     validStateNameRow->addWidget(m_ValidStateNameLineEdit);
+#endif
 
     //Quick add
     QGroupBox *quickMemberAddGroupBox = new QGroupBox(tr("&Quick Add"));
-    QFont boldFont = quickMemberAddGroupBox->font();
-    boldFont.setBold(true);
-    quickMemberAddGroupBox->setFont(boldFont);
+    //TODOoptional: figure out how to set the group box title thing to bold without setting all children of the group box's font to bold also. QFont boldFont = quickMemberAddGroupBox->font();
+    //boldFont.setBold(true);
+    //quickMemberAddGroupBox->setFont(boldFont);
     QHBoxLayout *quickMemberAddRow = new QHBoxLayout();
     m_QuickMemberAddLineEdit = new QLineEdit();
     m_QuickMemberAddLineEdit->setPlaceholderText(tr("New member signature..."));
@@ -61,6 +63,8 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     quickMemberAddRow->addWidget(quickAddNewSignalButton);
     quickMemberAddRow->addWidget(quickAddNewSlotButton);
     quickMemberAddGroupBox->setLayout(quickMemberAddRow);
+
+    //TODOreq: the old/ugly ways of adding properties/slots/signals should go on their own tabs. the first/front tab should only have a quick add line edit and a visualization of the class itself (practically identical to the class diagram graphics item). The one cool thing the old ugly ways do have that's nice is the argument re-ordering using up/down/delete buttons... but still I need to keep the first/front page clutter free
 
     //Add property -- merge with hasA private classes members? They are both technically "members" of a class... but of course the hasA private classes members show up in the class lifeline instance chooser dialog (a qobject that is also a q_property could show up there too!)
     QGroupBox *addPropertyGroupBox = new QGroupBox(tr("New Property"));
@@ -110,7 +114,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     QPushButton *doneButton = new QPushButton(tr("Done"));
 
     myLayout->addLayout(classNameRow);
-    myLayout->addLayout(validStateNameRow);
+    //myLayout->addLayout(validStateNameRow);
     myLayout->addWidget(quickMemberAddGroupBox);
     myLayout->addWidget(addPropertyGroupBox);
     myLayout->addWidget(addSlotGroupBox);
@@ -135,6 +139,9 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     //reactor pattern, gui responding to our own edits <3
     connect(classToEdit, SIGNAL(propertyAdded(DesignEqualsImplementationClassProperty*)), this, SLOT(handlePropertyAdded(DesignEqualsImplementationClassProperty*)));
     connect(classToEdit, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotAdded(DesignEqualsImplementationClassSlot*)));
+
+
+    m_QuickMemberAddLineEdit->setFocus();
 }
 void ClassEditorDialog::addArgToSlotBeingCreated()
 {
@@ -148,19 +155,6 @@ void ClassEditorDialog::addArgToSlotBeingCreated()
     connect(newArg, SIGNAL(moveArgumentDownRequested(MethodSingleArgumentWidget*)), this, SLOT(handleMoveArgumentDownRequested(MethodSingleArgumentWidget*)));
     connect(newArg, SIGNAL(deleteArgumentRequested(MethodSingleArgumentWidget*)), this, SLOT(handleDeleteArgumentRequested(MethodSingleArgumentWidget*)));
     newArg->focusOnArgType();
-}
-void ClassEditorDialog::addAllArgsInLayoutToMethod(IDesignEqualsImplementationMethod *methodToAddArgumentsTo, QLayout *layoutContainingOneArgPerChild)
-{
-    int argCount = layoutContainingOneArgPerChild->count();
-    for(int i = 0; i < argCount; ++i)
-    {
-        MethodSingleArgumentWidget *currentArgumentWidget = static_cast<MethodSingleArgumentWidget*>(layoutContainingOneArgPerChild->itemAt(i)->widget());
-        const QString &argumentType = currentArgumentWidget->argumentType();
-        const QString &argumentName = currentArgumentWidget->argumentName();
-        if(argumentType.isEmpty() || argumentName.isEmpty())
-            continue; //return? would there be more if an empty row is encountered? guess it depends on user. continue is best i guess
-        methodToAddArgumentsTo->createNewArgument(argumentType, argumentName);
-    }
 }
 bool ClassEditorDialog::addPropertyFieldsAreSane()
 {
@@ -191,12 +185,15 @@ bool ClassEditorDialog::addSlotFieldsAreSane()
 }
 void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
 {
+    //TODOoptional(nvm): this applies to non-quick-add as well: whenever the user specifies a type that is either an "internally designed type" _OR_ a qobject (all my internally designed types are qobjects, so...) and they don't choose for it to be a "pointer" like all my hasAprivateClassesMembers currently are, we should warn them with a modal dialog asking them if they're sure they want it to be a "plain member" ---- FFFFF nvm. the rational that i'd explain to the user was so that proper qobject parenting can be set up so that moveToThread calls work... BUT I JUST REALIZED FOR THE FIRST TIME EVER that even a non-pointer member can still be initialized in it's parent constructor list thingy ( : blah(), x(), etc ) to still use the proper parenting! in that case it would have the same parent twice! once in the OO heirarchy and again in the qobject heirarchy
 
+    //TODOreq: differentiating member pointer owned (instantiated) vs. not owned (not instantiated, passed in somehow) = ??????????????????
 }
 void ClassEditorDialog::handleQuickAddNewSignalButtonClicked()
 {
 
 }
+//TODOreq: either manually filter "_Bool" to "bool", or figure out how to get clang to give me the cpp version of a bool :-P
 void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
 {
     QList<QString> allKnownTypes;
@@ -233,9 +230,11 @@ void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
     }
 
     //now create the new slot itself
-    m_ClassBeingEditted->createwNewSlot(functionDeclarationParser.parsedFunctionName());
+    m_ClassBeingEditted->createwNewSlot(functionDeclarationParser.parsedFunctionName(), functionDeclarationParser.parsedFunctionArguments());
 
     //TODOreq: add the args to the new slot, i think i need to refactor some though... because the argument types can be either internally designed classes or defined elsewhere types... and additionally they can have modifiers such as "references", "pointers", "consts", etc... that we want to KEEP for the slot declaration. so i guess i'll just stop coding and sit here staring at the blinking cursor comatose until i figure out what to do
+
+    m_QuickMemberAddLineEdit->clear();
 }
 void ClassEditorDialog::handleAddPropertyButtonClicked()
 {
@@ -269,10 +268,25 @@ void ClassEditorDialog::handleDeleteArgumentRequested(MethodSingleArgumentWidget
 }
 void ClassEditorDialog::handleAddSlotButtonClicked()
 {
+    //TODOreq: a lot of this method, including calls it makes, is unfinished.. but i am also considering refactoring it tons so...
+
     if(addSlotFieldsAreSane())
     {
-        DesignEqualsImplementationClassSlot *newSlot = m_ClassBeingEditted->createwNewSlot(m_AddSlotNameLineEdit->text().trimmed()); //TODOoptional: reactor pattern fail? the args haven't been added, but the slot will already be emitted as added. Perhaps createNewSlot just needs an overload accepting a list of args? For now, fuck it.. just some flickering n shit ;-P (actually the args don't show up in graphics scene at all (but they do show up in source gen ofc), but flickering would still happen if i solved it halfway). Perhaps I should just new it myself and add it to class later after all args have been added
-        addAllArgsInLayoutToMethod(newSlot, m_AddSlotArgumentsVLayout);
+        QList<MethodArgumentTypedef> slotArguments;
+        int argCount = m_AddSlotArgumentsVLayout->count();
+        for(int i = 0; i < argCount; ++i)
+        {
+            MethodSingleArgumentWidget *currentArgumentWidget = static_cast<MethodSingleArgumentWidget*>(m_AddSlotArgumentsVLayout->itemAt(i)->widget());
+            const QString &argumentType = currentArgumentWidget->argumentType();
+            const QString &argumentName = currentArgumentWidget->argumentName();
+            if(argumentType.isEmpty() || argumentName.isEmpty())
+                continue; //return? would there be more if an empty row is encountered? guess it depends on user. continue is best i guess
+            slotArguments.append(qMakePair(argumentType, argumentName));
+            //methodToAddArgumentsTo->createNewArgument(argumentType, argumentName);
+        }
+
+        DesignEqualsImplementationClassSlot *newSlot = m_ClassBeingEditted->createwNewSlot(m_AddSlotNameLineEdit->text().trimmed(), slotArguments);
+        //addAllArgsInLayoutToMethod(newSlot, m_AddSlotArgumentsVLayout);
 
         m_AddSlotNameLineEdit->clear();
         //TODOreq: reset the args layout

@@ -9,9 +9,6 @@
 #include <QAction>
 #include <QGraphicsSceneContextMenuEvent>
 
-#include <QMutexLocker>
-#include "../../designequalsimplementation.h"
-
 #include "designequalsimplementationguicommon.h"
 #include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
 #include "classinstancechooserdialog.h"
@@ -79,8 +76,6 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::context
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine)
 {
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
-
     m_DesignEqualsImplementationClassLifeLine = classLifeLine;
     setFlag(QGraphicsItem::ItemIsMovable, true);
     //setFlag(QGraphicsItem::ItemIsSelectable, true);

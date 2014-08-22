@@ -7,9 +7,6 @@
 #include <QAction>
 #include <QGraphicsSceneContextMenuEvent>
 
-#include <QMutexLocker>
-#include "../../designequalsimplementation.h"
-
 #include "designequalsimplementationguicommon.h"
 #include"classeditordialog.h"
 
@@ -32,8 +29,6 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
     setPen(myPen);*/
     //setBrush(Qt::white);
     setBrush(Qt::transparent); //TODOoptional: can make them white now that I'm not overriding paint event, but then need Z ordering to be [de-]serialized and modifiable in gui
-
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
 
     m_ClassContentsGraphicsTextItem = new QGraphicsTextItem(this);
     updateClassContentsGraphicsTextItem();
@@ -155,7 +150,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::updateC
     m_ClassContentsGraphicsTextItem->setHtml(classDetailsAsHtmlString());
     setRect(childrenBoundingRect());
 }
-#if 0
+#if 0 //i believe there's some line drawing logic (in between the member types) i want to grab out of this before removing altogether
 QRectF DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::boundingRect() const
 {
     return m_BoundingRect;
@@ -165,9 +160,6 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
-
-    //TODOreq: this scopedLock must be commented out for click drag to work AT ALL hahahaha... I need a better synchronization solution. Right now it's not thread safe (but eh idc for now)
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex); //rofl. of all places that should use a faster method (implicit sharing, or even manual synchronization :-P)
 
     painter->save();
     //painter->setRenderHint(QPainter::Antialiasing, true); //TO DOneoptimization: maybe i can specify this somewhere else so i don't have to keep re-specifying it. also noticed noticeable slowdown when enabled lolol, BUT the level of sexiness hit maximum too. //TODOoptional: run-time option obviously makes a lot of sense
@@ -268,8 +260,6 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded)
 {
     Q_UNUSED(propertyAdded)
-
-    //QMutexLocker scopedLock(&DesignEqualsImplementation::BackendMutex);
     //TODOreq: re-paint with new property
     //TODOoptmization: when "opening" a file, tons (hundreds, possibly thousands, depending on the project) of these handle* slots will be invoked, each one triggering a repaint. I'm not sure, but actually I think that the calls to update CAN be (and are) combined. If _NOT_, I should probably do that combining myself/hackily!!
     //update(boundingRect()); //TODOoptimization: if our 'thing' (property here) is added at the BOTTOM of the uml/widget, we can supply a smaller rect to update!
