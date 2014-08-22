@@ -1,0 +1,3 @@
+"change type" (this use) vs. "rename type" (all uses)
+
+The rename action should perhaps be in the "class editor" only (or the "defined elsewhere list editor" (which doesn't even exist yet))

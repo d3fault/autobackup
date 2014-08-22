@@ -62,7 +62,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     quickMemberAddRow->addWidget(quickAddNewSlotButton);
     quickMemberAddGroupBox->setLayout(quickMemberAddRow);
 
-    //Add property
+    //Add property -- merge with hasA private classes members? They are both technically "members" of a class... but of course the hasA private classes members show up in the class lifeline instance chooser dialog (a qobject that is also a q_property could show up there too!)
     QGroupBox *addPropertyGroupBox = new QGroupBox(tr("New Property"));
     QHBoxLayout *addPropertyRow = new QHBoxLayout();
     m_AddPropertyTypeLineEdit = new QLineEdit();
@@ -209,6 +209,7 @@ void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
         allKnownTypes.append(currentDefinedElsewhereType);
     }
     DesignEqualsImplementationFunctionDeclarationParser functionDeclarationParser(m_QuickMemberAddLineEdit->text(), allKnownTypes);
+    //connect -- awww shit forgot can't emit signals in constructor LoL
     if(functionDeclarationParser.hasUnrecoverableSyntaxError())
     {
         QMessageBox::critical(this, tr("Syntax Error"), tr("There was a syntax error in your slot declaration. Check stderr for the details")); //TODOreq: show the details in-app in a qplaintextedit

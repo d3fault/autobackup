@@ -1,0 +1,1 @@
+My problem right now (with this type refactor) is that I don't understand my problem

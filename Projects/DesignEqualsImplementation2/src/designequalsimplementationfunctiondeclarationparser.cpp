@@ -10,13 +10,10 @@ public:
         : m_Context(context)
         , m_DesignEqualsImplementationFunctionDefinitionParser(designEqualsImplementationFunctionDefinitionParser)
     { }
-    bool VisitDecl(Decl *declaration)
+    bool VisitFunctionDecl(FunctionDecl *functionDecl)
     {
-        if(FunctionDecl *functionDecl = dyn_cast<FunctionDecl>(declaration))
-        {
-            m_DesignEqualsImplementationFunctionDefinitionParser->m_ParsedFunctionName = QString::fromStdString(functionDecl->getNameAsString());
-            //TO DOnereq(can't instantiate internal clang types eaisly): should i config a DesignEqualsImplementationMethod (rename to function?) or should i pass around the clang internal types? I'm leaning towards "depend on clang as little as possible (especially if i want to have a compile time switch to not even use it)", even though admittedly I'll be reinventing the wheel here and there (like I already am/have :-P). I'm still iffy on how I'm going to handle a variable "how the user typed it" (const SomeClass &blah -- etc) vs "underlying type" (SomeClass)... but I'm damn glad clang has allowed me to DETERMINE the underlying class :)
-        }
+        m_DesignEqualsImplementationFunctionDefinitionParser->m_ParsedFunctionName = QString::fromStdString(functionDecl->getNameAsString());
+        //TO DOnereq(can't instantiate internal clang types eaisly): should i config a DesignEqualsImplementationMethod (rename to function?) or should i pass around the clang internal types? I'm leaning towards "depend on clang as little as possible (especially if i want to have a compile time switch to not even use it)", even though admittedly I'll be reinventing the wheel here and there (like I already am/have :-P). I'm still iffy on how I'm going to handle a variable "how the user typed it" (const SomeClass &blah -- etc) vs "underlying type" (SomeClass)... but I'm damn glad clang has allowed me to DETERMINE the underlying class :)
         return true;
     }
 private:
@@ -82,6 +79,12 @@ DesignEqualsImplementationFunctionDeclarationParser::DesignEqualsImplementationF
     : m_OriginalFunctionDeclaration(functionDeclaration.trimmed().endsWith(";") ? functionDeclaration : (functionDeclaration + ";"))
     , m_HasUnrecoverableSyntaxError(false)
 {
+    if(!m_OriginalFunctionDeclaration.trimmed().startsWith("void "))
+    {
+        emit e("return type must be void"); //for now, since i'm only using this for signals/slots
+        m_HasUnrecoverableSyntaxError = true;
+        return;
+    }
     QString functionDeclarationTemp = m_OriginalFunctionDeclaration;
     Q_FOREACH(const QString &currentKnownType, knownTypesToTypedefPrepend)
     {
@@ -93,6 +96,7 @@ DesignEqualsImplementationFunctionDeclarationParser::DesignEqualsImplementationF
     {
         if(m_UnknownTypesDetectedInLastRunToolOnCodeIteration.isEmpty())
         {
+            emit e("syntax error");
             m_HasUnrecoverableSyntaxError = true;
             return;
         }

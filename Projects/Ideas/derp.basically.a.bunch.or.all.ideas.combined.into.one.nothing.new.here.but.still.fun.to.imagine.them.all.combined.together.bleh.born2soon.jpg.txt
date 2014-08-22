@@ -1,0 +1,7 @@
+I want my OpenBSD-based completely >= DPL licensed (so OpenBSD compiled with clang <3), wayland + QtQuick (using non-existing hypothetical C++ front-end to QtQuick (that sure as fucking shit doesn't req js)) rendered (with raster/X/software fallback), designEquals-generated userland (or at least my own additions to OpenBSD will be), inline editable, cli/gui/web/mobile (single code base _AND_ single gui definition (that's _MY_ definition of scalable UIs) -- WNavigationPanel for example scales down to mobile screens on demand), shared-nothing-resillient-secure-dht-of-categorized-by-license-content-community--but-also-completely-functional-in-offline-aka-single-node-mode, btrfs, tons of qt implicitly shared objects where appropriate (so COW both in memory and on permanent storage), osios.... computing environment.
+
+Musically integrated seems off-topic, perhaps should be a plugin or install or whatever... but I do like the idea of making music while coding at the same time (who cares how shit it sounds ;-P)...
+
+Simplified crypto and bitcoin banking for the masses, etc...
+
+Oh the list goes fucking on and on <3 <3 <3

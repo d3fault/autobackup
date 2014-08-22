@@ -1,11 +1,12 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONFUNCTIONDECLARATIONPARSER_H
 #define DESIGNEQUALSIMPLEMENTATIONFUNCTIONDECLARATIONPARSER_H
 
-#include <QString>
+#include <QObject>
 #include <QList>
 
-class DesignEqualsImplementationFunctionDeclarationParser
+class DesignEqualsImplementationFunctionDeclarationParser : public QObject
 {
+    Q_OBJECT
 public:
     DesignEqualsImplementationFunctionDeclarationParser(const QString &functionDeclaration, const QList<QString> &knownTypesToTypedefPrepend = QList<QString>());
     bool hasUnrecoverableSyntaxError() const;
@@ -20,6 +21,8 @@ private:
     QString m_ParsedFunctionName;
     QList<QString> m_UnknownTypesDetectedInLastRunToolOnCodeIteration;
     QList<QString> m_NewTypesSeenInFunctionDeclaration;
+signals:
+    void e(const QString &msg);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONFUNCTIONDECLARATIONPARSER_H
