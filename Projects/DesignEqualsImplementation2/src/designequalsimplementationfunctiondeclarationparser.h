@@ -19,7 +19,6 @@ private:
     friend class DesignEqualsImplementationFunctionDeclarationParserRecursiveAstVisitor;
     friend class DesignEqualsImplementationFunctionDeclarationDiagnosticConsumer;
 
-    QString m_OriginalFunctionDeclaration;
     bool m_HasUnrecoverableSyntaxError;
     QString m_ParsedFunctionName;
     QList<QString> m_UnknownTypesDetectedInLastRunToolOnCodeIteration;

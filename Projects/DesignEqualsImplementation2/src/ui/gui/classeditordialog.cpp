@@ -18,6 +18,8 @@
 //modeless yet still cancelable would be best, but for now i'll settle for modal and cancelable. actually fuck that shit, the editor is going to modify the backend object directly for now (fuck the police)
 //TODOoptional: "types" can be either internal/designed types (sup) or "Qt/C++ built-ins (or basically ANY type, but similarly simply referred to by string). If you choose a "string" type but later convert it to an internal type, the app could ask you if you want to scan for other uses of that string type to convert them to the internal types as well, saving time/effort/etcS
 //TODOoptional: auto-completion when typing in the quick add line edit for already existing types (and the C[++] types) would be nice, but probably pretty difficult. Much easier would be a read-only combo-box containing those types so that by just selecting one in the drop-down, it is pasted into the line edit wherever the cursor is (err does the cursos stay when I click the combo box? i guess append at end is decent enough)
+//TODOreq: hasAprivateClassesMembers adding... which up till now has only ever been done programmatically :-/. highly considering merging it with Q_PROPERTY and just calling it/them "member"... and the way to make it a Q_PROPERTY would become a non-default action of a QToolButton. default action should be private member
+//TODOoptional: An always accessible (read-only? methinks yes but idfk) combo box throughout entire app that copies the type you select to your clipboard. It's a hacky/easy solution to the auto-completion problem (auto-completion is easy if the line edit is only expecting a TYPE, but auto-completion is [probably? (libclang idfk)] a bitch when a line edit can contain a member declaration (property, signal, or slot). Differentiating from the "type", "qualifiers" and "name" parts would be a bitch... but meh actually maybe not but idk if it's worth diving into research mode in libclang [again(although admittedly last time was totally fucking worth it)]
 ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_ClassBeingEditted(classToEdit)
@@ -52,12 +54,12 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     //boldFont.setBold(true);
     //quickMemberAddGroupBox->setFont(boldFont);
     QHBoxLayout *quickMemberAddRow = new QHBoxLayout();
-    m_QuickMemberAddLineEdit = new QLineEdit();
+    m_QuickMemberAddLineEdit = new QLineEdit(); //TODOoptional: decide what to do when return is pressed lol. slot? if that's the case then slot should become the left-most of the three and bolded
     m_QuickMemberAddLineEdit->setPlaceholderText(tr("New member signature..."));
-    m_QuickMemberAddLineEdit->setToolTip(tr("Signals and Slots _MUST_ have a void return type"));
-    QPushButton *quickAddNewPropertyButton = new QPushButton(tr("Property"));
-    QPushButton *quickAddNewSignalButton = new QPushButton(tr("Signal"));
-    QPushButton *quickAddNewSlotButton = new QPushButton(tr("Slot"));
+    m_QuickMemberAddLineEdit->setToolTip(tr("Signals and Slots _MUST_ have a void return type. You are not required to type the [void] return type, however.\nJust start typing the signal/slot NAME and you're golden. The semi-colon at the end is optional as well.\n\nExample signal or slot (signal and slot declarations use the same syntax):\nnewSlot(int x, const SomeNewTypeThatWillBeCreatedOnTheFly &y);\n\nExample property:\nint MyProperty;\n\n\nSome shortcuts when typing:\n\tAlt+P = Property\n\tAlt+I = Signal\n\tAlt+L = Slot"));
+    QPushButton *quickAddNewPropertyButton = new QPushButton(tr("&Property"));
+    QPushButton *quickAddNewSignalButton = new QPushButton(tr("S&ignal"));
+    QPushButton *quickAddNewSlotButton = new QPushButton(tr("S&lot"));
     quickMemberAddRow->addWidget(m_QuickMemberAddLineEdit);
     quickMemberAddRow->addWidget(quickAddNewPropertyButton);
     quickMemberAddRow->addWidget(quickAddNewSignalButton);

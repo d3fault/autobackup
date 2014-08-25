@@ -84,22 +84,35 @@ private:
 
 DesignEqualsImplementationFunctionDeclarationParser::DesignEqualsImplementationFunctionDeclarationParser(const QString &functionDeclaration, const QList<QString> &knownTypesToTypedefPrepend, QObject *parent)
     : QObject(parent)
-    , m_OriginalFunctionDeclaration(functionDeclaration.trimmed().endsWith(";") ? functionDeclaration : (functionDeclaration + ";"))
     , m_HasUnrecoverableSyntaxError(false)
 {
-    if(!m_OriginalFunctionDeclaration.trimmed().startsWith("void "))
+    QString mutableFunctionDeclaration(functionDeclaration);
+    if(!mutableFunctionDeclaration.trimmed().startsWith("void "))
     {
-        emit e("return type must be void"); //for now, since i'm only using this for signals/slots
-        m_HasUnrecoverableSyntaxError = true;
-        return;
+        //TODOreq: handle if they put a non-void return type somehow, idfk how though lol. we'll prepend void and then it's syntax error? basically i don't even want them to type the return type since it must be void...
+        mutableFunctionDeclaration.prepend("void ");
     }
-    QString functionDeclarationTemp = m_OriginalFunctionDeclaration;
+    if(!mutableFunctionDeclaration.contains("("))
+    {
+        //no args specified (they typed name ONLY), we need to append a "()" for them in order to not get a syntax error
+        if(mutableFunctionDeclaration.contains(";") || mutableFunctionDeclaration.contains(")"))
+        {
+            //shit we can't recover from that, syntax error
+            m_HasUnrecoverableSyntaxError = true;
+            return;
+        }
+        mutableFunctionDeclaration.append("()");
+    }
+    if(!mutableFunctionDeclaration.trimmed().endsWith(";"))
+    {
+        mutableFunctionDeclaration.append(";");
+    }
     Q_FOREACH(const QString &currentKnownType, knownTypesToTypedefPrepend)
     {
         //TODOoptional: i could wrap these known types with a magical string (begin, end) and in a comment so that they aren't displayed to the user syntax error
-        functionDeclarationTemp.prepend("typedef int " + currentKnownType + ";\n"); //NVM: using append instead of prepend as originally planned because the ordering will matter later on i think, oh shit no it won't. thought it would because of interfaces/inheritence... but nope i just need to not get unknown type errors is all :)
+        mutableFunctionDeclaration.prepend("typedef int " + currentKnownType + ";\n"); //NVM: using append instead of prepend as originally planned because the ordering will matter later on i think, oh shit no it won't. thought it would because of interfaces/inheritence... but nope i just need to not get unknown type errors is all :)
     }
-    std::string functionDeclarationStdString = functionDeclarationTemp.toStdString();
+    std::string functionDeclarationStdString = mutableFunctionDeclaration.toStdString();
     while(!clang::tooling::runToolOnCode(new DesignEqualsImplementationFunctionDeclarationAstFrontendAction(this), functionDeclarationStdString))
     {
         if(m_UnknownTypesDetectedInLastRunToolOnCodeIteration.isEmpty())
@@ -108,11 +121,11 @@ DesignEqualsImplementationFunctionDeclarationParser::DesignEqualsImplementationF
             m_HasUnrecoverableSyntaxError = true;
             return;
         }
-        functionDeclarationTemp.prepend("typedef int " + m_UnknownTypesDetectedInLastRunToolOnCodeIteration.at(0) + ";\n"); //just one at a time, since the next one might be the same unknown type (right?)
+        mutableFunctionDeclaration.prepend("typedef int " + m_UnknownTypesDetectedInLastRunToolOnCodeIteration.at(0) + ";\n"); //just one at a time, since the next one might be the same unknown type (right?)
         m_NewTypesSeenInFunctionDeclaration.append(m_UnknownTypesDetectedInLastRunToolOnCodeIteration.at(0));
         m_UnknownTypesDetectedInLastRunToolOnCodeIteration.clear();
         m_ParsedFunctionArguments.clear();
-        functionDeclarationStdString = functionDeclarationTemp.toStdString();
+        functionDeclarationStdString = mutableFunctionDeclaration.toStdString();
     }
     //success
 }
