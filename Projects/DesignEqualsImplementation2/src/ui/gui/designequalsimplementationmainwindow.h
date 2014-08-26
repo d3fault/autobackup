@@ -49,6 +49,8 @@ private:
     void createToolbars();
     void createDockWidgets();
 
+    void decorateActions();
+
     void setClassDiagramToolsDisabled(bool disabled);
     void setUseCaseToolsDisabled(bool disabled);
 

@@ -1,0 +1,14 @@
+[] - Project save/open
+[] - Project [re-]name (NOT based on filename)
+[] - Use case [re-]name
+[] - Graphics for toolbars and available items
+[] - one signal can have multiple slots connected
+[] - remove signals/properties/slots (give warning when deleting a slot with > 0 statements)
+[] - remove (re-order?) statements in slots (signal/slot hackery stays in sync)
+[] - fix temp slot hack (? idk how yet still rofl)
+[] - Defined elsewhere #includes when referenced (EXCEPT when referenced as pointer, then forward declare)
+[] - Ampersand ambiguity in GUI (when in doubt, just remove ampersand altogether)
+[] - signal/slot dialog: ok button uses toolbutton to quick assign instance, only if no instance
+[] - hasA and properties -- merge? at the very least, hasA needs gui add
+[] - Don't allow infinite parent/child relationship loop (Foo hasA bar hasA Foo)
+[] - slot references with visual differentiation

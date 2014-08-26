@@ -1,0 +1,5 @@
+Auto completion of signals/slots: would be difficult (but not impossibru) to have auto-completion of existing types (if they're using the line edit for a new signal/slot) and auto-completion of existing signals/slots at the same time. Separating "new" and "existing" (existing staying just a read-only combo-box as it already is) simplifies it....
+
+BUT I decided to ignore completely the auto completion shit for now. That's fancy stuff and I want to get to 1.0 stable before doing it. libclang is fun but also a huge tangent that's making me lose perspective, there's still lots of basic stuff ([de-]serialization for example) i need to focus on
+
+it's funny to me that the only problem i'm having with code completion is that i can't figure out how to pass a `const char* code` to clang_codeComplete, which expects a `const char *filename`. The rest already makes sense in my head, QCompleter is so ez <3

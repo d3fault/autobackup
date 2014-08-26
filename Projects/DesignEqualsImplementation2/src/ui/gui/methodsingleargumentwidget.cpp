@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QStyle>
 
 #include "tabemittinglineedit.h"
 
@@ -19,9 +20,13 @@ MethodSingleArgumentWidget::MethodSingleArgumentWidget(QWidget *parent)
     m_ArgumentNameLineEdit->setPlaceholderText(tr("Arg Name"));
     m_ArgumentNameLineEdit->setToolTip(tr("Arg Name"));
 
-    QPushButton *moveArgumentUpButton = new QPushButton("^"); //TODOreq: this, "down", and "delete" should use a better pixmap (there is likely a good one included with Qt)
-    QPushButton *moveArgumentDownButton = new QPushButton("v");
-    QPushButton *deleteArgumentButton = new QPushButton("X"); //TODOreq: red X <3
+    //TODOreq: it isn't clear that these up/down/delete buttons are for the arguments and not the slots themselves. i did try putting the argument stuff in a groupbox, but it looked ugly :-P. was fixable tho
+    QPushButton *moveArgumentUpButton = new QPushButton();
+    moveArgumentUpButton->setIcon(style()->standardIcon(QStyle::SP_ArrowUp));
+    QPushButton *moveArgumentDownButton = new QPushButton();
+    moveArgumentDownButton->setIcon(style()->standardIcon(QStyle::SP_ArrowDown));
+    QPushButton *deleteArgumentButton = new QPushButton();
+    deleteArgumentButton->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
 
     myLayout->addWidget(m_ArgumentTypeLineEdit);
     myLayout->addWidget(m_ArgumentNameLineEdit);

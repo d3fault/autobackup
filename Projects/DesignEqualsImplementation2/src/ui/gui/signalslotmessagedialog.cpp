@@ -42,16 +42,12 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     //TODOoptional: combo boxes can be editable, but after thinking about it briefly I think adding a new slot like that would require that libclang interaction.. so for now KISS and just do existing slots (or add new slot with different
 
-    QFont boldFont;
-    boldFont.setBold(true);
-
     //Layout placement
 
     //Signals
     QGroupBox *signalGroupBox = new QGroupBox();
     QHBoxLayout *signalHLayout = new QHBoxLayout();
     m_SignalsCheckbox = new QCheckBox(tr("Signal")); //TODOreq: the signal checkbox is itself disabled when in UseCaseSignalSlotEventType, forcing the signals to be enabled. TODOreq: checkbox hovertext when disabled should explain why disabled
-    m_SignalsCheckbox->setFont(boldFont);
 
     signalHLayout->addWidget(m_SignalsCheckbox);
 
@@ -80,7 +76,6 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     QGroupBox *slotGroupBox = new QGroupBox();
     QHBoxLayout *slotHLayout = new QHBoxLayout();
     m_SlotsCheckbox = new QCheckBox(tr("Slot"));
-    m_SlotsCheckbox->setFont(boldFont);
     m_SlotsCheckbox->setChecked(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType);
     slotHLayout->addWidget(m_SlotsCheckbox);
 
@@ -147,9 +142,46 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
                         {
                             //either root or child of some other, we know at least that our instance is chosen, which means we are capable of having children. we have a list of children to check against that we know is valid (but perhaps empty)
 #endif
+
+#if 0 //applicable but unsolved -- not even sure there's a problem, but pretty sure there is -- i need to demonstrate the problem in a way that doesn't result in an infinite parent/child relationship loop, perhaps using zed. bleh maybe not a problem at all actually. after staring/thinking about it for a long time, the only time it can occur is when there is the infinite parent/child relationship loop (might be wrong) -- so teh answer is that the UI should not allow such infinite parent/child relationship loops to begin with. when the user tries to do it, we should qmessagebox::critical explaining why they can't do that. 'illegal operation' or whatever
+                            bool signalMandatory = false;
+
+                            /* TODOreq BUG
+                            Unable to validate signal/slot dialog when doing:
+                            Actor -> Foo::fooSlot -> Bar::barSlot (instance = Foo::m_Bar) -> Foo::blahFooSlot (instance = Foo::m_Bar::m_BarsFoo). Both of those arrows are (or want to be) plain slot invokes.
+                            The reason is because Foo hasA Bar, so it thinks Bar is reporting back to the first foo.. in which case yes a signal is required. BUT since it's a different instance of foo (and in fact, Bar hasA that other instance of Foo), the signal should not be necessary. The "if a hasA b and b sends message to a, require signal" logic is not utilizing instance information, only class type, which is an error
+
+                            funny i think i solved this once already and it's a regression since the instancing refactor xD
+                            my head hurts i'm not sure this is a problem. if foo hasa bar hasa foo, aren't there infinite foos and bars? TODOreq: maybe i should disallow such infinite loop but idfk
+                            */
+
+                            if(destinationClassLifeLine_OrZeroIfNoDest) //pre-precondition xD
+                            {
+                                if(
+                                        destinationClassLifeLine_OrZeroIfNoDest->instanceType() == DesignEqualsImplementationClassLifeLine::UseCasesRootClassLifeline //precondition to allow us to do non-instance-aware check for determining whether or not signal is mandatory
+                                        && sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()->parentClass() == destinationSlotToInvoke_OrZeroIfNoDest->ParentClass  //we can only check the types are the same (dest has no 'instance in other class' because it is root), but that's good enough in this case
+                                        )
+                                {
+                                    signalMandatory = true;
+                                }
+                                else if(
+                                        destinationClassLifeLine_OrZeroIfNoDest->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline //precondition to allow us to do instance-aware check for determining whether or not a signal is mandatory. my nose hurts. painfully itchy
+                                        && destinationClassLifeLine_OrZeroIfNoDest->designEqualsImplementationClass()->hasA_Private_Classes_Members().contains(sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()) //destination hasA this-source-instance, not just this-source-TYPE -- TODOreq: this STILL doesn't fix it because there are two instances of Foo and therefore two instances of Bar, but just like long ago we have no way of differentiating between those two instances of Bar gg, fucking instancing refactor fucked everything up again, so confusing
+                                        )
+                                {
+                                    signalMandatory = true;
+                                }
+                                else if(true)
+                                {
+                                    //TODOreq: what do i do for the NoInstanceChosen case? anything? nothing?
+                                }
+                            }
+
+                            if(signalMandatory)
+#endif
                             if(sourceClassLifeLine_OrZeroIfSourceIsActor->instanceInOtherClassIfApplicable()->parentClass() == destinationSlotToInvoke_OrZeroIfNoDest->ParentClass)
                             {
-                                //when the connection-activatation-line _destination_(slot) is parent (hasA relationship) of the _source_(signal), a signal is mandatory in the signal/slot message dialog before the dialog can be accepted. a slot is also mandatory since there is a destination, but that is already implemenented
+                                //when the connection-activatation-line _destination_(slot) is parent (hasA relationship) of the _source_(signal), a signal is mandatory in the signal/slot message dialog before the dialog can be accepted. a slot is also mandatory since there is a destination, but that is already implemenented(implied?)
                                 m_SignalsCheckbox->setChecked(true);
                                 m_SignalsCheckbox->setDisabled(true);
                                 newSignalAndExistingSignalsWidget->setDisabled(false);

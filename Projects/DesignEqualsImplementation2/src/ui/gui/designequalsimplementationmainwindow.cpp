@@ -10,6 +10,7 @@
 #include <QAction>
 #include <QListWidget>
 #include <QActionGroup> //and to think i wasted to much time with qbuttongroup/groupbox/etc in other projects!
+#include <QCoreApplication>
 
 #include <QDateTime> //temp/debug
 
@@ -18,7 +19,7 @@
 #include "usecaseumlitemswidget.h"
 #include "designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h"
 
-#define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME "Design = Implementation" //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod)
+#define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME "Design = Implementation" //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod) -- however i like the equality usage of the equal sign rather than assignment, in which case the word design coming first makes more sense (because the design does come before the implementation (most of the time, but especially in this app))
 
 #define DesignEqualsImplementationMainWindow_DOCK_WIDGET_FEATURES (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable)
 
@@ -53,9 +54,9 @@ DesignEqualsImplementationMainWindow::~DesignEqualsImplementationMainWindow()
 void DesignEqualsImplementationMainWindow::createActions()
 {
     //Project Operations
-    m_NewProjectAction = new QAction(tr("&New Project"), this); //TODOreq: lots of these ampersand things have collisions lewl
-    m_OpenProjectAction = new QAction(tr("&Open Open"), this);
-    m_NewUseCaseAction = new QAction(tr("&New Use Case"), this);
+    m_NewProjectAction = new QAction(tr("New &Project"), this); //TODOreq: lots of these ampersand things have collisions lewl
+    m_OpenProjectAction = new QAction(tr("&Open Project"), this);
+    m_NewUseCaseAction = new QAction(tr("New &Use Case"), this);
     m_GenerateSourceCodeAction = new QAction(tr("&Generate Source Code"), this);
     connect(m_NewProjectAction, SIGNAL(triggered()), this, SIGNAL(newProjectRequested()));
     connect(m_OpenProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
@@ -73,15 +74,24 @@ void DesignEqualsImplementationMainWindow::createActions()
     connect(m_MoveMousePointerDefaultAction, SIGNAL(triggered()), this, SLOT(doMouseModeChange()));
     connect(m_DrawSignalSlotConnectionActivationArrowsAction, SIGNAL(triggered()), this, SLOT(doMouseModeChange()));
     m_MoveMousePointerDefaultAction->setChecked(true);
+
+    decorateActions();
 }
 void DesignEqualsImplementationMainWindow::createMenu()
 {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu *fileNew = fileMenu->addMenu(tr("&New"));
+    fileNew->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
     fileNew->addAction(m_NewProjectAction);
     fileNew->addAction(m_NewUseCaseAction);
     fileMenu->addAction(m_OpenProjectAction);
     fileMenu->addAction(m_GenerateSourceCodeAction);
+
+    fileMenu->addSeparator();
+
+    QAction *quitAction = new QAction(tr("&Quit"), this); //TODOreq: if unsaved changes, are you sure + save and quit blah. same thing should happen when x is pressed or the user shuts down comp
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    fileMenu->addAction(quitAction);
 
     QMenu *modeMenu = menuBar()->addMenu(tr("&Mouse Mode"));
     modeMenu->addAction(m_MoveMousePointerDefaultAction);
@@ -89,17 +99,17 @@ void DesignEqualsImplementationMainWindow::createMenu()
 }
 void DesignEqualsImplementationMainWindow::createToolbars()
 {
-    QToolBar *fileNewMenuEquivalentToolbar = addToolBar(DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME " Project Operations Toolbar");
+    QToolBar *fileNewMenuEquivalentToolbar = addToolBar(tr("Project Operations Toolbar"));
     fileNewMenuEquivalentToolbar->addAction(m_NewProjectAction);
     fileNewMenuEquivalentToolbar->addAction(m_OpenProjectAction);
     fileNewMenuEquivalentToolbar->addAction(m_NewUseCaseAction);
     fileNewMenuEquivalentToolbar->addAction(m_GenerateSourceCodeAction);
 
-    addToolBarBreak();
+    //addToolBarBreak();
 
-    QToolBar *mainToolbar = addToolBar(DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME " Main Toolbar");
-    mainToolbar->addAction(m_MoveMousePointerDefaultAction);
-    mainToolbar->addAction(m_DrawSignalSlotConnectionActivationArrowsAction);
+    QToolBar *mouseModeToolbar = addToolBar(tr("Mouse Mode Toolbar"));
+    mouseModeToolbar->addAction(m_MoveMousePointerDefaultAction);
+    mouseModeToolbar->addAction(m_DrawSignalSlotConnectionActivationArrowsAction);
 }
 void DesignEqualsImplementationMainWindow::createDockWidgets()
 {
@@ -119,7 +129,7 @@ void DesignEqualsImplementationMainWindow::createDockWidgets()
     addDockWidget(Qt::LeftDockWidgetArea, dockWidget, Qt::Vertical);
 
     m_AllUseCasesListWidget = new QListWidget(); //TODOoptional: right-click -> new use case (TODOoptional: semi-OT: class diagram scene right-click -> new class)
-    QDockWidget *allUseCasesDockWidget = new QDockWidget("All Use Cases", this);
+    QDockWidget *allUseCasesDockWidget = new QDockWidget(tr("All Use Cases"), this);
     allUseCasesDockWidget->setFeatures(DesignEqualsImplementationMainWindow_DOCK_WIDGET_FEATURES);
     allUseCasesDockWidget->setWidget(m_AllUseCasesListWidget);
     addDockWidget(Qt::LeftDockWidgetArea, allUseCasesDockWidget, Qt::Vertical);
@@ -127,6 +137,12 @@ void DesignEqualsImplementationMainWindow::createDockWidgets()
     //defaults
     setClassDiagramToolsDisabled(false);
     setClassDiagramToolsDisabled(true);
+}
+void DesignEqualsImplementationMainWindow::decorateActions()
+{
+    m_NewProjectAction->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
+    m_OpenProjectAction->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+    //QStyle::SP_DialogSaveButton
 }
 void DesignEqualsImplementationMainWindow::setClassDiagramToolsDisabled(bool disabled)
 {

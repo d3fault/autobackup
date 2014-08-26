@@ -49,7 +49,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
 #endif
 
     //Quick add
-    QGroupBox *quickMemberAddGroupBox = new QGroupBox(tr("&Quick Add"));
+    QGroupBox *quickMemberAddGroupBox = new QGroupBox(tr("&Quick Add Member"));
     //TODOoptional: figure out how to set the group box title thing to bold without setting all children of the group box's font to bold also. QFont boldFont = quickMemberAddGroupBox->font();
     //boldFont.setBold(true);
     //quickMemberAddGroupBox->setFont(boldFont);
