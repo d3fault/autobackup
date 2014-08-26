@@ -13,6 +13,7 @@ class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassProperty;
 class IDesignEqualsImplementationMethod;
 class DesignEqualsImplementationClassSlot;
+class DesignEqualsImplementationClassSignal;
 
 class ClassEditorDialog : public QDialog
 {
@@ -57,7 +58,8 @@ private slots:
 
     //reactor pattern slots
     void handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded);
-    void handleSlotAdded(DesignEqualsImplementationClassSlot* slotAdded);
+    void handleSignalAdded(DesignEqualsImplementationClassSignal *signalAdded);
+    void handleSlotAdded(DesignEqualsImplementationClassSlot *slotAdded);
 };
 
 #endif // CLASSEDITORDIALOG_H

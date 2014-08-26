@@ -1,17 +1,18 @@
-#include "designequalsimplementationfunctiondeclarationparser.h"
+#include "designequalsimplementationlenientsignalorslotsignaturerparser.h"
 
 #include "libclangpch.h"
 using namespace clang;
 
-class DesignEqualsImplementationFunctionDeclarationParserRecursiveAstVisitor : public RecursiveASTVisitor<DesignEqualsImplementationFunctionDeclarationParserRecursiveAstVisitor>
+class DesignEqualsImplementationLenientSignalOrSlotSignaturerParserRecursiveAstVisitor : public RecursiveASTVisitor<DesignEqualsImplementationLenientSignalOrSlotSignaturerParserRecursiveAstVisitor>
 {
 public:
-    explicit DesignEqualsImplementationFunctionDeclarationParserRecursiveAstVisitor(ASTContext *context, DesignEqualsImplementationFunctionDeclarationParser *designEqualsImplementationFunctionDefinitionParser)
+    explicit DesignEqualsImplementationLenientSignalOrSlotSignaturerParserRecursiveAstVisitor(ASTContext *context, DesignEqualsImplementationLenientSignalOrSlotSignaturerParser *designEqualsImplementationFunctionDefinitionParser)
         : m_Context(context)
         , m_DesignEqualsImplementationFunctionDefinitionParser(designEqualsImplementationFunctionDefinitionParser)
     { }
     bool VisitFunctionDecl(FunctionDecl *functionDecl)
     {
+        ++m_DesignEqualsImplementationFunctionDefinitionParser->m_NumEncounteredFunctionDeclarations;
         m_DesignEqualsImplementationFunctionDefinitionParser->m_ParsedFunctionName = QString::fromStdString(functionDecl->getNameAsString());
         //TO DOnereq(can't instantiate internal clang types eaisly): should i config a DesignEqualsImplementationMethod (rename to function?) or should i pass around the clang internal types? I'm leaning towards "depend on clang as little as possible (especially if i want to have a compile time switch to not even use it)", even though admittedly I'll be reinventing the wheel here and there (like I already am/have :-P). I'm still iffy on how I'm going to handle a variable "how the user typed it" (const SomeClass &blah -- etc) vs "underlying type" (SomeClass)... but I'm damn glad clang has allowed me to DETERMINE the underlying class :)
         unsigned paramCount = functionDecl->getNumParams();
@@ -25,13 +26,13 @@ public:
     }
 private:
     ASTContext *m_Context;
-    DesignEqualsImplementationFunctionDeclarationParser *m_DesignEqualsImplementationFunctionDefinitionParser;
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser *m_DesignEqualsImplementationFunctionDefinitionParser;
 };
 
-class DesignEqualsImplementationFunctionDeclarationAstConsumer : public clang::ASTConsumer
+class DesignEqualsImplementationLenientSignalOrSlotSignaturerParserAstConsumer : public clang::ASTConsumer
 {
 public:
-    explicit DesignEqualsImplementationFunctionDeclarationAstConsumer(ASTContext *context, DesignEqualsImplementationFunctionDeclarationParser *designEqualsImplementationFunctionDefinitionParser)
+    explicit DesignEqualsImplementationLenientSignalOrSlotSignaturerParserAstConsumer(ASTContext *context, DesignEqualsImplementationLenientSignalOrSlotSignaturerParser *designEqualsImplementationFunctionDefinitionParser)
         : m_Visitor(context, designEqualsImplementationFunctionDefinitionParser)
     { }
     virtual void HandleTranslationUnit(clang::ASTContext &context)
@@ -39,13 +40,13 @@ public:
         m_Visitor.TraverseDecl(context.getTranslationUnitDecl());
     }
 private:
-    DesignEqualsImplementationFunctionDeclarationParserRecursiveAstVisitor m_Visitor;
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParserRecursiveAstVisitor m_Visitor;
 };
 
-struct DesignEqualsImplementationFunctionDeclarationDiagnosticConsumer : clang::DiagnosticConsumer
+struct DesignEqualsImplementationLenientSignalOrSlotSignaturerParserDiagnosticConsumer : clang::DiagnosticConsumer
 {
     llvm::OwningPtr<DiagnosticConsumer> m_Proxy;
-    DesignEqualsImplementationFunctionDeclarationDiagnosticConsumer(DiagnosticConsumer *previous, DesignEqualsImplementationFunctionDeclarationParser *designEqualsImplementationFunctionDefinitionParser)
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParserDiagnosticConsumer(DiagnosticConsumer *previous, DesignEqualsImplementationLenientSignalOrSlotSignaturerParser *designEqualsImplementationFunctionDefinitionParser)
         : m_Proxy(previous)
         , m_DesignEqualsImplementationFunctionDefinitionParser(designEqualsImplementationFunctionDefinitionParser)
     { }
@@ -63,28 +64,29 @@ struct DesignEqualsImplementationFunctionDeclarationDiagnosticConsumer : clang::
         m_Proxy->HandleDiagnostic(diagLevel, diagnosticInfo);
     }
 private:
-    DesignEqualsImplementationFunctionDeclarationParser *m_DesignEqualsImplementationFunctionDefinitionParser;
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser *m_DesignEqualsImplementationFunctionDefinitionParser;
 };
 
-class DesignEqualsImplementationFunctionDeclarationAstFrontendAction : public clang::ASTFrontendAction
+class DesignEqualsImplementationLenientSignalOrSlotSignaturerParserAstFrontendAction : public clang::ASTFrontendAction
 {
 public:
-    DesignEqualsImplementationFunctionDeclarationAstFrontendAction(DesignEqualsImplementationFunctionDeclarationParser *designEqualsImplementationFunctionDefinitionParser)
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParserAstFrontendAction(DesignEqualsImplementationLenientSignalOrSlotSignaturerParser *designEqualsImplementationFunctionDefinitionParser)
         : m_DesignEqualsImplementationFunctionDefinitionParser(designEqualsImplementationFunctionDefinitionParser)
     { }
     virtual clang::ASTConsumer *CreateASTConsumer(clang::CompilerInstance &compiler, llvm::StringRef InFile)
     {
         Q_UNUSED(InFile)
-        compiler.getDiagnostics().setClient(new DesignEqualsImplementationFunctionDeclarationDiagnosticConsumer(compiler.getDiagnostics().takeClient(), m_DesignEqualsImplementationFunctionDefinitionParser));
-        return new DesignEqualsImplementationFunctionDeclarationAstConsumer(&compiler.getASTContext(), m_DesignEqualsImplementationFunctionDefinitionParser);
+        compiler.getDiagnostics().setClient(new DesignEqualsImplementationLenientSignalOrSlotSignaturerParserDiagnosticConsumer(compiler.getDiagnostics().takeClient(), m_DesignEqualsImplementationFunctionDefinitionParser));
+        return new DesignEqualsImplementationLenientSignalOrSlotSignaturerParserAstConsumer(&compiler.getASTContext(), m_DesignEqualsImplementationFunctionDefinitionParser);
     }
 private:
-    DesignEqualsImplementationFunctionDeclarationParser *m_DesignEqualsImplementationFunctionDefinitionParser;
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser *m_DesignEqualsImplementationFunctionDefinitionParser;
 };
 
-DesignEqualsImplementationFunctionDeclarationParser::DesignEqualsImplementationFunctionDeclarationParser(const QString &functionDeclaration, const QList<QString> &knownTypesToTypedefPrepend, QObject *parent)
-    : QObject(parent)
-    , m_HasUnrecoverableSyntaxError(false)
+//lenient because it allows the "void " return type to be missing (but if return type is specified, it must be void), allows the parenthesis to be missing, and allows the semi-colon to be missing. in the simplest case, typing the signal/slot name alone is sufficient (i can't remember why i even parse in that case, but fuck it :-P... one code path is one code path)
+DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::DesignEqualsImplementationLenientSignalOrSlotSignaturerParser(const QString &functionDeclaration, const QList<QString> &knownTypesToTypedefPrepend)
+    : m_NumEncounteredFunctionDeclarations(0)
+    , m_HasError(false)
 {
     QString mutableFunctionDeclaration(functionDeclaration);
     if(!mutableFunctionDeclaration.trimmed().startsWith("void "))
@@ -98,7 +100,8 @@ DesignEqualsImplementationFunctionDeclarationParser::DesignEqualsImplementationF
         if(mutableFunctionDeclaration.contains(";") || mutableFunctionDeclaration.contains(")"))
         {
             //shit we can't recover from that, syntax error
-            m_HasUnrecoverableSyntaxError = true;
+            m_MostRecentError = "you have a ')' or a ';', but no '(' -- so a special syntax error";
+            m_HasError = true;
             return;
         }
         mutableFunctionDeclaration.append("()");
@@ -113,36 +116,50 @@ DesignEqualsImplementationFunctionDeclarationParser::DesignEqualsImplementationF
         mutableFunctionDeclaration.prepend("typedef int " + currentKnownType + ";\n"); //NVM: using append instead of prepend as originally planned because the ordering will matter later on i think, oh shit no it won't. thought it would because of interfaces/inheritence... but nope i just need to not get unknown type errors is all :)
     }
     std::string functionDeclarationStdString = mutableFunctionDeclaration.toStdString();
-    while(!clang::tooling::runToolOnCode(new DesignEqualsImplementationFunctionDeclarationAstFrontendAction(this), functionDeclarationStdString))
+    while(!clang::tooling::runToolOnCode(new DesignEqualsImplementationLenientSignalOrSlotSignaturerParserAstFrontendAction(this), functionDeclarationStdString))
     {
         if(m_UnknownTypesDetectedInLastRunToolOnCodeIteration.isEmpty())
         {
-            emit e("syntax error");
-            m_HasUnrecoverableSyntaxError = true;
+            m_MostRecentError = "libclang reported a syntax error. Check stderr for the details";
+            m_HasError = true;
             return;
         }
         mutableFunctionDeclaration.prepend("typedef int " + m_UnknownTypesDetectedInLastRunToolOnCodeIteration.at(0) + ";\n"); //just one at a time, since the next one might be the same unknown type (right?)
         m_NewTypesSeenInFunctionDeclaration.append(m_UnknownTypesDetectedInLastRunToolOnCodeIteration.at(0));
         m_UnknownTypesDetectedInLastRunToolOnCodeIteration.clear();
         m_ParsedFunctionArguments.clear();
+        m_NumEncounteredFunctionDeclarations = 0;
         functionDeclarationStdString = mutableFunctionDeclaration.toStdString();
     }
-    //success
+
+    //runToolOnCode success = no unrecoverable syntax errors
+
+    if(m_NumEncounteredFunctionDeclarations != 1)
+    {
+        m_MostRecentError = "error: " + QString::number(m_NumEncounteredFunctionDeclarations) + " function signatures parsed, but expected exactly 1";
+        m_HasError = true;
+        return;
+    }
 }
-bool DesignEqualsImplementationFunctionDeclarationParser::hasUnrecoverableSyntaxError() const
+bool DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::hasError() const
 {
-    return m_HasUnrecoverableSyntaxError;
+    return m_HasError;
 }
-QString DesignEqualsImplementationFunctionDeclarationParser::parsedFunctionName() const
+//only valid if has error
+QString DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::mostRecentError() const
+{
+    return m_MostRecentError;
+}
+QString DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::parsedFunctionName() const
 {
     //TODOreq: error out if zero or two+ function declarations were seen
     return m_ParsedFunctionName;
 }
-QList<QString> DesignEqualsImplementationFunctionDeclarationParser::newTypesSeenInFunctionDeclaration() const
+QList<QString> DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::newTypesSeenInFunctionDeclaration() const
 {
     return m_NewTypesSeenInFunctionDeclaration;
 }
-QList<MethodArgumentTypedef> DesignEqualsImplementationFunctionDeclarationParser::parsedFunctionArguments() const
+QList<MethodArgumentTypedef> DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::parsedFunctionArguments() const
 {
     return m_ParsedFunctionArguments;
 }

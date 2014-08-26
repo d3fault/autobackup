@@ -8,11 +8,13 @@ class DesignEqualsImplementationClassProperty : public QObject
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassProperty(QObject *parent = 0);
-    explicit DesignEqualsImplementationClassProperty(const QString &propertyType, const QString &propertyName, bool readOnly, bool notifiesOnChange, QObject *parent = 0);
+    explicit DesignEqualsImplementationClassProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange, QObject *parent = 0);
 
     //TODOoptional: private + getter/setter blah
     QString Type;
     QString Name;
+    bool HasInit;
+    QString OptionalInit;
     bool ReadOnly;
     bool NotifiesOnChange;
     //TODOoptional: a few others, such as "reset" (which should be combined with "default"/initial-value imo)

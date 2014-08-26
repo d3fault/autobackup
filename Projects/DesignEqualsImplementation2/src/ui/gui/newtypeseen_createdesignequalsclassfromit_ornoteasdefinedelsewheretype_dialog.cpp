@@ -7,11 +7,14 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
+#include "../../designequalsimplementationproject.h"
+
 #define NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog_COLUMN_OF_THE_LABEL 0
 #define NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog_COLUMN_OF_THE_CHECKBOX 1
 
-NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfTypesToDecideOn, QWidget *parent, Qt::WindowFlags f)
+NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfTypesToDecideOn, DesignEqualsImplementationProject *designEqualsImplementationProject, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
+    , m_DesignEqualsImplementationProject(designEqualsImplementationProject)
 {
     //TODOoptional: scroll bars in case there are a fucking shit load of new types (afaik, c[++] doesn't set a limit on num params)
 
@@ -46,6 +49,7 @@ NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::N
 
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(this, SIGNAL(accepted()), this, SLOT(handleDialogAccepted()));
 }
 QList<QString> NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::typesDecidedToBeDesignEqualsImplementationClass() const
 {
@@ -67,4 +71,17 @@ QList<QString> NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewher
         }
     }
     return ret;
+}
+void NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::handleDialogAccepted()
+{
+    //in the project: for each new type, create classes OR note them as defined elsewhere
+
+    Q_FOREACH(const QString &currentNewDesignEqualsClass, typesDecidedToBeDesignEqualsImplementationClass())
+    {
+        m_DesignEqualsImplementationProject->createNewClass(currentNewDesignEqualsClass);
+    }
+    Q_FOREACH(const QString &currentNewDefinedElsewhereType, typesDecidedToBeDefinedElsewhere())
+    {
+        m_DesignEqualsImplementationProject->noteDefinedElsewhereType(currentNewDefinedElsewhereType);
+    }
 }

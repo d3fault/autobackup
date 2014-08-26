@@ -11,6 +11,7 @@
 #include "clang/Tooling/Tooling.h"
 #include "clang/Parse/ParseDiagnostic.h"
 #include "clang/Sema/SemaDiagnostic.h"
+#include "clang/Lex/Lexer.h"
 
 #endif // __cplusplus
 

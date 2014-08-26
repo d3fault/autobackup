@@ -57,6 +57,7 @@ void ClassDiagramGraphicsScene::handleClassAdded(DesignEqualsImplementationClass
     //TODOreq: listen to move signals so the backend serializes later click-drag-rearranges from user
 
     connect(classAdded, SIGNAL(propertyAdded(DesignEqualsImplementationClassProperty*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handlePropertyAdded(DesignEqualsImplementationClassProperty*)));
+    connect(classAdded, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleSignalAdded(DesignEqualsImplementationClassSignal*)));
     connect(classAdded, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleSlotAdded(DesignEqualsImplementationClassSlot*)));
     connect(classAdded, SIGNAL(hasAPrivateMemberClassAdded(HasA_Private_Classes_Member*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member*)));
 

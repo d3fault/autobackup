@@ -13,7 +13,8 @@
 #include "newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h"
 #include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
-#include "../../designequalsimplementationfunctiondeclarationparser.h"
+#include "../../designequalsimplementationlenientsignalorslotsignaturerparser.h"
+#include "../../designequalsimplementationlenientpropertydeclarationparser.h"
 
 //modeless yet still cancelable would be best, but for now i'll settle for modal and cancelable. actually fuck that shit, the editor is going to modify the backend object directly for now (fuck the police)
 //TODOoptional: "types" can be either internal/designed types (sup) or "Qt/C++ built-ins (or basically ANY type, but similarly simply referred to by string). If you choose a "string" type but later convert it to an internal type, the app could ask you if you want to scan for other uses of that string type to convert them to the internal types as well, saving time/effort/etcS
@@ -56,7 +57,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     QHBoxLayout *quickMemberAddRow = new QHBoxLayout();
     m_QuickMemberAddLineEdit = new QLineEdit(); //TODOoptional: decide what to do when return is pressed lol. slot? if that's the case then slot should become the left-most of the three and bolded
     m_QuickMemberAddLineEdit->setPlaceholderText(tr("New member signature..."));
-    m_QuickMemberAddLineEdit->setToolTip(tr("Signals and Slots _MUST_ have a void return type. You are not required to type the [void] return type, however.\nJust start typing the signal/slot NAME and you're golden. The semi-colon at the end is optional as well.\n\nExample signal or slot (signal and slot declarations use the same syntax):\nnewSlot(int x, const SomeNewTypeThatWillBeCreatedOnTheFly &y);\n\nExample property:\nint MyProperty;\n\n\nSome shortcuts when typing:\n\tAlt+P = Property\n\tAlt+I = Signal\n\tAlt+L = Slot"));
+    m_QuickMemberAddLineEdit->setToolTip(tr("Signals and Slots _MUST_ have a void return type. You are not required to type the [void] return type, however.\nJust start typing the signal/slot NAME and you're golden. The semi-colon at the end is optional as well.\n\nExample signal or slot (signal and slot signatures use the same syntax):\nnewSlot(int x, const SomeNewTypeThatWillBeCreatedOnTheFly &y);\n\nExample property:\nint MyProperty;\nint MyProperty = 0;\nint MyProperty(0);\n\nSome shortcuts when typing:\n\tAlt+P = Property\n\tAlt+I = Signal\n\tAlt+L = Slot"));
     QPushButton *quickAddNewPropertyButton = new QPushButton(tr("&Property"));
     QPushButton *quickAddNewSignalButton = new QPushButton(tr("S&ignal"));
     QPushButton *quickAddNewSlotButton = new QPushButton(tr("S&lot"));
@@ -140,6 +141,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
 
     //reactor pattern, gui responding to our own edits <3
     connect(classToEdit, SIGNAL(propertyAdded(DesignEqualsImplementationClassProperty*)), this, SLOT(handlePropertyAdded(DesignEqualsImplementationClassProperty*)));
+    connect(classToEdit, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), this, SLOT(handleSignalAdded(DesignEqualsImplementationClassSignal*)));
     connect(classToEdit, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotAdded(DesignEqualsImplementationClassSlot*)));
 
 
@@ -190,49 +192,73 @@ void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
     //TODOoptional(nvm): this applies to non-quick-add as well: whenever the user specifies a type that is either an "internally designed type" _OR_ a qobject (all my internally designed types are qobjects, so...) and they don't choose for it to be a "pointer" like all my hasAprivateClassesMembers currently are, we should warn them with a modal dialog asking them if they're sure they want it to be a "plain member" ---- FFFFF nvm. the rational that i'd explain to the user was so that proper qobject parenting can be set up so that moveToThread calls work... BUT I JUST REALIZED FOR THE FIRST TIME EVER that even a non-pointer member can still be initialized in it's parent constructor list thingy ( : blah(), x(), etc ) to still use the proper parenting! in that case it would have the same parent twice! once in the OO heirarchy and again in the qobject heirarchy
 
     //TODOreq: differentiating member pointer owned (instantiated) vs. not owned (not instantiated, passed in somehow) = ??????????????????
+
+
+    DesignEqualsImplementationLenientPropertyDeclarationParser propertyDeclarationParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypes());
+    if(propertyDeclarationParser.hasError())
+    {
+        QMessageBox::critical(this, tr("Error"), propertyDeclarationParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
+        return;
+    }
+
+    //the property might be a new type, so ask the user how to handle it
+    if(!propertyDeclarationParser.newTypesSeenInPropertyDeclaration().isEmpty())
+    {
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(propertyDeclarationParser.newTypesSeenInPropertyDeclaration(), m_CurrentProject);
+        if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
+            return;
+    }
+
+    //now create the new property itself
+    m_ClassBeingEditted->createNewProperty(propertyDeclarationParser.parsedPropertyType(), propertyDeclarationParser.parsedPropertyName(), propertyDeclarationParser.hasInit(), propertyDeclarationParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
+
+    m_QuickMemberAddLineEdit->clear();
+
+
+    //TODOreq: maybe when they make the type an internally-designed type and it's also a pointer, i simply modal dialog ask them if they want to own/instantiate that object (makes it a hasA) or if it's just a pointer to one owned elsewhere. of course, if they type out the " = new class();" as the property initializer, we need to make sure not to conflict with their shit or overwrite it
 }
 void ClassEditorDialog::handleQuickAddNewSignalButtonClicked()
 {
-
-}
-//TODOreq: either manually filter "_Bool" to "bool", or figure out how to get clang to give me the cpp version of a bool :-P
-void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
-{
-    QList<QString> allKnownTypes;
-    Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_CurrentProject->classes())
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser signalSignatureParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypes());
+    if(signalSignatureParser.hasError())
     {
-        allKnownTypes.append(currentClass->ClassName);
-    }
-    Q_FOREACH(const QString &currentDefinedElsewhereType, m_CurrentProject->definedElsewhereTypes())
-    {
-        allKnownTypes.append(currentDefinedElsewhereType);
-    }
-    DesignEqualsImplementationFunctionDeclarationParser functionDeclarationParser(m_QuickMemberAddLineEdit->text(), allKnownTypes);
-    //connect -- awww shit forgot can't emit signals in constructor LoL
-    if(functionDeclarationParser.hasUnrecoverableSyntaxError())
-    {
-        QMessageBox::critical(this, tr("Syntax Error"), tr("There was a syntax error in your slot declaration. Check stderr for the details")); //TODOreq: show the details in-app in a qplaintextedit
+        QMessageBox::critical(this, tr("Error"), signalSignatureParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
         return;
     }
 
     //first we account for any new param type that is unknown to us
-    if(!functionDeclarationParser.newTypesSeenInFunctionDeclaration().isEmpty())
+    if(!signalSignatureParser.newTypesSeenInFunctionDeclaration().isEmpty())
     {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(functionDeclarationParser.newTypesSeenInFunctionDeclaration()); //intuitive naming ;-P
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(signalSignatureParser.newTypesSeenInFunctionDeclaration(), m_CurrentProject);
         if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
             return;
-        Q_FOREACH(const QString &currentNewDesignEqualsClass, newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.typesDecidedToBeDesignEqualsImplementationClass())
-        {
-            m_CurrentProject->createNewClass(currentNewDesignEqualsClass);
-        }
-        Q_FOREACH(const QString &currentNewDefinedElsewhereType, newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.typesDecidedToBeDefinedElsewhere())
-        {
-            m_CurrentProject->noteDefinedElsewhereType(currentNewDefinedElsewhereType);
-        }
+    }
+
+    //now create the new signal itself
+    m_ClassBeingEditted->createNewSignal(signalSignatureParser.parsedFunctionName(), signalSignatureParser.parsedFunctionArguments());
+
+    m_QuickMemberAddLineEdit->clear();
+}
+//TODOreq: either manually filter "_Bool" to "bool", or figure out how to get clang to give me the cpp version of a bool :-P
+void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
+{
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser slotSignatureParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypes());
+    if(slotSignatureParser.hasError())
+    {
+        QMessageBox::critical(this, tr("Error"), slotSignatureParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
+        return;
+    }
+
+    //first we account for any new param type that is unknown to us
+    if(!slotSignatureParser.newTypesSeenInFunctionDeclaration().isEmpty())
+    {
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(slotSignatureParser.newTypesSeenInFunctionDeclaration(), m_CurrentProject); //intuitive naming ;-P
+        if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
+            return;
     }
 
     //now create the new slot itself
-    m_ClassBeingEditted->createwNewSlot(functionDeclarationParser.parsedFunctionName(), functionDeclarationParser.parsedFunctionArguments());
+    m_ClassBeingEditted->createwNewSlot(slotSignatureParser.parsedFunctionName(), slotSignatureParser.parsedFunctionArguments());
 
     //TODOreq: add the args to the new slot, i think i need to refactor some though... because the argument types can be either internally designed classes or defined elsewhere types... and additionally they can have modifiers such as "references", "pointers", "consts", etc... that we want to KEEP for the slot declaration. so i guess i'll just stop coding and sit here staring at the blinking cursor comatose until i figure out what to do
 
@@ -243,7 +269,7 @@ void ClassEditorDialog::handleAddPropertyButtonClicked()
     if(addPropertyFieldsAreSane())
     {
         //signal, slot invoke, or direct method call? blah, semantecs at this point...
-        m_ClassBeingEditted->createNewProperty(m_AddPropertyTypeLineEdit->text().trimmed(), m_AddPropertyNameLineEdit->text().trimmed(), m_AddPropertyReadOnlyCheckbox->isChecked(), m_AddPropertyNotifiesOnChangeCheckbox->isChecked());
+        m_ClassBeingEditted->createNewProperty(m_AddPropertyTypeLineEdit->text().trimmed(), m_AddPropertyNameLineEdit->text().trimmed(), false, "", m_AddPropertyReadOnlyCheckbox->isChecked(), m_AddPropertyNotifiesOnChangeCheckbox->isChecked()); //TODOoptional: init checkbox and init line edit (checkbox because they might want to init to empty string). the init line edit could be disabled when checkbox is unchecked
         m_AddPropertyTypeLineEdit->clear();
         m_AddPropertyNameLineEdit->clear();
     }
@@ -287,7 +313,7 @@ void ClassEditorDialog::handleAddSlotButtonClicked()
             //methodToAddArgumentsTo->createNewArgument(argumentType, argumentName);
         }
 
-        DesignEqualsImplementationClassSlot *newSlot = m_ClassBeingEditted->createwNewSlot(m_AddSlotNameLineEdit->text().trimmed(), slotArguments);
+        m_ClassBeingEditted->createwNewSlot(m_AddSlotNameLineEdit->text().trimmed(), slotArguments);
         //addAllArgsInLayoutToMethod(newSlot, m_AddSlotArgumentsVLayout);
 
         m_AddSlotNameLineEdit->clear();
@@ -297,6 +323,10 @@ void ClassEditorDialog::handleAddSlotButtonClicked()
 void ClassEditorDialog::handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded)
 {
     //TODOreq: visualize added property in dialog
+}
+void ClassEditorDialog::handleSignalAdded(DesignEqualsImplementationClassSignal *signalAdded)
+{
+    //TODOreq: visualize added signal in dialog
 }
 void ClassEditorDialog::handleSlotAdded(DesignEqualsImplementationClassSlot *slotAdded)
 {

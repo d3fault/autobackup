@@ -120,7 +120,7 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
 #endif
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_DesignEqualsImplementationClass->Properties)
     {
-        classContentsString.append("<br />o  " + currentProperty->Type + ": " + currentProperty->Name);
+        classContentsString.append("<br />o  " + currentProperty->Type + ": " + currentProperty->Name); //TODOoptional: visualize optional init value
         ++numLinesOfText;
     }
     Q_FOREACH(HasA_Private_Classes_Member *currentHasA_Private_Classes_Members_ListEntryType, m_DesignEqualsImplementationClass->hasA_Private_Classes_Members())
@@ -283,5 +283,5 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleS
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleSignalAdded(DesignEqualsImplementationClassSignal *)
 {
-
+    updateClassContentsGraphicsTextItem();
 }

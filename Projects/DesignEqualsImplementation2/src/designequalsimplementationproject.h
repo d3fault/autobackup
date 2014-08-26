@@ -19,6 +19,8 @@ public:
 
     DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString());
 
+    QList<QString> allKnownTypes() const;
+
     //TODOoptional: private + getter/setter blah
     QString Name;
 

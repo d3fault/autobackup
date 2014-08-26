@@ -60,14 +60,22 @@ HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *DesignEqualsImplementati
     m_HasA_Private_PODorNonDesignedCpp_Members.append(newHasA_Private_PODorNonDesignedCpp_Members_ListEntryType);
     return newHasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
 }
-DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNewSignal(const QString &newSignalName)
+DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNewSignal(const QString &newSignalName, const QList<MethodArgumentTypedef> &newSignalArgs)
 {
     DesignEqualsImplementationClassSignal *newSignal = new DesignEqualsImplementationClassSignal(this);
     newSignal->Name = newSignalName;
-    newSignal->ParentClass = this;
-    m_MySignals.append(newSignal);
-    emit signalAdded(newSignal);
+    Q_FOREACH(const MethodArgumentTypedef &currentMethodArgument, newSignalArgs)
+    {
+        newSignal->createNewArgument(currentMethodArgument.first, currentMethodArgument.second);
+    }
+    addSignal(newSignal);
     return newSignal;
+}
+void DesignEqualsImplementationClass::addSignal(DesignEqualsImplementationClassSignal *signalToAdd)
+{
+    signalToAdd->ParentClass = this;
+    m_MySignals.append(signalToAdd);
+    emit signalAdded(signalToAdd);
 }
 DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNewSlot(const QString &newSlotName, const QList<MethodArgumentTypedef> &newSlotArgs)
 {
@@ -93,9 +101,9 @@ void DesignEqualsImplementationClass::removeSlot(DesignEqualsImplementationClass
     slotToRemove->ParentClass = 0; //TODOreq: a slot without a parent is undefined
     //emit slotRemoved(slotToRemove);
 }
-DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(const QString &propertyType, const QString &propertyName, bool readOnly, bool notifiesOnChange)
+DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
 {
-    DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, propertyName, readOnly, notifiesOnChange, this);
+    DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, propertyName, hasInit, optionalInit, readOnly, notifiesOnChange, this);
     addProperty(newProperty);
     return newProperty;
 }

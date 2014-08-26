@@ -33,7 +33,8 @@ public:
 
     HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *createNewHasAPrivate_PODorNonDesignedCpp_Member(const QString &typeString = QString(), const QString &variableName = QString());
 
-    DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString());
+    DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString(), const QList<MethodArgumentTypedef> &newSignalArgs = QList<MethodArgumentTypedef>());
+    void addSignal(DesignEqualsImplementationClassSignal *signalToAdd);
 
     DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString(), const QList<MethodArgumentTypedef> &newSlotArgs = QList<MethodArgumentTypedef>());
     void addSlot(DesignEqualsImplementationClassSlot *slotToAdd);
@@ -42,7 +43,7 @@ public:
     //TODOoptional: private + getter/setter blah
     QString ClassName;
 
-    DesignEqualsImplementationClassProperty *createNewProperty(const QString &propertyType, const QString &propertyName, bool readOnly, bool notifiesOnChange);
+    DesignEqualsImplementationClassProperty *createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
     void addProperty(DesignEqualsImplementationClassProperty *propertyToAdd);
 
     HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);

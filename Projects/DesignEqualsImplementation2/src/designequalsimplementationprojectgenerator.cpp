@@ -416,7 +416,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     {
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->Type << " " << memberNameForProperty(currentProperty->Name) << ";" << endl;
     }
-    if(!currentClass->Properties.isEmpty())
+    if(!currentClass->Properties.isEmpty() && atLeastOneHasAPrivateMemberClass) //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
     {
         headerFileTextStream << endl;
     }
@@ -446,6 +446,15 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         sourceFileTextStream << endl;
     sourceFileTextStream    << currentClass->ClassName << "::" << currentClass->ClassName << "(QObject *parent)" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;
+    //Source's header Properties constructor initializers
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    {
+        if(currentProperty->HasInit)
+        {
+            //, m_SomeBoolProperty(true)
+            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << memberNameForProperty(currentProperty->Name) << "(" << currentProperty->OptionalInit << ")" << endl; //TODOoptional: a way to use one of currentClass's constructor args (or even multiple but omg my brain) as the init for a given property. should be 'smart'
+        }
+    }
     //Source's header PrivateMemberClasses constructor initializers
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
     {
