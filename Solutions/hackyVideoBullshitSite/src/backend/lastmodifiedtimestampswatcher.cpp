@@ -11,6 +11,15 @@
 
 //git push -> post-update -> git clone/archive -> symlinkSwap -> deleteOldLastModifiedJustToTriggerQfsWatcher (also delete rest of shit) -> [re-]resolveAndWatchSymlink/.lastModified
 
+#define D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI 0 //completely off-topic hack for book generating :). so much timestamp merging etc going on i don't feel like coding twice
+
+#ifdef D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI
+#include <QTextStream>
+#include <QDateTime>
+#include <iostream>
+using namespace std;
+#endif
+
 LastModifiedTimestampsWatcher::LastModifiedTimestampsWatcher(QObject *parent)
     : QObject(parent)
     , m_LastModifiedTimestampsFilesWatcher(0)
@@ -129,6 +138,50 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
             (*pathsIndexIntoFlatListHash)[currentPath] = ++currentIndexIntoSortedPathsFlatList; //funny, if i use QString then the string is doubled in size (16-bit vs. 8-bit), and yet QString also saves me half the space because of implicit sharing xD...
         }
     }
+
+#ifdef D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI
+    {
+        QString baseDir = "/home/user/hvbs/web/view";
+        QFile bookContentsFile("/run/shm/book.contents.txt");
+        QFile dreamsContentsFile("/run/shm/book.dreams.txt");
+        if(!bookContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate) || !dreamsContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            cout << "error opening book contents file for writing";
+        else
+        {
+            QTextStream bookContentsStream(&bookContentsFile);
+            QTextStream dreamsContentsFileStream(&dreamsContentsFile);
+            Q_FOREACH(TimestampAndPath *currentTimestampAndPath, *sortedTimestampAndPathFlatList)
+            {
+                QString pathQ = QString::fromStdString(currentTimestampAndPath->Path);
+                if(!pathQ.endsWith("txt"))
+                    continue;
+                if(pathQ.contains("/Projects/") && !pathQ.contains("/Projects/Ideas/")) //don't want various "design" docs, but do want ideas
+                    continue;
+                if(pathQ.contains("/VariousTreeingsDuringHugeArchivePurge/") || pathQ.contains("oldUnversionedArchive/Lists/") || pathQ.contains("oldUnversionedArchive/Media Lists/") || pathQ.contains("downloadMoviesFreeLegallyTutorial") || pathQ.contains("/working/Documents/oldGitLog"))
+                    continue;
+                QDateTime timeD = QDateTime::fromMSecsSinceEpoch(currentTimestampAndPath->Timestamp*1000);
+                bookContentsStream << " ### " << timeD.toString("yy-MM-d_hh:mm:ss") << " ### " << pathQ << " ### ";
+                QFile currentFileForBook(baseDir + pathQ);
+                if(!currentFileForBook.open(QIODevice::ReadOnly))
+                {
+                    cout << "failed to open: " << baseDir.toStdString() << currentTimestampAndPath->Path;
+                    break;
+                }
+                else
+                {
+                    QTextStream currentFileForBookStream(&currentFileForBook);
+                    QString currentFileContents = currentFileForBookStream.readAll();
+                    if(pathQ.contains("/minddump/dreams/"))
+                    {
+                        dreamsContentsFileStream << timeD.toString("yy-MM-d_hh:mm:ss") << " - " << pathQ << endl << currentFileContents << endl << endl;
+                    }
+                    bookContentsStream << currentFileContents.replace("\n", "\\n");
+                }
+            }
+        }
+    }
+    cout << "book wroted";
+#endif
 
     LastModifiedTimestampsAndPaths *newTimestampsAndPaths = new LastModifiedTimestampsAndPaths(sortedTimestampAndPathFlatList, pathsIndexIntoFlatListHash);
     if(sortedTimestampAndPathFlatList->isEmpty())
