@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QIODevice>
 
-#include "simplifiedlastmodifiedtimestamp.h"
+#include "lastmodifiedtimestamp.h"
 
 LastModifiedTimestampsSorter::LastModifiedTimestampsSorter(QObject *parent)
     : QObject(parent)

@@ -1,0 +1,20 @@
+# nano /etc/hosts
+127.0.0.1       localhost
+199.115.117.209 l0l.d3fault.net l0l
+#there is stuff below here but it doesn't need to be changed
+
+
+
+# nano /etc/resolv.conf                                      
+domain d3fault.net
+nameserver 108.59.15.5
+nameserver 83.149.80.123
+nameserver 85.17.96.69
+
+
+
+# nano /etc/hostname
+l0l
+
+
+

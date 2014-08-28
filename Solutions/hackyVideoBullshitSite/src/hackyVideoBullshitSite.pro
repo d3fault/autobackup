@@ -49,7 +49,7 @@ INCLUDEPATH += ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/
 LIBS += -lwt -lwthttp -lboost_signals
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
-include(../../../GloballySharedClasses/simplifiedlastmodifiedtimestamp.pri)
+include(../../../GloballySharedClasses/lastmodifiedtimestamp.pri)
 include(../../../GloballySharedClasses/standardinputnotifier.pri)
 
 RESOURCES += \

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1409062263
+Documents/minddump/:1409163194
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -705,6 +705,7 @@ Documents/minddump/dlasfkjdsklfjkdsjfosdiuflkjouflsdkjfoeru.txt:1356102912
 Documents/minddump/dlasfkjsadlkfjsdouiewrlkjsdfoiuoiwerlkjsf.txt:1355645793
 Documents/minddump/dlfjlskfjsldfjsdofulkjerousakdjfsodfulsdfkjoweiurlkjsdfousdflkjsfd.txt:1380845964
 Documents/minddump/dlfjsdlkfjsaodfusadfyasoifuwaeruafjdfasdfaweprua.txt:1327892642
+Documents/minddump/dlfjslfkjsdklfjaslkfjslakjflksdjflksdjfsdhflsjkfklsdjflksdjoewurlksdjf.txt:1409074842
 Documents/minddump/dlfkjasdlfkjsdflsdkajfaosulwkjeraoewufsdlfjksdofjasdlfjsdfljsadfworeu.txt:1350505076
 Documents/minddump/dlfkjasldkfjdsaofuljwerouljasfdousdlfkjoiuwlerkjouslfjsdofulj.txt:1370582665
 Documents/minddump/dlfkjlaskjdflksjdfosudflkjsdfoulksdofuasdl.txt:1384486609
@@ -763,6 +764,7 @@ Documents/minddump/dsflkjsdfkljsadfoiuewrwrwelkfjoduflkwjeroulsdkfjsadofulewkjro
 Documents/minddump/dsflkjsdfkljsdfksdfouisdflkjsdfoeworul.txt:1358982708
 Documents/minddump/dsflkjsdflkjsdflkjoiusdlkjfsadouiflk.txt:1359542592
 Documents/minddump/dsflkjsdflkjsdflsdfouwerljsdoufdlkjsd.txt:1356168561
+Documents/minddump/dsflkjsdflkjsdlkfjljdflksjdflksjdflkjsdfkjsdflkjdsouwelrkjousdflksd.txt:1409162770
 Documents/minddump/dsflkjsdlfkjsdlfkjsdlfjsdlfkjsdlfkjsdlkfjouwelrkjsdofusdlfkjsdofu.txt:1381113317
 Documents/minddump/dsflkjsdlkfjsdaofiusldjfosurweouwedsfk.txt:1359511318
 Documents/minddump/dsflkjwaerousflkjawieryasfweoriusdkfj.txt:1342605985
@@ -1163,6 +1165,7 @@ Documents/minddump/kjsdafouwlkrjosufwlaekjrsfoiuwrjsdfkjwerou.txt:1342938608
 Documents/minddump/kjsdflkjsdlkfjslkdjflksjdflkjsdflkjsdlfksadflkjsdflkjsd.txt:1399002531
 Documents/minddump/kjsdjfkjsdafjasdlkfjlkasjflkajdslkfjasdlkfjweiouroiuweriouweo.txt:1352188793
 Documents/minddump/kjslfkjaskjldflskjdfsoufsldkfjsoudflksdfjosiudflkdsjf.oh.except.for.had.some.pretty.deep.thoughts.bro.txt:1392529034
+Documents/minddump/kldsjflkjsdflkjsldkfjsdjfsldkjflsdkjfsldkfjsldkjfsdofulksdjfoulk.txt:1409163194
 Documents/minddump/klfsjdflkjsdfouslfkjsofusfjsoufsdlk.txt:1391196026
 Documents/minddump/kljsdflsdjfljsdlfjldfalskflaskdjfouerouwerouiqaeruio.txt:1352189052
 Documents/minddump/kljsdlkfjsdlkjfdfglskdjfslkjfsldkjfousdlkjfsoduflkj.txt:1392976737
@@ -2603,7 +2606,7 @@ Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRele
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/main.cpp:1379408785
 Projects/DesignEqualsImplementation2/:1408725818
 Projects/DesignEqualsImplementation2/design/:1409004280
-Projects/DesignEqualsImplementation2/design/1.0.requirements.for.designEqualsImplementation2.txt:1408999622
+Projects/DesignEqualsImplementation2/design/1.0.requirements.for.designEqualsImplementation2.txt:1409074664
 Projects/DesignEqualsImplementation2/design/2.types.of.classes.maybe.action.class.and.pod.class.but.idfk.txt:1408253349
 Projects/DesignEqualsImplementation2/design/all.type.usages.simply.mark.the.underlying.type.as.required.which.isnt.difficult.but.still.requires.some.thinking.for.private.hasA.members.refactoring.txt:1408695344
 Projects/DesignEqualsImplementation2/design/arrows.saldfjsldfjlsjfwoeurljsdfosduflsdkjfosdfsldfjsldf.txt:1405420969
@@ -3201,8 +3204,8 @@ Projects/LastModifiedTimestampsSorter/src/cli/LastModifiedTimestampsSorterCli.pr
 Projects/LastModifiedTimestampsSorter/src/cli/lastmodifiedtimestampssortercli.cpp:1397732495
 Projects/LastModifiedTimestampsSorter/src/cli/lastmodifiedtimestampssortercli.h:1397731687
 Projects/LastModifiedTimestampsSorter/src/cli/main.cpp:1397731812
-Projects/LastModifiedTimestampsSorter/src/lib/:1401025162
-Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp:1401025162
+Projects/LastModifiedTimestampsSorter/src/lib/:1409253091
+Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp:1409253091
 Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h:1401024899
 Projects/LastModifiedTimestampsTools/:1401622753
 Projects/LastModifiedTimestampsTools/src/:1401629929
@@ -4767,7 +4770,7 @@ Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 Solutions/DasButton/:1400808943
-Solutions/DasButton/src/:1401292004
+Solutions/DasButton/src/:1409251734
 Solutions/DasButton/src/DasButton.pro:1400834262
 Solutions/DasButton/src/dasbutton.cpp:1401291874
 Solutions/DasButton/src/dasbutton.h:1401291794
@@ -4798,7 +4801,7 @@ Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrep
 Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.it.later.txt:1387589098
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1400664477
-Solutions/hackyVideoBullshitSite/:1397488850
+Solutions/hackyVideoBullshitSite/:1409253029
 Solutions/hackyVideoBullshitSite/design/:1400229918
 Solutions/hackyVideoBullshitSite/design/dont.use.atomics.for.synchronization.lol.overkill.just.rely.on.fs.buffer.cache.txt:1397469831
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
@@ -4807,7 +4810,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1401356167
+Solutions/hackyVideoBullshitSite/src/:1409253291
 Solutions/hackyVideoBullshitSite/src/backend/:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1401116619
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1401116218
@@ -4825,7 +4828,7 @@ Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:140102
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1400924041
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1401352804
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1401029359
-Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1401116298
+Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1409249547
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1401030303
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1401030044
 Solutions/hackyVideoBullshitSite/src/hvbsresources.qrc:1401115865
@@ -4838,7 +4841,7 @@ Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/:1400305184
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/initial.idea.including.a.failed.lol.attempt.txt:1400305184
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/:1400310726
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/:1400918638
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/:1409249320
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/AtomicallyUpdateSymlinkToLatestGitCommit.pro:1400312390
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/atomicallyupdatesymlinktolatestgitcommitcli.cpp:1400312390
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/atomicallyupdatesymlinktolatestgitcommitcli.h:1400312107
@@ -4886,7 +4889,7 @@ Solutions/launchASEPbecauseRedAlert/launchPlaceholderSvgStickFigureMeditating.sv
 Solutions/launchASEPbecauseRedAlert/list.of.domains.to.buy.at.or.just.before.launch.txt:1401723511
 Solutions/launchASEPbecauseRedAlert/meAnalyzingTheSituationWithPoliceHelicopterJuryAimingBothGunAndNetAtMe.svg:1371125630
 Solutions/launchASEPbecauseRedAlert/meAutoGrapplingTheFuckOutOfThereBecauseRedAlert.svg:1371123108
-Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if.i.generate.book.from.script.fuggit.txt:1398073737
+Solutions/launchASEPbecauseRedAlert/preamble.wip.oh.derp.this.would.be.a.dupe.if.i.generate.book.from.script.fuggit.txt:1409247027
 Solutions/launchASEPbecauseRedAlert/pricing.breakdown.asdf.txt:1402467562
 Solutions/launchASEPbecauseRedAlert/pursuingHappiness.svg:1371126578
 Solutions/launchASEPbecauseRedAlert/restricted.access.cookie.check.idea.thingo.asdflksadflkjsadf.txt:1388735956
@@ -4930,7 +4933,7 @@ VariousTreeingsDuringHugeArchivePurge/Silver1tbCalvaryeBooksEasyTree.txt:1367596
 VariousTreeingsDuringHugeArchivePurge/externals.which.is.which.txt:1367597729
 VariousTreeingsDuringHugeArchivePurge/k3.wpl:1264978231
 autobackupScripts/:1349691249
-autobackupScripts/linux/:1401721451
+autobackupScripts/linux/:1409247062
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -4945,10 +4948,11 @@ autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
-autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1404128262
+autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1409246773
 autobackupScripts/linux/base64theMd5SumOfAFileProperly.sh:1385203690
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
+autobackupScripts/linux/dedicated.server.domain.name.associating.txt:1409246698
 autobackupScripts/linux/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
 autobackupScripts/linux/dismount.2x.750gb.drives.sh:1350716638
 autobackupScripts/linux/droid.backup.and.delete.only.because.flash.medium.sh.bak:1358469389
