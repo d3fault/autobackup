@@ -11,7 +11,7 @@
 
 //git push -> post-update -> git clone/archive -> symlinkSwap -> deleteOldLastModifiedJustToTriggerQfsWatcher (also delete rest of shit) -> [re-]resolveAndWatchSymlink/.lastModified
 
-#define D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI 0 //completely off-topic hack for book generating :). so much timestamp merging etc going on i don't feel like coding twice
+#define D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI 1 //completely off-topic hack for book generating :). so much timestamp merging etc going on i don't feel like coding twice
 
 #ifdef D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI
 #include <QTextStream>
@@ -139,12 +139,12 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
         }
     }
 
-#ifdef D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI
+#if D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI
     {
         QString baseDir = "/home/user/hvbs/web/view";
         QFile bookContentsFile("/run/shm/book.contents.txt");
         QFile dreamsContentsFile("/run/shm/book.dreams.txt");
-        if(!bookContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text) || !dreamsContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        if(!bookContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text) || !dreamsContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
             cout << "error opening book contents file for writing";
         else
         {
@@ -157,7 +157,7 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
                     continue;
                 if(pathQ.contains("/Projects/") && !pathQ.contains("/Projects/Ideas/")) //don't want various "design" docs, but do want ideas
                     continue;
-                if(pathQ.contains("/VariousTreeingsDuringHugeArchivePurge/") || pathQ.contains("oldUnversionedArchive/Lists/") || pathQ.contains("oldUnversionedArchive/Media Lists/") || pathQ.contains("downloadMoviesFreeLegallyTutorial") || pathQ.contains("/working/Documents/oldGitLog"))
+                if(pathQ.contains("/VariousTreeingsDuringHugeArchivePurge/") || pathQ.contains("oldUnversionedArchive/Lists/") || pathQ.contains("oldUnversionedArchive/Media Lists/") || pathQ.contains("downloadMoviesFreeLegallyTutorial") || pathQ.contains("/working/Documents/oldGitLog") || pathQ.contains("/lastFmExports/"))
                     continue;
                 QDateTime timeD = QDateTime::fromMSecsSinceEpoch(currentTimestampAndPath->Timestamp*1000);
                 bookContentsStream << " ### " << timeD.toString("yy-MM-d_hh:mm:ss") << " ### " << pathQ << " ### ";
@@ -175,7 +175,7 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
                     {
                         dreamsContentsFileStream << timeD.toString("yy-MM-d_hh:mm:ss") << " - " << pathQ << endl << currentFileContents << endl << endl;
                     }
-                    bookContentsStream << currentFileContents.replace("\n", "\\n");
+                    bookContentsStream << currentFileContents.replace("\n", "\\n").replace("\t", "\\t");
                 }
             }
         }

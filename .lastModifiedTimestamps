@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1409512067
+Documents/minddump/:1409512159
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2003,6 +2003,7 @@ Documents/minddump/sdlkfjklsjdfsodufljksdfouwoeursdlfkj.txt:1384341360
 Documents/minddump/sdlkfjlaksjdfosudflkjsadfousdlfjouwelrkjousdf.txt:1384490455
 Documents/minddump/sdlkfjlaskjdflkjslkdfjlkasjflkjsdflkjsdflkjsdfkj.whats.one.day.txt.oh.shit.so.what.about.releasing.files.then.i.mean.when.txt:1400311121
 Documents/minddump/sdlkfjlksdjflskdjfouwerljsdlkfhlsdkjfsdlkjfsdofuoewurjfdlkjfsdflksjdfsduferkjsf.txt:1405074523
+Documents/minddump/sdlkfjlskdjflksjdflkjsdklfjlksdjflksjdflkjsdf.txt:1409512159
 Documents/minddump/sdlkfjlskjflkjsdfoiusdlfjsodfiulkdjfsokfoiuwelkrjsdfsdfoiuer.txt:1365218620
 Documents/minddump/sdlkfjsalfkjsaldfkjsdfousldfjsoduflsdjfoasudflksjdfuweorusoadfiusoadifjsfdl.txt:1380751657
 Documents/minddump/sdlkfjsdlfjouwerljsadfklsdjfoul.txt:1355649486
@@ -4819,11 +4820,11 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1409507973
-Solutions/hackyVideoBullshitSite/src/backend/:1409507545
+Solutions/hackyVideoBullshitSite/src/:1409512397
+Solutions/hackyVideoBullshitSite/src/backend/:1409512874
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1401116619
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1401116218
-Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1409507545
+Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1409512874
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1401025268
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1401264947
