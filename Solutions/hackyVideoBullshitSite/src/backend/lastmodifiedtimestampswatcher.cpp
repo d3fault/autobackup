@@ -144,7 +144,7 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
         QString baseDir = "/home/user/hvbs/web/view";
         QFile bookContentsFile("/run/shm/book.contents.txt");
         QFile dreamsContentsFile("/run/shm/book.dreams.txt");
-        if(!bookContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate) || !dreamsContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        if(!bookContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text) || !dreamsContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
             cout << "error opening book contents file for writing";
         else
         {
@@ -162,7 +162,7 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
                 QDateTime timeD = QDateTime::fromMSecsSinceEpoch(currentTimestampAndPath->Timestamp*1000);
                 bookContentsStream << " ### " << timeD.toString("yy-MM-d_hh:mm:ss") << " ### " << pathQ << " ### ";
                 QFile currentFileForBook(baseDir + pathQ);
-                if(!currentFileForBook.open(QIODevice::ReadOnly))
+                if(!currentFileForBook.open(QIODevice::ReadOnly | QIODevice::Text))
                 {
                     cout << "failed to open: " << baseDir.toStdString() << currentTimestampAndPath->Path;
                     break;

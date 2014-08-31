@@ -3,13 +3,13 @@
 #include <QLabel>
 #include <QPushButton>
 
-LabelLineEditBrowseButton::LabelLineEditBrowseButton(const QString &labelText, FileDialogMode fileDialogMode, Direction direction, QWidget *parent) :
+LabelLineEditBrowseButton::LabelLineEditBrowseButton(const QString &labelText, FileDialogMode fileDialogMode, const QString &pushButtonText, Direction direction, QWidget *parent) :
     QBoxLayout(direction, parent)
 {
     QLabel *myLabel = new QLabel(labelText);
     m_MyLineEdit = new QLineEdit();
     myLabel->setBuddy(m_MyLineEdit);
-    QPushButton *browseButton = new QPushButton("Browse");
+    QPushButton *browseButton = new QPushButton(pushButtonText);
 
     //global
     m_FileDialog.setWindowModality(Qt::WindowModal);
@@ -51,8 +51,10 @@ QFileDialog &LabelLineEditBrowseButton::fileDialog()
 }
 void LabelLineEditBrowseButton::handleBrowseButtonClicked()
 {
-    if(m_FileDialog.exec() && m_FileDialog.selectedFiles().size() > 0)
+    if(m_FileDialog.exec() == QDialog::Accepted && m_FileDialog.selectedFiles().size() > 0)
     {
-        m_MyLineEdit->setText(m_FileDialog.selectedFiles().at(0));
+        const QString &selectedFile0 = m_FileDialog.selectedFiles().at(0);
+        m_MyLineEdit->setText(selectedFile0);
+        emit pathSelectedFromBrowseDialog(selectedFile0);
     }
 }
