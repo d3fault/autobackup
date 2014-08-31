@@ -53,7 +53,8 @@ void LabelLineEditBrowseButton::handleBrowseButtonClicked()
 {
     if(m_FileDialog.exec() == QDialog::Accepted && m_FileDialog.selectedFiles().size() > 0)
     {
-        const QString &selectedFile0 = m_FileDialog.selectedFiles().at(0);
+        //const QString &selectedFile0 = m_FileDialog.selectedFiles().at(0); -- intermitent bug when using const reference. the first time i tried it on a small file, it worked. the second time ona  20mb file, it didn't work. and from then on even on small files it didn't work again. weird that i'm not even at the reading of file contents stage right here. the filename was showing up blank, but the very first time clearly was not. was working on CopyFileContentsToClipboard when it happened
+        QString selectedFile0 = m_FileDialog.selectedFiles().at(0);
         m_MyLineEdit->setText(selectedFile0);
         emit pathSelectedFromBrowseDialog(selectedFile0);
     }

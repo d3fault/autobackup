@@ -1,0 +1,1 @@
+I have a hilarious problem right now: how to paste 4000 pages in 828 page segments into a preformatted template. I can output to odt and then convert to whatever (or maybe conversion isn't even necessary), but I have a strong 'hunch' that the page borders and shit won't be set up properly and I'd prefer to use a template so I know for sure that the page is set up right :(.

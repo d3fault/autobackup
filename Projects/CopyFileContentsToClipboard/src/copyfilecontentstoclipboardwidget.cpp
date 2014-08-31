@@ -60,5 +60,5 @@ void CopyFileContentsToClipboardWidget::copyFileContentsToClipboardWidget(const 
         QString fileContents = fileContentsTextStream.readAll();
         clipboard->setText(fileContents);
     }
-    m_Output->appendPlainText("The contents of '" + filePath + "' have been copied to the clpboard.");
+    m_Output->appendPlainText("The contents of '" + filePath + "' have been copied to the clipboard.");
 }
