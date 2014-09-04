@@ -16,9 +16,9 @@ public:
     //TODOoptional: private + getter/setter blah
     QString Type;
 };
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassMethodArgument &argument);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassMethodArgument &argument);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassMethodArgument &argument);
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassMethodArgument *&argument);
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassMethodArgument *&argument);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassMethodArgument *argument);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassMethodArgument *argument);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSMETHODARGUMENT_H

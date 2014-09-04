@@ -242,7 +242,7 @@ void DesignEqualsImplementationClassLifeLine::assignPrivateMemberAsClassLifeline
 {
     setInstanceInOtherClassIfApplicable(chosenExistingHasA_Private_Classes_Member);
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassLifeLine &classLifeline)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassLifeLine &classLifeline)
 {
 #if 0
 #define DesignEqualsImplementationClassLifeLine_QDS(qds, direction, classLifeline) \
@@ -300,12 +300,14 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine
     }
     return in;
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassLifeLine *&designEqualsImplementationClassLifeline)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassLifeLine *classLifeline)
 {
-    return out << *designEqualsImplementationClassLifeline;
+    out << *classLifeline;
+    return out;
 }
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine *&designEqualsImplementationClassLifeline)
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine *classLifeline)
 {
-    designEqualsImplementationClassLifeline = new DesignEqualsImplementationClassLifeLine();
-    return in >> *designEqualsImplementationClassLifeline;
+    classLifeline = new DesignEqualsImplementationClassLifeLine();
+    in >> *classLifeline;
+    return in;
 }

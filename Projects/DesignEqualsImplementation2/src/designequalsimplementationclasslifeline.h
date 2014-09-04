@@ -73,9 +73,10 @@ public slots:
     void assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member);
 };
 
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassLifeLine &classLifeline);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassLifeLine &classLifeline);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine &classLifeline);
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassLifeLine *&designEqualsImplementationClassLifeline);
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine *&designEqualsImplementationClassLifeline);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassLifeLine *classLifeline);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine *classLifeline);
+
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINE_H

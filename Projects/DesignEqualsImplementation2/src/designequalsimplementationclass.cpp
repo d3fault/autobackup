@@ -8,6 +8,7 @@
 #include "designequalsimplementationsignalemissionstatement.h"
 
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
+qds direction designEqualsImplementationClass.ClassName; \
 qds direction designEqualsImplementationClass.Properties; \
 qds direction designEqualsImplementationClass.m_HasA_Private_Classes_Members; \
 qds direction designEqualsImplementationClass.PrivateMethods; \
@@ -145,7 +146,7 @@ void DesignEqualsImplementationClass::emitAllClassDetails()
 {
     //TODOreq
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass &designEqualsImplementationClass)
 {
     DesignEqualsImplementationClass_QDS(out, <<, designEqualsImplementationClass);
 }
@@ -153,12 +154,15 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass &design
 {
     DesignEqualsImplementationClass_QDS(in, >>, designEqualsImplementationClass);
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass *&designEqualsImplementationClass)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass *designEqualsImplementationClass)
 {
-    return out << *designEqualsImplementationClass;
+    out << *designEqualsImplementationClass;
+    return out;
 }
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&designEqualsImplementationClass)
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *designEqualsImplementationClass)
 {
     designEqualsImplementationClass = new DesignEqualsImplementationClass();
-    return in >> *designEqualsImplementationClass;
+    in >> *designEqualsImplementationClass;
+    TODO LEFT OFF: project.addClass(designEqualsImplementationClass);
+    return in;
 }

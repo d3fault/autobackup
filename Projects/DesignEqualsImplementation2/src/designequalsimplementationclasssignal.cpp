@@ -13,7 +13,7 @@ DesignEqualsImplementationClassSignal::DesignEqualsImplementationClassSignal(QOb
 { }
 DesignEqualsImplementationClassSignal::~DesignEqualsImplementationClassSignal()
 { }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal &signal)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSignal &signal)
 {
     DesignEqualsImplementationClassSignal_QDS(out, <<, signal)
 }
@@ -21,12 +21,14 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal &
 {
     DesignEqualsImplementationClassSignal_QDS(in, >>, signal)
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal *&signal)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSignal *signal)
 {
-    return out << *signal;
+    out << *signal;
+    return out;
 }
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal *&signal)
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal *signal)
 {
     signal = new DesignEqualsImplementationClassSignal();
-    return in >> *signal;
+    in >> *signal;
+    return in;
 }

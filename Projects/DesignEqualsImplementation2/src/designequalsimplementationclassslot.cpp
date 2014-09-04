@@ -64,7 +64,7 @@ QObject *DesignEqualsImplementationClassSlot::asQObject()
 {
     return this;
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot &slot)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSlot &slot)
 {
     DesignEqualsImplementationClassSlot_QDS(out, <<, slot)
 }
@@ -72,12 +72,14 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot &sl
 {
     DesignEqualsImplementationClassSlot_QDS(in, >>, slot)
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot *&slot)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSlot *slot)
 {
-    return out << *slot;
+    out << *slot;
+    return out;
 }
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot *&slot)
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot *slot)
 {
     slot = new DesignEqualsImplementationClassSlot();
-    return in >> *slot;
+    in >> *slot;
+    return in;
 }

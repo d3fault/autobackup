@@ -17,16 +17,9 @@ qds direction project.m_UseCases; \
 qds direction project.m_DefinedElsewhereTypes; \
 return qds;
 
-//new
 DesignEqualsImplementationProject::DesignEqualsImplementationProject(QObject *parent)
     : QObject(parent)
 { }
-//open
-DesignEqualsImplementationProject::DesignEqualsImplementationProject(const QString &existingProjectFilePath, QObject *parent)
-    : QObject(parent)
-{
-    //TODOreq: ACTUALLY DO _NOT_ use a load constructor, because then there's no way to connect to the "e" signal!!!
-}
 DesignEqualsImplementationProject::~DesignEqualsImplementationProject()
 {
     qDeleteAll(m_Classes);
@@ -393,7 +386,7 @@ void DesignEqualsImplementationProject::handleAddUmlItemRequested(UmlItemsTypede
     {
     case DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS:
     {
-        createNewClass("New Class 1" /*TODOreq: auto incrementing (but they'll likely change it anyways)*/, position);
+        createNewClass("NewClass1" /*TODOreq: auto incrementing (but they'll likely change it anyways)*/, position);
     }
         break;
     case DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE:

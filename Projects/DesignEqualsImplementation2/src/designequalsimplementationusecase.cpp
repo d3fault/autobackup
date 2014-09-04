@@ -613,14 +613,16 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useC
     }
     return in;
 }
-QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase *&useCase)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase *useCase)
 {
-    return out << *useCase;
+    out << *useCase;
+    return out;
 }
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *&useCase)
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *useCase)
 {
-    useCase = new DesignEqualsImplementationUseCase(); //TODOreq: no parent at this context (just memory related), also losing project we belong to (but since one project per serialized file, that will be easy to fix)
-    return in >> *useCase;
+    useCase = new DesignEqualsImplementationUseCase();
+    in >> *useCase;
+    return in;
 }
 QDataStream &operator<<(QDataStream &out, const SignalSlotCombinedEventHolder &useCase)
 {

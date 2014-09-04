@@ -77,10 +77,10 @@ signals:
 public slots:
     void emitAllClassDetails();
 };
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass &designEqualsImplementationClass);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass &designEqualsImplementationClass);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass &designEqualsImplementationClass);
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClass *&designEqualsImplementationClass);
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&designEqualsImplementationClass);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass *designEqualsImplementationClass);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *designEqualsImplementationClass);
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClass*)
 

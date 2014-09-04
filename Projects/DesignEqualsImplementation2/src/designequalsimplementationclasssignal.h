@@ -15,10 +15,10 @@ public:
     explicit DesignEqualsImplementationClassSignal(QObject *parent = 0);
     virtual ~DesignEqualsImplementationClassSignal();
 };
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal &signal);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSignal &signal);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal &signal);
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSignal *&signal);
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal *&signal);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSignal *signal);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSignal *signal);
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClassSignal*)
 

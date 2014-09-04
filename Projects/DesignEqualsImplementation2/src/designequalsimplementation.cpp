@@ -243,7 +243,8 @@ void DesignEqualsImplementation::newProject()
     testProject->generateSourceCode(DesignEqualsImplementationProject::Library, "/run/shm/designEqualsImplementation-GeneratedAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()));
 
     emit projectOpened(testProject);
-#elif defined DesignEqualsImplementation_TEST_GUI_MODE
+#endif // DesignEqualsImplementation_TEST_MODE
+#ifdef DesignEqualsImplementation_TEST_GUI_MODE
     DesignEqualsImplementationProject *testProject = new DesignEqualsImplementationProject(this);
     testProject->Name = "TestProject";
 
@@ -308,13 +309,13 @@ void DesignEqualsImplementation::newProject()
     connect(testProject, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     connect(testProject, SIGNAL(sourceCodeGenerated(bool)), this, SLOT(handlesourceCodeGenerated(bool)));
     emit projectOpened(testProject);
-#else
+#endif // DesignEqualsImplementation_TEST_GUI_MODE
     DesignEqualsImplementationProject *newProject = new DesignEqualsImplementationProject(this);
     newProject->Name = "New Project 1"; //TODOreq: auto-increment
+
     connect(newProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(newProject);
     emit projectOpened(newProject);
-#endif
 }
 void DesignEqualsImplementation::saveProject(DesignEqualsImplementationProject *projectToSave, const QString &projectFilePath)
 {
@@ -327,7 +328,7 @@ void DesignEqualsImplementation::saveProject(DesignEqualsImplementationProject *
     }
     QDataStream projectDataStream(&projectFile);
     //oops: projectDataStream << this; //surprisingly anti-climactic (but still awesome in it's own way)
-    projectDataStream << projectToSave;
+    projectDataStream << *projectToSave;
     if(!projectFile.flush())
     {
         emit e("could not flush to file '" + projectFilePath + "'");
@@ -336,7 +337,16 @@ void DesignEqualsImplementation::saveProject(DesignEqualsImplementationProject *
 }
 void DesignEqualsImplementation::openExistingProject(const QString &existingProjectFilePath)
 {
-    DesignEqualsImplementationProject *existingProject = new DesignEqualsImplementationProject(existingProjectFilePath, this);
+    QFile projectFile(existingProjectFilePath);
+    if(!projectFile.open(QIODevice::ReadOnly))
+    {
+        emit e("could not open file '" + existingProjectFilePath + "' for reading");
+        return;
+    }
+    QDataStream projectDataStream(&projectFile);
+    DesignEqualsImplementationProject *existingProject = new DesignEqualsImplementationProject(this);
+    projectDataStream >> *existingProject;
+
     connect(existingProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(existingProject);
     emit projectOpened(existingProject);

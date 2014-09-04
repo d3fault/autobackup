@@ -14,7 +14,6 @@ class DesignEqualsImplementationProject : public QObject
 public:
     enum ProjectGenerationMode { Library, CliApplication, GuiApplication /*, WebApplication */ };
     explicit DesignEqualsImplementationProject(QObject *parent = 0);
-    explicit DesignEqualsImplementationProject(const QString &existingProjectFilePath, QObject *parent = 0);
     ~DesignEqualsImplementationProject();
 
     DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString(), const QPointF &classPositionInGraphicsScene = QPointF());

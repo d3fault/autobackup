@@ -24,9 +24,9 @@ public:
 signals:
     void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
 };
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod);
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassPrivateMethod *&designEqualsImplementationClassPrivateMethod);
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassPrivateMethod *&designEqualsImplementationClassPrivateMethod);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassPrivateMethod *designEqualsImplementationClassPrivateMethod);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassPrivateMethod *designEqualsImplementationClassPrivateMethod);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSPRIVATEMETHOD_H

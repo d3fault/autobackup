@@ -27,7 +27,7 @@ DesignEqualsImplementationClassProperty::DesignEqualsImplementationClassProperty
     , ReadOnly(readOnly)
     , NotifiesOnChange(notifiesOnChange)
 { }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassProperty &designEqualsImplementationClassProperty)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassProperty &designEqualsImplementationClassProperty)
 {
     DesignEqualsImplementationClassProperty_QDS(out, <<, designEqualsImplementationClassProperty);
 }
@@ -35,12 +35,14 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassProperty
 {
     DesignEqualsImplementationClassProperty_QDS(in, >>, designEqualsImplementationClassProperty);
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassProperty *&designEqualsImplementationClassProperty)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassProperty *designEqualsImplementationClassProperty)
 {
-    return out << *designEqualsImplementationClassProperty;
+    out << *designEqualsImplementationClassProperty;
+    return out;
 }
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassProperty *&designEqualsImplementationClassProperty)
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassProperty *designEqualsImplementationClassProperty)
 {
     designEqualsImplementationClassProperty = new DesignEqualsImplementationClassProperty();
-    return in >> *designEqualsImplementationClassProperty;
+    in >> *designEqualsImplementationClassProperty;
+    return in;
 }

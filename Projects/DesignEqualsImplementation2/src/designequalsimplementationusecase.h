@@ -109,8 +109,8 @@ public slots:
 };
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);
-QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase *&useCase);
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *&useCase);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase *useCase);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *useCase);
 
 typedef QPair<DesignEqualsImplementationUseCase::UseCaseEventTypeEnum, QObject*> UseCaseEventListEntryType; //OrderedUseCaseEvents has a copy/paste of this type, because I couldn't forward declare it or whatever (wtf)
 

@@ -5,7 +5,7 @@
 #include <QList>
 
 //#define DesignEqualsImplementation_TEST_MODE 1
-#define DesignEqualsImplementation_TEST_GUI_MODE 1
+//#define DesignEqualsImplementation_TEST_GUI_MODE 1
 
 class DesignEqualsImplementationProject;
 

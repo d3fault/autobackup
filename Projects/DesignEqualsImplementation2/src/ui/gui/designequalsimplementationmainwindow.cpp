@@ -11,6 +11,7 @@
 #include <QListWidget>
 #include <QActionGroup> //and to think i wasted to much time with qbuttongroup/groupbox/etc in other projects!
 #include <QCoreApplication>
+#include <QFileDialog>
 
 #include <QDateTime> //temp/debug
 
@@ -189,7 +190,12 @@ void DesignEqualsImplementationMainWindow::handleSaveRequested()
 void DesignEqualsImplementationMainWindow::handleOpenProjectActionTriggered()
 {
     //TODOreq: file dialog and then
-    emit openExistingProjectRequested(QString());
+    QFileDialog openFileDialog(this, tr("Open project..."));
+    openFileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+    if(openFileDialog.exec() == QDialog::Accepted && openFileDialog.selectedFiles().size() > 0)
+    {
+        emit openExistingProjectRequested(openFileDialog.selectedFiles().at(0));
+    }
 }
 void DesignEqualsImplementationMainWindow::handleNewUseCaseActionTriggered()
 {

@@ -17,7 +17,7 @@ QString HasA_Private_Classes_Member::typeString()
 {
     return m_MyClass->ClassName + " *";
 }
-QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Member &hasA_Private_Classes_Member)
+QDataStream &operator<<(QDataStream &out, HasA_Private_Classes_Member &hasA_Private_Classes_Member)
 {
     //HasA_Private_Classes_Member_QDS(out, <<, hasA_Private_Classes_Member);
 #if 0
@@ -43,12 +43,14 @@ QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member &hasA_Priva
     in >> deserializationClassIdForParentClass;
     hasA_Private_Classes_Member.m_ParentClass = hasA_Private_Classes_Member.m_MyClass->m_ParentProject->classInstantiationFromSerializedClassId(deserializationClassIdForParentClass);
 }
-QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Member *&hasA_Private_Classes_Member)
+QDataStream &operator<<(QDataStream &out, HasA_Private_Classes_Member *hasA_Private_Classes_Member)
 {
-    return out << *hasA_Private_Classes_Member;
+    out << *hasA_Private_Classes_Member;
+    return out;
 }
-QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member *&hasA_Private_Classes_Member)
+QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member *hasA_Private_Classes_Member)
 {
     hasA_Private_Classes_Member = new HasA_Private_Classes_Member();
-    return in >> *hasA_Private_Classes_Member;
+    in >> *hasA_Private_Classes_Member;
+    return in;
 }

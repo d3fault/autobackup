@@ -39,10 +39,11 @@ private:
 signals:
     void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
 };
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot &slot);
+
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSlot &slot);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot &slot);
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassSlot *&slot);
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot *&slot);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSlot *slot);
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot *slot);
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClassSlot*)
 
