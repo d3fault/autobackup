@@ -16,6 +16,8 @@
 #ifdef D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI
 #include <QTextStream>
 #include <QDateTime>
+#include <QCryptographicHash>
+#include <QSet>
 #include <iostream>
 using namespace std;
 #endif
@@ -141,6 +143,7 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
 
 #if D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI
     {
+        QSet<QByteArray> fileContentsDeDuplicater; //sha1 contents, only ever add the body of a given hash to book once (first occurance)
         QString baseDir = "/home/user/hvbs/web/view";
         QFile bookContentsFile("/run/shm/book.contents.txt");
         QFile dreamsContentsFile("/run/shm/book.dreams.txt");
@@ -157,10 +160,9 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
                     continue;
                 if(pathQ.contains("/Projects/") && !pathQ.contains("/Projects/Ideas/")) //don't want various "design" docs, but do want ideas
                     continue;
-                if(pathQ.contains("/VariousTreeingsDuringHugeArchivePurge/") || pathQ.contains("oldUnversionedArchive/Lists/") || pathQ.contains("oldUnversionedArchive/Media Lists/") || pathQ.contains("downloadMoviesFreeLegallyTutorial") || pathQ.contains("/working/Documents/oldGitLog") || pathQ.contains("/lastFmExports/"))
+                if(pathQ.contains("/VariousTreeingsDuringHugeArchivePurge/") || pathQ.contains("oldUnversionedArchive/Lists/") || pathQ.contains("oldUnversionedArchive/Media Lists/") || pathQ.contains("downloadMoviesFreeLegallyTutorial") || pathQ.contains("/working/Documents/oldGitLog") || pathQ.contains("/lastFmExports/") || pathQ.contains("/sxml/testxml.txt") || pathQ.contains("/Documents/dmca/") || pathQ.contains("/Voice/property/"))
                     continue;
                 QDateTime timeD = QDateTime::fromMSecsSinceEpoch(currentTimestampAndPath->Timestamp*1000);
-                bookContentsStream << " ### " << timeD.toString("yy-MM-d_hh:mm:ss") << " ### " << pathQ << " ### ";
                 QFile currentFileForBook(baseDir + pathQ);
                 if(!currentFileForBook.open(QIODevice::ReadOnly | QIODevice::Text))
                 {
@@ -171,11 +173,78 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
                 {
                     QTextStream currentFileForBookStream(&currentFileForBook);
                     QString currentFileContents = currentFileForBookStream.readAll();
+                    //custom: "if(char-is-ascii-ascii) { emit empty-str }" replacer
+                    QString rebuiltWithNoUnicode;
+                    int fileContentsLen = currentFileContents.length();
+                    for(int i = 0; i < fileContentsLen; ++i)
+                    {
+                        QChar currentChar = currentFileContents.at(i);
+                        if(currentChar.unicode() > 127)
+                            continue;
+                        rebuiltWithNoUnicode.append(currentChar);
+                    }
+                    currentFileContents = rebuiltWithNoUnicode;
+                    if(currentFileContents.trimmed().isEmpty())
+                        continue;
+
+                    //Begin last-minute dedupe of contents based on sha1sum of contents
+                    QByteArray currentFileContentsAsByteArrayForDedupe = currentFileContents.toUtf8();
+                    QByteArray currentFileContentsSignature = QCryptographicHash::hash(currentFileContentsAsByteArrayForDedupe, QCryptographicHash::Sha1);
+                    if(fileContentsDeDuplicater.contains(currentFileContentsSignature))
+                        continue;
+                    fileContentsDeDuplicater.insert(currentFileContentsSignature);
+                    //End last-minute dedupe code
+
+                    bookContentsStream << timeD.toString("yy-MM-d_hh:mm:ss") << " ### " << pathQ << endl;
                     if(pathQ.contains("/minddump/dreams/"))
                     {
+                        //dreams only (retain formatting)
                         dreamsContentsFileStream << timeD.toString("yy-MM-d_hh:mm:ss") << " - " << pathQ << endl << currentFileContents << endl << endl;
                     }
-                    bookContentsStream << currentFileContents.replace("\n", "\\n").replace("\t", "\\t");
+
+                    //everything (compact formatting)
+
+                    //i see huge gaps of whitespace, so maybe readAll isn't as smart as readLine. ez fix anyways
+                    //convert all \r\n into \n until no more \r\n seen
+                    QString origString;
+                    do
+                    {
+                        origString = currentFileContents;
+                        currentFileContents = currentFileContents.replace("\r\n", "\n");
+                    }while(currentFileContents != origString);
+
+                    //compact all multiple \n into a single \n. i wasn't planning on doing this (see below's TODOoptional), but am seeing weird paragraph breaks that are costing me tons of empty space on pages (usually over half the page is blank)
+                    do
+                    {
+                        origString = currentFileContents;
+                        currentFileContents = currentFileContents.replace("\n\n", "\n");
+                    }while(currentFileContents != origString);
+
+                    //convert all multiple \t into just one \t until no more multiple \t seen
+
+                    //convert all newlines into '\n' until no more newlines seen -- TODOoptional: compact multiple newlines into something like "\n{15}", but only if that would give us a shorter string overall
+                    do
+                    {
+                        origString = currentFileContents;
+                        currentFileContents = currentFileContents.replace("\n", "\\n");
+                    }while(currentFileContents != origString);
+
+                    //convert all multiple \t into just one \t until no more multiple \t seen
+                    do
+                    {
+                        origString = currentFileContents;
+                        currentFileContents = currentFileContents.replace("\t\t", "\t");
+                    }while(currentFileContents != origString);
+                    currentFileContents.replace("\t", "\\t");
+
+                    //convert all multiple spaces into just one space until no more multiple spaces seen
+                    do
+                    {
+                        origString = currentFileContents;
+                        currentFileContents = currentFileContents.replace("  ", " ");
+                    }while(currentFileContents != origString);
+
+                    bookContentsStream << currentFileContents << endl;
                 }
             }
         }

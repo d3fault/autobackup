@@ -22,6 +22,7 @@ signals:
     void e(const QString &);
 public slots:
     void newProject();
+    void saveProject(DesignEqualsImplementationProject *projectToSave, const QString &projectFilePath);
     void openExistingProject(const QString &existingProjectFilePath);
 #ifdef DesignEqualsImplementation_TEST_GUI_MODE
 private slots:

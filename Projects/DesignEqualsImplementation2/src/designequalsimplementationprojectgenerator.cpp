@@ -6,6 +6,7 @@
 
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationusecase.h"
+#include "designequalsimplementationclasslifeline.h"
 #include "designequalsimplementationsignalemissionstatement.h"
 #include "designequalsimplementationslotinvocationstatement.h"
 
@@ -311,7 +312,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
             //TODOreq: record dependency on the slot's class INSTANCE (however, idk wtf to do since Bar is a child of Foo). perhaps this entire dependency recording thing is not needed [for instantiation] (might still be needed for connections)
             //TODOreq: queue destination slot for iterating/recursing just like we're already doing
             DesignEqualsImplementationSlotInvocationStatement *nextSlotInvocationStatement = static_cast<DesignEqualsImplementationSlotInvocationStatement*>(currentStatement);
-            if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, nextSlotInvocationStatement->slotInvocationContextVariables().ClassLifelineWhoseSlotIsAboutToBeInvoked, nextSlotInvocationStatement->slotToInvoke()))
+            if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, nextSlotInvocationStatement->classLifelineWhoseSlotIsToBeInvoked(), nextSlotInvocationStatement->slotToInvoke()))
             {
                 emit e("failed recursive walk werweurjdfkljsldkfj");
                 return false;

@@ -10,20 +10,9 @@
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
 qds direction designEqualsImplementationClass.Properties; \
 qds direction designEqualsImplementationClass.m_HasA_Private_Classes_Members; \
-qds direction designEqualsImplementationClass.m_HasA_Private_PODorNonDesignedCpp_Members; \
 qds direction designEqualsImplementationClass.PrivateMethods; \
 qds direction designEqualsImplementationClass.m_MySlots; \
 qds direction designEqualsImplementationClass.m_MySignals; \
-return qds;
-
-#define HasA_Private_Classes_Members_ListEntryType_QDS(qds, direction, hasA_Private_Classes_Members_ListEntryType) \
-qds direction hasA_Private_Classes_Members_ListEntryType.VariableName; \
-qds direction *hasA_Private_Classes_Members_ListEntryType.m_MyClass; \
-return qds;
-
-#define HasA_Private_PODorNonDesignedCpp_Members_ListEntryType_QDS(qds, direction, hasA_Private_PODorNonDesignedCpp_Members_ListEntryType) \
-qds direction hasA_Private_PODorNonDesignedCpp_Members_ListEntryType.VariableName; \
-qds direction hasA_Private_PODorNonDesignedCpp_Members_ListEntryType.Type; \
 return qds;
 
 //TODOoptional: auto-pimpl, since pimpl is cheap/awesome (and gives us implicit sharing when done properly) and increases source/binary compatibility. MAYBE it should be opt-in, but probably opt-out instead?
@@ -37,9 +26,10 @@ QString DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSe
 {
     return QString("connect(" + signalObjectVariableName + ", SIGNAL(" + signalNameIncludingNormalizedArgs + "), " +  slotObjectVariableName + ", SLOT(" + slotNameIncludingNormalizedArgs + "));");
 }
-DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent)
+DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent, DesignEqualsImplementationProject *parentProject)
     : QObject(parent)
     , IDesignEqualsImplementationVisuallyRepresentedItem()
+    , m_ParentProject(parentProject)
 { }
 DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
 {
@@ -49,16 +39,9 @@ DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
     //    delete currentMember->m_DesignEqualsImplementationClass;
     //}
     qDeleteAll(m_HasA_Private_Classes_Members);
-    qDeleteAll(m_HasA_Private_PODorNonDesignedCpp_Members);
     qDeleteAll(PrivateMethods);
     qDeleteAll(m_MySlots);
     qDeleteAll(m_MySignals);
-}
-HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *DesignEqualsImplementationClass::createNewHasAPrivate_PODorNonDesignedCpp_Member(const QString &typeString, const QString &variableName)
-{
-    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *newHasA_Private_PODorNonDesignedCpp_Members_ListEntryType = new HasA_Private_PODorNonDesignedCpp_Members_ListEntryType(typeString, variableName);
-    m_HasA_Private_PODorNonDesignedCpp_Members.append(newHasA_Private_PODorNonDesignedCpp_Members_ListEntryType);
-    return newHasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
 }
 DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNewSignal(const QString &newSignalName, const QList<MethodArgumentTypedef> &newSignalArgs)
 {
@@ -130,10 +113,6 @@ QList<HasA_Private_Classes_Member*> DesignEqualsImplementationClass::hasA_Privat
 {
     return m_HasA_Private_Classes_Members;
 }
-QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> DesignEqualsImplementationClass::hasA_Private_PODorNonDesignedCpp_Members()
-{
-    return m_HasA_Private_PODorNonDesignedCpp_Members;
-}
 QList<DesignEqualsImplementationClassSignal *> DesignEqualsImplementationClass::mySignals()
 {
     return m_MySignals;
@@ -182,38 +161,4 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *&desig
 {
     designEqualsImplementationClass = new DesignEqualsImplementationClass();
     return in >> *designEqualsImplementationClass;
-}
-QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Member &hasA_Private_Classes_Members_ListEntryType)
-{
-    HasA_Private_Classes_Members_ListEntryType_QDS(out, <<, hasA_Private_Classes_Members_ListEntryType)
-}
-QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member &hasA_Private_Classes_Members_ListEntryType)
-{
-    HasA_Private_Classes_Members_ListEntryType_QDS(in, >>, hasA_Private_Classes_Members_ListEntryType)
-}
-QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Member *&hasA_Private_Classes_Members_ListEntryType)
-{
-    return out << *hasA_Private_Classes_Members_ListEntryType;
-}
-QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member *&hasA_Private_Classes_Members_ListEntryType)
-{
-    hasA_Private_Classes_Members_ListEntryType = new HasA_Private_Classes_Member();
-    return in >> *hasA_Private_Classes_Members_ListEntryType;
-}
-QDataStream &operator<<(QDataStream &out, const HasA_Private_PODorNonDesignedCpp_Members_ListEntryType &hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
-{
-    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType_QDS(out, <<, hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
-}
-QDataStream &operator>>(QDataStream &in, HasA_Private_PODorNonDesignedCpp_Members_ListEntryType &hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
-{
-    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType_QDS(in, >>, hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
-}
-QDataStream &operator<<(QDataStream &out, const HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *&hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
-{
-    return out << *hasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
-}
-QDataStream &operator>>(QDataStream &in, HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *&hasA_Private_PODorNonDesignedCpp_Members_ListEntryType)
-{
-    hasA_Private_PODorNonDesignedCpp_Members_ListEntryType = new HasA_Private_PODorNonDesignedCpp_Members_ListEntryType();
-    return in >> *hasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
 }

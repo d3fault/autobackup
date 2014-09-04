@@ -1,0 +1,3 @@
+i wanted to move:
+[] - fix temp slot hack (see: unnamed.slots.should.show.up.in.class.editor...)
+to be above "Project save/open", but doing so might mean the same ordering I am trying to implement might be being broken during my own move to (attempt to) achieve. There is no mark for previous moves and the importance of dependencies (dependent lines), so my moving it might break "fix temp slot hacks" own dependencies. i considered bringing the line directly above it with it during the move.

@@ -1,5 +1,8 @@
 #include "designequalsimplementation.h"
 
+#include <QFile>
+#include <QDataStream>
+
 #include "designequalsimplementationproject.h"
 
 #ifdef DesignEqualsImplementation_TEST_MODE
@@ -270,8 +273,10 @@ void DesignEqualsImplementation::newProject()
     DesignEqualsImplementationClassSlot *barSlot1 = barClass->createwNewSlot("barSlot1");
     DesignEqualsImplementationClassSlot *barSlot2 = barClass->createwNewSlot("barSlot2");
 
+#if 0
     //bool Bar::m_Success -- HACK'ish: need something to satisfy barSignal's success arg
     HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *successPodMember = barClass->createNewHasAPrivate_PODorNonDesignedCpp_Member("bool", "m_Success");
+#endif
 
     //barSignal
     DesignEqualsImplementationClassSignal *barSignal = barClass->createNewSignal("barSignal");
@@ -310,6 +315,24 @@ void DesignEqualsImplementation::newProject()
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(newProject);
     emit projectOpened(newProject);
 #endif
+}
+void DesignEqualsImplementation::saveProject(DesignEqualsImplementationProject *projectToSave, const QString &projectFilePath)
+{
+    //vrooooom
+    QFile projectFile(projectFilePath);
+    if(!projectFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) //TODOreq: gui confirms overwrite. for now i am doing monolithic/single-state saves, but i'm considering migrating to mutations/replayable(undo-framework)
+    {
+        emit e("could not open file '" + projectFilePath + "' for writing");
+        return;
+    }
+    QDataStream projectDataStream(&projectFile);
+    //oops: projectDataStream << this; //surprisingly anti-climactic (but still awesome in it's own way)
+    projectDataStream << projectToSave;
+    if(!projectFile.flush())
+    {
+        emit e("could not flush to file '" + projectFilePath + "'");
+        return;
+    }
 }
 void DesignEqualsImplementation::openExistingProject(const QString &existingProjectFilePath)
 {

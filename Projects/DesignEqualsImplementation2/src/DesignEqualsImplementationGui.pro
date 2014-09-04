@@ -60,7 +60,10 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/tabemittinglineedit.cpp \
     ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.cpp \
     designequalsimplementationlenientsignalorslotsignaturerparser.cpp \
-    designequalsimplementationlenientpropertydeclarationparser.cpp
+    designequalsimplementationlenientpropertydeclarationparser.cpp \
+    designequalsimplementationprivatemethodsynchronouscallstatement.cpp \
+    idesignequalsimplementationstatement.cpp \
+    signalemissionorslotinvocationcontextvariables.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -113,7 +116,8 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/tabemittinglineedit.h \
     ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h \
     designequalsimplementationlenientsignalorslotsignaturerparser.h \
-    designequalsimplementationlenientpropertydeclarationparser.h
+    designequalsimplementationlenientpropertydeclarationparser.h \
+    designequalsimplementationprivatemethodsynchronouscallstatement.h
 
 #libclang stuff
 CONFIG += precompile_header

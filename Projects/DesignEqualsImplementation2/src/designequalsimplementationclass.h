@@ -14,11 +14,12 @@
 
 #define DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX "failed to generate source for: "
 
+class DesignEqualsImplementationProject;
+
 typedef QPair<QString /*type*/, QString /*name*/> MethodArgumentTypedef; //derp defined like twenty different places...
 //typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_Private_Classes_Members_ListEntryType;
 
 //TODOinstancing: class DesignEqualsImplementationClassInstance;
-class HasA_Private_PODorNonDesignedCpp_Members_ListEntryType;
 
 class DesignEqualsImplementationClass : public QObject, public IDesignEqualsImplementationVisuallyRepresentedItem
 {
@@ -27,11 +28,9 @@ public:
     //static DesignEqualsImplementationClassInstance *createClassInstance(DesignEqualsImplementationClassInstance *parent = 0, const QString &optionalVariableName = QString());
     static QString generateRawConnectStatementWithEndingSemicolon(const QString &signalObjectVariableName, const QString &signalNameIncludingNormalizedArgs, const QString &slotObjectVariableName, const QString &slotNameIncludingNormalizedArgs);
 
-    explicit DesignEqualsImplementationClass(QObject *parent = 0);
+    explicit DesignEqualsImplementationClass(QObject *parent = 0, DesignEqualsImplementationProject *parentProject = 0);
     bool generateSourceCode(const QString &destinationDirectoryPath);
     virtual ~DesignEqualsImplementationClass();
-
-    HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *createNewHasAPrivate_PODorNonDesignedCpp_Member(const QString &typeString = QString(), const QString &variableName = QString());
 
     DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString(), const QList<MethodArgumentTypedef> &newSignalArgs = QList<MethodArgumentTypedef>());
     void addSignal(DesignEqualsImplementationClassSignal *signalToAdd);
@@ -41,6 +40,7 @@ public:
     void removeSlot(DesignEqualsImplementationClassSlot *slotToRemove);
 
     //TODOoptional: private + getter/setter blah
+    DesignEqualsImplementationProject *m_ParentProject;
     QString ClassName;
 
     DesignEqualsImplementationClassProperty *createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
@@ -48,7 +48,6 @@ public:
 
     HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);
     QList<HasA_Private_Classes_Member *> hasA_Private_Classes_Members();
-    QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> hasA_Private_PODorNonDesignedCpp_Members();
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSignal*> mySignals();
     QList<DesignEqualsImplementationClassSlot*> mySlots();
@@ -61,9 +60,11 @@ public:
     //TODOoptional: should be private
     QList<DesignEqualsImplementationClassProperty*> Properties;
     QList<HasA_Private_Classes_Member*> m_HasA_Private_Classes_Members;
-    QList<HasA_Private_PODorNonDesignedCpp_Members_ListEntryType*> m_HasA_Private_PODorNonDesignedCpp_Members;
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;
     QList<DesignEqualsImplementationClassSlot*> m_MySlots;
+
+    inline int serializationSlotIdForSlot(DesignEqualsImplementationClassSlot *theSlot) { return m_MySlots.indexOf(theSlot); }
+    inline DesignEqualsImplementationClassSlot *slotInstantiationFromSerializedSlotId(int slotId) { return m_MySlots.at(slotId); }
 private:
     friend class DesignEqualsImplementationProjectGenerator;
 signals:
@@ -132,23 +133,5 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassInstance
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClassInstance*)
 #endif
-
-class HasA_Private_PODorNonDesignedCpp_Members_ListEntryType : public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
-{
-public:
-    explicit HasA_Private_PODorNonDesignedCpp_Members_ListEntryType() : IHaveTypeAndVariableNameAndPreferredTextualRepresentation() { }
-    explicit HasA_Private_PODorNonDesignedCpp_Members_ListEntryType(const QString &type, /*DesignEqualsImplementationClass *designEqualsImplementationClassThatHasMe,*/ const QString &variableName) : IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName), Type(type) { }
-    virtual ~HasA_Private_PODorNonDesignedCpp_Members_ListEntryType() { }
-    virtual QString typeString()
-    {
-        return Type;
-    }
-    QString Type;
-    //DesignEqualsImplementationClass *m_DesignEqualsImplementationClassThatHasMe;
-};
-QDataStream &operator<<(QDataStream &out, const HasA_Private_PODorNonDesignedCpp_Members_ListEntryType &hasA_Private_PODorNonDesignedCpp_Members_ListEntryType);
-QDataStream &operator>>(QDataStream &in, HasA_Private_PODorNonDesignedCpp_Members_ListEntryType &hasA_Private_PODorNonDesignedCpp_Members_ListEntryType);
-QDataStream &operator<<(QDataStream &out, const HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *&hasA_Private_PODorNonDesignedCpp_Members_ListEntryType);
-QDataStream &operator>>(QDataStream &in, HasA_Private_PODorNonDesignedCpp_Members_ListEntryType *&hasA_Private_PODorNonDesignedCpp_Members_ListEntryType);
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASS_H

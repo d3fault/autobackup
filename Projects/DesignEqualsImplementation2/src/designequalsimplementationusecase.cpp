@@ -15,11 +15,6 @@
 
 typedef QPair<DesignEqualsImplementationUseCase::UseCaseEventTypeEnum, QObject*> EventAndTypeTypedef;
 
-#define DesignEqualsImplementationUseCase_QDS(direction, qds, useCase) \
-    qds direction useCase.Name; \
-    qds direction numOrderedUseCaseEvents;
-//qds direction hasExitSignal;
-
 //TODOreq: by far the most difficult class to design/[de-]serialize/generate-from. the rest are just busywork by comparison
 //TODOoptimization: class diagram serialized first (although use cases must be factored into that!), serves as a simple library or whatever so that use cases only later have to refer to a signal by id/etc rather than redefine/reserialize the signal/slot/etc every time it is referenced
 //TODOreq: since it doesn't have much else use, use this->Name in the comments of the generated source code. the use case entry point slot should say the use case name for readability i suppose. also, if verbose logging is on, then each time a use case entry point is crossed we could output the name...
@@ -84,7 +79,7 @@ void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplement
     m_DesignEqualsImplementationProject = project;
     m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.first = 0;
 }
-void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, DesignEqualsImplementationClassLifeLine *signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot)
+void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, DesignEqualsImplementationClassLifeLine *destinationClassLifeline_OrZeroIfNotSlotInvoke, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, DesignEqualsImplementationClassLifeLine *signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot)
 {
     //bool firstUseCaseEventAdded = OrderedUseCaseEvents.isEmpty();
 
@@ -122,7 +117,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
         //TODOreq: etc for all switch types
         if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
         {
-            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertStatementInto, new DesignEqualsImplementationSlotInvocationStatement(slotUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
+            sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertStatementInto, new DesignEqualsImplementationSlotInvocationStatement(destinationClassLifeline_OrZeroIfNotSlotInvoke, slotUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
         }
 
 #if 0 //TODOreq: this should be handled in the GUI, the name collision checking + merging
@@ -413,24 +408,24 @@ void DesignEqualsImplementationUseCase::createClassLifelineInUseCase(DesignEqual
     //Weird just realized I haven't even designed "classes" into use cases [yet], as of now use case events point directly to their slots/etc!! But eh the concept of lifelines is derp easy, and the arrows source/destination stuff is really just used in populating which of those signals/slots to use for the already-design (;-D) use-case-event (slot/signal-slot/etc)... but i mean sure there's still a boat load of visual work that needs to be done right about now :-P
     //TODOreq: not sure if front-end or backend should enforce it (or both), but class lifelines should all share the same QPointF::top... just like in Umbrello (Umbrello does some things right, Dia others (like not crashing especially guh allmyrage)). Actor should also utilize that top line, though be slighly below it... AND right above the first lifeline but mb horizontally in between the actor and that first lifeline should go the "Use Case Name" in an oval :-P (but actually ovals take up a ton of space, mb rounded rect (different radius than classes) instead)
 
-    DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase = new DesignEqualsImplementationClassLifeLine(classToAddToUseCase, /*TODOinstancing:  myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */this, position, this);
+    DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase = new DesignEqualsImplementationClassLifeLine(designEqualsImplementationProject(), classToAddToUseCase, /*TODOinstancing:  myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */this, position, this);
 
     addClassLifeLineToUseCase(classLifeLineToAddToUseCase);
 }
 //Use Case first-slot entry point and also normal slot invocation from within another slot
-void DesignEqualsImplementationUseCase::insertSlotInvocationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables)
+void DesignEqualsImplementationUseCase::insertSlotInvocationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeline, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables)
 {
-    insertEventPrivate(UseCaseSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, designEqualsImplementationClassSlot, slotInvocationContextVariables);
+    insertEventPrivate(UseCaseSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, designEqualsImplementationClassSlot, destinationClassLifeline, slotInvocationContextVariables);
 }
 //Signal emitted during normal slot execution, slot handler for that signal is relevant to use case
 void DesignEqualsImplementationUseCase::insertSignalSlotActivationEvent(int indexToInsertEventAt, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, DesignEqualsImplementationClassLifeLine *indexInto_m_ClassLifeLines_OfSignal, int indexInto_m_ClassLifeLines_OfSlot)
 {
-    insertEventPrivate(UseCaseSignalSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), signalEmissionContextVariables, indexInto_m_ClassLifeLines_OfSignal, indexInto_m_ClassLifeLines_OfSlot);
+    insertEventPrivate(UseCaseSignalSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), 0, signalEmissionContextVariables, indexInto_m_ClassLifeLines_OfSignal, indexInto_m_ClassLifeLines_OfSlot);
 }
 //Signals with no listeners in this use case
 void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
 {
-    insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, 0, designEqualsImplementationClassSignal, signalEmissionContextVariables);
+    insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, 0, designEqualsImplementationClassSignal, 0, signalEmissionContextVariables);
 }
 void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint)
 {
@@ -472,7 +467,7 @@ void DesignEqualsImplementationUseCase::setExitSignal(DesignEqualsImplementation
     ExitSignal = designEqualsImplementationClassSignal;
 #endif
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase &useCase)
 {
 #if 0 //TODOreq
     qint32 numOrderedUseCaseEvents = useCase.SemiOrderedUseCaseEvents.size();
@@ -499,6 +494,36 @@ QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCas
         }
     }
 #endif
+#if 0
+#define DesignEqualsImplementationUseCase_QDS(direction, qds, useCase) \
+qds direction useCase.Name; \
+qds direction useCase.m_DesignEqualsImplementationProject; \
+qds direction numOrderedUseCaseEvents; //TODOreq: signal/slot activation events and class lifelines in use case
+//qds direction hasExitSignal;
+#endif
+
+    out << useCase.Name;
+#if 0
+    QList<int> classIdsForReconstructingClassLifelinesInDeserialization; //we are now serializing
+    Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifelineInUseCase, useCase.classLifeLines())
+    {
+        classIdsForReconstructingClassLifelinesInDeserialization.append(useCase.m_DesignEqualsImplementationProject->serializationClassIdForClass(currentClassLifelineInUseCase));
+    }
+    out << classIdsForReconstructingClassLifelinesInDeserialization;
+#endif
+    out << useCase.m_ClassLifeLines;
+    out << useCase.m_SignalSlotConnectionActivationsInThisUseCase.size();
+    Q_FOREACH(DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct currentSignalSlotActivation, useCase.m_SignalSlotConnectionActivationsInThisUseCase)
+    {
+        //Signal
+        out << useCase.serializationClassLifelineIdForClassLifeline(currentSignalSlotActivation.SignalStatement_Key0_IndexInto_m_ClassLifeLines);
+        out << qMakePair(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass->m_ParentProject->serializationClassIdForClass(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass), currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself));
+        out << currentSignalSlotActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
+
+        //Slots
+        out << currentSignalSlotActivation.SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines;
+        out << qMakePair(currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass->m_ParentProject->serializationClassIdForClass(currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass), currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself));
+    }
     return out;
 }
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase)
@@ -544,9 +569,51 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useC
         }
     }
 #endif
+
+    in >> useCase.Name;
+#if 0
+    QList<int> classIdsForReconstructingClassLifelinesInDeserialization;
+    in >> classIdsForReconstructingClassLifelinesInDeserialization;
+    Q_FOREACH(int currentClassId, classIdsForReconstructingClassLifelinesInDeserialization)
+    {
+        DesignEqualsImplementationClassLifeLine *classLifeline = new DesignEqualsImplementationClassLifeLine(useCase.designEqualsImplementationProject()->classInstantiationFromSerializedClassId(currentClassId), useCase);
+        useCase.m_ClassLifeLines.append();
+    }
+#endif
+    in >> useCase.m_ClassLifeLines;
+    int numSignalSlotConnectionActivationsInThisUseCase;
+    in >> numSignalSlotConnectionActivationsInThisUseCase;
+    for(int i = 0; i < numSignalSlotConnectionActivationsInThisUseCase; ++i)
+    {
+        DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct signalSlotConnectionActivation;
+        //Signal
+        //SignalStatement_Key0_IndexInto_m_ClassLifeLines
+        int signalStatement_Key0_IndexInto_m_ClassLifeLines;
+        in >> signalStatement_Key0_IndexInto_m_ClassLifeLines;
+        signalSlotConnectionActivation.SignalStatement_Key0_IndexInto_m_ClassLifeLines = useCase.classLifelineInstantiatedFromSerializedClassLifelineId(signalStatement_Key0_IndexInto_m_ClassLifeLines);
+
+        //SignalStatement_Key1_SourceSlotItself
+        SerializableSlotIdType serializedSourceSlotId;
+        in >> serializedSourceSlotId;
+        signalSlotConnectionActivation.SignalStatement_Key1_SourceSlotItself = useCase.m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedSourceSlotId.first)->slotInstantiationFromSerializedSlotId(serializedSourceSlotId.second);
+
+        //SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements
+        in >> signalSlotConnectionActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
+
+
+        //Slots
+        //SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines
+        in >> signalSlotConnectionActivation.SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines;
+        //SlotInvokedThroughConnection_Key1_DestinationSlotItself
+        SerializableSlotIdType serializedDestinationedSlotId;
+        in >> serializedDestinationedSlotId;
+        signalSlotConnectionActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself = useCase.m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedDestinationedSlotId.first)->slotInstantiationFromSerializedSlotId(serializedDestinationedSlotId.second);
+
+        useCase.m_SignalSlotConnectionActivationsInThisUseCase.append(signalSlotConnectionActivation);
+    }
     return in;
 }
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase *&useCase)
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase *&useCase)
 {
     return out << *useCase;
 }
@@ -557,6 +624,7 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *&use
 }
 QDataStream &operator<<(QDataStream &out, const SignalSlotCombinedEventHolder &useCase)
 {
+    //TODOreq: signal/slot REFERENCE
     out << *useCase.m_DesignEqualsImplementationClassSignal;
     out << *useCase.m_DesignEqualsImplementationClassSlot;
     return out;

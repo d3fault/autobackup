@@ -13,6 +13,8 @@ class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassSignal;
 class DesignEqualsImplementationClassLifeLine;
 
+typedef QPair<int /*id of class in project*/, int /*id of slot in class*/> SerializableSlotIdType;
+
 class DesignEqualsImplementationClassSlot : public QObject, public IDesignEqualsImplementationHaveOrderedListOfStatements, public IDesignEqualsImplementationMethod
 {
     Q_OBJECT

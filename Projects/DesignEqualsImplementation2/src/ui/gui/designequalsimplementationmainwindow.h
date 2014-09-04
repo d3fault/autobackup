@@ -28,6 +28,7 @@ private:
 
     //Actions
     QAction *m_NewProjectAction;
+    QAction *m_SaveProjectAction;
     QAction *m_OpenProjectAction;
     QAction *m_NewUseCaseAction;
     QAction *m_GenerateSourceCodeAction;
@@ -57,12 +58,14 @@ private:
     void addUseCaseToAllUseCasesListWidget(DesignEqualsImplementationUseCase *newUseCase);
 signals:
     void newProjectRequested();
+    void saveProjectRequested(DesignEqualsImplementationProject *projectToSave, const QString &projectFilePath);
     void openExistingProjectRequested(const QString &projectFilePath);
     void newUseCaseRequested();
     void mouseModeChanged(DesignEqualsImplementationMouseModeEnum newMouseMode);
 public slots:
     void handleProjectOpened(DesignEqualsImplementationProject *project);
 private slots:
+    void handleSaveRequested();
     void handleOpenProjectActionTriggered();
     void handleNewUseCaseActionTriggered();
     void handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged();

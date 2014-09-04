@@ -2,7 +2,8 @@
 #define IDESIGNEQUALSIMPLEMENTATIONHAVEORDEREDLISTOFSTATEMENTS_H
 
 #include <QList>
-#include <idesignequalsimplementationstatement.h>
+
+#include "idesignequalsimplementationstatement.h"
 
 class QObject;
 
@@ -16,9 +17,9 @@ public:
     void insertStatementIntoOrderedListOfStatements(int indexToInsertInto_WhereZeroComesBeforeTheFirstEntryAndOneMeansAfterTheFirstEntryAndSoOn, IDesignEqualsImplementationStatement *statementToInsert);
     QList<IDesignEqualsImplementationStatement*> orderedListOfStatements() const;
     virtual QObject *asQObject()=0;
-private:
-    QList<IDesignEqualsImplementationStatement*> m_OrderedListOfStatements;
 
+    //I think actually since I use these members in the stream IN (loading, aka writing to the variables) sense, that a const getter is entirely inappropriate and the compiler knew that :). Still seems ugly for them to be public, but oh well, functionality >
+    QList<IDesignEqualsImplementationStatement*> m_OrderedListOfStatements;
 public: //signals
     virtual void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)=0;
 };

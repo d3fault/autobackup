@@ -1,7 +1,11 @@
 #include "designequalsimplementationclasslifeline.h"
 
+#include <QDataStream>
+
 #include "designequalsimplementationcommon.h"
+#include "designequalsimplementationproject.h"
 #include "designequalsimplementationclass.h"
+#include "designequalsimplementationusecase.h"
 #include "designequalsimplementationclasslifelineunitofexecution.h"
 
 //Tempted to say this should inherit from 'class', but idk fo sho (plus that would require refactor (frontend specifies TYPE, backend factories it (whereas now i'm just passing one pointer around heh)) so fuck it for now)
@@ -116,8 +120,9 @@ BUT WHAT OF THE SIGNAL-WITH-NO-LISTENERS-AT-TIME-OF-DESIGN? Is that part of the 
 
 //A class lifeline is a per-use-case thing that merely stores which "slots on the object it represents" the use case uses. It is of little design use EXCEPT WHEN determining if we have the target as a child as a hasA attiribute, in which case we rely on it explicitly (and it shines). A class lifeline represents a class instantiation. When you click and drag a class onto the use case scene, a modal dialog asks you which of the available instances (class lifelines) you want to use. Your options are existing top level class lifelines from other use cases, new top level class lifeline, existing children of other classes, or we can even add ourself as a child (hasA) to another class on the fly
 //^If we don't have any variable name for the target, we are restricted to signal-slot activation (but i could see hacks allowing variable name pass in on the fly xD (there are too many customzations/hacks in this app to keep track of))
-DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationUseCase *parentUseCase, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */QPointF position, QObject *parent)
+DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationProject *parentProject, DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationUseCase *parentUseCase, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, */QPointF position, QObject *parent)
     : QObject(parent)
+    , m_ParentProject(parentProject)
     , m_InstanceType(NoInstanceChosen)
 {
     privateConstructor(designEqualsImplementationClass, parentUseCase, position);
@@ -236,4 +241,71 @@ void DesignEqualsImplementationClassLifeLine::createNewHasAPrivateMemberAndAssig
 void DesignEqualsImplementationClassLifeLine::assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member)
 {
     setInstanceInOtherClassIfApplicable(chosenExistingHasA_Private_Classes_Member);
+}
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassLifeLine &classLifeline)
+{
+#if 0
+#define DesignEqualsImplementationClassLifeLine_QDS(qds, direction, classLifeline) \
+if(classLifeline.m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline) { \
+    qds direction *(classLifeline.m_InstanceInOtherClassIfApplicable); \
+        /*actually is streamed implicitly in m_InstanceInOtherClassIfApplicable: qds direction classLifeline.m_InstanceVariableName;*/ \
+} \
+qds direction classLifeline.m_Position; \
+qds direction classLifeline.m_DesignEqualsImplementationClass; \
+qds direction classLifeline.m_ParentUseCase; \
+qds direction classLifeline.m_MySlotsAppearingInClassLifeLine; \
+return qds;
+#endif
+
+#if 0
+    qds direction classLifeline.m_InstanceType;
+#endif
+    quint8 instanceType = static_cast<quint8>(classLifeline.m_InstanceType);
+    out << instanceType;
+    //DesignEqualsImplementationClassLifeLine_QDS(out, <<, classLifeline)
+    if(classLifeline.m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
+    {
+        out << *classLifeline.m_InstanceInOtherClassIfApplicable;
+    }
+    out << classLifeline.m_Position;
+    out << classLifeline.m_ParentProject->serializationClassIdForClass(classLifeline.m_DesignEqualsImplementationClass);
+    //is 'known' because use case hasA class lifeline: out << classLifeline.m_ParentProject->serializationUseCaseIdForUseCase(classLifeline.parentUseCase());
+    QList<SerializableSlotIdType> slotsAppearingInClassLifeline;
+    Q_FOREACH(DesignEqualsImplementationClassSlot* currentSlot, classLifeline.m_MySlotsAppearingInClassLifeLine)
+    {
+        slotsAppearingInClassLifeline.append(qMakePair(classLifeline.m_ParentProject->serializationClassIdForClass(currentSlot->ParentClass), currentSlot->ParentClass->serializationSlotIdForSlot(currentSlot)));
+    }
+    out << slotsAppearingInClassLifeline;
+    return out;
+}
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine &classLifeline)
+{
+    quint8 instanceType;
+    in >> instanceType;
+    classLifeline.m_InstanceType = static_cast<DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassInstanceTypeEnum>(instanceType);
+    //DesignEqualsImplementationClassLifeLine_QDS(in, >>, classLifeline)
+    if(classLifeline.m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
+    {
+        in >> classLifeline.m_InstanceInOtherClassIfApplicable;
+    }
+    in >> classLifeline.m_Position;
+    int classId;
+    in >> classId;
+    classLifeline.m_DesignEqualsImplementationClass = classLifeline.m_ParentProject->classInstantiationFromSerializedClassId(classId);
+    QList<SerializableSlotIdType> slotsAppearingInClassLifeline;
+    in >> slotsAppearingInClassLifeline;
+    Q_FOREACH(SerializableSlotIdType currentSlotReference, slotsAppearingInClassLifeline)
+    {
+        classLifeline.m_MySlotsAppearingInClassLifeLine.append(classLifeline.m_ParentProject->classInstantiationFromSerializedClassId(currentSlotReference.first)->slotInstantiationFromSerializedSlotId(currentSlotReference.second));
+    }
+    return in;
+}
+QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationClassLifeLine *&designEqualsImplementationClassLifeline)
+{
+    return out << *designEqualsImplementationClassLifeline;
+}
+QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine *&designEqualsImplementationClassLifeline)
+{
+    designEqualsImplementationClassLifeline = new DesignEqualsImplementationClassLifeLine();
+    return in >> *designEqualsImplementationClassLifeline;
 }

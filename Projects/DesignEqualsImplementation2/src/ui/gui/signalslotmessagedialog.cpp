@@ -282,10 +282,12 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         {
             m_VariablesAvailableToSatisfyArgs.append(currentHasAClass);
         }
+#if 0 //TODOoptional: properties? i seem to have invented like 20 different variants of the same thing, so that decision is pending the refactor/consolidation
         Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAPod, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_PODorNonDesignedCpp_Members())
         {
             m_VariablesAvailableToSatisfyArgs.append(currentHasAPod);
         }
+#endif
     }
 
     if(destinationIsActor)
@@ -329,7 +331,7 @@ SignalEmissionOrSlotInvocationContextVariables SignalSlotMessageDialog::slotInvo
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables;
     Q_FOREACH(QComboBox *currentArg, m_AllArgSatisfiers)
     {
-        slotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments.append(qvariant_cast<IHaveTypeAndVariableNameAndPreferredTextualRepresentation*>(currentArg->currentData())->VariableName);
+        slotInvocationContextVariables.append(qvariant_cast<IHaveTypeAndVariableNameAndPreferredTextualRepresentation*>(currentArg->currentData())->VariableName);
     }
     return slotInvocationContextVariables;
 }

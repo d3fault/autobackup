@@ -17,7 +17,7 @@ public:
     explicit DesignEqualsImplementationProject(const QString &existingProjectFilePath, QObject *parent = 0);
     ~DesignEqualsImplementationProject();
 
-    DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString());
+    DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString(), const QPointF &classPositionInGraphicsScene = QPointF());
 
     QList<QString> allKnownTypes() const;
 
@@ -38,14 +38,19 @@ public:
 
     //TODOreq: m_Classes should be private, but I had issues getting the getters/setters to play nicely with QDataStream. Maybe a simple "friend QDataStream;" would fix it (or similar), but I can't be fucked to even play around with it right now. STILL, after coding for a while you should check that all usages of m_Classes are only from within the getter/setters (more important is the setter, but still in principle the getter too)
     QList<DesignEqualsImplementationClass*> m_Classes;
-    QList<DesignEqualsImplementationClassInstance*> m_TopLevelClassInstances;
     QList<DesignEqualsImplementationUseCase*> m_UseCases;
     QList<QString> m_DefinedElsewhereTypes;
+
+    //serialization and deserialization of a class REFERENCE
+    inline int serializationClassIdForClass(DesignEqualsImplementationClass *classToReturnSerializationIdFor) { return m_Classes.indexOf(classToReturnSerializationIdFor); }
+    inline DesignEqualsImplementationClass*classInstantiationFromSerializedClassId(int serializedClassId) { return m_Classes.at(serializedClassId); }
+
+    //serializing and deserializing of a use case REFERENCE
+    inline int serializationUseCaseIdForUseCase(DesignEqualsImplementationUseCase *useCase) { return m_UseCases.indexOf(useCase); }
 
     //Temporary for code gen:
     bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);
 private:
-    bool savePrivate(const QString &projectFilePath);
     bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
     bool allClassLifelinesInAllUseCasesInProjectHaveBeenAssignedInstances();
@@ -59,14 +64,12 @@ private:
 signals:
     void useCaseAdded(DesignEqualsImplementationUseCase*);
     void classAdded(DesignEqualsImplementationClass*);
-    void saved(bool);
     void sourceCodeGenerated(bool);
     void e(const QString &);
 public slots:
     void emitAllClassesAndUseCasesInProject();
     void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
     void handleNewUseCaseRequested();
-    void save(const QString &projectFilePath);
     void generateSourceCode(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationProject &project);

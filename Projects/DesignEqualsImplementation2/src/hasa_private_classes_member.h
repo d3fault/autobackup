@@ -11,11 +11,16 @@ public:
 
     DesignEqualsImplementationClass *parentClass() const;
     void setParentClass(DesignEqualsImplementationClass *parentClass);
-private:
+public:
     DesignEqualsImplementationClass *m_ParentClass;
 protected:
     virtual QString typeString();
 };
+
+QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Member &hasA_Private_Classes_Member);
+QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member &hasA_Private_Classes_Member);
+QDataStream &operator<<(QDataStream &out, const HasA_Private_Classes_Member *&hasA_Private_Classes_Member);
+QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member *&hasA_Private_Classes_Member);
 
 Q_DECLARE_METATYPE(HasA_Private_Classes_Member*)
 

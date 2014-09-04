@@ -15,6 +15,7 @@
 #include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationusecase.h"
+#include "../../designequalsimplementationclasslifeline.h"
 
 //TODOoptional: instead of a modal dialog, a qlistwidget below the uml class items listing the entries, defaulting to "new top level widget". Just less clicks is all. Also right click -> change instance being used?
 //TODOoptional: radio mode grays out opposite mode

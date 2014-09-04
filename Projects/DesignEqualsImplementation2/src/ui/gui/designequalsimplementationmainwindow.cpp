@@ -55,10 +55,12 @@ void DesignEqualsImplementationMainWindow::createActions()
 {
     //Project Operations
     m_NewProjectAction = new QAction(tr("New &Project"), this); //TODOreq: lots of these ampersand things have collisions lewl
+    m_SaveProjectAction = new QAction(tr("&Save Project"), this); //TODOoptional: save as. TODOreq: periodic auto-saving to temp dir (which should not be in ram). perhaps a timeline of them with a (had:known-fix[..]) fixed-size cryptographic integrity chunk at the end for cheap "latest + not-load-corrupt-ever" power failure recovery. a better power failure recovery is keeping 3 computers in sync with each other and on independent power (each with ups). i'm surprised no such system is available and advertised. if i had more time on my hands i would make it and target openbsd/debian combo (perhaps using each as one of the 3 computers. i bet openbsd is the most stable. that last description was for a computer environment in general, not just designEquals
     m_OpenProjectAction = new QAction(tr("&Open Project"), this);
     m_NewUseCaseAction = new QAction(tr("New &Use Case"), this);
     m_GenerateSourceCodeAction = new QAction(tr("&Generate Source Code"), this);
     connect(m_NewProjectAction, SIGNAL(triggered()), this, SIGNAL(newProjectRequested()));
+    connect(m_SaveProjectAction, SIGNAL(triggered()), this, SLOT(handleSaveRequested()));
     connect(m_OpenProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
     connect(m_NewUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseActionTriggered()));
     connect(m_GenerateSourceCodeAction, SIGNAL(triggered()), this, SLOT(handleGenerateSourceCodeActionTriggered()));
@@ -83,6 +85,7 @@ void DesignEqualsImplementationMainWindow::createMenu()
     QMenu *fileNew = fileMenu->addMenu(tr("&New"));
     fileNew->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
     fileNew->addAction(m_NewProjectAction);
+    fileNew->addAction(m_SaveProjectAction);
     fileNew->addAction(m_NewUseCaseAction);
     fileMenu->addAction(m_OpenProjectAction);
     fileMenu->addAction(m_GenerateSourceCodeAction);
@@ -99,11 +102,12 @@ void DesignEqualsImplementationMainWindow::createMenu()
 }
 void DesignEqualsImplementationMainWindow::createToolbars()
 {
-    QToolBar *fileNewMenuEquivalentToolbar = addToolBar(tr("Project Operations Toolbar"));
-    fileNewMenuEquivalentToolbar->addAction(m_NewProjectAction);
-    fileNewMenuEquivalentToolbar->addAction(m_OpenProjectAction);
-    fileNewMenuEquivalentToolbar->addAction(m_NewUseCaseAction);
-    fileNewMenuEquivalentToolbar->addAction(m_GenerateSourceCodeAction);
+    QToolBar *projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar = addToolBar(tr("Project Operations Toolbar"));
+    projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_NewProjectAction);
+    projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_SaveProjectAction);
+    projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_OpenProjectAction);
+    projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_NewUseCaseAction);
+    projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_GenerateSourceCodeAction);
 
     //addToolBarBreak();
 
@@ -141,8 +145,8 @@ void DesignEqualsImplementationMainWindow::createDockWidgets()
 void DesignEqualsImplementationMainWindow::decorateActions()
 {
     m_NewProjectAction->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
+    m_SaveProjectAction->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
     m_OpenProjectAction->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
-    //QStyle::SP_DialogSaveButton
 }
 void DesignEqualsImplementationMainWindow::setClassDiagramToolsDisabled(bool disabled)
 {
@@ -172,6 +176,15 @@ void DesignEqualsImplementationMainWindow::handleProjectOpened(DesignEqualsImple
     int tabIndex = m_OpenProjectsTabWidget->addTab(designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget, project->Name);
     connect(designEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget->classDiagramAndUseCasesTabWidget(), SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged()));
     m_OpenProjectsTabWidget->setCurrentIndex(tabIndex);
+}
+void DesignEqualsImplementationMainWindow::handleSaveRequested()
+{
+    //TODOreq
+
+    DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *currentProjectTab = static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget()/*m_OpenProjectsTabWidget->widget(m_CurrentProjectTabIndex*/);
+
+    QString dest("/run/shm/designEqualsImplementation-ProjectSavedAt_" + QString::number(QDateTime::currentMSecsSinceEpoch())); //TODOreq: cryptographic hash of file contents (placeholder to be filled in once calculated(?)) in filename, in addition to the time of course. SINCE we are using the cryptographic hash, the milliseconds/etc elements of the timestamp aren't needed (at least, not to avoid file name collision)
+    emit saveProjectRequested(currentProjectTab->designEqualsImplementationProject(), dest);
 }
 void DesignEqualsImplementationMainWindow::handleOpenProjectActionTriggered()
 {

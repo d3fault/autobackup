@@ -481,7 +481,6 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
         return false;
     SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables = signalSlotMessageCreatorDialog.slotInvocationContextVariables();
-    signalEmissionOrSlotInvocationContextVariables.ClassLifelineWhoseSlotIsAboutToBeInvoked = destinationClassLifeLine_OrZeroIfNoDest;
 
     //Retrieved specified variable name when slot invoke
 #if 0 //TODOinstancing
@@ -604,7 +603,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
             return true;
         }
 
-        emit insertSlotInvocationUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
+        emit insertSlotInvocationUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, destinationClassLifeLine_OrZeroIfNoDest, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables); //TODOreq: makes sense that the unit of execution is emitted as well, but eh I'm kinda just tacking unit of execution on at this point and still don't see clearly how it fits in xD
         return true;
     }
     if(destinationIsActor && userChosenSourceSignal_OrZeroIfNone)

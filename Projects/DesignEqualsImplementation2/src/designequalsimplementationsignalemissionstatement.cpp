@@ -1,7 +1,12 @@
 #include "designequalsimplementationsignalemissionstatement.h"
 
+#include <QDataStream>
+
+DesignEqualsImplementationSignalEmissionStatement::DesignEqualsImplementationSignalEmissionStatement()
+    : IDesignEqualsImplementationStatement(SignalEmitStatementType) //trivial constructor required for deserializing only. don't use elsewhere
+{ }
 DesignEqualsImplementationSignalEmissionStatement::DesignEqualsImplementationSignalEmissionStatement(DesignEqualsImplementationClassSignal *signalToEmit, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariablesForSignalArguments)
-    : IDesignEqualsImplementationStatement()
+    : IDesignEqualsImplementationStatement(IDesignEqualsImplementationStatement::SignalEmitStatementType)
     , m_SignalToEmit(signalToEmit)
     , m_SignalEmissionContextVariablesForSignalArguments(signalEmissionContextVariablesForSignalArguments)
 { }
@@ -11,7 +16,7 @@ QString DesignEqualsImplementationSignalEmissionStatement::toRawCppWithoutEnding
 {
     QString ret("emit " + m_SignalToEmit->Name + "(");
     bool firstArg = true;
-    Q_FOREACH(const QString &currentArgVarName, m_SignalEmissionContextVariablesForSignalArguments.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments)
+    Q_FOREACH(const QString &currentArgVarName, m_SignalEmissionContextVariablesForSignalArguments)
     {
         if(!firstArg)
             ret.append(", ");
@@ -24,4 +29,15 @@ QString DesignEqualsImplementationSignalEmissionStatement::toRawCppWithoutEnding
 DesignEqualsImplementationClassSignal *DesignEqualsImplementationSignalEmissionStatement::signalToEmit() const
 {
     return m_SignalToEmit;
+}
+void DesignEqualsImplementationSignalEmissionStatement::streamIn(QDataStream &in)
+{
+    //TODOreq: signal REFERENCE
+    in >> *m_SignalToEmit;
+    in >> m_SignalEmissionContextVariablesForSignalArguments;
+}
+void DesignEqualsImplementationSignalEmissionStatement::streamOut(QDataStream &out)
+{
+    out << *m_SignalToEmit; //TODOreq: __REFERENCE to m_SignalToEmit (or use compression on known-to-compact-nicely ;-)) repeatetive uses of the same signal? keep in mind that you definitely still need the signal to be defined, but that is of course done when serializing the signal itself!. for now idgaf about dupes
+    out << m_SignalEmissionContextVariablesForSignalArguments;
 }

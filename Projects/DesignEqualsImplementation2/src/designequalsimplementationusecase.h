@@ -46,7 +46,10 @@ public:
 
     bool allClassLifelinesInUseCaseHaveBeenAssignedInstances();
     ~DesignEqualsImplementationUseCase();
-private:
+
+    inline int serializationClassLifelineIdForClassLifeline(DesignEqualsImplementationClassLifeLine *classLifeline) { return m_ClassLifeLines.indexOf(classLifeline); }
+    inline DesignEqualsImplementationClassLifeLine *classLifelineInstantiatedFromSerializedClassLifelineId(int serializedClassLifelineId) { return m_ClassLifeLines.at(serializedClassLifelineId); }
+public:
     friend class DesignEqualsImplementationProjectGenerator;
     struct SignalSlotConnectionActivationTypeStruct
     {
@@ -79,7 +82,7 @@ private:
 
     void privateConstructor(DesignEqualsImplementationProject *project);
 
-    void insertEventPrivate(UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, DesignEqualsImplementationClassLifeLine *signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal = 0, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot = -1);
+    void insertEventPrivate(UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, DesignEqualsImplementationClassLifeLine *destinationClassLifeline_OrZeroIfNotSlotInvoke, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, DesignEqualsImplementationClassLifeLine *signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal = 0, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot = -1);
     //void addEventPrivateWithoutUpdatingExitSignal(UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot = SignalEmissionOrSlotInvocationContextVariables());
     void insertAlreadyFilledOutSlotIntoUseCase(DesignEqualsImplementationClassSlot *slotEntryPointThatKindaSortaMakesItNamed);
     void addClassLifeLineToUseCase(DesignEqualsImplementationClassLifeLine *classLifeLineToAddToUseCase);
@@ -97,16 +100,16 @@ signals:
 public slots:
     void addActorToUseCase(QPointF position);
     void createClassLifelineInUseCase(DesignEqualsImplementationClass *classToAddToUseCase, QPointF position);
-    void insertSlotInvocationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables);
+    void insertSlotInvocationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeline, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables);
     void insertSignalSlotActivationEvent(int indexToInsertEventAt, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, DesignEqualsImplementationClassLifeLine *indexInto_m_ClassLifeLines_OfSignal, int indexInto_m_ClassLifeLines_OfSlot);
     void insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables);
 
     void setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint);
     void setExitSignal(DesignEqualsImplementationClassSlot *sourceSlot, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables);
 };
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase &useCase);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);
-QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationUseCase *&useCase);
+QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase *&useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *&useCase);
 
 typedef QPair<DesignEqualsImplementationUseCase::UseCaseEventTypeEnum, QObject*> UseCaseEventListEntryType; //OrderedUseCaseEvents has a copy/paste of this type, because I couldn't forward declare it or whatever (wtf)

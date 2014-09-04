@@ -1,0 +1,7 @@
+BlockOfCode <- Function <- Method
+
+BlockOfCode hasA QList<statements>
+
+the name block of code is too vague though
+
+HOWEVER, a signal is a method without a block of code xD

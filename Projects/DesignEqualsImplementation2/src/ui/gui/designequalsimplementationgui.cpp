@@ -25,6 +25,7 @@ void DesignEqualsImplementationGui::handleDesignEqualsImplementationReadyForConn
     m_Gui->showMaximized(); //TODOreq: show() works fine now, no clue why, but keeping maximized for testing
 
     connect(m_Gui, SIGNAL(newProjectRequested()), designEqualsImplementation, SLOT(newProject()));
+    connect(m_Gui, SIGNAL(saveProjectRequested(DesignEqualsImplementationProject*,QString)), designEqualsImplementation, SLOT(saveProject(DesignEqualsImplementationProject*,QString)));
     connect(m_Gui, SIGNAL(openExistingProjectRequested(QString)), designEqualsImplementation, SLOT(openExistingProject(QString)));
     connect(designEqualsImplementation, SIGNAL(projectOpened(DesignEqualsImplementationProject*)), m_Gui, SLOT(handleProjectOpened(DesignEqualsImplementationProject*)));
 
