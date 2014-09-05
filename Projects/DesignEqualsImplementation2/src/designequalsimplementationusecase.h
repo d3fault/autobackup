@@ -54,7 +54,7 @@ public:
     struct SignalSlotConnectionActivationTypeStruct
     {
         //Signal
-        DesignEqualsImplementationClassLifeLine *SignalStatement_Key0_IndexInto_m_ClassLifeLines;
+        DesignEqualsImplementationClassLifeLine *SignalStatement_Key0_SourceClassLifeLine;
         DesignEqualsImplementationClassSlot *SignalStatement_Key1_SourceSlotItself;
         int SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
 

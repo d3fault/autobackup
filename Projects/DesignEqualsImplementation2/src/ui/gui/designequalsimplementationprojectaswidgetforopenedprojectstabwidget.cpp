@@ -10,6 +10,7 @@
 #include "../../designequalsimplementationproject.h"
 
 //This name might seem overly verbose, but I recall vividly in designEquals1 my confusion when naming it "ProjectTabWidget" (the tabwidget, or the widget in the tab!?!?... dun dun dun)... and now to add to the confusioin, it "isA" TabWidget as well as a widget used for a tab!!! rofl
+//TODOoptional: close buttons on use case tabs
 DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(DesignEqualsImplementationProject *project, QWidget *parent)
     : QWidget(parent)
     , m_ClassDiagramAndUseCasesTabWidget(new QTabWidget())
@@ -46,14 +47,36 @@ DesignEqualsImplementationProject *DesignEqualsImplementationProjectAsWidgetForO
 {
     return m_DesignEqualsImplementationProject;
 }
+void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::ensureUseCaseTabOpenedAkaCreatedAndMakeCurrentWidget(DesignEqualsImplementationUseCase *useCase)
+{
+    int useCaseTabIndex = -1;
+    int numOpenTabs = m_ClassDiagramAndUseCasesTabWidget->count();
+    for(int i = 1; i < numOpenTabs; ++i) //index 0 = class diagram
+    {
+        if(static_cast<DesignEqualsImplementationUseCaseAsWidgetForTab*>(m_ClassDiagramAndUseCasesTabWidget->widget(i))->useCase() == useCase)
+        {
+            useCaseTabIndex = i;
+            break;
+        }
+    }
+
+    if(useCaseTabIndex == -1)
+    {
+        //use case not 'opened' (added to tab widget) yet
+        DesignEqualsImplementationUseCaseAsWidgetForTab *designEqualsImplementationUseCaseAsWidgetForTab = new DesignEqualsImplementationUseCaseAsWidgetForTab(useCase);
+        connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), designEqualsImplementationUseCaseAsWidgetForTab, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
+        useCaseTabIndex = m_ClassDiagramAndUseCasesTabWidget->addTab(designEqualsImplementationUseCaseAsWidgetForTab, useCase->Name);
+    }
+
+    if(m_ClassDiagramAndUseCasesTabWidget->currentIndex() != useCaseTabIndex)
+        m_ClassDiagramAndUseCasesTabWidget->setCurrentIndex(useCaseTabIndex);
+}
 void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::requestNewUseCase()
 {
     emit newUseCaseRequested();
 }
+//slot for when we add new use case AT RUNTIME. does not get triggered when deserializing (no use case tabs are opened in that case)
 void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::handleUseCaseAdded(DesignEqualsImplementationUseCase *useCase) //TODOreq: use case OPENED instead? or i guess right here could just add it to our list of use cases
 {
-    DesignEqualsImplementationUseCaseAsWidgetForTab *designEqualsImplementationUseCaseAsWidgetForTab = new DesignEqualsImplementationUseCaseAsWidgetForTab(useCase);
-    connect(this, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)), designEqualsImplementationUseCaseAsWidgetForTab, SIGNAL(mouseModeChanged(DesignEqualsImplementationMouseModeEnum)));
-    int tabIndex = m_ClassDiagramAndUseCasesTabWidget->addTab(designEqualsImplementationUseCaseAsWidgetForTab, useCase->Name);
-    m_ClassDiagramAndUseCasesTabWidget->setCurrentIndex(tabIndex);
+    ensureUseCaseTabOpenedAkaCreatedAndMakeCurrentWidget(useCase);
 }

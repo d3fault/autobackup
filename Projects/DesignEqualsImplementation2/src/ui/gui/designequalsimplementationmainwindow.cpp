@@ -284,8 +284,8 @@ void DesignEqualsImplementationMainWindow::handleUseCaseAdded(DesignEqualsImplem
 }
 void DesignEqualsImplementationMainWindow::handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem *doubleClickedListWidgetItem)
 {
-    //TODOreq: don't double open (use case already open (do switch to it's tab))
-    //TODOreq: don't double show (current tab == double clicked item)
+    DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *projectTab = static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget());
+    projectTab->ensureUseCaseTabOpenedAkaCreatedAndMakeCurrentWidget(qvariant_cast<DesignEqualsImplementationUseCase*>(doubleClickedListWidgetItem->data(Qt::UserRole)));
 }
 void DesignEqualsImplementationMainWindow::doMouseModeChange()
 {

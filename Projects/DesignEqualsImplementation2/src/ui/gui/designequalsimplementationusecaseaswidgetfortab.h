@@ -12,6 +12,9 @@ class DesignEqualsImplementationUseCaseAsWidgetForTab : public IHaveAGraphicsVie
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationUseCaseAsWidgetForTab(DesignEqualsImplementationUseCase *useCase, QWidget *parent = 0);
+    DesignEqualsImplementationUseCase *useCase() const;
+private:
+    DesignEqualsImplementationUseCase *m_UseCase;
 signals:
     void mouseModeChanged(DesignEqualsImplementationMouseModeEnum newMouseMode);
 };

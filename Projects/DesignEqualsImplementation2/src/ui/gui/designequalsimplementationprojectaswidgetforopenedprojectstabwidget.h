@@ -17,6 +17,7 @@ public:
     explicit DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget(DesignEqualsImplementationProject *project, QWidget *parent = 0);
     QTabWidget *classDiagramAndUseCasesTabWidget();
     DesignEqualsImplementationProject *designEqualsImplementationProject();
+    void ensureUseCaseTabOpenedAkaCreatedAndMakeCurrentWidget(DesignEqualsImplementationUseCase *useCase);
 private:
     QTabWidget *m_ClassDiagramAndUseCasesTabWidget;
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;

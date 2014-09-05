@@ -202,7 +202,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
             //Signal/slot connection activation
             Q_FOREACH(const DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct &currentSignalSlotConnectionActivation, designEqualsImplementationUseCase->m_SignalSlotConnectionActivationsInThisUseCase)//TODOreq: ensure all these "key checks" are properly synchronized throughout app lifetime. getters and setters fuck yea~
             {
-                if(currentSignalSlotConnectionActivation.SignalStatement_Key0_IndexInto_m_ClassLifeLines == classLifeline) //signal key 0 check
+                if(currentSignalSlotConnectionActivation.SignalStatement_Key0_SourceClassLifeLine == classLifeline) //signal key 0 check
                 {
                     if(currentSignalSlotConnectionActivation.SignalStatement_Key1_SourceSlotItself == slotToWalk) //signal key 1 check
                     {

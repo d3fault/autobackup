@@ -1,11 +1,11 @@
-[] - Project save/open
+[] - fix temp slot hack (see: unnamed.slots.should.show.up.in.class.editor...)
+[wip] - Project save/open
 [] - Project [re-]name (NOT based on filename)
 [] - Use case [re-]name
-[] - Graphics for toolbars and available items
+[wip] - Graphics for toolbars and available items
 [] - one signal can have multiple slots connected
 [] - remove signals/properties/slots (give warning when deleting a slot with > 0 statements)
 [] - remove (re-order too?) statements in slots (signal/slot hackery stays in sync)
-[] - fix temp slot hack (see: unnamed.slots.should.show.up.in.class.editor...)
 [] - Defined elsewhere #includes when referenced (EXCEPT when referenced as pointer, then forward declare)
 [] - Ampersand ambiguity in GUI (when in doubt, just remove ampersand altogether)
 [] - signal/slot dialog: ok button uses toolbutton to quick assign instance, only if no instance

@@ -207,7 +207,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
                 SignalSlotConnectionActivationTypeStruct newSignalSlotConnectionActivationTypeStruct;
 
                 //signal key 0
-                newSignalSlotConnectionActivationTypeStruct.SignalStatement_Key0_IndexInto_m_ClassLifeLines = signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal;
+                newSignalSlotConnectionActivationTypeStruct.SignalStatement_Key0_SourceClassLifeLine = signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal;
 
                 //signal key 1
                 newSignalSlotConnectionActivationTypeStruct.SignalStatement_Key1_SourceSlotItself = static_cast<DesignEqualsImplementationClassSlot*>(sourceOrderedListOfStatements_OrZeroIfSourceIsActor);
@@ -517,7 +517,7 @@ qds direction numOrderedUseCaseEvents; //TODOreq: signal/slot activation events 
     Q_FOREACH(DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct currentSignalSlotActivation, useCase.m_SignalSlotConnectionActivationsInThisUseCase)
     {
         //Signal
-        out << useCase.serializationClassLifelineIdForClassLifeline(currentSignalSlotActivation.SignalStatement_Key0_IndexInto_m_ClassLifeLines);
+        out << useCase.serializationClassLifelineIdForClassLifeline(currentSignalSlotActivation.SignalStatement_Key0_SourceClassLifeLine);
         out << qMakePair(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass->m_ParentProject->serializationClassIdForClass(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass), currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself));
         out << currentSignalSlotActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
 
@@ -591,7 +591,7 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useC
         //SignalStatement_Key0_IndexInto_m_ClassLifeLines
         int signalStatement_Key0_IndexInto_m_ClassLifeLines;
         in >> signalStatement_Key0_IndexInto_m_ClassLifeLines;
-        signalSlotConnectionActivation.SignalStatement_Key0_IndexInto_m_ClassLifeLines = useCase.classLifelineInstantiatedFromSerializedClassLifelineId(signalStatement_Key0_IndexInto_m_ClassLifeLines);
+        signalSlotConnectionActivation.SignalStatement_Key0_SourceClassLifeLine = useCase.classLifelineInstantiatedFromSerializedClassLifelineId(signalStatement_Key0_IndexInto_m_ClassLifeLines);
 
         //SignalStatement_Key1_SourceSlotItself
         SerializableSlotIdType serializedSourceSlotId;
