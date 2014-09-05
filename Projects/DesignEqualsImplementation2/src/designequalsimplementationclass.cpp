@@ -163,6 +163,5 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *design
 {
     designEqualsImplementationClass = new DesignEqualsImplementationClass();
     in >> *designEqualsImplementationClass;
-    TODO LEFT OFF: project.addClass(designEqualsImplementationClass);
     return in;
 }

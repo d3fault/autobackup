@@ -63,7 +63,8 @@ SOURCES += ui/gui/main.cpp\
     designequalsimplementationlenientpropertydeclarationparser.cpp \
     designequalsimplementationprivatemethodsynchronouscallstatement.cpp \
     idesignequalsimplementationstatement.cpp \
-    signalemissionorslotinvocationcontextvariables.cpp
+    signalemissionorslotinvocationcontextvariables.cpp \
+    designequalsimplementationprojectserializer.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -117,7 +118,8 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h \
     designequalsimplementationlenientsignalorslotsignaturerparser.h \
     designequalsimplementationlenientpropertydeclarationparser.h \
-    designequalsimplementationprivatemethodsynchronouscallstatement.h
+    designequalsimplementationprivatemethodsynchronouscallstatement.h \
+    designequalsimplementationprojectserializer.h
 
 #libclang stuff
 CONFIG += precompile_header

@@ -4,6 +4,7 @@
 #include <QDataStream>
 
 #include "designequalsimplementationproject.h"
+#include "designequalsimplementationprojectserializer.h"
 
 #ifdef DesignEqualsImplementation_TEST_MODE
 #include <QDebug>
@@ -326,9 +327,12 @@ void DesignEqualsImplementation::saveProject(DesignEqualsImplementationProject *
         emit e("could not open file '" + projectFilePath + "' for writing");
         return;
     }
-    QDataStream projectDataStream(&projectFile);
+    //QDataStream projectDataStream(&projectFile);
     //oops: projectDataStream << this; //surprisingly anti-climactic (but still awesome in it's own way)
-    projectDataStream << *projectToSave;
+    //projectDataStream << *projectToSave;
+    DesignEqualsImplementationProjectSerializer projectWriter(this);
+    projectWriter.serializeProjectToIoDevice(projectToSave, &projectFile);
+
     if(!projectFile.flush())
     {
         emit e("could not flush to file '" + projectFilePath + "'");
@@ -343,9 +347,11 @@ void DesignEqualsImplementation::openExistingProject(const QString &existingProj
         emit e("could not open file '" + existingProjectFilePath + "' for reading");
         return;
     }
-    QDataStream projectDataStream(&projectFile);
+    //QDataStream projectDataStream(&projectFile);
     DesignEqualsImplementationProject *existingProject = new DesignEqualsImplementationProject(this);
-    projectDataStream >> *existingProject;
+    //projectDataStream >> *existingProject;
+    DesignEqualsImplementationProjectSerializer projectReader(this);
+    projectReader.deserializeProjectFromIoDevice(&projectFile, existingProject);
 
     connect(existingProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(existingProject);

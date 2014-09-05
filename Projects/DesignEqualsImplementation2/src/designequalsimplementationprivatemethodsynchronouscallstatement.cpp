@@ -26,12 +26,14 @@ QString DesignEqualsImplementationPrivateMethodSynchronousCallStatement::toRawCp
 }
 void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamIn(QDataStream &in)
 {
-    //TODOreq: private method REFERENCE
+#if 0 //TODOreq: private method REFERENCE
     in >> *m_PrivateMethodToCall;
+#endif
     in >> m_PrivateMethodArguments;
 }
 void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamOut(QDataStream &out)
 {
+#if 0
     out << *m_PrivateMethodToCall;
-    out << m_PrivateMethodArguments;
-}
+#endif
+    out << m_PrivateMethodArguments;}

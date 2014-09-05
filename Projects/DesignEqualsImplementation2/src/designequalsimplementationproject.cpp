@@ -50,6 +50,7 @@ QList<QString> DesignEqualsImplementationProject::allKnownTypes() const
 void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass *newClass)
 {
     connect(newClass, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+    newClass->m_ParentProject = this;
     m_Classes.append(newClass);
     emit classAdded(newClass);
 }
@@ -370,6 +371,7 @@ void DesignEqualsImplementationProject::cleanupJitGeneratedLinesFromAPreviousGen
 #endif
 void DesignEqualsImplementationProject::emitAllClassesAndUseCasesInProject()
 {
+#if 0
     //TODOreq: the signals will be emitted twice when LOADING a file (once when each individual deserialized 'thing' is added, and once again now). i'm not sure if 'some' of the later ones in the first batch might in fact be received, or if all of the first batch are definitely discarded (ui not listening yet)
     Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, m_UseCases)
     {
@@ -379,6 +381,7 @@ void DesignEqualsImplementationProject::emitAllClassesAndUseCasesInProject()
     {
         emit classAdded(currentClass);
     }
+#endif
 }
 void DesignEqualsImplementationProject::handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position)
 {

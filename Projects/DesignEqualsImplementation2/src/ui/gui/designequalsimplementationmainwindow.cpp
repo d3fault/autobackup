@@ -36,6 +36,7 @@
 //TODOreq: "left" and "right" direction arrows that remember previous projects/use-cases+class-diagrams viewed, JUST LIKE Qt Creator :-P
 //TODOoptional: a first run wizard teaching them how to design + execute hello world (or something more interesting). ex: "click and drag one of these classes here" (class creation), <insert class population instructions>, "ok now add a use case", "ok now draw line from here to here". should ideally be all visual and shit pointing to what the user needs to do next
 //TODOreq: holding ctrl should put the mouse mode into arrow mode until it's released (if already in arrow mode, do nothing (and don't change out of it when ctrl released))
+//TODOreq: when opening a project, if the current project is EMPTY, close the current empty project first (so only one is open)
 DesignEqualsImplementationMainWindow::DesignEqualsImplementationMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_CurrentProjectTabIndex(0)

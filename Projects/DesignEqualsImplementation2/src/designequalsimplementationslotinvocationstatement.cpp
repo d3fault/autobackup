@@ -41,13 +41,16 @@ DesignEqualsImplementationClassSlot *DesignEqualsImplementationSlotInvocationSta
 }
 void DesignEqualsImplementationSlotInvocationStatement::streamIn(QDataStream &in)
 {
-    //TODOreq: slot REFERENCES
+#if 0 //TODOreq: slot REFERENCES
     in >> *m_SlotToInvoke;
+#endif
     in >> m_SlotInvocationContextVariables;
 }
 void DesignEqualsImplementationSlotInvocationStatement::streamOut(QDataStream &out)
 {
+#if 0
     out << *m_SlotToInvoke;
+#endif
     out << m_SlotInvocationContextVariables;
 }
 DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationSlotInvocationStatement::classLifelineWhoseSlotIsToBeInvoked() const

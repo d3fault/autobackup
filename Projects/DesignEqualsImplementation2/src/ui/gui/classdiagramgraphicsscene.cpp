@@ -45,6 +45,11 @@ void ClassDiagramGraphicsScene::privateConstructor(DesignEqualsImplementationPro
 
     //responses
     connect(designEqualsImplementationProject, SIGNAL(classAdded(DesignEqualsImplementationClass*)), this, SLOT(handleClassAdded(DesignEqualsImplementationClass*))); //TODOreq: deleting a part of a class in class diagram might completely invalidate a use case, so either that should trigger the entire deletion of said use case (after warning), or force them into going and fixing the use case, or similar
+
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, designEqualsImplementationProject->m_Classes)
+    {
+        handleClassAdded(currentClass); //deserializing/loading
+    }
 }
 bool ClassDiagramGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *event)
 {
