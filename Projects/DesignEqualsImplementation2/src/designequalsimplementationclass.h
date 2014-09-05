@@ -65,6 +65,8 @@ public:
 
     inline int serializationSlotIdForSlot(DesignEqualsImplementationClassSlot *theSlot) { return m_MySlots.indexOf(theSlot); }
     inline DesignEqualsImplementationClassSlot *slotInstantiationFromSerializedSlotId(int slotId) { return m_MySlots.at(slotId); }
+    inline int serializationHasAIdForHasA(HasA_Private_Classes_Member *theHasA) { return m_HasA_Private_Classes_Members.indexOf(theHasA); }
+    inline HasA_Private_Classes_Member *hasAinstanceFromHasAId(int hasAId) { return m_HasA_Private_Classes_Members.at(hasAId); }
 private:
     friend class DesignEqualsImplementationProjectGenerator;
 signals:
@@ -75,6 +77,7 @@ signals:
     void signalAdded(DesignEqualsImplementationClassSignal*);
     void e(const QString &);
 public slots:
+    void setClassName(const QString &newClassName);
     void emitAllClassDetails();
 };
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass &designEqualsImplementationClass);

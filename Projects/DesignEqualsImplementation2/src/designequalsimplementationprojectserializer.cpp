@@ -6,6 +6,7 @@
 #include "designequalsimplementationsignalemissionstatement.h"
 #include "designequalsimplementationprivatemethodsynchronouscallstatement.h"
 #include "designequalsimplementationslotinvocationstatement.h"
+#include "designequalsimplementationclasslifeline.h"
 
 #define STREAM_OUT_METHOD_ARGUMENTS(qds, method) \
 int numArgs = method->m_Arguments.size(); \
@@ -30,6 +31,7 @@ for(int i = 0; i < numArgs; ++i) \
 }
 
 //not to be confused with project generation, this is saving/opening projects
+//TODOreq: deserializing doesn't clear the fake temp slot, so it shows up in class diagram
 DesignEqualsImplementationProjectSerializer::DesignEqualsImplementationProjectSerializer(QObject *parent)
     : QObject(parent)
 { }
@@ -44,10 +46,11 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
 
     //Project
     projectDataStream << projectToSerialize->Name;
+
     projectDataStream << projectToSerialize->m_Classes.size();
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->m_Classes)
     {
-        //Project Classes
+        //Project Classes -- first declaration and most body serializing
         projectDataStream << currentClass->ClassName;
         projectDataStream << currentClass->Position;
 
@@ -82,6 +85,49 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             }
         }
     }
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->m_Classes)
+    {
+        //Project Classes -- second interdependent class serializing (hasAs are classes, so we had to hold off on setting up the hasAs in order to avoid dependency problems)
+        projectDataStream << currentClass->m_HasA_Private_Classes_Members.size();
+        Q_FOREACH(HasA_Private_Classes_Member *currentHasA, currentClass->m_HasA_Private_Classes_Members)
+        {
+            //Project Class HasA Classes Members
+            projectDataStream << projectToSerialize->serializationClassIdForClass(currentHasA->m_MyClass);
+            projectDataStream << currentHasA->VariableName;
+        }
+    }
+
+    projectDataStream << projectToSerialize->m_UseCases.size();
+    Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, projectToSerialize->m_UseCases)
+    {
+        //Project Use Cases
+        projectDataStream << currentUseCase->Name;
+
+        projectDataStream << currentUseCase->m_ClassLifeLines.size();
+        Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeLine, currentUseCase->m_ClassLifeLines)
+        {
+            //Project Use Case Class Lifelines
+            projectDataStream << projectToSerialize->serializationClassIdForClass(currentClassLifeLine->m_DesignEqualsImplementationClass);
+            projectDataStream << currentClassLifeLine->m_Position;
+            projectDataStream << static_cast<quint8>(currentClassLifeLine->m_InstanceType);
+            if(currentClassLifeLine->m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
+            {
+                //out << *currentClassLifeLine->m_InstanceInOtherClassIfApplicable;
+                DesignEqualsImplementationClass *parentClass = currentClassLifeLine->m_InstanceInOtherClassIfApplicable->m_ParentClass;
+                projectDataStream << projectToSerialize->serializationClassIdForClass(parentClass);
+                projectDataStream << parentClass->serializationHasAIdForHasA(currentClassLifeLine->m_InstanceInOtherClassIfApplicable);
+            }
+
+            //is 'known' because use case hasA class lifeline: out << classLifeline.m_ParentProject->serializationUseCaseIdForUseCase(classLifeline.parentUseCase());
+            QList<SerializableSlotIdType> slotsAppearingInClassLifeline;
+            Q_FOREACH(DesignEqualsImplementationClassSlot* currentSlot, currentClassLifeLine->m_MySlotsAppearingInClassLifeLine)
+            {
+                //Project Use Class Lifeline Slots
+                slotsAppearingInClassLifeline.append(qMakePair(projectToSerialize->serializationClassIdForClass(currentSlot->ParentClass), currentSlot->ParentClass->serializationSlotIdForSlot(currentSlot)));
+            }
+            projectDataStream << slotsAppearingInClassLifeline;
+        }
+    }
 }
 //open
 void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice(QIODevice *ioDeviceToDeserializeFrom, DesignEqualsImplementationProject *projectToPopulate)
@@ -99,7 +145,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     projectDataStream >> numClasses;
     for(int i = 0; i < numClasses; ++i)
     {
-        //Project Classes
+        //Project Classes -- first declaration and most body populating
         QString currentClassName;
         projectDataStream >> currentClassName;
         QPointF classPosition;
@@ -147,7 +193,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                 quint8 currentStatementType;
                 projectDataStream >> currentStatementType;
                 IDesignEqualsImplementationStatement *statement;
-                switch(currentStatementType)
+                switch(static_cast<IDesignEqualsImplementationStatement::StatementTypeEnum>(currentStatementType))
                 {
                 case IDesignEqualsImplementationStatement::SignalEmitStatementType:
                     statement = new DesignEqualsImplementationSignalEmissionStatement();
@@ -161,6 +207,69 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                 }
                 statement->streamIn(projectDataStream);
                 currentSlot->m_OrderedListOfStatements.append(statement);
+            }
+        }
+    }
+    for(int i = 0; i < numClasses; ++i)
+    {
+        //Project Classes -- second interdependent class populating (hasAs are classes, so we had to hold off on setting up the hasAs in order to avoid dependency problems)
+        int numHasAPrivateClassesMembers;
+        projectDataStream >> numHasAPrivateClassesMembers;
+        for(int j = 0; j < numHasAPrivateClassesMembers; ++j)
+        {
+            DesignEqualsImplementationClass *currentClass = projectToPopulate->m_Classes.at(i);
+            //Project Class HasA Classes Members
+            int hasAClassId;
+            projectDataStream >> hasAClassId;
+            QString hasAvariableName;
+            projectDataStream >> hasAvariableName;
+            currentClass->createHasA_Private_Classes_Member(projectToPopulate->classInstantiationFromSerializedClassId(hasAClassId), hasAvariableName);
+        }
+    }
+
+    int numUseCases;
+    projectDataStream >> numUseCases;
+    for(int i = 0; i < numUseCases; ++i)
+    {
+        //Project Use Cases
+        QString useCaseName;
+        projectDataStream >> useCaseName;
+        DesignEqualsImplementationUseCase *currentUseCase = new DesignEqualsImplementationUseCase(projectToPopulate, projectToPopulate);
+        currentUseCase->Name = useCaseName;
+        projectToPopulate->addUseCase(currentUseCase);
+
+        int numClassLifelines;
+        projectDataStream >> numClassLifelines;
+        for(int j = 0; j < numClassLifelines; ++j)
+        {
+            //Project Use Case Class Lifelines
+            int classLifelineClassId;
+            projectDataStream >> classLifelineClassId;
+            DesignEqualsImplementationClass *classLifelineClass = projectToPopulate->classInstantiationFromSerializedClassId(classLifelineClassId);
+            QPointF classLifelinePosition;
+            projectDataStream >> classLifelinePosition;
+            DesignEqualsImplementationClassLifeLine *currentClassLifeline = currentUseCase->createClassLifelineInUseCase(classLifelineClass, classLifelinePosition);
+            quint8 classLifelineInstanteType;
+            projectDataStream >> classLifelineInstanteType;
+            currentClassLifeline->m_InstanceType = static_cast<DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassInstanceTypeEnum>(classLifelineInstanteType);
+            if(currentClassLifeline->m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
+            {
+                int hasAparentClassId;
+                projectDataStream >> hasAparentClassId;
+                DesignEqualsImplementationClass *hasAparentClass = projectToPopulate->classInstantiationFromSerializedClassId(hasAparentClassId);
+                int hasAid;
+                projectDataStream >> hasAid;
+                HasA_Private_Classes_Member *instanceInOtherClass = hasAparentClass->hasAinstanceFromHasAId(hasAid);
+                currentClassLifeline->setInstanceInOtherClassIfApplicable(instanceInOtherClass);
+            }
+            currentClassLifeline->m_ParentUseCase = currentUseCase;
+
+            QList<SerializableSlotIdType> slotsAppearingInClassLifeline;
+            projectDataStream >> slotsAppearingInClassLifeline;
+            Q_FOREACH(SerializableSlotIdType currentSlotReference, slotsAppearingInClassLifeline)
+            {
+                //Project Use Class Lifeline Slots
+                currentClassLifeline->m_MySlotsAppearingInClassLifeLine.append(projectToPopulate->classInstantiationFromSerializedClassId(currentSlotReference.first)->slotInstantiationFromSerializedSlotId(currentSlotReference.second));
             }
         }
     }

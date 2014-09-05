@@ -32,10 +32,10 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
 
     QHBoxLayout *classNameRow = new QHBoxLayout();
     QLabel *classNameLabel = new QLabel(tr("Class &Name:"));
-    QLineEdit *m_ClassNameLineEdit = new QLineEdit(classToEdit->ClassName);
-    classNameLabel->setBuddy(m_ClassNameLineEdit);
+    QLineEdit *classNameLineEdit = new QLineEdit(classToEdit->ClassName);
+    classNameLabel->setBuddy(classNameLineEdit);
     classNameRow->addWidget(classNameLabel);
-    classNameRow->addWidget(m_ClassNameLineEdit);
+    classNameRow->addWidget(classNameLineEdit);
 
 #if 0 //TODOoptional
     QHBoxLayout *validStateNameRow = new QHBoxLayout();
@@ -124,6 +124,8 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     myLayout->addWidget(doneButton);
 
     setLayout(myLayout);
+
+    connect(classNameLineEdit, SIGNAL(textChanged(QString)), m_ClassBeingEditted, SLOT(setClassName(QString))); //TODOreq: sanitize: no spaces etc. a libclang syntax check would be best, but also maybe overkill
 
     connect(quickAddNewPropertyButton, SIGNAL(clicked()), this, SLOT(handleQuickAddNewPropertyButtonClicked()));
     connect(quickAddNewSignalButton, SIGNAL(clicked()), this, SLOT(handleQuickAddNewSignalButtonClicked()));

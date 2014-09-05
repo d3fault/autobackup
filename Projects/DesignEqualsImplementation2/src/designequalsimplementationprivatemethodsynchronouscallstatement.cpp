@@ -36,4 +36,5 @@ void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamOut(
 #if 0
     out << *m_PrivateMethodToCall;
 #endif
-    out << m_PrivateMethodArguments;}
+    out << m_PrivateMethodArguments;
+}

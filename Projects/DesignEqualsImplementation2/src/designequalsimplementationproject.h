@@ -46,6 +46,7 @@ public:
 
     //serializing and deserializing of a use case REFERENCE
     inline int serializationUseCaseIdForUseCase(DesignEqualsImplementationUseCase *useCase) { return m_UseCases.indexOf(useCase); }
+    //inline QString serializationTypeIdForType(const QString &type) { return type; } //TODOoptional: dictionary of types, change return type to int as optimization, etc
 
     //Temporary for code gen:
     bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);

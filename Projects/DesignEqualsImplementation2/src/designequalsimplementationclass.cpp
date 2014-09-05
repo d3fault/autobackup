@@ -142,6 +142,10 @@ QString DesignEqualsImplementationClass::headerFilenameOnly()
 {
     return ClassName.toLower() + ".h";
 }
+void DesignEqualsImplementationClass::setClassName(const QString &newClassName)
+{
+    ClassName = newClassName;
+}
 void DesignEqualsImplementationClass::emitAllClassDetails()
 {
     //TODOreq
