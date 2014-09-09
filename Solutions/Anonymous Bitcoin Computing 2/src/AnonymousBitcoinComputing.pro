@@ -45,7 +45,8 @@ HEADERS += \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h \
     ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h \
     ../../../GloballySharedClasses/image/nonanimatedimagheaderchecker.h \
-    abc2common.h
+    abc2common.h \
+    ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -65,10 +66,12 @@ SOURCES += main.cpp \
     frontend/accounttabs/singleuseselfdeletingmemoryresource.cpp \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp \
-    backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.cpp
+    backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.cpp \
+    ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 INCLUDEPATH += ../../../GloballySharedClasses/image/
+INCLUDEPATH += ../../hackyVideoBullshitSite/src/backend/
 
 LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals -lboost_system -lboost_thread -lboost_serialization #TODOoptional: serialization lib not necessary when using lockfree queue

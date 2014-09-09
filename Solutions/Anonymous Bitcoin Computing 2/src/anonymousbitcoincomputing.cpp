@@ -3,6 +3,7 @@
 #include <boost/preprocessor/repeat.hpp>
 
 #include "abc2common.h"
+#include "nonexpiringstringwresource.h"
 #include "frontend/anonymousbitcoincomputingwtgui.h"
 #include "backend/anonymousbitcoincomputingcouchbasedb.h"
 
@@ -65,6 +66,32 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     WServer wtServer(argv[0]);
 
     wtServer.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
+
+    //BEGIN ABC LOGO
+    streampos fileSizeHack;
+    char *abcLogoBuffer;
+    ifstream abcLogoFileStream("abc.logo.svg", ios::in | ios::binary | ios::ate);
+    if(abcLogoFileStream.is_open())
+    {
+        fileSizeHack = abcLogoFileStream.tellg();
+        abcLogoFileStream.seekg(0,ios::beg);
+        abcLogoBuffer = new char[fileSizeHack]; //TODOoptimization: running out of memory (server critical load) throws an exception, we could pre-allocate this, but how to then share it among WApplications? guh fuckit. i think 'new' is mutex protected underneath anyways, so bleh maybe using a mutex and a pre-allocated buffer is even faster than this (would of course be best to use rand() + mutex shits xD)... but then we can't have multiple doing it on thread pool at same time (unless rand() + mutex shits)
+        abcLogoFileStream.read(abcLogoBuffer, fileSizeHack);
+        abcLogoFileStream.close();
+    }
+    else
+    {
+        beginStoppingCouchbase(&couchbaseDb);
+        finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);
+        cerr << "failed to open abc.logo.svg, quitting" << endl;
+        return 1;
+    }
+    std::string abcLogoString = std::string(abcLogoBuffer, fileSizeHack);
+    delete [] abcLogoBuffer;
+    NonExpiringStringWResource abcLogoImageResource(abcLogoString, "image/svg+xml", "abc.logo.svg", WResource::Inline);
+    abcLogoString.clear(); //we made a copy already. TODOoptimization similar calls can go in hvbs i suppose
+    wtServer.addResource(&abcLogoImageResource, "/abc.logo.svg");
+    //END ABC LOGO
 
     wtServer.addEntryPoint(Application, &AnonymousBitcoinComputing::createAnonymousBitcoinComputingWtGUI);
 

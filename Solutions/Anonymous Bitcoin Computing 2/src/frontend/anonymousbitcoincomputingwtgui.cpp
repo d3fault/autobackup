@@ -6,6 +6,8 @@
 #include "accounttabs/newadslotfilleraccounttabbody.h"
 #include "accounttabs/viewallexistingadslotfillersaccounttabbody.h"
 
+#define ABC_HUMAN_READABLE_NAME_PLX "Anonymous Bitcoin Computing"
+
 //internal paths
 
 #define ABC_INTERNAL_PATH_REGISTER "/register"
@@ -125,7 +127,7 @@ void AnonymousBitcoinComputingWtGUI::finalize()
 }
 void AnonymousBitcoinComputingWtGUI::buildGui()
 {
-    setTitle("Anonymous Bitcoin Computing");
+    setTitle(ABC_HUMAN_READABLE_NAME_PLX);
     WDefaultLoadingIndicator *theLoadingIndicator = new WDefaultLoadingIndicator();
     theLoadingIndicator->setMessage("Computing..."); //'Computing' just barely beat out 'Raping yer mum'
     setLoadingIndicator(theLoadingIndicator);
@@ -138,6 +140,7 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     styleSheet().addRule("body", "background-color: black; color: white; font-family: arial; font-size: large");
     styleSheet().addRule("a:link", "color: #e1e1e1;");
     styleSheet().addRule("a:visited", "color: #ffa2a2;");
+    styleSheet().addRule("img", "background-color: white;"); //our logo is an svg with transparency, we want a white background
 
     //Login Widget
     m_LoginWidget->setContentAlignment(Wt::AlignTop | Wt::AlignRight);
@@ -161,8 +164,12 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget); //might not be necessary, since it's the only one added at this point (comment is not worth...)
 
     WHBoxLayout *titleHeaderHlayout = new WHBoxLayout();
-    titleHeaderHlayout->addWidget(new WText("<h2>Anonymous Bitcoin Computing</h2>"), 0, Wt::AlignTop | Wt::AlignCenter);
-    m_MainVLayout->addLayout(titleHeaderHlayout, 0, Wt::AlignTop | Wt::AlignCenter);
+    WImage *abcLogoImage = new WImage(WLink(WLink::Url, "/abc.logo.svg"), ABC_HUMAN_READABLE_NAME_PLX " Logo");
+    abcLogoImage->setWidth(300);
+    abcLogoImage->setHeight(100);
+    titleHeaderHlayout->addWidget(abcLogoImage, 0, Wt::AlignTop | Wt::AlignLeft);
+    titleHeaderHlayout->addWidget(new WText("<h2>" ABC_HUMAN_READABLE_NAME_PLX "</h2>"), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_MainVLayout->addLayout(titleHeaderHlayout, 0, Wt::AlignTop | Wt::AlignLeft);
 
     WHBoxLayout *loginLogoutHeaderHLayout = new WHBoxLayout();
     loginLogoutHeaderHLayout->addWidget(m_LoginLogoutStackWidget, 0, Wt::AlignTop | Wt::AlignRight);
