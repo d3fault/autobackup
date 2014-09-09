@@ -1,0 +1,40 @@
+"make everything a filter" (some guy, maybe rms himself)
+everything should be a portable (Qt), compileable (GCC/Clang), linkable, filter
+it should be properly designed and generated. there can be many generates with the same design. there will* be many
+
+
+to be able to link to software is like being able to put your dick into something. i don't want anything to do with your software if i can't put my dick into you (had:it)
+
+
+
+that the code compiles and is compatible with unix filter executables is coincidental
+perhaps i should say "unix-style"
+but what the fuck do i know (or care)?
+
+i got an example with libtorrent-rasterbar[-dev] to compile by using the jessie build, which wasn't signed but who gives a fuck.
+it makes me wish i had gotten it to work earlier
+it just seems so fun. endless p2p apps which pretty much equates to endless bandwidth and cpu power too if i have a good reason for it and can convince others that it's a good idea as well.
+
+
+first it installs itself
+random app: on app shutdown after first download/install from a website for example, you are asked if you want to "just quit" (default), "quit but install" (copies session(s) to user directory from temp, installs binaries to system(root)-owned location, installs shortcuts to desktop environment applications menu), "quit, install, and start every time my computer starts". radio selection of course. the first app download/run runs perfectly self-contained in a portable manner (provided you give the binary a private folder). since it runs equivalently in the portable manner, we don't bother asking until they quit their first run.
+
+
+
+any p2p app should first install itself from the network. so what i really need is a generic p2p bootstrapper ;-)
+my mind is one.
+
+
+but i think i can still code a better one
+if(firstRun(downloadedNamedStubThatIsEquivalentToManyOtherBinariesExceptSomehowNamedAndDistributedEtcOnInternets))
+	return downloadAndLaunch(name
+
+yea too pseudo and worthless
+
+download is via p2p. launch (had:install) implies compile (but that is a transparent note to those who don't wish to know it).
+
+the stub is what the end-user downloads and executes to use your software. it is a minimal p2p client with Qt installers ideally (p2p powered), but it may end up depending on Qt itself fml.
+
+i should make a stub generator. i mean it's BASICALLY just an empty project generator. the name (and therefore the payload) changes, but the same basic "connect to dht using [preseeded-selected-known-to-recently-have-had-a-good-online-track-record] peers, download payload for name/identifier, compile, execute" is the same. it's the same but it's there, and coding that first and foremost will make coding a name-swapping generator of it (rofl ez)... err, yes, rofl ez.
+
+libtorrent-rasterbar and libcrypto++ are two powerful tools, especially when used together. just because i'd be using p2p doesn't mean i wouldn't be using crypto errwhere. or at least, i'd want to be xD.

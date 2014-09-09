@@ -11,7 +11,7 @@
 
 //git push -> post-update -> git clone/archive -> symlinkSwap -> deleteOldLastModifiedJustToTriggerQfsWatcher (also delete rest of shit) -> [re-]resolveAndWatchSymlink/.lastModified
 
-#define D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI 1 //completely off-topic hack for book generating :). so much timestamp merging etc going on i don't feel like coding twice
+#define D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI 0 //completely off-topic hack for book generating :). so much timestamp merging etc going on i don't feel like coding twice
 
 #ifdef D3FAULT_LAUNCH_BOOK_HACK_SEX_SPITTER_OUTTER_KTHXBAI
 #include <QTextStream>

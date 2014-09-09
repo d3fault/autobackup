@@ -20,7 +20,7 @@
 #include "usecaseumlitemswidget.h"
 #include "designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h"
 
-#define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME "Design = Implementation" //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod) -- however i like the equality usage of the equal sign rather than assignment, in which case the word design coming first makes more sense (because the design does come before the implementation (most of the time, but especially in this app))
+#define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME tr("Design = Implementation") //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod) -- however i like the equality usage of the equal sign rather than assignment, in which case the word design coming first makes more sense (because the design does come before the implementation (most of the time, but especially in this app))
 
 #define DesignEqualsImplementationMainWindow_DOCK_WIDGET_FEATURES (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable)
 
@@ -37,6 +37,7 @@
 //TODOoptional: a first run wizard teaching them how to design + execute hello world (or something more interesting). ex: "click and drag one of these classes here" (class creation), <insert class population instructions>, "ok now add a use case", "ok now draw line from here to here". should ideally be all visual and shit pointing to what the user needs to do next
 //TODOreq: holding ctrl should put the mouse mode into arrow mode until it's released (if already in arrow mode, do nothing (and don't change out of it when ctrl released))
 //TODOreq: when opening a project, if the current project is EMPTY, close the current empty project first (so only one is open)
+//TODOoptional: when naming the project, there could be one/several fields below the "human readable" line edit that are auto-generated-but-editable. Like for example the top-most "project name" is typed in as "My Project", and then below it the name-of-resulting-binary line edit could auto generate "myproject" (like I said, editable still). It is basically the qmake TARGET
 DesignEqualsImplementationMainWindow::DesignEqualsImplementationMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_CurrentProjectTabIndex(0)

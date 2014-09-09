@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1409773828
+Documents/minddump/:1410242885
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1409865070
+Documents/minddump/dreams/:1410245913
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -128,6 +128,7 @@ Documents/minddump/dreams/lskdfjlaksjfdlsdkjfosudflsjkdfouslfdjsdfououer.txt:138
 Documents/minddump/dreams/lskdjflksjdflksjdfouflkjsdofusdlfjsoduflkjweroiujsdf.txt:1377721281
 Documents/minddump/dreams/lskdjflsjadfosuadflsdofusdlfjouwerlkjsdofuisadlfk.txt:1389041042
 Documents/minddump/dreams/lskdjflskjdflkjsdfkljdsjflskdjfoiewurkjsdflkjf.txt:1409865070
+Documents/minddump/dreams/lskfjsdjfldskjflksdjflkjsdflksjdlfkjsdklfjsdkljflskdjflksjdflksdjfoulkjlk.txt:1410245913
 Documents/minddump/dreams/lskjdflkjsdfouewljrousdflkjsdofulewkjroiuasfkdjlsdjkfsdofulekjroiudsflkjsdf.txt:1382820797
 Documents/minddump/dreams/lskjdflkjsdlkfjskldjfklsjdklfjsdkljfkljekwlrjousdlfkjsdlf.txt:1408257545
 Documents/minddump/dreams/lskjflksjflksjdfosduflsdkjfosudflkjsdofusdlkfjsdouflskdjf.txt:1379861608
@@ -1447,6 +1448,7 @@ Documents/minddump/lskaflksdfjksdfoulekrjoufsdlkjsdfouewrlkjfdoiul.txt:135838015
 Documents/minddump/lskajfkjsdfkljsdlkfjlsdkjflkjsdfouewljrousdfljsdfouil.txt:1393253152
 Documents/minddump/lskdafjlsdkfjsdoafusdalkfjsodfulksdfjousdflkjsdfousdfljsdofuljsdfou.txt:1377207554
 Documents/minddump/lskdajflksjdfouwerljousdflkjsdfousdflkjsdfoiusdflk.txt:1392439798
+Documents/minddump/lskdfjlkasjdflksdjflksjdflkjsdfljsdklfjsdklfjoowureksdf.txt:1410242885
 Documents/minddump/lskdfjlksdjflksjdflkjsdlkfjlksdfjlksdjfsjdfewruoiusfkljsdf.txt:1396676790
 Documents/minddump/lskdfjlksjdfljlskdfjklsdjfowulerkjousdlfkjsdofusdlfk.txt:1409773828
 Documents/minddump/lskdfjsdfouswerwerqdfdlfjosudfljsdofulkjwerou.txt:1392701356
@@ -2139,6 +2141,7 @@ Documents/minddump/sldjkfsadofiuoierulfjsdkfjsdk.txt:1353789547
 Documents/minddump/sldkfjalkjdflskjfsdofualsdfkjsodfulksdfjoausflkjsadfousfdlkjsdfo.txt:1379630527
 Documents/minddump/sldkfjaskdljfousdflkjwoewerrqwerwerfdsurljfodsuflkjsdfoul.txt:1370746128
 Documents/minddump/sldkfjaslkfjsldkfjlskdjflksdjflksdjflkjweroulksjdfousdflksjfdoiuler.txt:1382180085
+Documents/minddump/sldkfjlksjdflksjdfkljsdklfjskdlfjksldjflksdjfklsdjkldsflkjsdf.txt:1409905685
 Documents/minddump/sldkfjlksjdfousfdlkjsdofusldkfjousdf.txt:1384778475
 Documents/minddump/sldkfjlsadflaskjdflkjsdflkjsdfdsofusldfkjsdflkjewrdofjsd.txt:1403682874
 Documents/minddump/sldkfjlsdjflksdjflkjdlfkjdslfjsdlkjeworulskdjfsdyuflsdkjfoweurlksdf.txt:1409062263
@@ -2671,11 +2674,11 @@ Projects/DesignEqualsImplementation2/design/unnamed.slots.should.show.up.in.clas
 Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.definitions.or.slot.references.and.yes.they.can.be.mixed.at.any.ratio.txt:1407283362
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1409890244
+Projects/DesignEqualsImplementation2/src/:1409891756
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1409889871
+Projects/DesignEqualsImplementation2/src/ui/gui/:1409891507
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1409876592
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1408651682
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2697,7 +2700,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassl
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.cpp:1409761775
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.h:1404132891
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationguicommon.h:1405638136
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.cpp:1409889203
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.cpp:1409891507
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.h:1409761792
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.cpp:1409889471
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h:1409889204
@@ -2736,7 +2739,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.cpp:140
 Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.h:1404574889
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.cpp:1409883103
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1409883080
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.cpp:1409814204
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.cpp:1409891431
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.h:1409812432
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.cpp:1405431299
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.h:1405431311
@@ -2910,7 +2913,7 @@ Projects/Hottee/src/cli/main.cpp:1402472001
 Projects/Hottee/src/lib/:1402473271
 Projects/Hottee/src/lib/hottee.cpp:1402473270
 Projects/Hottee/src/lib/hottee.h:1402473271
-Projects/Ideas/:1408699319
+Projects/Ideas/:1410248799
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -3155,6 +3158,7 @@ Projects/Ideas/reaction.time.games.p2p.multiplayer.txt:1325442855
 Projects/Ideas/read.this.before.ever.making.a.custom.http.server.for.tor.hidden.services.txt:1340590786
 Projects/Ideas/readme.before.or.when.designing.bootstrapped.version.txt:1323590022
 Projects/Ideas/readme.howto.launch.fuck.i.had.a.huge.thing.here.but.hit.up.arrow.key.and.it.erased.txt:1338634780
+Projects/Ideas/recursive.media.file.derper.slkdfjlsdkjflksdjf.txt:1410248799
 Projects/Ideas/related.and.or.parent.triggers.a.contextual.search.or.something.this.doesnt.make.MUCH.sense.but.there.is.something.there.txt:1340447548
 Projects/Ideas/release.code.write.DOOOOEEEEEEET.txt:1328082591
 Projects/Ideas/remix.yourself.infinitely.asldfjksdaflksjflsakj.txt:1338793583
@@ -3361,7 +3365,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1408606756
+Projects/Prototypes/:1409902212
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1390331620
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1390584039
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -3440,6 +3444,14 @@ Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:139024293
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/setvaluebykeyrequestfromwt.h:1389720128
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389777479
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389777895
+Projects/Prototypes/DhtAppDownloadCompileStubExample/:1409906195
+Projects/Prototypes/DhtAppDownloadCompileStubExample/src/:1409906187
+Projects/Prototypes/DhtAppDownloadCompileStubExample/src/DhtAppDownloadCompileStubExampleCli.pro:1409904081
+Projects/Prototypes/DhtAppDownloadCompileStubExample/src/dht.cpp:1409905615
+Projects/Prototypes/DhtAppDownloadCompileStubExample/src/dht.h:1409905591
+Projects/Prototypes/DhtAppDownloadCompileStubExample/src/dhtappdownloadcompilestubexample.cpp:1409906093
+Projects/Prototypes/DhtAppDownloadCompileStubExample/src/dhtappdownloadcompilestubexample.h:1409904701
+Projects/Prototypes/DhtAppDownloadCompileStubExample/src/main.cpp:1409905744
 Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/:1408610152
 Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/:1408653121
 Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/FunctionDecomposerWithNewTypeDetectorGui.pro:1408653057
@@ -4716,7 +4728,9 @@ Solutions/Anonymous Bitcoin Computing/src/shared/AppClientBankServerProtocol.h:1
 Solutions/Anonymous Bitcoin Computing/src/shared/WtFrontEndAndAppDbProtocol.h:1336171731
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
-Solutions/Anonymous Bitcoin Computing 2/:1396219103
+Solutions/Anonymous Bitcoin Computing 2/:1410246831
+Solutions/Anonymous Bitcoin Computing 2/assets/:1410246858
+Solutions/Anonymous Bitcoin Computing 2/assets/abc.logo.svg:1410248142
 Solutions/Anonymous Bitcoin Computing 2/design/:1393084980
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.with.recovery.cas.swap.to.get.a.key.with.uuids.for.refill.and.recovery.pseudocode.cpp:1392716033
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.without.recovery.kiss.but.not.most.efficient.solution.i.am.lolling.so.hard.right.now.txt:1392170170
@@ -4837,7 +4851,7 @@ Solutions/hackyVideoBullshitSite/src/:1409525767
 Solutions/hackyVideoBullshitSite/src/backend/:1409524317
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1401116619
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1401116218
-Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1409524317
+Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1410244616
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1401025268
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1401264947

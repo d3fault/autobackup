@@ -1,0 +1,13 @@
+A hardcoded/predefined-but-appendable-at-runtime-etc list of extensions and whether they are video/audio/image
+
+A line edit is populated at startup with a random string from /dev/random (this is optionally saved to replay the app session)
+
+You pick a source directory and a destination directory. It recursively iterates the destination directory, replacing each media file it finds with a PIECE of a media file from the source directory. The media meta data is detected by software, and then that meta data is used to chop out pieces of appropriate size from source. So for example: a 1 second audio clip in destination, gets replaced by a RANDOM 1 second audio clip from source (if the file it chooses to use in source is longer than 1 second, it is random which 1 second of that audio clip is chosen). We of course try not to ever use the same piece twice, but can wrap around if there's way more destination content than source content.
+
+An alternative to this app is pure random number attached to qpainter with no help input, would be much uglier/noisier.
+
+An example using pictures is similar: the dimensions of the dest are used and we chop out the same dimensions (random part) from source. Could work for video as well.
+
+Rationale: teeworlds code is bsd license, but it's data folder is cc-by-sa :(. I could run this app using ccmixter.org cc-by audio and pixabay pictures as source.. and it would give.... INTERESTING... results ;-). Each run would be different!
+
+Re:tw, There's still the copyright issues of built-in and custom maps, but making my own or pursuading some players to release them under DPL/BSD would work
