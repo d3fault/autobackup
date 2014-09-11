@@ -20,6 +20,7 @@
 //TODOoptional: instead of a modal dialog, a qlistwidget below the uml class items listing the entries, defaulting to "new top level widget". Just less clicks is all. Also right click -> change instance being used?
 //TODOoptional: radio mode grays out opposite mode
 //TODOreq: introducing qgoupbox made the radio buttons in different groups (and so not mutually exclusive), fix that
+//TODOreq: when instance choser is opened and we already have an instance, the "existing instance" radio box should be pre-selected, as well as the actual instance in the list highlighted
 ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementationClassLifeLine *classLifelineForWhichAnInstanceIsBeingChosen, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_NewInstanceRadioButton(new QRadioButton(tr("New Instance")))

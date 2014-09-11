@@ -89,27 +89,18 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             projectDataStream << currentHasA->VariableName;
         }
     }
-    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->classes())
-    {
-        //Project Classes Slots Statements -- we had to hold off on populating the statements until all classes/signals/slots/private-methods were instantiated
-        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
-        {
-            projectDataStream << currentSlot->m_OrderedListOfStatements.size();
-            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, currentSlot->m_OrderedListOfStatements)
-            {
-                //Project Class Slots Statements -- I don't think it's necessary since we iterate the slots the same way we create them, but we might need a slotId to know which slot these statements belong to
-                projectDataStream << static_cast<quint8>(currentStatement->StatementType);
-                currentStatement->streamOut(projectToSerialize, projectDataStream);
-            }
-        }
-    }
 
-    //use cases depend on statements
+    /*
+    TODOreq: Slot Statements depend on class lifelines (and yes I was right, slot statements do [indirectly, through class lifelines] depend on m_HasA_Private_Classes_Members), class lifelines depend on use cases, use cases depend on statements ;-). However only the SignalSlotConnectionActivations portion of use cases depend on slot statements... So I need to do it in this order:
+    1) UsesCase/ClassLifelines (no SignalSlotConnectionActivations)
+    2) Slots Statements
+    3) SignalSlotConnectionActivations in Use Cases
+    */
 
     projectDataStream << projectToSerialize->m_UseCases.size();
     Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, projectToSerialize->m_UseCases)
     {
-        //Project Use Cases -- //TODOreq: bug, lines/arrows aren't [de-]serialized
+        //Project Use Cases (1/2) -- Everything that doesn't depend on slot statements //TODOreq: bug, lines/arrows aren't [de-]serialized (nor should they be, but they need to be redrawn based on SignalSlotConnectionActivations)
         projectDataStream << currentUseCase->Name;
 
         //Project Use Cases Actor
@@ -155,6 +146,26 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             DesignEqualsImplementationClassSlot *slotEntryPoint = currentUseCase->m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.second;
             projectDataStream << slotEntryPoint->ParentClass->serializationSlotIdForSlot(slotEntryPoint);
         }
+    }
+
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->classes())
+    {
+        //Project Classes Slots Statements -- we had to hold off on populating the statements until all classes/signals/slots/private-methods, and even bare use cases/class-lifelines, were instantiated
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
+        {
+            projectDataStream << currentSlot->m_OrderedListOfStatements.size();
+            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, currentSlot->m_OrderedListOfStatements)
+            {
+                //Project Class Slots Statements -- I don't think it's necessary since we iterate the slots the same way we create them, but we might need a slotId to know which slot these statements belong to
+                projectDataStream << static_cast<quint8>(currentStatement->StatementType);
+                currentStatement->streamOut(projectToSerialize, projectDataStream);
+            }
+        }
+    }
+
+    Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, projectToSerialize->m_UseCases)
+    {
+        //Project Use Cases (2/2) -- Everything that depends on slot statements (such as SignalSlotConnectionActivations)
 
         projectDataStream << currentUseCase->m_SignalSlotConnectionActivationsInThisUseCase.size();
         Q_FOREACH(DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct currentSignalSlotActivation, currentUseCase->m_SignalSlotConnectionActivationsInThisUseCase)
@@ -245,44 +256,12 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             currentClass->createHasA_Private_Classes_Member(projectToPopulate->classInstantiationFromSerializedClassId(hasAClassId), hasAvariableName);
         }
     }
-    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToPopulate->classes())
-    {
-        //Project Classes Slots Statements -- we had to hold off on populating the statements until all classes/signals/slots/private-methods were instantiated
-        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
-        {
-            int numOrderedListOfStatements;
-            projectDataStream >> numOrderedListOfStatements;
-            for(int i = 0; i < numOrderedListOfStatements; ++i)
-            {
-                //Project Class Slots Statements
-                quint8 currentStatementType;
-                projectDataStream >> currentStatementType;
-                IDesignEqualsImplementationStatement *statement;
-                switch(static_cast<IDesignEqualsImplementationStatement::StatementTypeEnum>(currentStatementType))
-                {
-                case IDesignEqualsImplementationStatement::SignalEmitStatementType:
-                    statement = new DesignEqualsImplementationSignalEmissionStatement();
-                    break;
-                case IDesignEqualsImplementationStatement::SlotInvokeStatementType: //TODOreq: [de-]serialize class lifeline containing slot to invoke
-                    statement = new DesignEqualsImplementationSlotInvocationStatement();
-                    break;
-                case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
-                    statement = new DesignEqualsImplementationPrivateMethodSynchronousCallStatement();
-                    break;
-                }
-                statement->streamIn(projectToPopulate, projectDataStream); //TO DOnereq: i am pretty sure this needs to happen on another/later iteration of the slots, because not all slots/signals/etc have been instantiated (and hell, not even all the classes have been instantiated either!). similar to the 'second interdependent class populating' below. dependency problems sums it up perfectly. i probably DON'T need to move the stream out code, but i should keep them nice and lined up so that's reason enough to yes move it. it should probably come after the [similar] m_HasA_Private_Classes_Members second iteration, becuase these statements themselves MIGHT depend on those as well! not sure though. the statement populating must come after SIGNAL/SLOT/PRIVATE-METHOD (and any other 'statement type')
-                currentSlot->m_OrderedListOfStatements.append(statement);
-            }
-        }
-    }
-
-    //use cases depend on statements
 
     int numUseCases;
     projectDataStream >> numUseCases;
     for(int i = 0; i < numUseCases; ++i)
     {
-        //Project Use Cases
+        //Project Use Cases (1/2) -- Everything that doesn't depend on slot statements
         QString useCaseName;
         projectDataStream >> useCaseName;
         DesignEqualsImplementationUseCase *currentUseCase = new DesignEqualsImplementationUseCase(projectToPopulate, projectToPopulate);
@@ -346,13 +325,51 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             DesignEqualsImplementationClassLifeLine *rootClassLifeline = currentUseCase->classLifelineInstantiatedFromSerializedClassLifelineId(rootClassLifelineId);
             currentUseCase->setUseCaseSlotEntryPoint(rootClassLifeline, rootClassLifeline->designEqualsImplementationClass()->slotInstantiationFromSerializedSlotId(slotEntryPointSlotId));
         }
+    }
+
+
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToPopulate->classes())
+    {
+        //Project Classes Slots Statements -- we had to hold off on populating the statements until all classes/signals/slots/private-methods, and even bare use cases/class lifelines, were instantiated
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
+        {
+            int numOrderedListOfStatements;
+            projectDataStream >> numOrderedListOfStatements;
+            for(int i = 0; i < numOrderedListOfStatements; ++i)
+            {
+                //Project Class Slots Statements
+                quint8 currentStatementType;
+                projectDataStream >> currentStatementType;
+                IDesignEqualsImplementationStatement *statement;
+                switch(static_cast<IDesignEqualsImplementationStatement::StatementTypeEnum>(currentStatementType))
+                {
+                case IDesignEqualsImplementationStatement::SignalEmitStatementType:
+                    statement = new DesignEqualsImplementationSignalEmissionStatement();
+                    break;
+                case IDesignEqualsImplementationStatement::SlotInvokeStatementType: //TODOreq: [de-]serialize class lifeline containing slot to invoke
+                    statement = new DesignEqualsImplementationSlotInvocationStatement();
+                    break;
+                case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
+                    statement = new DesignEqualsImplementationPrivateMethodSynchronousCallStatement();
+                    break;
+                }
+                statement->streamIn(projectToPopulate, projectDataStream); //TO DOnereq: i am pretty sure this needs to happen on another/later iteration of the slots, because not all slots/signals/etc have been instantiated (and hell, not even all the classes have been instantiated either!). similar to the 'second interdependent class populating' below. dependency problems sums it up perfectly. i probably DON'T need to move the stream out code, but i should keep them nice and lined up so that's reason enough to yes move it. it should probably come after the [similar] m_HasA_Private_Classes_Members second iteration, becuase these statements themselves MIGHT depend on those as well! not sure though. the statement populating must come after SIGNAL/SLOT/PRIVATE-METHOD (and any other 'statement type')
+                currentSlot->m_OrderedListOfStatements.append(statement);
+            }
+        }
+    }
+
+    for(int i = 0; i < numUseCases; ++i)
+    {
+        //Project Use Cases (2/2) -- Everything that depends on slot statements (such as SignalSlotConnectionActivations)
+
+        DesignEqualsImplementationUseCase *currentUseCase = projectToPopulate->useCases().at(i);
 
         int numSignalSlotConnectionActivationsInThisUseCase;
         projectDataStream >> numSignalSlotConnectionActivationsInThisUseCase;
         for(int j = 0; j < numSignalSlotConnectionActivationsInThisUseCase; ++j)
         {
-            //Project Use Case SignalSlotConnectionActivations
-
+            //Project Use Case SignalSlotConnectionActivations            
             DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct signalSlotConnectionActivation;
             //Signal
             //SignalStatement_Key0_IndexInto_m_ClassLifeLines

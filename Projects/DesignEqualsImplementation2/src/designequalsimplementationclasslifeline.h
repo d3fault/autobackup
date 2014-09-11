@@ -52,6 +52,9 @@ public:
     void setInstanceInOtherClassIfApplicable(HasA_Private_Classes_Member *instanceInOtherClassIfApplicable);
 
     QString instanceVariableName();
+
+    static void streamOutClassLifelineReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassLifeLine *classLifeline, QDataStream &out);
+    static DesignEqualsImplementationClassLifeLine* streamInClassLifelineReference(DesignEqualsImplementationProject *project, QDataStream &in);
 public: //was protected, but eh serialization plx
     //friend class DesignEqualsImplementationClassLifeLineUnitOfExecution;
     DesignEqualsImplementationProject *m_ParentProject;

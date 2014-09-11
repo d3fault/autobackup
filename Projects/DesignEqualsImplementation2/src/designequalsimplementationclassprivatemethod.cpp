@@ -5,11 +5,12 @@
 #include "designequalsimplementationproject.h"
 
 #define DesignEqualsImplementationClassPrivateMethod_QDS(qds, direction, designEqualsImplementationClassPrivateMethod) \
-    qds direction designEqualsImplementationClassPrivateMethod.Name; \
-    qds direction designEqualsImplementationClassPrivateMethod.ReturnType; \
-    qds direction designEqualsImplementationClassPrivateMethod.Arguments; \
-    return qds; //TODOoptimization: argument types should be serialized using a dictionary of types. it should only be used during [de-]serialization because of the difference between type rename and change-type-of-existing-arg -- and the confusion that trying to maintain a dictionary would add on top. compression alone might alleviate the dupe type specifying overhead ENOUGH
+qds direction designEqualsImplementationClassPrivateMethod.Name; \
+qds direction designEqualsImplementationClassPrivateMethod.ReturnType; \
+qds direction designEqualsImplementationClassPrivateMethod.Arguments; \
+return qds; //TODOoptimization: argument types should be serialized using a dictionary of types. it should only be used during [de-]serialization because of the difference between type rename and change-type-of-existing-arg -- and the confusion that trying to maintain a dictionary would add on top. compression alone might alleviate the dupe type specifying overhead ENOUGH
 
+//TODOreq: this->ParentClass needs to be set during DesignEqualsImplementationClass::addPrivateMethod() -- just like in addSlot and addSignal. but I don't have the code even using this class yet so...
 DesignEqualsImplementationClassPrivateMethod::DesignEqualsImplementationClassPrivateMethod(QObject *parent)
     : QObject(parent)
     , IDesignEqualsImplementationHaveOrderedListOfStatements()

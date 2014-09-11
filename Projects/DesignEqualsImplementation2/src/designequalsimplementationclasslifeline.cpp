@@ -223,6 +223,20 @@ QString DesignEqualsImplementationClassLifeLine::instanceVariableName()
         ret = m_InstanceInOtherClassIfApplicable->VariableName;
     return ret;
 }
+void DesignEqualsImplementationClassLifeLine::streamOutClassLifelineReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassLifeLine *classLifeline, QDataStream &out)
+{
+    out << project->serializationUseCaseIdForUseCase(classLifeline->parentUseCase());
+    out << classLifeline->parentUseCase()->serializationClassLifelineIdForClassLifeline(classLifeline);
+}
+DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationClassLifeLine::streamInClassLifelineReference(DesignEqualsImplementationProject *project, QDataStream &in)
+{
+    int useCaseId;
+    in >> useCaseId;
+    int classLifelineId;
+    in >> classLifelineId;
+    DesignEqualsImplementationUseCase *useCaseThatHasClassLifeline = project->useCaseInstantiationFromSerializedUseCaseId(useCaseId);
+    return useCaseThatHasClassLifeline->classLifelineInstantiatedFromSerializedClassLifelineId(classLifelineId);
+}
 void DesignEqualsImplementationClassLifeLine::privateConstructor(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationUseCase *parentUseCase, QPointF position)
 {
     m_DesignEqualsImplementationClass = designEqualsImplementationClass;
