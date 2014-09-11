@@ -1,0 +1,6 @@
+thin js load balancing (prototype if bored, integrate with d= ideally)
+js served from www.domain.com does the round-robin'ing and communicates with backend0.domain.com, backend1.domain.com, etc via ajax. identical backends that shared a dht. a backend is selected and stuck with for entire session. non-js users are round-robin'd simply by which server they are HTTP REDIRECT'd to. if non-js user links to the backend0.domain.com (to share a link), the new user/session goes through round-robin again (if they are js, they go to www, if they are not js, they are round robin HTTP REDIRECT'd (the node doing the round robin selection should include itself in the rand() call (or for loop whatever), and then NOT redirect if it chose itself))
+
+i am tempted to protytpe this, but i don't want to get too carried away with it because i think it would be better as a backend for d=. i don't have any gui stuff put into d= yet, but it will come and when it does and i want to add web app generation, THEN i should integrate and expand upon that prototype
+
+obviouisly you would set a really long expiration date for the js blob that the www.domain.com server serves up

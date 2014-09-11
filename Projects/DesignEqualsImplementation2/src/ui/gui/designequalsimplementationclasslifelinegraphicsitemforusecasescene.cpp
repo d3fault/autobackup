@@ -21,6 +21,7 @@
 
 //TODOreq: if a slot invoked on another thread (to the right) invokes us (via signal or whatever) by drawing an arrow back to that same unit of execution, a new unit of execution is auto-created right then and there for it
 //TODOmb: right-click -> new unit of execution (would be nameless, just like the very first one added)
+//TODOmb: as soon as a slot is named, the next "dummy fake temp slot" should be created. all snap points (destination snap points) for the just-named slot should be redirected to the newly created "dummy fake temp slot"... but there should still be a visual cue of this redirecting in case that "dummy fake temp slot" is off the screen (perhaps the one they are aiming at has tons of statements on it, making the "dummy fake temp slot" be down below the fold. this is more or less already being done (when they release the mouse button, the new slot is created)... but the snap point re-routing logic when the mouse is still being held down is not being done
 DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
     : QObject(qobjectParent)
     , QGraphicsRectItem(graphicsItemParent)
@@ -122,7 +123,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
 DesignEqualsImplementationSlotGraphicsItemForUseCaseScene* DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = new DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(this, slot, this);
-    m_SlotsInThisClassLifeLine.insert(indexInsertedInto, slotGraphicsItem);
+    m_SlotGraphicsItemsInThisClassLifeLine.insert(indexInsertedInto, slotGraphicsItem);
     connect(slotGraphicsItem, SIGNAL(geometryChanged()), this, SLOT(handleSlotGeometryChanged()));
     return slotGraphicsItem;
 }
@@ -134,7 +135,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
 
     QPen dashedPen;
     dashedPen.setStyle(Qt::DotLine);
-    while(m_DottedLinesJustAboveEachSlot.size() < m_SlotsInThisClassLifeLine.size())
+    while(m_DottedLinesJustAboveEachSlot.size() < m_SlotGraphicsItemsInThisClassLifeLine.size())
     {
         QGraphicsLineItem *newLineItem = new QGraphicsLineItem(this);
         newLineItem->setLine(0, 0, 0, DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_NO_ACTIVITY_LIFELINE_MINIMUM_VERTICAL_GAP);
@@ -154,7 +155,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
     currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setX(rect().width()/2);
     currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(rect().bottom());
     int currentLineIndex = 0;
-    Q_FOREACH(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *currentUnitOfExecutionGraphicsItem, m_SlotsInThisClassLifeLine)
+    Q_FOREACH(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *currentSlotGraphicsItem, m_SlotGraphicsItemsInThisClassLifeLine)
     {
         //m_DottedLinesJustAboveEachUnitOfExecution.at(currentLineIndex++)->setLine(lineAboveUnitOfExecution); //TODOreq: drawing arrow to these dashed lines should behave just like drawing arrow to the class name box
         //QPointF dottedLinePos = bottomMiddleOfClassNameRect;
@@ -171,13 +172,13 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::reposit
         //QPointF topMiddlePos(rect().width()/2, bottomOfLifeLine.y());
         QPointF centerPointOfUnitOfExecution = currentTopMiddlePointOfDottedLineAboveUnitOfExecution;
         centerPointOfUnitOfExecution.setY(centerPointOfUnitOfExecution.y() + currentLineItem->boundingRect().height());
-        qreal halfUnitOfExecutionHeight = (currentUnitOfExecutionGraphicsItem->boundingRect().height()/2);
+        qreal halfUnitOfExecutionHeight = (currentSlotGraphicsItem->boundingRect().height()/2);
         centerPointOfUnitOfExecution.setY(centerPointOfUnitOfExecution.y() + halfUnitOfExecutionHeight);
         //bottomOfDottedLine.setY(bottomOfDottedLine.y() + dottedLineHalfHeight);
-        currentUnitOfExecutionGraphicsItem->setPos(centerPointOfUnitOfExecution);
+        currentSlotGraphicsItem->setPos(centerPointOfUnitOfExecution);
 
 
-        //calcuate next dotted line topMiddle position, even if there aren't any more units of execution (which means there aren't any more dotted lines)
+        //calcuate next dotted line topMiddle position, even if there aren't any more slots (which means there aren't any more dotted lines)
         currentTopMiddlePointOfDottedLineAboveUnitOfExecution.setY(centerPointOfUnitOfExecution.y() + halfUnitOfExecutionHeight);
 #if 0
         topOfLifeLine.setY(unitOfExecutionRect.bottom());
@@ -197,7 +198,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleS
 }
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved)
 {
-    QMutableListIterator<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*> slotGraphicsItemIterator(m_SlotsInThisClassLifeLine);
+    QMutableListIterator<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*> slotGraphicsItemIterator(m_SlotGraphicsItemsInThisClassLifeLine);
     while(slotGraphicsItemIterator.hasNext())
     {
         DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = slotGraphicsItemIterator.next();

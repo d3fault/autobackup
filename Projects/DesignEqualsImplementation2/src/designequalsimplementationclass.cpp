@@ -150,6 +150,7 @@ void DesignEqualsImplementationClass::emitAllClassDetails()
 {
     //TODOreq
 }
+#if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass &designEqualsImplementationClass)
 {
     DesignEqualsImplementationClass_QDS(out, <<, designEqualsImplementationClass);
@@ -169,3 +170,4 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *design
     in >> *designEqualsImplementationClass;
     return in;
 }
+#endif

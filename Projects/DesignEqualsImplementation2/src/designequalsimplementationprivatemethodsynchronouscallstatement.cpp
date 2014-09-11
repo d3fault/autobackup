@@ -24,17 +24,13 @@ QString DesignEqualsImplementationPrivateMethodSynchronousCallStatement::toRawCp
     ret.append(")");
     return ret;
 }
-void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamIn(QDataStream &in)
+void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamIn(DesignEqualsImplementationProject *project, QDataStream &in)
 {
-#if 0 //TODOreq: private method REFERENCE
-    in >> *m_PrivateMethodToCall;
-#endif
+    DesignEqualsImplementationClassPrivateMethod::streamInPrivateMethodReference(project, in);
     in >> m_PrivateMethodArguments;
 }
-void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamOut(QDataStream &out)
+void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamOut(DesignEqualsImplementationProject *project, QDataStream &out)
 {
-#if 0
-    out << *m_PrivateMethodToCall;
-#endif
+    DesignEqualsImplementationClassPrivateMethod::streamOutPrivateMethodReference(project, m_PrivateMethodToCall, out);
     out << m_PrivateMethodArguments;
 }

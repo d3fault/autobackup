@@ -12,3 +12,4 @@
 [] - hasA and properties -- merge? at the very least, hasA needs gui add
 [] - Don't allow infinite parent/child relationship loop (Foo hasA bar hasA Foo)
 [] - slot references with visual differentiation (slot references still show signal emit statements (recursively with private methods therein?))
+[] - clean up class editor (class preview + tab-ize. move the non-clang 'add stuff' to the stuff-specific tab. on each stuff-specific tab should also be a clang parse line edit at the top (exact same functionality, but pressing enter is no longer ambiguious). remove/re-order/rename/etc the 'stuff')

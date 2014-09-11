@@ -63,6 +63,7 @@ signals:
     void newUseCaseRequested();
     void mouseModeChanged(DesignEqualsImplementationMouseModeEnum newMouseMode);
 public slots:
+    void handleE(const QString &msg);
     void handleProjectOpened(DesignEqualsImplementationProject *project);
 private slots:
     void handleSaveRequested();

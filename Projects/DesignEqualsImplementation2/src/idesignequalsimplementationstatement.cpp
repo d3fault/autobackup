@@ -6,6 +6,7 @@
 #include "designequalsimplementationslotinvocationstatement.h"
 #include "designequalsimplementationprivatemethodsynchronouscallstatement.h"
 
+#if 0
 QDataStream &operator<<(QDataStream &out, IDesignEqualsImplementationStatement *&statement)
 {
     out << static_cast<quint8>(statement->StatementType);
@@ -34,3 +35,4 @@ QDataStream &operator>>(QDataStream &in, IDesignEqualsImplementationStatement *&
     return in;
     //return in >> *statement;
 }
+#endif

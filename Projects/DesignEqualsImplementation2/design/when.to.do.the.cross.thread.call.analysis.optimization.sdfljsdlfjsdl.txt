@@ -1,0 +1,6 @@
+The optimization I always think about where the design is analyzed and non-cross-thread-calls are turned into direct calls should be performed automatically when a static build is taking place. If ever they want to keep the intermediate/generated source code, they are warned that it is not as portable as it could/should be and they should do a 'regular'/dynamically-linked build instead. They could also request the optimization to be performed for a non-static build, but the same non-portable warning could/should be generated. This all assumes I'm controlling the compiler. For now a simple "optimize non-cross-thread-calls (non-portable)" checkbox in generate source wizard dialog would be enough.
+
+The speedup when doing this optimization would be: assloads.
+
+
+OT'ish: It's worth noting that it would be a waste of MY time to try to remove unreachable code. The compiler does that already, and is pretty aggressive about it when doing static builds.

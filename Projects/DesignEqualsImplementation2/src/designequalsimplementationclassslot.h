@@ -32,6 +32,9 @@ public:
     //TODOoptional: return type
 
     virtual QObject *asQObject();
+
+    static DesignEqualsImplementationClassSlot* streamInSlotReference(DesignEqualsImplementationProject *project, QDataStream &in);
+    static void streamOutSlotReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassSlot *slot, QDataStream &out);
 private:
     //DesignEqualsImplementationClassLifeLine *m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView;
     DesignEqualsImplementationClassSignal *m_FinishedOrExitSignal;
@@ -39,11 +42,12 @@ private:
 signals:
     void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
 };
-
+#if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSlot &slot);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot &slot);
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSlot *slot);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot *slot);
+#endif
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClassSlot*)
 

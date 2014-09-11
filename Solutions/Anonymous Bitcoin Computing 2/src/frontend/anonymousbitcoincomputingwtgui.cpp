@@ -165,10 +165,13 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
 
     WHBoxLayout *titleHeaderHlayout = new WHBoxLayout();
     WImage *abcLogoImage = new WImage(WLink(WLink::Url, "/abc.logo.svg"), ABC_HUMAN_READABLE_NAME_PLX " Logo");
+    WAnchor *abcLogoAnchor = new WAnchor(WLink(WLink::InternalPath, "/"), abcLogoImage);
     abcLogoImage->setWidth(300);
     abcLogoImage->setHeight(100);
-    titleHeaderHlayout->addWidget(abcLogoImage, 0, Wt::AlignTop | Wt::AlignLeft);
-    titleHeaderHlayout->addWidget(new WText("<h2>" ABC_HUMAN_READABLE_NAME_PLX "</h2>"), 0, Wt::AlignTop | Wt::AlignLeft);
+    abcLogoImage->setToolTip(ABC_HUMAN_READABLE_NAME_PLX);
+    abcLogoAnchor->setToolTip(ABC_HUMAN_READABLE_NAME_PLX);
+    titleHeaderHlayout->addWidget(abcLogoAnchor, 0, Wt::AlignTop | Wt::AlignLeft);
+    titleHeaderHlayout->addWidget(new WText("<h2>" ABC_HUMAN_READABLE_NAME_PLX "</h2>"), 1, Wt::AlignMiddle | Wt::AlignLeft);
     m_MainVLayout->addLayout(titleHeaderHlayout, 0, Wt::AlignTop | Wt::AlignLeft);
 
     WHBoxLayout *loginLogoutHeaderHLayout = new WHBoxLayout();
@@ -303,10 +306,13 @@ void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
         registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         registerGridLayout->addWidget(new WText("Your mum's cycle:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+
+#if 0 //too realistic, considering site does do money shit
         registerGridLayout->addWidget(new WText("Credit Card #:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
         registerGridLayout->addWidget(new WText("Credit Card Pin #:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         registerGridLayout->addWidget(new WLineEdit(), rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+#endif
 
         //;-) and then secretly ;-) on the deployed/binary version ;-) i actually save these values ;-) and then sell them to hollywood ;-) to make movies off of them ;-) and then use the funds from that to take over the world ;-) and solve us of our corporate cancers (of which hollywood is an item) ;-) muaahahahahhahaha
 

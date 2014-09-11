@@ -3,6 +3,7 @@
 #include <QDataStream>
 
 #include "designequalsimplementationproject.h"
+#include "designequalsimplementationactor.h"
 #include "designequalsimplementationsignalemissionstatement.h"
 #include "designequalsimplementationprivatemethodsynchronouscallstatement.h"
 #include "designequalsimplementationslotinvocationstatement.h"
@@ -75,14 +76,6 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             //Project Class Slots
             projectDataStream << currentSlot->Name;
             STREAM_OUT_METHOD_ARGUMENTS(projectDataStream, currentSlot)
-
-            projectDataStream << currentSlot->m_OrderedListOfStatements.size();
-            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, currentSlot->m_OrderedListOfStatements)
-            {
-                //Project Class Slots Statements
-                projectDataStream << static_cast<quint8>(currentStatement->StatementType);
-                currentStatement->streamOut(projectDataStream);
-            }
         }
     }
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->m_Classes)
@@ -96,12 +89,36 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             projectDataStream << currentHasA->VariableName;
         }
     }
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->classes())
+    {
+        //Project Classes Slots Statements -- we had to hold off on populating the statements until all classes/signals/slots/private-methods were instantiated
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
+        {
+            projectDataStream << currentSlot->m_OrderedListOfStatements.size();
+            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, currentSlot->m_OrderedListOfStatements)
+            {
+                //Project Class Slots Statements -- I don't think it's necessary since we iterate the slots the same way we create them, but we might need a slotId to know which slot these statements belong to
+                projectDataStream << static_cast<quint8>(currentStatement->StatementType);
+                currentStatement->streamOut(projectToSerialize, projectDataStream);
+            }
+        }
+    }
+
+    //use cases depend on statements
 
     projectDataStream << projectToSerialize->m_UseCases.size();
     Q_FOREACH(DesignEqualsImplementationUseCase *currentUseCase, projectToSerialize->m_UseCases)
     {
-        //Project Use Cases
+        //Project Use Cases -- //TODOreq: bug, lines/arrows aren't [de-]serialized
         projectDataStream << currentUseCase->Name;
+
+        //Project Use Cases Actor
+        bool actorInUseCase = (currentUseCase->m_UseCaseActor_OrZeroIfNoneAddedYet != 0);
+        projectDataStream << actorInUseCase;
+        if(actorInUseCase)
+        {
+            projectDataStream << currentUseCase->m_UseCaseActor_OrZeroIfNoneAddedYet->position();
+        }
 
         projectDataStream << currentUseCase->m_ClassLifeLines.size();
         Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeLine, currentUseCase->m_ClassLifeLines)
@@ -126,6 +143,17 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
                 slotsAppearingInClassLifeline.append(qMakePair(projectToSerialize->serializationClassIdForClass(currentSlot->ParentClass), currentSlot->ParentClass->serializationSlotIdForSlot(currentSlot)));
             }
             projectDataStream << slotsAppearingInClassLifeline;
+        }
+
+        //Project Use Cases Slot Entry Point
+        DesignEqualsImplementationClassLifeLine *useCaseRootClassLifelineMaybe = currentUseCase->m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.first;
+        bool useCaseHasUseCaseEntryPoint = (useCaseRootClassLifelineMaybe != 0);
+        projectDataStream << useCaseHasUseCaseEntryPoint;
+        if(useCaseHasUseCaseEntryPoint)
+        {
+            projectDataStream << currentUseCase->serializationClassLifelineIdForClassLifeline(useCaseRootClassLifelineMaybe);
+            DesignEqualsImplementationClassSlot *slotEntryPoint = currentUseCase->m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.second;
+            projectDataStream << slotEntryPoint->ParentClass->serializationSlotIdForSlot(slotEntryPoint);
         }
 
         projectDataStream << currentUseCase->m_SignalSlotConnectionActivationsInThisUseCase.size();
@@ -198,31 +226,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             projectDataStream >> slotName;
             QList<MethodArgumentTypedef> methodArguments;
             STREAM_IN_METHOD_ARGUMENTS(projectDataStream, methodArguments)
-            DesignEqualsImplementationClassSlot *currentSlot = currentClass->createwNewSlot(slotName, methodArguments);
-
-            int numOrderedListOfStatements;
-            projectDataStream >> numOrderedListOfStatements;
-            for(int k = 0; k < numOrderedListOfStatements; ++k)
-            {
-                //Project Class Slots Statements
-                quint8 currentStatementType;
-                projectDataStream >> currentStatementType;
-                IDesignEqualsImplementationStatement *statement;
-                switch(static_cast<IDesignEqualsImplementationStatement::StatementTypeEnum>(currentStatementType))
-                {
-                case IDesignEqualsImplementationStatement::SignalEmitStatementType:
-                    statement = new DesignEqualsImplementationSignalEmissionStatement();
-                    break;
-                case IDesignEqualsImplementationStatement::SlotInvokeStatementType:
-                    statement = new DesignEqualsImplementationSlotInvocationStatement();
-                    break;
-                case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
-                    statement = new DesignEqualsImplementationPrivateMethodSynchronousCallStatement();
-                    break;
-                }
-                statement->streamIn(projectDataStream);
-                currentSlot->m_OrderedListOfStatements.append(statement);
-            }
+            currentClass->createwNewSlot(slotName, methodArguments);
         }
     }
     for(int i = 0; i < numClasses; ++i)
@@ -241,6 +245,38 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             currentClass->createHasA_Private_Classes_Member(projectToPopulate->classInstantiationFromSerializedClassId(hasAClassId), hasAvariableName);
         }
     }
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToPopulate->classes())
+    {
+        //Project Classes Slots Statements -- we had to hold off on populating the statements until all classes/signals/slots/private-methods were instantiated
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
+        {
+            int numOrderedListOfStatements;
+            projectDataStream >> numOrderedListOfStatements;
+            for(int i = 0; i < numOrderedListOfStatements; ++i)
+            {
+                //Project Class Slots Statements
+                quint8 currentStatementType;
+                projectDataStream >> currentStatementType;
+                IDesignEqualsImplementationStatement *statement;
+                switch(static_cast<IDesignEqualsImplementationStatement::StatementTypeEnum>(currentStatementType))
+                {
+                case IDesignEqualsImplementationStatement::SignalEmitStatementType:
+                    statement = new DesignEqualsImplementationSignalEmissionStatement();
+                    break;
+                case IDesignEqualsImplementationStatement::SlotInvokeStatementType: //TODOreq: [de-]serialize class lifeline containing slot to invoke
+                    statement = new DesignEqualsImplementationSlotInvocationStatement();
+                    break;
+                case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
+                    statement = new DesignEqualsImplementationPrivateMethodSynchronousCallStatement();
+                    break;
+                }
+                statement->streamIn(projectToPopulate, projectDataStream); //TO DOnereq: i am pretty sure this needs to happen on another/later iteration of the slots, because not all slots/signals/etc have been instantiated (and hell, not even all the classes have been instantiated either!). similar to the 'second interdependent class populating' below. dependency problems sums it up perfectly. i probably DON'T need to move the stream out code, but i should keep them nice and lined up so that's reason enough to yes move it. it should probably come after the [similar] m_HasA_Private_Classes_Members second iteration, becuase these statements themselves MIGHT depend on those as well! not sure though. the statement populating must come after SIGNAL/SLOT/PRIVATE-METHOD (and any other 'statement type')
+                currentSlot->m_OrderedListOfStatements.append(statement);
+            }
+        }
+    }
+
+    //use cases depend on statements
 
     int numUseCases;
     projectDataStream >> numUseCases;
@@ -252,6 +288,16 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         DesignEqualsImplementationUseCase *currentUseCase = new DesignEqualsImplementationUseCase(projectToPopulate, projectToPopulate);
         currentUseCase->Name = useCaseName;
         projectToPopulate->addUseCase(currentUseCase);
+
+        //Project Use Cases Actor
+        bool actorInUseCase;
+        projectDataStream >> actorInUseCase;
+        if(actorInUseCase)
+        {
+            QPointF actorPosition;
+            projectDataStream >> actorPosition;
+            currentUseCase->addActorToUseCase(actorPosition);
+        }
 
         int numClassLifelines;
         projectDataStream >> numClassLifelines;
@@ -286,6 +332,19 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                 //Project Use Class Lifeline Slots
                 currentClassLifeline->m_MySlotsAppearingInClassLifeLine.append(projectToPopulate->classInstantiationFromSerializedClassId(currentSlotReference.first)->slotInstantiationFromSerializedSlotId(currentSlotReference.second));
             }
+        }
+
+        //Project Use Cases Slot Entry Point
+        bool useCaseHasUseCaseEntryPoint;
+        projectDataStream >> useCaseHasUseCaseEntryPoint;
+        if(useCaseHasUseCaseEntryPoint)
+        {
+            int rootClassLifelineId;
+            projectDataStream >> rootClassLifelineId;
+            int slotEntryPointSlotId;
+            projectDataStream >> slotEntryPointSlotId;
+            DesignEqualsImplementationClassLifeLine *rootClassLifeline = currentUseCase->classLifelineInstantiatedFromSerializedClassLifelineId(rootClassLifelineId);
+            currentUseCase->setUseCaseSlotEntryPoint(rootClassLifeline, rootClassLifeline->designEqualsImplementationClass()->slotInstantiationFromSerializedSlotId(slotEntryPointSlotId));
         }
 
         int numSignalSlotConnectionActivationsInThisUseCase;

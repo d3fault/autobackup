@@ -31,7 +31,7 @@ public:
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
-    QList<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*> m_SlotsInThisClassLifeLine;
+    QList<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*> m_SlotGraphicsItemsInThisClassLifeLine;
     QList<QGraphicsLineItem*> m_DottedLinesJustAboveEachSlot;
     DesignEqualsImplementationClassLifeLine *m_DesignEqualsImplementationClassLifeLine;
     QRectF m_BoundingRect;

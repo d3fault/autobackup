@@ -46,14 +46,14 @@ bool DesignEqualsImplementationProjectGenerator::processUseCase(DesignEqualsImpl
     }
 #endif
 
-    DesignEqualsImplementationClassLifeLine *rootClassLifeline = designEqualsImplementationUseCase->m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.first;
+    DesignEqualsImplementationClassLifeLine *rootClassLifeline = designEqualsImplementationUseCase->m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.first;
     if(!rootClassLifeline)
     {
         emit e(QObject::tr("You must connect an actor in use case '") + designEqualsImplementationUseCase->Name + QObject::tr("' before you can generate source code"));
         return false;
     }
 
-    if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, rootClassLifeline, designEqualsImplementationUseCase->m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second))
+    if(!recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(designEqualsImplementationUseCase, rootClassLifeline, designEqualsImplementationUseCase->m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.second))
     {
         emit e("failed recursive walk kdlfjasldkf");
         return false;

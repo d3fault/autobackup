@@ -23,8 +23,8 @@ public:
     const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables();
     DesignEqualsImplementationClassSlot *slotToInvoke();
 
-    virtual void streamIn(QDataStream &in);
-    virtual void streamOut(QDataStream &out);
+    virtual void streamIn(DesignEqualsImplementationProject *project, QDataStream &in);
+    virtual void streamOut(DesignEqualsImplementationProject *project, QDataStream &out);
     DesignEqualsImplementationClassLifeLine *classLifelineWhoseSlotIsToBeInvoked() const;
 private:
     DesignEqualsImplementationClassLifeLine *m_ClassLifelineWhoseSlotIsToBeInvoked;

@@ -63,7 +63,11 @@ public:
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;
     QList<DesignEqualsImplementationClassSlot*> m_MySlots;
 
-    inline int serializationSlotIdForSlot(DesignEqualsImplementationClassSlot *theSlot) { return m_MySlots.indexOf(theSlot); }
+    inline int serializationPrivateMethodIdForPrivateMethod(DesignEqualsImplementationClassPrivateMethod *privateMethod) { return PrivateMethods.indexOf(privateMethod); }
+    inline DesignEqualsImplementationClassPrivateMethod* privateMethodInstantatiationFromSerializedPrivateMethodId(int privateMethodId) { return PrivateMethods.at(privateMethodId); }
+    inline int serializationSignalIdForSignal(DesignEqualsImplementationClassSignal *theSignal) { return m_MySignals.indexOf(theSignal); }
+    inline DesignEqualsImplementationClassSignal* signalInstantiationFromSerializedSignalId(int signalId) { return m_MySignals.at(signalId); }
+    inline int serializationSlotIdForSlot(DesignEqualsImplementationClassSlot *theSlot) { return m_MySlots.indexOf(theSlot); } //TODOoptional: check return of indexOf, qFatal. also on similar methods throughout
     inline DesignEqualsImplementationClassSlot *slotInstantiationFromSerializedSlotId(int slotId) { return m_MySlots.at(slotId); }
     inline int serializationHasAIdForHasA(HasA_Private_Classes_Member *theHasA) { return m_HasA_Private_Classes_Members.indexOf(theHasA); }
     inline HasA_Private_Classes_Member *hasAinstanceFromHasAId(int hasAId) { return m_HasA_Private_Classes_Members.at(hasAId); }
@@ -80,10 +84,12 @@ public slots:
     void setClassName(const QString &newClassName);
     void emitAllClassDetails();
 };
+#if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass &designEqualsImplementationClass);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass &designEqualsImplementationClass);
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass *designEqualsImplementationClass);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *designEqualsImplementationClass);
+#endif
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationClass*)
 

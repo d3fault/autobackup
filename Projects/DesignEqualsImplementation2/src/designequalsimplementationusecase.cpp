@@ -77,7 +77,8 @@ void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplement
     //SlotWithCurrentContext = 0;
     //ExitSignal = 0;
     m_DesignEqualsImplementationProject = project;
-    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.first = 0;
+    m_UseCaseActor_OrZeroIfNoneAddedYet = 0; //TODOreq: qmessagebox fatal if they to add more than one actor to a use case. TODOoptional: we could ask them if they want us to center the graphics view over the already existing one. TODOreq: set back to zero if actor deleted from use case (why would they even.... (hell i might as well just make an actor a permanent thing in a use case, no point in adding TODreq (ACTUALLY JUST MAYBE, keep reading) saves valuable clicks! (ACTUALLY = if we use a signal in place of an actor or whatever that shit is i'm maybe planning on using, idfk, then maybe perhaps it makes sense to not have an actor. but i'm unsure atm)))
+    m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.first = 0;
 }
 void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, DesignEqualsImplementationClassLifeLine *destinationClassLifeline_OrZeroIfNotSlotInvoke, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, DesignEqualsImplementationClassLifeLine *signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot)
 {
@@ -392,9 +393,7 @@ void DesignEqualsImplementationUseCase::addActorToUseCase(QPointF position)
     //TODOreq: either actor or signal-entry point, but not both (error)
 
     DesignEqualsImplementationActor *actor = new DesignEqualsImplementationActor(position, this);
-
-    //TODOreq: this->setActor or something
-
+    m_UseCaseActor_OrZeroIfNoneAddedYet = actor;
     emit actorAdded(actor);
 }
 //So apparently a life line is a ....... wait no that's not ENTIRELY correct because points can be shared...... named variable [in a different lifeline/class]. So Bar needs to show up as "Bar* Foo::m_Bar", not just "Bar". Because I need the variable name "m_Bar" when adding the slot invocation use case event. I think that Bar can be shared is mostly irrelevant (and I sure hope it is, because it'd require a huge refactor otherwise :-/). The m_Bar variable name is what is relevant to this specific use case.... it is how Foo knows Bar. That other objects in other use cases can have different names for Bar (retrieved however) is irrelevant (except to those use cases/classes ;-P). Foo doesn't just haveA _pointer_ to Bar. Foo hasA Bar itself (that it is a pointer is an implementation detail)
@@ -428,10 +427,10 @@ void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertE
 {
     insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, 0, designEqualsImplementationClassSignal, 0, signalEmissionContextVariables);
 }
-void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint)
+void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPointOnRootClassLifeline)
 {
-    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.first = rootClassLifeline;
-    m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second = useCaseSlotEntryPoint; //TODOreq: handle deleting this arrow sets it back to zero i guess
+    m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.first = rootClassLifeline;
+    m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.second = useCaseSlotEntryPointOnRootClassLifeline; //TODOreq: handle deleting this arrow sets it back to zero i guess
     rootClassLifeline->setInstanceType(DesignEqualsImplementationClassLifeLine::UseCasesRootClassLifeline);
     //TODOreq: emit useCaseSlotEntryPointSet(m_UseCaseSlotEntryPoint_OrFirstIsNegativeOneIfNoneConnectedFromActorYetctorYet);
 }
@@ -614,6 +613,7 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useC
     }
     return in;
 }
+#if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase *useCase)
 {
     out << *useCase;
@@ -638,3 +638,4 @@ QDataStream &operator>>(QDataStream &in, SignalSlotCombinedEventHolder &useCase)
     in >> *useCase.m_DesignEqualsImplementationClassSlot;
     return in;
 }
+#endif

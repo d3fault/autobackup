@@ -8,7 +8,8 @@
 #include <QGraphicsSceneContextMenuEvent>
 
 #include "designequalsimplementationguicommon.h"
-#include"classeditordialog.h"
+#include "classeditordialog.h"
+#include "../../designequalsimplementationcommon.h"
 
 //TODOmb: considering changing this to a qpixmap in a graphics scene instead, where teh pixmap is drawn only when the class changes, update called once, then it's simply provided to qgraphicsview (svg might be more optimized?)... i'm going to wait on making a decision until i try to reuse the code for getting the "uml class" drag drop thingo to use the same shape (in designEquals1, i rendered to pixmap for that). i do know one thing, what i'm doing now is hella laggy (but works so fuck it)
 DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent, QObject *qobjectParent)
@@ -56,8 +57,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::mouseDo
 {
     Q_UNUSED(event)
     ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass, m_CurrentProject);
-    if(classEditorDialog.exec() != QDialog::Accepted)
-        return;
+    classEditorDialog.exec();
 }
 QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::classDetailsAsHtmlString()
 {
@@ -140,8 +140,15 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
     }
     Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_DesignEqualsImplementationClass->mySlots())
     {
-        classContentsString.append("<br />+  " + currentSlot->methodSignatureWithoutReturnType());
-        ++numLinesOfText;
+        if(currentSlot->Name != UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING)
+        {
+            classContentsString.append("<br />+  " + currentSlot->methodSignatureWithoutReturnType());
+            ++numLinesOfText;
+        }
+        else
+        {
+            //TODOoptional: we definitely don't want to SHOW the name of the unnamed slots (ugly temp hack string), but maybe indicate how many unnamed slots the class has (but don't say "zero" ofc -- when in the class editor, such unnamed slots would be double-clickable and that takes us to the use case they are in)
+        }
     }
     return classContentsString;
 }

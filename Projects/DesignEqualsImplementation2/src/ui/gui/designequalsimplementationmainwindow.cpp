@@ -12,6 +12,7 @@
 #include <QActionGroup> //and to think i wasted to much time with qbuttongroup/groupbox/etc in other projects!
 #include <QCoreApplication>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include <QDateTime> //temp/debug
 
@@ -123,8 +124,8 @@ void DesignEqualsImplementationMainWindow::createDockWidgets()
     setCorner(Qt::TopLeftCorner, Qt::TopDockWidgetArea);
     setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks);
 
-    QDockWidget *dockWidget = new QDockWidget(tr("Available Items"), this);
-    dockWidget->setFeatures(DesignEqualsImplementationMainWindow_DOCK_WIDGET_FEATURES);
+    QDockWidget *availableItemsDockWidget = new QDockWidget(tr("Available Items"), this);
+    availableItemsDockWidget->setFeatures(DesignEqualsImplementationMainWindow_DOCK_WIDGET_FEATURES);
 
     m_UmlStackedDockWidget = new QStackedWidget();
     m_ClassDiagramUmlItemsWidget = new ClassDiagramUmlItemsWidget();
@@ -132,8 +133,8 @@ void DesignEqualsImplementationMainWindow::createDockWidgets()
     m_UmlStackedDockWidget->addWidget(m_ClassDiagramUmlItemsWidget);
     m_UmlStackedDockWidget->addWidget(m_UseCaseUmlItemsWidget);
 
-    dockWidget->setWidget(m_UmlStackedDockWidget);
-    addDockWidget(Qt::LeftDockWidgetArea, dockWidget, Qt::Vertical);
+    availableItemsDockWidget->setWidget(m_UmlStackedDockWidget);
+    addDockWidget(Qt::LeftDockWidgetArea, availableItemsDockWidget, Qt::Vertical);
 
     m_AllUseCasesListWidget = new QListWidget(); //TODOoptional: right-click -> new use case (TODOoptional: semi-OT: class diagram scene right-click -> new class)
     QDockWidget *allUseCasesDockWidget = new QDockWidget(tr("All Use Cases"), this);
@@ -168,6 +169,10 @@ void DesignEqualsImplementationMainWindow::addUseCaseToAllUseCasesListWidget(Des
     QListWidgetItem *newUseCaseListWidgetItem = new QListWidgetItem(newUseCase->Name);
     newUseCaseListWidgetItem->setData(Qt::UserRole, QVariant::fromValue<DesignEqualsImplementationUseCase*>(newUseCase));
     m_AllUseCasesListWidget->addItem(newUseCaseListWidgetItem);
+}
+void DesignEqualsImplementationMainWindow::handleE(const QString &msg)
+{
+    QMessageBox::critical(this, tr("Error"), msg); //TODOoptional: an expanding-when-relevant pane at the bottom, to better handle multiple errors
 }
 //TODOreq: [backend] project is not thread safe to access directly, so check the source to make sure it's used properly (or i could mutex protect the DesignEqualsImplementationProject itself to KISS, undecided as of now)
 void DesignEqualsImplementationMainWindow::handleProjectOpened(DesignEqualsImplementationProject *project)

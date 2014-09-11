@@ -30,17 +30,13 @@ DesignEqualsImplementationClassSignal *DesignEqualsImplementationSignalEmissionS
 {
     return m_SignalToEmit;
 }
-void DesignEqualsImplementationSignalEmissionStatement::streamIn(QDataStream &in)
+void DesignEqualsImplementationSignalEmissionStatement::streamIn(DesignEqualsImplementationProject *project, QDataStream &in)
 {
-#if 0 //TODOreq: signal REFERENCE
-    in >> *m_SignalToEmit;
-#endif
+    m_SignalToEmit = DesignEqualsImplementationClassSignal::streamInSignalReference(project, in);
     in >> m_SignalEmissionContextVariablesForSignalArguments;
 }
-void DesignEqualsImplementationSignalEmissionStatement::streamOut(QDataStream &out)
+void DesignEqualsImplementationSignalEmissionStatement::streamOut(DesignEqualsImplementationProject *project, QDataStream &out)
 {
-#if 0
-    out << *m_SignalToEmit; //TODOreq: __REFERENCE to m_SignalToEmit (or use compression on known-to-compact-nicely ;-)) repeatetive uses of the same signal? keep in mind that you definitely still need the signal to be defined, but that is of course done when serializing the signal itself!. for now idgaf about dupes
-#endif
+    DesignEqualsImplementationClassSignal::streamOutSignalReference(project, m_SignalToEmit, out);
     out << m_SignalEmissionContextVariablesForSignalArguments;
 }

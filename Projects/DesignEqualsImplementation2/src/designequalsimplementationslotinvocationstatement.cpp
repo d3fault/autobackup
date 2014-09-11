@@ -39,18 +39,14 @@ DesignEqualsImplementationClassSlot *DesignEqualsImplementationSlotInvocationSta
 {
     return m_SlotToInvoke;
 }
-void DesignEqualsImplementationSlotInvocationStatement::streamIn(QDataStream &in)
+void DesignEqualsImplementationSlotInvocationStatement::streamIn(DesignEqualsImplementationProject *project, QDataStream &in)
 {
-#if 0 //TODOreq: slot REFERENCES
-    in >> *m_SlotToInvoke;
-#endif
-    in >> m_SlotInvocationContextVariables;
+    m_SlotToInvoke = DesignEqualsImplementationClassSlot::streamInSlotReference(project, in);
+    in >> m_SlotInvocationContextVariables; //TODOoptimization: dictionary/id (just like classes/slots/etc) for the variable names. fuck it for now
 }
-void DesignEqualsImplementationSlotInvocationStatement::streamOut(QDataStream &out)
+void DesignEqualsImplementationSlotInvocationStatement::streamOut(DesignEqualsImplementationProject *project, QDataStream &out)
 {
-#if 0
-    out << *m_SlotToInvoke;
-#endif
+    DesignEqualsImplementationClassSlot::streamOutSlotReference(project, m_SlotToInvoke, out);
     out << m_SlotInvocationContextVariables;
 }
 DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationSlotInvocationStatement::classLifelineWhoseSlotIsToBeInvoked() const

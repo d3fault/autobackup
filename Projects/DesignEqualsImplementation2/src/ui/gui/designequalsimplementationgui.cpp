@@ -8,6 +8,7 @@
 
 DesignEqualsImplementationGui::DesignEqualsImplementationGui(QObject *parent)
     : QObject(parent)
+    , m_StdErr(stderr)
 {
     m_Gui = new DesignEqualsImplementationMainWindow();
 
@@ -28,6 +29,8 @@ void DesignEqualsImplementationGui::handleDesignEqualsImplementationReadyForConn
     connect(m_Gui, SIGNAL(saveProjectRequested(DesignEqualsImplementationProject*,QString)), designEqualsImplementation, SLOT(saveProject(DesignEqualsImplementationProject*,QString)));
     connect(m_Gui, SIGNAL(openExistingProjectRequested(QString)), designEqualsImplementation, SLOT(openExistingProject(QString)));
     connect(designEqualsImplementation, SIGNAL(projectOpened(DesignEqualsImplementationProject*)), m_Gui, SLOT(handleProjectOpened(DesignEqualsImplementationProject*)));
+    connect(designEqualsImplementation, SIGNAL(e(QString)), m_Gui, SLOT(handleE(QString)));
+    connect(designEqualsImplementation, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
 
     QStringList argz = QCoreApplication::arguments();
     if(argz.size() > 1)
@@ -38,4 +41,8 @@ void DesignEqualsImplementationGui::handleDesignEqualsImplementationReadyForConn
     {
         QMetaObject::invokeMethod(designEqualsImplementation, "newProject");
     }
+}
+void DesignEqualsImplementationGui::handleE(const QString &msg)
+{
+    m_StdErr << msg;
 }

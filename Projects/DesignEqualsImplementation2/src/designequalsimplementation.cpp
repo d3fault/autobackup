@@ -349,11 +349,12 @@ void DesignEqualsImplementation::openExistingProject(const QString &existingProj
     }
     //QDataStream projectDataStream(&projectFile);
     DesignEqualsImplementationProject *existingProject = new DesignEqualsImplementationProject(this);
+    connect(existingProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+
     //projectDataStream >> *existingProject;
     DesignEqualsImplementationProjectSerializer projectReader(this);
     projectReader.deserializeProjectFromIoDevice(&projectFile, existingProject);
 
-    connect(existingProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(existingProject);
     emit projectOpened(existingProject);
 }

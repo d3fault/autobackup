@@ -14,8 +14,8 @@ public:
 protected:
     virtual QString toRawCppWithoutEndingSemicolon();
 
-    virtual void streamIn(QDataStream &in);
-    virtual void streamOut(QDataStream &out);
+    virtual void streamIn(DesignEqualsImplementationProject *project, QDataStream &in);
+    virtual void streamOut(DesignEqualsImplementationProject *project, QDataStream &out);
 private:
     DesignEqualsImplementationClassPrivateMethod *m_PrivateMethodToCall;
     SignalEmissionOrSlotInvocationContextVariables m_PrivateMethodArguments;

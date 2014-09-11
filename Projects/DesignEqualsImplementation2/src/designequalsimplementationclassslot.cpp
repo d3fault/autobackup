@@ -2,6 +2,7 @@
 
 #include <QDataStream>
 
+#include "designequalsimplementationproject.h"
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationclasslifeline.h"
 
@@ -64,6 +65,23 @@ QObject *DesignEqualsImplementationClassSlot::asQObject()
 {
     return this;
 }
+DesignEqualsImplementationClassSlot* DesignEqualsImplementationClassSlot::streamInSlotReference(DesignEqualsImplementationProject *project, QDataStream &in)
+{
+    int classIdOfClassTheSlotIsIn;
+    in >> classIdOfClassTheSlotIsIn;
+    int slotId;
+    in >> slotId;
+    DesignEqualsImplementationClass *classTheSlotIsIn = project->classInstantiationFromSerializedClassId(classIdOfClassTheSlotIsIn);
+    return classTheSlotIsIn->slotInstantiationFromSerializedSlotId(slotId);
+}
+void DesignEqualsImplementationClassSlot::streamOutSlotReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassSlot *slot, QDataStream &out) //TODOoptional: clean up other slot id uses to use this static method as well
+{
+    //if we only stream out the slot id, we won't know which class it came from, so we need to stream out the class id too
+    DesignEqualsImplementationClass *classTheSlotIsIn = slot->ParentClass;
+    out << project->serializationClassIdForClass(classTheSlotIsIn);
+    out << classTheSlotIsIn->serializationSlotIdForSlot(slot);
+}
+#if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSlot &slot)
 {
     DesignEqualsImplementationClassSlot_QDS(out, <<, slot)
@@ -83,3 +101,4 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassSlot *sl
     in >> *slot;
     return in;
 }
+#endif

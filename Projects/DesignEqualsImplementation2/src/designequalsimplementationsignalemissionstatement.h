@@ -16,8 +16,8 @@ public:
     virtual bool isSignalEmit() { return true; }
     DesignEqualsImplementationClassSignal *signalToEmit() const;
 
-    virtual void streamIn(QDataStream &in);
-    virtual void streamOut(QDataStream &out);
+    virtual void streamIn(DesignEqualsImplementationProject *project, QDataStream &in);
+    virtual void streamOut(DesignEqualsImplementationProject *project, QDataStream &out);
 private:
     DesignEqualsImplementationClassSignal *m_SignalToEmit;
     SignalEmissionOrSlotInvocationContextVariables m_SignalEmissionContextVariablesForSignalArguments;

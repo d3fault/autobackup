@@ -2,6 +2,7 @@
 #define DESIGNEQUALSIMPLEMENTATIONGUI_H
 
 #include <QObject>
+#include <QTextStream>
 
 class DesignEqualsImplementationMainWindow;
 
@@ -13,8 +14,10 @@ public:
     ~DesignEqualsImplementationGui();
 private:
     DesignEqualsImplementationMainWindow *m_Gui;
+    QTextStream m_StdErr;
 private slots:
     void handleDesignEqualsImplementationReadyForConnections(QObject *designEqualsImplementationAsQObject);
+    void handleE(const QString &msg);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONGUI_H

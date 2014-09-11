@@ -18,7 +18,7 @@ class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationClassSlot;
 //class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 
-typedef QPair<DesignEqualsImplementationClassLifeLine* /*rootClassLifeline*/, DesignEqualsImplementationClassSlot*/*the slot entry point*/> UseCaseEntryPointTypedef;
+typedef QPair<DesignEqualsImplementationClassLifeLine* /*rootClassLifeline*/, DesignEqualsImplementationClassSlot*/*the slot entry point on the root class lifeline*/> UseCaseEntryPointTypedef;
 
 class DesignEqualsImplementationUseCase : public QObject
 {
@@ -64,7 +64,8 @@ public:
     };
 
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
-    UseCaseEntryPointTypedef m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet;
+    DesignEqualsImplementationActor *m_UseCaseActor_OrZeroIfNoneAddedYet;
+    UseCaseEntryPointTypedef m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet;
     DesignEqualsImplementationClassSlot *m_SlotWithExitSignalCurrentlyInItsOrderedListOfStatements;
     int m_ExitSignalsIndexIntoOrderedListOfStatements;
 
@@ -107,10 +108,10 @@ public slots:
     void setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint);
     void setExitSignal(DesignEqualsImplementationClassSlot *sourceSlot, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables);
 };
+#if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase &useCase);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase &useCase);
-QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationUseCase *useCase);
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationUseCase *useCase);
+#endif
 
 typedef QPair<DesignEqualsImplementationUseCase::UseCaseEventTypeEnum, QObject*> UseCaseEventListEntryType; //OrderedUseCaseEvents has a copy/paste of this type, because I couldn't forward declare it or whatever (wtf)
 
@@ -129,7 +130,9 @@ public:
     DesignEqualsImplementationClassSignal *m_DesignEqualsImplementationClassSignal;
     DesignEqualsImplementationClassSlot *m_DesignEqualsImplementationClassSlot;
 };
+#if 0
 QDataStream &operator<<(QDataStream &out, const SignalSlotCombinedEventHolder &useCase);
 QDataStream &operator>>(QDataStream &in, SignalSlotCombinedEventHolder &useCase);
+#endif
 
 #endif // DESIGNEQUALSIMPLEMENTATIONUSECASE_H

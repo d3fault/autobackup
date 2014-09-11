@@ -69,6 +69,7 @@ void UseCaseUmlItemsWidget::addClass(DesignEqualsImplementationClass *designEqua
 void UseCaseUmlItemsWidget::handleNowShowingProject(DesignEqualsImplementationProject *project)
 {
     clear();
+    addActor(); //TO DOnereq: bug: after deserializing a saved project, actor isn't in available items list anymore :-/
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, project->classes())
     {
         addClass(currentClass);

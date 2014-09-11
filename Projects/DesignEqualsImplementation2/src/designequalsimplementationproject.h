@@ -72,8 +72,10 @@ public slots:
     void handleNewUseCaseRequested();
     void generateSourceCode(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
+#if 0
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationProject &project);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationProject &project);
+#endif
 
 Q_DECLARE_METATYPE(DesignEqualsImplementationProject*)
 

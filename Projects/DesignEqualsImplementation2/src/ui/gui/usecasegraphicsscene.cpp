@@ -295,6 +295,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
     m_ArrowDestinationSnapper_OrZeroIfNone = 0;
 
+    //TODOoptimization: make these lists static, no need for each use case to have a separate identical list
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
@@ -324,6 +325,10 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(useCase, SIGNAL(classLifeLineAdded(DesignEqualsImplementationClassLifeLine*)), this, SLOT(handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine*)));
     connect(useCase, SIGNAL(eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)), this, SLOT(handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)));
 
+    if(m_UseCase->m_UseCaseActor_OrZeroIfNoneAddedYet)
+    {
+        handleActorAdded(m_UseCase->m_UseCaseActor_OrZeroIfNoneAddedYet);
+    }
     Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeline, useCase->m_ClassLifeLines)
     {
         handleClassLifeLineAdded(currentClassLifeline);
@@ -374,7 +379,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     DesignEqualsImplementationClassSlot *destinationSlotIsProbablyNameless_OrZeroIfNoDest = 0;
     DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest = 0;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *destinationClassLifeLineGraphicsItem_OrZeroIfNoDest = 0;
-    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *destinationSlotGraphicsItem_OrZeroIfNoDest;
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *destinationSlotGraphicsItem_OrZeroIfNoDest = 0;
     bool destinationIsActor = false;
     if(destinationItem_CanBeZeroUnlessSourceIsActor) //for now only units of executions can be dests (or nothing)
     {

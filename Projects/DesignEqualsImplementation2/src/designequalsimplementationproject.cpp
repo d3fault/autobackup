@@ -183,6 +183,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
     //TODOreq: should library generation include a .pro file? a .pri file? both? better solution in qbs? all of the above (default to which?)?
 
     DesignEqualsImplementationProjectGenerator projectGenerator(projectGenerationMode, destinationDirectoryPath);
+    connect(&projectGenerator, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
 
 #if 0 //TODOreq: merge with project generator
     if(projectGenerationMode != Library)
@@ -411,6 +412,7 @@ void DesignEqualsImplementationProject::generateSourceCode(DesignEqualsImplement
 {
     emit sourceCodeGenerated(generateSourceCodePrivate(projectGenerationMode, appendSlashIfNeeded(destinationDirectoryPath)));
 }
+#if 0
 QDataStream &operator<<(QDataStream &out, const DesignEqualsImplementationProject &project)
 {
     quint8 serializationVersion = DesignEqualsImplementationProject_SERIALIZATION_VERSION;
@@ -421,3 +423,4 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationProject &proj
     quint8 serializationVersion;
     DesignEqualsImplementationProject_QDS(>>, in, project);
 }
+#endif

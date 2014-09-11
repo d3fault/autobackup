@@ -26,7 +26,7 @@ public:
     //TODOoptional: private + getter/setter blah
     QString Name;
     QList<DesignEqualsImplementationClassMethodArgument*> arguments();
-    DesignEqualsImplementationClass *ParentClass; //TODOreq: [de-]serialization
+    DesignEqualsImplementationClass *ParentClass;
 
     QString methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);
     QString argumentsToCommaSeparatedString(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);
