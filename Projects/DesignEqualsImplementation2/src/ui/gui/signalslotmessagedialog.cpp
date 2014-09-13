@@ -26,6 +26,8 @@
 //  b) otherwise, we allow the CREATION (and corresponding assignation) of a member on the fly for the express button
 //TODOoptional: setDisabled on checkbox grays out the checkbox label. i want the label to stay colored but the checkbox to gray out. could split into checkbox and label ez, or perhaps setReadOnly is my friend?
 //TODOreq: dialog should never validate when neither signal nor slot is checked
+//TODOoptional: when the signal and slot messages have identical arguments, we should pre-select the drop-down "fill in args" combo boxes (but of course, still allow them to be changed)
+//TODOreq: Properties show up in the "fill in the arguments" combo boxes
 SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)

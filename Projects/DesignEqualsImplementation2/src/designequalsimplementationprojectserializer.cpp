@@ -39,7 +39,7 @@ DesignEqualsImplementationProjectSerializer::DesignEqualsImplementationProjectSe
 //save
 void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(DesignEqualsImplementationProject *projectToSerialize, QIODevice *ioDeviceToSerializeTo)
 {
-    QDataStream projectDataStream(ioDeviceToSerializeTo);
+    QDataStream projectDataStream(ioDeviceToSerializeTo); //TODOoptimization: qCompress, perhaps as an app setting (would mean we need a flag in beginning to tell us if compressed or not)
     //projectDataStream << *projectToSerialize;
 
     quint8 serializationVersion = 1;
@@ -331,8 +331,11 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToPopulate->classes())
     {
         //Project Classes Slots Statements -- we had to hold off on populating the statements until all classes/signals/slots/private-methods, and even bare use cases/class lifelines, were instantiated
-        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
+        int numSlots = currentClass->mySlots().size()-1; //HACK to account for the recently created temp slot hack, guh
+        //segfaults: Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
+        for(int i = 0; i < numSlots; ++i)
         {
+            DesignEqualsImplementationClassSlot *currentSlot = TODO LEFT OFF if the temp slot hack was made when class lifeline was constructed (methinks it was), then i won't point to the correct slot! fml
             int numOrderedListOfStatements;
             projectDataStream >> numOrderedListOfStatements;
             for(int i = 0; i < numOrderedListOfStatements; ++i)
