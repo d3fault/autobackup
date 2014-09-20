@@ -288,15 +288,15 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             DesignEqualsImplementationClass *classLifelineClass = projectToPopulate->classInstantiationFromSerializedClassId(classLifelineClassId);
             QPointF classLifelinePosition;
             projectDataStream >> classLifelinePosition;
-            DesignEqualsImplementationClassLifeLine *currentClassLifeline = currentUseCase->createClassLifelineInUseCase(classLifelineClass, classLifelinePosition);
+            DesignEqualsImplementationClassLifeLine *currentClassLifeline = currentUseCase->createClassLifelineInUseCase(classLifelineClass, classLifelinePosition, false);
             quint8 classLifelineInstanteType;
             projectDataStream >> classLifelineInstanteType;
             currentClassLifeline->m_InstanceType = static_cast<DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassInstanceTypeEnum>(classLifelineInstanteType);
             if(currentClassLifeline->m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
             {
-                int hasAparentClassId;
-                projectDataStream >> hasAparentClassId;
-                DesignEqualsImplementationClass *hasAparentClass = projectToPopulate->classInstantiationFromSerializedClassId(hasAparentClassId);
+                int classIdofParentThatHasAus; //class id of parent that has us as a member
+                projectDataStream >> classIdofParentThatHasAus;
+                DesignEqualsImplementationClass *hasAparentClass = projectToPopulate->classInstantiationFromSerializedClassId(classIdofParentThatHasAus);
                 int hasAid;
                 projectDataStream >> hasAid;
                 HasA_Private_Classes_Member *instanceInOtherClass = hasAparentClass->hasAinstanceFromHasAId(hasAid);
@@ -335,7 +335,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         //segfaults: Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
         for(int i = 0; i < numSlots; ++i)
         {
-            DesignEqualsImplementationClassSlot *currentSlot = TODO LEFT OFF if the temp slot hack was made when class lifeline was constructed (methinks it was), then 'i' won't point to the correct slot! fml
+            DesignEqualsImplementationClassSlot *currentSlot = currentClass->mySlots().at(i); //TODOreq(semi-fixed through bool flag in class lifeline constructor, but seems hacky): if the temp slot hack was made when class lifeline was constructed (methinks it was), then 'i' won't point to the correct slot! fml
             int numOrderedListOfStatements;
             projectDataStream >> numOrderedListOfStatements;
             for(int i = 0; i < numOrderedListOfStatements; ++i)

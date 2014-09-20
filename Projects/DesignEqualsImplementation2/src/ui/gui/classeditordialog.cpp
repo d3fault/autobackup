@@ -22,6 +22,7 @@
 //TODOreq: hasAprivateClassesMembers adding... which up till now has only ever been done programmatically :-/. highly considering merging it with Q_PROPERTY and just calling it/them "member"... and the way to make it a Q_PROPERTY would become a non-default action of a QToolButton. default action should be private member
 //TODOoptional: An always accessible (read-only? methinks yes but idfk) combo box throughout entire app that copies the type you select to your clipboard. It's a hacky/easy solution to the auto-completion problem (auto-completion is easy if the line edit is only expecting a TYPE, but auto-completion is [probably? (libclang idfk)] a bitch when a line edit can contain a member declaration (property, signal, or slot). Differentiating from the "type", "qualifiers" and "name" parts would be a bitch... but meh actually maybe not but idk if it's worth diving into research mode in libclang [again(although admittedly last time was totally fucking worth it)]
 //TODOreq: class renames aren't reflected in "available items" in use case view
+//TODOreq: any time the quick signal/slot/property buttons are clicked, focus should be returned to the quick add line edit. the focus already stays when one of the alt+key shortcuts are used, but not when the mouse is used to click the buttons they are shortcuts to
 ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_ClassBeingEditted(classToEdit)

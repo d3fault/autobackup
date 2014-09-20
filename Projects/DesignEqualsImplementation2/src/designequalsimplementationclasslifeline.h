@@ -30,8 +30,8 @@ public:
         , ChildMemberOfOtherClassLifeline //OLD-mb: denotes m_ParentInstance is valid
     };
 
-    explicit DesignEqualsImplementationClassLifeLine(QObject *parent = 0) : QObject(parent) { }
-    explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationProject *parentProject, DesignEqualsImplementationClass *designEqualsImplementationClass, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe, */DesignEqualsImplementationUseCase *parentUseCase, QPointF position, QObject *parent = 0);
+    //explicit DesignEqualsImplementationClassLifeLine(QObject *parent = 0) : QObject(parent) { }
+    explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationProject *parentProject, DesignEqualsImplementationClass *designEqualsImplementationClass, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe, */DesignEqualsImplementationUseCase *parentUseCase, QPointF position, bool newClassLifelineSoCreateFirstDummySlot_OrFalseToIndicateDeserialzingClassLifeline, QObject *parent = 0);
     //explicit DesignEqualsImplementationClassLifeLine(const QString &instanceVariableName, DesignEqualsImplementationClass *designEqualsImplementationClass, /*TODOinstancing: DesignEqualsImplementationClassInstance *myInstanceInClassThatHasMe, */DesignEqualsImplementationUseCase *parentUseCase, QPointF position, QObject *parent = 0);
     //explicit DesignEqualsImplementationClassLifeLine(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *firstSlot, HasA_Private_Classes_Members_ListEntryType *myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline, QPointF position, QObject *parent = 0);
     QPointF position() const;
@@ -66,8 +66,6 @@ public: //was protected, but eh serialization plx
 
     DesignEqualsImplementationClassInstanceTypeEnum m_InstanceType;
     HasA_Private_Classes_Member *m_InstanceInOtherClassIfApplicable;
-private:
-    void privateConstructor(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationUseCase *parentUseCase, QPointF position);
 signals:
     void slotInsertedIntoClassLifeLine(int insertIndex, DesignEqualsImplementationClassSlot *slot);
     void slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
@@ -75,11 +73,11 @@ public slots:
     void createNewHasAPrivateMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember, DesignEqualsImplementationClass *typeOfNewPrivateHasAMember, const QString &nameOfNewPrivateHasAMember);
     void assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member);
 };
-
+#if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassLifeLine &classLifeline);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine &classLifeline);
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassLifeLine *classLifeline);
 QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassLifeLine *classLifeline);
-
+#endif
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINE_H
