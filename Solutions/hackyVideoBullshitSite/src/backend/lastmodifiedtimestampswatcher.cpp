@@ -147,20 +147,40 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
         QString baseDir = "/home/user/hvbs/web/view";
         QFile bookContentsFile("/run/shm/book.contents.txt");
         QFile dreamsContentsFile("/run/shm/book.dreams.txt");
+        QList<QString> wantedExtensionsForBook;
+        wantedExtensionsForBook.append(".txt");
+        wantedExtensionsForBook.append(".cpp");
+        wantedExtensionsForBook.append(".h");
+        wantedExtensionsForBook.append(".c");
+        wantedExtensionsForBook.append(".cxx");
+        wantedExtensionsForBook.append(".cs");
+        wantedExtensionsForBook.append(".php");
+        wantedExtensionsForBook.append(".sh");
+        //java? nahh since it was only ever stupid school projects...
         if(!bookContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text) || !dreamsContentsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
             cout << "error opening book contents file for writing";
         else
         {
             QTextStream bookContentsStream(&bookContentsFile);
             QTextStream dreamsContentsFileStream(&dreamsContentsFile);
+            bool firstEntry = true;
             Q_FOREACH(TimestampAndPath *currentTimestampAndPath, *sortedTimestampAndPathFlatList)
             {
                 QString pathQ = QString::fromStdString(currentTimestampAndPath->Path);
-                if(!pathQ.endsWith("txt"))
+                bool wantFileForBook = false;
+                Q_FOREACH(const QString &currentWantedExtensionForBook, wantedExtensionsForBook)
+                {
+                    if(pathQ.endsWith(currentWantedExtensionForBook))
+                    {
+                        wantFileForBook = true;
+                        break;
+                    }
+                }
+                if(!wantFileForBook)
                     continue;
-                if(pathQ.contains("/Projects/") && !pathQ.contains("/Projects/Ideas/")) //don't want various "design" docs, but do want ideas
-                    continue;
-                if(pathQ.contains("/VariousTreeingsDuringHugeArchivePurge/") || pathQ.contains("oldUnversionedArchive/Lists/") || pathQ.contains("oldUnversionedArchive/Media Lists/") || pathQ.contains("downloadMoviesFreeLegallyTutorial") || pathQ.contains("/working/Documents/oldGitLog") || pathQ.contains("/lastFmExports/") || pathQ.contains("/sxml/testxml.txt") || pathQ.contains("/Documents/dmca/") || pathQ.contains("/Voice/property/"))
+                /*if(pathQ.contains("/Projects/") && !pathQ.contains("/Projects/Ideas/")) //don't want various "design" docs, but do want ideas
+                    continue;*/
+                if(pathQ.contains("/VariousTreeingsDuringHugeArchivePurge/") || pathQ.contains("oldUnversionedArchive/Lists/") || pathQ.contains("oldUnversionedArchive/Media Lists/") || pathQ.contains("downloadMoviesFreeLegallyTutorial") || pathQ.contains("/working/Documents/oldGitLog") || pathQ.contains("/lastFmExports/") || pathQ.contains("/sxml/testxml.txt") || pathQ.contains("/Documents/dmca/") || pathQ.contains("/Voice/property/") || pathQ.contains("preamble.wip.2.txt") || pathQ.contains("license.dpl.txt") || pathQ == "copyright.txt" || pathQ.contains("/copyright.txt"))
                     continue;
                 QDateTime timeD = QDateTime::fromMSecsSinceEpoch(currentTimestampAndPath->Timestamp*1000);
                 QFile currentFileForBook(baseDir + pathQ);
@@ -195,7 +215,22 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
                     fileContentsDeDuplicater.insert(currentFileContentsSignature);
                     //End last-minute dedupe code
 
-                    bookContentsStream << timeD.toString("yy-MM-d_hh:mm:ss") << " ### " << pathQ << endl;
+                    if(firstEntry)
+                    {
+                        firstEntry = false;
+                    }
+                    else
+                    {
+                        bookContentsStream << " ### ";
+                    }
+
+                    //remove the first slash, since it is always there (it was added to make internal path for wt)
+                    if(pathQ.startsWith("/")) //just in case
+                    {
+                        pathQ = pathQ.right(pathQ.length()-1);
+                    }
+
+                    bookContentsStream << timeD.toString("yy-MM-d_hh:mm:ss") << " ### " << pathQ << " ### ";
                     if(pathQ.contains("/minddump/dreams/"))
                     {
                         //dreams only (retain formatting)
@@ -244,12 +279,12 @@ void LastModifiedTimestampsWatcher::combineAndPublishLastModifiedTimestampsFiles
                         currentFileContents = currentFileContents.replace("  ", " ");
                     }while(currentFileContents != origString);
 
-                    bookContentsStream << currentFileContents << endl;
+                    bookContentsStream << currentFileContents;
                 }
             }
         }
     }
-    cout << "book wroted";
+    cout << "book wroted" << endl;
 #endif
 
     LastModifiedTimestampsAndPaths *newTimestampsAndPaths = new LastModifiedTimestampsAndPaths(sortedTimestampAndPathFlatList, pathsIndexIntoFlatListHash);

@@ -335,7 +335,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         //segfaults: Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
         for(int i = 0; i < numSlots; ++i)
         {
-            DesignEqualsImplementationClassSlot *currentSlot = TODO LEFT OFF if the temp slot hack was made when class lifeline was constructed (methinks it was), then i won't point to the correct slot! fml
+            DesignEqualsImplementationClassSlot *currentSlot = TODO LEFT OFF if the temp slot hack was made when class lifeline was constructed (methinks it was), then 'i' won't point to the correct slot! fml
             int numOrderedListOfStatements;
             projectDataStream >> numOrderedListOfStatements;
             for(int i = 0; i < numOrderedListOfStatements; ++i)
