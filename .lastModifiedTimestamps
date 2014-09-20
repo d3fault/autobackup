@@ -2694,7 +2694,7 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1411178234
+Projects/DesignEqualsImplementation2/src/:1411181069
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
@@ -2784,7 +2784,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1410417365
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1410394870
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1408004343
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1411178222
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1411181025
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.h:1409871198
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.cpp:1410400627
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.h:1410400260

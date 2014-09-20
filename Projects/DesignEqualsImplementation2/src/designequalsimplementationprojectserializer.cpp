@@ -33,6 +33,7 @@ for(int i = 0; i < numArgs; ++i) \
 
 //not to be confused with project generation, this is saving/opening projects
 //TODOreq: deserializing doesn't clear the fake temp slot, so it shows up in class diagram
+//TODOreq: use case exit signal is not being [de-]serialized i'm pretty sure (but not 100% sure)
 DesignEqualsImplementationProjectSerializer::DesignEqualsImplementationProjectSerializer(QObject *parent)
     : QObject(parent)
 { }
@@ -331,7 +332,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToPopulate->classes())
     {
         //Project Classes Slots Statements -- we had to hold off on populating the statements until all classes/signals/slots/private-methods, and even bare use cases/class lifelines, were instantiated
-        int numSlots = currentClass->mySlots().size()-1; //HACK to account for the recently created temp slot hack, guh
+        int numSlots = currentClass->mySlots().size();
         //segfaults: Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
         for(int i = 0; i < numSlots; ++i)
         {
@@ -395,7 +396,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             //SlotInvokedThroughConnection_Key1_DestinationSlotItself
             SerializableSlotIdType serializedDestinationedSlotId;
             projectDataStream >> serializedDestinationedSlotId;
-            signalSlotConnectionActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself = currentUseCase->m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedDestinationedSlotId.first)->slotInstantiationFromSerializedSlotId(serializedDestinationedSlotId.second);
+            signalSlotConnectionActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself = currentUseCase->m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedDestinationedSlotId.first)->slotInstantiationFromSerializedSlotId(serializedDestinationedSlotId.second); //TODOoptimization: class id is not needed, because class lifeline was just streamed, so can be determined indirectly
 
             currentUseCase->m_SignalSlotConnectionActivationsInThisUseCase.append(signalSlotConnectionActivation);
         }
