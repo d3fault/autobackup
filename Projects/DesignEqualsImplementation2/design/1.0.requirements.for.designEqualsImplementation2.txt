@@ -1,6 +1,7 @@
-[] - fix temp slot hack (see: unnamed.slots.should.show.up.in.class.editor...)
+[?] - fix temp slot hack (see: unnamed.slots.should.show.up.in.class.editor...)
 [wip] - Project save/open
-[] - Project [re-]name (NOT based on filename)
+[x] - Project [re-]name (NOT based on filename)
+[] - New project and new use case number incrementing
 [] - Use case [re-]name
 [wip] - Graphics for toolbars and available items
 [] - one signal can have multiple slots connected
@@ -13,3 +14,4 @@
 [] - Don't allow infinite parent/child relationship loop (Foo hasA bar hasA Foo)
 [] - slot references with visual differentiation (slot references still show signal emit statements (recursively with private methods therein?))
 [] - clean up class editor (class preview + tab-ize. move the non-clang 'add stuff' to the stuff-specific tab. on each stuff-specific tab should also be a clang parse line edit at the top (exact same functionality, but pressing enter is no longer ambiguious). remove/re-order/rename/etc the 'stuff')
+[] - Do one iteration of searching for all to do r3qs, changing them to include '1.0' in their searchable string if I decide they are 1.0-worthy, then of course process those ones

@@ -30,6 +30,7 @@ private:
     QAction *m_NewProjectAction;
     QAction *m_SaveProjectAction;
     QAction *m_OpenProjectAction;
+    QAction *m_RenameProjectAction;
     QAction *m_NewUseCaseAction;
     QAction *m_GenerateSourceCodeAction;
     //More actions
@@ -68,6 +69,10 @@ public slots:
 private slots:
     void handleSaveRequested();
     void handleOpenProjectActionTriggered();
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
+    void handleProjectTabDoubleClicked(int indexOfTab);
+#endif
+    void handleRenameProjectActionTriggered();
     void handleNewUseCaseActionTriggered();
     void handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged();
     void handleUseCaseAdded(DesignEqualsImplementationUseCase *newUseCase);

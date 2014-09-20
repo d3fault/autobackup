@@ -2644,7 +2644,7 @@ Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:140
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
 Projects/DesignEqualsImplementation2/:1408725818
 Projects/DesignEqualsImplementation2/design/:1410402838
-Projects/DesignEqualsImplementation2/design/1.0.requirements.for.designEqualsImplementation2.txt:1410390701
+Projects/DesignEqualsImplementation2/design/1.0.requirements.for.designEqualsImplementation2.txt:1411187519
 Projects/DesignEqualsImplementation2/design/2.types.of.classes.maybe.action.class.and.pod.class.but.idfk.txt:1408253349
 Projects/DesignEqualsImplementation2/design/all.type.usages.simply.mark.the.underlying.type.as.required.which.isnt.difficult.but.still.requires.some.thinking.for.private.hasA.members.refactoring.txt:1408695344
 Projects/DesignEqualsImplementation2/design/arrows.saldfjsldfjlsjfwoeurljsdfosduflsdkjfosdfsldfjsldf.txt:1405420969
@@ -2694,16 +2694,16 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1411181069
+Projects/DesignEqualsImplementation2/src/:1411187532
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1411178183
+Projects/DesignEqualsImplementation2/src/ui/gui/:1411187396
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1409876592
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1408651682
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.h:1404475598
-Projects/DesignEqualsImplementation2/src/ui/gui/classeditordialog.cpp:1411177541
+Projects/DesignEqualsImplementation2/src/ui/gui/classeditordialog.cpp:1411181648
 Projects/DesignEqualsImplementation2/src/ui/gui/classeditordialog.h:1409072636
 Projects/DesignEqualsImplementation2/src/ui/gui/classinstancechooserdialog.cpp:1410419860
 Projects/DesignEqualsImplementation2/src/ui/gui/classinstancechooserdialog.h:1407995108
@@ -2720,8 +2720,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassl
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.cpp:1410394363
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.h:1410394345
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationguicommon.h:1405638136
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.cpp:1410394508
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.h:1410394389
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.cpp:1411186741
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationmainwindow.h:1411186643
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.cpp:1409889471
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h:1409889204
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationusecaseaswidgetfortab.cpp:1409888952
@@ -2738,6 +2738,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/methodsingleargumentwidget.h:140
 Projects/DesignEqualsImplementation2/src/ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.cpp:1409065541
 Projects/DesignEqualsImplementation2/src/ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h:1409065389
 Projects/DesignEqualsImplementation2/src/ui/gui/reference.class.lifeline.unit.of.execution.aka.slot.as.in.it.is.defined.in.another.use.case.double.clicking.door.opens.that.use.case.tab.svg:1407279778
+Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.cpp:1411187396
+Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.h:1411186033
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp:1405367716
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h:1405367700
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1410420756
@@ -2752,7 +2754,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1411178
 Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:1409796953
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.cpp:1410388713
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.h:1404489887
-Projects/DesignEqualsImplementation2/src/DesignEqualsImplementationGui.pro:1409870990
+Projects/DesignEqualsImplementation2/src/DesignEqualsImplementationGui.pro:1411185466
 Projects/DesignEqualsImplementation2/src/designequalsimplementation.cpp:1410419673
 Projects/DesignEqualsImplementation2/src/designequalsimplementation.h:1409808106
 Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.cpp:1410388840
@@ -2771,7 +2773,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationclassproperty
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassproperty.h:1409811358
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasssignal.cpp:1410400871
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasssignal.h:1410400879
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.cpp:1410402327
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.cpp:1411182241
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.h:1410402327
 Projects/DesignEqualsImplementation2/src/designequalsimplementationcommon.h:1410390382
 Projects/DesignEqualsImplementation2/src/designequalsimplementationlenientpropertydeclarationparser.cpp:1409071927
@@ -2784,7 +2786,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1410417365
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1410394870
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1408004343
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1411181025
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1411186434
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.h:1409871198
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.cpp:1410400627
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.h:1410400260
@@ -4869,7 +4871,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1411013340
+Solutions/hackyVideoBullshitSite/src/:1411186513
 Solutions/hackyVideoBullshitSite/src/backend/:1411013337
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1401116619
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1401116218

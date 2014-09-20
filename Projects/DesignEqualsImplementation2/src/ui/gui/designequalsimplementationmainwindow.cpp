@@ -20,6 +20,7 @@
 #include "classdiagramumlitemswidget.h"
 #include "usecaseumlitemswidget.h"
 #include "designequalsimplementationprojectaswidgetforopenedprojectstabwidget.h"
+#include "renameprojectdialog.h"
 
 #define DesignEqualsImplementationMainWindow_USER_VISIBLE_NAME tr("Design = Implementation") //thought about changing this to "Implementation = Design;" (the ordering change is significant, and the semi-colon is an nod) -- however i like the equality usage of the equal sign rather than assignment, in which case the word design coming first makes more sense (because the design does come before the implementation (most of the time, but especially in this app))
 
@@ -52,6 +53,9 @@ DesignEqualsImplementationMainWindow::DesignEqualsImplementationMainWindow(QWidg
 
     connect(m_OpenProjectsTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged()));
     connect(m_AllUseCasesListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem*)));
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
+    connect(m_OpenProjectsTabWidget, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(handleProjectTabDoubleClicked(int)));
+#endif
 }
 DesignEqualsImplementationMainWindow::~DesignEqualsImplementationMainWindow()
 { }
@@ -61,11 +65,13 @@ void DesignEqualsImplementationMainWindow::createActions()
     m_NewProjectAction = new QAction(tr("New &Project"), this); //TODOreq: lots of these ampersand things have collisions lewl
     m_SaveProjectAction = new QAction(tr("&Save Project"), this); //TODOoptional: save as. TODOreq: periodic auto-saving to temp dir (which should not be in ram). perhaps a timeline of them with a (had:known-fix[..]) fixed-size cryptographic integrity chunk at the end for cheap "latest + not-load-corrupt-ever" power failure recovery. a better power failure recovery is keeping 3 computers in sync with each other and on independent power (each with ups). i'm surprised no such system is available and advertised. if i had more time on my hands i would make it and target openbsd/debian combo (perhaps using each as one of the 3 computers. i bet openbsd is the most stable. that last description was for a computer environment in general, not just designEquals
     m_OpenProjectAction = new QAction(tr("&Open Project"), this);
+    m_RenameProjectAction = new QAction(tr("&Rename Project"), this);
     m_NewUseCaseAction = new QAction(tr("New &Use Case"), this);
     m_GenerateSourceCodeAction = new QAction(tr("&Generate Source Code"), this);
     connect(m_NewProjectAction, SIGNAL(triggered()), this, SIGNAL(newProjectRequested()));
     connect(m_SaveProjectAction, SIGNAL(triggered()), this, SLOT(handleSaveRequested()));
     connect(m_OpenProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
+    connect(m_RenameProjectAction, SIGNAL(triggered()), this, SLOT(handleRenameProjectActionTriggered()));
     connect(m_NewUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseActionTriggered()));
     connect(m_GenerateSourceCodeAction, SIGNAL(triggered()), this, SLOT(handleGenerateSourceCodeActionTriggered()));
 
@@ -92,6 +98,7 @@ void DesignEqualsImplementationMainWindow::createMenu()
     fileNew->addAction(m_SaveProjectAction);
     fileNew->addAction(m_NewUseCaseAction);
     fileMenu->addAction(m_OpenProjectAction);
+    fileMenu->addAction(m_RenameProjectAction);
     fileMenu->addAction(m_GenerateSourceCodeAction);
 
     fileMenu->addSeparator();
@@ -203,6 +210,21 @@ void DesignEqualsImplementationMainWindow::handleOpenProjectActionTriggered()
     {
         emit openExistingProjectRequested(openFileDialog.selectedFiles().at(0));
     }
+}
+#if !(QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
+void DesignEqualsImplementationMainWindow::handleProjectTabDoubleClicked(int indexOfTab)
+{
+    if(indexOfTab < 0) //they double-clicked the tab BAR, but not any tab in particular
+        return;
+    handleRenameProjectActionTriggered(); //relies on currentTab. can you even double click on a tab without making it current lol?
+}
+#endif
+void DesignEqualsImplementationMainWindow::handleRenameProjectActionTriggered()
+{
+    DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *currentProjectTab = static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget());
+
+    RenameProjectDialog dialog(currentProjectTab->designEqualsImplementationProject(), this);
+    dialog.exec();
 }
 void DesignEqualsImplementationMainWindow::handleNewUseCaseActionTriggered()
 {

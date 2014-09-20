@@ -182,6 +182,8 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             projectDataStream << currentSignalSlotActivation.SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines;
             projectDataStream << qMakePair(projectToSerialize->serializationClassIdForClass(currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass), currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself));
         }
+
+        //Project Use Case Exit Signal -- TODOreq, and deserialize also ofc. but pending slot references in other use cases (not to be confused with SERIALIZED slot references)
     }
 }
 //open
