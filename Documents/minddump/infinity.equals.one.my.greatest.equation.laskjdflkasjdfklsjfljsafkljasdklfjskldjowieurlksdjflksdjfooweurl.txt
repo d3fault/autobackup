@@ -1,0 +1,1 @@
+Point = Line (or Plane (or Cube (or 4D (etc)))), when the range is infinity.
