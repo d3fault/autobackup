@@ -4,6 +4,7 @@
 #include <QDialog>
 
 class QLineEdit;
+class QLabel;
 class QCheckBox;
 class QVBoxLayout;
 
@@ -26,6 +27,8 @@ private:
 
     QLineEdit *m_QuickMemberAddLineEdit;
 
+    QLabel *m_ClassOverviewLabel;
+
     //Add Property
     QLineEdit *m_AddPropertyTypeLineEdit;
     QLineEdit *m_AddPropertyNameLineEdit;
@@ -40,6 +43,13 @@ private:
     //static void addAllArgsInLayoutToMethod(IDesignEqualsImplementationMethod* methodToAddArgumentsTo, QLayout *layoutContainingOneArgPerChild);
     bool addPropertyFieldsAreSane();
     bool addSlotFieldsAreSane();
+
+    QWidget *createMainClassEditorTab();
+    QWidget *createPropertiesClassEditorTab();
+    QWidget *createSignalsClassEditorTab();
+    QWidget *createSlotsClassEditorTab();
+
+    QString classDetailsAsHtmlString();
 signals:
     void e(const QString &);
 private slots:
@@ -57,9 +67,12 @@ private slots:
     void handleAddSlotButtonClicked();
 
     //reactor pattern slots
+    void updateClassOverviewLabel();
+#if 0
     void handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded);
     void handleSignalAdded(DesignEqualsImplementationClassSignal *signalAdded);
     void handleSlotAdded(DesignEqualsImplementationClassSlot *slotAdded);
+#endif
 };
 
 #endif // CLASSEDITORDIALOG_H

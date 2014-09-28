@@ -1,5 +1,7 @@
 [?] - fix temp slot hack (see: unnamed.slots.should.show.up.in.class.editor...)
-[wip] - Project save/open
+[] - slot references with visual differentiation (slot references still show signal emit statements (recursively with private methods therein?))
+[] - use case exit signal -- dep slot references (and refactor) -- it can be emitted from different slot than use case entry point?
+[wip] - Project save/open -- dep use case exit signal
 [x] - Project [re-]name (NOT based on filename)
 [] - Save project file dialog
 [] - New project and new use case number incrementing
@@ -7,16 +9,15 @@
 [wip] - Graphics for toolbars and available items
 [] - Finalize 'arrow' visualization, including when deserialized
 [] - one signal can have multiple slots connected
-[] - remove signals/properties/slots (give warning when deleting a slot with > 0 statements)
+[] - remove signals/properties/slots (give warning when deleting a slot with > 0 statements. what should i do when a property/signal/slot is used as a statement for a slot? remove it i guess? give warning though? show a list of all places it's referred to?)
 [] - remove (re-order too?) statements in slots (signal/slot hackery stays in sync)
 [] - Defined elsewhere #includes whenever referenced (EXCEPT when referenced as pointer, then forward declare)
 [] - Ampersand ambiguity in GUI (when in doubt, just remove ampersand altogether)
 [] - signal/slot dialog: ok button uses toolbutton to quick assign instance, only if no instance (the common use case is that the slot does not have an instance, because we'll generally move from left to right. so the top-most toolbutton item (not the typical 'ok' without assign instance) should be 'ok and make slot child instance of signal' -- that's not to say it is the only option)
 [] - hasA and properties -- merge? at the very least, hasA needs gui add in class editor
 [] - Don't allow infinite parent/child relationship loop (Foo hasA bar hasA Foo)
-[] - slot references with visual differentiation (slot references still show signal emit statements (recursively with private methods therein?))
-[] - clean up class editor (class preview + tab-ize. move the non-clang 'add stuff' to the stuff-specific tab. on each stuff-specific tab should also be a clang parse line edit at the top (exact same functionality, but pressing enter is no longer ambiguious). remove/re-order/rename/etc the 'stuff')
+[wip] - clean up class editor (class preview + tab-ize. move the non-clang 'add stuff' to the stuff-specific tab. on each stuff-specific tab should also be a clang parse line edit at the top (exact same functionality, but pressing enter is no longer ambiguious). remove/re-order/rename/etc the 'stuff')
 [] - Do one iteration of searching for all to do r3qs, changing them to include '1.0' in their searchable string if I decide they are 1.0-worthy, then of course process those ones
 
 
-Are slot references a 2.0 item? They are definitely wanted, but are they not KISS enough for 1.0?
+Are slot references a 2.0 item? They are definitely wanted, but are they not KISS enough for 1.0? Since I don't have a schedule, it is unanswerable.

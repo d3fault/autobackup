@@ -29,6 +29,7 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     , m_NewInstanceNameLineEdit(new QLineEdit())
     , m_ExistingInstancesListWidget(new QListWidget())
     , m_ClassLifelineForWhichAnInstanceIsBeingChosen(classLifelineForWhichAnInstanceIsBeingChosen)
+    , m_UserIsTypingInCustomVariableNameSoDontSuggestAutoName(false)
     //TODOinstancing: , m_NewTopLevelInstanceChosen(false)
     //TODOinstancing: , m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline(0)
 {
@@ -75,11 +76,20 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
     QRadioButton *existingInstancesRadioButton = new QRadioButton(tr("Existing Instances"));
     existingInstancesRadioButton->setFont(boldFont);
 
+    bool atLeastOneOtherClassLifeline = false;
     Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeline, classLifelineForWhichAnInstanceIsBeingChosen->parentUseCase()->classLifeLines())
     {
         DesignEqualsImplementationClass *currentClass = currentClassLifeline->designEqualsImplementationClass();
         if(currentClass == classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass())
             continue;
+
+        if(!atLeastOneOtherClassLifeline)
+        {
+            atLeastOneOtherClassLifeline = true;
+
+            //atLeastOne also used hackily as a "firstAdded" detector for auto variable name selection
+            m_NewInstanceNameLineEdit->setText(currentClass->autoNameForNewChildMemberOfType(classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass())); //when new drop-down is chosen, a new auto-name for the chosen class is generated, UNLESS user has manually typed anything ever (during the lifetime of this modal dialog). TODOoptional: set focus to the line edit and select the "0" portion of it (the auto-generated portion), allowing them to type immediately and have that portion of it replaced. ex: m_Foo0 and the zero is highlighted ready for replacing with something more descriptive. this same feature could appear in many different places throughout app. In fact, that portion of text could be highlighted right when the dialog is first shown
+        }
 
         //TODOreq: two instances of same type (allowed in use case) should only be added once. just keep track of the classes already added and make sure it's not already added, simple
 
@@ -137,7 +147,7 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
 
     connect(m_NewInstanceRadioButton, SIGNAL(toggled(bool)), this, SLOT(handleNewInstancesRadioButtonToggled(bool)));
     connect(m_ClassesInUseCaseAvailableForUseAsParentOfNewInstance, SIGNAL(currentIndexChanged(int)), this, SLOT(handleClassesInUseCaseAvailableForUseAsParentOfNewInstanceCurrentIndexChanged(int)));
-    connect(m_NewInstanceNameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(handleNewInstanceNameLineEditTextChanged(QString)));
+    connect(m_NewInstanceNameLineEdit, SIGNAL(textEdited(QString)), this, SLOT(handleNewInstanceNameLineEditTextChanged(QString)));
     connect(m_ExistingInstancesListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(handleExistingInstancesCurrentRowChanged(int)));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
     connect(m_ExistingInstancesListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
@@ -147,6 +157,11 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
 
     connect(this, SIGNAL(createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)), classLifelineForWhichAnInstanceIsBeingChosen, SLOT(createNewHasAPrivateMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)));
     connect(this, SIGNAL(assignPrivateMemberAsClassLifelineInstanceRequested(HasA_Private_Classes_Member*)), classLifelineForWhichAnInstanceIsBeingChosen, SLOT(assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member*)));
+
+    if(!atLeastOneOtherClassLifeline)
+    {
+        okButton->setDisabled(true);
+    }
 }
 bool ClassInstanceChooserDialog::newInstanceChosen()
 {
@@ -166,6 +181,7 @@ HasA_Private_Classes_Member *ClassInstanceChooserDialog::chosenExistingHasA_Priv
 }
 void ClassInstanceChooserDialog::addAllPrivateHasAMembersThatAreOfAcertainTypeToExistingInstancesListWidget(DesignEqualsImplementationClass *classToIterate, DesignEqualsImplementationClass *typeOfClassWeAreInterestedInInstancesOf)
 {
+    //TODOreq: if the existing instance is already making an appearance in this use case (and it is not us), then i'm pretty sure it shouldn't be shown in the existing instances list. it depends on whether or not there can be two class lifeline instances that are the same, which i'm pretty sure is not allowed
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateHasAClassMember, classToIterate->hasA_Private_Classes_Members())
     {
         if(currentPrivateHasAClassMember->m_MyClass != typeOfClassWeAreInterestedInInstancesOf)
@@ -287,10 +303,15 @@ QString ClassInstanceChooserDialog::makeAbsoluteVariableNameSpecifierForInstance
 void ClassInstanceChooserDialog::handleClassesInUseCaseAvailableForUseAsParentOfNewInstanceCurrentIndexChanged(int newIndex)
 {
     m_ExistingClassToUseAsParentForNewInstance = qvariant_cast<DesignEqualsImplementationClass*>(m_ClassesInUseCaseAvailableForUseAsParentOfNewInstance->itemData(newIndex));
+    if(!m_UserIsTypingInCustomVariableNameSoDontSuggestAutoName || m_NewInstanceNameLineEdit->text().trimmed().isEmpty())
+    {
+        m_NewInstanceNameLineEdit->setText(m_ExistingClassToUseAsParentForNewInstance->autoNameForNewChildMemberOfType(m_ClassLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass()));
+    }
     //tryValidatingDialog();
 }
 void ClassInstanceChooserDialog::handleNewInstanceNameLineEditTextChanged(const QString &newText)
 {
+    m_UserIsTypingInCustomVariableNameSoDontSuggestAutoName = true;
     m_NameOfNewPrivateHasAMember = newText;
 }
 void ClassInstanceChooserDialog::handleExistingInstancesCurrentRowChanged(int newRow)

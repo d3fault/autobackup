@@ -43,6 +43,9 @@ private:
     HasA_Private_Classes_Member *m_ExistingInstanceHasAPrivateClassesMember;
 
     void addAllPrivateHasAMembersThatAreOfAcertainTypeToExistingInstancesListWidget(DesignEqualsImplementationClass *classToIterate, DesignEqualsImplementationClass *typeOfClassWeAreInterestedInInstancesOf);
+
+    bool m_UserIsTypingInCustomVariableNameSoDontSuggestAutoName;
+
 #if 0 //TODOinstancing
     bool m_NewTopLevelInstanceChosen;
     DesignEqualsImplementationClassInstance *m_myInstanceInClassThatHasMe_OrZeroIfUseCasesRootClassLifeline;
