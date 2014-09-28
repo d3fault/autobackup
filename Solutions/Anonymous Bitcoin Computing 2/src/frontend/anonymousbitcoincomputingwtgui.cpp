@@ -1,5 +1,9 @@
 #include "anonymousbitcoincomputingwtgui.h"
 
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+#include <Wt/WIntValidator>
+#endif
+
 #include "validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
 #include "registersuccessfulwidget.h"
 #include "accounttabs/addfundsaccounttabbody.h"
@@ -366,6 +370,11 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
 }
 void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget()
 {
+    //m_LettersNumbersOnlyValidatorAndInputFilter->validate()
+    //TODOreq: sanitize username and campaign index before doing below's TODOmulti-user
+    //TODOmulti-user: before showing the buy widget, do a get-accepting-not-found (not found means campaign doesn't exist (should link to "all of user's campaigns" (clicking tells you whether or not user exists)). should also check that the campaign is running (public) and not stopped (private). there is no delete, you simply stop.
+
+
     //TO DOnereqoptimization(but comments mentions other designs): this is going to be my most expensive document (the home link might be too, but it doesn't hit the db). I need SOME sort of caching solution [in order to make this horizontally scalable (so in other words, it isn't an absolute must pre-launch task], even if it's hacked-in/hardcoded who cares. getAndSubscribe comes to mind (but sounds complicated). a fucking mutex locked when new'ing the WContainerWidget below would be easy and would scale horizontally. Hell it MIGHT even be faster than a db hit (and there's always a 'randomly selected mutex in array of mutexes' hack xD)
 
     if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget) //TO DOnereq(rarely anything is deleted): this object, once created, should never be deleted until the WApplication is deleted. The reason is that get and subscribe updates might be sent to it (even if the user has navigated away, there is a race condition where they did not 'unsubscribe' yet so they'd still get the update (Wt handles this just fine. you can setText on something not being shown without crashing (but if I were to delete it, THEN we'd be fucked)))
@@ -1861,6 +1870,50 @@ bool AnonymousBitcoinComputingWtGUI::isHomePath(const std::string &pathToCheck)
 }
 void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string &newInternalPath)
 {
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE))
+    {
+        const std::string &campaignOwnerInternalPathPart = internalPathNextPart(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE "/");
+
+        //sanitize campaign owner part of url
+        WString campaignOwnerAsWString = WString::fromUTF8(campaignOwnerInternalPathPart, true);
+        Wt::WRegExpValidator::Result campaignOwnerValidationResult = m_LettersNumbersOnlyValidatorAndInputFilter->validate(campaignOwnerAsWString);
+        if(campaignOwnerValidationResult.state() != Wt::WRegExpValidator::Valid)
+        {
+            show404notFoundWidget(); //TODOoptional: better explaination
+            return;
+        }
+
+        if(campaignOwnerInternalPathPart == "")
+        {
+            //TODOreq: fetch first page of list of campaign owners
+        }
+        else
+        {
+            const std::string &campaignIndexInternalPathPart = internalPathNextPart(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE "/" + campaignOwnerInternalPathPart + "/");
+            if(campaignIndexInternalPathPart == "")
+            {
+                //TODOreq: fetch first page of list of campaigns for the known campaign owner
+            }
+            else
+            {
+                //sanitize campaign index part of url
+                WIntValidator campaignIndexValidator(0, 64000); //TODOoptional: more than 64k campaigns? TODOreq: at least fail out when they try to make more than upper limit
+                WString campaignIndexAsWString = WString::fromUTF8(campaignIndexInternalPathPart, true);
+                Wt::WIntValidator::Result campaignIndexValidationResult = campaignIndexValidator.validate(campaignIndexAsWString);
+                if(campaignOwnerValidationResult.state() != Wt::WIntValidator::Valid)
+                {
+                    show404notFoundWidget(); //TODOoptional: better explaination
+                    return;
+                }
+
+                beginAsyncDocGetTellingUsWhetherOrNotThatAdCampaignExistsAndIsRunning(campaignOwnerAsWString, campaignOwnerAsWString);
+                return;
+            }
+        }
+    }
+#endif
+
     if(!internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0)) //we would check ALL eligible subscriptions before going into this if block (future proof), or I suppose a better solution would be to put all subscription paths under the same clean url prefix...
     {
         //now in 'non-subscribeable' area
@@ -1910,12 +1963,8 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
         }
 
         //404 Not Found
-        if(!m_404NotFoundWidget)
-        {
-            m_404NotFoundWidget = new WContainerWidget(m_MainStack);
-            new WText("404 Not Found", m_404NotFoundWidget);
-        }
-        m_MainStack->setCurrentWidget(m_404NotFoundWidget);
+        show404notFoundWidget();
+        return; //needed? this return wasn't here before. bug?
     }
 
     //TODOreq: to be future proof for other subscriptions, we need to do an 'unsubscribe' -> subscribe-to-different code path, and maybe they can/should share the ride to the backend ;-P. low priority for now since only one subscription. but really they don't need to share a ride since unsubscribe doesn't respond. we just async send unsubscribe and then do the new subscribe, ez
@@ -2115,6 +2164,15 @@ void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
     m_LoggedIn = false;
     m_CurrentlyLoggedInUsername = "";
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget);
+}
+AnonymousBitcoinComputingWtGUI::show404notFoundWidget()
+{
+    if(!m_404NotFoundWidget)
+    {
+        m_404NotFoundWidget = new WContainerWidget(m_MainStack);
+        new WText("404 Not Found", m_404NotFoundWidget);
+    }
+    m_MainStack->setCurrentWidget(m_404NotFoundWidget);
 }
 void AnonymousBitcoinComputingWtGUI::newAndOpenAllWtMessageQueues()
 {

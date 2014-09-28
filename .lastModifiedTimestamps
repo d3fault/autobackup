@@ -2705,11 +2705,11 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1411192322
+Projects/DesignEqualsImplementation2/src/:1411889919
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1411187396
+Projects/DesignEqualsImplementation2/src/ui/gui/:1411889595
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1409876592
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1408651682
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2753,8 +2753,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.cpp:14111873
 Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.h:1411186033
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp:1405367716
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h:1405367700
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1410420756
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1407995196
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1411889595
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1411889523
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.cpp:1405630076
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.h:1405630057
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.cpp:1405628574
@@ -2770,8 +2770,8 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementation.cpp:14104196
 Projects/DesignEqualsImplementation2/src/designequalsimplementation.h:1409808106
 Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.cpp:1410388840
 Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.h:1404574889
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.cpp:1410400925
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1410401832
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.cpp:1411889698
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1411888940
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.cpp:1411177005
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.h:1411177010
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.cpp:1405431299
@@ -2796,7 +2796,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationprivatemethod
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1410400943
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1410417365
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1410394870
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1408004343
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1411889798
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1411186434
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.h:1409871198
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.cpp:1410400627
@@ -4787,7 +4787,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1411808796
+Solutions/Anonymous Bitcoin Computing 2/src/:1411812878
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1399671510
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -4799,7 +4799,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialb
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1396218440
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1399671510
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1393799993
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1410254838
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1411812561
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1399672099
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
@@ -4820,8 +4820,8 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/l
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1393161161
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp:1393160674
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h:1393161161
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1410254837
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1396217247
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1411812561
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1411811856
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.cpp:1393117307
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.h:1393117244
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1396218645
@@ -4829,7 +4829,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/getcouchbas
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/getcouchbasedocumentbykeyrequest.h:1396218632
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp:1392910056
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchbasedocumentbykeyrequest.h:1396218645
-Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1410253465
+Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1411812813
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1396219028
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1410253778
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
@@ -4882,7 +4882,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1411186513
+Solutions/hackyVideoBullshitSite/src/:1411812887
 Solutions/hackyVideoBullshitSite/src/backend/:1411013337
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1401116619
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1401116218

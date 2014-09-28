@@ -444,6 +444,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     bool m_LoggedIn;
     std::string m_CurrentlyLoggedInUsername; //only valid if logged in
+
+    show404notFoundWidget();
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
     virtual void finalize();

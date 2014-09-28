@@ -9,7 +9,7 @@
 class QVBoxLayout;
 class QCheckBox;
 class QComboBox;
-class QPushButton;
+class QAbstractButton;
 
 class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationClassLifeLine;
@@ -31,9 +31,11 @@ private:
     QCheckBox *m_SlotsCheckbox;
     QComboBox *m_ExistingSignalsComboBox;
     QComboBox *m_ExistingSlotsComboBox;
+    DesignEqualsImplementationClassSlot *m_SourceSlot_OrZeroIfSourceIsActor;
+    DesignEqualsImplementationClassSlot *m_DestinationSlot_OrZeroIfNoDest;
     DesignEqualsImplementationClassSignal *m_SignalToEmit;
     DesignEqualsImplementationClassSlot *m_SlotToInvoke;
-    QPushButton *m_OkButton;
+    QAbstractButton *m_OkButton;
     bool m_SourceIsActor;
     bool m_DestinationIsActor;
     //DesignEqualsImplementationClassSlot *m_SlotWithCurrentContext_OrZeroIfSourceIsActor;
@@ -43,6 +45,7 @@ private:
     QWidget *m_SlotArgsFillingInWidget;
 
     DesignEqualsImplementationClassLifeLine *m_SourceClassLifeline_OrZeroIfSourceIsActor;
+    DesignEqualsImplementationClassLifeLine *m_DestinationClassLifeline_OrZeroIfNoDest;
 
     void showSignalArgFillingIn();
     void collapseSignalArgFillingIn();
@@ -60,6 +63,8 @@ private slots:
     void tryValidatingDialog();
 
     void handleChooseSourceInstanceButtonClicked();
+
+    void handleOkAndMakeChildOfSignalSenderActionTriggered();
 };
 
 #endif // SIGNALSLOTMESSAGEDIALOG_H

@@ -5,6 +5,8 @@
 #include <QGroupBox>
 #include <QComboBox>
 #include <QPushButton>
+#include <QToolButton>
+#include <QAction>
 #include <QLabel>
 #include <QCheckBox>
 #include <QLineEdit>
@@ -32,12 +34,16 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
     , m_Layout(new QVBoxLayout())
+    , m_SourceSlot_OrZeroIfSourceIsActor(sourceSlot_OrZeroIfSourceIsActor)
+    , m_DestinationSlot_OrZeroIfNoDest(destinationSlotToInvoke_OrZeroIfNoDest)
     , m_SignalToEmit(0)
     , m_SlotToInvoke(0)
     , m_SourceIsActor(sourceIsActor)
     , m_DestinationIsActor(destinationIsActor)
     , m_SignalArgsFillingInWidget(0)
     , m_SlotArgsFillingInWidget(0)
+    , m_SourceClassLifeline_OrZeroIfSourceIsActor(sourceClassLifeLine_OrZeroIfSourceIsActor)
+    , m_DestinationClassLifeline_OrZeroIfNoDest(destinationClassLifeLine_OrZeroIfNoDest)
 {
     setWindowTitle(tr("Signal/Slot Message"));
     //Note: our use of the dialogMode excludes UseCaseSlotEventType altogether (it is used in the backend)
@@ -101,12 +107,30 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     QHBoxLayout *cancelOkRow = new QHBoxLayout();
 
     QPushButton *cancelButton = new QPushButton(tr("Cancel"), this);
-    m_OkButton = new QPushButton(tr("Ok"), this); //TODOreq: button stays below arg filling in
-    m_OkButton->setDefault(true);
+    if(sourceSlot_OrZeroIfSourceIsActor && destinationClassLifeLine_OrZeroIfNoDest && destinationClassLifeLine_OrZeroIfNoDest->instanceType() == DesignEqualsImplementationClassLifeLine::NoInstanceChosen) //"ok" + quick assign instance tool button(s?)
+    {
+        QToolButton *okToolButton = new QToolButton(this);
+        QAction *okAction = new QAction(tr("Ok"), this);
+        QString okAndMakeChildOfSignalSenderText = "Ok and make this instance of " + destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->ClassName + " a child member of " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->ClassName + " named: " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->autoNameForNewChildMemberOfType(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass);
+        QAction *okAndMakeChildOfSignalSenderAction = new QAction(okAndMakeChildOfSignalSenderText, this); //TODOoptional: IDEALLY there'd be another action in the toolbutton to let you choose the member name too))
+        okToolButton->setDefaultAction(okAction);
+        okToolButton->addAction(okAndMakeChildOfSignalSenderAction);
+        okToolButton->setPopupMode(QToolButton::MenuButtonPopup);
+        m_OkButton = okToolButton;
+        connect(okAction, SIGNAL(triggered()), this, SLOT(accept()));
+        connect(okAndMakeChildOfSignalSenderAction, SIGNAL(triggered()), this, SLOT(handleOkAndMakeChildOfSignalSenderActionTriggered()));
+    }
+    else //regular ok button
+    {
+        QPushButton *okPushButton = new QPushButton(tr("Ok"), this); //TODOreq: button stays below arg filling in;
+        connect(okPushButton, SIGNAL(clicked()), this, SLOT(accept()));
+        okPushButton->setDefault(true);
+        m_OkButton = okPushButton;
+    }
     m_OkButton->setDisabled(true);
 
     cancelOkRow->addWidget(cancelButton);
-    cancelOkRow->addWidget(m_OkButton);
+    cancelOkRow->addWidget(m_OkButton, 1);
 
     m_Layout->addLayout(cancelOkRow);
 
@@ -315,7 +339,6 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     connect(m_ExistingSignalsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSignalComboBoxIndexChanged(int)));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(m_OkButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     setLayout(m_Layout);
 }
@@ -566,4 +589,12 @@ void SignalSlotMessageDialog::handleChooseSourceInstanceButtonClicked() //corner
 
         //TODOoptional: pre-Generate-source-code sanitization. I am only hesitant to do that stage of sanitization because eventually there hopefully won't be the requirement of objects being children of each other in order to communicate (the source would still need a pointer to dest, even if he doesn't own dest)
     }
+}
+void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered()
+{
+    //the toolbutton to get here wouldn't be shown if source is actor or if there's no dest
+    DesignEqualsImplementationClass *sourceClass = m_SourceSlot_OrZeroIfSourceIsActor->ParentClass;
+    HasA_Private_Classes_Member *newHasAmember = sourceClass->createHasA_Private_Classes_Member(m_DestinationSlot_OrZeroIfNoDest->ParentClass);
+    m_DestinationClassLifeline_OrZeroIfNoDest->setInstanceInOtherClassIfApplicable(newHasAmember);
+    accept();
 }

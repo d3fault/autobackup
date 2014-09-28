@@ -21,6 +21,8 @@ CONFIG -= qt
 
 #QMAKE_CXXFLAGS += -save-temps
 
+#DEFINES += ABC_MULTI_CAMPAIGN_OWNER_MODE
+
 HEADERS += \
     anonymousbitcoincomputing.h \
     frontend/anonymousbitcoincomputingwtgui.h \

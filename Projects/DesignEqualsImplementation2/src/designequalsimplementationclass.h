@@ -46,7 +46,7 @@ public:
     DesignEqualsImplementationClassProperty *createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
     void addProperty(DesignEqualsImplementationClassProperty *propertyToAdd);
 
-    HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName);
+    HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName = QString());
     QList<HasA_Private_Classes_Member *> hasA_Private_Classes_Members();
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSignal*> mySignals();
@@ -71,6 +71,8 @@ public:
     inline DesignEqualsImplementationClassSlot *slotInstantiationFromSerializedSlotId(int slotId) { return m_MySlots.at(slotId); }
     inline int serializationHasAIdForHasA(HasA_Private_Classes_Member *theHasA) { return m_HasA_Private_Classes_Members.indexOf(theHasA); }
     inline HasA_Private_Classes_Member *hasAinstanceFromHasAId(int hasAId) { return m_HasA_Private_Classes_Members.at(hasAId); }
+
+    QString autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType);
 private:
     friend class DesignEqualsImplementationProjectGenerator;
 signals:

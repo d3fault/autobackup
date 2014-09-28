@@ -6,6 +6,7 @@
 
 #include "designequalsimplementationcommon.h"
 #include "designequalsimplementationsignalemissionstatement.h"
+#include "designequalsimplementationprojectgenerator.h" //only for a few string utils (/lazy)
 
 #define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
 qds direction designEqualsImplementationClass.ClassName; \
@@ -96,15 +97,22 @@ void DesignEqualsImplementationClass::addProperty(DesignEqualsImplementationClas
     Properties.append(propertyToAdd);
     emit propertyAdded(propertyToAdd);
 }
-HasA_Private_Classes_Member *DesignEqualsImplementationClass::createHasA_Private_Classes_Member(DesignEqualsImplementationClass *hasA_Private_Class_Member, const QString &variableName)
+HasA_Private_Classes_Member *DesignEqualsImplementationClass::createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName)
 {
     //TODOreq: ensure all callers haven't already done the "new"
 
     //TODOinstancing: DesignEqualsImplementationClassInstance *newInstance = new DesignEqualsImplementationClassInstance(hasA_Private_Class_Member, this, variableName);
     //m_HasA_Private_Classes_Members.append(newInstance);
+
+    QString chosenVariableName = variableName_OrLeaveBlankForAutoNumberedVariableName;
+    if(variableName_OrLeaveBlankForAutoNumberedVariableName.trimmed().isEmpty())
+    {
+        chosenVariableName = autoNameForNewChildMemberOfType(memberClassType);
+    }
+
     HasA_Private_Classes_Member *newMember = new HasA_Private_Classes_Member(); //TODOoptional: all these properties should maybe be required as constructor args
-    newMember->m_MyClass = hasA_Private_Class_Member;
-    newMember->VariableName = variableName;
+    newMember->m_MyClass = memberClassType;
+    newMember->VariableName = chosenVariableName;
     newMember->setParentClass(this);
     m_HasA_Private_Classes_Members.append(newMember); //TODOreq: re-ordering needs to resynchronize
 
@@ -141,6 +149,27 @@ QList<QString> DesignEqualsImplementationClass::allMyAvailableMemberGettersWhenI
 QString DesignEqualsImplementationClass::headerFilenameOnly()
 {
     return ClassName.toLower() + ".h";
+}
+QString DesignEqualsImplementationClass::autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType)
+{
+    int indexCurrentlyTestingForNameCollission = -1;
+    while(true)
+    {
+        QString maybeVariableName = "m_" + DesignEqualsImplementationProjectGenerator::firstCharacterToUpper(childMemberClassType->ClassName) + QString::number(++indexCurrentlyTestingForNameCollission); //m_Foo0, m_Foo1, etc. TODOoptional: random 5 letter word from dictionary chosen, append two numbers also, so they are easier to differentiate/remember when using auto mode (although i probably won't use it myself (unless i'm in a rush)). //TODooptional: should the first m_Foo have a zero on the end or no? I'd say yes keep the zero, just makes it simpler LATER
+        bool seenThisTime = false;
+        Q_FOREACH(HasA_Private_Classes_Member *currentHasAprivateClassMember, m_HasA_Private_Classes_Members)
+        {
+            if(currentHasAprivateClassMember->VariableName == maybeVariableName)
+            {
+                seenThisTime = true;
+                break;
+            }
+        }
+        if(!seenThisTime)
+        {
+            return maybeVariableName;
+        }
+    }
 }
 void DesignEqualsImplementationClass::setClassName(const QString &newClassName)
 {

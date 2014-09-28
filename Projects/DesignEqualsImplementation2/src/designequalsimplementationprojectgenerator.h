@@ -23,6 +23,17 @@ public:
     void setProjectGenerationMode(const DesignEqualsImplementationProject::ProjectGenerationMode &projectGenerationMode);
     QString destinationDirectoryPath() const;
     void setDestinationDirectoryPath(const QString &destinationDirectoryPath);
+    static inline QString firstCharacterToUpper(const QString &inputString)
+    {
+        QString ret = inputString;
+        if(!inputString.isEmpty())
+        {
+            QString firstChar = ret.at(0);
+            QString firstCharToUpper = firstChar.toUpper();
+            ret.replace(0, 1, firstCharToUpper);
+        }
+        return ret;
+    }
 private:
     DesignEqualsImplementationProject::ProjectGenerationMode m_ProjectGenerationMode;
     QString m_DestinationDirectoryPath;
@@ -43,17 +54,6 @@ private:
             QString firstChar = ret.at(0);
             QString firstCharToLower = firstChar.toLower();
             ret.replace(0, 1, firstCharToLower);
-        }
-        return ret;
-    }
-    static inline QString firstCharacterToUpper(const QString &inputString)
-    {
-        QString ret = inputString;
-        if(!inputString.isEmpty())
-        {
-            QString firstChar = ret.at(0);
-            QString firstCharToUpper = firstChar.toUpper();
-            ret.replace(0, 1, firstCharToUpper);
         }
         return ret;
     }
