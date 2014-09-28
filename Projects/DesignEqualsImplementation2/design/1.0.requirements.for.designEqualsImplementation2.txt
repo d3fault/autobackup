@@ -1,6 +1,8 @@
 [?] - fix temp slot hack (see: unnamed.slots.should.show.up.in.class.editor...)
+[] - quick add signal and/or slot in signal-slot-message-editor (i think placeholder line edits are already in place)
 [] - slot references with visual differentiation (slot references still show signal emit statements (recursively with private methods therein?))
 [] - use case exit signal -- dep slot references (and refactor) -- it can be emitted from different slot than use case entry point?
+[] - [de-]serialize the valid use of fake temp slot hack (make sure two unnamed slots in different use cases (etc) deserialize properly)
 [wip] - Project save/open -- dep use case exit signal
 [x] - Project [re-]name (NOT based on filename)
 [] - Save project file dialog
