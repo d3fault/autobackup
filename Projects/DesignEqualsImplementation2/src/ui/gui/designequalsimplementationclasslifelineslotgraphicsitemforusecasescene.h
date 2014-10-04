@@ -1,5 +1,5 @@
-#ifndef DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTIONGRAPHICSITEMFORUSECASESCENE_H
-#define DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTIONGRAPHICSITEMFORUSECASESCENE_H
+#ifndef DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINESLOTGRAPHICSITEMFORUSECASESCENE_H
+#define DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINESLOTGRAPHICSITEMFORUSECASESCENE_H
 
 #include <QGraphicsRectItem>
 
@@ -9,7 +9,7 @@ class IDesignEqualsImplementationHaveOrderedListOfStatements;
 class IDesignEqualsImplementationStatement;
 class IRepresentSnapGraphicsItemAndProxyGraphicsItem;
 
-typedef QPair<QGraphicsLineItem* /*visual representation*/, IDesignEqualsImplementationStatement* /*underlyingStatement*/> ExistingStatementListEntryTypedef;
+typedef QPair<QGraphicsItem* /*visual representation*/, IDesignEqualsImplementationStatement* /*underlyingStatement*/> ExistingStatementListEntryTypedef;
 
 class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene : public QObject, public QGraphicsRectItem
 {
@@ -27,6 +27,8 @@ public:
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifelineGraphicsItem() const;
     DesignEqualsImplementationClassSlot* underlyingSlot() const;
     virtual int type() const;
+
+    //QPointF calculatePointForStatementsP1AtStatementIndex(int statementIndexToCalculateP1for);
 private:
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecution;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *m_ParentClassLifeline;
@@ -44,4 +46,4 @@ private slots:
     void handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
 };
 
-#endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINEUNITOFEXECUTIONGRAPHICSITEMFORUSECASESCENE_H
+#endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINESLOTGRAPHICSITEMFORUSECASESCENE_H

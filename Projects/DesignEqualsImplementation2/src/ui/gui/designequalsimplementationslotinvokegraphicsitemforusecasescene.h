@@ -1,0 +1,12 @@
+#ifndef DESIGNEQUALSIMPLEMENTATIONSLOTINVOKEGRAPHICSITEMFORUSECASESCENE_H
+#define DESIGNEQUALSIMPLEMENTATIONSLOTINVOKEGRAPHICSITEMFORUSECASESCENE_H
+
+#include <QGraphicsLineItem>
+
+class DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene : public QGraphicsLineItem
+{
+public:
+    DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(QGraphicsItem *parent = 0);
+};
+
+#endif // DESIGNEQUALSIMPLEMENTATIONSLOTINVOKEGRAPHICSITEMFORUSECASESCENE_H

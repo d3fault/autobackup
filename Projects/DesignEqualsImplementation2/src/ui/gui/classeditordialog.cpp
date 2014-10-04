@@ -28,6 +28,7 @@
 //TODOreq: any time the quick signal/slot/property buttons are clicked, focus should be returned to the quick add line edit. the focus already stays when one of the alt+key shortcuts are used, but not when the mouse is used to click the buttons they are shortcuts to
 //TODOoptional: the class overview could be in html and use anchor/hrefs for each piece, where clicking on that piece brings you to the correct tab (property/signal/slot) and selects the right property/signal/slot in the list, and additionally puts the cursor focus (and maybe selects all) in the line edit used to edit that piece that was clicked. this could additionally be done in class diagram view at all times, but then click-n-drag moving around the objects might become a pain (though i doubt it (click-n-drag vs. click) and like this feature very much in BOTH places!)
 //TODOreq: member name collissions (off the top of my head, a signal and slot can't both be named "x")
+//TODOoptional: if something is typed in quick add line edit[s] and done is pressed, we assume that either property/signal/slot was meant to be pressed and show an "are you sure?" dialog so they have to confirm the erasal of their quick add line edit typings
 ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_ClassBeingEditted(classToEdit)

@@ -1,0 +1,12 @@
+#ifndef DESIGNEQUALSIMPLEMENTATIONPRIVATEMETHODINVOKESTATEMENTGRAPHICSITEMFORUSECASESCENE_H
+#define DESIGNEQUALSIMPLEMENTATIONPRIVATEMETHODINVOKESTATEMENTGRAPHICSITEMFORUSECASESCENE_H
+
+#include <QGraphicsLineItem>
+
+class DesignEqualsImplementationPrivateMethodInvokeStatementGraphicsItemForUseCaseScene : public QGraphicsLineItem
+{
+public:
+    DesignEqualsImplementationPrivateMethodInvokeStatementGraphicsItemForUseCaseScene(QGraphicsItem *parent = 0);
+};
+
+#endif // DESIGNEQUALSIMPLEMENTATIONPRIVATEMETHODINVOKESTATEMENTGRAPHICSITEMFORUSECASESCENE_H

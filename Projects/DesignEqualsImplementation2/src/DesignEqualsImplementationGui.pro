@@ -42,7 +42,6 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.cpp \
     designequalsimplementationclasslifeline.cpp \
     designequalsimplementationclasslifelineunitofexecution.cpp \
-    ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.cpp \
     ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.cpp \
     designequalsimplementationactor.cpp \
     ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp \
@@ -66,7 +65,10 @@ SOURCES += ui/gui/main.cpp\
     signalemissionorslotinvocationcontextvariables.cpp \
     designequalsimplementationprojectserializer.cpp \
     ui/gui/renameprojectdialog.cpp \
-    ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.cpp
+    ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.cpp \
+    ui/gui/designequalsimplementationslotinvokegraphicsitemforusecasescene.cpp \
+    ui/gui/designequalsimplementationprivatemethodinvokestatementgraphicsitemforusecasescene.cpp \
+    ui/gui/designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -101,7 +103,6 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.h \
     designequalsimplementationclasslifeline.h \
     designequalsimplementationclasslifelineunitofexecution.h \
-    ui/gui/designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h \
     ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.h \
     designequalsimplementationactor.h \
     ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h \
@@ -123,7 +124,10 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementationprivatemethodsynchronouscallstatement.h \
     designequalsimplementationprojectserializer.h \
     ui/gui/renameprojectdialog.h \
-    ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.h
+    ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.h \
+    ui/gui/designequalsimplementationslotinvokegraphicsitemforusecasescene.h \
+    ui/gui/designequalsimplementationprivatemethodinvokestatementgraphicsitemforusecasescene.h \
+    ui/gui/designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h
 
 #libclang stuff
 CONFIG += precompile_header

@@ -1,15 +1,15 @@
-#include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
+#include "designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h"
 
 #include <QLineF>
 
 #include "designequalsimplementationguicommon.h"
 #include "sourceslotsnappingindicationvisualrepresentation.h"
 #include "destinationslotsnappingindicationvisualrepresentation.h"
+#include "usecasegraphicsscene.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../idesignequalsimplementationstatement.h"
 
 #define DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE 25
-#define DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_STATEMENT_MARGIN_TO_EDGE 10 //For the side opposite the arrow comes out
 
 DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
@@ -111,6 +111,12 @@ int DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::type() const
 {
     return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID;
 }
+#if 0
+QPointF DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::calculatePointForStatementsP1AtStatementIndex(int statementIndexToCalculateP1for)
+{
+
+}
+#endif
 const QRectF DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::minRect()
 {
     static const QRect minRect(-(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH), -(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE/2), (DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH*2), DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_MINIMUM_VERTICAL_SIZE);
@@ -138,17 +144,16 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstruct
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
-    QGraphicsLineItem *newGraphicsLineItemForVisualRepresentation = new QGraphicsLineItem(this);
-    qreal statementHalfLength /*width sorta*/ = (minRect().width()-(DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_STATEMENT_MARGIN_TO_EDGE*2))/2; //the times two accounts for the margins on both left and right sides
-    newGraphicsLineItemForVisualRepresentation->setLine(QLineF(QPointF(-statementHalfLength, 0), QPointF(statementHalfLength, 0)));
-    //TODOreq: newGraphicsLineItemForVisualRepresentation->setLine( <- just make it go left and right along y=0, using whatever width to determine the two x points
-    m_ExistingStatements.insert(indexInsertedInto, qMakePair(newGraphicsLineItemForVisualRepresentation, statementInserted));
+    QGraphicsItem *newVisualRepresentationOfStatement = UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(statementInserted, this);
+    //newVisualRepresentationOfStatement->setPos(QPointF(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, 0));
+    //newVisualRepresentationOfStatement->moveBy(50, 0);
+    m_ExistingStatements.insert(indexInsertedInto, qMakePair(newVisualRepresentationOfStatement, statementInserted));
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::repositionExistingStatementsAndSnapPoints()
 {
     //TODOoptimization: "append"/etc doesn't reposition ALL of them
 
-    int numStatementsOrSnapPointsInUnitOfExecution = ((m_ExistingStatements.size()*2)+1); //Times two accounts for all our snap/insert positions, First plus one accounts for "insert before and insert after"
+    int numStatementsOrSnapPointsInUnitOfExecution = ((m_ExistingStatements.size()*2)+1); //Times two accounts for all our snap/insert positions, Plus one accounts for "insert before or insert after"
 
     qreal maybeRectHeight = ((numStatementsOrSnapPointsInUnitOfExecution+1)*DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
     qreal myRectHeight = qMax(minRect().height(), maybeRectHeight);

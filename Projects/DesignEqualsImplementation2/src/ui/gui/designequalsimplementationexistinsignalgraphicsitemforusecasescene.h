@@ -1,14 +1,19 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONEXISTINSIGNALGRAPHICSITEMFORUSECASESCENE_H
 #define DESIGNEQUALSIMPLEMENTATIONEXISTINSIGNALGRAPHICSITEMFORUSECASESCENE_H
 
-#include <QGraphicsItem>
+#include <QGraphicsLineItem>
 
-class DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene : public QGraphicsItem
+
+class DesignEqualsImplementationClassSignal;
+
+class DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene : public QGraphicsLineItem
 {
 public:
-    explicit DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(QGraphicsItem *parent = 0);
+    explicit DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSignal *theSignal, QGraphicsItem *parent = 0);
     virtual ~DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene() { }
     virtual int type() const;
+private:
+    DesignEqualsImplementationClassSignal *m_TheSignal;
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONEXISTINSIGNALGRAPHICSITEMFORUSECASESCENE_H

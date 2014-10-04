@@ -12,9 +12,11 @@
 #include "designequalsimplementationguicommon.h"
 #include "designequalsimplementationactorgraphicsitemforusecasescene.h"
 #include "designequalsimplementationclasslifelinegraphicsitemforusecasescene.h"
+#include "designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h"
 #include "signalslotconnectionactivationarrowforgraphicsscene.h"
-#include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
 #include "designequalsimplementationexistinsignalgraphicsitemforusecasescene.h"
+#include "designequalsimplementationslotinvokegraphicsitemforusecasescene.h"
+#include "designequalsimplementationprivatemethodinvokestatementgraphicsitemforusecasescene.h"
 #include "signalslotmessagedialog.h"
 #include "snappingindicationvisualrepresentation.h"
 #include "classinstancechooserdialog.h"
@@ -22,7 +24,7 @@
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationactor.h"
 #include "../../designequalsimplementationclasslifeline.h"
-#include "../../designequalsimplementationclasslifelineunitofexecution.h"
+#include "../../designequalsimplementationsignalemissionstatement.h"
 
 #define UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH 25
 
@@ -34,6 +36,25 @@
 //TODOoptional: it makes sense that the "first slot" is not existing yet (but there's still the problems of how to add statements to it!).... what I'm getting at is that there should always be a "+1" slot/unit-of-execution ready for accepting arrow connections. creating it on mouse RELEASE is kinda ugly/hacky. when you have no stuf, all you see is that +1. After you've added stuff, at the bottom of every lifeline should be another pseudo-empty "+1" slot. My JIT create/destroy stuff would mostly stay the same (it must exist in order to add statements to it), BUT basically I'm just saying the GUI should lie about how many slots there are. When there are zero, it should show 1 (but still problem of connecting statements to "nameless" (not yet "invoked") slot, guh. I've flip flopped on this issue like a million times over the last few days, but I finally think the cleanest solution is to have a "ghost +1" to connect to. My existing "connect to slot and then JIT create one" is an ugly user-experience (kinda ;-P). Actually since typing that "kinda" I'm leaning back towards the other way ROFL. Because the user does not care about slots or units of execution!!! Showing a "ghost +1" might just confuse them ("where do I connect the line?")
 //TODOreq: if the first item placed is actor, we should scroll/reposition graphics view so that actor is in top-left corner. we should maybe do the same for the first class lifeline, but maybe leaving some space to the left for actor/other?
 //TODOreq: when deserializing: applies to both graphics scenes: the first item placed goes to 0,0 -- regardless of what coords I specify (this is just how the graphics scene works). So what that means is that every item coords after the first item must be translated to become relative to the first item's coords.
+QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, QGraphicsItem *parent)
+{
+    switch(theStatement->StatementType)
+    {
+    case IDesignEqualsImplementationStatement::SignalEmitStatementType:
+    {
+        DesignEqualsImplementationSignalEmissionStatement *signalEmitStatement = static_cast<DesignEqualsImplementationSignalEmissionStatement*>(theStatement);
+        return new DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(signalEmitStatement->signalToEmit(), parent);
+    }
+        break;
+    case IDesignEqualsImplementationStatement::SlotInvokeStatementType:
+        return new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parent);
+        break;
+    case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
+        return new DesignEqualsImplementationPrivateMethodInvokeStatementGraphicsItemForUseCaseScene(parent);
+        break;
+        //TODOreq: etc
+    }
+}
 UseCaseGraphicsScene::UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase)
     : IDesignEqualsImplementationGraphicsScene()
 {
@@ -273,7 +294,8 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     //QScopedPointer<SignalSlotConnectionActivationArrowForGraphicsScene*> autLineDeletionScopedDeleter(*m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn); //It has to be "taken" before end of this method which signifies a valid signal,signal-slot,or slotInvoke, nvm the custom deleter can't zero it out so...
     if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
     {
-        if(!keepArrowForThisMouseReleaseEvent(event))
+        //if(!keepArrowForThisMouseReleaseEvent(event))
+        keepArrowForThisMouseReleaseEvent(event);
         {
             delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn; //TODOreq: either always delete, or pass to backend to at least "add"/update for reactor pattern. Backend creates new units of execution (whenever target is slot) that the arrow must point to, but the unit of execution to point to doesn't exist until the backend tells us via signal
         }
@@ -318,7 +340,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
 
     connect(this, SIGNAL(insertSlotInvocationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSlotInvocationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)));
-    connect(this, SIGNAL(insertSignalEmissionUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSignalEmitEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
+    connect(this, SIGNAL(insertSignalEmissionUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*)), useCase, SLOT(insertSignalEmitEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*)));
 
     connect(this, SIGNAL(setUseCaseSlotEntryPointRequested(DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*)), useCase, SLOT(setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*)));
     connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
@@ -630,7 +652,7 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
     if(!userChosenDestinationSlot_OrZeroIfNone && userChosenSourceSignal_OrZeroIfNone)
     {
         //Signal with no listeners at time of design emit
-        emit insertSignalEmissionUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables);
+        emit insertSignalEmissionUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables, sourceClassLifeLine_OrZeroIfSourceIsActor);
         return true;
     }
     emit e("Error: Message editor dialog didn't give us anything we could work with");
@@ -752,12 +774,61 @@ QRectF UseCaseGraphicsScene::mouseSnappingRect(QPointF mousePoint)
     QPointF bottomRight(mousePoint.x()+(UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH/2), mousePoint.y()+(UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH/2));
     return QRectF(topLeft, bottomRight);
 }
-QPointF UseCaseGraphicsScene::calculatePointOnSlotOnClassLifelineThatWeUseAsAStartPoint_Aka_P1_ifWeWereALine_UsingTheIndexThatTheStatementWasInsertedInto(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto)
+#if 0
+QPointF UseCaseGraphicsScene::calculatePointOnSlotOnClassLifelineThatWeUseAsAStartPoint_Aka_P1_ifWeWereALine_UsingTheIndexThatTheStatementWasInsertedInto(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexStatementWasInsertedInto)
 {
-    DesignEqualsImplementationClassLifeLine *signalClassLifeline = m_UseCase->classLifeLines().at(indexInto_m_ClassLifeLines_OfSignal);
-    //signalStatementContainingBodyListOfStatements
 
+    DesignEqualsImplementationClassLifeLine *signalClassLifeline = m_UseCase->classLifeLines().at(indexInto_m_ClassLifeLines_OfSignal);
+
+#if 0
+    IDesignEqualsImplementationStatement *maybeSourceSlot = 0;
+    Q_FOREACH(IDesignEqualsImplementationStatement *currentSlotTesting, signalClassLifeline->mySlotsAppearingInClassLifeLine())
+    {
+        if(currentSlotTesting == sourceSlot)
+        {
+            maybeSourceSlot = currentSlotTesting;
+            break;
+        }
+    }
+#if 0
+    if(!maybeSourceSlot)
+    {
+        //qFatal("couldn't calculate point on slot on class lifeline because we couldn't find the indicated slot on that class lifeline");
+        return QPointF(0,0);
+    }
+#endif
+    Q_ASSERT(maybeSourceSlot != 0);
+#endif
+
+
+
+    DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *maybeClassLifeline = 0;
+    Q_FOREACH(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *currentClassLifelineGraphicsItem, m_ClassLifelineGraphicsItemsInUseCaseGraphicsScene)
+    {
+        if(currentClassLifelineGraphicsItem->classLifeLine() == signalClassLifeline)
+        {
+            maybeClassLifeline = currentClassLifelineGraphicsItem;
+            break;
+        }
+    }
+    Q_ASSERT(maybeClassLifeline != 0);
+
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *maybeSlotGraphicsItem = 0;
+    Q_FOREACH(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *currentSlotGraphicsItem, maybeClassLifeline->m_SlotGraphicsItemsInThisClassLifeLine)
+    {
+        if(currentSlotGraphicsItem->underlyingSlot() == sourceSlot)
+        {
+            maybeSlotGraphicsItem = currentSlotGraphicsItem;
+            break;
+        }
+    }
+    Q_ASSERT(maybeSlotGraphicsItem != 0);
+
+    return maybeSlotGraphicsItem->calculatePointForStatementsP1AtStatementIndex(indexStatementWasInsertedInto);
+
+    //signalStatementContainingBodyListOfStatements
 }
+#endif
 #if 0
 DesignEqualsImplementationClassLifeLineUnitOfExecution* UseCaseGraphicsScene::targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt(DesignEqualsImplementationClassLifeLine *classLifeline)
 {
@@ -787,14 +858,18 @@ void UseCaseGraphicsScene::handleClassLifeLineAdded(DesignEqualsImplementationCl
 
     designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene->setPos(newClassLifeLine->position()); //TODOreq: listen for moves
 
+    m_ClassLifelineGraphicsItemsInUseCaseGraphicsScene.append(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene);
+
     addItem(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene);
 }
-void UseCaseGraphicsScene::handleSignalEmitEventAdded(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto)
+void UseCaseGraphicsScene::handleSignalEmitEventAdded(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexStatementWasInsertedInto)
 {
-    //TODOreq
-    DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *signalGraphicsItem = new DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene();
+    //TODOreq: anything?
+    /*
+     DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *signalGraphicsItem = new DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene();
     addItem(signalGraphicsItem);
-    signalGraphicsItem->setPos(calculatePointOnSlotOnClassLifelineThatWeUseAsAStartPoint_Aka_P1_ifWeWereALine_UsingTheIndexThatTheStatementWasInsertedInto(indexInto_m_ClassLifeLines_OfSignal, sourceSlot, indexToInsertStatementInto));
+    signalGraphicsItem->setPos(calculatePointOnSlotOnClassLifelineThatWeUseAsAStartPoint_Aka_P1_ifWeWereALine_UsingTheIndexThatTheStatementWasInsertedInto(indexInto_m_ClassLifeLines_OfSignal, sourceSlot, indexStatementWasInsertedInto));
+    */
 }
 void UseCaseGraphicsScene::handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto)
 {

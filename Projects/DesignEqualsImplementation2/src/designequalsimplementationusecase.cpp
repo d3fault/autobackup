@@ -180,7 +180,8 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
         if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
         {
             sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertStatementInto, new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
-            emit signalEmitEventAdded(sourceOrderedListOfStatements_OrZeroIfSourceIsActor, signalUseCaseEvent, indexToInsertStatementInto);
+            int indexInto_m_ClassLifeLines_OfSignal = m_ClassLifeLines.indexOf(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal);
+            emit signalEmitEventAdded(indexInto_m_ClassLifeLines_OfSignal, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, signalUseCaseEvent, indexToInsertStatementInto);
         }
         //OLD
         //SlotWithCurrentContext->OrderedListOfStatements.append(new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
@@ -234,7 +235,8 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
 
                 /*DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = */insertAlreadyFilledOutSlotIntoUseCase(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot); //TODOreq: the slot will already exist, we are simply finally giving it a name (and possibly a parent class name)
 
-                emit signalEmitEventAdded(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, indexToInsertStatementInto);
+                int indexInto_m_ClassLifeLines_OfSignal = m_ClassLifeLines.indexOf(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal);
+                emit signalEmitEventAdded(indexInto_m_ClassLifeLines_OfSignal, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, indexToInsertStatementInto);
                 //emit signalSlotEventAdded(signalSlotCombinedUseCaseEvent.take());
                 emit slotAddedToExistingSignalSlotConnectionList(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, 0 /*TODOreq*/);
                 signalSlotCombinedUseCaseEvent.take();
@@ -455,9 +457,9 @@ void DesignEqualsImplementationUseCase::insertSignalSlotActivationEvent(int inde
     insertEventPrivate(UseCaseSignalSlotEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), 0, signalEmissionContextVariables, indexInto_m_ClassLifeLines_OfSignal, indexInto_m_ClassLifeLines_OfSlot);
 }
 //Signals with no listeners in this use case
-void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables)
+void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, DesignEqualsImplementationClassLifeLine *classLifelineOfSignal)
 {
-    insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, 0, designEqualsImplementationClassSignal, 0, signalEmissionContextVariables);
+    insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, 0, designEqualsImplementationClassSignal, 0, signalEmissionContextVariables, classLifelineOfSignal);
 }
 void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPointOnRootClassLifeline)
 {
