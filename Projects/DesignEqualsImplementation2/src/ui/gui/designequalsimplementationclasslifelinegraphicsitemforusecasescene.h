@@ -8,6 +8,7 @@
 
 class QGraphicsSceneContextMenuEvent;
 
+class UseCaseGraphicsScene;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationClassSlot;
@@ -18,9 +19,7 @@ class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene : publi
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, QObject *qobjectParent = 0, QGraphicsItem *graphicsItemParent = 0);
-    explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, const QRectF &rect, QObject *qobjectParent = 0, QGraphicsItem *graphicsItemParent = 0);
-    explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, qreal x, qreal y, qreal w, qreal h, QObject *qobjectParent = 0, QGraphicsItem *graphicsItemParent = 0);
+    explicit DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *classLifeLine, QObject *qobjectParent = 0, QGraphicsItem *graphicsItemParent = 0);
 
     void repositionSlotsBecauseOneSlotsChanged();
 
@@ -28,6 +27,9 @@ public:
     //virtual QRectF boundingRect() const;
     //virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     virtual int type() const;
+    UseCaseGraphicsScene *parentUseCaseGraphicsScene() const;
+
+    void maybeMoveLeftOrRightBecauseNewSlotInvokeStatementWasConnected();
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
@@ -36,6 +38,8 @@ private:
     DesignEqualsImplementationClassLifeLine *m_DesignEqualsImplementationClassLifeLine;
     QRectF m_BoundingRect;
     QPen m_ClassBorderPen;
+
+    UseCaseGraphicsScene *m_ParentUseCaseGraphicsScene;
 
     void privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine);
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);

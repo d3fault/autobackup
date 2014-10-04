@@ -10,7 +10,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 
 #include "designequalsimplementationguicommon.h"
-#include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
+#include "designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h"
 #include "classinstancechooserdialog.h"
 #include "classeditordialog.h"
 #include "../../designequalsimplementationclass.h"
@@ -22,21 +22,10 @@
 //TODOreq: if a slot invoked on another thread (to the right) invokes us (via signal or whatever) by drawing an arrow back to that same unit of execution, a new unit of execution is auto-created right then and there for it
 //TODOmb: right-click -> new unit of execution (would be nameless, just like the very first one added)
 //TODOmb: as soon as a slot is named, the next "dummy fake temp slot" should be created. all snap points (destination snap points) for the just-named slot should be redirected to the newly created "dummy fake temp slot"... but there should still be a visual cue of this redirecting in case that "dummy fake temp slot" is off the screen (perhaps the one they are aiming at has tons of statements on it, making the "dummy fake temp slot" be down below the fold. this is more or less already being done (when they release the mouse button, the new slot is created)... but the snap point re-routing logic when the mouse is still being held down is not being done
-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *classLifeLine, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
     : QObject(qobjectParent)
     , QGraphicsRectItem(graphicsItemParent)
-{
-    privateConstructor(classLifeLine);
-}
-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, const QRectF &rect, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
-    : QObject(qobjectParent)
-    , QGraphicsRectItem(rect, graphicsItemParent)
-{
-    privateConstructor(classLifeLine);
-}
-DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLine *classLifeLine, qreal x, qreal y, qreal w, qreal h, QObject *qobjectParent, QGraphicsItem *graphicsItemParent)
-    : QObject(qobjectParent)
-    , QGraphicsRectItem(x, y, w, h, graphicsItemParent)
+    , m_ParentUseCaseGraphicsScene(parentUseCaseGraphicsScene)
 {
     privateConstructor(classLifeLine);
 }
@@ -75,6 +64,23 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::context
         //TODOreq
     }
 }
+UseCaseGraphicsScene *DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::parentUseCaseGraphicsScene() const
+{
+    return m_ParentUseCaseGraphicsScene;
+}
+void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::maybeMoveLeftOrRightBecauseNewSlotInvokeStatementWasConnected()
+{
+    //TODOreq: find max slot width and then set our pos based on it
+    qreal width = 10; //TODoreq: better default? probably won't be used anyways?
+    Q_FOREACH(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *currentSlotGraphicsItem, m_SlotGraphicsItemsInThisClassLifeLine)
+    {
+        //TODOreq: we are only interested in slot invokes from the class lifeline directly to the left of this class lifeline (right?), wtf?
+        //TODOreq: class lifelines in between the slot invoker and slot invokee are accounted for when calculating the "max width" thingo
+        //TODOreq: we don't necessarily have ANY slot invocations from the class lifeline directly to the left of this class lifeline, but we still need to calculate a good width
+        //TODOreq: width = qMax(width, currentSlotGraphicsItem->invokingStatementGraphicsItem()->boundingRect().width());
+    }
+
+}
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine)
 {
     m_DesignEqualsImplementationClassLifeLine = classLifeLine;
@@ -82,7 +88,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     //setFlag(QGraphicsItem::ItemIsSelectable, true);
     m_ClassBorderPen.setWidth(2);
 
-    QString lifeLineTitleHtml("<b>"); //TODOreq: only the ClassName/Type should be bold
+    QString lifeLineTitleHtml("<b>");
 #if 0 //TODOinstancing
     if(classLifeLine->myInstanceInClassThatHasMe()->m_InstanceType.first)
     {

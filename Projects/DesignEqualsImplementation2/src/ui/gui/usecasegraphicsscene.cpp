@@ -25,6 +25,7 @@
 #include "../../designequalsimplementationactor.h"
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationsignalemissionstatement.h"
+#include "../../designequalsimplementationslotinvocationstatement.h"
 
 #define UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH 25
 
@@ -36,6 +37,7 @@
 //TODOoptional: it makes sense that the "first slot" is not existing yet (but there's still the problems of how to add statements to it!).... what I'm getting at is that there should always be a "+1" slot/unit-of-execution ready for accepting arrow connections. creating it on mouse RELEASE is kinda ugly/hacky. when you have no stuf, all you see is that +1. After you've added stuff, at the bottom of every lifeline should be another pseudo-empty "+1" slot. My JIT create/destroy stuff would mostly stay the same (it must exist in order to add statements to it), BUT basically I'm just saying the GUI should lie about how many slots there are. When there are zero, it should show 1 (but still problem of connecting statements to "nameless" (not yet "invoked") slot, guh. I've flip flopped on this issue like a million times over the last few days, but I finally think the cleanest solution is to have a "ghost +1" to connect to. My existing "connect to slot and then JIT create one" is an ugly user-experience (kinda ;-P). Actually since typing that "kinda" I'm leaning back towards the other way ROFL. Because the user does not care about slots or units of execution!!! Showing a "ghost +1" might just confuse them ("where do I connect the line?")
 //TODOreq: if the first item placed is actor, we should scroll/reposition graphics view so that actor is in top-left corner. we should maybe do the same for the first class lifeline, but maybe leaving some space to the left for actor/other?
 //TODOreq: when deserializing: applies to both graphics scenes: the first item placed goes to 0,0 -- regardless of what coords I specify (this is just how the graphics scene works). So what that means is that every item coords after the first item must be translated to become relative to the first item's coords.
+//TODOoptional: [de-]serailized "bookmarked" items (each use case has a list? or one list project-wide?). double clicking simply centers that object in the graphics view. there should additionally be an "all objects" parrallel list that is double click-able as well, but maintaining bookmarked ones allows the user to prioritize arbitrarily
 QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, QGraphicsItem *parent)
 {
     switch(theStatement->StatementType)
@@ -47,7 +49,11 @@ QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementT
     }
         break;
     case IDesignEqualsImplementationStatement::SlotInvokeStatementType:
-        return new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parent);
+    {
+        DesignEqualsImplementationSlotInvocationStatement *slotInvokeStatement = static_cast<DesignEqualsImplementationSlotInvocationStatement*>(theStatement);
+        DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *sourceSlotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(parent);
+        return new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(sourceSlotGraphicsItem, slotInvokeStatement, parent);
+    }
         break;
     case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
         return new DesignEqualsImplementationPrivateMethodInvokeStatementGraphicsItemForUseCaseScene(parent);
@@ -76,6 +82,15 @@ DesignEqualsImplementationMouseModeEnum UseCaseGraphicsScene::mouseMode() const
 }
 UseCaseGraphicsScene::~UseCaseGraphicsScene()
 { }
+DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *UseCaseGraphicsScene::classLifelineGraphicsItemByClassLifeline_OrZeroIfNotFound(DesignEqualsImplementationClassLifeLine *classLifelineToRetrieveGraphicsItemFor)
+{
+    Q_FOREACH(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *currentClassLifelineGraphicsItem, m_ClassLifelineGraphicsItemsInUseCaseGraphicsScene)
+    {
+        if(currentClassLifelineGraphicsItem->classLifeLine() == classLifelineToRetrieveGraphicsItemFor)
+            return currentClassLifelineGraphicsItem;
+    }
+    return 0;
+}
 void UseCaseGraphicsScene::handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *event)
 {
     QByteArray umlItemData = event->mimeData()->data(DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_USE_CASE_OBJECT);
@@ -853,7 +868,7 @@ void UseCaseGraphicsScene::handleActorAdded(DesignEqualsImplementationActor *act
 }
 void UseCaseGraphicsScene::handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine)
 {
-    DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene = new DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(newClassLifeLine); //TODOreq: right-click -> change thread (main/gui thread (default), new thread X, existing thread Y). they should somehow visually indicate their thread. i was thinking a shared "filled-background" (color), but even if just the colors of the lifelines are the same that would be sufficient
+    DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene = new DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene(this, newClassLifeLine); //TODOreq: right-click -> change thread (main/gui thread (default), new thread X, existing thread Y). they should somehow visually indicate their thread. i was thinking a shared "filled-background" (color), but even if just the colors of the lifelines are the same that would be sufficient
     connect(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene, SIGNAL(slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*)), this, SLOT(handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*)));
 
     designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene->setPos(newClassLifeLine->position()); //TODOreq: listen for moves

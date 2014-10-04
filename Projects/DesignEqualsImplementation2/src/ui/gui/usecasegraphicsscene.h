@@ -18,13 +18,15 @@ class UseCaseGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
     Q_OBJECT
 public:
-    static QGraphicsItem *createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, QGraphicsItem *parent = 0);
+    static QGraphicsItem *createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, QGraphicsItem *parent);
 
     UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase);
     UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase, const QRectF &sceneRect);
     UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase, qreal x, qreal y, qreal width, qreal height);
     DesignEqualsImplementationMouseModeEnum mouseMode() const;
     virtual ~UseCaseGraphicsScene();
+
+    DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene* classLifelineGraphicsItemByClassLifeline_OrZeroIfNotFound(DesignEqualsImplementationClassLifeLine *classLifelineToRetrieveGraphicsItemFor);
 protected:
     virtual void handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *event);
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);

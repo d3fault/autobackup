@@ -11,6 +11,7 @@
 
 #define DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE 25
 
+//TODOoptional: the statement graphics items could be rects and the statement 'text' could go inside the rects. does actually save [vertical] real-estate, since we now only are a little bit taller than the text
 DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
     , m_ParentClassLifeline(parentClassLifeLine)
