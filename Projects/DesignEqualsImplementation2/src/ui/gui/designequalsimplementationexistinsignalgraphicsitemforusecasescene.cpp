@@ -5,14 +5,18 @@
 #include <QGraphicsEllipseItem>
 
 #include "designequalsimplementationguicommon.h"
+#include "usecasegraphicsscene.h"
+#include "designequalsimplementationslotinvokegraphicsitemforusecasescene.h"
 #include "../../designequalsimplementationclasssignal.h"
+#include "../../designequalsimplementationusecase.h"
+#include "../../designequalsimplementationclasslifeline.h"
 
 #define DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS 2.5
 
 //TODOreq: snap to 'notch'. Ideally we could daisy chain infinite signals together, but the more common case and much more important is to allow a list of slots to be connected to the signal
 //TODOoptional: maybe all the lines share a width, such as the 'longest width (from longest signal name)'. There are some lines that go to the same class lifeline, and some that go to other class lifelines. The width measuring would be per-classlifeline ofc. Slightly OT: I do plan on doing auto-gui, which means I don't need to serialize positions of anything (maybe class diagram view can be placed manually, but I'm leaning against use case manual placing. Placing objects so they can be read is a very time consuming task and is more or less a waste of fucking time. auto-arranging is ez tbh
 //TODOoptional: when doing auto-arranging stuff, say if you rename a signal name and that drastically shortens the horizontal distance from one classlifeline to the next (assuming it has a slot going to it ofc), then we should BEFORE find the center-most item on the screen, do the rename + auto-arranging, and then AFTER center the graphics view back on that center-most item. The benefit of this is that what they were working on should still be right in front of them, and not potentially (worst case) lots of scroll screens away
-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSignal *theSignal, QGraphicsItem *parent)
+DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *slotThatSignalWasEmittedFrom, int indexStatementInsertedInto, DesignEqualsImplementationClassSignal *theSignal, QGraphicsItem *parent)
     : QGraphicsLineItem(parent)
 {
     QPen myPen = pen();
@@ -35,13 +39,22 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
     signalNameTextGraphicsItem->setPos(startX, -myChildrenBoundingRect.height());
 
     //move text to be 'above' the line
-    setLine(QLineF(QPointF(startX, 0), QPointF(myChildrenBoundingRect.width()+DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_LINE_WIDTH_MARGIN_AROUND_SIGNAL_NAME_TEXT, 0)));
+    setLine(QLineF(QPointF(startX, 0), QPointF(myChildrenBoundingRect.width()+startX+DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_LINE_WIDTH_MARGIN_AROUND_SIGNAL_NAME_TEXT, 0)));
 
     QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
     QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, this);
     slotCircleNotchGraphicsItem->setPos(this->line().p2().x(), 0);
     slotCircleNotchGraphicsItem->setPen(myPen);
     slotCircleNotchGraphicsItem->setBrush(Qt::blue);
+
+
+    //TODOreq: draw slots attached to this signal emit statement. as children of the signal? other parents of slots invocation statements would be actor and slot and private method (or anything with list of statements), so idfk if I should make it parented to this signal or what
+    Q_FOREACH(SlotConnectedToSignalTypedef currentSlotConnectedToSignal, sourceClassLifeline->parentUseCase()->slotsConnectedToSignal(sourceClassLifeline, slotThatSignalWasEmittedFrom, indexStatementInsertedInto))
+    {
+        DesignEqualsImplementationClassSlot *aSlotConnectedToThisSignal = currentSlotConnectedToSignal.second;
+        DesignEqualsImplementationClassLifeLine *classLifelineOfSlot = parentUseCaseGraphicsScene->useCase()->classLifeLines().at(currentSlotConnectedToSignal.first);
+        DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, this);
+    }
 }
 int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::type() const
 {

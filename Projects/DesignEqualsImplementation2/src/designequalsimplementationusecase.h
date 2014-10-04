@@ -51,6 +51,8 @@ public:
 
     inline int serializationClassLifelineIdForClassLifeline(DesignEqualsImplementationClassLifeLine *classLifeline) { return m_ClassLifeLines.indexOf(classLifeline); }
     inline DesignEqualsImplementationClassLifeLine *classLifelineInstantiatedFromSerializedClassLifelineId(int serializedClassLifelineId) { return m_ClassLifeLines.at(serializedClassLifelineId); }
+
+    QList<SlotConnectedToSignalTypedef> slotsConnectedToSignal(DesignEqualsImplementationClassLifeLine *sourceSignalClassLifeline, DesignEqualsImplementationClassSlot *sourceSlotThatSignalWasEmittedFrom, int indexOfTheEmitStatementInSourceSlotsListOfStatements);
 public:
     friend class DesignEqualsImplementationProjectGenerator;
     struct SignalSlotConnectionActivationTypeStruct

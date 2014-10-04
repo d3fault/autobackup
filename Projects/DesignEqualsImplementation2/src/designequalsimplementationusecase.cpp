@@ -72,6 +72,21 @@ DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
         delete ExitSignal;*/
 #endif
 }
+QList<SlotConnectedToSignalTypedef> DesignEqualsImplementationUseCase::slotsConnectedToSignal(DesignEqualsImplementationClassLifeLine *sourceSignalClassLifeline, DesignEqualsImplementationClassSlot *sourceSlotThatSignalWasEmittedFrom, int indexOfTheEmitStatementInSourceSlotsListOfStatements)
+{
+    Q_FOREACH(SignalSlotConnectionActivationTypeStruct currentSignalSlotActivation, m_SignalSlotConnectionActivationsInThisUseCase)
+    {
+        if  (
+                currentSignalSlotActivation.SignalStatement_Key0_SourceClassLifeLine == sourceSignalClassLifeline &&
+                currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself == sourceSlotThatSignalWasEmittedFrom &&
+                currentSignalSlotActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements == indexOfTheEmitStatementInSourceSlotsListOfStatements
+            )
+        {
+            return currentSignalSlotActivation.SlotsAttachedToTheSignal;
+        }
+    }
+    return QList<SlotConnectedToSignalTypedef>();
+}
 void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplementationProject *project)
 {
     //SlotWithCurrentContext = 0;

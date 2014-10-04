@@ -3,15 +3,14 @@
 
 #include <QGraphicsLineItem>
 
-class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene;
-class DesignEqualsImplementationSlotInvocationStatement;
+class UseCaseGraphicsScene;
+class DesignEqualsImplementationClassSlot;
+class DesignEqualsImplementationClassLifeLine;
 
 class DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene : public QGraphicsLineItem
 {
 public:
-    DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *parentSourceSlotGraphicsItem, DesignEqualsImplementationSlotInvocationStatement *slotInvokeStatement, QGraphicsItem *parent = 0);
-private:
-    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *m_ParentSourceSlotGraphicsItem;
+    DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *classlifelineWhoseSlotIsToBeInvoked, DesignEqualsImplementationClassSlot *theSlotToBeInvoked, QGraphicsItem *parent = 0);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONSLOTINVOKEGRAPHICSITEMFORUSECASESCENE_H

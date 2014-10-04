@@ -38,21 +38,24 @@
 //TODOreq: if the first item placed is actor, we should scroll/reposition graphics view so that actor is in top-left corner. we should maybe do the same for the first class lifeline, but maybe leaving some space to the left for actor/other?
 //TODOreq: when deserializing: applies to both graphics scenes: the first item placed goes to 0,0 -- regardless of what coords I specify (this is just how the graphics scene works). So what that means is that every item coords after the first item must be translated to become relative to the first item's coords.
 //TODOoptional: [de-]serailized "bookmarked" items (each use case has a list? or one list project-wide?). double clicking simply centers that object in the graphics view. there should additionally be an "all objects" parrallel list that is double click-able as well, but maintaining bookmarked ones allows the user to prioritize arbitrarily
-QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, QGraphicsItem *parent)
+QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, int indexInsertedInto, QGraphicsItem *parent)
 {
     switch(theStatement->StatementType)
     {
     case IDesignEqualsImplementationStatement::SignalEmitStatementType:
     {
         DesignEqualsImplementationSignalEmissionStatement *signalEmitStatement = static_cast<DesignEqualsImplementationSignalEmissionStatement*>(theStatement);
-        return new DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(signalEmitStatement->signalToEmit(), parent);
+        DesignEqualsImplementationClassLifeLine *sourceClassLifeline = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(parent)->parentClassLifelineGraphicsItem()->classLifeLine();
+        DesignEqualsImplementationClassSlot *slotThatSignalWasEmittedFrom = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(parent)->underlyingSlot();
+        DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *sourceSlotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(parent);
+        return new DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(sourceSlotGraphicsItem->parentClassLifelineGraphicsItem()->parentUseCaseGraphicsScene(), sourceClassLifeline, slotThatSignalWasEmittedFrom, indexInsertedInto, signalEmitStatement->signalToEmit(), parent);
     }
         break;
     case IDesignEqualsImplementationStatement::SlotInvokeStatementType:
     {
         DesignEqualsImplementationSlotInvocationStatement *slotInvokeStatement = static_cast<DesignEqualsImplementationSlotInvocationStatement*>(theStatement);
         DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *sourceSlotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(parent);
-        return new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(sourceSlotGraphicsItem, slotInvokeStatement, parent);
+        return new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(sourceSlotGraphicsItem->parentClassLifelineGraphicsItem()->parentUseCaseGraphicsScene(), slotInvokeStatement->classLifelineWhoseSlotIsToBeInvoked(), slotInvokeStatement->slotToInvoke(), parent);
     }
         break;
     case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
@@ -327,6 +330,10 @@ void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         delete m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone;
         m_ItemThatDestinationSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
     }*/
+}
+DesignEqualsImplementationUseCase *UseCaseGraphicsScene::useCase() const
+{
+    return m_UseCase;
 }
 void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase *useCase)
 {

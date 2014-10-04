@@ -18,7 +18,7 @@ class UseCaseGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
     Q_OBJECT
 public:
-    static QGraphicsItem *createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, QGraphicsItem *parent);
+    static QGraphicsItem *createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, int indexInsertedInto, QGraphicsItem *parent);
 
     UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase);
     UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase, const QRectF &sceneRect);
@@ -27,6 +27,7 @@ public:
     virtual ~UseCaseGraphicsScene();
 
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene* classLifelineGraphicsItemByClassLifeline_OrZeroIfNotFound(DesignEqualsImplementationClassLifeLine *classLifelineToRetrieveGraphicsItemFor);
+    DesignEqualsImplementationUseCase *useCase() const;
 protected:
     virtual void handleAcceptedDropEvent(QGraphicsSceneDragDropEvent *event);
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);

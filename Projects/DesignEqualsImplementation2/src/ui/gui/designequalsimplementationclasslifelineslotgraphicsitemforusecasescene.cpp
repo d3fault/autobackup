@@ -145,7 +145,7 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstruct
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
-    QGraphicsItem *newVisualRepresentationOfStatement = UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(statementInserted, this);
+    QGraphicsItem *newVisualRepresentationOfStatement = UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(statementInserted, indexInsertedInto, this);
     //newVisualRepresentationOfStatement->setPos(QPointF(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, 0));
     //newVisualRepresentationOfStatement->moveBy(50, 0);
     m_ExistingStatements.insert(indexInsertedInto, qMakePair(newVisualRepresentationOfStatement, statementInserted));

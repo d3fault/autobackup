@@ -4,12 +4,15 @@
 #include <QGraphicsLineItem>
 
 
+class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationClassSignal;
+class DesignEqualsImplementationClassLifeLine;
+class UseCaseGraphicsScene;
 
 class DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene : public QGraphicsLineItem
 {
 public:
-    explicit DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(DesignEqualsImplementationClassSignal *theSignal, QGraphicsItem *parent = 0);
+    explicit DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *slotThatSignalWasEmittedFrom, int indexStatementInsertedInto, DesignEqualsImplementationClassSignal *theSignal, QGraphicsItem *parent = 0);
     virtual ~DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene() { }
     virtual int type() const;
 private:
