@@ -232,10 +232,28 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             //Find closest
             QGraphicsItem *itemWithEdgeNearestToPoint = findNearestPointOnItemBoundingRectFromPoint(itemsNearMouse, eventScenePos);
 
+#if 0 //TODOoptional: fix inheritence stuffz, simplifies what is immediately below, but does same thing
             ISnappableSourceGraphicsItem *snappableSourceGraphicsItem = (ISnappableSourceGraphicsItem*) /*hack*/ /*static_cast<ISnappableSourceGraphicsItem*>(*/itemWithEdgeNearestToPoint/*)*/; //for now we rely on findNearestPointOnItemBoundingRectFromPoint only returning graphics items that inherit from ISnappableGraphicsItem. Every entry in m_ListOfItemTypesIWant_SnapSource must inherit from ISnappableGraphicsItem. We could do stronger type checking (making sure it's in m_ListOfItemTypesIWant_SnapSource, but that would be the second time I checked it so nah..
+#endif
+            ISnappableSourceGraphicsItem *snappableSourceGraphicsItem;
+            switch(itemWithEdgeNearestToPoint->type())
+            {
+                case DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID:
+                    snappableSourceGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
+                    break;
+                case DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID:
+                    snappableSourceGraphicsItem = static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
+                    break;
+            default:
+                snappableSourceGraphicsItem = 0;
+                break;
+            }
+
             if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
                 delete m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
-            m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = snappableSourceGraphicsItem->makeSnappingHelperForMousePoint(eventScenePos);
+
+            if(snappableSourceGraphicsItem)
+                m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = snappableSourceGraphicsItem->makeSnappingHelperForMousePoint(eventScenePos);
         }
         else if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
         {

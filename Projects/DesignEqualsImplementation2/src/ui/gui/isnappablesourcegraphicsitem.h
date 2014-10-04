@@ -9,6 +9,7 @@ class ISnappableSourceGraphicsItem
 {
 public:
     virtual IRepresentSnapGraphicsItemAndProxyGraphicsItem *makeSnappingHelperForMousePoint(QPointF eventScenePos)=0;
+    virtual ~ISnappableSourceGraphicsItem() { }
 };
 
 #endif // ISNAPPABLESOURCEGRAPHICSITEM_H

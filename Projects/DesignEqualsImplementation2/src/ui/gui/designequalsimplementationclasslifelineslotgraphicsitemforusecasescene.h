@@ -19,6 +19,7 @@ public:
     explicit DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, QGraphicsItem *parent = 0);
     explicit DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, const QRectF &rect, QGraphicsItem *parent = 0);
     explicit DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
+    virtual ~DesignEqualsImplementationSlotGraphicsItemForUseCaseScene() { }
 
     int getInsertIndexForMouseScenePos(QPointF mouseEventScenePos);
     IRepresentSnapGraphicsItemAndProxyGraphicsItem *makeSnappingHelperForSlotEntryPoint(QPointF mouseScenePosForDeterminingRightOrLeftOnly);
