@@ -2724,11 +2724,11 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1412453178
+Projects/DesignEqualsImplementation2/src/:1412457010
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1412453133
+Projects/DesignEqualsImplementation2/src/ui/gui/:1412456993
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1409876592
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1408651682
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2747,8 +2747,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassl
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.h:1412447755
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.cpp:1412451125
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h:1412438170
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.cpp:1412452778
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.h:1412451465
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.cpp:1412456993
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.h:1412454423
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.cpp:1410394363
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.h:1410394345
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationguicommon.h:1412452755

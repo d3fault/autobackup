@@ -3,6 +3,7 @@
 #include <QPen>
 #include <QGraphicsTextItem>
 #include <QGraphicsEllipseItem>
+#include <QGraphicsRectItem>
 
 #include "designequalsimplementationguicommon.h"
 #include "usecasegraphicsscene.h"
@@ -11,17 +12,24 @@
 #include "../../designequalsimplementationusecase.h"
 #include "../../designequalsimplementationclasslifeline.h"
 
+#define DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR Qt::blue
+
 #define DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS 2.5
+#define DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH 7.5
+
+//is used as spacing between notches, and also above top notch and below bottom notch
+#define DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER 5
 
 //TODOreq: snap to 'notch'. Ideally we could daisy chain infinite signals together, but the more common case and much more important is to allow a list of slots to be connected to the signal
 //TODOoptional: maybe all the lines share a width, such as the 'longest width (from longest signal name)'. There are some lines that go to the same class lifeline, and some that go to other class lifelines. The width measuring would be per-classlifeline ofc. Slightly OT: I do plan on doing auto-gui, which means I don't need to serialize positions of anything (maybe class diagram view can be placed manually, but I'm leaning against use case manual placing. Placing objects so they can be read is a very time consuming task and is more or less a waste of fucking time. auto-arranging is ez tbh
 //TODOoptional: when doing auto-arranging stuff, say if you rename a signal name and that drastically shortens the horizontal distance from one classlifeline to the next (assuming it has a slot going to it ofc), then we should BEFORE find the center-most item on the screen, do the rename + auto-arranging, and then AFTER center the graphics view back on that center-most item. The benefit of this is that what they were working on should still be right in front of them, and not potentially (worst case) lots of scroll screens away
 DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *slotThatSignalWasEmittedFrom, int indexStatementInsertedInto, DesignEqualsImplementationClassSignal *theSignal, QGraphicsItem *parent)
     : QGraphicsLineItem(parent)
+    , m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal(0)
 {
     QPen myPen = pen();
     myPen.setWidth(3);
-    myPen.setColor(Qt::blue);
+    myPen.setColor(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
     setPen(myPen);
 
     QGraphicsTextItem *signalNameTextGraphicsItem = new QGraphicsTextItem(theSignal->Name, this); //TODOoptional: visualize args of signal too? maybe not to keep it brief, since i'm setting the width of the arrow by it
@@ -41,19 +49,68 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
     //move text to be 'above' the line
     setLine(QLineF(QPointF(startX, 0), QPointF(myChildrenBoundingRect.width()+startX+DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_LINE_WIDTH_MARGIN_AROUND_SIGNAL_NAME_TEXT, 0)));
 
-    QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
-    QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, this);
-    slotCircleNotchGraphicsItem->setPos(this->line().p2().x(), 0);
-    slotCircleNotchGraphicsItem->setPen(myPen);
-    slotCircleNotchGraphicsItem->setBrush(Qt::blue);
-
-
     //TODOreq: draw slots attached to this signal emit statement. as children of the signal? other parents of slots invocation statements would be actor and slot and private method (or anything with list of statements), so idfk if I should make it parented to this signal or what
-    Q_FOREACH(SlotConnectedToSignalTypedef currentSlotConnectedToSignal, sourceClassLifeline->parentUseCase()->slotsConnectedToSignal(sourceClassLifeline, slotThatSignalWasEmittedFrom, indexStatementInsertedInto))
+    QList<SlotConnectedToSignalTypedef> slotsConnectedToSignal = sourceClassLifeline->parentUseCase()->slotsConnectedToSignal(sourceClassLifeline, slotThatSignalWasEmittedFrom, indexStatementInsertedInto);
+    if(slotsConnectedToSignal.isEmpty())
     {
-        DesignEqualsImplementationClassSlot *aSlotConnectedToThisSignal = currentSlotConnectedToSignal.second;
-        DesignEqualsImplementationClassLifeLine *classLifelineOfSlot = parentUseCaseGraphicsScene->useCase()->classLifeLines().at(currentSlotConnectedToSignal.first);
-        DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, this);
+        //0 slots connected
+        QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
+        QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, this);
+        slotCircleNotchGraphicsItem->setPos(line().p2().x(), 0);
+        slotCircleNotchGraphicsItem->setPen(myPen);
+        slotCircleNotchGraphicsItem->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
+    }
+    else
+    {
+        // > 0 slots connected
+        int numSignalRhsNotches = ((slotsConnectedToSignal.size()*2)+1); //just like statements, the times two plus one gives us space for insertion before/after/in-between
+
+        qreal notchMultiplexerRectHeight = (numSignalRhsNotches*DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2) + (numSignalRhsNotches*(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER+2));
+        qreal halfHeight = notchMultiplexerRectHeight/2;
+        QRectF notchMultiplexerRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH, -halfHeight, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH*2.0, notchMultiplexerRectHeight);
+        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal = new QGraphicsRectItem(notchMultiplexerRect, this);
+        //m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPos(line().p2().x(), 0);
+        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPos(line().p2().x()+(notchMultiplexerRect.width()/2), halfHeight);
+        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPen(myPen);
+        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
+
+        qreal currentNotchVerticalPositionRelativeToNotchMultiplexerRect = notchMultiplexerRect.top() + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS;
+
+        qreal notchX = m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->rect().right()+(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
+
+        bool even = true;
+        int currentIndexIntoSlotsConnectedToSignal = 0;
+        for(int i = 0; i < numSignalRhsNotches; ++i)
+        {
+            QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
+            QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal);
+            slotCircleNotchGraphicsItem->setPos(notchX, currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
+            slotCircleNotchGraphicsItem->setPen(myPen);
+            slotCircleNotchGraphicsItem->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
+
+            if(even)
+            {
+                //even means we show a notch that can have a slot attached. since we draw the notch during both even and odd, we do nothing here (except toggle the bool)
+                even = false;
+            }
+            else
+            {
+                //odd means we show a notch with a slot already attached
+                even = true;
+
+                SlotConnectedToSignalTypedef currentSlotConnectedToSignal = slotsConnectedToSignal.at(currentIndexIntoSlotsConnectedToSignal);
+                DesignEqualsImplementationClassSlot *aSlotConnectedToThisSignal = currentSlotConnectedToSignal.second;
+                DesignEqualsImplementationClassLifeLine *classLifelineOfSlot = parentUseCaseGraphicsScene->useCase()->classLifeLines().at(currentSlotConnectedToSignal.first);
+                DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, slotCircleNotchGraphicsItem);
+
+                //DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, this);
+                //aSlotConnectedToThisSignalGraphicsItem->setPos(notchX, currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
+
+                ++currentIndexIntoSlotsConnectedToSignal;
+            }
+
+            currentNotchVerticalPositionRelativeToNotchMultiplexerRect += (DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS);
+        }
     }
 }
 int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::type() const

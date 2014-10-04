@@ -3,6 +3,7 @@
 
 #include <QGraphicsLineItem>
 
+class QGraphicsRectItem;
 
 class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationClassSignal;
@@ -17,6 +18,7 @@ public:
     virtual int type() const;
 private:
     DesignEqualsImplementationClassSignal *m_TheSignal;
+    QGraphicsRectItem *m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal;
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONEXISTINSIGNALGRAPHICSITEMFORUSECASESCENE_H
