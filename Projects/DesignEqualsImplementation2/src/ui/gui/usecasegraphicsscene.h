@@ -50,6 +50,7 @@ private:
     qreal calculateDistanceFromPointToNearestPointOnBoundingRect(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item);
     QPointF calculateNearestPointOnBoundingRectToArbitraryPoint(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item);
     static QRectF mouseSnappingRect(QPointF mousePoint);
+    QPointF calculatePointOnSlotOnClassLifelineThatWeUseAsAStartPoint_Aka_P1_ifWeWereALine_UsingTheIndexThatTheStatementWasInsertedInto(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto);
 
     //static DesignEqualsImplementationClassLifeLineUnitOfExecution* targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt(DesignEqualsImplementationClassLifeLine *classLifeline);
     virtual bool wantDragDropEvent(QGraphicsSceneDragDropEvent *event);
@@ -67,7 +68,9 @@ signals:
 private slots:
     void handleActorAdded(DesignEqualsImplementationActor *actor);
     void handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);
-    void handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventTypeEnum, QObject* event, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionOrSlotInvocationContextVariables);
+    void handleSignalEmitEventAdded(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto);
+    void handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto);
+    //void handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventTypeEnum, QObject* event, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionOrSlotInvocationContextVariables);
     void handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem);
 public slots:
     void setMouseMode(DesignEqualsImplementationMouseModeEnum newMouseMode);

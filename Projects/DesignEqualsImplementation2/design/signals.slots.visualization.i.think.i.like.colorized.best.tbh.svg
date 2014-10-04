@@ -114,9 +114,9 @@
      id="path3801"
      style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
   <path
-     d="m 5675.8305,2646.229 -226.2741,-185.868 -737.4115,0"
+     d="m 5675.8305,2646.229 -242.6414,-185.868 -790.7512,0"
      id="path3803"
-     style="fill:none;stroke:#000000;stroke-width:77;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+     style="fill:none;stroke:#000000;stroke-width:79.73623657;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
   <text
      x="4922.0059"
      y="2403.1982"
@@ -198,10 +198,6 @@
      y="2577.877"
      id="rect3851"
      style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
-  <path
-     d="m 4710.0297,2456.7065 a 78.4803,78.4803 0 1 1 -156.9606,0 78.4803,78.4803 0 1 1 156.9606,0 z"
-     id="path3853"
-     style="fill:none;stroke:#000000;stroke-width:23.18112373;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
   <rect
      width="702.4715"
      height="1023.0313"
@@ -713,7 +709,7 @@
          x="6346.5312"
          y="10103.241"
          id="tspan3583"
-         style="font-size:64px">barSlot0</tspan></tspan></text>
+         style="font-size:64px">barSlot1</tspan></tspan></text>
   <path
      d="m 5905.4128,10290.169 a 60.609156,60.609156 0 1 1 -121.2183,0 60.609156,60.609156 0 1 1 121.2183,0 z"
      id="path4125"
@@ -960,7 +956,7 @@
          x="13005.457"
          y="10103.241"
          id="tspan3625"
-         style="font-size:64px">barSlot0</tspan></tspan></text>
+         style="font-size:64px">barSlot1</tspan></tspan></text>
   <path
      d="m 12564.338,10290.169 a 60.609156,60.609156 0 1 1 -121.218,0 60.609156,60.609156 0 1 1 121.218,0 z"
      id="path4235"

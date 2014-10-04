@@ -19,6 +19,7 @@ class DesignEqualsImplementationClassSlot;
 //class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 
 typedef QPair<DesignEqualsImplementationClassLifeLine* /*rootClassLifeline*/, DesignEqualsImplementationClassSlot*/*the slot entry point on the root class lifeline*/> UseCaseEntryPointTypedef;
+typedef QPair<int /*SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines*/, DesignEqualsImplementationClassSlot * /*SlotInvokedThroughConnection_Key1_DestinationSlotItself*/> SlotConnectedToSignalTypedef;
 
 class DesignEqualsImplementationUseCase : public QObject
 {
@@ -29,9 +30,10 @@ public:
 
     enum UseCaseEventTypeEnum //TODOoptional: move to guicommon, since also used as dialog mode
     {
-        UseCaseSlotEventType,
-        UseCaseSignalEventType,
-        UseCaseSignalSlotEventType
+          UseCaseSlotEventType //new slot invoke statement
+        , UseCaseSignalEventType //new signal emit (with no listener(s)) statement
+        , UseCaseSignalSlotEventType //new signal emit (with immediate/first slot listener) statement
+        , UseCaseExistingSignalNewSlotEventType //existing signal (with or without listeners) emit slot added later
     };
 
     DesignEqualsImplementationProject *designEqualsImplementationProject() const;
@@ -59,8 +61,7 @@ public:
         int SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
 
         //Slots
-        int SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines;
-        DesignEqualsImplementationClassSlot *SlotInvokedThroughConnection_Key1_DestinationSlotItself;
+        QList<SlotConnectedToSignalTypedef> SlotsAttachedToTheSignal;
     };
 
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
@@ -92,8 +93,9 @@ signals:
     void classLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);
 
     void slotInvokeEventAdded(DesignEqualsImplementationClassSlot *slotUseCaseEvent);
-    void signalEmitEventAdded(DesignEqualsImplementationClassSignal *signalUseCaseEvent);
-    void signalSlotEventAdded(SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent);
+    void signalEmitEventAdded(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto);
+    //void signalSlotEventAdded(SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent);
+    void slotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto); //TODOreq: remove signalSlotEventAdded (split it into signalEmitEventAdded and slotAddedToExistingSignal)
 
     void eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
 

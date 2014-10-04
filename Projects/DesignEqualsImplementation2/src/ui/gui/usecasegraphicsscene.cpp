@@ -14,6 +14,7 @@
 #include "designequalsimplementationclasslifelinegraphicsitemforusecasescene.h"
 #include "signalslotconnectionactivationarrowforgraphicsscene.h"
 #include "designequalsimplementationclasslifelineunitofexecutiongraphicsitemforusecasescene.h"
+#include "designequalsimplementationexistinsignalgraphicsitemforusecasescene.h"
 #include "signalslotmessagedialog.h"
 #include "snappingindicationvisualrepresentation.h"
 #include "classinstancechooserdialog.h"
@@ -325,7 +326,9 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     //responses
     connect(useCase, SIGNAL(actorAdded(DesignEqualsImplementationActor*)), this, SLOT(handleActorAdded(DesignEqualsImplementationActor*)));
     connect(useCase, SIGNAL(classLifeLineAdded(DesignEqualsImplementationClassLifeLine*)), this, SLOT(handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine*)));
-    connect(useCase, SIGNAL(eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)), this, SLOT(handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)));
+    connect(useCase, SIGNAL(signalEmitEventAdded(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,int)), this, SLOT(handleSignalEmitEventAdded(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,int)));
+    connect(useCase, SIGNAL(slotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,int)), this, SLOT(handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,int)));
+    //connect(useCase, SIGNAL(eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)), this, SLOT(handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)));
 
     if(m_UseCase->m_UseCaseActor_OrZeroIfNoneAddedYet)
     {
@@ -749,6 +752,12 @@ QRectF UseCaseGraphicsScene::mouseSnappingRect(QPointF mousePoint)
     QPointF bottomRight(mousePoint.x()+(UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH/2), mousePoint.y()+(UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH/2));
     return QRectF(topLeft, bottomRight);
 }
+QPointF UseCaseGraphicsScene::calculatePointOnSlotOnClassLifelineThatWeUseAsAStartPoint_Aka_P1_ifWeWereALine_UsingTheIndexThatTheStatementWasInsertedInto(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto)
+{
+    DesignEqualsImplementationClassLifeLine *signalClassLifeline = m_UseCase->classLifeLines().at(indexInto_m_ClassLifeLines_OfSignal);
+    //signalStatementContainingBodyListOfStatements
+
+}
 #if 0
 DesignEqualsImplementationClassLifeLineUnitOfExecution* UseCaseGraphicsScene::targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt(DesignEqualsImplementationClassLifeLine *classLifeline)
 {
@@ -780,10 +789,23 @@ void UseCaseGraphicsScene::handleClassLifeLineAdded(DesignEqualsImplementationCl
 
     addItem(designEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene);
 }
+void UseCaseGraphicsScene::handleSignalEmitEventAdded(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto)
+{
+    //TODOreq
+    DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *signalGraphicsItem = new DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene();
+    addItem(signalGraphicsItem);
+    signalGraphicsItem->setPos(calculatePointOnSlotOnClassLifelineThatWeUseAsAStartPoint_Aka_P1_ifWeWereALine_UsingTheIndexThatTheStatementWasInsertedInto(indexInto_m_ClassLifeLines_OfSignal, sourceSlot, indexToInsertStatementInto));
+}
+void UseCaseGraphicsScene::handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto)
+{
+    //TODOreq
+}
+#if 0 //the comment inside is still worth reading
 void UseCaseGraphicsScene::handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventTypeEnum, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionOrSlotInvocationContextVariables)
 {
     //TODOreq: draw the fucking use case event blah, make the arrows permanent i guess... maybe even change their shape if signal/slot... and let sender/receiver each be able to reference the arrow (but maybe that part is done in backend)
 }
+#endif
 void UseCaseGraphicsScene::handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem)
 {
     if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode && m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)

@@ -1,0 +1,1 @@
+reference slot invocation, where the use case where that slot was defined had that slot signaling to a neighbor/SIBLING object. How much of the referenced use case heirarchy is instantiated in the referencing use case? I have hit the problem of object lifetime again, but now it's a matter of merging pyramids (root-classlifeline -> n(children-class-lifelines)).
