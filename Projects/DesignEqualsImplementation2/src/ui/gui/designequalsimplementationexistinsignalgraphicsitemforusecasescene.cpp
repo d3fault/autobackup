@@ -8,6 +8,7 @@
 #include "designequalsimplementationguicommon.h"
 #include "usecasegraphicsscene.h"
 #include "designequalsimplementationslotinvokegraphicsitemforusecasescene.h"
+#include "sourceexistingsignalsnappingindicationvisualrepresentation.h"
 #include "../../designequalsimplementationclasssignal.h"
 #include "../../designequalsimplementationusecase.h"
 #include "../../designequalsimplementationclasslifeline.h"
@@ -50,15 +51,18 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
     setLine(QLineF(QPointF(startX, 0), QPointF(myChildrenBoundingRect.width()+startX+DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_LINE_WIDTH_MARGIN_AROUND_SIGNAL_NAME_TEXT, 0)));
 
     //TODOreq: draw slots attached to this signal emit statement. as children of the signal? other parents of slots invocation statements would be actor and slot and private method (or anything with list of statements), so idfk if I should make it parented to this signal or what
+    m_VerticalPositionsOfSnapPoints.clear();
     QList<SlotConnectedToSignalTypedef> slotsConnectedToSignal = sourceClassLifeline->parentUseCase()->slotsConnectedToSignal(sourceClassLifeline, slotThatSignalWasEmittedFrom, indexStatementInsertedInto);
     if(slotsConnectedToSignal.isEmpty())
     {
         //0 slots connected
         QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
         QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, this);
-        slotCircleNotchGraphicsItem->setPos(line().p2().x(), 0);
+        qreal notchY = 0.0;
+        slotCircleNotchGraphicsItem->setPos(line().p2().x(), notchY);
         slotCircleNotchGraphicsItem->setPen(myPen);
         slotCircleNotchGraphicsItem->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
+        m_VerticalPositionsOfSnapPoints.append(notchY);
     }
     else
     {
@@ -90,8 +94,11 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
 
             if(even)
             {
-                //even means we show a notch that can have a slot attached. since we draw the notch during both even and odd, we do nothing here (except toggle the bool)
+                //even means we show a notch that CAN have a slot attached. since we draw the notch during both even and odd, we do nothing here (except toggle the bool and keep update our vertical positions mapping for snapping)
                 even = false;
+
+                m_VerticalPositionsOfSnapPoints.append(currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
+
             }
             else
             {
@@ -116,4 +123,32 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
 int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::type() const
 {
     return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID;
+}
+IRepresentSnapGraphicsItemAndProxyGraphicsItem *DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF eventScenePos) //mostly copy/paste job from the slot equivalent (not to be confused with slot INVOKE STATEMENT equivalent)
+{
+    QPointF mouseItemPos = mapFromScene(eventScenePos);
+    bool left = mouseItemPos.x() < 0;
+
+    QMap<qreal /*distance*/, QPair<qreal /*vertical height*/, int /*index into vertical height array*/> > distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter;
+    int currentIndex = 0;
+    Q_FOREACH(qreal currentVerticalPositionOfSnapPoint, m_VerticalPositionsOfSnapPoints)
+    {
+        distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), qMakePair(currentVerticalPositionOfSnapPoint, currentIndex++));
+    }
+    if(!distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.isEmpty())
+    {
+        qreal closestSnappingPointsYValue = distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().first;
+
+        //TODOreq: how to manage the snapping visual item's lifetime
+        //if(currentSnappingVisualIsAlreadyUsingA_Y_ValueOf(closestSnappingPointsYValue))
+           //return;
+
+        //reposition instead? who owns the snapping indication visual (line at the time of writing), me or the graphics scene?
+
+        IRepresentSnapGraphicsItemAndProxyGraphicsItem *sourceSnappingIndicationVisualRepresentation = new SourceExistingSignalSnappingIndicationVisualRepresentation(this, distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().second, this);
+        sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos(QPointF((left ? line().p1().x() : line().p2().x()), closestSnappingPointsYValue));
+        return sourceSnappingIndicationVisualRepresentation;
+    }
+
+    return 0;
 }

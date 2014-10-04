@@ -51,9 +51,9 @@ private:
 
     void privateConstructor(DesignEqualsImplementationUseCase *useCase);
     bool keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    bool itemIsWantedType(QGraphicsItem *itemToCheckIfWant, const QList<int> &m_ListOfItemTypesForArrowPressOrReleaseMode);
+    bool itemIsWantedType(QGraphicsItem *itemToCheckIfWant, const QList<int> &listOfTypesTheyWant);
     QGraphicsItem *giveMeTopMostItemUnderPointThatIwantInArrowMouseMode_OrZeroIfNoneOfInterest(QPointF pointToLookForItemsWeWant);
-    QList<QGraphicsItem *> itemsIWantIntersectingRect(QRectF rectWithinWhichToLookForItemsWeWant, const QList<int> &m_ListOfItemTypesForArrowPressOrReleaseMode);
+    QList<QGraphicsItem *> itemsIWantIntersectingRect(QRectF rectWithinWhichToLookForItemsWeWant, const QList<int> &listOfTypesTheyWant);
     QGraphicsItem *findNearestPointOnItemBoundingRectFromPoint(const QList<QGraphicsItem*> &itemsToCheck, QPointF pointToFindNearestEdge);
     qreal calculateDistanceFromPointToNearestPointOnBoundingRect(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item);
     QPointF calculateNearestPointOnBoundingRectToArbitraryPoint(QPointF pointCalculateNearestEdgeTo, QGraphicsItem *item);

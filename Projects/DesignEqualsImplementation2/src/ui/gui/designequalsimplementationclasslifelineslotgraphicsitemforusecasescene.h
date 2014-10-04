@@ -2,6 +2,7 @@
 #define DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINESLOTGRAPHICSITEMFORUSECASESCENE_H
 
 #include <QGraphicsRectItem>
+#include "isnappablesourcegraphicsitem.h"
 
 class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene;
 class DesignEqualsImplementationClassSlot;
@@ -11,7 +12,7 @@ class IRepresentSnapGraphicsItemAndProxyGraphicsItem;
 
 typedef QPair<QGraphicsItem* /*visual representation*/, IDesignEqualsImplementationStatement* /*underlyingStatement*/> ExistingStatementListEntryTypedef;
 
-class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene : public QObject, public QGraphicsRectItem
+class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene : public QObject, public QGraphicsRectItem, public ISnappableSourceGraphicsItem
 {
     Q_OBJECT
 public:
@@ -21,7 +22,7 @@ public:
 
     int getInsertIndexForMouseScenePos(QPointF mouseEventScenePos);
     IRepresentSnapGraphicsItemAndProxyGraphicsItem *makeSnappingHelperForSlotEntryPoint(QPointF mouseScenePosForDeterminingRightOrLeftOnly);
-    IRepresentSnapGraphicsItemAndProxyGraphicsItem *makeSnappingHelperForMousePoint(QPointF mouseScenePos);
+    virtual IRepresentSnapGraphicsItemAndProxyGraphicsItem *makeSnappingHelperForMousePoint(QPointF mouseScenePos);
 
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *unitOfExecution() const;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifelineGraphicsItem() const;

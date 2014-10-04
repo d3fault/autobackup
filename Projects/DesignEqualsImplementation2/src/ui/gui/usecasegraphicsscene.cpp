@@ -38,6 +38,7 @@
 //TODOreq: if the first item placed is actor, we should scroll/reposition graphics view so that actor is in top-left corner. we should maybe do the same for the first class lifeline, but maybe leaving some space to the left for actor/other?
 //TODOreq: when deserializing: applies to both graphics scenes: the first item placed goes to 0,0 -- regardless of what coords I specify (this is just how the graphics scene works). So what that means is that every item coords after the first item must be translated to become relative to the first item's coords.
 //TODOoptional: [de-]serailized "bookmarked" items (each use case has a list? or one list project-wide?). double clicking simply centers that object in the graphics view. there should additionally be an "all objects" parrallel list that is double click-able as well, but maintaining bookmarked ones allows the user to prioritize arbitrarily
+//TODOreq: I guess there's the concept of signal references also. That is to say, if a signal is emitted in multiple places in the same use case, we should NOT (rite?) draw the slots that are attached to it, and should somehow visually indicate that it's emitting a signal that was connected "above"/elsewhere. The signal listeners are the same of course. Eventually I think I'll need to even add connect/disconnect STATEMENTS, but for now the connections are in the constructor and for the lifetime of the objects
 QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, int indexInsertedInto, QGraphicsItem *parent)
 {
     switch(theStatement->StatementType)
@@ -231,10 +232,10 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             //Find closest
             QGraphicsItem *itemWithEdgeNearestToPoint = findNearestPointOnItemBoundingRectFromPoint(itemsNearMouse, eventScenePos);
 
-            DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
+            ISnappableSourceGraphicsItem *snappableSourceGraphicsItem = (ISnappableSourceGraphicsItem*) /*hack*/ /*static_cast<ISnappableSourceGraphicsItem*>(*/itemWithEdgeNearestToPoint/*)*/; //for now we rely on findNearestPointOnItemBoundingRectFromPoint only returning graphics items that inherit from ISnappableGraphicsItem. Every entry in m_ListOfItemTypesIWant_SnapSource must inherit from ISnappableGraphicsItem. We could do stronger type checking (making sure it's in m_ListOfItemTypesIWant_SnapSource, but that would be the second time I checked it so nah..
             if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
                 delete m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
-            m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = static_cast<IRepresentSnapGraphicsItemAndProxyGraphicsItem*>(slotGraphicsItem->makeSnappingHelperForMousePoint(eventScenePos));
+            m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = snappableSourceGraphicsItem->makeSnappingHelperForMousePoint(eventScenePos);
         }
         else if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
         {
@@ -243,7 +244,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
     }
 
-    if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn) //holy shit a variable pun
+    if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
     {
         QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
         m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine);
@@ -346,14 +347,16 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
+    m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID); //TODOreq: am I sure I want this for release mode ALSO? I guess I could proxy to the slot the existing signal is emitted from, but it makes more sense to only have in the list for mouse PRESS
 
     //m_ListOfItemTypesIWant_SnapSource.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesIWant_SnapSource.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID);
+    m_ListOfItemTypesIWant_SnapSource.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID);
 
     //m_ListOfItemTypesIWant_SnapDestination.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesIWant_SnapDestination.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID);
 
-    //TODOreq: snap to actor
+    //TODOreq: snap to/from actor
 
 
     //requests

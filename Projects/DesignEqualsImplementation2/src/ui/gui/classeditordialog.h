@@ -66,6 +66,8 @@ private slots:
     void handleDeleteArgumentRequested(MethodSingleArgumentWidget *argumentRequestingToBeDeleted);
     void handleAddSlotButtonClicked();
 
+    void handleDoneButtonClicked();
+
     //reactor pattern slots
     void updateClassOverviewLabel();
 #if 0

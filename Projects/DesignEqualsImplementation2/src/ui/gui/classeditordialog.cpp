@@ -29,6 +29,8 @@
 //TODOoptional: the class overview could be in html and use anchor/hrefs for each piece, where clicking on that piece brings you to the correct tab (property/signal/slot) and selects the right property/signal/slot in the list, and additionally puts the cursor focus (and maybe selects all) in the line edit used to edit that piece that was clicked. this could additionally be done in class diagram view at all times, but then click-n-drag moving around the objects might become a pain (though i doubt it (click-n-drag vs. click) and like this feature very much in BOTH places!)
 //TODOreq: member name collissions (off the top of my head, a signal and slot can't both be named "x")
 //TODOoptional: if something is typed in quick add line edit[s] and done is pressed, we assume that either property/signal/slot was meant to be pressed and show an "are you sure?" dialog so they have to confirm the erasal of their quick add line edit typings
+//TODOoptional: when there's a signal, we can have multiple slots. they may all be created IN the signal slot editor. as a special case, pressing enter in the "quick add new slot" line edit should not accept the dialog (like usual) but should instead add new line edit for the next slot. Pressing enter when the line edit is empty (so pressing enter twice in a row) accepts the dialog like normal
+//TODOreq: class editor -> slots tab... to allow them to do the non-quick-add, or re-order/re-name/etc, which after dialog is 'done' means we need to refresh ourself (just like after instance chooser is accepted)
 ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_ClassBeingEditted(classToEdit)
@@ -77,7 +79,8 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
 
     connect(classNameLineEdit, SIGNAL(textChanged(QString)), m_ClassBeingEditted, SLOT(setClassName(QString))); //TODOreq: sanitize: no spaces etc. a libclang syntax check would be best, but also maybe overkill
 
-    connect(doneButton, SIGNAL(clicked()), this, SLOT(accept())); //or reject or done or close, no matter. might make this modeless. TODOreq: process any fields that may have been typed into. Like basically "done" could be a shortcut for "add slot" (+ done) or "add property" (+ done) etc. HOWEVER this may not be desireable so maybe we should prompt the user. Additionally, which of the unfinished edits to we process? All of them? Perhaps just a warning with cancel/ok whenever un-committed edits are detected? Perhaps even a checkbox for to do the speedy "add + done" thing to save clicks, opt in by default but saving whether or not it's checked
+    connect(doneButton, SIGNAL(clicked()), this, SLOT(handleDoneButtonClicked()));
+    //connect(doneButton, SIGNAL(clicked()), this, SLOT(accept())); //or reject or done or close, no matter. might make this modeless. TODOreq: process any fields that may have been typed into. Like basically "done" could be a shortcut for "add slot" (+ done) or "add property" (+ done) etc. HOWEVER this may not be desireable so maybe we should prompt the user. Additionally, which of the unfinished edits to we process? All of them? Perhaps just a warning with cancel/ok whenever un-committed edits are detected? Perhaps even a checkbox for to do the speedy "add + done" thing to save clicks, opt in by default but saving whether or not it's checked
 
     //reactor pattern, gui responding to our own edits <3
     connect(classToEdit, SIGNAL(propertyAdded(DesignEqualsImplementationClassProperty*)), this, SLOT(updateClassOverviewLabel()));
@@ -357,6 +360,7 @@ void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
     m_ClassBeingEditted->createNewProperty(propertyDeclarationParser.parsedPropertyType(), propertyDeclarationParser.parsedPropertyName(), propertyDeclarationParser.hasInit(), propertyDeclarationParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
 
     m_QuickMemberAddLineEdit->clear();
+    m_QuickMemberAddLineEdit->setFocus();
 
 
     //TODOreq: maybe when they make the type an internally-designed type and it's also a pointer, i simply modal dialog ask them if they want to own/instantiate that object (makes it a hasA) or if it's just a pointer to one owned elsewhere. of course, if they type out the " = new class();" as the property initializer, we need to make sure not to conflict with their shit or overwrite it
@@ -382,6 +386,7 @@ void ClassEditorDialog::handleQuickAddNewSignalButtonClicked()
     m_ClassBeingEditted->createNewSignal(signalSignatureParser.parsedFunctionName(), signalSignatureParser.parsedFunctionArguments());
 
     m_QuickMemberAddLineEdit->clear();
+    m_QuickMemberAddLineEdit->setFocus();
 }
 //TODOreq: either manually filter "_Bool" to "bool", or figure out how to get clang to give me the cpp version of a bool :-P
 void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
@@ -407,6 +412,7 @@ void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
     //TODOreq: add the args to the new slot, i think i need to refactor some though... because the argument types can be either internally designed classes or defined elsewhere types... and additionally they can have modifiers such as "references", "pointers", "consts", etc... that we want to KEEP for the slot declaration. so i guess i'll just stop coding and sit here staring at the blinking cursor comatose until i figure out what to do
 
     m_QuickMemberAddLineEdit->clear();
+    m_QuickMemberAddLineEdit->setFocus();
 }
 void ClassEditorDialog::handleAddPropertyButtonClicked()
 {
@@ -463,6 +469,18 @@ void ClassEditorDialog::handleAddSlotButtonClicked()
         m_AddSlotNameLineEdit->clear();
         //TODOreq: reset the args layout
     }
+}
+void ClassEditorDialog::handleDoneButtonClicked()
+{
+    if(!m_QuickMemberAddLineEdit->text().trimmed().isEmpty())
+    {
+        QMessageBox::StandardButton questionResponse = QMessageBox::question(this, tr("Warning"), tr("The quick add line edit has content that has not been utilized yet. Are you sure you want to close this dialog? Anything typed into the quick add line edit will be lost forever."));
+        if(questionResponse != QMessageBox::Yes)
+        {
+            return;
+        }
+    }
+    accept();
 }
 void ClassEditorDialog::updateClassOverviewLabel()
 {
