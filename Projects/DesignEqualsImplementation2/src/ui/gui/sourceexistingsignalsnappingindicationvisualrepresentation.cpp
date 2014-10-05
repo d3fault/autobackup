@@ -14,7 +14,7 @@ SourceExistingSignalSnappingIndicationVisualRepresentation::~SourceExistingSigna
 QGraphicsItem *SourceExistingSignalSnappingIndicationVisualRepresentation::myVisualRepresentation(QGraphicsItem *parent)
 {
     QGraphicsLineItem *lineGraphicItem = new QGraphicsLineItem(parent);
-    lineGraphicItem->setLine(-5, 0, 5, 0);
+    lineGraphicItem->setLine(0, 0, 10, 0);
     QPen myPen(DESIGNEQUALSIMPLEMENTATION_GUI_SNAP_INDICATION_COLOR);
     myPen.setWidth(2);
     lineGraphicItem->setPen(myPen);

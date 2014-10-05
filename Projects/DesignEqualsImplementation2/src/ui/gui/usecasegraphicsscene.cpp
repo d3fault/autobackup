@@ -17,6 +17,7 @@
 #include "designequalsimplementationexistinsignalgraphicsitemforusecasescene.h"
 #include "designequalsimplementationslotinvokegraphicsitemforusecasescene.h"
 #include "designequalsimplementationprivatemethodinvokestatementgraphicsitemforusecasescene.h"
+#include "signalstatementnotchmultiplextergraphicsrect.h"
 #include "signalslotmessagedialog.h"
 #include "snappingindicationvisualrepresentation.h"
 #include "classinstancechooserdialog.h"
@@ -244,13 +245,18 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 case DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID:
                     snappableSourceGraphicsItem = static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
                     break;
+            case DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_SignalStatementNotchMultiplexterGraphicsRect_GRAPHICS_TYPE_ID:
+                    snappableSourceGraphicsItem = static_cast<SignalStatementNotchMultiplexterGraphicsRect*>(itemWithEdgeNearestToPoint)->parentSignalStatementGraphicsItem();
             default:
                 snappableSourceGraphicsItem = 0;
                 break;
             }
 
             if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
+            {
                 delete m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
+                m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
+            }
 
             if(snappableSourceGraphicsItem)
                 m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = snappableSourceGraphicsItem->makeSnappingHelperForMousePoint(eventScenePos);
@@ -366,10 +372,12 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_Actor_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID); //TODOreq: am I sure I want this for release mode ALSO? I guess I could proxy to the slot the existing signal is emitted from, but it makes more sense to only have in the list for mouse PRESS
+    m_ListOfItemTypesForArrowPressOrReleaseMode.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_SignalStatementNotchMultiplexterGraphicsRect_GRAPHICS_TYPE_ID);
 
     //m_ListOfItemTypesIWant_SnapSource.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesIWant_SnapSource.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesIWant_SnapSource.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID);
+    m_ListOfItemTypesIWant_SnapSource.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_SignalStatementNotchMultiplexterGraphicsRect_GRAPHICS_TYPE_ID);
 
     //m_ListOfItemTypesIWant_SnapDestination.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassLifeLine_GRAPHICS_TYPE_ID);
     m_ListOfItemTypesIWant_SnapDestination.append(DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID);

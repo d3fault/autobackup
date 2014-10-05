@@ -3,12 +3,12 @@
 #include <QPen>
 #include <QGraphicsTextItem>
 #include <QGraphicsEllipseItem>
-#include <QGraphicsRectItem>
 
 #include "designequalsimplementationguicommon.h"
 #include "usecasegraphicsscene.h"
 #include "designequalsimplementationslotinvokegraphicsitemforusecasescene.h"
 #include "sourceexistingsignalsnappingindicationvisualrepresentation.h"
+#include "signalstatementnotchmultiplextergraphicsrect.h"
 #include "../../designequalsimplementationclasssignal.h"
 #include "../../designequalsimplementationusecase.h"
 #include "../../designequalsimplementationclasslifeline.h"
@@ -24,6 +24,7 @@
 //TODOreq: snap to 'notch'. Ideally we could daisy chain infinite signals together, but the more common case and much more important is to allow a list of slots to be connected to the signal
 //TODOoptional: maybe all the lines share a width, such as the 'longest width (from longest signal name)'. There are some lines that go to the same class lifeline, and some that go to other class lifelines. The width measuring would be per-classlifeline ofc. Slightly OT: I do plan on doing auto-gui, which means I don't need to serialize positions of anything (maybe class diagram view can be placed manually, but I'm leaning against use case manual placing. Placing objects so they can be read is a very time consuming task and is more or less a waste of fucking time. auto-arranging is ez tbh
 //TODOoptional: when doing auto-arranging stuff, say if you rename a signal name and that drastically shortens the horizontal distance from one classlifeline to the next (assuming it has a slot going to it ofc), then we should BEFORE find the center-most item on the screen, do the rename + auto-arranging, and then AFTER center the graphics view back on that center-most item. The benefit of this is that what they were working on should still be right in front of them, and not potentially (worst case) lots of scroll screens away
+//TODOreq: make m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal a snappable item (it simply proxies for the signal emit statement obviously), otherwise we can't snap to the non-first notches
 DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *slotThatSignalWasEmittedFrom, int indexStatementInsertedInto, DesignEqualsImplementationClassSignal *theSignal, QGraphicsItem *parent)
     : QGraphicsLineItem(parent)
     , m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal(0)
@@ -72,7 +73,7 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
         qreal notchMultiplexerRectHeight = (numSignalRhsNotches*DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2) + (numSignalRhsNotches*(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER+2));
         qreal halfHeight = notchMultiplexerRectHeight/2;
         QRectF notchMultiplexerRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH, -halfHeight, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH*2.0, notchMultiplexerRectHeight);
-        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal = new QGraphicsRectItem(notchMultiplexerRect, this);
+        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal = new SignalStatementNotchMultiplexterGraphicsRect(this, notchMultiplexerRect, this);
         //m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPos(line().p2().x(), 0);
         m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPos(line().p2().x()+(notchMultiplexerRect.width()/2), halfHeight);
         m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPen(myPen);
@@ -108,7 +109,7 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
                 SlotConnectedToSignalTypedef currentSlotConnectedToSignal = slotsConnectedToSignal.at(currentIndexIntoSlotsConnectedToSignal);
                 DesignEqualsImplementationClassSlot *aSlotConnectedToThisSignal = currentSlotConnectedToSignal.second;
                 DesignEqualsImplementationClassLifeLine *classLifelineOfSlot = parentUseCaseGraphicsScene->useCase()->classLifeLines().at(currentSlotConnectedToSignal.first);
-                DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, slotCircleNotchGraphicsItem);
+                /*DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = */new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, slotCircleNotchGraphicsItem);
 
                 //DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, this);
                 //aSlotConnectedToThisSignalGraphicsItem->setPos(notchX, currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
@@ -126,29 +127,36 @@ int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::type() c
 }
 IRepresentSnapGraphicsItemAndProxyGraphicsItem *DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF eventScenePos) //mostly copy/paste job from the slot equivalent (not to be confused with slot INVOKE STATEMENT equivalent)
 {
-    QPointF mouseItemPos = mapFromScene(eventScenePos);
-    bool left = mouseItemPos.x() < 0;
-
-    QMap<qreal /*distance*/, QPair<qreal /*vertical height*/, int /*index into vertical height array*/> > distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter;
-    int currentIndex = 0;
-    Q_FOREACH(qreal currentVerticalPositionOfSnapPoint, m_VerticalPositionsOfSnapPoints)
+    if(m_VerticalPositionsOfSnapPoints.size() == 1)
     {
-        distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), qMakePair(currentVerticalPositionOfSnapPoint, currentIndex++));
-    }
-    if(!distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.isEmpty())
-    {
-        qreal closestSnappingPointsYValue = distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().first;
-
-        //TODOreq: how to manage the snapping visual item's lifetime
-        //if(currentSnappingVisualIsAlreadyUsingA_Y_ValueOf(closestSnappingPointsYValue))
-           //return;
-
-        //reposition instead? who owns the snapping indication visual (line at the time of writing), me or the graphics scene?
-
-        IRepresentSnapGraphicsItemAndProxyGraphicsItem *sourceSnappingIndicationVisualRepresentation = new SourceExistingSignalSnappingIndicationVisualRepresentation(this, distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().second, this);
-        sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos(QPointF((left ? line().p1().x() : line().p2().x()), closestSnappingPointsYValue));
+        // 0 slots attached
+        IRepresentSnapGraphicsItemAndProxyGraphicsItem *sourceSnappingIndicationVisualRepresentation = new SourceExistingSignalSnappingIndicationVisualRepresentation(this, 0, this);
+        sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos(QPointF(line().p2().x()/*+(sourceSnappingIndicationVisualRepresentation->visualRepresentation()->boundingRect().width()/2)*/, m_VerticalPositionsOfSnapPoints.at(0)));
         return sourceSnappingIndicationVisualRepresentation;
     }
+    else //implies m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal != 0
+    {
+        // > 0 slots attached
 
+        QPointF mouseItemPos = m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->mapFromScene(eventScenePos);
+        //QPointF mouseItemPos = mapFromScene(eventScenePos);
+        //bool left = mouseItemPos.x() < 0;
+
+        QMap<qreal /*distance*/, QPair<qreal /*vertical height*/, int /*index into vertical height array*/> > distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter;
+        int currentIndex = 0;
+        Q_FOREACH(qreal currentVerticalPositionOfSnapPoint, m_VerticalPositionsOfSnapPoints)
+        {
+            distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), qMakePair(currentVerticalPositionOfSnapPoint, currentIndex++));
+        }
+        if(!distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.isEmpty())
+        {
+            qreal closestSnappingPointsYValue = distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().first; //TODOreq: mouse pos is relative to signal statement (line), closestSnappingPointsYValue value is relative to the signal multiplexer rect..... yet i'm using the closestSnappingPointsYValue to setPos in the signal statement coordinates!
+
+            IRepresentSnapGraphicsItemAndProxyGraphicsItem *sourceSnappingIndicationVisualRepresentation = new SourceExistingSignalSnappingIndicationVisualRepresentation(this, distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().second, m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal);
+            //sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos(QPointF((left ? line().p1().x() : line().p2().x()), closestSnappingPointsYValue));
+            sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos(QPointF(m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->rect().right()+(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2), closestSnappingPointsYValue));
+            return sourceSnappingIndicationVisualRepresentation;
+        }
+    }
     return 0;
 }

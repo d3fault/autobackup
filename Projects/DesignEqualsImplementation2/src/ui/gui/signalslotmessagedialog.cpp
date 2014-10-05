@@ -30,6 +30,7 @@
 //TODOreq: dialog should never validate when neither signal nor slot is checked
 //TODOoptional: when the signal and slot messages have identical arguments, we should pre-select the drop-down "fill in args" combo boxes (but of course, still allow them to be changed)
 //TODOreq: Properties show up in the "fill in the arguments" combo boxes
+//TODOoptional: selecting an existing slot from combo box adds selection to list + resets combo box to the default. We re-use the combo box instead of having a new combo box for every slot invocation. Might change my mind on this though and have each slot BE a combo box
 SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
