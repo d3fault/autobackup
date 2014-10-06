@@ -14,6 +14,8 @@ public:
     virtual int type() const;
     virtual IRepresentSnapGraphicsItemAndProxyGraphicsItem *makeSnappingHelperForMousePoint(QPointF eventScenePos);
     virtual ~SignalStatementNotchMultiplexterGraphicsRect() { }
+
+    int getInsertSubIndexForMouseScenePos(QPointF eventScenePos);
 private:
     DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *m_ParentSignalStatementGraphicsItem;
 };

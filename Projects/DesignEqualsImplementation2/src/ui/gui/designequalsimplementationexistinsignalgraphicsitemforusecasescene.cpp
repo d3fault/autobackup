@@ -164,3 +164,21 @@ int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::indexSta
 {
     return m_IndexStatementInsertedInto;
 }
+int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::getInsertSubIndexForMouseScenePos(QPointF eventScenePos)
+{
+    return m_VerticalPositionsOfSnapPoints.size()-1;
+
+#if 0 //old: whenever the signal line is targetted, we always use the 'last' index available
+    if(m_VerticalPositionsOfSnapPoints.size() == 1)
+    {
+        // 0 slots attached
+        return 0;
+    }
+    else
+    {
+        // > 0 slots attached
+        return m_
+        //return m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->getInsertSubIndexForMouseScenePos(eventScenePos);
+    }
+#endif
+}

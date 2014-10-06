@@ -184,7 +184,7 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
             if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
             {
-                m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone = new SignalSlotConnectionActivationArrowForGraphicsScene(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->itemProxyingFor(), m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->insertIndexForProxyItem(), QLineF(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->visualRepresentation()->scenePos(), event->scenePos()));
+                m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone = new SignalSlotConnectionActivationArrowForGraphicsScene(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->itemProxyingFor(), m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->insertIndexForProxyItem(), QLineF(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->visualRepresentation()->scenePos(), event->scenePos()), m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->optionalSubInsertIndexForWhenConnectingSlotToExistingSignal_OrNegativeOneIfNotApplicable());
                 addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone);
                 delete m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
                 m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
@@ -199,11 +199,24 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                     //i can abstract multi threading concepts from software design, but i'll be damned if i can convince a girl to have a one night stand with me [without paying her money]
                     //1-06-Gorillaz-Gorillaz-Man Research (Clapper).mp3 "ya ya ya ya ya ya" are teh best lyrics in gorillaz. the way he says it.
                     int indexOnUnitOfExecutionThatStatementIsInsertedInto = 0;
-                    if(itemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID)
+                    int optionalSubIndexForSlotOnExistingSignalSlotConnectionList = -1;
+                    if(itemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID) //TODOreq: do the same for existing signal + notch, and also remember the sub-index!
                     {
                         indexOnUnitOfExecutionThatStatementIsInsertedInto = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemUnderMouse)->getInsertIndexForMouseScenePos(mouseEventScenePos);
                     }
-                    m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone = new SignalSlotConnectionActivationArrowForGraphicsScene(itemUnderMouse, indexOnUnitOfExecutionThatStatementIsInsertedInto, QLineF(mouseEventScenePos, mouseEventScenePos));
+                    else if(itemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID)
+                    {
+                        DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *existingSignalStatementGraphicsItem = static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(itemUnderMouse);
+                        indexOnUnitOfExecutionThatStatementIsInsertedInto = existingSignalStatementGraphicsItem->indexStatementInsertedInto();
+                        optionalSubIndexForSlotOnExistingSignalSlotConnectionList = existingSignalStatementGraphicsItem->getInsertSubIndexForMouseScenePos(mouseEventScenePos);
+                    }
+                    else if(itemUnderMouse->type() == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_SignalStatementNotchMultiplexterGraphicsRect_GRAPHICS_TYPE_ID)
+                    {
+                        SignalStatementNotchMultiplexterGraphicsRect *signalNotchMultiplexerGraphicsItem = static_cast<SignalStatementNotchMultiplexterGraphicsRect*>(itemUnderMouse);
+                        indexOnUnitOfExecutionThatStatementIsInsertedInto = signalNotchMultiplexerGraphicsItem->parentSignalStatementGraphicsItem()->indexStatementInsertedInto();
+                        optionalSubIndexForSlotOnExistingSignalSlotConnectionList = signalNotchMultiplexerGraphicsItem->getInsertSubIndexForMouseScenePos(mouseEventScenePos);
+                    }
+                    m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone = new SignalSlotConnectionActivationArrowForGraphicsScene(itemUnderMouse, indexOnUnitOfExecutionThatStatementIsInsertedInto, QLineF(mouseEventScenePos, mouseEventScenePos), optionalSubIndexForSlotOnExistingSignalSlotConnectionList);
                     addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone);
 
                     /*if(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone) //There was a snap active, but we didn't use it
@@ -391,7 +404,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(this, SIGNAL(insertSlotInvocationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSlotInvocationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)));
     connect(this, SIGNAL(insertSignalEmissionUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*)), useCase, SLOT(insertSignalEmitEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*)));
-    connect(this, SIGNAL(insertExistingSignalNewSlotEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)), useCase, SLOT(insertExistingSignalNewSlotEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)));
+    connect(this, SIGNAL(insertExistingSignalNewSlotEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int,int)), useCase, SLOT(insertExistingSignalNewSlotEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int,int)));
 
     connect(this, SIGNAL(setUseCaseSlotEntryPointRequested(DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*)), useCase, SLOT(setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*)));
     connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
@@ -707,7 +720,7 @@ bool UseCaseGraphicsScene::processMouseReleaseEvent_andReturnWhetherOrNotToKeepT
         if(signalSlotMessageCreatorDialog.signalIsExistingSignalFlag())
         {
             //Existing signal statement, new slot
-            emit insertExistingSignalNewSlotEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables, sourceClassLifeLine_OrZeroIfSourceIsActor, classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfDestinationSlot);  //TODOreq: ensure all are actually valid. TODOoptimization: some of the args are probably not used and can be ommitted. but actually the method called might require them anyways lol so meh
+            emit insertExistingSignalNewSlotEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables, sourceClassLifeLine_OrZeroIfSourceIsActor, classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfDestinationSlot, m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->optionalSubInsertIndexForWhenConnectingSlotToExistingSignal_OrNegativeOneIfNotApplicable());  //TODOreq: ensure all are actually valid. TODOoptimization: some of the args are probably not used and can be ommitted. but actually the method called might require them anyways lol so meh
             return true;
         }
 

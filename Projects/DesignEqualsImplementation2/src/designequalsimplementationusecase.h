@@ -97,7 +97,7 @@ signals:
     void slotInvokeEventAdded(DesignEqualsImplementationClassSlot *slotUseCaseEvent);
     void signalEmitEventAdded(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto);
     //void signalSlotEventAdded(SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent);
-    void slotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto); //TODOreq: remove signalSlotEventAdded (split it into signalEmitEventAdded and slotAddedToExistingSignal)
+    void slotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto);
 
     void eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
 
@@ -108,7 +108,7 @@ public slots:
     void insertSlotInvocationEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeline, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables);
     void insertSignalSlotActivationEvent(int indexToInsertEventAt, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, DesignEqualsImplementationClassLifeLine *indexInto_m_ClassLifeLines_OfSignal, int indexInto_m_ClassLifeLines_OfSlot);
     void insertSignalEmitEvent(int indexToInsertEventAt, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, DesignEqualsImplementationClassLifeLine *classLifelineOfSignal);
-    void insertExistingSignalNewSlotEvent(int indexTheSlotWantsToBeInSignalSlotConnectStatements, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, DesignEqualsImplementationClassLifeLine *indexInto_m_ClassLifeLines_OfSignal, int indexInto_m_ClassLifeLines_OfSlot);
+    void insertExistingSignalNewSlotEvent(int statementIndexOfExistingSignal, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, DesignEqualsImplementationClassLifeLine *indexInto_m_ClassLifeLines_OfSignal, int indexInto_m_ClassLifeLines_OfSlot, int indexToInsertSlotIntoSignalSlotConnectionActivationList);
 
     void setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPoint);
     void setExitSignal(DesignEqualsImplementationClassSlot *sourceSlot, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, const SignalEmissionOrSlotInvocationContextVariables &exitSignalEmissionContextVariables);
@@ -126,14 +126,16 @@ class SignalSlotCombinedEventHolder : public QObject
     Q_OBJECT
 public:
     explicit SignalSlotCombinedEventHolder(QObject *parent = 0) : QObject(parent) { }
-    explicit SignalSlotCombinedEventHolder(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, QObject *parent = 0)
+    explicit SignalSlotCombinedEventHolder(DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int indexToInsertSlotIntoSignalSlotConnectionActivationList = -1, QObject *parent = 0)
         : QObject(parent)
         , m_DesignEqualsImplementationClassSignal(designEqualsImplementationClassSignal)
         , m_DesignEqualsImplementationClassSlot(designEqualsImplementationClassSlot)
+        , m_IndexToInsertSlotIntoSignalSlotConnectionActivationList(indexToInsertSlotIntoSignalSlotConnectionActivationList)
     { }
     ~SignalSlotCombinedEventHolder() { /*these two combined children are deleted by class diagram perspective: delete m_DesignEqualsImplementationClassSignal; delete m_DesignEqualsImplementationClassSlot;*/ }
     DesignEqualsImplementationClassSignal *m_DesignEqualsImplementationClassSignal;
     DesignEqualsImplementationClassSlot *m_DesignEqualsImplementationClassSlot;
+    int m_IndexToInsertSlotIntoSignalSlotConnectionActivationList;
 };
 #if 0
 QDataStream &operator<<(QDataStream &out, const SignalSlotCombinedEventHolder &useCase);

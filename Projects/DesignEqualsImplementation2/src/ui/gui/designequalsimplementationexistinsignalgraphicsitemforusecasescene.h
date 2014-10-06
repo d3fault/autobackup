@@ -26,6 +26,8 @@ public:
     DesignEqualsImplementationClassSlot *slotThatSignalWasEmittedFrom() const;
     DesignEqualsImplementationClassLifeLine *sourceClassLifeline() const;
     int indexStatementInsertedInto() const;
+
+    int getInsertSubIndexForMouseScenePos(QPointF eventScenePos);
 private:
     DesignEqualsImplementationClassSignal *m_UnderlyingSignal;
     SignalStatementNotchMultiplexterGraphicsRect *m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal;

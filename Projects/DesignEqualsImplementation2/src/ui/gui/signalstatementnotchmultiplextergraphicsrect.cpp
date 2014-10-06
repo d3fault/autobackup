@@ -39,3 +39,20 @@ IRepresentSnapGraphicsItemAndProxyGraphicsItem* SignalStatementNotchMultiplexter
     }
     return 0;
 }
+int SignalStatementNotchMultiplexterGraphicsRect::getInsertSubIndexForMouseScenePos(QPointF eventScenePos)
+{
+    //TODOreq: this is LIKE snappig, but 'this' is known to be under the mouse. just like with slot statement inserting (getInsertIndexForMouseScenePos), some of this code is redundant with snapping and could be merged with it
+
+    //some copy/pasta from makeSnappingHelperForMousePoint
+    QPointF mouseItemPos = mapFromScene(eventScenePos);
+    QMap<qreal, int> distancesFromMousePointAndTheirCorrespondingIndexesInOurInternalList_Sorter;
+    Q_FOREACH(qreal currentVerticalPositionOfSnapPoint, parentSignalStatementGraphicsItem()->verticalPositionsOfSnapPoints())
+    {
+        distancesFromMousePointAndTheirCorrespondingIndexesInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), currentVerticalPositionOfSnapPoint);
+    }
+    if(!distancesFromMousePointAndTheirCorrespondingIndexesInOurInternalList_Sorter.isEmpty())
+    {
+        return distancesFromMousePointAndTheirCorrespondingIndexesInOurInternalList_Sorter.first();
+    }
+    return 0;
+}

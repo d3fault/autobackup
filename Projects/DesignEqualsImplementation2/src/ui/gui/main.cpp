@@ -15,6 +15,7 @@
 //TODOreq: C++ statement, including C++ IDE integration (spit out, suck in)
 //TODOreq: do not allow the same instance of class [lifeline] to be in the same use case. attempting to do so should give an appropriate error message (or perhaps the already-used-instance should be unselectable (BUT i still think there should be some visual cue notifying them of why they can't select it. without said visual cue, one might go crazy trying to select an instance and have no clue why it isn't showing up in the list)
 //TODOreq: perhaps "DesignEqualsImplementationType" (wherever a type is mentioned), with two "modes" selectable via enum: InternallyDesignedType, QtOrCppBuiltinOrOtherKnownByStringType. HOWEVER, how would I use an internally-designed type as a method argument as const/ref/ptr???
+//this project has turned into massive spaghetti code, but i have infinite energy to (had:i'm inclined to) 'deal with it' because the very problem the app attempts to solve is spaghetti code itself
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
