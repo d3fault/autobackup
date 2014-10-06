@@ -21,9 +21,9 @@ DesignEqualsImplementationProjectGenerator::DesignEqualsImplementationProjectGen
 { }
 bool DesignEqualsImplementationProjectGenerator::processClassStep0declaringClassInProject(DesignEqualsImplementationClass *designEqualsImplementationClass)
 {
-    if(!m_ClassesInThisProjectGenerate.contains(designEqualsImplementationClass))
+    if(!m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.contains(designEqualsImplementationClass))
     {
-        m_ClassesInThisProjectGenerate.insert(designEqualsImplementationClass, QList<QString>());
+        m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.insert(designEqualsImplementationClass, QList<QString>());
     }
     return true;
 }
@@ -153,7 +153,7 @@ while(classLifelinesInUseCaseIterator.hasNext())
 }
 bool DesignEqualsImplementationProjectGenerator::writeClassesToDisk()
 {
-    QHashIterator<DesignEqualsImplementationClass*, QList<QString> > classesToGenerateIterator(m_ClassesInThisProjectGenerate);
+    QHashIterator<DesignEqualsImplementationClass*, QList<QString> > classesToGenerateIterator(m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements);
     while(classesToGenerateIterator.hasNext())
     {
         classesToGenerateIterator.next();
@@ -200,20 +200,20 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
             DesignEqualsImplementationSignalEmissionStatement *signalEmitStatement = static_cast<DesignEqualsImplementationSignalEmissionStatement*>(currentStatement);
 
             //Signal/slot connection activation
-            Q_FOREACH(const DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct &currentSignalSlotConnectionActivation, designEqualsImplementationUseCase->m_SignalSlotConnectionActivationsInThisUseCase)//TODOreq: ensure all these "key checks" are properly synchronized throughout app lifetime. getters and setters fuck yea~
+            Q_FOREACH(DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct *currentSignalSlotConnectionActivation, designEqualsImplementationUseCase->m_SignalSlotConnectionActivationsInThisUseCase)//TODOreq: ensure all these "key checks" are properly synchronized throughout app lifetime. getters and setters fuck yea~
             {
-                if(currentSignalSlotConnectionActivation.SignalStatement_Key0_SourceClassLifeLine == classLifeline) //signal key 0 check
+                if(currentSignalSlotConnectionActivation->SignalStatement_Key0_SourceClassLifeLine == classLifeline) //signal key 0 check
                 {
-                    if(currentSignalSlotConnectionActivation.SignalStatement_Key1_SourceSlotItself == slotToWalk) //signal key 1 check
+                    if(currentSignalSlotConnectionActivation->SignalStatement_Key1_SourceSlotItself == slotToWalk) //signal key 1 check
                     {
-                        if(currentSignalSlotConnectionActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements == currentStatementIndex) //signal key 2 check
+                        if(currentSignalSlotConnectionActivation->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements == currentStatementIndex) //signal key 2 check
                         {
                             //Getting here means the signal is connected to a slot
 
-                            Q_FOREACH(SlotConnectedToSignalTypedef currentSlotConnectedToSignal, currentSignalSlotConnectionActivation.SlotsAttachedToTheSignal) //TODOreq: won't apply until slot references are implemented, but we need a way to make sure that a slot is only walked once (ACTUALLY NO THAT IS NOT TRUE WE WALK THE SLOT MULTIPLE TIMES BECAUSE EACH USE CASE HAS DIFFERENT CONNECTIONS AND WALKING THEM IS HOW WE RESOLVE THEM)
+                            Q_FOREACH(SlotConnectedToSignalTypedef *currentSlotConnectedToSignal, currentSignalSlotConnectionActivation->SlotsAttachedToTheSignal) //TODOreq: won't apply until slot references are implemented, but we need a way to make sure that a slot is only walked once (ACTUALLY NO THAT IS NOT TRUE WE WALK THE SLOT MULTIPLE TIMES BECAUSE EACH USE CASE HAS DIFFERENT CONNECTIONS AND WALKING THEM IS HOW WE RESOLVE THEM)
                             {
-                                DesignEqualsImplementationClassLifeLine *destinationSlotClassLifeline = designEqualsImplementationUseCase->m_ClassLifeLines.at(currentSlotConnectedToSignal.first); //slot key 0
-                                DesignEqualsImplementationClassSlot *destinationSlot = currentSlotConnectedToSignal.second; //slot key 1
+                                DesignEqualsImplementationClassLifeLine *destinationSlotClassLifeline = designEqualsImplementationUseCase->m_ClassLifeLines.at(currentSlotConnectedToSignal->first); //slot key 0
+                                DesignEqualsImplementationClassSlot *destinationSlot = currentSlotConnectedToSignal->second; //slot key 1
 
                                 //0a
                                 //Check if they are both members of the same parent, the simplest connection resolving case and number 0 on my list
@@ -468,7 +468,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     }
 
     //Source constructor -- children connection statements (or just constructor statements, but as of writing they are only connect statements)
-    QList<QString> classConstructorLines = m_ClassesInThisProjectGenerate.value(currentClass);
+    QList<QString> classConstructorLines = m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.value(currentClass);
     if(classConstructorLines.isEmpty())
     {
         sourceFileTextStream    << "{ }" << endl;
@@ -589,7 +589,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
 }
 void DesignEqualsImplementationProjectGenerator::appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement)
 {
-    QList<QString> currentListOfConnectStatements = m_ClassesInThisProjectGenerate.value(classToGetConnectStatementInInitializationSequence);
+    QList<QString> currentListOfConnectStatements = m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.value(classToGetConnectStatementInInitializationSequence);
     currentListOfConnectStatements.append(connectStatement);
-    m_ClassesInThisProjectGenerate.insert(classToGetConnectStatementInInitializationSequence, currentListOfConnectStatements);
+    m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.insert(classToGetConnectStatementInInitializationSequence, currentListOfConnectStatements);
 }

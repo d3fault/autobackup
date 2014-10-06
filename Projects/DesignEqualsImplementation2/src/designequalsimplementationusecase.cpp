@@ -56,6 +56,11 @@ bool DesignEqualsImplementationUseCase::allClassLifelinesInUseCaseHaveBeenAssign
 }
 DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
 {
+    Q_FOREACH(SignalSlotConnectionActivationTypeStruct *signalSlotConnectionActivation, m_SignalSlotConnectionActivationsInThisUseCase)
+    {
+        qDeleteAll(signalSlotConnectionActivation->SlotsAttachedToTheSignal);
+    }
+    qDeleteAll(m_SignalSlotConnectionActivationsInThisUseCase);
     //qDeleteAll(m_ClassLifeLines); //TODOreq: same class lifeline can be added multiple times. isn't it parented anyways so fuck it?
 
 #if 0
@@ -72,20 +77,20 @@ DesignEqualsImplementationUseCase::~DesignEqualsImplementationUseCase()
         delete ExitSignal;*/
 #endif
 }
-QList<SlotConnectedToSignalTypedef> DesignEqualsImplementationUseCase::slotsConnectedToSignal(DesignEqualsImplementationClassLifeLine *sourceSignalClassLifeline, DesignEqualsImplementationClassSlot *sourceSlotThatSignalWasEmittedFrom, int indexOfTheEmitStatementInSourceSlotsListOfStatements)
+QList<SlotConnectedToSignalTypedef*> DesignEqualsImplementationUseCase::slotsConnectedToSignal(DesignEqualsImplementationClassLifeLine *sourceSignalClassLifeline, DesignEqualsImplementationClassSlot *sourceSlotThatSignalWasEmittedFrom, int indexOfTheEmitStatementInSourceSlotsListOfStatements)
 {
-    Q_FOREACH(SignalSlotConnectionActivationTypeStruct currentSignalSlotActivation, m_SignalSlotConnectionActivationsInThisUseCase)
+    Q_FOREACH(SignalSlotConnectionActivationTypeStruct *currentSignalSlotActivation, m_SignalSlotConnectionActivationsInThisUseCase)
     {
         if  (
-                currentSignalSlotActivation.SignalStatement_Key0_SourceClassLifeLine == sourceSignalClassLifeline &&
-                currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself == sourceSlotThatSignalWasEmittedFrom &&
-                currentSignalSlotActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements == indexOfTheEmitStatementInSourceSlotsListOfStatements
+                currentSignalSlotActivation->SignalStatement_Key0_SourceClassLifeLine == sourceSignalClassLifeline &&
+                currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself == sourceSlotThatSignalWasEmittedFrom &&
+                currentSignalSlotActivation->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements == indexOfTheEmitStatementInSourceSlotsListOfStatements
             )
         {
-            return currentSignalSlotActivation.SlotsAttachedToTheSignal;
+            return currentSignalSlotActivation->SlotsAttachedToTheSignal;
         }
     }
-    return QList<SlotConnectedToSignalTypedef>();
+    return QList<SlotConnectedToSignalTypedef*>();
 }
 void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplementationProject *project)
 {
@@ -95,7 +100,7 @@ void DesignEqualsImplementationUseCase::privateConstructor(DesignEqualsImplement
     m_UseCaseActor_OrZeroIfNoneAddedYet = 0; //TODOreq: qmessagebox fatal if they to add more than one actor to a use case. TODOoptional: we could ask them if they want us to center the graphics view over the already existing one. TODOreq: set back to zero if actor deleted from use case (why would they even.... (hell i might as well just make an actor a permanent thing in a use case, no point in adding TODreq (ACTUALLY JUST MAYBE, keep reading) saves valuable clicks! (ACTUALLY = if we use a signal in place of an actor or whatever that shit is i'm maybe planning on using, idfk, then maybe perhaps it makes sense to not have an actor. but i'm unsure atm)))
     m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.first = 0;
 }
-void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, DesignEqualsImplementationClassLifeLine *destinationClassLifeline_OrZeroIfNotSlotInvoke, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, DesignEqualsImplementationClassLifeLine *signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot)
+void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, int indexToInsertStatementInto, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSlot *destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, QObject *event, DesignEqualsImplementationClassLifeLine *destinationClassLifeline_OrZeroIfNotSlotInvoke, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot, DesignEqualsImplementationClassLifeLine *signalSlotActivation_ONLY_signalClassLifeLines_OrZero, int signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot)
 {
     //bool firstUseCaseEventAdded = OrderedUseCaseEvents.isEmpty();
 
@@ -195,7 +200,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
         if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
         {
             sourceOrderedListOfStatements_OrZeroIfSourceIsActor->insertStatementIntoOrderedListOfStatements(indexToInsertStatementInto, new DesignEqualsImplementationSignalEmissionStatement(signalUseCaseEvent, signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot));
-            int indexInto_m_ClassLifeLines_OfSignal = m_ClassLifeLines.indexOf(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal);
+            int indexInto_m_ClassLifeLines_OfSignal = m_ClassLifeLines.indexOf(signalSlotActivation_ONLY_signalClassLifeLines_OrZero);
             emit signalEmitEventAdded(indexInto_m_ClassLifeLines_OfSignal, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, signalUseCaseEvent, indexToInsertStatementInto);
         }
         //OLD
@@ -208,9 +213,9 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
 
         QScopedPointer<SignalSlotCombinedEventHolder> signalSlotCombinedUseCaseEvent(static_cast<SignalSlotCombinedEventHolder*>(event));
 
-        if(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal == 0 /* TODOreq: -1? */ || signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot == -1)
+        if(signalSlotActivation_ONLY_signalClassLifeLines_OrZero == 0 || signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot == -1)
         {
-            qFatal("class lifeline index into use case was -1 for either signal or slot");
+            qFatal("class lifeline was invalid for either signal or slot");
             return;
         }
 
@@ -221,21 +226,24 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
                 //TODOreq: add entry to m_SignalSlotConnectionActivationsInThisUseCase
 
 
-                SignalSlotConnectionActivationTypeStruct newSignalSlotConnectionActivationTypeStruct;
+                SignalSlotConnectionActivationTypeStruct *newSignalSlotConnectionActivationTypeStruct = new SignalSlotConnectionActivationTypeStruct();
 
                 //signal key 0
-                newSignalSlotConnectionActivationTypeStruct.SignalStatement_Key0_SourceClassLifeLine = signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal;
+                newSignalSlotConnectionActivationTypeStruct->SignalStatement_Key0_SourceClassLifeLine = signalSlotActivation_ONLY_signalClassLifeLines_OrZero;
 
                 //signal key 1
-                newSignalSlotConnectionActivationTypeStruct.SignalStatement_Key1_SourceSlotItself = static_cast<DesignEqualsImplementationClassSlot*>(sourceOrderedListOfStatements_OrZeroIfSourceIsActor);
+                newSignalSlotConnectionActivationTypeStruct->SignalStatement_Key1_SourceSlotItself = static_cast<DesignEqualsImplementationClassSlot*>(sourceOrderedListOfStatements_OrZeroIfSourceIsActor);
 
                 //signal key 2
-                newSignalSlotConnectionActivationTypeStruct.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements = indexToInsertStatementInto; //TODOreq: is it sanitized? gui may have sanitized it enough for us, but idk if the backend always accepts it...
+                newSignalSlotConnectionActivationTypeStruct->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements = indexToInsertStatementInto; //TODOreq: is it sanitized? gui may have sanitized it enough for us, but idk if the backend always accepts it...
 
 
                 //slot(s)
                 //TODOreq: just append slot for now, but we do want to specify an index in the future
-                newSignalSlotConnectionActivationTypeStruct.SlotsAttachedToTheSignal.append(qMakePair(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot /* slot key 0 */, destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal /* slot key 1 */));
+                SlotConnectedToSignalTypedef *slotConnectedToSignal = new SlotConnectedToSignalTypedef();
+                slotConnectedToSignal->first = signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot; //slot key 0
+                slotConnectedToSignal->second = destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal; //slot key 1
+                newSignalSlotConnectionActivationTypeStruct->SlotsAttachedToTheSignal.append(slotConnectedToSignal);
 
 
                 m_SignalSlotConnectionActivationsInThisUseCase.append(newSignalSlotConnectionActivationTypeStruct); //TODOreq: inserts, etc. applies to all of these keys actually. TODOoptional: connection activation added signal (keep/transform arrow in gui?)
@@ -250,7 +258,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
 
                 /*DesignEqualsImplementationClassLifeLineUnitOfExecution *newUnitOfExecution = */insertAlreadyFilledOutSlotIntoUseCase(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSlot); //TODOreq: the slot will already exist, we are simply finally giving it a name (and possibly a parent class name)
 
-                int indexInto_m_ClassLifeLines_OfSignal = m_ClassLifeLines.indexOf(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal);
+                int indexInto_m_ClassLifeLines_OfSignal = m_ClassLifeLines.indexOf(signalSlotActivation_ONLY_signalClassLifeLines_OrZero);
                 emit signalEmitEventAdded(indexInto_m_ClassLifeLines_OfSignal, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, indexToInsertStatementInto);
                 //emit signalSlotEventAdded(signalSlotCombinedUseCaseEvent.take());
                 emit slotAddedToExistingSignalSlotConnectionList(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, 0 /*TODOreq*/);
@@ -290,9 +298,9 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
     {
         QScopedPointer<SignalSlotCombinedEventHolder> signalSlotCombinedUseCaseEvent(static_cast<SignalSlotCombinedEventHolder*>(event));
 
-        if(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal == 0 /* TODOreq: -1? */ || signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot == -1)
+        if(signalSlotActivation_ONLY_signalClassLifeLines_OrZero == 0 || signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot == -1)
         {
-            qFatal("class lifeline index into use case was -1 for either signal or slot");
+            qFatal("class lifeline was invalid for either signal or slot");
             return;
         }
 
@@ -301,12 +309,15 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
             if(sourceOrderedListOfStatements_OrZeroIfSourceIsActor)
             {
                 //first, find the existing signal in our list of signal slot connection activations
-                Q_FOREACH(SignalSlotConnectionActivationTypeStruct currentSignalSlotConnectionActivation, m_SignalSlotConnectionActivationsInThisUseCase)
+                Q_FOREACH(SignalSlotConnectionActivationTypeStruct *currentSignalSlotConnectionActivation, m_SignalSlotConnectionActivationsInThisUseCase)
                 {
-                    if(currentSignalSlotConnectionActivation.SignalStatement_Key0_SourceClassLifeLine == signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_OfSignal && currentSignalSlotConnectionActivation.SignalStatement_Key1_SourceSlotItself == static_cast<DesignEqualsImplementationClassSlot*>(sourceOrderedListOfStatements_OrZeroIfSourceIsActor) && currentSignalSlotConnectionActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements == indexToInsertStatementInto)
+                    if(currentSignalSlotConnectionActivation->SignalStatement_Key0_SourceClassLifeLine == signalSlotActivation_ONLY_signalClassLifeLines_OrZero && currentSignalSlotConnectionActivation->SignalStatement_Key1_SourceSlotItself == static_cast<DesignEqualsImplementationClassSlot*>(sourceOrderedListOfStatements_OrZeroIfSourceIsActor) && currentSignalSlotConnectionActivation->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements == indexToInsertStatementInto)
                     {
                         //found the signal! now just add the slot
-                        currentSignalSlotConnectionActivation.SlotsAttachedToTheSignal.append(qMakePair(signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot /* slot key 0 */, destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal /* slot key 1 */));
+                        SlotConnectedToSignalTypedef *slotConnectedToSignal = new SlotConnectedToSignalTypedef();
+                        slotConnectedToSignal->first = signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot; //slot key 0
+                        slotConnectedToSignal->second = destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal; //slot key 1
+                        currentSignalSlotConnectionActivation->SlotsAttachedToTheSignal.append(slotConnectedToSignal); //TODOreq: use insert instead of append, but i think convert from snap vertical spacing index. TODOreq: i debug and watch the append make there be 2 slots, but then generate source code stage debugging shows only 1 slot. I am pretty sure the reason is that I'm appending to a copy of the list, not modifying the list directly. Needz moar pointerz.
                         emit slotAddedToExistingSignalSlotConnectionList(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, 0 /*TODOreq*/);
                         signalSlotCombinedUseCaseEvent.take();
                         break;
@@ -476,6 +487,11 @@ void DesignEqualsImplementationUseCase::insertSignalEmitEvent(int indexToInsertE
 {
     insertEventPrivate(UseCaseSignalEventType, indexToInsertEventAt, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, 0, designEqualsImplementationClassSignal, 0, signalEmissionContextVariables, classLifelineOfSignal);
 }
+void DesignEqualsImplementationUseCase::insertExistingSignalNewSlotEvent(int indexTheSlotWantsToBeInSignalSlotConnectStatements, DesignEqualsImplementationClassSlot *sourceOrderedListOfStatements_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *designEqualsImplementationClassSignal, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionContextVariables, DesignEqualsImplementationClassLifeLine *indexInto_m_ClassLifeLines_OfSignal, int indexInto_m_ClassLifeLines_OfSlot)
+{
+    //TODOreq: for now and to KISS, signal and slot params must match and so we only keep one copy of the emit context variables (signal args). But it does make sense that in the future a slot will want to drop/ignore some of those signal args... so basically it should be noted I guess. Maybe each slot simply keeps a number that is between zero (ignore all args) and the number of args (use all args), telling how many of the signal's args the slot wants
+    insertEventPrivate(UseCaseExistingSignalNewSlotEventType, indexTheSlotWantsToBeInSignalSlotConnectStatements, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, designEqualsImplementationClassSlot, new SignalSlotCombinedEventHolder(designEqualsImplementationClassSignal, designEqualsImplementationClassSlot), 0, signalEmissionContextVariables, indexInto_m_ClassLifeLines_OfSignal, indexInto_m_ClassLifeLines_OfSlot);
+}
 void DesignEqualsImplementationUseCase::setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine *rootClassLifeline, DesignEqualsImplementationClassSlot *useCaseSlotEntryPointOnRootClassLifeline)
 {
     m_UseCaseSlotEntryPoint_OrFirstIsZeroIfNoneConnectedFromActorYet.first = rootClassLifeline;
@@ -566,13 +582,13 @@ qds direction numOrderedUseCaseEvents; //TODOreq: signal/slot activation events 
     Q_FOREACH(DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct currentSignalSlotActivation, useCase.m_SignalSlotConnectionActivationsInThisUseCase)
     {
         //Signal
-        out << useCase.serializationClassLifelineIdForClassLifeline(currentSignalSlotActivation.SignalStatement_Key0_SourceClassLifeLine);
-        out << qMakePair(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass->m_ParentProject->serializationClassIdForClass(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass), currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself));
-        out << currentSignalSlotActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
+        out << useCase.serializationClassLifelineIdForClassLifeline(currentSignalSlotActivation->SignalStatement_Key0_SourceClassLifeLine);
+        out << qMakePair(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass->m_ParentProject->serializationClassIdForClass(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass), currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself));
+        out << currentSignalSlotActivation->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
 
         //Slots
-        out << currentSignalSlotActivation.SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines;
-        out << qMakePair(currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass->m_ParentProject->serializationClassIdForClass(currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass), currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation.SlotInvokedThroughConnection_Key1_DestinationSlotItself));
+        out << currentSignalSlotActivation->SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines;
+        out << qMakePair(currentSignalSlotActivation->SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass->m_ParentProject->serializationClassIdForClass(currentSignalSlotActivation->SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass), currentSignalSlotActivation->SlotInvokedThroughConnection_Key1_DestinationSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation->SlotInvokedThroughConnection_Key1_DestinationSlotItself));
     }
     return out;
 }

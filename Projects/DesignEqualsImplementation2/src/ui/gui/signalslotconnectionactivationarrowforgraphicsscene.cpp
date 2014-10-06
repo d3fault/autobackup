@@ -24,7 +24,7 @@ QGraphicsItem *SignalSlotConnectionActivationArrowForGraphicsScene::sourceGraphi
 {
     return m_SourceGraphicsItem;
 }
-int SignalSlotConnectionActivationArrowForGraphicsScene::statementInsertIndex() const
+int SignalSlotConnectionActivationArrowForGraphicsScene::statementInsertIndex() const //primarily for the statement index, but doubles as the "slot index" when the source is an existing signal
 {
     return m_StatementInsertIndex;
 }

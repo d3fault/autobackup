@@ -40,6 +40,7 @@
 //TODOreq: when deserializing: applies to both graphics scenes: the first item placed goes to 0,0 -- regardless of what coords I specify (this is just how the graphics scene works). So what that means is that every item coords after the first item must be translated to become relative to the first item's coords.
 //TODOoptional: [de-]serailized "bookmarked" items (each use case has a list? or one list project-wide?). double clicking simply centers that object in the graphics view. there should additionally be an "all objects" parrallel list that is double click-able as well, but maintaining bookmarked ones allows the user to prioritize arbitrarily
 //TODOreq: I guess there's the concept of signal references also. That is to say, if a signal is emitted in multiple places in the same use case, we should NOT (rite?) draw the slots that are attached to it, and should somehow visually indicate that it's emitting a signal that was connected "above"/elsewhere. The signal listeners are the same of course. Eventually I think I'll need to even add connect/disconnect STATEMENTS, but for now the connections are in the constructor and for the lifetime of the objects
+//TODoreq: remember the last used mouse mode when returning to use cases view (tab range). move mode is going to be especially useless once i implement some auto layout scheme, and i might remove move mode altogether (maybe it will still be available in class diagram mode, maybe it won't)
 QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, int indexInsertedInto, QGraphicsItem *parent)
 {
     switch(theStatement->StatementType)
@@ -183,8 +184,8 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
             if(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone)
             {
-                m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->itemProxyingFor(), m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->insertIndexForProxyItem(), QLineF(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->visualRepresentation()->scenePos(), event->scenePos()));
-                addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn);
+                m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone = new SignalSlotConnectionActivationArrowForGraphicsScene(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->itemProxyingFor(), m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->insertIndexForProxyItem(), QLineF(m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone->visualRepresentation()->scenePos(), event->scenePos()));
+                addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone);
                 delete m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone;
                 m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
             }
@@ -202,8 +203,8 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                     {
                         indexOnUnitOfExecutionThatStatementIsInsertedInto = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemUnderMouse)->getInsertIndexForMouseScenePos(mouseEventScenePos);
                     }
-                    m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = new SignalSlotConnectionActivationArrowForGraphicsScene(itemUnderMouse, indexOnUnitOfExecutionThatStatementIsInsertedInto, QLineF(mouseEventScenePos, mouseEventScenePos));
-                    addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn);
+                    m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone = new SignalSlotConnectionActivationArrowForGraphicsScene(itemUnderMouse, indexOnUnitOfExecutionThatStatementIsInsertedInto, QLineF(mouseEventScenePos, mouseEventScenePos));
+                    addItem(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone);
 
                     /*if(m_ItemThatSnappingForCurrentMousePosWillClick_OrZeroIfNone) //There was a snap active, but we didn't use it
                     {
@@ -219,7 +220,7 @@ void UseCaseGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode && !m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+    if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode && !m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone)
     {
         //Source snapping
 
@@ -246,7 +247,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                     snappableSourceGraphicsItem = static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
                     break;
             case DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_SignalStatementNotchMultiplexterGraphicsRect_GRAPHICS_TYPE_ID:
-                    snappableSourceGraphicsItem = static_cast<SignalStatementNotchMultiplexterGraphicsRect*>(itemWithEdgeNearestToPoint)->parentSignalStatementGraphicsItem();
+                    snappableSourceGraphicsItem = static_cast<SignalStatementNotchMultiplexterGraphicsRect*>(itemWithEdgeNearestToPoint);
                     break;
             default:
                 snappableSourceGraphicsItem = 0;
@@ -269,10 +270,10 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
     }
 
-    if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+    if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone)
     {
-        QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line().p1(), event->scenePos());
-        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(newLine);
+        QLineF newLine(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->line().p1(), event->scenePos());
+        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->setLine(newLine);
 
         //Destination snapping
 
@@ -283,10 +284,10 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QList<QGraphicsItem*> itemsNearMouse = itemsIWantIntersectingRect(myMouseSnappingRect, m_ListOfItemTypesIWant_SnapDestination);
         if(!itemsNearMouse.isEmpty())
         {
-            //Find closet
+            //Find closest
             QGraphicsItem *itemWithEdgeNearestToPoint = findNearestPointOnItemBoundingRectFromPoint(itemsNearMouse, eventScenePos);
 
-            if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem() == itemWithEdgeNearestToPoint)
+            if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->sourceGraphicsItem() == itemWithEdgeNearestToPoint)
                 return;
 
             DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(itemWithEdgeNearestToPoint);
@@ -333,17 +334,14 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 //TODOreq: I keep refactoring-while-writing mouseReleaseEvent because I keep changing my mind on what arrows connected to what (or none) objects should be allowed in the app. I pretty much will allow everything (class creation on the fly), but for now I'm going to just do the 3 modes that are vital do the design (signals, signal/slots, and invokeMethods). It's not that I don't want the others, but I'm having a bitch of a time focusing on what needs to be coded when I consider ALL the possible combinations together
 void UseCaseGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    //TODOreq: right now it's just slot invocation //these are the reqs we are looking for
-
-    //QScopedPointer<SignalSlotConnectionActivationArrowForGraphicsScene*> autLineDeletionScopedDeleter(*m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn); //It has to be "taken" before end of this method which signifies a valid signal,signal-slot,or slotInvoke, nvm the custom deleter can't zero it out so...
-    if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+    if(m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone)
     {
-        //if(!keepArrowForThisMouseReleaseEvent(event))
-        keepArrowForThisMouseReleaseEvent(event);
+        //if(!prosessMouseReleaseEvent_andReturnWhetherOrNotToKeepTempArrowForThisMouseReleaseEvent(event))
+        processMouseReleaseEvent_andReturnWhetherOrNotToKeepTempArrowForThisMouseReleaseEvent(event);
         {
-            delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn; //TODOreq: either always delete, or pass to backend to at least "add"/update for reactor pattern. Backend creates new units of execution (whenever target is slot) that the arrow must point to, but the unit of execution to point to doesn't exist until the backend tells us via signal
+            delete m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone; //TODOreq: either always delete, or pass to backend to at least "add"/update for reactor pattern. Backend creates new units of execution (whenever target is slot) that the arrow must point to, but the unit of execution to point to doesn't exist until the backend tells us via signal
         }
-        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = 0;
+        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone = 0;
     }
     else
     {
@@ -364,7 +362,7 @@ DesignEqualsImplementationUseCase *UseCaseGraphicsScene::useCase() const
 void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase *useCase)
 {
     m_UseCase = useCase;
-    m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn = 0;
+    m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone = 0;
     m_ItemThatSourceSnappingForCurrentMousePosWillClick_OrZeroIfNone = 0;
     m_ArrowDestinationSnapper_OrZeroIfNone = 0;
 
@@ -393,6 +391,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(this, SIGNAL(insertSlotInvocationUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(insertSlotInvocationEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables)));
     connect(this, SIGNAL(insertSignalSlotActivationUseCaseEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)), useCase, SLOT(insertSignalSlotActivationEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)));
     connect(this, SIGNAL(insertSignalEmissionUseCaseEventRequested(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*)), useCase, SLOT(insertSignalEmitEvent(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*)));
+    connect(this, SIGNAL(insertExistingSignalNewSlotEventRequested(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)), useCase, SLOT(insertExistingSignalNewSlotEvent(int,DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,SignalEmissionOrSlotInvocationContextVariables,DesignEqualsImplementationClassLifeLine*,int)));
 
     connect(this, SIGNAL(setUseCaseSlotEntryPointRequested(DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*)), useCase, SLOT(setUseCaseSlotEntryPoint(DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*)));
     connect(this, SIGNAL(setExitSignalRequested(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)), useCase, SLOT(setExitSignal(DesignEqualsImplementationClassSlot*,DesignEqualsImplementationClassSignal*,SignalEmissionOrSlotInvocationContextVariables)));
@@ -415,19 +414,19 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
 }
 //TODOreq: if new slot jit created and shown behind message editor, the arrow's p2 should be updated to reflect that. HOWEVER I'm considering using ghosting techniques to already show what will happen should the user release the mouse button, so those considerations need to be considered
 //TODOreq: certain actions occuring right around the message editor dialog, such as jit slot creation, should be undone if the dialog is cancelled xD
-bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+bool UseCaseGraphicsScene::processMouseReleaseEvent_andReturnWhetherOrNotToKeepTempArrowForThisMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     //first things first, get the topmost items [that we want] underneath the source and dest points
-    QGraphicsItem *sourceItem = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->sourceGraphicsItem(); //it was already set to zero if no items determined wanted
+    QGraphicsItem *sourceItem = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->sourceGraphicsItem(); //it was already set to zero if no items determined wanted
     if(!sourceItem)
         return false; //for now, we require a source
     QGraphicsItem *destinationItem_CanBeZeroUnlessSourceIsActor = 0;
     if(m_ArrowDestinationSnapper_OrZeroIfNone)
     {
         destinationItem_CanBeZeroUnlessSourceIsActor = m_ArrowDestinationSnapper_OrZeroIfNone->itemProxyingFor();
-        QLineF existingLine = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line();
+        QLineF existingLine = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->line();
         existingLine.setP2(m_ArrowDestinationSnapper_OrZeroIfNone->visualRepresentation()->scenePos());
-        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(existingLine);
+        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->setLine(existingLine);
         delete m_ArrowDestinationSnapper_OrZeroIfNone;
         m_ArrowDestinationSnapper_OrZeroIfNone = 0;
     }
@@ -558,15 +557,43 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
                 //sourceUnitOfExecution_OrZeroIfSourceIsActorOrNotWantedType = classLifeLine->targetUnitOfExecutionIfUnitofExecutionIsUnnamed_FirstAfterTargetIfNamedEvenIfYouHaveToCreateIt();
             }
         }
+        else if(sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID)
+        {
+            DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *existingSignalGraphicsItem = static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(sourceItem);
+            sourceSlotForStatementInsertion_OrZeroIfSourceIsActor = existingSignalGraphicsItem->slotThatSignalWasEmittedFrom();
+            sourceClassLifeLine_OrZeroIfSourceIsActor = existingSignalGraphicsItem->sourceClassLifeline();
+        }
+        else if(sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_SignalStatementNotchMultiplexterGraphicsRect_GRAPHICS_TYPE_ID)
+        {
+            SignalStatementNotchMultiplexterGraphicsRect *notchMultiplexerGraphicsItem = static_cast<SignalStatementNotchMultiplexterGraphicsRect*>(sourceItem);
+            DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *existingSignalGraphicsItem = notchMultiplexerGraphicsItem->parentSignalStatementGraphicsItem();
+            sourceSlotForStatementInsertion_OrZeroIfSourceIsActor = existingSignalGraphicsItem->slotThatSignalWasEmittedFrom();
+            sourceClassLifeLine_OrZeroIfSourceIsActor = existingSignalGraphicsItem->sourceClassLifeline();
+        }
     }
 
     if(sourceSlotForStatementInsertion_OrZeroIfSourceIsActor == destinationSlotIsProbablyNameless_OrZeroIfNoDest)
         return false; //Drag arrow onto self = unsupported for now. TODOoptional: call private methods this way (with arch arrow)?
 
-    //TODOreq: by/at-around now, we know which index in the source the statement should be inserted at. We don't have to give it to the dialog, but we do need to emit it to the backend after dialog is accepted
-    int indexToInsertStatementAt_IntoSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->statementInsertIndex();
+    DesignEqualsImplementationClassSignal *sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement = 0;
+    if(!sourceIsActor)
+    {
+        if(sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID)
+        {
+            DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *sourceExistingSignalStatementGraphicsItem = static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(sourceItem);
+            sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement = sourceExistingSignalStatementGraphicsItem->underlyingSignal();
+        }
+        else if(sourceItemType == DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_SignalStatementNotchMultiplexterGraphicsRect_GRAPHICS_TYPE_ID)
+        {
+            SignalStatementNotchMultiplexterGraphicsRect *sourceExistingSignalStatementSlotNotchMultiplexerGraphicsRect = static_cast<SignalStatementNotchMultiplexterGraphicsRect*>(sourceItem);
+            sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement = sourceExistingSignalStatementSlotNotchMultiplexerGraphicsRect->parentSignalStatementGraphicsItem()->underlyingSignal();
+        }
+    }
 
-    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, destinationSlotIsProbablyNameless_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceClassLifeLine_OrZeroIfSourceIsActor, destinationClassLifeLine_OrZeroIfNoDest, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
+    //TODOreq: by/at-around now, we know which index in the source the statement should be inserted at. We don't have to give it to the dialog, but we do need to emit it to the backend after dialog is accepted
+    int indexToInsertStatementAt_IntoSource = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->statementInsertIndex();
+
+    SignalSlotMessageDialog signalSlotMessageCreatorDialog(messageEditorDialogMode, destinationSlotIsProbablyNameless_OrZeroIfNoDest, sourceIsActor, destinationIsActor, sourceClassLifeLine_OrZeroIfSourceIsActor, destinationClassLifeLine_OrZeroIfNoDest, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement); //TODOreq: segfault if drawing line to anything other than unit of execution lololol. TODOreq: i have 3 options, idk which makes the most sense: pass in unit of execution, pass in class lifeline, or pass i class. perhaps it doesn't matter... but for now to play it safe i'll pass in the unit of execution, since he has a reference to the other two :-P
     if(signalSlotMessageCreatorDialog.exec() != QDialog::Accepted)
         return false;
     SignalEmissionOrSlotInvocationContextVariables signalEmissionOrSlotInvocationContextVariables = signalSlotMessageCreatorDialog.slotInvocationContextVariables();
@@ -677,6 +704,13 @@ bool UseCaseGraphicsScene::keepArrowForThisMouseReleaseEvent(QGraphicsSceneMouse
 
     if(userChosenDestinationSlot_OrZeroIfNone && userChosenSourceSignal_OrZeroIfNone)
     {
+        if(signalSlotMessageCreatorDialog.signalIsExistingSignalFlag())
+        {
+            //Existing signal statement, new slot
+            emit insertExistingSignalNewSlotEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables, sourceClassLifeLine_OrZeroIfSourceIsActor, classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfDestinationSlot);  //TODOreq: ensure all are actually valid. TODOoptimization: some of the args are probably not used and can be ommitted. but actually the method called might require them anyways lol so meh
+            return true;
+        }
+
         //Signal/slot activation
         emit insertSignalSlotActivationUseCaseEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables, sourceClassLifeLine_OrZeroIfSourceIsActor, classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfDestinationSlot);
         return true;
@@ -935,16 +969,16 @@ void UseCaseGraphicsScene::handleEventAdded(DesignEqualsImplementationUseCase::U
 #endif
 void UseCaseGraphicsScene::handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem)
 {
-    if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode && m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn)
+    if(m_MouseMode == DesignEqualsImplementationMouseDrawSignalSlotConnectionActivationArrowsMode && m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone)
     {
-        QLineF existingLine = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->line();
+        QLineF existingLine = m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->line();
         QPointF slotJustAddedPos = slotGraphicsItem->scenePos();
         QPointF topLeftOfSlotJustAdded;
         QRectF boundingRectOfSlotJustAdded = slotGraphicsItem->boundingRect();
         topLeftOfSlotJustAdded.setX(slotJustAddedPos.x()-(boundingRectOfSlotJustAdded.width()/2));
         topLeftOfSlotJustAdded.setY(slotJustAddedPos.y()-(boundingRectOfSlotJustAdded.height()/2));
         existingLine.setP2(topLeftOfSlotJustAdded); //TODOreq: topRight when relevant
-        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn->setLine(existingLine);
+        m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->setLine(existingLine);
     }
 }
 void UseCaseGraphicsScene::setMouseMode(DesignEqualsImplementationMouseModeEnum newMouseMode)

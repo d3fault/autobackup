@@ -15,7 +15,6 @@
 
 #define DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR Qt::blue
 
-#define DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS 2.5
 #define DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH 7.5
 
 //is used as spacing between notches, and also above top notch and below bottom notch
@@ -25,16 +24,20 @@
 //TODOoptional: maybe all the lines share a width, such as the 'longest width (from longest signal name)'. There are some lines that go to the same class lifeline, and some that go to other class lifelines. The width measuring would be per-classlifeline ofc. Slightly OT: I do plan on doing auto-gui, which means I don't need to serialize positions of anything (maybe class diagram view can be placed manually, but I'm leaning against use case manual placing. Placing objects so they can be read is a very time consuming task and is more or less a waste of fucking time. auto-arranging is ez tbh
 //TODOoptional: when doing auto-arranging stuff, say if you rename a signal name and that drastically shortens the horizontal distance from one classlifeline to the next (assuming it has a slot going to it ofc), then we should BEFORE find the center-most item on the screen, do the rename + auto-arranging, and then AFTER center the graphics view back on that center-most item. The benefit of this is that what they were working on should still be right in front of them, and not potentially (worst case) lots of scroll screens away
 //TODOreq: make m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal a snappable item (it simply proxies for the signal emit statement obviously), otherwise we can't snap to the non-first notches
-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *slotThatSignalWasEmittedFrom, int indexStatementInsertedInto, DesignEqualsImplementationClassSignal *theSignal, QGraphicsItem *parent)
+DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *slotThatSignalWasEmittedFrom, int indexStatementInsertedInto, DesignEqualsImplementationClassSignal *underlyingSignal, QGraphicsItem *parent)
     : QGraphicsLineItem(parent)
+    , m_UnderlyingSignal(underlyingSignal)
     , m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal(0)
+    , m_SourceClassLifeline(sourceClassLifeline)
+    , m_SlotThatSignalWasEmittedFrom(slotThatSignalWasEmittedFrom)
+    , m_IndexStatementInsertedInto(indexStatementInsertedInto)
 {
     QPen myPen = pen();
     myPen.setWidth(3);
     myPen.setColor(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
     setPen(myPen);
 
-    QGraphicsTextItem *signalNameTextGraphicsItem = new QGraphicsTextItem(theSignal->Name, this); //TODOoptional: visualize args of signal too? maybe not to keep it brief, since i'm setting the width of the arrow by it
+    QGraphicsTextItem *signalNameTextGraphicsItem = new QGraphicsTextItem(underlyingSignal->Name, this); //TODOoptional: visualize args of signal too? maybe not to keep it brief, since i'm setting the width of the arrow by it
     QRectF myChildrenBoundingRect = childrenBoundingRect();
 
     //TODOreq: draw differently depending on whether or not there is one slot connected, and of course account for multiple slots
@@ -53,7 +56,7 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
 
     //TODOreq: draw slots attached to this signal emit statement. as children of the signal? other parents of slots invocation statements would be actor and slot and private method (or anything with list of statements), so idfk if I should make it parented to this signal or what
     m_VerticalPositionsOfSnapPoints.clear();
-    QList<SlotConnectedToSignalTypedef> slotsConnectedToSignal = sourceClassLifeline->parentUseCase()->slotsConnectedToSignal(sourceClassLifeline, slotThatSignalWasEmittedFrom, indexStatementInsertedInto);
+    QList<SlotConnectedToSignalTypedef*> slotsConnectedToSignal = sourceClassLifeline->parentUseCase()->slotsConnectedToSignal(sourceClassLifeline, slotThatSignalWasEmittedFrom, indexStatementInsertedInto);
     if(slotsConnectedToSignal.isEmpty())
     {
         //0 slots connected
@@ -106,9 +109,9 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
                 //odd means we show a notch with a slot already attached
                 even = true;
 
-                SlotConnectedToSignalTypedef currentSlotConnectedToSignal = slotsConnectedToSignal.at(currentIndexIntoSlotsConnectedToSignal);
-                DesignEqualsImplementationClassSlot *aSlotConnectedToThisSignal = currentSlotConnectedToSignal.second;
-                DesignEqualsImplementationClassLifeLine *classLifelineOfSlot = parentUseCaseGraphicsScene->useCase()->classLifeLines().at(currentSlotConnectedToSignal.first);
+                SlotConnectedToSignalTypedef *currentSlotConnectedToSignal = slotsConnectedToSignal.at(currentIndexIntoSlotsConnectedToSignal);
+                DesignEqualsImplementationClassSlot *aSlotConnectedToThisSignal = currentSlotConnectedToSignal->second;
+                DesignEqualsImplementationClassLifeLine *classLifelineOfSlot = parentUseCaseGraphicsScene->useCase()->classLifeLines().at(currentSlotConnectedToSignal->first);
                 /*DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = */new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, slotCircleNotchGraphicsItem);
 
                 //DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, this);
@@ -130,33 +133,34 @@ IRepresentSnapGraphicsItemAndProxyGraphicsItem *DesignEqualsImplementationExisti
     if(m_VerticalPositionsOfSnapPoints.size() == 1)
     {
         // 0 slots attached
-        IRepresentSnapGraphicsItemAndProxyGraphicsItem *sourceSnappingIndicationVisualRepresentation = new SourceExistingSignalSnappingIndicationVisualRepresentation(this, 0, this);
+        IRepresentSnapGraphicsItemAndProxyGraphicsItem *sourceSnappingIndicationVisualRepresentation = new SourceExistingSignalSnappingIndicationVisualRepresentation(this, m_IndexStatementInsertedInto, this, 0);
         sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos(QPointF(line().p2().x()/*+(sourceSnappingIndicationVisualRepresentation->visualRepresentation()->boundingRect().width()/2)*/, m_VerticalPositionsOfSnapPoints.at(0)));
         return sourceSnappingIndicationVisualRepresentation;
     }
     else //implies m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal != 0
     {
         // > 0 slots attached
-
-        QPointF mouseItemPos = m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->mapFromScene(eventScenePos);
-        //QPointF mouseItemPos = mapFromScene(eventScenePos);
-        //bool left = mouseItemPos.x() < 0;
-
-        QMap<qreal /*distance*/, QPair<qreal /*vertical height*/, int /*index into vertical height array*/> > distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter;
-        int currentIndex = 0;
-        Q_FOREACH(qreal currentVerticalPositionOfSnapPoint, m_VerticalPositionsOfSnapPoints)
-        {
-            distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.insert(qAbs(currentVerticalPositionOfSnapPoint - mouseItemPos.y()), qMakePair(currentVerticalPositionOfSnapPoint, currentIndex++));
-        }
-        if(!distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.isEmpty())
-        {
-            qreal closestSnappingPointsYValue = distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().first; //TODOreq: mouse pos is relative to signal statement (line), closestSnappingPointsYValue value is relative to the signal multiplexer rect..... yet i'm using the closestSnappingPointsYValue to setPos in the signal statement coordinates!
-
-            IRepresentSnapGraphicsItemAndProxyGraphicsItem *sourceSnappingIndicationVisualRepresentation = new SourceExistingSignalSnappingIndicationVisualRepresentation(this, distancesFromMousePointAndTheirCorrespondingVerticalHeightsInOurInternalList_Sorter.first().second, m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal);
-            //sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos(QPointF((left ? line().p1().x() : line().p2().x()), closestSnappingPointsYValue));
-            sourceSnappingIndicationVisualRepresentation->visualRepresentation()->setPos(QPointF(m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->rect().right()+(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2), closestSnappingPointsYValue));
-            return sourceSnappingIndicationVisualRepresentation;
-        }
+        return m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->makeSnappingHelperForMousePoint(eventScenePos);
     }
     return 0;
+}
+DesignEqualsImplementationClassSignal *DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::underlyingSignal() const
+{
+    return m_UnderlyingSignal;
+}
+QList<qreal> DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::verticalPositionsOfSnapPoints() const
+{
+    return m_VerticalPositionsOfSnapPoints;
+}
+DesignEqualsImplementationClassSlot *DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::slotThatSignalWasEmittedFrom() const
+{
+    return m_SlotThatSignalWasEmittedFrom;
+}
+DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::sourceClassLifeline() const
+{
+    return m_SourceClassLifeline;
+}
+int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::indexStatementInsertedInto() const
+{
+    return m_IndexStatementInsertedInto;
 }

@@ -20,10 +20,11 @@ class SignalSlotMessageDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode , DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor,  bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode , DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor,  bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement, QWidget *parent = 0, Qt::WindowFlags f = 0);
     DesignEqualsImplementationClassSignal *signalToEmit_OrZeroIfNone() const;
     DesignEqualsImplementationClassSlot *slotToInvoke_OrZeroIfNone() const;
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables() const;
+    bool signalIsExistingSignalFlag() const;
 private:
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecutionContainingSlotToInvoke;
     QVBoxLayout *m_Layout;
@@ -46,6 +47,8 @@ private:
 
     DesignEqualsImplementationClassLifeLine *m_SourceClassLifeline_OrZeroIfSourceIsActor;
     DesignEqualsImplementationClassLifeLine *m_DestinationClassLifeline_OrZeroIfNoDest;
+
+    bool m_SignalIsExistingSignalFlag;
 
     void showSignalArgFillingIn();
     void collapseSignalArgFillingIn();

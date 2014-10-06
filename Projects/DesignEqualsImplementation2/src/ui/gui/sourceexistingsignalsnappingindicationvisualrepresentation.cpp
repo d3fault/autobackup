@@ -4,8 +4,8 @@
 
 #include "designequalsimplementationguicommon.h"
 
-SourceExistingSignalSnappingIndicationVisualRepresentation::SourceExistingSignalSnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int insertIndexForProxyItem, QGraphicsItem *parentGraphicsItem)
-    : IRepresentSnapGraphicsItemAndProxyGraphicsItem(itemProxyingFor, insertIndexForProxyItem, parentGraphicsItem)
+SourceExistingSignalSnappingIndicationVisualRepresentation::SourceExistingSignalSnappingIndicationVisualRepresentation(QGraphicsItem *itemProxyingFor, int statementIndexOfSignal, QGraphicsItem *parentGraphicsItem, int slotIndexIntoExistingSignal)
+    : IRepresentSnapGraphicsItemAndProxyGraphicsItem(itemProxyingFor, statementIndexOfSignal, parentGraphicsItem, slotIndexIntoExistingSignal)
 {
     visualRepresentation();
 }

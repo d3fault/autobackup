@@ -32,7 +32,7 @@
 //TODOreq: Properties show up in the "fill in the arguments" combo boxes
 //TODOoptional: selecting an existing slot from combo box adds selection to list + resets combo box to the default. We re-use the combo box instead of having a new combo box for every slot invocation. Might change my mind on this though and have each slot BE a combo box
 //TODOreq: the first time you use the "quick assign instance" on an installation (ie, per 'user' settings (once they exist)), you are asked if you want to make that quick assign action the button's default action (the typical "ok" [WITHOUT quick assign instance] becomes an option in the toolbutton's menu now, they swapped places basically). goes without saying that you should be able to undo (and also just plain do) this in the options menu (once it exists)
-SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, QWidget *parent, Qt::WindowFlags f)
+SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
     , m_Layout(new QVBoxLayout())
@@ -46,6 +46,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     , m_SlotArgsFillingInWidget(0)
     , m_SourceClassLifeline_OrZeroIfSourceIsActor(sourceClassLifeLine_OrZeroIfSourceIsActor)
     , m_DestinationClassLifeline_OrZeroIfNoDest(destinationClassLifeLine_OrZeroIfNoDest)
+    , m_SignalIsExistingSignalFlag(sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement != 0)
 {
     setWindowTitle(tr("Signal/Slot Message"));
     //Note: our use of the dialogMode excludes UseCaseSlotEventType altogether (it is used in the backend)
@@ -288,34 +289,54 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     }
     else
     {
-        if(!sourceSlot_OrZeroIfSourceIsActor) //hack that i put this here, it's where a segfault occured :)
+        if(!sourceSlot_OrZeroIfSourceIsActor)
         {
+            //hack that i put this here, it's where a segfault occured :)
             QMessageBox::information(this, tr("Error"), tr("Source must be connected/named/entered first")); //TODOreq: the source should be [defined as] just an unnamed-as-of-yet  "interface invocation" (the interface and the invocation upon it can both be nameless at any time, except when generating code (an auto-namer util could be used for those who can't be fucked TODOoptional))
             QMetaObject::invokeMethod(this, "reject", Qt::QueuedConnection);
             return;
         }
-        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, sourceSlot_OrZeroIfSourceIsActor->ParentClass->mySignals())
-        {
-            m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
-        }
 
-        //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments. TODOreq: prefix the "source" of the arg satisfier, and perhaps sort them by that too. "my-method-arguments", "my-class-members", etc)
-        //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->arguments())
+        if(sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement)
         {
-            m_VariablesAvailableToSatisfyArgs.append(currentArg);
+            //TODOreq: show the existing signal in a read-only combo-box (so it doesn't need to be full or even function). if they wish to choose a different signal, they need to cancel (i guess this doesn't need to apply if there are no other slots connected to this signal. but when there are other signals, it would be insane to allow us to choose a different signal for all of those slots too)
+            m_ExistingSignalsComboBox->addItem(sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement->methodSignatureWithoutReturnType(), QVariant::fromValue(sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement)); //TODOreq: i think i need a [returned] flag for knowing after accept() has been called that the signal the dialog retrieved was an existing signal. It will be propagated to the backend differently
+            //m_ExistingSignalsComboBox->setCurrentIndex(m_ExistingSignalsComboBox->count()-1);
+            int signalIndex = m_ExistingSignalsComboBox->count()-1;
+            QMetaObject::invokeMethod(m_ExistingSignalsComboBox, "setCurrentIndex", Qt::QueuedConnection, Q_ARG(int, signalIndex)); //queued because we haven't connected to it and will do so later in this slot. we want the listener to do it's magic, especially the equivalent of this: m_SignalToEmit = sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement;
+            m_ExistingSignalsComboBox->setDisabled(true);
+            m_SignalsCheckbox->setChecked(true);
+            m_SignalsCheckbox->setDisabled(true);
+            m_SignalsCheckbox->setToolTip(tr("You can't change the signal when connecting from an existing signal"));
+            m_ExistingSignalsComboBox->setToolTip(tr("You can't change the signal when connecting from an existing signal"));
+
+            //TODOoptional: remove the already selected slots (since it might be the same dest class lifeline) from the exist slots combo box? i'm actually leaning towards NO to this, if they want one signal to call the same slot twice, so be it
         }
-        //m_VariablesAvailableToSatisfyArgs.append(*slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_PrivateMemberClasses);
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAClass, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_Classes_Members())
+        else
         {
-            m_VariablesAvailableToSatisfyArgs.append(currentHasAClass);
-        }
+            Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, sourceSlot_OrZeroIfSourceIsActor->ParentClass->mySignals())
+            {
+                m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
+            }
+
+            //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments. TODOreq: prefix the "source" of the arg satisfier, and perhaps sort them by that too. "my-method-arguments", "my-class-members", etc)
+            //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
+            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->arguments())
+            {
+                m_VariablesAvailableToSatisfyArgs.append(currentArg);
+            }
+            //m_VariablesAvailableToSatisfyArgs.append(*slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_PrivateMemberClasses);
+            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAClass, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_Classes_Members())
+            {
+                m_VariablesAvailableToSatisfyArgs.append(currentHasAClass);
+            }
 #if 0 //TODOoptional: properties? i seem to have invented like 20 different variants of the same thing, so that decision is pending the refactor/consolidation
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAPod, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_PODorNonDesignedCpp_Members())
-        {
-            m_VariablesAvailableToSatisfyArgs.append(currentHasAPod);
-        }
+            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAPod, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_PODorNonDesignedCpp_Members())
+            {
+                m_VariablesAvailableToSatisfyArgs.append(currentHasAPod);
+            }
 #endif
+        }
     }
 
     if(destinationIsActor)
@@ -361,6 +382,10 @@ SignalEmissionOrSlotInvocationContextVariables SignalSlotMessageDialog::slotInvo
         slotInvocationContextVariables.append(qvariant_cast<IHaveTypeAndVariableNameAndPreferredTextualRepresentation*>(currentArg->currentData())->VariableName);
     }
     return slotInvocationContextVariables;
+}
+bool SignalSlotMessageDialog::signalIsExistingSignalFlag() const
+{
+    return m_SignalIsExistingSignalFlag;
 }
 void SignalSlotMessageDialog::showSignalArgFillingIn()
 {

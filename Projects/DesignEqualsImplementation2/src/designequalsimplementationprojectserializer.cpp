@@ -169,21 +169,21 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
         //Project Use Cases (2/2) -- Everything that depends on slot statements (such as SignalSlotConnectionActivations)
 
         projectDataStream << currentUseCase->m_SignalSlotConnectionActivationsInThisUseCase.size();
-        Q_FOREACH(DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct currentSignalSlotActivation, currentUseCase->m_SignalSlotConnectionActivationsInThisUseCase)
+        Q_FOREACH(DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct *currentSignalSlotActivation, currentUseCase->m_SignalSlotConnectionActivationsInThisUseCase)
         {
             //Project Use Case SignalSlotConnectionActivations
 
             //Signal
-            projectDataStream << currentUseCase->serializationClassLifelineIdForClassLifeline(currentSignalSlotActivation.SignalStatement_Key0_SourceClassLifeLine);
-            projectDataStream << qMakePair(projectToSerialize->serializationClassIdForClass(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass), currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation.SignalStatement_Key1_SourceSlotItself));
-            projectDataStream << currentSignalSlotActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
+            projectDataStream << currentUseCase->serializationClassLifelineIdForClassLifeline(currentSignalSlotActivation->SignalStatement_Key0_SourceClassLifeLine);
+            projectDataStream << qMakePair(projectToSerialize->serializationClassIdForClass(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass), currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself));
+            projectDataStream << currentSignalSlotActivation->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
 
             //Slots
-            projectDataStream << currentSignalSlotActivation.SlotsAttachedToTheSignal.size();
-            Q_FOREACH(SlotConnectedToSignalTypedef currentSlotAttachedToSignal, currentSignalSlotActivation.SlotsAttachedToTheSignal)
+            projectDataStream << currentSignalSlotActivation->SlotsAttachedToTheSignal.size();
+            Q_FOREACH(SlotConnectedToSignalTypedef *currentSlotAttachedToSignal, currentSignalSlotActivation->SlotsAttachedToTheSignal)
             {
-                projectDataStream << currentSlotAttachedToSignal.first;
-                projectDataStream << qMakePair(projectToSerialize->serializationClassIdForClass(currentSlotAttachedToSignal.second->ParentClass), currentSlotAttachedToSignal.second->ParentClass->serializationSlotIdForSlot(currentSlotAttachedToSignal.second));
+                projectDataStream << currentSlotAttachedToSignal->first;
+                projectDataStream << qMakePair(projectToSerialize->serializationClassIdForClass(currentSlotAttachedToSignal->second->ParentClass), currentSlotAttachedToSignal->second->ParentClass->serializationSlotIdForSlot(currentSlotAttachedToSignal->second));
             }
         }
 
@@ -380,20 +380,20 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         for(int j = 0; j < numSignalSlotConnectionActivationsInThisUseCase; ++j)
         {
             //Project Use Case SignalSlotConnectionActivations            
-            DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct signalSlotConnectionActivation;
+            DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct *signalSlotConnectionActivation = new DesignEqualsImplementationUseCase::SignalSlotConnectionActivationTypeStruct();
             //Signal
             //SignalStatement_Key0_IndexInto_m_ClassLifeLines
             int signalStatement_Key0_IndexInto_m_ClassLifeLines;
             projectDataStream >> signalStatement_Key0_IndexInto_m_ClassLifeLines;
-            signalSlotConnectionActivation.SignalStatement_Key0_SourceClassLifeLine = currentUseCase->classLifelineInstantiatedFromSerializedClassLifelineId(signalStatement_Key0_IndexInto_m_ClassLifeLines);
+            signalSlotConnectionActivation->SignalStatement_Key0_SourceClassLifeLine = currentUseCase->classLifelineInstantiatedFromSerializedClassLifelineId(signalStatement_Key0_IndexInto_m_ClassLifeLines);
 
             //SignalStatement_Key1_SourceSlotItself
             SerializableSlotIdType serializedSourceSlotId;
             projectDataStream >> serializedSourceSlotId;
-            signalSlotConnectionActivation.SignalStatement_Key1_SourceSlotItself = currentUseCase->m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedSourceSlotId.first)->slotInstantiationFromSerializedSlotId(serializedSourceSlotId.second);
+            signalSlotConnectionActivation->SignalStatement_Key1_SourceSlotItself = currentUseCase->m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedSourceSlotId.first)->slotInstantiationFromSerializedSlotId(serializedSourceSlotId.second);
 
             //SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements
-            projectDataStream >> signalSlotConnectionActivation.SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
+            projectDataStream >> signalSlotConnectionActivation->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
 
 
             //Slots
@@ -401,16 +401,16 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             projectDataStream >> numSlotsAttachedToThisSignalForThisUseCase;
             for(int i = 0; i < numSlotsAttachedToThisSignalForThisUseCase; ++i)
             {
-                SlotConnectedToSignalTypedef currentSlotConnectedToSignal;
+                SlotConnectedToSignalTypedef *currentSlotConnectedToSignal = new SlotConnectedToSignalTypedef();
 
                 //SlotInvokedThroughConnection_Key0_IndexInto_m_ClassLifeLines
-                projectDataStream >> currentSlotConnectedToSignal.first;
+                projectDataStream >> currentSlotConnectedToSignal->first;
                 //SlotInvokedThroughConnection_Key1_DestinationSlotItself
                 SerializableSlotIdType serializedDestinationedSlotId;
                 projectDataStream >> serializedDestinationedSlotId;
-                currentSlotConnectedToSignal.second = currentUseCase->m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedDestinationedSlotId.first)->slotInstantiationFromSerializedSlotId(serializedDestinationedSlotId.second); //TODOoptimization: class id is not needed, because class lifeline was just streamed, so can be determined indirectly
+                currentSlotConnectedToSignal->second = currentUseCase->m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedDestinationedSlotId.first)->slotInstantiationFromSerializedSlotId(serializedDestinationedSlotId.second); //TODOoptimization: class id is not needed, because class lifeline was just streamed, so can be determined indirectly
 
-                signalSlotConnectionActivation.SlotsAttachedToTheSignal.append(currentSlotConnectedToSignal);
+                signalSlotConnectionActivation->SlotsAttachedToTheSignal.append(currentSlotConnectedToSignal);
             }
 
             currentUseCase->m_SignalSlotConnectionActivationsInThisUseCase.append(signalSlotConnectionActivation);
