@@ -247,6 +247,7 @@ void UseCaseGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                     break;
             case DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_SignalStatementNotchMultiplexterGraphicsRect_GRAPHICS_TYPE_ID:
                     snappableSourceGraphicsItem = static_cast<SignalStatementNotchMultiplexterGraphicsRect*>(itemWithEdgeNearestToPoint)->parentSignalStatementGraphicsItem();
+                    break;
             default:
                 snappableSourceGraphicsItem = 0;
                 break;

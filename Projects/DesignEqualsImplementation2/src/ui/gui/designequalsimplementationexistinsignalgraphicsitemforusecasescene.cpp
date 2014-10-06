@@ -125,7 +125,7 @@ int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::type() c
 {
     return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID;
 }
-IRepresentSnapGraphicsItemAndProxyGraphicsItem *DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF eventScenePos) //mostly copy/paste job from the slot equivalent (not to be confused with slot INVOKE STATEMENT equivalent)
+IRepresentSnapGraphicsItemAndProxyGraphicsItem *DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::makeSnappingHelperForMousePoint(QPointF eventScenePos) //mostly copy/paste job from the slot graphics item equivalent (not to be confused with slot INVOKE STATEMENT graphics item equivalent)
 {
     if(m_VerticalPositionsOfSnapPoints.size() == 1)
     {

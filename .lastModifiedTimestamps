@@ -2724,11 +2724,11 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1412469297
+Projects/DesignEqualsImplementation2/src/:1412585182
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1412469109
+Projects/DesignEqualsImplementation2/src/ui/gui/:1412585136
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1409876592
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1408651682
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -2747,7 +2747,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassl
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelinegraphicsitemforusecasescene.h:1412447755
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.cpp:1412451125
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h:1412463594
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.cpp:1412468817
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.cpp:1412583568
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationexistinsignalgraphicsitemforusecasescene.h:1412460820
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.cpp:1410394363
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationgui.h:1410394345
@@ -2779,7 +2779,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.cpp:14111873
 Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.h:1411186033
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp:1405367716
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h:1405367700
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1412466061
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1412584681
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1411889523
 Projects/DesignEqualsImplementation2/src/ui/gui/signalstatementnotchmultiplextergraphicsrect.cpp:1412468751
 Projects/DesignEqualsImplementation2/src/ui/gui/signalstatementnotchmultiplextergraphicsrect.h:1412468751
@@ -2791,7 +2791,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisu
 Projects/DesignEqualsImplementation2/src/ui/gui/sourceslotsnappingindicationvisualrepresentation.h:1405612585
 Projects/DesignEqualsImplementation2/src/ui/gui/tabemittinglineedit.cpp:1408342320
 Projects/DesignEqualsImplementation2/src/ui/gui/tabemittinglineedit.h:1408342168
-Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1412469109
+Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.cpp:1412585136
 Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:1412459431
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.cpp:1410388713
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.h:1404489887
