@@ -97,7 +97,7 @@ signals:
     void slotInvokeEventAdded(DesignEqualsImplementationClassSlot *slotUseCaseEvent);
     void signalEmitEventAdded(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexToInsertStatementInto);
     //void signalSlotEventAdded(SignalSlotCombinedEventHolder *signalSlotCombinedUseCaseEvent);
-    void slotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto);
+    void slotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *sourceSlotTheSignalWasEmittedFrom, int signalEmitStatementIndexInSlotEmittedFrom);
 
     void eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventType, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalOrSlot_contextVariables_AndTargetSlotVariableNameInCurrentContextWhenSlot);
 

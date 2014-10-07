@@ -66,6 +66,7 @@ QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementT
         break;
         //TODOreq: etc
     }
+    return 0;
 }
 UseCaseGraphicsScene::UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase)
     : IDesignEqualsImplementationGraphicsScene()
@@ -413,7 +414,7 @@ void UseCaseGraphicsScene::privateConstructor(DesignEqualsImplementationUseCase 
     connect(useCase, SIGNAL(actorAdded(DesignEqualsImplementationActor*)), this, SLOT(handleActorAdded(DesignEqualsImplementationActor*)));
     connect(useCase, SIGNAL(classLifeLineAdded(DesignEqualsImplementationClassLifeLine*)), this, SLOT(handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine*)));
     connect(useCase, SIGNAL(signalEmitEventAdded(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,int)), this, SLOT(handleSignalEmitEventAdded(int,IDesignEqualsImplementationHaveOrderedListOfStatements*,DesignEqualsImplementationClassSignal*,int)));
-    connect(useCase, SIGNAL(slotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,int)), this, SLOT(handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassSlot*,int)));
+    connect(useCase, SIGNAL(slotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*,int)), this, SLOT(handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal*,DesignEqualsImplementationClassLifeLine*,DesignEqualsImplementationClassSlot*,int)));
     //connect(useCase, SIGNAL(eventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)), this, SLOT(handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum,QObject*,SignalEmissionOrSlotInvocationContextVariables)));
 
     if(m_UseCase->m_UseCaseActor_OrZeroIfNoneAddedYet)
@@ -970,9 +971,24 @@ void UseCaseGraphicsScene::handleSignalEmitEventAdded(int indexInto_m_ClassLifeL
     signalGraphicsItem->setPos(calculatePointOnSlotOnClassLifelineThatWeUseAsAStartPoint_Aka_P1_ifWeWereALine_UsingTheIndexThatTheStatementWasInsertedInto(indexInto_m_ClassLifeLines_OfSignal, sourceSlot, indexStatementWasInsertedInto));
     */
 }
-void UseCaseGraphicsScene::handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto)
+void UseCaseGraphicsScene::handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *sourceSlotTheSignalWasEmittedFrom, int signalEmitStatementIndexInSlotEmittedFrom)
 {
-    //TODOreq
+    DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *sourceClassLifelineGraphicsItem = classLifelineGraphicsItemByClassLifeline_OrZeroIfNotFound(sourceClassLifeline);
+    if(!sourceClassLifelineGraphicsItem)
+        return; //should never happen
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *sourceSlotGraphicsItemTheSignalWasEmittedFrom = sourceClassLifelineGraphicsItem->slotGraphicsItemForSlot_OrZeroIfNotFound(sourceSlotTheSignalWasEmittedFrom);
+    if(!sourceSlotGraphicsItemTheSignalWasEmittedFrom)
+        return; //should never happen
+    ExistingStatementListEntryTypedef existingSignalStatementAndGraphicsItem = sourceSlotGraphicsItemTheSignalWasEmittedFrom->existingStatementsAndTheirGraphicsItems().at(signalEmitStatementIndexInSlotEmittedFrom);
+    if(existingSignalStatementAndGraphicsItem.second->StatementType != IDesignEqualsImplementationStatement::SignalEmitStatementType)
+        return; //should never happen
+    DesignEqualsImplementationSignalEmissionStatement *signalEmitStatement = static_cast<DesignEqualsImplementationSignalEmissionStatement*>(existingSignalStatementAndGraphicsItem.second);
+    if(signalEmitStatement->signalToEmit() != existingSignalSlotWasAddedTo)
+        return; //should never happen
+    if(existingSignalStatementAndGraphicsItem.first->type() != DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ExistingSignal_GRAPHICS_TYPE_ID)
+        return; //should never happen
+    DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene *existingSignalGraphicsItem = static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(existingSignalStatementAndGraphicsItem.first);
+    existingSignalGraphicsItem->redoVisualStuffz0rz(); //to account for new slot
 }
 #if 0 //the comment inside is still worth reading
 void UseCaseGraphicsScene::handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventTypeEnum, QObject *event, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionOrSlotInvocationContextVariables)

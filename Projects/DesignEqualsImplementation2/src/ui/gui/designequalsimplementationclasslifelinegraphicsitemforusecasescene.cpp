@@ -81,6 +81,15 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::maybeMo
     }
 
 }
+DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::slotGraphicsItemForSlot_OrZeroIfNotFound(DesignEqualsImplementationClassSlot *theSlot)
+{
+    Q_FOREACH(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *currentSlotGraphicsItem, m_SlotGraphicsItemsInThisClassLifeLine)
+    {
+        if(currentSlotGraphicsItem->underlyingSlot() == theSlot)
+            return currentSlotGraphicsItem;
+    }
+    return 0;
+}
 void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::privateConstructor(DesignEqualsImplementationClassLifeLine *classLifeLine)
 {
     m_DesignEqualsImplementationClassLifeLine = classLifeLine;

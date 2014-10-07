@@ -78,7 +78,7 @@ private slots:
     void handleActorAdded(DesignEqualsImplementationActor *actor);
     void handleClassLifeLineAdded(DesignEqualsImplementationClassLifeLine *newClassLifeLine);
     void handleSignalEmitEventAdded(int indexInto_m_ClassLifeLines_OfSignal, IDesignEqualsImplementationHaveOrderedListOfStatements *sourceSlot, DesignEqualsImplementationClassSignal *signalUseCaseEvent, int indexStatementWasInsertedInto);
-    void handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassSlot *slotAdded, int indexOfSignalConnectionsTheSlotWasInsertedInto);
+    void handleSlotAddedToExistingSignalSlotConnectionList(DesignEqualsImplementationClassSignal *existingSignalSlotWasAddedTo, DesignEqualsImplementationClassLifeLine *sourceClassLifeline, DesignEqualsImplementationClassSlot *sourceSlotTheSignalWasEmittedFrom, int signalEmitStatementIndexInSlotEmittedFrom);
     //void handleEventAdded(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum useCaseEventTypeEnum, QObject* event, const SignalEmissionOrSlotInvocationContextVariables &signalEmissionOrSlotInvocationContextVariables);
     void handleSlotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem);
 public slots:

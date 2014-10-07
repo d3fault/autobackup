@@ -3,6 +3,8 @@
 
 #include <QGraphicsLineItem>
 
+class QGraphicsTextItem;
+
 class UseCaseGraphicsScene;
 class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationClassLifeLine;
@@ -11,6 +13,9 @@ class DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene : public Q
 {
 public:
     DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *classlifelineWhoseSlotIsToBeInvoked, DesignEqualsImplementationClassSlot *theSlotToBeInvoked, QGraphicsItem *parent = 0);
+    void reset(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *classlifelineWhoseSlotIsToBeInvoked, DesignEqualsImplementationClassSlot *theSlotToBeInvoked);
+private:
+    QGraphicsTextItem *m_SlotNameTextGraphicsItem;
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONSLOTINVOKEGRAPHICSITEMFORUSECASESCENE_H

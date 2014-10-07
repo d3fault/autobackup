@@ -112,6 +112,10 @@ int DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::type() const
 {
     return DesignEqualsImplementationActorGraphicsItemForUseCaseScene_ClassSlot_GRAPHICS_TYPE_ID;
 }
+QList<ExistingStatementListEntryTypedef> DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::existingStatementsAndTheirGraphicsItems() const
+{
+    return m_ExistingStatementsAndTheirGraphicsItems;
+}
 #if 0
 QPointF DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::calculatePointForStatementsP1AtStatementIndex(int statementIndexToCalculateP1for)
 {
@@ -148,13 +152,13 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementG
     QGraphicsItem *newVisualRepresentationOfStatement = UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(statementInserted, indexInsertedInto, this);
     //newVisualRepresentationOfStatement->setPos(QPointF(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, 0));
     //newVisualRepresentationOfStatement->moveBy(50, 0);
-    m_ExistingStatements.insert(indexInsertedInto, qMakePair(newVisualRepresentationOfStatement, statementInserted));
+    m_ExistingStatementsAndTheirGraphicsItems.insert(indexInsertedInto, qMakePair(newVisualRepresentationOfStatement, statementInserted));
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::repositionExistingStatementsAndSnapPoints()
 {
     //TODOoptimization: "append"/etc doesn't reposition ALL of them
 
-    int numStatementsOrSnapPointsInUnitOfExecution = ((m_ExistingStatements.size()*2)+1); //Times two accounts for all our snap/insert positions, Plus one accounts for "insert before or insert after"
+    int numStatementsOrSnapPointsInUnitOfExecution = ((m_ExistingStatementsAndTheirGraphicsItems.size()*2)+1); //Times two accounts for all our snap/insert positions, Plus one accounts for "insert before or insert after"
 
     qreal maybeRectHeight = ((numStatementsOrSnapPointsInUnitOfExecution+1)*DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
     qreal myRectHeight = qMax(minRect().height(), maybeRectHeight);
@@ -186,7 +190,7 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::repositionExisti
         {
             //odd
 
-            m_ExistingStatements.at(existingStatementsIndex++).first->setPos(0, currentVerticalPos);
+            m_ExistingStatementsAndTheirGraphicsItems.at(existingStatementsIndex++).first->setPos(0, currentVerticalPos);
 
             even = true;
         }
@@ -260,6 +264,6 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::handleStatementI
 {
     insertStatementGraphicsItem(indexInsertedInto, statementInserted);
     repositionExistingStatementsAndSnapPoints();
-    emit geometryChanged(); //parent class lifeline listens to this and repositions Units Of Execution
+    emit geometryChanged(); //parent class lifeline listens to this and repositions Units Of Execution. TODOreq: should i emit this when adding a new slot to an existing signal? technically it will still indirectly increase the height of the slot ("unit of executioni" block), so it kind of makes sense that yes i should
     //parentClassLifeline()->repositionUnitsOfExecution(); //TODOoptioinal: friend unit of execution from within class lifeline (??? idfk whether or not i should, so i won't (using that logic, every method should be public (wait nvm)))
 }

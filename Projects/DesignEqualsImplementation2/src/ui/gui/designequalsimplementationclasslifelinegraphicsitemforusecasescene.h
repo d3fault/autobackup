@@ -30,6 +30,8 @@ public:
     UseCaseGraphicsScene *parentUseCaseGraphicsScene() const;
 
     void maybeMoveLeftOrRightBecauseNewSlotInvokeStatementWasConnected();
+
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItemForSlot_OrZeroIfNotFound(DesignEqualsImplementationClassSlot *theSlot);
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:

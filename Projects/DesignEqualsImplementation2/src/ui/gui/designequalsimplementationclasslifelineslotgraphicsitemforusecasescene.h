@@ -31,12 +31,13 @@ public:
     virtual int type() const;
 
     //QPointF calculatePointForStatementsP1AtStatementIndex(int statementIndexToCalculateP1for);
+    QList<ExistingStatementListEntryTypedef> existingStatementsAndTheirGraphicsItems() const;
 private:
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecution;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *m_ParentClassLifeline;
     DesignEqualsImplementationClassSlot *m_Slot;
     QList<qreal> m_VerticalPositionsOfSnapPoints;
-    QList<ExistingStatementListEntryTypedef> m_ExistingStatements;
+    QList<ExistingStatementListEntryTypedef> m_ExistingStatementsAndTheirGraphicsItems;
 
     static const QRectF minRect();
     void privateConstructor();

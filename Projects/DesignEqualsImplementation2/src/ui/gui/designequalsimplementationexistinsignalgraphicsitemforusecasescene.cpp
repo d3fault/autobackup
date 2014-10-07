@@ -28,14 +28,15 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
     : QGraphicsLineItem(parent)
     , m_UnderlyingSignal(underlyingSignal)
     , m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal(0)
+    , m_ParentUseCaseGraphicsScene(parentUseCaseGraphicsScene)
     , m_SourceClassLifeline(sourceClassLifeline)
     , m_SlotThatSignalWasEmittedFrom(slotThatSignalWasEmittedFrom)
     , m_IndexStatementInsertedInto(indexStatementInsertedInto)
 {
-    QPen myPen = pen();
-    myPen.setWidth(3);
-    myPen.setColor(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
-    setPen(myPen);
+    m_Pen = pen();
+    m_Pen.setWidth(3);
+    m_Pen.setColor(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
+    setPen(m_Pen);
 
     QGraphicsTextItem *signalNameTextGraphicsItem = new QGraphicsTextItem(underlyingSignal->Name, this); //TODOoptional: visualize args of signal too? maybe not to keep it brief, since i'm setting the width of the arrow by it
     QRectF myChildrenBoundingRect = childrenBoundingRect();
@@ -48,81 +49,13 @@ DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::DesignEquals
         startX = parentItem()->boundingRect().width()/2; //TODOoptional: if the signal is being emitted to "the left" this would be negative
     }
 
-    //make line connect at the right edge of the slot
+    //move text to be 'above' the line
     signalNameTextGraphicsItem->setPos(startX, -myChildrenBoundingRect.height());
 
-    //move text to be 'above' the line
+    //make line connect at the right edge of the slot
     setLine(QLineF(QPointF(startX, 0), QPointF(myChildrenBoundingRect.width()+startX+DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_LINE_WIDTH_MARGIN_AROUND_SIGNAL_NAME_TEXT, 0)));
 
-    //TODOreq: draw slots attached to this signal emit statement. as children of the signal? other parents of slots invocation statements would be actor and slot and private method (or anything with list of statements), so idfk if I should make it parented to this signal or what
-    m_VerticalPositionsOfSnapPoints.clear();
-    QList<SlotConnectedToSignalTypedef*> slotsConnectedToSignal = sourceClassLifeline->parentUseCase()->slotsConnectedToSignal(sourceClassLifeline, slotThatSignalWasEmittedFrom, indexStatementInsertedInto);
-    if(slotsConnectedToSignal.isEmpty())
-    {
-        //0 slots connected
-        QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
-        QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, this);
-        qreal notchY = 0.0;
-        slotCircleNotchGraphicsItem->setPos(line().p2().x(), notchY);
-        slotCircleNotchGraphicsItem->setPen(myPen);
-        slotCircleNotchGraphicsItem->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
-        m_VerticalPositionsOfSnapPoints.append(notchY);
-    }
-    else
-    {
-        // > 0 slots connected
-        int numSignalRhsNotches = ((slotsConnectedToSignal.size()*2)+1); //just like statements, the times two plus one gives us space for insertion before/after/in-between
-
-        qreal notchMultiplexerRectHeight = (numSignalRhsNotches*DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2) + (numSignalRhsNotches*(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER+2));
-        qreal halfHeight = notchMultiplexerRectHeight/2;
-        QRectF notchMultiplexerRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH, -halfHeight, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH*2.0, notchMultiplexerRectHeight);
-        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal = new SignalStatementNotchMultiplexterGraphicsRect(this, notchMultiplexerRect, this);
-        //m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPos(line().p2().x(), 0);
-        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPos(line().p2().x()+(notchMultiplexerRect.width()/2), halfHeight);
-        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPen(myPen);
-        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
-
-        qreal currentNotchVerticalPositionRelativeToNotchMultiplexerRect = notchMultiplexerRect.top() + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS;
-
-        qreal notchX = m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->rect().right()+(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
-
-        bool even = true;
-        int currentIndexIntoSlotsConnectedToSignal = 0;
-        for(int i = 0; i < numSignalRhsNotches; ++i)
-        {
-            QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
-            QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal);
-            slotCircleNotchGraphicsItem->setPos(notchX, currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
-            slotCircleNotchGraphicsItem->setPen(myPen);
-            slotCircleNotchGraphicsItem->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
-
-            if(even)
-            {
-                //even means we show a notch that CAN have a slot attached. since we draw the notch during both even and odd, we do nothing here (except toggle the bool and keep update our vertical positions mapping for snapping)
-                even = false;
-
-                m_VerticalPositionsOfSnapPoints.append(currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
-
-            }
-            else
-            {
-                //odd means we show a notch with a slot already attached
-                even = true;
-
-                SlotConnectedToSignalTypedef *currentSlotConnectedToSignal = slotsConnectedToSignal.at(currentIndexIntoSlotsConnectedToSignal);
-                DesignEqualsImplementationClassSlot *aSlotConnectedToThisSignal = currentSlotConnectedToSignal->second;
-                DesignEqualsImplementationClassLifeLine *classLifelineOfSlot = parentUseCaseGraphicsScene->useCase()->classLifeLines().at(currentSlotConnectedToSignal->first);
-                /*DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = */new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, slotCircleNotchGraphicsItem);
-
-                //DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, this);
-                //aSlotConnectedToThisSignalGraphicsItem->setPos(notchX, currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
-
-                ++currentIndexIntoSlotsConnectedToSignal;
-            }
-
-            currentNotchVerticalPositionRelativeToNotchMultiplexerRect += (DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS);
-        }
-    }
+    redoVisualStuffz0rz();
 }
 int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::type() const
 {
@@ -163,6 +96,99 @@ DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationExistinSignal
 int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::indexStatementInsertedInto() const
 {
     return m_IndexStatementInsertedInto;
+}
+void DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::redoVisualStuffz0rz()
+{
+    //TODOreq: draw slots attached to this signal emit statement. as children of the signal? other parents of slots invocation statements would be actor and slot and private method (or anything with list of statements), so idfk if I should make it parented to this signal or what
+    m_VerticalPositionsOfSnapPoints.clear();
+    QList<SlotConnectedToSignalTypedef*> slotsConnectedToSignal = m_SourceClassLifeline->parentUseCase()->slotsConnectedToSignal(m_SourceClassLifeline, m_SlotThatSignalWasEmittedFrom, m_IndexStatementInsertedInto);
+    if(slotsConnectedToSignal.isEmpty())
+    {
+        //0 slots connected
+        QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
+        QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, this);
+        qreal notchY = 0.0;
+        slotCircleNotchGraphicsItem->setPos(line().p2().x(), notchY);
+        slotCircleNotchGraphicsItem->setPen(m_Pen);
+        slotCircleNotchGraphicsItem->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
+        m_VerticalPositionsOfSnapPoints.append(notchY);
+    }
+    else
+    {
+        // > 0 slots connected
+        int numSignalRhsNotches = ((slotsConnectedToSignal.size()*2)+1); //just like statements, the times two plus one gives us space for insertion before/after/in-between
+
+        qreal notchMultiplexerRectHeight = (numSignalRhsNotches*DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2) + (numSignalRhsNotches*(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER+2));
+        qreal halfHeight = notchMultiplexerRectHeight/2;
+        QRectF notchMultiplexerRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH, -halfHeight, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_NOTCH_MULTIPLEXTER_RECT_HALF_WIDTH*2.0, notchMultiplexerRectHeight);
+        if(!m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal)
+        {
+            m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal = new SignalStatementNotchMultiplexterGraphicsRect(this, notchMultiplexerRect, this);
+            m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPen(m_Pen);
+            m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
+        }
+        else
+        {
+            m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setRect(notchMultiplexerRect);
+        }
+        //m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPos(line().p2().x(), 0);
+        m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->setPos(line().p2().x()+(notchMultiplexerRect.width()/2), halfHeight);
+
+        qreal currentNotchVerticalPositionRelativeToNotchMultiplexerRect = notchMultiplexerRect.top() + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS;
+
+        qreal notchX = m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->rect().right()+(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
+
+        bool even = true;
+        int currentIndexIntoSlotsConnectedToSignal = 0;
+        while(m_NotchGraphicsItems.size() < numSignalRhsNotches)
+        {
+            QRectF slotCircleNotchGraphicsItemRect(-DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, -DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2, DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS*2);
+            QGraphicsEllipseItem *slotCircleNotchGraphicsItem = new QGraphicsEllipseItem(slotCircleNotchGraphicsItemRect, m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal);
+            slotCircleNotchGraphicsItem->setPen(m_Pen);
+            slotCircleNotchGraphicsItem->setBrush(DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SIGNAL_COLOR);
+            m_NotchGraphicsItems.append(slotCircleNotchGraphicsItem);
+        }
+        for(int i = 0; i < numSignalRhsNotches; ++i)
+        {
+            QGraphicsEllipseItem *slotCircleNotchGraphicsItem = m_NotchGraphicsItems.at(i);
+            slotCircleNotchGraphicsItem->setPos(notchX, currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
+
+            if(even)
+            {
+                //even means we show a notch that CAN have a slot attached. since we draw the notch during both even and odd, we do nothing here (except toggle the bool and keep update our vertical positions mapping for snapping)
+                even = false;
+
+                m_VerticalPositionsOfSnapPoints.append(currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
+
+            }
+            else
+            {
+                //odd means we show a notch with a slot already attached
+                even = true;
+
+                SlotConnectedToSignalTypedef *currentSlotConnectedToSignal = slotsConnectedToSignal.at(currentIndexIntoSlotsConnectedToSignal);
+                DesignEqualsImplementationClassSlot *aSlotConnectedToThisSignal = currentSlotConnectedToSignal->second;
+                DesignEqualsImplementationClassLifeLine *classLifelineOfSlot = m_ParentUseCaseGraphicsScene->useCase()->classLifeLines().at(currentSlotConnectedToSignal->first);
+
+                if(m_SlotInvokeGraphicsItems.size() == currentIndexIntoSlotsConnectedToSignal)
+                {
+                    DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(m_ParentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, slotCircleNotchGraphicsItem);
+                    m_SlotInvokeGraphicsItems.append(aSlotConnectedToThisSignalGraphicsItem);
+                }
+                else
+                {
+                    m_SlotInvokeGraphicsItems.at(currentIndexIntoSlotsConnectedToSignal)->reset(m_ParentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal);
+                }
+
+                //DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene *aSlotConnectedToThisSignalGraphicsItem = new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(parentUseCaseGraphicsScene, classLifelineOfSlot, aSlotConnectedToThisSignal, this);
+                //aSlotConnectedToThisSignalGraphicsItem->setPos(notchX, currentNotchVerticalPositionRelativeToNotchMultiplexerRect);
+
+                ++currentIndexIntoSlotsConnectedToSignal;
+            }
+
+            currentNotchVerticalPositionRelativeToNotchMultiplexerRect += (DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_VERTICAL_SPACER + DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_SLOT_CONNECTING_NOTCH_CIRCLE_RADIUS);
+        }
+    }
 }
 int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::getInsertSubIndexForMouseScenePos(QPointF eventScenePos)
 {

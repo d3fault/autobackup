@@ -261,8 +261,8 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
                 int indexInto_m_ClassLifeLines_OfSignal = m_ClassLifeLines.indexOf(signalSlotActivation_ONLY_signalClassLifeLines_OrZero);
                 emit signalEmitEventAdded(indexInto_m_ClassLifeLines_OfSignal, sourceOrderedListOfStatements_OrZeroIfSourceIsActor, signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, indexToInsertStatementInto);
                 //emit signalSlotEventAdded(signalSlotCombinedUseCaseEvent.take());
-                emit slotAddedToExistingSignalSlotConnectionList(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, 0 /*TODOreq*/);
-                signalSlotCombinedUseCaseEvent.take();
+                emit slotAddedToExistingSignalSlotConnectionList(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, signalSlotActivation_ONLY_signalClassLifeLines_OrZero, static_cast<DesignEqualsImplementationClassSlot*>(sourceOrderedListOfStatements_OrZeroIfSourceIsActor), indexToInsertStatementInto);
+                //signalSlotCombinedUseCaseEvent.take();
             }
         }
 
@@ -296,7 +296,7 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
         break;
     case UseCaseExistingSignalNewSlotEventType:
     {
-        QScopedPointer<SignalSlotCombinedEventHolder> signalSlotCombinedUseCaseEvent(static_cast<SignalSlotCombinedEventHolder*>(event));
+        QScopedPointer<SignalSlotCombinedEventHolder> existingSignalNewSlotEvent(static_cast<SignalSlotCombinedEventHolder*>(event));
 
         if(signalSlotActivation_ONLY_signalClassLifeLines_OrZero == 0 || signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot == -1)
         {
@@ -317,9 +317,9 @@ void DesignEqualsImplementationUseCase::insertEventPrivate(DesignEqualsImplement
                         SlotConnectedToSignalTypedef *slotConnectedToSignal = new SlotConnectedToSignalTypedef();
                         slotConnectedToSignal->first = signalSlotActivation_ONLY_indexInto_m_ClassLifeLines_ofSlot; //slot key 0
                         slotConnectedToSignal->second = destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal; //slot key 1
-                        currentSignalSlotConnectionActivation->SlotsAttachedToTheSignal.insert(signalSlotCombinedUseCaseEvent->m_IndexToInsertSlotIntoSignalSlotConnectionActivationList, slotConnectedToSignal);
-                        emit slotAddedToExistingSignalSlotConnectionList(signalSlotCombinedUseCaseEvent->m_DesignEqualsImplementationClassSignal, destinationSlot_OrZeroIfDestIsActorOrEventIsPlainSignal, signalSlotCombinedUseCaseEvent->m_IndexToInsertSlotIntoSignalSlotConnectionActivationList); //TODOreq: visualize the added slot
-                        signalSlotCombinedUseCaseEvent.take();
+                        currentSignalSlotConnectionActivation->SlotsAttachedToTheSignal.insert(existingSignalNewSlotEvent->m_IndexToInsertSlotIntoSignalSlotConnectionActivationList, slotConnectedToSignal);
+                        emit slotAddedToExistingSignalSlotConnectionList(existingSignalNewSlotEvent->m_DesignEqualsImplementationClassSignal, signalSlotActivation_ONLY_signalClassLifeLines_OrZero, static_cast<DesignEqualsImplementationClassSlot*>(sourceOrderedListOfStatements_OrZeroIfSourceIsActor), indexToInsertStatementInto);
+                        //existingSignalNewSlotEvent.take();
                         break;
                     }
                 }

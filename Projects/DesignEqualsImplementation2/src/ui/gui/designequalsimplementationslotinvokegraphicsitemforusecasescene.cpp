@@ -13,13 +13,22 @@
 //TODOoptional: slot invoke line is just a tad bit too wide and I'm not sure why...
 DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *classlifelineWhoseSlotIsToBeInvoked, DesignEqualsImplementationClassSlot *theSlotToBeInvoked, QGraphicsItem *parent)
     : QGraphicsLineItem(parent)
+    , m_SlotNameTextGraphicsItem(0)
 {
     QPen myPen = pen();
     myPen.setWidth(3);
     myPen.setColor(Qt::red);
     setPen(myPen);
 
-    QGraphicsTextItem *slotNameTextGraphicsItem = new QGraphicsTextItem(theSlotToBeInvoked->Name, this);
+    reset(parentUseCaseGraphicsScene, classlifelineWhoseSlotIsToBeInvoked, theSlotToBeInvoked);
+}
+void DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene::reset(UseCaseGraphicsScene *parentUseCaseGraphicsScene, DesignEqualsImplementationClassLifeLine *classlifelineWhoseSlotIsToBeInvoked, DesignEqualsImplementationClassSlot *theSlotToBeInvoked)
+{
+    if(m_SlotNameTextGraphicsItem)
+    {
+        delete m_SlotNameTextGraphicsItem;
+    }
+    m_SlotNameTextGraphicsItem = new QGraphicsTextItem(theSlotToBeInvoked->Name, this);
     QRectF myChildrenBoundingRect = childrenBoundingRect();
 
     qreal startX = 0.0;
@@ -29,7 +38,7 @@ DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene::DesignEqualsImp
         startX = parentItem()->boundingRect().right(); //TODOoptional: if the slot is being emitted to "the left", this would be "left" instead of "right"
     }
 
-    slotNameTextGraphicsItem->setPos(startX, -myChildrenBoundingRect.height());
+    m_SlotNameTextGraphicsItem->setPos(startX, -myChildrenBoundingRect.height());
 
     setLine(QLineF(QPointF(startX, 0), QPointF(myChildrenBoundingRect.width()+startX+DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene_LINE_WIDTH_MARGIN_AROUND_SIGNAL_NAME_TEXT, 0)));
 
