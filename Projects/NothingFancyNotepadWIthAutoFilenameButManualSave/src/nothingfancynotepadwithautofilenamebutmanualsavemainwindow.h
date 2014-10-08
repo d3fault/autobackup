@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-class QPlainTextEdit;
+class QTabWidget;
 
 class NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow : public QMainWindow
 {
@@ -13,8 +13,10 @@ public:
 protected:
     virtual void closeEvent(QCloseEvent *closeEvent);
 private:
-    QPlainTextEdit *m_MainTextEdit;
+    QTabWidget *m_MainTabWidget;
+    QAction *m_NewFileTabAction;
     QAction *m_AutoFilenameSaveAction;
+    quint32 m_CurrentVisibleTabIndex;
 
     QString m_CurrentProfile;
     QString m_CurrentProfileBaseDir;
@@ -24,7 +26,13 @@ private:
     void createToolbars();
 
     QString autoFileNameFromContentsAndCurrentTime(const QByteArray &fileContents);
+
+    QByteArray myHexHash(const QByteArray &inputByteArray);
+    void addNewFileTabAndMakeItCurrent();
 private slots:
+    void handleMainTabWidgetCurrentTabChanged(int newIndex);
+    void handleMainTextEditChanged();
+    void handleNewFileTabActionTriggered();
     void handleAutoFilenameSaveActionTriggered();
 };
 

@@ -13,9 +13,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         nothingfancynotepadwithautofilenamebutmanualsavemainwindow.cpp \
-    newprofiledialog.cpp
+    newprofiledialog.cpp \
+    nothingfancyplaintextedit.cpp
 
 HEADERS  += nothingfancynotepadwithautofilenamebutmanualsavemainwindow.h \
-    newprofiledialog.h
+    newprofiledialog.h \
+    nothingfancyplaintextedit.h
 
 include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)
