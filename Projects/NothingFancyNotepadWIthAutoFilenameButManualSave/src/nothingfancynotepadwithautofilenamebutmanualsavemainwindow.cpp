@@ -14,6 +14,8 @@
 #include <QSettings>
 //#include <QBuffer>
 
+#include "newprofiledialog.h"
+
 //TODOoptional: could be specifiable in the user profile
 #define NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix "AutoFilenameSaveAt-"
 #define NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Extension ".txt"
@@ -23,6 +25,7 @@
 NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_MainTextEdit(new QPlainTextEdit())
+    , m_FolderizeBaseDir(true)
 {
     setWindowTitle(tr("Nothing Fancy Notepad with Auto-Filename Save"));
     setCentralWidget(m_MainTextEdit);
@@ -33,6 +36,34 @@ NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::NothingFancyNotepadW
     QSettings settings;
     restoreGeometry(settings.value("windowGeometry").toByteArray());
     restoreState(settings.value("windowState").toByteArray());
+
+    m_CurrentProfile = settings.value("lastUsedProfile").toString();
+    if(m_CurrentProfile.isEmpty())
+    {
+        //create profile
+        NewProfileDialog newProfileDialog(this);
+        if(newProfileDialog.exec() != QDialog::Accepted)
+        {
+            close();
+        }
+        m_CurrentProfile = newProfileDialog.newProfileName();
+        m_CurrentProfileBaseDir = newProfileDialog.newProfileBaseDir();
+        m_FolderizeBaseDir = newProfileDialog.folderizeBaseDir();
+        settings.setValue("lastUsedProfile", m_CurrentProfile);
+
+        settings.beginGroup(m_CurrentProfile);
+        settings.setValue("baseDir", m_CurrentProfileBaseDir);
+        settings.setValue("folderizeBaseDir", m_FolderizeBaseDir);
+        settings.endGroup();
+    }
+    else
+    {
+        //load profile
+        settings.beginGroup(m_CurrentProfile);
+        m_CurrentProfileBaseDir = NewProfileDialog::appendSlashIfNeeded(settings.value("baseDir").toString());
+        m_FolderizeBaseDir = settings.value("folderizeBaseDir").toBool();
+        settings.endGroup();
+    }
 }
 void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::closeEvent(QCloseEvent *closeEvent)
 {
@@ -54,15 +85,10 @@ void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::createToolbars(
 }
 QString NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::autoFileNameFromContentsAndCurrentTime(const QByteArray &fileContents)
 {
-    /*TODOreq: appendSlashIfNeeded(currentSettingsProfile.autoSaveDir())*/
-    QString baseDir = "/run/shm/";
-
-    bool folderIze = true; //TODOreq: per-profile setting
-
-    if(folderIze)
+    if(m_FolderizeBaseDir)
     {
         QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
-        QString folderizedPath = baseDir
+        QString folderizedPath = m_CurrentProfileBaseDir
                                 + QString::number(currentDateTime.date().year()) //2014
                                 + QDir::separator()
                                 + currentDateTime.date().toString("MM-MMMM") //01-January
@@ -95,7 +121,7 @@ QString NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::autoFileName
     }
     else
     {
-        QString ret(NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix + QString::number(QDateTime::currentMSecsSinceEpoch() / static_cast<qint64>(1000)) + "-");
+        QString ret(m_CurrentProfileBaseDir + NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix + QString::number(QDateTime::currentMSecsSinceEpoch() / static_cast<qint64>(1000)) + "-");
         //qint16 contentsCrc16 = qChecksum(fileContents.constData(), fileContents.length());
         QByteArray contentHash = QCryptographicHash::hash(fileContents, QCryptographicHash::Md5);
         QByteArray contentHashHex = contentHash.toHex();

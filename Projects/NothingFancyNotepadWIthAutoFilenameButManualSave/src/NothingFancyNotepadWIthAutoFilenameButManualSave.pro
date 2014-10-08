@@ -12,6 +12,10 @@ TARGET = NothingFancyNotepadWIthAutoFilenameButManualSave
 TEMPLATE = app
 
 SOURCES += main.cpp\
-        nothingfancynotepadwithautofilenamebutmanualsavemainwindow.cpp
+        nothingfancynotepadwithautofilenamebutmanualsavemainwindow.cpp \
+    newprofiledialog.cpp
 
-HEADERS  += nothingfancynotepadwithautofilenamebutmanualsavemainwindow.h
+HEADERS  += nothingfancynotepadwithautofilenamebutmanualsavemainwindow.h \
+    newprofiledialog.h
+
+include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)

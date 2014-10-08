@@ -16,6 +16,10 @@ private:
     QPlainTextEdit *m_MainTextEdit;
     QAction *m_AutoFilenameSaveAction;
 
+    QString m_CurrentProfile;
+    QString m_CurrentProfileBaseDir;
+    bool m_FolderizeBaseDir;
+
     void createActions();
     void createToolbars();
 
