@@ -10,6 +10,8 @@ class NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow : public QMainW
     Q_OBJECT
 public:
     NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow(QWidget *parent = 0);
+protected:
+    virtual void closeEvent(QCloseEvent *closeEvent);
 private:
     QPlainTextEdit *m_MainTextEdit;
     QAction *m_AutoFilenameSaveAction;
