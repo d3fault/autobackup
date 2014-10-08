@@ -1,0 +1,5 @@
+auto filename, manual save. nothing fancy notepad
+qsettings 'profiles', profile required and prompted for at start, first-config/settings dialog to select dir to auto save to
+
+qcombobox to select profile
+last used profile remembered
