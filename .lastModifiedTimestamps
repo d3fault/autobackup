@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1412431712
+Documents/minddump/dreams/:1413039256
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -195,6 +195,7 @@ Documents/minddump/dreams/sldjfklasjdkfsaoduflsajfosudfljsdfousdlfk.txt:13855556
 Documents/minddump/dreams/sldkfjlkasdjflksajdfsadofulkwejroulkdjfoasudflaksdfjosdfulsdkfjouwekrjoiusdflkjsdf.txt:1379234828
 Documents/minddump/dreams/sldkjflskjdflkjsdlfjsdkljfjewrjlkjdflkjsldfjoiwer.txt:1394211103
 Documents/minddump/dreams/slfkjalskjflksjdflsjdflkjsdlkfjouwerlkjosudflksjdfousdfl.easy.metaphore.for.uhh.economy.and.lots.others.txt:1397896994
+Documents/minddump/dreams/slkfjslkjflksjdflkjsdlkfjalksdjflkjsdflkjsdflkjoweurlkjsdfosdlfkjsdfoiusdkfl.txt:1413039256
 Documents/minddump/dreams/slkjdflkajsldkfjlksjdflkjsdkfjljewroulkjsdflkjdsflkwer.txt:1399574436
 Documents/minddump/dreams/slkjdflskjdflkjskldfjsdjfklsdjflkjsdfjsldkfjlksdf.txt:1409511808
 Documents/minddump/dreams/small.navy.boat.addendum.werasfdsfsdfjklsjdfkljsfd.txt:1390212530
@@ -2731,7 +2732,7 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1412764365
+Projects/DesignEqualsImplementation2/src/:1412765294
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
@@ -2786,7 +2787,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.cpp:14111873
 Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.h:1411186033
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp:1412603998
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h:1412602934
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1412598081
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1413039022
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1412594485
 Projects/DesignEqualsImplementation2/src/ui/gui/signalstatementnotchmultiplextergraphicsrect.cpp:1412603934
 Projects/DesignEqualsImplementation2/src/ui/gui/signalstatementnotchmultiplextergraphicsrect.h:1412603754
