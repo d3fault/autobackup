@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+class ObjectOnThreadGroup;
 class CouchbaseNotepadWidget;
 
 class CouchbaseNotepadGui : public QObject
@@ -12,9 +13,14 @@ public:
     explicit CouchbaseNotepadGui(QObject *parent = 0);
     ~CouchbaseNotepadGui();
 private:
+    ObjectOnThreadGroup *m_BackendThread;
     CouchbaseNotepadWidget *m_Gui;
+signals:
+    void quitBackendRequested();
 public slots:
     void handleCouchbaseNotepadReadyForConnections(QObject *couchbaseNotepadAsQObject);
+private slots:
+    void handleAboutToQuit();
 };
 
 #endif // COUCHBASENOTEPADGUI_H

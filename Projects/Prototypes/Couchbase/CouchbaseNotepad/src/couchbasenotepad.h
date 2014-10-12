@@ -15,6 +15,7 @@ public:
     explicit CouchbaseNotepad(QObject *parent = 0);
 private:
     lcb_t m_Couchbase;
+    struct event_base *m_LibEventBase_OrZero_JustForCallingLoopBreakOn;
 
     static const struct timeval m_ThirtyMilliseconds;
     struct event *m_ProcessQtEventsTimeout;
@@ -76,6 +77,8 @@ public slots:
 
     void getCouchbaseNotepadDocByKey(const QString &key);
     void storeCouchbaseNotepadDocByKey(const QString &key, const QString &value, bool overwriteExisting = false);
+
+    void stopCouchbase();
 };
 
 #endif // COUCHBASENOTEPAD_H

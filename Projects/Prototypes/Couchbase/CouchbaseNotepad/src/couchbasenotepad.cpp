@@ -7,6 +7,7 @@ const struct timeval CouchbaseNotepad::m_ThirtyMilliseconds = {0,30000};
 //copy/pasted liberally from anonymousbitcoincomputingcouchbasedb.cpp
 CouchbaseNotepad::CouchbaseNotepad(QObject *parent)
     : QObject(parent)
+    , m_LibEventBase_OrZero_JustForCallingLoopBreakOn(0)
     , m_PendingGetCount(0)
     , m_PendingStoreCount(0)
 { }
@@ -377,6 +378,8 @@ void CouchbaseNotepad::initializeAndStart()
 #endif
 
     event_add(m_ProcessQtEventsTimeout, &m_ThirtyMilliseconds);
+    m_LibEventBase_OrZero_JustForCallingLoopBreakOn = LibEventBaseScopedDeleterInstance.LibEventBase;
+    emit initializedAndStartedSuccessfully();
 
     event_base_loop(LibEventBaseScopedDeleterInstance.LibEventBase, 0); //wait until event_base_loopbreak is called, processing all events of course. TODOreq: qApp->processEvents() periodically, i guess a 30ms libevent timer?
     event_free(m_ProcessQtEventsTimeout);
@@ -436,4 +439,21 @@ void CouchbaseNotepad::storeCouchbaseNotepadDocByKey(const QString &key, const Q
         return;
     }
     ++m_PendingStoreCount;
+}
+void CouchbaseNotepad::stopCouchbase()
+{
+    if(m_LibEventBase_OrZero_JustForCallingLoopBreakOn)
+    {
+#if 0 //later
+        m_NoMoreAllowedMuahahaha = true;
+        //maybe we got lucky, or maybe there is no activity on the server
+        if(m_PendingStoreCount == 0 && m_PendingGetCount == 0)
+        {
+            notifyMainThreadWeAreFinishedWithAllPendingRequests();
+        }
+#endif
+        //KISS
+        event_base_loopbreak(m_LibEventBase_OrZero_JustForCallingLoopBreakOn);
+        m_LibEventBase_OrZero_JustForCallingLoopBreakOn = 0;
+    }
 }
