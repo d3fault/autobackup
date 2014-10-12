@@ -92,10 +92,10 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_WhatTheStoreWithInputCasSavingOutputCasWasFor(INITIALINVALIDNULLSTOREWITHCASSAVINGCAS),
       m_WhatTheGetWasFor(INITIALINVALIDNULLGET),
       m_WhatTheGetSavingCasWasFor(INITIALINVALIDNULLGETSAVINGCAS),
-      m_CurrentlySubscribedTo(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING),
       m_LoggedIn(false)
 {
     //constructor body, in case you're confused...
+    m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, "");
 #if 0
     mt19937 mersenneTwisterRandomNumberGenerator;
     mersenneTwisterRandomNumberGenerator.seed(static_cast<int>(WDateTime::currentDateTime().toTime_t())); //had taus88, but when used with bitcoin key dispersement set selection, i was getting the same number over and over for the entire app run. a TODOoptimization here might be to just do "time_t % num_queues" (or use unique id again), because i'd imagine these RNGs are expensive ish
@@ -121,10 +121,10 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
 }
 void AnonymousBitcoinComputingWtGUI::finalize()
 {
-    if(m_CurrentlySubscribedTo != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
+    if(m_CurrentlySubscribedTo.first != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
     {
         //we're subscribed to something, so unsubscribe
-        getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
+        getAndSubscribeCouchbaseDocumentByKeySavingCas(m_CurrentlySubscribedTo.second, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode);
         //no need to reset m_CurrentlySubscribedTo to because 'this' is about to be deleted...
     }
     WApplication::finalize();
@@ -357,6 +357,19 @@ void AnonymousBitcoinComputingWtGUI::registerAttemptFinished(bool lcbOpSuccess, 
     m_RegisterUsernameLineEdit->setText("");
     m_RegisterPasswordLineEdit->setText("");
 }
+#if 0
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+void AnonymousBitcoinComputingWtGUI::beginAsyncDocGetTellingUsWhetherOrNotThatAdCampaignExistsAndIsRunning(const WString &campaignOwner, const WString &campaignIndex)
+{
+    getCouchbaseDocumentByKeyBegin(adSpaceCampaignKey(campaignOwner.toUTF8(), campaignIndex.toUTF8())); //defer rendering implied
+    m_WhatTheGetWasFor = GETPOSSIBLYNONEXISTENTADCAMPAIGNDOC_ANDMAKESUREITSRUNNINGBEFOREPRESENTING;
+}
+void AnonymousBitcoinComputingWtGUI::ifAdCampaignDocExistsAndCampaignIsRunning_ShowItToTheUserJustLikeD3faultsAdCampaign0(const string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
+{
+    //TODOreq: get and subscribe mode needs to work with multiple keys
+}
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+#endif
 void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
 {
     if(!m_AdvertisingBuyAdSpaceD3faultWidget)
@@ -368,7 +381,11 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultWidget);
 }
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, std::string &campaignIndex)
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget()
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 {
     //m_LettersNumbersOnlyValidatorAndInputFilter->validate()
     //TODOreq: sanitize username and campaign index before doing below's TODOmulti-user
@@ -410,8 +427,13 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
             m_FirstPopulate = true; //so we know to call resumeRendering on first populate/update, but not populates/updates thereafter
             deferRendering();
 
-            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
-            m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+            const std::string &keyToSubscribeTo = adSpaceCampaignKey(campaignOwner, campaignIndex);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
+            const std::string &keyToSubscribeTo = adSpaceCampaignKey("d3fault", "0");
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(keyToSubscribeTo, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
+            m_CurrentlySubscribedTo = std::make_pair(HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS, keyToSubscribeTo); //TO DOnereq(resolved by the end of typing): i want to refactor it into a pointer to a "subscripton" object, nullptr meaning not subscribed to anything. With a mode enum that has "StandardSubscription" and those js hacks. Finally, a string field for the key to the doc actually subscribed to. Alas, I am not brave enough to ifdef hack in this multi owner mode AND do a refactor at the same fucking time! Ok actually I just got the courage to do it. You know fuck it actually, ima just use a pair so the bulk of what I already have stays (I was about to do the ptr logic just described, but then contemplated what I should do if the ptr is not zero right here/now and was liek "errm"
 
             //TODOoptimization: shorten js variable names (LOL JS). use defines to retain sanity
 
@@ -459,8 +481,13 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         else
         {
             //just re-subscribe
-            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
-            m_CurrentlySubscribedTo = HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS;
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+            const std::string &keyToResubscribeTo = adSpaceCampaignKey(campaignOwner, campaignIndex);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
+            const std::string &keyToResubscribeTo = adSpaceCampaignKey("d3fault", "0");
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(keyToResubscribeTo, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
+            m_CurrentlySubscribedTo = std::make_pair(HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS, keyToResubscribeTo);
         }
         //TO DOnereq(newest cache poll always gotten): the data will still be populated, but the data may be stale (maybe i shouldn't ever show such stale info (could be really really old, BUT if everything is working it will get updated really fast ([probably] not even a couchbase hit, so SUB-SUB-MILLISECONDS!?!?)))
         //^still, should i disable gui or something?
@@ -645,8 +672,9 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
     else
     {
         //no-js needs to get the campaign doc again [from subscription cache] before proceeding to next step (uses same enum as above afterwards)
-        getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
-        m_CurrentlySubscribedTo = NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK;
+        const std::string &campaignDocKey = adSpaceCampaignKey("d3fault", "0");
+        getAndSubscribeCouchbaseDocumentByKeySavingCas(campaignDocKey, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
+        m_CurrentlySubscribedTo = std::make_pair(NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK, campaignDocKey);
         //we use the same enum going in as the no-js single get hack, but a different enum for pulling back out (since we don't want to end up at pre-step 1)
     }
     deferRendering();
@@ -1430,8 +1458,9 @@ void AnonymousBitcoinComputingWtGUI::doHackyOneTimeBuyEventUpdateThingoForNoJava
     //3) 'sorry, someone else bought the slot just moments before you' (multiple)
     //4) successful slot purchase
 
-    getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
-    m_CurrentlySubscribedTo = SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX;
+    const std::string &campaignDocKey = adSpaceCampaignKey("d3fault", "0");
+    getAndSubscribeCouchbaseDocumentByKeySavingCas(campaignDocKey, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
+    m_CurrentlySubscribedTo = std::make_pair(SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX, campaignDocKey);
     deferRendering(); //getAndSubscribe doesn't defer/resume, but we need to since no-js (the switch/'case' for the above special no-js enum does the resume)
 }
 void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::string &keyToCouchbaseDocument)
@@ -1568,6 +1597,15 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     //this hack STILL makes me giggle like a little school girl, tee hee. the hack becomes life and all you know, and is no longer 'considered' a hack
     switch(m_WhatTheGetWasFor)
     {
+#if 0
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    case GETPOSSIBLYNONEXISTENTADCAMPAIGNDOC_ANDMAKESUREITSRUNNINGBEFOREPRESENTING:
+    {
+        ifAdCampaignDocExistsAndCampaignIsRunning_ShowItToTheUserJustLikeD3faultsAdCampaign0(couchbaseDocument, lcbOpSuccess, dbError);
+    }
+        break;
+#endif //ABC_MULTI_CAMPAIGN_OWNER_MODE
+#endif
     case HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET:
     {
         buySlotPopulateStep2d3faultCampaign0(couchbaseDocument, lcbOpSuccess, dbError);
@@ -1689,7 +1727,7 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
 }
 void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas_UPDATE(const string &keyToCouchbaseDocument, const string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError)
 {
-    switch(m_CurrentlySubscribedTo)
+    switch(m_CurrentlySubscribedTo.first)
     {
     case HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS:
     {
@@ -1699,14 +1737,14 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
     case SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX:
     {
         resumeRendering(); //get and subscribe mode generally does not defer/resume, but this is a no-js hack so it makes an exception!
-        m_CurrentlySubscribedTo = INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING; //end of subscription after just one (so we don't 'unsubscribe' or send change session id stuff)
+        m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, ""); //end of subscription after just one (so we don't 'unsubscribe' or send change session id stuff)
         finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas);        
     }
         break;
     case NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK:
     {
         //since we go to a specialized method, we can just resumeRendering in there (whereas the above no-js hack shares the 'finish showing' method with yes-js). but in fact, we don't want to resumeRendering anyways until a bit later (another [regular] db hit)
-        m_CurrentlySubscribedTo = INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING; //still want to unsubscribe tho, just makes more sense to put it here
+        m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, "");; //still want to unsubscribe tho, just makes more sense to put it here
         ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1(couchbaseDocument, cas, lcbOpSuccess, dbError);
     }
         break;
@@ -1884,51 +1922,117 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
             return;
         }
 
-        if(campaignOwnerInternalPathPart == "")
-        {
-            //TODOreq: fetch first page of list of campaign owners
-        }
-        else
+        if(campaignOwnerInternalPathPart != "")
         {
             const std::string &campaignIndexInternalPathPart = internalPathNextPart(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE "/" + campaignOwnerInternalPathPart + "/");
-            if(campaignIndexInternalPathPart == "")
-            {
-                //TODOreq: fetch first page of list of campaigns for the known campaign owner
-            }
-            else
+            if(campaignIndexInternalPathPart != "")
             {
                 //sanitize campaign index part of url
                 WIntValidator campaignIndexValidator(0, 64000); //TODOoptional: more than 64k campaigns? TODOreq: at least fail out when they try to make more than upper limit
+                campaignIndexValidator.setMandatory(true);
                 WString campaignIndexAsWString = WString::fromUTF8(campaignIndexInternalPathPart, true);
                 Wt::WIntValidator::Result campaignIndexValidationResult = campaignIndexValidator.validate(campaignIndexAsWString);
-                if(campaignOwnerValidationResult.state() != Wt::WIntValidator::Valid)
+                if(campaignIndexValidationResult.state() != Wt::WIntValidator::Valid)
                 {
                     show404notFoundWidget(); //TODOoptional: better explaination
                     return;
                 }
 
-                beginAsyncDocGetTellingUsWhetherOrNotThatAdCampaignExistsAndIsRunning(campaignOwnerAsWString, campaignOwnerAsWString);
+                //if we get here then we're at the only subscribable page (for now) in the system: campaign doc
+
+                //beginAsyncDocGetTellingUsWhetherOrNotThatAdCampaignExistsAndIsRunning(campaignOwnerAsWString, campaignIndexAsWString);
+                beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(campaignOwnerAsWString.toUTF8(), campaignIndexAsWString.toUTF8());
+
                 return;
             }
-        }
-    }
-#endif
 
+
+
+
+
+            //now in 'non-subscribeable' area
+
+            //TODOreq: fetch first page of list of campaigns for the known campaign owner
+            return;
+        }
+        //TODOreq: fetch first page of list of campaign owners
+        return;
+    }
+    if(m_CurrentlySubscribedTo.first != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
+    {
+        //we need to unsubscribe from whatever we're subscribed to
+
+        //looks like i need some auxillary message queues for communicating with backend... fffff /lazy
+        //also applies to changing sessionId, guh. 'get' and 'store' just don't cut-it/qualify (though i could PROBABLY hack them in xD). I'm mainly hesitant because it is MACRO HELL dealing with that shiz (i was tempted to do it for 'cas' vs. 'no-cas' etc, but ultimately said fuck it and just hacked onto the regular (but in hindsight, it wouldn't have worked [easily] because i only have 1x couchbase get/store callback!). I smell a refactor commit, which scares me because they often are the last times i touch codebases
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        const std::string &keyToUnsubscribeFrom = m_CurrentlySubscribedTo.second;
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
+        const std::string &keyToUnsubscribeFrom = adSpaceCampaignKey("d3fault", "0");
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+        getAndSubscribeCouchbaseDocumentByKeySavingCas(keyToUnsubscribeFrom, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: to be future proof for use with other subscriptions i'd have to call a method passing in m_CurrentlySubscribedTo in order to get the key to pass in here (easy but lazy)
+
+        //we don't expect a response from the backend, so this is our frontend's flag that we are now unsubscribed
+        m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, "");
+    }
+    if(isHomePath(newInternalPath)) //why do we have this both here and in the constructor? because setInternalPath() does not go to/through the constructor, so showHome() would never be called if they click a link etc that does setInternalPath("/home"). They'd only be able to get there by navigating directly to the site/home without a session (which is a common case but yea~)
+    {
+        showHomeWidget();
+        return;
+    }
+    if(internalPathMatches(ABC_INTERNAL_PATH_ADS))
+    {
+#if 0 //handled above, 'near' (but below) the subscribable area
+        if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE))
+        {
+            if(internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT))
+            {
+                showAdvertisingBuyAdSpaceD3faultWidget();
+                return;
+            }
+            showAdvertisingBuyAdSpaceWidget();
+            return;
+        }
+#endif
+        showAdvertisingWidget();
+        return;
+    }
+    if(newInternalPath == ABC_INTERNAL_PATH_ACCOUNT)
+    {
+        showAccountWidget();
+        return;
+    }
+    if(newInternalPath == ABC_INTERNAL_PATH_REGISTER)
+    {
+        showRegisterWidget();
+        return;
+    }
+
+    //404 Not Found
+    show404notFoundWidget();
+    return;
+
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
     if(!internalPathMatches(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0)) //we would check ALL eligible subscriptions before going into this if block (future proof), or I suppose a better solution would be to put all subscription paths under the same clean url prefix...
     {
         //now in 'non-subscribeable' area
 
-        if(m_CurrentlySubscribedTo != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
+        if(m_CurrentlySubscribedTo.first != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
         {
             //we need to unsubscribe from whatever we're subscribed to
 
             //looks like i need some auxillary message queues for communicating with backend... fffff /lazy
             //also applies to changing sessionId, guh. 'get' and 'store' just don't cut-it/qualify (though i could PROBABLY hack them in xD). I'm mainly hesitant because it is MACRO HELL dealing with that shiz (i was tempted to do it for 'cas' vs. 'no-cas' etc, but ultimately said fuck it and just hacked onto the regular (but in hindsight, it wouldn't have worked [easily] because i only have 1x couchbase get/store callback!). I smell a refactor commit, which scares me because they often are the last times i touch codebases
 
-            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: to be future proof for use with other subscriptions i'd have to call a method passing in m_CurrentlySubscribedTo in order to get the key to pass in here (easy but lazy)
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        const std::string &keyToUnsubscribeFrom = m_CurrentlySubscribedTo.second;
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
+        const std::string &keyToUnsubscribeFrom = adSpaceCampaignKey("d3fault", "0");
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(keyToUnsubscribeFrom, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode);
 
             //we don't expect a response from the backend, so this is our frontend's flag that we are now unsubscribed
-            m_CurrentlySubscribedTo = INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING;
+            m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, "");
         }
 
         if(isHomePath(newInternalPath)) //why do we have this both here and in the constructor? because setInternalPath() does not go to/through the constructor, so showHome() would never be called if they click a link etc that does setInternalPath("/home"). They'd only be able to get there by navigating directly to the site/home without a session (which is a common case but yea~)
@@ -1964,12 +2068,13 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
 
         //404 Not Found
         show404notFoundWidget();
-        return; //needed? this return wasn't here before. bug?
+        return; //needed? this return wasn't here before. bug? sure looks like it because we wouldn't want to show the ad campaign on a 404... wtf?
     }
 
     //TODOreq: to be future proof for other subscriptions, we need to do an 'unsubscribe' -> subscribe-to-different code path, and maybe they can/should share the ride to the backend ;-P. low priority for now since only one subscription. but really they don't need to share a ride since unsubscribe doesn't respond. we just async send unsubscribe and then do the new subscribe, ez
 
     beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 }
 void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
 {
@@ -2061,10 +2166,11 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
 
         changeSessionId();
 
-        if(m_CurrentlySubscribedTo != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
+        if(m_CurrentlySubscribedTo.first != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
         {
             //we're subscribed to something, so need to notify backend that we changed session id
-            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeChangeSessionIdMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
+            //getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeChangeSessionIdMode); //TODOreq: see handleInternalPath's comment about making key dynamic (ez)
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(m_CurrentlySubscribedTo.second, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeChangeSessionIdMode);
         }
 
         m_CurrentlyLoggedInUsername = m_LoginUsernameLineEdit->text().toUTF8(); //TO DOnereq(depends on how much security deferRending gives me): do we need to keep rendering deferred until we capture this (or perhaps capture it earlier (when it's used to LCB_GET)?)? Maybe they could 'change usernames' at precise moment to give them access to account that isn't theirs. idk [wt] tbh, but sounds plausible. should be captured as m_UsernameToAttemptToLoginAs (because this one is reserved for post-login), and then use simple assignment HERE
@@ -2165,7 +2271,7 @@ void AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked()
     m_CurrentlyLoggedInUsername = "";
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget);
 }
-AnonymousBitcoinComputingWtGUI::show404notFoundWidget()
+void AnonymousBitcoinComputingWtGUI::show404notFoundWidget()
 {
     if(!m_404NotFoundWidget)
     {

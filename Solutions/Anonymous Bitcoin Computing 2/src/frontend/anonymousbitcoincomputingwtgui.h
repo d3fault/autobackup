@@ -2,6 +2,7 @@
 #define ANONYMOUSBITCOINCOMPUTINGWTGUI_H
 
 #include <string>
+#include <utility>
 
 #include <event2/event.h>
 
@@ -275,6 +276,13 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void registerAttemptFinished(bool lcbOpSuccess, bool dbError);
     RegisterSuccessfulWidget *m_RegisterSuccessfulWidget;
 
+#if 0
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE //softcoded wip
+    void beginAsyncDocGetTellingUsWhetherOrNotThatAdCampaignExistsAndIsRunning(const WString &campaignOwner, const WString &campaignIndex);
+    void ifAdCampaignDocExistsAndCampaignIsRunning_ShowItToTheUserJustLikeD3faultsAdCampaign0(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
+#endif //ABC_MULTI_CAMPAIGN_OWNER_MODE
+#endif
+
     //hardcoded
     bool m_BuyInProgress;
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
@@ -286,7 +294,11 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WText *m_CurrentPriceLabel;
     std::string m_CurrentPriceDomPath;
     WPushButton *m_BuySlotFillerStep1Button;
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, std::string &campaignIndex);
+#else
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
+#endif
     std::string m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase;
     u_int64_t m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase;
     std::string m_HackedInD3faultCampaign0_MinPrice;
@@ -408,6 +420,11 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         GETALLADSLOTFILLERSDOCFORVIEWING,
         HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS,
         ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK
+#if 0
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        , GETPOSSIBLYNONEXISTENTADCAMPAIGNDOC_ANDMAKESUREITSRUNNINGBEFOREPRESENTING
+#endif //ABC_MULTI_CAMPAIGN_OWNER_MODE
+#endif
     };
     enum WhatTheGetSavingCasWasForEnum
     {
@@ -425,12 +442,12 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         //HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
     };
-    enum WhatTheGetAndSubscribeSavingCasWasForEnum
+    enum CurrentGetAndSubscribeMode
     {
-        INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING,
-        HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS,
-        SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX, //no-js equivalent of above subscription (hack)
-        NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK //another use of no-js hack, except this time we are getting campaign doc for 'just after buy step 1 clicked', because otherwise we can/do show stale pricing (despite 'recalculating', the values themselves we calculate from could be stale)
+        INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING = 0,
+        HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS = 1,
+        SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX = 2, //no-js equivalent of above subscription (hack)
+        NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK = 3 //another use of no-js hack, except this time we are getting campaign doc for 'just after buy step 1 clicked', because otherwise we can/do show stale pricing (despite 'recalculating', the values themselves we calculate from could be stale)
     };
 
     //TODOoptimziation: can probably use callbacks (boost::bind comes to mind) for these and would maybe be more efficient (idk)
@@ -440,12 +457,12 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WhatTheStoreWithInputCasSavingOutputCasWasForEnum m_WhatTheStoreWithInputCasSavingOutputCasWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
     WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
-    WhatTheGetAndSubscribeSavingCasWasForEnum m_CurrentlySubscribedTo; //hack insted of 'bool m_CurrentlySubscribed' (which isn't future proof anyways)
+    std::pair<CurrentGetAndSubscribeMode, std::string /*keyToDocCurrentlySubscribedTo*/> m_CurrentlySubscribedTo; //hack insted of 'bool m_CurrentlySubscribed' (which isn't future proof anyways)
 
     bool m_LoggedIn;
     std::string m_CurrentlyLoggedInUsername; //only valid if logged in
 
-    show404notFoundWidget();
+    void show404notFoundWidget();
 public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
     virtual void finalize();
