@@ -1,0 +1,5 @@
+I forget why I hate couchbase [now], so I'm coding this extremely simple KISS "notepad" app to re-remember and to additionally see if I can find a solution to the problem. Abc2 was too "full" for me to tweak-recompile-run in a timely manner, and there was assloads of unrelated code littered everywhere etc etc.
+
+This app will have a line edit "key", a plain text edit "value", and two buttons: GET and SET. SET tries LCB_ADD, if it fails then it asks you if you want to overwrite. If you press GET and the contents gotten aren't the same as what's in the plain text edit, ideally we should warn about unsaved contents... but meh I'm getting side tracked from the point.
+
+If I can resolve my problems with couchbase I'd consider using the "notepad" full time (and at that point I'd polish ofc (and integrate into Osios too)), since it's way the fuck safer than just 1 copy on a magnetic fucking disk.

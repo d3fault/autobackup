@@ -3518,7 +3518,19 @@ Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/mainwid
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/mainwidget.h:1340375359
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.cpp:1340400146
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.h:1340399397
-Projects/Prototypes/Couchbase/:1389319403
+Projects/Prototypes/Couchbase/:1413069068
+Projects/Prototypes/Couchbase/CouchbaseNotepad/:1413077413
+Projects/Prototypes/Couchbase/CouchbaseNotepad/design/:1413069202
+Projects/Prototypes/Couchbase/CouchbaseNotepad/design/intial.idea.couchbase.notepad.txt:1413069461
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/:1413078785
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/CouchbaseNotepadGui.pro:1413076481
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepad.cpp:1413077804
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepad.h:1413077666
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepadgui.cpp:1413070398
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepadgui.h:1413070310
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepadwidget.cpp:1413078663
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepadwidget.h:1413078215
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/main.cpp:1413075062
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/:1389498494
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/:1389940657
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/javascriptless.connections.do.blocking.get.javascript.is.async.both.share.a.cache.ideally.txt:1389498532
@@ -4838,8 +4850,8 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1411812878
-Solutions/Anonymous Bitcoin Computing 2/src/backend/:1399671510
+Solutions/Anonymous Bitcoin Computing 2/src/:1413078669
+Solutions/Anonymous Bitcoin Computing 2/src/backend/:1413077144
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1393531537
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h:1393531477
@@ -4847,7 +4859,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialb
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h:1393528690
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp:1393527299
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h:1393526820
-Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1396218440
+Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1413077144
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1399671510
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1393799993
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1411812561

@@ -269,7 +269,7 @@ void AnonymousBitcoinComputingCouchbaseDB::errorCallbackStatic(lcb_t instance, l
 }
 void AnonymousBitcoinComputingCouchbaseDB::errorCallback(lcb_error_t error, const char *errinfo)
 {
-    cerr << "COUCHBASE ERROR CALLBACK: " << lcb_strerror(m_Couchbase, error) << errinfo << endl;
+    cerr << "COUCHBASE ERROR CALLBACK: " << lcb_strerror(m_Couchbase, error) << " - " << errinfo << endl;
 
     if(!m_IsConnected)
     {
