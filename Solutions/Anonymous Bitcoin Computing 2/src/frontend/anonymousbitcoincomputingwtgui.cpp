@@ -483,8 +483,27 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         {
             //just re-subscribe
 
-#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE            
             const std::string &keyToResubscribeTo = adSpaceCampaignKey(campaignOwner, campaignIndex);
+
+            //we might need to unsubscribe from another campaign
+            if(m_CurrentlySubscribedTo.first == HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS)
+            {
+                if(m_CurrentlySubscribedTo.second != keyToResubscribeTo)
+                {
+                    //unsubscribe from old, subscribe to new
+                    //this needs to be somewhere else if/when I ever have other subscribable page TYPES
+
+                    //TO DOnereq(nope. it would be the case if they had the same key, BUT THEY DON'T): need to unsubscribe from old, subscribe to new. HOWEVER the fact that we use multiple queues to communicate with the backend and that each of them might have N pending requests on them AND that we don't process ALL N of them whenever the corresponding event is lifted, means we can't guarantee that the unsubscribe request will be process BEFORE the "subscribe" [to new] request sent one statement later. if the unsubscribe request is processed after (a rare but as I've just shown, possible, race condition), then the [new] subscription we WANT will be unsubscribed, guh. I think Ima do the "unsubscribe piggy backing on new subscribe" (call it.. dun dun dun.. "change subscription" xD) to solve that
+                    getAndSubscribeCouchbaseDocumentByKeySavingCas(m_CurrentlySubscribedTo.second, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode);
+                }
+                else //already subscribed wtf?
+                {
+                    //do nothing. can internal path changed even be triggered (getting us here) when it really didn't change?
+                    m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //just in case
+                    return;
+                }
+            }
 #else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
             const std::string &keyToResubscribeTo = adSpaceCampaignKey("d3fault", "0");
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
@@ -816,7 +835,20 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
     //if we get here, allAds doc exists (which means it has at least one ad)
 
-    string currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp))));
+    string currentPriceStringForConfirmingOnly;
+    //check expired. js checks expired itself, BUT we still follow this code path just to get the starting 'datetime' of purchaseable slot accurately set [for both js and no-js]
+    double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
+    double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
+    if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
+    {
+        //expired, so use min price (maybe calculateCurrentPrice() should do this if(expired) stuff?)
+        currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_MinPrice;
+    }
+    else
+    {
+        //not expired
+        currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp))));
+    }
 
     if(!environment().ajax())
     {
@@ -945,6 +977,15 @@ void AnonymousBitcoinComputingWtGUI::ensureSlotDoesntExistThenContinueWithLockin
 
     m_CurrentPriceInSatoshisToUseForBuyingString = satoshiIntToSatoshiString(m_CurrentPriceInSatoshisToUseForBuying);
     m_PurchaseTimestampForUseInSlotItselfAndAlsoUpdatingCampaignDocAfterPurchase = boost::lexical_cast<std::string>(currentDateTime); //TO DOnereq: just fixed this, but need to make sure other code paths (???) also do the same: i was doing 'currentDateTime' twice and in between couchbase requests... but i need to make sure that the timestamp used to calculate the price is the same one stored alongside it in the json doc as 'purchase time' (and possibly start time, depending if last is expired). just fixed it now i'm pretty sure. since i was calculating it twice and the second time was later after a couchbase request, the timestamp would have been off by [sub]-milliseconds... and we've all seen superman 3 (actually i'm not sure that i have (probably have when i was young as shit, but don't remember it (hmmmm time for a rewatch)), but i've definitely seen office space (oh yea i want to rewatch that also!))
+
+    if(m_CurrentPriceInSatoshisToUseForBuying < 0) //heh
+    {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        cerr << "OMFG WE ALMOST ATTEMPTED TO BUY A SLOT FOR A NEGATIVE AMOUNT (which would have given the buyer the money lol) FFFFFF, but didn't" << endl;
+        resumeRendering();
+        return;
+    }
 
     if(userBalance >= m_CurrentPriceInSatoshisToUseForBuying) //cringing less now that they are fixed integers :)
     {

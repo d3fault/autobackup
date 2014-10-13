@@ -442,7 +442,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     enum CurrentGetAndSubscribeMode
     {
         INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING = 0,
-        HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS = 1,
+        HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS = 1, //this used to be for d3fault campaign 0 only, but now it's for all campaigns
         SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX = 2, //no-js equivalent of above subscription (hack)
         NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK = 3 //another use of no-js hack, except this time we are getting campaign doc for 'just after buy step 1 clicked', because otherwise we can/do show stale pricing (despite 'recalculating', the values themselves we calculate from could be stale)
     };
@@ -454,7 +454,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WhatTheStoreWithInputCasSavingOutputCasWasForEnum m_WhatTheStoreWithInputCasSavingOutputCasWasFor;
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
     WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
-    std::pair<CurrentGetAndSubscribeMode, std::string /*keyToDocCurrentlySubscribedTo*/> m_CurrentlySubscribedTo; //hack insted of 'bool m_CurrentlySubscribed' (which isn't future proof anyways)
+    std::pair<CurrentGetAndSubscribeMode, std::string /*keyToDocCurrentlySubscribedTo*/> m_CurrentlySubscribedTo;
 
     bool m_LoggedIn;
     std::string m_CurrentlyLoggedInUsername; //only valid if logged in
