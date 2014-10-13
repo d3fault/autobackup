@@ -48,7 +48,8 @@ HEADERS += \
     ../../../GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h \
     ../../../GloballySharedClasses/image/nonanimatedimagheaderchecker.h \
     abc2common.h \
-    ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h
+    ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h \
+    frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -69,7 +70,8 @@ SOURCES += main.cpp \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.cpp \
-    ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp
+    ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp \
+    frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

@@ -4,6 +4,7 @@
 #include <Wt/WIntValidator>
 #endif
 
+#include "pages/advertisingbuyownersadspacecampaignwithindexwidget.h"
 #include "validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
 #include "registersuccessfulwidget.h"
 #include "accounttabs/addfundsaccounttabbody.h"
@@ -58,6 +59,8 @@
 
 //TODOoptimization: walking the internal path via "next sub path" (including sanitization at each step) is a good way to organize the website and additionally fill in json key pieces. example: /ads/buy-ad-space/d3fault/0 could be organized in Wt as: class Ads { class BuyAdSpace { m_SellerUsername = d3fault; m_SellerCampaign = 0; } }.... and organized in json as ads_buy_d3fault_0.  sanitization errors would be simple 404s, and it goes without saying that neither can/should include underscores or slashes
 //^sanitize underscores(well,maybe.. if used as key 'split' identifier (isn't currently)), slashes(ditto if done for internal path 'walking'), and spaces (couchbase keys cannot contain spaces) from all user input AS A MINIMUM. really i'm probably going to go overkill and just allow a-z and 0-9 in a whitelist :-D. fuggit
+
+//TODOoptional: campaign "human readable name", instead of just the owner's name and an index
 
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv),
@@ -357,19 +360,6 @@ void AnonymousBitcoinComputingWtGUI::registerAttemptFinished(bool lcbOpSuccess, 
     m_RegisterUsernameLineEdit->setText("");
     m_RegisterPasswordLineEdit->setText("");
 }
-#if 0
-#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-void AnonymousBitcoinComputingWtGUI::beginAsyncDocGetTellingUsWhetherOrNotThatAdCampaignExistsAndIsRunning(const WString &campaignOwner, const WString &campaignIndex)
-{
-    getCouchbaseDocumentByKeyBegin(adSpaceCampaignKey(campaignOwner.toUTF8(), campaignIndex.toUTF8())); //defer rendering implied
-    m_WhatTheGetWasFor = GETPOSSIBLYNONEXISTENTADCAMPAIGNDOC_ANDMAKESUREITSRUNNINGBEFOREPRESENTING;
-}
-void AnonymousBitcoinComputingWtGUI::ifAdCampaignDocExistsAndCampaignIsRunning_ShowItToTheUserJustLikeD3faultsAdCampaign0(const string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
-{
-    //TODOreq: get and subscribe mode needs to work with multiple keys
-}
-#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
-#endif
 void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
 {
     if(!m_AdvertisingBuyAdSpaceD3faultWidget)
@@ -381,12 +371,17 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultWidget);
 }
+
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, std::string &campaignIndex)
+{
+    m_CampaignOwnerForPageBeingViewed = campaignOwner;
+    m_CampaignIndexForPageBeingViewed = campaignIndex;
 #else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget()
-#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 {
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
     //m_LettersNumbersOnlyValidatorAndInputFilter->validate()
     //TODOreq: sanitize username and campaign index before doing below's TODOmulti-user
     //TODOmulti-user: before showing the buy widget, do a get-accepting-not-found (not found means campaign doesn't exist (should link to "all of user's campaigns" (clicking tells you whether or not user exists)). should also check that the campaign is running (public) and not stopped (private). there is no delete, you simply stop.
@@ -396,9 +391,10 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
 
     if(!m_AdvertisingBuyAdSpaceD3faultCampaign0Widget) //TO DOnereq(rarely anything is deleted): this object, once created, should never be deleted until the WApplication is deleted. The reason is that get and subscribe updates might be sent to it (even if the user has navigated away, there is a race condition where they did not 'unsubscribe' yet so they'd still get the update (Wt handles this just fine. you can setText on something not being shown without crashing (but if I were to delete it, THEN we'd be fucked)))
     {
-        m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new WContainerWidget(m_MainStack);
-        m_AdvertisingBuyAdSpaceD3faultCampaign0Widget->setOverflow(WContainerWidget::OverflowAuto);
-        new WText(ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        //TODOreq? don't do any gui stuff until we know the campaign doc exists! pending multi owner refactor ofc. really though, the below stuff is just setting up placeholders etc
+
+        m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget(campaignOwner, campaignIndex, m_MainStack);
+
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
@@ -481,6 +477,7 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         else
         {
             //just re-subscribe
+
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
             const std::string &keyToResubscribeTo = adSpaceCampaignKey(campaignOwner, campaignIndex);
 #else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
@@ -508,8 +505,51 @@ double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double currentTime_
     //return satoshiIntToJsonDouble(jsonDoubleToSatoshiIntIncludingRounding(ret));
 }
 //NOTE: a lot of the body of this method has been copy/pasted to ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1, so if you change this, you should probably change that as well
-void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase)
+void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &keyToCouchbaseDocument, const string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError)
 {
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE //as of writing, single campaign owner mode made no use of lcbOpSuccess or dbError
+    if(dbError || !lcbOpSuccess)
+    {
+        //eh playing it safe setting these values back to blank, idk if it's necessary
+        m_CampaignLengthHoursLabel->setText("");
+        m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText("");
+        m_CurrentPriceLabel->setText("");
+
+        if(dbError)
+        {
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            cerr << "finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget db error" << endl;
+            if(!env().ajax())
+                resumeRendering();
+            else if(m_FirstPopulate)
+            {
+                resumeRendering();
+                m_FirstPopulate = false;
+            }
+            return;
+        }
+
+        if(!lcbOpSuccess)
+        {
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            new WText("The campaign for that user (or perhaps that user) does not exist", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: 'click here to see all of the user's campaigns' (and to find out of the user even exists?)
+            if(!env().ajax())
+                resumeRendering();
+            else if(m_FirstPopulate)
+            {
+                resumeRendering();
+                m_FirstPopulate = false;
+            }
+            return;
+        }
+    }
+
+    m_CampaignDocKeyForPageBeingViewed = keyToCouchbaseDocument;
+#endif
+
+    //TODOoptional: a campaign could be 'inactive' (just a field in the json ofc) theoretically but there's lots of use cases I need to implement in order to support that (what happens when 5 days are purchased and the campaign is made inactive? those 5 days refunded or the 6th+ days unpurchasable?), so fuck it for now
+
     //This is ALSO (but not always (first get)) what I have referred to as a "buy event", so if they have clicked "buy step 1" we need to roll back the GUI so they have to click buy step 1 again (various GUI object organizational changes to support this)
     //Goes without saying that the new 'slot index' that they will try to buy (which is locked in after clicking buy step 1) should be set in this method
     //I'm thinking it might be easiest to do all the "new" ing in the beginShowing() method and then to merely modify/populate those objects/variables via setText in this one
@@ -672,7 +712,13 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
     else
     {
         //no-js needs to get the campaign doc again [from subscription cache] before proceeding to next step (uses same enum as above afterwards)
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        const std::string &campaignDocKey = m_CampaignDocKeyForPageBeingViewed;
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
         const std::string &campaignDocKey = adSpaceCampaignKey("d3fault", "0");
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
         getAndSubscribeCouchbaseDocumentByKeySavingCas(campaignDocKey, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
         m_CurrentlySubscribedTo = std::make_pair(NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK, campaignDocKey);
         //we use the same enum going in as the no-js single get hack, but a different enum for pulling back out (since we don't want to end up at pre-step 1)
@@ -1042,8 +1088,15 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
             slotIndexToAttemptToBuy = (boost::lexical_cast<int>(m_SlotIndexImmediatelyAfterBuyStep1wasPressed_aka_PreviousSlotIndexToTheOneTheyWantToBuy) + 1);
         }
         m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase = boost::lexical_cast<std::string>(slotIndexToAttemptToBuy);
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        m_AdSlotAboutToBeFilledIfLockIsSuccessful = adSpaceCampaignSlotKey(m_CampaignOwnerForPageBeingViewed, m_CampaignIndexForPageBeingViewed, m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
+        getCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
         m_AdSlotAboutToBeFilledIfLockIsSuccessful = adSpaceCampaignSlotKey("d3fault", "0", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase);
         getCouchbaseDocumentByKeyBegin(m_AdSlotAboutToBeFilledIfLockIsSuccessful);
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
         m_WhatTheGetWasFor = ENSURESLOTABOUTTOLOCKUSERACCOUNTTOWARDSATTEMPTINGTOPURCHASEDOESNTEXISTBECAUSEIFITDOESANDWEBOUGHTITSTATEWOULDBEFUCKED;
     }
     else
@@ -1230,11 +1283,23 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
     //create transaction doc using lcb_add accepting fail -- i can probably re-use this code later (merge into functions), for now KISS
     ptree pt;
     pt.put(JSON_TRANSACTION_BUYER, m_CurrentlyLoggedInUsername);
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    pt.put(JSON_TRANSACTION_SELLER, m_CampaignOwnerForPageBeingViewed); //TODOoptional: implied/deducable from key name...
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
     pt.put(JSON_TRANSACTION_SELLER, "d3fault"); //TODOoptional: implied/deducable from key name...
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
     pt.put(JSON_TRANSACTION_AMOUNT, m_CurrentPriceInSatoshisToUseForBuyingString);
     std::ostringstream transactionBuffer;
     write_json(transactionBuffer, pt, false);
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(transactionKey(m_CampaignOwnerForPageBeingViewed, m_CampaignIndexForPageBeingViewed, m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase), transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
     store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(transactionKey("d3fault", "0", m_AdSlotIndexToBeFilledIfLockIsSuccessful_AndForUseInUpdateCampaignDocAfterPurchase), transactionBuffer.str(), StoreCouchbaseDocumentByKeyRequest::AddMode);
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
     m_WhatTheStoreWithoutInputCasWasFor = CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS; //TO DOnereq(possy is synchronous standalone app lol): it goes without saying that 'recovery possy' needs it's own set of these, so as not to conflict
     //TO DOnereq(cute, my younger/stupider self <3): i need a way of telling the backend that certain adds (like this one) are okay to fail. But really I already need a whole slew of error case handling to be coded into the backend, I guess I'll just do it later? So basically for adds where fails are not ok, we need to have two code paths... but for this one where the add failing is ok, we just pick up with one code path. I think the easiest way of doing this is to return a bool telling whether or not the add succeeded, and to just ignore it if it doesn't matter. But since there's many many ways of failing, maybe I should be passing around the LCB_ERROR itself? So far I've tried to keep front end and back end separate, so idk maybe "bool opTypeFail and bool dbTypeFail", where the first one is relating to cas/add fails and the second is like "500 internal server error" (of course, the backend would have retried backing off exponentially etc before resorting to that)
 }
@@ -1358,7 +1423,13 @@ void AnonymousBitcoinComputingWtGUI::doneUnlockingUserAccountAfterSuccessfulPurc
     write_json(updatedCampaignJsonDocBuffer, pt, false);
 
     //CAS-swap-accepting-fail
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(adSpaceCampaignKey(m_CampaignOwnerForPageBeingViewed, m_CampaignIndexForPageBeingViewed), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
     store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(adSpaceCampaignKey("d3fault", "0"), updatedCampaignJsonDocBuffer.str(), m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
     m_WhatTheStoreWithInputCasWasFor = HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS;
 }
 void AnonymousBitcoinComputingWtGUI::doneUpdatingCampaignDocSoErrYeaTellUserWeAreCompletelyDoneWithTheSlotFillAkaPurchase(bool dbError)
@@ -1458,7 +1529,12 @@ void AnonymousBitcoinComputingWtGUI::doHackyOneTimeBuyEventUpdateThingoForNoJava
     //3) 'sorry, someone else bought the slot just moments before you' (multiple)
     //4) successful slot purchase
 
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    const std::string &campaignDocKey = adSpaceCampaignKey(m_CampaignOwnerForPageBeingViewed, m_CampaignIndexForPageBeingViewed);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
     const std::string &campaignDocKey = adSpaceCampaignKey("d3fault", "0");
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
     getAndSubscribeCouchbaseDocumentByKeySavingCas(campaignDocKey, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx);
     m_CurrentlySubscribedTo = std::make_pair(SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX, campaignDocKey);
     deferRendering(); //getAndSubscribe doesn't defer/resume, but we need to since no-js (the switch/'case' for the above special no-js enum does the resume)
@@ -1597,15 +1673,6 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     //this hack STILL makes me giggle like a little school girl, tee hee. the hack becomes life and all you know, and is no longer 'considered' a hack
     switch(m_WhatTheGetWasFor)
     {
-#if 0
-#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-    case GETPOSSIBLYNONEXISTENTADCAMPAIGNDOC_ANDMAKESUREITSRUNNINGBEFOREPRESENTING:
-    {
-        ifAdCampaignDocExistsAndCampaignIsRunning_ShowItToTheUserJustLikeD3faultsAdCampaign0(couchbaseDocument, lcbOpSuccess, dbError);
-    }
-        break;
-#endif //ABC_MULTI_CAMPAIGN_OWNER_MODE
-#endif
     case HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET:
     {
         buySlotPopulateStep2d3faultCampaign0(couchbaseDocument, lcbOpSuccess, dbError);
@@ -1731,7 +1798,7 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
     {
     case HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS:
     {
-        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas); //TODOreq: lcbOpSuccess + dbError? my backend already needs special attention to this stuff for the request hackily being used for polling, so that may be related to this
+        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(keyToCouchbaseDocument, couchbaseDocument, cas, lcbOpSuccess, dbError); //TODOreq: lcbOpSuccess + dbError? my backend already needs special attention to this stuff for the request hackily being used for polling, so that may be related to this
     }
         break;
     case SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX:
@@ -2024,12 +2091,7 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
             //looks like i need some auxillary message queues for communicating with backend... fffff /lazy
             //also applies to changing sessionId, guh. 'get' and 'store' just don't cut-it/qualify (though i could PROBABLY hack them in xD). I'm mainly hesitant because it is MACRO HELL dealing with that shiz (i was tempted to do it for 'cas' vs. 'no-cas' etc, but ultimately said fuck it and just hacked onto the regular (but in hindsight, it wouldn't have worked [easily] because i only have 1x couchbase get/store callback!). I smell a refactor commit, which scares me because they often are the last times i touch codebases
 
-#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-        const std::string &keyToUnsubscribeFrom = m_CurrentlySubscribedTo.second;
-#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
-        const std::string &keyToUnsubscribeFrom = adSpaceCampaignKey("d3fault", "0");
-#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
-            getAndSubscribeCouchbaseDocumentByKeySavingCas(keyToUnsubscribeFrom, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode);
+            getAndSubscribeCouchbaseDocumentByKeySavingCas(adSpaceCampaignKey("d3fault", "0"), GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode);
 
             //we don't expect a response from the backend, so this is our frontend's flag that we are now unsubscribed
             m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, "");

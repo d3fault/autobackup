@@ -63,9 +63,11 @@ if(m_LastOpStatus != LCB_SUCCESS) \
 }
 
 //monitor-er? ^^ the things that keep me up at night...
-Abc2PessimisticStateMonitorAndRecoverer::Abc2PessimisticStateMonitorAndRecoverer()
+Abc2PessimisticStateMonitorAndRecoverer::Abc2PessimisticStateMonitorAndRecoverer(int argc, char *argv[])
     : ISynchronousLibCouchbaseUser()
-{ }
+{
+    //TODOreq: parse the target campaign [owner+index] from argv[1] and argv[2]. They are mandatory (but I guess I COULD default to d3fault ;-P). But honestly this monitor and recoverer doesn't scale that well to begin with... :-/... or maybe it does.
+}
 
 //TODOreq: If the driver's durability polling (replication) takes longer than one second, we'll get a lot of false positives here. Additionally, we should do a durability poll of our own for the "slot that just appeared" before we do the "100ms extra time" thing. Lastly, we should do durability polling for all of our recovery storings.
 int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRecovereringStateUntilToldToStop()

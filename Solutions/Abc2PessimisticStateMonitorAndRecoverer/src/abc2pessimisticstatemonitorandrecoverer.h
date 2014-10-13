@@ -9,7 +9,7 @@ using namespace std;
 class Abc2PessimisticStateMonitorAndRecoverer : public ISynchronousLibCouchbaseUser
 {
 public:
-    Abc2PessimisticStateMonitorAndRecoverer();
+    Abc2PessimisticStateMonitorAndRecoverer(int argc, char *argv[]);
     int startPessimisticallyMonitoringAndRecovereringStateUntilToldToStop();
 private:
     void errorOutput(const string &errorString);

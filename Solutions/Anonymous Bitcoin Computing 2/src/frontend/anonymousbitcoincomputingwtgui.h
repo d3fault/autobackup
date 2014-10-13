@@ -215,6 +215,7 @@ m_##text##MutexArray[lockedMutexIndex].unlock();
 
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
+class AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget;
 class LettersNumbersOnlyRegExpValidatorAndInputFilter;
 class RegisterSuccessfulWidget;
 class AddFundsAccountTabBody;
@@ -276,29 +277,24 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void registerAttemptFinished(bool lcbOpSuccess, bool dbError);
     RegisterSuccessfulWidget *m_RegisterSuccessfulWidget;
 
-#if 0
-#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE //softcoded wip
-    void beginAsyncDocGetTellingUsWhetherOrNotThatAdCampaignExistsAndIsRunning(const WString &campaignOwner, const WString &campaignIndex);
-    void ifAdCampaignDocExistsAndCampaignIsRunning_ShowItToTheUserJustLikeD3faultsAdCampaign0(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
-#endif //ABC_MULTI_CAMPAIGN_OWNER_MODE
-#endif
-
-    //hardcoded
+    //hardcoded (not as hardcoded as one might think! un-hardcoding wip if ABC_MULTI_CAMPAIGN_OWNER_MODE it defined)
     bool m_BuyInProgress;
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
     void showAdvertisingBuyAdSpaceD3faultWidget();
-    WContainerWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
+    AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     bool m_FirstPopulate;
     WText *m_CampaignLengthHoursLabel;
     WText *m_CampaignSlotCurrentlyForSaleStartDateTimeLabel;
     WText *m_CurrentPriceLabel;
     std::string m_CurrentPriceDomPath;
     WPushButton *m_BuySlotFillerStep1Button;
+
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, std::string &campaignIndex);
 #else
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
 #endif
+
     std::string m_HackedInD3faultCampaign0JsonDocForUpdatingLaterAfterSuccessfulPurchase;
     u_int64_t m_HackedInD3faultCampaign0CasForSafelyUpdatingCampaignDocLaterAfterSuccessfulPurchase;
     std::string m_HackedInD3faultCampaign0_MinPrice;
@@ -310,7 +306,13 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp;
     std::string m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice;
     double calculateCurrentPrice(double currentTime_x, double minPrice_y2, double lastSlotFilledAkaPurchasedPurchasePriceDoubled_y1, double lastSlotFilledAkaPurchasedExpireDateTime_x2, double lastSlotFilledAkaPurchasedPurchaseDateTime_x1);
-    void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase);
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    std::string m_CampaignOwnerForPageBeingViewed;
+    std::string m_CampaignIndexForPageBeingViewed;
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
+    void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &keyToCouchbaseDocument, const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError);
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1(const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError);
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError);
@@ -420,11 +422,6 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         GETALLADSLOTFILLERSDOCFORVIEWING,
         HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS,
         ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK
-#if 0
-#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-        , GETPOSSIBLYNONEXISTENTADCAMPAIGNDOC_ANDMAKESUREITSRUNNINGBEFOREPRESENTING
-#endif //ABC_MULTI_CAMPAIGN_OWNER_MODE
-#endif
     };
     enum WhatTheGetSavingCasWasForEnum
     {
