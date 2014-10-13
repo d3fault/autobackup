@@ -532,11 +532,11 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             //exception thrown if not found, but if we get to this code path then it has to be there (hence no try/catch)
 
             //the following two while loops are our processing of unsubscribe/change-session id requests. we could have done it right when we got the requests in eventSlotForWtGet, but we do it here instead to prevent a segfault when request hackily being used requests unsubscribe/change-session-id during the time it's being hackily used. now that we've finished using the request to pull out our cacheItem, it's ok if it gets deleted
-            while(!m_UnsubscribeRequestsToProcessMomentarily.empty())
+            while(!cacheItem->UnsubscribeRequestsToProcessMomentarily.empty())
             {
                 //process unsubscribe requests
-                GetCouchbaseDocumentByKeyRequest *originalUnsubscribeRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(m_UnsubscribeRequestsToProcessMomentarily.back());
-                m_UnsubscribeRequestsToProcessMomentarily.pop_back();
+                GetCouchbaseDocumentByKeyRequest *originalUnsubscribeRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->UnsubscribeRequestsToProcessMomentarily.back());
+                cacheItem->UnsubscribeRequestsToProcessMomentarily.pop_back();
 
                 GetCouchbaseDocumentByKeyRequest *existingSubscription;
                 try
@@ -566,11 +566,11 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
                 //always delete the unsubscribe request
                 delete originalUnsubscribeRequestFromWt;
             }
-            while(!m_ChangeSessionIdRequestsToProcessMomentarily.empty())
+            while(!cacheItem->ChangeSessionIdRequestsToProcessMomentarily.empty())
             {
                 //process change session id requests
-                GetCouchbaseDocumentByKeyRequest *originalChangeSessionIdRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(m_ChangeSessionIdRequestsToProcessMomentarily.back());
-                m_ChangeSessionIdRequestsToProcessMomentarily.pop_back();
+                GetCouchbaseDocumentByKeyRequest *originalChangeSessionIdRequestFromWt = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->ChangeSessionIdRequestsToProcessMomentarily.back());
+                cacheItem->ChangeSessionIdRequestsToProcessMomentarily.pop_back();
 
                 GetCouchbaseDocumentByKeyRequest *existingSubscription;
                 try
@@ -994,14 +994,14 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
             //first handle our two special cases (change session id and unsubscribe) by queuing their requests, to be processed when the next poll completes. if we processed them here, we'd run the risk of deleting the message being hackily used to poll the value every 100ms
             if(originalRequest->GetAndSubscribe == 2) //change session id
             {
-                m_ChangeSessionIdRequestsToProcessMomentarily.push_back(originalRequest);
+                keyValueCacheItem->ChangeSessionIdRequestsToProcessMomentarily.push_back(originalRequest);
 
                 //don't continue doing get [and/or subscribe]
                 return;
             }
             else if(originalRequest->GetAndSubscribe == 3) //unsubscribe
             {
-                m_UnsubscribeRequestsToProcessMomentarily.push_back(originalRequest);
+                keyValueCacheItem->UnsubscribeRequestsToProcessMomentarily.push_back(originalRequest);
 
                 //don't continue doing get [and/or subscribe]
                 return;
@@ -1041,7 +1041,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
         {
             //CACHE MISS
 
-            if(originalRequest->GetAndSubscribe == 2) //for these two specials: if there is no cache hit, we don't do jack shit (hey it rhymes)
+            if(originalRequest->GetAndSubscribe == 2) //for these two specials: if there is no cache hit, we don't do jack shit (hey it rhymes). ACTUALLY for the changeSessionId one, shouldn't I create the cache item, since clearly they're expressing interest in it (let's ignore the fact that we SHOULD NEVER EVEN GET HERE [because in order to change session-id we have to have been subscribed [TO SOME EXISTING KEY] in the first place])
             {
                 //change sessionId
                 delete originalRequest;

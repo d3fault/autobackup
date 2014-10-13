@@ -140,7 +140,7 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
 
     //read the ad image json and b64decode it
     bool someError = (reply->error() != QNetworkReply::NoError);
-    ptree pt;
+    ptree pt; //note: ptree is not re-entrant. if ever acceing from multiple threads, need to define BOOST_SPIRIT_THREADSAFE. However since it's only used in this object/thread, leaving it not defined is an optimization
     if(!someError)
     {
         QTextStream replyTextStream(reply);

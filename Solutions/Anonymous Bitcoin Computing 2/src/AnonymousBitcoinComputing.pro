@@ -21,9 +21,10 @@ CONFIG -= qt
 
 #QMAKE_CXXFLAGS += -save-temps
 
+#intermittent (<3 multi-threaded bugs) segfault without this define!
 DEFINES += BOOST_SPIRIT_THREADSAFE
 
-#DEFINES += ABC_MULTI_CAMPAIGN_OWNER_MODE
+DEFINES += ABC_MULTI_CAMPAIGN_OWNER_MODE
 
 HEADERS += \
     anonymousbitcoincomputing.h \

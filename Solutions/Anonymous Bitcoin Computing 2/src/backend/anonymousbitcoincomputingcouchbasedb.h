@@ -283,8 +283,6 @@ private:
     bool m_IsFinishedWithAllPendingRequests;
 
     GetAndSubscribeCacheHashType m_GetAndSubscribeCacheHash;
-    std::vector<void*> m_UnsubscribeRequestsToProcessMomentarily;
-    std::vector<void*> m_ChangeSessionIdRequestsToProcessMomentarily;
     static const struct timeval m_OneHundredMilliseconds;
 #ifndef ABC_MULTI_CAMPAIGN_OWNER_MODE
     struct event *m_GetAndSubscribePollingTimeout; //all keys share a timeout for now (and possibly forever), KISS

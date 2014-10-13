@@ -35,6 +35,9 @@ public:
 
     SubscribersType NewSubscribers; //want whatever next fetch gives
     SubscribersType Subscribers; //only want changes
+
+    std::vector<void*> UnsubscribeRequestsToProcessMomentarily;
+    std::vector<void*> ChangeSessionIdRequestsToProcessMomentarily;
 private:
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
     static const struct timeval m_OneHundredMilliseconds;
