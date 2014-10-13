@@ -373,7 +373,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
 }
 
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, std::string &campaignIndex)
+void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, const std::string &campaignIndex)
 {
     m_CampaignOwnerForPageBeingViewed = campaignOwner;
     m_CampaignIndexForPageBeingViewed = campaignIndex;
@@ -505,7 +505,7 @@ double AnonymousBitcoinComputingWtGUI::calculateCurrentPrice(double currentTime_
     //return satoshiIntToJsonDouble(jsonDoubleToSatoshiIntIncludingRounding(ret));
 }
 //NOTE: a lot of the body of this method has been copy/pasted to ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1, so if you change this, you should probably change that as well
-void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &keyToCouchbaseDocument, const string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError)
+void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError)
 {
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE //as of writing, single campaign owner mode made no use of lcbOpSuccess or dbError
     if(dbError || !lcbOpSuccess)
@@ -520,7 +520,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
             new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
             cerr << "finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget db error" << endl;
-            if(!env().ajax())
+            if(!environment().ajax())
                 resumeRendering();
             else if(m_FirstPopulate)
             {
@@ -534,7 +534,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         {
             new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
             new WText("The campaign for that user (or perhaps that user) does not exist", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: 'click here to see all of the user's campaigns' (and to find out of the user even exists?)
-            if(!env().ajax())
+            if(!environment().ajax())
                 resumeRendering();
             else if(m_FirstPopulate)
             {
@@ -544,8 +544,6 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             return;
         }
     }
-
-    m_CampaignDocKeyForPageBeingViewed = keyToCouchbaseDocument;
 #endif
 
     //TODOoptional: a campaign could be 'inactive' (just a field in the json ofc) theoretically but there's lots of use cases I need to implement in order to support that (what happens when 5 days are purchased and the campaign is made inactive? those 5 days refunded or the 6th+ days unpurchasable?), so fuck it for now
@@ -714,7 +712,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
         //no-js needs to get the campaign doc again [from subscription cache] before proceeding to next step (uses same enum as above afterwards)
 
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-        const std::string &campaignDocKey = m_CampaignDocKeyForPageBeingViewed;
+        const std::string &campaignDocKey = adSpaceCampaignKey(m_CampaignOwnerForPageBeingViewed, m_CampaignIndexForPageBeingViewed);
 #else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
         const std::string &campaignDocKey = adSpaceCampaignKey("d3fault", "0");
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
@@ -1798,14 +1796,14 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
     {
     case HACKEDIND3FAULTCAMPAIGN0GETANDSUBSCRIBESAVINGCAS:
     {
-        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(keyToCouchbaseDocument, couchbaseDocument, cas, lcbOpSuccess, dbError); //TODOreq: lcbOpSuccess + dbError? my backend already needs special attention to this stuff for the request hackily being used for polling, so that may be related to this
+        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas, lcbOpSuccess, dbError); //TODOreq: lcbOpSuccess + dbError? my backend already needs special attention to this stuff for the request hackily being used for polling, so that may be related to this
     }
         break;
     case SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX:
     {
         resumeRendering(); //get and subscribe mode generally does not defer/resume, but this is a no-js hack so it makes an exception!
         m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, ""); //end of subscription after just one (so we don't 'unsubscribe' or send change session id stuff)
-        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas);        
+        finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(couchbaseDocument, cas, lcbOpSuccess, dbError);
     }
         break;
     case NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK:

@@ -1,5 +1,6 @@
 #include "anonymousbitcoincomputingcouchbasedb.h"
 
+#include "getandsubscribecacheitem.h"
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
 #include "d3faultscouchbaseshared.h"
@@ -9,6 +10,7 @@ using namespace std;
 const struct timeval AnonymousBitcoinComputingCouchbaseDB::m_OneHundredMilliseconds = {0,100000};
 
 //TODOoptimization: not only will lockfree::queue be faster just as a queue implementation, but it provides two additional benefits: 1) dynamic sizing at run-time, so I don't need Store, StoreLarge, and Get (just Get and Store). 2) I think I can just pass the pointer to the request object instead of serializing/copying/reading/deserializing it, but unsure about this. Another benefit that is mostly design related, is that I can use proper boost::bind callbacks etc since I won't be serializing anything. I can clean up the "what x was for" enum code (as in, delete it), and boost::bind also provides a solution to expanding GetAndSubscribe (currently, changing subscriptions may still receive a subscription or two for the old subcription, but since we use "what x was for", they OLD subscription would go to the NEW callback and blah segfault (but boost::bind fixes this :-P)). Also the WApplication::bind thing I've never used.
+//TODOoptimization: I think maybe the 100ms polling should increase as there are more items in the get and subscribe cache. Like if there's only 1 item we are at 100ms, but maybe a couple thousand should be like 5 seconds (and everything linearly in between ofc). 100ms polling just sounds like too much if there are tons of items, but eh I'm not sure that's correct since there's sharding/distribution of load going on for those thousands already. For now I'm just going to do 100ms for all. Thought about doing a time per key (cache item) and then having only the ones with lots of subscribers at 100ms (few subscribers = 1-5 seconds), but I like the first strategy mentioned better
 
 #define ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(GetOrStore) \
 AutoRetryingWithExponentialBackoffCouchbase##GetOrStore##Request *newOrRecycledExponentialBackoffTimerAndCallback; \
@@ -203,7 +205,12 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     //m_StoreEventCallbackForWt0 = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, eventSlotForWtStore0Static, this);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO)
 
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    GetAndSubscribeCacheItem::setAnonymousBitcoinComputingCouchbaseDB(this);
+    GetAndSubscribeCacheItem::setEventBase(LibEventBaseScopedDeleterInstance.LibEventBase);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
     m_GetAndSubscribePollingTimeout = evtimer_new(LibEventBaseScopedDeleterInstance.LibEventBase, &AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic, this);
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
     AutoRetryingWithExponentialBackoffCouchbaseGetRequest::setAnonymousBitcoinComputingCouchbaseDB(this);
     AutoRetryingWithExponentialBackoffCouchbaseGetRequest::setEventBase(LibEventBaseScopedDeleterInstance.LibEventBase); //need this as a member to add exponential backoff timers at runtime
     m_BeginStoppingCouchbaseCleanlyEvent = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, &AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic, this);
@@ -248,7 +255,9 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_REMOVE_ALL_MESSAGE_QUEUES_MACRO)
 
     //wtf? valgrind complains if i don't have these event_free's here... but why come (why cum? because it is an option and with infinite time all possible options are eventually.. err... done (performed? executed? chosen? entered?)) it don't complain about all the cross thread ones not being freed (and i thought "all" (including below two) were being free'd at lcb_destroy_io_ops wtf wtf?). Maybe valgrind just isn't catching them because it's all happening at scope exit in struct destructor (lol wut) (in which case it's a valgrind bug i'd say)
+#ifndef ABC_MULTI_CAMPAIGN_OWNER_MODE
     event_free(m_GetAndSubscribePollingTimeout);
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
     event_free(m_FinalCleanUpAndJoinEvent);
     event_free(m_BeginStoppingCouchbaseCleanlyEvent);
     lcb_destroy(m_Couchbase);
@@ -463,7 +472,14 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             if(originalRequest->GetAndSubscribe != 0 && originalRequest->GetAndSubscribe != 6)
             {
                 //i honestly don't konw what to do with a get and subscribe error thing, so don't "respond" it and definitely don't delete it... just ehh continue as if nothing had happened and maybe the error will be gone in 100ms xD...
-                event_add(m_GetAndSubscribePollingTimeout, &m_OneHundredMilliseconds); //just like with our "normal" call, we probably need to do something else with this to make get and subscribe work with other keys
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+                GetAndSubscribeCacheItem *cacheItem = m_GetAndSubscribeCacheHash.at(originalRequest->CouchbaseGetKeyInput);
+                //exception thrown if not found, but if we get to this code path then it has to be there (hence no try/catch)
+                cacheItem->startPollingTimeoutTimer();
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
+                event_add(m_GetAndSubscribePollingTimeout, &m_OneHundredMilliseconds);
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
             }
             else
             {
@@ -513,7 +529,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
 #endif
             cacheItem = m_GetAndSubscribeCacheHash.at(originalRequest->CouchbaseGetKeyInput);
 
-            //exception thrown if not found
+            //exception thrown if not found, but if we get to this code path then it has to be there (hence no try/catch)
 
             //the following two while loops are our processing of unsubscribe/change-session id requests. we could have done it right when we got the requests in eventSlotForWtGet, but we do it here instead to prevent a segfault when request hackily being used requests unsubscribe/change-session-id during the time it's being hackily used. now that we've finished using the request to pull out our cacheItem, it's ok if it gets deleted
             while(!m_UnsubscribeRequestsToProcessMomentarily.empty())
@@ -648,8 +664,11 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
                 cacheItem->NewSubscribers[v.first] = v.second;
             }
 
-            //TODOreq: doing it here makes get and subscribe not future proof for multiple keys
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+            cacheItem->startPollingTimeoutTimer();
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
             event_add(m_GetAndSubscribePollingTimeout, &m_OneHundredMilliseconds);
+#endif
 #if 0
         }
         catch(std::out_of_range &keyNotInCacheException)
@@ -737,14 +756,42 @@ void AnonymousBitcoinComputingCouchbaseDB::durabilityCallback(const void *cookie
     delete originalRequest;
 }
 #endif // ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
+//had some lulz just now thinking that it'd be smart to periodically vacuum the get new or recycled exponential backoff vectors... except that makes absolutely no sense at all because they are there to help with high server load, and vacuuming them would only help, YOU GUESSED IT, at high server load...
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlot(GetAndSubscribeCacheItem *cacheItem)
+{
+    //get the first subscriber found. if there aren't any subscribers found, we don't do the get and then remove it from m_GetAndSubscribeCacheHash and delete the cache item
+    GetCouchbaseDocumentByKeyRequest *originalRequest = NULL; //had it called 'aRequestToHackilyUseLoL' but eh MACRO
+    if(!cacheItem->Subscribers.empty())
+    {
+        originalRequest = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->Subscribers.begin()->second);
+    }
+    else if(!cacheItem->NewSubscribers.empty())
+    {
+        originalRequest = static_cast<GetCouchbaseDocumentByKeyRequest*>(cacheItem->NewSubscribers.begin()->second);
+    }
+
+    if(originalRequest == NULL)
+    {
+        //delete cache item since no subscribers. the unsubscribe code could have done it, but it's better to do it here because then subscribers can be add-removed-add-removed and so on changing between "0 and 1" rapidly without us having to delete/new over and over with each one. here we give 100ms leeway in which it can be empty for (at a maximum (could only be 1ms, we dunno/care (as in, don't care)). TODOreq: when a subscriber is added, the cacheItem needs to either be deleted or the timer needs to be running. if the cache item is deleted, we re-start the timer. this isn't future proof, my design here with the timer is only for one cacheItem (/lazy)
+
+        m_GetAndSubscribeCacheHash.erase(cacheItem->Key);
+        delete cacheItem;
+        return;
+    }
+
+    cacheItem->CurrentlyFetchingPossiblyNew = true;
+    ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(Get)
+    //TODOreq: as i have it coded now, if i did two subscribables, they would each event_add the same timer using their own "100ms" thingy. not sure if they'd overwrite each other or what, but yea i need to fix that before ever doing multiple subscribables
+}
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic(int unusedSocket, short events, void *userData)
 {
     (void)unusedSocket;
     (void)events;
     static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->getAndSubscribePollingTimeoutEventSlot();
 }
-//had some lulz just now thinking that it'd be smart to periodically vacuum the get new or recycled exponential backoff vectors... except that makes absolutely no sense at all because they are there to help with high server load, and vacuuming them would only help, YOU GUESSED IT, at high server load...
-void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlot()
+void getAndSubscribePollingTimeoutEventSlot()
 {
     //TO DOnereq(they don't, except the one hackily used for polling ofc): subscribers shouldn't take up an AutoRetry thingy, but if they reeaaally need to because it would warrant a huge refactor otherwise, i guess it's ok :-/...
     std::list<std::string> listOfKeysWithNoSubscribers;
@@ -783,6 +830,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
         delete cacheItemWithNoSubscribersToDelete;
     }
 }
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData)
 {
     (void)unusedSocket;
@@ -1012,7 +1060,12 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
             if(originalRequest->GetAndSubscribe != 4)
             {
                 //create cache item, even though we have nothing to put in it yet. TODOreq: we need to make sure that we wait for the first get to finish before we ever give someone the "Document" from the cache item (BECAUSE IT IS EMPTY)
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+                GetAndSubscribeCacheItem *newKeyValueCacheItem = new GetAndSubscribeCacheItem(originalRequest->CouchbaseGetKeyInput);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
                 GetAndSubscribeCacheItem *newKeyValueCacheItem = new GetAndSubscribeCacheItem();
+#endif
 
                 //if we get here, we definitely need to do the first 'get' (when it returns, it sets up the 100ms poller (TO DOnereq(we still do the timeout if all unsubscribed by then, but the timeout callback doesn't do the db get (and hence the timeout doesn't get rescheduled a 2nd time either)): unless all users have unsubscribed by then xD))
 

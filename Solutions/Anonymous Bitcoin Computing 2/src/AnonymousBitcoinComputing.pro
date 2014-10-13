@@ -21,7 +21,7 @@ CONFIG -= qt
 
 #QMAKE_CXXFLAGS += -save-temps
 
-#DEFINES += ABC_MULTI_CAMPAIGN_OWNER_MODE
+DEFINES += ABC_MULTI_CAMPAIGN_OWNER_MODE
 
 HEADERS += \
     anonymousbitcoincomputing.h \
@@ -71,7 +71,8 @@ SOURCES += main.cpp \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp \
     backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.cpp \
     ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp \
-    frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.cpp
+    frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.cpp \
+    backend/getandsubscribecacheitem.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

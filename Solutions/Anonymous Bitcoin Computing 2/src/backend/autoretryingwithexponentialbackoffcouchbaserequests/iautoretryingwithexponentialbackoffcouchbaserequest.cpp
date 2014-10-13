@@ -13,9 +13,8 @@ void IAutoRetryingWithExponentialBackoffCouchbaseRequest::setEventBase(event_bas
     m_EventBase = eventBase;
 }
 IAutoRetryingWithExponentialBackoffCouchbaseRequest::IAutoRetryingWithExponentialBackoffCouchbaseRequest()
-{
-    m_MyLibEventTimer = evtimer_new(m_EventBase, &IAutoRetryingWithExponentialBackoffCouchbaseRequest::timeoutCallbackStatic, this);
-}
+    : m_MyLibEventTimer(evtimer_new(m_EventBase, &IAutoRetryingWithExponentialBackoffCouchbaseRequest::timeoutCallbackStatic, this))
+{ }
 void IAutoRetryingWithExponentialBackoffCouchbaseRequest::resetTimeval()
 {
     m_MyBackoffTimeval.tv_sec = 0;

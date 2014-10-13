@@ -21,11 +21,12 @@ using namespace boost::lockfree;
 using namespace boost::interprocess;
 #endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
-#include "getandsubscribecacheitem.h"
 #include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h"
 #include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h"
 
 //#define ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
+
+class GetAndSubscribeCacheItem;
 
 typedef boost::unordered_map<std::string /*key*/, GetAndSubscribeCacheItem* /*doc,cas,listOfSubscribers*/> GetAndSubscribeCacheHashType;
 
@@ -262,6 +263,7 @@ public:
     //struct event *getStoreEventCallbackForWt0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO)
 private:
+    friend class GetAndSubscribeCacheItem;
     friend class AutoRetryingWithExponentialBackoffCouchbaseGetRequest;
     friend class AutoRetryingWithExponentialBackoffCouchbaseStoreRequest;
 
@@ -284,7 +286,9 @@ private:
     std::vector<void*> m_UnsubscribeRequestsToProcessMomentarily;
     std::vector<void*> m_ChangeSessionIdRequestsToProcessMomentarily;
     static const struct timeval m_OneHundredMilliseconds;
+#ifndef ABC_MULTI_CAMPAIGN_OWNER_MODE
     struct event *m_GetAndSubscribePollingTimeout; //all keys share a timeout for now (and possibly forever), KISS
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
     std::vector<AutoRetryingWithExponentialBackoffCouchbaseStoreRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseStoreRequestCache;
     std::vector<AutoRetryingWithExponentialBackoffCouchbaseGetRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache;
 
@@ -309,8 +313,13 @@ private:
     void durabilityCallback(const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp);
 #endif
 
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    void getAndSubscribePollingTimeoutEventSlot(GetAndSubscribeCacheItem *cacheItem);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
     static void getAndSubscribePollingTimeoutEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData);
     void getAndSubscribePollingTimeoutEventSlot();
+#endif
+
 
     static void beginStoppingCouchbaseCleanlyEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData);
     void beginStoppingCouchbaseCleanlyEventSlot();

@@ -290,7 +290,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WPushButton *m_BuySlotFillerStep1Button;
 
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-    void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, std::string &campaignIndex);
+    void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, const string &campaignIndex);
 #else
     void beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget();
 #endif
@@ -312,7 +312,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     std::string m_CampaignIndexForPageBeingViewed;
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 
-    void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const string &keyToCouchbaseDocument, const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError);
+    void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError);
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1(const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError);
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError);
