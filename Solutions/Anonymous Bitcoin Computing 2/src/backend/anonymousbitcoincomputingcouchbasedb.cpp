@@ -791,7 +791,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
     (void)events;
     static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->getAndSubscribePollingTimeoutEventSlot();
 }
-void getAndSubscribePollingTimeoutEventSlot()
+void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlot()
 {
     //TO DOnereq(they don't, except the one hackily used for polling ofc): subscribers shouldn't take up an AutoRetry thingy, but if they reeaaally need to because it would warrant a huge refactor otherwise, i guess it's ok :-/...
     std::list<std::string> listOfKeysWithNoSubscribers;

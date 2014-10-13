@@ -61,6 +61,7 @@
 //^sanitize underscores(well,maybe.. if used as key 'split' identifier (isn't currently)), slashes(ditto if done for internal path 'walking'), and spaces (couchbase keys cannot contain spaces) from all user input AS A MINIMUM. really i'm probably going to go overkill and just allow a-z and 0-9 in a whitelist :-D. fuggit
 
 //TODOoptional: campaign "human readable name", instead of just the owner's name and an index
+//TODOoptional: buy step 1 should clicking fail when insufficient funds, not buy step 2 (that's certainly not to say buy step 2 shouldn't also do the check)
 
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv),
@@ -393,7 +394,11 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
     {
         //TODOreq? don't do any gui stuff until we know the campaign doc exists! pending multi owner refactor ofc. really though, the below stuff is just setting up placeholders etc
 
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
         m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget(campaignOwner, campaignIndex, m_MainStack);
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
+        m_AdvertisingBuyAdSpaceD3faultCampaign0Widget = new AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget("d3fault", "0", m_MainStack);
+#endif
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
