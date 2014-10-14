@@ -59,6 +59,11 @@ const std::string hugeBitcoinKeyListPageKey(const std::string &pageZ)
     return COUCHBASE_HUGE_BITCOIN_KEY_LIST_PAGE_KEY_PREFIX
         D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + pageZ;
 }
+const std::string adSpaceCampaignIndexCacheKey(const std::string &usernameOfCampaignOwner)
+{
+    return COUCHBASE_AD_SPACE_CAMPAIGN_NEXT_AVAIABLE_INDEX_CACHE_KEY_PREFIX
+            D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + usernameOfCampaignOwner;
+}
 const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex)
 {
     return COUCHBASE_AD_SPACE_CAMPAIGN_SLOT_CACHE_KEY_PREFIX

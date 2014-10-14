@@ -199,3 +199,10 @@ hugeBitcoinKeyList_Page0 //hardcoded key range size of 100 (matching bitcoinKeyS
   "keyRange420claimedSetN" : "setN for book keeping" //get_optional
               claimedSetNPageY??? is just book keeping anyways, idfk
 }
+
+adSpaceCampaignNextAvailableIndexCache_d3fault
+{
+	"nextAvailableCampaignIndex" : "3"
+}
+
+//CampaignCache is just a shortcut/symbolic-link esq type doc. If it doesn't exist we can just walk the campaign indexes until we find one not existing

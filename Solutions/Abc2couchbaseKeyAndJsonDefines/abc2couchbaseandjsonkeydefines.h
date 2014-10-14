@@ -135,6 +135,13 @@ const std::string hugeBitcoinKeyListCurrentPageKey();
 const std::string hugeBitcoinKeyListPageKey(const std::string &pageZ);
 
 
+//campaign current index CACHE
+#define COUCHBASE_AD_SPACE_CAMPAIGN_NEXT_AVAIABLE_INDEX_CACHE_KEY_PREFIX "adSpaceCampaignNextAvailableIndexCache"
+#define JSON_AD_SPACE_CAMPAIGN_NEXT_AVAILABLE_INDEX_CACHE "nextAvailableCampaignIndex"
+
+const std::string adSpaceCampaignIndexCacheKey(const std::string &usernameOfCampaignOwner);
+
+
 //campaign current slot CACHE
 #define COUCHBASE_AD_SPACE_CAMPAIGN_SLOT_CACHE_KEY_PREFIX "adSpaceCampaignSlotCache"
 #define JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT "currentSlot"

@@ -2,6 +2,8 @@
 
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
 #include <Wt/WIntValidator>
+
+#include "pages/advertisingselladspacecreatenewadcampaignwidget.h"
 #endif
 
 #include "pages/advertisingbuyownersadspacecampaignwithindexwidget.h"
@@ -25,6 +27,14 @@
 #define ABC_INTERNAL_PATH_ADS "/advertising"
 #define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE ABC_INTERNAL_PATH_ADS \
                                     "/buy-ad-space"
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+#define ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE ABC_INTERNAL_PATH_ADS \
+    "/sell-ad-space"
+#define ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE_CREATE_NEW_AD_CAMPAIGN ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE \
+    "/create-new-ad-campaign"
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
 //hardcoded internal paths, would be dynamic ideally
 #define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE \
                                         "/d3fault"
@@ -33,7 +43,14 @@
 
 #define ABC_ANCHOR_TEXTS_PATH_HOME "Home"
 #define ABC_ANCHOR_TEXTS_PATH_ADS "Advertising"
+
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE "Buy Ad Space"
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+#define ABC_ANCHOR_TEXTS_PATH_ADS_SELL_AD_SPACE "Sell Ad Space"
+#define ABC_ANCHOR_TEXTS_PATH_ADS_SELL_AD_SPACE_CREATE_NEW_AD_CAMPAIGN "Create New Ad Campaign"
+#endif // #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT "d3fault"
 #define ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 "d3fault's Ad Campaign #0"
 
@@ -79,6 +96,10 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_HomeWidget(0),
       m_AdvertisingWidget(0),
       m_AdvertisingBuyAdSpaceWidget(0),
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+      m_AdvertisingSellAdSpaceWidget(0),
+      m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget(0),
+#endif
       m_AccountTabWidget(0),
       m_NewAdSlotFillerAccountTab(0),
       m_AuthenticationRequiredWidget(0),
@@ -193,6 +214,10 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
     m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE), 0, Wt::AlignTop | Wt::AlignLeft);
     m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    m_LinksVLayout->addWidget(new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_SELL_AD_SPACE), 0, Wt::AlignTop | Wt::AlignLeft);
+    m_LinksVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 
     m_BodyHLayout->addLayout(m_LinksVLayout, 0, Wt::AlignTop | Wt::AlignLeft);
     m_MainStack->setOverflow(WContainerWidget::OverflowAuto);
@@ -218,6 +243,10 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingWidget()
         new WText(ABC_ANCHOR_TEXTS_PATH_ADS " - Sub-categories:", m_AdvertisingWidget);
         new WBreak(m_AdvertisingWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE, m_AdvertisingWidget);
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        new WBreak(m_AdvertisingWidget);
+        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE), "-" ABC_ANCHOR_TEXTS_PATH_ADS_SELL_AD_SPACE, m_AdvertisingWidget);
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
     }
     m_MainStack->setCurrentWidget(m_AdvertisingWidget);
 }
@@ -232,6 +261,52 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceWidget()
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceWidget);
 }
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+void AnonymousBitcoinComputingWtGUI::showAdvertisingSellAdSpaceWidget()
+{
+    if(!m_LoggedIn)
+    {
+        if(m_AdvertisingSellAdSpaceWidget)
+        {
+            delete m_AdvertisingSellAdSpaceWidget;
+            m_AdvertisingSellAdSpaceWidget = 0;
+        }
+        showAuthenticationRequiredWidget();
+        return;
+    }
+
+    if(!m_AdvertisingSellAdSpaceWidget)
+    {
+        m_AdvertisingSellAdSpaceWidget = new WContainerWidget(m_MainStack);
+        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE_CREATE_NEW_AD_CAMPAIGN), ABC_ANCHOR_TEXTS_PATH_ADS_SELL_AD_SPACE_CREATE_NEW_AD_CAMPAIGN, m_AdvertisingSellAdSpaceWidget);
+        //TODOreq: some space beneath 'create new' and then list all (or the first page of) their existing ad campaigns. perhaps i should use tabs for create/existing like i do in accounts
+    }
+    m_MainStack->setCurrentWidget(m_AdvertisingSellAdSpaceWidget);
+}
+void AnonymousBitcoinComputingWtGUI::showAdvertisingSellAdSpaceCreateNewAdCampaignWidget()
+{
+    if(!m_LoggedIn)
+    {
+        if(m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget)
+        {
+            delete m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget;
+            m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget = 0;
+        }
+        showAuthenticationRequiredWidget();
+        return;
+    }
+
+    if(!m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget)
+    {
+        m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget = new AdvertisingSellAdSpaceCreateNewAdCampaignWidget(this, m_MainStack);
+    }
+    else
+    {
+        //it's definitely plausible that they'll create multiple campaigns in a single session, so TODOreq perhaps reset the default values. or i could set the default values back up after a successful campaign create, no difference
+    }
+    m_MainStack->setCurrentWidget(m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget);
+}
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingWtGUI::showAccountWidget()
 {
     if(!m_LoggedIn)
@@ -241,12 +316,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
             delete m_AccountTabWidget;
             m_AccountTabWidget = 0;
         }
-        if(!m_AuthenticationRequiredWidget)
-        {
-            m_AuthenticationRequiredWidget = new WContainerWidget(m_MainStack);
-            new WText("You need to be logged in to view this page", m_AuthenticationRequiredWidget);
-        }
-        m_MainStack->setCurrentWidget(m_AuthenticationRequiredWidget);
+        showAuthenticationRequiredWidget();
         return;
     }
 
@@ -262,6 +332,15 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
 
     }
     m_MainStack->setCurrentWidget(m_AccountTabWidget);
+}
+void AnonymousBitcoinComputingWtGUI::showAuthenticationRequiredWidget()
+{
+    if(!m_AuthenticationRequiredWidget)
+    {
+        m_AuthenticationRequiredWidget = new WContainerWidget(m_MainStack);
+        new WText("You need to be logged in to view this page", m_AuthenticationRequiredWidget);
+    }
+    m_MainStack->setCurrentWidget(m_AuthenticationRequiredWidget);
 }
 void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
 {
@@ -1825,6 +1904,13 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
         m_NewAdSlotFillerAccountTab->determineNextSlotFillerIndexAndThenAddSlotFillerToIt(couchbaseDocument, cas, lcbOpSuccess, dbError);
     }
         break;
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    case GETADSPACECAMPAIGNINDEXCACHEEVENTHOUGHITMIGHTNOTEXIST:
+    {
+        m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget->useCacheToDetermineIndexForCreatingNewCampaignAtOrWalkThemUntilEmptyIndexFoundIfTheCacheDoesntExist(couchbaseDocument, cas, lcbOpSuccess, dbError);
+    }
+        break;
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
     case INITIALINVALIDNULLGETSAVINGCAS:
     default:
         cerr << "got a couchbase 'get' (saving cas) response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl << "unexpected cas: " << cas << endl;
@@ -1896,6 +1982,18 @@ void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyF
         m_AddFundsAccountTab->doneAttemptingBitcoinKeySetNnextPageYcreation(dbError);
     }
         break;
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    case ATTEMPTTOADDCAMPAIGNATINDEX:
+    {
+        m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget->handleAttemptToAddCampaignAtIndexFinished(lcbOpSuccess, dbError);
+    }
+        break;
+    case ADDCAMPAIGNINDEXCACHEIGNORINGRESPONSE:
+    {
+        //do nothing (but we still need to catch it here so it doesn't go to the default case below)
+    }
+        break;
+#endif
     case INITIALINVALIDNULLSTOREWITHOUTINPUTCAS:
     default:
         cerr << "got a couchbase 'store without input cas' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
@@ -1966,6 +2064,13 @@ void AnonymousBitcoinComputingWtGUI::storeCouchbaseDocumentByKeyWithInputCasFini
     {
         m_NewAdSlotFillerAccountTab->doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(lcbOpSuccess, dbError);
     }
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    case CASSWAPCAMPAIGNINDEXCACHEIGNORINGRESPONSE:
+    {
+        //do nothing (but we still need to catch it here so it doesn't go to the default case below)
+    }
+        break;
+#endif
         break;
     case INITIALINVALIDNULLSTOREWITHCAS:
     default:
@@ -2024,17 +2129,17 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
     {
         const std::string &campaignOwnerInternalPathPart = internalPathNextPart(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE "/");
 
-        //sanitize campaign owner part of url
-        WString campaignOwnerAsWString = WString::fromUTF8(campaignOwnerInternalPathPart, true);
-        Wt::WRegExpValidator::Result campaignOwnerValidationResult = m_LettersNumbersOnlyValidatorAndInputFilter->validate(campaignOwnerAsWString);
-        if(campaignOwnerValidationResult.state() != Wt::WRegExpValidator::Valid)
-        {
-            show404notFoundWidget(); //TODOoptional: better explaination
-            return;
-        }
-
         if(campaignOwnerInternalPathPart != "")
         {
+            //sanitize campaign owner part of url
+            WString campaignOwnerAsWString = WString::fromUTF8(campaignOwnerInternalPathPart, true);
+            Wt::WRegExpValidator::Result campaignOwnerValidationResult = m_LettersNumbersOnlyValidatorAndInputFilter->validate(campaignOwnerAsWString);
+            if(campaignOwnerValidationResult.state() != Wt::WRegExpValidator::Valid)
+            {
+                show404notFoundWidget(); //TODOoptional: better explaination
+                return;
+            }
+
             const std::string &campaignIndexInternalPathPart = internalPathNextPart(ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE "/" + campaignOwnerInternalPathPart + "/");
             if(campaignIndexInternalPathPart != "")
             {
@@ -2069,6 +2174,8 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
         //TODOreq: fetch first page of list of campaign owners
         return;
     }
+
+    //handle changing from subscribable area to non-subscribable area (aka, unsubscribe)
     if(m_CurrentlySubscribedTo.first != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
     {
         //we need to unsubscribe from whatever we're subscribed to
@@ -2086,6 +2193,7 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
         //we don't expect a response from the backend, so this is our frontend's flag that we are now unsubscribed
         m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, "");
     }
+
     if(isHomePath(newInternalPath)) //why do we have this both here and in the constructor? because setInternalPath() does not go to/through the constructor, so showHome() would never be called if they click a link etc that does setInternalPath("/home"). They'd only be able to get there by navigating directly to the site/home without a session (which is a common case but yea~)
     {
         showHomeWidget();
@@ -2105,6 +2213,16 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
             return;
         }
 #endif
+        if(internalPathMatches(ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE))
+        {
+            if(internalPathMatches(ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE_CREATE_NEW_AD_CAMPAIGN))
+            {
+                showAdvertisingSellAdSpaceCreateNewAdCampaignWidget();
+                return;
+            }
+            showAdvertisingSellAdSpaceWidget();
+            return;
+        }
         showAdvertisingWidget();
         return;
     }
@@ -2194,7 +2312,7 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     std::string passwordPlainText = m_RegisterPasswordLineEdit->text().toUTF8();
 
     //make salt
-    std::string salt = sha1(username + uniqueId() + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + WDateTime::currentDateTime().toString().toUTF8());
+    std::string salt = sha1(username + uniqueId() /*TODOreq: uniqueId and sessionId are seen by user, which means they could be intercepted by man in the middle. use some server side rand instead*/ + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + WDateTime::currentDateTime().toString().toUTF8());
     //base64 salt for storage in json/couchbase
     std::string base64Salt = base64Encode(salt);
     //hash password using base64'd salt

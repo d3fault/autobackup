@@ -215,6 +215,7 @@ m_##text##MutexArray[lockedMutexIndex].unlock();
 
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
+class AdvertisingSellAdSpaceCreateNewAdCampaignWidget;
 class AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget;
 class LettersNumbersOnlyRegExpValidatorAndInputFilter;
 class RegisterSuccessfulWidget;
@@ -225,6 +226,7 @@ class ViewAllExistingAdSlotFillersAccountTabBody;
 class AnonymousBitcoinComputingWtGUI : public WApplication
 {
     //69'ing friend classes
+    friend class AdvertisingSellAdSpaceCreateNewAdCampaignWidget;
     friend class AddFundsAccountTabBody;
     friend class NewAdSlotFillerAccountTabBody;
     friend class ViewAllExistingAdSlotFillersAccountTabBody;
@@ -259,6 +261,14 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_AdvertisingBuyAdSpaceWidget;
     void showAdvertisingBuyAdSpaceWidget();
 
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+    WContainerWidget *m_AdvertisingSellAdSpaceWidget;
+    void showAdvertisingSellAdSpaceWidget();
+
+    AdvertisingSellAdSpaceCreateNewAdCampaignWidget *m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget;
+    void showAdvertisingSellAdSpaceCreateNewAdCampaignWidget();
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
     void showAccountWidget();
     void handleAccountTabWidgetTabChanged();
     ActualLazyLoadedTabWidget *m_AccountTabWidget;
@@ -267,7 +277,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     ViewAllExistingAdSlotFillersAccountTabBody *m_ViewAllExistingAdSlotFillersAccountTab;
     WScrollArea *m_AccountWidgetScrollArea;
     WContainerWidget *m_AccountWidget;
+
     WContainerWidget *m_AuthenticationRequiredWidget;
+    void showAuthenticationRequiredWidget();
 
     WContainerWidget *m_RegisterWidget;
     WLineEdit *m_RegisterUsernameLineEdit;
@@ -390,6 +402,11 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         LARGE_ADIMAGEUPLOADBUYERSETTINGUPADSLOTFILLERFORUSEINPURCHASINGLATERONSTOREWITHOUTINPUTCAS,
         BUYAKAFILLSLOTWITHSLOTFILLERSTOREWITHOUTINPUTCAS,
         CREATETRANSACTIONDOCSTOREWITHOUTINPUTCAS
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        , ATTEMPTTOADDCAMPAIGNATINDEX
+        , ADDCAMPAIGNINDEXCACHEIGNORINGRESPONSE
+#endif
+
     };
     enum WhatTheStoreWithInputCasWasForEnum
     {
@@ -405,6 +422,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         HACKEDIND3FAULTCAMPAIGN0BUYPURCHASSUCCESSFULSOUNLOCKUSERACCOUNTSAFELYUSINGCAS,
         HACKEDIND3FAULTCAMPAIGN0USERACCOUNTUNLOCKDONESOUPDATECAMPAIGNDOCSETWITHINPUTCAS,
         LOGINACCOUNTRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_UNLOCKINGWITHOUTDEBITTINGUSERACCOUNT
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        , CASSWAPCAMPAIGNINDEXCACHEIGNORINGRESPONSE
+#endif
     };
     enum WhatTheStoreWithInputCasSavingOutputCasWasForEnum
     {
@@ -438,6 +458,9 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         GETALLADSLOTFILLERSTODETERMINENEXTINDEXANDTOUPDATEITAFTERADDINGAFILLERGETSAVINGCAS,
         //HACKEDIND3FAULTCAMPAIGN0GET,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP2aVERIFYBALANCEANDGETCASFORSWAPLOCKGET
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        , GETADSPACECAMPAIGNINDEXCACHEEVENTHOUGHITMIGHTNOTEXIST
+#endif
     };
     enum CurrentGetAndSubscribeMode
     {
