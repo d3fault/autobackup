@@ -48,9 +48,11 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     new WBreak(this);
     new WBreak(this);
 
-    WPushButton *createNewAdCampaignButton = new WPushButton("Create Ad Campaign", this);
-    createNewAdCampaignButton->clicked().connect(this, &AdvertisingSellAdSpaceCreateNewAdCampaignWidget::createNewAdCampaignButtonClicked);
-    createNewAdCampaignButton->clicked().connect(createNewAdCampaignButton, &WPushButton::disable);
+    m_CreateNewAdCampaignButton = new WPushButton("Create Ad Campaign", this);
+    m_CreateNewAdCampaignButton->clicked().connect(this, &AdvertisingSellAdSpaceCreateNewAdCampaignWidget::createNewAdCampaignButtonClicked);
+    m_CreateNewAdCampaignButton->clicked().connect(m_CreateNewAdCampaignButton, &WPushButton::disable);
+
+    new WBreak(this);
 }
 void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::createNewAdCampaignButtonClicked()
 {
@@ -59,12 +61,14 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::createNewAdCampaignButtonC
     {
         new WBreak(this);
         new WText("Invalid minimum price", this); //TODOoptional: elaborate. however the js front-end of the validator will already do it in most cases
+        m_CreateNewAdCampaignButton->enable();
         return;
     }
     if(m_SlotLengthHoursLineEdit->validate() != WIntValidator::Valid)
     {
         new WBreak(this);
         new WText("Invalid advertisement duration", this);
+        m_CreateNewAdCampaignButton->enable();
         return;
     }
 
@@ -86,6 +90,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::useCacheToDetermineIndexFo
         new WBreak(this);
         new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
         cerr << "useCacheToDetermineIndexForCreatingNewCampaignAtOrWalkThemUntilEmptyIndexFoundIfTheCacheDoesntExist db error" << endl;
+        m_CreateNewAdCampaignButton->enable();
         m_AnonymousBitcoinComputingWtGUI->resumeRendering();
         return;
     }
@@ -111,7 +116,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::useCacheToDetermineIndexFo
     //create campaign doc
     ptree pt;
 
-    pt.put(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE, m_MinPriceLineEdit->text().toUTF8());
+    pt.put(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE, boost::lexical_cast<std::string>(jsonStringToSatoshiInt(m_MinPriceLineEdit->text().toUTF8())));
     pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, m_SlotLengthHoursLineEdit->text().toUTF8());
 
     std::ostringstream campaignDocBuffer;
@@ -141,6 +146,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::handleAttemptToAddCampaign
         new WBreak(this);
         new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
         cerr << "handleAttemptToAddCampaignAtIndexFinished db error" << endl;
+        m_CreateNewAdCampaignButton->enable();
         m_AnonymousBitcoinComputingWtGUI->resumeRendering();
         return;
     }
@@ -176,7 +182,8 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::handleAttemptToAddCampaign
     }
 
     new WBreak(this);
-    new WText("Campaign at index #" + m_CampaignIndexToTryLcbAddingAt + " was successfully created");
+    new WText("Campaign at index #" + m_CampaignIndexToTryLcbAddingAt + " was successfully created", this);
     //hmm actually might as well leave whatever they entered... m_MinPriceLineEdit. if there was a human readable line edit though, we'd want to clear that one
+    m_CreateNewAdCampaignButton->enable();
     m_AnonymousBitcoinComputingWtGUI->resumeRendering();
 }

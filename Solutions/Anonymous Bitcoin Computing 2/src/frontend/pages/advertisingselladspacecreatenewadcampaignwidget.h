@@ -16,6 +16,7 @@ private:
 
     WLineEdit *m_MinPriceLineEdit;
     WLineEdit *m_SlotLengthHoursLineEdit;
+    WPushButton *m_CreateNewAdCampaignButton;
 
     u_int64_t m_CasOfCampaignIndexCacheDoc_OrZeroIfCacheDocDoesNotExist;
     std::string m_CampaignIndexToTryLcbAddingAt;

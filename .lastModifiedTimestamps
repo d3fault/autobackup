@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1413299112
+Documents/minddump/dreams/:1413384095
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -124,6 +124,7 @@ Documents/minddump/dreams/lsdfjlkasjdfkjsdlkfjksdfjjdsfljsdlfkjlkjewroufdl.txt:1
 Documents/minddump/dreams/lsdhflsdjflkdsjfodsuflkjweofuslkdfjosidufsdlkf.txt:1402862755
 Documents/minddump/dreams/lsdkajflsdkjfoduwerljsdowererufalsdjfosuflsdfoiuew.txt:1391095454
 Documents/minddump/dreams/lsdkfjlsdkjfouslkjreworuljfsoduflsdjfouwerl.txt:1366067544
+Documents/minddump/dreams/lsdkjflkjsdlfkjsdjfsdouflkwejrousldkfjdsofuldskfjsldfkj.txt:1413384095
 Documents/minddump/dreams/lsdkjflsjkdflkjsdkfljdslkfjosadfwerulkejrouskljfsdlfk.txt:1411010559
 Documents/minddump/dreams/lsjflkasjdflkjwleruoisudflkjasldkfjsdfklwekruosdflk.txt:1396203681
 Documents/minddump/dreams/lskajdflkjsalfjsldjflksjdflkjsdlkfjlksdjflksdjf.txt:1399483065
@@ -4667,7 +4668,7 @@ Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1413
 Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1413302934
 Solutions/Abc2dbInitializer/:1393907655
 Solutions/Abc2dbInitializer/src/:1393920575
-Solutions/Abc2dbInitializer/src/cli/:1394269708
+Solutions/Abc2dbInitializer/src/cli/:1413387195
 Solutions/Abc2dbInitializer/src/cli/Abc2dbInitializercli.pro:1394267475
 Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.cpp:1393921679
 Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.h:1393913424
@@ -4853,7 +4854,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1413306194
+Solutions/Anonymous Bitcoin Computing 2/src/:1413398225
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1413251305
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -4862,11 +4863,11 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialb
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h:1393528690
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h:1393526820
-Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1413251305
+Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1413388694
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1413239945
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.cpp:1413219024
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1413240036
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1413305778
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1413397992
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1399672099
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
@@ -4882,17 +4883,17 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/singleuseselfde
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/stupidmimefromextensionutil.h:1394152357
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.cpp:1399672099
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.h:1399665798
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/:1413305964
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/:1413397628
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.cpp:1413097652
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.h:1413097652
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingselladspacecreatenewadcampaignwidget.cpp:1413305964
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingselladspacecreatenewadcampaignwidget.h:1413304776
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingselladspacecreatenewadcampaignwidget.cpp:1413397628
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingselladspacecreatenewadcampaignwidget.h:1413396982
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/:1393884334
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.cpp:1393884334
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1393161161
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp:1393160674
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h:1393161161
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1413305778
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1413397992
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1413305672
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.cpp:1393117307
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.h:1393117244
@@ -4905,7 +4906,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:141329
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1396219028
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1410253778
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
-Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1413244095
+Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1413396821
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
 Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021
@@ -5120,7 +5121,7 @@ autobackupScripts/linux/sudoer.config.fresh.os.install.truecrypt.and.general.mou
 autobackupScripts/linux/sync.toSync.and.shred.sh:1370736718
 autobackupScripts/linux/syncGitAndBackupTo750gb.drives.sh:1350716632
 autobackupScripts/linux/virtualbox.networking.how.do.these.blogs.say.so.little.in.so.much.txt:1389528171
-autobackupScripts/linux/vnc.over.ssh.simple.howto.just.like.virtualbox.instructions.so.many.blog.posts.sucked.at.explaining.this.txt:1395043142
+autobackupScripts/linux/vnc.over.ssh.simple.howto.just.like.virtualbox.instructions.so.many.blog.posts.sucked.at.explaining.this.txt:1413396089
 autobackupScripts/linux/yumDownloadOnly.sh:1350716657
 autobackupScripts/linux/zoom.backup.and.shred.sh:1351237228
 autobackupScripts/win/:1383901959

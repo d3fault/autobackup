@@ -6,7 +6,7 @@ remote machine: x11vnc, and your choice of a desktop environment (xfce4 imo)
 localmachine: ssh user@remotemachine
 remotemachine: startx
 
-2) set ssh vnc tunnel to remotemachine:
+2) setup ssh vnc tunnel to remotemachine:
 localmachine: ssh -C -t -L 5900:localhost:5900 user@remotemachine 'x11vnc -localhost -display :0'
 
 3) launch client using ssh vnc tunnel

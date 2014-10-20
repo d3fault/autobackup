@@ -916,17 +916,27 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
 
     string currentPriceStringForConfirmingOnly;
     //check expired. js checks expired itself, BUT we still follow this code path just to get the starting 'datetime' of purchaseable slot accurately set [for both js and no-js]
-    double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
-    double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
-    if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
+    if(!m_HackedInD3faultCampaign0_NoPreviousSlotPurchases)
     {
-        //expired, so use min price (maybe calculateCurrentPrice() should do this if(expired) stuff?)
-        currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_MinPrice;
+        //there is a previous purchase
+
+        double lastSlotFilledAkaPurchasedExpireDateTime = (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0))));
+        double currentDateTime = static_cast<double>(WDateTime::currentDateTime().toTime_t());
+        if(currentDateTime >= lastSlotFilledAkaPurchasedExpireDateTime)
+        {
+            //expired, so use min price (maybe calculateCurrentPrice() should do this if(expired) stuff?)
+            currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_MinPrice;
+        }
+        else
+        {
+            //not expired
+            currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp))));
+        }
     }
     else
     {
-        //not expired
-        currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_NoPreviousSlotPurchases ? m_HackedInD3faultCampaign0_MinPrice : (jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(calculateCurrentPrice(static_cast<double>(WDateTime::currentDateTime().toTime_t()), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_MinPrice), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchasePrice)*2.0), (boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedStartTimestamp)+((double)(boost::lexical_cast<double>(m_HackedInD3faultCampaign0_SlotLengthHours)*(3600.0)))), boost::lexical_cast<double>(m_HackedInD3faultCampaign0_LastSlotFilledAkaPurchasedPurchaseTimestamp))));
+        //no previous purchases, use min price
+        currentPriceStringForConfirmingOnly = m_HackedInD3faultCampaign0_MinPrice;
     }
 
     if(!environment().ajax())

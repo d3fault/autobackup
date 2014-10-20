@@ -3,7 +3,7 @@
 /*
 
 ==1.0 BLOCKER Bugs==
-- move the fuck away from std::string for cross thread comm, since string might use COW (implementation dependent), and COW means internal reference count, and that means it isn't thread-safe (since it doesn't declare itself as such). I should just copy the bytes and pass a void pointer like a real man (no std::string should cross thread boundaries (not even the key input! TODOreq)). I think I've just been getting really lucky so far xD
+- move the fuck away from std::string for cross thread comm, since string might use COW (implementation dependent), and COW means internal reference count, and that means it isn't thread-safe (since it doesn't declare itself as such). I should just copy the bytes and pass a void pointer like a real man (no std::string should cross thread boundaries (not even the key input! TODOreq)). I think I've just been getting really lucky so far xD. Actually fuck it, since both GCC and Clang (the only two relevant compilers in existence) use atomic reference counting and are more or less thread safe, I'll just leave it because I'm a lazy bastard. Also worth noting that if I'm NOT using lockfree::queue, this isn't an issue [since I'm making deep copies during serialization]
 
 ==1.1 Bugs==
 
@@ -26,6 +26,7 @@
 */
 
 //I'd imagine lots would want to use this + hackyvideobullshitsite themselves (yw)... so here's a note to anyone genricizing (making not-'d3fault' specific): abstract my specific stuff into some kind of "profile" loaded at runtime or whatever, that way i can pull your changes back in and spread the software further around :-P (row row fight the powa)
+//TODOoptional: any time I create a document (as opposed to modifying one), whether in this app or in recovery possy etc, I should use some method that returns a ptree with the document's defaults. This allows me to add fields without having to change code in lots of supporting places. I'm scared to add fields now because I'd have to search for all the places where the same doc is created (and then add the field)
 int main(int argc, char *argv[])
 {
     AnonymousBitcoinComputing abc;
