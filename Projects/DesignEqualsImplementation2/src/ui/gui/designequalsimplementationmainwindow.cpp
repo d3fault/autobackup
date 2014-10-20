@@ -169,7 +169,8 @@ void DesignEqualsImplementationMainWindow::setUseCaseToolsDisabled(bool disabled
 
     if(disabled && m_DrawSignalSlotConnectionActivationArrowsAction->isChecked())
         m_MoveMousePointerDefaultAction->setChecked(true);
-    m_DrawSignalSlotConnectionActivationArrowsAction->setDisabled(disabled);
+    m_DrawSignalSlotConnectionActivationArrowsAction->setDisabled(disabled); //can't select this mouse mode when in class diagram view
+    m_DrawSignalSlotConnectionActivationArrowsAction->setChecked(!disabled); //always jump to signals slots mouse mode when switching to a use case. TODOoptional remember 'last checked'
 }
 void DesignEqualsImplementationMainWindow::addUseCaseToAllUseCasesListWidget(DesignEqualsImplementationUseCase *newUseCase)
 {

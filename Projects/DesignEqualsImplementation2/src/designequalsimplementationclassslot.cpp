@@ -19,6 +19,7 @@ DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(QObject
     , IDesignEqualsImplementationHaveOrderedListOfStatements()
     , IDesignEqualsImplementationMethod()
     //, m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView(0)
+    , m_ClassLifelineFirstDefinedIn_OrZeroIfNotDefinedInAnyClassLifelinesYet(0)
     , m_FinishedOrExitSignal(0)
 { }
 DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(DesignEqualsImplementationClassLifeLine *parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView, QObject *parent)
@@ -26,6 +27,7 @@ DesignEqualsImplementationClassSlot::DesignEqualsImplementationClassSlot(DesignE
     , IDesignEqualsImplementationHaveOrderedListOfStatements()
     , IDesignEqualsImplementationMethod()
     //, m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView(parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView) //class lifeline tells us our variable name should we need it (as seen, we do). it also can/will tell us if we are a top level object or if we have a parent object that hasA us
+    , m_ClassLifelineFirstDefinedIn_OrZeroIfNotDefinedInAnyClassLifelinesYet(0)
     , m_FinishedOrExitSignal(0)
 {
     if(parentClassLifeLineInUseCaseView_OrZeroInClassDiagramView)

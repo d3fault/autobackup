@@ -140,7 +140,7 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
     }
     Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_DesignEqualsImplementationClass->mySlots())
     {
-        if(currentSlot->Name != UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING)
+        if(!currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
         {
             classContentsString.append("<br />+  " + currentSlot->methodSignatureWithoutReturnType());
             ++numLinesOfText;

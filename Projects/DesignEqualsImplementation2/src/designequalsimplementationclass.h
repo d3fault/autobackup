@@ -73,6 +73,17 @@ public:
     inline HasA_Private_Classes_Member *hasAinstanceFromHasAId(int hasAId) { return m_HasA_Private_Classes_Members.at(hasAId); }
 
     QString autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType);
+    QString nextTempUnnamedSlotName();
+
+    inline bool slotWithThisNameExists(const QString &slotName)
+    {
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_MySlots)
+        {
+            if(currentSlot->Name == slotName)
+                return true;
+        }
+        return false;
+    }
 private:
     friend class DesignEqualsImplementationProjectGenerator;
 signals:

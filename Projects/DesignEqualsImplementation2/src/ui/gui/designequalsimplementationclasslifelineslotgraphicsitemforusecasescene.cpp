@@ -6,12 +6,15 @@
 #include "sourceslotsnappingindicationvisualrepresentation.h"
 #include "destinationslotsnappingindicationvisualrepresentation.h"
 #include "usecasegraphicsscene.h"
+#include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../idesignequalsimplementationstatement.h"
+#include "../../designequalsimplementationcommon.h"
 
 #define DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE 25
 
 //TODOoptional: the statement graphics items could be rects and the statement 'text' could go inside the rects. does actually save [vertical] real-estate, since we now only are a little bit taller than the text
+//TODOoptional: if the slot is unnamed and there are more than zero statements attached, we could (should?) show a ghost slot invocation graphic. we could also use a valid auto-generated C++ slot name. The name is chosen when the slot is placed in class lifeline, but we don't show it until there are > 0 statements because the normal flow of creation has them invoke the slot from something "from the left" and naming it during that connecting stage (Showing them the auto-named "ghost" slot invocation" at all times is confusing. However, showing it when there are > 0 statements serves as a reminder (but the fact that it is a valid C++ CLASS name (TODOreq: use slot name in auto-generated slot name) that they are supposed to connect it from the left (supposed to name it))
 DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::DesignEqualsImplementationSlotGraphicsItemForUseCaseScene(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *parentClassLifeLine, DesignEqualsImplementationClassSlot *slot, QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
     , m_ParentClassLifeline(parentClassLifeLine)
@@ -129,6 +132,21 @@ const QRectF DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::minRect(
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstructor()
 {
+    QString myToolTip = m_Slot->ParentClass->ClassName + "::";
+    if(m_Slot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
+    {
+#ifdef QT_DEBUG
+            myToolTip.append(m_Slot->Name);
+#else //Release
+            myToolTip.append("(unnamed slot)");
+#endif // QT_DEBUG
+    }
+    else
+    {
+        myToolTip.append(m_Slot->methodSignatureWithoutReturnType());
+    }
+    setToolTip(myToolTip); //TODOreq: update tooltip slot rename
+
     //Draw existing (serialized) statements, or at least make the vertical space for them and know they exist (as of writing, "arrows" are unfinished)
     //I think for now I'm not going to have any visual representation of the "amount of statements", I'll just use a simple odd/even strategy for "statements" vs. "snapping points"
     connect(m_Slot, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)), this, SLOT(handleStatementInserted(int,IDesignEqualsImplementationStatement*)));

@@ -171,6 +171,17 @@ QString DesignEqualsImplementationClass::autoNameForNewChildMemberOfType(DesignE
         }
     }
 }
+QString DesignEqualsImplementationClass::nextTempUnnamedSlotName()
+{
+    QString ret;
+    int i = -1;
+    do
+    {
+        ret = UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX + QString::number(++i);
+    }
+    while(slotWithThisNameExists(ret));
+    return ret;
+}
 void DesignEqualsImplementationClass::setClassName(const QString &newClassName)
 {
     ClassName = newClassName;

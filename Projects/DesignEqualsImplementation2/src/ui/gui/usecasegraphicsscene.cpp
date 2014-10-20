@@ -503,7 +503,7 @@ bool UseCaseGraphicsScene::processMouseReleaseEvent_andReturnWhetherOrNotToKeepT
             if(destinationSlotGraphicsItem_OrZeroIfNoDest) //TODOreq: skipping slot entry point connecting (ie: Foo::unnamedFirstSlot -> Bar::fooSlot -> Bar::barSignal -> Foo::handleBarSignal) should not now name that first Foo::unnamedFirstSlot, because if it did then it would be an infinite loop. We need to see that since unnamedFirstSlot referenced us "later on", that our NAMING him would be an infinite loop. To KISS initially, I should just always create a new slot whenever the dest's statement list isn't empty (adding that to this if now)
             {
                 bool jitCreate = true;
-                if(destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING)
+                if(destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
                 {
                     jitCreate = false;
                 }
@@ -517,7 +517,8 @@ bool UseCaseGraphicsScene::processMouseReleaseEvent_andReturnWhetherOrNotToKeepT
                 if(jitCreate)
                 {
                     //jit create slot on class lifeline in destination (unless it's actor)
-                    DesignEqualsImplementationClassSlot *newSlot = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING);
+                    DesignEqualsImplementationClass *classToCreateSlotIn = destinationSlotIsProbablyNameless_OrZeroIfNoDest->ParentClass;
+                    DesignEqualsImplementationClassSlot *newSlot = classToCreateSlotIn->createwNewSlot(classToCreateSlotIn->nextTempUnnamedSlotName());
                     if(destinationClassLifeLine_OrZeroIfNoDest)
                     {
                         destinationClassLifeLine_OrZeroIfNoDest->insertSlotToClassLifeLine(destinationClassLifeLine_OrZeroIfNoDest->mySlotsAppearingInClassLifeLine().size(), newSlot);
@@ -637,7 +638,7 @@ bool UseCaseGraphicsScene::processMouseReleaseEvent_andReturnWhetherOrNotToKeepT
     {
 
         //HACK to delete target slot if unnamed and empty
-        if(userChosenDestinationSlot_OrZeroIfNone != destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING && destinationClassLifeLine_OrZeroIfNoDest)
+        if(userChosenDestinationSlot_OrZeroIfNone != destinationSlotIsProbablyNameless_OrZeroIfNoDest && destinationSlotIsProbablyNameless_OrZeroIfNoDest->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX) && destinationClassLifeLine_OrZeroIfNoDest)
         {
             //TODOoptimization: could sneak the slot in without deleting the graphics item and recreating it, but as of now it is done transparently via reactor pattern through two below calls. Btw I'm putting business logic in the gui but fuck it this is deserving and idgaf anymore (TODOimplicitsharing: request here that the next two statements are performed in the backend... but wtf it needs to be finished before i delete it 3 lines down so idfk)
 

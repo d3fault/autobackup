@@ -21,6 +21,7 @@
 //TODOoptional: radio mode grays out opposite mode
 //TODOreq: introducing qgoupbox made the radio buttons in different groups (and so not mutually exclusive), fix that
 //TODOreq: when instance choser is opened and we already have an instance, the "existing instance" radio box should be pre-selected, as well as the actual instance in the list highlighted
+//TODOreq: "root use case class lifeline" radio option (name not applicable). radio option not shown if use case already has root class lifeline
 ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementationClassLifeLine *classLifelineForWhichAnInstanceIsBeingChosen, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_NewInstanceRadioButton(new QRadioButton(tr("New Instance")))

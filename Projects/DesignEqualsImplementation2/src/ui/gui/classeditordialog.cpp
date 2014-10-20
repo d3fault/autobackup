@@ -315,7 +315,7 @@ QString ClassEditorDialog::classDetailsAsHtmlString()
     QString slotTempHtml;
     Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_ClassBeingEditted->mySlots())
     {
-        if(currentSlot->Name != UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING)
+        if(!currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
         {
             slotTempHtml.append("<br />" + currentSlot->methodSignatureWithoutReturnType());
             noSlotsThatArentTempSlotMagicalNameString = false;

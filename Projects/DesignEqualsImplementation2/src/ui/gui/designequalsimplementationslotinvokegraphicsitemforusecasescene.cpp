@@ -17,7 +17,7 @@ DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene::DesignEqualsImp
 {
     QPen myPen = pen();
     myPen.setWidth(3);
-    myPen.setColor(Qt::red);
+    myPen.setColor(Qt::darkGreen);
     setPen(myPen);
 
     reset(parentUseCaseGraphicsScene, classlifelineWhoseSlotIsToBeInvoked, theSlotToBeInvoked);

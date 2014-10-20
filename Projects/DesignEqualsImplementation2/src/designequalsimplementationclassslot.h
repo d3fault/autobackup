@@ -37,6 +37,7 @@ public:
     static void streamOutSlotReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassSlot *slot, QDataStream &out);
 private:
     //DesignEqualsImplementationClassLifeLine *m_ParentClassLifeLineInUseCaseView_OrZeroInClassDiagramView;
+    DesignEqualsImplementationClassLifeLine *m_ClassLifelineFirstDefinedIn_OrZeroIfNotDefinedInAnyClassLifelinesYet; //TODOreq: update when relevant. also [de-]serialize
     DesignEqualsImplementationClassSignal *m_FinishedOrExitSignal;
     SignalEmissionOrSlotInvocationContextVariables m_ExitSignalEmissionContextVariables;
 signals:

@@ -133,7 +133,7 @@ DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassLifeLine
     if(newClassLifelineSoCreateFirstDummySlot_OrFalseToIndicateDeserialzingClassLifeline)
     {
         //give them an unnamed + no-statements slot as a target in the class lifeline
-        DesignEqualsImplementationClassSlot *firstDummyFakeSlotInClassLifeLine = m_DesignEqualsImplementationClass->createwNewSlot(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING);
+        DesignEqualsImplementationClassSlot *firstDummyFakeSlotInClassLifeLine = m_DesignEqualsImplementationClass->createwNewSlot(m_DesignEqualsImplementationClass->nextTempUnnamedSlotName());
         //defaultSlotInClassLifeLine->ParentClass = designEqualsImplementationClass;
         insertSlotToClassLifeLine(0, firstDummyFakeSlotInClassLifeLine); //every lifeline has at least one slot. TODOrq: unit of execution "ordering" does not make sense when you consider that the same object/lifeline could be used in different use cases... fml. HOWEVER since each use case is responsible for holding a set of class life lines, doesn't that mean that all units of execution in a class life line belong to the same use case? EVEN THEN, the nature of threading means we can't make ordering guarantees... blah
     }

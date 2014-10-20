@@ -276,7 +276,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
             Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->mySlots()) //List the slots on the target slot, derp
             {
-                if(currentSlot->Name == UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING)
+                if(currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
                     continue;
                 m_ExistingSlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
             }
