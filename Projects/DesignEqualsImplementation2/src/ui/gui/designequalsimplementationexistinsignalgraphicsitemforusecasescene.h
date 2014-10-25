@@ -33,6 +33,8 @@ public:
 
     void redoVisualStuffz0rz();
     int getInsertSubIndexForMouseScenePos(QPointF eventScenePos);
+
+    qreal calculateHeightPossiblyIncludingNotchMultiplexer();
 private:
     DesignEqualsImplementationClassSignal *m_UnderlyingSignal;
     SignalStatementNotchMultiplexterGraphicsRect *m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal;

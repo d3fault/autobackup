@@ -208,3 +208,12 @@ int DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::getInser
     }
 #endif
 }
+qreal DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene::calculateHeightPossiblyIncludingNotchMultiplexer()
+{
+    qreal ret = 0.0;
+    if(m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal) //TODOreq: not sure this is valid yet, but shit maybe it is...
+    {
+        ret += m_NotchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal->boundingRect().height();
+    }
+    return ret;
+}

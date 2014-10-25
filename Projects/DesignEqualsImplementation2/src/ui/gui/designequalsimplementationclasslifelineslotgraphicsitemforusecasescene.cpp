@@ -6,6 +6,8 @@
 #include "sourceslotsnappingindicationvisualrepresentation.h"
 #include "destinationslotsnappingindicationvisualrepresentation.h"
 #include "usecasegraphicsscene.h"
+#include "designequalsimplementationclasslifelinegraphicsitemforusecasescene.h"
+#include "designequalsimplementationexistinsignalgraphicsitemforusecasescene.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../idesignequalsimplementationstatement.h"
@@ -176,9 +178,12 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::repositionExisti
 {
     //TODOoptimization: "append"/etc doesn't reposition ALL of them
 
-    int numStatementsOrSnapPointsInUnitOfExecution = ((m_ExistingStatementsAndTheirGraphicsItems.size()*2)+1); //Times two accounts for all our snap/insert positions, Plus one accounts for "insert before or insert after"
+    int numStatementsOrSnapPointsInUnitOfExecution = ((m_ExistingStatementsAndTheirGraphicsItems.size()*2)+1); //Times two accounts for all our snap OR insert positions, Plus one accounts for "insert before or insert after"
 
+    qreal maybeRectHeight = calculateMyRectHeightUsingExistingStatements();
+#if 0
     qreal maybeRectHeight = ((numStatementsOrSnapPointsInUnitOfExecution+1)*DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE);
+#endif
     qreal myRectHeight = qMax(minRect().height(), maybeRectHeight);
 
     QRectF myRect = minRect();
@@ -278,10 +283,69 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::repositionExisti
     setRect(myRect);
 #endif
 }
+qreal DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::calculateMyRectHeightUsingExistingStatements()
+{
+    qreal myHeight = 0.0; //minheight stuff is still checked against the result of this method, so we only need to worry about accuracy
+    myHeight += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE; //top border/margin (we don't want to snap to top edge, nor do we want a statement to come out of top edge)
+
+    int currentStatementIndex = 0;
+    Q_FOREACH(ExistingStatementListEntryTypedef currentExistingStatement, m_ExistingStatementsAndTheirGraphicsItems)
+    {
+        if(currentExistingStatement.second->isSignalEmit())
+        {
+            myHeight += (DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE/2.0); //first halft
+            myHeight += static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(currentExistingStatement.first)->calculateHeightPossiblyIncludingNotchMultiplexer(); //"additional" height maybe added on to account for slots
+            myHeight += (DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE/2.0); //second half
+#if 0
+            QList<SlotConnectedToSignalTypedef> slotsConnectedToSignal = m_ParentClassLifeline->parentUseCaseGraphicsScene()->useCase()->slotsConnectedToSignal(m_ParentClassLifeline, m_Slot, currentStatementIndex);
+            if(slotsConnectedToSignal.isEmpty())
+            {
+                myHeight += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
+            }
+            else
+            {
+                //since we're calculating TOTAL HEIGHT in this method, we add the total height of the slot notch multiplexer. TODOreq: when calculating where slot statement should be touching on the emitting slot, we should use half the slot notch multplexer height
+                myHeight += static_cast<DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene*>(currentExistingStatement.first)->notchMultiplexerRect_OrZeroIfNoSlotsAttachedToSignal()->boundingRect().height();
+            }
+#endif
+        }
+        else if(currentExistingStatement.second->isSlotInvoke())
+        {
+            myHeight += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
+        }
+        else
+        {
+            //TODOreq: change to use private method call's graphical height once created, "loop back half circle calling self". for now going to take "0" [additional] height just like a slot invoke statement or signal emit with no slots attached
+            myHeight += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE;
+        }
+    }
+
+    myHeight += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE; //bottom border/margin (we don't want to snap to bottom edge, nor do we want a statement to come out of bottom edge)
+    return myHeight;
+}
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
 {
     insertStatementGraphicsItem(indexInsertedInto, statementInserted);
     repositionExistingStatementsAndSnapPoints();
     emit geometryChanged(); //parent class lifeline listens to this and repositions Units Of Execution. TODOreq: should i emit this when adding a new slot to an existing signal? technically it will still indirectly increase the height of the slot ("unit of executioni" block), so it kind of makes sense that yes i should
     //parentClassLifeline()->repositionUnitsOfExecution(); //TODOoptioinal: friend unit of execution from within class lifeline (??? idfk whether or not i should, so i won't (using that logic, every method should be public (wait nvm)))
+
+
+#if 0 //maybe not needed here. maybe 'emit geometryChanged()' is good enough
+    //and now fix positioning of all of the statement's "receivers" (only slot invocations at time of writing (TODOreq: signal with no slots is still used in "width calculation" for the class lifeline "to the right", regardless of if it is even connected to from any slots on our class lifeline)
+    //TODOreq: ensure all statement receivers (slots) are ordered properly on their corresponding class lifelines, and are slid down enough but as high as possible
+    Q_FOREACH(ExistingStatementListEntryTypedef existinStatementAndGraphicsItem, m_ExistingStatementsAndTheirGraphicsItems)
+    {
+        if(existinStatementAndGraphicsItem.second->isSignalEmit())
+        {
+            //signal width + (longest slot width that is connecting to class lifeline directly to the right, OR, if nomin class lifeline horizontal spacing
+        }
+        else if(existinStatementAndGraphicsItem.second->isSlotInvoke())
+        {
+            //only use width of slot in calculation
+        }
+        //TODOreq: still use width of private method call statement for spacing to next class lifeline 'to the right'?
+    }
+    //I've got the above foreach pseudo'd, but don't I need to account for every slot on this class lifeline, not just every statement on the current slot? Uhh one problem I have is that statements, and their snap points, won't any longer be even divides in the slot height. I need to account for the the fact that signals with > 0 slots attached take up more-than-usual vertical space. So the statement (and statement snap point) directly below any signal with > 0 slots attached will be lower than if a regular slot invoke (or signal emit with NO slots attached) were above it. I think positioning should start at class lifeline and work down and recursively "to the right"
+#endif
 }

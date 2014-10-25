@@ -1,0 +1,11 @@
+GitBitShit (a commit is a poop and is transported using libtorrent (the raw contents of git diff, or whatever is needed to bring the repo to the next commit (incl git commit message)))
+
+use git as normal, commit.
+on-post-update:
+git diff HEAD^ HEAD | announceAndStartTorrentInAlreadyExistingProcess; #QProcess calls git diff. the already existing process needs to be triggered by post-update still (lots of ways to accomplish this. daemons)
+
+The "announce" basically tells each node about the infohash of the "raw git diff". I could make a dht proper, but I could also use git hackily since it supports push protocols already. Those additional-unseen-backend-git-repos have another custom post-update script that simply reads the contents of the update (the new commit) and there is just one file in there and it's a QSettings file. The QSettings file describes the new "raw git diff" available.
+
+At this point you're wondering why not just git push the actual content. It is because this optimization is meant for large binaries in git. We're just hackily using "git push" as a message transport for the notification of new large binaries. A proper dht would probably close tons of security holes opened by hackily using "git push" in such a manner. At this point I am only interested in functionality because I want to use it for server content propagation. One broadcasting computer, tons of content servers. My current scp retrying code does not scale as well as bittorrent.
+
+If a dht proper was used (custom ez), the GitBitShit could even be used publically. Using "git push" as transport for meta notification opens up way more access than it should.

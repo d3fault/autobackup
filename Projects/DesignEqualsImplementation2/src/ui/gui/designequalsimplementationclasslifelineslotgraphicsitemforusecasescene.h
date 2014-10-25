@@ -43,6 +43,7 @@ private:
     void privateConstructor();
     void insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
     void repositionExistingStatementsAndSnapPoints();
+    qreal calculateMyRectHeightUsingExistingStatements();
 signals:
     void geometryChanged();
 private slots:

@@ -1,0 +1,33 @@
+4 network bootstrapping nodes (actually decided on just 3 nodes, no frontend concept)
+3 backend
+1 frontend
+all do the same thing (shared nothing ideally)
+the 1 frontend node displays those 3 backends screen-content-buffers recombined and compares its own
+
+i want an operating system in a pixmap where the screen is cut vertically into thirds. each of the backend nodes sends one of those thirds to the frontend, who combines those thirds and does a full compare against his own [full] buffer of same content that the three backends are looking at/doing (operating system in a cryptographically verified operating system in a pixmap (pixmap is bytearray is data is signed and is verified on every one of the shared nothing nodes
+the frontend becomes a security bottleneck, but i only know how to do it in software. or i could buy 3 screens. (2 more i mean)
+
+i _THINK_ if i serialize a graphics scene that is toPixmap'd using software rendering that the results are defined and therefore comparable (and each third will match the others (TODOreq: verify each third with the others and notify high priority (had:messagebox(fuck-focus-stealers)) if any one of the 3rds don't match each other or my own (the frontend)))
+
+use 3 screens, run the system 3 times, each screen can be used as if it were doing it's own thing (but every keystroke would be cryptographically verified of it's existence on all 3 nodes (fuck the frontend node idea, using 3 screens solves it). the screens i want to use are (and should be) small, so having 3 of them will be nice. it should obviously be N, but to trick myself while coding it I should use _DERP_THREE.
+
+each of the three screens can flash a certain color perio-
+they can be color coded notifications(flashing worse than modal messagebox?)
+
+certain error conditions (such as the failure of another node (security verification fails is good indication of it ;-P)) should only be displayed on certain monitors/nodes (do i want 1:1?), so every monitor/node has an independent always-on-screen-so-as-not-to-interfere(interfere in the modal sense) notification log (qplaintextedit). i imagine it as a bar along the bottom of the screen.
+
+TODOoptimization: nodes can and should gossip to one another when they detect a failure of another node. they want to fit in and be cool and put their hands in their inner-elbows and make faces of disapproval in the `general direction` of the failee. such satisfaction can be noted and displayed in the same notification log described just above.
+
+...
+node 0 failed
+node 1 agrees that node 0 failed
+concensus is that node 0 failed (hey you, maybe you should throw node 0 away and replace it)
+...
+
+
+if a node fails without it's screen also failing, what the fuck
+
+
+
+
+the reason a frontend seems necessary is because i need to plug a keyboard into ONE comp (this problem is solvable (saw (had:solve) a keyboard into thirds where each third of the keyboard goes to a different node and broadcasts it's keystroke on the network (so all 3 nodes get all thirds of the keyboard, eventually (this requires high precision timing to work with accuracy)) (which manifests visually on all 3 screens (perhaps their log?)))
