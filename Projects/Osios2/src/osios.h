@@ -13,18 +13,21 @@ class Osios : public QObject
 public:
     explicit Osios(const QString &profileName, QObject *parent = 0);
     ~Osios();
-    QList<ITimelineNode> timelineNodes() const;
+    QList<TimelineNode> timelineNodes() const;
 private:
+    friend class TimelineSerializer;
+
     QString m_ProfileName;
-    QList<ITimelineNode> m_TimelineNodes;
+    QList<TimelineNode> m_TimelineNodes;
     int m_LastSerializedTimelineIndex;
     QFile *m_LocalPersistenceDevice;
     QDataStream m_LocalPersistenceStream;
 
     void readInAllPreviouslySerializedEntries();
+    ITimelineNode *deserializeNextTimelineNode();
     void serializeTimelineAdditionsLocally();
-    void serializeTimelineActionLocally(const ITimelineNode &action);
-    void propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingItsReplication(const ITimelineNode &action);
+    void serializeTimelineActionLocally(TimelineNode action);
+    void propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingItsReplication(TimelineNode action);
     inline QString appendSlashIfNeeded(const QString &inputString)
     {
         if(inputString.endsWith("/"))
@@ -34,7 +37,7 @@ private:
         return inputString + "/";
     }
 public slots:
-    void recordAction(const ITimelineNode &action);
+    void recordAction(TimelineNode action);
 private slots:
     void flushDiskBuffer();
 };

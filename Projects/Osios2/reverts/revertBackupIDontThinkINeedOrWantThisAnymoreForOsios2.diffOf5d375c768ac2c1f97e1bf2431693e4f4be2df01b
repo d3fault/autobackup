@@ -1,0 +1,357 @@
+diff --git a/Projects/Osios2/src/itimelinenode.cpp b/Projects/Osios2/src/itimelinenode.cpp
+index 36f9bbc..22617cd 100644
+--- a/Projects/Osios2/src/itimelinenode.cpp
++++ b/Projects/Osios2/src/itimelinenode.cpp
+@@ -2,34 +2,26 @@
+ 
+ QDataStream &operator<<(QDataStream &outputStream, const ITimelineNode &timelineNode)
+ {
+-    return timelineNode.d->save(outputStream);
++    outputStream << static_cast<quint32>(TimelineNodeType);
++    return timelineNode.save(outputStream);
+ }
+ QDataStream &operator>>(QDataStream &inputStream, ITimelineNode &timelineNode)
+ {
+-    return timelineNode.d->load(inputStream);
++    quint32 timelineNodeTypeData; //quint32 should keep be busy for a while
++    inputStream >> timelineNodeTypeData;
++    TimelineNodeType = static_cast<TimelineNodeTypeEnum::TimelineNodeTypeEnumActual>(timelineNodeTypeData);
++    return timelineNode.load(inputStream);
+ }
+ ITimelineNodeDataITimelineNodeData::~ITimelineNodeDataITimelineNodeData()
+ { }
++#if 0
+ QString ITimelineNodeDataITimelineNodeData::humanReadableShortDescription() const
+ {
+     //derived classes must override this
+     //return "Invalid Timeline Node";
+     return QString::number(TimelineNodeType); //TODOoptional: convert to human readable type
+ }
+-QDataStream &ITimelineNodeDataITimelineNodeData::save(QDataStream &outputStream) const
+-{
+-    //derived classes must override this to serialize their data, but they should call their parent class first
+-    outputStream << static_cast<quint32>(TimelineNodeType);
+-    return outputStream;
+-}
+-QDataStream &ITimelineNodeDataITimelineNodeData::load(QDataStream &inputStream)
+-{
+-    //derived classes must override this to serialize their data, but they should call their parent class first
+-    quint32 timelineNodeTypeData; //quint32 should keep be busy for a while
+-    inputStream >> timelineNodeTypeData;
+-    TimelineNodeType = static_cast<TimelineNodeTypeEnum::TimelineNodeTypeEnumActual>(timelineNodeTypeData);
+-    return inputStream;
+-}
++#endif
+ ITimelineNode::~ITimelineNode()
+ { }
+ QString ITimelineNode::humanReadableShortDescription() const
+diff --git a/Projects/Osios2/src/itimelinenode.h b/Projects/Osios2/src/itimelinenode.h
+index 042bcff..9276862 100644
+--- a/Projects/Osios2/src/itimelinenode.h
++++ b/Projects/Osios2/src/itimelinenode.h
+@@ -31,10 +31,7 @@ class ITimelineNodeDataITimelineNodeData : public QSharedData
+     { }
+     virtual ~ITimelineNodeDataITimelineNodeData();
+ 
+-    QString humanReadableShortDescription() const;
+-
+-    virtual QDataStream &save(QDataStream &outputStream) const;
+-    virtual QDataStream &load(QDataStream &inputStream);
++    //QString humanReadableShortDescription() const;
+ 
+     int TimelineNodeType;
+ };
+@@ -42,26 +39,27 @@ class ITimelineNodeDataITimelineNodeData : public QSharedData
+ class ITimelineNode
+ {
+   public:
+-    ITimelineNode() { d = new ITimelineNodeDataITimelineNodeData; }
+-    ITimelineNode(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeType) { d = new ITimelineNodeDataITimelineNodeData(timelineNodeType); }
+-    ITimelineNode(const ITimelineNode &other)
+-          : d (other.d)
+-    { }
+-    virtual ~ITimelineNode();
++    virtual QString humanReadableShortDescription() const=0;
+ 
+-    QString humanReadableShortDescription() const;
++    virtual void setTimelineNodeType(int timelineNodeType)=0; // { d->TimelineNodeType = timelineNodeType; }
++    virtual int timelineNodeType() const=0; // { return d->TimelineNodeType; }
+ 
+-    void setTimelineNodeType(int timelineNodeType) { d->TimelineNodeType = timelineNodeType; }
+-    int timelineNodeType() const { return d->TimelineNodeType; }
++    virtual QDataStream &save(QDataStream &outputStream) const=0;
++    virtual QDataStream &load(QDataStream &inputStream)=0;
+   private:
+     friend QDataStream &operator<< (QDataStream &outputStream, const ITimelineNode &timelineNode);
+     friend QDataStream &operator>> (QDataStream &inputStream, ITimelineNode &timelineNode);
++#if 0
+     QSharedDataPointer<ITimelineNodeDataITimelineNodeData> d;
++#endif
+ };
+ 
++//they have to be pure because we don't have a d ptr until derived
++#define REDUNDANT_TIMELINE_NODE_OVERRIDE_DEFINITIONS void setTimelineNodeType(int timelineNodeType) { d->TimelineNodeType = timelineNodeType; } int timelineNodeType() const { return d->TimelineNodeType; }
++
+ QDataStream &operator<< (QDataStream &outputStream, const ITimelineNode &timelineNode);
+ QDataStream &operator>> (QDataStream &inputStream, ITimelineNode &timelineNode);
+ 
+-Q_DECLARE_METATYPE(ITimelineNode)
++Q_DECLARE_METATYPE(ITimelineNode*)
+ 
+ #endif // ITIMELINENODE_H
+diff --git a/Projects/Osios2/src/mainmenuitems/timelinetab_widget_formainmenutabwidget.cpp b/Projects/Osios2/src/mainmenuitems/timelinetab_widget_formainmenutabwidget.cpp
+index bffc1ad..7de6d05 100644
+--- a/Projects/Osios2/src/mainmenuitems/timelinetab_widget_formainmenutabwidget.cpp
++++ b/Projects/Osios2/src/mainmenuitems/timelinetab_widget_formainmenutabwidget.cpp
+@@ -11,9 +11,9 @@ TimelineTab_Widget_ForMainMenuTabWidget::TimelineTab_Widget_ForMainMenuTabWidget
+     QVBoxLayout *myLayout = new QVBoxLayout();
+ 
+     QListWidget *m_TimelineNodesList = new QListWidget();
+-    Q_FOREACH(ITimelineNode currentTimelineNode, osios->timelineNodes())
++    Q_FOREACH(ITimelineNode *currentTimelineNode, osios->timelineNodes())
+     {
+-        QListWidgetItem *currentListWidgetItem = new QListWidgetItem(currentTimelineNode.humanReadableShortDescription(), m_TimelineNodesList);
++        QListWidgetItem *currentListWidgetItem = new QListWidgetItem(currentTimelineNode->humanReadableShortDescription(), m_TimelineNodesList);
+         currentListWidgetItem->setData(Qt::UserRole, QVariant::fromValue(currentTimelineNode));
+     }
+     myLayout->addWidget(m_TimelineNodesList);
+diff --git a/Projects/Osios2/src/osios.cpp b/Projects/Osios2/src/osios.cpp
+index 029c536..9c15ffc 100644
+--- a/Projects/Osios2/src/osios.cpp
++++ b/Projects/Osios2/src/osios.cpp
+@@ -6,6 +6,7 @@
+ #include <QDataStream>
+ #include <QDebug>
+ 
++#include "timelinenodetypes/mainmenuactivitychangedtimelinenode.h"
+ #include "osioscommon.h"
+ 
+ #define OSIOS_TIMELINE_FILENAME "timeline.bin"
+@@ -51,7 +52,7 @@ Osios::~Osios()
+     m_LocalPersistenceDevice->seek(0);
+     m_LocalPersistenceStream << m_TimelineNodes.size();
+ }
+-QList<ITimelineNode> Osios::timelineNodes() const
++QList<ITimelineNode*> Osios::timelineNodes() const
+ {
+     return m_TimelineNodes;
+ }
+@@ -66,22 +67,45 @@ void Osios::readInAllPreviouslySerializedEntries()
+         int currentIndex = m_TimelineNodes.size()-1;
+         for(int i = 0; i < numTimelineNodes; ++i)
+         {
+-            ITimelineNode serializedTimelineNode;
+-            m_LocalPersistenceStream >> serializedTimelineNode;
++            ITimelineNode *serializedTimelineNode = deserializeNextTimelineNode();
++            /*m_LocalPersistenceStream >> serializedTimelineNode;*/
+             m_TimelineNodes.append(serializedTimelineNode);
+             ++currentIndex;
+             m_LastSerializedTimelineIndex = currentIndex;
+         }
+     }
+ }
++ITimelineNode* Osios::deserializeNextTimelineNode()
++{
++    quint32 timelineNodeTypeData; //quint32 should keep be busy for a while
++    m_LocalPersistenceStream >> timelineNodeTypeData;
++    TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeType = static_cast<TimelineNodeTypeEnum::TimelineNodeTypeEnumActual>(timelineNodeTypeData);
++    switch(timelineNodeType)
++    {
++    case TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode:
++    {
++        MainMenuActivityChangedTimelineNode mainMenuActivityChangedTimelineNode;
++    }
++        break;
++    case TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode:
++    {
++    }
++        break;
++    case TimelineNodeTypeEnum::INITIALNULLINVALIDTIMELINENODETYPE:
++    default:
++    {
++    }
++        break;
++    }
++}
+ //batch write, but really doesn't make much difference since we flush every X seconds anyways
+ void Osios::serializeTimelineAdditionsLocally()
+ {
+     int timelineSize = m_TimelineNodes.size();
+     while((m_LastSerializedTimelineIndex+1) < timelineSize)
+     {
+-        const ITimelineNode &timelineNode = m_TimelineNodes.at(++m_LastSerializedTimelineIndex);
+-        serializeTimelineActionLocally(timelineNode);
++        ITimelineNode *timelineNode = m_TimelineNodes.at(++m_LastSerializedTimelineIndex);
++        serializeTimelineActionLocally(*timelineNode);
+     }
+ }
+ void Osios::serializeTimelineActionLocally(const ITimelineNode &action)
+@@ -102,7 +126,7 @@ void Osios::propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingIts
+ }
+ void Osios::recordAction(const ITimelineNode &action)
+ {
+-    m_TimelineNodes.append(action);
++    m_TimelineNodes.append(&action);
+     //TODOreq: at this point we schedule it to be written to disk in 2 mins (we just give it to a thread (main thread for now, but shouldn't be later) that is periodically flushed), but immediately replicate it to network neighbors for cryptographic verification
+     propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingItsReplication(action);
+     serializeTimelineAdditionsLocally(); //writes to file but does not flush
+diff --git a/Projects/Osios2/src/osios.h b/Projects/Osios2/src/osios.h
+index b715405..8a65641 100644
+--- a/Projects/Osios2/src/osios.h
++++ b/Projects/Osios2/src/osios.h
+@@ -13,15 +13,16 @@ class Osios : public QObject
+ public:
+     explicit Osios(const QString &profileName, QObject *parent = 0);
+     ~Osios();
+-    QList<ITimelineNode> timelineNodes() const;
++    QList<ITimelineNode*> timelineNodes() const;
+ private:
+     QString m_ProfileName;
+-    QList<ITimelineNode> m_TimelineNodes;
++    QList<ITimelineNode*> m_TimelineNodes;
+     int m_LastSerializedTimelineIndex;
+     QFile *m_LocalPersistenceDevice;
+     QDataStream m_LocalPersistenceStream;
+ 
+     void readInAllPreviouslySerializedEntries();
++    ITimelineNode *deserializeNextTimelineNode();
+     void serializeTimelineAdditionsLocally();
+     void serializeTimelineActionLocally(const ITimelineNode &action);
+     void propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingItsReplication(const ITimelineNode &action);
+diff --git a/Projects/Osios2/src/timelinenodetypes/keypressinnewemptydoctimelinenode.cpp b/Projects/Osios2/src/timelinenodetypes/keypressinnewemptydoctimelinenode.cpp
+index b9a1c31..0c5e798 100644
+--- a/Projects/Osios2/src/timelinenodetypes/keypressinnewemptydoctimelinenode.cpp
++++ b/Projects/Osios2/src/timelinenodetypes/keypressinnewemptydoctimelinenode.cpp
+@@ -4,13 +4,6 @@
+ 
+ KeyPressInNewEmptyDocTimelineNodeData::~KeyPressInNewEmptyDocTimelineNodeData()
+ { }
+-#if 0
+-QString KeyPressInNewEmptyDocTimelineNodeData::humanReadableShortDescription() const
+-{
+-    QKeyEvent theKeyAsEvent(QKeyEvent::KeyPress, KeyPressed, Qt::NoModifier); //used convert from int to string
+-    return "Key Press Event (" + theKeyAsEvent.text() + ")";
+-}
+-#endif
+ QDataStream &KeyPressInNewEmptyDocTimelineNodeData::save(QDataStream &outputStream) const
+ {
+     ITimelineNodeDataITimelineNodeData::save(outputStream);
+@@ -25,3 +18,8 @@ QDataStream &KeyPressInNewEmptyDocTimelineNodeData::load(QDataStream &inputStrea
+ }
+ KeyPressInNewEmptyDocTimelineNode::~KeyPressInNewEmptyDocTimelineNode()
+ { }
++QString KeyPressInNewEmptyDocTimelineNode::humanReadableShortDescription() const
++{
++    QKeyEvent theKeyAsEvent(QKeyEvent::KeyPress, d->KeyPressed, Qt::NoModifier); //used convert from int to string
++    return "Key Press Event (" + theKeyAsEvent.text() + ")";
++}
+diff --git a/Projects/Osios2/src/timelinenodetypes/keypressinnewemptydoctimelinenode.h b/Projects/Osios2/src/timelinenodetypes/keypressinnewemptydoctimelinenode.h
+index aafe4c8..eebaec3 100644
+--- a/Projects/Osios2/src/timelinenodetypes/keypressinnewemptydoctimelinenode.h
++++ b/Projects/Osios2/src/timelinenodetypes/keypressinnewemptydoctimelinenode.h
+@@ -17,6 +17,8 @@ public:
+     { }
+     virtual ~KeyPressInNewEmptyDocTimelineNodeData();
+ 
++    QString humanReadableShortDescription() const;
++
+     int KeyPressed; //TODOoptional: multiple keys (modifiers). I really wish I could just serialize QKeyEvent :(
+ 
+     virtual QDataStream &save(QDataStream &outputStream) const;
+@@ -37,8 +39,12 @@ class KeyPressInNewEmptyDocTimelineNode : public ITimelineNode
+     { }
+     virtual ~KeyPressInNewEmptyDocTimelineNode();
+ 
++    QString humanReadableShortDescription() const;
++
+     void setKeyPressed(int keyPressed) { d->KeyPressed = keyPressed; }
+     int keyPressed() const { return d->KeyPressed; }
++
++    REDUNDANT_TIMELINE_NODE_OVERRIDE_DEFINITIONS
+   private:
+     QSharedDataPointer<KeyPressInNewEmptyDocTimelineNodeData> d;
+ };
+diff --git a/Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.cpp b/Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.cpp
+index 4fb64bf..bf6a1bd 100644
+--- a/Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.cpp
++++ b/Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.cpp
+@@ -5,19 +5,19 @@
+ 
+ MainMenuActivityChangedTimelineNodeData::~MainMenuActivityChangedTimelineNodeData()
+ { }
+-#if 0
+-QString MainMenuActivityChangedTimelineNodeData::humanReadableShortDescription() const
++MainMenuActivityChangedTimelineNode::~MainMenuActivityChangedTimelineNode()
++{ }
++QString MainMenuActivityChangedTimelineNode::humanReadableShortDescription() const
+ {
+-    return "Main Menu Activity Changed To: " + QString::number(NewMainMenuActivity); //TODOoptional: human readable instead of enum int value
++    return "Main Menu Activity Changed To: " + QString::number(d->NewMainMenuActivity); //TODOoptional: human readable instead of enum int value
+ }
+-#endif
+-QDataStream &MainMenuActivityChangedTimelineNodeData::save(QDataStream &outputStream) const
++QDataStream &MainMenuActivityChangedTimelineNode::save(QDataStream &outputStream) const
+ {
+     ITimelineNodeDataITimelineNodeData::save(outputStream);
+     outputStream << static_cast<OsiosMainMenuSerializedDataType>(NewMainMenuActivity);
+     return outputStream;
+ }
+-QDataStream &MainMenuActivityChangedTimelineNodeData::load(QDataStream &inputStream)
++QDataStream &MainMenuActivityChangedTimelineNode::load(QDataStream &inputStream)
+ {
+     ITimelineNodeDataITimelineNodeData::load(inputStream);
+     OsiosMainMenuSerializedDataType newMainMenuActivityData;
+@@ -25,5 +25,3 @@ QDataStream &MainMenuActivityChangedTimelineNodeData::load(QDataStream &inputStr
+     NewMainMenuActivity = static_cast<MainMenuActivitiesEnum::MainMenuActivitiesEnumActual>(newMainMenuActivityData);
+     return inputStream;
+ }
+-MainMenuActivityChangedTimelineNode::~MainMenuActivityChangedTimelineNode()
+-{ }
+diff --git a/Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.h b/Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.h
+index b2b2cfa..8497517 100644
+--- a/Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.h
++++ b/Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.h
+@@ -4,7 +4,7 @@
+ #include "../itimelinenode.h"
+ #include "../iactivitytab_widget_formainmenutabwidget.h"
+ 
+-//#define MAIN_MENU_DEFAULT_ACTIVITY TimelineViewActivity
++#define MAIN_MENU_DEFAULT_ACTIVITY MainMenuActivitiesEnum::TimelineViewActivity
+ 
+ class MainMenuActivityChangedTimelineNodeData : public ITimelineNodeDataITimelineNodeData
+ {
+@@ -20,16 +20,13 @@ public:
+     virtual ~MainMenuActivityChangedTimelineNodeData();
+ 
+     MainMenuActivitiesEnum::MainMenuActivitiesEnumActual NewMainMenuActivity;
+-
+-    virtual QDataStream &save(QDataStream &outputStream) const;
+-    virtual QDataStream &load(QDataStream &inputStream);
+ };
+ 
+ class MainMenuActivityChangedTimelineNode : public ITimelineNode
+ {
+   public:
+-    MainMenuActivityChangedTimelineNode(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity)
+-        : ITimelineNode(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode)
++    MainMenuActivityChangedTimelineNode(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity = MAIN_MENU_DEFAULT_ACTIVITY)
++        : ITimelineNode()
+     {
+         d = new MainMenuActivityChangedTimelineNodeData(newMainMenuActivity);
+     }
+@@ -39,8 +36,15 @@ class MainMenuActivityChangedTimelineNode : public ITimelineNode
+     { }
+     virtual ~MainMenuActivityChangedTimelineNode();
+ 
++    QString humanReadableShortDescription() const;
++
+     void setNewMainMenuActivity(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity) { d->NewMainMenuActivity = newMainMenuActivity; }
+     int newMainMenuActivity() const { return d->NewMainMenuActivity; }
++
++    virtual QDataStream &save(QDataStream &outputStream) const;
++    virtual QDataStream &load(QDataStream &inputStream);
++
++    REDUNDANT_TIMELINE_NODE_OVERRIDE_DEFINITIONS
+   private:
+     QSharedDataPointer<MainMenuActivityChangedTimelineNodeData> d;
+ };

@@ -13,7 +13,7 @@ public:
     virtual MainMenuActivitiesEnum::MainMenuActivitiesEnumActual mainMenuActivityType() const;
     QObject *asQObject();
 signals:
-    void actionOccurred(const ITimelineNode &action);
+    void actionOccurred(TimelineNode action);
 };
 
 #endif // WRITERTAB_WIDGET_FORMAINMENUTABWIDGET_H

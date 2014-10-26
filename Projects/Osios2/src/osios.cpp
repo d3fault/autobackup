@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "osioscommon.h"
+#include "timelineserializer.h"
 
 #define OSIOS_TIMELINE_FILENAME "timeline.bin"
 
@@ -30,7 +31,9 @@ Osios::Osios(const QString &profileName, QObject *parent)
     }
     m_LocalPersistenceStream.setDevice(m_LocalPersistenceDevice);
 
-    //TODOreq: read in all previously serialized entries, and make sure write cursor is at the end for appending
+    qRegisterMetaType<TimelineNode>("TimelineNode");
+
+    //read in all previously serialized entries, which also puts the write cursor is at the end for appending
     readInAllPreviouslySerializedEntries();
 
     int timelineSize = m_TimelineNodes.size();
@@ -50,8 +53,10 @@ Osios::~Osios()
     //update the [probably, but not necessarily, changed] serialized number of timeline nodes at the beginning of the file (better, use a mutation append-only strategy)
     m_LocalPersistenceDevice->seek(0);
     m_LocalPersistenceStream << m_TimelineNodes.size();
+    m_LocalPersistenceDevice->flush();
+    qDeleteAll(m_TimelineNodes);
 }
-QList<ITimelineNode> Osios::timelineNodes() const
+QList<TimelineNode> Osios::timelineNodes() const
 {
     return m_TimelineNodes;
 }
@@ -66,13 +71,18 @@ void Osios::readInAllPreviouslySerializedEntries()
         int currentIndex = m_TimelineNodes.size()-1;
         for(int i = 0; i < numTimelineNodes; ++i)
         {
-            ITimelineNode serializedTimelineNode;
-            m_LocalPersistenceStream >> serializedTimelineNode;
+            ITimelineNode *serializedTimelineNode = deserializeNextTimelineNode();
+            //m_LocalPersistenceStream >> serializedTimelineNode;
             m_TimelineNodes.append(serializedTimelineNode);
             ++currentIndex;
             m_LastSerializedTimelineIndex = currentIndex;
         }
     }
+}
+ITimelineNode *Osios::deserializeNextTimelineNode()
+{
+    //we have to return a pointer because we have to instantiate the derived type
+    return TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(m_LocalPersistenceDevice);
 }
 //batch write, but really doesn't make much difference since we flush every X seconds anyways
 void Osios::serializeTimelineAdditionsLocally()
@@ -80,13 +90,13 @@ void Osios::serializeTimelineAdditionsLocally()
     int timelineSize = m_TimelineNodes.size();
     while((m_LastSerializedTimelineIndex+1) < timelineSize)
     {
-        const ITimelineNode &timelineNode = m_TimelineNodes.at(++m_LastSerializedTimelineIndex);
+        TimelineNode timelineNode = m_TimelineNodes.at(++m_LastSerializedTimelineIndex);
         serializeTimelineActionLocally(timelineNode);
     }
 }
-void Osios::serializeTimelineActionLocally(const ITimelineNode &action)
+void Osios::serializeTimelineActionLocally(TimelineNode action)
 {
-    m_LocalPersistenceStream << action;
+    m_LocalPersistenceStream << *action;
 }
 void Osios::flushDiskBuffer()
 {
@@ -96,13 +106,13 @@ void Osios::flushDiskBuffer()
     }
     //TODOreq: still need to do "sync" system call, but i don't think there's a portable way to do it :(
 }
-void Osios::propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingItsReplication(const ITimelineNode &action)
+void Osios::propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingItsReplication(TimelineNode action)
 {
     //TODOreq:
 }
-void Osios::recordAction(const ITimelineNode &action)
+void Osios::recordAction(TimelineNode action)
 {
-    m_TimelineNodes.append(action);
+    m_TimelineNodes.append(action); //takes ownership, deletes in destructor
     //TODOreq: at this point we schedule it to be written to disk in 2 mins (we just give it to a thread (main thread for now, but shouldn't be later) that is periodically flushed), but immediately replicate it to network neighbors for cryptographic verification
     propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingItsReplication(action);
     serializeTimelineAdditionsLocally(); //writes to file but does not flush

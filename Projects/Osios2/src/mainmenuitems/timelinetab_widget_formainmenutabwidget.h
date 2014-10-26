@@ -15,7 +15,7 @@ public:
 
     QObject *asQObject();
 signals:
-    void actionOccurred(const ITimelineNode &action);
+    void actionOccurred(TimelineNode action);
 };
 
 #endif // TIMELINETAB_WIDGET_FORMAINMENUTABWIDGET_H

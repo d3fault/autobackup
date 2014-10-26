@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QSettings>
 
+#include "itimelinenode.h"
 #include "osiosgui.h"
 
 int main(int argc, char *argv[])

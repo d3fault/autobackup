@@ -10,7 +10,7 @@ WriterTab_Widget_ForMainMenuTabWidget::WriterTab_Widget_ForMainMenuTabWidget(IOs
     myLayout->addWidget(new EventEmittingPlainTextEdit(osiosClient));
     setLayout(myLayout);
 
-    connect(this, SIGNAL(actionOccurred(ITimelineNode)), osiosClient->asQObject(), SIGNAL(actionOccurred(ITimelineNode)));
+    connect(this, SIGNAL(actionOccurred(TimelineNode)), osiosClient->asQObject(), SIGNAL(actionOccurred(TimelineNode)));
 }
 MainMenuActivitiesEnum::MainMenuActivitiesEnumActual WriterTab_Widget_ForMainMenuTabWidget::mainMenuActivityType() const
 {

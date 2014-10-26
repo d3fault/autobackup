@@ -5,6 +5,7 @@
 #include "iosiosclient.h"
 
 #include "osios.h"
+#include "itimelinenode.h"
 
 class QTabWidget;
 
@@ -16,10 +17,12 @@ class OsiosMainWindow : public QMainWindow, IOsiosClient /* the ONLY actual osio
 public:
     OsiosMainWindow(Osios *osios, QWidget *parent = 0);
     QObject *asQObject();
+protected:
+    virtual void closeEvent(QCloseEvent *event);
 private:
     QTabWidget *m_MainMenuItemsTabWidget;
 signals:
-    void actionOccurred(const ITimelineNode &action);
+    void actionOccurred(TimelineNode action);
 private slots:
     void handleMainMenuItemsTabWidgetCurrentTabChanged();
 };

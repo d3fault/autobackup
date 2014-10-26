@@ -4,17 +4,44 @@
 #include "../itimelinenode.h"
 #include "../iactivitytab_widget_formainmenutabwidget.h"
 
-//#define MAIN_MENU_DEFAULT_ACTIVITY TimelineViewActivity
+#define MAIN_MENU_DEFAULT_ACTIVITY TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode
 
-class MainMenuActivityChangedTimelineNodeData : public ITimelineNodeDataITimelineNodeData
+class MainMenuActivityChangedTimelineNode : public ITimelineNode
+{
+  public:
+    MainMenuActivityChangedTimelineNode()
+        : ITimelineNode(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode)
+        , NewMainMenuActivity(MAIN_MENU_DEFAULT_ACTIVITY)
+    { }
+    MainMenuActivityChangedTimelineNode(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity)
+        : ITimelineNode(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode)
+        , NewMainMenuActivity(newMainMenuActivity)
+    { }
+    MainMenuActivityChangedTimelineNode(const MainMenuActivityChangedTimelineNode &other)
+        : ITimelineNode(other)
+        , NewMainMenuActivity(other.NewMainMenuActivity)
+    { }
+    virtual ~MainMenuActivityChangedTimelineNode();
+
+    int NewMainMenuActivity;
+
+    virtual QString humanReadableShortDescription() const;
+protected:
+    virtual QDataStream &save(QDataStream &outputStream) const;
+    virtual QDataStream &load(QDataStream &inputStream);
+};
+
+#if 0
+
+class MainMenuActivityChangedTimelineNodeData : public ITimelineNodeData
 {
 public:
     MainMenuActivityChangedTimelineNodeData(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity)
-        : ITimelineNodeDataITimelineNodeData(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode)
+        : ITimelineNodeData(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode)
         , NewMainMenuActivity(newMainMenuActivity)
     { }
     MainMenuActivityChangedTimelineNodeData(const MainMenuActivityChangedTimelineNodeData &other)
-        : ITimelineNodeDataITimelineNodeData(other)
+        : ITimelineNodeData(other)
         , NewMainMenuActivity(other.NewMainMenuActivity)
     { }
     virtual ~MainMenuActivityChangedTimelineNodeData();
@@ -25,7 +52,7 @@ public:
     virtual QDataStream &load(QDataStream &inputStream);
 };
 
-class MainMenuActivityChangedTimelineNode : public ITimelineNode
+class MainMenuActivityChangedTimelineNode : public ITimelineNode<MainMenuActivityChangedTimelineNodeData>
 {
   public:
     MainMenuActivityChangedTimelineNode(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity)
@@ -44,5 +71,7 @@ class MainMenuActivityChangedTimelineNode : public ITimelineNode
   private:
     QSharedDataPointer<MainMenuActivityChangedTimelineNodeData> d;
 };
+
+#endif
 
 #endif // MAINMENUACTIVITYCHANGEDTIMELINENODE_H

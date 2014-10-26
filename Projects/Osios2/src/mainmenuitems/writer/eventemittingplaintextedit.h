@@ -14,7 +14,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *e);
 signals:
-    void actionOccurred(const ITimelineNode &action);
+    void actionOccurred(TimelineNode action);
 };
 
 #endif // EVENTEMITTINGPLAINTEXTEDIT_H

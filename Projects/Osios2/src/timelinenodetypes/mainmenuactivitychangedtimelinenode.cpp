@@ -3,27 +3,27 @@
 //increase if more tabs are added
 #define OsiosMainMenuSerializedDataType quint8
 
+#if 0
 MainMenuActivityChangedTimelineNodeData::~MainMenuActivityChangedTimelineNodeData()
 { }
-#if 0
-QString MainMenuActivityChangedTimelineNodeData::humanReadableShortDescription() const
+#endif
+MainMenuActivityChangedTimelineNode::~MainMenuActivityChangedTimelineNode()
+{ }
+QString MainMenuActivityChangedTimelineNode::humanReadableShortDescription() const
 {
     return "Main Menu Activity Changed To: " + QString::number(NewMainMenuActivity); //TODOoptional: human readable instead of enum int value
 }
-#endif
-QDataStream &MainMenuActivityChangedTimelineNodeData::save(QDataStream &outputStream) const
+QDataStream &MainMenuActivityChangedTimelineNode::save(QDataStream &outputStream) const
 {
-    ITimelineNodeDataITimelineNodeData::save(outputStream);
+    ITimelineNode::save(outputStream);
     outputStream << static_cast<OsiosMainMenuSerializedDataType>(NewMainMenuActivity);
     return outputStream;
 }
-QDataStream &MainMenuActivityChangedTimelineNodeData::load(QDataStream &inputStream)
+QDataStream &MainMenuActivityChangedTimelineNode::load(QDataStream &inputStream)
 {
-    ITimelineNodeDataITimelineNodeData::load(inputStream);
+    ITimelineNode::load(inputStream);
     OsiosMainMenuSerializedDataType newMainMenuActivityData;
     inputStream >> newMainMenuActivityData;
     NewMainMenuActivity = static_cast<MainMenuActivitiesEnum::MainMenuActivitiesEnumActual>(newMainMenuActivityData);
     return inputStream;
 }
-MainMenuActivityChangedTimelineNode::~MainMenuActivityChangedTimelineNode()
-{ }

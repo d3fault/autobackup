@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     iactivitytab_widget_formainmenutabwidget.cpp \
     osioscreateprofiledialog.cpp \
     timelinenodetypes/keypressinnewemptydoctimelinenode.cpp \
-    mainmenuitems/writer/eventemittingplaintextedit.cpp
+    mainmenuitems/writer/eventemittingplaintextedit.cpp \
+    timelineserializer.cpp
 
 HEADERS  += osiosmainwindow.h \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.h \
@@ -37,6 +38,7 @@ HEADERS  += osiosmainwindow.h \
     osioscreateprofiledialog.h \
     timelinenodetypes/keypressinnewemptydoctimelinenode.h \
     iosiosclient.h \
-    mainmenuitems/writer/eventemittingplaintextedit.h
+    mainmenuitems/writer/eventemittingplaintextedit.h \
+    timelineserializer.h
 
 include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)

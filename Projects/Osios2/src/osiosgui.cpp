@@ -76,5 +76,5 @@ OsiosGui::~OsiosGui()
 void OsiosGui::connectBackendToAndFromFrontendSignalsAndSlots()
 {
     //TODOreq: every timeline node action that we want to serialize needs a connection. change tab, key press, etc
-    connect(m_MainWindow, SIGNAL(actionOccurred(ITimelineNode)), m_Osios, SLOT(recordAction(ITimelineNode))); //old: called tab in frontend and activity on backend because there might be a cli version someday
+    connect(m_MainWindow, SIGNAL(actionOccurred(TimelineNode)), m_Osios, SLOT(recordAction(TimelineNode))); //old: called tab in frontend and activity on backend because there might be a cli version someday
 }

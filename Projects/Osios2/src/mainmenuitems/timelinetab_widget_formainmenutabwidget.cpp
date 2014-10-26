@@ -11,16 +11,16 @@ TimelineTab_Widget_ForMainMenuTabWidget::TimelineTab_Widget_ForMainMenuTabWidget
     QVBoxLayout *myLayout = new QVBoxLayout();
 
     QListWidget *m_TimelineNodesList = new QListWidget();
-    Q_FOREACH(ITimelineNode currentTimelineNode, osios->timelineNodes())
+    Q_FOREACH(TimelineNode currentTimelineNode, osios->timelineNodes())
     {
-        QListWidgetItem *currentListWidgetItem = new QListWidgetItem(currentTimelineNode.humanReadableShortDescription(), m_TimelineNodesList);
+        QListWidgetItem *currentListWidgetItem = new QListWidgetItem(currentTimelineNode->humanReadableShortDescription(), m_TimelineNodesList);
         currentListWidgetItem->setData(Qt::UserRole, QVariant::fromValue(currentTimelineNode));
     }
     myLayout->addWidget(m_TimelineNodesList);
 
     setLayout(myLayout);
 
-    connect(this, SIGNAL(actionOccurred(ITimelineNode)), osiosClient->asQObject(), SIGNAL(actionOccurred(ITimelineNode)));
+    connect(this, SIGNAL(actionOccurred(TimelineNode)), osiosClient->asQObject(), SIGNAL(actionOccurred(TimelineNode)));
 }
 MainMenuActivitiesEnum::MainMenuActivitiesEnumActual TimelineTab_Widget_ForMainMenuTabWidget::mainMenuActivityType() const
 {

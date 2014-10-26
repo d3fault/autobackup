@@ -2,28 +2,55 @@
 #define KEYPRESSINNEWEMPTYDOCTIMELINENODE_H
 
 #include "../itimelinenode.h"
+
+class KeyPressInNewEmptyDocTimelineNode : public ITimelineNode
+{
+  public:
+    KeyPressInNewEmptyDocTimelineNode()
+        : ITimelineNode(TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode)
+        , KeyPressed(-1)
+    { }
+    KeyPressInNewEmptyDocTimelineNode(int keyPressed)
+        : ITimelineNode(TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode)
+        , KeyPressed(keyPressed)
+    { }
+    KeyPressInNewEmptyDocTimelineNode(const KeyPressInNewEmptyDocTimelineNode &other)
+        : ITimelineNode(other)
+        , KeyPressed(other.KeyPressed)
+    { }
+    virtual ~KeyPressInNewEmptyDocTimelineNode();
+
+    int KeyPressed;
+
+    virtual QString humanReadableShortDescription() const;
+protected:
+    virtual QDataStream &save(QDataStream &outputStream) const;
+    virtual QDataStream &load(QDataStream &inputStream);
+};
+
+#if 0
 #include "../osioscommon.h"
 
-class KeyPressInNewEmptyDocTimelineNodeData : public ITimelineNodeDataITimelineNodeData
+class KeyPressInNewEmptyDocTimelineNodeData : public ITimelineNodeData
 {
 public:
     KeyPressInNewEmptyDocTimelineNodeData(int keyPressed)
-        : ITimelineNodeDataITimelineNodeData(TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode)
+        : ITimelineNodeData(TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode)
         , KeyPressed(keyPressed)
     { }
     KeyPressInNewEmptyDocTimelineNodeData(const KeyPressInNewEmptyDocTimelineNodeData &other)
-        : ITimelineNodeDataITimelineNodeData(other)
+        : ITimelineNodeData(other)
         , KeyPressed(other.KeyPressed)
     { }
     virtual ~KeyPressInNewEmptyDocTimelineNodeData();
 
-    int KeyPressed; //TODOoptional: multiple keys (modifiers). I really wish I could just serialize QKeyEvent :(
+    int KeyPressed; //TODOoptional: multiple keys (modifiers)
 
     virtual QDataStream &save(QDataStream &outputStream) const;
     virtual QDataStream &load(QDataStream &inputStream);
 };
 
-class KeyPressInNewEmptyDocTimelineNode : public ITimelineNode
+class KeyPressInNewEmptyDocTimelineNode : public ITimelineNode<KeyPressInNewEmptyDocTimelineNodeData>
 {
   public:
     KeyPressInNewEmptyDocTimelineNode(int keyPressed)
@@ -32,7 +59,7 @@ class KeyPressInNewEmptyDocTimelineNode : public ITimelineNode
         d = new KeyPressInNewEmptyDocTimelineNodeData(keyPressed);
     }
     KeyPressInNewEmptyDocTimelineNode(const KeyPressInNewEmptyDocTimelineNode &other)
-        : ITimelineNode(other)
+        : ITimelineNode<KeyPressInNewEmptyDocTimelineNodeData>(other)
         , d(other.d)
     { }
     virtual ~KeyPressInNewEmptyDocTimelineNode();
@@ -42,5 +69,6 @@ class KeyPressInNewEmptyDocTimelineNode : public ITimelineNode
   private:
     QSharedDataPointer<KeyPressInNewEmptyDocTimelineNodeData> d;
 };
+#endif
 
 #endif // KEYPRESSINNEWEMPTYDOCTIMELINENODE_H

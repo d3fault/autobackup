@@ -1,27 +1,26 @@
 #include "keypressinnewemptydoctimelinenode.h"
 
-#include <QKeyEvent>
+#include <QKeySequence>
 
+#if 0
 KeyPressInNewEmptyDocTimelineNodeData::~KeyPressInNewEmptyDocTimelineNodeData()
 { }
-#if 0
-QString KeyPressInNewEmptyDocTimelineNodeData::humanReadableShortDescription() const
-{
-    QKeyEvent theKeyAsEvent(QKeyEvent::KeyPress, KeyPressed, Qt::NoModifier); //used convert from int to string
-    return "Key Press Event (" + theKeyAsEvent.text() + ")";
-}
 #endif
-QDataStream &KeyPressInNewEmptyDocTimelineNodeData::save(QDataStream &outputStream) const
+KeyPressInNewEmptyDocTimelineNode::~KeyPressInNewEmptyDocTimelineNode()
+{ }
+QString KeyPressInNewEmptyDocTimelineNode::humanReadableShortDescription() const
 {
-    ITimelineNodeDataITimelineNodeData::save(outputStream);
+    return "Key Press Event (" + QKeySequence(KeyPressed).toString() + ")";
+}
+QDataStream &KeyPressInNewEmptyDocTimelineNode::save(QDataStream &outputStream) const
+{
+    ITimelineNode::save(outputStream);
     outputStream << KeyPressed;
     return outputStream;
 }
-QDataStream &KeyPressInNewEmptyDocTimelineNodeData::load(QDataStream &inputStream)
+QDataStream &KeyPressInNewEmptyDocTimelineNode::load(QDataStream &inputStream)
 {
-    ITimelineNodeDataITimelineNodeData::load(inputStream);
+    ITimelineNode::load(inputStream);
     inputStream >> KeyPressed;
     return inputStream;
 }
-KeyPressInNewEmptyDocTimelineNode::~KeyPressInNewEmptyDocTimelineNode()
-{ }
