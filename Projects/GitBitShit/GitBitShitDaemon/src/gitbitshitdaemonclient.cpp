@@ -1,19 +1,27 @@
 #include "gitbitshitdaemonclient.h"
 
-#include <QIODevice>
+#include <QLocalSocket>
 #include <QDataStream>
 #include <QBuffer>
 
-GitBitShitDaemonClient::GitBitShitDaemonClient(QIODevice *client, QObject *parent)
+GitBitShitDaemonClient::GitBitShitDaemonClient(QLocalSocket *client, QObject *parent)
     : QObject(parent)
     , m_Client(client)
 {
     connect(client, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
 }
+void GitBitShitDaemonClient::disconnectClient()
+{
+    m_Client->disconnectFromServer();
+}
+GitBitShitDaemonClient::~GitBitShitDaemonClient()
+{
+    m_Client->deleteLater();
+}
 void GitBitShitDaemonClient::handleReadyRead()
 {
     qint64 bytesAvailable = m_Client->bytesAvailable();
-    if(bytesAvailable < sizeof(quint32))
+    if(bytesAvailable < static_cast<qint64>(sizeof(quint32)))
         return;
     qint64 payloadBytesAvailable = bytesAvailable - sizeof(quint32);
     quint32 messageLength = 0;
@@ -32,6 +40,13 @@ void GitBitShitDaemonClient::handleReadyRead()
         theMessageDataStream >> theMessage;
         emit messageReceived(theMessage);
     }
+    else if(messageLength == 0)
+    {
+        //read the empty message, just to get it out of the way. this was probably an error
+        QString emptyMessage;
+        QDataStream theMessageDataStream(m_Client);
+        theMessageDataStream >> emptyMessage;
+    }
 #if 0
     m_Client->peek(static_cast<char*>(&messageLength), sizeof(quint32));
     if(messageLength > 0 && payloadBytesAvailable >= messageLength)
@@ -42,4 +57,8 @@ void GitBitShitDaemonClient::handleReadyRead()
         emit messageReceived(theMessage);
     }
 #endif
+}
+void GitBitShitDaemonClient::handleClientDisconnected()
+{
+    emit clientDisconnected(this);
 }

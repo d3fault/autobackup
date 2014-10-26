@@ -14,13 +14,42 @@ GitBitShitDaemon::GitBitShitDaemon(QObject *parent)
     : QObject(parent)
 {
     m_LocalServer = new QLocalServer(this);
+    bool listening = false;
     if(!m_LocalServer->listen(GitBitShitDaemonName))
     {
-        QTextStream stdErr(stderr);
-        stdErr << "daemon failed to start. the local server failed to listen by name '" GitBitShitDaemonName "'" << endl;
-        QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+        if(QLocalServer::removeServer(GitBitShitDaemonName))
+        {
+            if(m_LocalServer->listen(GitBitShitDaemonName))
+            {
+                listening = true;
+            }
+        }
     }
+    else
+    {
+        listening = true;
+    }
+
+    if(!listening)
+    {
+        QTextStream stdErr(stderr);
+        stdErr << "GitBitShitDaemon failed to start. the local server failed to listen by name '" GitBitShitDaemonName "'" << endl;
+        QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+        return;
+    }
+    QTextStream stdOut(stdout);
+    stdOut << "GitBitShitDaemon started" << endl;
+
     connect(m_LocalServer, SIGNAL(newConnection()), this, SLOT(handleLocalServerNewConnection()));
+}
+GitBitShitDaemon::~GitBitShitDaemon()
+{
+    Q_FOREACH(GitBitShitDaemonClient *currentClient, m_CurrentlyConnectedClients)
+    {
+        disconnect(currentClient, SIGNAL(clientDisconnected(GitBitShitDaemonClient*)), 0, 0); //so we don't double delete the GitBitShitDaemonClient
+        currentClient->disconnectClient();
+        currentClient->deleteLater();
+    }
 }
 void GitBitShitDaemon::startGitBitShitForLatestCommitInTargetRepo()
 {
@@ -57,8 +86,12 @@ void GitBitShitDaemon::handleInternalGitMetaRepoPostUpdateSignaled()
 }
 void GitBitShitDaemon::handleLocalServerNewConnection()
 {
-    GitBitShitDaemonClient *newConnection = new GitBitShitDaemonClient(static_cast<QIODevice*>(m_LocalServer->nextPendingConnection()), this);
+    QLocalSocket *newConnectionActual = m_LocalServer->nextPendingConnection();
+    GitBitShitDaemonClient *newConnection = new GitBitShitDaemonClient(newConnectionActual, this);
     connect(newConnection, SIGNAL(messageReceived(QString)), this, SLOT(processMessage(QString)));
+    connect(newConnectionActual, SIGNAL(disconnected()), newConnection, SLOT(handleClientDisconnected()));
+    connect(newConnection, SIGNAL(clientDisconnected(GitBitShitDaemonClient*)), this, SLOT(handleClientDisconnected(GitBitShitDaemonClient*)));
+    m_CurrentlyConnectedClients.append(newConnection);
 }
 void GitBitShitDaemon::processMessage(const QString &theMessage)
 {
@@ -74,7 +107,14 @@ void GitBitShitDaemon::processMessage(const QString &theMessage)
     }
     if(theMessage == StopGitBitShitDaemon_Message)
     {
+        QTextStream stdOut(stdout);
+        stdOut << "GitBitShitDaemon quitting" << endl;
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
         return;
     }
+}
+void GitBitShitDaemon::handleClientDisconnected(GitBitShitDaemonClient *disconnectedClient)
+{
+    m_CurrentlyConnectedClients.removeOne(disconnectedClient);
+    disconnectedClient->deleteLater();
 }

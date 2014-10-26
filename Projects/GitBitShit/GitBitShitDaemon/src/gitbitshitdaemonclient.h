@@ -3,19 +3,25 @@
 
 #include <QObject>
 
-class QIODevice;
+class QLocalSocket;
 
 class GitBitShitDaemonClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit GitBitShitDaemonClient(QIODevice *client, QObject *parent = 0);
+    explicit GitBitShitDaemonClient(QLocalSocket *client, QObject *parent = 0);
+    void disconnectClient();
+    ~GitBitShitDaemonClient();
 private:
-    QIODevice *m_Client;
+    QLocalSocket *m_Client;
 signals:
     void messageReceived(const QString &theMessage);
+    void clientDisconnected(GitBitShitDaemonClient *self);
 private slots:
     void handleReadyRead();
+    void handleClientDisconnected();
 };
+
+Q_DECLARE_METATYPE(GitBitShitDaemonClient*)
 
 #endif // GITBITSHITDAEMONCLIENT_H

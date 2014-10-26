@@ -1,0 +1,33 @@
+#-------------------------------------------------
+#
+# Project created by QtCreator 2014-10-25T20:36:44
+#
+#-------------------------------------------------
+
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+TARGET = Osios
+TEMPLATE = app
+
+
+SOURCES += main.cpp\
+        osiosmainwindow.cpp \
+    mainmenuitems/timelinetab_widget_formainmenutabwidget.cpp \
+    mainmenuitems/writertab_widget_formainmenutabwidget.cpp \
+    osiosgui.cpp \
+    osios.cpp \
+    itimelinenode.cpp \
+    timelinenodetypes/mainmenuactivitychangedtimelinenode.cpp \
+    iactivitytab_widget_formainmenutabwidget.cpp
+
+HEADERS  += osiosmainwindow.h \
+    mainmenuitems/timelinetab_widget_formainmenutabwidget.h \
+    mainmenuitems/writertab_widget_formainmenutabwidget.h \
+    osiosgui.h \
+    osios.h \
+    itimelinenode.h \
+    timelinenodetypes/mainmenuactivitychangedtimelinenode.h \
+    osioscommon.h \
+    iactivitytab_widget_formainmenutabwidget.h

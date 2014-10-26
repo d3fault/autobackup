@@ -1,0 +1,49 @@
+Osios needs to  have the timeline functioning. Every action (ex: SessionCreated("d3fault"), TabChanged(details), KeyPressed(details-incl-which-doc-and-ofc-the-key), BackspacePressed(doc-details)). I'm not going to list every action, but pretty much every "click" on any gui item in the entire app needs to be recorded/serialized. The GUI is replay-able from that serialized action timeline (and also provides cryptographic verifiability like bitmaps do). It is also streamed to 2 neighbors for immediate replication (shared nothing, gui by default, request cli/no-monitor-attached with command line arg (of course, cli is standalone so as not to depend on the gui libs)). I should still do the screen cutting into thirds hack because it guys you verifiability. If I'm seeing what I'm seeing, I KNOW my shit is working. I only hope it isn't a software bug present on all 3 ;-P (*insert rant about proper backup procedures*).
+
+The best security is making your shit public. Once you know hundreds/thousands/etc of people have your shit, you know it isn't going to be "jacked"/deleted.
+
+Auto-Public should be an opt-in feature of Osios. The primary goal (codewise) and default (once I implement that option) is only those 2 neighbors get all your shit.
+
+
+class ISerializeableTimelineNode
+{
+public:
+	Enum type; //TODOreq: don't rely on compile time. be able to use libraries properly
+	quint64 TimelineNodeId_OrZeroIfNotYetPlacedInTimelineWhichIsWhenTimelineNodeIdIsSet; //TODOreq: filter zero out, except when zero is actually needed xD (at the very beginning)
+
+	//or whatever these signatures are. They rely on the >> and << underneath
+	QDataStream &read(QDataStream &in);
+	QDataStream &write(QDataStream &out);
+	//or save/load, whatever
+	//err actually this entire paragraph should be in ISerializeable instead
+	
+	//QByteArray data;
+	//^commented because they would just be private members on the derived types
+};
+
+nothing fancy, so here's the equivalent for keyPressed
+
+class KeyPressedTimelineNode : ISerializeable, ITimelineNode
+{
+public:
+	KeyPressedTimelineNode() : ITimelineNode(KeyPressedTimelineNodeType) { }
+protected:
+	int Key;
+	IAcceptKeyPresses *m_DocCurrentlyWithFocus; //memory only, not serialized (or what I mean is, serialized smartly so that it can be reconstructed in memory). Since "document opened" is also a timeline node, simply replaying the linear non-branching timeline tells you what doc the key press belongs in, and where. Branches are a concept yes, but a human being can only perform one action on one branch at a time, therefore his own actions are singular and linear non-branching. I can never jump over a frame (or 'a moment in time'). Calculating ONE `sha1sum and transferring it over the network for comparison with itself (dht)` per key stroke is fucking cheap as balls. It is true that you shouldn't "sync" [to disk] on every keystroke ( ;_; ), but it's also true that you SHOULD "sync" [to network nodes involved in mirroring each other for backup purposes] ON EVERY KEYSTROKE. How often to sync to disk should depend on how many nodes are in the system. Syncing to disk should be part of any backup application's formal design. A dht is a single design, even though it involves many nodes. It is difficult to grasp at first, sort of like recursion. I say sync to disk every 30 seconds (or mb 2 minutes) when there's 3 nodes (and my hard-coded defaults), and this can/should lifted dynamically to say every 10 minutes when there's 5 nodes. I pulled this rate-of-increase out of my ass, perhaps a more efficient one can be devised. KISS for now, hardcoding to 2 minutes. I will of course hover the debug-build-only-visible(unless requested in release version in options) "sync to disk" button. That "sync to disk" button syncs the entire dht to disk. When to press it: you want to shut down but you want to make sure you sync first (I hate when shutdowns fail and then keep shutting down. Pressing sync first (blah quit forces sync too, but then oh shit i'm going in circles)). WHen to really press it: when paranoid as fuck (every 10 seconds. err, whenever something significant is said (but srsly the network mirroring bro!)).
+	//I say "doc" but it could also be a game or a web page or a video or anything. Maybe I should change the type to QWidget* ?
+	//Maybe I should implement the first version in couchbase. But do I trust couchbase enough? Famous last words? If I _DO_ use couchbase, the in-memory model still needs to serialize it's own self independently of the couchbase dht
+	//Fuck couchbase is too heavy for this app. tcp sockets aren't really that hard, and neither are per-keystroke verifications. OH RIGHT YEA FUCK COUCHBASE BECAUSE: I WANT 3 FULL INDEPENDENT COPIES. NODE FAILURE NEVER IS EVEN NOTICED BY THE OTHER 2 NODES BECAUSE I NOTICE IT WITH MY FUCKING EYES. THEREFORE INDEPENDENT COPIES (2 output streams, 3 save streams (2 of which are input from the same nodes we sent the 2 output to)). onTimelineNode(timelineNode) { /*pseudo ofc*/ if(timelineNodeHashCheckWithNeighborFails(timelineNode){ write to the per-monitor(node)-activity-log (serialized? for now no, but definitely DISPLAY everything (or most everything) that is serialized. every of those timeline actions i'd imagine (it isn't intended to be read unless needed. i also think all/most reponses from the system can/should go there. it is dht status AND local monitor response. local monitor response is the "timeline playback" and is serialized, dht status is not serialized i guess/choose-for-now)) at high priority about the node fail details (which node failed, that about sums it up). RED (default green ofc). (NOPE:TURN_THE_SCREEN_A_CERTAIN_COLOR_TO_SIGNAL_THAT) } }
+
+	virtual QByteArray save(QIODevice *outputIoDevice);
+	virtual KeyPressedTimelineNode* load(QIODevice *inputIoDevice); //or whatever	
+};
+
+
+I now need to find out the intermediate steps between CreateProfile("d3fault"), the first and mandatory timeline node, and KeyPress(details), the most important timeline node (for now ;-P).
+
+CreateProfile("d3fault");
+ChangeToMainMenuItemTab("Writer" /*ideally encoded by enum/int instead ofc*/); //WebBrowser, Messenger, etc. The default main menu tab is the timeline view, and you see what you were working on last time (and can restore that session if you choose to (and you are asked (the first time only) if you want to always restore the last session)
+//KeyPressedInCurrentlyFocusedWidget(details); //the "new doc" was implied and NOT serialized. "New tab"/new doc is however serialized, as is //change doc. Filenames do not exist in writer (they are their collective timeline nodes played sequentially), but we can provide a tagging system (applying a tag is a timeline node) and utilize the tagging system to provide a "doc name" feature in the gui (incl searching by doc name (or any tag *cough*)). Perhaps I should do "the key press was a mutation on a null object" for the first keystroke/implicit-doc-creation. subsequent-keystrokes are merely recorded, as their order in the timeline nodes tells us where they are/belong.
+KeyPressInNewEmptyDoc(details); //this fits better than above. the gui creates the new empty doc on first time the tab is switched to, and when the user presses new doc button. I don't think I will record new doc button presses, but I could. In this variation, subsequent key presses would be KeyPressAtCurrentPositionInDoc(details). The doc is created "on first key stroke" and we don't give a fudge if in teh gui they press "new doc" hundreds of times without typing anything in any. If they choose to name a doc before the first keystroke, we hackily use an "empty character" key timeline node for the doc creation, then create the "doc name" tag immediately after (as the tag needs to point to SOMETHING). Yea I like this second one better, simpler. Commenting the above one out now
+
+oh wow only 3 O_o. And now to implement that in code. Very simple but CRITICAL. KISS.

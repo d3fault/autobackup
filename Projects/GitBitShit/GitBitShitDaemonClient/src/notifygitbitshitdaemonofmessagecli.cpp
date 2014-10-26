@@ -28,7 +28,7 @@ NotifyGitBitShitDaemonOfNotifyGitBitShitDaemonOfMessageCli::NotifyGitBitShitDaem
     m_CommandNumber = commandNumber;
 
     m_LocalSocket = new QLocalSocket(this);
-    connect(m_LocalSocket, SIGNAL(stateChanged(QLocalSocket::LocalSocketState)), this, SLOT(handleLocalSocketConnected(QLocalSocket::LocalSocketState)));
+    connect(m_LocalSocket, SIGNAL(connected()), this, SLOT(handleLocalSocketConnected()));
     m_LocalSocket->connectToServer(GitBitShitDaemonName, QLocalSocket::WriteOnly);
 }
 void NotifyGitBitShitDaemonOfNotifyGitBitShitDaemonOfMessageCli::usageAndQuit()
@@ -49,9 +49,10 @@ void NotifyGitBitShitDaemonOfNotifyGitBitShitDaemonOfMessageCli::sendCommandToDa
         notifyDaemonOfMessage(InternalMetaRepoUpdate_Message);
         return;
     }
-    if(commandNumber == 3)
+    if(commandNumber == 2)
     {
         notifyDaemonOfMessage(StopGitBitShitDaemon_Message);
+        return;
     }
 }
 void NotifyGitBitShitDaemonOfNotifyGitBitShitDaemonOfMessageCli::notifyDaemonOfMessage(const QString &theMessage)
@@ -64,13 +65,17 @@ void NotifyGitBitShitDaemonOfNotifyGitBitShitDaemonOfMessageCli::notifyDaemonOfM
     m_LocalSocket->flush();
     m_LocalSocket->close();
 }
-void NotifyGitBitShitDaemonOfNotifyGitBitShitDaemonOfMessageCli::handleLocalSocketStateChanged(QLocalSocket::LocalSocketState localSocketState)
+void NotifyGitBitShitDaemonOfNotifyGitBitShitDaemonOfMessageCli::handleLocalSocketConnected()
 {
+#if 0
     switch(localSocketState)
     {
     case QLocalSocket::ConnectedState:
+#endif
         sendCommandToDaemonByNumber(m_CommandNumber);
         //notifyDaemonOfInternalMetaRepoUpdate();
+        QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+#if 0
         break;
     case QLocalSocket::ClosingState:
         QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
@@ -79,4 +84,5 @@ void NotifyGitBitShitDaemonOfNotifyGitBitShitDaemonOfMessageCli::handleLocalSock
     default:
         break;
     }
+#endif
 }

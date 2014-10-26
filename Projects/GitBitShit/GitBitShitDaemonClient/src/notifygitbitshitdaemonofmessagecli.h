@@ -17,7 +17,7 @@ private:
     void sendCommandToDaemonByNumber(int commandNumber);
     void notifyDaemonOfMessage(const QString &theMessage);
 private slots:
-    void handleLocalSocketStateChanged(QLocalSocket::LocalSocketState localSocketState);
+    void handleLocalSocketConnected();
 };
 
 #endif // NOTIFYGITBITSHITDAEMONOFMESSAGECLI_H
