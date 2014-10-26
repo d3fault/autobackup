@@ -10,8 +10,9 @@ class TimelineNodeTypeEnum
 public:
     enum TimelineNodeTypeEnumActual
     {
-        INITIALNULLINVALIDTIMELINENODETYPE = 0
-      , MainMenuActivityChangedTimelineNode = 1
+          INITIALNULLINVALIDTIMELINENODETYPE = 0
+        , MainMenuActivityChangedTimelineNode = 1
+        , KeyPressedInNewEmptyDocTimelineNode = 2
     };
 };
 
@@ -30,6 +31,8 @@ class ITimelineNodeDataITimelineNodeData : public QSharedData
     { }
     virtual ~ITimelineNodeDataITimelineNodeData();
 
+    QString humanReadableShortDescription() const;
+
     virtual QDataStream &save(QDataStream &outputStream) const;
     virtual QDataStream &load(QDataStream &inputStream);
 
@@ -44,6 +47,10 @@ class ITimelineNode
     ITimelineNode(const ITimelineNode &other)
           : d (other.d)
     { }
+    virtual ~ITimelineNode();
+
+    QString humanReadableShortDescription() const;
+
     void setTimelineNodeType(int timelineNodeType) { d->TimelineNodeType = timelineNodeType; }
     int timelineNodeType() const { return d->TimelineNodeType; }
   private:
@@ -54,5 +61,7 @@ class ITimelineNode
 
 QDataStream &operator<< (QDataStream &outputStream, const ITimelineNode &timelineNode);
 QDataStream &operator>> (QDataStream &inputStream, ITimelineNode &timelineNode);
+
+Q_DECLARE_METATYPE(ITimelineNode)
 
 #endif // ITIMELINENODE_H

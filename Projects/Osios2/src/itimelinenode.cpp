@@ -10,6 +10,12 @@ QDataStream &operator>>(QDataStream &inputStream, ITimelineNode &timelineNode)
 }
 ITimelineNodeDataITimelineNodeData::~ITimelineNodeDataITimelineNodeData()
 { }
+QString ITimelineNodeDataITimelineNodeData::humanReadableShortDescription() const
+{
+    //derived classes must override this
+    //return "Invalid Timeline Node";
+    return QString::number(TimelineNodeType); //TODOoptional: convert to human readable type
+}
 QDataStream &ITimelineNodeDataITimelineNodeData::save(QDataStream &outputStream) const
 {
     //derived classes must override this to serialize their data, but they should call their parent class first
@@ -23,4 +29,11 @@ QDataStream &ITimelineNodeDataITimelineNodeData::load(QDataStream &inputStream)
     inputStream >> timelineNodeTypeData;
     TimelineNodeType = static_cast<TimelineNodeTypeEnum::TimelineNodeTypeEnumActual>(timelineNodeTypeData);
     return inputStream;
+}
+ITimelineNode::~ITimelineNode()
+{ }
+QString ITimelineNode::humanReadableShortDescription() const
+{
+    //derived classes must override this (i think, but could be wrong). since my d is private and... not sure if it will resolve to the derived d or what
+    return d->humanReadableShortDescription();
 }

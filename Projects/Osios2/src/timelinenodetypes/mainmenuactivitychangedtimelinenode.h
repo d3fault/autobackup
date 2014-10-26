@@ -28,11 +28,17 @@ public:
 class MainMenuActivityChangedTimelineNode : public ITimelineNode
 {
   public:
-    MainMenuActivityChangedTimelineNode(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity) { d = new MainMenuActivityChangedTimelineNodeData(newMainMenuActivity); }
+    MainMenuActivityChangedTimelineNode(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity)
+        : ITimelineNode(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode)
+    {
+        d = new MainMenuActivityChangedTimelineNodeData(newMainMenuActivity);
+    }
     MainMenuActivityChangedTimelineNode(const MainMenuActivityChangedTimelineNode &other)
         : ITimelineNode(other)
         , d(other.d)
     { }
+    virtual ~MainMenuActivityChangedTimelineNode();
+
     void setNewMainMenuActivity(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity) { d->NewMainMenuActivity = newMainMenuActivity; }
     int newMainMenuActivity() const { return d->NewMainMenuActivity; }
   private:

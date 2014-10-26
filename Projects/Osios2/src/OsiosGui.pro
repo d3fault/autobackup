@@ -20,7 +20,10 @@ SOURCES += main.cpp\
     osios.cpp \
     itimelinenode.cpp \
     timelinenodetypes/mainmenuactivitychangedtimelinenode.cpp \
-    iactivitytab_widget_formainmenutabwidget.cpp
+    iactivitytab_widget_formainmenutabwidget.cpp \
+    osioscreateprofiledialog.cpp \
+    timelinenodetypes/keypressinnewemptydoctimelinenode.cpp \
+    mainmenuitems/writer/eventemittingplaintextedit.cpp
 
 HEADERS  += osiosmainwindow.h \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.h \
@@ -30,4 +33,10 @@ HEADERS  += osiosmainwindow.h \
     itimelinenode.h \
     timelinenodetypes/mainmenuactivitychangedtimelinenode.h \
     osioscommon.h \
-    iactivitytab_widget_formainmenutabwidget.h
+    iactivitytab_widget_formainmenutabwidget.h \
+    osioscreateprofiledialog.h \
+    timelinenodetypes/keypressinnewemptydoctimelinenode.h \
+    iosiosclient.h \
+    mainmenuitems/writer/eventemittingplaintextedit.h
+
+include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)

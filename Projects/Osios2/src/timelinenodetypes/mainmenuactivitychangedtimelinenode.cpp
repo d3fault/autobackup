@@ -5,6 +5,12 @@
 
 MainMenuActivityChangedTimelineNodeData::~MainMenuActivityChangedTimelineNodeData()
 { }
+#if 0
+QString MainMenuActivityChangedTimelineNodeData::humanReadableShortDescription() const
+{
+    return "Main Menu Activity Changed To: " + QString::number(NewMainMenuActivity); //TODOoptional: human readable instead of enum int value
+}
+#endif
 QDataStream &MainMenuActivityChangedTimelineNodeData::save(QDataStream &outputStream) const
 {
     ITimelineNodeDataITimelineNodeData::save(outputStream);
@@ -19,3 +25,5 @@ QDataStream &MainMenuActivityChangedTimelineNodeData::load(QDataStream &inputStr
     NewMainMenuActivity = static_cast<MainMenuActivitiesEnum::MainMenuActivitiesEnumActual>(newMainMenuActivityData);
     return inputStream;
 }
+MainMenuActivityChangedTimelineNode::~MainMenuActivityChangedTimelineNode()
+{ }

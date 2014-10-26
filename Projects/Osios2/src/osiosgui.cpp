@@ -1,10 +1,10 @@
 #include "osiosgui.h"
 
 #include <QSettings>
-#include <QInputDialog>
 #include <QCoreApplication>
 #include <QMessageBox>
 
+#include "osioscreateprofiledialog.h"
 #include "osios.h"
 #include "osiosmainwindow.h"
 #include "osioscommon.h"
@@ -33,30 +33,34 @@ OsiosGui::OsiosGui(QObject *parent)
 
     if(lastUsedProfile_OrEmptyStringIfNone.isEmpty())
     {
-        QString enteredProfileName;
-        while(enteredProfileName.trimmed().isEmpty())
+        OsiosCreateProfileDialog createProfileDialog;
+        while(createProfileDialog.newProfileName().trimmed().isEmpty())
         {
-            bool pressedOk = false;
-            QString newProfileName = QInputDialog::getText(0, tr("Enter New Profile Name"), tr("Profile Name:"), QLineEdit::Normal, QString(), &pressedOk);
-            if(!pressedOk || newProfileName.trimmed().isEmpty())
+            if(createProfileDialog.exec() != QDialog::Accepted)
             {
                 QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection); //TODOoptional: modal dialog infinite loop asking them if they're sure they want to quit or if they want to go to the create profile screen again
                 return;
             }
-            if(enteredProfileName.trimmed().isEmpty())
+            if(createProfileDialog.newProfileName().trimmed().isEmpty())
             {
                 QMessageBox::critical(0, tr("Error"), tr("Error: Profile Name Cannot Be Empty"));
             }
         }
-        lastUsedProfile_OrEmptyStringIfNone = enteredProfileName;
+        lastUsedProfile_OrEmptyStringIfNone = createProfileDialog.newProfileName();
 
-        //TODOreq: creating profile settings.beginGroup(PROFILES_GOUP_SETTINGS_KEY);. make sure the profile name doesn't already exist
+        settings.beginGroup(PROFILES_GOUP_SETTINGS_KEY);
+        //TODOreq: make sure the profile name doesn't already exist in the settings
+        settings.beginGroup(lastUsedProfile_OrEmptyStringIfNone);
+        settings.setValue(OSIOS_DATA_DIR_SETTINGS_KEY, createProfileDialog.chosenDataDir());
+        settings.endGroup();
+        settings.endGroup();
         settings.setValue(LAST_USED_PROFILE_SETTINGS_KEY, lastUsedProfile_OrEmptyStringIfNone);
     }
 
     m_Osios = new Osios(lastUsedProfile_OrEmptyStringIfNone);
-    m_MainWindow = new OsiosMainWindow();
+    m_MainWindow = new OsiosMainWindow(m_Osios);
     connectBackendToAndFromFrontendSignalsAndSlots();
+    m_MainWindow->show();
 }
 OsiosGui::~OsiosGui()
 {

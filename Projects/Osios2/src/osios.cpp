@@ -8,7 +8,7 @@
 
 #include "osioscommon.h"
 
-#define OSIOS_SERIALIZED_TIMELINE_FILEPATH_SETTINGS_KEY "serializedTimelineFilePath"
+#define OSIOS_TIMELINE_FILENAME "timeline.bin"
 
 //TODOoptional: COW on the timeline nodes (the seraialized bytes, that is) could be achieved with a timeline node called "import state from doc x, mutate with empty character" (or perhaps these two are separated), effectively incrementing the reference count (although delete is not in plans anyways)
 Osios::Osios(const QString &profileName, QObject *parent)
@@ -18,9 +18,11 @@ Osios::Osios(const QString &profileName, QObject *parent)
 {
     QSettings settings;
     settings.beginGroup(PROFILES_GOUP_SETTINGS_KEY);
-    QString timelineFilepath = settings.value(OSIOS_SERIALIZED_TIMELINE_FILEPATH_SETTINGS_KEY).toString(); //TODOoptional: sanitize empty/invalid filename etc
+    settings.beginGroup(profileName);
+    QString dataDir = settings.value(OSIOS_DATA_DIR_SETTINGS_KEY).toString(); //TODOoptional: sanitize empty/invalid filename etc. also the value needs to be set during profile creation (and the dir/filename needs to be queried)
     settings.endGroup();
-    m_LocalPersistenceDevice = new QFile(timelineFilepath, this);
+    settings.endGroup();
+    m_LocalPersistenceDevice = new QFile(appendSlashIfNeeded(dataDir) + OSIOS_TIMELINE_FILENAME, this);
     if(!m_LocalPersistenceDevice->open(QIODevice::ReadWrite))
     {
         //TODOoptional: better handling
@@ -31,7 +33,13 @@ Osios::Osios(const QString &profileName, QObject *parent)
     //TODOreq: read in all previously serialized entries, and make sure write cursor is at the end for appending
     readInAllPreviouslySerializedEntries();
 
-    qDebug() << "Read in " << QString::number(m_Timeline.size()) << " previously serialized entries in the timeline";
+    int timelineSize = m_TimelineNodes.size();
+    qDebug() << "Read in " << QString::number(timelineSize) << " previously serialized entries in the timeline";
+    if(timelineSize == 0)
+    {
+        //no timeline nodes, so write zero size placeholder into file, which is rewound to and updated in our destructor
+        m_LocalPersistenceStream << timelineSize;
+    }
 
     QTimer *diskFlushTimer = new QTimer(this);
     connect(diskFlushTimer, SIGNAL(timeout()), this, SLOT(flushDiskBuffer()));
@@ -39,7 +47,13 @@ Osios::Osios(const QString &profileName, QObject *parent)
 }
 Osios::~Osios()
 {
-    //TODOreq: update the [probably, but not necessarily, changed] serialized number of timeline nodes at the beginning of the file (better, use a mutation append-only strategy)
+    //update the [probably, but not necessarily, changed] serialized number of timeline nodes at the beginning of the file (better, use a mutation append-only strategy)
+    m_LocalPersistenceDevice->seek(0);
+    m_LocalPersistenceStream << m_TimelineNodes.size();
+}
+QList<ITimelineNode> Osios::timelineNodes() const
+{
+    return m_TimelineNodes;
 }
 void Osios::readInAllPreviouslySerializedEntries()
 {
@@ -49,21 +63,24 @@ void Osios::readInAllPreviouslySerializedEntries()
         //if(m_LocalPersistenceStream.device()->bytesAvailable() < sizeof(numTimelineNodes)) -- not network so yea
         //    return;
         m_LocalPersistenceStream >> numTimelineNodes;
+        int currentIndex = m_TimelineNodes.size()-1;
         for(int i = 0; i < numTimelineNodes; ++i)
         {
             ITimelineNode serializedTimelineNode;
             m_LocalPersistenceStream >> serializedTimelineNode;
-            m_Timeline.append(serializedTimelineNode);
+            m_TimelineNodes.append(serializedTimelineNode);
+            ++currentIndex;
+            m_LastSerializedTimelineIndex = currentIndex;
         }
     }
 }
 //batch write, but really doesn't make much difference since we flush every X seconds anyways
 void Osios::serializeTimelineAdditionsLocally()
 {
-    int timelineSize = m_Timeline.size();
+    int timelineSize = m_TimelineNodes.size();
     while((m_LastSerializedTimelineIndex+1) < timelineSize)
     {
-        const ITimelineNode &timelineNode = m_Timeline.at(++m_LastSerializedTimelineIndex);
+        const ITimelineNode &timelineNode = m_TimelineNodes.at(++m_LastSerializedTimelineIndex);
         serializeTimelineActionLocally(timelineNode);
     }
 }
@@ -85,7 +102,7 @@ void Osios::propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingIts
 }
 void Osios::recordAction(const ITimelineNode &action)
 {
-    m_Timeline.append(action);
+    m_TimelineNodes.append(action);
     //TODOreq: at this point we schedule it to be written to disk in 2 mins (we just give it to a thread (main thread for now, but shouldn't be later) that is periodically flushed), but immediately replicate it to network neighbors for cryptographic verification
     propagateActionToNeighborsAsFirstStepOfCryptographicallyVerifyingItsReplication(action);
     serializeTimelineAdditionsLocally(); //writes to file but does not flush

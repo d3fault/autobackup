@@ -8,19 +8,23 @@
 
 #include "timelinenodetypes/mainmenuactivitychangedtimelinenode.h"
 
-OsiosMainWindow::OsiosMainWindow(QWidget *parent)
+OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
     : QMainWindow(parent)
     , m_MainMenuItemsTabWidget(new QTabWidget())
 {
     setWindowTitle(tr("Osios"));
 
     //all added tabs must implement IMainMenuActivityTab
-    m_MainMenuItemsTabWidget->addTab(new TimelineTab_Widget_ForMainMenuTabWidget(), tr("Timeline"));
-    m_MainMenuItemsTabWidget->addTab(new WriterTab_Widget_ForMainMenuTabWidget(), tr("Writer"));
+    m_MainMenuItemsTabWidget->addTab(new TimelineTab_Widget_ForMainMenuTabWidget(osios, this), tr("Timeline"));
+    m_MainMenuItemsTabWidget->addTab(new WriterTab_Widget_ForMainMenuTabWidget(this), tr("Writer"));
 
     setCentralWidget(m_MainMenuItemsTabWidget);
 
     connect(m_MainMenuItemsTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleMainMenuItemsTabWidgetCurrentTabChanged()));
+}
+QObject *OsiosMainWindow::asQObject()
+{
+    return this;
 }
 void OsiosMainWindow::handleMainMenuItemsTabWidgetCurrentTabChanged()
 {
