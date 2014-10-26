@@ -12,7 +12,7 @@
 TimelineSerializer::TimelineSerializer(QObject *parent)
     : QObject(parent)
 { }
-#if 0
+#if 0 //even though i didn't CALL either of these two methods from anywhere, somehow writing them and getting them to work fixed the other similar code xD
 bool TimelineSerializer::serializeTimelineToDisk(Osios *osiosContainingTimelineToBeSerialized, QIODevice *ioDeviceToSerializeTo)
 {
     QDataStream writeStream(ioDeviceToSerializeTo);

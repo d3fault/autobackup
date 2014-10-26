@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     osioscreateprofiledialog.cpp \
     timelinenodetypes/keypressinnewemptydoctimelinenode.cpp \
     mainmenuitems/writer/eventemittingplaintextedit.cpp \
-    timelineserializer.cpp
+    timelineserializer.cpp \
+    osiosdhtpeer.cpp \
+    osiosdht.cpp
 
 HEADERS  += osiosmainwindow.h \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.h \
@@ -39,6 +41,8 @@ HEADERS  += osiosmainwindow.h \
     timelinenodetypes/keypressinnewemptydoctimelinenode.h \
     iosiosclient.h \
     mainmenuitems/writer/eventemittingplaintextedit.h \
-    timelineserializer.h
+    timelineserializer.h \
+    osiosdhtpeer.h \
+    osiosdht.h
 
 include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)

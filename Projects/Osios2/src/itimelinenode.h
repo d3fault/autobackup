@@ -32,6 +32,9 @@ public:
     explicit ITimelineNode();
     explicit ITimelineNode(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeType);
     explicit ITimelineNode(const ITimelineNode &other);
+
+    QByteArray toByteArray();
+
     virtual ~ITimelineNode();
 
     TimelineNodeTypeEnum::TimelineNodeTypeEnumActual TimelineNodeType;

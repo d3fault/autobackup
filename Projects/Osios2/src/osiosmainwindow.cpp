@@ -2,6 +2,8 @@
 
 #include <QTabWidget>
 #include <QSettings>
+#include <QColor>
+#include <QDebug>
 
 #include "iactivitytab_widget_formainmenutabwidget.h"
 #include "mainmenuitems/timelinetab_widget_formainmenutabwidget.h"
@@ -37,6 +39,18 @@ void OsiosMainWindow::closeEvent(QCloseEvent *event)
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
     QMainWindow::closeEvent(event);
+}
+void OsiosMainWindow::changeConnectionColor(int color)
+{
+    //TODOreq:
+    //temp:
+    QColor myColor(static_cast<Qt::GlobalColor>(color));
+    setWindowTitle(myColor.name());
+}
+void OsiosMainWindow::presentNotification(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel)
+{
+    //TODOreq:
+    qDebug() << notificationMessage;
 }
 void OsiosMainWindow::handleMainMenuItemsTabWidgetCurrentTabChanged()
 {
