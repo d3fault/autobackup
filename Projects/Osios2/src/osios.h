@@ -5,7 +5,7 @@
 #include <QCryptographicHash>
 
 #include "itimelinenode.h"
-#include "osiosdht.h"
+#include "osioscommon.h"
 
 class QFile;
 
@@ -28,7 +28,7 @@ class Osios : public QObject
 {
     Q_OBJECT
 public:
-    explicit Osios(const QString &profileName, quint16 localServerPort, ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts, QObject *parent = 0);
+    explicit Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseRandomPort, ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts, QObject *parent = 0);
     ~Osios();
     QList<TimelineNode> timelineNodes() const;
 private:

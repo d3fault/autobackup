@@ -2,6 +2,7 @@
 
 #include <QtNetwork/QTcpServer> //aww yee we are both client and server, <3 p2p
 #include <QtNetwork/QTcpSocket>
+#include <QDateTime>
 
 #include "osios.h"
 #include "osiosdhtpeer.h"
@@ -13,7 +14,9 @@ OsiosDht::OsiosDht(Osios *osios, QObject *parent)
     : QObject(parent)
     , m_Osios(osios)
     , m_DhtState(OsiosDhtStates::InitialIdleNoConnectionsState)
-{ }
+{
+    connect(this, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), m_Osios, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
+}
 void OsiosDht::sendNewTimelineNodeToAllDhtPeersWithHealthyConnectionForFirstStepOfCryptographicVerification(TimelineNode action)
 {
     //fuck the dht's state, we'll send to whoever is connected!
@@ -28,16 +31,38 @@ void OsiosDht::sendNewTimelineNodeToAllDhtPeersWithHealthyConnectionForFirstStep
 #endif
     }
 }
+quint16 OsiosDht::generateRandomPort()
+{
+    return (qrand() % (65536-1024))+1024;
+}
 void OsiosDht::startLocalNetworkServer(quint16 localServerPort)
 {
     m_LocalNetworkServer = new QTcpServer(this);
-    if(!m_LocalNetworkServer->listen(QHostAddress::Any, localServerPort))
+    bool portSuppliedByUser = (localServerPort > 0);
+    if(!portSuppliedByUser)
     {
-        //TODOreq: notification error
-        return;
+        qsrand(QDateTime::currentMSecsSinceEpoch());
+        localServerPort = generateRandomPort();
+    }
+    quint8 portListenAttempts = 0;
+    quint8 maxPortListenAttempts = 255;
+    while(!m_LocalNetworkServer->listen(QHostAddress::Any, localServerPort))
+    {
+        if(portSuppliedByUser)
+        {
+            emit notificationAvailable(tr("DHT failed to listen on port ") + QString::number(localServerPort), OsiosNotificationLevels::FatalNotificationLevel);
+            return;
+        }
+        if(++portListenAttempts == maxPortListenAttempts)
+        {
+            emit notificationAvailable(tr("DHT failed to find a free port after trying to listen on 256 random different ports. Try supplying one with the --listen-port arg"), OsiosNotificationLevels::FatalNotificationLevel);
+            return;
+        }
+        localServerPort = generateRandomPort();
     }
 
-    //TODOreq: notification status "now listening on port X" (would be nice to also show external ip (although getting it with zero connections is errm wat), will settle for internal ip for now)
+    emit notificationAvailable(tr("DHT now listening on port ") + QString::number(localServerPort));
+    //TODOreq: would be nice to also show external ip (although getting it with zero connections is errm wat), will settle for internal ip for now
     connect(m_LocalNetworkServer, SIGNAL(newConnection()), this, SLOT(handleLocalNetworkServerNewIncomingConnection()));
 }
 void OsiosDht::setDhtState(const OsiosDhtStates::OsiosDhtStatesEnum &dhtState)
@@ -69,10 +94,10 @@ void OsiosDht::maybeChangeStateBecauseThereWasNewConnection()
         }
     }
 }
-void OsiosDht::bootstrap(ListOfDhtPeerAddressesAndPorts bootstrapHostAddresses, quint16 localServerPort)
+void OsiosDht::bootstrap(ListOfDhtPeerAddressesAndPorts bootstrapHostAddresses, quint16 localServerPort_OrZeroToChooseRandomPort)
 {
     //a) start local tcp server for (incoming)
-    startLocalNetworkServer(localServerPort);
+    startLocalNetworkServer(localServerPort_OrZeroToChooseRandomPort);
 
     //b) try to connect to each of the bootstrap host addresses (outgoing)
     Q_FOREACH(DhtPeerAddressAndPort currentBootstrapHostAddress, bootstrapHostAddresses)

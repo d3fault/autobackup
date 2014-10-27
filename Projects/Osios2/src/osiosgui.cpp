@@ -19,21 +19,32 @@ OsiosGui::OsiosGui(QObject *parent)
     , m_MainWindow(0)
 {
     QStringList argz = QCoreApplication::arguments();
-    if(argz.size() < 2)
-    {
-        usageAndQuit();
-        return;
-    }
-    bool convertOk = false;
-    quint16 localServerPort = argz.at(1).toUShort(&convertOk); //considering making this optional (auto-generated, who gives a fuck. so long as we say what we chose in our status notifications...)
-    if(!convertOk)
-    {
-        usageAndQuit();
-        return;
-    }
-
     argz.removeFirst(); //filepath
-    argz.removeFirst(); //port
+
+    quint16 localServerPort_OrZeroToChooseRandomPort = 0;
+    int listenPortArgVindex = argz.indexOf("--listen-port");
+    if(listenPortArgVindex > -1)
+    {
+        if((listenPortArgVindex+1) >= argz.size())
+        {
+            usageAndQuit();
+            return;
+        }
+        bool convertOk = false;
+        localServerPort_OrZeroToChooseRandomPort = argz.at(1).toUShort(&convertOk); //considering making this optional (auto-generated, who gives a fuck. so long as we say what we chose in our status notifications...)
+        if(!convertOk)
+        {
+            usageAndQuit();
+            return;
+        }
+        argz.removeAt(listenPortArgVindex);
+        argz.removeAt(listenPortArgVindex);
+        if(argz.indexOf("--listen-port") != -1)
+        {
+            usageAndQuit();
+            return;
+        }
+    }
 
 
     ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts; //TODOreq: store some (ALL LEARNED?) addresses/ips in settings or something
@@ -98,7 +109,7 @@ OsiosGui::OsiosGui(QObject *parent)
         settings.setValue(LAST_USED_PROFILE_SETTINGS_KEY, lastUsedProfile_OrEmptyStringIfNone);
     }
 
-    m_Osios = new Osios(lastUsedProfile_OrEmptyStringIfNone, localServerPort, bootstrapAddressesAndPorts);
+    m_Osios = new Osios(lastUsedProfile_OrEmptyStringIfNone, localServerPort_OrZeroToChooseRandomPort, bootstrapAddressesAndPorts);
     m_MainWindow = new OsiosMainWindow(m_Osios);
     connectBackendToAndFromFrontendSignalsAndSlots();
     m_MainWindow->show();
@@ -117,7 +128,7 @@ OsiosGui::~OsiosGui()
 void OsiosGui::usageAndQuit()
 {
     //TODOreq: modal dialog? might as well just ask them for the port at that point (but... asking for bootstrap nodes is more work guh)
-    QMessageBox::critical(0, tr("Error"), tr("You either didn't pass enough arguments to the app, or you passed invalid arguments.\n\nUsage: Osios localServerPort [--add-bootstrap-node host:port]\n\nYou can supply --add-bootstrap-node multiple times"));
+    QMessageBox::critical(0, tr("Error"), tr("You either didn't pass enough arguments to the app, or you passed invalid arguments.\n\nUsage: Osios localServerPort [--listen-port N --add-bootstrap-node host:port]\n\nIf you don't specify a --listen-port, one is chosen for you at random.\nYou can supply --add-bootstrap-node multiple times"));
     QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
 void OsiosGui::connectBackendToAndFromFrontendSignalsAndSlots()
@@ -125,6 +136,6 @@ void OsiosGui::connectBackendToAndFromFrontendSignalsAndSlots()
     //TODOreq: every timeline node action that we want to serialize needs a connection. change tab, key press, etc
     connect(m_MainWindow, SIGNAL(actionOccurred(TimelineNode)), m_Osios, SLOT(recordMyAction(TimelineNode))); //old: called tab in frontend and activity on backend because there might be a cli version someday
 
-    void connectionColorChanged(int color);
-    void notificationAvailable(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel = OsiosNotificationLevels::StandardNotificationLevel);
+    connect(m_Osios, SIGNAL(connectionColorChanged(int)), m_MainWindow, SLOT(changeConnectionColor(int)));
+    connect(m_Osios, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), m_MainWindow, SLOT(presentNotification(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
 }

@@ -15,7 +15,7 @@
 
 //TODOoptional: COW on the timeline nodes (the seraialized bytes, that is) could be achieved with a timeline node called "import state from doc x, mutate with empty character" (or perhaps these two are separated), effectively incrementing the reference count (although delete is not in plans anyways)
 //TODOoptional: in addition to (or perhaps integrated INTO) the red/green "bar of color", i could create reproduceable patterns of color using the latest timeline node hash, so that i can look for that pattern on each of my monitors/nodes and see that they are all 3 synchronized. it's mildly cryptographic verification performed by a human (since doing so in an extreme manner would require you to sit all day every day typing in things on a calculator)
-Osios::Osios(const QString &profileName, quint16 localServerPort, ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts, QObject *parent)
+Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseRandomPort, ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts, QObject *parent)
     : QObject(parent)
     , m_ProfileName(profileName)
     , m_LastSerializedTimelineIndex(-1)
@@ -58,7 +58,7 @@ Osios::Osios(const QString &profileName, quint16 localServerPort, ListOfDhtPeerA
     //connect(m_OsiosDht, SIGNAL(timelineNodeReceivedFromPeer(OsiosDhtPeer*,TimelineNode)), this, SLOT(cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndHashNeighborsActionAndRespondWithHash(OsiosDhtPeer*,TimelineNode)));
     //connect(m_OsiosDht,)
 
-    QMetaObject::invokeMethod(m_OsiosDht, "bootstrap", Q_ARG(ListOfDhtPeerAddressesAndPorts, bootstrapAddressesAndPorts), Q_ARG(quint16, localServerPort));
+    QMetaObject::invokeMethod(m_OsiosDht, "bootstrap", Qt::QueuedConnection /*so we can connect first*/, Q_ARG(ListOfDhtPeerAddressesAndPorts, bootstrapAddressesAndPorts), Q_ARG(quint16, localServerPort_OrZeroToChooseRandomPort));
 }
 Osios::~Osios()
 {
