@@ -3473,7 +3473,7 @@ Projects/Osios2/design/osios2.initial.idea.txt:1414311199
 Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:1414439351
 Projects/Osios2/reverts/:1414326188
 Projects/Osios2/reverts/revertBackupIDontThinkINeedOrWantThisAnymoreForOsios2.diffOf5d375c768ac2c1f97e1bf2431693e4f4be2df01b:1414325772
-Projects/Osios2/src/:1414470882
+Projects/Osios2/src/:1414473524
 Projects/Osios2/src/mainmenuitems/:1414469596
 Projects/Osios2/src/mainmenuitems/writer/:1414435556
 Projects/Osios2/src/mainmenuitems/writer/eventemittingplaintextedit.cpp:1414435556
@@ -3494,13 +3494,13 @@ Projects/Osios2/src/iosiosclient.h:1414336825
 Projects/Osios2/src/itimelinenode.cpp:1414466349
 Projects/Osios2/src/itimelinenode.h:1414466147
 Projects/Osios2/src/main.cpp:1414458249
-Projects/Osios2/src/osios.cpp:1414466864
-Projects/Osios2/src/osios.h:1414468081
-Projects/Osios2/src/osioscommon.h:1414469538
+Projects/Osios2/src/osios.cpp:1414473510
+Projects/Osios2/src/osios.h:1414471461
+Projects/Osios2/src/osioscommon.h:1414472069
 Projects/Osios2/src/osioscreateprofiledialog.cpp:1414469620
 Projects/Osios2/src/osioscreateprofiledialog.h:1414453978
-Projects/Osios2/src/osiosdht.cpp:1414365616
-Projects/Osios2/src/osiosdht.h:1414365514
+Projects/Osios2/src/osiosdht.cpp:1414472227
+Projects/Osios2/src/osiosdht.h:1414472205
 Projects/Osios2/src/osiosdhtpeer.cpp:1414465159
 Projects/Osios2/src/osiosdhtpeer.h:1414358603
 Projects/Osios2/src/osiosgui.cpp:1414469169

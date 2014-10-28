@@ -18,6 +18,9 @@ class OsiosDht : public QObject
 public:
     explicit OsiosDht(Osios *osios, QObject *parent = 0);
     void sendNewTimelineNodeToAllDhtPeersWithHealthyConnectionForFirstStepOfCryptographicVerification(TimelineNode action);
+
+    OsiosDhtStates::OsiosDhtStatesEnum dhtState() const;
+    void setDhtState(const OsiosDhtStates::OsiosDhtStatesEnum &dhtState);
 private:
     Osios *m_Osios;
     QTcpServer *m_LocalNetworkServer;
@@ -26,7 +29,6 @@ private:
 
     quint16 generateRandomPort();
     void startLocalNetworkServer(quint16 localServerPort);
-    void setDhtState(const OsiosDhtStates::OsiosDhtStatesEnum &dhtState);
     void attemptToEstablishNetworkClientConnectionTo(DhtPeerAddressAndPort dhtPeerAddressAndPort);
     void maybeChangeStateBecauseThereWasNewConnection();
 signals:

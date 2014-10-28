@@ -6,6 +6,8 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QHash>
+#include <QHashIterator>
+#include <QDateTime>
 
 #include "osioscommon.h"
 #include "timelineserializer.h"
@@ -14,6 +16,8 @@
 #include "osiossettings.h"
 
 #define OSIOS_TIMELINE_FILENAME "timeline.bin"
+
+#define OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS 5000
 
 //TODOoptional: COW on the timeline nodes (the seraialized bytes, that is) could be achieved with a timeline node called "import state from doc x, mutate with empty character" (or perhaps these two are separated), effectively incrementing the reference count (although delete is not in plans anyways)
 //TODOoptional: in addition to (or perhaps integrated INTO) the red/green "bar of color", i could create reproduceable patterns of color using the latest timeline node hash, so that i can look for that pattern on each of my monitors/nodes and see that they are all 3 synchronized. it's mildly cryptographic verification performed by a human (since doing so in an extreme manner would require you to sit all day every day typing in things on a calculator)
@@ -57,6 +61,10 @@ Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseR
     QTimer *diskFlushTimer = new QTimer(this);
     connect(diskFlushTimer, SIGNAL(timeout()), this, SLOT(flushDiskBuffer()));
     diskFlushTimer->start(2*60*1000); //2 mins
+
+    QTimer *checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer = new QTimer(this);
+    connect(checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer, SIGNAL(timeout()), this, SLOT(checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodes()));
+    checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer->start(1500 /*OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS <-- nope. check every 1.5 seconds, if any are older than 5 seconds. i could give each byte array it's own timer, but nahhh */);
 
     connect(m_OsiosDht, SIGNAL(dhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)), this, SLOT(handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)));
 
@@ -124,6 +132,23 @@ void Osios::flushDiskBuffer()
     }
     //TODOreq: still need to do "sync" system call (and notification if that fails), but i don't think there's a portable way to do it :(
 }
+void Osios::checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodes()
+{
+    QHashIterator<CryptographicHashAndTimeoutTimestamp> recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator(m_RecentlyGeneratedTimelineNodesAndTheirTimeoutTimestamps);
+    while(recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.hasNext())
+    {
+        recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.next();
+        if(recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.value() >= QDateTime::currentMSecsSinceEpoch())
+        {
+            //TODomb: retry? remove from list so the same error isn't emitted for the same timeline node in 5 more seconds?
+            emit notificationAvailable(tr("Failed to replicate a timeline node to ") + QString::number(OSIOS_NUM_NEIGHBORS_TO_WAIT_FOR_VERIFICATION_FROM_BEFORE_CONSIDERING_A_TIMELINE_NODE_VERIFIED) + tr(" neighbors within ") + QString::number(OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS/1000) + tr(" seconds!!"), OsiosNotificationLevels::ErrorNotificationLevel);
+            if(m_OsiosDht->dhtState() != OsiosDhtStates::BootstrappingForFirstTimeState)
+            {
+                m_OsiosDht->setDhtState(OsiosDhtStates::FellBelowMinBootstrapNodesState);
+            }
+        }
+    }
+}
 void Osios::handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState)
 {
     switch(newDhtState)
@@ -159,7 +184,7 @@ void Osios::handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState
         case OsiosDhtStates::FellBelowMinBootstrapNodesState:
         {
             emit connectionColorChanged(Qt::red);
-            emit notificationAvailable(tr("The DHT changed states to indicate that there are NOT at least ") + QString::number(OSIOS_DHT_MIN_PEERS_CONNECTED_FOR_BOOTSTRAP_TO_BE_CONSIDERED_COMPLETE) + tr(" peers connected!"), OsiosNotificationLevels::ErrorNotificationLevel);
+            emit notificationAvailable(tr("The DHT changed states to indicate that we are NOT connected to at least ") + QString::number(OSIOS_DHT_MIN_PEERS_CONNECTED_FOR_BOOTSTRAP_TO_BE_CONSIDERED_COMPLETE) + tr(" healthy peers!"), OsiosNotificationLevels::ErrorNotificationLevel);
         }
             break;
         default /*wat*/:
@@ -208,8 +233,9 @@ void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResp
 void Osios::cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action)
 {
     //TODOreq: as an implicit sub-action of this step, we need to first record the cryptgraphic hash for later comparison/verification. However, as an optimization it's better to only ever convert action to a byte array once. I'm just going to err on the side of understandability over optimization at this point (because...)
-    //QByteArray actionByteArray =
-    m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.insert(calculateCrytographicHashOfTimelineNode(action), new QSet<OsiosDhtPeer*>() /*delete the QSet in our destructor or whenever appropriate*/); //small inefficiency beats small refactor anyday. human time > *. shit how could anything be greater than everything, else be greater than itself (impossibru)
+    QByteArray actionCryptographicHash = calculateCrytographicHashOfTimelineNode(action);
+    m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.insert(actionCryptographicHash, new QSet<OsiosDhtPeer*>() /*delete the QSet in our destructor or whenever appropriate*/); //small inefficiency beats small refactor anyday. human time > *. shit how could anything be greater than everything, else be greater than itself (impossibru)
+    m_RecentlyGeneratedTimelineNodesAndTheirTimeoutTimestamps.insert(actionCryptographicHash, QDateTime::currentMSecsSinceEpoch() + OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS); //epoch-based qint64 instead of qdatetime because datetimes can "jump in time" (leap years, etc)
 
     //TODOreq: might be a good optimization to put everything network on a network thread, and maybe even all disk access on a disk thread. for now KISS everything goes on main thread. I am pretty sure Qt's APIs are async for me already anyways... so unless I above it, lockup is unlikely. HOWEVER this is still a good idea in general just because it will scale better in the future when maybe timeline nodes are much larger in size. It also isn't that difficult (would have taken about as much time as this comment)
 
@@ -223,13 +249,13 @@ void Osios::cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeigh
 }
 void Osios::cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOriginallyAndNowReceiverOfHashVerification_removeThisHashFromAwaitingVerificationListAfterCheckingIfEnoughNeighborsHaveCryptographicallyVerifiedBecauseWeJustAddedAPeerToThatList_AndStopTheTimeoutForThatPieceIfRemoved(QByteArray keyToListToRemoveFrom, QSet<OsiosDhtPeer*> *listToMaybeRemove)
 {
-    static const int numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified = OSIOS_DHT_MIN_PEERS_CONNECTED_FOR_BOOTSTRAP_TO_BE_CONSIDERED_COMPLETE; //this could be it's own define/runtime-option/etc, but KISS for now
-    if(listToMaybeRemove->size() >= numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified)
+    if(listToMaybeRemove->size() >= OSIOS_NUM_NEIGHBORS_TO_WAIT_FOR_VERIFICATION_FROM_BEFORE_CONSIDERING_A_TIMELINE_NODE_VERIFIED)
     {
         //good, verified, remove from list
         m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.remove(keyToListToRemoveFrom);
+        m_RecentlyGeneratedTimelineNodesAndTheirTimeoutTimestamps.remove(keyToListToRemoveFrom);
         //emit notificationAvailable();
-        qDebug() << "Timeline Node Hash verified by" << numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified << "DHT neighbors:" << keyToListToRemoveFrom.toHex(); //TODOoptional: associate and print human readable timeline node 'action'
+        qDebug() << "Timeline Node Hash verified by" << OSIOS_NUM_NEIGHBORS_TO_WAIT_FOR_VERIFICATION_FROM_BEFORE_CONSIDERING_A_TIMELINE_NODE_VERIFIED << "DHT neighbors:" << keyToListToRemoveFrom.toHex(); //TODOoptional: associate and print human readable timeline node 'action'
     }
 }
 void Osios::serializeNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineNode action)

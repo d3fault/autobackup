@@ -31,6 +31,18 @@ void OsiosDht::sendNewTimelineNodeToAllDhtPeersWithHealthyConnectionForFirstStep
 #endif
     }
 }
+OsiosDhtStates::OsiosDhtStatesEnum OsiosDht::dhtState() const
+{
+    return m_DhtState;
+}
+void OsiosDht::setDhtState(const OsiosDhtStates::OsiosDhtStatesEnum &dhtState)
+{
+    if(dhtState != m_DhtState)
+    {
+        m_DhtState = dhtState;
+        emit dhtStateChanged(dhtState);
+    }
+}
 quint16 OsiosDht::generateRandomPort()
 {
     return (qrand() % (65536-1024))+1024;
@@ -64,14 +76,6 @@ void OsiosDht::startLocalNetworkServer(quint16 localServerPort)
     emit notificationAvailable(tr("DHT now listening on port ") + QString::number(localServerPort));
     //TODOreq: would be nice to also show external ip (although getting it with zero connections is errm wat), will settle for internal ip for now
     connect(m_LocalNetworkServer, SIGNAL(newConnection()), this, SLOT(handleLocalNetworkServerNewIncomingConnection()));
-}
-void OsiosDht::setDhtState(const OsiosDhtStates::OsiosDhtStatesEnum &dhtState)
-{
-    if(dhtState != m_DhtState)
-    {
-        m_DhtState = dhtState;
-        emit dhtStateChanged(dhtState);
-    }
 }
 void OsiosDht::attemptToEstablishNetworkClientConnectionTo(DhtPeerAddressAndPort dhtPeerAddressAndPort)
 {

@@ -15,6 +15,7 @@ class OsiosDhtPeer;
 //the qba is timeline node hash
 //the qset is list of peers that have verified the timeline node hash. we are removed from m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromTheNeighbors when a sufficient number are seen
 typedef QHash<QByteArray, QSet<OsiosDhtPeer*>*> CryptographicHashAndTheListofDhtPeersThatHaveVerifiedItSoFar;
+#define CryptographicHashAndTimeoutTimestamp QByteArray, qint64
 
 class Osios : public QObject
 {
@@ -29,6 +30,7 @@ private:
     QString m_ProfileName;
     QList<TimelineNode> m_TimelineNodes;
     CryptographicHashAndTheListofDhtPeersThatHaveVerifiedItSoFar m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready;
+    QHash<CryptographicHashAndTimeoutTimestamp> m_RecentlyGeneratedTimelineNodesAndTheirTimeoutTimestamps;
     int m_LastSerializedTimelineIndex;
     QFile *m_LocalPersistenceDevice;
     QDataStream m_LocalPersistenceStream;
@@ -59,6 +61,7 @@ public slots:
     void recordMyAction(TimelineNode action);
 private slots:
     void flushDiskBuffer();
+    void checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodes();
     void handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState);
     void cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndHashNeighborsActionAndRespondWithHash(OsiosDhtPeer *osiosDhtPeer, TimelineNode action);
     void cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptoGraphicHashOfTimelineNodePreviouslySent);
