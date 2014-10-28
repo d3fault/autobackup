@@ -17,6 +17,14 @@ public:
 private:
     QLineEdit *m_ProfileNameLineEdit;
     LabelLineEditBrowseButton *m_DataDirRow;
+    QPushButton *m_OkButton;
+
+    const QString &defaultDataDirectory() const;
+    QString dataDirectoryResolved();
+    bool profileContentsValid();
+private slots:
+    void enableOrDisableOkButtonDependingOnContentsValidate();
+    void createProfileAndAcceptDialog();
 };
 
 #endif // OSIOSCREATEPROFILEDIALOG_H

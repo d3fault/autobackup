@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     mainmenuitems/writer/eventemittingplaintextedit.cpp \
     timelineserializer.cpp \
     osiosdhtpeer.cpp \
-    osiosdht.cpp
+    osiosdht.cpp \
+    osiosprofilemanagerdialog.cpp
 
 HEADERS  += osiosmainwindow.h \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.h \
@@ -43,6 +44,8 @@ HEADERS  += osiosmainwindow.h \
     mainmenuitems/writer/eventemittingplaintextedit.h \
     timelineserializer.h \
     osiosdhtpeer.h \
-    osiosdht.h
+    osiosdht.h \
+    osiosprofilemanagerdialog.h \
+    osiossettings.h
 
 include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)

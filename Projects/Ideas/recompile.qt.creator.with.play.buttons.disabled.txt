@@ -1,0 +1,1 @@
+Recompile Qt Creator with the play buttons disabled (make them simply do what the compile button does). This would be my devbox IDE, so I can't accidentally hit play like I sometimes do (usually compiler errors save my ass, but I fear the day where I'll die).

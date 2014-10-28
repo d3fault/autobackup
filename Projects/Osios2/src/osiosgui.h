@@ -17,6 +17,7 @@ private:
     OsiosMainWindow *m_MainWindow;
 
     void usageAndQuit();
+    void quit();
     void connectBackendToAndFromFrontendSignalsAndSlots();
 };
 

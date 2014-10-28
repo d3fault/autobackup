@@ -5,11 +5,13 @@
 #include <QFile>
 #include <QDataStream>
 #include <QDebug>
+#include <QHash>
 
 #include "osioscommon.h"
 #include "timelineserializer.h"
 #include "osiosdht.h"
 #include "osiosdhtpeer.h"
+#include "osiossettings.h"
 
 #define OSIOS_TIMELINE_FILENAME "timeline.bin"
 
@@ -27,9 +29,13 @@ Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseR
     QString dataDir = settings.value(OSIOS_DATA_DIR_SETTINGS_KEY).toString(); //TODOoptional: sanitize empty/invalid filename etc. also the value needs to be set during profile creation (and the dir/filename needs to be queried)
     settings.endGroup();
     settings.endGroup();
-    m_LocalPersistenceDevice = new QFile(appendSlashIfNeeded(dataDir) + OSIOS_TIMELINE_FILENAME, this);
+    QString fileName = appendSlashIfNeeded(dataDir) + OSIOS_TIMELINE_FILENAME;
+    qDebug() << "file path of timeline for current profile: " << fileName;
+    m_LocalPersistenceDevice = new QFile(fileName, this);
     if(!m_LocalPersistenceDevice->open(QIODevice::ReadWrite))
     {
+        qDebug() << "failed to open local persistence device" << fileName;
+        //constructor, guh: emit notificationAvailable(Fatal);
         //TODOoptional: better handling
         return;
     }
@@ -114,9 +120,9 @@ void Osios::flushDiskBuffer()
 {
     if(!m_LocalPersistenceDevice->flush())
     {
-        //TODOreq: error notification
+        emit notificationAvailable(tr("Failed to flush to the local persistence device (ex: hard drive)!"), OsiosNotificationLevels::FatalNotificationLevel);
     }
-    //TODOreq: still need to do "sync" system call, but i don't think there's a portable way to do it :(
+    //TODOreq: still need to do "sync" system call (and notification if that fails), but i don't think there's a portable way to do it :(
 }
 void Osios::handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState)
 {
@@ -125,7 +131,7 @@ void Osios::handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState
         case OsiosDhtStates::InitialIdleNoConnectionsState:
         {
             emit connectionColorChanged(Qt::black); //TO DOnereq(nop): disabling dht- (wait no you can't it's the whole purpose of the app). err was going to say that if the dht is disabled then black should always be shown...
-            emit notificationAvailable(tr("DHT state changed to Initial Idle No Connections"));
+            emit notificationAvailable(tr("DHT state changed to Stopped"));
         }
             break;
 
@@ -151,10 +157,15 @@ void Osios::handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState
             break;
 
         case OsiosDhtStates::FellBelowMinBootstrapNodesState:
-        default /*wat*/:
         {
             emit connectionColorChanged(Qt::red);
             emit notificationAvailable(tr("The DHT changed states to indicate that there are NOT at least ") + QString::number(OSIOS_DHT_MIN_PEERS_CONNECTED_FOR_BOOTSTRAP_TO_BE_CONSIDERED_COMPLETE) + tr(" peers connected!"), OsiosNotificationLevels::ErrorNotificationLevel);
+        }
+            break;
+        default /*wat*/:
+        {
+            emit connectionColorChanged(Qt::red);
+            emit notificationAvailable(tr("The DHT changed to an unknown state!"), OsiosNotificationLevels::FatalNotificationLevel);
         }
             break;
     }
@@ -170,10 +181,36 @@ void Osios::cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndH
 }
 void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptoGraphicHashOfTimelineNodePreviouslySent)
 {
+    CryptographicHashAndTheListofDhtPeersThatHaveVerifiedItSoFar::const_iterator it = m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.find(cryptoGraphicHashOfTimelineNodePreviouslySent);
+    if(it == m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.end())
+    {
+        //TODOreq: if we have N replicas but only care about X of them (with X being <= N of course), maybe we just received some we already consider "verified" and that's why it's not in this list. For now, error notification to be on the safe side
+        emit notificationAvailable(tr("A neighbor sent us a cryptographic hash that we weren't expecting"), OsiosNotificationLevels::ErrorNotificationLevel); //TODOmb: ping the offending neighbor and ask what's up, start inquiries and other bullshit that increases the complexity of a dht a trillion fold
+        return;
+    }
+
+    //TODOoptional, check that the dht peer didn't already send us that hash, and then error report it (I am going to ensure that they aren't accounted for twice, but might not have the error reporting)
+    QSet<OsiosDhtPeer*> *dhtPeersThatAlreadySentUsThatHash = it.value();
+
+    if(dhtPeersThatAlreadySentUsThatHash->contains(osiosDhtPeer))
+    {
+        emit notificationAvailable(tr("A neighbor sent us the same cryptographic hash twice"), OsiosNotificationLevels::WarningNotificationLevel);
+        return;
+    }
+
+    //add peer to list of neighbors that have verified this hash
+    dhtPeersThatAlreadySentUsThatHash->insert(osiosDhtPeer);
+
+
+    cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOriginallyAndNowReceiverOfHashVerification_removeThisHashFromAwaitingVerificationListAfterCheckingIfEnoughNeighborsHaveCryptographicallyVerifiedBecauseWeJustAddedAPeerToThatList_AndStopTheTimeoutForThatPieceIfRemoved(cryptoGraphicHashOfTimelineNodePreviouslySent, dhtPeersThatAlreadySentUsThatHash);
     //TODOreq: now we check it against what we calculated for it earlier and (had:report errors) if the hash isn't found in our list of hashes watching for (meaning a mismatch, in which case we do nothing and the 5 second timeout will flash red etc). we should remove a hash from being watched once all (or N) of the neighbors respond with a valid cryptographic hash
 }
 void Osios::cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action)
 {
+    //TODOreq: as an implicit sub-action of this step, we need to first record the cryptgraphic hash for later comparison/verification. However, as an optimization it's better to only ever convert action to a byte array once. I'm just going to err on the side of understandability over optimization at this point (because...)
+    //QByteArray actionByteArray =
+    m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.insert(calculateCrytographicHashOfTimelineNode(action), new QSet<OsiosDhtPeer*>() /*delete the QSet in our destructor or whenever appropriate*/); //small inefficiency beats small refactor anyday. human time > *. shit how could anything be greater than everything, else be greater than itself (impossibru)
+
     //TODOreq: might be a good optimization to put everything network on a network thread, and maybe even all disk access on a disk thread. for now KISS everything goes on main thread. I am pretty sure Qt's APIs are async for me already anyways... so unless I above it, lockup is unlikely. HOWEVER this is still a good idea in general just because it will scale better in the future when maybe timeline nodes are much larger in size. It also isn't that difficult (would have taken about as much time as this comment)
 
     m_OsiosDht->sendNewTimelineNodeToAllDhtPeersWithHealthyConnectionForFirstStepOfCryptographicVerification(action);
@@ -183,6 +220,17 @@ void Osios::cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeigh
     QByteArray sha1SumOfTimelineNode = calculateCrytographicHashOfTimelineNode(action);
     //now send it back to the neighbor for verification
     osiosDhtPeer->respondWithCryptographicHashComputedFromReceivedTimelineNode(sha1SumOfTimelineNode);
+}
+void Osios::cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOriginallyAndNowReceiverOfHashVerification_removeThisHashFromAwaitingVerificationListAfterCheckingIfEnoughNeighborsHaveCryptographicallyVerifiedBecauseWeJustAddedAPeerToThatList_AndStopTheTimeoutForThatPieceIfRemoved(QByteArray keyToListToRemoveFrom, QSet<OsiosDhtPeer*> *listToMaybeRemove)
+{
+    static const int numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified = OSIOS_DHT_MIN_PEERS_CONNECTED_FOR_BOOTSTRAP_TO_BE_CONSIDERED_COMPLETE; //this could be it's own define/runtime-option/etc, but KISS for now
+    if(listToMaybeRemove->size() >= numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified)
+    {
+        //good, verified, remove from list
+        m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.remove(keyToListToRemoveFrom);
+        //emit notificationAvailable();
+        qDebug() << "Timeline Node Hash verified by " << QString::number(numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified) << " DHT neighbors: " << keyToListToRemoveFrom.toHex(); //TODOoptional: associate and print human readable timeline node 'action'
+    }
 }
 void Osios::replicateNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineNode action)
 {
@@ -197,5 +245,5 @@ void Osios::recordMyAction(TimelineNode action)
 {
     m_TimelineNodes.append(action); //takes ownership, deletes in this' destructor
     cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(action); //replicate it to network neighbors for cryptographic verification
-    serializeMyTimelineAdditionsLocally(); //writes to file but does not flush
+    serializeMyTimelineAdditionsLocally(); //writes to file but does not flush. i could make this method the target of diskFlushTimer if i wanted, since the action being in m_TimelineNodes means it's recorded. I don't think it matters whether I buffer it or Qt does, since both are userland.
 }

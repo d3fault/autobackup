@@ -39,7 +39,7 @@ public:
 
     TimelineNodeTypeEnum::TimelineNodeTypeEnumActual TimelineNodeType;
 
-    virtual QString humanReadableShortDescription() const=0; //TODOreq: try making this pure virtual later once shit is compiling again. might just work
+    virtual QString humanReadableShortDescription() const=0;
 protected:
     virtual QDataStream &save(QDataStream &outputStream) const;
     virtual QDataStream &load(QDataStream &inputStream);

@@ -5,13 +5,12 @@
 #include <QMessageBox>
 #include <QUrl>
 
+#include "osiosprofilemanagerdialog.h"
 #include "osioscreateprofiledialog.h"
 #include "osios.h"
 #include "osiosmainwindow.h"
 #include "osioscommon.h"
-
-#define LAST_USED_PROFILE_SETTINGS_KEY "lastUsedProfile"
-#define NUM_PROFILES_SETTINGS_KEY "numProfiles"
+#include "osiossettings.h"
 
 OsiosGui::OsiosGui(QObject *parent)
     : QObject(parent)
@@ -20,6 +19,28 @@ OsiosGui::OsiosGui(QObject *parent)
 {
     QStringList argz = QCoreApplication::arguments();
     argz.removeFirst(); //filepath
+
+    bool profileManagerRequested = false;
+    int profileManagerArgIndex = argz.indexOf("--profile-manager");
+    if(profileManagerArgIndex != -1)
+    {
+        profileManagerRequested = true;
+        argz.removeAt(profileManagerArgIndex);
+    }
+
+    QString profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet;
+    int profileSpecificationArgIndex = argz.indexOf("--profile");
+    if(profileSpecificationArgIndex != -1)
+    {
+        if((profileSpecificationArgIndex+1) >= argz.size())
+        {
+            usageAndQuit();
+            return;
+        }
+        profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet = argz.at(profileSpecificationArgIndex+1);
+        argz.removeAt(profileSpecificationArgIndex);
+        argz.removeAt(profileSpecificationArgIndex);
+    }
 
     quint16 localServerPort_OrZeroToChooseRandomPort = 0;
     int listenPortArgVindex = argz.indexOf("--listen-port");
@@ -31,7 +52,7 @@ OsiosGui::OsiosGui(QObject *parent)
             return;
         }
         bool convertOk = false;
-        localServerPort_OrZeroToChooseRandomPort = argz.at(1).toUShort(&convertOk); //considering making this optional (auto-generated, who gives a fuck. so long as we say what we chose in our status notifications...)
+        localServerPort_OrZeroToChooseRandomPort = argz.at(listenPortArgVindex+1).toUShort(&convertOk); //considering making this optional (auto-generated, who gives a fuck. so long as we say what we chose in our status notifications...)
         if(!convertOk)
         {
             usageAndQuit();
@@ -47,6 +68,7 @@ OsiosGui::OsiosGui(QObject *parent)
     }
 
 
+    qRegisterMetaType<ListOfDhtPeerAddressesAndPorts>("ListOfDhtPeerAddressesAndPorts");
     ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts; //TODOreq: store some (ALL LEARNED?) addresses/ips in settings or something
     while(!argz.isEmpty())
     {
@@ -70,46 +92,40 @@ OsiosGui::OsiosGui(QObject *parent)
     }
 
     QSettings settings;
-    QString lastUsedProfile_OrEmptyStringIfNone = settings.value(LAST_USED_PROFILE_SETTINGS_KEY).toString();
 
-    //there still might be profiles, so we would offer for them to select existing ideally (with option to create still ofc)
-    int numProfiles = settings.value(NUM_PROFILES_SETTINGS_KEY).toInt();
-    if(numProfiles > 0)
+    if(profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet.isEmpty())
     {
-        settings.beginGroup(PROFILES_GOUP_SETTINGS_KEY);
-        //add to some list for combo box
-        settings.endGroup();
+        profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet = settings.value(LAST_USED_PROFILE_SETTINGS_KEY).toString(); //try reading last used profile, but it may also be empty/missing so that would leave the string the same as it was anyways
     }
-    //TODOreq: present "choose existing profile" dialog, including setting lastUsedProfile_OrEmptyStringIfNone to the chosen profile before proceeding forward
 
-
-    if(lastUsedProfile_OrEmptyStringIfNone.isEmpty())
+    if(profileManagerRequested)
+    {
+        OsiosProfileManagerDialog profileManagerDialog;
+        if(profileManagerDialog.exec() == QDialog::Accepted)
+        {
+            profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet = profileManagerDialog.profileNameChosen();
+        }
+        else
+        {
+            //cancel pressed
+            quit();
+            return;
+        }
+    }
+    else if(profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet.isEmpty())
     {
         OsiosCreateProfileDialog createProfileDialog;
-        while(createProfileDialog.newProfileName().trimmed().isEmpty())
+        if(createProfileDialog.exec() != QDialog::Accepted)
         {
-            if(createProfileDialog.exec() != QDialog::Accepted)
-            {
-                QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection); //TODOoptional: modal dialog infinite loop asking them if they're sure they want to quit or if they want to go to the create profile screen again
-                return;
-            }
-            if(createProfileDialog.newProfileName().trimmed().isEmpty())
-            {
-                QMessageBox::critical(0, tr("Error"), tr("Error: Profile Name Cannot Be Empty"));
-            }
+            quit(); //TODOoptional: modal dialog infinite loop asking them if they're sure they want to quit or if they want to go to the create profile screen again
+            return;
         }
-        lastUsedProfile_OrEmptyStringIfNone = createProfileDialog.newProfileName();
-
-        settings.beginGroup(PROFILES_GOUP_SETTINGS_KEY);
-        //TODOreq: make sure the profile name doesn't already exist in the settings
-        settings.beginGroup(lastUsedProfile_OrEmptyStringIfNone);
-        settings.setValue(OSIOS_DATA_DIR_SETTINGS_KEY, createProfileDialog.chosenDataDir());
-        settings.endGroup();
-        settings.endGroup();
-        settings.setValue(LAST_USED_PROFILE_SETTINGS_KEY, lastUsedProfile_OrEmptyStringIfNone);
+        profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet = createProfileDialog.newProfileName();
     }
 
-    m_Osios = new Osios(lastUsedProfile_OrEmptyStringIfNone, localServerPort_OrZeroToChooseRandomPort, bootstrapAddressesAndPorts);
+    //if we get here, profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet is set and valid
+    settings.setValue(LAST_USED_PROFILE_SETTINGS_KEY, profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet);
+    m_Osios = new Osios(profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet, localServerPort_OrZeroToChooseRandomPort, bootstrapAddressesAndPorts);
     m_MainWindow = new OsiosMainWindow(m_Osios);
     connectBackendToAndFromFrontendSignalsAndSlots();
     m_MainWindow->show();
@@ -129,6 +145,10 @@ void OsiosGui::usageAndQuit()
 {
     //TODOreq: modal dialog? might as well just ask them for the port at that point (but... asking for bootstrap nodes is more work guh)
     QMessageBox::critical(0, tr("Error"), tr("You either didn't pass enough arguments to the app, or you passed invalid arguments.\n\nUsage: Osios localServerPort [--listen-port N --add-bootstrap-node host:port]\n\nIf you don't specify a --listen-port, one is chosen for you at random.\nYou can supply --add-bootstrap-node multiple times"));
+    quit();
+}
+void OsiosGui::quit()
+{
     QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
 void OsiosGui::connectBackendToAndFromFrontendSignalsAndSlots()
