@@ -159,5 +159,5 @@ void OsiosGui::connectBackendToAndFromFrontendSignalsAndSlots()
     connect(m_MainWindow, SIGNAL(actionOccurred(TimelineNode)), m_Osios, SLOT(recordMyAction(TimelineNode))); //old: called tab in frontend and activity on backend because there might be a cli version someday
 
     connect(m_Osios, SIGNAL(connectionColorChanged(int)), m_MainWindow, SLOT(changeConnectionColor(int)));
-    connect(m_Osios, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), m_MainWindow, SLOT(presentNotification(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
+    connect(m_Osios, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), m_MainWindow, SIGNAL(presentNotificationRequested(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
 }

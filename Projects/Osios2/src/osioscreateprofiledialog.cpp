@@ -12,6 +12,7 @@
 
 #include "labellineeditbrowsebutton.h"
 #include "osiossettings.h"
+#include "osioscommon.h"
 
 #define  PROFILE_NAME_PERCENT_FILTER "%ProfileName%"
 
@@ -23,6 +24,7 @@ OsiosCreateProfileDialog::OsiosCreateProfileDialog(QWidget *parent)
     setWindowTitle(tr("Create Profile"));
 
     QVBoxLayout *myLayout = new QVBoxLayout();
+    myLayout->setContentsMargins(OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS);
 
     QHBoxLayout *profileNameRow = new QHBoxLayout();
     profileNameRow->addWidget(new QLabel(tr("Profile Name:")));

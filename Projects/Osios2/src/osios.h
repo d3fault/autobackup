@@ -12,18 +12,6 @@ class QFile;
 class OsiosDht;
 class OsiosDhtPeer;
 
-class OsiosNotificationLevels
-{
-public:
-    enum OsiosNotificationLevelsEnum
-    {
-          StandardNotificationLevel = 0
-        , WarningNotificationLevel = 1
-        , ErrorNotificationLevel = 2
-        , FatalNotificationLevel = 3
-    };
-};
-
 //the qba is timeline node hash
 //the qset is list of peers that have verified the timeline node hash. we are removed from m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromTheNeighbors when a sufficient number are seen
 typedef QHash<QByteArray, QSet<OsiosDhtPeer*>*> CryptographicHashAndTheListofDhtPeersThatHaveVerifiedItSoFar;
@@ -53,7 +41,7 @@ private:
     void cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action);
     void cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(OsiosDhtPeer *osiosDhtPeer, TimelineNode action);
     void cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOriginallyAndNowReceiverOfHashVerification_removeThisHashFromAwaitingVerificationListAfterCheckingIfEnoughNeighborsHaveCryptographicallyVerifiedBecauseWeJustAddedAPeerToThatList_AndStopTheTimeoutForThatPieceIfRemoved(QByteArray keyToListToRemoveFrom, QSet<OsiosDhtPeer *> *listToMaybeRemove);
-    void replicateNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineNode action);
+    void serializeNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineNode action);
     QByteArray calculateCrytographicHashOfTimelineNode(TimelineNode action, QCryptographicHash::Algorithm algorithm = QCryptographicHash::Sha1);
     inline QString appendSlashIfNeeded(const QString &inputString)
     {
@@ -66,6 +54,7 @@ private:
 signals:
     void connectionColorChanged(int color);
     void notificationAvailable(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel = OsiosNotificationLevels::StandardNotificationLevel);
+    void timelineNodeAdded(TimelineNode action);
 public slots:
     void recordMyAction(TimelineNode action);
 private slots:

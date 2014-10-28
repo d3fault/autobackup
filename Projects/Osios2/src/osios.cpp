@@ -175,7 +175,7 @@ void Osios::cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndH
     //nothing too difficult here, but what 'profile' to use for the serialization is in question. is a dht and it's set of nodes associated with a profile? or should all of the incoming dhts be global to every local profile?
     //what i mean by "what profile" is basically I need a dht node id, and ip address isn't good enough. it needs to reflect their profile name perhaps. another way to solve this is to use public/private keys and to use the public keys as identifiers (this has other gains as well ofc, but I'm simply looking for simplest)
 
-    replicateNeighborActionLocally(osiosDhtPeer, action); //TODOreq: use the same period flushing code as our own serializeMyTimelineAdditionsLocally (this is why a io thread is nice (however i'm not as thread safe as i could be dommit))
+    serializeNeighborActionLocally(osiosDhtPeer, action); //TODOreq: use the same period flushing code as our own serializeMyTimelineAdditionsLocally (this is why a io thread is nice (however i'm not as thread safe as i could be dommit))
 
     cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(osiosDhtPeer, action);
 }
@@ -232,7 +232,7 @@ void Osios::cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOrig
         qDebug() << "Timeline Node Hash verified by" << numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified << "DHT neighbors:" << keyToListToRemoveFrom.toHex(); //TODOoptional: associate and print human readable timeline node 'action'
     }
 }
-void Osios::replicateNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineNode action)
+void Osios::serializeNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineNode action)
 {
     //TODOreq: simple to do once I decide WHICH file[name] to write to, based on some unique id (what if two users on network choose same profile name? ideally we could handle that)
 }
@@ -246,4 +246,5 @@ void Osios::recordMyAction(TimelineNode action)
     m_TimelineNodes.append(action); //takes ownership, deletes in this' destructor
     cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(action); //replicate it to network neighbors for cryptographic verification
     serializeMyTimelineAdditionsLocally(); //writes to file but does not flush. i could make this method the target of diskFlushTimer if i wanted, since the action being in m_TimelineNodes means it's recorded. I don't think it matters whether I buffer it or Qt does, since both are userland.
+    emit timelineNodeAdded(action);
 }

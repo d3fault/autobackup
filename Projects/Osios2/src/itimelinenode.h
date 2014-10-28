@@ -40,6 +40,7 @@ public:
     qint64 UnixTimestamp;
 
     virtual QString humanReadableShortDescription() const=0;
+    QString humanReadableShortDescriptionIncludingTimestamp() const;
 protected:
     virtual QDataStream &save(QDataStream &outputStream) const=0;
     virtual QDataStream &load(QDataStream &inputStream)=0;

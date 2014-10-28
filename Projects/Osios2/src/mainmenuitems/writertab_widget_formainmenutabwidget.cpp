@@ -7,6 +7,8 @@ WriterTab_Widget_ForMainMenuTabWidget::WriterTab_Widget_ForMainMenuTabWidget(IOs
     : IActivityTab_Widget_ForMainMenuTabWidget(parent)
 {
     QVBoxLayout *myLayout = new QVBoxLayout();
+    myLayout->setContentsMargins(OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS);
+
     myLayout->addWidget(new EventEmittingPlainTextEdit(osiosClient));
     setLayout(myLayout);
 

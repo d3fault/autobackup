@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     timelineserializer.cpp \
     osiosdhtpeer.cpp \
     osiosdht.cpp \
-    osiosprofilemanagerdialog.cpp
+    osiosprofilemanagerdialog.cpp \
+    osiosnotificationswidget.cpp
 
 HEADERS  += osiosmainwindow.h \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.h \
@@ -46,6 +47,7 @@ HEADERS  += osiosmainwindow.h \
     osiosdhtpeer.h \
     osiosdht.h \
     osiosprofilemanagerdialog.h \
-    osiossettings.h
+    osiossettings.h \
+    osiosnotificationswidget.h
 
 include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)

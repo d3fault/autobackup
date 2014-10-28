@@ -21,11 +21,13 @@ protected:
     virtual void closeEvent(QCloseEvent *event);
 private:
     QTabWidget *m_MainMenuItemsTabWidget;
+
+    void addDockWidgets();
 signals:
     void actionOccurred(TimelineNode action);
+    void presentNotificationRequested(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel);
 public slots:
     void changeConnectionColor(int color);
-    void presentNotification(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel = OsiosNotificationLevels::StandardNotificationLevel);
 private slots:
     void handleMainMenuItemsTabWidgetCurrentTabChanged();
 };

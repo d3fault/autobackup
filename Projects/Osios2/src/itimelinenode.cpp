@@ -81,6 +81,13 @@ ITimelineNode *ITimelineNode::fromByteArray(const QByteArray &inputByteArray)
 #endif
 ITimelineNode::~ITimelineNode()
 { }
+QString ITimelineNode::humanReadableShortDescriptionIncludingTimestamp() const
+{
+    QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(UnixTimestamp);
+    QString ret = timestamp.toString(Qt::RFC2822Date);
+    ret += " : " + humanReadableShortDescription();
+    return ret;
+}
 QString ITimelineNode::humanReadableShortDescription() const
 {
     //derived classes should override this (i think, but could be wrong). since my d is private and... not sure if it will resolve to the derived d or what

@@ -3,8 +3,10 @@
 #include <QTabWidget>
 #include <QSettings>
 #include <QColor>
+#include <QDockWidget>
 #include <QDebug>
 
+#include "osiosnotificationswidget.h"
 #include "iactivitytab_widget_formainmenutabwidget.h"
 #include "mainmenuitems/timelinetab_widget_formainmenutabwidget.h"
 #include "mainmenuitems/writertab_widget_formainmenutabwidget.h"
@@ -23,6 +25,8 @@ OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
 
     setCentralWidget(m_MainMenuItemsTabWidget);
 
+    addDockWidgets();
+
     QSettings settings;
     restoreGeometry(settings.value("geometry").toByteArray());
     restoreState(settings.value("windowState").toByteArray());
@@ -40,17 +44,26 @@ void OsiosMainWindow::closeEvent(QCloseEvent *event)
     settings.setValue("windowState", saveState());
     QMainWindow::closeEvent(event);
 }
+void OsiosMainWindow::addDockWidgets()
+{
+    setCorner(Qt::TopLeftCorner, Qt::TopDockWidgetArea);
+    setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks);
+
+    QDockWidget *notificationsPanelDockWidget = new QDockWidget(tr("Notifications"), this);
+    notificationsPanelDockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetVerticalTitleBar);
+
+    OsiosNotificationsWidget *osiosNotificationsWidget = new OsiosNotificationsWidget();
+    notificationsPanelDockWidget->setWidget(osiosNotificationsWidget);
+    addDockWidget(Qt::BottomDockWidgetArea, notificationsPanelDockWidget, Qt::Horizontal);
+
+    connect(this, SIGNAL(presentNotificationRequested(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), osiosNotificationsWidget, SLOT(presentNotification(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
+}
 void OsiosMainWindow::changeConnectionColor(int color)
 {
     //TODOreq:
     //temp:
     QColor myColor(static_cast<Qt::GlobalColor>(color));
     setWindowTitle(myColor.name());
-}
-void OsiosMainWindow::presentNotification(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel)
-{
-    //TODOreq:
-    qDebug() << notificationMessage;
 }
 void OsiosMainWindow::handleMainMenuItemsTabWidgetCurrentTabChanged()
 {
