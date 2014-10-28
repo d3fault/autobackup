@@ -22,6 +22,8 @@ typedef /*QSharedPointer<*/ITimelineNode*/*>*/ TimelineNode; //is only technical
 class ITimelineNode
 {
 public:
+    QByteArray toByteArray();
+    static ITimelineNode *fromByteArray(/*const */QByteArray &timelineNode);
 #if 0
     static TimelineNode makeTimelineNode(ITimelineNode *rawITimelineNodePointer) //only exists for the deleteLater usage
     {
@@ -30,26 +32,26 @@ public:
     }
 #endif
     explicit ITimelineNode();
-    explicit ITimelineNode(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeType);
+    explicit ITimelineNode(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeType, qint64 UnixTimestamp_OrZeroToUseCurrentTime);
     explicit ITimelineNode(const ITimelineNode &other);
-
-    QByteArray toByteArray();
-
     virtual ~ITimelineNode();
 
     TimelineNodeTypeEnum::TimelineNodeTypeEnumActual TimelineNodeType;
+    qint64 UnixTimestamp;
 
     virtual QString humanReadableShortDescription() const=0;
 protected:
-    virtual QDataStream &save(QDataStream &outputStream) const;
-    virtual QDataStream &load(QDataStream &inputStream);
+    virtual QDataStream &save(QDataStream &outputStream) const=0;
+    virtual QDataStream &load(QDataStream &inputStream)=0;
 private:
     friend QDataStream &operator<<(QDataStream &outputStream, const ITimelineNode &timelineNode);
     friend QDataStream &operator>>(QDataStream &inputStream, ITimelineNode &timelineNode);
 };
 
+#if 0
 QDataStream &operator<< (QDataStream &outputStream, const ITimelineNode &timelineNode);
 QDataStream &operator>> (QDataStream &inputStream, ITimelineNode &timelineNode);
+#endif
 
 Q_DECLARE_METATYPE(TimelineNode)
 

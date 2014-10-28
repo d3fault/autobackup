@@ -10,6 +10,8 @@
 
 //Merging each of the 3 'profiles' (monitors/nodes) timeline node streams into one is doable, but I'm going to resist for now (KISS). The safety achieved with 3 independent streams (replicated in 2 places each) is all I want for now
 
+//TODOreq: only one instance can be using a profile at a time. this change could/would/should be done at the same time that the daemonization/clientization of the application itself is performed (code-wise, not runtime-wise), or at least after it
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

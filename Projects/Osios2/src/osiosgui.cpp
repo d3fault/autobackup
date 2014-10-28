@@ -89,6 +89,8 @@ OsiosGui::OsiosGui(QObject *parent)
             return;
         }
         bootstrapAddressesAndPorts.append(qMakePair(QHostAddress(hostAndPort.host()), hostAndPort.port()));
+        argz.takeFirst(); //add bootstrap arg
+        argz.takeFirst(); //host:port
     }
 
     QSettings settings;

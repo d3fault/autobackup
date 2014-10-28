@@ -14,13 +14,11 @@ QString KeyPressInNewEmptyDocTimelineNode::humanReadableShortDescription() const
 }
 QDataStream &KeyPressInNewEmptyDocTimelineNode::save(QDataStream &outputStream) const
 {
-    ITimelineNode::save(outputStream);
     outputStream << KeyPressed;
     return outputStream;
 }
 QDataStream &KeyPressInNewEmptyDocTimelineNode::load(QDataStream &inputStream)
 {
-    ITimelineNode::load(inputStream);
     inputStream >> KeyPressed;
     return inputStream;
 }

@@ -21,7 +21,7 @@ public:
     bool deserializeTimelineFromDisk(Osios *osiosContainingTimelineToBeSerialized, QIODevice *ioDeviceToDeserializeFrom);
 #endif
 private:
-    static ITimelineNode *instantiateDerivedTimelineNodeTypeByTypeId(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeTypeId);
+    static ITimelineNode *instantiateTimelineNodeBasedOnTimelineNodeType(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeTypeId);
 };
 
 #endif // TIMELINESERIALIZER_H

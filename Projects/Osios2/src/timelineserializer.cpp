@@ -46,15 +46,15 @@ bool TimelineSerializer::deserializeTimelineFromDisk(Osios *osiosContainingTimel
 ITimelineNode *TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(QIODevice *ioDeviceToDeserializeFrom)
 {
     //peek type
-    QByteArray timelineNodeTypePeekByteArray = ioDeviceToDeserializeFrom->peek(sizeof(quint32));
-    QBuffer timelineNodeTypePeekBuffer(&timelineNodeTypePeekByteArray);
-    timelineNodeTypePeekBuffer.open(QIODevice::ReadOnly);
-    QDataStream convertPeekedByteArrayProperlyDataStream(&timelineNodeTypePeekBuffer);
-    quint32 timelineNodeTypeId;
-    convertPeekedByteArrayProperlyDataStream >> timelineNodeTypeId;
+    QByteArray timelineNodeHeaderPeekByteArray = ioDeviceToDeserializeFrom->peek(sizeof(quint32) /*timeline node type*/);
+    QBuffer timelineNodeHeaderPeekBuffer(&timelineNodeHeaderPeekByteArray);
+    timelineNodeHeaderPeekBuffer.open(QIODevice::ReadOnly);
+    QDataStream convertPeekedByteArrayProperlyDataStream(&timelineNodeHeaderPeekBuffer);
+    quint32 timelineNodeType;
+    convertPeekedByteArrayProperlyDataStream >> timelineNodeType; //timeline node type
 
     //instantiate type
-    ITimelineNode *instantiatedToDerived = instantiateDerivedTimelineNodeTypeByTypeId(static_cast<TimelineNodeTypeEnum::TimelineNodeTypeEnumActual>(timelineNodeTypeId));
+    ITimelineNode *instantiatedToDerived = instantiateTimelineNodeBasedOnTimelineNodeType(static_cast<TimelineNodeTypeEnum::TimelineNodeTypeEnumActual>(timelineNodeType));
 
     //read type
     QDataStream readStream(ioDeviceToDeserializeFrom);
@@ -62,7 +62,7 @@ ITimelineNode *TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNode
 
     return instantiatedToDerived;
 }
-ITimelineNode *TimelineSerializer::instantiateDerivedTimelineNodeTypeByTypeId(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeTypeId)
+ITimelineNode *TimelineSerializer::instantiateTimelineNodeBasedOnTimelineNodeType(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeTypeId)
 {
     switch(timelineNodeTypeId)
     {
@@ -74,7 +74,8 @@ ITimelineNode *TimelineSerializer::instantiateDerivedTimelineNodeTypeByTypeId(Ti
         break;
     case TimelineNodeTypeEnum::INITIALNULLINVALIDTIMELINENODETYPE:
     default:
-        qFatal("deserialized invalid timeline node type id");
+        QString timelineNodeIdString = QString::number(static_cast<quint32>(timelineNodeTypeId));
+        qFatal(std::string("deserialized invalid timeline node type id: " + timelineNodeIdString.toStdString()).c_str()); //TODOmb: quit and release resources etc? idk how exactly qFatal works..
         return 0;
         break;
     }

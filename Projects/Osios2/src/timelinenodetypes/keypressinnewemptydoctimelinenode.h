@@ -7,11 +7,11 @@ class KeyPressInNewEmptyDocTimelineNode : public ITimelineNode
 {
   public:
     KeyPressInNewEmptyDocTimelineNode()
-        : ITimelineNode(TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode)
+        : ITimelineNode(TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode, 0)
         , KeyPressed(-1)
     { }
-    KeyPressInNewEmptyDocTimelineNode(int keyPressed)
-        : ITimelineNode(TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode)
+    KeyPressInNewEmptyDocTimelineNode(int keyPressed, qint64 unixTimestamp_OrZeroToUseCurrentTime = 0)
+        : ITimelineNode(TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode, unixTimestamp_OrZeroToUseCurrentTime)
         , KeyPressed(keyPressed)
     { }
     KeyPressInNewEmptyDocTimelineNode(const KeyPressInNewEmptyDocTimelineNode &other)

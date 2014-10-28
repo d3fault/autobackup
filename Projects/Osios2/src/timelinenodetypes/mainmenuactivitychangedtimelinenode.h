@@ -10,11 +10,11 @@ class MainMenuActivityChangedTimelineNode : public ITimelineNode
 {
   public:
     MainMenuActivityChangedTimelineNode()
-        : ITimelineNode(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode)
+        : ITimelineNode(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode, 0)
         , NewMainMenuActivity(MAIN_MENU_DEFAULT_ACTIVITY)
     { }
-    MainMenuActivityChangedTimelineNode(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity)
-        : ITimelineNode(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode)
+    MainMenuActivityChangedTimelineNode(MainMenuActivitiesEnum::MainMenuActivitiesEnumActual newMainMenuActivity, qint64 unixTimestamp_OrZeroToUseCurrentTime = 0)
+        : ITimelineNode(TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode, unixTimestamp_OrZeroToUseCurrentTime)
         , NewMainMenuActivity(newMainMenuActivity)
     { }
     MainMenuActivityChangedTimelineNode(const MainMenuActivityChangedTimelineNode &other)

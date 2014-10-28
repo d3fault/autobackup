@@ -15,13 +15,11 @@ QString MainMenuActivityChangedTimelineNode::humanReadableShortDescription() con
 }
 QDataStream &MainMenuActivityChangedTimelineNode::save(QDataStream &outputStream) const
 {
-    ITimelineNode::save(outputStream);
     outputStream << static_cast<OsiosMainMenuSerializedDataType>(NewMainMenuActivity);
     return outputStream;
 }
 QDataStream &MainMenuActivityChangedTimelineNode::load(QDataStream &inputStream)
 {
-    ITimelineNode::load(inputStream);
     OsiosMainMenuSerializedDataType newMainMenuActivityData;
     inputStream >> newMainMenuActivityData;
     NewMainMenuActivity = static_cast<MainMenuActivitiesEnum::MainMenuActivitiesEnumActual>(newMainMenuActivityData);

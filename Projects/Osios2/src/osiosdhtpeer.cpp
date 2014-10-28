@@ -67,17 +67,18 @@ void OsiosDhtPeer::handleSocketToPeerReadyRead()
         m_StreamToPeer >> dhtMessageTypeData; //derp, get dat peeked shit out of the way
         //m_StreamToPeer >> timelineNodeSize; //derp, get dat peeked shit out of the way. nvm anymore since the message size is 'built into' the qbytearray payload (h4x)
 
+        QByteArray payload;
+        m_StreamToPeer >> payload;
+
         if(dhtMessageType == OsiosDhtMessageTypes::SengingNewTimelineNodeForFirstStepOfCryptographicVerification)
         {
-            TimelineNode theTimelineNodeReceivedFromPeer = TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(m_SocketToPeer); //TODOreq: ownership, we have it. delete somewhere too...
+            TimelineNode theTimelineNodeReceivedFromPeer = ITimelineNode::fromByteArray(payload);
             emit timelineNodeReceivedFromPeer(this, theTimelineNodeReceivedFromPeer);
             continue;
         }
         if(dhtMessageType == OsiosDhtMessageTypes::RespondingWithCryptographicHashComputedFromReceivedTimelineNode)
         {
-            QByteArray responseCryptographicHash;
-            m_StreamToPeer >> responseCryptographicHash;
-            emit responseCryptoGraphicHashReceivedFromNeighbor(this, responseCryptographicHash);
+            emit responseCryptoGraphicHashReceivedFromNeighbor(this, payload);
             continue;
         }
     }

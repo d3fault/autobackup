@@ -229,7 +229,7 @@ void Osios::cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOrig
         //good, verified, remove from list
         m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.remove(keyToListToRemoveFrom);
         //emit notificationAvailable();
-        qDebug() << "Timeline Node Hash verified by " << QString::number(numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified) << " DHT neighbors: " << keyToListToRemoveFrom.toHex(); //TODOoptional: associate and print human readable timeline node 'action'
+        qDebug() << "Timeline Node Hash verified by" << numNeighborsToWaitForVerificationFromBeforeConsideringAtimelineNodeVerified << "DHT neighbors:" << keyToListToRemoveFrom.toHex(); //TODOoptional: associate and print human readable timeline node 'action'
     }
 }
 void Osios::replicateNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineNode action)
