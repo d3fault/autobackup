@@ -12,6 +12,10 @@
 
 //TODOreq: only one instance can be using a profile at a time. this change could/would/should be done at the same time that the daemonization/clientization of the application itself is performed (code-wise, not runtime-wise), or at least after it
 
+//TODOmb: this app does not scale horizontally because every [dht] node sends every [timeline] node to every [dht] node xD. However, I'm not sure I care to solve the problem seeing as this app is intended private LAN use and is intended for BACKUP purposes (or, realtime data archival ;-P). BACKUP solutions aren't supposed to be efficient, they make tons of redundant copies
+
+//TODOreq: right now the application state (dht state really) will look valid so long as no actions are performed. we should probably use a heartbeat to prove that the connection is still healthy, regardless of whether or not any actions are triggered
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

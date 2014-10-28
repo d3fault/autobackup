@@ -6,6 +6,7 @@
 #include <QDateTime>
 
 //TODOoptional: instead of tabs i could do just one text edit and provide checkboxes for what levels to show. Perhaps I should not allow the ignoring/hiding of error and fatal messages
+//TODOmb: give better default height. stupidly my main window is giving it about half the height :-/
 OsiosNotificationsWidget::OsiosNotificationsWidget(QWidget *parent)
     : QWidget(parent)
 {

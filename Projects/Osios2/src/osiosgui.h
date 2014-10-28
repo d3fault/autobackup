@@ -19,6 +19,7 @@ private:
     void usageAndQuit();
     void quit();
     void connectBackendToAndFromFrontendSignalsAndSlots();
+    void showMainWindow();
 };
 
 #endif // OSIOSGUI_H

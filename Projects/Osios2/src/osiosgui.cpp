@@ -4,6 +4,7 @@
 #include <QCoreApplication>
 #include <QMessageBox>
 #include <QUrl>
+#include <QDesktopWidget>
 
 #include "osiosprofilemanagerdialog.h"
 #include "osioscreateprofiledialog.h"
@@ -130,7 +131,7 @@ OsiosGui::OsiosGui(QObject *parent)
     m_Osios = new Osios(profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet, localServerPort_OrZeroToChooseRandomPort, bootstrapAddressesAndPorts);
     m_MainWindow = new OsiosMainWindow(m_Osios);
     connectBackendToAndFromFrontendSignalsAndSlots();
-    m_MainWindow->show();
+    showMainWindow();
 }
 OsiosGui::~OsiosGui()
 {
@@ -160,4 +161,26 @@ void OsiosGui::connectBackendToAndFromFrontendSignalsAndSlots()
 
     connect(m_Osios, SIGNAL(connectionColorChanged(int)), m_MainWindow, SLOT(changeConnectionColor(int)));
     connect(m_Osios, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), m_MainWindow, SIGNAL(presentNotificationRequested(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
+}
+void OsiosGui::showMainWindow()
+{
+    QSettings settings;
+    QByteArray previousResolutionSetting = settings.value("geometry").toByteArray();
+    if(previousResolutionSetting.isEmpty())
+    {
+        QDesktopWidget desktopWidget;
+        QSize screenResolution = desktopWidget.availableGeometry().size();
+        if(screenResolution.width() >= 1024 && screenResolution.height() >= 768)
+        {
+            m_MainWindow->resize(1024, 768); //TODOreq: conflicts with QMainWindow::loadState. whatever they last used should be used over this
+            m_MainWindow->show();
+        }
+        else
+            m_MainWindow->showMaximized();
+    }
+    else
+    {
+        //restoreGeometry() in main window's constructor will use whatever they used last time
+        m_MainWindow->show();
+    }
 }

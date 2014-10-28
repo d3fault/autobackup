@@ -64,7 +64,7 @@ Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseR
 
     QTimer *checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer = new QTimer(this);
     connect(checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer, SIGNAL(timeout()), this, SLOT(checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodes()));
-    checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer->start(1500 /*OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS <-- nope. check every 1.5 seconds, if any are older than 5 seconds. i could give each byte array it's own timer, but nahhh */);
+    checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer->start(OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS /*at worse, could take 10 seconds to time out. i could give each byte array it's own timer, but nahhh*/);
 
     connect(m_OsiosDht, SIGNAL(dhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)), this, SLOT(handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)));
 
@@ -101,7 +101,7 @@ void Osios::readInAllPreviouslySerializedEntries()
             //m_LocalPersistenceStream >> serializedTimelineNode;
             m_TimelineNodes.append(serializedTimelineNode);
             ++currentIndex;
-            m_LastSerializedTimelineIndex = currentIndex;
+            m_LastSerializedTimelineIndex = ++currentIndex;
         }
     }
 }
@@ -138,9 +138,9 @@ void Osios::checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerification
     while(recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.hasNext())
     {
         recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.next();
-        if(recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.value() >= QDateTime::currentMSecsSinceEpoch())
+        if(recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.value() <= QDateTime::currentMSecsSinceEpoch())
         {
-            //TODomb: retry? remove from list so the same error isn't emitted for the same timeline node in 5 more seconds?
+            //TODomb: retry? remove from list so the same error isn't emitted for the same timeline node in 5 more seconds? Weird, in my testing it already isn't emitted more than once. I kind of like that behavior, but I'm still pulling my hair out trying to figure out WHY it's happening (rather, isn't happening) in the first place. Oh woot figured it out, my logic was backwards xD
             emit notificationAvailable(tr("Failed to replicate a timeline node to ") + QString::number(OSIOS_NUM_NEIGHBORS_TO_WAIT_FOR_VERIFICATION_FROM_BEFORE_CONSIDERING_A_TIMELINE_NODE_VERIFIED) + tr(" neighbors within ") + QString::number(OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS/1000) + tr(" seconds!!"), OsiosNotificationLevels::ErrorNotificationLevel);
             if(m_OsiosDht->dhtState() != OsiosDhtStates::BootstrappingForFirstTimeState)
             {

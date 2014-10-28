@@ -51,6 +51,7 @@ void OsiosMainWindow::addDockWidgets()
 
     QDockWidget *notificationsPanelDockWidget = new QDockWidget(tr("Notifications"), this);
     notificationsPanelDockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetVerticalTitleBar);
+    notificationsPanelDockWidget->setObjectName("Osios Notifications");
 
     OsiosNotificationsWidget *osiosNotificationsWidget = new OsiosNotificationsWidget();
     notificationsPanelDockWidget->setWidget(osiosNotificationsWidget);
