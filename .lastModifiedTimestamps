@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1414433820
+Documents/minddump/:1414619223
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -568,6 +568,7 @@ Documents/minddump/asldfjsldkjfksjdflkjsdlfkjsdlkfjosdufljweroulksjdfousdlfkjsdo
 Documents/minddump/asldfkjaskdlfjsadlkjfsdlkfouwerksdaflksdfskjflkj.txt:1357416756
 Documents/minddump/asldfkjasldkfjsaoduflsdjfosudflksdfousdfljoweurlkjsfdouasfdljk.txt:1389766123
 Documents/minddump/asldfkjaslkfdjslkjowreulkjsdfousdlfkjsdaofuaslfdkouwerlkjosduifl.txt:1382646371
+Documents/minddump/asldfkjaslkfjslkadjflksdjaflkajsdflkjsdfkjsadlfkjsdlfkjsad.txt.yes.i.saw.the.freudian.slip.at.the.end.of.that.txt:1414619223
 Documents/minddump/asldfkjdalfjksoduewroiulaksdfjsdlfk.txt:1354665486
 Documents/minddump/asldfkjlksjdfkjsdflkjsdjflskdjflkjsdfosdufljkouewrljsdf.txt:1393963397
 Documents/minddump/asldfkjowuerlasjkdfouwrljsdofuwelrkjweroul.txt:1340901344
@@ -2481,7 +2482,7 @@ GloballySharedClasses/ssltcpclient.pri:1353348368
 GloballySharedClasses/ssltcpserver.pri:1353171172
 GloballySharedClasses/ssltcpservertestcerts.pri:1353171143
 GloballySharedClasses/standardinputnotifier.pri:1397025625
-Pictures/:1402197488
+Pictures/:1414618471
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -2524,6 +2525,7 @@ Pictures/Screenshot - 02062014 - 10\:56\:17 PM.png.7z:1391752762
 Pictures/Screenshot - 12162012 - 01\:32\:46 AM.png:1355646947
 Pictures/alien.species.interaction.or.even.humanless.surrogate.solution.svg:1367324786
 Pictures/dpl.dicks.everywhere.license.comparison.gave.up.but.you.get.the.point.svg:1356964724
+Pictures/encrypted.files.asdfkjaslkfjlskadjfklasdjfsa.svg:1414618490
 Pictures/failed.attempt.at.solving.or.understanding.gfs.and.how.to.use.it.as.a.kv.store.svg:1360734271
 Pictures/force.your.will.here.is.the.programming.design.even.though.this.is.a.construct.of.the.mind.svg:1363911100
 Pictures/i.am.building.a.giant.metaphorical.toggle.switch.asdfoiuwerlkjfdousdfj.svg:1364940499
@@ -2669,7 +2671,7 @@ Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.cpp:1
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:1409507797
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
 Projects/DesignEqualsImplementation2/:1412596378
-Projects/DesignEqualsImplementation2/design/:1412139857
+Projects/DesignEqualsImplementation2/design/:1414618544
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/:1411932839
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/:1411934573
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/design/:1411934133
@@ -2712,6 +2714,7 @@ Projects/DesignEqualsImplementation2/design/kiss.self.pep.talk.sdlfkjasldfjsldjf
 Projects/DesignEqualsImplementation2/design/lol.variadic.macros.ez.etcetc.safjslfdkjsdfouwerlkjsdflsdk.txt:1405767449
 Projects/DesignEqualsImplementation2/design/lsdjflsjfljsdfjslkfjsldkjflksjdflkjsdflkjsdfjsldkjfsdlkjfsd.txt:1406687463
 Projects/DesignEqualsImplementation2/design/multiple.top.level.objects.blah.boring.dont.read.adfljslfjasdlfkjsalkdfjsd.txt:1405769244
+Projects/DesignEqualsImplementation2/design/notes.on.slot.references.adskjfaslkdjfaslkjdfklsdjfou.txt:1414618544
 Projects/DesignEqualsImplementation2/design/nvm.sdfjlsdjflksdjlfkjsdklfjksdljfsjdflkjweorulsdjflksdjflkjsdfk.txt:1408535988
 Projects/DesignEqualsImplementation2/design/qobject.children.can.be.found.without.modifying.the.parents.in.between.as.a.way.to.connect.distant.objects.directly.txt:1407134590
 Projects/DesignEqualsImplementation2/design/quick.add.coming.soon.and.strategy.for.when.clang.encounters.unknown.types.outlined.txt:1408603171
@@ -3469,13 +3472,16 @@ Projects/Osios/src/OsiosGui.pro:1404008961
 Projects/Osios/src/osios.cpp:1404010898
 Projects/Osios/src/osios.h:1403729701
 Projects/Osios2/:1414341370
-Projects/Osios2/design/:1414543488
+Projects/Osios2/design/:1414618605
 Projects/Osios2/design/copycat.lol.typo.was.copycant.but.anyways.yea.its.kinda.like.monitor.clone.mode.and.should.not.be.the.default.except.when.utilized.for.screen.splicing.txt:1414543488
+Projects/Osios2/design/currentRollingHash-aka-CryptographicallyVerifiedReferenceToTimelineNode.txt:1414618605
+Projects/Osios2/design/osios.dht.hello.catch.up.old.timeline.nodes.protocol.txt:1414557256
 Projects/Osios2/design/osios2.initial.idea.txt:1414311199
+Projects/Osios2/design/sdlkfjsladkfjksldjfklsdjfklsjdflksjdflkjsdlkfjsldkf.txt:1414570379
 Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:1414439351
 Projects/Osios2/reverts/:1414326188
 Projects/Osios2/reverts/revertBackupIDontThinkINeedOrWantThisAnymoreForOsios2.diffOf5d375c768ac2c1f97e1bf2431693e4f4be2df01b:1414325772
-Projects/Osios2/src/:1414554016
+Projects/Osios2/src/:1414576850
 Projects/Osios2/src/mainmenuitems/:1414549626
 Projects/Osios2/src/mainmenuitems/writer/:1414549644
 Projects/Osios2/src/mainmenuitems/writer/eventemittingplaintextedit.cpp:1414549644
@@ -3499,22 +3505,22 @@ Projects/Osios2/src/iosioscopycatclient.h:1414549723
 Projects/Osios2/src/itimelinenode.cpp:1414551681
 Projects/Osios2/src/itimelinenode.h:1414553622
 Projects/Osios2/src/main.cpp:1414478196
-Projects/Osios2/src/osios.cpp:1414553414
+Projects/Osios2/src/osios.cpp:1414554254
 Projects/Osios2/src/osios.h:1414553157
 Projects/Osios2/src/osioscommon.h:1414472069
 Projects/Osios2/src/osioscreateprofiledialog.cpp:1414469620
 Projects/Osios2/src/osioscreateprofiledialog.h:1414453978
-Projects/Osios2/src/osiosdht.cpp:1414472227
-Projects/Osios2/src/osiosdht.h:1414472205
-Projects/Osios2/src/osiosdhtpeer.cpp:1414552054
-Projects/Osios2/src/osiosdhtpeer.h:1414358603
+Projects/Osios2/src/osiosdht.cpp:1414576712
+Projects/Osios2/src/osiosdht.h:1414576615
+Projects/Osios2/src/osiosdhtpeer.cpp:1414576803
+Projects/Osios2/src/osiosdhtpeer.h:1414576812
 Projects/Osios2/src/osiosgui.cpp:1414545661
 Projects/Osios2/src/osiosgui.h:1414477351
 Projects/Osios2/src/osiosmainwindow.cpp:1414549420
 Projects/Osios2/src/osiosmainwindow.h:1414548740
 Projects/Osios2/src/osiosnotificationswidget.cpp:1414476227
 Projects/Osios2/src/osiosnotificationswidget.h:1414470794
-Projects/Osios2/src/osiosprofilemanagerdialog.cpp:1414456222
+Projects/Osios2/src/osiosprofilemanagerdialog.cpp:1414569883
 Projects/Osios2/src/osiosprofilemanagerdialog.h:1414456009
 Projects/Osios2/src/osiossettings.h:1414450413
 Projects/Osios2/src/timelineserializer.cpp:1414551491

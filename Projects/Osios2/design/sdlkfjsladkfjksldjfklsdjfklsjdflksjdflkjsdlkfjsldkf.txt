@@ -1,0 +1,27 @@
+near "retry?" where i emit the crypto hash timeout, i should handle it better. write it in terms of "list of people i sent this timeline node to"
+every IP should  be retried with exponential backoff
+holy shit that's an excellent idea to do even in real life.
+i mean the public internet
+not just "every IP" as in "list of known dht node IPs", but 0.0.0.0-255.255.255.255 .
+
+As of now, I check for enough crypto verifications everyy 5 seconds, but I don't do(say?) anything to (whether it's do or say is a matter of whether it's private/trusted public/untrusted) the nodes I sent it to. In fact, I don't even have a list of them. I have a list of known good connections at the time when the timeline node timed out (determined to be good solely by the fact that they haven't timed out YET (but we)), which means I don't know that I sent it to any of them. I need a list, and 3 lists of 3 is cheap.
+
+Aww shit this is boiling down to whether or not I EVER want this to be a public dht and I think right now the answer for that is no.
+
+if(
+
+
+
+
+
+/*NOPE i just reinvented wheel: for any nodes that did not cryptographically verify within 5 seconds, we go back to the "hello" state (we initiate it) and restart the process. as an implemented later TODOoptimization, i could have the receiver of any hello message from a node who is not disconnected (is either good or in connecting/bootstrapping state*/
+
+i do go back to the hello state for any node that did not cryptographically verify within 5 seconds. the going back to hello state is when i take measurements to see if i jumped over the line between bootstrapped state or not (>= 2 neighbors).
+
+
+ok side note (still going to trick myself with 3): i should use 4 nodes and then if i ever drop down to 3 for [some reason i forget that is somehow significant and the entire point but guh can't remember], i should then use 6 because it eliminates to a much further degree the problem. i'm stupid, why WOULDN'T i ever get down to 3?
+
+So since 3 is my goal of always maintaining, I should record 5. 6 is a tad overkill, 4 is a tad under. 3 is trillions of times better than 2. 2 is several orders of magnitude better than 1. 1 is retarded, and most all operating systems/computers ("kits", "widgets"(the economics class variety)) use 1 in their base packages (and even the higher end packages just throw in RAID and try to run it by you as a data backup solution -_-).
+
+
+The minimum period between two hellos (sent by us, that is) is governed by exponential backoff (abstract it away from the osios logic, perhaps in the dht layer is fine)

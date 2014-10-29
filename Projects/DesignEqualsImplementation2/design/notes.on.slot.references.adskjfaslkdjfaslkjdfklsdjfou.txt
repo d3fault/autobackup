@@ -1,0 +1,4 @@
+In designEquals, it should be "earliest definition" instead of "first definition", to account for the ability to delete. unless there is no delete i suppose (but that would be a programming nightmare. just record deletes and allow. so the formal definition would be "earliest definition still referenced by unabandoned code" or perhaps better "earliest definition being actively maintained" (but that implies a release so idk))
+
+I do would like to be able to reference the "first definintion, regardless of whether or not it is API compatible and/or considered 'maintained'/in-use/whatever" (for archival/nostalgia reasons), but when a DESIGN EQUALS IMPLEMENTATION USE CASE "SLOT REFERENCE" is being created, we want the one that's going to fit (likely a revision of that first definition).
+

@@ -5,13 +5,17 @@
 
 #include "timelineserializer.h"
 
-OsiosDhtPeer::OsiosDhtPeer(QAbstractSocket *socketToPeer, QObject *parent)
+OsiosDhtPeer::OsiosDhtPeer(QAbstractSocket *socketToPeer, DhtPeerAddressAndPort peerConnectionInfo, QObject *parent)
     : QObject(parent)
     , m_SocketToPeer(socketToPeer)
     , m_StreamToPeer(socketToPeer)
+    , m_QTcpSocketHasToldUsWeAreConnected(false)
+    , m_PeerConnectionInfo(peerConnectionInfo)
 {
     connect(socketToPeer, SIGNAL(connected()), this, SLOT(handleSocketToPeerConnected()));
     connect(socketToPeer, SIGNAL(readyRead()), this, SLOT(handleSocketToPeerReadyRead()));
+    connect(socketToPeer, SIGNAL(disconnected()), this, SLOT(emitConnectionNoLongerConsideredGood()));
+    connect(socketToPeer, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(emitConnectionNoLongerConsideredGood()));
 }
 void OsiosDhtPeer::sendNewTimelineNodeForFirstStepOfCryptographicVerification(TimelineNode action)
 {
@@ -30,6 +34,7 @@ void OsiosDhtPeer::sendOsiosMessageToDhtPeer(OsiosDhtMessageTypes::OsiosDhtMessa
 }
 void OsiosDhtPeer::handleSocketToPeerConnected()
 {
+    m_QTcpSocketHasToldUsWeAreConnected = true;
     emit osiosDhtPeerConnected(this);
 }
 void OsiosDhtPeer::handleSocketToPeerReadyRead()
@@ -82,4 +87,13 @@ void OsiosDhtPeer::handleSocketToPeerReadyRead()
             continue;
         }
     }
+}
+void OsiosDhtPeer::emitConnectionNoLongerConsideredGood()
+{
+    if(m_QTcpSocketHasToldUsWeAreConnected)
+    {
+        m_QTcpSocketHasToldUsWeAreConnected = false; //the sole purpose of this flag is just to not double send this signal. the receiver of the signal should delete us (but keep the ip/port around for exponential backoff retrying) TODOreq
+        emit connectionNoLongerConsideredGood(this);
+    }
+    deleteLater(); //TODOmb: the listener of above signal might never hear it, if he is ever not on the same thread as us (right?). implicit sharing solves this, but qobject signal/slot disconnection at least means we won't crash
 }

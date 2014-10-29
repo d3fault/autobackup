@@ -77,7 +77,7 @@ Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseR
 
     QTimer *checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer = new QTimer(this);
     connect(checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer, SIGNAL(timeout()), this, SLOT(checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodes()));
-    checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer->start(OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS /*at worse, could take 10 seconds to time out. i could give each byte array it's own timer, but nahhh*/);
+    checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer->start(OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS/2 /* check every 2.5 seconds if the any of the timeline nodes haven't been verified in 5 seconds. our worst case scenario is now 7.5 seconds xD */);
 
     connect(m_OsiosDht, SIGNAL(dhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)), this, SLOT(handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)));
 

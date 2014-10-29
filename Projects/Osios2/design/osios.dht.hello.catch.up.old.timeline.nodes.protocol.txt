@@ -1,0 +1,28 @@
+Osios needs a serialize-able application state. At a glance I appear to already be working on this, but I'd argue that my timeline node stream is (and/or should be) a "series of [serializable] mutations to that serialize-able application state". Later it would be smart to have application-state-checkpoints to speed up loading from disk, but those are stupid to try to implement now seeing as the serializable app state isn't designed. Still definitely worth keeping in mind when designing the app state though.
+
+I say the app state should be serializable, but that doesn't mean it should always be serialized (would be massive waste of space to serialize it entirely after every mutation).
+
+Additionally, perhaps the standard crypto verification of timeline nodes should incorporate the app state byte array along with the new timeline node byte array (perhaps this also warrants timeline node ids be sent across network, perhaps not). It's expensive to serialize-to-disk the app state on each mutation, yes, but not to hash with every mutation.
+
+Incorporating app state bytes with the timeline node bytes during the hash process also better connects the timeline nodes linearly, which is why I don't think ordering is necessary.
+
+As of right now I'm not saving to disk the cyrpto hashes of each timeline node, but if I wanted to implement "catch up" network messages then I'd certainly need some way to refer to positions in the timeline (and keeping every crypto hash is one way (perhaps too inefficient? git solves the problem by making the user manually commit. if git did commit-on-every-keystroke like meh, it would be stupid inefficient) of doing that)
+
+I'm reminded of a design from years ago: record average characters per second in a sentence (which is either a certain amount of characters, trigered by a period/etc, or a certain amount of time) and that keeps you from having to save the timestamp for EACH character (only first timestamp needs to be saved, along with average characters per second). My point in bringing it up is that I wonder if a keystroke should really modify the app state UNTIL it is incorporated in a "sentence" the sending dht-node does replicate each keystroke, but then it sends a SYNC-SENTENCE timeline node message for all the previous keystrokes (sync sentence should have a hash of the previosly entered keys, for added verification TODOreq but maybe this is overkill/pointless -- and that hash of keys is probably only for network comm, not disk, but idfk)
+
+
+
+Catch-up by itself is probably not that hard, off the tip of my fingers:
+
+0) Joiner: Hello i am d3fault, and I have 3 timeline nodes //first dht connect message (and subsequent re-connects). maybe I created the 3 while being offline, maybe the joinee was offline when I was online and created those 3, w/e
+1) Joinee: OHai d3fault, I am JimboKnives and I have 0 (or a commit-id esq) of your timeline nodes; so can I have all of them starting with index 0? How many of my 50 (or commit-id esq) timeline nodes do you have?
+2) Joiner: Ok I'll start sending all of mine starting from index 0. I have 20 of yours, so can I have all of them starting with index 20?
+*joinee and joiner exchange the missing timeline nodes*
+
+Should I go into catch-up mode or just say bootstrapped and then add flagging? Depends entirely if a node can be cryptographically verified standalone (without the entire history) really, but design considerations are more important than that technical requirement anyways. Also, the joinee is probably already bootstrapped but STILL needs to "catch up" the joiner's timeline nodes! So I suppose "catch up" should have nothing to do with bootstrap state. ((Osios*)this)->catchUp(OsiosDhtPeer *peerToRequestOldTimelineNodesFrom, int skip /*, int numNodes -- we want all, so... */);
+Pretty basic/easy yea, but right now when a new timeline node is generated, it's sent to every healthy connection. I don't think I want to send NEW timeline nodes until the catching up is done, so I need to refactor that a bit. Also TO DOnereq(just changed the protocol a bit, now you ask for "every node after X, starting with X"): by the time the catching up is complete, new nodes may have been generated (but not sent, as per the previous sentence).
+The dht nodes put each other in special lists until the catching up is complete and the last node generated has been cryptographically verified, and then they join the healthy connections. 
+QList<OsiosDhtPeer*, int /* lastSentTimelineNodeId(or commit-id-esq)ThatThisPeerCryptographicallyVerified*/> m_ListOfNodesCatchingUpFromMyTimeline;
+the connections in m_ListOfNodesCatchingUpFromMyTimeline are not considered when determining the healthy/bootstrapped state, since they aren't receiving our recently-generated timline nodes [yet]
+
+Obviously libtorrent comes to mind to speed up the catching up, FUCK THAT FOR NOW.

@@ -1,6 +1,7 @@
 #include "osiosprofilemanagerdialog.h"
 
 #include <QVBoxLayout>
+#include <QLabel>
 #include <QComboBox>
 #include <QSettings>
 #include <QHBoxLayout>
@@ -16,8 +17,9 @@ const int OsiosProfileManagerDialog::ComboBoxIndexThatIndicatesUnchosen = 0;
 OsiosProfileManagerDialog::OsiosProfileManagerDialog(QWidget *parent)
     : QDialog(parent)
 {
-    QVBoxLayout *myLayout = new QVBoxLayout();
+    QHBoxLayout *myLayout = new QHBoxLayout();
 
+    QLabel *existingProfilesLabel = new QLabel(tr("Existing Profiles:"));
     m_ExistingProfilesComboBox = new QComboBox(); //TODOoptional: label to the left saying "existing profiles"
     m_ExistingProfilesComboBox->addItem(tr("Select Profile")); //correlates with ComboBoxIndexThatIndicatesUnchosen. TODOoptional: when there was a last used profile in settings, default to it in the combo box
 
@@ -32,17 +34,18 @@ OsiosProfileManagerDialog::OsiosProfileManagerDialog(QWidget *parent)
         m_ExistingProfilesComboBox->setCurrentText(lastUsedProfile);
     }
 
-    QPushButton *createProfileButton = new QPushButton(tr("Create Profile"));
+    QVBoxLayout *buttonsColumn = new QVBoxLayout();
 
-    QHBoxLayout *okCancelRow = new QHBoxLayout();
-    QPushButton *cancelButton = new QPushButton(tr("Cancel"));
     m_OkButton = new QPushButton(tr("Ok"));
-    okCancelRow->addWidget(cancelButton);
-    okCancelRow->addWidget(m_OkButton);
+    QPushButton *createProfileButton = new QPushButton(tr("Create Profile"));
+    QPushButton *cancelButton = new QPushButton(tr("Cancel"));
+    buttonsColumn->addWidget(m_OkButton);
+    buttonsColumn->addWidget(createProfileButton);
+    buttonsColumn->addWidget(cancelButton);
 
+    myLayout->addWidget(existingProfilesLabel);
     myLayout->addWidget(m_ExistingProfilesComboBox);
-    myLayout->addWidget(createProfileButton);
-    myLayout->addLayout(okCancelRow);
+    myLayout->addLayout(buttonsColumn);
 
     setLayout(myLayout);
 
