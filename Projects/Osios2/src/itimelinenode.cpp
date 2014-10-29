@@ -49,7 +49,7 @@ ITimelineNode::ITimelineNode(const ITimelineNode &other)
     : TimelineNodeType(other.TimelineNodeType)
     , UnixTimestamp(other.UnixTimestamp)
 { }
-QByteArray ITimelineNode::toByteArray()
+QByteArray ITimelineNode::toByteArray(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotToPutTheProfileNameInTheByteArray_YouShouldChooseYesIfNetworkMessageAndNoIfSavingToDisk)
 {
     QByteArray timelineNodeRawByteArray;
 
@@ -57,16 +57,23 @@ QByteArray ITimelineNode::toByteArray()
         QBuffer timelineNodeRawBuffer(&timelineNodeRawByteArray);
         timelineNodeRawBuffer.open(QIODevice::WriteOnly);
         QDataStream timelineNodeSerializer(&timelineNodeRawBuffer);
+
+        if(whetherOrNotToPutTheProfileNameInTheByteArray_YouShouldChooseYesIfNetworkMessageAndNoIfSavingToDisk == TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayDoesContainProfileName)
+        {
+            //profile name comes just before timeline node type
+            timelineNodeSerializer << ProfileName; //TODOreq: after reading a/some timeline node[s] from disk, the ProfileName must be set by whatever we know it to be (could be deduced from the very first timeline node (profile creation declaration) ofc)
+        }
+
         timelineNodeSerializer << *this;
     }
 
     return timelineNodeRawByteArray;
 }
-ITimelineNode *ITimelineNode::fromByteArray(/*const */QByteArray &timelineNode) //TODOreq: this method gives the caller ownership of the returned timeline node, so they need to delete it somewhere too...
+ITimelineNode *ITimelineNode::fromByteArray(/*const */QByteArray &timelineNode, TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt) //TODOreq: this method gives the caller ownership of the returned timeline node, so they need to delete it somewhere too...
 {
     QBuffer timelineNodeBuffer(&timelineNode);
     timelineNodeBuffer.open(QIODevice::ReadOnly);
-    return TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(&timelineNodeBuffer);
+    return TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(&timelineNodeBuffer, whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
 }
 #if 0
 ITimelineNode *ITimelineNode::fromByteArray(const QByteArray &inputByteArray)

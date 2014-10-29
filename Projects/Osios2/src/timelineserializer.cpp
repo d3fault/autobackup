@@ -43,8 +43,20 @@ bool TimelineSerializer::deserializeTimelineFromDisk(Osios *osiosContainingTimel
     return true;
 }
 #endif
-ITimelineNode *TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(QIODevice *ioDeviceToDeserializeFrom)
+ITimelineNode *TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(QIODevice *ioDeviceToDeserializeFrom, TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt)
 {
+    QDataStream readStream(ioDeviceToDeserializeFrom);
+    QString profileNameMaybe;
+    if(whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt == TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayDoesContainProfileName)
+    {
+        //profile name comes just before timeline node type (if it's there at all (only exists in network variants))
+        readStream >> profileNameMaybe;
+        if(profileNameMaybe.trimmed().isEmpty())
+        {
+            qDebug("profile name empty on timeline node received over network, wtf?"); //TODOreq: use notification system
+        }
+    }
+
     //peek type
     QByteArray timelineNodeHeaderPeekByteArray = ioDeviceToDeserializeFrom->peek(sizeof(quint32) /*timeline node type*/);
     QBuffer timelineNodeHeaderPeekBuffer(&timelineNodeHeaderPeekByteArray);
@@ -57,8 +69,13 @@ ITimelineNode *TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNode
     ITimelineNode *instantiatedToDerived = instantiateTimelineNodeBasedOnTimelineNodeType(static_cast<TimelineNodeTypeEnum::TimelineNodeTypeEnumActual>(timelineNodeType));
 
     //read type
-    QDataStream readStream(ioDeviceToDeserializeFrom);
+
     readStream >> *instantiatedToDerived;
+
+    if(!profileNameMaybe.isEmpty())
+    {
+        instantiatedToDerived->ProfileName = profileNameMaybe;
+    }
 
     return instantiatedToDerived;
 }

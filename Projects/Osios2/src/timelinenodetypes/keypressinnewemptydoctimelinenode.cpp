@@ -10,7 +10,7 @@ KeyPressInNewEmptyDocTimelineNode::~KeyPressInNewEmptyDocTimelineNode()
 { }
 QString KeyPressInNewEmptyDocTimelineNode::humanReadableShortDescription() const
 {
-    return "Key Press Event (" + QKeySequence(KeyPressed).toString() + ")";
+    return QObject::tr("Key Press Event (") + QKeySequence(KeyPressed).toString() + ")";
 }
 QDataStream &KeyPressInNewEmptyDocTimelineNode::save(QDataStream &outputStream) const
 {

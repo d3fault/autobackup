@@ -3,13 +3,13 @@
 #include <QVBoxLayout>
 #include "writer/eventemittingplaintextedit.h"
 
-WriterTab_Widget_ForMainMenuTabWidget::WriterTab_Widget_ForMainMenuTabWidget(IOsiosClient *osiosClient, QWidget *parent)
+WriterTab_Widget_ForMainMenuTabWidget::WriterTab_Widget_ForMainMenuTabWidget(IOsiosClient *osiosClient, IOsiosCopycatClient *copycatClient, QWidget *parent)
     : IActivityTab_Widget_ForMainMenuTabWidget(parent)
 {
     QVBoxLayout *myLayout = new QVBoxLayout();
     myLayout->setContentsMargins(OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS);
 
-    myLayout->addWidget(new EventEmittingPlainTextEdit(osiosClient));
+    myLayout->addWidget(new EventEmittingPlainTextEdit(osiosClient, copycatClient));
     setLayout(myLayout);
 
     connect(this, SIGNAL(actionOccurred(TimelineNode)), osiosClient->asQObject(), SIGNAL(actionOccurred(TimelineNode)));

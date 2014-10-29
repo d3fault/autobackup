@@ -13,7 +13,7 @@ class TimelineSerializer : public QObject
 {
     Q_OBJECT
 public:
-    static ITimelineNode *peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(QIODevice *ioDeviceToDeserializeFrom);
+    static ITimelineNode *peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(QIODevice *ioDeviceToDeserializeFrom, TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
 
     explicit TimelineSerializer(QObject *parent = 0);
 #if 0

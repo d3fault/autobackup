@@ -4,7 +4,7 @@
 #include "../itimelinenode.h"
 #include "../iactivitytab_widget_formainmenutabwidget.h"
 
-#define MAIN_MENU_DEFAULT_ACTIVITY TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode
+#define MAIN_MENU_DEFAULT_ACTIVITY MainMenuActivitiesEnum::TimelineViewActivity
 
 class MainMenuActivityChangedTimelineNode : public ITimelineNode
 {
@@ -23,7 +23,7 @@ class MainMenuActivityChangedTimelineNode : public ITimelineNode
     { }
     virtual ~MainMenuActivityChangedTimelineNode();
 
-    int NewMainMenuActivity;
+    MainMenuActivitiesEnum::MainMenuActivitiesEnumActual NewMainMenuActivity;
 
     virtual QString humanReadableShortDescription() const;
 protected:

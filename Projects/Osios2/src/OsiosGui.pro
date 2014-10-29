@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     osiosdhtpeer.cpp \
     osiosdht.cpp \
     osiosprofilemanagerdialog.cpp \
-    osiosnotificationswidget.cpp
+    osiosnotificationswidget.cpp \
+    timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.cpp
 
 HEADERS  += osiosmainwindow.h \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.h \
@@ -48,6 +49,8 @@ HEADERS  += osiosmainwindow.h \
     osiosdht.h \
     osiosprofilemanagerdialog.h \
     osiossettings.h \
-    osiosnotificationswidget.h
+    osiosnotificationswidget.h \
+    iosioscopycatclient.h \
+    timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h
 
 include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)

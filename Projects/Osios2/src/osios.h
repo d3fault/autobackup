@@ -24,6 +24,8 @@ public:
     explicit Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseRandomPort, ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts, QObject *parent = 0);
     ~Osios();
     QList<TimelineNode> timelineNodes() const;
+
+    void setCopycatModeEnabledForUsername(const QString &nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone);
 private:
     friend class TimelineSerializer;
 
@@ -36,8 +38,10 @@ private:
     QDataStream m_LocalPersistenceStream;
     OsiosDht *m_OsiosDht;
 
-    void readInAllPreviouslySerializedEntries();
-    ITimelineNode *deserializeNextTimelineNode();
+    QString m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone;
+
+    void readInAllMyPreviouslySerializedLocallyEntries();
+    ITimelineNode *deserializeNextTimelineNode(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
     void serializeMyTimelineAdditionsLocally();
     void serializeTimelineActionLocally(TimelineNode action);
     void cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action);
@@ -54,9 +58,13 @@ private:
         return inputString + "/";
     }
 signals:
+    //regular
     void connectionColorChanged(int color);
     void notificationAvailable(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel = OsiosNotificationLevels::StandardNotificationLevel);
     void timelineNodeAdded(TimelineNode action);
+
+    //copycat
+    void timelineNodeReceivedFromCopycatTarget(TimelineNode timelineNode);
 public slots:
     void recordMyAction(TimelineNode action);
 private slots:

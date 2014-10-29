@@ -15,7 +15,7 @@ OsiosDhtPeer::OsiosDhtPeer(QAbstractSocket *socketToPeer, QObject *parent)
 }
 void OsiosDhtPeer::sendNewTimelineNodeForFirstStepOfCryptographicVerification(TimelineNode action)
 {
-    QByteArray actionPayload = action->toByteArray(); //we're peeking into the qbytearray's size when we read
+    QByteArray actionPayload = action->toByteArray(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayDoesContainProfileName); //we're peeking into the qbytearray's size when we read
     //m_StreamToPeer << actionPayload;
     sendOsiosMessageToDhtPeer(OsiosDhtMessageTypes::SengingNewTimelineNodeForFirstStepOfCryptographicVerification, actionPayload);
 }
@@ -72,7 +72,7 @@ void OsiosDhtPeer::handleSocketToPeerReadyRead()
 
         if(dhtMessageType == OsiosDhtMessageTypes::SengingNewTimelineNodeForFirstStepOfCryptographicVerification)
         {
-            TimelineNode theTimelineNodeReceivedFromPeer = ITimelineNode::fromByteArray(payload);
+            TimelineNode theTimelineNodeReceivedFromPeer = ITimelineNode::fromByteArray(payload, TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayDoesContainProfileName);
             emit timelineNodeReceivedFromPeer(this, theTimelineNodeReceivedFromPeer);
             continue;
         }

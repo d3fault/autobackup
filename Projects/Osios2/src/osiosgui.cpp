@@ -21,12 +21,36 @@ OsiosGui::OsiosGui(QObject *parent)
     QStringList argz = QCoreApplication::arguments();
     argz.removeFirst(); //filepath
 
+    QString nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //aka "monitor clone" mode
+    int copyCatArgIndex = argz.indexOf("--copycat");
+    if(copyCatArgIndex != -1)
+    {
+        if((copyCatArgIndex+1) >= argz.size())
+        {
+            usageAndQuit();
+            return;
+        }
+        nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = argz.at(copyCatArgIndex+1); //TODOreq: sanitize this and other cli args
+        argz.removeAt(copyCatArgIndex);
+        argz.removeAt(copyCatArgIndex);
+        if(argz.indexOf("--copycat") != -1)
+        {
+            usageAndQuit();
+            return;
+        }
+    }
+
     bool profileManagerRequested = false;
     int profileManagerArgIndex = argz.indexOf("--profile-manager");
     if(profileManagerArgIndex != -1)
     {
         profileManagerRequested = true;
         argz.removeAt(profileManagerArgIndex);
+        if(argz.indexOf("--profile-manager") != -1)
+        {
+            usageAndQuit();
+            return;
+        }
     }
 
     QString profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet;
@@ -41,6 +65,11 @@ OsiosGui::OsiosGui(QObject *parent)
         profileToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet = argz.at(profileSpecificationArgIndex+1);
         argz.removeAt(profileSpecificationArgIndex);
         argz.removeAt(profileSpecificationArgIndex);
+        if(argz.indexOf("--profile") != -1)
+        {
+            usageAndQuit();
+            return;
+        }
     }
 
     quint16 localServerPort_OrZeroToChooseRandomPort = 0;
@@ -132,6 +161,16 @@ OsiosGui::OsiosGui(QObject *parent)
     m_MainWindow = new OsiosMainWindow(m_Osios);
     connectBackendToAndFromFrontendSignalsAndSlots();
     showMainWindow();
+
+    if(!nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone.isEmpty())
+    {
+        //copycat mode (for now I'm NOT going to disable input on the node that is going into copycat mode (this one). inputting anything using kb/mouse will lead to undefined results (i think that disabling input may be a waste of my efforts, since the contents will USUALLY not be seen [directly] and only used for screen splicing. to polish the monitor clone mode, however, (low priority), i should disable the user input. hell maybe just doing mainmenu.setReadOnly would do it??? rofl. it will seem weird, but i will deal with it for now, to be using profile b when copycatting profile a (b's timeline log will mirror a's in that case (unless i disconnect the actionOccured signal))
+        //connect(m_Osios, SIGNAL(timelineNodeReceivedFromDhtPeer(OsiosDhtPeer*, TimelineNode)), m_MainWindow, SLOT(synthesizeEventUsingTimelineNodeReceivedFromDhtPeer(OsiosDhtPeer*,TimelineNode))); //TODOoptimization: only emit the signal for the copycat peer (take t
+        //m_MainWindow->setCopycat
+        m_MainWindow->setCopycatModeEnabled(true);
+        m_Osios->setCopycatModeEnabledForUsername(nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone); //can only be copycatting one person at a time (in the normal mode. i'm going to make hacks building on top of this that lets me copycat 2 others and splice screens etc xD)
+        connect(m_Osios, SIGNAL(timelineNodeReceivedFromCopycatTarget(TimelineNode)), m_MainWindow, SLOT(synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(TimelineNode)));
+    }
 }
 OsiosGui::~OsiosGui()
 {

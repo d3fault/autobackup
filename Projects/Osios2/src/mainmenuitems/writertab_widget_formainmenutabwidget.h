@@ -5,11 +5,13 @@
 
 #include "../iosiosclient.h"
 
+class IOsiosCopycatClient;
+
 class WriterTab_Widget_ForMainMenuTabWidget : public IActivityTab_Widget_ForMainMenuTabWidget, public IOsiosClient /* relay client only */
 {
     Q_OBJECT
 public:
-    explicit WriterTab_Widget_ForMainMenuTabWidget(IOsiosClient *osiosClient, QWidget *parent = 0);
+    explicit WriterTab_Widget_ForMainMenuTabWidget(IOsiosClient *osiosClient, IOsiosCopycatClient *copycatClient, QWidget *parent = 0);
     virtual MainMenuActivitiesEnum::MainMenuActivitiesEnumActual mainMenuActivityType() const;
     QObject *asQObject();
 signals:

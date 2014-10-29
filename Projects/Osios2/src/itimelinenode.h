@@ -10,8 +10,19 @@ public:
     enum TimelineNodeTypeEnumActual
     {
         INITIALNULLINVALIDTIMELINENODETYPE = 0
-        , MainMenuActivityChangedTimelineNode = 1
-        , KeyPressedInNewEmptyDocTimelineNode = 2
+        , ProfileCreationAnnounce_aka_GenesisTimelineNode = 1
+        , MainMenuActivityChangedTimelineNode = 2
+        , KeyPressedInNewEmptyDocTimelineNode = 3
+    };
+};
+
+class TimelineNodeByteArrayContainsProfileNameEnum //perhaps better description is "serialize for network" and "serialize for disk"
+{
+public:
+    enum TimelineNodeByteArrayContainsProfileNameEnumActual
+    {
+          TimelineNodeByteArrayDoesContainProfileName = 0 // serializing to/from network
+        , TimelineNodeByteArrayDoesNotContainProfileName = 1 // serializing to/from disk (the profile name is the first timeline node of the stream on disk
     };
 };
 
@@ -22,8 +33,8 @@ typedef /*QSharedPointer<*/ITimelineNode*/*>*/ TimelineNode; //is only technical
 class ITimelineNode
 {
 public:
-    QByteArray toByteArray();
-    static ITimelineNode *fromByteArray(/*const */QByteArray &timelineNode);
+    QByteArray toByteArray(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotToPutTheProfileNameInTheByteArray_YouShouldChooseYesIfNetworkMessageAndNoIfSavingToDisk);
+    static ITimelineNode *fromByteArray(/*const */QByteArray &timelineNode, TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
 #if 0
     static TimelineNode makeTimelineNode(ITimelineNode *rawITimelineNodePointer) //only exists for the deleteLater usage
     {
@@ -35,6 +46,8 @@ public:
     explicit ITimelineNode(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeType, qint64 UnixTimestamp_OrZeroToUseCurrentTime);
     explicit ITimelineNode(const ITimelineNode &other);
     virtual ~ITimelineNode();
+
+    QString ProfileName; //sent across network with each timeline node, but only ever serialized once (first timeline node serialized)
 
     TimelineNodeTypeEnum::TimelineNodeTypeEnumActual TimelineNodeType;
     qint64 UnixTimestamp;

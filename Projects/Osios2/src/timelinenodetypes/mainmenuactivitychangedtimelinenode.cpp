@@ -1,5 +1,7 @@
 #include "mainmenuactivitychangedtimelinenode.h"
 
+#include <QObject>
+
 //increase if more tabs are added
 #define OsiosMainMenuSerializedDataType quint8
 
@@ -11,7 +13,7 @@ MainMenuActivityChangedTimelineNode::~MainMenuActivityChangedTimelineNode()
 { }
 QString MainMenuActivityChangedTimelineNode::humanReadableShortDescription() const
 {
-    return "Main Menu Activity Changed To: " + QString::number(NewMainMenuActivity); //TODOoptional: human readable instead of enum int value
+    return QObject::tr("Main Menu Activity Changed To: ") + QString::number(NewMainMenuActivity); //TODOoptional: human readable instead of enum int value
 }
 QDataStream &MainMenuActivityChangedTimelineNode::save(QDataStream &outputStream) const
 {

@@ -14,10 +14,14 @@
 #include "osiosdht.h"
 #include "osiosdhtpeer.h"
 #include "osiossettings.h"
+#include "timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h"
 
 #define OSIOS_TIMELINE_FILENAME "timeline.bin"
 
 #define OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS 5000
+
+//this define below doesn't matter, but needs to be CONSISTENT (so the hash matches) on both the sender of the timeline node and the receiver/crypto-hash-verifier. I decided to let it keep the profile name in it so that the algorithms have just a bit more data to work with (and this hopefully avoids collisions a tad)
+#define WHETHER_OR_NOT_TO_HAVE_PROFILE_NAME_IN_TIMELINE_NODE_WHEN_COMPUTING_CRYPTOGRAPHIC_HASH TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayDoesContainProfileName
 
 //TODOoptional: COW on the timeline nodes (the seraialized bytes, that is) could be achieved with a timeline node called "import state from doc x, mutate with empty character" (or perhaps these two are separated), effectively incrementing the reference count (although delete is not in plans anyways)
 //TODOoptional: in addition to (or perhaps integrated INTO) the red/green "bar of color", i could create reproduceable patterns of color using the latest timeline node hash, so that i can look for that pattern on each of my monitors/nodes and see that they are all 3 synchronized. it's mildly cryptographic verification performed by a human (since doing so in an extreme manner would require you to sit all day every day typing in things on a calculator)
@@ -35,6 +39,7 @@ Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseR
     settings.endGroup();
     QString fileName = appendSlashIfNeeded(dataDir) + OSIOS_TIMELINE_FILENAME;
     qDebug() << "file path of timeline for current profile: " << fileName;
+    bool newUser = !QFile::exists(fileName);
     m_LocalPersistenceDevice = new QFile(fileName, this);
     if(!m_LocalPersistenceDevice->open(QIODevice::ReadWrite))
     {
@@ -47,15 +52,23 @@ Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseR
 
     qRegisterMetaType<TimelineNode>("TimelineNode");
 
+    if(newUser)
+    {
+        m_LocalPersistenceStream << static_cast<qint32>(1); //new user, so no timeline nodes, so write 1 size placeholder into file, which is rewound to and updated in our destructor. we write 1 instead of 0 because the 1 we are talking about is the very next statement. we also want the file header to be accurate for the call to readInAllMyPreviouslySerializedLocallyEntries. yes it's inefficient to write and re-read a moment later like that, but idfc (and sheeit prolly still in kernel memory anyways so fuggit)
+
+        //Hack: usually the front-end tells us about timeline nodes via action occured. this is one exception
+        ProfileCreationAnnounce_aka_GenesisTimelineNode *profileCreationAnnounceTimelineNode = new ProfileCreationAnnounce_aka_GenesisTimelineNode(profileName);
+        recordMyAction(profileCreationAnnounceTimelineNode); //TODOreq: since there is no "catch up" message/mode-of-connecting, and since we are in constructor, calling my usual recordMyAction() method will work as far as getting the action to serialize to disk, but won't ever get it to propagate to neighbor since the dht is neither instantiated nor bootstrapping at this point!
+    }
+
     //read in all previously serialized entries, which also puts the write cursor at the end for appending
-    readInAllPreviouslySerializedEntries();
+    readInAllMyPreviouslySerializedLocallyEntries();
 
     int timelineSize = m_TimelineNodes.size();
     qDebug() << "Read in " << QString::number(timelineSize) << " previously serialized entries in the timeline";
     if(timelineSize == 0)
     {
-        //no timeline nodes, so write zero size placeholder into file, which is rewound to and updated in our destructor
-        m_LocalPersistenceStream << timelineSize;
+        //TODOoptional: error
     }
 
     QTimer *diskFlushTimer = new QTimer(this);
@@ -86,18 +99,22 @@ QList<TimelineNode> Osios::timelineNodes() const
 {
     return m_TimelineNodes;
 }
-void Osios::readInAllPreviouslySerializedEntries()
+void Osios::setCopycatModeEnabledForUsername(const QString &nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone)
 {
-    while(!m_LocalPersistenceStream.atEnd())
+    m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone;
+}
+void Osios::readInAllMyPreviouslySerializedLocallyEntries()
+{
+    if(!m_LocalPersistenceStream.atEnd())
     {
-        int numTimelineNodes;
+        qint32 numTimelineNodes;
         //if(m_LocalPersistenceStream.device()->bytesAvailable() < sizeof(numTimelineNodes)) -- not network so yea
         //    return;
         m_LocalPersistenceStream >> numTimelineNodes;
         int currentIndex = m_TimelineNodes.size()-1;
         for(int i = 0; i < numTimelineNodes; ++i)
         {
-            ITimelineNode *serializedTimelineNode = deserializeNextTimelineNode();
+            ITimelineNode *serializedTimelineNode = deserializeNextTimelineNode(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayDoesNotContainProfileName);
             //m_LocalPersistenceStream >> serializedTimelineNode;
             m_TimelineNodes.append(serializedTimelineNode);
             ++currentIndex;
@@ -105,10 +122,10 @@ void Osios::readInAllPreviouslySerializedEntries()
         }
     }
 }
-ITimelineNode *Osios::deserializeNextTimelineNode()
+ITimelineNode *Osios::deserializeNextTimelineNode(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt)
 {
     //we have to return a pointer because we have to instantiate the derived type
-    return TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(m_LocalPersistenceDevice);
+    return TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(m_LocalPersistenceDevice, whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
 }
 //batch write, but really doesn't make much difference since we flush every X seconds anyways
 void Osios::serializeMyTimelineAdditionsLocally()
@@ -122,6 +139,7 @@ void Osios::serializeMyTimelineAdditionsLocally()
 }
 void Osios::serializeTimelineActionLocally(TimelineNode action)
 {
+    //we side-step the "write profile name in action?" logic when reading/writing to/from disk, but that what we want since they aren't wrapped in byte arrays when stored locally (right?), guh maybe splitting the protocol like this is a terrible idea
     m_LocalPersistenceStream << *action;
 }
 void Osios::flushDiskBuffer()
@@ -203,6 +221,12 @@ void Osios::cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndH
     serializeNeighborActionLocally(osiosDhtPeer, action); //TODOreq: use the same period flushing code as our own serializeMyTimelineAdditionsLocally (this is why a io thread is nice (however i'm not as thread safe as i could be dommit))
 
     cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(osiosDhtPeer, action);
+
+    //TO DOnemb(solved-at-end-of-paragraph): don't copycat the timeline node until the timeline node originator/sender tells us that our cryptographic response ([async-begin] sent one statement above) -- either that or I'd need some kind of copycat-step-undo functionality *gasp*. for now im' going to trust the connection is stable and not lying etc (AFTER ALL, VISUALIZING THE RESULTS IS VERIFICATION ENOUGH!!!)
+    if(!m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone.isEmpty() && action->ProfileName == m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone)
+    {
+        emit timelineNodeReceivedFromCopycatTarget(action);
+    }
 }
 void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptoGraphicHashOfTimelineNodePreviouslySent)
 {
@@ -264,7 +288,7 @@ void Osios::serializeNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineN
 }
 QByteArray Osios::calculateCrytographicHashOfTimelineNode(TimelineNode action, QCryptographicHash::Algorithm algorithm)
 {
-    QByteArray timelineNodeRawByteArray = action->toByteArray();
+    QByteArray timelineNodeRawByteArray = action->toByteArray(WHETHER_OR_NOT_TO_HAVE_PROFILE_NAME_IN_TIMELINE_NODE_WHEN_COMPUTING_CRYPTOGRAPHIC_HASH);
     return QCryptographicHash::hash(timelineNodeRawByteArray, algorithm);
 }
 void Osios::recordMyAction(TimelineNode action)
