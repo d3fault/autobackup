@@ -1,0 +1,8 @@
+--copycat username
+
+so that settles what dht ids should be: usernames. wait no that's wrong. dhts IDs are a stored-in-QSettings user-agnostic auto-generated-on-first-launch sha1 of some random source. However, timeline node streams need to have the very first node be the announcing of the profile name. collisions should be reported or perhaps handled intelligently. i want the dht id to be independent of the profile so that multiple profiles on one machine don't require keeping a copy of the entire history of every profile, per profile! it does make testing a bit difficult for me because during testing I do want to have each "profile" (which i am during TESTING wanting to resemble an independent dht node, and so not share data folders). I need client/daemon working in order to get multiple-profiles-using-same-local-dht-store-simultaneously
+
+
+But yea, copycatting is kind of like "cloning your monitor". It will be a feature that you can use on ADDITIONAL monitors such as if you want to display content for OTHERS. The primary use case of Osios is the much more complicated copycat+take-pic-of-result+cut-into-thirds+transmit-to-originator-for-DISPLAYING -- and to reiterate, each of the three dht nodes will be doing that procedure!
+
+Implementing copycat standalone (since it has utility on it's own) is the next logical step to attain the level of verification described in the above paragraph (and in the Osios initial idea design doc), which when combined with cryptographic hash verifications (ALREADY IMPLEMENTED FUCK YEEER) gives you a "metric fucking shit ton" (tm) of certainty that your actions are being recorded (properly, redundantly, etc, all implied).

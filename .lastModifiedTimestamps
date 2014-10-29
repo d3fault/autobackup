@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1413384095
+Documents/minddump/dreams/:1414543764
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -116,6 +116,7 @@ Documents/minddump/dreams/lkasjfdosduwljkerosduifsdlkfjwourweroijsldfkouierw.txt
 Documents/minddump/dreams/lkdfjlaskjdflaksdjfaosdfulasdkjfosaduflkajsdofuaslkdfjoasduflskdajfosudflk.txt:1379106183
 Documents/minddump/dreams/lkfjslkjdfalskdjflskdjflskdjfosduflksdjfousdflkjsdfousldkfjosdfulksdjfsdf.txt:1379689934
 Documents/minddump/dreams/lkjaslkfjaskdlfjsdfuouwelrkjosduflksjdfouiwelrjkoiusfdljfoiusadlkfj.txt:1379397196
+Documents/minddump/dreams/lksadjfkljsadklfjsldjfklsdf.cry.txt:1414543764
 Documents/minddump/dreams/lksdjflkjsdlkfjwoeurlkjsdfousdflkjsdofulekrjousdf.txt:1397262740
 Documents/minddump/dreams/lksdjflksjflkjsdfkljsdklfjklsdjfsdyfsdlkjfoiwuerlkjfoiusdflksdjfoi.txt:1408693587
 Documents/minddump/dreams/lksjdflkasdfouwelkrjoiudsflkjsdoiufkljwouerlkjoudsflkjsoduif.txt:1383331274
@@ -2488,7 +2489,7 @@ Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon3
 Pictures/2012-09 Tobey Family Tree Cartoon/screenshot.of.creating.it.png:1348376918
 Pictures/shirts/:1411009466
 Pictures/shirts/bitches.are.so.much.effort.and.yea.its.totally.worth.it.unless.you.value.your.time.hurrrr.txt:1408988398
-Pictures/shirts/candy.is.to.the.tongue.what.drugs.are.to.the.brain.lasdfjasofdu.txt:1383720745
+Pictures/shirts/candy.is.to.the.tongue.what.drugs.are.to.the.brain.lasdfjasofdu.txt:1414478783
 Pictures/shirts/diff.sociopathy.courtship.intent.txt:1383710633
 Pictures/shirts/dont.let.a.perfectly.good.mind.go.to.waste.eat.mushrooms.svg:1355486883
 Pictures/shirts/eh.not.that.fancy.since.people.do.tons.of.shit.to.survive.but.still.a.strange.concept.imo.and.perhaps.live.fits.better.txt:1390763355
@@ -3468,12 +3469,13 @@ Projects/Osios/src/OsiosGui.pro:1404008961
 Projects/Osios/src/osios.cpp:1404010898
 Projects/Osios/src/osios.h:1403729701
 Projects/Osios2/:1414341370
-Projects/Osios2/design/:1414439351
+Projects/Osios2/design/:1414543488
+Projects/Osios2/design/copycat.lol.typo.was.copycant.but.anyways.yea.its.kinda.like.monitor.clone.mode.and.should.not.be.the.default.except.when.utilized.for.screen.splicing.txt:1414543488
 Projects/Osios2/design/osios2.initial.idea.txt:1414311199
 Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:1414439351
 Projects/Osios2/reverts/:1414326188
 Projects/Osios2/reverts/revertBackupIDontThinkINeedOrWantThisAnymoreForOsios2.diffOf5d375c768ac2c1f97e1bf2431693e4f4be2df01b:1414325772
-Projects/Osios2/src/:1414478508
+Projects/Osios2/src/:1414543812
 Projects/Osios2/src/mainmenuitems/:1414469596
 Projects/Osios2/src/mainmenuitems/writer/:1414435556
 Projects/Osios2/src/mainmenuitems/writer/eventemittingplaintextedit.cpp:1414435556
@@ -3494,7 +3496,7 @@ Projects/Osios2/src/iosiosclient.h:1414336825
 Projects/Osios2/src/itimelinenode.cpp:1414466349
 Projects/Osios2/src/itimelinenode.h:1414466147
 Projects/Osios2/src/main.cpp:1414478196
-Projects/Osios2/src/osios.cpp:1414478342
+Projects/Osios2/src/osios.cpp:1414478634
 Projects/Osios2/src/osios.h:1414471461
 Projects/Osios2/src/osioscommon.h:1414472069
 Projects/Osios2/src/osioscreateprofiledialog.cpp:1414469620
@@ -3505,7 +3507,7 @@ Projects/Osios2/src/osiosdhtpeer.cpp:1414465159
 Projects/Osios2/src/osiosdhtpeer.h:1414358603
 Projects/Osios2/src/osiosgui.cpp:1414477428
 Projects/Osios2/src/osiosgui.h:1414477351
-Projects/Osios2/src/osiosmainwindow.cpp:1414477519
+Projects/Osios2/src/osiosmainwindow.cpp:1414479695
 Projects/Osios2/src/osiosmainwindow.h:1414469073
 Projects/Osios2/src/osiosnotificationswidget.cpp:1414476227
 Projects/Osios2/src/osiosnotificationswidget.h:1414470794

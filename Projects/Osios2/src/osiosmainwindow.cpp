@@ -20,7 +20,7 @@ OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
     setWindowTitle(tr("OSiOS"));
 
     //all added tabs must implement IMainMenuActivityTab
-    m_MainMenuItemsTabWidget->addTab(new TimelineTab_Widget_ForMainMenuTabWidget(osios, this), tr("Timeline"));
+    m_MainMenuItemsTabWidget->addTab(new TimelineTab_Widget_ForMainMenuTabWidget(osios, this), tr("Actions Timeline"));
     m_MainMenuItemsTabWidget->addTab(new WriterTab_Widget_ForMainMenuTabWidget(this), tr("Writer"));
 
     setCentralWidget(m_MainMenuItemsTabWidget);

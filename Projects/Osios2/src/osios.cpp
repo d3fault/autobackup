@@ -140,7 +140,7 @@ void Osios::checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerification
         recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.next();
         if(recentlyGeneratedTimelineNodesAndTheirTimeoutTimestampsIterator.value() <= QDateTime::currentMSecsSinceEpoch())
         {
-            //TODomb: retry? remove from list so the same error isn't emitted for the same timeline node in 5 more seconds? Weird, in my testing it already isn't emitted more than once. I kind of like that behavior, but I'm still pulling my hair out trying to figure out WHY it's happening (rather, isn't happening) in the first place. Oh woot figured it out, my logic was backwards xD
+            //TODomb: retry? remove from list so the same error isn't emitted for the same timeline node in 5 more seconds?
             emit notificationAvailable(tr("Failed to replicate a timeline node to ") + QString::number(OSIOS_NUM_NEIGHBORS_TO_WAIT_FOR_VERIFICATION_FROM_BEFORE_CONSIDERING_A_TIMELINE_NODE_VERIFIED) + tr(" neighbors within ") + QString::number(OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS/1000) + tr(" seconds!!"), OsiosNotificationLevels::ErrorNotificationLevel);
             if(m_OsiosDht->dhtState() != OsiosDhtStates::BootstrappingForFirstTimeState)
             {
