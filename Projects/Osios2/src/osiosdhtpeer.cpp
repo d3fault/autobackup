@@ -27,6 +27,10 @@ void OsiosDhtPeer::respondWithCryptographicHashComputedFromReceivedTimelineNode(
 {
     sendOsiosMessageToDhtPeer(OsiosDhtMessageTypes::RespondingWithCryptographicHashComputedFromReceivedTimelineNode, cryptographicHashOfPreviouslyReceivedTimelineNode);
 }
+DhtPeerAddressAndPort OsiosDhtPeer::peerConnectionInfo() const
+{
+    return m_PeerConnectionInfo;
+}
 void OsiosDhtPeer::sendOsiosMessageToDhtPeer(OsiosDhtMessageTypes::OsiosDhtMessageTypesEnum osiosDhtMessageType, QByteArray payload)
 {
     m_StreamToPeer << static_cast<SerializedDhtMessageType>(osiosDhtMessageType);
@@ -84,6 +88,29 @@ void OsiosDhtPeer::handleSocketToPeerReadyRead()
         if(dhtMessageType == OsiosDhtMessageTypes::RespondingWithCryptographicHashComputedFromReceivedTimelineNode)
         {
             emit responseCryptoGraphicHashReceivedFromNeighbor(this, payload);
+            continue;
+        }
+
+        //HELLO CODE
+        //even though these dhtMessageTypes are transmitted before the above types, they are overall used way less often so it is an optimization to check them after checking for the above/more-frequent types
+        if(dhtMessageType == OsiosDhtMessageTypes::Hello1of4_WeInitiatorAkaSender_SayingHelloIAmProfileNameAndWhatIThinkCurrentRollingHashForMyProfileIs)
+        {
+            //TODOreq
+            continue;
+        }
+        if(dhtMessageType == OsiosDhtMessageTypes::Hello2of4_WeResponder_SayingOhHaiProfileNameIamMyProfileNameAndMyCurrentRollingHashForMyProfileIsX_AndIThinkYourCurrentRollingHashForYourProfileIsY)
+        {
+            //TODOreq
+            continue;
+        }
+        if(dhtMessageType == OsiosDhtMessageTypes::Hello3of4_WeInitiatorAkaSender_OkIllStartSendingTheOnesYouNeed_ThisIsWhatIThinkYourCurrentRollingHashIsAt)
+        {
+            //TODOreq
+            continue;
+        }
+        if(dhtMessageType == OsiosDhtMessageTypes::Hello4of4_HelloCompleteBecauseYouHaveAllMyTimelineNodes_AndIHaveReceivedAllOfYours)
+        {
+            //TODOreq
             continue;
         }
     }

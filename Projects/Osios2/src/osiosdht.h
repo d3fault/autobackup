@@ -13,7 +13,7 @@ class QTimer;
 class Osios;
 class OsiosDhtPeer;
 
-#define OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF qint64 /* next connect/hello attempt*/, QPair<int /* last exponent */, QString /*connection info*/> /*this comment is just to keep qt creator from fucking my space after the greater than*/
+#define OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF qint64 /* next connect/hello attempt*/, QPair<int /* last exponent */, QUrl /*connection info*/> /*this comment is just to keep qt creator from fucking my space after the greater than*/
 
 class OsiosDht : public QObject
 {

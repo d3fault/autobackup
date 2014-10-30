@@ -89,7 +89,7 @@ void OsiosDht::startLocalNetworkServer(quint16 localServerPort)
 void OsiosDht::attemptToEstablishNetworkClientConnectionTo(DhtPeerAddressAndPort dhtPeerAddressAndPort)
 {
     QTcpSocket *outgoingConnectionAttempt = new QTcpSocket(this);
-    outgoingConnectionAttempt->connectToHost(dhtPeerAddressAndPort.first, dhtPeerAddressAndPort.second);
+    outgoingConnectionAttempt->connectToHost(dhtPeerAddressAndPort.host(), dhtPeerAddressAndPort.port());
     OsiosDhtPeer *dhtPeerWrapper = new OsiosDhtPeer(outgoingConnectionAttempt, outgoingConnectionAttempt->peerName(), outgoingConnectionAttempt); //TODOoptional: maybe put in m_PendingConnections list that is periodically purged. for now fuck it KISS
     connect(dhtPeerWrapper, SIGNAL(osiosDhtPeerConnected(OsiosDhtPeer*)), this, SLOT(handleOsiosDhtPeerConnected(OsiosDhtPeer*)));
 }
@@ -128,7 +128,7 @@ void OsiosDht::bootstrap(ListOfDhtPeerAddressesAndPorts bootstrapHostAddresses, 
     Q_FOREACH(DhtPeerAddressAndPort currentBootstrapHostAddress, bootstrapHostAddresses)
     {
         //attemptToEstablishNetworkClientConnectionTo(currentBootstrapHostAddress);
-        m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff.insert(0, qMakePair(1, currentBootstrapHostAddress.first.toString() + ":" + QString::number(currentBootstrapHostAddress.second)));
+        m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff.insert(0, qMakePair(1, currentBootstrapHostAddress));
     }
     handleRetryConnectionAndSayHelloToWithExponentialBackoffTimerTimedOut(); //get things going, don't wait for first timeout
 

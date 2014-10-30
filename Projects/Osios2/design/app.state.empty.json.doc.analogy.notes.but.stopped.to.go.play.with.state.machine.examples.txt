@@ -1,0 +1,54 @@
+The json concept is just to help me think (and shit Qt does serialize it to binary woot): By default your profile (app state) is an empty json doc:
+
+Profile (profile.bin, stored next to timeline.bin but only written to on exit, unlike timeline.bin)
+{
+}
+
+You receive the profile creation timeline node, and then it mutates your json doc to add the key "profileName" with the right value:
+
+Profile
+{
+	"profileName" : "d3fault"
+	"currentMainMenuActivity" : TimelineMainMenuActivity /*enum/int ofc*/
+}
+
+You receive the main menu activity changed timeline node, and then it mutates your json doc to set the main menu activity to whatever (should I create a main menu activity changed timeline node right after/during the profile create, simply saying they are on the timeline main menu activity? sure it can be deduced, but does that add unecessary logic/confusion? Methinks YES!!! KISS so now I'm adding that to the profile step. Ok but still that profile create timeline node includes that current main menu mutation built in (not 2 timeline nodes). It is simply that we want to keep the state (and as a tiny as fuck optimization (DON'T IMPL UNLESS YOU WANT TO SUICIDE), it could be not transmitted across network) consistent and "always have a main menu activity" for simplification.
+
+Still, the first main menu activity change timeline node does mutate that Profile json doc
+
+Profile
+{
+	"profileName" : "d3fault"
+	"currentMainMenuActivity" : WriterMainMenuActivity /*there is a blank doc in front of the user at this point, but it is not inserted into timeline until first key press*/
+}
+
+Each state of Profile is synonymous with (can be referred to by) the CurrentRollingHash for the timeline node most recently applied. Just as desired, it is serializable but not serialized (except periodically as a cache TODOoptimization) in full, only each mutation is serialized
+
+Now things get more complex, keyStrokeOnNewEmptyDoc comes along
+
+we check if(docWithCurrentKeyboardFocus /*really abstract keyboard input ideally, not just qlineedit, field does not exist if the main menu activity (or sub-activity) does not accept keyboard input */) json field exists, such as in:
+
+Actually I'm moving that impl down some, I want to CREATE that field first, then I'll check it later. Shit, does the app state include the entire history, or just the list currently opened 'files' (and their buffers (or maybe not their buffers, idfk))? I'm having a hard time figuring out what to make the key name be for the doc, and/or where to put it in the json.
+
+Profile
+{
+	"profileName" : "d3fault"
+	"currentMainMenuActivity" : WriterMainMenuActivity
+	"WriterOpenedDocs" : 1 /* or json array but I can't remember syntax so.. */
+	"WriterOpenedDoc0Contents" : "a" //New keystrokes simply append to this value field. The zero in the key name (or array index or whatever) correlates with the doc-tab in writer
+	"WriterOpenedDoc0CCursorPosition" : 1 //0-index based. Value was implicitly changed with key press timeline node, but there is also the explicit/standalone curor position changed timeline node as well
+	"AbstractDocWithCurrentKeyboardFocus" : "0" /* any main menu activity can use this in combination with currentMainMenuActivity to determine where a key stroke should go. In this case, 0 simply represents a tab index (or doc index just like used above (they are all the same)), but in other cases the number could correlate with some piece of user input. Perhaps I can disable focus on a lot of widgets and then explicitly order them so that their focus index is portable enough to match against on another computer, perhaps not. I suppose there could also be N AbstractDocWithCurrentKeyboardFocus sub-IDs as well, depending on the requirements of the main menu activity
+}
+
+So we have implicitly created (WriterOpenedDocs, WriterOpenedDoc0Contents, WriterOpenedDoc0CCursorPosition, and AbstractDocWithCurrentKeyboardFocus) implicitly with a single timeline node. When we received the key pressed timeline node, we looked at our state and since there were no opened writer docs, we created one and set the first keystroke and also updated the cursor position. The cursor position is not in timeline.bin, or shit maybe it is guh. We also set the AbstractDocWithCurrentKeyboardFocus because simply having the doc open does not mean jack diddly shit. So far so good, and it would work well as a "cache/snapshot" to make the GUI look exactly how it should.
+
+
+Ok back to subsequent key presses
+
+forwardKeyPressToMainMenuActivity("currentMainMenuActivity", docWithCurrentKeyboardFocus_OrEmptyStringIfNone, theKey); //append to doc if docWithCurrentKeyboardFocus is not empty string, the implicit create process described above if it is an empty string
+
+
+SO (forgot where I was going with this)
+
+
+I keep telling myself a state machine is what I want (timeline nodes are mutations to the state machine), but I'm not pro enough at using state machines to be sure (and additionally, to use one!). Time to go play with the state machine examples :-D

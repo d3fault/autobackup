@@ -1,0 +1,65 @@
+Revision, Edition, Hash, CommitId, TimelineNodeId, TimelineNodeId_aka_HashOfContentsToBeCryptographicallyVerified (except then we give them the answer to the question we want solved to prove their saving of the timeline node). The hash of the timeline node must not be sent in plaintext over the wire at any point. The reason is that programmer error could make you access the received-via-network hash as your response (ON ACCIDENT) to the mirror-and-respond-with-cryptographic-hash-plx dht message (a request, incidentally), the base (only? (excluding bootstrap/dc/etc)) message of the dht and the primary justification of (primary reason for (had: core reason of)) the application's existence.
+
+But back to the point, what do I want to refer to nodes by something. The rolling hash sounds good. Except for the very first timeline node, the rolling hash for a given profile (a point in time that is recorded and referred to by something (the rolling hash)) is hash(rollingHashForTimelineNode(currentTimelineNodeIndex-1) appended to, catted with (order doesn't matter) hash(currentTimelineNodeContents)). Very simple really to put into words: the previous rolling hash is hashed with the contents buffer of the new content itself as a whole to become the current (the way you refer to that timeline node that was hashed as well) rolling hash.
+
+
+failed attempt after 'is'
+timelineNodeAt(theRollingHash
+
+
+
+It is also effectively the dht state for a particular timeline node (and all it's previous history (assuming proper periodic hdd testing procedures are introduced and followed)).
+
+
+QByteArray currentRollingHash /* or, rolling hash for a given timeline node */ = hash(rollingHashForTimelineNode(currentTimelineNodeIndex-1) appended to, catted with (order doesn't matter) hash(currentTimelineNodeContents));
+
+
+Again, tempted to combine profile rolling hashes into one, but WON'T FOR NOW to KISS.
+
+
+
+The DHT hello should not include merely the number of timeline nodes you've produced (although that too may be sufficient actually fml idk), but should announce it's most recent cryptographic hash generated/placed on it's timeline node. The issue/matter/problem/question/decision of synchronization appears. Do I want to trust myself or the network. Obviously TODOreq the network cannot delete any of my timeline nodes. Only local user requests can MARK THEM AS DELETED (but never delete (tempted to put "unless compressing losslessly, but that has risks too" (small ones become larger over a big (swapped larger and big) period of time))).
+
+
+The thing is, you can "refer to them" (trust their contents), or you can "refer to their cryptographically verified rolling hash" (not trust their contents). Since the system is based around "proof you have it by sending me the content that matches <current-rolling-hash-for-that-timeline-node> (the less frequent (had:infrequent) but mandatory hdd testing procedures!)", it somehow makes logical sense to also refer to the node by exactly that.
+
+Do I want sync? Do I want pull-down if logging into the dht from another terminal? Of fucking course. Why the shit would I ever want to display stale content. So if this is ever released publically it needs PKI, but for now I can rely on (had:merely)sha1 proving alone.
+
+
+//the mirror one another:
+
+onInsert(timelineNode)
+{
+	proveYouGotItByVerifyingItsSha1Bitch(timelineNode);
+}
+onPeriodicHddCheck(timelineNodeId)
+{
+	proveYouGotItBySendingMeTheEntireFuckingThingAndIwillSha1ThatBitchMyselfBecauseIdontTrustYouMotherfucker(timelineNodeId); //and this is why I love coding
+}
+
+
+Also I don't think PKI solves crypto hash verification on insertion. It would verify it on periodic hdd checks though, since the thing being gamed is the bandwidth itself (say you received it but really you only received a hash from a co-conspiring neighbor). Fuck public anyways, backup is my goal. Not efficiency. I am prioritizing this above all recently because it is a matter of sanity.
+
+
+If I have sync (pull-down), what should my merging strategy be should the local contents and remote contents branched? Fuck, error for now and impl that later?
+
+I think maybe I need to rethink whether or not I want to be able to pull down when I myself am a pusher. Merging occuring indicates dht node failure indicates data loss, so a joining dht node need only broadcast his currentRollingHash (each profile has a different "block(hash) chain"). We should bootstrap before enabling the GUI [until we have a merging strategy in place to account for offline/dht-wide/splits? again, depends on if I ever want to pull, and the answer has to be yes because data loss is inevitiable and pulling is my plan to account for that].
+
+So by simply FORCING pull down to finish before I can write (indicates node failure if the remote has more recent than me), I side-step merge strategies for the time being. That means no offline mode for now, but that's ok since KISS. Offline mode indicates error in the system the application creates, this is a realtime redundant backup system (also an OS ;-P) so offline mode means failure mode. STILL THAT BEING SAID, it would be stupid to NOT serialize creations made that just so happened to be made right before the bootstrap state FELL FROM bootstrapped (and therefore those recently created timeline nodes aren't cryptographically verified). Erroring the fuck out is sure a good idea, and so would be exporting the application state, or creating a state snapshot and backing it up manually. I mean the entire history, or perhaps just the relevant most recent chunks if I do it more efficiently.
+
+Failed user input goes noticed within 5 seconds, and I could lower that tremendously so that it is near-instantaneous to the perception of a human being. I could stress test it and find the sweet spot, I'd imagine 10ms would be reasonable to expect for LAN, maybe(probably?) lower.
+
+Since sync-TO (push) must be finished before the dht node is considered healthy, it also makes sense that sync-FROM must be finished before ANY of the dht nodes are considered healthy (a la, the app can be in a good/green state). Sync-FROM is much more important and must finish before we can write. Sync-TO is async and determines whether or not that dht node is ready to be considered healthy. They are in catch up mode and will be considered healthy once they've caught up.
+
+When the app is not green, it should not be used because then it isn't serving the purpose it is designed for: data integrity. Your "keystrokes" are still in the line edit you typed it in, and you know exactly the last keystroke that was cryptographically verified, so you literally can manually copy(or cut) the keystrokes that didn't get cryptographically verified because the dht state came out of bootstrapped before they could be. Even though maybe only some early keys weren't crypto verified, it's likely that the more recent ones are about to trigger that same fail, so all of the "timeline nodes awaiting crypto verification" (keystrokes, anything) should be sent to your local clipboard for manual saving (the system is fucked!).
+
+I should do 5 dht peers to prove cryptographic verifiability.
+Only 4 on time = warning, node failed, replace it.
+Only 3 on time = error, multiple node failures, data loss will occur unless action is taken within a reasonable amount of time (few years at best)
+Only 2 on time = error, only 2 replicas being made, data loss extremely likely over the course of years of application use (at the time of writing in 2014)
+Only 1 on time = error, only 1 replica being made, data loss likely to occur at any time
+None on time = fatal, (or, offline mode rofl), no replicas being made. There is no purpose to using this OS at this point vs any other non-auto-backup OS (Windows, Mac, Android, GNU/Linux) [by default]
+
+The transition from 4 to 3 is where we leave bootstrapped/healthy mode. We perhaps put the UI into read-only mode, or "export the recent timeline nodes that weren't cryptographically verified to some local file or thumb drive etc" mode. Yea that last idea is best. You most likely don't need to use that thumb drive copy to import from when you reconnect to the dht eventually, since the timeline nodes were definitely saved locally as well, but you would need to use the timeline nodes on the thumbdrive as import if the dht failed and then you failed a little bit after (or perhaps your drive failed already but you hadn't noticed it. replicating the still-in-memory timeline nodes to a usb drive manually (the app tells you when) side steps the problem that occurs when the dht fails and then you fail before the dht recovers. There is of course the data loss that could occur if the machine shuts off instantly, but we maximize our dht bandwidth by sending timeline nodes as they are generated anyways, so as long as the dht was in good state it's very likely that EVERYTHING up to your last keystroke is on the dht for you to pull from once you replace your hdd. However, it's only somewhat-guaranteed that everything before and up to 5 seconds ago was stored on the dht.
+
+A couple seconds of data loss is nothing compared to a few hours/days/weeks/MONTHS of data loss (i've had months occur, luckily most of it was warez but bleh there was still some personal docs too damnit (gut wrenching))

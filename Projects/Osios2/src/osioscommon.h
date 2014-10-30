@@ -2,6 +2,7 @@
 #define OSIOSCOMMON_H
 
 #include <QtNetwork/QHostAddress>
+#include <QUrl>
 
 class MainMenuActivitiesEnum
 {
@@ -45,7 +46,7 @@ public:
 
 #define OSIOS_GUI_LAYOUT_CONTENT_MARGINS 0
 
-typedef QPair<QHostAddress, quint16> DhtPeerAddressAndPort;
+typedef QUrl DhtPeerAddressAndPort;
 typedef QList<DhtPeerAddressAndPort> ListOfDhtPeerAddressesAndPorts;
 
 #endif // OSIOSCOMMON_H
