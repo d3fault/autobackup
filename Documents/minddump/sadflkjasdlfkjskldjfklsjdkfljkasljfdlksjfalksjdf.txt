@@ -1,0 +1,1 @@
+gg I just went to sync before starting Virtualbox and right at the moment I pressed enter to enter the sync command, the GUI of Virtualbox popped up, stole focus, and did exactly the action I was not wanting to do until I sync'd. Sure it didn't crash this time, but still the chance of it happening is there.
