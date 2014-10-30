@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Osios
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         osiosmainwindow.cpp \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.cpp \
@@ -29,7 +28,9 @@ SOURCES += main.cpp\
     osiosdht.cpp \
     osiosprofilemanagerdialog.cpp \
     osiosnotificationswidget.cpp \
-    timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.cpp
+    timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.cpp \
+    osiosdhtbootstrapsplashdialog.cpp \
+    osiossettings.cpp
 
 HEADERS  += osiosmainwindow.h \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.h \
@@ -51,6 +52,9 @@ HEADERS  += osiosmainwindow.h \
     osiossettings.h \
     osiosnotificationswidget.h \
     iosioscopycatclient.h \
-    timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h
+    timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h \
+    osiosdhtbootstrapsplashdialog.h \
+    ibootstrapsplashscreen.h \
+    iosiosdhtbootstrapclient.h
 
 include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)

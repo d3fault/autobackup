@@ -91,6 +91,7 @@ void OsiosDhtPeer::handleSocketToPeerReadyRead()
             continue;
         }
 
+#if 0 //TODOreq
         //HELLO CODE
         //even though these dhtMessageTypes are transmitted before the above types, they are overall used way less often so it is an optimization to check them after checking for the above/more-frequent types
         if(dhtMessageType == OsiosDhtMessageTypes::Hello1of4_WeInitiatorAkaSender_SayingHelloIAmProfileNameAndWhatIThinkCurrentRollingHashForMyProfileIs)
@@ -113,6 +114,7 @@ void OsiosDhtPeer::handleSocketToPeerReadyRead()
             //TODOreq
             continue;
         }
+#endif
     }
 }
 void OsiosDhtPeer::emitConnectionNoLongerConsideredGood()

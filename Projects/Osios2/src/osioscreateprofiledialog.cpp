@@ -59,14 +59,16 @@ QString OsiosCreateProfileDialog::newProfileName() const
 {
     return m_ProfileNameLineEdit->text();
 }
+#if 0 //I grab it out of QSettings instead
 QString OsiosCreateProfileDialog::chosenDataDir() const
 {
     return m_DataDirRow->lineEdit()->text();
 }
+#endif
 const QString &OsiosCreateProfileDialog::defaultDataDirectory() const
 {
-    static const QSettings settings;
-    static const QFileInfo settingsFileInfo(settings.fileName());
+    QScopedPointer<QSettings> settings(OsiosSettings::newSettings());
+    QFileInfo settingsFileInfo(settings->fileName());
     static const QString defaultDataDirectoryThe = settingsFileInfo.absolutePath() + QDir::separator() + PROFILES_GOUP_SETTINGS_KEY + QDir::separator() + PROFILE_NAME_PERCENT_FILTER;
     return defaultDataDirectoryThe;
 }
@@ -102,15 +104,15 @@ void OsiosCreateProfileDialog::enableOrDisableOkButtonDependingOnContentsValidat
 void OsiosCreateProfileDialog::createProfileAndAcceptDialog()
 {
     //profile already known to be valid
-    QSettings settings;
-    QStringList existingProfileNames =  settings.value(ALL_PROFILE_NAMES_LIST_SETTINGS_KEY).toStringList();
+    QScopedPointer<QSettings> settings(OsiosSettings::newSettings());
+    QStringList existingProfileNames =  settings->value(ALL_PROFILE_NAMES_LIST_SETTINGS_KEY).toStringList();
     existingProfileNames.append(m_ProfileNameLineEdit->text());
-    settings.setValue(ALL_PROFILE_NAMES_LIST_SETTINGS_KEY, existingProfileNames);
+    settings->setValue(ALL_PROFILE_NAMES_LIST_SETTINGS_KEY, existingProfileNames);
 
-    settings.beginGroup(PROFILES_GOUP_SETTINGS_KEY);
+    settings->beginGroup(PROFILES_GOUP_SETTINGS_KEY);
     //TODOreq: make sure the profile name doesn't already exist in the settings
-    settings.beginGroup(m_ProfileNameLineEdit->text());
-    settings.setValue(OSIOS_DATA_DIR_SETTINGS_KEY, dataDirectoryResolved());
+    settings->beginGroup(m_ProfileNameLineEdit->text());
+    settings->setValue(OSIOS_DATA_DIR_SETTINGS_KEY, dataDirectoryResolved());
     if(m_DataDirRow->lineEdit()->text() == defaultDataDirectory())
     {
         //ensure the dir is/gets made only when the default dir is still there
@@ -129,7 +131,7 @@ void OsiosCreateProfileDialog::createProfileAndAcceptDialog()
         }
     }
     //more profile properties can go here
-    settings.endGroup();
-    settings.endGroup();
+    settings->endGroup();
+    settings->endGroup();
     accept();
 }

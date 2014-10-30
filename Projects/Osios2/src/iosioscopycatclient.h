@@ -9,6 +9,7 @@ class KeyPressInNewEmptyDocTimelineNode;
 class IOsiosCopycatClient
 {
 public:
+    virtual void setCopycatModeEnabled(bool enabled)=0;
     virtual QObject *asQObject()=0;
 protected: //signals
     virtual void connectEventSynthesisSignalsForCopycattingRequested(IOsiosCopycatClient *osiosCopycatClientToListenToSignalsFrom)=0;

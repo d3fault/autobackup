@@ -24,11 +24,11 @@ OsiosProfileManagerDialog::OsiosProfileManagerDialog(QWidget *parent)
     m_ExistingProfilesComboBox->addItem(tr("Select Profile")); //correlates with ComboBoxIndexThatIndicatesUnchosen. TODOoptional: when there was a last used profile in settings, default to it in the combo box
 
     //show existing profiles for them to select
-    QSettings settings;
-    QStringList allProfiles = settings.value(ALL_PROFILE_NAMES_LIST_SETTINGS_KEY).toStringList();
+    QScopedPointer<QSettings> settings(OsiosSettings::newSettings());
+    QStringList allProfiles = settings->value(ALL_PROFILE_NAMES_LIST_SETTINGS_KEY).toStringList();
     m_ExistingProfilesComboBox->addItems(allProfiles);
 
-    QString lastUsedProfile = settings.value(LAST_USED_PROFILE_SETTINGS_KEY).toString();
+    QString lastUsedProfile = settings->value(LAST_USED_PROFILE_SETTINGS_KEY).toString();
     if(!lastUsedProfile.isEmpty())
     {
         m_ExistingProfilesComboBox->setCurrentText(lastUsedProfile);

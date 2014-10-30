@@ -6,6 +6,7 @@
 #include <QDockWidget>
 #include <QDebug>
 
+#include "osiossettings.h"
 #include "osiosnotificationswidget.h"
 #include "iactivitytab_widget_formainmenutabwidget.h"
 #include "mainmenuitems/timelinetab_widget_formainmenutabwidget.h"
@@ -17,7 +18,7 @@
 OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
     : QMainWindow(parent)
     , m_MainMenuItemsTabWidget(new QTabWidget())
-    , m_CopycatModeEnabled(false)
+    , m_CopycatModeEnabled(false) //TODOmb: make protected in ICopycatClient interface
 {
     setWindowTitle(tr("OSiOS"));
 
@@ -29,9 +30,9 @@ OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
 
     addDockWidgets();
 
-    QSettings settings;
-    restoreGeometry(settings.value("geometry").toByteArray());
-    restoreState(settings.value("windowState").toByteArray());
+    QScopedPointer<QSettings> settings(OsiosSettings::newSettings());
+    restoreGeometry(settings->value("geometry").toByteArray());
+    restoreState(settings->value("windowState").toByteArray());
 
     connect(m_MainMenuItemsTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleMainMenuItemsTabWidgetCurrentTabChanged()));
 }
@@ -57,9 +58,9 @@ void OsiosMainWindow::setCopycatModeEnabled(bool enabled)
 }
 void OsiosMainWindow::closeEvent(QCloseEvent *event)
 {
-    QSettings settings;
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
+    QScopedPointer<QSettings> settings(OsiosSettings::newSettings());
+    settings->setValue("geometry", saveGeometry());
+    settings->setValue("windowState", saveState());
     QMainWindow::closeEvent(event);
 }
 void OsiosMainWindow::addDockWidgets()

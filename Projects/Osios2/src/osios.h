@@ -9,6 +9,9 @@
 
 class QFile;
 
+class IOsiosDhtBootstrapClient;
+class IOsiosDhtBootstrapSplashScreen;
+class IOsiosClient;
 class OsiosDht;
 class OsiosDhtPeer;
 
@@ -21,7 +24,7 @@ class Osios : public QObject
 {
     Q_OBJECT
 public:
-    explicit Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseRandomPort, ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts, QObject *parent = 0);
+    explicit Osios(QObject *parent = 0);
     ~Osios();
     QList<TimelineNode> timelineNodes() const;
 
@@ -29,7 +32,10 @@ public:
 private:
     friend class TimelineSerializer;
 
-    QString m_ProfileName;
+    QStringList m_Arguments;
+    IOsiosDhtBootstrapClient *m_OsiosDhtBootstrapClient;
+    QString m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet; //TODOreq: merge with below m_ProfileName?
+    //QString m_ProfileName;
     QList<TimelineNode> m_TimelineNodes;
     CryptographicHashAndTheListofDhtPeersThatHaveVerifiedItSoFar m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready;
     QHash<CryptographicHashAndTimeoutTimestamp> m_RecentlyGeneratedTimelineNodesAndTheirTimeoutTimestamps;
@@ -40,6 +46,12 @@ private:
 
     QString m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone;
 
+    bool parseOptionalSettingsFilepathArgDidntReturnParseError(QString *theSettingsFilepathOutput);
+    bool parseOptionalLocalServerPortFromArgsDidntReturnParseError(quint16 *portToParseInto);
+    bool parseOptionalBootstrapAddressesAndPortsFromArgsDidntReturnParseError(ListOfDhtPeerAddressesAndPorts *listOfDhtPeersAddressesAndPortsToParseInto);
+
+    void connecToAndFromFrontendSignalsAndSlots(IOsiosClient *frontEnd);
+    void beginUsingProfileNameInOsios(const QString &profileName);
     void readInAllMyPreviouslySerializedLocallyEntries();
     ITimelineNode *deserializeNextTimelineNode(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
     void serializeMyTimelineAdditionsLocally();
@@ -57,7 +69,12 @@ private:
         }
         return inputString + "/";
     }
+    QString usage();
+    void usageAndQuit();
 signals:
+    //bootstrapping
+    void bootstrapped();
+
     //regular
     void connectionColorChanged(int color);
     void notificationAvailable(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel = OsiosNotificationLevels::StandardNotificationLevel);
@@ -65,9 +82,13 @@ signals:
 
     //copycat
     void timelineNodeReceivedFromCopycatTarget(TimelineNode timelineNode);
+
+    void quitRequested();
 public slots:
+    void initializeAndStart(IOsiosDhtBootstrapClient *osiosDhtBootstrapClient);
     void recordMyAction(TimelineNode action);
 private slots:
+    void showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant();
     void flushDiskBuffer();
     void checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodes();
     void handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState);

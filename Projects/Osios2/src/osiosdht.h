@@ -13,7 +13,7 @@ class QTimer;
 class Osios;
 class OsiosDhtPeer;
 
-#define OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF qint64 /* next connect/hello attempt*/, QPair<int /* last exponent */, QUrl /*connection info*/> /*this comment is just to keep qt creator from fucking my space after the greater than*/
+#define OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF qint64 /* timestamp of next connect/hello attempt */, QPair<int /* last exponent */, QUrl /*connection info*/> /*this comment is just to keep qt creator from fucking my space after the greater than*/
 
 class OsiosDht : public QObject
 {
@@ -27,7 +27,7 @@ public:
 private:
     Osios *m_Osios;
     QTcpServer *m_LocalNetworkServer;
-    QMap<OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF> m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff;
+    QMultiMap<OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF> m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff;
     QList<OsiosDhtPeer*> m_DhtPeersWithHealthyConnection; //fuck rpc generator and acking, cryptographic verifiability is better and weirdly easier (honestly i was just in refactor hell with rpc generator. the design wasn't THAT complex and i wasn't necessarily stuck). If any of the timeline nodes don't cryptographically ack a timeline node within... 5 seconds... the connection is no longer considered healthy and an error notification is presented on the screen of anyone that notices
     //QList<OsiosDhtPeer*> m_PotentialOrOldDhtPeersToConnectAndSayHelloToWithExponentialBackoff;
     OsiosDhtStates::OsiosDhtStatesEnum m_DhtState;

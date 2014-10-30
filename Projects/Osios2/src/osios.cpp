@@ -1,5 +1,6 @@
 #include "osios.h"
 
+#include <QCoreApplication>
 #include <QSettings>
 #include <QTimer>
 #include <QFile>
@@ -8,13 +9,18 @@
 #include <QHash>
 #include <QHashIterator>
 #include <QDateTime>
+#include <QScopedPointer>
 
+#include "ibootstrapsplashscreen.h"
+#include "iosiosdhtbootstrapclient.h"
+#include "iosiosclient.h"
 #include "osioscommon.h"
 #include "timelineserializer.h"
 #include "osiosdht.h"
 #include "osiosdhtpeer.h"
 #include "osiossettings.h"
 #include "timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h"
+#include "iosioscopycatclient.h"
 
 #define OSIOS_TIMELINE_FILENAME "timeline.bin"
 
@@ -25,34 +31,157 @@
 
 //TODOoptional: COW on the timeline nodes (the seraialized bytes, that is) could be achieved with a timeline node called "import state from doc x, mutate with empty character" (or perhaps these two are separated), effectively incrementing the reference count (although delete is not in plans anyways)
 //TODOoptional: in addition to (or perhaps integrated INTO) the red/green "bar of color", i could create reproduceable patterns of color using the latest timeline node hash, so that i can look for that pattern on each of my monitors/nodes and see that they are all 3 synchronized. it's mildly cryptographic verification performed by a human (since doing so in an extreme manner would require you to sit all day every day typing in things on a calculator)
-Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseRandomPort, ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts, QObject *parent)
+//Head just exploded: a cli front-end can copycat a gui front-end and vice versa? Why not :-P?
+Osios::Osios(QObject *parent)
     : QObject(parent)
-    , m_ProfileName(profileName)
+    , m_Arguments(QCoreApplication::arguments())
+    //TODOreq: pending refactor: , m_ProfileName(profileName)
     , m_LastSerializedTimelineIndex(-1)
-    , m_OsiosDht(new OsiosDht(this))
+    , m_LocalPersistenceDevice(0)
+    , m_OsiosDht(new OsiosDht(this, this))
 {
-    QSettings settings;
-    settings.beginGroup(PROFILES_GOUP_SETTINGS_KEY);
-    settings.beginGroup(profileName);
-    QString dataDir = settings.value(OSIOS_DATA_DIR_SETTINGS_KEY).toString(); //TODOoptional: sanitize empty/invalid filename etc. also the value needs to be set during profile creation (and the dir/filename needs to be queried)
-    settings.endGroup();
-    settings.endGroup();
+    qRegisterMetaType<ListOfDhtPeerAddressesAndPorts>("ListOfDhtPeerAddressesAndPorts"); //TODOoptional: only register once and make re-entrant + thread safe, although maybe who cares since re-registering a type fails sanely (nothing happens) and the register attempt is already thread safe...
+    qRegisterMetaType<TimelineNode>("TimelineNode");
+
+    m_Arguments.removeFirst(); //filepath
+
+    QString theSettingsFilepath_OrEmptyStringIfNoneSpecified;
+    if(!parseOptionalSettingsFilepathArgDidntReturnParseError(&theSettingsFilepath_OrEmptyStringIfNoneSpecified))
+    {
+        //TODOreq: error in non-fatal way xD
+        qFatal("Failed to parse settings file from arguments");
+        return;
+    }
+    OsiosSettings::setSettingsFilenameApplicationWide(theSettingsFilepath_OrEmptyStringIfNoneSpecified);
+}
+Osios::~Osios()
+{
+    if(m_LocalPersistenceDevice)
+    {
+        //update the [probably, but not necessarily, changed] serialized number of timeline nodes at the beginning of the file (better, use a mutation append-only strategy)
+        m_LocalPersistenceDevice->seek(0);
+        m_LocalPersistenceStream << m_TimelineNodes.size();
+        m_LocalPersistenceDevice->flush();
+    }
+    qDeleteAll(m_TimelineNodes);
+}
+QList<TimelineNode> Osios::timelineNodes() const
+{
+    return m_TimelineNodes;
+}
+bool Osios::parseOptionalSettingsFilepathArgDidntReturnParseError(QString *theSettingsFilepathOutput)
+{
+    //the settings file is able to not be specified, but parse errors return false
+    int systemWideSettingsFileArgindex = m_Arguments.indexOf("--system-wide-settings-file"); //eh system wide is kinda incorrect, since technically it's user-wide if run by user, system wide if run by root, etc (just like QSettings says), but fuck it for now and I don't want people to erroneously use this [undocumented for now] arg instead of --profile. They might confuse one for the other
+    if(systemWideSettingsFileArgindex > -1)
+    {
+        if((systemWideSettingsFileArgindex+1) >= m_Arguments.size())
+        {
+            usageAndQuit();
+            return false;
+        }
+        *theSettingsFilepathOutput = m_Arguments.at(systemWideSettingsFileArgindex+1);
+        m_Arguments.removeAt(systemWideSettingsFileArgindex);
+        m_Arguments.removeAt(systemWideSettingsFileArgindex);
+        if(m_Arguments.indexOf("--system-wide-settings-file") != -1)
+        {
+            usageAndQuit();
+            return false;
+        }
+        return true;
+    }
+    return true;
+}
+bool Osios::parseOptionalLocalServerPortFromArgsDidntReturnParseError(quint16 *portToParseInto)
+{
+    //the port is able to not be specified, but parse errors return false
+    int listenPortArgVindex = m_Arguments.indexOf("--listen-port");
+    if(listenPortArgVindex > -1)
+    {
+        if((listenPortArgVindex+1) >= m_Arguments.size())
+        {
+            usageAndQuit();
+            return false;
+        }
+        bool convertOk = false;
+        *portToParseInto = m_Arguments.at(listenPortArgVindex+1).toUShort(&convertOk);
+        if(!convertOk)
+        {
+            *portToParseInto = 0;
+            usageAndQuit();
+            return false;
+        }
+        m_Arguments.removeAt(listenPortArgVindex);
+        m_Arguments.removeAt(listenPortArgVindex);
+        if(m_Arguments.indexOf("--listen-port") != -1)
+        {
+            usageAndQuit();
+            return false;
+        }
+        return true;
+    }
+    return true;
+}
+bool Osios::parseOptionalBootstrapAddressesAndPortsFromArgsDidntReturnParseError(ListOfDhtPeerAddressesAndPorts *listOfDhtPeersAddressesAndPortsToParseInto)
+{
+    //they can provide zero or more boostrap nodes, only parse errors return false
+    int addBootstrapNodeArgIndex = m_Arguments.indexOf("--add-bootstrap-node");
+    while(addBootstrapNodeArgIndex > -1)
+    {
+        if((addBootstrapNodeArgIndex+1) >= m_Arguments.size())
+        {
+            usageAndQuit();
+            return false;
+        }
+        DhtPeerAddressAndPort dhtPeerAddressAndPort = DhtPeerAddressAndPort::fromUserInput(m_Arguments.at(addBootstrapNodeArgIndex+1));
+        if(!dhtPeerAddressAndPort.isValid())
+        {
+            usageAndQuit();
+            return false;
+        }
+        (*listOfDhtPeersAddressesAndPortsToParseInto).append(dhtPeerAddressAndPort);
+
+        m_Arguments.removeAt(addBootstrapNodeArgIndex); //add bootstrap arg
+        m_Arguments.removeAt(addBootstrapNodeArgIndex); //host:port
+
+        addBootstrapNodeArgIndex = m_Arguments.indexOf("--add-bootstrap-node");
+    }
+    return true;
+}
+void Osios::connecToAndFromFrontendSignalsAndSlots(IOsiosClient *frontEnd)
+{
+    connect(frontEnd->asQObject(), SIGNAL(actionOccurred(TimelineNode)), this, SLOT(recordMyAction(TimelineNode)));
+
+    connect(this, SIGNAL(connectionColorChanged(int)), frontEnd->asQObject(), SLOT(changeConnectionColor(int)));
+    connect(this, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), frontEnd->asQObject(), SIGNAL(presentNotificationRequested(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
+}
+void Osios::beginUsingProfileNameInOsios(const QString &profileName)
+{
+    //kind of like logging in. we are already bootstrapped and the profile creation node already sent, but this means we're proceeding forward into the main menu using a chosen profile name. This used to be in my constructor, since bootstrap took place after profile selection. For now it's only safe to call once per app instance, but in the future I'd have an equivalent "stopUsingProfileInOsios" if they for example went back to the profile manager (File->Log Out (or "Choose Different User")
+
+    QScopedPointer<QSettings> settings(OsiosSettings::newSettings()); //Note: don't use QObject parenting for cleanup of OsiosSettings because this class will be alive for really long periods of time, meaning lots of settings objects could be created on the heap if I did that xD
+    settings->beginGroup(PROFILES_GOUP_SETTINGS_KEY);
+    settings->beginGroup(profileName);
+    QString dataDir = settings->value(OSIOS_DATA_DIR_SETTINGS_KEY).toString(); //TODOoptional: sanitize empty/invalid filename etc
+    settings->endGroup();
+    settings->endGroup();
     QString fileName = appendSlashIfNeeded(dataDir) + OSIOS_TIMELINE_FILENAME;
-    qDebug() << "file path of timeline for current profile: " << fileName;
+    qDebug() << "Current profile:" << profileName;
+    qDebug() << "File path of timeline for current profile:" << fileName;
     bool newUser = !QFile::exists(fileName);
+    if(m_LocalPersistenceDevice)
+        delete m_LocalPersistenceDevice;
     m_LocalPersistenceDevice = new QFile(fileName, this);
     if(!m_LocalPersistenceDevice->open(QIODevice::ReadWrite))
     {
-        qDebug() << "failed to open local persistence device" << fileName;
+        qDebug() << "Failed to open local persistence device:" << fileName;
         //constructor, guh: emit notificationAvailable(Fatal);
         //TODOoptional: better handling
         return;
     }
     m_LocalPersistenceStream.setDevice(m_LocalPersistenceDevice);
 
-    qRegisterMetaType<TimelineNode>("TimelineNode");
-
-    if(newUser)
+    if(newUser) //TODOreq: move to profile creation dialog (and keep using interfaces ofc), which is post-bootstrap now. Perhaps the interface emits that profile creation is requested, and we still handle it in this class
     {
         m_LocalPersistenceStream << static_cast<qint32>(1); //new user, so no timeline nodes, so write 1 size placeholder into file, which is rewound to and updated in our destructor. we write 1 instead of 0 because the 1 we are talking about is the very next statement. we also want the file header to be accurate for the call to readInAllMyPreviouslySerializedLocallyEntries. yes it's inefficient to write and re-read a moment later like that, but idfc (and sheeit prolly still in kernel memory anyways so fuggit)
 
@@ -62,7 +191,7 @@ Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseR
     }
 
     //read in all previously serialized entries, which also puts the write cursor at the end for appending
-    readInAllMyPreviouslySerializedLocallyEntries();
+    readInAllMyPreviouslySerializedLocallyEntries(); //TODOoptimization: once HELLO (+sync) is finished, there may be an opportunity to not have to re-read timeline nodes that were read during sync process
 
     int timelineSize = m_TimelineNodes.size();
     qDebug() << "Read in " << QString::number(timelineSize) << " previously serialized entries in the timeline";
@@ -78,30 +207,6 @@ Osios::Osios(const QString &profileName, quint16 localServerPort_OrZeroToChooseR
     QTimer *checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer = new QTimer(this);
     connect(checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer, SIGNAL(timeout()), this, SLOT(checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodes()));
     checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodesTimer->start(OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS/2 /* check every 2.5 seconds if the any of the timeline nodes haven't been verified in 5 seconds. our worst case scenario is now 7.5 seconds xD */);
-
-    connect(m_OsiosDht, SIGNAL(dhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)), this, SLOT(handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)));
-
-    //old, we now pass Osios into the dht so that it can connect us DIRECTLY to the dht peers signals (this commented out code is signal daisy chaning: peer -> dht -> osios
-    //connect(m_OsiosDht, SIGNAL(timelineNodeReceivedFromPeer(OsiosDhtPeer*,TimelineNode)), this, SLOT(cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndHashNeighborsActionAndRespondWithHash(OsiosDhtPeer*,TimelineNode)));
-    //connect(m_OsiosDht,)
-
-    QMetaObject::invokeMethod(m_OsiosDht, "bootstrap", Qt::QueuedConnection /*so we can connect first*/, Q_ARG(ListOfDhtPeerAddressesAndPorts, bootstrapAddressesAndPorts), Q_ARG(quint16, localServerPort_OrZeroToChooseRandomPort));
-}
-Osios::~Osios()
-{
-    //update the [probably, but not necessarily, changed] serialized number of timeline nodes at the beginning of the file (better, use a mutation append-only strategy)
-    m_LocalPersistenceDevice->seek(0);
-    m_LocalPersistenceStream << m_TimelineNodes.size();
-    m_LocalPersistenceDevice->flush();
-    qDeleteAll(m_TimelineNodes);
-}
-QList<TimelineNode> Osios::timelineNodes() const
-{
-    return m_TimelineNodes;
-}
-void Osios::setCopycatModeEnabledForUsername(const QString &nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone)
-{
-    m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone;
 }
 void Osios::readInAllMyPreviouslySerializedLocallyEntries()
 {
@@ -124,6 +229,8 @@ void Osios::readInAllMyPreviouslySerializedLocallyEntries()
 }
 ITimelineNode *Osios::deserializeNextTimelineNode(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt)
 {
+    //was tempted to put if(!m_LocalPersistenceDevice) return 0; here, but I'm pretty damn sure it'd have to be instantiated if we got this far (the error would show up during testing). Plus, returning zero doesn't do much unless we check it in the caller too xD
+
     //we have to return a pointer because we have to instantiate the derived type
     return TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(m_LocalPersistenceDevice, whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
 }
@@ -144,6 +251,8 @@ void Osios::serializeTimelineActionLocally(TimelineNode action)
 }
 void Osios::flushDiskBuffer()
 {
+    if(!m_LocalPersistenceDevice)
+        return;
     if(!m_LocalPersistenceDevice->flush())
     {
         emit notificationAvailable(tr("Failed to flush to the local persistence device (ex: hard drive)!"), OsiosNotificationLevels::FatalNotificationLevel);
@@ -189,6 +298,7 @@ void Osios::handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState
         {
             emit connectionColorChanged(Qt::green);
             emit notificationAvailable(tr("DHT state changed to Bootstrapped"));
+            emit bootstrapped(); //to let dht bootstrap splash know to close itself, and we listen to it [the first time it's emitted only] to create/present the varios UI etc after the splash
         }
             break;
 
@@ -291,10 +401,202 @@ QByteArray Osios::calculateCrytographicHashOfTimelineNode(TimelineNode action, Q
     QByteArray timelineNodeRawByteArray = action->toByteArray(WHETHER_OR_NOT_TO_HAVE_PROFILE_NAME_IN_TIMELINE_NODE_WHEN_COMPUTING_CRYPTOGRAPHIC_HASH);
     return QCryptographicHash::hash(timelineNodeRawByteArray, algorithm);
 }
+QString Osios::usage()
+{
+    //TODOreq: modal dialog? might as well just ask them for the port at that point (but... asking for bootstrap nodes is more work guh)
+    QString ret(tr("You either didn't pass enough arguments to the app, or you passed invalid arguments.\n\nUsage: Osios localServerPort [--listen-port N --add-bootstrap-node host:port]\n\nIf you don't specify a --listen-port, one is chosen for you at random.\nYou can supply --add-bootstrap-node multiple times"));
+    return ret;
+}
+void Osios::usageAndQuit()
+{
+    emit notificationAvailable(usage(), OsiosNotificationLevels::FatalNotificationLevel);
+    emit quitRequested();
+}
+void Osios::initializeAndStart(IOsiosDhtBootstrapClient *osiosDhtBootstrapClient)
+{
+    m_OsiosDhtBootstrapClient = osiosDhtBootstrapClient;
+
+    int profileSpecificationArgIndex = m_Arguments.indexOf("--profile");
+    if(profileSpecificationArgIndex != -1)
+    {
+        if((profileSpecificationArgIndex+1) >= m_Arguments.size())
+        {
+            usageAndQuit();
+            return;
+        }
+        m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet = m_Arguments.at(profileSpecificationArgIndex+1);
+        m_Arguments.removeAt(profileSpecificationArgIndex);
+        m_Arguments.removeAt(profileSpecificationArgIndex);
+        if(m_Arguments.indexOf("--profile") != -1)
+        {
+            usageAndQuit();
+            return;
+        }
+    }
+
+    QScopedPointer<QSettings> settings(OsiosSettings::newSettings());
+    if(m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet.isEmpty())
+    {
+        m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet = settings->value(LAST_USED_PROFILE_SETTINGS_KEY).toString(); //try reading last used profile, but it may also be empty/missing so that would leave the string the same as it was anyways
+    }
+
+    bool autoLoginLastUsedProfileOnBootstrap = settings->value(AUTO_LOGIN_LAST_USED_PROFILE_ON_BOOTSTRAP_SETTINGS_KEY).toBool();
+
+    if(m_OsiosDhtBootstrapClient->hasBootstrapSplashScreen())
+    {
+        IOsiosDhtBootstrapSplashScreen *bootstrapSplashScreen = m_OsiosDhtBootstrapClient->createAndPresentBootstrapSplashScreen(m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet, autoLoginLastUsedProfileOnBootstrap);
+        //bootstrapSplashScreen->presentSelf();
+        connect(this, SIGNAL(bootstrapped()), bootstrapSplashScreen->asQObject(), SLOT(handleBootstrapped()));
+    }
+    connect(this, SIGNAL(bootstrapped()), this, SLOT(showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant()));
+
+#if 0 //ip/port enough...
+    QByteArray myDhtId = settings->value(DHT_ID_SETTINGS_KEY).toByteArray();
+    if(myDhtId.isEmpty())
+    {
+        //first launch, generate dht id
+        QByteArray randomInput = QDateTime::currentMSecsSinceEpoch();
+        //randomInput.append(QString::number(static_cast<quintptr>(this)).toUtf8());
+        myDhtId = QCryptographicHash::hash(randomInput, QCryptographicHash::Sha1);
+        settings->setValue(DHT_ID_SETTINGS_KEY, myDhtId);
+    }
+#endif
+
+    //parse local port from args
+    quint16 localServerPort_OrZeroToChooseRandomPort = 0;
+    if(!parseOptionalLocalServerPortFromArgsDidntReturnParseError(&localServerPort_OrZeroToChooseRandomPort))
+    {
+        return;
+    }
+
+    //parse bootstrap node ip/ports from args
+    ListOfDhtPeerAddressesAndPorts bootstrapAddressesAndPorts; //TODOreq: store some (ALL LEARNED?) addresses/ips in settings or something
+    if(!parseOptionalBootstrapAddressesAndPortsFromArgsDidntReturnParseError(&bootstrapAddressesAndPorts))
+    {
+        return;
+    }
+
+    //start bootstrapping
+    connect(m_OsiosDht, SIGNAL(dhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)), this, SLOT(handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)));
+    QMetaObject::invokeMethod(m_OsiosDht, "bootstrap", Qt::QueuedConnection /*so we can connect first*/, Q_ARG(ListOfDhtPeerAddressesAndPorts, bootstrapAddressesAndPorts), Q_ARG(quint16, localServerPort_OrZeroToChooseRandomPort));
+}
 void Osios::recordMyAction(TimelineNode action)
 {
     m_TimelineNodes.append(action); //takes ownership, deletes in this' destructor
     cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(action); //replicate it to network neighbors for cryptographic verification
     serializeMyTimelineAdditionsLocally(); //writes to file but does not flush. i could make this method the target of diskFlushTimer if i wanted, since the action being in m_TimelineNodes means it's recorded. I don't think it matters whether I buffer it or Qt does, since both are userland.
     emit timelineNodeAdded(action);
+}
+void Osios::showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant()
+{
+    disconnect(this, SIGNAL(bootstrapped()), this, SLOT(showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant())); //we only want to do this slot once, the very first time we've bootstrapped, not every time we re-bootstrap etc
+
+    //we are bootstrapped
+    //some cases when skipping and going to main menu directly are: --profile specified, lastUsedProfile is set and auto-login set and was not unchecked in the dht bootstrap splash
+
+
+    QString nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //aka "monitor clone" mode
+    int copyCatArgIndex = m_Arguments.indexOf("--copycat");
+    if(copyCatArgIndex != -1)
+    {
+        if((copyCatArgIndex+1) >= m_Arguments.size())
+        {
+            usageAndQuit();
+            return;
+        }
+        nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = m_Arguments.at(copyCatArgIndex+1); //TODOreq: sanitize this and other cli args
+        m_Arguments.removeAt(copyCatArgIndex);
+        m_Arguments.removeAt(copyCatArgIndex);
+        if(m_Arguments.indexOf("--copycat") != -1)
+        {
+            usageAndQuit();
+            return;
+        }
+    }
+
+    bool profileManagerRequested = false;
+    int profileManagerArgIndex = m_Arguments.indexOf("--profile-manager");
+    if(profileManagerArgIndex != -1)
+    {
+        profileManagerRequested = true;
+        m_Arguments.removeAt(profileManagerArgIndex);
+        if(m_Arguments.indexOf("--profile-manager") != -1)
+        {
+            usageAndQuit();
+            return;
+        }
+    }
+
+    if(profileManagerRequested)
+    {
+        if(m_OsiosDhtBootstrapClient->hasProfileManagerUi())
+        {
+            if(!m_OsiosDhtBootstrapClient->showProfileManagerAndReturnWhetherItWasAcceptedOrNotWhichTellsUsIfAProfileWasSelectedOrNot(&m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet))
+            {
+                //cancel pressed
+                emit quitRequested();
+                return;
+            }
+        }
+        else
+        {
+            qFatal("Back-end requested profile manager, but the front-end did not provide one");
+            return;
+        }
+    }
+    else if(m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet.isEmpty())
+    {
+        if(m_OsiosDhtBootstrapClient->hasCreateProfileUi())
+        {
+            if(!m_OsiosDhtBootstrapClient->showCreateProfileAndReturnWhetherOrNotTheDialogWasAccepted(&m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet))
+            {
+                emit quitRequested(); //TODOoptional: modal dialog infinite loop asking them if they're sure they want to quit or if they want to go to the create profile screen again
+                return;
+            }
+        }
+        else
+        {
+            qFatal("Back-end requested create profile wizard, but the front-end did not provide one");
+            return;
+        }
+    }
+
+    //if we get here, m_ProfileNameToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet is set and valid
+    QScopedPointer<QSettings> settings(OsiosSettings::newSettings());
+    settings->setValue(LAST_USED_PROFILE_SETTINGS_KEY, m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet);
+    //m_Osios = new Osios(m_ProfileNameToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet, localServerPort_OrZeroToChooseRandomPort, bootstrapAddressesAndPorts);
+    IOsiosClient *frontEnd = m_OsiosDhtBootstrapClient->createMainUi();
+    //m_MainWindow = new OsiosMainWindow(m_Osios);
+    connecToAndFromFrontendSignalsAndSlots(frontEnd);
+    m_OsiosDhtBootstrapClient->presentMainUi();
+
+    if(!nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone.isEmpty())
+    {
+        //copycat mode (for now I'm NOT going to disable input on the node that is going into copycat mode (this one). inputting anything using kb/mouse will lead to undefined results (i think that disabling input may be a waste of my efforts, since the contents will USUALLY not be seen [directly] and only used for screen splicing. to polish the monitor clone mode, however, (low priority), i should disable the user input. hell maybe just doing mainmenu.setReadOnly would do it??? rofl. it will seem weird, but i will deal with it for now, to be using profile b when copycatting profile a (b's timeline log will mirror a's in that case (unless i disconnect the actionOccured signal))
+        //connect(m_Osios, SIGNAL(timelineNodeReceivedFromDhtPeer(OsiosDhtPeer*, TimelineNode)), m_MainWindow, SLOT(synthesizeEventUsingTimelineNodeReceivedFromDhtPeer(OsiosDhtPeer*,TimelineNode))); //TODOoptimization: only emit the signal for the copycat peer (take t
+        //m_MainWindow->setCopycat
+        if(m_OsiosDhtBootstrapClient->mainUiHasCopycatAbility())
+        {
+            IOsiosCopycatClient *copycatClient = m_OsiosDhtBootstrapClient->mainUiAsCopycatClient();
+            copycatClient->setCopycatModeEnabled(true);
+            m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //setCopycatModeEnabledForUsername(nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone); //can only be copycatting one person at a time (in the normal mode. i'm going to make hacks building on top of this that lets me copycat 2 others and splice screens etc xD)
+            connect(this, SIGNAL(timelineNodeReceivedFromCopycatTarget(TimelineNode)), copycatClient->asQObject(), SLOT(synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(TimelineNode)));
+        }
+        else
+        {
+            qFatal("Back-end requested copycat mode, but front-end does not support it");
+            return;
+        }
+    }
+
+#if 0 //ignore
+    if(!m_Arguments.isEmpty())
+    {
+        //unused arg. TODOoptional: quit? ignore?
+        usageAndQuit();
+        return;
+    }
+#endif
+
+    beginUsingProfileNameInOsios(m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet);
 }

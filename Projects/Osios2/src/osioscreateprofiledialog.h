@@ -13,7 +13,7 @@ class OsiosCreateProfileDialog : public QDialog
 public:
     explicit OsiosCreateProfileDialog(QWidget *parent = 0);
     QString newProfileName() const;
-    QString chosenDataDir() const;
+    //QString chosenDataDir() const;
 private:
     QLineEdit *m_ProfileNameLineEdit;
     LabelLineEditBrowseButton *m_DataDirRow;
