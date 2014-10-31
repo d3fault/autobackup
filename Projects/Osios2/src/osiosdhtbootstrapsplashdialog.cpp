@@ -4,6 +4,8 @@
 #include <QTextEdit>
 #include <QCheckBox>
 
+#include "osiossettings.h"
+
 //QDialog because QSplashScreen doesn't allow user input :(
 //The CLI equivalent should just block until bootstrap is complete, duh
 //TODOoptional: this would also change the above comment to be untrue, as now simply blocking the in CLI equivalent is not good enough: allow adding bootstrap nodes at runtime in this dialog!
@@ -12,6 +14,8 @@ OsiosDhtBootstrapSplashDialog::OsiosDhtBootstrapSplashDialog(const QString &last
     : QDialog(parent)
 {
     //TODOoptional: pretty-ify, animate the status messages as they come, etc
+
+    setWindowTitle(OSIOS_HUMAN_READABLE_TITLE);
 
     QVBoxLayout *myLayout = new QVBoxLayout(this);
 

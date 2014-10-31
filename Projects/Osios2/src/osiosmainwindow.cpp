@@ -21,7 +21,7 @@ OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
     , m_MainMenuItemsTabWidget(new QTabWidget())
     , m_CopycatModeEnabled(false) //TODOmb: make protected in ICopycatClient interface
 {
-    setWindowTitle(tr("OSiOS"));
+    setWindowTitle(OSIOS_HUMAN_READABLE_TITLE);
 
     //all added tabs must implement IMainMenuActivityTab
     m_MainMenuItemsTabWidget->addTab(new TimelineTab_Widget_ForMainMenuTabWidget(osios, this), tr("Actions Timeline"));

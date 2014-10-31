@@ -50,6 +50,8 @@ private:
     bool parseOptionalLocalServerPortFromArgsDidntReturnParseError(quint16 *portToParseInto);
     bool parseOptionalBootstrapAddressesAndPortsFromArgsDidntReturnParseError(ListOfDhtPeerAddressesAndPorts *listOfDhtPeersAddressesAndPortsToParseInto);
 
+    bool checkCopycatShouldBeEnabledEnableItAsWell();
+    IOsiosClient *profileAgnosticUiSetup();
     void connecToAndFromFrontendSignalsAndSlots(IOsiosClient *frontEnd);
     void beginUsingProfileNameInOsios(const QString &profileName);
     void readInAllMyPreviouslySerializedLocallyEntries();

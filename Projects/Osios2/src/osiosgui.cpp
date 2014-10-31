@@ -48,6 +48,7 @@ bool OsiosGui::hasCreateProfileUi()
 bool OsiosGui::showCreateProfileAndReturnWhetherOrNotTheDialogWasAccepted(QString *newlyCreatedProfile)
 {
     OsiosCreateProfileDialog createProfileDialog;
+    //createProfileDialog.setModal(false); i want to but i don't want profile manager to be usable underneath
     if(createProfileDialog.exec() == QDialog::Accepted)
     {
         *newlyCreatedProfile = createProfileDialog.newProfileName(); //TODOreq: dataDir also. Instead of being passed a QString ptr for my output, I should pass in a Profile ptr
@@ -66,7 +67,8 @@ bool OsiosGui::hasProfileManagerUi()
 bool OsiosGui::showProfileManagerAndReturnWhetherItWasAcceptedOrNotWhichTellsUsIfAProfileWasSelectedOrNot(QString *chosenProfileName)
 {
     OsiosProfileManagerDialog profileManagerDialog;
-    if(profileManagerDialog.exec() == QDialog::Accepted)
+    profileManagerDialog.setModal(false);
+    if(profileManagerDialog.exec() == QDialog::Accepted) //does this even become non-blocking-ish when setModal(true) occurs? i worry that my dialogs are blocking the event loop... i may be right :-/. whatever i am doing them quick for now lol. TODOreq fix. use heap + signals (just like splash) i guess. HOWEVER it might be fine that we're blocking osios (since he calls us directly), idfk. IT IS NOT OK THAT WE ARE BLOCKING if we want to use a create profile signal to signal profile creation... because then osios can't respond to it until it's done. actually that might be fine, it might still work, but it's still sloppy
     {
         *chosenProfileName = profileManagerDialog.profileNameChosen();
         return true;

@@ -2,6 +2,7 @@
 
 #include <QVBoxLayout>
 #include "writer/eventemittingplaintextedit.h"
+#include "osiossettings.h"
 
 WriterTab_Widget_ForMainMenuTabWidget::WriterTab_Widget_ForMainMenuTabWidget(IOsiosClient *osiosClient, IOsiosCopycatClient *copycatClient, QWidget *parent)
     : IActivityTab_Widget_ForMainMenuTabWidget(parent)

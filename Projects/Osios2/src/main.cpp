@@ -20,6 +20,8 @@
 
 //TODOreq: offline read-only mode, perhaps a separate fucking binary to discourage use. I mean idk if it should be discouraged, but it's imparative that user input is literally disabled in such a mode. The argument for it's existence is that you should not have to be bootstrapped to access your data.  Proper offline/online sync will probably eventually come too, BUT AS I KEEP RE-REMEMBERING, I DON'T WANT OFFLINE MODE GAH (still, read-only is justified methinks (but still, creating a localhost dht is a matter of launching the binary 3 times xD (assuming you provide different --system-wide-settings for each instance))
 
+//It's weird I keep wanting to contradict myself: when you say "operating system" and look at that by itself, it's STUPID AS FUCK to say that a network connection to 2 nodes (DERP BTW THE EASIEST WAY TO GET NON-NETWORK/single-offline USE WOULD BE TO PUT MIN_NEIGHBORS TO ZERO) is required before you can start using it. But then I re-remember AGAIN that the entire purpose of the app/os is data integrity/backup, so really it does make sense to require it. I'm entertaining (surely) the idea of selling kits of 3-5 computers all in one single unit (independent power supplies (one charge port though), etc). Completely open source build instructions from easily attainable components and all free software, with of course a bitchin easy to read (pictures) or watch (vidya) tutorial on assembly (fun). Or pay a little extra (bitch/pussy) and it comes pre-assembled. Integrate with WASDF and oh my.
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

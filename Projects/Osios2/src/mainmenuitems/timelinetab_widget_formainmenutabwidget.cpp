@@ -4,6 +4,7 @@
 #include <QListWidget>
 
 #include "../osios.h"
+#include "../osiossettings.h"
 
 TimelineTab_Widget_ForMainMenuTabWidget::TimelineTab_Widget_ForMainMenuTabWidget(Osios *osios, IOsiosClient *osiosClient, QWidget *parent)
     : IActivityTab_Widget_ForMainMenuTabWidget(parent)

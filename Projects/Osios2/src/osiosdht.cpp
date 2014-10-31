@@ -10,9 +10,7 @@
 #include "osios.h"
 #include "osiosdhtpeer.h"
 #include "osioscommon.h"
-
-#define OSIOS_DHT_MIN_TIME_TO_WAIT_BEFORE_RETRYING_CONNECTION_MS (100)
-#define OSIOS_DHT_MAX_AMOUNT_OF_TIME_TO_WAIT_BEFORE_CHECKING_LIST_FOR_PEERS_TO_RETRY_CONNECTING_TO_MS (60*1000)
+#include "osiossettings.h"
 
 //for now the other 2 IPs must be hardcoded, there will be no IP address sharing (or sharding ;-P) yet just to KISS
 //TODOoptional: some multicast broadcast thing would make a decent bootstrapping strategy, especially since this app is designed specifically for LAN
@@ -91,6 +89,7 @@ void OsiosDht::startLocalNetworkServer(quint16 localServerPort)
 //pop a boner
 void OsiosDht::attemptToEstablishOutgoingNetworkClientConnectionTo(DhtPeerAddressAndPort dhtPeerAddressAndPort)
 {
+    qDebug() << "Attempting new outgoing connection to:" << QString(dhtPeerAddressAndPort.first.toString() + ":" + QString::number(dhtPeerAddressAndPort.second));
     QTcpSocket *outgoingConnectionAttempt = new QTcpSocket(this);
     OsiosDhtPeer *dhtPeerWrapper = new OsiosDhtPeer(outgoingConnectionAttempt, dhtPeerAddressAndPort, outgoingConnectionAttempt); //TODOoptional: maybe put in m_PendingConnections list that is periodically purged. for now fuck it KISS
     connect(dhtPeerWrapper, SIGNAL(osiosDhtPeerConnected(OsiosDhtPeer*)), this, SLOT(handleOsiosDhtPeerConnected(OsiosDhtPeer*)));
@@ -125,6 +124,12 @@ void OsiosDht::maybeChangeStateBecauseThereWasAConnectionThatStoppedBeingConside
 }
 void OsiosDht::bootstrap(ListOfDhtPeerAddressesAndPorts bootstrapHostAddresses, quint16 localServerPort_OrZeroToChooseRandomPort)
 {
+#if OSIOS_DHT_MIN_PEERS_CONNECTED_FOR_BOOTSTRAP_TO_BE_CONSIDERED_COMPLETE < 1 //TODOoptional: eh this hack works in that it gets us to the main window, but no timeline actions are shown in the timeline widget (neither new nor deserialized). this is low priority to fix since it's not the purpose of the app
+    //compile time hack to get dht to bootstrap (and therefore, make the app usable) with 0 neighbors. useful for testing. in that case we serialize a local timeline.bin and that's it
+    setDhtState(OsiosDhtStates::BootstrappedState);
+    return;
+#endif
+
     setDhtState(OsiosDhtStates::BootstrappingForFirstTimeState);
 
     //a) start local tcp server for (incoming)
@@ -140,10 +145,10 @@ void OsiosDht::bootstrap(ListOfDhtPeerAddressesAndPorts bootstrapHostAddresses, 
 }
 void OsiosDht::handleRetryConnectionAndSayHelloToWithExponentialBackoffTimerTimedOut()
 {
-    if(m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff.isEmpty())
+    if(m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff.isEmpty()) //TODOoptional: start/stop the timer on list insert/remove instead. TODOreq: at the very least we don't want our retry timeout to be stuck at some extremely low interval (i think i plan to use a minimum so...)
         return;
 
-    //we should use a map with the timeout as the key so it is sorted async for us. as soon as we reach a key that does not need a retry for exponential backoff, we stop iterating the list and then restart our timer for that amount. iterating the entire list could be[come] expensive
+    //we use a map with the timeout as the key so it is sorted async for us when the disconnected/error/whatever signals are emitted. as soon as we reach a key that does not need a retry for exponential backoff, we stop iterating the list and then restart our timer for that amount+a-tad. iterating the entire list could be[come] expensive
     QMutableMapIterator<OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF> mapIterator(m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff);
     qint64 durationUntilFirstNextConnectionAttempt_OrNegativeOneIfWeRetriedAllInTheList = -1;
     while(mapIterator.hasNext())
@@ -154,31 +159,7 @@ void OsiosDht::handleRetryConnectionAndSayHelloToWithExponentialBackoffTimerTime
         if(mapIterator.key() <= QDateTime::currentMSecsSinceEpoch())
         {
             attemptToEstablishOutgoingNetworkClientConnectionTo(mapIterator.value().second);
-#if 0
-            //TO DOnereq: might be calling connectToHost more than once if the 420ms (for now) exponential backoff timer takes longer than the connect (which actually is unlikely on localhost, but definitely a bug I want to plug since it occurs lots on the internet and is just sloppy coding in general)
-            //TO DOnereq: put that remove from exponential backoff multimap code here, but aww shit it needs to be merged xD
-            //remove peer from m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff. TODOreq: we should remove them right at connectToHost. They should only be in m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff when connectToHost hasn't been called for first time, OR when connection fails/drops/times-out/ETC for any reason. We need to record whether or not the last connection attempt was successful (even if it later errored), and if it was then we reset the exponential backoff for that ip/port
-            QMutableMapIterator<OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF> pendingConnectionsToRetryWithExponentialBackoffIterator(m_PotentialOrOldDhtPeersToConnectAndSayHelloToRetryingWithExponentialBackoff);
-            bool foundTheEntry = false;
-            while(pendingConnectionsToRetryWithExponentialBackoffIterator.hasNext())
-            {
-                pendingConnectionsToRetryWithExponentialBackoffIterator.next();
-                DhtPeerAddressAndPort currentPeerConnectionInfo = pendingConnectionsToRetryWithExponentialBackoffIterator.value().second;
-                if(currentPeerConnectionInfo.first == newDhtPeer->peerConnectionInfo().first && currentPeerConnectionInfo.second == newDhtPeer->peerConnectionInfo().second) //first and second mean host and port respectively
-                {
-                    pendingConnectionsToRetryWithExponentialBackoffIterator.remove();
-                    foundTheEntry = true;
-                    break;
-                }
-            }
-            if(!foundTheEntry)
-            {
-                emit notificationAvailable(tr("We established connection to a peer (us to them), but we were unable to find their connection info in our list of connections to try [and retry with exponential backoff]. This is most likely an indication of a bug in the software"), OsiosNotificationLevels::ErrorNotificationLevel);
-            }
-#endif
-            //all of the above ifdef'd out became:
-            mapIterator.remove();
-            //during the described therein "merge"
+            mapIterator.remove(); //we'll put it back in if/when the connect attempt fails
 
             //TODOreq: in order to get exponential backoff to work, I need to KEEP A RECORD OF THEM (them being the just-removed above) and their current exponent. Qt's timeout will be constant (30s? arbitrary who cares), mine will have exponential backoff. 420ms is good enough for now/testing
 
@@ -186,26 +167,28 @@ void OsiosDht::handleRetryConnectionAndSayHelloToWithExponentialBackoffTimerTime
         }
         durationUntilFirstNextConnectionAttempt_OrNegativeOneIfWeRetriedAllInTheList =
                 qMin(
-                      (mapIterator.key() - QDateTime::currentMSecsSinceEpoch())
+                    (mapIterator.key() - QDateTime::currentMSecsSinceEpoch())
                     , static_cast<qint64>(OSIOS_DHT_MAX_AMOUNT_OF_TIME_TO_WAIT_BEFORE_CHECKING_LIST_FOR_PEERS_TO_RETRY_CONNECTING_TO_MS)
                     );
         break;
     }
     if(durationUntilFirstNextConnectionAttempt_OrNegativeOneIfWeRetriedAllInTheList > -1)
     {
-        m_RetryConnectionAndSayHelloToWithExponentialBackoffTimer->start(durationUntilFirstNextConnectionAttempt_OrNegativeOneIfWeRetriedAllInTheList); //restart timer to be more accurate. the timer itself follows exponential backoff as well :-D (the lowest interval possible (TODOreq: the interval of course changes again when new peer info is inserted into the map))
+        m_RetryConnectionAndSayHelloToWithExponentialBackoffTimer->start(durationUntilFirstNextConnectionAttempt_OrNegativeOneIfWeRetriedAllInTheList+OSIOS_DHT_TIME_TO_OVERSHOOT_A_RETRYWITHEXPONENTIALBACKOFF_TIMEOUT_WHEN_WE_WANT_TO_HIT_ON_NEXT_TIMEOUT_MS); //restart timer to be more accurate. the timer itself follows exponential backoff as well :-D (the lowest interval possible (TODOreq: the interval of course changes again when new peer info is inserted into the map))
     }
 }
 void OsiosDht::handleLocalNetworkServerNewIncomingConnection()
 {
     QTcpSocket *dhtPeerSocket = m_LocalNetworkServer->nextPendingConnection();
     OsiosDhtPeer *dhtPeerWrapper = new OsiosDhtPeer(dhtPeerSocket, qMakePair(dhtPeerSocket->peerAddress(), dhtPeerSocket->peerPort()) /* TODOreq: returning empty string for host and -1 for port. This just means I won't be able to try an outgoing attempt to connect to them [with exponential backoff] should they ever dc */, dhtPeerSocket);
+    qDebug() << "New incoming connection (Hello handshake NOT yet complete) from:" << QString(dhtPeerWrapper->peerConnectionInfo().first.toString() + ":" + QString::number(dhtPeerWrapper->peerConnectionInfo().second));
     connect(dhtPeerWrapper, SIGNAL(osiosDhtPeerConnected(OsiosDhtPeer*)), this, SLOT(handleOsiosDhtPeerConnected(OsiosDhtPeer*))); //the connected signal has already been emitted. the only reason i am connecting it is so that this incoming tcp socket is in an IDENTICAL state as the outgoing tcp sockets. This will matter when re-connect strategies are coded/designed
     connect(dhtPeerWrapper, SIGNAL(connectionNoLongerConsideredGood(OsiosDhtPeer*)), this, SLOT(handleConnectionNoLongerConsideredGood(OsiosDhtPeer*)));
     handleOsiosDhtPeerConnected(dhtPeerWrapper); //like I said, the connected signal was already emitted (we are handling it right this very moment), so we call it manually just this once
 }
 void OsiosDht::handleOsiosDhtPeerConnected(OsiosDhtPeer *newDhtPeer)
 {
+    qDebug() << "New healthy connection (Hello handshake COMPLETE) to/from:" << QString(newDhtPeer->peerConnectionInfo().first.toString() + ":" + QString::number(newDhtPeer->peerConnectionInfo().second));
     if(m_DhtState != OsiosDhtStates::BootstrappedState)
     {
         //TODOoptional: could put this if block in it's own dedicated slot connected to signal 'osiosDhtPeerConnected' that is disconnected on/at bootstrap. small optimization methinks, also arguably cleaner

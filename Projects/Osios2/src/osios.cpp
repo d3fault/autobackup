@@ -152,6 +152,64 @@ bool Osios::parseOptionalBootstrapAddressesAndPortsFromArgsDidntReturnParseError
     }
     return true;
 }
+bool Osios::checkCopycatShouldBeEnabledEnableItAsWell()
+{
+    //check it's enabled
+    QString nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //aka "monitor clone" mode
+    int copyCatArgIndex = m_Arguments.indexOf("--copycat");
+    if(copyCatArgIndex != -1)
+    {
+        if((copyCatArgIndex+1) >= m_Arguments.size())
+        {
+            usageAndQuit();
+            return true; //although it's an error, we still want to indicate that copycat mode was specified to the caller
+        }
+        nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = m_Arguments.at(copyCatArgIndex+1); //TODOreq: sanitize this and other cli args
+        m_Arguments.removeAt(copyCatArgIndex);
+        m_Arguments.removeAt(copyCatArgIndex);
+        if(m_Arguments.indexOf("--copycat") != -1)
+        {
+            usageAndQuit();
+            return true; //see above for justification of true
+        }
+    }
+
+    bool copycatModeEnabled = !nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone.isEmpty();
+
+    //enable it. this is our copycat equivalent of beginUsingProfileNameInOsios (and some of the rest of our caller's code, some gui init stuff, but not all of it ofc)
+    if(copycatModeEnabled)
+    {
+        //copycat mode (for now I'm NOT going to disable input on the node that is going into copycat mode (this one). inputting anything using kb/mouse will lead to undefined results (i think that disabling input may be a waste of my efforts, since the contents will USUALLY not be seen [directly] and only used for screen splicing. to polish the monitor clone mode, however, (low priority), i should disable the user input. hell maybe just doing mainmenu.setReadOnly would do it??? rofl. it will seem weird, but i will deal with it for now, to be using profile b when copycatting profile a (b's timeline log will mirror a's in that case (unless i disconnect the actionOccured signal))
+        //connect(m_Osios, SIGNAL(timelineNodeReceivedFromDhtPeer(OsiosDhtPeer*, TimelineNode)), m_MainWindow, SLOT(synthesizeEventUsingTimelineNodeReceivedFromDhtPeer(OsiosDhtPeer*,TimelineNode))); //TODOoptimization: only emit the signal for the copycat peer (take t
+
+        IOsiosClient *frontEnd = profileAgnosticUiSetup(); //copycat has no "my profile", there is only the one he's copycatting
+
+        if(m_OsiosDhtBootstrapClient->mainUiHasCopycatAbility())
+        {
+            //disable recording of user input from ui. if a user in front of the "clone monitor" changes/interacts-with the ui, it won't be recorded (and future timeline node synthesis is undefined!). we don't want to record copycatted actions. yea we just connected it a few lines up, whatever
+            disconnect(frontEnd->asQObject(), SIGNAL(actionOccurred(TimelineNode)), this, SLOT(recordMyAction(TimelineNode)));
+
+            IOsiosCopycatClient *copycatClient = m_OsiosDhtBootstrapClient->mainUiAsCopycatClient();
+            copycatClient->setCopycatModeEnabled(true);
+            m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //setCopycatModeEnabledForUsername(nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone); //can only be copycatting one person at a time (in the normal mode. i'm going to make hacks building on top of this that lets me copycat 2 others and splice screens etc xD)
+            connect(this, SIGNAL(timelineNodeReceivedFromCopycatTarget(TimelineNode)), copycatClient->asQObject(), SLOT(synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(TimelineNode)));
+        }
+        else
+        {
+            qFatal("Back-end requested copycat mode, but front-end does not support it");
+        }
+    }
+
+    return copycatModeEnabled;
+}
+IOsiosClient *Osios::profileAgnosticUiSetup() //used by both copycat mode and normal mode
+{
+    IOsiosClient *frontEnd = m_OsiosDhtBootstrapClient->createMainUi();
+    //m_MainWindow = new OsiosMainWindow(m_Osios);
+    connecToAndFromFrontendSignalsAndSlots(frontEnd);
+    m_OsiosDhtBootstrapClient->presentMainUi();
+    return frontEnd;
+}
 void Osios::connecToAndFromFrontendSignalsAndSlots(IOsiosClient *frontEnd)
 {
     connect(frontEnd->asQObject(), SIGNAL(actionOccurred(TimelineNode)), this, SLOT(recordMyAction(TimelineNode)));
@@ -508,25 +566,8 @@ void Osios::showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant()
     //we are bootstrapped
     //some cases when skipping and going to main menu directly are: --profile specified, lastUsedProfile is set and auto-login set and was not unchecked in the dht bootstrap splash
 
-
-    QString nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //aka "monitor clone" mode
-    int copyCatArgIndex = m_Arguments.indexOf("--copycat");
-    if(copyCatArgIndex != -1)
-    {
-        if((copyCatArgIndex+1) >= m_Arguments.size())
-        {
-            usageAndQuit();
-            return;
-        }
-        nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = m_Arguments.at(copyCatArgIndex+1); //TODOreq: sanitize this and other cli args
-        m_Arguments.removeAt(copyCatArgIndex);
-        m_Arguments.removeAt(copyCatArgIndex);
-        if(m_Arguments.indexOf("--copycat") != -1)
-        {
-            usageAndQuit();
-            return;
-        }
-    }
+    if(checkCopycatShouldBeEnabledEnableItAsWell())
+        return; //nothing left for us to do
 
     bool profileManagerRequested = false;
     int profileManagerArgIndex = m_Arguments.indexOf("--profile-manager");
@@ -579,29 +620,7 @@ void Osios::showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant()
     QScopedPointer<QSettings> settings(OsiosSettings::newSettings());
     settings->setValue(LAST_USED_PROFILE_SETTINGS_KEY, m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet);
     //m_Osios = new Osios(m_ProfileNameToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet, localServerPort_OrZeroToChooseRandomPort, bootstrapAddressesAndPorts);
-    IOsiosClient *frontEnd = m_OsiosDhtBootstrapClient->createMainUi();
-    //m_MainWindow = new OsiosMainWindow(m_Osios);
-    connecToAndFromFrontendSignalsAndSlots(frontEnd);
-    m_OsiosDhtBootstrapClient->presentMainUi();
-
-    if(!nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone.isEmpty())
-    {
-        //copycat mode (for now I'm NOT going to disable input on the node that is going into copycat mode (this one). inputting anything using kb/mouse will lead to undefined results (i think that disabling input may be a waste of my efforts, since the contents will USUALLY not be seen [directly] and only used for screen splicing. to polish the monitor clone mode, however, (low priority), i should disable the user input. hell maybe just doing mainmenu.setReadOnly would do it??? rofl. it will seem weird, but i will deal with it for now, to be using profile b when copycatting profile a (b's timeline log will mirror a's in that case (unless i disconnect the actionOccured signal))
-        //connect(m_Osios, SIGNAL(timelineNodeReceivedFromDhtPeer(OsiosDhtPeer*, TimelineNode)), m_MainWindow, SLOT(synthesizeEventUsingTimelineNodeReceivedFromDhtPeer(OsiosDhtPeer*,TimelineNode))); //TODOoptimization: only emit the signal for the copycat peer (take t
-        //m_MainWindow->setCopycat
-        if(m_OsiosDhtBootstrapClient->mainUiHasCopycatAbility())
-        {
-            IOsiosCopycatClient *copycatClient = m_OsiosDhtBootstrapClient->mainUiAsCopycatClient();
-            copycatClient->setCopycatModeEnabled(true);
-            m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //setCopycatModeEnabledForUsername(nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone); //can only be copycatting one person at a time (in the normal mode. i'm going to make hacks building on top of this that lets me copycat 2 others and splice screens etc xD)
-            connect(this, SIGNAL(timelineNodeReceivedFromCopycatTarget(TimelineNode)), copycatClient->asQObject(), SLOT(synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(TimelineNode)));
-        }
-        else
-        {
-            qFatal("Back-end requested copycat mode, but front-end does not support it");
-            return;
-        }
-    }
+    profileAgnosticUiSetup(); //we're in normal mode (not copycat mode)
 
 #if 0 //ignore
     if(!m_Arguments.isEmpty())
