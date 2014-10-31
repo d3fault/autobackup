@@ -10,7 +10,7 @@ void OsiosSettings::setSettingsFilenameApplicationWide(const QString &applicatio
 }
 QSettings *OsiosSettings::newSettings(/*QObject *parent*/)
 {
-    if(!m_ApplicationWideSettingsFilename_OrEmptyIfNoneSpecified.isEmpty() /* TODOmb: is this thread safe? since it's static idfk. fuck it for now */)
+    if(!m_ApplicationWideSettingsFilename_OrEmptyIfNoneSpecified.isEmpty() /* TODOmb: is this thread safe? since it's static idfk (probably not (mutex protect gg)). fuck it for now */)
     {
         return new QSettings(m_ApplicationWideSettingsFilename_OrEmptyIfNoneSpecified, QSettings::IniFormat /*, parent*/);
     }

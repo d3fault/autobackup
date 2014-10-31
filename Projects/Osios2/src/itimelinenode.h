@@ -7,6 +7,7 @@
 class TimelineNodeTypeEnum
 {
 public:
+    //enum is prioritized in semi-order of creation, but the ordering of such enum values in the switch statement in instantiateTimelineNodeBasedOnTimelineNodeType is prioritized based on the programmer's-guess (sup) of which will be the most frequently used
     enum TimelineNodeTypeEnumActual
     {
         INITIALNULLINVALIDTIMELINENODETYPE = 0

@@ -13,7 +13,7 @@ class QTimer;
 class Osios;
 class OsiosDhtPeer;
 
-#define OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF qint64 /* timestamp of next connect/hello attempt */, QPair<int /* last exponent */, QUrl /*connection info*/> /*this comment is just to keep qt creator from fucking my space after the greater than*/
+#define OSIOS_DHT_MAP_TYPE_OF_PEERS_TO_TRY_CONNECTING_TO_RETRYING_WITH_EXPONENTIAL_BACKOFF qint64 /* timestamp of next connect/hello attempt */, QPair<int /* last exponent */, DhtPeerAddressAndPort /*connection info*/> /*this comment is just to keep qt creator from fucking my space after the greater than*/
 
 class OsiosDht : public QObject
 {
@@ -36,9 +36,9 @@ private:
 
     quint16 generateRandomPort();
     void startLocalNetworkServer(quint16 localServerPort);
-    void attemptToEstablishNetworkClientConnectionTo(DhtPeerAddressAndPort dhtPeerAddressAndPort);
+    void attemptToEstablishOutgoingNetworkClientConnectionTo(DhtPeerAddressAndPort dhtPeerAddressAndPort);
     void maybeChangeStateBecauseThereWasNewConnection();
-    void maybeChangeStateBecauseThereWasADisconnection();
+    void maybeChangeStateBecauseThereWasAConnectionThatStoppedBeingConsideredHealthy();
 signals:
     void notificationAvailable(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel = OsiosNotificationLevels::StandardNotificationLevel);
     void dhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState);

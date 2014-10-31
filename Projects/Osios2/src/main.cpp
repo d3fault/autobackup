@@ -17,6 +17,9 @@
 //TODOreq: right now the application state (dht state really) will look valid so long as no actions are performed. we should probably use a heartbeat to prove that the connection is still healthy, regardless of whether or not any actions are triggered
 
 //If I ever do implement sharding (to make it scale better, regardless of whether or not it's public dht also), with care I could make the "replication strategy" a compile time define. Right now my replication is "EVERY NODE GETS EVERY NODE", but it could be "SHARD BLAH EFFICIENT-ER"
+
+//TODOreq: offline read-only mode, perhaps a separate fucking binary to discourage use. I mean idk if it should be discouraged, but it's imparative that user input is literally disabled in such a mode. The argument for it's existence is that you should not have to be bootstrapped to access your data.  Proper offline/online sync will probably eventually come too, BUT AS I KEEP RE-REMEMBERING, I DON'T WANT OFFLINE MODE GAH (still, read-only is justified methinks (but still, creating a localhost dht is a matter of launching the binary 3 times xD (assuming you provide different --system-wide-settings for each instance))
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

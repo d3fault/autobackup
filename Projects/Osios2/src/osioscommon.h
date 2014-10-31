@@ -46,7 +46,7 @@ public:
 
 #define OSIOS_GUI_LAYOUT_CONTENT_MARGINS 0
 
-typedef QUrl DhtPeerAddressAndPort;
+typedef QPair<QHostAddress,quint16> DhtPeerAddressAndPort;
 typedef QList<DhtPeerAddressAndPort> ListOfDhtPeerAddressesAndPorts;
 
 #endif // OSIOSCOMMON_H

@@ -124,5 +124,5 @@ void OsiosDhtPeer::emitConnectionNoLongerConsideredGood()
         m_QTcpSocketHasToldUsWeAreConnected = false; //the sole purpose of this flag is just to not double send this signal. the receiver of the signal should delete us (but keep the ip/port around for exponential backoff retrying) TODOreq
         emit connectionNoLongerConsideredGood(this);
     }
-    deleteLater(); //TODOmb: the listener of above signal might never hear it, if he is ever not on the same thread as us (right?). implicit sharing solves this, but qobject signal/slot disconnection at least means we won't crash
+    deleteLater(); //TODOmb(false i believe actually): the listener of above signal might never hear it, if he is ever not on the same thread as us (right?). implicit sharing solves this, but qobject signal/slot disconnection at least means we won't crash
 }

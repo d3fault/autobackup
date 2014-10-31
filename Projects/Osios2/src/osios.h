@@ -35,7 +35,7 @@ private:
     QStringList m_Arguments;
     IOsiosDhtBootstrapClient *m_OsiosDhtBootstrapClient;
     QString m_ProfileNameUserWantsToUse_OrEmptyStringIfNoneDecidedCreatedEtcYet; //TODOreq: merge with below m_ProfileName?
-    //QString m_ProfileName;
+    QString m_ProfileName;
     QList<TimelineNode> m_TimelineNodes;
     CryptographicHashAndTheListofDhtPeersThatHaveVerifiedItSoFar m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready;
     QHash<CryptographicHashAndTimeoutTimestamp> m_RecentlyGeneratedTimelineNodesAndTheirTimeoutTimestamps;

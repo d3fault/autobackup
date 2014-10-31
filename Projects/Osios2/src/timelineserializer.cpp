@@ -6,9 +6,11 @@
 
 #include "osios.h"
 #include "itimelinenode.h"
+#include "timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h"
 #include "timelinenodetypes/mainmenuactivitychangedtimelinenode.h"
 #include "timelinenodetypes/keypressinnewemptydoctimelinenode.h"
 
+//TODOoptional: move all of this into ITimelineNode, since I never ended up using it. The ifdef'd out stuff can be use as a "timeline export" functionality, to write a timeline in full. I'm not sure it's finished, but it might just work. Bleh that's easy anyways why am I-
 TimelineSerializer::TimelineSerializer(QObject *parent)
     : QObject(parent)
 { }
@@ -81,13 +83,18 @@ ITimelineNode *TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNode
 }
 ITimelineNode *TimelineSerializer::instantiateTimelineNodeBasedOnTimelineNodeType(TimelineNodeTypeEnum::TimelineNodeTypeEnumActual timelineNodeTypeId)
 {
+    //switch statement in instantiateTimelineNodeBasedOnTimelineNodeType is prioritized based on the programmer's (sup) best-guess of which will be the most frequently used, but enum is prioritized in semi-order of creation
     switch(timelineNodeTypeId)
     {
+    //mouse movement would go above key presses in priority, if recorded (tbd)
+    case TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode:
+        return new KeyPressInNewEmptyDocTimelineNode();
+        break;
     case TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode:
         return new MainMenuActivityChangedTimelineNode();
         break;
-    case TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode:
-        return new KeyPressInNewEmptyDocTimelineNode();
+    case TimelineNodeTypeEnum::ProfileCreationAnnounce_aka_GenesisTimelineNode:
+        return new ProfileCreationAnnounce_aka_GenesisTimelineNode();
         break;
     case TimelineNodeTypeEnum::INITIALNULLINVALIDTIMELINENODETYPE:
     default:

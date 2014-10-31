@@ -133,12 +133,16 @@ bool Osios::parseOptionalBootstrapAddressesAndPortsFromArgsDidntReturnParseError
             usageAndQuit();
             return false;
         }
-        DhtPeerAddressAndPort dhtPeerAddressAndPort = DhtPeerAddressAndPort::fromUserInput(m_Arguments.at(addBootstrapNodeArgIndex+1));
-        if(!dhtPeerAddressAndPort.isValid())
+        QUrl userInputParser = QUrl::fromUserInput(m_Arguments.at(addBootstrapNodeArgIndex+1));
+        if(!userInputParser.isValid())
         {
             usageAndQuit();
             return false;
         }
+        DhtPeerAddressAndPort dhtPeerAddressAndPort;
+        dhtPeerAddressAndPort.first = userInputParser.host();
+        dhtPeerAddressAndPort.second = userInputParser.port();
+
         (*listOfDhtPeersAddressesAndPortsToParseInto).append(dhtPeerAddressAndPort);
 
         m_Arguments.removeAt(addBootstrapNodeArgIndex); //add bootstrap arg
@@ -166,6 +170,7 @@ void Osios::beginUsingProfileNameInOsios(const QString &profileName)
     settings->endGroup();
     settings->endGroup();
     QString fileName = appendSlashIfNeeded(dataDir) + OSIOS_TIMELINE_FILENAME;
+    m_ProfileName = profileName;
     qDebug() << "Current profile:" << profileName;
     qDebug() << "File path of timeline for current profile:" << fileName;
     bool newUser = !QFile::exists(fileName);
@@ -181,7 +186,8 @@ void Osios::beginUsingProfileNameInOsios(const QString &profileName)
     }
     m_LocalPersistenceStream.setDevice(m_LocalPersistenceDevice);
 
-    if(newUser) //TODOreq: move to profile creation dialog (and keep using interfaces ofc), which is post-bootstrap now. Perhaps the interface emits that profile creation is requested, and we still handle it in this class
+    //double check where(when) profile creation timeline node is sent to dht. should be right when ok button of create profile dialog is pressed, since we are already bootstrapped. TODOreq: should i wait for confirmation of that first one? NAWWW don't reinvent the dht's crytpo verification process over and over ya nub. the profile creation dialog should send osios a signal to actually create the profile, not do it himself
+    if(newUser) //TODOreq: move to profile creation dialog (and keep using interfaces ofc), which is post-bootstrap now. Perhaps the interface emits that profile creation is requested, and we still handle it in this class. HOWEVER, putting it here gives us "lazy creation" of the profile node (but timeline.bin is already created anyways so... (and shit wtf no i can't put it in create dialog unless i open the timeline.bin file in there as well :-/)
     {
         m_LocalPersistenceStream << static_cast<qint32>(1); //new user, so no timeline nodes, so write 1 size placeholder into file, which is rewound to and updated in our destructor. we write 1 instead of 0 because the 1 we are talking about is the very next statement. we also want the file header to be accurate for the call to readInAllMyPreviouslySerializedLocallyEntries. yes it's inefficient to write and re-read a moment later like that, but idfc (and sheeit prolly still in kernel memory anyways so fuggit)
 
@@ -194,7 +200,7 @@ void Osios::beginUsingProfileNameInOsios(const QString &profileName)
     readInAllMyPreviouslySerializedLocallyEntries(); //TODOoptimization: once HELLO (+sync) is finished, there may be an opportunity to not have to re-read timeline nodes that were read during sync process
 
     int timelineSize = m_TimelineNodes.size();
-    qDebug() << "Read in " << QString::number(timelineSize) << " previously serialized entries in the timeline";
+    qDebug() << "Read in " << QString::number(timelineSize) << " previously serialized entries in the timeline"; //TODOreq: the deserialized number is accurate, but the timeline list widget is empty. this does kind of relate to state, since, i also want to re-open tabs that were open in last session, but now i'm getting off-topic
     if(timelineSize == 0)
     {
         //TODOoptional: error
@@ -332,10 +338,16 @@ void Osios::cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndH
 
     cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(osiosDhtPeer, action);
 
+
     //TO DOnemb(solved-at-end-of-paragraph): don't copycat the timeline node until the timeline node originator/sender tells us that our cryptographic response ([async-begin] sent one statement above) -- either that or I'd need some kind of copycat-step-undo functionality *gasp*. for now im' going to trust the connection is stable and not lying etc (AFTER ALL, VISUALIZING THE RESULTS IS VERIFICATION ENOUGH!!!)
     if(!m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone.isEmpty() && action->ProfileName == m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone)
     {
-        emit timelineNodeReceivedFromCopycatTarget(action);
+        //NOPE: copycat mode handled differently, serializing and cryptographically verifying would be redundant, since we are a peer of the dht already
+        //^i was going to move this above the serialize/cryptoNeighborReplicate calls above, and return before getting to them. it is in our role as a peer of said dht that we received the copycat timeline stream to begin with, so  we still need to fulfill our role as dht peer in addition to doing copycat stuff
+        //TO DOnereq: every node i received from copycat target needs to be sent to recordMyAction, BUT (this is what i meant above) recordMyAction is only to get it to show up in the our timeline list widget -- we want to use hacks/etc to disable both the serializing and replicating to neighbors that usually comes with calling recordMyAction
+        emit timelineNodeReceivedFromCopycatTarget(action); //synthesize event actual in ui
+        emit timelineNodeAdded(action); //synthesize event timeline entry in ui. well that was easy lol, but TODOreq: i still need to put copycat mode into a profile-less watcher maybe. at the very least, when copycatting a and 'using' profile b, we sure as shit don't want any of the synthesized events to be recorded as b's actual actions (especially since those will then be persisted and replicated more redundantly than we desire (with the sender being a replica of himself, doh!)). i think most relevantly i want b's profile creation not to be sent. hell he shouldn't even have a timeline or profile folder or any of that shit (I'm just not sure that refactor is such a good idea)
+        //return;
     }
 }
 void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptoGraphicHashOfTimelineNodePreviouslySent)
@@ -482,6 +494,8 @@ void Osios::initializeAndStart(IOsiosDhtBootstrapClient *osiosDhtBootstrapClient
 }
 void Osios::recordMyAction(TimelineNode action)
 {
+    action->ProfileName = m_ProfileName; //TODOmb: set earlier? TODOoptimization(tl;dr:COW): don't store it in memory action, but hackily stream it over the network still. actually proper use of COW mitigates that problem anyways, nvm
+
     m_TimelineNodes.append(action); //takes ownership, deletes in this' destructor
     cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(action); //replicate it to network neighbors for cryptographic verification
     serializeMyTimelineAdditionsLocally(); //writes to file but does not flush. i could make this method the target of diskFlushTimer if i wanted, since the action being in m_TimelineNodes means it's recorded. I don't think it matters whether I buffer it or Qt does, since both are userland.

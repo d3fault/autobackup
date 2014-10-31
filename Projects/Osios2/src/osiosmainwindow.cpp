@@ -12,6 +12,7 @@
 #include "mainmenuitems/timelinetab_widget_formainmenutabwidget.h"
 #include "mainmenuitems/writertab_widget_formainmenutabwidget.h"
 
+#include "timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h"
 #include "timelinenodetypes/mainmenuactivitychangedtimelinenode.h"
 #include "timelinenodetypes/keypressinnewemptydoctimelinenode.h"
 
@@ -117,10 +118,17 @@ void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(
         emit synthesizeKeyPressedInNewEmptyDocRequested(static_cast<KeyPressInNewEmptyDocTimelineNode*>(timelineNode));
     }
         break;
+    case TimelineNodeTypeEnum::ProfileCreationAnnounce_aka_GenesisTimelineNode:
+    {
+        //as of now, this timeline node event is only displayed in the timeline and has no other manifestation, so:
+        //oops: timeline node is what i want emit presentNotificationRequested(static_cast<ProfileCreationAnnounce_aka_GenesisTimelineNode*>(timelineNode)->humanReadableShortDescriptionIncludingTimestamp());
+        //hmm so i don't think i need to do anything actually, but i still need to catch it
+    }
+        break;
     case TimelineNodeTypeEnum::INITIALNULLINVALIDTIMELINENODETYPE:
     default:
     {
-        emit presentNotificationRequested(tr("While in copycat mode, the Osios front-end received from the back-end a timeline node of an unknown type"), OsiosNotificationLevels::WarningNotificationLevel);
+        emit presentNotificationRequested(tr("While in copycat mode, the Osios front-end received from the back-end a timeline node of an unknown type: ") + QString::number(timelineNode->TimelineNodeType), OsiosNotificationLevels::WarningNotificationLevel);
     }
         break;
     }
