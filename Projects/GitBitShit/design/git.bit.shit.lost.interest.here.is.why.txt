@@ -1,0 +1,3 @@
+I lost interest in this project because git doesn't really handle large files well (and if you don't have large files, the app serves no purpose). What I learned from it has been applied to Osios2, however :-D.
+
+The thing is that you needed 3 full copies (at a minimum) of the files in order for it to work: the git repo in the .git folder, the checked out working directory, and a bunch of diffs for libtorrent (sure I wrote about generating them on-demand, but who knows whether or not libtorrent would have played nice with 'in memory files')

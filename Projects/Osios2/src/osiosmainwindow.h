@@ -32,24 +32,25 @@ private:
     void addDockWidgets();
 
     //copycat
-    void synthesizeMainMenuActivityTabChange(MainMenuActivityChangedTimelineNode *mainMenuTabChangedTimelineNode);
+    void synthesizeMainMenuActivityTabChange(OsiosDhtPeer *osiosDhtPeer, MainMenuActivityChangedTimelineNode *mainMenuTabChangedTimelineNode);
 signals:
-    void actionOccurred(TimelineNode action);
+    void actionOccurred(TimelineNode action, const QByteArray &cryptographicHashOfTheRenderingOfGuiAfterTheActionWasApplied);
+    void timelineNodeAppliedAndRendered(OsiosDhtPeer *osiosDhtPeer, TimelineNode action, const QByteArray &renderingProof_Sha1OfPngRofl);
     void presentNotificationRequested(QString notificationMessage, OsiosNotificationLevels::OsiosNotificationLevelsEnum notificationLevel);
 
     //copycat enable/disable
     void connectEventSynthesisSignalsForCopycattingRequested(IOsiosCopycatClient *osiosCopycatClientToListenToSignalsFrom);
     void disconnectEventSynthesisSignalsForCopycattingRequested(IOsiosCopycatClient *osiosCopycatClientToStopListeningToSIgnalsFrom);
     //copycat individual events
-    void synthesizeKeyPressedInNewEmptyDocRequested(KeyPressInNewEmptyDocTimelineNode *keyPressInNewEmptyDocTimelineNodeTimelineNode);
+    void synthesizeKeyPressedInNewEmptyDocRequested(OsiosDhtPeer *osiosDhtPeer, KeyPressInNewEmptyDocTimelineNode *keyPressInNewEmptyDocTimelineNodeTimelineNode);
 
-#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
-    void copycatTimelineNodeRendered(TimelineNode timelineNode, const QByteArray &renderedWidgetPngBytes);
-#endif
+//#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+    //void copycatTimelineNodeRendered(OsiosDhtPeer *osiosDhtPeer, TimelineNode timelineNode, const QByteArray &renderedWidgetPngBytes);
+//#endif
 public slots:
     void changeConnectionColor(int color);
 
-    void synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(TimelineNode timelineNode);
+    void synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(OsiosDhtPeer *osiosDhtPeer, TimelineNode timelineNode);
 private slots:
     void handleMainMenuItemsTabWidgetCurrentTabChanged();
 };

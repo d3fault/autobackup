@@ -24,6 +24,8 @@ class Osios : public QObject
 {
     Q_OBJECT
 public:
+    static QByteArray calculateCrytographicHashOfByteArray(const QByteArray &inputByteArray);
+
     explicit Osios(QObject *parent = 0);
     ~Osios();
     QList<TimelineNode> timelineNodes() const;
@@ -50,7 +52,7 @@ private:
     bool parseOptionalLocalServerPortFromArgsDidntReturnParseError(quint16 *portToParseInto);
     bool parseOptionalBootstrapAddressesAndPortsFromArgsDidntReturnParseError(ListOfDhtPeerAddressesAndPorts *listOfDhtPeersAddressesAndPortsToParseInto);
 
-    bool checkCopycatShouldBeEnabledEnableItAsWell();
+    bool checkWhetherOrNotCopycatShouldBeEnabledAndThenEnableItIfRelevant();
     IOsiosClient *profileAgnosticUiSetup();
     void connecToAndFromFrontendSignalsAndSlots(IOsiosClient *frontEnd);
     void beginUsingProfileNameInOsios(const QString &profileName);
@@ -58,11 +60,11 @@ private:
     ITimelineNode *deserializeNextTimelineNode(TimelineNodeByteArrayContainsProfileNameEnum::TimelineNodeByteArrayContainsProfileNameEnumActual whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
     void serializeMyTimelineAdditionsLocally();
     void serializeTimelineActionLocally(TimelineNode action);
-    void cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action);
-    void cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(OsiosDhtPeer *osiosDhtPeer, TimelineNode action);
+    void cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action, const QByteArray &cryptographicHashOfTheRenderingOfClientAfterTheActionWasApplied);
+    void cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(OsiosDhtPeer *osiosDhtPeer, TimelineNode action, const QByteArray &sha1OfRenderedWidgetPngBytes);
     void cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOriginallyAndNowReceiverOfHashVerification_removeThisHashFromAwaitingVerificationListAfterCheckingIfEnoughNeighborsHaveCryptographicallyVerifiedBecauseWeJustAddedAPeerToThatList_AndStopTheTimeoutForThatPieceIfRemoved(QByteArray keyToListToRemoveFrom, QSet<OsiosDhtPeer *> *listToMaybeRemove);
     void serializeNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineNode action);
-    QByteArray calculateCrytographicHashOfTimelineNode(TimelineNode action, QCryptographicHash::Algorithm algorithm = QCryptographicHash::Sha1);
+    QByteArray calculateCrytographicHashOfTimelineNode(TimelineNode action);
     inline QString appendSlashIfNeeded(const QString &inputString)
     {
         if(inputString.endsWith("/"))
@@ -83,27 +85,27 @@ signals:
     void timelineNodeAdded(TimelineNode action);
 
     //copycat
-#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
-    void timelineNodeReceivedFromCopycatTarget(TimelineNode timelineNode);
-#else
+//#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+    //void timelineNodeReceivedFromCopycatTarget(TimelineNode timelineNode);
+//#else
     void timelineNodeReceivedFromCopycatTarget(OsiosDhtPeer *osiosDhtPeer, TimelineNode timelineNode);
-#endif
+//#endif
 
     void quitRequested();
 public slots:
     void initializeAndStart(IOsiosDhtBootstrapClient *osiosDhtBootstrapClient);
-    void recordMyAction(TimelineNode action);
+    void recordMyAction(TimelineNode action, const QByteArray &cryptographicHashOfTheRenderingOfClientAfterTheActionWasApplied);
 private slots:
     void showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant();
     void flushDiskBuffer();
     void checkRecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighborsForTimedOutTimelineNodes();
     void handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState);
     void cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndHashNeighborsActionAndRespondWithHash(OsiosDhtPeer *osiosDhtPeer, TimelineNode action);
-    void cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptoGraphicHashOfTimelineNodePreviouslySent);
+    void cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptographicHashOfTimelineNodeDataAndOfTimelineNodeRendering_OfTimelineNodePreviouslySent);
 
-#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
-    void handleCopycatTimelineNodeRendered(TimelineNode timelineNode, const QByteArray &renderedWidgetPngBytes);
-#endif
+//#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+    void handleTimelineNodeAppliedAndRendered(OsiosDhtPeer *osiosDhtPeer, TimelineNode timelineNode, const QByteArray &sha1OfRenderedWidgetPngBytes);
+//#endif
 };
 
 #endif // OSIOS_H

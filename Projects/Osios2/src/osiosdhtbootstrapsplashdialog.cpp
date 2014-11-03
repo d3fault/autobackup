@@ -23,7 +23,8 @@ OsiosDhtBootstrapSplashDialog::OsiosDhtBootstrapSplashDialog(const QString &last
     m_DhtMessagesTextEdit->setReadOnly(true);
 
     QCheckBox *autoLoginCheckbox = new QCheckBox(tr("Auto-Login as '") + lastUsedProfileNameToDisplayInSplash + tr("' when DHT finishes bootstrapping") /* connected, meaning bootstrapped.. but the user doesn't care*/);
-    autoLoginCheckbox->setChecked(autoLoginLastUsedProfileOnBootstrap);
+    autoLoginCheckbox->setChecked(autoLoginLastUsedProfileOnBootstrap && !lastUsedProfileNameToDisplayInSplash.isEmpty());
+    autoLoginCheckbox->setEnabled(!lastUsedProfileNameToDisplayInSplash.isEmpty());
 
     myLayout->addWidget(m_DhtMessagesTextEdit);
     myLayout->addWidget(autoLoginCheckbox);

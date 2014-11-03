@@ -17,13 +17,14 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *e);
 signals:
-    void actionOccurred(TimelineNode action);
+    void actionOccurred(TimelineNode action, const QByteArray &cryptographicHashOfTheRenderingOfGuiAfterTheActionWasApplied);
+    void timelineNodeAppliedAndRendered(OsiosDhtPeer *osiosDhtPeer, TimelineNode action, const QByteArray &renderingProof_Sha1OfPngRofl);
 private slots:
     //copycat enable/disable
     void connectToOsiosClientsCopyCatSignals(IOsiosCopycatClient *osiosCopycatClient);
     void disconnectToOsiosClientsCopyCatSignals(IOsiosCopycatClient *osiosCopycatClient);
     //copycat relevant events
-    void synthesizeKeyPressedInNewEmptyDocRequested(KeyPressInNewEmptyDocTimelineNode *keyPressInNewEmptyDocTimelineNodeTimelineNode);
+    void synthesizeKeyPressedInNewEmptyDocRequested(OsiosDhtPeer *osiosDhtPeer, KeyPressInNewEmptyDocTimelineNode *keyPressInNewEmptyDocTimelineNodeTimelineNode);
 };
 
 #endif // EVENTEMITTINGPLAINTEXTEDIT_H

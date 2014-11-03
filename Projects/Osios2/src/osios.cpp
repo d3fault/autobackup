@@ -32,6 +32,11 @@
 //TODOoptional: COW on the timeline nodes (the seraialized bytes, that is) could be achieved with a timeline node called "import state from doc x, mutate with empty character" (or perhaps these two are separated), effectively incrementing the reference count (although delete is not in plans anyways)
 //TODOoptional: in addition to (or perhaps integrated INTO) the red/green "bar of color", i could create reproduceable patterns of color using the latest timeline node hash, so that i can look for that pattern on each of my monitors/nodes and see that they are all 3 synchronized. it's mildly cryptographic verification performed by a human (since doing so in an extreme manner would require you to sit all day every day typing in things on a calculator)
 //Head just exploded: a cli front-end can copycat a gui front-end and vice versa? Why not :-P?
+QByteArray Osios::calculateCrytographicHashOfByteArray(const QByteArray &inputByteArray)
+{
+    //nothing fancy here, but this ensures I'm using the same crypto hash application wide, and that there's only one place to change it if/when I want more bits in the hash
+    return QCryptographicHash::hash(inputByteArray, QCryptographicHash::Sha1);
+}
 Osios::Osios(QObject *parent)
     : QObject(parent)
     , m_Arguments(QCoreApplication::arguments())
@@ -152,7 +157,7 @@ bool Osios::parseOptionalBootstrapAddressesAndPortsFromArgsDidntReturnParseError
     }
     return true;
 }
-bool Osios::checkCopycatShouldBeEnabledEnableItAsWell()
+bool Osios::checkWhetherOrNotCopycatShouldBeEnabledAndThenEnableItIfRelevant()
 {
     //check it's enabled
     QString nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //aka "monitor clone" mode
@@ -187,12 +192,12 @@ bool Osios::checkCopycatShouldBeEnabledEnableItAsWell()
         if(m_OsiosDhtBootstrapClient->mainUiHasCopycatAbility())
         {
             //disable recording of user input from ui. if a user in front of the "clone monitor" changes/interacts-with the ui, it won't be recorded (and future timeline node synthesis is undefined!). we don't want to record copycatted actions. yea we just connected it a few lines up, whatever
-            disconnect(frontEnd->asQObject(), SIGNAL(actionOccurred(TimelineNode)), this, SLOT(recordMyAction(TimelineNode)));
+            disconnect(frontEnd->asQObject(), SIGNAL(actionOccurred(TimelineNode,QByteArray)), this, SLOT(recordMyAction(TimelineNode,QByteArray)));
 
             IOsiosCopycatClient *copycatClient = m_OsiosDhtBootstrapClient->mainUiAsCopycatClient();
             copycatClient->setCopycatModeEnabled(true);
             m_NameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone = nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone; //setCopycatModeEnabledForUsername(nameOfNeighborToCopycatActionsTimeline_OrEmptyStringIfNone); //can only be copycatting one person at a time (in the normal mode. i'm going to make hacks building on top of this that lets me copycat 2 others and splice screens etc xD)
-            connect(this, SIGNAL(timelineNodeReceivedFromCopycatTarget(TimelineNode)), copycatClient->asQObject(), SLOT(synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(TimelineNode)));
+            connect(this, SIGNAL(timelineNodeReceivedFromCopycatTarget(OsiosDhtPeer*,TimelineNode)), copycatClient->asQObject(), SLOT(synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(OsiosDhtPeer*,TimelineNode)));
         }
         else
         {
@@ -212,14 +217,15 @@ IOsiosClient *Osios::profileAgnosticUiSetup() //used by both copycat mode and no
 }
 void Osios::connecToAndFromFrontendSignalsAndSlots(IOsiosClient *frontEnd)
 {
-    connect(frontEnd->asQObject(), SIGNAL(actionOccurred(TimelineNode)), this, SLOT(recordMyAction(TimelineNode)));
+    connect(frontEnd->asQObject(), SIGNAL(actionOccurred(TimelineNode,QByteArray)), this, SLOT(recordMyAction(TimelineNode,QByteArray)));
 
     connect(this, SIGNAL(connectionColorChanged(int)), frontEnd->asQObject(), SLOT(changeConnectionColor(int)));
     connect(this, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), frontEnd->asQObject(), SIGNAL(presentNotificationRequested(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
 
-#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
-    connect(frontEnd->asQObject(), SIGNAL(copycatTimelineNodeRendered(TimelineNode,QByteArray)), this, SLOT(handleCopycatTimelineNodeRendered(TimelineNode,QByteArray))); //TODOoptional: this signal belongs in the copycat interface, and copycat interface KIND OF deserves to be merged with IOsiosClient (except there's a problem with how I'm using it as a client relay lots of times. that'd suck to refactor). the signal i am connecting to here isn't even in IOsiosClient, but since connect uses strings it still works
-#endif
+//#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+    //connect(frontEnd->asQObject(), SIGNAL(copycatTimelineNodeRendered(OsiosDhtPeer*,TimelineNode,QByteArray)), this, SLOT(handleCopycatTimelineNodeRendered(OsiosDhtPeer*,TimelineNode,QByteArray))); //TODOoptional: this signal belongs in the copycat interface, and copycat interface KIND OF deserves to be merged with IOsiosClient (except there's a problem with how I'm using it as a client relay lots of times. that'd suck to refactor). the signal i am connecting to here isn't even in IOsiosClient, but since connect uses strings it still works
+    connect(frontEnd->asQObject(), SIGNAL(timelineNodeAppliedAndRendered(OsiosDhtPeer*,TimelineNode,QByteArray)), this, SLOT(handleTimelineNodeAppliedAndRendered(OsiosDhtPeer*,TimelineNode,QByteArray)));
+//#endif
 }
 void Osios::beginUsingProfileNameInOsios(const QString &profileName)
 {
@@ -255,7 +261,8 @@ void Osios::beginUsingProfileNameInOsios(const QString &profileName)
 
         //Hack: usually the front-end tells us about timeline nodes via action occured. this is one exception
         ProfileCreationAnnounce_aka_GenesisTimelineNode *profileCreationAnnounceTimelineNode = new ProfileCreationAnnounce_aka_GenesisTimelineNode(profileName);
-        recordMyAction(profileCreationAnnounceTimelineNode); //TODOreq: since there is no "catch up" message/mode-of-connecting, and since we are in constructor, calling my usual recordMyAction() method will work as far as getting the action to serialize to disk, but won't ever get it to propagate to neighbor since the dht is neither instantiated nor bootstrapping at this point!
+        QByteArray emptyByteArray; //TODOreq: proper this, idfk how. see the similar use in when ProfileCreationAnnounce_aka_GenesisTimelineNode is 'synthesized+rendered' in mainwindow. Honestly an empty byte array isn't THAT bad. Since I'm appending the "render hash" onto the timeline node hash, an append of an empty byte array is essentially a noop. Since we already have the timeline node data hash in front of it, it being empty is fine so long as both sides agree (and they do). Still seems ugly/sloppy but whatever for now
+        recordMyAction(profileCreationAnnounceTimelineNode, emptyByteArray); //TODOreq: since there is no "catch up" message/mode-of-connecting, and since we are in constructor, calling my usual recordMyAction() method will work as far as getting the action to serialize to disk, but won't ever get it to propagate to neighbor since the dht is neither instantiated nor bootstrapping at this point!
     }
 
     //read in all previously serialized entries, which also puts the write cursor at the end for appending
@@ -398,9 +405,9 @@ void Osios::cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndH
 
     serializeNeighborActionLocally(osiosDhtPeer, action); //TODOreq: use the same period flushing code as our own serializeMyTimelineAdditionsLocally (this is why a io thread is nice (however i'm not as thread safe as i could be dommit))
 
-#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE //if that's the config, then we'll calc it later after it's rendered. but before we rendered timeline nodes, this was the logical spot to calculate + respond-with the crypto verification
-    cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(osiosDhtPeer, action);
-#endif
+//#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE //if that's the config, then we'll calc it later after it's rendered. but before we rendered timeline nodes, this was the logical spot to calculate + respond-with the crypto verification
+    //OLD, pre- rendering+returning-hash-of-rendering additions: cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(osiosDhtPeer, action);
+//#endif
 
 
     //TO DOnemb(solved-at-end-of-paragraph): don't copycat the timeline node until the timeline node originator/sender tells us that our cryptographic response ([async-begin] sent one statement above) -- either that or I'd need some kind of copycat-step-undo functionality *gasp*. for now im' going to trust the connection is stable and not lying etc (AFTER ALL, VISUALIZING THE RESULTS IS VERIFICATION ENOUGH!!!)
@@ -411,17 +418,19 @@ void Osios::cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndH
         //TO DOnereq: every node i received from copycat target needs to be sent to recordMyAction, BUT (this is what i meant above) recordMyAction is only to get it to show up in the our timeline list widget -- we want to use hacks/etc to disable both the serializing and replicating to neighbors that usually comes with calling recordMyAction
         emit timelineNodeAdded(action); //synthesize event timeline entry in ui. well that was easy lol, but TODOreq: i still need to put copycat mode into a profile-less watcher maybe. at the very least, when copycatting a and 'using' profile b, we sure as shit don't want any of the synthesized events to be recorded as b's actual actions (especially since those will then be persisted and replicated more redundantly than we desire (with the sender being a replica of himself, doh!)). i think most relevantly i want b's profile creation not to be sent. hell he shouldn't even have a timeline or profile folder or any of that shit (I'm just not sure that refactor is such a good idea)
 
-#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
-        emit timelineNodeReceivedFromCopycatTarget(action); //synthesize event actual in ui        
+//#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+        //emit timelineNodeReceivedFromCopycatTarget(action); //synthesize event actual in ui
         //we synthesize the timeline entry in the ui before synthesizing the actual even in the ui, because right after the actual event is synthesized is when we're going to want to take the screenshot, so doing it vice versa (as I had before) means the most recent timeline entry doesn't show up in the screenshot
-#else
-        TODO LEFT OFF emit timelineNodeReceivedFromCopycatTarget(osiosDhtPeer, action); //derp sending the dht peer ptr to the front-end instead of storing in list + looking up later
-#endif
+//#else
+       emit timelineNodeReceivedFromCopycatTarget(osiosDhtPeer, action); //TODOreq:derp sending the dht peer ptr to the front-end instead of storing in list + looking up later. actually being smart about my signal/slot connections is better/simpler than using a list and looking it up, but idk if that's possible. fuck it for now
+//#endif
     }
 }
-void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptoGraphicHashOfTimelineNodePreviouslySent)
+void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptographicHashOfTimelineNodeDataAndOfTimelineNodeRendering_OfTimelineNodePreviouslySent)
 {
-    CryptographicHashAndTheListofDhtPeersThatHaveVerifiedItSoFar::const_iterator it = m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.find(cryptoGraphicHashOfTimelineNodePreviouslySent);
+    //nah, i'll just store them combined too :-D: QByteArray cryptographicHashOfTimelineNode = cryptographicHashOfTimelineNodeDataAndOfTimelineNodeRendering_OfTimelineNodePreviouslySent.splitInMiddlePlx();
+
+    CryptographicHashAndTheListofDhtPeersThatHaveVerifiedItSoFar::const_iterator it = m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.find(cryptographicHashOfTimelineNodeDataAndOfTimelineNodeRendering_OfTimelineNodePreviouslySent);
     if(it == m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.end())
     {
         //TODOreq: if we have N replicas but only care about X of them (with X being <= N of course), maybe we just received some we already consider "verified" and that's why it's not in this list. For now, error notification to be on the safe side
@@ -429,32 +438,33 @@ void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResp
         return;
     }
 
-    //TODOoptional, check that the dht peer didn't already send us that hash, and then error report it (I am going to ensure that they aren't accounted for twice, but might not have the error reporting)
+    //TODOoptional, check that the dht peer didn't already send us that hash, and then error report it (I am going to ensure that they aren't accounted for twice, but might not have the error reporting (does for now?))
     QSet<OsiosDhtPeer*> *dhtPeersThatAlreadySentUsThatHash = it.value();
 
     if(dhtPeersThatAlreadySentUsThatHash->contains(osiosDhtPeer))
     {
         emit notificationAvailable(tr("A neighbor sent us the same cryptographic hash twice"), OsiosNotificationLevels::WarningNotificationLevel);
-        return;
+        return; //don't double count
     }
 
     //add peer to list of neighbors that have verified this hash
     dhtPeersThatAlreadySentUsThatHash->insert(osiosDhtPeer);
 
 
-    cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOriginallyAndNowReceiverOfHashVerification_removeThisHashFromAwaitingVerificationListAfterCheckingIfEnoughNeighborsHaveCryptographicallyVerifiedBecauseWeJustAddedAPeerToThatList_AndStopTheTimeoutForThatPieceIfRemoved(cryptoGraphicHashOfTimelineNodePreviouslySent, dhtPeersThatAlreadySentUsThatHash);
+    cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOriginallyAndNowReceiverOfHashVerification_removeThisHashFromAwaitingVerificationListAfterCheckingIfEnoughNeighborsHaveCryptographicallyVerifiedBecauseWeJustAddedAPeerToThatList_AndStopTheTimeoutForThatPieceIfRemoved(cryptographicHashOfTimelineNodeDataAndOfTimelineNodeRendering_OfTimelineNodePreviouslySent, dhtPeersThatAlreadySentUsThatHash);
     //TODOreq: now we check it against what we calculated for it earlier and (had:report errors) if the hash isn't found in our list of hashes watching for (meaning a mismatch, in which case we do nothing and the 5 second timeout will flash red etc). we should remove a hash from being watched once all (or N) of the neighbors respond with a valid cryptographic hash
 }
-#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
-void Osios::handleCopycatTimelineNodeRendered(TimelineNode timelineNode, const QByteArray &renderedWidgetPngBytes)
+//#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+void Osios::handleTimelineNodeAppliedAndRendered(OsiosDhtPeer *osiosDhtPeer, TimelineNode timelineNode, const QByteArray &sha1OfRenderedWidgetPngBytes)
 {
-
+    cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(osiosDhtPeer, timelineNode, sha1OfRenderedWidgetPngBytes);
 }
-#endif
-void Osios::cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action)
+//#endif
+void Osios::cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action, const QByteArray &cryptographicHashOfTheRenderingOfClientAfterTheActionWasApplied)
 {
     //as an implicit sub-action of this step, we need to first record the cryptgraphic hash for later comparison/verification. We convert to byte array during persisting to local disk as well, so it's an optimization to only ever convert the action into a byte array once. I'm just going to err on the side of understandability over optimization at this point (because...)
     QByteArray actionCryptographicHash = calculateCrytographicHashOfTimelineNode(action);
+    actionCryptographicHash.append(cryptographicHashOfTheRenderingOfClientAfterTheActionWasApplied); //TODOoptional: dirty hack, see the correlating append/hack in cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash
     m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.insert(actionCryptographicHash, new QSet<OsiosDhtPeer*>() /*delete the QSet in our destructor or whenever appropriate*/); //small inefficiency beats small refactor anyday. human time > *. shit how could anything be greater than everything, else be greater than itself (impossibru)
     m_RecentlyGeneratedTimelineNodesAndTheirTimeoutTimestamps.insert(actionCryptographicHash, QDateTime::currentMSecsSinceEpoch() + OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS); //epoch-based qint64 instead of qdatetime because datetimes can "jump in time" (leap years, etc)
 
@@ -462,9 +472,11 @@ void Osios::cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateAct
 
     m_OsiosDht->sendNewTimelineNodeToAllDhtPeersWithHealthyConnectionForFirstStepOfCryptographicVerification(action);
 }
-void Osios::cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(OsiosDhtPeer *osiosDhtPeer, TimelineNode action)
+void Osios::cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(OsiosDhtPeer *osiosDhtPeer, TimelineNode action, const QByteArray &sha1OfRenderedWidgetPngBytes)
 {
-    QByteArray sha1SumOfTimelineNode = calculateCrytographicHashOfTimelineNode(action);
+    QByteArray sha1SumOfTimelineNode = calculateCrytographicHashOfTimelineNode(action); //core timeline node (the persisted data) cryptographic hash!
+    sha1SumOfTimelineNode.append(sha1OfRenderedWidgetPngBytes); //TODOoptional: appending directly onto the timeline node hash is an ugly hack that workds because sha1sums are fixed size, but to be cleaner/prettier we'd be able to differentiate them differently/better. correlates with the same append hack done in cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors
+
     //now send it back to the neighbor for verification
     osiosDhtPeer->respondWithCryptographicHashComputedFromReceivedTimelineNode(sha1SumOfTimelineNode);
 }
@@ -483,10 +495,10 @@ void Osios::serializeNeighborActionLocally(OsiosDhtPeer *osiosDhtPeer, TimelineN
 {
     //TODOreq: simple to do once I decide WHICH file[name] to write to, based on some unique id (what if two users on network choose same profile name? ideally we could handle that)
 }
-QByteArray Osios::calculateCrytographicHashOfTimelineNode(TimelineNode action, QCryptographicHash::Algorithm algorithm)
+QByteArray Osios::calculateCrytographicHashOfTimelineNode(TimelineNode action)
 {
     QByteArray timelineNodeRawByteArray = action->toByteArray(WHETHER_OR_NOT_TO_HAVE_PROFILE_NAME_IN_TIMELINE_NODE_WHEN_COMPUTING_CRYPTOGRAPHIC_HASH);
-    return QCryptographicHash::hash(timelineNodeRawByteArray, algorithm);
+    return calculateCrytographicHashOfByteArray(timelineNodeRawByteArray);
 }
 QString Osios::usage()
 {
@@ -567,14 +579,14 @@ void Osios::initializeAndStart(IOsiosDhtBootstrapClient *osiosDhtBootstrapClient
     connect(m_OsiosDht, SIGNAL(dhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)), this, SLOT(handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum)));
     QMetaObject::invokeMethod(m_OsiosDht, "bootstrap", Qt::QueuedConnection /*so we can connect first*/, Q_ARG(ListOfDhtPeerAddressesAndPorts, bootstrapAddressesAndPorts), Q_ARG(quint16, localServerPort_OrZeroToChooseRandomPort));
 }
-void Osios::recordMyAction(TimelineNode action)
+void Osios::recordMyAction(TimelineNode action, const QByteArray &cryptographicHashOfTheRenderingOfClientAfterTheActionWasApplied)
 {
     action->ProfileName = m_ProfileName; //TODOmb: set earlier? TODOoptimization(tl;dr:COW): don't store it in memory action, but hackily stream it over the network still. actually proper use of COW mitigates that problem anyways, nvm
 
     m_TimelineNodes.append(action); //takes ownership, deletes in this' destructor
-    cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(action); //replicate it to network neighbors for cryptographic verification
+    cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(action, cryptographicHashOfTheRenderingOfClientAfterTheActionWasApplied); //replicate it to network neighbors for cryptographic verification
     serializeMyTimelineAdditionsLocally(); //writes to file but does not flush. i could make this method the target of diskFlushTimer if i wanted, since the action being in m_TimelineNodes means it's recorded. I don't think it matters whether I buffer it or Qt does, since both are userland.
-    emit timelineNodeAdded(action);
+    emit timelineNodeAdded(action); //TODOoptional: wait until 2 neighbors verify the timeline node before emitting this (it simply shows up in timeline view IIRC)
 }
 void Osios::showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant()
 {
@@ -583,7 +595,7 @@ void Osios::showProfileCreatorOrManagerOrSkipAndDisplayMainMenuIfRelevant()
     //we are bootstrapped
     //some cases when skipping and going to main menu directly are: --profile specified, lastUsedProfile is set and auto-login set and was not unchecked in the dht bootstrap splash
 
-    if(checkCopycatShouldBeEnabledEnableItAsWell())
+    if(checkWhetherOrNotCopycatShouldBeEnabledAndThenEnableItIfRelevant())
         return; //nothing left for us to do
 
     bool profileManagerRequested = false;

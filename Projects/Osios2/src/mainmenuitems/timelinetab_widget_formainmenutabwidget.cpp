@@ -6,7 +6,7 @@
 #include "../osios.h"
 #include "../osiossettings.h"
 
-TimelineTab_Widget_ForMainMenuTabWidget::TimelineTab_Widget_ForMainMenuTabWidget(Osios *osios, IOsiosClient *osiosClient, QWidget *parent)
+TimelineTab_Widget_ForMainMenuTabWidget::TimelineTab_Widget_ForMainMenuTabWidget(Osios *osios, QWidget *parent)
     : IActivityTab_Widget_ForMainMenuTabWidget(parent)
 {
     QVBoxLayout *myLayout = new QVBoxLayout();
@@ -21,7 +21,6 @@ TimelineTab_Widget_ForMainMenuTabWidget::TimelineTab_Widget_ForMainMenuTabWidget
 
     setLayout(myLayout);
 
-    connect(this, SIGNAL(actionOccurred(TimelineNode)), osiosClient->asQObject(), SIGNAL(actionOccurred(TimelineNode)));
     connect(osios, SIGNAL(timelineNodeAdded(TimelineNode)), this, SLOT(handleTimelineNodeAdded(TimelineNode)));
 }
 MainMenuActivitiesEnum::MainMenuActivitiesEnumActual TimelineTab_Widget_ForMainMenuTabWidget::mainMenuActivityType() const

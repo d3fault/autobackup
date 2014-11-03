@@ -6,11 +6,6 @@
 #include <QDockWidget>
 #include <QDebug>
 
-#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
-#include <QPainter>
-#include <QBuffer>
-#endif
-
 #include "osiossettings.h"
 #include "osiosnotificationswidget.h"
 #include "iactivitytab_widget_formainmenutabwidget.h"
@@ -26,6 +21,7 @@ textEdit.append(newKeystroke); //synthesis
 renderTextEditIntoQImageForSendingBack(&textEdit);
 //^no race condition for the new keystroke to be in the image? methinks not, but idk for sure*/
 
+//Still wrapping my head around this: 2 mainwindows hidden (mimicking + rendering + hashing-screencap-of the 2 neighbors' timeline node stream), 1 mainwindow shown. Do I also need multiple Osios backends to account for that?
 OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
     : QMainWindow(parent)
     , m_MainMenuItemsTabWidget(new QTabWidget())
@@ -34,7 +30,7 @@ OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
     setWindowTitle(OSIOS_HUMAN_READABLE_TITLE);
 
     //all added tabs must implement IMainMenuActivityTab
-    m_MainMenuItemsTabWidget->addTab(new TimelineTab_Widget_ForMainMenuTabWidget(osios, this), tr("Actions Timeline"));
+    m_MainMenuItemsTabWidget->addTab(new TimelineTab_Widget_ForMainMenuTabWidget(osios), tr("Actions Timeline"));
     m_MainMenuItemsTabWidget->addTab(new WriterTab_Widget_ForMainMenuTabWidget(this, this), tr("Writer"));
 
     setCentralWidget(m_MainMenuItemsTabWidget);
@@ -106,7 +102,7 @@ void OsiosMainWindow::changeConnectionColor(int color)
     QColor myColor(static_cast<Qt::GlobalColor>(color));
     setWindowTitle(myColor.name());
 }
-void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(TimelineNode timelineNode)
+void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(OsiosDhtPeer *osiosDhtPeer /* TODOoptional: don't send backend peer to front-end xD */, TimelineNode timelineNode)
 {
     //TODOreq:
     switch(timelineNode->TimelineNodeType)
@@ -114,7 +110,7 @@ void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(
     case TimelineNodeTypeEnum::MainMenuActivityChangedTimelineNode:
     {
         //as an exception, the main menu actvitity tab change does not use signal/slot (just plain call to private method synthesizeMainMenuActivityTabChange), since this class is in charge of handling it
-        synthesizeMainMenuActivityTabChange(static_cast<MainMenuActivityChangedTimelineNode*>(timelineNode));
+        synthesizeMainMenuActivityTabChange(osiosDhtPeer, static_cast<MainMenuActivityChangedTimelineNode*>(timelineNode));
     }
         break;
     case TimelineNodeTypeEnum::KeyPressedInNewEmptyDocTimelineNode:
@@ -125,7 +121,7 @@ void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(
 
         }
 #endif
-        emit synthesizeKeyPressedInNewEmptyDocRequested(static_cast<KeyPressInNewEmptyDocTimelineNode*>(timelineNode));
+        emit synthesizeKeyPressedInNewEmptyDocRequested(osiosDhtPeer, static_cast<KeyPressInNewEmptyDocTimelineNode*>(timelineNode));
     }
         break;
     case TimelineNodeTypeEnum::ProfileCreationAnnounce_aka_GenesisTimelineNode:
@@ -133,6 +129,9 @@ void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(
         //as of now, this timeline node event is only displayed in the timeline and has no other manifestation, so:
         //oops: timeline node is what i want emit presentNotificationRequested(static_cast<ProfileCreationAnnounce_aka_GenesisTimelineNode*>(timelineNode)->humanReadableShortDescriptionIncludingTimestamp());
         //hmm so i don't think i need to do anything actually, but i still need to catch it so as not to go to the default area
+
+        QByteArray emptyByteArray; //TODoreq: see the similar use in when ProfileCreationAnnounce_aka_GenesisTimelineNode is actually created in osios.cpp
+        emit timelineNodeAppliedAndRendered(osiosDhtPeer, timelineNode, emptyByteArray);
     }
         break;
     case TimelineNodeTypeEnum::INITIALNULLINVALIDTIMELINENODETYPE:
@@ -150,41 +149,43 @@ void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(
     render(&myPainter);
     myScreenshot.save("/run/shm/screenAt" + QString::number(QDateTime::currentMSecsSinceEpoch()) + ".png", "PNG");
 #endif
-
-#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
-    QImage widgetRendereredAsImage(sizeHint(), QImage::Format_ARGB32);
-    QPainter widgetPainter(&widgetRendereredAsImage);
-    render(&widgetPainter); //TODOreq: don't render notification panel (see note above above putting another main window as central widget of outer most main window)
-    QByteArray renderedWidgetPngBytes;
-
-    {
-        QBuffer renderedWidgetPngBuffer(&renderedWidgetPngBytes);
-        renderedWidgetPngBuffer.open(QIODevice::WriteOnly);
-        widgetRendereredAsImage.save(renderedWidgetPngBuffer, "PNG", 0); //TODOoptimization: maybe don't use the highest compression (0). try/benchmark others, including the default of -1
-    }
-
-    emit copycatTimelineNodeRendered(timelineNode, renderedWidgetPngBytes);
-#endif
 }
 //MAIN MENU ACTIVITY TAB CHANGE -- RECORD
 void OsiosMainWindow::handleMainMenuItemsTabWidgetCurrentTabChanged()
 {
+    //pass through event (n/a, we're a signal sent after it already occured, not a virtual override like most similar 'record' methods)
+
+    //now record event
     TimelineNode mainMenuActivityChangedTimelineNode(new MainMenuActivityChangedTimelineNode(static_cast<IActivityTab_Widget_ForMainMenuTabWidget*>(m_MainMenuItemsTabWidget->currentWidget())->mainMenuActivityType()));
     //MainMenuActivityChangedTimelineNode *mainMenuActivityChangedTimelineNode = new MainMenuActivityChangedTimelineNode(static_cast<IActivityTab_Widget_ForMainMenuTabWidget*>(m_MainMenuItemsTabWidget->currentWidget())->mainMenuActivityType());
-    emit actionOccurred(mainMenuActivityChangedTimelineNode); //my listener should put that bitch in a shared pointer. copies can still be made by derefing and COW is still used, including the data still being valid (if copied before the last pointer destructs ofc). Correction: my listener receives that bitch in a shared pointer already :-P
+    QByteArray mainMenuTabWidgetScreenshotHash = IOsiosClient::calculateCryptographicHashOfWidgetRenderedToImage(m_MainMenuItemsTabWidget);
+
+    emit actionOccurred(mainMenuActivityChangedTimelineNode, mainMenuTabWidgetScreenshotHash);
 }
 //MAIN MENU ACTIVITY TAB CHANGE -- SYNTHESIZE
-void OsiosMainWindow::synthesizeMainMenuActivityTabChange(MainMenuActivityChangedTimelineNode *mainMenuTabChangedTimelineNode)
+void OsiosMainWindow::synthesizeMainMenuActivityTabChange(OsiosDhtPeer *osiosDhtPeer, MainMenuActivityChangedTimelineNode *mainMenuTabChangedTimelineNode)
 {
+    //apply event
     //we don't know the tab index that it correlates with (right they match the enum, but maybe i'll allow tab re-ordering in the future), but we can find it
     int numTabs = m_MainMenuItemsTabWidget->count();
+    bool tabFound = false;
     for(int i = 0; i < numTabs; ++i)
     {
         if(static_cast<IActivityTab_Widget_ForMainMenuTabWidget*>(m_MainMenuItemsTabWidget->widget(i))->mainMenuActivityType() == mainMenuTabChangedTimelineNode->NewMainMenuActivity)
         {
             m_MainMenuItemsTabWidget->setCurrentIndex(i);
-            return;
+            tabFound = true;
+            break;
         }
     }
-    emit presentNotificationRequested(tr("While in copycat mode, the Osios front-end received from the back-end a change main menu activity timeline node of an unknown type"), OsiosNotificationLevels::ErrorNotificationLevel);
+    if(!tabFound)
+    {
+        emit presentNotificationRequested(tr("While in copycat mode, the Osios front-end received from the back-end a change main menu activity timeline node of an unknown type"), OsiosNotificationLevels::ErrorNotificationLevel);
+        return;
+    }
+
+    //render for proofz
+    QByteArray mainMenuTabWidgetScreenshotHash = IOsiosClient::calculateCryptographicHashOfWidgetRenderedToImage(m_MainMenuItemsTabWidget);
+
+    emit timelineNodeAppliedAndRendered(osiosDhtPeer, mainMenuTabChangedTimelineNode, mainMenuTabWidgetScreenshotHash);
 }
