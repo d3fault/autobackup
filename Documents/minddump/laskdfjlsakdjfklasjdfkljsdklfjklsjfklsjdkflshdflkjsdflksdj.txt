@@ -1,0 +1,31 @@
+My infinite cycle is considering suicide, seeing my shotgun, thinking of all the cool things I could do before blowing my fucking brains out, and then attempting to do them until I eventually feel suicidal again. I think I've even written this before, in another cycle of the loop.
+
+I kinda feel like I'm setting a bad example by saying the truth.
+
+Leik, I could easily hear some bitch with sand in her vagina say "he's encouraging kids to commit suicide". She'd be standing on a wooden box yelling it into a cone thing (not the electric one) and would be waving a folder, that appears to have important papers inside, around in the air. The wooden box is in the grass yard of her child's elementary school. Man Im' fucking dumb, begging for help like that.
+
+
+I give you,
+static void ILifeForm::Death(ILifeForm*)
+{
+	Q_UNUSED(ILifeForm*)
+}
+
+
+or perhaps the more accurate (it started off as just this: death() { }, but not on one line ofc):
+static void ILifeForm::Death(ILifeForm*)
+{
+	delete ILifeForm;
+}
+
+
+death()
+{
+
+}
+
+somehow says it better. was the original thought. but then you might misunderstand it for a class.
+
+
+
+somehow actually the de-allocation of memory associated with "delete ILifeForm;" doesn't fit the analogy, so while it seems smarter code-wise it's not what I was going for (the changing of the memory structure of a computer is ... I was going to say (had:more instantaneous) real (wait no it's just as real as us [dying]) but idfk)

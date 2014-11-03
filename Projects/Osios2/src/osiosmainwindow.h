@@ -42,6 +42,10 @@ signals:
     void disconnectEventSynthesisSignalsForCopycattingRequested(IOsiosCopycatClient *osiosCopycatClientToStopListeningToSIgnalsFrom);
     //copycat individual events
     void synthesizeKeyPressedInNewEmptyDocRequested(KeyPressInNewEmptyDocTimelineNode *keyPressInNewEmptyDocTimelineNodeTimelineNode);
+
+#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+    void copycatTimelineNodeRendered(TimelineNode timelineNode, const QByteArray &renderedWidgetPngBytes);
+#endif
 public slots:
     void changeConnectionColor(int color);
 

@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Osios
 TEMPLATE = app
 
+DEFINES += OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+
 SOURCES += main.cpp\
         osiosmainwindow.cpp \
     mainmenuitems/timelinetab_widget_formainmenutabwidget.cpp \

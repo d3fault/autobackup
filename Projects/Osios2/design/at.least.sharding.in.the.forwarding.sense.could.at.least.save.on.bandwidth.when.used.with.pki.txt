@@ -1,0 +1,17 @@
+sharding + pki = scaling + same level of security
+
+to make it scale BETTER (to only 2 neighbors) when on say, 100 node comp, use a 2 [neighbors] when iterating that Q_FOREACH that currently sends to all peers
+
+Additionally, jump to a random point in the list that many (2 in this case) times. Dont't shuffle it, that might be too expensive. Generate a random number (2 random numbers) and jump to that index in the peer list and that's who is responsible for that timeline node. I'm starting to think they will need a reliable prng [seed] in order to remember who they sent a specific prng to. So does that mean the all-combined-timeline-nodes (dht-wide) stream, if I do choose to implement one, aww shit man forgot where I was going with this but it must maintain a paxos list of nodes joined, or at least near paxos(*) to account for parting/joining. This idea sucks, ima stick to timeline nodes individually for now (especially since your local copy (should be copies, but kinda implied) of your timeline nodes is your most important copy)
+
+
+DhtNode_aka_Peer
+
+
+All 100 getting all 100 would be IO hell.
+
+
+
+at.least.sharding.in.the.forwarding.sense.could.at.least.save.on.bandwidth.when.used.with.pki.txt
+
+like uhm each dht node (peer) still cryptographically verifies each timeline node (datum), but that doesn't mean I need to ever establish a [direct] connection to him. I could delegate routes (and these routes make up the optimization itself). Meh I'd think TCP/IP/Nagles would be optimization enough for me in the packet combining sense, but perhaps the sheer bandwidth of all 100 sending to all 100 is just too high to do without in-app packet combining (giving to a neighbor and having him 'collect a bunch of cryptographic verifications', assuming of course every peer on the dht is trusted, and it is in this case. Since pki proves authenticity, I know exactly which specific peers are responsible for the crypto proofs (and rendering, which I discovered while taking a shit (had:that) needs to be a lot more backend integrated)) as well.

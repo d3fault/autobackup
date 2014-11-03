@@ -6,6 +6,11 @@
 #include <QDockWidget>
 #include <QDebug>
 
+#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+#include <QPainter>
+#include <QBuffer>
+#endif
+
 #include "osiossettings.h"
 #include "osiosnotificationswidget.h"
 #include "iactivitytab_widget_formainmenutabwidget.h"
@@ -15,6 +20,11 @@
 #include "timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h"
 #include "timelinenodetypes/mainmenuactivitychangedtimelinenode.h"
 #include "timelinenodetypes/keypressinnewemptydoctimelinenode.h"
+
+/*TODOreq:
+textEdit.append(newKeystroke); //synthesis
+renderTextEditIntoQImageForSendingBack(&textEdit);
+//^no race condition for the new keystroke to be in the image? methinks not, but idk for sure*/
 
 OsiosMainWindow::OsiosMainWindow(Osios *osios, QWidget *parent)
     : QMainWindow(parent)
@@ -122,7 +132,7 @@ void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(
     {
         //as of now, this timeline node event is only displayed in the timeline and has no other manifestation, so:
         //oops: timeline node is what i want emit presentNotificationRequested(static_cast<ProfileCreationAnnounce_aka_GenesisTimelineNode*>(timelineNode)->humanReadableShortDescriptionIncludingTimestamp());
-        //hmm so i don't think i need to do anything actually, but i still need to catch it
+        //hmm so i don't think i need to do anything actually, but i still need to catch it so as not to go to the default area
     }
         break;
     case TimelineNodeTypeEnum::INITIALNULLINVALIDTIMELINENODETYPE:
@@ -130,8 +140,31 @@ void OsiosMainWindow::synthesizeEventUsingTimelineNodeReceivedFromCopycatTarget(
     {
         emit presentNotificationRequested(tr("While in copycat mode, the Osios front-end received from the back-end a timeline node of an unknown type: ") + QString::number(timelineNode->TimelineNodeType), OsiosNotificationLevels::WarningNotificationLevel);
     }
-        break;
+        return;
     }
+
+#if 0 //lol. these screenshots are pretty damn accurate/with-latest-timeline-node-applied (could probably even be hashed themselves and matched as I used to want to do (now I'm going for combo strategy of 'machine verifiable' (sha1) and 'human verifiable' (rendered correctly) to achieve a level of certainty that gives me a fucking boner)). (DONE: the reason timeline view doesn't work is because it's sent "later" from the backend i think (there's just a lag of 1 timeline entry)). I almost want to give the screenshot stream it's own port/connection, so it doesn't clutter the crypto verify stream. really though, onl lan it won't matter much, and that's my primary target. TODOreq: if the status notification panel is moved "up" or undocked etc, the screenshots won't match. i probably shouldn't even take a screenshot of the status notifications panel. There is also the issue of resolution: they need to be exactly the same in order to match. The system themes being different could also throw the real-estate-available-for-widget-contents off by just a few pixels. If I could set a theme for a specific widget (it would reflect what the timeline node sender's theme is TODOoptional) and then render that widget into an image off screen, that would be neat. Hell maybe I can already xD, *tests*. Woot it does work, but the size is 640x480 and the un-used space is black. I have to either send size stuff to render (or widget.resize), or have to call show() first and it'll figure out the size itself. maybe two quick calls to show()/hide() won't look too stupid. Well it works, but yes it looks stupid. Fuck yea SIZE HINT saves the day <3 Qt. I should probably only render the central widget for comparison, not the entire main window (so the notification panel isn't rendered). HOWEVER, I could see actions in the file menus or toolbars being timeline nodes, so rendering central widget fails in that case (*cough sub main window as central widget of this main window side-steps that problem TODOmb?*.) TODOoptimization: [better] compression. can use lossy because the rendered results aren't being saved or compared, but only viewed and then discarded. WebP? I kind of want to keep separate the "copycat" and "copycat + take screenshot of self and send back to originator" functionality, to support "monitor clone" standalone mode, but I think it's obvious which one I'd rather have if I had to choose. TODOoptimization: [image] diffing between the previous frame could probably save us a TON of bandwidth. A keystroke for example modified only a tiny portion of the screen. BUT perhaps that is best left to a proper video encoder (VP9). Do I want to send a series of images, or a video stream? Video stream would probably be more efficient, and additionally could be "on it's own port/connection" with ease since libav has tons of streaming protocols built in. Also worth noting AGAIN (reminder) that I only want 1/3 of the screenshot (if possible, only render that 1/3 as well). 3 screens, 9 video streams, 3 timeline streams, 2 replicas, two security layers (computer, human). Maybe I should put the "this monitor" version of the widget (the main one I've pretty much already coded) on top of the recombined other 3 pieces, and use transparency on the "this monitor" version. Because that main menu does still need to have focus, but we want the recombined thirds to APPEAR as if they were on top. 50% transparency would be decent: you'd still be able to see the contents if the video streams died. It would appear to be not transparent at all during normal operation. You are able to notice when the 3rds streams fail. OT-ish but vidya got me thinkin: Obiviously I'd like to integrate "video frame" (B or I) == timeline node, but I wonder about it's efficiency (probably fine tbh). I also day dream on the idea of having a video game built into it, each video game action recorded/etc too. But seriously development tools integrated (d=) would be FUCKING SEX compared to those two high bandwidth examples just mentioned. One problem with VP9 is encode speed on my quad core ex-gaming machine: 1fps xD. Fuck it though, so long as it looks good enough I'd use theora idfc. I'll probably see the thirds stitching lines pretty apparently lolol (and could probably even fix them with blurring etc). For now I'm inclined to send PNGs to KISS. If I only send them on every timeline node, perhaps the bandwidth isn't an issue anyways (whereas video I can't control with such fine-grained accuracy)
+    //takeScreenshot();
+    QImage myScreenshot(size() /*or sizeHint() if the widget hasn't been shown() yet*/, QImage::Format_RGB32);
+    QPainter myPainter(&myScreenshot);
+    render(&myPainter);
+    myScreenshot.save("/run/shm/screenAt" + QString::number(QDateTime::currentMSecsSinceEpoch()) + ".png", "PNG");
+#endif
+
+#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+    QImage widgetRendereredAsImage(sizeHint(), QImage::Format_ARGB32);
+    QPainter widgetPainter(&widgetRendereredAsImage);
+    render(&widgetPainter); //TODOreq: don't render notification panel (see note above above putting another main window as central widget of outer most main window)
+    QByteArray renderedWidgetPngBytes;
+
+    {
+        QBuffer renderedWidgetPngBuffer(&renderedWidgetPngBytes);
+        renderedWidgetPngBuffer.open(QIODevice::WriteOnly);
+        widgetRendereredAsImage.save(renderedWidgetPngBuffer, "PNG", 0); //TODOoptimization: maybe don't use the highest compression (0). try/benchmark others, including the default of -1
+    }
+
+    emit copycatTimelineNodeRendered(timelineNode, renderedWidgetPngBytes);
+#endif
 }
 //MAIN MENU ACTIVITY TAB CHANGE -- RECORD
 void OsiosMainWindow::handleMainMenuItemsTabWidgetCurrentTabChanged()

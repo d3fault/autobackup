@@ -83,7 +83,11 @@ signals:
     void timelineNodeAdded(TimelineNode action);
 
     //copycat
+#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
     void timelineNodeReceivedFromCopycatTarget(TimelineNode timelineNode);
+#else
+    void timelineNodeReceivedFromCopycatTarget(OsiosDhtPeer *osiosDhtPeer, TimelineNode timelineNode);
+#endif
 
     void quitRequested();
 public slots:
@@ -96,6 +100,10 @@ private slots:
     void handleDhtStateChanged(OsiosDhtStates::OsiosDhtStatesEnum newDhtState);
     void cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndHashNeighborsActionAndRespondWithHash(OsiosDhtPeer *osiosDhtPeer, TimelineNode action);
     void cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptoGraphicHashOfTimelineNodePreviouslySent);
+
+#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+    void handleCopycatTimelineNodeRendered(TimelineNode timelineNode, const QByteArray &renderedWidgetPngBytes);
+#endif
 };
 
 #endif // OSIOS_H

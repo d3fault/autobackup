@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1414719867
+Documents/minddump/:1414787227
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1235,6 +1235,7 @@ Documents/minddump/lasjdfljksdflkjsdfousdlfjdsofulsdkfjosdufljksdfouflskjdfousdf
 Documents/minddump/lasjdfljsdflkjsldkjfsldkjfslkjdflksdjfousdlfkjsdfusodful.txt:1400221724
 Documents/minddump/lasjdflkajsdfljlskjdfkljsdlkfjwoeurlskjdfousdfkjkjsldfjasdfjsdfou.txt:1397719101
 Documents/minddump/laskdfjlksjdflkjsdkjfsdkfjsdoufoiewjrlkjsldfjsodufshjdslfkjsdlkfj.txt:1395384112
+Documents/minddump/laskdfjlsakdjfklasjdfkljsdklfjklsjfklsjdkflshdflkjsdflksdj.txt:1414787227
 Documents/minddump/laskdfjosudfwlerjaofyasklfjwourlaskfjouwrpuwr.txt:1344187959
 Documents/minddump/laskdjflaksjdflkjsouwelrjousdlfkjsdofulsdjfkouwlerkjsodfuoiusdflk.txt:1383717788
 Documents/minddump/laskdjflkjsdfousdflkjweourlkjsdfousdflkj.txt:1384434428
@@ -1439,6 +1440,7 @@ Documents/minddump/lsdjflkjsdflkjsdfoiuwljkfosdiuflsdkjfosidufl.gross.sdfsdfoulj
 Documents/minddump/lsdjflkjsdflkjsdfouilkjwerouslfkjsdfoulsdfkjouwerlkjsfdoiu.txt:1367587558
 Documents/minddump/lsdjflksdjflkjsalkfjslkjdfsdjfkljsdkjfwerujsdfusdklfj.txt:1396515274
 Documents/minddump/lsdjflsdjflksjdlkfjsdkljfsdlkjfoiwherljsdflkjsdfl.txt:1405678628
+Documents/minddump/lsdjflsdkjfklsdjfkjsdfkljsdlkfowuerlkjsdfhdskfjklsdjfsldkjf.txt:1414785399
 Documents/minddump/lsdjflsjadflkjskdlfjsdlkfjsdofusdlkfjsoduflsdjfljkewrousdf.txt:1393796085
 Documents/minddump/lsdjkflskajdfkjsdlfkjlwkejroulsdkjflksjdflksdfjouewlrkjousdfls.txt:1400127929
 Documents/minddump/lsdkfjlskdjfsdoiuwerlkjdfsousdflkjweroulkjdfs.txt:1355290132
@@ -3478,17 +3480,22 @@ Projects/Osios/src/OsiosGui.pro:1404008961
 Projects/Osios/src/osios.cpp:1404010898
 Projects/Osios/src/osios.h:1403729701
 Projects/Osios2/:1414341370
-Projects/Osios2/design/:1414629578
+Projects/Osios2/design/:1414998857
 Projects/Osios2/design/app.state.empty.json.doc.analogy.notes.but.stopped.to.go.play.with.state.machine.examples.txt:1414629578
+Projects/Osios2/design/at.least.sharding.in.the.forwarding.sense.could.at.least.save.on.bandwidth.when.used.with.pki.txt:1414785003
+Projects/Osios2/design/copycat.ONLY.mode.should.be.implemented.later.nob.txt:1414998857
 Projects/Osios2/design/copycat.lol.typo.was.copycant.but.anyways.yea.its.kinda.like.monitor.clone.mode.and.should.not.be.the.default.except.when.utilized.for.screen.splicing.txt:1414543488
 Projects/Osios2/design/currentRollingHash-aka-CryptographicallyVerifiedReferenceToTimelineNodeInTimeline.txt:1414624475
+Projects/Osios2/design/i.probably.can.beef.up.the.protocol.as.much.as.my.heart.desires.so.long.as.im.not.wasteful.txt:1414743755
 Projects/Osios2/design/osios.dht.hello.catch.up.old.timeline.nodes.protocol.txt:1414557256
 Projects/Osios2/design/osios2.initial.idea.txt:1414311199
+Projects/Osios2/design/public.access.should.only.ever.be.through.interop.layer.but.core.app.security.requires.private.dht.txt:1414798376
 Projects/Osios2/design/sdlkfjsladkfjksldjfklsdjfklsjdflksjdflkjsdlkfjsldkf.txt:1414570379
 Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:1414439351
+Projects/Osios2/design/this.is.a.data.security.application.but.thats.probably.not.what.you.think.it.means.txt:1414798918
 Projects/Osios2/reverts/:1414326188
 Projects/Osios2/reverts/revertBackupIDontThinkINeedOrWantThisAnymoreForOsios2.diffOf5d375c768ac2c1f97e1bf2431693e4f4be2df01b:1414325772
-Projects/Osios2/src/:1414723214
+Projects/Osios2/src/:1414746326
 Projects/Osios2/src/mainmenuitems/:1414720386
 Projects/Osios2/src/mainmenuitems/writer/:1414549644
 Projects/Osios2/src/mainmenuitems/writer/eventemittingplaintextedit.cpp:1414549644
@@ -3504,22 +3511,22 @@ Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.cpp:14
 Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.h:1414549408
 Projects/Osios2/src/timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.cpp:1414553871
 Projects/Osios2/src/timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h:1414553833
-Projects/Osios2/src/OsiosGui.pro:1414654401
+Projects/Osios2/src/OsiosGui.pro:1414744655
 Projects/Osios2/src/iactivitytab_widget_formainmenutabwidget.cpp:1414306500
 Projects/Osios2/src/iactivitytab_widget_formainmenutabwidget.h:1414307140
 Projects/Osios2/src/ibootstrapsplashscreen.h:1414648082
 Projects/Osios2/src/iosiosclient.h:1414548285
 Projects/Osios2/src/iosioscopycatclient.h:1414647466
 Projects/Osios2/src/iosiosdhtbootstrapclient.h:1414647369
-Projects/Osios2/src/itimelinenode.cpp:1414551681
-Projects/Osios2/src/itimelinenode.h:1414713885
+Projects/Osios2/src/itimelinenode.cpp:1414732953
+Projects/Osios2/src/itimelinenode.h:1414733020
 Projects/Osios2/src/main.cpp:1414716931
-Projects/Osios2/src/osios.cpp:1414721954
-Projects/Osios2/src/osios.h:1414720200
+Projects/Osios2/src/osios.cpp:1414746324
+Projects/Osios2/src/osios.h:1414746197
 Projects/Osios2/src/osioscommon.h:1414720276
 Projects/Osios2/src/osioscreateprofiledialog.cpp:1414651719
 Projects/Osios2/src/osioscreateprofiledialog.h:1414648497
-Projects/Osios2/src/osiosdht.cpp:1414722855
+Projects/Osios2/src/osiosdht.cpp:1414734587
 Projects/Osios2/src/osiosdht.h:1414711007
 Projects/Osios2/src/osiosdhtbootstrapsplashdialog.cpp:1414723116
 Projects/Osios2/src/osiosdhtbootstrapsplashdialog.h:1414648150
@@ -3527,15 +3534,15 @@ Projects/Osios2/src/osiosdhtpeer.cpp:1414710876
 Projects/Osios2/src/osiosdhtpeer.h:1414638041
 Projects/Osios2/src/osiosgui.cpp:1414717649
 Projects/Osios2/src/osiosgui.h:1414647380
-Projects/Osios2/src/osiosmainwindow.cpp:1414723094
-Projects/Osios2/src/osiosmainwindow.h:1414548740
+Projects/Osios2/src/osiosmainwindow.cpp:1414745772
+Projects/Osios2/src/osiosmainwindow.h:1414745764
 Projects/Osios2/src/osiosnotificationswidget.cpp:1414720456
 Projects/Osios2/src/osiosnotificationswidget.h:1414470794
 Projects/Osios2/src/osiosprofilemanagerdialog.cpp:1414651797
 Projects/Osios2/src/osiosprofilemanagerdialog.h:1414456009
 Projects/Osios2/src/osiossettings.cpp:1414711609
 Projects/Osios2/src/osiossettings.h:1414723077
-Projects/Osios2/src/timelineserializer.cpp:1414714024
+Projects/Osios2/src/timelineserializer.cpp:1414732743
 Projects/Osios2/src/timelineserializer.h:1414706614
 Projects/OsiosInNetworkVerifiedGraphicsView/:1414093958
 Projects/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView/:1414101615
@@ -4964,7 +4971,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1413398225
+Solutions/Anonymous Bitcoin Computing 2/src/:1414734579
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1413251305
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477

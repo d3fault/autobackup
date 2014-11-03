@@ -216,6 +216,10 @@ void Osios::connecToAndFromFrontendSignalsAndSlots(IOsiosClient *frontEnd)
 
     connect(this, SIGNAL(connectionColorChanged(int)), frontEnd->asQObject(), SLOT(changeConnectionColor(int)));
     connect(this, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), frontEnd->asQObject(), SIGNAL(presentNotificationRequested(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
+
+#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+    connect(frontEnd->asQObject(), SIGNAL(copycatTimelineNodeRendered(TimelineNode,QByteArray)), this, SLOT(handleCopycatTimelineNodeRendered(TimelineNode,QByteArray))); //TODOoptional: this signal belongs in the copycat interface, and copycat interface KIND OF deserves to be merged with IOsiosClient (except there's a problem with how I'm using it as a client relay lots of times. that'd suck to refactor). the signal i am connecting to here isn't even in IOsiosClient, but since connect uses strings it still works
+#endif
 }
 void Osios::beginUsingProfileNameInOsios(const QString &profileName)
 {
@@ -296,7 +300,7 @@ ITimelineNode *Osios::deserializeNextTimelineNode(TimelineNodeByteArrayContainsP
     //was tempted to put if(!m_LocalPersistenceDevice) return 0; here, but I'm pretty damn sure it'd have to be instantiated if we got this far (the error would show up during testing). Plus, returning zero doesn't do much unless we check it in the caller too xD
 
     //we have to return a pointer because we have to instantiate the derived type
-    return TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(m_LocalPersistenceDevice, whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt);
+    return TimelineSerializer::peekInstantiateAndDeserializeNextTimelineNodeFromIoDevice(m_LocalPersistenceDevice, whetherOrNotTheByteArrayHasProfileNameInIt_IfYouGotItFromNetworkThenYesItDoesButIfFromDiskThenNoItDoesnt); //TODOreq: caller takes ownership, deletes when appropriate
 }
 //batch write, but really doesn't make much difference since we flush every X seconds anyways
 void Osios::serializeMyTimelineAdditionsLocally()
@@ -394,7 +398,9 @@ void Osios::cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndH
 
     serializeNeighborActionLocally(osiosDhtPeer, action); //TODOreq: use the same period flushing code as our own serializeMyTimelineAdditionsLocally (this is why a io thread is nice (however i'm not as thread safe as i could be dommit))
 
+#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE //if that's the config, then we'll calc it later after it's rendered. but before we rendered timeline nodes, this was the logical spot to calculate + respond-with the crypto verification
     cyryptoNeighborReplicationVerificationStep1bOfX_WeReceiver_hashNeighborsActionAndRespondWithHash(osiosDhtPeer, action);
+#endif
 
 
     //TO DOnemb(solved-at-end-of-paragraph): don't copycat the timeline node until the timeline node originator/sender tells us that our cryptographic response ([async-begin] sent one statement above) -- either that or I'd need some kind of copycat-step-undo functionality *gasp*. for now im' going to trust the connection is stable and not lying etc (AFTER ALL, VISUALIZING THE RESULTS IS VERIFICATION ENOUGH!!!)
@@ -403,9 +409,14 @@ void Osios::cyryptoNeighborReplicationVerificationStep1aOfX_WeReceiver_storeAndH
         //NOPE: copycat mode handled differently, serializing and cryptographically verifying would be redundant, since we are a peer of the dht already
         //^i was going to move this above the serialize/cryptoNeighborReplicate calls above, and return before getting to them. it is in our role as a peer of said dht that we received the copycat timeline stream to begin with, so  we still need to fulfill our role as dht peer in addition to doing copycat stuff
         //TO DOnereq: every node i received from copycat target needs to be sent to recordMyAction, BUT (this is what i meant above) recordMyAction is only to get it to show up in the our timeline list widget -- we want to use hacks/etc to disable both the serializing and replicating to neighbors that usually comes with calling recordMyAction
-        emit timelineNodeReceivedFromCopycatTarget(action); //synthesize event actual in ui
         emit timelineNodeAdded(action); //synthesize event timeline entry in ui. well that was easy lol, but TODOreq: i still need to put copycat mode into a profile-less watcher maybe. at the very least, when copycatting a and 'using' profile b, we sure as shit don't want any of the synthesized events to be recorded as b's actual actions (especially since those will then be persisted and replicated more redundantly than we desire (with the sender being a replica of himself, doh!)). i think most relevantly i want b's profile creation not to be sent. hell he shouldn't even have a timeline or profile folder or any of that shit (I'm just not sure that refactor is such a good idea)
-        //return;
+
+#ifndef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+        emit timelineNodeReceivedFromCopycatTarget(action); //synthesize event actual in ui        
+        //we synthesize the timeline entry in the ui before synthesizing the actual even in the ui, because right after the actual event is synthesized is when we're going to want to take the screenshot, so doing it vice versa (as I had before) means the most recent timeline entry doesn't show up in the screenshot
+#else
+        TODO LEFT OFF emit timelineNodeReceivedFromCopycatTarget(osiosDhtPeer, action); //derp sending the dht peer ptr to the front-end instead of storing in list + looking up later
+#endif
     }
 }
 void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResponseCryptoGraphicHashReceivedFromNeighbor(OsiosDhtPeer *osiosDhtPeer, QByteArray cryptoGraphicHashOfTimelineNodePreviouslySent)
@@ -434,9 +445,15 @@ void Osios::cyryptoNeighborReplicationVerificationStep2OfX_WeReceiver_handleResp
     cryptoNeighborReplicationVerificationStep2ofX_WeSenderOfTImelineOriginallyAndNowReceiverOfHashVerification_removeThisHashFromAwaitingVerificationListAfterCheckingIfEnoughNeighborsHaveCryptographicallyVerifiedBecauseWeJustAddedAPeerToThatList_AndStopTheTimeoutForThatPieceIfRemoved(cryptoGraphicHashOfTimelineNodePreviouslySent, dhtPeersThatAlreadySentUsThatHash);
     //TODOreq: now we check it against what we calculated for it earlier and (had:report errors) if the hash isn't found in our list of hashes watching for (meaning a mismatch, in which case we do nothing and the 5 second timeout will flash red etc). we should remove a hash from being watched once all (or N) of the neighbors respond with a valid cryptographic hash
 }
+#ifdef OSIOS_DHT_CONFIG_NEIGHBOR_SENDS_BACK_RENDERING_WITH_CRYPTOGRAPHIC_VERIFICATION_OF_TIMELINE_NODE
+void Osios::handleCopycatTimelineNodeRendered(TimelineNode timelineNode, const QByteArray &renderedWidgetPngBytes)
+{
+
+}
+#endif
 void Osios::cyryptoNeighborReplicationVerificationStep0ofX_WeSender_propagateActionToNeighbors(TimelineNode action)
 {
-    //TODOreq: as an implicit sub-action of this step, we need to first record the cryptgraphic hash for later comparison/verification. However, as an optimization it's better to only ever convert action to a byte array once. I'm just going to err on the side of understandability over optimization at this point (because...)
+    //as an implicit sub-action of this step, we need to first record the cryptgraphic hash for later comparison/verification. We convert to byte array during persisting to local disk as well, so it's an optimization to only ever convert the action into a byte array once. I'm just going to err on the side of understandability over optimization at this point (because...)
     QByteArray actionCryptographicHash = calculateCrytographicHashOfTimelineNode(action);
     m_RecentlyGeneratedTimelineNodesAwaitingCryptographicVerificationFromMoreNeighbors_AndTheNeighborsWhoHaveVerifiedThisHashAlready.insert(actionCryptographicHash, new QSet<OsiosDhtPeer*>() /*delete the QSet in our destructor or whenever appropriate*/); //small inefficiency beats small refactor anyday. human time > *. shit how could anything be greater than everything, else be greater than itself (impossibru)
     m_RecentlyGeneratedTimelineNodesAndTheirTimeoutTimestamps.insert(actionCryptographicHash, QDateTime::currentMSecsSinceEpoch() + OSIOS_TIMELINE_NODE_CRYPTOGRAPHIC_HASH_NEIGHBOR_VERIFICATION_TIMEOUT_MILLISECONDS); //epoch-based qint64 instead of qdatetime because datetimes can "jump in time" (leap years, etc)

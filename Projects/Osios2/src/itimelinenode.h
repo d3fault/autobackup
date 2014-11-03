@@ -48,7 +48,7 @@ public:
     explicit ITimelineNode(const ITimelineNode &other);
     virtual ~ITimelineNode();
 
-    QString ProfileName; //sent across network with each timeline node, but only ever serialized once (first timeline node serialized)
+    QString ProfileName; //sent across network with each timeline node, but only ever serialized once (first timeline node serialized). TODOptional: move the logic surrounding it to network protocol then!
 
     TimelineNodeTypeEnum::TimelineNodeTypeEnumActual TimelineNodeType;
     qint64 UnixTimestamp;

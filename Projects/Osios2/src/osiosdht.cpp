@@ -12,8 +12,9 @@
 #include "osioscommon.h"
 #include "osiossettings.h"
 
-//for now the other 2 IPs must be hardcoded, there will be no IP address sharing (or sharding ;-P) yet just to KISS
+//for now there is be no IP address sharing (or sharding ;-P) yet just to KISS, but obviously at HELLO state we SHOULD exchange IP lists AND profile lists (incl what the current rolling hash for each profile is at)
 //TODOoptional: some multicast broadcast thing would make a decent bootstrapping strategy, especially since this app is designed specifically for LAN
+//TODOoptimization: err it's a TODOreq that I think I want the timeline node originator to tell the replicator/cryptographic-verifier that the cryptographic hash they just sent back is in fact valid (because the replicator should (will, TODOreq) not persist to disk until he receives that ack), BUT it is an optimization that I "bum" that ack onto future timeline nodes. Just like the lazy ack ack, the replicator doesn't need to know it ASEP. Although actually since timeline nodes may only be generated every few seconds/MINUTES, lazy ack ack is PROBABLY NOT A GOOD IDEA [unless we know for sure we will be generating numerous timeline nodes per second (video, audio, game, etc)]
 OsiosDht::OsiosDht(Osios *osios, QObject *parent)
     : QObject(parent)
     , m_Osios(osios)
@@ -53,6 +54,12 @@ void OsiosDht::setDhtState(const OsiosDhtStates::OsiosDhtStatesEnum &dhtState)
 }
 quint16 OsiosDht::generateRandomPort()
 {
+    static bool haveSeeded = false;
+    if(!haveSeeded)
+    {
+        qsrand(QDateTime::currentMSecsSinceEpoch());
+        haveSeeded = true;
+    }
     return static_cast<quint16>((qrand() % static_cast<int>(65536-1024))+1024);
 }
 //spread your legs
@@ -62,7 +69,6 @@ void OsiosDht::startLocalNetworkServer(quint16 localServerPort)
     bool portSuppliedByUser = (localServerPort > 0);
     if(!portSuppliedByUser)
     {
-        qsrand(QDateTime::currentMSecsSinceEpoch());
         localServerPort = generateRandomPort();
     }
     quint8 portListenAttempts = 0;
