@@ -21,7 +21,7 @@ OsiosCreateProfileDialog::OsiosCreateProfileDialog(QWidget *parent)
     , m_ProfileNameLineEdit(new QLineEdit())
     , m_DataDirRow(new LabelLineEditBrowseButton(tr("Data Dir:"), LabelLineEditBrowseButton::OpenDirectoryMode))
 {
-    setWindowTitle(tr("Create Profile"));
+    setWindowTitle(OSIOS_HUMAN_READABLE_TITLE + tr(" - Create Profile"));
 
     QVBoxLayout *myLayout = new QVBoxLayout();
     myLayout->setContentsMargins(OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS, OSIOS_GUI_LAYOUT_CONTENT_MARGINS);

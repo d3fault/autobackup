@@ -17,6 +17,8 @@ const int OsiosProfileManagerDialog::ComboBoxIndexThatIndicatesUnchosen = 0;
 OsiosProfileManagerDialog::OsiosProfileManagerDialog(QWidget *parent)
     : QDialog(parent)
 {
+    setWindowTitle(OSIOS_HUMAN_READABLE_TITLE + tr(" - Profile Manager"));
+
     QHBoxLayout *myLayout = new QHBoxLayout();
 
     QLabel *existingProfilesLabel = new QLabel(tr("Existing Profiles:"));
@@ -43,8 +45,8 @@ OsiosProfileManagerDialog::OsiosProfileManagerDialog(QWidget *parent)
     buttonsColumn->addWidget(createProfileButton);
     buttonsColumn->addWidget(cancelButton);
 
-    myLayout->addWidget(existingProfilesLabel);
-    myLayout->addWidget(m_ExistingProfilesComboBox);
+    myLayout->addWidget(existingProfilesLabel, 0, Qt::AlignTop);
+    myLayout->addWidget(m_ExistingProfilesComboBox, 0, Qt::AlignTop);
     myLayout->addLayout(buttonsColumn);
 
     setLayout(myLayout);

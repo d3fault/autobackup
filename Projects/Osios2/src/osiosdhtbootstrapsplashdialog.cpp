@@ -15,7 +15,7 @@ OsiosDhtBootstrapSplashDialog::OsiosDhtBootstrapSplashDialog(const QString &last
 {
     //TODOoptional: pretty-ify, animate the status messages as they come, etc
 
-    setWindowTitle(OSIOS_HUMAN_READABLE_TITLE);
+    setWindowTitle(OSIOS_HUMAN_READABLE_TITLE + tr(" - Establishing Connection"));
 
     QVBoxLayout *myLayout = new QVBoxLayout(this);
 

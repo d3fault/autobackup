@@ -56,10 +56,15 @@ void OsiosMainWindow::setCopycatModeEnabled(bool enabled)
         if(enabled)
         {
             emit connectEventSynthesisSignalsForCopycattingRequested(this);
+
+            //TODOreq (aka "note", since longstanding): other events may have similar side effects. we don't want to listen to the tab changed signal anymore when in copycat mode (because we'll be synthesizing it). the corresponding reconnect in the else below also applies. But it doesn't apply to all the timeline node types. For example, synthesizing the key press in writer is used by "insertText", which DOES NOT trigger onKeyPress. The problem here is that our synthesizing is itself being needlessly recorded (memory leak, sloppy codan). The rule of thumb when adding a new timeline node type is: if synthesizing triggers recording, extra logic is needed to evade that needless record
+            disconnect(m_MainMenuItemsTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleMainMenuItemsTabWidgetCurrentTabChanged()));
         }
         else
         {
             emit disconnectEventSynthesisSignalsForCopycattingRequested(this);
+
+            connect(m_MainMenuItemsTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleMainMenuItemsTabWidgetCurrentTabChanged()));
         }
     }
 }

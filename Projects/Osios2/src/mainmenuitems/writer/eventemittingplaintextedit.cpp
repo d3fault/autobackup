@@ -34,10 +34,12 @@ void EventEmittingPlainTextEdit::keyPressEvent(QKeyEvent *e) //TODOreq: differen
 void EventEmittingPlainTextEdit::connectToOsiosClientsCopyCatSignals(IOsiosCopycatClient *osiosCopycatClient)
 {
     connect(osiosCopycatClient->asQObject(), SIGNAL(synthesizeKeyPressedInNewEmptyDocRequested(OsiosDhtPeer*,KeyPressInNewEmptyDocTimelineNode*)), this, SLOT(synthesizeKeyPressedInNewEmptyDocRequested(OsiosDhtPeer*,KeyPressInNewEmptyDocTimelineNode*)));
+    connect(this, SIGNAL(timelineNodeAppliedAndRendered(OsiosDhtPeer*,TimelineNode,QByteArray)), osiosCopycatClient->asQObject(), SIGNAL(timelineNodeAppliedAndRendered(OsiosDhtPeer*,TimelineNode,QByteArray)));
 }
 void EventEmittingPlainTextEdit::disconnectToOsiosClientsCopyCatSignals(IOsiosCopycatClient *osiosCopycatClient)
 {
     disconnect(osiosCopycatClient->asQObject(), SIGNAL(synthesizeKeyPressedInNewEmptyDocRequested(OsiosDhtPeer*,KeyPressInNewEmptyDocTimelineNode*)), this, SLOT(synthesizeKeyPressedInNewEmptyDocRequested(OsiosDhtPeer*,KeyPressInNewEmptyDocTimelineNode*)));
+    disconnect(this, SIGNAL(timelineNodeAppliedAndRendered(OsiosDhtPeer*,TimelineNode,QByteArray)), osiosCopycatClient->asQObject(), SIGNAL(timelineNodeAppliedAndRendered(OsiosDhtPeer*,TimelineNode,QByteArray)));
 }
 //KEY PRESS EVENT -- SYNTHESIZE
 void EventEmittingPlainTextEdit::synthesizeKeyPressedInNewEmptyDocRequested(OsiosDhtPeer *osiosDhtPeer, KeyPressInNewEmptyDocTimelineNode *keyPressInNewEmptyDocTimelineNodeTimelineNode)
