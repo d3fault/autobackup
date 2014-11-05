@@ -1,0 +1,5 @@
+I'm new to views, all I've done with them so far is query them plainly once (then display the resulting json), no pagination etc. I want to prototype pagination first, and then second I want to try to implement the "more efficient" method of going to the next page as described in the couchbase docs. I can't even remember exactly what it was, something about using a a null unicode character in your range start thing or fuck idk.
+
+The point of this is to get me ready to implement the "Users with Ad Campaigns for Sale" page on Abc2, which will mark my first real use of views.
+
+I may or may not additionally prototype a "5 minute view query cache", since views are expensive to query (but I'm certainly leaning towards putting the cache feature in Abc2 ofc)

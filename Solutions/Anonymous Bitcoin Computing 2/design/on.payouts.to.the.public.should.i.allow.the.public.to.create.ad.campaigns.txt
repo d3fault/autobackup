@@ -1,0 +1,6 @@
+I'm thinking if I ever let the public create ad campaigns, the payout method I should use should be instantaneous (~10 min bitcoin) as long as the amount is below a certain threshold ($500/day? whatever arbitrary). Additionally (and governing the previous threshold), there should be a "maximum amount of payouts sent per day". The max-payouts-per-day is SYSTEM-WIDE, not per-user... and max-payouts-per-day should be the amount in another/separate "payout wallet", which I manually fill (whenever needed) to never more than an amount that I'd care about losing. This is similar to how bitcoin users are SUPPOSED to deal with the currency exchanges (but most don't, the dolts).
+
+Goes without saying that I should be manually (or perhaps semi-automatically, but using separate/offline tools) verifying all pay-ins, ad campaign slot purchases, and pay-outs, to make sure everything adds up (and if it doesn't, I find/fix the bug before refilling the payout wallet (perhaps bringing entire site down in the meantime)).
+I don't like "payout requests", but I am also too scared to do "automatic payouts" [without a limit of some sort].
+
+Users could easily get around the per-user threshold by creating 1 ad campaign per username... so perhaps the per-user limit is dumb and I should rely soley (sp=solely? wtf both look retarded) on "is there enough left in the payout wallet?"

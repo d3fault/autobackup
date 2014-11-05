@@ -9,7 +9,7 @@ using namespace std;
 class ISynchronousLibCouchbaseUser
 {
 public:
-    ISynchronousLibCouchbaseUser();
+    ISynchronousLibCouchbaseUser(); //TODOmb: doesn't this class require a destructor to disconnect/destroy couchbase properly?
 protected:
     lcb_t m_Couchbase;
     bool m_Connected;

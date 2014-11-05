@@ -1,0 +1,38 @@
+Map:
+
+function(doc, meta)
+{
+  if(meta.id.lastIndexOf("adSpaceCampaign_",0) === 0)
+  {
+    var keyParts = meta.id.split("_", 2);
+    emit(keyParts[1], null);
+  }
+}
+
+
+Reduce:
+
+function(keys, values, rereduce)
+{
+  var ret = [];
+  var keyLen = keys.length;
+  for(i = 0; i < keyLen; i++)
+  {
+    var currentKey = keys[i];
+    var retLen = ret.length;
+    var alreadyInRet = false;
+    for(j = 0; j < retLen; j++)
+    {
+      if(ret[j] == currentKey)
+      {
+        alreadyInRet = true;
+        break;
+      }
+    }
+    if(alreadyInRet === false)
+    {
+      ret[retLen] = currentKey;
+    }
+  }
+  return ret;
+}

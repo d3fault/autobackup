@@ -11,6 +11,7 @@
 using namespace boost::property_tree;
 
 //TODOoptimization: this and the key page inserter app could use lcb's bulk set functionality
+//TODOoptional: programmatically insert/create the map/reduce views used in Abc2 (none atm, but that's a WIP)
 //Qt, how I missed thee...
 Abc2dbInitializer::Abc2dbInitializer(QObject *parent) :
     QObject(parent), ISynchronousLibCouchbaseUser()

@@ -5,6 +5,7 @@
 #include <QThread>
 
 //TODOoptional: make these classes actually private
+//Is a group of objects on a single thread, not a group of objects on a group of threads etc. *shakes fist at boost for giving me the name :-P*
 class ObjectOnThreadGroupPrivateSingleThreadBase : public QThread
 {
     Q_OBJECT
