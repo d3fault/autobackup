@@ -5,8 +5,13 @@
 #include "d3faultscouchbaseshared.h"
 
 ISynchronousLibCouchbaseUser::ISynchronousLibCouchbaseUser()
-    : m_Connected(false) //i think my initializer/page-adder forgot to set this to false, so this refactor caught a potentially large bug
+    : m_CouchbaseCreated(false)
+    , m_Connected(false) //i think my initializer/page-adder forgot to set this to false, so this refactor caught a potentially large bug
 { }
+ISynchronousLibCouchbaseUser::~ISynchronousLibCouchbaseUser()
+{
+    destroyCouchbaseIfCreated();
+}
 void ISynchronousLibCouchbaseUser::errorCallback(lcb_error_t error, const char *errinfo)
 {
     errorOutput("Got an error in our couchbase error callback: " + string(lcb_strerror(m_Couchbase, error)) + " / " + string(errinfo));
@@ -47,6 +52,7 @@ bool ISynchronousLibCouchbaseUser::connectToCouchbase()
         errorOutput("Failed to create a libcouchbase instance: " + string(lcb_strerror(NULL, error)));
         return false;
     }
+    m_CouchbaseCreated = true;
 
     lcb_set_cookie(m_Couchbase, this);
 
@@ -59,19 +65,19 @@ bool ISynchronousLibCouchbaseUser::connectToCouchbase()
     if((error = lcb_connect(m_Couchbase)) != LCB_SUCCESS)
     {
         errorOutput("Failed to start connecting libcouchbase instance: " + string(lcb_strerror(m_Couchbase, error)));
-        lcb_destroy(m_Couchbase);
+        destroyCouchbaseIfCreated();
         return false;
     }
     if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS)
     {
         errorOutput("Failed to lcb_wait after lcb_connect:" + string(lcb_strerror(m_Couchbase, error)));
-        lcb_destroy(m_Couchbase);
+        destroyCouchbaseIfCreated();
         return false;
     }
     if(!m_Connected)
     {
         errorOutput("Failed to connect libcouchbase instance: " + string(lcb_strerror(m_Couchbase, error)));
-        lcb_destroy(m_Couchbase);
+        destroyCouchbaseIfCreated();
         return false;
     }
     return true;
@@ -90,14 +96,14 @@ bool ISynchronousLibCouchbaseUser::couchbaseGetRequest(const string &key, const 
         if(error  != LCB_SUCCESS)
         {
             errorOutput("Failed to setup get request for " + optionalDescriptionOfGet + ": " + string(lcb_strerror(m_Couchbase, error)));
-            lcb_destroy(m_Couchbase);
+            destroyCouchbaseIfCreated();
             return false;
         }
     }
     if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS)
     {
         errorOutput("Failed to lcb_wait after lcb_get for " + optionalDescriptionOfGet + ": " + string(lcb_strerror(m_Couchbase, error)));
-        lcb_destroy(m_Couchbase);
+        destroyCouchbaseIfCreated();
         return false;
     }
     return true;
@@ -129,7 +135,7 @@ bool ISynchronousLibCouchbaseUser::couchbaseGetRequestWithExponentialBackoffRequ
     if(m_LastOpStatus != LCB_SUCCESS)
     {
         errorOutput("Failed to get " + optionalDescriptionOfGet + ": " + string(lcb_strerror(m_Couchbase, m_LastOpStatus)));
-        lcb_destroy(m_Couchbase);
+        destroyCouchbaseIfCreated();
         return false;
     }
     return true;
@@ -152,14 +158,14 @@ bool ISynchronousLibCouchbaseUser::couchbaseStoreRequest(const string &key, cons
         if(error != LCB_SUCCESS)
         {
             errorOutput("Failed to set up add request for " + optionalDescriptionOfStore + string(lcb_strerror(m_Couchbase, error)));
-            lcb_destroy(m_Couchbase);
+            destroyCouchbaseIfCreated();
             return false;
         }
     }
     if((error = lcb_wait(m_Couchbase)) != LCB_SUCCESS)
     {
         errorOutput("Failed to lcb_wait after set request for " + optionalDescriptionOfStore + string(lcb_strerror(m_Couchbase, error)));
-        lcb_destroy(m_Couchbase);
+        destroyCouchbaseIfCreated();
         return false;
     }
     return true;
@@ -190,7 +196,7 @@ bool ISynchronousLibCouchbaseUser::couchbaseStoreRequestWithExponentialBackoffRe
     if(m_LastOpStatus != LCB_SUCCESS)
     {
         errorOutput("Failed to store " + optionalDescriptionOfStore + ": " + string(lcb_strerror(m_Couchbase, m_LastOpStatus)));
-        lcb_destroy(m_Couchbase);
+        destroyCouchbaseIfCreated();
         return false;
     }
     return true;
@@ -246,4 +252,12 @@ void ISynchronousLibCouchbaseUser::getCallbackStatic(lcb_t instance, const void 
 void ISynchronousLibCouchbaseUser::storeCallbackStatic(lcb_t instance, const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp)
 {
     const_cast<ISynchronousLibCouchbaseUser*>(static_cast<const ISynchronousLibCouchbaseUser*>(lcb_get_cookie(instance)))->storeCallback(cookie, operation, error, resp);
+}
+void ISynchronousLibCouchbaseUser::destroyCouchbaseIfCreated()
+{
+    if(m_CouchbaseCreated)
+    {
+        lcb_destroy(m_Couchbase);
+        m_CouchbaseCreated = false;
+    }
 }

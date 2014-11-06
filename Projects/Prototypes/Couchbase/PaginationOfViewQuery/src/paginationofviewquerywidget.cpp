@@ -10,7 +10,7 @@ PaginationOfViewQueryWidget::PaginationOfViewQueryWidget(QWidget *parent)
     , m_PageViewer(new QPlainTextEdit())
 {
     m_PageSelectionSpinBox->setPrefix(tr("Page "));
-    m_PageSelectionSpinBox->setRange(0, 1); //or 1-2, idk yet
+    m_PageSelectionSpinBox->setRange(1, 2);
 
     QVBoxLayout *myLayout = new QVBoxLayout(this);
 

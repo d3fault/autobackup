@@ -20,7 +20,7 @@ signals:
     void quitRequested();
 public slots:
     void initializePaginationOfViewQuery();
-    void queryPageOfView(int pageNum);
+    void queryPageOfView(int pageNum_WithOneBeingTheFirstPage);
 };
 
 #endif // PAGINATIONOFVIEWQUERY_H

@@ -9,9 +9,11 @@ using namespace std;
 class ISynchronousLibCouchbaseUser
 {
 public:
-    ISynchronousLibCouchbaseUser(); //TODOmb: doesn't this class require a destructor to disconnect/destroy couchbase properly?
+    ISynchronousLibCouchbaseUser();
+    virtual ~ISynchronousLibCouchbaseUser();
 protected:
     lcb_t m_Couchbase;
+    bool m_CouchbaseCreated;
     bool m_Connected;
     lcb_error_t m_LastOpStatus;
     std::string m_LastDocGetted;
@@ -44,6 +46,8 @@ private:
     static void configurationCallbackStatic(lcb_t instance, lcb_configuration_t config);
     static void getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
     static void storeCallbackStatic(lcb_t instance, const void *cookie, lcb_storage_t operation, lcb_error_t error, const lcb_store_resp_t *resp);
+
+    void destroyCouchbaseIfCreated();
 };
 
 #endif // ISYNCHRONOUSLIBCOUCHBASEUSER_H

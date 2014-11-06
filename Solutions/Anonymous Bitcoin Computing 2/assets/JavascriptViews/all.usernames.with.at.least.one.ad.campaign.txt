@@ -1,3 +1,6 @@
+NOTE: for some reason it has to be queried with group_level=1, otherwise every user [with at least one ad campaign] is in a single array value (and then can't be paginated) O_o...
+
+
 Map:
 
 function(doc, meta)
@@ -11,6 +14,13 @@ function(doc, meta)
 
 
 Reduce:
+
+_sum
+
+
+
+OLD-Reduce:
+Since _sum gives us the number of ad campaigns they have, it is sufficient... but the one below doesn't provide such number... might be faster but shit who knows maybe it's slower. For now I'll just use _sum, because I don't trust my own code (and plus, I'm not sure this old one handles INCREMENTAL reduces correctly (or at all)... can't quite wrap my head around it. Doesn't keys contain every key? How then does increment work? The next vs. previous logic below won't work when doing incremental reduce!!!??? Fuck it, _sum it is :-P... I'll just ignore the resulting sum heh...). Now a more appropriate name for this view+reduce would be "all usernames with at least one ad campaign, and their number of ad campaigns".
 
 function(keys, values, rereduce)
 {
