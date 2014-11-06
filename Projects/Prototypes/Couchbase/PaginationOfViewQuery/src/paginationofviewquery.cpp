@@ -13,8 +13,11 @@ using namespace boost::property_tree;
 
 #define APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO \
 int skip = (pageNum_WithOneBeingTheFirstPage-1)*itemsPerPage; \
-viewPath += "&skip="; \
-viewPath += QString::number(skip).toStdString();
+if(skip > 0) \
+{ \
+    viewPath += "&skip="; \
+    viewPath += QString::number(skip).toStdString(); \
+}
 
 class PaginationOfViewQueryCouchbaseCookieType
 {
@@ -46,10 +49,9 @@ void PaginationOfViewQuery::httpCompleteCallbackStatic(lcb_http_request_t reques
 }
 void PaginationOfViewQuery::httpCompleteCallback(int pageNum_WithOneBeingTheFirstPage, lcb_error_t error, const lcb_http_resp_t *resp)
 {
-    //TODOoptimization: pre-format the page/cache before giving to front-end. Is both memory and cpu optimization, memory because don't store a bunch of "null" value [strings], cpu because front-end would have to convert it on each request anyways. We should cache that pre-formatted structure
+    //we pre-format the page/cache before giving to front-end. Is both memory and cpu optimization, memory because it's pointless to store a bunch of "null" value [strings], cpu because front-end would have to convert it on each request anyways. We cache that pre-formatted structure ofc
 
-    //TODOreq: cache page result
-    //TODoreq: handle json errors both in backend and frontend. backend=don't cache. frontent=display error message. perhaps for the frontend to know if it's an error or not could rely on whether or not we pass him an empty string
+    //TODoreq: handle json errors both in backend and frontend. backend=don't cache. frontent=display error message. perhaps for the frontend to know if it's an error or not could rely on whether or not we pass him an empty list, but maybe i should send a bool error so that "page not exist" can be differentiated from "500 Internal Server Error". also, the lcb_error should do 500 internal just like the json error
     qDebug() << "httpCompleteCallback";
     if(error != LCB_SUCCESS)
     {
@@ -73,7 +75,6 @@ void PaginationOfViewQuery::httpCompleteCallback(int pageNum_WithOneBeingTheFirs
     if(errorMaybe.is_initialized())
     {
         qDebug() << "json had error set";
-        //TODOreq: error, this should be handled a little sooner actually (emit empty string on error)
         emit finishedQueryingPageOfView(ret);
         return;
     }
@@ -85,8 +86,9 @@ void PaginationOfViewQuery::httpCompleteCallback(int pageNum_WithOneBeingTheFirs
     emit finishedQueryingPageOfView(ret);
     if(ret.isEmpty())
     {
-        return;
+        return; //the below call to back() would segfault otherwise
     }
+
     //cache the last username's docid and all the usernames on that page!
     m_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(pageNum_WithOneBeingTheFirstPage, qMakePair(rowsPt.back().second.get<std::string>("id" /* docid, that is */), ret));
 
@@ -154,39 +156,41 @@ void PaginationOfViewQuery::queryPageOfView(int pageNum_WithOneBeingTheFirstPage
     }
 #endif
 
-    if(pageNum_WithOneBeingTheFirstPage > 1) //there is definitely not a [previous] page 0 in cache (since we start at page 1), and also the optimization doesn't even apply for the first page anyways lol (nothing to skip). TODOreq: the page 1 _CONTENTS_ might still be in the cache, so it should be handled specially because yea it's true we don't want to try to use the last doc id of page 0...
+    if(!m_CachedPagesAndTheirLastDocIdsAndLastKeys.isEmpty()) //our cache must not be empty lol
     {
-        if(!m_CachedPagesAndTheirLastDocIdsAndLastKeys.isEmpty()) //our cache must not be empty lol
+        /*
+        if previous page is in cache and not expired
         {
-            /*
-            if previous page is in cache and not expired
-            {
-                use previous page's last docid as startkey_docid and last key as startkey, then do skip=1 --- and that's about it.... but heh the pseudo is much simpler xD
-            }
-            */
+            use previous page's last docid as startkey_docid and last key as startkey, then do skip=1 --- and that's about it.... but heh the pseudo is much simpler xD
+        }
+        */
 
-            //I have a few choices with how to expire cache items. I think I should be proactive about it since far back pages (and there could be lots of them) may be access infrequently and therefore we might run out of memory if we aren't proactive, which means I DON'T need to check expirations here/now: if it's in the cache, it isn't expired. The "cache expiry timer" timeout should be (CACHE_LENGTH / 2) btw TODOreq, which yea can be still inaccurate by ~(CACHE_LENGTH + (CACHE_LENGTH / 2)), but whatever
-            //this is all a complete fucking waste of time if Abc2 never allows the public to create ad campaigns btw :-), since there'd just be "d3fault" (which I should just hardcode at that point) xD xD... but yea I mean I guess I'm still learning about views/reduces/etc in a hands on manner...
+        //I have a few choices with how to expire cache items. I think I should be proactive about it since far back pages (and there could be lots of them) may be access infrequently and therefore we might run out of memory if we aren't proactive, which means I DON'T need to check expirations here/now: if it's in the cache, it isn't expired. The "cache expiry timer" timeout should be (CACHE_LENGTH / 2) btw TODOreq, which yea can be still inaccurate by ~(CACHE_LENGTH + (CACHE_LENGTH / 2)), but whatever
+        //this is all a complete fucking waste of time if Abc2 never allows the public to create ad campaigns btw :-), since there'd just be "d3fault" (which I should just hardcode at that point) xD xD... but yea I mean I guess I'm still learning about views/reduces/etc in a hands on manner...
 
-            //try to get the page about to be requested. If it's there then we have a cache CONTENT hit and don't even need to query the view :-P
-            QMap<CACHED_VIEW_QUERY_PAGES_HASH_KEY_AND_VALUE_TYPE>::const_iterator it = m_CachedPagesAndTheirLastDocIdsAndLastKeys.lowerBound(pageNum_WithOneBeingTheFirstPage);
-            if(it.key() == pageNum_WithOneBeingTheFirstPage)
-            {
-                qDebug() << "cache CONTENT hit";
-                //emit immediately
-                emit finishedQueryingPageOfView(it.value().second);
-                return;
-            }
-            //otherwise, decrement the iterator (as long as it isn't begin()), and then we have a startkey_docid at least...
-            if(it == m_CachedPagesAndTheirLastDocIdsAndLastKeys.cbegin())
-            {
-                //begin() points to a page after the page we want, so use regular inefficient skip strategy
-                APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO
-            }
-            else
+        //try to get the page about to be requested. If it's there then we have a cache CONTENT hit and don't even need to query the view :-P
+        QMap<CACHED_VIEW_QUERY_PAGES_HASH_KEY_AND_VALUE_TYPE>::const_iterator it = m_CachedPagesAndTheirLastDocIdsAndLastKeys.lowerBound(pageNum_WithOneBeingTheFirstPage);
+        if(it.key() == pageNum_WithOneBeingTheFirstPage)
+        {
+            qDebug() << "cache CONTENT hit";
+            //emit immediately
+            emit finishedQueryingPageOfView(it.value().second);
+            return;
+        }
+        //otherwise, decrement the iterator (as long as it isn't begin()), and then we have a startkey_docid at least...
+        if(it == m_CachedPagesAndTheirLastDocIdsAndLastKeys.cbegin())
+        {
+            //begin() points to a page after the page we want, so use regular inefficient skip strategy
+            APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO
+        }
+        else
+        {
+            //iterator points to something greater than our page requested, but we know there's another cached page before it (simply decrement the iterator and blamo). however we need to first check we're not requesting the first page, because there is definitely not a [previous] page 0 in cache (since we start at page 1), and also the optimization doesn't even apply for the first page anyways lol (nothing to skip)
+            if(pageNum_WithOneBeingTheFirstPage > 1)
             {
                 --it;
                 //now iterator points to "a cached page that is before (less than) the page being requested", and we know what page it is from it.key(), so we calculate how much there is left to skip based on that it.key() in addition to our constant items per page
+                qDebug() << "Using startkey_docid from page:" << it.key() << ", for more efficient lookup";
                 int skip = 1; //we always want to skip at least 1, because startkey/startkey_docid the last entry of that [previous] page
 
                 //now skip entire pages worth of items if needed. this is a combination of the "inefficient skipping" _AND_ the efficient use of startkey_docid. Hell I didn't even see it described in couchbase docs, *sucks own dick*
@@ -195,30 +199,30 @@ void PaginationOfViewQuery::queryPageOfView(int pageNum_WithOneBeingTheFirstPage
 
                 viewPath += "&starkey_docid=\"" + it.value().first + "\"&startkey=\"" + it.value().second.last() + "\"&skip=" + QString::number(skip).toStdString(); //damn this line is so sex
             }
+        }
 
 #if 0 //old hash based cache, page-1 had to exist in cache otherwise inefficient skipping was used
-            CACHED_VIEW_QUERY_PAGES_HASH_VALUE_TYPE previousPageInCacheMaybe = m_CachedPagesAndTheirLastDocIdsAndLastKeys.value(pageNum_WithOneBeingTheFirstPage-1);
-            if(previousPageInCacheMaybe.first != "" /*checking instead if second is not empty would work just as well*/)
-            {
-                qDebug() << "previous page existed, so we're using it's last docid as our startkey_docid";
-                //previous page is in cache, so we can get the page requested pretty efficiently. TODOmb: use a map instead of a hash, and then get simply the "previous map entry" (since sorted by page, we know it's BEFORE the page we are requesting)... which may or may not be exactly page-1. But it would still be an optimization to get page-2 or page-3 if, say, we're requesting page 999999. KISS and just a hash requiring page-1 for now (otherwise optimization isn't used (TODOreq: if the optimization isn't used (regardless of hash or map), we should fall back to the basic skip+limit strategy duh)). Hash is more efficient to lookup in, map allows us to easily get the "last page in cache before the page we want" easier (getting it in qhash would require iterating/decrementing/checking-if-exists, yuck) -- they both have tradeoffs idfk
-                //Eh with more research, I am having trouble figuring out how to jump into a map for "any key less than this key x" O_o... oh shit actually maybe lowerBound does it, idfk readan. TODOreq: don't decrement the iterator returned by lowerBound if it points to begin(). Also note that begin() is not necessarily the first page (even though it probably is).
-                //TODOoptimization: if using the above described "map" strategy, we could amplify the "skip" by however much we need to. If page-2 is cached, then we skip over page-1 (even though page-1 isn't cached) simply because we know how many are on page-1. In fact, this optimization might be necessary idfk. TODOreq: test jumping to pages directly ofc, not using the startkey_docid needs to function as well. Be careful with off by ones when doing that optimization xD
-                viewPath += "&starkey_docid=\"" + previousPageInCacheMaybe.first + "\"&startkey=\"" + previousPageInCacheMaybe.second + "\"&skip=1";
-            }
-            else
-            {
-                //regular inefficient skip
-                viewPath += "&skip=";
-                viewPath += QString::number((pageNum_WithOneBeingTheFirstPage-1)*itemsPerPage).toStdString(); //skip
-            }
-#endif
+        CACHED_VIEW_QUERY_PAGES_HASH_VALUE_TYPE previousPageInCacheMaybe = m_CachedPagesAndTheirLastDocIdsAndLastKeys.value(pageNum_WithOneBeingTheFirstPage-1);
+        if(previousPageInCacheMaybe.first != "" /*checking instead if second is not empty would work just as well*/)
+        {
+            qDebug() << "previous page existed, so we're using it's last docid as our startkey_docid";
+            //previous page is in cache, so we can get the page requested pretty efficiently. TODOmb: use a map instead of a hash, and then get simply the "previous map entry" (since sorted by page, we know it's BEFORE the page we are requesting)... which may or may not be exactly page-1. But it would still be an optimization to get page-2 or page-3 if, say, we're requesting page 999999. KISS and just a hash requiring page-1 for now (otherwise optimization isn't used (TODOreq: if the optimization isn't used (regardless of hash or map), we should fall back to the basic skip+limit strategy duh)). Hash is more efficient to lookup in, map allows us to easily get the "last page in cache before the page we want" easier (getting it in qhash would require iterating/decrementing/checking-if-exists, yuck) -- they both have tradeoffs idfk
+            //Eh with more research, I am having trouble figuring out how to jump into a map for "any key less than this key x" O_o... oh shit actually maybe lowerBound does it, idfk readan. TODOreq: don't decrement the iterator returned by lowerBound if it points to begin(). Also note that begin() is not necessarily the first page (even though it probably is).
+            //TODOoptimization: if using the above described "map" strategy, we could amplify the "skip" by however much we need to. If page-2 is cached, then we skip over page-1 (even though page-1 isn't cached) simply because we know how many are on page-1. In fact, this optimization might be necessary idfk. TODOreq: test jumping to pages directly ofc, not using the startkey_docid needs to function as well. Be careful with off by ones when doing that optimization xD
+            viewPath += "&starkey_docid=\"" + previousPageInCacheMaybe.first + "\"&startkey=\"" + previousPageInCacheMaybe.second + "\"&skip=1";
         }
         else
         {
-            //cache is empty, use inefficient skip
-            APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO
+            //regular inefficient skip
+            viewPath += "&skip=";
+            viewPath += QString::number((pageNum_WithOneBeingTheFirstPage-1)*itemsPerPage).toStdString(); //skip
         }
+#endif
+    }
+    else
+    {
+        //cache is empty, use inefficient skip
+        APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO
     }
 
     lcb_http_cmd_t queryPageOfViewCmd;
