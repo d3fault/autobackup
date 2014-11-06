@@ -15,23 +15,17 @@ Reduce:
 function(keys, values, rereduce)
 {
   var ret = [];
+  var retLen = 0;
+  var previousKey = "_\__ _|__/ _  __";
   var keyLen = keys.length;
   for(i = 0; i < keyLen; i++)
   {
     var currentKey = keys[i];
-    var retLen = ret.length;
-    var alreadyInRet = false;
-    for(j = 0; j < retLen; j++)
-    {
-      if(ret[j] == currentKey)
-      {
-        alreadyInRet = true;
-        break;
-      }
-    }
-    if(alreadyInRet === false)
+    if(currentKey != previousKey)
     {
       ret[retLen] = currentKey;
+      retLen++;
+      previousKey = currentKey;
     }
   }
   return ret;

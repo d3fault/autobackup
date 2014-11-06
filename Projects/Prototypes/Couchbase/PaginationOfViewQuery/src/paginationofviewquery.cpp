@@ -43,14 +43,17 @@ void PaginationOfViewQuery::initializePaginationOfViewQuery()
     }
     lcb_set_http_complete_callback(m_Couchbase, PaginationOfViewQuery::httpCompleteCallbackStatic);
     emit paginationOfViewQueryInitialized(true);
+
+    //kind of a hack, so that when the gui loads for the first time we get the first page right away
+    queryPageOfView(0);
 }
 void PaginationOfViewQuery::queryPageOfView(int pageNum)
 {
     lcb_http_cmd_t queryPageOfViewCmd;
     queryPageOfViewCmd.version = 0;
-    QString viewPath("_design/dev_AllUsersWithAtLeastOneAdCampaign/_view/AllUsersWithAtLeastOneAdCampaign?stale=false&limit=1&skip="); //once I upgrade to couchbase 3.0, I'll use stale=ok :-D. //TODOreq: since the keys of a view result are already sorted, my reduce function can be made more efficient by simply seeing if the next "key" was the same as the previous "key", instead of iterating the ENTIRE list of "ret" to see if the key is already in it
-    viewPath.append(QString::number(pageNum));
-    queryPageOfViewCmd.v.v0.path = viewPath.toStdString().c_str();
+    std::string viewPath = "_design/dev_AllUsersWithAtLeastOneAdCampaign/_view/AllUsersWithAtLeastOneAdCampaign?stale=false&limit=1&skip="; //once I upgrade to couchbase 3.0, I'll use stale=ok :-D. //TODOreq: since the keys of a view result are already sorted, my reduce function can be made more efficient by simply seeing if the next "key" was the same as the previous "key", instead of iterating the ENTIRE list of "ret" to see if the key is already in it
+    viewPath += QString::number(pageNum).toStdString();
+    queryPageOfViewCmd.v.v0.path = viewPath.c_str();
     queryPageOfViewCmd.v.v0.npath = strlen(queryPageOfViewCmd.v.v0.path);
     queryPageOfViewCmd.v.v0.body = NULL;
     queryPageOfViewCmd.v.v0.nbody = 0;
