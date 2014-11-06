@@ -1,0 +1,6 @@
+#ifndef PAGINATIONOFVIEWQUERYCOMMON_H
+#define PAGINATIONOFVIEWQUERYCOMMON_H
+
+typedef QList<std::string> ViewQueryPageContentsType;
+
+#endif // PAGINATIONOFVIEWQUERYCOMMON_H

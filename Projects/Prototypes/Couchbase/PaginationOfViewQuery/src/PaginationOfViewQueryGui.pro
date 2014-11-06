@@ -20,7 +20,8 @@ SOURCES += main.cpp\
 HEADERS  += paginationofviewquerywidget.h \
     paginationofviewquerygui.h \
     paginationofviewquery.h \
-    ../../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h
+    ../../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h \
+    paginationofviewquerycommon.h
 
 INCLUDEPATH += ../../../../../GloballySharedClasses/distributeddatabase/
 

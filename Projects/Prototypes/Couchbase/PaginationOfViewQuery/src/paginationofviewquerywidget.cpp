@@ -19,8 +19,11 @@ PaginationOfViewQueryWidget::PaginationOfViewQueryWidget(QWidget *parent)
 
     connect(m_PageSelectionSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(queryPageOfViewRequested(int)));
 }
-void PaginationOfViewQueryWidget::displayPageOfView(const QString &rawViewJsonResults)
+void PaginationOfViewQueryWidget::displayPageOfView(const ViewQueryPageContentsType &usernamesOnPage)
 {
     m_PageViewer->clear();
-    m_PageViewer->appendPlainText(rawViewJsonResults);
+    Q_FOREACH(const std::string &currentUsername, usernamesOnPage)
+    {
+        m_PageViewer->appendPlainText(QString::fromStdString(currentUsername));
+    }
 }

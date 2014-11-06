@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "paginationofviewquerycommon.h"
+
 class QSpinBox;
 class QPlainTextEdit;
 
@@ -17,7 +19,7 @@ private:
 signals:
     void queryPageOfViewRequested(int pageNum);
 public slots:
-    void displayPageOfView(const QString &rawViewJsonResults);
+    void displayPageOfView(const ViewQueryPageContentsType &usernamesOnPage);
 };
 
 #endif // PAGINATIONOFVIEWQUERYWIDGET_H

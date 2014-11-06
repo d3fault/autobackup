@@ -5,11 +5,14 @@
 #include "objectonthreadgroup.h"
 #include "paginationofviewquery.h"
 #include "paginationofviewquerywidget.h"
+#include "paginationofviewquerycommon.h"
 
 PaginationOfViewQueryGui::PaginationOfViewQueryGui(QObject *parent)
     : QObject(parent)
     , m_Gui(0)
 {
+    qRegisterMetaType<ViewQueryPageContentsType>("ViewQueryPageContentsType");
+
     ObjectOnThreadGroup *backendThread = new ObjectOnThreadGroup(this);
     backendThread->addObjectOnThread<PaginationOfViewQuery>("handlePaginationOfViewQueryReadyForConnections");
     backendThread->doneAddingObjectsOnThreads();
@@ -35,7 +38,7 @@ void PaginationOfViewQueryGui::handlePaginationOfViewQueryReadyForConnections(QO
 
     connect(business, SIGNAL(paginationOfViewQueryInitialized(bool)), this, SLOT(handlePaginationOfViewQueryInitialized(bool)));
     connect(m_Gui, SIGNAL(queryPageOfViewRequested(int)), business, SLOT(queryPageOfView(int)));
-    connect(business, SIGNAL(finishedQueryingPageOfView(QString)), m_Gui, SLOT(displayPageOfView(QString)));
+    connect(business, SIGNAL(finishedQueryingPageOfView(ViewQueryPageContentsType)), m_Gui, SLOT(displayPageOfView(ViewQueryPageContentsType)));
     connect(business, SIGNAL(quitRequested()), this, SLOT(quit()));
 
     QMetaObject::invokeMethod(business, "initializePaginationOfViewQuery");
