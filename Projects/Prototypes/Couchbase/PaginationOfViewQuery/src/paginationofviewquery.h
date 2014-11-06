@@ -4,6 +4,11 @@
 #include <QObject>
 #include "isynchronouslibcouchbaseuser.h"
 
+#include <QHash>
+
+#define CACHED_VIEW_QUERY_PAGES_HASH_VALUE_TYPE QPair<std::string /* last docid */, std::string /* last key (username) */> /*this comment is only here to keep Qt creator from deleting trailing whitespace at save. delete it and watch what happens i dare you ;-P*/
+#define CACHED_VIEW_QUERY_PAGES_HASH_KEY_AND_VALUE_TYPE int /*pageNum*/, CACHED_VIEW_QUERY_PAGES_HASH_VALUE_TYPE
+
 class PaginationOfViewQuery : public QObject, public ISynchronousLibCouchbaseUser /*should be couchbase client, not couchbase user. w/e*/
 {
     Q_OBJECT
@@ -12,8 +17,10 @@ public:
 protected:
     void errorOutput(const std::string &errorString);
 private:
+    QHash<CACHED_VIEW_QUERY_PAGES_HASH_KEY_AND_VALUE_TYPE> m_CachedPagesAndTheirLastDocIdsAndLastKeys;
+
     static void httpCompleteCallbackStatic(lcb_http_request_t request, lcb_t instance, const void *cookie, lcb_error_t error, const lcb_http_resp_t *resp);
-    void httpCompleteCallback(lcb_http_request_t request, lcb_t instance, lcb_error_t error, const lcb_http_resp_t *resp);
+    void httpCompleteCallback(int pageNum_WithOneBeingTheFirstPage, lcb_error_t error, const lcb_http_resp_t *resp);
 signals:
     void paginationOfViewQueryInitialized(bool success);
     void finishedQueryingPageOfView(const QString &jsonPageContents);

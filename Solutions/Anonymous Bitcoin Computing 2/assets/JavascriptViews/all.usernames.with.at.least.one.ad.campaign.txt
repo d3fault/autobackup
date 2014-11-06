@@ -1,7 +1,30 @@
-NOTE: for some reason it has to be queried with group_level=1, otherwise every user [with at least one ad campaign] is in a single array value (and then can't be paginated) O_o...
-
-
 Map:
+
+function(doc, meta)
+{
+  if(meta.id.lastIndexOf("adSpaceCampaign_",0) === 0)
+  {
+    var keyParts = meta.id.split("_", 3);
+    if(keyParts[2] === "0")
+    {
+      emit(keyParts[1], null);
+    }
+  }
+}
+
+Reduce: None
+
+
+//Note regarding below notes (read them in reverse order): emitting a key is necessary because startkey must be used when startkey_docid is used
+//Old-Note: the reason we don't emit a key or value is because the username is deduced when parsing the view query results, from the docid included in every view emit. It used to be: emit(keyParts[1], null); and is now emit(null,null);
+//Old-Old-Note: the emit could emit both key and value as null, since the username could be deduced LATER from the docid. Just a small space saving optimization
+
+
+
+OLD-Map:
+This one depended on a reduce to keep the samer username from being outputted multiple times, whereas the above one does not use a reduce at all and simply checks that the ad campaign is "index 0" as a way of keeping the same username from being emitted multiple times. If there is ever ad campaign deletion (deleted=true), the above map doesn't work anymore (but I suppose we could assume they still have at least one other non-deleted ad campaign (but eh that's a stupid assumption))
+
+NOTE: for some reason the below map/reduce has to be queried with group_level=1, otherwise every user [with at least one ad campaign] is in a single array value (and then can't be paginated) O_o...
 
 function(doc, meta)
 {
@@ -13,13 +36,13 @@ function(doc, meta)
 }
 
 
-Reduce:
+OLD-Reduce:
 
 _sum
 
 
 
-OLD-Reduce:
+OLD-OLD-Reduce:
 Since _sum gives us the number of ad campaigns they have, it is sufficient... but the one below doesn't provide such number... might be faster but shit who knows maybe it's slower. For now I'll just use _sum, because I don't trust my own code (and plus, I'm not sure this old one handles INCREMENTAL reduces correctly (or at all)... can't quite wrap my head around it. Doesn't keys contain every key? How then does increment work? The next vs. previous logic below won't work when doing incremental reduce!!!??? Fuck it, _sum it is :-P... I'll just ignore the resulting sum heh...). Now a more appropriate name for this view+reduce would be "all usernames with at least one ad campaign, and their number of ad campaigns".
 
 function(keys, values, rereduce)

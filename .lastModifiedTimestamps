@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1415181222
+Documents/minddump/:1415259916
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -836,6 +836,7 @@ Documents/minddump/dslfkjasldkjfsoduflsdfjosudflksjdfousdflkjsdfousdf.txt:138950
 Documents/minddump/dslfkjdslfjsldakjfosduflsjdfouasdflkjsdfuoiuwerkjalsdkf.txt:1383069170
 Documents/minddump/dslfkjsdflkjsdfkjsldkjflskjflskduweroiusdflkjsdfoewrweriu.txt:1382175301
 Documents/minddump/dslfkjsdlfkjsdfosdufsldfjsodfusd.txt:1392193571
+Documents/minddump/dslfkjsdlkfjsdlkjflkjwerousldkfjsdofusdfkjsdlfkjsdf.txt:1415258371
 Documents/minddump/dslfkjsdlkfjsdlkjflskdjoiurwlj.txt:1355827452
 Documents/minddump/dslfkjsldkjfslkdjfosdufoiuwerlkjsldkfjsdflkjafdlksfjoiuewrlj.txt:1365396615
 Documents/minddump/dsljflksjdfsdofulwkejrousdflkjsdfouldsfkjsdofuisdlfkjsdofiu.txt:1383981982
@@ -1087,7 +1088,7 @@ Documents/minddump/haha.just.kidding.fuck.your.like.opinion.man.sdlfjalsjdflskdj
 Documents/minddump/hard.acronym.thought.up.slfdjklsdjfouerwlk.txt:1365441922
 Documents/minddump/have.no.direction.because.direction.is.meaningless.asfdljsadfljowrulksjfd.txt:1345057275
 Documents/minddump/head.pulling.me.in.too.many.directions.priotizing.is.probably.one.of.the.most.important.things.that.will.influence.the.direction.of.my.life.txt:1350761475
-Documents/minddump/heros.alsdjflkjsadlkfjsdkl.txt:1400833858
+Documents/minddump/heros.alsdjflkjsadlkfjsdkl.txt:1415257364
 Documents/minddump/how.do.you.EXPORT.from.hidden.os.lol.txt:1320057239
 Documents/minddump/how.to.code.and.when.to.optimize.i.am.an.idiot.sdafouwelrjosdufsldkf.txt:1390926461
 Documents/minddump/howto.use.todo.effectively.txt:1320052350
@@ -1890,6 +1891,7 @@ Documents/minddump/sdflksjflkjsdfoulwerouislkjfosduflksjdfoulkwerjouisdflk.txt:1
 Documents/minddump/sdflksjflksdofulkwjerouslfdkjodisfulsdjoiurlkjwer.txt:1363766362
 Documents/minddump/sdflkweroiusdfoiuwreklweroiaufwe098234.txt:1339058881
 Documents/minddump/sdflsadjfaosdufwerlkjasdfoiuasflsakjf.txt:1333103151
+Documents/minddump/sdflsdjflkjsdlkfjskdljfklsdjflksdjflkjsdkfljsdlkfjsdlkfjsdlkfjsdlkf.txt:1415259916
 Documents/minddump/sdflsdjflkjwourlksjdfouwelrjoufl.txt:1355707892
 Documents/minddump/sdflsdjflksdajfoiuwelrjousdlfjsdouflwejrousdlfjksdoful.txt:1370674837
 Documents/minddump/sdflsjflkjslkdfjljwreouslkfjsdofusldkjfsldkjflkwejroulksjdfl.txt:1397029837
@@ -1957,6 +1959,7 @@ Documents/minddump/sdkjfslkdjfklsdjfklsjdfklsjdkfljwersodiflksdjf.txt:1405328663
 Documents/minddump/sdklfjlskjdfkjlsdfousdfljksdfusdfouoewrulkjsdfousdf.txt:1384325091
 Documents/minddump/sdklfjsdjfsdlkjfsdlkjfsdlkjfowuerlkjsdfsdjowejkfsd.txt:1360824949
 Documents/minddump/sdklfjsdkfjsdjflksdjflkjsdlkfjsdlkjflsjdfljsdflkjdsf.txt:1409758817
+Documents/minddump/sdklfjsdlkfjlsdkjflksdjfljsdflksdjfoukjdsflkjsdflk.txt:1415257956
 Documents/minddump/sdklfsdlkfjsldkjfdlsjfouwlekjhdfljksdfksdofu.txt:1402444685
 Documents/minddump/sdkljflksjdflkjsdfjslkjflksjflkjsfdlkjsdfkljsdfou.txt:1393064987
 Documents/minddump/sdlafjlskdjflksdjfousdfljasdfoulkjsd.txt:1359507149
@@ -3655,12 +3658,12 @@ Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepadwidget.h:1413
 Projects/Prototypes/Couchbase/CouchbaseNotepad/src/main.cpp:1413075062
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/:1415179965
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/design/:1415170222
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/design/pagination.of.view.query.initial.idea.txt:1415174133
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/:1415250189
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/design/pagination.of.view.query.initial.idea.txt:1415251166
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/:1415261493
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/PaginationOfViewQueryGui.pro:1415174964
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/main.cpp:1415171470
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.cpp:1415249204
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.h:1415249039
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.cpp:1415261469
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.h:1415261032
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerygui.cpp:1415180718
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerygui.h:1415175219
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerywidget.cpp:1415249012
@@ -4805,7 +4808,7 @@ Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1413
 Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1413302934
 Solutions/Abc2dbInitializer/:1393907655
 Solutions/Abc2dbInitializer/src/:1393920575
-Solutions/Abc2dbInitializer/src/cli/:1415179543
+Solutions/Abc2dbInitializer/src/cli/:1415250390
 Solutions/Abc2dbInitializer/src/cli/Abc2dbInitializercli.pro:1394267475
 Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.cpp:1393921679
 Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.h:1393913424
@@ -4814,7 +4817,7 @@ Solutions/Abc2dbInitializer/src/lib/:1415110656
 Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.cpp:1415110656
 Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.h:1394267540
 Solutions/Abc2getTodaysAdSlot/:1394268588
-Solutions/Abc2getTodaysAdSlot/src/:1394522396
+Solutions/Abc2getTodaysAdSlot/src/:1415258630
 Solutions/Abc2getTodaysAdSlot/src/Abc2getTodaysAdSlot.pro:1394512843
 Solutions/Abc2getTodaysAdSlot/src/gettodaysadslotwresource.cpp:1394512954
 Solutions/Abc2getTodaysAdSlot/src/gettodaysadslotwresource.h:1394505665
@@ -4970,7 +4973,7 @@ Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
 Solutions/Anonymous Bitcoin Computing 2/:1410246831
 Solutions/Anonymous Bitcoin Computing 2/assets/:1415110445
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/:1415110488
-Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.usernames.with.at.least.one.ad.campaign.txt:1415250077
+Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.usernames.with.at.least.one.ad.campaign.txt:1415254635
 Solutions/Anonymous Bitcoin Computing 2/assets/abc.logo.svg:1410248142
 Solutions/Anonymous Bitcoin Computing 2/design/:1415111353
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.with.recovery.cas.swap.to.get.a.key.with.uuids.for.refill.and.recovery.pseudocode.cpp:1392716033
@@ -4994,7 +4997,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1414734579
+Solutions/Anonymous Bitcoin Computing 2/src/:1415261288
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1413251305
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477

@@ -3,5 +3,6 @@ Hideo Kojima
 Hunter S. Thompson
 Maddox
 rms
+Ronald Jenkees
 Theo de Raadt
 Yu Suzuki
