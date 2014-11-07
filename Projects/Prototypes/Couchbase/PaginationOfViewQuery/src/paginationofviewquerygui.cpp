@@ -38,7 +38,7 @@ void PaginationOfViewQueryGui::handlePaginationOfViewQueryReadyForConnections(QO
 
     connect(business, SIGNAL(paginationOfViewQueryInitialized(bool)), this, SLOT(handlePaginationOfViewQueryInitialized(bool)));
     connect(m_Gui, SIGNAL(queryPageOfViewRequested(int)), business, SLOT(queryPageOfView(int)));
-    connect(business, SIGNAL(finishedQueryingPageOfView(ViewQueryPageContentsType)), m_Gui, SLOT(displayPageOfView(ViewQueryPageContentsType)));
+    connect(business, SIGNAL(finishedQueryingPageOfView(ViewQueryPageContentsType,bool)), m_Gui, SLOT(displayPageOfView(ViewQueryPageContentsType,bool)));
     connect(business, SIGNAL(quitRequested()), this, SLOT(quit()));
 
     QMetaObject::invokeMethod(business, "initializePaginationOfViewQuery");

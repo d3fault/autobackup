@@ -19,7 +19,7 @@ private:
 signals:
     void queryPageOfViewRequested(int pageNum);
 public slots:
-    void displayPageOfView(const ViewQueryPageContentsType &usernamesOnPage);
+    void displayPageOfView(const ViewQueryPageContentsType &usernamesOnPage, bool internalServerErrorOrJsonError);
 };
 
 #endif // PAGINATIONOFVIEWQUERYWIDGET_H

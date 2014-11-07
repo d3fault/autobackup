@@ -21,12 +21,14 @@ protected:
     void errorOutput(const std::string &errorString);
 private:
     QMap<CACHED_VIEW_QUERY_PAGES_HASH_KEY_AND_VALUE_TYPE> m_CachedPagesAndTheirLastDocIdsAndLastKeys;
+    //int m_TotalRowsInEntireView_OnlyValidWhenCacheIsNotEmpty;
+    int m_TotalPageCount_OnlyValidWhenCacheIsNotEmpty;
 
     static void httpCompleteCallbackStatic(lcb_http_request_t request, lcb_t instance, const void *cookie, lcb_error_t error, const lcb_http_resp_t *resp);
     void httpCompleteCallback(int pageNum_WithOneBeingTheFirstPage, lcb_error_t error, const lcb_http_resp_t *resp);
 signals:
     void paginationOfViewQueryInitialized(bool success);
-    void finishedQueryingPageOfView(const ViewQueryPageContentsType &pageContents);
+    void finishedQueryingPageOfView(const ViewQueryPageContentsType &listOfUsernamesOnPage_OrEmptyListIfPageNotExist, bool internalServerErrorOrJsonError = false);
     void quitRequested();
 public slots:
     void initializePaginationOfViewQuery();

@@ -10,7 +10,7 @@ PaginationOfViewQueryWidget::PaginationOfViewQueryWidget(QWidget *parent)
     , m_PageViewer(new QPlainTextEdit())
 {
     m_PageSelectionSpinBox->setPrefix(tr("Page "));
-    m_PageSelectionSpinBox->setRange(1, 2);
+    m_PageSelectionSpinBox->setMinimum(1);
 
     QVBoxLayout *myLayout = new QVBoxLayout(this);
 
@@ -19,9 +19,19 @@ PaginationOfViewQueryWidget::PaginationOfViewQueryWidget(QWidget *parent)
 
     connect(m_PageSelectionSpinBox, SIGNAL(valueChanged(int)), this, SIGNAL(queryPageOfViewRequested(int)));
 }
-void PaginationOfViewQueryWidget::displayPageOfView(const ViewQueryPageContentsType &usernamesOnPage)
+void PaginationOfViewQueryWidget::displayPageOfView(const ViewQueryPageContentsType &usernamesOnPage, bool internalServerErrorOrJsonError)
 {
     m_PageViewer->clear();
+    if(internalServerErrorOrJsonError)
+    {
+        m_PageViewer->appendPlainText(tr("500 Internal Server"));
+        return;
+    }
+    if(usernamesOnPage.isEmpty())
+    {
+        m_PageViewer->appendPlainText(tr("The page you requested does not exist"));
+        return;
+    }
     Q_FOREACH(const std::string &currentUsername, usernamesOnPage)
     {
         m_PageViewer->appendPlainText(QString::fromStdString(currentUsername));

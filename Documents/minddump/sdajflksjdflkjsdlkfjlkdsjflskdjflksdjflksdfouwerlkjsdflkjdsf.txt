@@ -1,0 +1,4 @@
+while(++linesOfCodeWritten)
+{
+	profit = 0;
+}
