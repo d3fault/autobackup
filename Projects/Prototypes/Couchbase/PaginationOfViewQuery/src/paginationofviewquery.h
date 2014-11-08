@@ -24,8 +24,8 @@ private:
     //int m_TotalRowsInEntireView_OnlyValidWhenCacheIsNotEmpty;
     int m_TotalPageCount_OnlyValidWhenCacheIsNotEmpty;
 
-    static void httpCompleteCallbackStatic(lcb_http_request_t request, lcb_t instance, const void *cookie, lcb_error_t error, const lcb_http_resp_t *resp);
-    void httpCompleteCallback(int pageNum_WithOneBeingTheFirstPage, lcb_error_t error, const lcb_http_resp_t *resp);
+    static void viewQueryCompleteCallbackStatic(lcb_http_request_t request, lcb_t instance, const void *cookie, lcb_error_t error, const lcb_http_resp_t *resp);
+    void viewQueryCompleteCallback(int pageNum_WithOneBeingTheFirstPage, lcb_error_t error, const lcb_http_resp_t *resp);
 signals:
     void paginationOfViewQueryInitialized(bool success);
     void finishedQueryingPageOfView(const ViewQueryPageContentsType &listOfUsernamesOnPage_OrEmptyListIfPageNotExist, bool internalServerErrorOrJsonError = false);

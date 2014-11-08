@@ -24,9 +24,15 @@ using namespace boost::interprocess;
 #include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h"
 #include "autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h"
 
+#include "../frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h" //no retrying with exponential backoff for view queries, they either succeed or don't
+
 //#define ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
 
+#define ABC_VIEW_QUERY_PAGES_MAP_VALUE_TYPE std::pair<std::string /* last docid */, ViewQueryPageContentsType /* usernames on that page */> /*this comment is only here to keep Qt creator from deleting trailing whitespace at save. delete it and watch what happens i double dog dare you ;-P */
+#define ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE int /*pageNum*/, ABC_VIEW_QUERY_PAGES_MAP_VALUE_TYPE
+
 class GetAndSubscribeCacheItem;
+class ViewQueryCouchbaseDocumentByKeyRequest;
 
 typedef boost::unordered_map<std::string /*key*/, GetAndSubscribeCacheItem* /*doc,cas,listOfSubscribers*/> GetAndSubscribeCacheHashType;
 
@@ -287,7 +293,11 @@ private:
 #ifndef ABC_MULTI_CAMPAIGN_OWNER_MODE
     struct event *m_GetAndSubscribePollingTimeout; //all keys share a timeout for now (and possibly forever), KISS
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
-    std::vector<AutoRetryingWithExponentialBackoffCouchbaseStoreRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseStoreRequestCache;
+
+    std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE> m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys;
+    int m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty;
+
+    std::vector<AutoRetryingWithExponentialBackoffCouchbaseStoreRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseStoreRequestCache; //TODOoptimization: vector requires adjacent memory positions. i only chose vector because it's supposedly fast for popping the top item... but that adjacent memory requirement (which I don't need) might cause lots of unecessary overhead. mb just a list or queue instead..
     std::vector<AutoRetryingWithExponentialBackoffCouchbaseGetRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache;
 
     void threadEntryPoint();
@@ -305,6 +315,10 @@ private:
     static void getCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
     void getCallback(const void *cookie, lcb_error_t error, const lcb_get_resp_t *resp);
     void decrementPendingGetCountAndHandle();
+
+    static void viewQueryCompleteCallbackStatic(lcb_http_request_t request, lcb_t instance, const void *cookie, lcb_error_t error, const lcb_http_resp_t *resp);
+    void viewQueryCompleteCallback(ViewQueryCouchbaseDocumentByKeyRequest *originalRequest, lcb_error_t error, const lcb_http_resp_t *resp);
+    //TODOreq: decrementPendingViewQueryCountAndHandle() ???
 
 #ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
     static void durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp);

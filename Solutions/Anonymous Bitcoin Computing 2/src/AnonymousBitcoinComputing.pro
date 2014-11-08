@@ -2,6 +2,7 @@
 #Alpha 0.1, only 332 req To Do items xD. 259 now after one ctrl+f pass, most of them seem dumb. 104 now after 2nd ctrl+f pass and let's call it Beta 0.5 <3
 
 ###############DEPLOY############
+#0) Give system a a huge swap. This app does not deal with out of memory scenarios well (or at all ;-P)
 #1) Copy /usr/share/Wt/resources/ to the directory that "wtAppHere" is located in
 #2) In /etc/wt/wt_config.xml, set:
 #   2a) <ajax-puzzle>true</ajax-puzzle>
@@ -53,7 +54,9 @@ HEADERS += \
     abc2common.h \
     ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h \
     frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.h \
-    frontend/pages/advertisingselladspacecreatenewadcampaignwidget.h
+    frontend/pages/advertisingselladspacecreatenewadcampaignwidget.h \
+    frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h \
+    frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -77,7 +80,9 @@ SOURCES += main.cpp \
     ../../hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp \
     frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.cpp \
     backend/getandsubscribecacheitem.cpp \
-    frontend/pages/advertisingselladspacecreatenewadcampaignwidget.cpp
+    frontend/pages/advertisingselladspacecreatenewadcampaignwidget.cpp \
+    frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.cpp \
+    frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

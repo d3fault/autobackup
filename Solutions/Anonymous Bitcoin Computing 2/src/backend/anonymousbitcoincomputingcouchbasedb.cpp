@@ -1,17 +1,26 @@
 #include "anonymousbitcoincomputingcouchbasedb.h"
 
+#include <boost/lexical_cast.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 #include "getandsubscribecacheitem.h"
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
 #include "d3faultscouchbaseshared.h"
 
 using namespace std;
+using namespace boost::property_tree;
 
 const struct timeval AnonymousBitcoinComputingCouchbaseDB::m_OneHundredMilliseconds = {0,100000};
 
 //TODOoptimization: not only will lockfree::queue be faster just as a queue implementation, but it provides two additional benefits: 1) dynamic sizing at run-time, so I don't need Store, StoreLarge, and Get (just Get and Store). 2) I think I can just pass the pointer to the request object instead of serializing/copying/reading/deserializing it, but unsure about this. Another benefit that is mostly design related, is that I can use proper boost::bind callbacks etc since I won't be serializing anything. I can clean up the "what x was for" enum code (as in, delete it), and boost::bind also provides a solution to expanding GetAndSubscribe (currently, changing subscriptions may still receive a subscription or two for the old subcription, but since we use "what x was for", they OLD subscription would go to the NEW callback and blah segfault (but boost::bind fixes this :-P)). Also the WApplication::bind thing I've never used.
 //TODOoptimization: I think maybe the 100ms polling should increase as there are more items in the get and subscribe cache. Like if there's only 1 item we are at 100ms, but maybe a couple thousand should be like 5 seconds (and everything linearly in between ofc). 100ms polling just sounds like too much if there are tons of items, but eh I'm not sure that's correct since there's sharding/distribution of load going on for those thousands already. For now I'm just going to do 100ms for all. Thought about doing a time per key (cache item) and then having only the ones with lots of subscribers at 100ms (few subscribers = 1-5 seconds), but I like the first strategy mentioned better
 //TODOoptimization: it might be wise to use nagle's algorithm, at, say, 5ms. the couchbase "get/store" commands can be batched together with ease (but figuring out which responses go with what might not be as simple)
+
+#define AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE 2 /* when changing, change the string below too. TODOreq: 10 or 20 or something, 2 is just for testing*/
+#define AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING "2" /* just saves us from having to lexical_cast the above int on every request */
 
 #define ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(GetOrStore) \
 AutoRetryingWithExponentialBackoffCouchbase##GetOrStore##Request *newOrRecycledExponentialBackoffTimerAndCallback; \
@@ -27,8 +36,36 @@ else \
 newOrRecycledExponentialBackoffTimerAndCallback->setNew##GetOrStore##RequestToRetry(originalRequest); \
 schedule##GetOrStore##Request(newOrRecycledExponentialBackoffTimerAndCallback);
 
+#define ABC_VIEW_QUERY_APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO \
+int skip = (pageNum_WithOneBeingTheFirstPage-1)*AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE; \
+if(skip > 0) \
+{ \
+    viewPath += "&skip="; \
+    viewPath += boost::lexical_cast<std::string>(skip); \
+}
+
+class PaginationOfViewQueryCouchbaseCookieType
+{
+public:
+    explicit PaginationOfViewQueryCouchbaseCookieType(AnonymousBitcoinComputingCouchbaseDB *pointerToPaginationOfViewQuery, ViewQueryCouchbaseDocumentByKeyRequest *originalRequest)
+        : PointerToPaginationOfViewQuery(pointerToPaginationOfViewQuery)
+        , OriginalRequest(originalRequest)
+    { }
+
+    AnonymousBitcoinComputingCouchbaseDB *PointerToPaginationOfViewQuery;
+    ViewQueryCouchbaseDocumentByKeyRequest *OriginalRequest;
+};
+
 AnonymousBitcoinComputingCouchbaseDB::AnonymousBitcoinComputingCouchbaseDB()
-    : m_Thread(boost::bind(&AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint, this)), m_IsDoneInitializing(false), m_IsConnected(false), m_ThreadExittedCleanly(false), m_IsInEventLoop(false), m_NoMoreAllowedMuahahaha(false), m_PendingStoreCount(0), m_PendingGetCount(0), m_IsFinishedWithAllPendingRequests(false)
+    : m_Thread(boost::bind(&AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint, this))
+    , m_IsDoneInitializing(false)
+    , m_IsConnected(false)
+    , m_ThreadExittedCleanly(false)
+    , m_IsInEventLoop(false)
+    , m_NoMoreAllowedMuahahaha(false)
+    , m_PendingStoreCount(0)
+    , m_PendingGetCount(0)
+    , m_IsFinishedWithAllPendingRequests(false)
     , m_BeginStoppingCouchbaseCleanlyEvent(NULL)
     , m_FinalCleanUpAndJoinEvent(NULL)
     //, m_StoreWtMessageQueue0(NULL)
@@ -190,6 +227,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     lcb_set_configuration_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::configurationCallbackStatic);
     lcb_set_get_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::getCallbackStatic);
     lcb_set_store_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::storeCallbackStatic);
+    lcb_set_http_complete_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallbackStatic);
 #ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
     lcb_set_durability_callback(m_Couchbase, AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic);
 #endif
@@ -700,6 +738,57 @@ void AnonymousBitcoinComputingCouchbaseDB::decrementPendingGetCountAndHandle()
 {
     ABC_GOT_A_PENDING_RESPONSE_FROM_COUCHBASE(Get)
 }
+void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallbackStatic(lcb_http_request_t request, lcb_t instance, const void *cookie, lcb_error_t error, const lcb_http_resp_t *resp)
+{
+    (void)request;
+    (void)instance;
+    boost::scoped_ptr<PaginationOfViewQueryCouchbaseCookieType> theCookie(const_cast<PaginationOfViewQueryCouchbaseCookieType*>(static_cast<const PaginationOfViewQueryCouchbaseCookieType*>(cookie)));
+    theCookie->PointerToPaginationOfViewQuery->viewQueryCompleteCallback(theCookie->OriginalRequest, error, resp);
+}
+void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(ViewQueryCouchbaseDocumentByKeyRequest *originalRequest, lcb_error_t error, const lcb_http_resp_t *resp)
+{
+    ViewQueryPageContentsType ret;
+    if(error != LCB_SUCCESS)
+    {
+        //qDebug() << "httpCompleteCallback has error";
+        originalRequest->respond(ret, true);
+        return;
+    }
+
+    ptree pt;
+    std::string jsonPageContentsStdString(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes);
+    std::istringstream is(jsonPageContentsStdString);
+    read_json(is, pt);
+    boost::optional<std::string> errorMaybe = pt.get_optional<std::string>("error");
+    if(errorMaybe.is_initialized())
+    {
+        //qDebug() << "json had error set";
+        originalRequest->respond(ret, true);
+        return;
+    }
+    const ptree &rowsPt = pt.get_child("rows");
+    BOOST_FOREACH(const ptree::value_type &row, rowsPt)
+    {
+        ret.push_back(row.second.get<std::string>("key" /* emitted view key, username in this case*/));
+    }
+    originalRequest->respond(ret);
+    if(ret.empty())
+    {
+        return; //the below call to back() would segfault otherwise
+    }
+
+    //cache the last username's docid and all the usernames on that page!
+    m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(std::make_pair(originalRequest->PageNum_WithOneBeingTheFirstPage, std::make_pair(rowsPt.back().second.get<std::string>("id" /* docid, that is */), ret)));
+
+    //since we inserted a cache item, update/set "total_rows" (total pages actually, based on total_rows ofc)
+    int totalRows = boost::lexical_cast<int>(pt.get<std::string>("total_rows"));
+    m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty = (totalRows / AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE); //optimization to calculate this now rather than on every request
+    if((totalRows % AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE) != 0) //account for the very last page not necessarily being full
+    {
+        ++m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty;
+    }
+    //TODOreq: I'm not sure if I should cache the last docid [for using as startkey_docid] if the page doesn't contain the max amount of 'items per page'. For example on the very last page, only 5 of the 10 items might be shown, so uhhhh (mind=exploded). Idk tbh, but yea figure it out...
+}
 #ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
@@ -858,7 +947,7 @@ void AnonymousBitcoinComputingCouchbaseDB::finalCleanupAndJoin(int unusedSocket,
     (void)unusedSocket;
     (void)events;
     event_base_loopbreak((event_base*)userData);
-    //^^lcb_breakout instead?
+    //^^lcb_breakout instead? probably no difference except that lcb_breakout would work with libev/etc, event_base_loopbreak is libevent2 specific. but what do i know...
 }
 void AnonymousBitcoinComputingCouchbaseDB::notifyMainThreadWeAreFinishedWithAllPendingRequests()
 {
@@ -1085,6 +1174,91 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 
     //get new or recycled AutoRetryingWithExponentialBackoffCouchbaseGetRequest
     ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(Get)
+}
+void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
+{
+    //TODOreq: two simultaneous queries [to same view] from two users (or to put it another way, a cached page is currently being refreshed), second one just appends to list of responders, just like 'Get+Subscribe' cache code does
+    if(m_NoMoreAllowedMuahahaha)
+    {
+        return;
+    }
+    ViewQueryCouchbaseDocumentByKeyRequest *originalRequest = m_ViewQueryMessageQueuesCurrentMessageBuffer; //TODOoptional: make this work with the old message queue thing, but actually I'm thinking of removing that altogether as I'm not sure it even works with the new "multiple subscription pages" (multi ad campaigns) code
+
+    //TODOreq: multiple views. keep in mind that each view should be able to specify a different cache duration. for now ima KISS and hard-code: typdef boost::unordered_map<std::string /*view path without any params*/, ???> ViewsPagesCachesTypedef;
+
+    std::string viewPath = originalRequest->ViewPath + "?stale=false&limit=" AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING; //TODOreq: once I upgrade to couchbase 3.0, I'll use stale=ok :-D. A compile time couchbase version check deciding the value of stale would be best :)
+    //viewPath += boost::lexical_cast<std::string>(AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING); //limit. TODOoptional: allow users to choose different items per pages, which should intelligently use the cache to combine pages etc, querying ranges needed and blah fuck that shit for now~
+
+    //TODOreq: i need to give each requester a COPY of the std::list of usernames for each page. Qt lists use implicit sharing, std::list does not :(. The cache/list may expire before the front-end receives it, so it's a thread safety issue guh. Maybe I should use a shared_ptr instead (whenever the list is to be updated, i make a NEW list and delete the [reference to the] old list, since the front-end may still be using it). Still since I'm not familiar with shared_ptr and have never used it, I'll use the 'make a copy' strategy for now
+    int pageNum_WithOneBeingTheFirstPage = originalRequest->PageNum_WithOneBeingTheFirstPage; //optimization to deref less
+
+    if(!m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.empty()) //this map should be the value of the hash (commented out above) used to keep track of all the different views (and their pages), but for now I only have 1 view type
+    {
+        //check if the pageNum requested could even exist based on what total_rows was set at the last time a page was queried. If it can't, then just emit an empty page to signify "page not found"
+        if(pageNum_WithOneBeingTheFirstPage > m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty)
+        {
+            //page does not exist
+            originalRequest->respond(ViewQueryPageContentsType());
+            return;
+        }
+
+        //try to get the page about to be requested. If it's there then we have a cache CONTENT hit and don't even need to query the view :-P
+        std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE>::iterator it = m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.lower_bound(pageNum_WithOneBeingTheFirstPage);
+        if(it->first == pageNum_WithOneBeingTheFirstPage)
+        {
+            //cache CONTENT hit
+            //emit immediately
+            originalRequest->respond(it->second.second);
+            return;
+        }
+        //cache miss, so decrement the iterator (as long as it isn't begin()) in order to get "a page before the one we want that is in the cache", and then use it's startkey_docid to get us as close as possible to the page being requested in a much more efficient than specifying startkey or skip only
+        if(it == m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.begin())
+        {
+            //begin() points to a page after the page we want, so use regular inefficient skip strategy
+            ABC_VIEW_QUERY_APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO
+        }
+        else
+        {
+            //iterator points to a page greater than our page requested, but we know there's another cached page before it (simply decrement the iterator and blamo). however we need to first check we're not requesting the first page, because there is definitely not a [previous] page 0 in cache (since we start at page 1), and also the optimization doesn't even apply for the first page anyways lol (nothing to skip)
+            if(pageNum_WithOneBeingTheFirstPage > 1)
+            {
+                --it;
+                //now iterator points to "a cached page that is before (less than) the page being requested", and we know what page it is from it.key(), so we calculate how much there is left to skip based on that it.key() in addition to our constant items per page
+                //qDebug() << "Using startkey_docid from page:" << it.key() << "for a more efficient lookup";
+                int skip = 1; //we always want to skip at least 1, because startkey/startkey_docid the last entry of that [previous] page
+
+                //now skip entire pages worth of items if needed. this is a combination of the "inefficient skipping" _AND_ the efficient use of startkey_docid. Hell I didn't even see it described in couchbase docs, *sucks own dick*
+                int numFullPagesToSkip = (pageNum_WithOneBeingTheFirstPage-it->first)-1; //the minus one is because we don't need to skip the page it points to (that was already done by specifying startkey_docid/startkey)
+                skip += (numFullPagesToSkip*AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE);
+
+                viewPath += "&starkey_docid=\"" + it->second.first + "\"&startkey=\"" + it->second.second.back() + "\"&skip=" + boost::lexical_cast<std::string>(skip);
+            }
+            //else: page 1, so no skip param specified
+        }
+    }
+    else
+    {
+        //cache is empty, use inefficient skip
+        ABC_VIEW_QUERY_APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO
+    }
+
+    lcb_http_cmd_t queryPageOfViewCmd;
+    queryPageOfViewCmd.version = 0;
+    queryPageOfViewCmd.v.v0.path = viewPath.c_str();
+    queryPageOfViewCmd.v.v0.npath = viewPath.length();
+    queryPageOfViewCmd.v.v0.body = NULL;
+    queryPageOfViewCmd.v.v0.nbody = 0;
+    queryPageOfViewCmd.v.v0.method = LCB_HTTP_METHOD_GET;
+    queryPageOfViewCmd.v.v0.chunked = 0;
+    queryPageOfViewCmd.v.v0.content_type = "application/json";
+    lcb_error_t error = lcb_make_http_request(m_Couchbase, new PaginationOfViewQueryCouchbaseCookieType(this, originalRequest) /*TODOreq: if lcb_make_http_request returns an error, is the callback still called? my cookie on the heap would be leaking memory if it isn't. Additionally, the request would be responded to (with error set) twice! I doubt the callback is called, but I don't KNOW */, LCB_HTTP_TYPE_VIEW, &queryPageOfViewCmd, NULL);
+    //libcouchbase_make_couch_request(instance, NULL, path, npath, NULL, 0, LBCOUCHBAESE_HTTP_METHOD_GET, 1);
+    if (error != LCB_SUCCESS)
+    {
+        //qDebug() <<  "Failed to query view" << QString::fromStdString(lcb_strerror(m_Couchbase, error));
+        originalRequest->respond(ViewQueryPageContentsType(), true);
+        return;
+    }
 }
 //queue<StoreCouchbaseDocumentByKeyRequest*> *AnonymousBitcoinComputingCouchbaseDB::getStoreLockFreeQueueForWt0()
 //{

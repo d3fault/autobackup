@@ -50,6 +50,7 @@ using namespace boost::interprocess;
 
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
+#include "../frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h"
 
 #include "abc2couchbaseandjsonkeydefines.h"
 
@@ -216,6 +217,7 @@ m_##text##MutexArray[lockedMutexIndex].unlock();
 /////////////////////////////////////////////////////END MACRO HELL///////////////////////////////////////////////
 
 class AdvertisingSellAdSpaceCreateNewAdCampaignWidget;
+class AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget;
 class AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget;
 class LettersNumbersOnlyRegExpValidatorAndInputFilter;
 class RegisterSuccessfulWidget;
@@ -227,12 +229,14 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 {
     //69'ing friend classes
     friend class AdvertisingSellAdSpaceCreateNewAdCampaignWidget;
+    friend class AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget;
     friend class AddFundsAccountTabBody;
     friend class NewAdSlotFillerAccountTabBody;
     friend class ViewAllExistingAdSlotFillersAccountTabBody;
 
     friend class StoreCouchbaseDocumentByKeyRequest;
     friend class GetCouchbaseDocumentByKeyRequest;
+    friend class ViewQueryCouchbaseDocumentByKeyRequest;
 
     void buildGui();
     WHBoxLayout *m_BodyHLayout;
@@ -289,7 +293,10 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void registerAttemptFinished(bool lcbOpSuccess, bool dbError);
     RegisterSuccessfulWidget *m_RegisterSuccessfulWidget;
 
-    //hardcoded (not as hardcoded as one might think! un-hardcoding wip if ABC_MULTI_CAMPAIGN_OWNER_MODE it defined)
+    void showAllUsersWithAtLeastOneAdCampaignWidget();
+    AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget *m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget;
+
+    //hardcoded (not as hardcoded as one might think! un-hardcoding wip if ABC_MULTI_CAMPAIGN_OWNER_MODE is defined)
     bool m_BuyInProgress;
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
     void showAdvertisingBuyAdSpaceD3faultWidget();
@@ -375,6 +382,10 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     //get and subscribe
     void getAndSubscribeCouchbaseDocumentByKeySavingCas(const std::string &keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeEnum subscribeMode = GetCouchbaseDocumentByKeyRequest::GetAndSubscribeMode);
     void getAndSubscribeCouchbaseDocumentByKeySavingCas_UPDATE(const std::string &keyToCouchbaseDocument, const std::string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+
+    //views (as in couchbase views. map/reduce 'views', not SHIT YOU LOOK AT views. guh shit naming)
+    void queryCouchbaseViewBegin(const std::string &viewPathWithoutAnyParams, int pageNum_MustBeGreaterThanOrEqualToOne);
+    void queryCouchbaseViewFinished(ViewQueryPageContentsType *pageContents, bool internalServerErrorOrJsonError);
 
     bool isHomePath(const std::string &pathToCheck);
     void handleInternalPathChanged(const std::string &newInternalPath);
@@ -469,6 +480,11 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         SINGLESUBSCRIPTIONUPDATEFORNOJAVASCRIPTUSERSHACKPLXTHX = 2, //no-js equivalent of above subscription (hack)
         NOJSNEEDSTOVERIFYCAMPAIGNDOCSHITAFTERBUYSTEP1CLICKEDDOESNTNEEDTOBEENTIRELYACCURATEBUTISDUMBNOTTOCHECK = 3 //another use of no-js hack, except this time we are getting campaign doc for 'just after buy step 1 clicked', because otherwise we can/do show stale pricing (despite 'recalculating', the values themselves we calculate from could be stale)
     };
+    enum WhatTheQueryCouchbaseViewWasForEnum
+    {
+        INITIALINVALIDNULLQUERYCOUCHBASEVIEW,
+        ALLUSERSWITHATLEASTONEADCAMPAIGNQUERYCOUCHBASEVIEW
+    };
 
     //TODOoptimziation: can probably use callbacks (boost::bind comes to mind) for these and would maybe be more efficient (idk)
     //TODOoptional: might make sense to set them back to null after using, but as of writing i don't need to
@@ -478,6 +494,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WhatTheGetWasForEnum m_WhatTheGetWasFor;
     WhatTheGetSavingCasWasForEnum m_WhatTheGetSavingCasWasFor;
     std::pair<CurrentGetAndSubscribeMode, std::string /*keyToDocCurrentlySubscribedTo*/> m_CurrentlySubscribedTo;
+    WhatTheQueryCouchbaseViewWasForEnum m_WhatTheQueryCouchbaseViewWasFor;
 
     bool m_LoggedIn;
     std::string m_CurrentlyLoggedInUsername; //only valid if logged in

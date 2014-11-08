@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1415247717
+Documents/minddump/dreams/:1415418272
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -186,6 +186,7 @@ Documents/minddump/dreams/sfdjlsdkfjlsakfjsfodulkoweurlkjsdfousdlfsodfusldkfjoue
 Documents/minddump/dreams/sffgdfgdkjlskjdflkjsdfljsdlkfjsdfouewrj.txt:1393067471
 Documents/minddump/dreams/sflkjsdfkljsadklfjldskjfsdouflsdjfouwelrkjdfjlskdfjsdf.txt:1411808935
 Documents/minddump/dreams/sflsdlfkjsdlkfjlkdjsflsdkjflkjsdflsdakjfouwelkrjousdflkjsofuwlkjerulkjfosudf.txt:1383071212
+Documents/minddump/dreams/she.had.a.manly.vagina.though.and.it.disgusted.me.txt:1415418272
 Documents/minddump/dreams/six.flags.passport.matt.txt:1354516951
 Documents/minddump/dreams/sjdfkljsdlfjslkdjflksdjflksdjflkjsdflkjsdlkfjksldjflsdkjfklsdjflk.txt:1408653791
 Documents/minddump/dreams/sjdfkljsdlkfjsdkljfsdofusdfuosdfou.girl.coder.in.green.txt:1390836907
@@ -2417,9 +2418,9 @@ GloballySharedClasses/architecture/ibusinessobject.h:1399319929
 GloballySharedClasses/cli/:1397707910
 GloballySharedClasses/cli/standardinputnotifier.cpp:1397707910
 GloballySharedClasses/cli/standardinputnotifier.h:1397707898
-GloballySharedClasses/distributeddatabase/:1415249547
+GloballySharedClasses/distributeddatabase/:1415360299
 GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h:1400918587
-GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1415249547
+GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1415360299
 GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h:1415249534
 GloballySharedClasses/filesystem/:1401628130
 GloballySharedClasses/filesystem/easytree.cpp:1387286577
@@ -2476,9 +2477,9 @@ GloballySharedClasses/network/multiserverclientabstraction.cpp:1370998417
 GloballySharedClasses/network/multiserverclientabstraction.h:1370998417
 GloballySharedClasses/network/networkmagic.cpp:1361275960
 GloballySharedClasses/network/networkmagic.h:1367230309
-GloballySharedClasses/threading/:1415171702
+GloballySharedClasses/threading/:1415360350
 GloballySharedClasses/threading/boostthreadinitializationsynchronizationkit.h:1394427635
-GloballySharedClasses/threading/objectonthreadgroup.h:1415171702
+GloballySharedClasses/threading/objectonthreadgroup.h:1415360349
 GloballySharedClasses/threading/objectonthreadhelper.h:1400276993
 GloballySharedClasses/debuggableStartableStoppableBackendAndFrontend.pri:1344898899
 GloballySharedClasses/easytree.pri:1367396791
@@ -3664,11 +3665,11 @@ Projects/Prototypes/Couchbase/CouchbaseNotepad/src/main.cpp:1413075062
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/:1415179965
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/design/:1415170222
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/design/pagination.of.view.query.initial.idea.txt:1415251166
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/:1415359501
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/:1415437593
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/PaginationOfViewQueryGui.pro:1415268847
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/main.cpp:1415171470
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.cpp:1415359488
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.h:1415359244
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.cpp:1415437592
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.h:1415422138
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerycommon.h:1415268866
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerygui.cpp:1415357068
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerygui.h:1415175219
@@ -4981,7 +4982,7 @@ Solutions/Anonymous Bitcoin Computing 2/assets/:1415110445
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/:1415110488
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.usernames.with.at.least.one.ad.campaign.txt:1415254635
 Solutions/Anonymous Bitcoin Computing 2/assets/abc.logo.svg:1410248142
-Solutions/Anonymous Bitcoin Computing 2/design/:1415111353
+Solutions/Anonymous Bitcoin Computing 2/design/:1415418403
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.with.recovery.cas.swap.to.get.a.key.with.uuids.for.refill.and.recovery.pseudocode.cpp:1392716033
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.without.recovery.kiss.but.not.most.efficient.solution.i.am.lolling.so.hard.right.now.txt:1392170170
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.NOPE.design.not.using.way.too.complex.lold.when.i.thought.up.more.expensive.much.simpler.design.about.to.write.txt:1392170213
@@ -4992,6 +4993,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/chart.helps.with.time.aspect.anim
 Solutions/Anonymous Bitcoin Computing 2/design/core.json.doc.design.for.use.case.user.jimboknives.an.buying.ad.slot.filler.txt:1413306071
 Solutions/Anonymous Bitcoin Computing 2/design/core.math.for.ad.doubles.0.worthless.read.but.lololololololol.txt:1390315030
 Solutions/Anonymous Bitcoin Computing 2/design/core.math.for.ad.doubles.1.formulas.and.eventual.success.woot.txt:1390325417
+Solutions/Anonymous Bitcoin Computing 2/design/failed.attempt.at.core.json.docs.from.way.early.on.that.had.been.sitting.on.my.desktop.txt:1389958895
 Solutions/Anonymous Bitcoin Computing 2/design/initial.db.state.lol.need.to.make.a.one.off.app.to.populate.it.txt:1392699696
 Solutions/Anonymous Bitcoin Computing 2/design/login.throttling.pointless.if.db.is.public.lewl.txt:1390304771
 Solutions/Anonymous Bitcoin Computing 2/design/on.payouts.to.the.public.should.i.allow.the.public.to.create.ad.campaigns.txt:1415111353
@@ -5003,8 +5005,8 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.db.relevant.snapshot.and.i
 Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guarantee.that.the.site.stays.up.until.all.pending.slots.are.displayed.txt:1390317494
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1415261288
-Solutions/Anonymous Bitcoin Computing 2/src/backend/:1413251305
+Solutions/Anonymous Bitcoin Computing 2/src/:1415437614
+Solutions/Anonymous Bitcoin Computing 2/src/backend/:1415436883
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h:1393531477
@@ -5012,11 +5014,11 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialb
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h:1393528690
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h:1393526820
-Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1413388694
-Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1413239945
+Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1415436883
+Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1415429756
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.cpp:1413219024
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1413240036
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1413397992
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1415435824
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1399672099
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
@@ -5032,7 +5034,9 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/singleuseselfde
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/stupidmimefromextensionutil.h:1394152357
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.cpp:1399672099
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.h:1399665798
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/:1413397628
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/:1415436807
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.cpp:1415436807
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.h:1415435993
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.cpp:1413097652
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.h:1413097652
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingselladspacecreatenewadcampaignwidget.cpp:1413397628
@@ -5042,17 +5046,19 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/l
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1393161161
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp:1393160674
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h:1393161161
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1413397992
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1413305672
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1415435669
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1415435824
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.cpp:1393117307
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.h:1393117244
-Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1396218645
+Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1415435936
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/getcouchbasedocumentbykeyrequest.cpp:1393803415
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/getcouchbasedocumentbykeyrequest.h:1396218632
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchbasedocumentbykeyrequest.cpp:1392910056
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchbasedocumentbykeyrequest.h:1396218645
-Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1413299185
-Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1396219028
+Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.cpp:1415435936
+Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h:1415430447
+Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1415431025
+Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1415430322
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1410253778
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
 Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1413396821
@@ -5243,7 +5249,7 @@ autobackupScripts/linux/customLaunchers/:1350497963
 autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
-autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1409246773
+autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1415361357
 autobackupScripts/linux/base64theMd5SumOfAFileProperly.sh:1385203690
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665

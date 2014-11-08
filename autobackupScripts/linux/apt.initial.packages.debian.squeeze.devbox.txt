@@ -20,3 +20,7 @@ libboost-all-dev bitcoind
 
 OLD wheezy main (installing differently now):
 libboost-all-dev witty witty-dev ffmpeg libavcodec-dev libavdevice-dev libavfilter-dev libavformat-dev libavutil-dev libpostproc-dev libswscale-dev
+
+
+
+kinda OT, another firefox extension I like (noscript mentioned above, adblock edge always remembered lewl) is "CoLT". I've even written about wanting to implement it myself, right-click->"copy link TEXT"

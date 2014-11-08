@@ -29,8 +29,8 @@ void ISynchronousLibCouchbaseUser::getCallback(const void *cookie, lcb_error_t e
     m_LastOpStatus = error;
     if(error == LCB_SUCCESS)
     {
-        //TODOreq: these members are undefined if the error wasn't success, need to make sure i don't try to access them in such cases
-        m_LastDocGetted = std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes); //TODOreq: leaking memory from m_LastDocGetted's previous value?
+        //Note: these members are undefined(uninitialized or old values) if the error wasn't success, need to make sure i don't try to access them in such cases
+        m_LastDocGetted = std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes);
         m_LastGetCas = resp->v.v0.cas;
     }
 }

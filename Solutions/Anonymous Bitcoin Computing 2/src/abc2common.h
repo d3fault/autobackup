@@ -1,6 +1,9 @@
 #ifndef ABC2COMMON_H
 #define ABC2COMMON_H
 
+#include <list>
+#include <string>
+
 #include <boost/version.hpp>
 
 #define ABC_500_INTERNAL_SERVER_ERROR_MESSAGE "500 Internal Server Error"
@@ -13,10 +16,10 @@
 #endif
 
 #ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
-#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS 2
+#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS 3
 //#define ABC_NAME_OF_STORE_LARGE_NOT_NEEDED_ANYMORE_SINCE_LOCKFREE_QUEUE_HACK Store //hack used to redirect all frontend->backend "StoreLarge" requests to use the regular "Store" queue, when in lockfree::queue mode. This hack doesn't need to be utilized on the backend, since the StoreLarge libevents are never raised. eh this hack ended up causing macro expansion problems, so the relevant portions just use ABC_USE_BOOST_LOCKFREE_QUEUE stuffs instead..
 #else
-#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS 3 //if you add more message queue types, increment the 2 above and the 3 here, and make sure StoreLarge remains the last one
+#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS 4 //if you add more message queue types, increment the 3 above and the 4 here, and make sure StoreLarge remains the last one
 #define ABC_NAME_OF_STORE_LARGE_NOT_NEEDED_ANYMORE_SINCE_LOCKFREE_QUEUE_HACK StoreLarge
 #endif
 
@@ -38,10 +41,17 @@
 #define ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_Get 3
 #define ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_Get 500
 
+//set 2 -- View Query
+#define ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET2 ViewQuery
+#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET2 5
+#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_ViewQuery 5
+#define ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_ViewQuery 2
+#define ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_ViewQuery 500
+
 #ifndef ABC_USE_BOOST_LOCKFREE_QUEUE
-//set 2 -- Store Large
-#define ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET2 StoreLarge
-#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET2 2
+//set 3 -- Store Large
+#define ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET3 StoreLarge
+#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET3 2
 #define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_StoreLarge 2
 #define ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_StoreLarge 1
 #define ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_StoreLarge 2157392
@@ -70,10 +80,17 @@
 #define ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_Get 50
 #define ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_Get 500 //had '251' to reflect max key size, but that doesn't account for the rest of the message wt->couchbase message. When I'm done hacking shit in, I should do 251+overhead. problem is i dunno how much space boost serialization is using :-P
 
+//set 2 -- View Query
+#define ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET2 ViewQuery
+#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET2 100
+#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_ViewQuery 100
+#define ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_ViewQuery 5
+#define ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_ViewQuery 500
+
 #ifndef ABC_USE_BOOST_LOCKFREE_QUEUE
-//set 2 -- Store Large
-#define ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET2 StoreLarge
-#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET2 6
+//set 3 -- Store Large
+#define ABC_NAME_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SET3 StoreLarge
+#define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_SET3 6
 #define ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_StoreLarge 6
 #define ABC_MAX_NUMBER_OF_WT_TO_COUCHBASE_MESSAGES_IN_EACH_QUEUE_FOR_StoreLarge 2
 #define ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_StoreLarge 2157392 //~2.5mb, to account for overhead + b64encoding
@@ -86,5 +103,7 @@
 #endif // ABC_TESTING_SIZE_VARIABLES_PLZ
 
 //MIN MEMORY REQUIRED [for message queues only] calculated via above tunables: QUEUE_MAX_MESSAGE_SIZE * MAX_MESSAGES_IN_QUEUE * NUMBER_OF_QUEUES
+
+typedef std::list<std::string> ViewQueryPageContentsType;
 
 #endif // ABC2COMMON_H

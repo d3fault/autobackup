@@ -1,0 +1,40 @@
+//user account
+jsonKey : <username-goes-here>Account
+{
+	userid : 6 //needed?
+	passwordSha256 : "blahblahblah"
+	email : "blah@blah.blah"
+	signup : 1970
+	balance "0.0"
+}
+
+//BUY (user available)
+//TODOreq: they can add campaigns, but not delete/edit them. Otherwise they could change them as they are being displayed which would lead to undefined results. buying a "slot filler" locks in the ad that they selected
+jsonKey : <username-goes-here>BuyAdSpaceCampaigns
+{
+	buyAdSpaceCampaignIds : [ 67, 68 ]
+}
+jsonKey : <username-goes-here>BuyAdSpaceCampaign<buyAdSpaceCampaignId-goes-here>
+{
+	imageData : base64encodedImageData
+	href : urlToGoToWhenImageIsClickedOn
+	hover : //optional fuck it
+}
+
+//SELL (not user available at launch, since "pay out" is really hard to secure (and requires "money exchange" license or whatever))
+jsonKey : <username-goes-here>SellAdSpaceCampaigns //d3fault will be only one initially, hardcoded or however
+{
+	sellAdSpaceCampaignIds : [ 0, 1, etc ] //again, just one initially
+}
+jsonKey : <username-goes-here>SellAdSpaceCampaigns<sellAdSpaceCampaignId-goes-here>
+{
+	lastSlotFillerSold: -1 // to start
+	href : relevantLinkWhereAdSpaceIsBeingSold //d3fault.net
+}
+^accessible via: abc.com/buy-ad-space/d3fault/0 <-- even though i'm the one "selling" and it almost makes sense to list that in the url (especially when available to many), it makes more sense to tailor the URL to the action being done. listing a campaign for selling ad space would be in an "edit" profile mode, so maybe like abc.com/edit/sell-ad-space-campaigns/0 that of course -- err wait so wtf goes in abc.com/sell-ad-space ? i guess that. man i'm confus but this is stupid as fuck too
+
+jsonKey : buy<SELLER-USERNAME-GOES-HERE>AdSpace<sellAdSpaceCampaignId-goes-here>Filler<lastSlotFillerSold+1-goes-here>
+{
+	buyerCampaign : <BUYER-USERNAME-GOES-HERE>BuyAdSpaceCampaign<buyAdSpaceCampaignId-goes-here> //correpsonding to "BUY" above (which has url, image, hover)
+}
+//^^Couchbase "ADD", but only after verifying their balance >= 

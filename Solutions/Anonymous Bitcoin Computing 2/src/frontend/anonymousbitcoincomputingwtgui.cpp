@@ -6,6 +6,7 @@
 #include "pages/advertisingselladspacecreatenewadcampaignwidget.h"
 #endif
 
+#include "pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.h"
 #include "pages/advertisingbuyownersadspacecampaignwithindexwidget.h"
 #include "validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
 #include "registersuccessfulwidget.h"
@@ -105,6 +106,7 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_AuthenticationRequiredWidget(0),
       m_RegisterWidget(0),
       m_RegisterSuccessfulWidget(0),
+      m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget(0),
       m_BuyInProgress(false),
       m_AdvertisingBuyAdSpaceD3faultWidget(0),
       m_AdvertisingBuyAdSpaceD3faultCampaign0Widget(0),
@@ -117,6 +119,7 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_WhatTheStoreWithInputCasSavingOutputCasWasFor(INITIALINVALIDNULLSTOREWITHCASSAVINGCAS),
       m_WhatTheGetWasFor(INITIALINVALIDNULLGET),
       m_WhatTheGetSavingCasWasFor(INITIALINVALIDNULLGETSAVINGCAS),
+      m_WhatTheQueryCouchbaseViewWasFor(INITIALINVALIDNULLQUERYCOUCHBASEVIEW),
       m_LoggedIn(false)
 {
     //constructor body, in case you're confused...
@@ -440,12 +443,20 @@ void AnonymousBitcoinComputingWtGUI::registerAttemptFinished(bool lcbOpSuccess, 
     m_RegisterUsernameLineEdit->setText("");
     m_RegisterPasswordLineEdit->setText("");
 }
+void AnonymousBitcoinComputingWtGUI::showAllUsersWithAtLeastOneAdCampaignWidget()
+{
+    if(!m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget)
+    {
+        m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget = new AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget(this, m_MainStack);
+    }
+    m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget);
+}
 void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
 {
     if(!m_AdvertisingBuyAdSpaceD3faultWidget)
     {
         m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(m_MainStack);
-        new WText("d3fault's ad space campaigns:", m_AdvertisingBuyAdSpaceD3faultWidget);
+        new WText("d3fault's ad space campaigns:", m_AdvertisingBuyAdSpaceD3faultWidget); //TODOreq: spinbox to jump to campaigns is sure way the fuck more efficient than views/etc, but one I allow campaigns to have titles and such then views are a must
         new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultWidget);
     }
@@ -1961,6 +1972,34 @@ void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySaving
         break;
     }
 }
+void AnonymousBitcoinComputingWtGUI::queryCouchbaseViewBegin(const string &viewPathWithoutAnyParams, int pageNum_MustBeGreaterThanOrEqualToOne)
+{
+    deferRendering();
+#ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
+    ViewQueryCouchbaseDocumentByKeyRequest *couchbaseRequest = new ViewQueryCouchbaseDocumentByKeyRequest(sessionId(), this, viewPathWithoutAnyParams, pageNum_MustBeGreaterThanOrEqualToOne); //TODOreq: where/when the fuck do these get deleted? i can't remember lol. i don't recall valgrind bitchin for the get/store requests, so it's probably done somewhere.... oh right now i remember the backend deletes them when done with them (since it sometimes keeps them around for get+subscribe, it isn't proper to delete them at 'respond', or when the front-end gets them (implicit sharing would be better but guh))
+    ABC_SERIALIZE_COUCHBASE_REQUEST_AND_SEND_TO_COUCHBASE_ON_RANDOM_MUTEX_PROTECTED_MESSAGE_QUEUE(ViewQuery)
+#else
+    ldskjfldskjfsdf ;-sdflsdkjf ;-P don't compile biatch'
+        #endif
+}
+void AnonymousBitcoinComputingWtGUI::queryCouchbaseViewFinished(ViewQueryPageContentsType *pageContents, bool internalServerErrorOrJsonError)
+{
+    resumeRendering();
+    switch(m_WhatTheQueryCouchbaseViewWasFor)
+    {
+    case ALLUSERSWITHATLEASTONEADCAMPAIGNQUERYCOUCHBASEVIEW:
+        m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget->showPageOfUsersWithAtLeastOneAdCampaign(*pageContents, internalServerErrorOrJsonError);
+        break;
+    case INITIALINVALIDNULLQUERYCOUCHBASEVIEW:
+    default:
+        cerr << "got a couchbase 'query couchbase view' response we weren't expecting:" << endl << "unexpected page contents: " << pageContents << endl;
+        //TODOreq: 500 internal server error?
+        break;
+    }
+
+    //TODOreq: TEMP until shared_ptr is used
+    delete pageContents;
+}
 void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyFinished(const string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
     //no need to pass in the value, and we probably don't even need the key here... but might in the future. i do know that if i do the enableUpdates/triggerUpdate async design that i would probably very much need the key at least here. imagine they dispatch two "add" requests before the first one can return. but meh that's a pretty big design overhaul as it is so not worrying about it right now (if only there was a generator that could...)
@@ -2176,12 +2215,13 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
 
 
 
-            //now in 'non-subscribeable' area
+            //lines below this line (regardless of scope) are 'non-subscribeable' area
 
             //TODOreq: fetch first page of list of campaigns for the known campaign owner
             return;
         }
         //TODOreq: fetch first page of list of campaign owners
+        showAllUsersWithAtLeastOneAdCampaignWidget();
         return;
     }
 

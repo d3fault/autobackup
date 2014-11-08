@@ -78,7 +78,7 @@ public:
         emitAllObjectsOnThreadsInGroupReadyForConnectionsIfDoneAddingToGroupAndNoObjectsLeftToSynchronize();
     }
 private:
-    QStack<ObjectOnThreadGroupPrivateSingleThreadBase*> m_ObjectOnThreadsToQuitWhenDestructorIsCalled; //quit but not wait :-P (async). TODOreq: perhaps an "all have finished" signal... but idk i kinda like having it all be transparent in destruction phase
+    QStack<ObjectOnThreadGroupPrivateSingleThreadBase*> m_ObjectOnThreadsToQuitWhenDestructorIsCalled; //quit but not wait :-P (async). TODOmb: perhaps an "all have finished" signal... but idk i kinda like having it all be transparent in destruction phase
     quint32 m_ObjectsLeftToSynchronize;
     bool m_DoneAddingObjectsOnThreads;
 
