@@ -44,16 +44,24 @@ if(skip > 0) \
     viewPath += boost::lexical_cast<std::string>(skip); \
 }
 
+#define ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNum, thePageContents, internalServerErrorOrJsonError) \
+const std::list<ViewQueryCouchbaseDocumentByKeyRequest*> &listOfUsersThatWantToBeGivenThePageResults = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum); /* we don't try/catch because it's gotta be there */ \
+for(std::list<ViewQueryCouchbaseDocumentByKeyRequest*>::const_iterator it = listOfUsersThatWantToBeGivenThePageResults.begin(); it != listOfUsersThatWantToBeGivenThePageResults.end(); ++it) \
+{ \
+    (*it)->respond(thePageContents, internalServerErrorOrJsonError); \
+} \
+m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.erase(pageNum); /* see TODOoptimization in change session id about using a find iterator instead */
+
 class PaginationOfViewQueryCouchbaseCookieType
 {
 public:
-    explicit PaginationOfViewQueryCouchbaseCookieType(AnonymousBitcoinComputingCouchbaseDB *pointerToPaginationOfViewQuery, ViewQueryCouchbaseDocumentByKeyRequest *originalRequest)
+    explicit PaginationOfViewQueryCouchbaseCookieType(AnonymousBitcoinComputingCouchbaseDB *pointerToPaginationOfViewQuery, int pageNum)
         : PointerToPaginationOfViewQuery(pointerToPaginationOfViewQuery)
-        , OriginalRequest(originalRequest)
+        , PageNum(pageNum)
     { }
 
     AnonymousBitcoinComputingCouchbaseDB *PointerToPaginationOfViewQuery;
-    ViewQueryCouchbaseDocumentByKeyRequest *OriginalRequest;
+    int PageNum;
 };
 
 AnonymousBitcoinComputingCouchbaseDB::AnonymousBitcoinComputingCouchbaseDB()
@@ -201,7 +209,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     //couchbase
     struct lcb_create_st copts;
     memset(&copts, 0, sizeof(copts));
-    copts.v.v0.host = "192.168.56.10:8091"; //TODOreq: supply lots of hosts, either separated by semicolon or comma, I forget. Also there's an option somewhere to tell couchbase to try the hosts in a random order
+    copts.v.v0.host = "192.168.56.10:8091"; //TODOreq: supply lots of hosts, separated by semicolon. Also there's an option somewhere to tell couchbase to try the hosts in a random order
     copts.v.v0.io = CouchbaseIoOpsScopedDeleterInstance.CouchbaseIoOps;
     if((error = lcb_create(&m_Couchbase, &copts)) != LCB_SUCCESS)
     {
@@ -743,15 +751,15 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallbackStatic(lcb_h
     (void)request;
     (void)instance;
     boost::scoped_ptr<PaginationOfViewQueryCouchbaseCookieType> theCookie(const_cast<PaginationOfViewQueryCouchbaseCookieType*>(static_cast<const PaginationOfViewQueryCouchbaseCookieType*>(cookie)));
-    theCookie->PointerToPaginationOfViewQuery->viewQueryCompleteCallback(theCookie->OriginalRequest, error, resp);
+    theCookie->PointerToPaginationOfViewQuery->viewQueryCompleteCallback(theCookie->PageNum, error, resp);
 }
-void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(ViewQueryCouchbaseDocumentByKeyRequest *originalRequest, lcb_error_t error, const lcb_http_resp_t *resp)
+void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNumJustGot, lcb_error_t error, const lcb_http_resp_t *resp)
 {
     ViewQueryPageContentsType ret;
     if(error != LCB_SUCCESS)
     {
-        //qDebug() << "httpCompleteCallback has error";
-        originalRequest->respond(ret, true);
+        cerr << "view query (" << std::string(resp->v.v0.path, resp->v.v0.npath) << ") callback has lcb error: " << lcb_strerror(m_Couchbase, error) << endl;
+        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, true)
         return;
     }
 
@@ -762,8 +770,8 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(ViewQueryCo
     boost::optional<std::string> errorMaybe = pt.get_optional<std::string>("error");
     if(errorMaybe.is_initialized())
     {
-        //qDebug() << "json had error set";
-        originalRequest->respond(ret, true);
+        cerr << "view query (" << std::string(resp->v.v0.path, resp->v.v0.npath) << ") callback has json error: " << errorMaybe.get() << endl;
+        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, true)
         return;
     }
     const ptree &rowsPt = pt.get_child("rows");
@@ -771,14 +779,14 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(ViewQueryCo
     {
         ret.push_back(row.second.get<std::string>("key" /* emitted view key, username in this case*/));
     }
-    originalRequest->respond(ret);
+    ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, false)
     if(ret.empty())
     {
         return; //the below call to back() would segfault otherwise
     }
 
     //cache the last username's docid and all the usernames on that page!
-    m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(std::make_pair(originalRequest->PageNum_WithOneBeingTheFirstPage, std::make_pair(rowsPt.back().second.get<std::string>("id" /* docid, that is */), ret)));
+    m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(std::make_pair(pageNumJustGot, std::make_pair(rowsPt.back().second.get<std::string>("id" /* docid, that is */), ret)));
 
     //since we inserted a cache item, update/set "total_rows" (total pages actually, based on total_rows ofc)
     int totalRows = boost::lexical_cast<int>(pt.get<std::string>("total_rows"));
@@ -1177,7 +1185,9 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
 {
-    //TODOreq: two simultaneous queries [to same view] from two users (or to put it another way, a cached page is currently being refreshed), second one just appends to list of responders, just like 'Get+Subscribe' cache code does
+    //TODOreq: cache timing out shiz. do I want one timer per page, one timer per view, or one timer for all views/pages? I'm thinking one timer per view is the sweet spot (per page would give me too many timers, and one timer for all views/pages means I can't (well.... [EASILY]) use different cache expire lengths per view
+    //TO DOnereq: two+ simultaneous queries [to same view] from two+ users, second+ ones just appends to list of responders, just like 'Get+Subscribe' cache code does
+
     if(m_NoMoreAllowedMuahahaha)
     {
         return;
@@ -1186,11 +1196,25 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
 
     //TODOreq: multiple views. keep in mind that each view should be able to specify a different cache duration. for now ima KISS and hard-code: typdef boost::unordered_map<std::string /*view path without any params*/, ???> ViewsPagesCachesTypedef;
 
-    std::string viewPath = originalRequest->ViewPath + "?stale=false&limit=" AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING; //TODOreq: once I upgrade to couchbase 3.0, I'll use stale=ok :-D. A compile time couchbase version check deciding the value of stale would be best :)
+    int pageNum_WithOneBeingTheFirstPage = originalRequest->PageNum_WithOneBeingTheFirstPage; //optimization to deref less
+
+    //maybe the page is already in the process of being requested. if so, add ourselves to the list of people to be told about the result and then return. we know that if it's currently being requested, that it isn't in the cache, that's why we check if it's being requested before checking if it's in the cache
+    try
+    {
+        std::list<ViewQueryCouchbaseDocumentByKeyRequest*> listOfUsersThatWantToBeNotifiedWhenThePageComes = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum_WithOneBeingTheFirstPage);
+
+        //if we get here, no exception was thrown and therefore the page is already being requested. append ourself end return
+        listOfUsersThatWantToBeNotifiedWhenThePageComes.push_back(originalRequest); //sometimes COW sucks, this is a good case of it. if the list was cow, then i'd have to re-insert it into the hash derp. that inefficiency could be 'significant' on huge containers
+        return;
+    }
+    catch(std::out_of_range &pageNotCurrentlyBeingRequestedException)
+    { /* do nothing. continue below to request the page */ }
+
+
+    std::string viewPath = originalRequest->ViewPath + "?stale=ok&limit=" AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING;
     //viewPath += boost::lexical_cast<std::string>(AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING); //limit. TODOoptional: allow users to choose different items per pages, which should intelligently use the cache to combine pages etc, querying ranges needed and blah fuck that shit for now~
 
     //TODOreq: i need to give each requester a COPY of the std::list of usernames for each page. Qt lists use implicit sharing, std::list does not :(. The cache/list may expire before the front-end receives it, so it's a thread safety issue guh. Maybe I should use a shared_ptr instead (whenever the list is to be updated, i make a NEW list and delete the [reference to the] old list, since the front-end may still be using it). Still since I'm not familiar with shared_ptr and have never used it, I'll use the 'make a copy' strategy for now
-    int pageNum_WithOneBeingTheFirstPage = originalRequest->PageNum_WithOneBeingTheFirstPage; //optimization to deref less
 
     if(!m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.empty()) //this map should be the value of the hash (commented out above) used to keep track of all the different views (and their pages), but for now I only have 1 view type
     {
@@ -1206,12 +1230,11 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
         std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE>::iterator it = m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.lower_bound(pageNum_WithOneBeingTheFirstPage);
         if(it->first == pageNum_WithOneBeingTheFirstPage)
         {
-            //cache CONTENT hit
-            //emit immediately
+            //cache CONTENT hit, respond immediately
             originalRequest->respond(it->second.second);
             return;
         }
-        //cache miss, so decrement the iterator (as long as it isn't begin()) in order to get "a page before the one we want that is in the cache", and then use it's startkey_docid to get us as close as possible to the page being requested in a much more efficient than specifying startkey or skip only
+        //cache miss, so decrement the iterator (as long as it isn't begin()) in order to get "a page before the one we want that is in the cache", and then use it's startkey_docid to get us as close as possible to the page being requested in a much more efficient way than specifying startkey or skip only
         if(it == m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.begin())
         {
             //begin() points to a page after the page we want, so use regular inefficient skip strategy
@@ -1251,14 +1274,20 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
     queryPageOfViewCmd.v.v0.method = LCB_HTTP_METHOD_GET;
     queryPageOfViewCmd.v.v0.chunked = 0;
     queryPageOfViewCmd.v.v0.content_type = "application/json";
-    lcb_error_t error = lcb_make_http_request(m_Couchbase, new PaginationOfViewQueryCouchbaseCookieType(this, originalRequest) /*TODOreq: if lcb_make_http_request returns an error, is the callback still called? my cookie on the heap would be leaking memory if it isn't. Additionally, the request would be responded to (with error set) twice! I doubt the callback is called, but I don't KNOW */, LCB_HTTP_TYPE_VIEW, &queryPageOfViewCmd, NULL);
+    PaginationOfViewQueryCouchbaseCookieType *viewQueryCookie = new PaginationOfViewQueryCouchbaseCookieType(this, pageNum_WithOneBeingTheFirstPage);
+    lcb_error_t error = lcb_make_http_request(m_Couchbase, viewQueryCookie, LCB_HTTP_TYPE_VIEW, &queryPageOfViewCmd, NULL);
     //libcouchbase_make_couch_request(instance, NULL, path, npath, NULL, 0, LBCOUCHBAESE_HTTP_METHOD_GET, 1);
     if (error != LCB_SUCCESS)
     {
-        //qDebug() <<  "Failed to query view" << QString::fromStdString(lcb_strerror(m_Couchbase, error));
+        delete viewQueryCookie; //TODOreq: if lcb_make_http_request returns an error, is the callback still called? my cookie on the heap would be leaking memory if it isn't. Additionally, the request would be responded to (with error set) twice! I doubt the callback is called, but I don't KNOW
+        cerr <<  "Failed to schedule view query (" << viewPath << ") with lcb error: " << lcb_strerror(m_Couchbase, error) << endl;
         originalRequest->respond(ViewQueryPageContentsType(), true);
         return;
     }
+    //now create the list of users that want the page and add ourselves to it
+    std::list<ViewQueryCouchbaseDocumentByKeyRequest*> listOfUsersThatWantThePageWhenItComes;
+    listOfUsersThatWantThePageWhenItComes.push_back(originalRequest);
+    m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes[pageNum_WithOneBeingTheFirstPage] = listOfUsersThatWantThePageWhenItComes;
 }
 //queue<StoreCouchbaseDocumentByKeyRequest*> *AnonymousBitcoinComputingCouchbaseDB::getStoreLockFreeQueueForWt0()
 //{
