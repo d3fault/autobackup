@@ -45,12 +45,13 @@ if(skip > 0) \
 }
 
 #define ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNum, thePageContents, internalServerErrorOrJsonError) \
-const std::list<ViewQueryCouchbaseDocumentByKeyRequest*> &listOfUsersThatWantToBeGivenThePageResults = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum); /* we don't try/catch because it's gotta be there */ \
-for(std::list<ViewQueryCouchbaseDocumentByKeyRequest*>::const_iterator it = listOfUsersThatWantToBeGivenThePageResults.begin(); it != listOfUsersThatWantToBeGivenThePageResults.end(); ++it) \
+std::list<ViewQueryCouchbaseDocumentByKeyRequest*> *listOfUsersThatWantToBeGivenThePageResults = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum); /* we don't try/catch because it's gotta be there */ \
+for(std::list<ViewQueryCouchbaseDocumentByKeyRequest*>::const_iterator it = listOfUsersThatWantToBeGivenThePageResults->begin(); it != listOfUsersThatWantToBeGivenThePageResults->end(); ++it) \
 { \
     (*it)->respond(thePageContents, internalServerErrorOrJsonError); \
 } \
-m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.erase(pageNum); /* see TODOoptimization in change session id about using a find iterator instead */
+m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.erase(pageNum); /* see TODOoptimization in change session id about using a find iterator instead */ \
+delete listOfUsersThatWantToBeGivenThePageResults;
 
 class PaginationOfViewQueryCouchbaseCookieType
 {
@@ -762,6 +763,12 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNum
         ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, true)
         return;
     }
+    if(resp->v.v0.status != LCB_HTTP_STATUS_OK)
+    {
+        cerr << "view query (" << std::string(resp->v.v0.path, resp->v.v0.npath) << ") http response status was not LCB_HTTP_STATUS_OK. was: " << resp->v.v0.status << endl;
+        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, true)
+        return;
+    }
 
     ptree pt;
     std::string jsonPageContentsStdString(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes);
@@ -1186,7 +1193,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
 {
     //TODOreq: cache timing out shiz. do I want one timer per page, one timer per view, or one timer for all views/pages? I'm thinking one timer per view is the sweet spot (per page would give me too many timers, and one timer for all views/pages means I can't (well.... [EASILY]) use different cache expire lengths per view
-    //TO DOnereq: two+ simultaneous queries [to same view] from two+ users, second+ ones just appends to list of responders, just like 'Get+Subscribe' cache code does
+    //TO DOnereq: two+ simultaneous queries [to same view page] from two+ users, second+ ones just appends to list of responders, just like 'Get+Subscribe' cache code does
 
     if(m_NoMoreAllowedMuahahaha)
     {
@@ -1201,17 +1208,17 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
     //maybe the page is already in the process of being requested. if so, add ourselves to the list of people to be told about the result and then return. we know that if it's currently being requested, that it isn't in the cache, that's why we check if it's being requested before checking if it's in the cache
     try
     {
-        std::list<ViewQueryCouchbaseDocumentByKeyRequest*> listOfUsersThatWantToBeNotifiedWhenThePageComes = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum_WithOneBeingTheFirstPage);
+        std::list<ViewQueryCouchbaseDocumentByKeyRequest*> *listOfUsersThatWantToBeNotifiedWhenThePageComes = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum_WithOneBeingTheFirstPage);
 
         //if we get here, no exception was thrown and therefore the page is already being requested. append ourself end return
-        listOfUsersThatWantToBeNotifiedWhenThePageComes.push_back(originalRequest); //sometimes COW sucks, this is a good case of it. if the list was cow, then i'd have to re-insert it into the hash derp. that inefficiency could be 'significant' on huge containers
+        listOfUsersThatWantToBeNotifiedWhenThePageComes->push_back(originalRequest);
         return;
     }
     catch(std::out_of_range &pageNotCurrentlyBeingRequestedException)
     { /* do nothing. continue below to request the page */ }
 
 
-    std::string viewPath = originalRequest->ViewPath + "?stale=ok&limit=" AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING;
+    std::string viewPath = originalRequest->ViewPath + "?stale=ok&connection_timeout=10000&limit=" AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING; //TODOreq: 10 seconds to query a view sounds fine, so long as it's incremental. if we have to rebuild the index, we should perhaps use a daemon (with large or non-existent timeout) to trigger the first view queries/index-build. even under those circumstances, if a view isn't queried 'for a while' the mere incremental index updating could take a long time, but idfk
     //viewPath += boost::lexical_cast<std::string>(AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING); //limit. TODOoptional: allow users to choose different items per pages, which should intelligently use the cache to combine pages etc, querying ranges needed and blah fuck that shit for now~
 
     //TODOreq: i need to give each requester a COPY of the std::list of usernames for each page. Qt lists use implicit sharing, std::list does not :(. The cache/list may expire before the front-end receives it, so it's a thread safety issue guh. Maybe I should use a shared_ptr instead (whenever the list is to be updated, i make a NEW list and delete the [reference to the] old list, since the front-end may still be using it). Still since I'm not familiar with shared_ptr and have never used it, I'll use the 'make a copy' strategy for now
@@ -1285,8 +1292,8 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
         return;
     }
     //now create the list of users that want the page and add ourselves to it
-    std::list<ViewQueryCouchbaseDocumentByKeyRequest*> listOfUsersThatWantThePageWhenItComes;
-    listOfUsersThatWantThePageWhenItComes.push_back(originalRequest);
+    std::list<ViewQueryCouchbaseDocumentByKeyRequest*> *listOfUsersThatWantThePageWhenItComes = new std::list<ViewQueryCouchbaseDocumentByKeyRequest*>();
+    listOfUsersThatWantThePageWhenItComes->push_back(originalRequest);
     m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes[pageNum_WithOneBeingTheFirstPage] = listOfUsersThatWantThePageWhenItComes;
 }
 //queue<StoreCouchbaseDocumentByKeyRequest*> *AnonymousBitcoinComputingCouchbaseDB::getStoreLockFreeQueueForWt0()

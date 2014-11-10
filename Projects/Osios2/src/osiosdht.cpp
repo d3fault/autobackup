@@ -24,7 +24,7 @@ OsiosDht::OsiosDht(Osios *osios, QObject *parent)
     connect(this, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)), m_Osios, SIGNAL(notificationAvailable(QString,OsiosNotificationLevels::OsiosNotificationLevelsEnum)));
 
     connect(m_RetryConnectionAndSayHelloToWithExponentialBackoffTimer, SIGNAL(timeout()), this, SLOT(handleRetryConnectionAndSayHelloToWithExponentialBackoffTimerTimedOut()));
-    m_RetryConnectionAndSayHelloToWithExponentialBackoffTimer->start(420); //arbitrary starting point, we'll calculate to a tad after the next expiring one after each checking of the list (with an upper limit for how often to check said list to see if enough time has elapsed for an exponential backoffs is 60 seconds)
+    m_RetryConnectionAndSayHelloToWithExponentialBackoffTimer->start(420); //arbitrary starting point, we'll calculate to a tad after the next expiring one after each checking of the list (with an upper limit for how often to check said list to see if enough time has elapsed for an exponential backoffs is 60 seconds). TODOmb: don't have the timer be running when there is nobody to attempt to connect to
 }
 void OsiosDht::sendNewTimelineNodeToAllDhtPeersWithHealthyConnectionForFirstStepOfCryptographicVerification(TimelineNode action)
 {

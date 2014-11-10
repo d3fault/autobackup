@@ -296,8 +296,7 @@ private:
 
     std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE> m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys;
     int m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty;
-    boost::unordered_map<int /*pageNum*/, std::list<ViewQueryCouchbaseDocumentByKeyRequest*> /*list of users to give the page to once it comes */ > m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes;
-    //typedef boost::unordered_map<void * /* WApplication pointer */, void * /* GetCouchbaseDocumentByKeyRequest pointer */> SubscribersType;
+    boost::unordered_map<int /*pageNum*/, std::list<ViewQueryCouchbaseDocumentByKeyRequest*>* /*list of users to give the page to once it comes */ > m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes;
 
     std::vector<AutoRetryingWithExponentialBackoffCouchbaseStoreRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseStoreRequestCache; //TODOoptimization: vector requires adjacent memory positions. i only chose vector because it's supposedly fast for popping the top item... but that adjacent memory requirement (which I don't need) might cause lots of unecessary overhead. mb just a list or queue instead..
     std::vector<AutoRetryingWithExponentialBackoffCouchbaseGetRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache;
