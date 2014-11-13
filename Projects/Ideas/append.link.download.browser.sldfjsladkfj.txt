@@ -1,0 +1,19 @@
+AppendLink Download Browser
+if(isBeingDownloaded(filename) && currentDownloadFileSize == filename.filesize)
+{
+	append the new url to the list of urls
+}
+
+The idea is jacked from aria2. Multiple URLs for a single download. Except that you don't have to have all the URLs at the start. You can even remove URLs that are too slow (or set a minimum kbps before auto-removal).
+
+Basically Qt web view does all the heavy lifting, heh. I should mod the browser that comes as an example (it's pretty feature-complete, and firefox is getting pretty shit imo).
+
+There is another "feature" that I could argue is it's own feature: when a download is activated via javascript, in current browsers there's no way to intercept that URL (for giving to wget, which imo is better. firefox downloads fail and don't retry, wget retries <3 (wget is a very simple app i could duplicate btw but..)).
+
+
+Uhh I was looking for a firefox extension to "copy download url to clipboard" for accomplishing similar (well just for giving to wget tbh). Certain download sites require js (guh).
+
+
+This app would be extremely easy to implement, but my plate is full already...
+
+If http wasn't such a piece of shit, I could rely on sha1/etc matching instead of just filename+filesize.
