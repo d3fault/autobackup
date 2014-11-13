@@ -4,6 +4,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "getandsubscribecacheitem.h"
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
@@ -45,7 +46,7 @@ if(skip > 0) \
 }
 
 #define ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNum, thePageContents, internalServerErrorOrJsonError) \
-std::list<ViewQueryCouchbaseDocumentByKeyRequest*> *listOfUsersThatWantToBeGivenThePageResults = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum); /* we don't try/catch because it's gotta be there */ \
+std::list<ViewQueryCouchbaseDocumentByKeyRequest*> *listOfUsersThatWantToBeGivenThePageResults = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum); /* we don't try/catch because it's gotta be there at this point */ \
 for(std::list<ViewQueryCouchbaseDocumentByKeyRequest*>::const_iterator it = listOfUsersThatWantToBeGivenThePageResults->begin(); it != listOfUsersThatWantToBeGivenThePageResults->end(); ++it) \
 { \
     (*it)->respond(thePageContents, internalServerErrorOrJsonError); \
@@ -75,6 +76,7 @@ AnonymousBitcoinComputingCouchbaseDB::AnonymousBitcoinComputingCouchbaseDB()
     , m_PendingStoreCount(0)
     , m_PendingGetCount(0)
     , m_IsFinishedWithAllPendingRequests(false)
+    , m_ViewPageCacheTimeoutTimerForAllPagesOfAllViews(NULL)
     , m_BeginStoppingCouchbaseCleanlyEvent(NULL)
     , m_FinalCleanUpAndJoinEvent(NULL)
     //, m_StoreWtMessageQueue0(NULL)
@@ -133,6 +135,93 @@ void AnonymousBitcoinComputingCouchbaseDB::waitForJoin()
 bool AnonymousBitcoinComputingCouchbaseDB::threadExittedCleanly()
 {
     return m_ThreadExittedCleanly;
+}
+long long AnonymousBitcoinComputingCouchbaseDB::millisecondsSinceEpoch()
+{
+    static const boost::posix_time::ptime epoch(boost::posix_time::from_time_t(0)); //date(1970, 1, 1));
+    boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+    boost::posix_time::time_duration diff = now - epoch;
+    return diff.total_milliseconds();
+}
+timeval AnonymousBitcoinComputingCouchbaseDB::millisecondsToTimeval(long long milliseconds)
+{
+    struct timeval ret;
+    ret.tv_sec = milliseconds / 1000;
+    ret.tv_usec = (milliseconds % 1000)*1000;
+    return ret;
+}
+void AnonymousBitcoinComputingCouchbaseDB::cacheTheLastUsernamesDocIdAndAllUsernamesOnThatPage(int pageNumJustGot, const string &lastDocIDonPage, ViewQueryPageContentsType *pageOfUsernamesToCache)
+{
+    //actually cache it
+    m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(std::make_pair(pageNumJustGot, std::make_pair(lastDocIDonPage, *pageOfUsernamesToCache))); //TODOoptimization: doesn't make pair copy the list, and insert copy the list, and whenever it's accessed also copy the list (before copying the list to give to the front-end for thread safety)? worth noting that the reason i accept a pointer in this method is to avoid a list copy. COW how I miss thee. Anyways, yea, maybe I should have the stored type be a pointer to a list (but I'd _STILL_ need to make a copy of it before giving it to frontend for thread safety, for now). Just makes memory management a little harder but whatever, might be worth it
+
+    //set up the cache timeout
+    long long currentDateTime = millisecondsSinceEpoch();
+    long long expireDateTime = currentDateTime + (5*60*1000); //5 mins hardcoded cache timeout for now
+    bool timerNeedsStartingOrRestarting = m_ViewPageCacheTimeoutsForAllPagesOfAllViews.empty();
+    if(!timerNeedsStartingOrRestarting) //we use the bool to see if the map isn't empty, instead of calling empty() twice
+    {
+        long long nextExpirationDateTime = m_ViewPageCacheTimeoutsForAllPagesOfAllViews.begin()->first;
+        if(expireDateTime < nextExpirationDateTime)
+        {
+            //our new cache item's expire date time is sooner than first cache item will expire, so restart timer to use expireDateTime
+            timerNeedsStartingOrRestarting = true;
+        }
+    }
+    m_ViewPageCacheTimeoutsForAllPagesOfAllViews.insert(std::make_pair(expireDateTime, std::make_pair("_dev/blah/viewPathGoesHereWhenMultiViewsIsImplemented", pageNumJustGot)));
+    if(timerNeedsStartingOrRestarting)
+    {
+        long long msUntilNextTimeout = expireDateTime - currentDateTime;
+        struct timeval msUntilNextTimeoutTimeval = millisecondsToTimeval(msUntilNextTimeout);
+        event_add(m_ViewPageCacheTimeoutTimerForAllPagesOfAllViews, &msUntilNextTimeoutTimeval);
+    }
+}
+void AnonymousBitcoinComputingCouchbaseDB::viewPageCacheTimeoutEventSlotStatic(int unusedSocket, short events, void *userData)
+{
+    (void)unusedSocket;
+    (void)events;
+    static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->viewPageCacheTimeoutEventSlot();
+}
+void AnonymousBitcoinComputingCouchbaseDB::viewPageCacheTimeoutEventSlot()
+{
+    //TODOreq: iterate the map of timeouts, deleting every expired one and removing it from the map........ until the first entry that doesn't need to be expired is encountered, then re-start the timer targetting that expiring-next map entry
+
+    long long currentDateTime = millisecondsSinceEpoch();
+    for(ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_TYPE::iterator it = m_ViewPageCacheTimeoutsForAllPagesOfAllViews.begin(); it != m_ViewPageCacheTimeoutsForAllPagesOfAllViews.end(); /* nop */)
+    {
+        /* pseudo:
+
+          if(expired)
+            delete+remove
+          else
+          {
+            re-start timer
+            return; //stop iterating
+          }
+
+        */
+
+        if(currentDateTime >= it->first)
+        {
+            //expired
+            //remove from m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys
+            //remove what the iterator currently points to
+            //continue with for loop
+
+            //once i implement multiple views, we need to incorporate more of it->second (first (since second is itself a pair)), and not just the pagenum
+            m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.erase(it->second.second /* pageNum*/); //remove actual cache item
+            m_ViewPageCacheTimeoutsForAllPagesOfAllViews.erase(it++); //remove cache item timeout timestamp. TODOoptimization: use the iterator range erase overload
+            continue; //understandability
+        }
+        else
+        {
+            //not expired
+            long long millsecondsUntilNextItemExpires = it->first - currentDateTime; //TO DOnereq: when inserting a new item into the cache, we may need to adjust this (restart it to be sooner (but we never restart it to be later)). that will only occur when multiple view paths with DIFFERENT cache timespans are used. TO DOnereq: also need to see if the timer needs to be started when a cache item is inserted, if it's the first one inserted
+            struct timeval millsecondsUntilNextItemExpiresTimeval = millisecondsToTimeval(millsecondsUntilNextItemExpires);
+            event_add(m_ViewPageCacheTimeoutTimerForAllPagesOfAllViews, &millsecondsUntilNextItemExpiresTimeval);
+            return; //stop iterating
+        }
+    }
 }
 void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
 {
@@ -259,6 +348,9 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
 #else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
     m_GetAndSubscribePollingTimeout = evtimer_new(LibEventBaseScopedDeleterInstance.LibEventBase, &AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic, this);
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
+    m_ViewPageCacheTimeoutTimerForAllPagesOfAllViews = evtimer_new(LibEventBaseScopedDeleterInstance.LibEventBase, AnonymousBitcoinComputingCouchbaseDB::viewPageCacheTimeoutEventSlotStatic, this);
+
     AutoRetryingWithExponentialBackoffCouchbaseGetRequest::setAnonymousBitcoinComputingCouchbaseDB(this);
     AutoRetryingWithExponentialBackoffCouchbaseGetRequest::setEventBase(LibEventBaseScopedDeleterInstance.LibEventBase); //need this as a member to add exponential backoff timers at runtime
     m_BeginStoppingCouchbaseCleanlyEvent = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, &AnonymousBitcoinComputingCouchbaseDB::beginStoppingCouchbaseCleanlyEventSlotStatic, this);
@@ -306,6 +398,9 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
 #ifndef ABC_MULTI_CAMPAIGN_OWNER_MODE
     event_free(m_GetAndSubscribePollingTimeout);
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+
+    event_free(m_ViewPageCacheTimeoutTimerForAllPagesOfAllViews);
+
     event_free(m_FinalCleanUpAndJoinEvent);
     event_free(m_BeginStoppingCouchbaseCleanlyEvent);
     lcb_destroy(m_Couchbase);
@@ -789,11 +884,12 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNum
     ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, false)
     if(ret.empty())
     {
-        return; //the below call to back() would segfault otherwise
+        return; //the below call to back() would segfault otherwise. it almost makes sense to cache the fact that it's empty, BUT that should never happen to begin with
     }
 
-    //cache the last username's docid and all the usernames on that page!
-    m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(std::make_pair(pageNumJustGot, std::make_pair(rowsPt.back().second.get<std::string>("id" /* docid, that is */), ret)));
+    //cache the last username's docid and all the usernames on that page
+    cacheTheLastUsernamesDocIdAndAllUsernamesOnThatPage(pageNumJustGot, rowsPt.back().second.get<std::string>("id" /* docid, that is */), &ret);
+    //m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(std::make_pair(pageNumJustGot, std::make_pair(rowsPt.back().second.get<std::string>("id" /* docid, that is */), ret)));
 
     //since we inserted a cache item, update/set "total_rows" (total pages actually, based on total_rows ofc)
     int totalRows = boost::lexical_cast<int>(pt.get<std::string>("total_rows"));
@@ -887,7 +983,6 @@ void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlo
 
     cacheItem->CurrentlyFetchingPossiblyNew = true;
     ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(Get)
-    //TODOreq: as i have it coded now, if i did two subscribables, they would each event_add the same timer using their own "100ms" thingy. not sure if they'd overwrite each other or what, but yea i need to fix that before ever doing multiple subscribables
 }
 #else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingCouchbaseDB::getAndSubscribePollingTimeoutEventSlotStatic(int unusedSocket, short events, void *userData)
@@ -1192,7 +1287,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
 }
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
 {
-    //TODOreq: cache timing out shiz. do I want one timer per page, one timer per view, or one timer for all views/pages? I'm thinking one timer per view is the sweet spot (per page would give me too many timers, and one timer for all views/pages means I can't (well.... [EASILY]) use different cache expire lengths per view
+    //TODOreq: cache timing out shiz. do I want one timer per page, one timer per view, or one timer for all views/pages? I'm thinking one timer per view is the sweet spot (per page would give me too many timers, and one timer for all views/pages means I can't (well.... [EASILY]) use different cache expire lengths per view. I'm starting to wonder how [in-]efficient using "one timer per request" (my exponential backoff auto retrying things each have a timer). On one hand I wonder if tons of timers is inefficient, but on the other I wonder if perhaps "one timer and then iterating containters checking timestamps/etc" is duplicating the functionality LESS EFFICIENTLY that libevent already does. I genuinely don't know, so perhaps I should just not give a shit and go with the simplest solution and optimize later. Still, none of the combinations (one timer per page, one timer per view, or one timer for all views/pages) are that complicated... so even figuring out which is the simplest is proving to be a challenge. *flips coin*. Decided while taking a piss that since each event activation requires a mutex lock, that one timer for all views/pages is the more efficient (and definitely simple enough) implementation. It also means that it's a TODOoptimization to not use a timer-per-request for the auto retrying with exponential backoff requests. I do my best thinking while taking a piss/shit.
     //TO DOnereq: two+ simultaneous queries [to same view page] from two+ users, second+ ones just appends to list of responders, just like 'Get+Subscribe' cache code does
 
     if(m_NoMoreAllowedMuahahaha)

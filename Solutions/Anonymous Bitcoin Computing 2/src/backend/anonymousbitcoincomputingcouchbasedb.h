@@ -31,6 +31,10 @@ using namespace boost::interprocess;
 #define ABC_VIEW_QUERY_PAGES_MAP_VALUE_TYPE std::pair<std::string /* last docid */, ViewQueryPageContentsType /* usernames on that page */> /*this comment is only here to keep Qt creator from deleting trailing whitespace at save. delete it and watch what happens i double dog dare you ;-P */
 #define ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE int /*pageNum*/, ABC_VIEW_QUERY_PAGES_MAP_VALUE_TYPE
 
+#define ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_VALUE_TYPE std::pair<std::string /* view path without param (future proofing for when there are multiple views in system */, int /* page num */> /* comment here to keep the trailing space */
+#define ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_KEY_AND_VALUE_TYPE long long /* expire timestamp */, ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_VALUE_TYPE
+#define ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_TYPE std::map<ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_KEY_AND_VALUE_TYPE>
+
 class GetAndSubscribeCacheItem;
 class ViewQueryCouchbaseDocumentByKeyRequest;
 
@@ -273,6 +277,9 @@ private:
     friend class AutoRetryingWithExponentialBackoffCouchbaseGetRequest;
     friend class AutoRetryingWithExponentialBackoffCouchbaseStoreRequest;
 
+    static long long millisecondsSinceEpoch();
+    static struct timeval millisecondsToTimeval(long long milliseconds);
+
     boost::thread m_Thread;
     lcb_t m_Couchbase;
     boost::condition_variable m_IsConnectedWaitCondition;
@@ -294,9 +301,19 @@ private:
     struct event *m_GetAndSubscribePollingTimeout; //all keys share a timeout for now (and possibly forever), KISS
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 
+    //begin 'single view'
     std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE> m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys;
     int m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty;
-    boost::unordered_map<int /*pageNum*/, std::list<ViewQueryCouchbaseDocumentByKeyRequest*>* /*list of users to give the page to once it comes */ > m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes;
+    boost::unordered_map<int /*pageNum*/, std::list<ViewQueryCouchbaseDocumentByKeyRequest*>* /*list of users to give the page to once it comes */ > m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes; //TODOreq: iterate the map and delete the value/list-ptr in destructor on shutdown? methinks yes, but idfk
+    //end 'single view'
+
+    void cacheTheLastUsernamesDocIdAndAllUsernamesOnThatPage(int pageNumJustGot, const std::string &lastDocIDonPage, ViewQueryPageContentsType *pageOfUsernamesToCache);
+
+    //applies to all views:
+    ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_TYPE m_ViewPageCacheTimeoutsForAllPagesOfAllViews;
+    struct event *m_ViewPageCacheTimeoutTimerForAllPagesOfAllViews;
+    static void viewPageCacheTimeoutEventSlotStatic(evutil_socket_t unusedSocket, short events, void *userData);
+    void viewPageCacheTimeoutEventSlot();
 
     std::vector<AutoRetryingWithExponentialBackoffCouchbaseStoreRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseStoreRequestCache; //TODOoptimization: vector requires adjacent memory positions. i only chose vector because it's supposedly fast for popping the top item... but that adjacent memory requirement (which I don't need) might cause lots of unecessary overhead. mb just a list or queue instead..
     std::vector<AutoRetryingWithExponentialBackoffCouchbaseGetRequest*> m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache;
