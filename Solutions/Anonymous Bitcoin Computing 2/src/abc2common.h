@@ -5,6 +5,7 @@
 #include <string>
 
 #include <boost/version.hpp>
+#include <boost/shared_ptr.hpp> //ViewQueryPageContentsType
 
 #define ABC_500_INTERNAL_SERVER_ERROR_MESSAGE "500 Internal Server Error"
 #define ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME "AbcWtToCouchbaseMessageQueuesBaseName"
@@ -104,6 +105,7 @@
 
 //MIN MEMORY REQUIRED [for message queues only] calculated via above tunables: QUEUE_MAX_MESSAGE_SIZE * MAX_MESSAGES_IN_QUEUE * NUMBER_OF_QUEUES
 
-typedef std::list<std::string> ViewQueryPageContentsType;
+typedef std::list<std::string> ViewQueryPageContentsPointedType;
+typedef boost::shared_ptr<ViewQueryPageContentsPointedType> ViewQueryPageContentsType; //TODOoptional: search for any/all uses of "delete" application-wide and use a shared pointer instead
 
 #endif // ABC2COMMON_H

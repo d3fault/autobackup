@@ -385,7 +385,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     //views (as in couchbase views. map/reduce 'views', not SHIT YOU LOOK AT views. guh shit naming)
     void queryCouchbaseViewBegin(const std::string &viewPathWithoutAnyParams, int pageNum_MustBeGreaterThanOrEqualToOne);
-    void queryCouchbaseViewFinished(ViewQueryPageContentsType *pageContents, bool internalServerErrorOrJsonError);
+    void queryCouchbaseViewFinished(const ViewQueryPageContentsType &pageContents, bool internalServerErrorOrJsonError);
 
     bool isHomePath(const std::string &pathToCheck);
     void handleInternalPathChanged(const std::string &newInternalPath);

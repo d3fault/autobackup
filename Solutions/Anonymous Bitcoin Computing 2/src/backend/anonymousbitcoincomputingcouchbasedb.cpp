@@ -851,7 +851,7 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallbackStatic(lcb_h
 }
 void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNumJustGot, lcb_error_t error, const lcb_http_resp_t *resp)
 {
-    ViewQueryPageContentsType ret;
+    ViewQueryPageContentsType ret(new ViewQueryPageContentsPointedType());
     if(error != LCB_SUCCESS)
     {
         cerr << "view query (" << std::string(resp->v.v0.path, resp->v.v0.npath) << ") callback has lcb error: " << lcb_strerror(m_Couchbase, error) << endl;
@@ -879,10 +879,10 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNum
     const ptree &rowsPt = pt.get_child("rows");
     BOOST_FOREACH(const ptree::value_type &row, rowsPt)
     {
-        ret.push_back(row.second.get<std::string>("key" /* emitted view key, username in this case*/));
+        ret.get()->push_back(row.second.get<std::string>("key" /* emitted view key, username in this case*/));
     }
     ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, false)
-    if(ret.empty())
+    if(ret.get()->empty())
     {
         return; //the below call to back() would segfault otherwise. it almost makes sense to cache the fact that it's empty, BUT that should never happen to begin with
     }
@@ -1356,7 +1356,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
                 int numFullPagesToSkip = (pageNum_WithOneBeingTheFirstPage-it->first)-1; //the minus one is because we don't need to skip the page it points to (that was already done by specifying startkey_docid/startkey)
                 skip += (numFullPagesToSkip*AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE);
 
-                viewPath += "&starkey_docid=\"" + it->second.first + "\"&startkey=\"" + it->second.second.back() + "\"&skip=" + boost::lexical_cast<std::string>(skip);
+                viewPath += "&starkey_docid=\"" + it->second.first + "\"&startkey=\"" + it->second.second.get()->back() + "\"&skip=" + boost::lexical_cast<std::string>(skip);
             }
             //else: page 1, so no skip param specified
         }

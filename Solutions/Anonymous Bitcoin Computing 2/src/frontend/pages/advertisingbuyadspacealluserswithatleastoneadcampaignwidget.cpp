@@ -40,12 +40,12 @@ void AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget::showPageOfUser
         new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
         return;
     }
-    if(pageContents.empty())
+    if(pageContents.get()->empty())
     {
         new WText("The requested page does not exist", this); //TODOmb: a link back to page 1. clicking "buy ad space" does not bring us back to page 1 either, but being on an invalid page is not very common anyways...
         return;
     }
-    for(ViewQueryPageContentsType::const_iterator it = pageContents.begin(); it != pageContents.end(); ++it)
+    for(ViewQueryPageContentsPointedType::const_iterator it = pageContents.get()->begin(); it != pageContents.get()->end(); ++it)
     {
         new WText(*it, this);
         new WBreak(this);

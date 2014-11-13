@@ -1982,23 +1982,20 @@ void AnonymousBitcoinComputingWtGUI::queryCouchbaseViewBegin(const string &viewP
     ldskjfldskjfsdf ;-sdflsdkjf ;-P don't compile biatch'
         #endif
 }
-void AnonymousBitcoinComputingWtGUI::queryCouchbaseViewFinished(ViewQueryPageContentsType *pageContents, bool internalServerErrorOrJsonError)
+void AnonymousBitcoinComputingWtGUI::queryCouchbaseViewFinished(const ViewQueryPageContentsType &pageContents, bool internalServerErrorOrJsonError)
 {
     resumeRendering();
     switch(m_WhatTheQueryCouchbaseViewWasFor)
     {
     case ALLUSERSWITHATLEASTONEADCAMPAIGNQUERYCOUCHBASEVIEW:
-        m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget->showPageOfUsersWithAtLeastOneAdCampaign(*pageContents, internalServerErrorOrJsonError);
+        m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget->showPageOfUsersWithAtLeastOneAdCampaign(pageContents, internalServerErrorOrJsonError);
         break;
     case INITIALINVALIDNULLQUERYCOUCHBASEVIEW:
     default:
-        cerr << "got a couchbase 'query couchbase view' response we weren't expecting:" << endl << "unexpected page contents: " << pageContents << endl;
+        cerr << "got a couchbase 'query couchbase view' response we weren't expecting:" << endl << "unexpected page contents: " << pageContents /* TODOoptional: print this out better/properly */ << endl;
         //TODOreq: 500 internal server error?
         break;
     }
-
-    //TODOreq: TEMP until shared_ptr is used
-    delete pageContents;
 }
 void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyFinished(const string &keyToCouchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
