@@ -153,7 +153,7 @@ timeval AnonymousBitcoinComputingCouchbaseDB::millisecondsToTimeval(long long mi
 void AnonymousBitcoinComputingCouchbaseDB::cacheTheLastUsernamesDocIdAndAllUsernamesOnThatPage(int pageNumJustGot, const string &lastDocIDonPage, ViewQueryPageContentsType *pageOfUsernamesToCache)
 {
     //actually cache it
-    m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(std::make_pair(pageNumJustGot, std::make_pair(lastDocIDonPage, *pageOfUsernamesToCache))); //TODOoptimization: doesn't make pair copy the list, and insert copy the list, and whenever it's accessed also copy the list (before copying the list to give to the front-end for thread safety)? worth noting that the reason i accept a pointer in this method is to avoid a list copy. COW how I miss thee. Anyways, yea, maybe I should have the stored type be a pointer to a list (but I'd _STILL_ need to make a copy of it before giving it to frontend for thread safety, for now). Just makes memory management a little harder but whatever, might be worth it
+    m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage.insert(std::make_pair(pageNumJustGot, std::make_pair(lastDocIDonPage, *pageOfUsernamesToCache))); //TODOoptimization: doesn't make pair copy the list, and insert copy the list, and whenever it's accessed also copy the list (before copying the list to give to the front-end for thread safety)? worth noting that the reason i accept a pointer in this method is to avoid a list copy. COW how I miss thee. Anyways, yea, maybe I should have the stored type be a pointer to a list (but I'd _STILL_ need to make a copy of it before giving it to frontend for thread safety, for now). Just makes memory management a little harder but whatever, might be worth it
 
     //set up the cache timeout
     long long currentDateTime = millisecondsSinceEpoch();
@@ -184,7 +184,7 @@ void AnonymousBitcoinComputingCouchbaseDB::viewPageCacheTimeoutEventSlotStatic(i
 }
 void AnonymousBitcoinComputingCouchbaseDB::viewPageCacheTimeoutEventSlot()
 {
-    //TODOreq: iterate the map of timeouts, deleting every expired one and removing it from the map........ until the first entry that doesn't need to be expired is encountered, then re-start the timer targetting that expiring-next map entry
+    //iterate the map of timeouts, deleting every expired one and removing it from the map........ until the first entry that doesn't need to be expired is encountered, then re-start the timer targetting that expiring-next map entry
 
     long long currentDateTime = millisecondsSinceEpoch();
     for(ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_TYPE::iterator it = m_ViewPageCacheTimeoutsForAllPagesOfAllViews.begin(); it != m_ViewPageCacheTimeoutsForAllPagesOfAllViews.end(); /* nop */)
@@ -209,7 +209,7 @@ void AnonymousBitcoinComputingCouchbaseDB::viewPageCacheTimeoutEventSlot()
             //continue with for loop
 
             //once i implement multiple views, we need to incorporate more of it->second (first (since second is itself a pair)), and not just the pagenum
-            m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.erase(it->second.second /* pageNum*/); //remove actual cache item
+            m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage.erase(it->second.second /* pageNum*/); //remove actual cache item
             m_ViewPageCacheTimeoutsForAllPagesOfAllViews.erase(it++); //remove cache item timeout timestamp. TODOoptimization: use the iterator range erase overload
             continue; //understandability
         }
@@ -1294,16 +1294,35 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
     {
         return;
     }
-    ViewQueryCouchbaseDocumentByKeyRequest *originalRequest = m_ViewQueryMessageQueuesCurrentMessageBuffer; //TODOoptional: make this work with the old message queue thing, but actually I'm thinking of removing that altogether as I'm not sure it even works with the new "multiple subscription pages" (multi ad campaigns) code
+    ViewQueryCouchbaseDocumentByKeyRequest *originalRequest = m_ViewQueryMessageQueuesCurrentMessageBuffer; //TODOoptional: make this work with the old message queue thing, but actually I'm thinking of removing that altogether as I'm not sure it even works with the new "multiple get+subscribe pages" (multi ad campaigns) code
 
-    //TODOreq: multiple views. keep in mind that each view should be able to specify a different cache duration. for now ima KISS and hard-code: typdef boost::unordered_map<std::string /*view path without any params*/, ???> ViewsPagesCachesTypedef;
+    //TODOreq: multiple views. keep in mind that each view should be able to specify a different cache duration. for now ima KISS and hard-code for a single view path: typdef boost::unordered_map<std::string /*view path without any params*/, ???> ViewsPagesCachesTypedef;
+    //I'm not sure how to best be able to specify different cache durations for different views. my options are: a) in initialization code set up a hash of paths->timeoutLengths, b) specify timeoutLength with each view query request (ignore it most times, use when needed). I did originally think I could abstract the view query stuff into an interface, in which case the timeoutLength duration could have been specified as a constructor arg... but when it came down to it I couldn't quite wrap my head around that interface-based design (a hacky existing implementation is better than an elegant non-existing implementation)
 
     int pageNum_WithOneBeingTheFirstPage = originalRequest->PageNum_WithOneBeingTheFirstPage; //optimization to deref less
+
+
+
+#if 0 //multiple view paths attempt. is a refactor of the below code
+    try
+    {
+        ViewQueryCacheItem *viewQueryCacheItem = m_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage.at(originalRequest->ViewPath);
+
+        //if we get here, no exception was thrown and therefore the view path is already being managed by our cache
+
+        //bleh i'm just like shifting logicz into a different class (maybe), but i still need some of it to stay in this one. friend classing? idfk, my head hurts
+    }
+    catch(std::out_of_range &viewPathNotCurrentlyBeingManagedAkaNotYetRequestedOnceException)
+    { /* do nothing. continue below to request the view path for the first time yada */ }
+#endif
+
+
+
 
     //maybe the page is already in the process of being requested. if so, add ourselves to the list of people to be told about the result and then return. we know that if it's currently being requested, that it isn't in the cache, that's why we check if it's being requested before checking if it's in the cache
     try
     {
-        std::list<ViewQueryCouchbaseDocumentByKeyRequest*> *listOfUsersThatWantToBeNotifiedWhenThePageComes = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum_WithOneBeingTheFirstPage);
+        std::list<ViewQueryCouchbaseDocumentByKeyRequest*> *listOfUsersThatWantToBeNotifiedWhenThePageComes = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum_WithOneBeingTheFirstPage); //TODOoptional: shared_ptr would solve my "do i delete remaining ones in destructor?" question
 
         //if we get here, no exception was thrown and therefore the page is already being requested. append ourself end return
         listOfUsersThatWantToBeNotifiedWhenThePageComes->push_back(originalRequest);
@@ -1318,7 +1337,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
 
     //TODOreq: i need to give each requester a COPY of the std::list of usernames for each page. Qt lists use implicit sharing, std::list does not :(. The cache/list may expire before the front-end receives it, so it's a thread safety issue guh. Maybe I should use a shared_ptr instead (whenever the list is to be updated, i make a NEW list and delete the [reference to the] old list, since the front-end may still be using it). Still since I'm not familiar with shared_ptr and have never used it, I'll use the 'make a copy' strategy for now
 
-    if(!m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.empty()) //this map should be the value of the hash (commented out above) used to keep track of all the different views (and their pages), but for now I only have 1 view type
+    if(!m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage.empty()) //this map should be the value of the hash (commented out above) used to keep track of all the different views (and their pages), but for now I only have 1 view type
     {
         //check if the pageNum requested could even exist based on what total_rows was set at the last time a page was queried. If it can't, then just emit an empty page to signify "page not found"
         if(pageNum_WithOneBeingTheFirstPage > m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty)
@@ -1329,7 +1348,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
         }
 
         //try to get the page about to be requested. If it's there then we have a cache CONTENT hit and don't even need to query the view :-P
-        std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE>::iterator it = m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.lower_bound(pageNum_WithOneBeingTheFirstPage);
+        std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE>::iterator it = m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage.lower_bound(pageNum_WithOneBeingTheFirstPage);
         if(it->first == pageNum_WithOneBeingTheFirstPage)
         {
             //cache CONTENT hit, respond immediately
@@ -1337,7 +1356,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
             return;
         }
         //cache miss, so decrement the iterator (as long as it isn't begin()) in order to get "a page before the one we want that is in the cache", and then use it's startkey_docid to get us as close as possible to the page being requested in a much more efficient way than specifying startkey or skip only
-        if(it == m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.begin())
+        if(it == m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage.begin())
         {
             //begin() points to a page after the page we want, so use regular inefficient skip strategy
             ABC_VIEW_QUERY_APPEND_INEFFICIENT_SKIP_TO_VIEW_PATH_PLX_MACRO

@@ -301,8 +301,13 @@ private:
     struct event *m_GetAndSubscribePollingTimeout; //all keys share a timeout for now (and possibly forever), KISS
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 
+#if 0 //multiple view paths attempt. is a refactor of the below code
+    //boost::unordered_map<std::string /* viewPath without any params */, std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE>* /* pointer to map of cached pages (and the last docid of each page), ordered by page number */> m_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage; //a list in a map in a hash, come at me bro
+    boost::unordered_map<std::string /* viewPath without any params */, ViewQueryCacheItem*> m_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage;
+#endif
+
     //begin 'single view'
-    std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE> m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys;
+    std::map<ABC_VIEW_QUERY_PAGES_MAP_KEY_AND_VALUE_TYPE> m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndAllKeysAkaUsernamesOnThatPage;
     int m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty;
     boost::unordered_map<int /*pageNum*/, std::list<ViewQueryCouchbaseDocumentByKeyRequest*>* /*list of users to give the page to once it comes */ > m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes; //TODOreq: iterate the map and delete the value/list-ptr in destructor on shutdown? methinks yes, but idfk
     //end 'single view'
