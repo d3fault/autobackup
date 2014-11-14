@@ -659,6 +659,15 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             GetCouchbaseDocumentByKeyRequest::respond(originalRequest, "", false, false);
         }
         m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
+
+        if(originalRequest->GetAndSubscribe != 0 && originalRequest->GetAndSubscribe != 6)
+        {
+            //TO DOnereq: handle case where key doesn't exist <------ LOL, i thought of the bug way back then ;-P
+            //TO DOnereq: they may have navigated DIRECTLY (typed in url) to an ad campaign index that does not exist: that means we get HERE but we've also put it in the "NewSubscribers". We delete it in just a few lines, so the copy in NewSubscribers is a dangling pointer. TODOreq: this in-NewSubscribers-bug might also apply to the above error (which already has a note saying "i honestly don't konw what to do with a get and subscribe error thing"), I _STILL_ have no idea ;-P. But shit man I'm not even sure whether or not I know at this point if it was even a get to a key that is subscribable. TODOreq: view queries and their 'list of users to tell about the page when it comes' might have a similar bug (db error or json error) fml fml fml *eats shotgun*
+            GetAndSubscribeCacheItem *cacheItem = m_GetAndSubscribeCacheHash.at(originalRequest->CouchbaseGetKeyInput);
+            cacheItem->NewSubscribers.erase(originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback); //see TODOoptimization in change session id about using a find iterator instead
+        }
+
         delete originalRequest;
         return;
     }
@@ -668,10 +677,6 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
 
     if(originalRequest->GetAndSubscribe != 0 && originalRequest->GetAndSubscribe != 6)
     {
-        //TODOreq: handle case where key doesn't exist (but since we're manually setting up get and subscribe shit for now (including recompilations), that is ridiculously unlikely)
-
-        //TODOoptimization: still iffy on if this get and subscribe stuff needs to be on it's own thread, so as not to congest traditional gets/stores when there is an update
-
         //TO DOnereq (not sure about the end of this comment, but deleting of the cache happens when timeout occurs and that slot sees it as being empty): the last person to unsubscribe himself should also remove the cache item from m_GetAndSubscribeCacheHash and delete the cache item (see the catch code path's comments (this is an other time we need to "???" <-, but is it the only?)
 
         GetAndSubscribeCacheItem *cacheItem;

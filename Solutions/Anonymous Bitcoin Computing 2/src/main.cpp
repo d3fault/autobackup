@@ -2,9 +2,6 @@
 
 /*
 
-==1.0 BLOCKER Bugs==
-- [intermittent] Segfault when stopping the app when deleting new subscribers. Since the app won't be stopping very often :-P, it's a 1.1 bug. Line 381 of couchbasedb.cpp, "delete subscription;" (new subscription, that is) -- best solution is to use shared_ptr. actually i don't think it's as simple as using shared_ptr to fix (see that line for more notes), fml
-
 ==1.1 Bugs==
 
 - A lot of my error messages (not logged in, 500 internal server error, etc -- but also even things like "you successfully bought" too. but come to think of it, if it doesn't work without javascript, fuck that -- it should work without js soon, it's a pending wt bug report) should be in a messagebox instead of just added to the current page. I wasn't aware of Wt's message box functionality until recently

@@ -62,7 +62,7 @@ void AdvertisingBuyAdSpaceAllAdCampaignsForUserWidget::readCampaignIndexCacheDoc
     if(!lcbOpSuccess)
     {
         //they might have navigated to the url: the user might exist but they might not have any ad campaigns. OR, the 'cache' (soon to be authorative) index doc may have simply failed to have been created (additionally, it may have failed to have been updated. idk when/where the best spot to do the recovery logic for that doc is :-/ TODOreq: need to find SOMEWHERE, especially if making it authoriative)
-        //segfaults if they later navigate to a user with an ad campaign: clear();
+        //segfaults if they later navigate to a user with an ad campaign, but TODOreq we don't want to show the spinbox/etc if they don't have any so wtf: clear();
         new WText("User " + m_CampaignOwner + " does not appear to have any advertising campaigns. If you know this is an error, please report it", this);
         return;
     }

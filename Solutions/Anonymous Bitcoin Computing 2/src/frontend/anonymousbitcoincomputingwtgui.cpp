@@ -234,7 +234,7 @@ void AnonymousBitcoinComputingWtGUI::showHomeWidget()
     if(!m_HomeWidget)
     {
         m_HomeWidget = new WContainerWidget(m_MainStack);
-        new WText("Welcome to " ABC_HUMAN_READABLE_NAME_PLX ".", m_HomeWidget);
+        new WText("Welcome to " ABC_HUMAN_READABLE_NAME_PLX, m_HomeWidget);
         //new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_HomeWidget);
     }
     m_MainStack->setCurrentWidget(m_HomeWidget);
@@ -650,7 +650,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         if(!lcbOpSuccess)
         {
             new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-            new WText("The campaign for that user (or perhaps that user) does not exist", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: 'click here to see all of the user's campaigns' (and to find out of the user even exists?)
+            new WText("The campaign for that user (or perhaps that user) does not exist", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: 'click here to see all of the user's campaigns' (and to find out of the user even exists?). TO DOnereq: we are 'subscribed' and should not be! it segfaults on shutdown, but may even shutdown at runtime if the requested campaign is created later and then viewed normally and that triggers a 'subscription update' (but like I said, it's already deleted I think (but I'm not even sure of that))
             if(!environment().ajax())
                 resumeRendering();
             else if(m_FirstPopulate)

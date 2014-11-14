@@ -33,7 +33,7 @@ using namespace boost::interprocess;
 
 #define ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_VALUE_TYPE std::pair<std::string /* view path without param (future proofing for when there are multiple views in system */, int /* page num */> /* comment here to keep the trailing space */
 #define ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_KEY_AND_VALUE_TYPE long long /* expire timestamp */, ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_VALUE_TYPE
-#define ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_TYPE std::map<ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_KEY_AND_VALUE_TYPE>
+#define ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_TYPE std::multimap<ABC_VIEW_PAGE_CACHE_TIMEOUT_MAP_KEY_AND_VALUE_TYPE>
 
 class GetAndSubscribeCacheItem;
 class ViewQueryCouchbaseDocumentByKeyRequest;
