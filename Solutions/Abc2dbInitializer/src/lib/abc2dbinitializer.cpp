@@ -136,7 +136,7 @@ void Abc2dbInitializer::initializeAbc2db(const QString &filenameOfLineSeparatedE
 
     emit d("done reading file, you should have seen 1000 sets created and at least one huge bitcoin key list page created (and one more for every 10k increment on top of that)");
 
-    //campaign 0 doc
+    //d3fault campaign 0 doc
     pt.clear();
     pt.put(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE, "1");
     pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, "24");
@@ -148,6 +148,18 @@ void Abc2dbInitializer::initializeAbc2db(const QString &filenameOfLineSeparatedE
     if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(campaign0docCouchbaseKey, campaign0docJson, LCB_ADD, 0, outputMsg))
         return;
     emit d(QString::fromStdString(outputMsg));
+
+    // d3fault campaign index 'cache' (soon to be 'authorative') doc
+    pt.clear();
+    pt.put(JSON_AD_SPACE_CAMPAIGN_NEXT_AVAILABLE_INDEX_CACHE, "1");
+    std::ostringstream campaignIndexCacheDocBuffer;
+    write_json(campaignIndexCacheDocBuffer, pt, false);
+    std::string campaignIndexCacheDoc = campaignIndexCacheDocBuffer.str();
+    outputMsg = "adding campaign index cache doc";
+    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(adSpaceCampaignIndexCacheKey("d3fault"), campaignIndexCacheDoc, LCB_ADD, 0, outputMsg))
+        return;
+    emit d(QString::fromStdString(outputMsg));
+
     emit d("done initializing");
     emit doneInitializingAbc2db();
 }

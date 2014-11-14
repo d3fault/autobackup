@@ -7,6 +7,7 @@
 #endif
 
 #include "pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.h"
+#include "pages/advertisingbuyadspacealladcampaignsforuserwidget.h"
 #include "pages/advertisingbuyownersadspacecampaignwithindexwidget.h"
 #include "validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
 #include "registersuccessfulwidget.h"
@@ -455,21 +456,14 @@ void AnonymousBitcoinComputingWtGUI::showAllUsersWithAtLeastOneAdCampaignWidget(
 }
 void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget(const string &username)
 {
-    //TODOreq: they might have typed the url in directly. the username is not KNOWN to have any ad campaigns at all
     if(!m_AdvertisingBuyAdSpaceD3faultWidget)
     {
-        //TODOreq: m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(username, m_MainStack);
-        m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(m_MainStack);
-        new WText(username + "'s ad space campaigns: TODO", m_AdvertisingBuyAdSpaceD3faultWidget); //TODOreq: spinbox to jump to campaigns is sure way the fuck more efficient than views/etc, but one I allow campaigns to have titles and such then views are a must
-        new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
-        //new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultWidget);
+        m_AdvertisingBuyAdSpaceD3faultWidget = new AdvertisingBuyAdSpaceAllAdCampaignsForUserWidget(this, username, m_MainStack);
     }
-#if 0 //TODOreq
     else
     {
-        m_AdvertisingBuyAdSpaceD3faultWidget->setCampaignOwnerWeWantToSeeAdCampaignsFor(username);
+        m_AdvertisingBuyAdSpaceD3faultWidget->setCampaignOwnerWeWantToSeeAdCampaignsForAndBeginFiguringOutHowManyAdCampaignsUserHasIfTheUsernameActuallyChanged(username);
     }
-#endif
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultWidget);
 }
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
@@ -1854,6 +1848,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
     case HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS:
     {
         m_ViewAllExistingAdSlotFillersAccountTab->oneAdSlotFillerFromHackyMultiGetAttemptFinished(keyToCouchbaseDocument, couchbaseDocument, lcbOpSuccess, dbError);
+    }
+        break;
+    case GETADCAMPAIGNCURRENTINDEXCACHEDOCFORDETERMININGHOWMANYADCAMPAIGNSAUSERHAS:
+    {
+        m_AdvertisingBuyAdSpaceD3faultWidget->readCampaignIndexCacheDocToFigureOutHowManyAdCampaignsTheCampaignOwnerHas(couchbaseDocument, lcbOpSuccess, dbError);
     }
         break;
     case INITIALINVALIDNULLGET:

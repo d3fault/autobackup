@@ -61,6 +61,7 @@ const std::string hugeBitcoinKeyListPageKey(const std::string &pageZ)
 }
 const std::string adSpaceCampaignIndexCacheKey(const std::string &usernameOfCampaignOwner)
 {
+    //ex: adSpaceCampaignNextAvailableIndexCache_d3fault
     return COUCHBASE_AD_SPACE_CAMPAIGN_NEXT_AVAIABLE_INDEX_CACHE_KEY_PREFIX
             D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + usernameOfCampaignOwner;
 }

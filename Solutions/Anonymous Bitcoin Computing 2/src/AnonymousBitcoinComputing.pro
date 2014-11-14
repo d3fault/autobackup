@@ -56,7 +56,8 @@ HEADERS += \
     frontend/pages/advertisingbuyownersadspacecampaignwithindexwidget.h \
     frontend/pages/advertisingselladspacecreatenewadcampaignwidget.h \
     frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h \
-    frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.h
+    frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.h \
+    frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -82,7 +83,8 @@ SOURCES += main.cpp \
     backend/getandsubscribecacheitem.cpp \
     frontend/pages/advertisingselladspacecreatenewadcampaignwidget.cpp \
     frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.cpp \
-    frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.cpp
+    frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.cpp \
+    frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

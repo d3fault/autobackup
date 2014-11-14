@@ -222,6 +222,7 @@ m_##text##MutexArray[lockedMutexIndex].unlock();
 
 class AdvertisingSellAdSpaceCreateNewAdCampaignWidget;
 class AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget;
+class AdvertisingBuyAdSpaceAllAdCampaignsForUserWidget;
 class AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget;
 class LettersNumbersOnlyRegExpValidatorAndInputFilter;
 class RegisterSuccessfulWidget;
@@ -234,6 +235,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     //69'ing friend classes
     friend class AdvertisingSellAdSpaceCreateNewAdCampaignWidget;
     friend class AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget;
+    friend class AdvertisingBuyAdSpaceAllAdCampaignsForUserWidget;
     friend class AddFundsAccountTabBody;
     friend class NewAdSlotFillerAccountTabBody;
     friend class ViewAllExistingAdSlotFillersAccountTabBody;
@@ -302,7 +304,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     //hardcoded (not as hardcoded as one might think! un-hardcoding wip if ABC_MULTI_CAMPAIGN_OWNER_MODE is defined)
     bool m_BuyInProgress;
-    WContainerWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
+    AdvertisingBuyAdSpaceAllAdCampaignsForUserWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
     void showAdvertisingBuyAdSpaceD3faultWidget(const std::string &username);
     AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     bool m_FirstPopulate;
@@ -453,6 +455,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     enum WhatTheGetWasForEnum
     {
         INITIALINVALIDNULLGET,
+        GETADCAMPAIGNCURRENTINDEXCACHEDOCFORDETERMININGHOWMANYADCAMPAIGNSAUSERHAS,
         GETNICKNAMEOFADSLOTFILLERNOTINALLADSLOTFILLERSDOCFORADDINGITTOIT_THEN_TRYADDINGTONEXTSLOTFILLERINDEXPLZ,
         HACKEDIND3FAULTCAMPAIGN0BUYSTEP1GET,
         ENSURESLOTABOUTTOLOCKUSERACCOUNTTOWARDSATTEMPTINGTOPURCHASEDOESNTEXISTBECAUSEIFITDOESANDWEBOUGHTITSTATEWOULDBEFUCKED,

@@ -378,7 +378,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
         BOOST_FOREACH(SubscribersType::value_type &s, v.second->NewSubscribers)
         {
             GetCouchbaseDocumentByKeyRequest *subscription = static_cast<GetCouchbaseDocumentByKeyRequest*>(s.second);
-            delete subscription;
+            delete subscription; //TODOreq: i get intermittent segfaults here when shutting down, and I _THINK_ one reason might be triggered by: navigating to an ad campaign index that does not exist tries to 'subscribe' to it, but since the ad campaign doesn't exist we should NOT be subscribing to it. I think the request is deleted somewhere but still stored in the list of [new] subscribers. We would segfault at runtime MUCH LATER if that index was ever created and then a 'subscription update' was triggered (the old one I'm describing is still sitting in there, which is why I'm segfaulting at THIS LINE). ffffff yea that's a bug. IF THE INDEX DOES NOT EXIST WE SHOULD NOT TRY TO SUBSCRIBE TO IT
         }
         BOOST_FOREACH(SubscribersType::value_type &s, v.second->Subscribers)
         {
